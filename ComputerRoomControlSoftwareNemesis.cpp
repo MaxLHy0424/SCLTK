@@ -2,25 +2,32 @@
 #include<iostream>
 int main(){
     printf("欢迎使用 Computer Room Control Software Nemesis (机房控制软件克星)!\n\n");
-    printf("模式列表:\n");
+    printf("  0. 访问 GitHub 仓库页面\n");
     printf("  1. 普通模式\n");
     printf("  2. 强力模式\n\n");
     printf("模式说明: \n  %c普通模式%c 仅会强制关闭 %c极域电子教室%c 的相关进程, 可能存在重新开启的情况, 但只会执行一次, 资源占用较少.\n  %c强力模式%c 会重复结束 %c极域电子教室%c 和 %c联想智能云教室%c 的相关进程, 效果较强, 但资源消耗较大, 推荐联想机型选择此模式.\n\n",34,34,34,34,34,34,34,34,34,34);
     unsigned short FeatureMode{0},InputError{0};
+    printf("请输入模式代码: ");
     scanf("%hu",&FeatureMode);
-    while(FeatureMode!=1&&FeatureMode!=2){
+    while(FeatureMode!=0&&FeatureMode!=1&&FeatureMode!=2){
         if(InputError>=5){
-            printf("输入错误次数过多, 程序退出.\n");
+            printf("疑似出现错误, 程序退出.\n");
             goto ExitProgram;
         }
         printf("输入错误, 请重新输入: ");
         scanf("%hu",&FeatureMode);
     }
+    printf("########################################\n");
     switch(FeatureMode){
+        case 0:{
+            printf("感谢!\n");
+            system("start https://github.com/MaxLHy0424/Computer-Room-Control-Software-Nemesis");
+            break;
+        }
         case 1:{
             printf("\n您选择了 %c普通模式%c.\n",34,34);
             system("taskkill /F /IM StudentMain.exe");
-            printf("执行成功, 如出现复发请使用 %c强力模式%c",34,34);
+            printf("执行成功, 如出现复发请使用 %c强力模式%c\n",34,34);
             break;
         }
         case 2:{
@@ -35,6 +42,7 @@ int main(){
         }
     }
 ExitProgram:
+    printf("########################################\n");
     system("pause");
     return 0;
 }
