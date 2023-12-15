@@ -4,7 +4,8 @@
 
 这个软件可以帮到你!
 
-Computer Room Control Software Nemesis (中文名 机房控制软件克星 ,简称 CRCSN), 可以帮助你通过简单的操作快速脱离控制!
+Computer Room Control Software Nemesis (中文名 机房控制软件克星 , 简称 CRCSN), 可以帮助你通过简单的操作快速脱离控制!
+
 # 注意事项
 
 此软件仅可用于 Windows 平台.
