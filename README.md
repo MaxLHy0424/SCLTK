@@ -1,10 +1,10 @@
 # 简介
 
-你是否因为无法脱离机房老师的控制, 而无法欢快的使用机房的电脑?
+你是否因为无法脱离机房老师的控制, 而无法欢快使用机房的电脑?
 
 这个软件可以帮到你!
 
-Computer Room Control Software Nemesis (中文名 机房控制软件克星 , 简称 CRCSN), 可以帮助你通过简单的操作快速脱离控制!
+Computer Room Control Software Nemesis (中文名 机房控制软件克星 , 简称 CRCSN), 可以帮助你通过简单的操作快速 (间接) 脱离控制!
 
 # 注意事项
 
