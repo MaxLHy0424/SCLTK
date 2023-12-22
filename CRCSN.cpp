@@ -1,29 +1,35 @@
+/*
+感谢您查看本程序的源代码!
+本程序以 MIT 协议开源 (具体看仓库下 LICENSE 文件), 请在符合 MIT 协议的情况下使用, 谢谢配合!
+欢迎对本程序提出意见或报告 Bug, 这对我很重要!
+*/
 #include<iostream>
 #include<string>
-#include<ShlObj.h>
-std::string FeatureMode{0};
+#include<ShlObj.h>//函数 IsUerAnAdmin 依赖头文件, 用于检测是否为管理员权限运行程序
+using namespace std;
+string FeatureCode{0};//用于存储功能代码 (全局定义纯粹是作者太懒)
 void PermissionDetection(){
-    BOOL RunAsAdmin{IsUserAnAdmin()};
-    if(!RunAsAdmin){
+    BOOL RunAsAdmin{IsUserAnAdmin()};//当是管理员权限时为 True, 否则为 False
+    if(!RunAsAdmin){//对变量 RunAsAdmin 进行非运算, 及将非管理员权限运行时的值 False 转为 True 以进行 if 语句内的操作
         printf("[Error] 权限不足, 请以管理员权限运行...\n");
         printf("\n########################################\n\n");
         system("pause");
-        exit(0);
+        exit(0);//退出程序
     }
 }
 void OptionScreen(){
-    std::ios::sync_with_stdio(false);
-    std::cin.tie(nullptr);
+    ios::sync_with_stdio(false);//解除 cin 与 stdin 的绑定, 提升效率
+    cin.tie(nullptr);//接触 cin 与 cout 之间的绑定, 提升效率
     printf("欢迎使用 机房控制软件克星 !\n\n");
     printf("功能列表:\n");
     printf("   [0] 关于\n");
     printf("   [1] TaskKill 方案\n");
     printf("   [2] TsKill 方案\n");
     printf("请输入功能代码: ");
-    std::cin>>FeatureMode;
-    while(FeatureMode!="0"&&FeatureMode!="1"&&FeatureMode!="2"){
+    cin>>FeatureCode;
+    while(FeatureCode!="0"&&FeatureCode!="1"&&FeatureCode!="2"){
         printf("输入错误, 请重新输入: ");
-        std::cin>>FeatureMode;
+        cin>>FeatureCode;
     }
 }
 void About(){
@@ -40,45 +46,45 @@ void Mode1(){
     printf("提示: 已尝试临时修复环境变量, 如无法使用则是管理员修改了注册表, 暂无方案解决此问题.\n");
     printf("按任意键将清空以上内容并继续!\n\n");
     system("pause");
-    for(;;){
-        system("cls");
-        system("sc config tvnserver start= Disabled");
-        system("net stop tvnserver");
-        system("TaskKill /F /T /IM PortControl64.exe");
-        system("TaskKill /F /T /IM DesktopCheck.exe");
-        system("TaskKill /F /T /IM DeploymentAgent.exe");
-        system("TaskKill /F /T /IM XYNTService.exe");
-        system("TaskKill /F /T /IM StudentMain.exe");
+    for(;;){//无限循环, 解决存在守护进程的问题, 资源消耗并不高
+        system("cls");//清空控制台屏幕
+        system("sc config tvnserver start= Disabled");//禁用 "联想云教室" 的主要服务
+        system("net stop tvnserver");//停止 "联想云教室" 的主要服务
+        system("TaskKill /F /T /IM PortControl64.exe");//结束 "联想云教室" 的相关进程
+        system("TaskKill /F /T /IM DesktopCheck.exe");//结束 "联想云教室" 的相关进程
+        system("TaskKill /F /T /IM DeploymentAgent.exe");//结束 "联想云教室" 的相关进程
+        system("TaskKill /F /T /IM XYNTService.exe");//结束 "联想云教室" 的相关进程
+        system("TaskKill /F /T /IM StudentMain.exe");//结束 "极域电子教室" 的进程
     }
 }
 void Mode2(){
     printf("您选择了 \"TsKill 方案\".\n");
-    printf("提示 1: 此方案推荐用于 \"TaskKill 方案\" 无法使用时的备选方案.\n");
+    printf("提示 1: 此方案未经测试, 推荐用于 \"TaskKill 方案\" 无法使用时的备选方案.\n");
     printf("提示 2: 已尝试临时修复环境变量, 如无法使用则是管理员修改了注册表, 暂无方案解决此问题.\n");
     printf("按任意键将清空以上内容并继续!\n\n");
     system("pause");
-    for(;;){
-        system("cls");
-        system("sc config tvnserver start= Disabled");
-        system("net stop tvnserver");
-        system("TsKill PortControl64 /A /V");
-        system("TsKill DesktopCheck /A /V");
-        system("TsKill DeploymentAgent /A /V");
-        system("TsKill XYNTService /A /V");
-        system("TsKill StudentMain /A /V");
+    for(;;){//无限循环, 解决存在守护进程的问题, 资源消耗并不高
+        system("cls");//清空控制台屏幕
+        system("sc config tvnserver start= Disabled");//禁用 "联想云教室" 的主要服务
+        system("net stop tvnserver");//停止 "联想云教室" 的主要服务
+        system("TsKill PortControl64 /A /V");//结束 "联想云教室" 的相关进程
+        system("TsKill DesktopCheck /A /V");//结束 "联想云教室" 的相关进程
+        system("TsKill DeploymentAgent /A /V");//结束 "联想云教室" 的相关进程
+        system("TsKill XYNTService /A /V");//结束 "联想云教室" 的相关进程
+        system("TsKill StudentMain /A /V");//结束 "极域电子教室" 的进程
     }
 }
 int main(){
-    system("color b");
+    system("color b");//调整控制台字体颜色为青蓝色
     PermissionDetection();
     OptionScreen();
-    system("set path=%path%;C:\\Windows\\System32\\");
+    system("set path=%path%;C:\\Windows\\System32\\");//临时设置环境变量 (解决部分情况下 cmd 指令无法使用的问题)
     printf("\n########################################\n\n");
-    if(FeatureMode=="0"){
+    if(FeatureCode=="0"){
         About();
-    }else if(FeatureMode=="1"){
+    }else if(FeatureCode=="1"){
         Mode1();
-    }else if(FeatureMode=="2"){
+    }else if(FeatureCode=="2"){
         Mode2();
     }
     printf("\n########################################\n\n");
