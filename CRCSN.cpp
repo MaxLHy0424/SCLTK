@@ -19,7 +19,7 @@ void PermissionDetection(){
 }
 void OptionScreen(){
     ios::sync_with_stdio(false);//解除 cin 与 stdin 的绑定, 提升效率
-    cin.tie(nullptr);//接触 cin 与 cout 之间的绑定, 提升效率
+    cin.tie(nullptr);//解除 cin 与 cout 之间的绑定, 提升效率
     printf("欢迎使用 机房控制软件克星 !\n\n");
     printf("功能列表:\n");
     printf("   [0] 关于\n");
