@@ -24,7 +24,7 @@ void OptionScreen(){
     printf("   [2] TsKill 方案\n");
     printf("请输入功能代码: ");
     scanf("%s",&FeatureCode[0]);
-    while((FeatureCode[0]!='1'&&FeatureCode[0]!=2&&FeatureCode[0]!=3)||FeatureCode[1]!='\0'){
+    while((FeatureCode[0]!='0'&&FeatureCode[0]!='1'&&FeatureCode[0]!='2')||FeatureCode[1]!='\0'){
         printf("输入错误, 请重新输入: ");
         scanf("%s",&FeatureCode[0]);
     }
