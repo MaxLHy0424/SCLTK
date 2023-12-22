@@ -3,11 +3,10 @@
 本程序以 MIT 协议开源 (具体看仓库下 LICENSE 文件), 请在符合 MIT 协议的情况下使用, 谢谢配合!
 欢迎对本程序提出意见或报告 Bugs, 这对我很重要!
 */
-#include<iostream>
-#include<string>
-#include<ShlObj.h>//函数 IsUerAnAdmin 依赖头文件, 用于检测是否为管理员权限运行程序
+#include<cstdio>
+#include<ShlObj.h>//函数 IsUerAnAdmin() 依赖头文件, 用于检测是否为管理员权限运行程序
 using namespace std;
-string FeatureCode{0};//用于存储功能代码 (全局定义纯粹是作者太懒)
+char FeatureCode[8];//用于存储功能代码 (全局定义纯粹是作者太懒)
 void PermissionDetection(){
     BOOL RunAsAdmin{IsUserAnAdmin()};//当是管理员权限时为 True, 否则为 False
     if(!RunAsAdmin){//对变量 RunAsAdmin 进行非运算, 及将非管理员权限运行时的值 False 转为 True 以进行 if 语句内的操作
@@ -18,18 +17,16 @@ void PermissionDetection(){
     }
 }
 void OptionScreen(){
-    ios::sync_with_stdio(false);//解除 cin 与 stdin 的绑定, 提升效率
-    cin.tie(nullptr);//解除 cin 与 cout 之间的绑定, 提升效率
     printf("欢迎使用 机房控制软件克星 !\n\n");
     printf("功能列表:\n");
     printf("   [0] 关于\n");
     printf("   [1] TaskKill 方案\n");
     printf("   [2] TsKill 方案\n");
     printf("请输入功能代码: ");
-    cin>>FeatureCode;
-    while(FeatureCode!="0"&&FeatureCode!="1"&&FeatureCode!="2"){
+    scanf("%s",&FeatureCode[0]);
+    while((FeatureCode[0]!='1'&&FeatureCode[0]!=2&&FeatureCode[0]!=3)||FeatureCode[1]!='\0'){
         printf("输入错误, 请重新输入: ");
-        cin>>FeatureCode;
+        scanf("%s",&FeatureCode[0]);
     }
 }
 void About(){
@@ -80,12 +77,17 @@ int main(){
     OptionScreen();
     system("set path=%path%;C:\\Windows\\System32\\");//临时设置环境变量 (解决部分情况下 cmd 指令无法使用的问题)
     printf("\n########################################\n\n");
-    if(FeatureCode=="0"){
-        About();
-    }else if(FeatureCode=="1"){
-        Mode1();
-    }else if(FeatureCode=="2"){
-        Mode2();
+    switch(FeatureCode[0]){
+        case '0':{
+            About();
+            break;
+        }case '1':{
+            Mode1();
+            break;
+        }case '2':{
+            Mode2();
+            break;
+        }
     }
     printf("\n########################################\n\n");
     system("pause");
