@@ -4,9 +4,9 @@
 欢迎对本程序提出意见或报告 Bugs, 这对我很重要!
 */
 #include<cstdio>
+#include<stdlib.h>
 #include<ShlObj.h>//函数 IsUerAnAdmin() 依赖头文件, 用于检测是否为管理员权限运行程序
-using namespace std;
-char FeatureCode[8];//用于存储功能代码 (全局定义纯粹是作者太懒)
+char FeatureCode[5];//用于存储功能代码 (全局定义纯粹是作者太懒)
 void PermissionDetection(){
     BOOL RunAsAdmin{IsUserAnAdmin()};//当是管理员权限时为 True, 否则为 False
     if(!RunAsAdmin){//对变量 RunAsAdmin 进行非运算, 及将非管理员权限运行时的值 False 转为 True 以进行 if 语句内的操作
