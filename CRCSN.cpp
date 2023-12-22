@@ -33,11 +33,12 @@ void About(){
     printf("作者: MaxLHy0424\n");
     printf("作者 B 站账号 UID: 1678066522\n");
     printf("作者反馈邮箱: MaxLHy974413@outlook.com / 1097268127@qq.com\n\n");
-    printf("Copyright 2023, 保留所有权利.\n");
+    printf("Copyright 2023-2024, 保留所有权利.\n");
 }
 void Mode1(){
     printf("您选择了 \"TaskKill 方案\".\n");
     printf("提示: 已尝试临时修复环境变量, 如无法使用则是管理员修改了注册表, 暂无方案解决此问题.\n");
+    printf("按任意键将清空以上内容并继续!\n");
     system("pause");
     for(;;){
         system("cls");
@@ -54,6 +55,7 @@ void Mode2(){
     printf("您选择了 \"TsKill 方案\".\n");
     printf("提示 1: 此方案推荐用于 \"TaskKill 方案\" 无法使用时的备选方案.\n");
     printf("提示 2: 已尝试临时修复环境变量, 如无法使用则是管理员修改了注册表, 暂无方案解决此问题.\n");
+    printf("按任意键将清空以上内容并继续!\n");
     system("pause");
     for(;;){
         system("cls");
