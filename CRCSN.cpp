@@ -1,4 +1,28 @@
 /*
+       ┏┓　   ┏┓
+　　　┏┛┻━━━━━┛┻┓
+　　　┃　　　　  ┃
+　　　┃　　　━   ┃
+　　 ████━████  ┃
+　　　┃　　　　  ┃
+　　　┃　　　┻　 ┃
+　　　┃　　　　  ┃
+　　　┗━┓　　　┏━┛
+　　　　┃　　　┃
+　　　　┃　　　┃
+　　　　┃　　　┃
+　　　　┃　　　┃　　　　神兽保佑,代码无bug　　
+　　　　┃　　　┃
+　　　　┃　　　┃
+　　　　┃　 　　┗━━━┓ +
+　　　　┃ 　　　　　　　┣┓
+　　　　┃ 　　　　　　　┏┛+++
+　　　　┗┓┓┏━┳┓┏┛━━━━━━     +++
+　　　　 ┃┫┫ ┃┫┫
+　　　　 ┗┻┛ ┗┻┛
+
+(以上为整活部分)
+
 感谢您查看本程序的源代码!
 本程序以 MIT 协议开源 (具体看仓库下 LICENSE 文件), 请在符合 MIT 协议的情况下使用, 谢谢配合!
 欢迎对本程序提出意见或报告 Bugs, 这对我很重要!
@@ -19,9 +43,9 @@ void PermissionDetection(){
 void OptionScreen(){
     printf("欢迎使用 机房控制软件克星 !\n\n");
     printf("功能列表:\n");
-    printf("   [0] 关于\n");
-    printf("   [1] TaskKill 方案\n");
-    printf("   [2] TsKill 方案\n");
+    printf("  [0] 关于\n");
+    printf("  [1] TaskKill 方案\n");
+    printf("  [2] TsKill 方案\n");
     printf("请输入功能代码: ");
     scanf("%s",&FeatureCode[0]);
     while((FeatureCode[0]!='0'&&FeatureCode[0]!='1'&&FeatureCode[0]!='2')||FeatureCode[1]!='\0'){
