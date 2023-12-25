@@ -155,4 +155,4 @@ int main(void){
     PermissionDetection();//调用权限检测函数
     Start(0,0);
     return 0;
-}//
+}
