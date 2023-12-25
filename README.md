@@ -18,7 +18,7 @@ Computer Room Control Software Nemesis (中文名 机房控制软件克星 , 简
 
 # 提示
 
-如果打开软件时提示 "命令提示符已被管理员禁用" 之类的提示, 那么说明 命令提示符 被仅用了, 此时可以试试打开注册表编辑器, 定位到``HKEY_CURRENT_USER\Software\Policies\Microsoft\Windows\System``下, 看看有没有一个叫``DisableCMD``的 DWORD 值, 有的话就删掉. 再次打开软件试试是否能成功. (如果还是打不开, 那我也不知道了 awa)
+如果打开软件时提示 "命令提示符已被管理员禁用" 之类的提示, 那么说明 命令提示符 被禁用了, 此时可以试试打开注册表编辑器, 定位到``HKEY_CURRENT_USER\Software\Policies\Microsoft\Windows\System``下, 看看有没有一个叫``DisableCMD``的 DWORD 值, 有的话就删掉. 再次打开软件看看是否能成功. (如果还是打不开, 那我也不知道了 awa)
 
 本仓库内提供的 exe 文件如果无法正常使用, 请下载源代码文件进行编译. (ps: 作者太懒, 用的是 msys2 的 g++ 编译器, 导致一些 DLL 库没放进发行的 exe 可执行文件里)
 
