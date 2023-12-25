@@ -13,7 +13,7 @@ void PermissionDetection(void){
         printf("[Error] 权限不足, 请以管理员权限运行...\n");
         printf("\n########################################\n\n");
         system("pause");
-        exit(0);//退出程序
+        exit(0);
     }
 }
 void About(void){
