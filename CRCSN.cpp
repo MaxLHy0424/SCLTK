@@ -103,8 +103,6 @@ double Mode2(double SleepTime){
     return 0;
 }
 double Start(unsigned short InputWrongNumber,double SleepTime){//用处: 自定义函数类型来解决 main 必须是 int 型的限制
-    system("title 机房控制软件克星 (CRCSN)");//修改窗口名称为 "机房控制软件克星 (CRCSN)"
-    system("color b");//调整控制台字体颜色为青蓝色
     char FeatureCode[5];//用于存储功能代码 (全局定义纯粹是作者太懒)
     printf("欢迎使用 机房控制软件克星 !\n\n");
     printf("功能列表:\n");
@@ -152,6 +150,8 @@ double Start(unsigned short InputWrongNumber,double SleepTime){//用处: 自定�
     return 0;
 }
 int main(void){
+    system("title 机房控制软件克星 (CRCSN)");//修改窗口名称为 "机房控制软件克星 (CRCSN)"
+    system("color b");//调整控制台字体颜色为青蓝色
     PermissionDetection();
     Start(0,0);
     return 0;
