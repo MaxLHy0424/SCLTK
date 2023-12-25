@@ -68,7 +68,7 @@ double Mode2(double SleepTime){
     printf("提示 1: 此方案推荐用于 \"TaskKill 方案\" 无法使用时的备选方案, 另外在部分情况下可能出现找不到命令的情况.\n");
     printf("提示 2: 已尝试临时修复环境变量, 如还是无法使用, 暂无解决方案.\n");
     printf("按任意键将清空以上内容并继续!\n\n");
-    system("pause");
+    system("pause");//
     for(;;){//无限循环, 解决存在守护进程的问题, 资源消耗并不高
         system("cls");//清空控制台屏幕
         printf("尝试禁用服务 tvnserver ...\n\n");
