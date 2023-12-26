@@ -2,9 +2,9 @@
 感谢您查看本程序的源代码!
 本程序以 MIT 协议开源, 请在符合 MIT 协议的情况下使用本仓库下的所有文件 (包括 (预) 发行版本编译的程序).
 */
-#include<cstdio>
-#include<unistd.h>//函数 Sleep 依赖头文件, 用于实现 "休眠" 功能
+#include<stdio.h>
 #include<stdlib.h>
+#include<unistd.h>//函数 Sleep 依赖头文件, 用于实现 "休眠" 功能
 #include<ShlObj.h>//函数 IsUerAnAdmin() 依赖头文件, 用于检测是否为管理员权限运行程序
 void PermissionDetection(void){
     BOOL RunAsAdmin{IsUserAnAdmin()};//当是管理员权限时为 True, 否则为 False
@@ -29,7 +29,7 @@ float Mode1(float SleepTime){
     printf("提示: 已尝试临时修复环境变量, 在部分情况下可能出现找不到命令的情况, 如无法使用, 暂无解决方案.\n");
     printf("按任意键将清空以上内容并继续!\n\n");
     system("pause");
-    for(;;){//无限循环, 解决存在守护进程的问题, 资源消耗并不高
+    for(;;){//无限循环, 解决存在守护进程的问题
         system("cls");//清空控制台屏幕
         printf("尝试禁用服务 tvnserver ...\n\n");
         system("sc config tvnserver start= Disabled");//禁用 "联想云教室" 的主要服务
@@ -68,7 +68,7 @@ float Mode2(float SleepTime){
     printf("提示 2: 已尝试临时修复环境变量, 如还是无法使用, 暂无解决方案.\n");
     printf("按任意键将清空以上内容并继续!\n\n");
     system("pause");//
-    for(;;){//无限循环, 解决存在守护进程的问题, 资源消耗并不高
+    for(;;){//无限循环, 解决存在守护进程的问题
         system("cls");//清空控制台屏幕
         printf("尝试禁用服务 tvnserver ...\n\n");
         system("sc config tvnserver start= Disabled");//禁用 "联想云教室" 的主要服务
@@ -102,7 +102,7 @@ float Mode2(float SleepTime){
     return 0;
 }
 float Start(float SleepTime){//用处: 自定义函数类型来解决 main 必须是 int 型的限制
-    char FeatureCode[5];//用于存储功能代码
+    char FeatureCode[4];
     printf("欢迎使用 机房控制软件克星 !\n\n");
     printf("功能列表:\n");
     printf("  [0] 关于\n");
@@ -117,9 +117,17 @@ float Start(float SleepTime){//用处: 自定义函数类型来解决 main 必�
     if(FeatureCode[0]=='1'||FeatureCode[0]=='2'){
         printf("请输入 \"休眠\" 的时间 (\"休眠\" 在每次执行命令后暂停一定时间, 单位 秒, 最大 30, 不可为负数): ");
         scanf("%f",&SleepTime);
+        unsigned short WrongNumber{0};
         while(SleepTime>30.0||SleepTime<0.0){
+            if(WrongNumber>=10){
+                printf("\n\n########################################\n");
+                printf("[Warning] 为保证程序的健壮性, 已禁止输入. 按任意键禁用 \"休眠\" 并继续...\n");
+                printf("########################################\n\n");
+                break;
+            }
             printf("输入错误, 请按照上面的要求输入: ");
             scanf("%f",&SleepTime);
+            WrongNumber++;
         }
     }
     system("set path=%path%;C:\\Windows\\System32\\");//临时设置环境变量, 解决部分情况下 cmd 指令无法使用的问题
