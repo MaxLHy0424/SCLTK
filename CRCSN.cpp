@@ -1,6 +1,6 @@
 /*
 感谢您查看本程序的源代码!
-本程序以 MIT 协议开源 (具体看仓库下 LICENSE 文件), 请在符合 MIT 协议的情况下使用 (包括 (预) 发行版本文件, 源代码文件).
+本程序以 MIT 协议开源, 请在符合 MIT 协议的情况下使用本仓库下的所有文件 (包括 (预) 发行版本编译的程序).
 */
 #include<cstdio>
 #include<unistd.h>//函数 Sleep 依赖头文件, 用于实现 "休眠" 功能
@@ -24,7 +24,7 @@ void About(void){
     printf("作者反馈邮箱: MaxLHy974413@outlook.com / 1097268127@qq.com\n\n");
     printf("(C) Copyright 2023-2024 CRCSN. 保留所有权利.\n");
 }
-double Mode1(double SleepTime){
+float Mode1(float SleepTime){
     printf("您选择了 \"TaskKill 方案\".\n");
     printf("提示: 已尝试临时修复环境变量, 在部分情况下可能出现找不到命令的情况, 如无法使用, 暂无解决方案.\n");
     printf("按任意键将清空以上内容并继续!\n\n");
@@ -33,16 +33,16 @@ double Mode1(double SleepTime){
         system("cls");//清空控制台屏幕
         printf("尝试禁用服务 tvnserver ...\n\n");
         system("sc config tvnserver start= Disabled");//禁用 "联想云教室" 的主要服务
-        printf("\n尝试停止服务 tvnserver ...\n\n");
-        system("sc stop tvnserver");//停止 "联想云教室" 的主要服务
         printf("\n尝试禁用服务 TDNetFilter ...\n\n");
-        system("sc config TDNetFilter start= Disabled");//禁用 "联想云教室" 的阻止网页访问的服务 (暂未测试)
+        system("sc config TDNetFilter start= Disabled");//禁用 "联想云教室" 的阻止网页访问的服务
         printf("\n尝试禁用服务 TDFileFilter ...\n\n");
-        system("sc config TDFileFilter start= Disabled");//禁用 "极域电子教室" 的 U 盘锁服务 (暂未测试)
+        system("sc config TDFileFilter start= Disabled");//禁用 "极域电子教室" 的 U 盘锁服务
+        printf("\n尝试停止服务 tvnserver ...\n\n");
+        system("net stop tvnserver");//停止 "联想云教室" 的主要服务
         printf("\n尝试停止服务 TDNetFilter ...\n\n");
-        system("sc stop TDNetFilter");//停止 "极域电子教室" 的网络限制服务 (暂未测试)
+        system("net stop TDNetFilter");//停止 "极域电子教室" 的网络限制服务
         printf("\n尝试停止服务 TDFileFilter ...\n\n");
-        system("sc stop TDFileFilter");//停止 "极域电子教室" 的 U 盘锁服务 (暂未测试)
+        system("net stop TDFileFilter");//停止 "极域电子教室" 的 U 盘锁服务
         printf("\n尝试结束进程 PortControl64.exe ...\n\n");
         system("TaskKill /F /T /IM PortControl64.exe");//结束 "联想云教室" 的相关进程
         printf("\n尝试结束进程 DesktopCheck.exe ...\n\n");
@@ -54,15 +54,15 @@ double Mode1(double SleepTime){
         printf("\n尝试结束进程 StudentMain.exe ...\n\n");
         system("TaskKill /F /T /IM StudentMain.exe");//结束 "极域电子教室" 的进程
         printf("\n尝试结束进程 GATESRV.exe ...\n\n");
-        system("TaskKill /F /T /IM GATESRV.exe");//结束 "极域电子教室" 阻止网页访问的进程 (暂未测试)
+        system("TaskKill /F /T /IM GATESRV.exe");//结束 "极域电子教室" 阻止网页访问的进程 
         printf("\n尝试结束进程 MasterHelper.exe ...\n\n");
-        system("TaskKill /F /T /IM MasterHelper.exe");//结束 "极域电子教室" 阻止网页访问的进程 (暂未测试)
+        system("TaskKill /F /T /IM MasterHelper.exe");//结束 "极域电子教室" 阻止网页访问的进程
         printf("\n休眠中...\n");
         sleep(SleepTime);
     }
     return 0;
 }
-double Mode2(double SleepTime){
+float Mode2(float SleepTime){
     printf("您选择了 \"TsKill 方案\".\n");
     printf("提示 1: 此方案推荐用于 \"TaskKill 方案\" 无法使用时的备选方案, 另外在部分情况下可能出现找不到命令的情况.\n");
     printf("提示 2: 已尝试临时修复环境变量, 如还是无法使用, 暂无解决方案.\n");
@@ -72,16 +72,16 @@ double Mode2(double SleepTime){
         system("cls");//清空控制台屏幕
         printf("尝试禁用服务 tvnserver ...\n\n");
         system("sc config tvnserver start= Disabled");//禁用 "联想云教室" 的主要服务
-        printf("\n尝试停止服务 tvnserver ...\n\n");
-        system("sc stop tvnserver");//停止 "联想云教室" 的主要服务
         printf("\n尝试禁用服务 TDNetFilter ...\n\n");
-        system("sc config TDNetFilter start= Disabled");//禁用 "联想云教室" 的组织网页访问的服务 (暂未测试)
+        system("sc config TDNetFilter start= Disabled");//禁用 "联想云教室" 的组织网页访问的服务
         printf("\n尝试禁用服务 TDFileFilter ...\n\n");
-        system("sc config TDFileFilter start= Disabled");//禁用 "极域电子教室" 的 U 盘锁服务 (暂未测试)
+        system("sc config TDFileFilter start= Disabled");//禁用 "极域电子教室" 的 U 盘锁服务
+        printf("\n尝试停止服务 tvnserver ...\n\n");
+        system("net stop tvnserver");//停止 "联想云教室" 的主要服务
         printf("\n尝试停止服务 TDNetFilter ...\n\n");
-        system("sc stop TDNetFilter");//解除 "极域电子教室" 的阻止网页访问的服务 (暂未测试)
+        system("net stop TDNetFilter");//解除 "极域电子教室" 的阻止网页访问的服务
         printf("\n尝试停止服务 TDFileFilter ...\n\n");
-        system("sc stop TDFileFilter");//解除 "极域电子教室" 的 U 盘锁 (暂未测试)
+        system("net stop TDFileFilter");//解除 "极域电子教室" 的 U 盘锁
         printf("\n尝试结束进程 PortControl64.exe ...\n\n");
         system("TsKill PortControl64 /A /V");//结束 "联想云教室" 的相关进程
         printf("\n尝试结束进程 DesktopCheck.exe ...\n\n");
@@ -93,16 +93,16 @@ double Mode2(double SleepTime){
         printf("\n尝试结束进程 StudentMain.exe ...\n\n");
         system("TsKill StudentMain /A /V");//结束 "极域电子教室" 的进程
         printf("\n尝试结束进程 GATESRV.exe ...\n\n");
-        system("TsKill GATESRV /A /V");//结束 "极域电子教室" 的相关进程 (暂未测试)
+        system("TsKill GATESRV /A /V");//结束 "极域电子教室" 的相关进程
         printf("\n尝试结束进程 MasterHelper.exe ...\n\n");
-        system("TsKill MasterHelper /A /V");//结束 "极域电子教室" 的相关进程 (暂未测试)
+        system("TsKill MasterHelper /A /V");//结束 "极域电子教室" 的相关进程
         printf("\n休眠中...\n");
         sleep(SleepTime);
     }
     return 0;
 }
-double Start(unsigned short InputWrongNumber,double SleepTime){//用处: 自定义函数类型来解决 main 必须是 int 型的限制
-    char FeatureCode[5];//用于存储功能代码 (全局定义纯粹是作者太懒)
+float Start(float SleepTime){//用处: 自定义函数类型来解决 main 必须是 int 型的限制
+    char FeatureCode[5];//用于存储功能代码
     printf("欢迎使用 机房控制软件克星 !\n\n");
     printf("功能列表:\n");
     printf("  [0] 关于\n");
@@ -116,21 +116,13 @@ double Start(unsigned short InputWrongNumber,double SleepTime){//用处: 自定�
     }
     if(FeatureCode[0]=='1'||FeatureCode[0]=='2'){
         printf("请输入 \"休眠\" 的时间 (\"休眠\" 在每次执行命令后暂停一定时间, 单位 秒, 最大 30, 不可为负数): ");
-        scanf("%lf",&SleepTime);
+        scanf("%f",&SleepTime);
         while(SleepTime>30.0||SleepTime<0.0){
-            if(InputWrongNumber>=5){
-                printf("\n########################################\n");
-                printf("[Error] 输入次数过多, 程序将退出...\n");
-                printf("\n########################################\n\n");
-                system("pause");
-                exit(0);
-            }
             printf("输入错误, 请按照上面的要求输入: ");
-            scanf("%lf",&SleepTime);
-            InputWrongNumber++;
+            scanf("%f",&SleepTime);
         }
     }
-    system("set path=%path%;C:\\Windows\\System32\\");//临时设置环境变量 (解决部分情况下 cmd 指令无法使用的问题)
+    system("set path=%path%;C:\\Windows\\System32\\");//临时设置环境变量, 解决部分情况下 cmd 指令无法使用的问题
     printf("\n########################################\n\n");
     switch(FeatureCode[0]){
         case '0':{
@@ -149,9 +141,9 @@ double Start(unsigned short InputWrongNumber,double SleepTime){//用处: 自定�
     return 0;
 }
 int main(void){
-    system("title 机房控制软件克星 (CRCSN)");//修改窗口名称为 "机房控制软件克星 (CRCSN)"
+    system("title 机房控制软件克星");//修改窗口名称为 "机房控制软件克星"
     system("color b");//调整控制台字体颜色为青蓝色
     PermissionDetection();//调用权限检测函数
-    Start(0,0);
+    Start(0);
     return 0;
 }
