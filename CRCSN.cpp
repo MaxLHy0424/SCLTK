@@ -22,7 +22,7 @@ void About(void){
     printf("作者: MaxLHy0424\n");
     printf("作者 B 站账号 UID: 1678066522\n");
     printf("作者反馈邮箱: MaxLHy974413@outlook.com / 1097268127@qq.com\n\n");
-    printf("(C) Copyright 2023-2024 CRCSN. 保留所有权利.\n");
+    printf("(C) Copyright 2023-2024 CRCSN Official. 保留所有权利.\n");
 }
 float Mode1(float SleepTime){
     printf("您选择了 \"TaskKill 方案\".\n");
