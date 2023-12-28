@@ -22,11 +22,11 @@ void About(void){
     printf("作者: MaxLHy0424\n");
     printf("作者 B 站账号 UID: 1678066522\n");
     printf("作者反馈邮箱: MaxLHy974413@outlook.com / 1097268127@qq.com\n\n");
-    printf("(C) Copyright 2023-2024 CRCSN Official. 保留所有权利.\n");
+    printf("(C) Copyright 2023-2024 MaxLHy0424. 保留所有权利.\n");
 }
 float ModMode(float SleepTime){
     char ModeCode[4]{0,0,0,0};
-    printf("破解模式列表:\n");
+    printf("破解方案列表:\n");
     printf("  [1] 方案 1\n");
     printf("  [2] 方案 2\n");
     printf("请输入: ");
