@@ -30,4 +30,4 @@ Computer Room Control Software Nemesis (中文名 机房控制软件克星 , 简
 
 # 鸣谢
 
-苦力怕论坛坛友们 的大力支持.
+网友们的大力支持.
