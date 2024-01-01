@@ -16,15 +16,15 @@ void About(void){
     printf("(C) Copyright 2023-2024 MaxLHy0424. 保留所有权利.\n");
 }
 double ModMode(double SleepTimes){
-    char ModeCode[4]{0,0,0,0};
+    char PlanCode[4]{0,0,0,0};
     printf("破解方案列表:\n");
     printf("   [1] 方案 1\n");
     printf("   [2] 方案 2\n");
     printf("请输入: ");
-    scanf("%s",&ModeCode[0]);
-    while((ModeCode[0]!='1'&&ModeCode[0]!='2')||ModeCode[1]!=0){
+    scanf("%s",&PlanCode[0]);
+    while((PlanCode[0]!='1'&&PlanCode[0]!='2')||PlanCode[1]!=0){
         printf("输入错误, 请重新输入: ");
-        scanf("%s",&ModeCode[0]);
+        scanf("%s",&PlanCode[0]);
     }
     printf("请输入 \"休眠\" 的时间 (\"休眠\" 在每次执行命令后暂停一定时间, 单位 秒, 最大 30, 不可为负数): ");
     scanf("%lf",&SleepTimes);
@@ -41,7 +41,7 @@ double ModMode(double SleepTimes){
         scanf("%lf",&SleepTimes);
         WrongNumber++;
     }
-    switch(ModeCode[0]){
+    switch(PlanCode[0]){
         case '1':{
             system("cls");
             printf("配置:\n     方案: 方案 1\n   \"休眠\": %lg 秒\n\n",SleepTimes);
