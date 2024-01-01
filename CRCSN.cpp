@@ -6,29 +6,20 @@
 #include<stdlib.h>
 #include<unistd.h>//函数 Sleep 依赖头文件, 用于实现 "休眠" 功能
 #include<ShlObj.h>//函数 IsUerAnAdmin() 依赖头文件, 用于检测是否为管理员权限运行程序
-void PermissionDetection(void){
-    BOOL RunAsAdmin{IsUserAnAdmin()};//当是管理员权限时为 True, 否则为 False
-    if(!RunAsAdmin){//对变量 RunAsAdmin 进行非运算, 及将非管理员权限运行时的值 False 转为 True 以进行 if 语句内的操作
-        printf("[Error] 权限不足, 请以管理员权限运行...\n");
-        printf("\n########################################\n\n");
-        system("pause");
-        exit(0);
-    }
-}
 void About(void){
     printf("软件名称: 机房控制软件克星 (英文名 Computer Room Control Software Nemesis, 简称 CRCSN)\n");
-    printf("软件版本: v2.0_Stable\n");
+    printf("软件版本: v2.1_Stable\n");
     printf("软件项目仓库: https://github.com/MaxLHy0424/Computer-Room-Control-Software-Nemesis\n");
     printf("作者: MaxLHy0424\n");
     printf("作者 B 站账号 UID: 1678066522\n");
     printf("作者反馈邮箱: MaxLHy974413@outlook.com / 1097268127@qq.com\n\n");
     printf("(C) Copyright 2023-2024 MaxLHy0424. 保留所有权利.\n");
 }
-float ModMode(float SleepTime){
+double ModMode(double SleepTimes){
     char ModeCode[4]{0,0,0,0};
     printf("破解方案列表:\n");
-    printf("  [1] 方案 1\n");
-    printf("  [2] 方案 2\n");
+    printf("   [1] 方案 1\n");
+    printf("   [2] 方案 2\n");
     printf("请输入: ");
     scanf("%s",&ModeCode[0]);
     while((ModeCode[0]!='1'&&ModeCode[0]!='2')||ModeCode[1]!=0){
@@ -36,25 +27,25 @@ float ModMode(float SleepTime){
         scanf("%s",&ModeCode[0]);
     }
     printf("请输入 \"休眠\" 的时间 (\"休眠\" 在每次执行命令后暂停一定时间, 单位 秒, 最大 30, 不可为负数): ");
-    scanf("%f",&SleepTime);
+    scanf("%lf",&SleepTimes);
     unsigned short WrongNumber{0};
-    while(SleepTime>30.0||SleepTime<0.0){
+    while(SleepTimes>30.0||SleepTimes<0.0){
         if(WrongNumber>=10){
             printf("\n\n########################################\n");
             printf("[Warning] 为保证程序的健壮性, 已禁止输入. 按任意键禁用 \"休眠\" 并继续...\n");
             printf("########################################\n\n");
-            SleepTime=0;
+            SleepTimes=0;
             break;
         }
         printf("输入错误, 请按照上面的要求输入: ");
-        scanf("%f",&SleepTime);
+        scanf("%lf",&SleepTimes);
         WrongNumber++;
     }
     switch(ModeCode[0]){
         case '1':{
-            printf("\n########################################\n\n");
-            printf("您选择了 \"方案 1\".\n");
-            printf("提示: 已尝试临时修复环境变量, 在部分情况下可能出现找不到命令的情况, 如无法使用, 暂无解决方案.\n");
+            system("cls");
+            printf("配置:\n     方案: 方案 1\n   \"休眠\": %lg 秒\n\n",SleepTimes);
+            printf("提示: 已尝试临时修复环境变量, 在部分情况下可能出现找不到命令的情况, 如无法使用, 暂无解决方案.\n\n");
             printf("按任意键将清空以上内容并继续!\n\n");
             system("pause");
             for(;;){//无限循环, 解决存在守护进程的问题
@@ -86,14 +77,14 @@ float ModMode(float SleepTime){
                 printf("\n尝试结束进程 MasterHelper.exe ...\n\n");
                 system("TaskKill /F /T /IM MasterHelper.exe");//结束 "极域电子教室" 阻止网页访问的进程
                 printf("\n休眠中...\n");
-                sleep(SleepTime);
+                sleep(SleepTimes);
             }
             break;
         }case '2':{
-            printf("\n########################################\n\n");
-            printf("您选择了 \"方案 2\".\n");
+            system("cls");
+            printf("配置:\n     方案: 方案 2\n   \"休眠\": %lg 秒\n\n",SleepTimes);
             printf("提示 1: 此方案推荐用于 \"方案 1\" 无法使用时的备选方案, 另外在部分情况下可能出现找不到命令的情况.\n");
-            printf("提示 2: 已尝试临时修复环境变量, 如还是无法使用, 暂无解决方案.\n");
+            printf("提示 2: 已尝试临时修复环境变量, 如还是无法使用, 暂无解决方案.\n\n");
             printf("按任意键将清空以上内容并继续!\n\n");
             system("pause");//
             for(;;){//无限循环, 解决存在守护进程的问题
@@ -125,7 +116,7 @@ float ModMode(float SleepTime){
                 printf("\n尝试结束进程 MasterHelper.exe ...\n\n");
                 system("TsKill MasterHelper /A /V");//结束 "极域电子教室" 的相关进程
                 printf("\n休眠中...\n");
-                sleep(SleepTime);
+                sleep(SleepTimes);
             }
             break;
         }
@@ -153,7 +144,16 @@ void RecoveryMode(void){
 int main(void){
     system("title 机房控制软件克星");//修改窗口名称为 "机房控制软件克星"
     system("color b");//调整控制台字体颜色为青蓝色
-    PermissionDetection();//调用权限检测函数
+    {//权限检测模块, 被花括号包围用于快速释放变量 RunAsAdmin 的内存
+        BOOL RunAsAdmin{IsUserAnAdmin()};//当是管理员权限时为 True, 否则为 False
+        if(!RunAsAdmin){//对变量 RunAsAdmin 进行非运算, 及将非管理员权限运行时的值 False 转为 True 以进行 if 语句内的操作
+            printf("[Error] 权限不足, 请以管理员权限运行...\n");
+            printf("\n########################################\n\n");
+            printf("按任意键退出程序!\n\n");
+            system("pause");
+            exit(0);
+        }
+    }
     char FeatureCode[4]{0,0,0,0};
     printf("欢迎使用 机房控制软件克星 !\n\n");
     printf("功能列表:\n");
@@ -182,6 +182,7 @@ int main(void){
         }
     }
     printf("\n########################################\n\n");
+    printf("按任意键退出程序!\n\n");
     system("pause");
     return 0;
 }
