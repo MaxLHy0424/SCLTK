@@ -8,12 +8,12 @@
 #include<ShlObj.h>//函数 IsUerAnAdmin() 依赖头文件, 用于检测是否为管理员权限运行程序
 void About(void){
     printf("软件名称: 机房控制软件克星 (英文名 Computer Room Control Software Nemesis, 简称 CRCSN)\n");
-    printf("软件版本: v2.1_Stable\n");
+    printf("软件版本: v2.2_Stable\n");
     printf("软件项目仓库: https://github.com/MaxLHy0424/Computer-Room-Control-Software-Nemesis\n");
     printf("作者: MaxLHy0424\n");
     printf("作者 B 站账号 UID: 1678066522\n");
-    printf("作者反馈邮箱: MaxLHy974413@outlook.com / 1097268127@qq.com\n\n");
-    printf("(C) Copyright 2023-2024 MaxLHy0424. 保留所有权利.\n");
+    printf("作者邮箱: MaxLHy974413@outlook.com / 1097268127@qq.com\n\n");
+    printf("(C) Copyright 2023-2024 MaxLHy0424, All rights reserved.\n");
 }
 double ModMode(double SleepTimes){
     char PlanCode[4]{0,0,0,0};
@@ -43,6 +43,10 @@ double ModMode(double SleepTimes){
     }
     switch(PlanCode[0]){
         case '1':{
+            PlanCode[0]=0;
+            PlanCode[1]=0;
+            PlanCode[2]=0;
+            PlanCode[3]=0;
             system("cls");
             printf("配置:\n     方案: 方案 1\n   \"休眠\": %lg 秒\n\n",SleepTimes);
             printf("提示: 已尝试临时修复环境变量, 在部分情况下可能出现找不到命令的情况, 如无法使用, 暂无解决方案.\n\n");
@@ -81,6 +85,10 @@ double ModMode(double SleepTimes){
             }
             break;
         }case '2':{
+            PlanCode[0]=0;
+            PlanCode[1]=0;
+            PlanCode[2]=0;
+            PlanCode[3]=0;
             system("cls");
             printf("配置:\n     方案: 方案 2\n   \"休眠\": %lg 秒\n\n",SleepTimes);
             printf("提示 1: 此方案推荐用于 \"方案 1\" 无法使用时的备选方案, 另外在部分情况下可能出现找不到命令的情况.\n");
@@ -124,30 +132,30 @@ double ModMode(double SleepTimes){
     return 0;
 }
 void RecoveryMode(void){
-    printf("说明: 本功能用于恢复破解时的部分操作, 恢复完成后请手动开启控制软件.\n");
+    printf("说明: 本功能用于恢复破解时的部分操作, 部分情况下可能无法产生效果, 执行完毕后请手动开启控制软件.\n");
     printf("按任意键将清空以上内容并继续!\n\n");
     system("pause");
     system("cls");
     printf("尝试启用服务 tvnserver ...\n\n");
-    system("sc config tvnserver start= Auto");//禁用 "联想云教室" 的主要服务
+    system("sc config tvnserver start= Auto");//启用 "联想云教室" 的主要服务
     printf("\n尝试启用服务 TDNetFilter ...\n\n");
-    system("sc config TDNetFilter start= Auto");//禁用 "联想云教室" 的阻止网页访问的服务
+    system("sc config TDNetFilter start= Auto");//启用 "联想云教室" 的阻止网页访问的服务
     printf("\n尝试启用服务 TDFileFilter ...\n\n");
-    system("sc config TDFileFilter start= Auto");//禁用 "极域电子教室" 的 U 盘锁服务
+    system("sc config TDFileFilter start= Auto");//启用 "极域电子教室" 的 U 盘锁服务
     printf("\n尝试启动服务 tvnserver ...\n\n");
-    system("net start tvnserver");//停止 "联想云教室" 的主要服务
+    system("net start tvnserver");//启动 "联想云教室" 的主要服务
     printf("\n尝试启动服务 TDNetFilter ...\n\n");
-    system("net start TDNetFilter");//停止 "极域电子教室" 的网络限制服务
+    system("net start TDNetFilter");//启动 "极域电子教室" 的网络限制服务
     printf("\n尝试启动服务 TDFileFilter ...\n\n");
-    system("net start TDFileFilter");//停止 "极域电子教室" 的 U 盘锁服务
+    system("net start TDFileFilter");//启动 "极域电子教室" 的 U 盘锁服务
 }
 int main(void){
-    system("title 机房控制软件克星");//修改窗口名称为 "机房控制软件克星"
+    system("title 机房控制软件克星 (Administrator)");//修改窗口标题
     system("color b");//调整控制台字体颜色为青蓝色
     {//权限检测模块, 被花括号包围用于快速释放变量 RunAsAdmin 的内存
         BOOL RunAsAdmin{IsUserAnAdmin()};//当是管理员权限时为 True, 否则为 False
         if(!RunAsAdmin){//对变量 RunAsAdmin 进行非运算, 及将非管理员权限运行时的值 False 转为 True 以进行 if 语句内的操作
-            printf("[Error] 权限不足, 请以管理员权限运行...\n");
+            printf("[Error] 当前权限为 User, 请以管理员权限运行...\n");
             printf("\n########################################\n\n");
             printf("按任意键退出程序!\n\n");
             system("pause");
@@ -169,13 +177,25 @@ int main(void){
     printf("\n########################################\n\n");
     switch(FeatureCode[0]){
         case '0':{
+            FeatureCode[0]=0;
+            FeatureCode[1]=0;
+            FeatureCode[2]=0;
+            FeatureCode[3]=0;
             About();
             break;
         }case '1':{
+            FeatureCode[0]=0;
+            FeatureCode[1]=0;
+            FeatureCode[2]=0;
+            FeatureCode[3]=0;
             system("set path=%path%;C:\\Windows\\System32\\");//临时设置环境变量, 解决部分情况下 cmd 指令无法使用的问题
             ModMode(0);
             break;
         }case '2':{
+            FeatureCode[0]=0;
+            FeatureCode[1]=0;
+            FeatureCode[2]=0;
+            FeatureCode[3]=0;
             system("set path=%path%;C:\\Windows\\System32\\");//临时设置环境变量, 解决部分情况下 cmd 指令无法使用的问题
             RecoveryMode();
             break;
