@@ -26,7 +26,7 @@ Computer Room Control Software Nemesis (中文名 机房控制软件克星 , 简
 
 # 新闻
 1. CRCSN 会在本年推出特别版本, 比如愚人节特别版.
-2. CRCSN v2.x 版本将在几个小版本后趋于稳定. 接下来的 v3.x 更新内容暂未确定, 欢迎大家发送 E-mail 至 MaxLHy974413@outlook.com 或 1097268127@qq.com 提交你的想法,建议.
+2. CRCSN v2.x 版本将在几个小版本后趋于稳定. 接下来的 v3.x 更新内容暂未确定, 欢迎大家发送 E-mail 至 MaxLHy974413@outlook.com 或 1097268127@qq.com 提交你的想法.
 
 # 鸣谢
 
