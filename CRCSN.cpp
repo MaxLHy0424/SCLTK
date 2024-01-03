@@ -162,13 +162,13 @@ int main(void){
             exit(0);
         }
     }
-    char FeatureCode[4]{0,0,0,0};
     printf("欢迎使用 机房控制软件克星 !\n\n");
     printf("功能列表:\n");
     printf("  [0] 关于\n");
     printf("  [1] 破解模式\n");
     printf("  [2] 恢复模式\n");
     printf("请输入功能代码: ");
+    char FeatureCode[4]{0,0,0,0};
     scanf("%s",&FeatureCode[0]);
     while((FeatureCode[0]!='0'&&FeatureCode[0]!='1'&&FeatureCode[0]!='2')||FeatureCode[1]!=0){
         printf("输入错误, 请重新输入: ");
