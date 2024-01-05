@@ -3,20 +3,19 @@
 本程序以 MIT 协议开源, 请在符合 MIT 协议的情况下使用本仓库下的所有文件 (包括 (预) 发行版本编译的程序).
 */
 #include<stdio.h>
-#include<stdlib.h>
 #include<unistd.h>//函数 Sleep 依赖头文件, 用于实现 "休眠" 功能
-#include<ShlObj.h>//函数 IsUerAnAdmin() 依赖头文件, 用于检测是否为管理员权限运行程序
+#include<ShlObj.h>//函数 IsUerAnAdmin() 与 函数 System 依赖头文件, 用于检测是否为管理员权限运行程序
 void About(void){
     printf("软件名称: 机房控制软件克星 (英文名 Computer Room Control Software Nemesis, 简称 CRCSN)\n");
-    printf("软件版本: v2.2_Stable\n");
+    printf("软件版本: v2.3_Stable\n");
     printf("软件项目仓库: https://github.com/MaxLHy0424/Computer-Room-Control-Software-Nemesis\n");
     printf("作者: MaxLHy0424\n");
     printf("作者 B 站账号 UID: 1678066522\n");
     printf("作者邮箱: MaxLHy974413@outlook.com / 1097268127@qq.com\n\n");
-    printf("(C) Copyright 2023-2024 MaxLHy0424, All rights reserved.\n");
+    printf("(C) Copyright 2023-2024 MaxLHy0424, all rights reserved.\n");
 }
 double ModMode(double SleepTimes){
-    char PlanCode[4]{0,0,0,0};
+    char PlanCode[2]{0,0};
     printf("破解方案列表:\n");
     printf("   [1] 方案 1\n");
     printf("   [2] 方案 2\n");
@@ -32,7 +31,7 @@ double ModMode(double SleepTimes){
     while(SleepTimes>30.0||SleepTimes<0.0){
         if(WrongNumber>=10){
             printf("\n\n########################################\n");
-            printf("[Warning] 为保证程序的健壮性, 已禁止输入. 按任意键禁用 \"休眠\" 并继续...\n");
+            printf("[Warning] 出现问题, 已禁止输入. 按任意键禁用 \"休眠\" 并继续...\n");
             printf("########################################\n\n");
             SleepTimes=0;
             break;
@@ -45,8 +44,6 @@ double ModMode(double SleepTimes){
         case '1':{
             PlanCode[0]=0;
             PlanCode[1]=0;
-            PlanCode[2]=0;
-            PlanCode[3]=0;
             system("cls");
             printf("配置:\n     方案: 方案 1\n   \"休眠\": %lg 秒\n\n",SleepTimes);
             printf("提示: 已尝试临时修复环境变量, 在部分情况下可能出现找不到命令的情况, 如无法使用, 暂无解决方案.\n\n");
@@ -87,8 +84,6 @@ double ModMode(double SleepTimes){
         }case '2':{
             PlanCode[0]=0;
             PlanCode[1]=0;
-            PlanCode[2]=0;
-            PlanCode[3]=0;
             system("cls");
             printf("配置:\n     方案: 方案 2\n   \"休眠\": %lg 秒\n\n",SleepTimes);
             printf("提示 1: 此方案推荐用于 \"方案 1\" 无法使用时的备选方案, 另外在部分情况下可能出现找不到命令的情况.\n");
@@ -164,38 +159,36 @@ int main(void){
     }
     printf("欢迎使用 机房控制软件克星 !\n\n");
     printf("功能列表:\n");
+    printf("  [x] 退出程序\n");
     printf("  [0] 关于\n");
     printf("  [1] 破解模式\n");
     printf("  [2] 恢复模式\n");
     printf("请输入功能代码: ");
-    char FeatureCode[4]{0,0,0,0};
+    char FeatureCode[2]{0,0};
     scanf("%s",&FeatureCode[0]);
-    while((FeatureCode[0]!='0'&&FeatureCode[0]!='1'&&FeatureCode[0]!='2')||FeatureCode[1]!=0){
+    while((FeatureCode[0]!='x'&&FeatureCode[0]!='0'&&FeatureCode[0]!='1'&&FeatureCode[0]!='2')||FeatureCode[1]!=0){
         printf("输入错误, 请重新输入: ");
         scanf("%s",&FeatureCode[0]);
     }
     printf("\n########################################\n\n");
     switch(FeatureCode[0]){
+        case 'x':{
+            exit(0);
+        }
         case '0':{
             FeatureCode[0]=0;
             FeatureCode[1]=0;
-            FeatureCode[2]=0;
-            FeatureCode[3]=0;
             About();
             break;
         }case '1':{
             FeatureCode[0]=0;
             FeatureCode[1]=0;
-            FeatureCode[2]=0;
-            FeatureCode[3]=0;
             system("set path=%path%;C:\\Windows\\System32\\");//临时设置环境变量, 解决部分情况下 cmd 指令无法使用的问题
             ModMode(0);
             break;
         }case '2':{
             FeatureCode[0]=0;
             FeatureCode[1]=0;
-            FeatureCode[2]=0;
-            FeatureCode[3]=0;
             system("set path=%path%;C:\\Windows\\System32\\");//临时设置环境变量, 解决部分情况下 cmd 指令无法使用的问题
             RecoveryMode();
             break;
