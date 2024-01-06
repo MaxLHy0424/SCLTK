@@ -60,8 +60,8 @@ Q2: 程序无法在 32 位 Windows 系统中打开, 如何解决?
 
 A2: 程序发布版本暂无 32 位版本. 可以先下载程序源代码, 然后删除以下代码:
 ````c++
-{
-        BOOL RunAsAdmin{IsUserAnAdmin()};//当是管理员权限时为 true, 否则为 false
+    {
+        BOOL RunAsAdmin{IsUserAnAdmin()};
         if(!RunAsAdmin){
             printf("[Error] 当前权限为 User, 请以 Administrator 权限运行本程序...\n");
             printf("\n########################################\n\n");
