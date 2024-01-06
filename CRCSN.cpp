@@ -5,16 +5,18 @@
 #include<stdio.h>
 #include<unistd.h>//函数 sleep 依赖头文件, 用于实现 "休眠" 功能
 #include<ShlObj.h>//函数 IsUerAnAdmin() 与 函数 system 依赖头文件, 用于检测是否为管理员权限运行程序
-void About(void){
-    printf("软件名称: 机房控制软件克星 (英文名 Computer Room Control Software Nemesis, 简称 CRCSN)\n");
-    printf("软件版本: v2.4_Stable\n");
-    printf("软件项目仓库: https://github.com/MaxLHy0424/Computer-Room-Control-Software-Nemesis\n");
-    printf("作者: MaxLHy0424\n");
-    printf("作者 B 站账号 UID: 1678066522\n");
-    printf("作者邮箱: MaxLHy974413@outlook.com / 1097268127@qq.com\n\n");
-    printf("(C) Copyright 2023-2024 MaxLHy0424, all rights reserved.\n");
+void About(){
+    printf("[关于]\n\n");
+    printf("   程序名称: 机房控制软件克星 (英文名 Computer Room Control Software Nemesis, 简称 CRCSN)\n");
+    printf("   程序版本: v2.4_Stable\n");
+    printf("   程序项目仓库: https://github.com/MaxLHy0424/Computer-Room-Control-Software-Nemesis\n");
+    printf("   程序作者: MaxLHy0424\n");
+    printf("   作者 B 站账号 UID: 1678066522\n");
+    printf("   作者邮箱: MaxLHy974413@outlook.com\n\n");
+    printf("   (C) Copyright 2023-2024 MaxLHy0424, all rights reserved.\n");
 }
-void CrackingMode(void){
+void CrackingMode(){
+    printf("[破解模式]\n\n");
     printf("破解方案列表:\n");
     printf("   [1] 方案 A\n");
     printf("   [2] 方案 B\n");
@@ -126,7 +128,8 @@ void CrackingMode(void){
         }
     }
 }
-void RecoveringMode(void){
+void RecoveringMode(){
+    printf("[恢复模式]\n\n");
     printf("说明: 本功能用于恢复破解时的部分操作, 部分情况下可能无法产生效果, 执行完毕后请手动开启控制软件.\n");
     printf("按任意键将清空以上内容并继续!\n\n");
     system("pause");
@@ -144,7 +147,7 @@ void RecoveringMode(void){
     printf("\n尝试启动服务 TDFileFilter ...\n\n");
     system("net start TDFileFilter");//启动 "极域电子教室" 的 U 盘锁服务
 }
-int main(void){
+int main(){
     system("title 机房控制软件克星");//修改窗口标题
     system("color b");//调整控制台字体颜色为青蓝色
     {//权限检测模块, 被花括号包围用于快速释放变量 RunAsAdmin 的内存
