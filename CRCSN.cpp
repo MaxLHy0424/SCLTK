@@ -26,16 +26,16 @@ void CrackingMode(){
     printf("请输入 \"休眠\" 时间 (在每次执行操作后暂停执行一段时间, 单位 秒, 数值 0.0  ~ 15.0): ");
     double SleepTimes{0};
     scanf("%lf",&SleepTimes);
-    unsigned short WrongNumber{0};
+    unsigned short WrongInputNumber{0};
     while(SleepTimes>15.0||SleepTimes<0.0){
-        if(WrongNumber>=5){
+        if(WrongInputNumber>=5){
             SleepTimes=0;
-            WrongNumber=0;
+            WrongInputNumber=0;
             break;
         }
         printf("输入错误, 请重新输入: ");
         scanf("%lf",&SleepTimes);
-        WrongNumber++;
+        WrongInputNumber++;
     }
     switch(PlanCode[0]){
         case '1':{
