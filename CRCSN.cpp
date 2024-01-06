@@ -51,34 +51,34 @@ void CrackingMode(){
             printf("提示: 已尝试临时修复环境变量, 在部分情况下可能出现找不到命令的情况, 如无法使用, 暂无解决方案.\n\n");
             printf("按任意键将清空以上内容并继续!\n\n");
             system("pause");
-            for(;;){//无限循环, 解决存在守护进程的问题
-                system("cls");//清空控制台屏幕
+            for(;;){
+                system("cls");
                 printf("尝试禁用服务 tvnserver ...\n\n");
-                system("sc config tvnserver start= Disabled");//禁用 "联想云教室" 的主要服务
+                system("sc config tvnserver start= Disabled");
                 printf("\n尝试禁用服务 TDNetFilter ...\n\n");
-                system("sc config TDNetFilter start= Disabled");//禁用 "联想云教室" 的阻止网页访问的服务
+                system("sc config TDNetFilter start= Disabled");
                 printf("\n尝试禁用服务 TDFileFilter ...\n\n");
-                system("sc config TDFileFilter start= Disabled");//禁用 "极域电子教室" 的 U 盘锁服务
+                system("sc config TDFileFilter start= Disabled");
                 printf("\n尝试停止服务 tvnserver ...\n\n");
-                system("net stop tvnserver");//停止 "联想云教室" 的主要服务
+                system("net stop tvnserver");
                 printf("\n尝试停止服务 TDNetFilter ...\n\n");
-                system("net stop TDNetFilter");//停止 "极域电子教室" 的网络限制服务
+                system("net stop TDNetFilter");
                 printf("\n尝试停止服务 TDFileFilter ...\n\n");
-                system("net stop TDFileFilter");//停止 "极域电子教室" 的 U 盘锁服务
+                system("net stop TDFileFilter");
                 printf("\n尝试结束进程 PortControl64.exe ...\n\n");
-                system("TaskKill /F /T /IM PortControl64.exe");//结束 "联想云教室" 的相关进程
+                system("TaskKill /F /T /IM PortControl64.exe");
                 printf("\n尝试结束进程 DesktopCheck.exe ...\n\n");
-                system("TaskKill /F /T /IM DesktopCheck.exe");//结束 "联想云教室" 的相关进程
+                system("TaskKill /F /T /IM DesktopCheck.exe");
                 printf("\n尝试结束进程 DeploymentAgent.exe ...\n\n");
-                system("TaskKill /F /T /IM DeploymentAgent.exe");//结束 "联想云教室" 的相关进程
+                system("TaskKill /F /T /IM DeploymentAgent.exe");
                 printf("\n尝试结束进程 XYNTService.exe ...\n\n");
-                system("TaskKill /F /T /IM XYNTService.exe");//结束 "联想云教室" 的相关进程
+                system("TaskKill /F /T /IM XYNTService.exe");
                 printf("\n尝试结束进程 StudentMain.exe ...\n\n");
-                system("TaskKill /F /T /IM StudentMain.exe");//结束 "极域电子教室" 的进程
+                system("TaskKill /F /T /IM StudentMain.exe");
                 printf("\n尝试结束进程 GATESRV.exe ...\n\n");
-                system("TaskKill /F /T /IM GATESRV.exe");//结束 "极域电子教室" 阻止网页访问的进程 
+                system("TaskKill /F /T /IM GATESRV.exe");
                 printf("\n尝试结束进程 MasterHelper.exe ...\n\n");
-                system("TaskKill /F /T /IM MasterHelper.exe");//结束 "极域电子教室" 阻止网页访问的进程
+                system("TaskKill /F /T /IM MasterHelper.exe");
                 printf("\n休眠中...\n");
                 sleep(SleepTimes);
             }
@@ -96,35 +96,35 @@ void CrackingMode(){
             printf("提示 1: 此方案推荐用于 \"方案 A\" 无法使用时的备选方案, 另外在部分情况下可能出现找不到命令的情况.\n");
             printf("提示 2: 已尝试临时修复环境变量, 如还是无法使用, 暂无解决方案.\n\n");
             printf("按任意键将清空以上内容并继续!\n\n");
-            system("pause");//
-            for(;;){//无限循环, 解决存在守护进程的问题
-                system("cls");//清空控制台屏幕
+            system("pause");
+            for(;;){
+                system("cls");
                 printf("尝试禁用服务 tvnserver ...\n\n");
-                system("sc config tvnserver start= Disabled");//禁用 "联想云教室" 的主要服务
+                system("sc config tvnserver start= Disabled");
                 printf("\n尝试禁用服务 TDNetFilter ...\n\n");
-                system("sc config TDNetFilter start= Disabled");//禁用 "联想云教室" 的组织网页访问的服务
+                system("sc config TDNetFilter start= Disabled");
                 printf("\n尝试禁用服务 TDFileFilter ...\n\n");
-                system("sc config TDFileFilter start= Disabled");//禁用 "极域电子教室" 的 U 盘锁服务
+                system("sc config TDFileFilter start= Disabled");
                 printf("\n尝试停止服务 tvnserver ...\n\n");
-                system("net stop tvnserver");//停止 "联想云教室" 的主要服务
+                system("net stop tvnserver");
                 printf("\n尝试停止服务 TDNetFilter ...\n\n");
-                system("net stop TDNetFilter");//解除 "极域电子教室" 的阻止网页访问的服务
+                system("net stop TDNetFilter");
                 printf("\n尝试停止服务 TDFileFilter ...\n\n");
-                system("net stop TDFileFilter");//解除 "极域电子教室" 的 U 盘锁
+                system("net stop TDFileFilter");
                 printf("\n尝试结束进程 PortControl64.exe ...\n\n");
-                system("TsKill PortControl64 /A /V");//结束 "联想云教室" 的相关进程
+                system("TsKill PortControl64 /A /V");
                 printf("\n尝试结束进程 DesktopCheck.exe ...\n\n");
-                system("TsKill DesktopCheck /A /V");//结束 "联想云教室" 的相关进程
+                system("TsKill DesktopCheck /A /V");
                 printf("\n尝试结束进程 DeploymentAgent.exe ...\n\n");
-                system("TsKill DeploymentAgent /A /V");//结束 "联想云教室" 的相关进程
+                system("TsKill DeploymentAgent /A /V");
                 printf("\n尝试结束进程 XYNTService.exe ...\n\n");
-                system("TsKill XYNTService /A /V");//结束 "联想云教室" 的相关进程
+                system("TsKill XYNTService /A /V");
                 printf("\n尝试结束进程 StudentMain.exe ...\n\n");
-                system("TsKill StudentMain /A /V");//结束 "极域电子教室" 的进程
+                system("TsKill StudentMain /A /V");
                 printf("\n尝试结束进程 GATESRV.exe ...\n\n");
-                system("TsKill GATESRV /A /V");//结束 "极域电子教室" 的相关进程
+                system("TsKill GATESRV /A /V");
                 printf("\n尝试结束进程 MasterHelper.exe ...\n\n");
-                system("TsKill MasterHelper /A /V");//结束 "极域电子教室" 的相关进程
+                system("TsKill MasterHelper /A /V");
                 printf("\n休眠中...\n");
                 sleep(SleepTimes);
             }
@@ -139,23 +139,23 @@ void RecoveringMode(){
     system("pause");
     system("cls");
     printf("尝试启用服务 tvnserver ...\n\n");
-    system("sc config tvnserver start= Auto");//启用 "联想云教室" 的主要服务
+    system("sc config tvnserver start= Auto");
     printf("\n尝试启用服务 TDNetFilter ...\n\n");
-    system("sc config TDNetFilter start= Auto");//启用 "联想云教室" 的阻止网页访问的服务
+    system("sc config TDNetFilter start= Auto");
     printf("\n尝试启用服务 TDFileFilter ...\n\n");
-    system("sc config TDFileFilter start= Auto");//启用 "极域电子教室" 的 U 盘锁服务
+    system("sc config TDFileFilter start= Auto");
     printf("\n尝试启动服务 tvnserver ...\n\n");
-    system("net start tvnserver");//启动 "联想云教室" 的主要服务
+    system("net start tvnserver");
     printf("\n尝试启动服务 TDNetFilter ...\n\n");
-    system("net start TDNetFilter");//启动 "极域电子教室" 的网络限制服务
+    system("net start TDNetFilter");
     printf("\n尝试启动服务 TDFileFilter ...\n\n");
-    system("net start TDFileFilter");//启动 "极域电子教室" 的 U 盘锁服务
+    system("net start TDFileFilter");
 }
 int main(){
-    system("color b");//调整控制台字体颜色为青蓝色
+    system("color b");
     system("title 机房控制软件克星");
     {
-        BOOL RunAsAdmin{IsUserAnAdmin()};//当是管理员权限时为 true, 否则为 false
+        BOOL RunAsAdmin{IsUserAnAdmin()};
         if(!RunAsAdmin){
             printf("[Error] 当前权限为 User, 请以 Administrator 权限运行本程序...\n");
             printf("\n########################################\n\n");
@@ -190,13 +190,13 @@ int main(){
         }case '1':{
             FeatureCode[0]=0;
             FeatureCode[1]=0;
-            system("set path=%path%;C:\\Windows\\System32\\");//临时设置环境变量, 解决部分情况下 cmd 指令无法使用的问题
+            system("set path=%path%;C:\\Windows\\System32\\");
             CrackingMode();
             break;
         }case '2':{
             FeatureCode[0]=0;
             FeatureCode[1]=0;
-            system("set path=%path%;C:\\Windows\\System32\\");//临时设置环境变量, 解决部分情况下 cmd 指令无法使用的问题
+            system("set path=%path%;C:\\Windows\\System32\\");
             RecoveringMode();
             break;
         }
