@@ -160,7 +160,7 @@ int main(){
             exit(0);
         }
     }
-    system("title 机房控制软件克星 (Administrator");//修改窗口标题
+    system("title 机房控制软件克星 (Administrator)");//修改窗口标题
     printf("欢迎使用 机房控制软件克星 !\n\n");
     printf("功能列表:\n");
     printf("  [x] 退出程序\n");
