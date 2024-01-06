@@ -9,7 +9,7 @@ void About(){
     printf("   程序作者: MaxLHy0424\n");
     printf("   作者 B 站账号 UID: 1678066522\n");
     printf("   作者邮箱: MaxLHy974413@outlook.com\n\n");
-    printf("   (C) Copyright 2024 MaxLHy0424, All Rights Reserved.\n");
+    printf("   (C) Copyright 2023-2024 MaxLHy0424, All Rights Reserved.\n");
 }
 void CrackingMode(){
     printf("[破解模式]\n\n");
