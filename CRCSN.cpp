@@ -148,11 +148,11 @@ void RecoveringMode(){
     system("net start TDFileFilter");//启动 "极域电子教室" 的 U 盘锁服务
 }
 int main(){
-    system("title 机房控制软件克星");//修改窗口标题
     system("color b");//调整控制台字体颜色为青蓝色
     {//权限检测模块, 被花括号包围用于快速释放变量 RunAsAdmin 的内存
         BOOL RunAsAdmin{IsUserAnAdmin()};//当是管理员权限时为 True, 否则为 False
         if(!RunAsAdmin){//对变量 RunAsAdmin 进行非运算, 及将非管理员权限运行时的值 False 转为 True 以进行 if 语句内的操作
+            system("title 机房控制软件克星");//修改窗口标题
             printf("[Error] 请以 Administrator 权限运行本程序...\n");
             printf("\n########################################\n\n");
             printf("按任意键退出程序!\n\n");
