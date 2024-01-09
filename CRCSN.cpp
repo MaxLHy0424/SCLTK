@@ -356,7 +356,7 @@ int main(){
     system("color b");
     if(!Data.StartupMode){
         system("title 机房控制软件克星 (受限模式)");
-        printf("[Error] 当前权限为 User, 建议 Administrator 权限运行本程序...\n");
+        printf("[提示] 当前权限为 User, 建议 Administrator 权限运行本程序...\n");
         printf("\n########################################\n\n");
         printf("按任意键进入 \"受限模式\"...\n\n");
         system("pause");
@@ -365,4 +365,4 @@ int main(){
         system("title 机房控制软件克星");
     }
     Start();
-}
+}  
