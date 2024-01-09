@@ -6,11 +6,11 @@
 
 Computer Room Control Software Nemesis (中文名 机房控制软件克星 , 简称 CRCSN), 可以帮助你通过简单的操作快速 (间接) 脱离控制!
 
-# 技术细节
-
-其原理是通过结束进程和禁止服务的方式破解控制.
-
-具体实现方式:
+# 实现原理
+>最后更新于 2024/01/09
+>
+> 适用于 CRCSN v3.0
+## "破解模式" 技术细节
 
 使用 ``ShlObj.h`` 头文件中的 system 函数运行 CMD 命令.
 
@@ -26,6 +26,7 @@ TaskKill /F /T /IM PortControl64.exe
 TaskKill /F /T /IM DesktopCheck.exe
 TaskKill /F /T /IM DeploymentAgent.exe
 TaskKill /F /T /IM XYNTService.exe
+TaskKill /F /T /IM ProcHelper64.exe
 TaskKill /F /T /IM StudentMain.exe
 TaskKill /F /T /IM GATESRV.exe
 TaskKill /F /T /IM MasterHelper.exe
@@ -34,9 +35,14 @@ TaskKill /F /T /IM MasterHelper.exe
 
 "恢复模式" 的实现方法则是将上面的三个服务启用, 达到恢复的效果.
 
-另外, 比较细心的话会发现以 User 权限运行, 会退出程序. 原理是使用了头文件 ``ShlObj.h`` 中的 ``IsUserAnAdmin()`` 函数, 赋值给一个叫 ``RunAsAdmin`` 的变量. 接着对这个变量进行判断, 如果为 0, 则返回退出程序的消息, 否则将继续运行程序.
+## "劫持工具" 技术细节
+"劫持工具" 主要是通过修改注册表实现劫持.
 
-还有破解时的 "休眠" 功能, 对应头文件 ``unistd.h`` 的 ``sleep`` 函数, 将 "休眠" 的时间存储在双精度浮点类型变量 ``SleepTimes`` 中, 然后在程序中使用 ``sleep(SleepTimes);`` 实现 "休眠".
+例如, 在 CMD 中输入如下命令:
+````batch
+reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\taskmgr.exe\" /t REG_SZ -v debugger /d "THIS_PROGRAM_HAS_BEEN_BLOCKED" /F
+````
+即可将 ``taskmgr.exe`` 劫持为 ``THIS_PROGRAM_HAS_BEEN_BLOCKED``, 但因为劫持的程序不存在, 所以就无法启动 ``taskmgr.exe``, 间接达到了屏蔽的效果.
 
 # 注意事项
 
@@ -48,21 +54,21 @@ TaskKill /F /T /IM MasterHelper.exe
 
 如果此软件对计算机造成影响 (包括但不限于: 卡顿, 死机), 请勿使用.
 
-使用时请以管理员身份运行, 否则可能出现异常. (v1.0_Dev3 及之后的版本已添加管理员身份的识别, v1.0_Dev1 和 v1.0_Dev2 请手动使用管理员权限运行)
-
 # 常见问题
 
 Q1: 打开程序时提示 "命令提示符已被管理员禁用" 之类的提示, 如何解决?
 
-A1: 这说明 命令提示符 已被禁用. 可以试试打开注册表编辑器, 定位到 ``HKEY_CURRENT_USER\Software\Policies\Microsoft\Windows\System`` 下, 看看有没有一个叫 ``DisableCMD`` 的 DWORD 值, 有的话就删掉. 再次打开软件看看是否能成功. (如果还是打不开, 那我也不知道了 awa)
+A1: 这说明 CMD 已被禁用. 可以试试打开注册表编辑器, 定位到 ``HKEY_CURRENT_USER\Software\Policies\Microsoft\Windows\System`` 下, 看看有没有一个叫 ``DisableCMD`` 的 DWORD 值, 有的话就删掉. 再次打开软件看看是否能成功. (如果还是打不开, 那我也不知道了 awa)
 
 Q2: 程序无法在 32 位 Windows 系统中打开, 如何解决?
 
 A2: 程序发布版本暂无 32 位版本. 可以先下载程序源代码, 使用 MinGW-w32 编译源代码文件, 正常使用即可. 
 
-# 新闻
+# 公告
+
 1. CRCSN 会在本年推出特别版本, 比如愚人节特别版.
 2. CRCSN v3.0 正在开发中, 有什么功能需求可以随时提出!
+
 # 鸣谢
 
 支持本项目的所有网友, 所有测试人员, 以及我的老师.
