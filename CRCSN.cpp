@@ -2,15 +2,13 @@
 #include<unistd.h>
 #include<ShlObj.h>
 struct ProgramRuntimeData{
-    BOOL EnableFullMode;
-    char FeatureCode[2];
-    char FeatureCodeForCrackingMode[2];
-    char Back[2];
+    BOOL StartupMode;
+    char Code[2],Back[2];
     double SleepTimes;
-    char ToolCode[2];
 }Data;
 int Start();
 void About(){
+    Data.Code[0]=0,Data.Code[1]=0;
     printf("[关于]\n");
     printf("   名称: 机房控制软件克星 (英文名 Computer Room Control Software Nemesis, 简称 CRCSN)\n");
     printf("   版本: v3.0\n");
@@ -26,23 +24,24 @@ void About(){
     Start();
 }
 void CrackingMode(){
+    Data.Code[0]=0,Data.Code[1]=0;
     printf("[破解模式]\n");
     printf("   [0] 返回上一级\n");
     printf("   [1] 主方案\n");
     printf("   [2] 备用方案\n");
     printf("请输入: ");
-    scanf("%s",&Data.FeatureCodeForCrackingMode[0]);
-    while(Data.FeatureCodeForCrackingMode[0]!='0'&&Data.FeatureCodeForCrackingMode[0]!='1'&&Data.FeatureCodeForCrackingMode[0]!='2'){
-        printf("输入有误: ");
-        scanf("%s",&Data.FeatureCodeForCrackingMode[0]);
+    scanf("%s",&Data.Code[0]);
+    while(Data.Code[0]!='0'&&Data.Code[0]!='1'&&Data.Code[0]!='2'){
+        printf("输入有误, 请重新输入: ");
+        scanf("%s",&Data.Code[0]);
     }
-    switch(Data.FeatureCodeForCrackingMode[0]){
+    switch(Data.Code[0]){
         case '0':{
             system("cls");
             Start();
             break;
         }case '1':{
-            if(!Data.EnableFullMode){
+            if(!Data.StartupMode){
                 system("cls");
                 printf("当前为 \"受限模式\", 此方案已被禁用. 按任意键返回上一级!\n\n");
                 system("pause");
@@ -54,26 +53,13 @@ void CrackingMode(){
     }
     printf("请输入 \"休眠\" 时间 (在每次执行操作后暂停执行一段时间, 单位 秒, 数值 0.0  ~ 15.0): ");
     scanf("%lf",&Data.SleepTimes);
-    {
-        unsigned short WrongInputNumber{0};
         while(Data.SleepTimes>15.0||Data.SleepTimes<0.0){
-            if(WrongInputNumber>=5){
-                printf("\n########################################\n\n");
-                printf("[Warning] 输入次数达到限制, 按任意键禁用 \"休眠\" 并继续...");
-                printf("########################################\n\n");
-                system("pause");
-                Data.SleepTimes=0;
-                WrongInputNumber=0;
-                break;
-            }
             printf("输入错误, 请重新输入: ");
             scanf("%lf",&Data.SleepTimes);
-            WrongInputNumber++;
         }
-    }
     system("cls");
     printf("配置:\n          方案: ");
-    switch(Data.FeatureCodeForCrackingMode[0]){
+    switch(Data.Code[0]){
         case '1':{
             printf("主方案.\n");
             break;
@@ -91,7 +77,7 @@ void CrackingMode(){
     printf("请确认 (Y: 继续, N: 返回上一级): ");
     scanf("%s",&Data.Back[0]);
     while((Data.Back[0]!='Y'&&Data.Back[0]!='N')||Data.Back[1]!=0){
-        printf("输入有误: ");
+        printf("输入有误, 请重新输入: ");
         scanf("%s",&Data.Back[0]);
     }
     switch(Data.Back[0]){
@@ -103,7 +89,7 @@ void CrackingMode(){
             break;
         }
     }
-    switch(Data.FeatureCodeForCrackingMode[0]){
+    switch(Data.Code[0]){
         case '1':{
             for(;;){
                 system("cls");
@@ -127,6 +113,8 @@ void CrackingMode(){
                 system("TaskKill /F /T /IM DeploymentAgent.exe");
                 printf("\n尝试结束进程 XYNTService.exe ...\n\n");
                 system("TaskKill /F /T /IM XYNTService.exe");
+                printf("\n尝试结束进程 ProcHelper64.exe ...\n\n");
+                system("TaskKill /F /T /IM ProcHelper64.exe");
                 printf("\n尝试结束进程 StudentMain.exe ...\n\n");
                 system("TaskKill /F /T /IM StudentMain.exe");
                 printf("\n尝试结束进程 GATESRV.exe ...\n\n");
@@ -140,7 +128,7 @@ void CrackingMode(){
         }case '2':{
             for(;;){
                 system("cls");
-                printf("\n尝试结束进程 PortControl64.exe ...\n\n");
+                printf("尝试结束进程 PortControl64.exe ...\n\n");
                 system("TaskKill /F /T /IM PortControl64.exe");
                 printf("\n尝试结束进程 DesktopCheck.exe ...\n\n");
                 system("TaskKill /F /T /IM DesktopCheck.exe");
@@ -148,6 +136,8 @@ void CrackingMode(){
                 system("TaskKill /F /T /IM DeploymentAgent.exe");
                 printf("\n尝试结束进程 XYNTService.exe ...\n\n");
                 system("TaskKill /F /T /IM XYNTService.exe");
+                printf("\n尝试结束进程 ProcHelper64.exe ...\n\n");
+                system("TaskKill /F /T /IM ProcHelper64.exe");
                 printf("\n尝试结束进程 StudentMain.exe ...\n\n");
                 system("TaskKill /F /T /IM StudentMain.exe");
                 printf("\n尝试结束进程 GATESRV.exe ...\n\n");
@@ -162,19 +152,23 @@ void CrackingMode(){
     }
 }
 void RecoveringMode(){
-    if(!Data.EnableFullMode){
+    if(!Data.StartupMode){
         system("cls");
-        printf("当前为 \"受限模式\", 此功能已被禁用. 按任意键返回上一级!\n\n");
+        printf("当前为 \"受限模式\", 此功能已被禁用...\n\n");
+        printf("########################################\n\n");
+        printf("按任意键返回上一级!\n\n");
         system("pause");
         system("cls");
         Start();
     }
+    Data.Code[0]=0,Data.Code[1]=0;
+    Data.Back[0]=0,Data.Back[1]=0;
     printf("[恢复模式]\n\n");
     printf("说明: 本功能用于恢复破解时的部分操作, 部分情况下可能无法产生效果, 执行完毕后请手动开启控制软件.\n\n");
     printf("请确认 (Y: 继续, N: 返回上一级): ");
     scanf("%s",&Data.Back[0]);
     while((Data.Back[0]!='Y'&&Data.Back[0]!='N')||Data.Back[1]!=0){
-        printf("输入有误: ");
+        printf("输入有误, 请重新输入: ");
         scanf("%s",&Data.Back[0]);
     }
     switch(Data.Back[0]){
@@ -186,6 +180,7 @@ void RecoveringMode(){
             break;
         }
     }
+    Data.Back[0]=0,Data.Back[1]=0;
     system("cls");
     printf("尝试启用服务 tvnserver ...\n\n");
     system("sc config tvnserver start= Auto");
@@ -201,7 +196,7 @@ void RecoveringMode(){
     system("net start TDFileFilter");
     printf("\n########################################\n");
     printf("    联想云教室: PortControl64.exe , DesktopCheck.exe , DeploymentAgent.exe , XYNTService.exe\n");
-    printf("  极域电子教室: StudentMain.exe , GATESRV.exe , MasterHelper.exe\n\n");
+    printf("  极域电子教室: StudentMain.exe , GATESRV.exe , MasterHelper.exe , ProcHelper64.exe\n\n");
     printf("请手动开启以上程序!\n");
     printf("########################################\n\n");
     printf("按任意键返回上一级!\n\n");
@@ -210,17 +205,119 @@ void RecoveringMode(){
     Start();
 }
 void ToolBox(){
+    if(!Data.StartupMode){
+        system("cls");
+        printf("当前为 \"受限模式\", 此功能已被禁用...\n\n");
+        printf("########################################\n\n");
+        printf("按任意键返回上一级!\n\n");
+        system("pause");
+        system("cls");
+        Start();
+    }
+    Data.Code[0]=0,Data.Code[1]=0;
     printf("[工具箱]\n");
     printf("   [0] 返回上一级\n");
     printf("   [1] 打开 \"极域电子教室\" 默认安装目录\n");
     printf("   [2] 打开 \"联想云教室\" 默认安装目录\n");
-    printf("   [3] 读取 \"极域电子教室\" 配置密码\n");
-    printf("   [4] 删除 \"极域电子教室\" 和 \"联想云教室\" 注册表\n");
-    printf("   [5] 劫持 \"极域电子教室\" 和 \"联想云教室\"\n");
+    printf("   [3] 劫持工具\n");
+    printf("   [4] 查询 \"极域电子教室\" 万能密码\n");
     printf("请输入: ");
-    scanf("%s",&Data.ToolCode[0]);
+    scanf("%s",&Data.Code[0]);
+    while((Data.Code[0]!='0'&&Data.Code[0]!='1'&&Data.Code[0]!='2'&&Data.Code[0]!='3'&&Data.Code[0]!='4')||Data.Code[1]!=0){
+        printf("输入有误, 请重新输入: ");
+        scanf("%s",&Data.Code[0]);
+    }
+    system("cls");
+    switch(Data.Code[0]){
+        case '0':{
+            Start();
+            break;
+        }case '1':{
+            printf("尝试打开...\n\n");
+            system("explorer \"C:\\Program Files (x86)\\Mythware\\\"");
+            printf("########################################\n\n");
+            printf("按任意键返回上一级!\n\n");
+            system("pause");
+            system("cls");
+            ToolBox();
+            break;
+        }case '2':{
+            printf("尝试打开...\n\n");
+            system("explorer \"C:\\Program Files (x86)\\Lenovo\\\"");
+            printf("########################################\n\n");
+            printf("按任意键返回上一级!\n\n");
+            system("pause");
+            system("cls");
+            ToolBox();
+            break;
+        }case '3':{
+            printf("[工具箱 > 劫持工具]\n");
+            printf("\"劫持工具\" 支持劫持 \"极域电子教室\" 和 \"联想云教室\".\n");
+            printf("   [0] 返回上一级\n");
+            printf("   [1] 应用劫持\n");
+            printf("   [2] 撤销劫持\n");
+            printf("请输入: ");
+            scanf("%s",Data.Code);
+            while((Data.Code[0]!='0'&&Data.Code[0]!='1'&&Data.Code[0]!='2')||Data.Code[1]!=0){
+                printf("输入有误, 请重新输入: ");
+                scanf("%s",Data.Code);
+            }
+            system("cls");
+            switch(Data.Code[0]){
+                case '0':{
+                    ToolBox();
+                    break;
+                }case '1':{
+                    printf("[工具箱 > 劫持工具 > 应用劫持]\n\n");
+                    system("reg add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\PortControl64.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
+                    system("reg add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DesktopCheck.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
+                    system("reg add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DeploymentAgent.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
+                    system("reg add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\XYNTService.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
+                    system("reg add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\ProcHelper64.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
+                    system("reg add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\StudentMain.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
+                    system("reg add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\GATESRV.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
+                    system("reg add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\MasterHelper.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
+                    printf("\n\n已成功劫持!\n\n");
+                    printf("########################################\n\n");
+                    printf("按任意键返回 [工具箱]!\n\n");
+                    system("pause");
+                    system("cls");
+                    ToolBox();
+                    break;
+                }case '2':{
+                    printf("[工具箱 > 劫持工具 > 撤销劫持]\n\n");
+                    system("reg delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\PortControl64.exe\" /F");
+                    system("reg delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DesktopCheck.exe\" /F");
+                    system("reg delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DeploymentAgent.exe\" /F");
+                    system("reg delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\XYNTService.exe\" /F");
+                    system("reg delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\ProcHelper64.exe\" /F");
+                    system("reg delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\StudentMain.exe\" /F");
+                    system("reg delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\GATESRV.exe\" /F");
+                    system("reg delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\MasterHelper.exe\" /F");
+                    printf("\n\n已撤销劫持!\n\n");
+                    printf("########################################\n\n");
+                    printf("按任意键返回 [工具箱]!\n\n");
+                    system("pause");
+                    system("cls");
+                    ToolBox();
+                    break;
+                }
+            }
+        }case '4':{
+            printf("[工具箱 > 查询 \"极域电子教室\" 万能密码\n\n");
+            printf("\"极域电子教室\" 万能密码:\n");
+            printf("mythware_super_password\n");
+            printf("########################################\n\n");
+            printf("按任意键返回上一级!\n\n");
+            system("pause");
+            system("cls");
+            ToolBox();
+            break;
+        }
+    }
 }
 int Start(){
+    Data.Code[0]=0,Data.Code[1]=0;
     printf("欢迎使用 机房控制软件克星!\n");
     printf("   [x] 退出程序\n");
     printf("   [0] 关于\n");
@@ -228,13 +325,13 @@ int Start(){
     printf("   [2] 恢复模式\n");
     printf("   [3] 工具箱\n");
     printf("请输入: ");
-    scanf("%s",&Data.FeatureCode[0]);
-    while((Data.FeatureCode[0]!='x'&&Data.FeatureCode[0]!='0'&&Data.FeatureCode[0]!='1'&&Data.FeatureCode[0]!='2'&&Data.FeatureCode[0]!='3')||Data.FeatureCode[1]!=0){
-        printf("输入有误: ");
-        scanf("%s",&Data.FeatureCode[0]);
+    scanf("%s",&Data.Code[0]);
+    while((Data.Code[0]!='x'&&Data.Code[0]!='0'&&Data.Code[0]!='1'&&Data.Code[0]!='2'&&Data.Code[0]!='3')||Data.Code[1]!=0){
+        printf("输入有误, 请重新输入: ");
+        scanf("%s",&Data.Code[0]);
     }
     system("cls");
-    switch(Data.FeatureCode[0]){
+    switch(Data.Code[0]){
         case 'x':{
             exit(0);
         }case '0':{
@@ -247,20 +344,17 @@ int Start(){
             RecoveringMode();
             break;
         }case '3':{
-            printf("正在开发...\n");
-            system("pause");
-            system("cls");
-            Start();
+            ToolBox();
             break;
         }
     }
     return 0;
 }
 int main(){
-    Data.EnableFullMode=IsUserAnAdmin();
+    Data.StartupMode=IsUserAnAdmin();//StartupMode: 0 - "受限模式"   1 - "完整模式"
     system("set path=%path%;C:\\Windows\\System32\\");
     system("color b");
-    if(!Data.EnableFullMode){
+    if(!Data.StartupMode){
         system("title 机房控制软件克星 (受限模式)");
         printf("[Error] 当前权限为 User, 建议 Administrator 权限运行本程序...\n");
         printf("\n########################################\n\n");
