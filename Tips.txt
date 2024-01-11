@@ -2,3 +2,4 @@
 
 不可删除的文件:
 CRCSN.cpp
+ntsd.exe

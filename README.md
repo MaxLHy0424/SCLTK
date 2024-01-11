@@ -19,18 +19,19 @@ Computer Room Control Software Nemesis (中文名 机房控制软件克星 , 简
 sc config tvnserver start= Disabled
 sc config TDNetFilter start= Disabled
 sc config TDFileFilter start= Disabled
-net stop tvnserver
-net stop TDNetFilter
-net stop TDFileFilter
-TaskKill /F /T /IM PortControl64.exe
-TaskKill /F /T /IM DesktopCheck.exe
-TaskKill /F /T /IM DeploymentAgent.exe
-TaskKill /F /T /IM XYNTService.exe
-TaskKill /F /T /IM ProcHelper64.exe
-TaskKill /F /T /IM StudentMain.exe
-TaskKill /F /T /IM GATESRV.exe
-TaskKill /F /T /IM MasterHelper.exe
+Net Stop tvnserver
+Net Stop TDNetFilter
+Net Stop TDFileFilter
+ntsd -c q -pn PortControl64.exe
+ntsd -c q -pn DesktopCheck.exe
+ntsd -c q -pn DeploymentAgent.exe
+ntsd -c q -pn XYNTService.exe
+ntsd -c q -pn ProcHelper64.exe
+ntsd -c q -pn StudentMain.exe
+ntsd -c q -pn GATESRV.exe
+ntsd -c q -pn MasterHelper.exe
 ````
+> 上面命令中的 ``ntsd`` 命令在 Windows XP 之后便不再内置于 Windows 系统当中, 直接运行建议替换为 ``TaskKill`` 命令, 例如: ``TaskKill /F /T /IM StudentMain.exe``.
 运行了以上几个命令后, 基本可以解决大部分的控制了.
 
 "恢复模式" 的实现方法则是将上面的三个服务启用, 达到恢复的效果.
