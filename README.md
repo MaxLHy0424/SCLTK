@@ -16,34 +16,31 @@ Computer Room Control Software Nemesis (中文名 机房控制软件克星 , 简
 
 主要是用了以下的命令:
 ````batch
-sc config tvnserver start= Disabled
-sc config TDNetFilter start= Disabled
-sc config TDFileFilter start= Disabled
+SC Config tvnserver Start= Disabled
+SC Config TDNetFilter Start= Disabled
+SC Config TDFileFilter Start= Disabled
 Net Stop tvnserver
 Net Stop TDNetFilter
 Net Stop TDFileFilter
-ntsd -c q -pn PortControl64.exe
-ntsd -c q -pn DesktopCheck.exe
-ntsd -c q -pn DeploymentAgent.exe
-ntsd -c q -pn XYNTService.exe
-ntsd -c q -pn ProcHelper64.exe
-ntsd -c q -pn StudentMain.exe
-ntsd -c q -pn GATESRV.exe
-ntsd -c q -pn MasterHelper.exe
+TaskKill /F /T /IM PortControl64.exe
+TaskKill /F /T /IM DesktopCheck.exe
+TaskKill /F /T /IM DeploymentAgent.exe
+TaskKill /F /T /IM XYNTService.exe
+TaskKill /F /T /IM ProcHelper64.exe
+TaskKill /F /T /IM StudentMain.exe
+TaskKill /F /T /IM GATESRV.exe
+TaskKill /F /T /IM MasterHelper.exe
 ````
-> 上面命令中的 ``ntsd`` 命令在 Windows XP 之后便不再内置于 Windows 系统当中, 直接运行建议替换为 ``TaskKill`` 命令, 例如: ``TaskKill /F /T /IM StudentMain.exe``.
 运行了以上几个命令后, 基本可以解决大部分的控制了.
-
-"恢复模式" 的实现方法则是将上面的三个服务启用, 达到恢复的效果.
 
 ## "劫持工具" 技术细节
 "劫持工具" 主要是通过修改注册表实现劫持.
 
 例如, 在 CMD 中输入如下命令:
 ````batch
-reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\taskmgr.exe\" /t REG_SZ -v debugger /d "THIS_PROGRAM_HAS_BEEN_BLOCKED" /F
+Reg Add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\msedge.exe\" /t REG_SZ -v debugger /d "THIS_PROGRAM_HAS_BEEN_BLOCKED" /F
 ````
-即可将 ``taskmgr.exe`` 劫持为 ``THIS_PROGRAM_HAS_BEEN_BLOCKED``, 但因为劫持的程序不存在, 所以就无法启动 ``taskmgr.exe``, 间接达到了屏蔽的效果.
+即可将 ``msedge.exe`` 劫持为 ``THIS_PROGRAM_HAS_BEEN_BLOCKED``, 但因为劫持的程序不存在, 所以就无法启动 ``msedge.exe``, 间接达到了屏蔽的效果.
 
 # 注意事项
 
