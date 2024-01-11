@@ -2,8 +2,7 @@
 #include<unistd.h>
 #include<ShlObj.h>
 struct ProgramRuntimeData{
-    BOOL StartupMode;
-    char Code[2],Back[2];
+    char Code[2];
     double SleepTimes;
 }Data;
 int Start();
@@ -11,7 +10,7 @@ void About(){
     Data.Code[0]=0,Data.Code[1]=0;
     printf("[关于]\n");
     printf("   名称: 机房控制软件克星 (英文名 Computer Room Control Software Nemesis, 简称 CRCSN)\n");
-    printf("   版本: v3.0\n");
+    printf("   版本: v3.0_Dev3\n");
     printf("   项目仓库: https://github.com/MaxLHy0424/Computer-Room-Control-Software-Nemesis\n");
     printf("   作者: MaxLHy0424\n");
     printf("   作者 B 站账号 UID: 1678066522\n");
@@ -25,62 +24,20 @@ void About(){
 }
 void CrackingMode(){
     Data.Code[0]=0,Data.Code[1]=0;
-    printf("[破解模式]\n");
-    printf("   [0] 返回上一级\n");
-    printf("   [1] 主方案\n");
-    printf("   [2] 备用方案\n");
-    printf("请输入: ");
+    printf("[破解模式]\n\n");
+    printf("请输入 \"休眠\" 时间 (在每次执行操作后暂停执行一段时间, 单位 秒, 数值 0.0  ~ 15.0): ");
+    scanf("%lf",&Data.SleepTimes);
+    while(Data.SleepTimes>15.0||Data.SleepTimes<0.0){
+        printf("输入错误, 请重新输入: ");
+        scanf("%lf",&Data.SleepTimes);
+    }
+    printf("请确认 (Y: 继续, N: 返回上一级): ");
     scanf("%s",&Data.Code[0]);
-    while(Data.Code[0]!='0'&&Data.Code[0]!='1'&&Data.Code[0]!='2'){
+    while((Data.Code[0]!='Y'&&Data.Code[0]!='N')||Data.Code[1]!=0){
         printf("输入有误, 请重新输入: ");
         scanf("%s",&Data.Code[0]);
     }
     switch(Data.Code[0]){
-        case '0':{
-            system("cls");
-            Start();
-            break;
-        }case '1':{
-            if(!Data.StartupMode){
-                system("cls");
-                printf("当前为 \"受限模式\", 此方案已被禁用. 按任意键返回上一级!\n\n");
-                system("pause");
-                system("cls");
-                CrackingMode();
-                break;
-            }
-        }
-    }
-    printf("请输入 \"休眠\" 时间 (在每次执行操作后暂停执行一段时间, 单位 秒, 数值 0.0  ~ 15.0): ");
-    scanf("%lf",&Data.SleepTimes);
-        while(Data.SleepTimes>15.0||Data.SleepTimes<0.0){
-            printf("输入错误, 请重新输入: ");
-            scanf("%lf",&Data.SleepTimes);
-        }
-    system("cls");
-    printf("配置:\n          方案: ");
-    switch(Data.Code[0]){
-        case '1':{
-            printf("主方案.\n");
-            break;
-        }case '2':{
-            printf("备用方案.\n");
-            break;
-        }
-    }
-    printf("   \"休眠\" 时间: ");
-    if(Data.SleepTimes==0){
-        printf("已禁用.\n\n");
-    }else{
-        printf("已启用, %lg 秒.\n\n",Data.SleepTimes);
-    }
-    printf("请确认 (Y: 继续, N: 返回上一级): ");
-    scanf("%s",&Data.Back[0]);
-    while((Data.Back[0]!='Y'&&Data.Back[0]!='N')||Data.Back[1]!=0){
-        printf("输入有误, 请重新输入: ");
-        scanf("%s",&Data.Back[0]);
-    }
-    switch(Data.Back[0]){
         case 'Y':{
             break;
         }case 'N':{
@@ -89,89 +46,53 @@ void CrackingMode(){
             break;
         }
     }
-    switch(Data.Code[0]){
-        case '1':{
-            for(;;){
-                system("cls");
-                printf("尝试禁用服务 tvnserver ...\n\n");
-                system("sc config tvnserver start= Disabled");
-                printf("\n尝试禁用服务 TDNetFilter ...\n\n");
-                system("sc config TDNetFilter start= Disabled");
-                printf("\n尝试禁用服务 TDFileFilter ...\n\n");
-                system("sc config TDFileFilter start= Disabled");
-                printf("\n尝试停止服务 tvnserver ...\n\n");
-                system("net stop tvnserver");
-                printf("\n尝试停止服务 TDNetFilter ...\n\n");
-                system("net stop TDNetFilter");
-                printf("\n尝试停止服务 TDFileFilter ...\n\n");
-                system("net stop TDFileFilter");
-                printf("\n尝试结束进程 PortControl64.exe ...\n\n");
-                system("TaskKill /F /T /IM PortControl64.exe");
-                printf("\n尝试结束进程 DesktopCheck.exe ...\n\n");
-                system("TaskKill /F /T /IM DesktopCheck.exe");
-                printf("\n尝试结束进程 DeploymentAgent.exe ...\n\n");
-                system("TaskKill /F /T /IM DeploymentAgent.exe");
-                printf("\n尝试结束进程 XYNTService.exe ...\n\n");
-                system("TaskKill /F /T /IM XYNTService.exe");
-                printf("\n尝试结束进程 ProcHelper64.exe ...\n\n");
-                system("TaskKill /F /T /IM ProcHelper64.exe");
-                printf("\n尝试结束进程 StudentMain.exe ...\n\n");
-                system("TaskKill /F /T /IM StudentMain.exe");
-                printf("\n尝试结束进程 GATESRV.exe ...\n\n");
-                system("TaskKill /F /T /IM GATESRV.exe");
-                printf("\n尝试结束进程 MasterHelper.exe ...\n\n");
-                system("TaskKill /F /T /IM MasterHelper.exe");
-                printf("\n休眠中...\n");
-                sleep(Data.SleepTimes);
-            }
-            break;
-        }case '2':{
-            for(;;){
-                system("cls");
-                printf("尝试结束进程 PortControl64.exe ...\n\n");
-                system("TaskKill /F /T /IM PortControl64.exe");
-                printf("\n尝试结束进程 DesktopCheck.exe ...\n\n");
-                system("TaskKill /F /T /IM DesktopCheck.exe");
-                printf("\n尝试结束进程 DeploymentAgent.exe ...\n\n");
-                system("TaskKill /F /T /IM DeploymentAgent.exe");
-                printf("\n尝试结束进程 XYNTService.exe ...\n\n");
-                system("TaskKill /F /T /IM XYNTService.exe");
-                printf("\n尝试结束进程 ProcHelper64.exe ...\n\n");
-                system("TaskKill /F /T /IM ProcHelper64.exe");
-                printf("\n尝试结束进程 StudentMain.exe ...\n\n");
-                system("TaskKill /F /T /IM StudentMain.exe");
-                printf("\n尝试结束进程 GATESRV.exe ...\n\n");
-                system("TaskKill /F /T /IM GATESRV.exe");
-                printf("\n尝试结束进程 MasterHelper.exe ...\n\n");
-                system("TaskKill /F /T /IM MasterHelper.exe");
-                printf("\n休眠中...\n");
-                sleep(Data.SleepTimes);
-            }
-            break;
-        }
+    system("Copy /B /-Y /V \"ntsd.exe\" \"C:\\Windows\\System32\\\"");
+    system("cd \"C:\\Windows\\System32\\\"");
+    for(;;){
+        system("cls");
+        printf("尝试禁用服务 tvnserver ...\n\n");
+        system("SC Config tvnserver start= Disabled");
+        printf("\n尝试禁用服务 TDNetFilter ...\n\n");
+        system("SC Config TDNetFilter start= Disabled");
+        printf("\n尝试禁用服务 TDFileFilter ...\n\n");
+        system("SC Config TDFileFilter start= Disabled");
+        printf("\n尝试停止服务 tvnserver ...\n\n");
+        system("Net Stop tvnserver");
+        printf("\n尝试停止服务 TDNetFilter ...\n\n");
+        system("Net Stop TDNetFilter");
+        printf("\n尝试停止服务 TDFileFilter ...\n\n");
+        system("Net Stop TDFileFilter");
+        printf("\n尝试结束进程 PortControl64.exe ...\n\n");
+        system("ntsd -c q -pn PortControl64.exe");
+        printf("\n尝试结束进程 DesktopCheck.exe ...\n\n");
+        system("ntsd -c q -pn DesktopCheck.exe");
+        printf("\n尝试结束进程 DeploymentAgent.exe ...\n\n");
+        system("ntsd -c q -pn DeploymentAgent.exe");
+        printf("\n尝试结束进程 XYNTService.exe ...\n\n");
+        system("ntsd -c q -pn XYNTService.exe");
+        printf("\n尝试结束进程 ProcHelper64.exe ...\n\n");
+        system("ntsd -c q -pn ProcHelper64.exe");
+        printf("\n尝试结束进程 StudentMain.exe ...\n\n");
+        system("ntsd -c q -pn StudentMain.exe");
+        printf("\n尝试结束进程 GATESRV.exe ...\n\n");
+        system("ntsd -c q -pn GATESRV.exe");
+        printf("\n尝试结束进程 MasterHelper.exe ...\n\n");
+        system("ntsd -c q -pn MasterHelper.exe");
+        printf("\n休眠中...\n");
+        sleep(Data.SleepTimes);
     }
 }
 void RecoveringMode(){
-    if(!Data.StartupMode){
-        system("cls");
-        printf("当前为 \"受限模式\", 此功能已被禁用...\n\n");
-        printf("########################################\n\n");
-        printf("按任意键返回上一级!\n\n");
-        system("pause");
-        system("cls");
-        Start();
-    }
     Data.Code[0]=0,Data.Code[1]=0;
-    Data.Back[0]=0,Data.Back[1]=0;
     printf("[恢复模式]\n\n");
     printf("说明: 本功能用于恢复破解时的部分操作, 部分情况下可能无法产生效果, 执行完毕后请手动开启控制软件.\n\n");
     printf("请确认 (Y: 继续, N: 返回上一级): ");
-    scanf("%s",&Data.Back[0]);
-    while((Data.Back[0]!='Y'&&Data.Back[0]!='N')||Data.Back[1]!=0){
+    scanf("%s",&Data.Code[0]);
+    while((Data.Code[0]!='Y'&&Data.Code[0]!='N')||Data.Code[1]!=0){
         printf("输入有误, 请重新输入: ");
-        scanf("%s",&Data.Back[0]);
+        scanf("%s",&Data.Code[0]);
     }
-    switch(Data.Back[0]){
+    switch(Data.Code[0]){
         case 'Y':{
             break;
         }case 'N':{
@@ -180,7 +101,7 @@ void RecoveringMode(){
             break;
         }
     }
-    Data.Back[0]=0,Data.Back[1]=0;
+    Data.Code[0]=0,Data.Code[1]=0;
     system("cls");
     printf("尝试启用服务 tvnserver ...\n\n");
     system("sc config tvnserver start= Auto");
@@ -189,11 +110,11 @@ void RecoveringMode(){
     printf("\n尝试启用服务 TDFileFilter ...\n\n");
     system("sc config TDFileFilter start= Auto");
     printf("\n尝试启动服务 tvnserver ...\n\n");
-    system("net start tvnserver");
+    system("Net start tvnserver");
     printf("\n尝试启动服务 TDNetFilter ...\n\n");
-    system("net start TDNetFilter");
+    system("Net start TDNetFilter");
     printf("\n尝试启动服务 TDFileFilter ...\n\n");
-    system("net start TDFileFilter");
+    system("Net start TDFileFilter");
     printf("\n########################################\n");
     printf("    联想云教室: PortControl64.exe , DesktopCheck.exe , DeploymentAgent.exe , XYNTService.exe\n");
     printf("  极域电子教室: StudentMain.exe , GATESRV.exe , MasterHelper.exe , ProcHelper64.exe\n\n");
@@ -205,15 +126,6 @@ void RecoveringMode(){
     Start();
 }
 void ToolBox(){
-    if(!Data.StartupMode){
-        system("cls");
-        printf("当前为 \"受限模式\", 此功能已被禁用...\n\n");
-        printf("########################################\n\n");
-        printf("按任意键返回上一级!\n\n");
-        system("pause");
-        system("cls");
-        Start();
-    }
     Data.Code[0]=0,Data.Code[1]=0;
     printf("[工具箱]\n");
     printf("   [0] 返回上一级\n");
@@ -333,6 +245,7 @@ int Start(){
     system("cls");
     switch(Data.Code[0]){
         case 'x':{
+            system("Del /Q \"C:\\Windows\\System32\\ntsd.exe\"");
             exit(0);
         }case '0':{
             About();
@@ -351,18 +264,17 @@ int Start(){
     return 0;
 }
 int main(){
-    Data.StartupMode=IsUserAnAdmin();//StartupMode: 0 - "受限模式"   1 - "完整模式"
+    system("title 机房控制软件克星");
+    system("cd .");
     system("set path=%path%;C:\\Windows\\System32\\");
     system("color b");
-    if(!Data.StartupMode){
-        system("title 机房控制软件克星 (受限模式)");
-        printf("[提示] 当前权限为 User, 建议 Administrator 权限运行本程序...\n");
+    BOOL RunAsAdmin{IsUserAnAdmin()};//StartupMode: 0 - "受限模式"   1 - "完整模式"
+    if(!RunAsAdmin){
+        printf("[提示] 当前权限为 User, 请以 Administrator 权限运行...\n");
         printf("\n########################################\n\n");
-        printf("按任意键进入 \"受限模式\"...\n\n");
+        printf("按任意键退出程序!...\n\n");
         system("pause");
-        system("cls");
-    }else{
-        system("title 机房控制软件克星");
+        exit(0);
     }
     Start();
 }
