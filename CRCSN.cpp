@@ -41,15 +41,13 @@ void CrackingMode(){
             system("cls");
             main();
             break;
-        }case '2':{
-            printf("请输入 \"休眠\" 时间 (在每次执行操作后暂停执行一段时间, 单位 秒, 数值 0.0  ~ 15.0): ");
-            scanf("%lf",&Data.SleepTimes);
-            while(Data.SleepTimes>15.0||Data.SleepTimes<0.0){
-                printf("输入错误, 请重新输入: ");
-                scanf("%lf",&Data.SleepTimes);
-            }
-            break;
         }
+    }
+    printf("请输入 \"休眠\" 时间 (在每次执行操作后暂停执行一段时间, 单位 秒, 数值 0.0  ~ 15.0): ");
+    scanf("%lf",&Data.SleepTimes);
+    while(Data.SleepTimes>15.0||Data.SleepTimes<0.0){
+        printf("输入错误, 请重新输入: ");
+        scanf("%lf",&Data.SleepTimes);
     }
     system("cls");
     printf("配置:\n          方案: ");
