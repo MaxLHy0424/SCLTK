@@ -2,16 +2,23 @@
 #include<unistd.h>
 #include<ShlObj.h>
 struct ProgramRuntimeData{
-    BOOL StartupMode;
-    char Code[2],Back[2];
+    char Code[3];
     double SleepTimes;
 }Data;
-int main();
+int Start();
+bool PermissionDetecting(){
+    BOOL RunAsAdministrator{IsUserAnAdmin()};
+    if(!RunAsAdministrator){
+        return FALSE;
+    }else{
+        return TRUE;
+    }
+}
 void About(){
     Data.Code[0]=0,Data.Code[1]=0;
     printf("[关于]\n");
     printf("   名称: 机房控制软件克星 (英文名 Computer Room Control Software Nemesis, 简称 CRCSN)\n");
-    printf("   版本: v3.0_Dev3\n");
+    printf("   版本: v3.0_Dev4\n");
     printf("   项目仓库: https://github.com/MaxLHy0424/Computer-Room-Control-Software-Nemesis\n");
     printf("   作者: MaxLHy0424\n");
     printf("   作者 B 站账号 UID: 1678066522\n");
@@ -21,15 +28,23 @@ void About(){
     printf("按任意键返回上一级!\n\n");
     system("pause");
     system("cls");
-    main();
+    Start();
 }
-void CrackingMode(){
-    Data.Code[0]=0,Data.Code[1]=0;
+void CrackingTool(){
+    if(PermissionDetecting()==FALSE){
+        printf("[提示] 当前处于\"受限模式\", 此页面已被禁用...\n");
+        printf("\n########################################\n\n");
+        printf("按任意键返回上一级!\n\n");
+        system("pause");
+        system("cls");
+        Start();
+    }
+    Data.Code[0]=0,Data.Code[1]=0,Data.Code[2]=0;
     Data.SleepTimes=0;
-    printf("[破解模式]\n");
+    printf("[破解工具]\n");
     printf("   [0] 返回上一级\n");
-    printf("   [1] 主方案\n");
-    printf("   [2] 备用方案\n");
+    printf("   [1] 单次模式\n");
+    printf("   [2] 循环模式\n");
     printf("请输入: ");
     scanf("%s",&Data.Code[0]);
     while(Data.Code[0]!='0'&&Data.Code[0]!='1'&&Data.Code[0]!='2'){
@@ -39,24 +54,25 @@ void CrackingMode(){
     switch(Data.Code[0]){
         case '0':{
             system("cls");
-            main();
-            break;
-        }
-    }
-    printf("请输入 \"休眠\" 时间 (在每次执行操作后暂停执行一段时间, 单位 秒, 数值 0.0  ~ 15.0): ");
-    scanf("%lf",&Data.SleepTimes);
-    while(Data.SleepTimes>15.0||Data.SleepTimes<0.0){
-        printf("输入错误, 请重新输入: ");
-        scanf("%lf",&Data.SleepTimes);
-    }
-    system("cls");
-    printf("配置:\n          方案: ");
-    switch(Data.Code[0]){
-        case '1':{
-            printf("主方案.\n");
+            Start();
             break;
         }case '2':{
-            printf("备用方案.\n");
+            printf("请输入 \"休眠\" 时间 (在每次执行操作后暂停执行一段时间, 单位 秒, 数值 0.0  ~ 10.0): ");
+            scanf("%lf",&Data.SleepTimes);
+            while(Data.SleepTimes>10.0||Data.SleepTimes<0.0){
+                printf("输入错误, 请重新输入: ");
+                scanf("%lf",&Data.SleepTimes);
+            }
+        }
+    }
+    system("cls");
+    printf("配置:\n          模式: ");
+    switch(Data.Code[0]){
+        case '1':{
+            printf("单次模式.\n");
+            break;
+        }case '2':{
+            printf("循环模式.\n");
             break;
         }
     }
@@ -67,244 +83,203 @@ void CrackingMode(){
         printf("已启用, %lg 秒.\n\n",Data.SleepTimes);
     }
     printf("请确认 (Y: 继续, N: 返回上一级): ");
-    scanf("%s",&Data.Back[0]);
-    while((Data.Back[0]!='Y'&&Data.Back[0]!='N')||Data.Back[1]!=0){
+    scanf("%s",&Data.Code[1]);
+    while((Data.Code[1]!='Y'&&Data.Code[1]!='N')||Data.Code[2]!=0){
         printf("输入有误, 请重新输入: ");
-        scanf("%s",&Data.Back[0]);
+        scanf("%s",&Data.Code[1]);
     }
-    switch(Data.Back[0]){
+    switch(Data.Code[1]){
         case 'Y':{
             break;
         }case 'N':{
             system("cls");
-            CrackingMode();
+            CrackingTool();
             break;
         }
     }
+    Data.Code[1]=0;
     system("cls");
+    for(;;){
+        system("SC Config tvnserver Start= Disabled");
+        system("SC Config TDNetFilter Start= Disabled");
+        system("SC Config TDFileFilter Start= Disabled");
+        system("SC Config STUDSRV Start= Disabled");
+        system("SC Config BSAgentSvr Start= Disabled");
+        system("SC Config WFBSMlogon Start= Disabled");
+        system("Net Stop tvnserver");
+        system("Net Stop TDNetFilter");
+        system("Net Stop TDFileFilter");
+        system("Net Stop STUDSRV");
+        system("Net Stop BSAgentSvr");
+        system("Net Stop WFBSMlogon");
+        system("TaskKill /F /T /IM uninstallCnt.exe");
+        system("TaskKill /F /T /IM Install64.exe");
+        system("TaskKill /F /T /IM Install32.exe");
+        system("TaskKill /F /T /IM vncviewer.exe");
+        system("TaskKill /F /T /IM tvnserver32.exe");
+        system("TaskKill /F /T /IM WfbsPnpInstall.exe");
+        system("TaskKill /F /T /IM WFBSMon.exe");
+        system("TaskKill /F /T /IM WFBSMlogon.exe");
+        system("TaskKill /F /T /IM WFBSSvrLogShow.exe");
+        system("TaskKill /F /T /IM ResetIp.exe");
+        system("TaskKill /F /T /IM FuncForWIN64.exe");
+        system("TaskKill /F /T /IM CertMgr.exe");
+        system("TaskKill /F /T /IM Fireware.exe");
+        system("TaskKill /F /T /IM BCDBootCopy.exe");
+        system("TaskKill /F /T /IM refreship.exe");
+        system("TaskKill /F /T /IM LenovoLockScreen.exe");
+        system("TaskKill /F /T /IM PortControl64.exe");
+        system("TaskKill /F /T /IM DesktopCheck.exe");
+        system("TaskKill /F /T /IM DeploymentManager.exe");
+        system("TaskKill /F /T /IM DeploymentAgent.exe");
+        system("TaskKill /F /T /IM XYNTService.exe");
+        system("TaskKill /F /T /IM ProcHelper64.exe");
+        system("TaskKill /F /T /IM StudentMain.exe");
+        system("TaskKill /F /T /IM DispcapHelper.exe");
+        system("TaskKill /F /T /IM SpecialSet.exe");
+        system("TaskKill /F /T /IM VRCwPlayer.exe");
+        system("TaskKill /F /T /IM InstHelpApp.exe");
+        system("TaskKill /F /T /IM TDOvrSet.exe");
+        system("TaskKill /F /T /IM GATESRV.exe");
+        system("TaskKill /F /T /IM MasterHelper.exe");
+        system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\uninstallCnt.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
+        system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\Install64.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
+        system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\Install32.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
+        system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\vncviewer.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
+        system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\tvnserver32.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
+        system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\WfbsPnpInstall.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
+        system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\WFBSMon.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
+        system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\WFBSMlogon.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
+        system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\WFBSSvrLogShow.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
+        system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\ResetIp.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
+        system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\FuncForWIN64.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
+        system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\CertMgr.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
+        system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\Fireware.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
+        system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\BCDBootCopy.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
+        system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\refreship.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
+        system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\LenovoLockScreen.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
+        system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\PortControl64.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
+        system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DesktopCheck.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
+        system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DeploymentManager.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
+        system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DeploymentAgent.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
+        system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\XYNTService.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
+        system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\ProcHelper64.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
+        system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\StudentMain.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
+        system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DispcapHelper.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
+        system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\SpecialSet.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
+        system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\VRCwPlayer.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
+        system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\InstHelpApp.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
+        system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\TDOvrSet.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
+        system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\GATESRV.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
+        system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\MasterHelper.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
+        if(Data.Code[0]=='1'){
+            break;
+        }
+        printf("\n休眠中...\n");
+        sleep(Data.SleepTimes);
+    }
     switch(Data.Code[0]){
         case '1':{
-            for(;;){
-                printf("尝试禁用服务 tvnserver ...\n\n");
-                system("SC Config tvnserver Start= Disabled");
-                printf("\n尝试禁用服务 TDNetFilter ...\n\n");
-                system("SC Config TDNetFilter Start= Disabled");
-                printf("\n尝试禁用服务 TDFileFilter ...\n\n");
-                system("SC Config TDFileFilter Start= Disabled");
-                printf("\n尝试停止服务 tvnserver ...\n\n");
-                system("Net Stop tvnserver");
-                printf("\n尝试停止服务 TDNetFilter ...\n\n");
-                system("Net Stop TDNetFilter");
-                printf("\n尝试停止服务 TDFileFilter ...\n\n");
-                system("Net Stop TDFileFilter");
-                printf("\n尝试结束进程 PortControl64.exe ...\n\n");
-                system("TaskKill /F /T /IM PortControl64.exe");
-                printf("\n尝试结束进程 DesktopCheck.exe ...\n\n");
-                system("TaskKill /F /T /IM DesktopCheck.exe");
-                printf("\n尝试结束进程 DeploymentAgent.exe ...\n\n");
-                system("TaskKill /F /T /IM DeploymentAgent.exe");
-                printf("\n尝试结束进程 XYNTService.exe ...\n\n");
-                system("TaskKill /F /T /IM XYNTService.exe");
-                printf("\n尝试结束进程 ProcHelper64.exe ...\n\n");
-                system("TaskKill /F /T /IM ProcHelper64.exe");
-                printf("\n尝试结束进程 StudentMain.exe ...\n\n");
-                system("TaskKill /F /T /IM StudentMain.exe");
-                printf("\n尝试结束进程 GATESRV.exe ...\n\n");
-                system("TaskKill /F /T /IM GATESRV.exe");
-                printf("\n尝试结束进程 MasterHelper.exe ...\n\n");
-                system("TaskKill /F /T /IM MasterHelper.exe");
-                printf("\n休眠中...\n");
-                sleep(Data.SleepTimes);
-            }
-            break;
-        }case '2':{
-            for(;;){
-                printf("尝试禁用服务 tvnserver ...\n\n");
-                system("SC Config tvnserver Start= Disabled");
-                printf("\n尝试禁用服务 TDNetFilter ...\n\n");
-                system("SC Config TDNetFilter Start= Disabled");
-                printf("\n尝试禁用服务 TDFileFilter ...\n\n");
-                system("SC Config TDFileFilter Start= Disabled");
-                printf("\n尝试停止服务 tvnserver ...\n\n");
-                system("Net Stop tvnserver");
-                printf("\n尝试停止服务 TDNetFilter ...\n\n");
-                system("Net Stop TDNetFilter");
-                printf("\n尝试停止服务 TDFileFilter ...\n\n");
-                system("Net Stop TDFileFilter");
-                printf("\n尝试结束进程 PortControl64.exe ...\n\n");
-                system("TsKill PortControl64.exe /A /V");
-                printf("\n尝试结束进程 DesktopCheck.exe ...\n\n");
-                system("TsKill DesktopCheck.exe /A /V");
-                printf("\n尝试结束进程 DeploymentAgent.exe ...\n\n");
-                system("TsKill DeploymentAgent.exe /A /V");
-                printf("\n尝试结束进程 XYNTService.exe ...\n\n");
-                system("TsKill XYNTService.exe /A /V");
-                printf("\n尝试结束进程 ProcHelper64.exe ...\n\n");
-                system("TsKill ProcHelper64.exe /A /V");
-                printf("\n尝试结束进程 StudentMain.exe ...\n\n");
-                system("TsKill StudentMain.exe /A /V");
-                printf("\n尝试结束进程 GATESRV.exe ...\n\n");
-                system("TsKill GATESRV.exe /A /V");
-                printf("\n尝试结束进程 MasterHelper.exe ...\n\n");
-                system("TsKill MasterHelper.exe /A /V");
-                printf("\n休眠中...\n");
-                sleep(Data.SleepTimes);
-            }
+            printf("\n########################################\n");
+            printf("按任意键返回 [主界面]!\n\n");
+            system("pause");
+            system("cls");
+            Start();
             break;
         }
     }
 }
 void RecoveringMode(){
-    printf("[恢复模式]\n\n");
+    if(PermissionDetecting()==FALSE){
+        printf("[提示] 当前处于\"受限模式\", 此页面已被禁用...\n");
+        printf("\n########################################\n\n");
+        printf("按任意键返回上一级!\n\n");
+        system("pause");
+        system("cls");
+        Start();
+    }
+    printf("[恢复工具]\n\n");
     printf("说明: 本功能用于恢复破解时的部分操作, 部分情况下可能无法产生效果, 执行完毕后请手动开启控制软件.\n\n");
     printf("请确认 (Y: 继续, N: 返回上一级): ");
-    scanf("%s",&Data.Back[0]);
-    while((Data.Back[0]!='Y'&&Data.Back[0]!='N')||Data.Back[1]!=0){
+    scanf("%s",&Data.Code[1]);
+    while((Data.Code[1]!='Y'&&Data.Code[1]!='N')||Data.Code[2]!=0){
         printf("输入有误, 请重新输入: ");
-        scanf("%s",&Data.Back[0]);
+        scanf("%s",&Data.Code[1]);
     }
-    switch(Data.Back[0]){
+    switch(Data.Code[1]){
         case 'Y':{
             break;
         }case 'N':{
             system("cls");
-            main();
+            Start();
             break;
         }
     }
-    Data.Back[0]=0,Data.Back[1]=0;
+    Data.Code[1]=0,Data.Code[1]=0,Data.Code[2]=0;
     system("cls");
-    printf("尝试启用服务 tvnserver ...\n\n");
+    system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\uninstallCnt.exe\" /F");
+    system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\Install64.exe\" /F");
+    system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\Install32.exe\" /F");
+    system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\vncviewer.exe\" /F");
+    system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\tvnserver32.exe\" /F");
+    system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\WfbsPnpInstall.exe\" /F");
+    system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\WFBSMon.exe\" /F");
+    system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\WFBSMlogon.exe\" /F");
+    system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\WFBSSvrLogShow.exe\" /F");
+    system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\ResetIp.exe\" /F");
+    system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\FuncForWIN64.exe\" /F");
+    system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\CertMgr.exe\" /F");
+    system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\Fireware.exe\" /F");
+    system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\BCDBootCopy.exe\" /F");
+    system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\refreship.exe\" /F");
+    system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\LenovoLockScreen.exe\" /F");
+    system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\PortControl64.exe\" /F");
+    system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DesktopCheck.exe\" /F");
+    system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DeploymentManager.exe\" /F");
+    system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DeploymentAgent.exe\" /F");
+    system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\XYNTService.exe\" /F");
+    system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\ProcHelper64.exe\" /F");
+    system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\StudentMain.exe\" /F");
+    system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DispcapHelper.exe\" /F");
+    system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\SpecialSet.exe\" /F");
+    system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\VRCwPlayer.exe\" /F");
+    system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\InstHelpApp.exe\" /F");
+    system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\TDOvrSet.exe\" /F");
+    system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\GATESRV.exe\" /F");
+    system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\MasterHelper.exe\" /F");
     system("SC Config tvnserver Start= Auto");
-    printf("\n尝试启用服务 TDNetFilter ...\n\n");
+    system("SC Config BSAgentSvr Start= Auto");
+    system("SC Config WFBSMlogon Start= Auto");
     system("SC Config TDNetFilter Start= Auto");
-    printf("\n尝试启用服务 TDFileFilter ...\n\n");
     system("SC Config TDFileFilter Start= Auto");
-    printf("\n尝试启动服务 tvnserver ...\n\n");
+    system("SC Config STUDSRV Start= Auto");
     system("Net Start tvnserver");
-    printf("\n尝试启动服务 TDNetFilter ...\n\n");
+    system("Net Start BSAgentSvr");
+    system("Net Start WFBSMlogon");
     system("Net Start TDNetFilter");
-    printf("\n尝试启动服务 TDFileFilter ...\n\n");
     system("Net Start TDFileFilter");
+    system("Net Start STUDSRV");
     printf("\n########################################\n");
-    printf("    联想云教室: PortControl64.exe , DesktopCheck.exe , DeploymentAgent.exe , XYNTService.exe\n");
-    printf("  极域电子教室: StudentMain.exe , GATESRV.exe , MasterHelper.exe , ProcHelper64.exe\n\n");
+    printf("    联想云教室: vncviewer.exe, tvnserver32.exe, WFDeskShow.exe, WfbsPnpInstall.exe, WFBSMon.exe, WFBSMlogon.exe, refreship.exe, LenovoLockScreen.exe, DeploymentManager.exe, WFBSSvrLogShow.exe, ResetIp.exe, FuncForWIN64.exe, CertMgr.exe, Fireware.exe, BCDBootCopy.exe, PortControl64.exe, DesktopCheck.exe, DeploymentAgent.exe, XYNTService.exe\n");
+    printf("  极域电子教室: StudentMain.exe, GATESRV.exe, MasterHelper.exe, ProcHelper64.exe, DispcapHelper.exe, VRCwPlayer.exe\n\n");
     printf("请手动开启以上程序!\n");
     printf("########################################\n\n");
     printf("按任意键返回上一级!\n\n");
     system("pause");
     system("cls");
-    main();
+    Start();
 }
-void ToolBox(){
-    Data.Code[0]=0,Data.Code[1]=0;
-    Data.Back[0]=0,Data.Back[1]=0;
-    printf("[工具箱]\n");
-    printf("   [0] 返回上一级\n");
-    printf("   [1] 劫持工具\n");
-    printf("   [2] 卸载工具 (正在开发, 不可使用)\n");
-    printf("   [3] 查询 \"极域电子教室\" 万能密码\n");
-    printf("请输入: ");
-    scanf("%s",&Data.Code[0]);
-    while((Data.Code[0]!='0'&&Data.Code[0]!='1'&&Data.Code[0]!='2'&&Data.Code[0]!='3')||Data.Code[1]!=0){
-        printf("输入有误, 请重新输入: ");
-        scanf("%s",&Data.Code[0]);
-    }
-    system("cls");
-    switch(Data.Code[0]){
-        case '0':{
-            main();
-            break;
-        }case '1':{
-            printf("[工具箱 > 劫持工具]\n");
-            printf("\"劫持工具\" 支持劫持 \"极域电子教室\" 和 \"联想云教室\".\n");
-            printf("   [0] 返回上一级\n");
-            printf("   [1] 应用劫持\n");
-            printf("   [2] 撤销劫持\n");
-            printf("请输入: ");
-            scanf("%s",Data.Code);
-            while((Data.Code[0]!='0'&&Data.Code[0]!='1'&&Data.Code[0]!='2')||Data.Code[1]!=0){
-                printf("输入有误, 请重新输入: ");
-                scanf("%s",Data.Code);
-            }
-            system("cls");
-            switch(Data.Code[0]){
-                case '0':{
-                    ToolBox();
-                    break;
-                }case '1':{
-                    printf("[工具箱 > 劫持工具 > 应用劫持]\n\n");
-                    system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\PortControl64.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
-                    system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DesktopCheck.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
-                    system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DeploymentAgent.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
-                    system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\XYNTService.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
-                    system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\ProcHelper64.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
-                    system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\StudentMain.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
-                    system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\GATESRV.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
-                    system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\MasterHelper.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
-                    printf("\n\n已成功劫持!\n\n");
-                    printf("########################################\n\n");
-                    printf("按任意键返回 [工具箱]!\n\n");
-                    system("pause");
-                    system("cls");
-                    ToolBox();
-                    break;
-                }case '2':{
-                    printf("[工具箱 > 劫持工具 > 撤销劫持]\n\n");
-                    system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\PortControl64.exe\" /F");
-                    system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DesktopCheck.exe\" /F");
-                    system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DeploymentAgent.exe\" /F");
-                    system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\XYNTService.exe\" /F");
-                    system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\ProcHelper64.exe\" /F");
-                    system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\StudentMain.exe\" /F");
-                    system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\GATESRV.exe\" /F");
-                    system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\MasterHelper.exe\" /F");
-                    printf("\n\n已撤销劫持!\n\n");
-                    printf("########################################\n\n");
-                    printf("按任意键返回 [工具箱]!\n\n");
-                    system("pause");
-                    system("cls");
-                    ToolBox();
-                    break;
-                }
-            }
-        }case '3':{
-            printf("[工具箱 > 查询 \"极域电子教室\" 万能密码\n\n");
-            printf("\"极域电子教室\" 万能密码:\n");
-            printf("mythware_super_password\n");
-            printf("########################################\n\n");
-            printf("按任意键返回上一级!\n\n");
-            system("pause");
-            system("cls");
-            ToolBox();
-            break;
-        }
-    }
-}
-int main(){
-    Data.StartupMode=IsUserAnAdmin();//StartupMode: 0 - "受限模式"   1 - "完整模式"
-    system("set path=%path%;C:\\Windows\\System32\\");
-    system("title 机房控制软件克星");
-    system("color b");
-    if(!Data.StartupMode){
-        printf("[提示] 当前权限为 User, 请以 Administrator 权限运行本程序...\n");
-        printf("\n########################################\n\n");
-        printf("按任意键退出程序\n\n");
-        system("pause");
-        exit(0);
-    }
+int Start(){
     Data.Code[0]=0,Data.Code[1]=0;
     Data.SleepTimes=0;
-    Data.Back[0]=0,Data.Back[1]=0;
     printf("欢迎使用 机房控制软件克星!\n");
     printf("   [x] 退出程序\n");
     printf("   [0] 关于\n");
-    printf("   [1] 破解模式\n");
-    printf("   [2] 恢复模式\n");
-    printf("   [3] 工具箱\n");
+    printf("   [1] 破解工具\n");
+    printf("   [2] 恢复工具\n");
     printf("请输入: ");
     scanf("%s",&Data.Code[0]);
-    while((Data.Code[0]!='x'&&Data.Code[0]!='0'&&Data.Code[0]!='1'&&Data.Code[0]!='2'&&Data.Code[0]!='3')||Data.Code[1]!=0){
+    while((Data.Code[0]!='x'&&Data.Code[0]!='0'&&Data.Code[0]!='1'&&Data.Code[0]!='2')||Data.Code[1]!=0){
         printf("输入有误, 请重新输入: ");
         scanf("%s",&Data.Code[0]);
     }
@@ -316,15 +291,26 @@ int main(){
             About();
             break;
         }case '1':{
-            CrackingMode();
+            CrackingTool();
             break;
         }case '2':{
             RecoveringMode();
             break;
-        }case '3':{
-            ToolBox();
-            break;
         }
     }
+    return 0;
+}
+int main(){
+    system("set path=%path%;C:\\Windows\\System32\\");
+    system("title 机房控制软件克星");
+    system("color b");
+    if(PermissionDetecting()==FALSE){
+        printf("[提示] 建议以 Administrator 权限运行本程序...\n");
+        printf("\n########################################\n\n");
+        printf("按任意键进入 \"受限模式\"!\n\n");
+        system("pause");
+        system("cls");
+    }
+    Start();
     return 0;
 }
