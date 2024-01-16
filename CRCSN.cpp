@@ -15,7 +15,7 @@ bool PermissionDetecting(){
     }
 }
 void About(){
-    Data.Code[0]=0,Data.Code[1]=0;
+    Data.Code[0]=0,Data.Code[1]=0,Data.Code[2]=0;
     printf("[关于]\n");
     printf("   名称: 机房控制软件克星 (英文名 Computer Room Control Software Nemesis, 简称 CRCSN)\n");
     printf("   版本: v3.0_Dev5\n");
@@ -282,7 +282,7 @@ void RecoveringMode(){
     Start();
 }
 int Start(){
-    Data.Code[0]=0,Data.Code[1]=0;
+    Data.Code[0]=0,Data.Code[1]=0,Data.Code[2]=0;
     Data.SleepTimes=0;
     printf("欢迎使用 机房控制软件克星!\n");
     printf("   [x] 退出程序\n");
