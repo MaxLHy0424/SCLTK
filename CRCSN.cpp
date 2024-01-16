@@ -18,7 +18,7 @@ void About(){
     Data.Code[0]=0,Data.Code[1]=0;
     printf("[关于]\n");
     printf("   名称: 机房控制软件克星 (英文名 Computer Room Control Software Nemesis, 简称 CRCSN)\n");
-    printf("   版本: v3.0_Dev4\n");
+    printf("   版本: v3.0_Dev5\n");
     printf("   项目仓库: https://github.com/MaxLHy0424/Computer-Room-Control-Software-Nemesis\n");
     printf("   作者: MaxLHy0424\n");
     printf("   作者 B 站账号 UID: 1678066522\n");
@@ -98,14 +98,20 @@ void CrackingTool(){
         }
     }
     Data.Code[1]=0;
-    system("cls");
     for(;;){
+        system("cls");
+        system("SC Config netprofm Start= Disabled");
+        system("SC Config NlaSvc Start= Disabled");
+        system("SC Config EventLog Start= Disabled");
         system("SC Config tvnserver Start= Disabled");
         system("SC Config TDNetFilter Start= Disabled");
         system("SC Config TDFileFilter Start= Disabled");
         system("SC Config STUDSRV Start= Disabled");
         system("SC Config BSAgentSvr Start= Disabled");
         system("SC Config WFBSMlogon Start= Disabled");
+        system("Net Stop netprofm");
+        system("Net Stop NlaSvc");
+        system("Net Stop EventLog");
         system("Net Stop tvnserver");
         system("Net Stop TDNetFilter");
         system("Net Stop TDFileFilter");
@@ -247,12 +253,18 @@ void RecoveringMode(){
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\TDOvrSet.exe\" /F");
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\GATESRV.exe\" /F");
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\MasterHelper.exe\" /F");
+    system("SC Config netprofm Start= Auto");
+    system("SC Config NlaSvc Start= Auto");
+    system("SC Config EventLog Start= Auto");
     system("SC Config tvnserver Start= Auto");
     system("SC Config BSAgentSvr Start= Auto");
     system("SC Config WFBSMlogon Start= Auto");
     system("SC Config TDNetFilter Start= Auto");
     system("SC Config TDFileFilter Start= Auto");
     system("SC Config STUDSRV Start= Auto");
+    system("Net Start netprofm");
+    system("Net Start NlaSvc");
+    system("Net Start EventLog");
     system("Net Start tvnserver");
     system("Net Start BSAgentSvr");
     system("Net Start WFBSMlogon");
