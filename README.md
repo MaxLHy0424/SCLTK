@@ -16,13 +16,13 @@ Computer Room Control Software Nemesis (中文名 机房控制软件克星 , 简
 
 ## 破解
 
-以管理员权限运行程序, 依次输入 ``1 1 Y``, 开始破解.
+以管理员权限运行程序, 依次输入 `1 1 Y`, 开始破解.
 
 然后等个几十秒关闭程序即可.
 
 ## 恢复
 
-以管理员权限运行软件, 依次输入 ``2 Y``, 开始恢复.
+以管理员权限运行软件, 依次输入 `2 Y`, 开始恢复.
 
 接着根据提示, 手动打开两个控制软件的安装目录, 分别找到每个程序, 以管理员权限运每个程序.
 
@@ -42,7 +42,7 @@ Computer Room Control Software Nemesis (中文名 机房控制软件克星 , 简
 
 Q1: 运行程序时控制台界面总是输出 "命令提示符已被管理员禁用" 之类的提示, 无法正常使用, 如何解决?
 
-A1: 这说明 CMD 已被禁用. 可以试试打开注册表编辑器, 定位到 ``HKEY_CURRENT_USER\Software\Policies\Microsoft\Windows\System`` 下, 看看有没有一个叫 ``DisableCMD`` 的 DWORD 值, 有的话就删掉. 再次打开软件看看是否能成功. (如果还是打不开, 那我也不知道了 awa)
+A1: 这说明 CMD 已被禁用. 可以试试打开注册表编辑器, 定位到 `HKEY_CURRENT_USER\Software\Policies\Microsoft\Windows\System` 下, 看看有没有一个叫 `DisableCMD` 的 DWORD 值, 有的话就删掉. 再次打开软件看看是否能成功. (如果还是打不开, 那我也不知道了 awa)
 
 Q2: 程序无法在 32 位 Windows 系统中打开, 如何解决?
 
@@ -50,7 +50,7 @@ A2: 程序发布版本暂无 32 位版本. 可以先下载程序源代码, 使�
 
 Q3: 破解后一些软件打开提示 "找不到文件" 之类的错误, 并且打开的程序本身并没有损坏, 是什么情况?
 
-A3: CRCSN v3.0 添加了通过注册表劫持控制软件, 间接达到禁止启动控制软件的效果, 但弊端是和控制软件的文件名一样的程序文件也无法打开了. 在不影响软件正常运行的情况下, 可以试试给程序文件修改一个名称, 再打开试试. 实在不行就打开注册表编辑器, 定位到 ``HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\`` 下, 找到和要运行的程序的文件名称相同的项, 删除项即可.
+A3: CRCSN v3.0 添加了通过注册表劫持控制软件, 间接达到禁止启动控制软件的效果, 但弊端是和控制软件的文件名一样的程序文件也无法打开了. 在不影响软件正常运行的情况下, 可以试试给程序文件修改一个名称, 再打开试试. 实在不行就打开注册表编辑器, 定位到 `HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\` 下, 找到和要运行的程序的文件名称相同的项, 删除项即可.
 
 # 公告
 
