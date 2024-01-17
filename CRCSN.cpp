@@ -18,7 +18,7 @@ void About(){
     Data.Code[0]=0,Data.Code[1]=0,Data.Code[2]=0;
     printf("[关于]\n");
     printf("   名称: 机房控制软件克星 (英文名 Computer Room Control Software Nemesis, 简称 CRCSN)\n");
-    printf("   版本: v3.0_Dev5\n");
+    printf("   版本: v3.0_Dev6\n");
     printf("   项目仓库: https://github.com/MaxLHy0424/Computer-Room-Control-Software-Nemesis\n");
     printf("   作者: MaxLHy0424\n");
     printf("   作者 B 站账号 UID: 1678066522\n");
