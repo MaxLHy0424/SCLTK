@@ -82,6 +82,8 @@ void CrackingTool(){
             break;
         }case 'N':{
             system("cls");
+            delete SleepTimes;
+            SleepTimes=NULL;
             CrackingTool();
             break;
         }
@@ -180,6 +182,7 @@ void CrackingTool(){
             system("pause");
             system("cls");
             delete SleepTimes;
+            SleepTimes=NULL;
             Start();
             break;
         }
@@ -262,7 +265,7 @@ void RecoveringMode(){
     system("Net Start TDFileFilter");
     system("Net Start STUDSRV");
     printf("\n########################################\n");
-    printf("    联想云教室: vncviewer.exe, tvnserver32.exe, WFDeskShow.exe, WfbsPnpInstall.exe, WFBSMon.exe, WFBSMlogon.exe, refreship.exe, LenovoLockScreen.exe, DeploymentManager.exe, WFBSSvrLogShow.exe, ResetIp.exe, FuncForWIN64.exe, CertMgr.exe, Fireware.exe, BCDBootCopy.exe, PortControl64.exe, DesktopCheck.exe, DeploymentAgent.exe, XYNTService.exe\n");
+    printf("  联想云教室: vncviewer.exe, tvnserver32.exe, WFDeskShow.exe, WfbsPnpInstall.exe, WFBSMon.exe, WFBSMlogon.exe, refreship.exe, LenovoLockScreen.exe, DeploymentManager.exe, WFBSSvrLogShow.exe, ResetIp.exe, FuncForWIN64.exe, CertMgr.exe, Fireware.exe, BCDBootCopy.exe, PortControl64.exe, DesktopCheck.exe, DeploymentAgent.exe, XYNTService.exe\n");
     printf("  极域电子教室: StudentMain.exe, GATESRV.exe, MasterHelper.exe, ProcHelper64.exe, DispcapHelper.exe, VRCwPlayer.exe\n\n");
     printf("请手动开启以上程序!\n");
     printf("########################################\n\n");
