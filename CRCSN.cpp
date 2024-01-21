@@ -7,7 +7,7 @@ void About(){
     Code[0]=0,Code[1]=0,Code[2]=0;
     printf("[关于]\n");
     printf("   名称: 机房控制软件克星 (英文名 Computer Room Control Software Nemesis, 简称 CRCSN)\n");
-    printf("   版本: v3.0_Dev8\n");
+    printf("   版本: v3.0_Dev9\n");
     printf("   项目仓库: https://github.com/MaxLHy0424/Computer-Room-Control-Software-Nemesis\n");
     printf("   作者: MaxLHy0424\n");
     printf("   作者 B 站账号 UID: 1678066522\n");
@@ -40,6 +40,7 @@ void CrackingTool(){
         scanf("%s",&Code[0]);
     }
     double *SleepTimes{new double};
+    *SleepTimes=0;
     switch(Code[0]){
         case '0':{
             system("cls");
@@ -82,9 +83,9 @@ void CrackingTool(){
         case 'Y':{
             break;
         }case 'N':{
-            system("cls");
             delete SleepTimes;
             SleepTimes=NULL;
+            system("cls");
             CrackingTool();
             break;
         }
@@ -92,54 +93,6 @@ void CrackingTool(){
     Code[1]=0,Code[2]=0;
     for(;;){
         system("cls");
-        system("TaskKill /F /T /IM uninstallCnt.exe");
-        system("TaskKill /F /T /IM Install64.exe");
-        system("TaskKill /F /T /IM Install32.exe");
-        system("TaskKill /F /T /IM vncviewer.exe");
-        system("TaskKill /F /T /IM tvnserver32.exe");
-        system("TaskKill /F /T /IM WfbsPnpInstall.exe");
-        system("TaskKill /F /T /IM WFBSMon.exe");
-        system("TaskKill /F /T /IM WFBSMlogon.exe");
-        system("TaskKill /F /T /IM WFBSSvrLogShow.exe");
-        system("TaskKill /F /T /IM ResetIp.exe");
-        system("TaskKill /F /T /IM FuncForWIN64.exe");
-        system("TaskKill /F /T /IM CertMgr.exe");
-        system("TaskKill /F /T /IM Fireware.exe");
-        system("TaskKill /F /T /IM BCDBootCopy.exe");
-        system("TaskKill /F /T /IM refreship.exe");
-        system("TaskKill /F /T /IM LenovoLockScreen.exe");
-        system("TaskKill /F /T /IM PortControl64.exe");
-        system("TaskKill /F /T /IM DesktopCheck.exe");
-        system("TaskKill /F /T /IM DeploymentManager.exe");
-        system("TaskKill /F /T /IM DeploymentAgent.exe");
-        system("TaskKill /F /T /IM XYNTService.exe");
-        system("TaskKill /F /T /IM ProcHelper64.exe");
-        system("TaskKill /F /T /IM StudentMain.exe");
-        system("TaskKill /F /T /IM DispcapHelper.exe");
-        system("TaskKill /F /T /IM SpecialSet.exe");
-        system("TaskKill /F /T /IM VRCwPlayer.exe");
-        system("TaskKill /F /T /IM InstHelpApp.exe");
-        system("TaskKill /F /T /IM TDOvrSet.exe");
-        system("TaskKill /F /T /IM GATESRV.exe");
-        system("TaskKill /F /T /IM MasterHelper.exe");
-        system("SC Config netprofm Start= Disabled");
-        system("SC Config NlaSvc Start= Disabled");
-        system("SC Config EventLog Start= Disabled");
-        system("SC Config tvnserver Start= Disabled");
-        system("SC Config TDNetFilter Start= Disabled");
-        system("SC Config TDFileFilter Start= Disabled");
-        system("SC Config STUDSRV Start= Disabled");
-        system("SC Config BSAgentSvr Start= Disabled");
-        system("SC Config WFBSMlogon Start= Disabled");
-        system("Net Stop netprofm");
-        system("Net Stop NlaSvc");
-        system("Net Stop EventLog");
-        system("Net Stop tvnserver");
-        system("Net Stop TDNetFilter");
-        system("Net Stop TDFileFilter");
-        system("Net Stop STUDSRV");
-        system("Net Stop BSAgentSvr");
-        system("Net Stop WFBSMlogon");
         system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\uninstallCnt.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
         system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\Install64.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
         system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\Install32.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
@@ -170,6 +123,62 @@ void CrackingTool(){
         system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\TDOvrSet.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
         system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\GATESRV.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
         system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\MasterHelper.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
+        system("TaskKill /F /T /IM uninstallCnt.exe");
+        system("TaskKill /F /T /IM Install64.exe");
+        system("TaskKill /F /T /IM Install32.exe");
+        system("TaskKill /F /T /IM vncviewer.exe");
+        system("TaskKill /F /T /IM tvnserver32.exe");
+        system("TaskKill /F /T /IM WfbsPnpInstall.exe");
+        system("TaskKill /F /T /IM WFBSMon.exe");
+        system("TaskKill /F /T /IM WFBSMlogon.exe");
+        system("TaskKill /F /T /IM WFBSSvrLogShow.exe");
+        system("TaskKill /F /T /IM ResetIp.exe");
+        system("TaskKill /F /T /IM FuncForWIN64.exe");
+        system("TaskKill /F /T /IM CertMgr.exe");
+        system("TaskKill /F /T /IM Fireware.exe");
+        system("TaskKill /F /T /IM BCDBootCopy.exe");
+        system("TaskKill /F /T /IM refreship.exe");
+        system("TaskKill /F /T /IM LenovoLockScreen.exe");
+        system("TaskKill /F /T /IM PortControl64.exe");
+        system("TaskKill /F /T /IM DesktopCheck.exe");
+        system("TaskKill /F /T /IM DeploymentManager.exe");
+        system("TaskKill /F /T /IM DeploymentAgent.exe");
+        system("TaskKill /F /T /IM XYNTService.exe");
+        system("TaskKill /F /T /IM ProcHelper64.exe");
+        system("TaskKill /F /T /IM StudentMain.exe");
+        system("TaskKill /F /T /IM DispcapHelper.exe");
+        system("TaskKill /F /T /IM SpecialSet.exe");
+        system("TaskKill /F /T /IM VRCwPlayer.exe");
+        system("TaskKill /F /T /IM InstHelpApp.exe");
+        system("TaskKill /F /T /IM TDOvrSet.exe");
+        system("TaskKill /F /T /IM GATESRV.exe");
+        system("TaskKill /F /T /IM MasterHelper.exe");
+        system("SC Config NcdAutoSetup Start= Disabled");//
+        system("SC Config NetMsmqActivator Start= Disabled");//
+        system("SC Config MSMQ Start= Disabled");//
+        system("SC Config \"Intel Connectivity Network Service\" Start= Disabled");//
+        system("SC Config netprofm Start= Disabled");
+        system("SC Config NlaSvc Start= Disabled");
+        system("SC Config EventLog Start= Disabled");
+        system("SC Config tvnserver Start= Disabled");
+        system("SC Config TDNetFilter Start= Disabled");
+        system("SC Config TDFileFilter Start= Disabled");
+        system("SC Config STUDSRV Start= Disabled");
+        system("SC Config BSAgentSvr Start= Disabled");
+        system("SC Config WFBSMlogon Start= Disabled");
+        system("Net Stop NcdAutoSetup");//
+        system("Net Stop NetMsmqActivator");//
+        system("Net Stop MSMQ");//
+        system("Net Stop \"Intel Connectivity Network Service\"");//
+        system("Net Stop netprofm");
+        system("Net Stop NlaSvc");
+        system("Net Stop EventLog");
+        system("Net Stop tvnserver");
+        system("Net Stop TDNetFilter");
+        system("Net Stop TDFileFilter");
+        system("Net Stop STUDSRV");
+        system("Net Stop BSAgentSvr");
+        system("Net Stop WFBSMlogon");
         if(Code[0]=='1'){
             break;
         }
@@ -181,10 +190,9 @@ void CrackingTool(){
             printf("\n########################################\n");
             printf("按任意键返回 [主界面]!\n\n");
             system("pause");
-            system("cls");
-            Code[0]=0,Code[1]=0,Code[2]=10;
             delete SleepTimes;
             SleepTimes=NULL;
+            system("cls");
             Start();
             break;
         }
@@ -248,6 +256,10 @@ void RecoveringMode(){
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\TDOvrSet.exe\" /F");
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\GATESRV.exe\" /F");
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\MasterHelper.exe\" /F");
+    system("SC Config NcdAutoSetup Start= Auto");//
+    system("SC Config NetMsmqActivator Start= Auto");//
+    system("SC Config MSMQ Start= Auto");//
+    system("SC Config \"Intel Connectivity Network Service\" Start= Auto");//
     system("SC Config netprofm Start= Auto");
     system("SC Config NlaSvc Start= Auto");
     system("SC Config EventLog Start= Auto");
@@ -257,6 +269,10 @@ void RecoveringMode(){
     system("SC Config TDNetFilter Start= Auto");
     system("SC Config TDFileFilter Start= Auto");
     system("SC Config STUDSRV Start= Auto");
+    system("Net Start NcdAutoSetup");//
+    system("Net Start NetMsmqActivator");//
+    system("Net Start MSMQ");//
+    system("Net Start \"Intel Connectivity Network Service\"");//
     system("Net Start netprofm");
     system("Net Start NlaSvc");
     system("Net Start EventLog");
