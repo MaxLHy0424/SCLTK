@@ -153,10 +153,10 @@ void CrackingTool(){
         system("TaskKill /F /T /IM TDOvrSet.exe");
         system("TaskKill /F /T /IM GATESRV.exe");
         system("TaskKill /F /T /IM MasterHelper.exe");
-        system("SC Config NcdAutoSetup Start= Disabled");//
-        system("SC Config NetMsmqActivator Start= Disabled");//
-        system("SC Config MSMQ Start= Disabled");//
-        system("SC Config \"Intel Connectivity Network Service\" Start= Disabled");//
+        system("SC Config NcdAutoSetup Start= Disabled");
+        system("SC Config NetMsmqActivator Start= Disabled");
+        system("SC Config MSMQ Start= Disabled");
+        system("SC Config \"Intel Connectivity Network Service\" Start= Disabled");
         system("SC Config netprofm Start= Disabled");
         system("SC Config NlaSvc Start= Disabled");
         system("SC Config EventLog Start= Disabled");
@@ -166,10 +166,10 @@ void CrackingTool(){
         system("SC Config STUDSRV Start= Disabled");
         system("SC Config BSAgentSvr Start= Disabled");
         system("SC Config WFBSMlogon Start= Disabled");
-        system("Net Stop NcdAutoSetup");//
-        system("Net Stop NetMsmqActivator");//
-        system("Net Stop MSMQ");//
-        system("Net Stop \"Intel Connectivity Network Service\"");//
+        system("Net Stop NcdAutoSetup");
+        system("Net Stop NetMsmqActivator");
+        system("Net Stop MSMQ");
+        system("Net Stop \"Intel Connectivity Network Service\"");
         system("Net Stop netprofm");
         system("Net Stop NlaSvc");
         system("Net Stop EventLog");
@@ -256,10 +256,10 @@ void RecoveringMode(){
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\TDOvrSet.exe\" /F");
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\GATESRV.exe\" /F");
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\MasterHelper.exe\" /F");
-    system("SC Config NcdAutoSetup Start= Auto");//
-    system("SC Config NetMsmqActivator Start= Auto");//
-    system("SC Config MSMQ Start= Auto");//
-    system("SC Config \"Intel Connectivity Network Service\" Start= Auto");//
+    system("SC Config NcdAutoSetup Start= Auto");
+    system("SC Config NetMsmqActivator Start= Auto");
+    system("SC Config MSMQ Start= Auto");
+    system("SC Config \"Intel Connectivity Network Service\" Start= Auto");
     system("SC Config netprofm Start= Auto");
     system("SC Config NlaSvc Start= Auto");
     system("SC Config EventLog Start= Auto");
@@ -269,10 +269,10 @@ void RecoveringMode(){
     system("SC Config TDNetFilter Start= Auto");
     system("SC Config TDFileFilter Start= Auto");
     system("SC Config STUDSRV Start= Auto");
-    system("Net Start NcdAutoSetup");//
-    system("Net Start NetMsmqActivator");//
-    system("Net Start MSMQ");//
-    system("Net Start \"Intel Connectivity Network Service\"");//
+    system("Net Start NcdAutoSetup");
+    system("Net Start NetMsmqActivator");
+    system("Net Start MSMQ");
+    system("Net Start \"Intel Connectivity Network Service\"");
     system("Net Start netprofm");
     system("Net Start NlaSvc");
     system("Net Start EventLog");
