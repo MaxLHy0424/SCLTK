@@ -1,29 +1,19 @@
 #include<stdio.h>
 #include<unistd.h>
 #include<ShlObj.h>
-struct ProgramRuntimeData{
-    char Code[3];
-    double SleepTimes;
-}Data;
+
+char Code[3]{0,0,0};
 int Start();
-bool PermissionDetecting(){
-    BOOL RunAsAdministrator{IsUserAnAdmin()};
-    if(!RunAsAdministrator){
-        return FALSE;
-    }else{
-        return TRUE;
-    }
-}
 void About(){
-    Data.Code[0]=0,Data.Code[1]=0,Data.Code[2]=0;
+    Code[0]=0,Code[1]=0,Code[2]=0;
     printf("[关于]\n");
     printf("   名称: 机房控制软件克星 (英文名 Computer Room Control Software Nemesis, 简称 CRCSN)\n");
-    printf("   版本: v3.0_Dev6\n");
+    printf("   版本: v3.0_Dev7\n");
     printf("   项目仓库: https://github.com/MaxLHy0424/Computer-Room-Control-Software-Nemesis\n");
     printf("   作者: MaxLHy0424\n");
     printf("   作者 B 站账号 UID: 1678066522\n");
     printf("   作者邮箱: MaxLHy974413@outlook.com\n\n");
-    printf("   (C) Copyright 2023-2024 MaxLHy0424, All Rights Reserved.\n\n");
+    printf("   (C) Copyright 2024 MaxLHy0424, All Rights Reserved.\n\n");
     printf("########################################\n\n");
     printf("按任意键返回上一级!\n\n");
     system("pause");
@@ -31,7 +21,7 @@ void About(){
     Start();
 }
 void CrackingTool(){
-    if(PermissionDetecting()==FALSE){
+    if(!IsUserAnAdmin()){
         printf("[提示] 当前处于\"受限模式\", 此页面已被禁用...\n");
         printf("\n########################################\n\n");
         printf("按任意键返回上一级!\n\n");
@@ -39,35 +29,35 @@ void CrackingTool(){
         system("cls");
         Start();
     }
-    Data.Code[0]=0,Data.Code[1]=0,Data.Code[2]=0;
-    Data.SleepTimes=0;
+    Code[0]=0,Code[1]=0,Code[2]=0;
     printf("[破解工具]\n");
     printf("   [0] 返回上一级\n");
     printf("   [1] 单次模式\n");
     printf("   [2] 循环模式\n");
     printf("请输入: ");
-    scanf("%s",&Data.Code[0]);
-    while(Data.Code[0]!='0'&&Data.Code[0]!='1'&&Data.Code[0]!='2'){
+    scanf("%s",&Code[0]);
+    while(Code[0]!='0'&&Code[0]!='1'&&Code[0]!='2'){
         printf("输入有误, 请重新输入: ");
-        scanf("%s",&Data.Code[0]);
+        scanf("%s",&Code[0]);
     }
-    switch(Data.Code[0]){
+    double SleepTimes{0};
+    switch(Code[0]){
         case '0':{
             system("cls");
             Start();
             break;
         }case '2':{
             printf("请输入 \"休眠\" 时间 (在每次执行操作后暂停执行一段时间, 单位 秒, 数值 0.0  ~ 10.0): ");
-            scanf("%lf",&Data.SleepTimes);
-            while(Data.SleepTimes>10.0||Data.SleepTimes<0.0){
+            scanf("%lf",&SleepTimes);
+            while(SleepTimes>10.0||SleepTimes<0.0){
                 printf("输入错误, 请重新输入: ");
-                scanf("%lf",&Data.SleepTimes);
+                scanf("%lf",&SleepTimes);
             }
         }
     }
     system("cls");
     printf("配置:\n          模式: ");
-    switch(Data.Code[0]){
+    switch(Code[0]){
         case '1':{
             printf("单次模式.\n");
             break;
@@ -77,18 +67,18 @@ void CrackingTool(){
         }
     }
     printf("   \"休眠\" 时间: ");
-    if(Data.SleepTimes==0){
+    if(SleepTimes==0){
         printf("已禁用.\n\n");
     }else{
-        printf("已启用, %lg 秒.\n\n",Data.SleepTimes);
+        printf("已启用, %lg 秒.\n\n",SleepTimes);
     }
     printf("请确认 (Y: 继续, N: 返回上一级): ");
-    scanf("%s",&Data.Code[1]);
-    while((Data.Code[1]!='Y'&&Data.Code[1]!='N')||Data.Code[2]!=0){
+    scanf("%s",&Code[1]);
+    while((Code[1]!='Y'&&Code[1]!='N')||Code[2]!=0){
         printf("输入有误, 请重新输入: ");
-        scanf("%s",&Data.Code[1]);
+        scanf("%s",&Code[1]);
     }
-    switch(Data.Code[1]){
+    switch(Code[1]){
         case 'Y':{
             break;
         }case 'N':{
@@ -97,7 +87,7 @@ void CrackingTool(){
             break;
         }
     }
-    Data.Code[1]=0;
+    Code[1]=0;
     for(;;){
         system("cls");
         system("TaskKill /F /T /IM uninstallCnt.exe");
@@ -178,13 +168,13 @@ void CrackingTool(){
         system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\TDOvrSet.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
         system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\GATESRV.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
         system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\MasterHelper.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
-        if(Data.Code[0]=='1'){
+        if(Code[0]=='1'){
             break;
         }
         printf("\n休眠中...\n");
-        sleep(Data.SleepTimes);
+        sleep(SleepTimes);
     }
-    switch(Data.Code[0]){
+    switch(Code[0]){
         case '1':{
             printf("\n########################################\n");
             printf("按任意键返回 [主界面]!\n\n");
@@ -196,7 +186,7 @@ void CrackingTool(){
     }
 }
 void RecoveringMode(){
-    if(PermissionDetecting()==FALSE){
+    if(!IsUserAnAdmin()){
         printf("[提示] 当前处于\"受限模式\", 此页面已被禁用...\n");
         printf("\n########################################\n\n");
         printf("按任意键返回上一级!\n\n");
@@ -207,12 +197,12 @@ void RecoveringMode(){
     printf("[恢复工具]\n\n");
     printf("说明: 本功能用于恢复破解时的部分操作, 部分情况下可能无法产生效果, 执行完毕后请手动开启控制软件.\n\n");
     printf("请确认 (Y: 继续, N: 返回上一级): ");
-    scanf("%s",&Data.Code[1]);
-    while((Data.Code[1]!='Y'&&Data.Code[1]!='N')||Data.Code[2]!=0){
+    scanf("%s",&Code[1]);
+    while((Code[1]!='Y'&&Code[1]!='N')||Code[2]!=0){
         printf("输入有误, 请重新输入: ");
-        scanf("%s",&Data.Code[1]);
+        scanf("%s",&Code[1]);
     }
-    switch(Data.Code[1]){
+    switch(Code[1]){
         case 'Y':{
             break;
         }case 'N':{
@@ -221,7 +211,7 @@ void RecoveringMode(){
             break;
         }
     }
-    Data.Code[1]=0,Data.Code[1]=0,Data.Code[2]=0;
+    Code[1]=0,Code[1]=0,Code[2]=0;
     system("cls");
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\uninstallCnt.exe\" /F");
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\Install64.exe\" /F");
@@ -282,21 +272,20 @@ void RecoveringMode(){
     Start();
 }
 int Start(){
-    Data.Code[0]=0,Data.Code[1]=0,Data.Code[2]=0;
-    Data.SleepTimes=0;
+    Code[0]=0,Code[1]=0,Code[2]=0;
     printf("欢迎使用 机房控制软件克星!\n");
     printf("   [x] 退出程序\n");
     printf("   [0] 关于\n");
     printf("   [1] 破解工具\n");
     printf("   [2] 恢复工具\n");
     printf("请输入: ");
-    scanf("%s",&Data.Code[0]);
-    while((Data.Code[0]!='x'&&Data.Code[0]!='0'&&Data.Code[0]!='1'&&Data.Code[0]!='2')||Data.Code[1]!=0){
+    scanf("%s",&Code[0]);
+    while((Code[0]!='x'&&Code[0]!='0'&&Code[0]!='1'&&Code[0]!='2')||Code[1]!=0){
         printf("输入有误, 请重新输入: ");
-        scanf("%s",&Data.Code[0]);
+        scanf("%s",&Code[0]);
     }
     system("cls");
-    switch(Data.Code[0]){
+    switch(Code[0]){
         case 'x':{
             exit(0);
         }case '0':{
@@ -316,7 +305,7 @@ int main(){
     system("set path=%path%;C:\\Windows\\System32\\");
     system("title 机房控制软件克星");
     system("color b");
-    if(PermissionDetecting()==FALSE){
+    if(!IsUserAnAdmin()){
         printf("[提示] 建议以 Administrator 权限运行本程序...\n");
         printf("\n########################################\n\n");
         printf("按任意键进入 \"受限模式\"!\n\n");
