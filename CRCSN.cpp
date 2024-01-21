@@ -59,10 +59,11 @@ void CrackingTool(){
     switch(Code[0]){
         case '1':{
             printf("单次模式.\n");
-            printf("   \"休眠\": 已禁用.\n\n");
+            printf("  \"休眠\": 已禁用.\n\n");
             break;
         }case '2':{
             printf("循环模式.\n");
+            printf("  \"休眠\": ");
             if(*SleepTimes==0){
                 printf("已禁用.\n\n");
             }else{
@@ -88,7 +89,7 @@ void CrackingTool(){
             break;
         }
     }
-    Code[0]=0,Code[1]=0,Code[2]=0;
+    Code[1]=0,Code[2]=0;
     for(;;){
         system("cls");
         system("TaskKill /F /T /IM uninstallCnt.exe");
@@ -181,6 +182,7 @@ void CrackingTool(){
             printf("按任意键返回 [主界面]!\n\n");
             system("pause");
             system("cls");
+            Code[0]=0,Code[1]=0,Code[2]=10;
             delete SleepTimes;
             SleepTimes=NULL;
             Start();
