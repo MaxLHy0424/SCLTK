@@ -1,14 +1,13 @@
 #include<stdio.h>
 #include<unistd.h>
 #include<ShlObj.h>
-
 char Code[3]{0,0,0};
 int Start();
 void About(){
     Code[0]=0,Code[1]=0,Code[2]=0;
     printf("[关于]\n");
     printf("   名称: 机房控制软件克星 (英文名 Computer Room Control Software Nemesis, 简称 CRCSN)\n");
-    printf("   版本: v3.0_Dev7\n");
+    printf("   版本: v3.0_Dev8\n");
     printf("   项目仓库: https://github.com/MaxLHy0424/Computer-Room-Control-Software-Nemesis\n");
     printf("   作者: MaxLHy0424\n");
     printf("   作者 B 站账号 UID: 1678066522\n");
@@ -40,7 +39,7 @@ void CrackingTool(){
         printf("输入有误, 请重新输入: ");
         scanf("%s",&Code[0]);
     }
-    double SleepTimes{0};
+    double *SleepTimes{new double};
     switch(Code[0]){
         case '0':{
             system("cls");
@@ -48,29 +47,29 @@ void CrackingTool(){
             break;
         }case '2':{
             printf("请输入 \"休眠\" 时间 (在每次执行操作后暂停执行一段时间, 单位 秒, 数值 0.0  ~ 10.0): ");
-            scanf("%lf",&SleepTimes);
-            while(SleepTimes>10.0||SleepTimes<0.0){
+            scanf("%lf",SleepTimes);
+            while(*SleepTimes>10.0||*SleepTimes<0.0){
                 printf("输入错误, 请重新输入: ");
-                scanf("%lf",&SleepTimes);
+                scanf("%lf",SleepTimes);
             }
         }
     }
     system("cls");
-    printf("配置:\n          模式: ");
+    printf("配置:\n    模式: ");
     switch(Code[0]){
         case '1':{
             printf("单次模式.\n");
+            printf("   \"休眠\": 已禁用.\n\n");
             break;
         }case '2':{
             printf("循环模式.\n");
+            if(*SleepTimes==0){
+                printf("已禁用.\n\n");
+            }else{
+                printf("已启用, %lg 秒.\n\n",*SleepTimes);
+            }
             break;
         }
-    }
-    printf("   \"休眠\" 时间: ");
-    if(SleepTimes==0){
-        printf("已禁用.\n\n");
-    }else{
-        printf("已启用, %lg 秒.\n\n",SleepTimes);
     }
     printf("请确认 (Y: 继续, N: 返回上一级): ");
     scanf("%s",&Code[1]);
@@ -87,7 +86,7 @@ void CrackingTool(){
             break;
         }
     }
-    Code[1]=0;
+    Code[0]=0,Code[1]=0,Code[2]=0;
     for(;;){
         system("cls");
         system("TaskKill /F /T /IM uninstallCnt.exe");
@@ -172,7 +171,7 @@ void CrackingTool(){
             break;
         }
         printf("\n休眠中...\n");
-        sleep(SleepTimes);
+        sleep(*SleepTimes);
     }
     switch(Code[0]){
         case '1':{
@@ -180,6 +179,7 @@ void CrackingTool(){
             printf("按任意键返回 [主界面]!\n\n");
             system("pause");
             system("cls");
+            delete SleepTimes;
             Start();
             break;
         }
