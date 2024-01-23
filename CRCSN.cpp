@@ -4,10 +4,9 @@
 char Code[3]{0,0,0};
 int Start();
 void About(){
-    Code[0]=0,Code[1]=0,Code[2]=0;
     printf("[关于]\n");
     printf("   名称: 机房控制软件克星 (英文名 Computer Room Control Software Nemesis, 简称 CRCSN)\n");
-    printf("   版本: v3.0_Dev9\n");
+    printf("   版本: v3.0_Dev10\n");
     printf("   项目仓库: https://github.com/MaxLHy0424/Computer-Room-Control-Software-Nemesis\n");
     printf("   作者: MaxLHy0424\n");
     printf("   作者 B 站账号 UID: 1678066522\n");
@@ -28,7 +27,6 @@ void CrackingTool(){
         system("cls");
         Start();
     }
-    Code[0]=0,Code[1]=0,Code[2]=0;
     printf("[破解工具]\n");
     printf("   [0] 返回上一级\n");
     printf("   [1] 单次模式\n");
@@ -39,10 +37,11 @@ void CrackingTool(){
         printf("输入有误, 请重新输入: ");
         scanf("%s",&Code[0]);
     }
-    double *SleepTimes{new double};
-    *SleepTimes=0;
+    double* SleepTimes{new double{0}};
     switch(Code[0]){
         case '0':{
+            delete SleepTimes;
+            SleepTimes=NULL;
             system("cls");
             Start();
             break;
@@ -90,7 +89,6 @@ void CrackingTool(){
             break;
         }
     }
-    Code[1]=0,Code[2]=0;
     for(;;){
         system("cls");
         system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\uninstallCnt.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
@@ -224,7 +222,6 @@ void RecoveringMode(){
             break;
         }
     }
-    Code[1]=0,Code[1]=0,Code[2]=0;
     system("cls");
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\uninstallCnt.exe\" /F");
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\Install64.exe\" /F");
@@ -293,7 +290,6 @@ void RecoveringMode(){
     Start();
 }
 int Start(){
-    Code[0]=0,Code[1]=0,Code[2]=0;
     printf("欢迎使用 机房控制软件克星!\n");
     printf("   [x] 退出程序\n");
     printf("   [0] 关于\n");
@@ -327,12 +323,11 @@ int main(){
     system("title 机房控制软件克星");
     system("color b");
     if(!IsUserAnAdmin()){
-        printf("[提示] 建议以 Administrator 权限运行本程序...\n");
+        printf("[提示] 当前程序权限为 User, 建议以 Administrator 权限运行本程序...\n");
         printf("\n########################################\n\n");
         printf("按任意键进入 \"受限模式\"!\n\n");
         system("pause");
         system("cls");
     }
     Start();
-    return 0;
 }
