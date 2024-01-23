@@ -6,12 +6,12 @@ int Start();
 void About(){
     printf("[关于]\n");
     printf("   名称: 机房控制软件克星 (英文名 Computer Room Control Software Nemesis, 简称 CRCSN)\n");
-    printf("   版本: v3.0_Dev10\n");
+    printf("   版本: v3.0_Dev (Build 300.10.02)\n");
     printf("   项目仓库: https://github.com/MaxLHy0424/Computer-Room-Control-Software-Nemesis\n");
     printf("   作者: MaxLHy0424\n");
     printf("   作者 B 站账号 UID: 1678066522\n");
     printf("   作者邮箱: MaxLHy974413@outlook.com\n\n");
-    printf("   (C) Copyright 2024 MaxLHy0424, All Rights Reserved.\n\n");
+    printf("   (C) Copyright 2023-2024 MaxLHy0424, All Rights Reserved.\n\n");
     printf("########################################\n\n");
     printf("按任意键返回上一级!\n\n");
     system("pause");
@@ -55,15 +55,15 @@ void CrackingTool(){
         }
     }
     system("cls");
-    printf("配置:\n    模式: ");
+    printf("配置:\n   模式: ");
     switch(Code[0]){
         case '1':{
             printf("单次模式.\n");
-            printf("  \"休眠\": 已禁用.\n\n");
+            printf(" \"休眠\": 已禁用.\n\n");
             break;
         }case '2':{
             printf("循环模式.\n");
-            printf("  \"休眠\": ");
+            printf(" \"休眠\": ");
             if(*SleepTimes==0){
                 printf("已禁用.\n\n");
             }else{
@@ -186,7 +186,7 @@ void CrackingTool(){
     switch(Code[0]){
         case '1':{
             printf("\n########################################\n");
-            printf("按任意键返回 [主界面]!\n\n");
+            printf("按任意键返回 主界面!\n\n");
             system("pause");
             delete SleepTimes;
             SleepTimes=NULL;
