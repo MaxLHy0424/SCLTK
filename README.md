@@ -10,7 +10,7 @@ Computer Room Control Software Nemesis (中文名 机房控制软件克星 , 简
 
 >最后更新于 2024/01/23
 >
-> 适用于 CRCSN v3.0 (Build 300.10.02)
+> 适用于 CRCSN v3.0 (Build 300.10.02) 及以上版本
 
 (CRCSN 大多数选项都有提示, 可以跟着提示一起看)
 
