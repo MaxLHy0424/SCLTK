@@ -6,14 +6,14 @@ int Start();
 void About(){
     printf("[关于]\n");
     printf("   名称: 机房控制软件克星 (英文名 Computer Room Control Software Nemesis, 简称 CRCSN)\n");
-    printf("   版本: v3.0_Dev (Build 300.10.02)\n");
+    printf("   版本: v3.0_Dev (Build 300.10.03)\n");
     printf("   项目仓库: https://github.com/MaxLHy0424/Computer-Room-Control-Software-Nemesis\n");
     printf("   作者: MaxLHy0424\n");
     printf("   作者 B 站账号 UID: 1678066522\n");
     printf("   作者邮箱: MaxLHy974413@outlook.com\n\n");
     printf("   (C) Copyright 2023-2024 MaxLHy0424, All Rights Reserved.\n\n");
     printf("########################################\n\n");
-    printf("按任意键返回上一级!\n\n");
+    printf("按任意键返回主界面!\n\n");
     system("pause");
     system("cls");
     Start();
@@ -22,13 +22,13 @@ void CrackingTool(){
     if(!IsUserAnAdmin()){
         printf("[提示] 当前处于\"受限模式\", 此页面已被禁用...\n");
         printf("\n########################################\n\n");
-        printf("按任意键返回上一级!\n\n");
+        printf("按任意键返回主界面!\n\n");
         system("pause");
         system("cls");
         Start();
     }
     printf("[破解工具]\n");
-    printf("   [0] 返回上一级\n");
+    printf("   [0] 返回主界面\n");
     printf("   [1] 单次模式\n");
     printf("   [2] 循环模式\n");
     printf("请输入: ");
@@ -72,7 +72,7 @@ void CrackingTool(){
             break;
         }
     }
-    printf("请确认 (Y: 继续, N: 返回上一级): ");
+    printf("请确认 (Y: 继续, N: 放弃并返回): ");
     scanf("%s",&Code[1]);
     while((Code[1]!='Y'&&Code[1]!='N')||Code[2]!=0){
         printf("输入有误, 请重新输入: ");
@@ -186,7 +186,7 @@ void CrackingTool(){
     switch(Code[0]){
         case '1':{
             printf("\n########################################\n");
-            printf("按任意键返回 主界面!\n\n");
+            printf("按任意键返回主界面!\n\n");
             system("pause");
             delete SleepTimes;
             SleepTimes=NULL;
@@ -198,16 +198,16 @@ void CrackingTool(){
 }
 void RecoveringMode(){
     if(!IsUserAnAdmin()){
-        printf("[提示] 当前处于\"受限模式\", 此页面已被禁用...\n");
+        printf("[提示] 当前处于 \"受限模式\", 此页面已被禁用...\n");
         printf("\n########################################\n\n");
-        printf("按任意键返回上一级!\n\n");
+        printf("按任意键返回主界面!\n\n");
         system("pause");
         system("cls");
         Start();
     }
     printf("[恢复工具]\n\n");
     printf("说明: 本功能用于恢复破解时的部分操作, 部分情况下可能无法产生效果, 执行完毕后请手动开启控制软件.\n\n");
-    printf("请确认 (Y: 继续, N: 返回上一级): ");
+    printf("请确认 (Y: 继续, N: 放弃并返回): ");
     scanf("%s",&Code[1]);
     while((Code[1]!='Y'&&Code[1]!='N')||Code[2]!=0){
         printf("输入有误, 请重新输入: ");
@@ -284,7 +284,7 @@ void RecoveringMode(){
     printf("  极域电子教室: StudentMain.exe, GATESRV.exe, MasterHelper.exe, ProcHelper64.exe, DispcapHelper.exe, VRCwPlayer.exe\n\n");
     printf("请手动开启以上程序!\n");
     printf("########################################\n\n");
-    printf("按任意键返回上一级!\n\n");
+    printf("按任意键返回主界面!\n\n");
     system("pause");
     system("cls");
     Start();
