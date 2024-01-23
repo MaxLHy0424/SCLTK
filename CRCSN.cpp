@@ -6,7 +6,7 @@ int Start();
 void About(){
     printf("[关于]\n");
     printf("   名称: 机房控制软件克星 (英文名 Computer Room Control Software Nemesis, 简称 CRCSN)\n");
-    printf("   版本: v3.0_Dev (Build 300.10.03)\n");
+    printf("   版本: v3.0_Dev (Build 300.10.04)\n");
     printf("   项目仓库: https://github.com/MaxLHy0424/Computer-Room-Control-Software-Nemesis\n");
     printf("   作者: MaxLHy0424\n");
     printf("   作者 B 站账号 UID: 1678066522\n");
@@ -320,7 +320,7 @@ int Start(){
 }
 int main(){
     system("set path=%path%;C:\\Windows\\System32\\");
-    system("title 机房控制软件克星");
+    system("title CRCSN");
     system("color b");
     if(!IsUserAnAdmin()){
         printf("[提示] 当前程序权限为 User, 建议以 Administrator 权限运行本程序...\n");
