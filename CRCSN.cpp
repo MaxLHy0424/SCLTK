@@ -6,13 +6,14 @@ int Start();
 void About(){
     printf("[关于]\n");
     printf("   名称: 机房控制软件克星 (英文名 Computer Room Control Software Nemesis, 简称 CRCSN)\n");
-    printf("   版本: v3.0_Dev (Build 300.10.04)\n");
+    printf("   版本: v3.0_Dev11\n");
     printf("   项目仓库: https://github.com/MaxLHy0424/Computer-Room-Control-Software-Nemesis\n");
     printf("   作者: MaxLHy0424\n");
     printf("   作者 B 站账号 UID: 1678066522\n");
     printf("   作者邮箱: MaxLHy974413@outlook.com\n\n");
     printf("   (C) Copyright 2023-2024 MaxLHy0424, All Rights Reserved.\n\n");
     printf("########################################\n\n");
+    sleep(1);
     printf("按任意键返回主界面!\n\n");
     system("pause");
     system("cls");
@@ -22,6 +23,7 @@ void CrackingTool(){
     if(!IsUserAnAdmin()){
         printf("[提示] 当前处于\"受限模式\", 此页面已被禁用...\n");
         printf("\n########################################\n\n");
+        sleep(0.1);
         printf("按任意键返回主界面!\n\n");
         system("pause");
         system("cls");
@@ -29,7 +31,7 @@ void CrackingTool(){
     }
     printf("[破解工具]\n");
     printf("   [0] 返回主界面\n");
-    printf("   [1] 单次模式\n");
+    printf("   [1] 快速模式\n");
     printf("   [2] 循环模式\n");
     printf("请输入: ");
     scanf("%s",&Code[0]);
@@ -58,11 +60,11 @@ void CrackingTool(){
     printf("配置:\n   模式: ");
     switch(Code[0]){
         case '1':{
-            printf("单次模式.\n");
+            printf("快速.\n");
             printf(" \"休眠\": 已禁用.\n\n");
             break;
         }case '2':{
-            printf("循环模式.\n");
+            printf("循环.\n");
             printf(" \"休眠\": ");
             if(*SleepTimes==0){
                 printf("已禁用.\n\n");
@@ -186,6 +188,7 @@ void CrackingTool(){
     switch(Code[0]){
         case '1':{
             printf("\n########################################\n");
+            sleep(0.1);
             printf("按任意键返回主界面!\n\n");
             system("pause");
             delete SleepTimes;
@@ -200,6 +203,7 @@ void RecoveringMode(){
     if(!IsUserAnAdmin()){
         printf("[提示] 当前处于 \"受限模式\", 此页面已被禁用...\n");
         printf("\n########################################\n\n");
+        sleep(0.1);
         printf("按任意键返回主界面!\n\n");
         system("pause");
         system("cls");
@@ -284,13 +288,14 @@ void RecoveringMode(){
     printf("  极域电子教室: StudentMain.exe, GATESRV.exe, MasterHelper.exe, ProcHelper64.exe, DispcapHelper.exe, VRCwPlayer.exe\n\n");
     printf("请手动开启以上程序!\n");
     printf("########################################\n\n");
+    sleep(1);
     printf("按任意键返回主界面!\n\n");
     system("pause");
     system("cls");
     Start();
 }
 int Start(){
-    printf("欢迎使用 机房控制软件克星!\n");
+    printf("欢迎您使用本机房反控程序!\n");
     printf("   [x] 退出程序\n");
     printf("   [0] 关于\n");
     printf("   [1] 破解工具\n");
@@ -302,6 +307,7 @@ int Start(){
         scanf("%s",&Code[0]);
     }
     system("cls");
+    sleep(1);
     switch(Code[0]){
         case 'x':{
             exit(0);
@@ -326,6 +332,7 @@ int main(){
         printf("[提示] 当前程序权限为 User, 建议以 Administrator 权限运行本程序...\n");
         printf("\n########################################\n\n");
         printf("按任意键进入 \"受限模式\"!\n\n");
+        sleep(0.1);
         system("pause");
         system("cls");
     }
