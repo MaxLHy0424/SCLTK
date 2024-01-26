@@ -22,7 +22,7 @@ void About(){
 void CrackingTool(){
     printf("<破解工具>\n");
     if(!IsUserAnAdmin()){
-        printf("\n[Warning]当前处于 \"受限模式\", 已限制部分功能. 若需解除限制, 需要以 Administrator 权限运行本程序.\n\n");
+        printf("[Warning]当前处于 \"受限模式\", 已限制部分功能. 若需解除限制, 需要以 Administrator 权限运行本程序.\n\n");
     }
     printf("   [0] 返回主界面\n");
     printf("   [1] 快速模式\n");
