@@ -203,7 +203,7 @@ void RecoveringMode(){
     if(!IsUserAnAdmin()){
         printf("[提示] 当前处于 \"受限模式\", 此页面已被禁用...\n");
         printf("\n########################################\n\n");
-        sleep(0.1);
+        sleep(0.5);
         printf("按任意键返回主界面!\n\n");
         system("pause");
         system("cls");
@@ -332,7 +332,7 @@ int main(){
         printf("[提示] 当前程序权限为 User, 建议以 Administrator 权限运行本程序...\n");
         printf("\n########################################\n\n");
         printf("按任意键进入 \"受限模式\"!\n\n");
-        sleep(0.1);
+        sleep(0.5);
         system("pause");
         system("cls");
     }else{
