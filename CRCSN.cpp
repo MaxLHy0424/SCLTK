@@ -22,7 +22,7 @@ void About(){
 void CrackingTool(){
     printf("<破解工具>\n");
     if(!IsUserAnAdmin()){
-        printf("[Warning]当前处于 \"受限模式\", 已限制部分功能. 若需解除限制, 需要以 Administrator 权限运行本程序.\n\n");
+        printf("[提示]当前处于 \"受限模式\", 已限制部分功能. 若需解除限制, 需要以 Administrator 权限运行本程序.\n");
     }
     printf("   [0] 返回主界面\n");
     printf("   [1] 快速模式\n");
@@ -201,7 +201,7 @@ void CrackingTool(){
 }
 void RecoveringMode(){
     if(!IsUserAnAdmin()){
-        printf("[Tips] 当前处于 \"受限模式\", 此页面已被禁用...\n");
+        printf("[提示] 当前处于 \"受限模式\", 此页面已被禁用...\n");
         printf("\n########################################\n\n");
         sleep(0.1);
         printf("按任意键返回主界面!\n\n");
@@ -329,7 +329,7 @@ int main(){
     system("color b");
     if(!IsUserAnAdmin()){
         system("Title 机房控制软件克星 (受限模式)");
-        printf("[Warning] 当前程序权限为 User, 建议以 Administrator 权限运行本程序...\n");
+        printf("[提示] 当前程序权限为 User, 建议以 Administrator 权限运行本程序...\n");
         printf("\n########################################\n\n");
         printf("按任意键进入 \"受限模式\"!\n\n");
         sleep(0.1);
