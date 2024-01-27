@@ -2,19 +2,19 @@
 #include<unistd.h>
 #include<ShlObj.h>
 char Code[3]{0,0,0};
-int Start();
+unsigned short Start();
 void About(){
     printf("<关于>\n\n");
-    printf("   名称: 机房控制软件克星 (英文名 Computer Room Control Software Nemesis, 简称 CRCSN)\n");
-    printf("   版本: v3.0_Dev12\n");
+    printf("   名称: 机房控制软件克星 (Computer Room Control Software Nemesis)\n");
+    printf("   版本: v3.0_Dev13\n");
     printf("   项目仓库: https://github.com/MaxLHy0424/Computer-Room-Control-Software-Nemesis\n");
     printf("   作者: MaxLHy0424\n");
     printf("   作者 B 站账号 UID: 1678066522\n");
-    printf("   作者邮箱: MaxLHy974413@outlook.com\n\n");
+    printf("   反馈邮箱: MaxLHy974413@outlook.com\n\n");
     printf("   (C) Copyright 2023-2024 MaxLHy0424, All Rights Reserved.\n\n");
     printf("########################################\n\n");
     sleep(1);
-    printf("按任意键返回主界面!\n\n");
+    printf("按任意键返回主界面.\n\n");
     system("pause");
     system("cls");
     Start();
@@ -22,31 +22,33 @@ void About(){
 void CrackingTool(){
     printf("<破解工具>\n");
     if(!IsUserAnAdmin()){
-        printf("[提示]当前处于 \"受限模式\", 已限制部分功能. 若需解除限制, 需要以 Administrator 权限运行本程序.\n");
+        printf("[提示] 当前为 \"受限模式\", 已限制此功能. 若需解除限制, 请以 Administrator 权限重启软件.\n");
     }
     printf("   [0] 返回主界面\n");
     printf("   [1] 快速模式\n");
     printf("   [2] 循环模式\n");
     printf("请输入: ");
     scanf("%s",&Code[0]);
-    while(Code[0]!='0'&&Code[0]!='1'&&Code[0]!='2'){
-        printf("输入有误, 请重新输入: ");
+    while((Code[0]!='0'&&Code[0]!='1'&&Code[0]!='2')||Code[1]!=0){
+        printf("输入错误, 请重新输入: ");
+        Code[0]=0,Code[1]=0,Code[2]=0;
         scanf("%s",&Code[0]);
     }
-    double* SleepTimes{new double{0}};
+    float* sleepTimes{new float{0}};
     switch(Code[0]){
         case '0':{
-            delete SleepTimes;
-            SleepTimes=NULL;
+            delete sleepTimes;
+            sleepTimes=NULL;
             system("cls");
             Start();
             break;
         }case '2':{
             printf("请输入 \"休眠\" 时间 (在每次执行操作后暂停执行一段时间, 单位 秒, 数值 0.0  ~ 10.0): ");
-            scanf("%lf",SleepTimes);
-            while(*SleepTimes>10.0||*SleepTimes<0.0){
+            scanf("%f",sleepTimes);
+            while(*sleepTimes<0.0||*sleepTimes>10.0){
                 printf("输入错误, 请重新输入: ");
-                scanf("%lf",SleepTimes);
+                *sleepTimes=0;
+                scanf("%f",sleepTimes);
             }
         }
     }
@@ -68,23 +70,24 @@ void CrackingTool(){
         printf("已启用.\n");
     }
     printf("     \"休眠\": ");
-    if(*SleepTimes==0){
+    if(*sleepTimes==0){
         printf("已禁用.\n\n");
     }else{
-        printf("已启用, %lg 秒.\n\n",*SleepTimes);
+        printf("已启用, %lg 秒.\n\n",*sleepTimes);
     }
     printf("请确认 (Y: 继续, N: 放弃并返回): ");
     scanf("%s",&Code[1]);
     while((Code[1]!='Y'&&Code[1]!='N')||Code[2]!=0){
-        printf("输入有误, 请重新输入: ");
+        printf("输入错误, 请重新输入: ");
+        Code[1]=0,Code[2]=0;
         scanf("%s",&Code[1]);
     }
     switch(Code[1]){
         case 'Y':{
             break;
         }case 'N':{
-            delete SleepTimes;
-            SleepTimes=NULL;
+            delete sleepTimes;
+            sleepTimes=NULL;
             system("cls");
             CrackingTool();
             break;
@@ -181,17 +184,17 @@ void CrackingTool(){
             system("Net Stop WFBSMlogon");
         }
         if(Code[0]=='1'){
-            delete SleepTimes;
-            SleepTimes=NULL;
+            delete sleepTimes;
+            sleepTimes=NULL;
             break;
         }
         printf("\n休眠中...\n");
-        sleep(*SleepTimes);
+        sleep(*sleepTimes);
     }
     switch(Code[0]){
         case '1':{
             printf("\n########################################\n");
-            printf("按任意键返回主界面!\n\n");
+            printf("按任意键返回主界面.\n\n");
             system("pause");
             system("cls");
             Start();
@@ -204,17 +207,18 @@ void RecoveringMode(){
         printf("[提示] 当前处于 \"受限模式\", 此页面已被禁用...\n");
         printf("\n########################################\n\n");
         sleep(0.5);
-        printf("按任意键返回主界面!\n\n");
+        printf("按任意键返回主界面.\n\n");
         system("pause");
         system("cls");
         Start();
     }
-    printf("<恢复工具<\n\n");
+    printf("<恢复工具>\n\n");
     printf("说明: 本功能用于恢复破解时的部分操作, 部分情况下可能无法产生效果, 执行完毕后请手动开启控制软件.\n\n");
     printf("请确认 (Y: 继续, N: 放弃并返回): ");
     scanf("%s",&Code[1]);
     while((Code[1]!='Y'&&Code[1]!='N')||Code[2]!=0){
-        printf("输入有误, 请重新输入: ");
+        printf("输入错误, 请重新输入: ");
+        Code[1]=0,Code[2]=0;
         scanf("%s",&Code[1]);
     }
     switch(Code[1]){
@@ -286,30 +290,30 @@ void RecoveringMode(){
     printf("\n########################################\n");
     printf("    联想云教室: vncviewer.exe, tvnserver32.exe, WFDeskShow.exe, WfbsPnpInstall.exe, WFBSMon.exe, WFBSMlogon.exe, refreship.exe, LenovoLockScreen.exe, DeploymentManager.exe, WFBSSvrLogShow.exe, ResetIp.exe, FuncForWIN64.exe, CertMgr.exe, Fireware.exe, BCDBootCopy.exe, PortControl64.exe, DesktopCheck.exe, DeploymentAgent.exe, XYNTService.exe\n");
     printf("  极域电子教室: StudentMain.exe, GATESRV.exe, MasterHelper.exe, ProcHelper64.exe, DispcapHelper.exe, VRCwPlayer.exe\n\n");
-    printf("请手动开启以上程序!\n");
+    printf("请手动开启以上软件.\n");
     printf("########################################\n\n");
     sleep(1);
-    printf("按任意键返回主界面!\n\n");
+    printf("按任意键返回主界面.\n\n");
     system("pause");
     system("cls");
     Start();
 }
-int Start(){
-    printf("欢迎您使用本机房反控程序!\n");
-    printf("   [x] 退出程序\n");
+unsigned short Start(){
+    printf("欢迎您使用本软件!\n");
+    printf("   [x] 退出软件\n");
     printf("   [0] 关于\n");
     printf("   [1] 破解工具\n");
     printf("   [2] 恢复工具\n");
     printf("请输入: ");
     scanf("%s",&Code[0]);
     while((Code[0]!='x'&&Code[0]!='0'&&Code[0]!='1'&&Code[0]!='2')||Code[1]!=0){
-        printf("输入有误, 请重新输入: ");
+        printf("输入错误, 请重新输入: ");
+        Code[0]=0,Code[1]=0,Code[2]=0;
         scanf("%s",&Code[0]);
     }
     system("cls");
     switch(Code[0]){
         case 'x':{
-            sleep(1);
             exit(0);
         }case '0':{
             About();
@@ -325,13 +329,13 @@ int Start(){
     return 0;
 }
 int main(){
-    system("set path=%path%;C:\\Windows\\System32\\");
-    system("color b");
+    system("Set Path=%path%;C:\\Windows\\System32\\");
+    system("Color b");
     if(!IsUserAnAdmin()){
         system("Title 机房控制软件克星 (受限模式)");
-        printf("[提示] 当前程序权限为 User, 建议以 Administrator 权限运行本程序...\n");
-        printf("\n########################################\n\n");
-        printf("按任意键进入 \"受限模式\"!\n\n");
+        printf("[提示] 当前软件权限为 User, 建议以 Administrator 权限运行本软件.\n\n");
+        printf("########################################\n\n");
+        printf("按任意键进入 \"受限模式\".\n\n");
         sleep(0.5);
         system("pause");
         system("cls");
@@ -339,4 +343,5 @@ int main(){
         system("Title 机房控制软件克星");
     }
     Start();
+    return 0;
 }
