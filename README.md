@@ -40,6 +40,10 @@ CRCSN 大多数选项都有提示, 可以跟着提示一起看
 
 # 常见问题
 
+## GitHub 在中国大陆地区访问不便, 获取软件非常不方便
+
+目前已经在国内云盘上传最新版本, 可以从[这里](https://pan.huang1111.cn/s/e7Dxug "点击跳转至第三方云盘")下载.
+
 ## 运行软件时控制台界面总是输出 "命令提示符已被管理员禁用" 之类的提示, 无法正常使用
 
 这说明 CMD 已被禁用. 可以试试打开注册表编辑器, 定位到 `HKEY_CURRENT_USER\Software\Policies\Microsoft\Windows\System` 下, 看看有没有一个叫 `DisableCMD` 的 DWORD 值, 有的话就删掉. 再次打开软件看看是否能成功. (如果还是打不开, 那我也不知道了 awa)
