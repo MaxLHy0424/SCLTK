@@ -46,7 +46,7 @@ CRCSN 大多数选项都有提示, 可以跟着提示一起看
 
 ## 运行软件时控制台界面总是输出 "命令提示符已被管理员禁用" 之类的提示, 无法正常使用
 
-这说明 CMD 已被禁用. 可以试试打开注册表编辑器, 定位到 `HKEY_CURRENT_USER\Software\Policies\Microsoft\Windows\System` 下, 看看有没有一个叫 `DisableCMD` 的 DWORD 值, 有的话就删掉. 再次打开软件看看是否能成功.
+这说明 CMD 已被禁用. 可以试试打开注册表编辑器, 定位到 `HKEY_CURRENT_USER\Software\Policies\Microsoft\Windows\System` 下, 看看有没有一个叫 `DisableCMD` 的 DWORD 值, 有的话就删掉. 再次打开软件试试.
 
 ## 软件无法在 32 位 Windows 系统中使用
 
