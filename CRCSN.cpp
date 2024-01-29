@@ -5,8 +5,8 @@ char Code[3]{0,0,0};
 unsigned short Start();
 void About(){
     printf("<关于>\n\n");
-    printf("   名称: 机房控制软件克星 (Computer Room Control Software Nemesis, 简称 CRCSN)\n");
-    printf("   版本: v3.0_PreRelease1\n");
+    printf("   名称: 机房控制软件克星 (Computer Room Control Software Nemesis)\n");
+    printf("   版本: v3.0_Dev14\n");
     printf("   项目仓库: https://github.com/MaxLHy0424/Computer-Room-Control-Software-Nemesis\n");
     printf("   作者: MaxLHy0424\n");
     printf("   作者 B 站账号 UID: 1678066522\n");
@@ -15,14 +15,14 @@ void About(){
     printf("########################################\n\n");
     sleep(1);
     printf("按任意键返回主界面.\n\n");
-    system("pause");
-    system("cls");
+    system("Pause");
+    system("CLS");
     Start();
 }
 void CrackingTool(){
     printf("<破解工具>\n");
     if(!IsUserAnAdmin()){
-        printf("[提示] 当前为 \"受限模式\", 已限制此功能. 若需解除限制, 请以 Administrator 权限重启软件.\n");
+        printf("\n[提示] 当前为 \"受限模式\", 已限制此功能. 若需解除限制, 请以 Administrator 权限重启软件.\n\n");
     }
     printf("   [0] 返回主界面\n");
     printf("   [1] 快速模式\n");
@@ -39,7 +39,7 @@ void CrackingTool(){
         case '0':{
             delete sleepTimes;
             sleepTimes=NULL;
-            system("cls");
+            system("CLS");
             Start();
             break;
         }case '2':{
@@ -52,7 +52,7 @@ void CrackingTool(){
             }
         }
     }
-    system("cls");
+    system("CLS");
     printf("配置:\n       模式: ");
     switch(Code[0]){
         case '1':{
@@ -88,13 +88,13 @@ void CrackingTool(){
         }case 'N':{
             delete sleepTimes;
             sleepTimes=NULL;
-            system("cls");
+            system("CLS");
             CrackingTool();
             break;
         }
     }
     for(;;){
-        system("cls");
+        system("CLS");
         system("TaskKill /F /T /IM uninstallCnt.exe");
         system("TaskKill /F /T /IM Install64.exe");
         system("TaskKill /F /T /IM Install32.exe");
@@ -184,23 +184,18 @@ void CrackingTool(){
             system("Net Stop WFBSMlogon");
         }
         if(Code[0]=='1'){
-            delete sleepTimes;
-            sleepTimes=NULL;
             break;
         }
         printf("\n休眠中...\n");
         sleep(*sleepTimes);
     }
-    switch(Code[0]){
-        case '1':{
-            printf("\n########################################\n");
-            printf("按任意键返回主界面.\n\n");
-            system("pause");
-            system("cls");
-            Start();
-            break;
-        }
-    }
+    delete sleepTimes;
+    sleepTimes=NULL;
+    printf("\n########################################\n");
+    printf("按任意键返回主界面.\n\n");
+    system("Pause");
+    system("CLS");
+    Start();
 }
 void RecoveringMode(){
     if(!IsUserAnAdmin()){
@@ -208,8 +203,8 @@ void RecoveringMode(){
         printf("\n########################################\n\n");
         sleep(0.5);
         printf("按任意键返回主界面.\n\n");
-        system("pause");
-        system("cls");
+        system("Pause");
+        system("CLS");
         Start();
     }
     printf("<恢复工具>\n\n");
@@ -225,12 +220,12 @@ void RecoveringMode(){
         case 'Y':{
             break;
         }case 'N':{
-            system("cls");
+            system("CLS");
             Start();
             break;
         }
     }
-    system("cls");
+    system("CLS");
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\uninstallCnt.exe\" /F");
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\Install64.exe\" /F");
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\Install32.exe\" /F");
@@ -294,8 +289,8 @@ void RecoveringMode(){
     printf("########################################\n\n");
     sleep(1);
     printf("按任意键返回主界面.\n\n");
-    system("pause");
-    system("cls");
+    system("Pause");
+    system("CLS");
     Start();
 }
 unsigned short Start(){
@@ -311,7 +306,7 @@ unsigned short Start(){
         Code[0]=0,Code[1]=0,Code[2]=0;
         scanf("%s",&Code[0]);
     }
-    system("cls");
+    system("CLS");
     switch(Code[0]){
         case 'x':{
             exit(0);
@@ -337,8 +332,8 @@ int main(){
         printf("########################################\n\n");
         printf("按任意键进入 \"受限模式\".\n\n");
         sleep(0.5);
-        system("pause");
-        system("cls");
+        system("Pause");
+        system("CLS");
     }else{
         system("Title 机房控制软件克星");
     }
