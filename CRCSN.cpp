@@ -1,17 +1,19 @@
 #include<stdio.h>
 #include<unistd.h>
 #include<ShlObj.h>
+#include<thread>
 char Code[3]{0,0,0};
 unsigned short Start();
+void CrackingTool();
 void About(){
     printf("<关于>\n\n");
     printf("   名称: 机房控制软件克星 (Computer Room Control Software Nemesis)\n");
-    printf("   版本: v3.0_Dev15\n");
+    printf("   版本: v3.0_Dev16\n");
     printf("   项目仓库: https://github.com/MaxLHy0424/Computer-Room-Control-Software-Nemesis\n");
     printf("   作者: MaxLHy0424\n");
     printf("   作者 B 站账号 UID: 1678066522\n");
     printf("   反馈邮箱: MaxLHy974413@outlook.com\n\n");
-    printf("   (C) Copyright 2023-2024 MaxLHy0424, All Rights Reserved.\n\n");
+    printf("   (C) 2023-2024 MaxLHy0424, All Rights Reserved.\n\n");
     printf("########################################\n\n");
     sleep(1);
     printf("按任意键返回主界面.\n\n");
@@ -19,6 +21,98 @@ void About(){
     system("ClS");
     Start();
 }
+void CrackingTool_Process(){
+    system("TaskKill /F /T /IM uninstallCnt.exe");
+    system("TaskKill /F /T /IM Install64.exe");
+    system("TaskKill /F /T /IM Install32.exe");
+    system("TaskKill /F /T /IM vncviewer.exe");
+    system("TaskKill /F /T /IM tvnserver32.exe");
+    system("TaskKill /F /T /IM WfbsPnpInstall.exe");
+    system("TaskKill /F /T /IM WFBSMon.exe");
+    system("TaskKill /F /T /IM WFBSMlogon.exe");
+    system("TaskKill /F /T /IM WFBSSvrLogShow.exe");
+    system("TaskKill /F /T /IM ResetIp.exe");
+    system("TaskKill /F /T /IM FuncForWIN64.exe");
+    system("TaskKill /F /T /IM CertMgr.exe");
+    system("TaskKill /F /T /IM Fireware.exe");
+    system("TaskKill /F /T /IM BCDBootCopy.exe");
+    system("TaskKill /F /T /IM refreship.exe");
+    system("TaskKill /F /T /IM LenovoLockScreen.exe");
+    system("TaskKill /F /T /IM PortControl64.exe");
+    system("TaskKill /F /T /IM DesktopCheck.exe");
+    system("TaskKill /F /T /IM DeploymentManager.exe");
+    system("TaskKill /F /T /IM DeploymentAgent.exe");
+    system("TaskKill /F /T /IM XYNTService.exe");
+    system("TaskKill /F /T /IM ProcHelper64.exe");
+    system("TaskKill /F /T /IM StudentMain.exe");
+    system("TaskKill /F /T /IM DispcapHelper.exe");
+    system("TaskKill /F /T /IM SpecialSet.exe");
+    system("TaskKill /F /T /IM VRCwPlayer.exe");
+    system("TaskKill /F /T /IM InstHelpApp.exe");
+    system("TaskKill /F /T /IM TDOvrSet.exe");
+    system("TaskKill /F /T /IM GATESRV.exe");
+    system("TaskKill /F /T /IM MasterHelper.exe");
+    printf("\n");
+}void CrackingTool_Net(){
+    system("SC Config NcdAutoSetup Start= Disabled");
+    system("SC Config NetMsmqActivator Start= Disabled");
+    system("SC Config MSMQ Start= Disabled");
+    system("SC Config \"Intel Connectivity Network Service\" Start= Disabled");
+    system("SC Config netprofm Start= Disabled");
+    system("SC Config NlaSvc Start= Disabled");
+    system("SC Config EventLog Start= Disabled");
+    system("SC Config tvnserver Start= Disabled");
+    system("SC Config TDNetFilter Start= Disabled");
+    system("SC Config TDFileFilter Start= Disabled");
+    system("SC Config STUDSRV Start= Disabled");
+    system("SC Config BSAgentSvr Start= Disabled");
+    system("SC Config WFBSMlogon Start= Disabled");
+    system("Net Stop NcdAutoSetup");
+    system("Net Stop NetMsmqActivator");
+    system("Net Stop MSMQ");
+    system("Net Stop \"Intel Connectivity Network Service\"");
+    system("Net Stop netprofm");
+    system("Net Stop NlaSvc");
+    system("Net Stop EventLog");
+    system("Net Stop tvnserver");
+    system("Net Stop TDNetFilter");
+    system("Net Stop TDFileFilter");
+    system("Net Stop STUDSRV");
+    system("Net Stop BSAgentSvr");
+    system("Net Stop WFBSMlogon");
+}void CrackingTool_Reg(){
+    system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\uninstallCnt.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
+    system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\Install64.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
+    system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\Install32.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
+    system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\vncviewer.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
+    system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\tvnserver32.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
+    system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\WfbsPnpInstall.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
+    system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\WFBSMon.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
+    system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\WFBSMlogon.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
+    system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\WFBSSvrLogShow.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
+    system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\ResetIp.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
+    system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\FuncForWIN64.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
+    system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\CertMgr.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
+    system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\Fireware.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
+    system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\BCDBootCopy.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
+    system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\refreship.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
+    system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\LenovoLockScreen.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
+    system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\PortControl64.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
+    system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DesktopCheck.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
+    system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DeploymentManager.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
+    system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DeploymentAgent.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
+    system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\XYNTService.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
+    system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\ProcHelper64.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
+    system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\StudentMain.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
+    system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DispcapHelper.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
+    system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\SpecialSet.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
+    system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\VRCwPlayer.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
+    system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\InstHelpApp.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
+    system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\TDOvrSet.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
+    system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\GATESRV.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
+    system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\MasterHelper.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
+}
+#pragma GCC diagnostic ignored "-Winfinite-recursion"
 void CrackingTool(){
     printf("<破解工具>\n\n");
     if(!IsUserAnAdmin()){
@@ -34,21 +128,19 @@ void CrackingTool(){
         Code[0]=0,Code[1]=0,Code[2]=0;
         scanf("%s",&Code[0]);
     }
-    float* sleepTimes{new float{0}};
+    float sleepTimes{0};
     switch(Code[0]){
         case '0':{
-            delete sleepTimes;
-            sleepTimes=NULL;
             system("ClS");
             Start();
             break;
         }case '2':{
             printf("请输入 \"休眠\" 时间 (在每次执行操作后暂停执行一段时间, 单位 秒, 数值 0.0  ~ 10.0): ");
-            scanf("%f",sleepTimes);
-            while(*sleepTimes<0.0||*sleepTimes>10.0){
+            scanf("%f",&sleepTimes);
+            while(sleepTimes<0.0||sleepTimes>10.0){
                 printf("输入错误, 请重新输入: ");
-                *sleepTimes=0;
-                scanf("%f",sleepTimes);
+                sleepTimes=0;
+                scanf("%f",&sleepTimes);
             }
         }
     }
@@ -70,10 +162,10 @@ void CrackingTool(){
         printf("已启用.\n");
     }
     printf("     \"休眠\": ");
-    if(*sleepTimes==0){
+    if(sleepTimes==0){
         printf("已禁用.\n\n");
     }else{
-        printf("已启用, %lg 秒.\n\n",*sleepTimes);
+        printf("已启用, %lg 秒.\n\n",sleepTimes);
     }
     printf("请确认 (Y: 继续, N: 放弃并返回): ");
     scanf("%s",&Code[1]);
@@ -86,8 +178,6 @@ void CrackingTool(){
         case 'Y':{
             break;
         }case 'N':{
-            delete sleepTimes;
-            sleepTimes=NULL;
             system("ClS");
             CrackingTool();
             break;
@@ -95,108 +185,26 @@ void CrackingTool(){
     }
     for(;;){
         system("ClS");
-        system("TaskKill /F /T /IM uninstallCnt.exe");
-        system("TaskKill /F /T /IM Install64.exe");
-        system("TaskKill /F /T /IM Install32.exe");
-        system("TaskKill /F /T /IM vncviewer.exe");
-        system("TaskKill /F /T /IM tvnserver32.exe");
-        system("TaskKill /F /T /IM WfbsPnpInstall.exe");
-        system("TaskKill /F /T /IM WFBSMon.exe");
-        system("TaskKill /F /T /IM WFBSMlogon.exe");
-        system("TaskKill /F /T /IM WFBSSvrLogShow.exe");
-        system("TaskKill /F /T /IM ResetIp.exe");
-        system("TaskKill /F /T /IM FuncForWIN64.exe");
-        system("TaskKill /F /T /IM CertMgr.exe");
-        system("TaskKill /F /T /IM Fireware.exe");
-        system("TaskKill /F /T /IM BCDBootCopy.exe");
-        system("TaskKill /F /T /IM refreship.exe");
-        system("TaskKill /F /T /IM LenovoLockScreen.exe");
-        system("TaskKill /F /T /IM PortControl64.exe");
-        system("TaskKill /F /T /IM DesktopCheck.exe");
-        system("TaskKill /F /T /IM DeploymentManager.exe");
-        system("TaskKill /F /T /IM DeploymentAgent.exe");
-        system("TaskKill /F /T /IM XYNTService.exe");
-        system("TaskKill /F /T /IM ProcHelper64.exe");
-        system("TaskKill /F /T /IM StudentMain.exe");
-        system("TaskKill /F /T /IM DispcapHelper.exe");
-        system("TaskKill /F /T /IM SpecialSet.exe");
-        system("TaskKill /F /T /IM VRCwPlayer.exe");
-        system("TaskKill /F /T /IM InstHelpApp.exe");
-        system("TaskKill /F /T /IM TDOvrSet.exe");
-        system("TaskKill /F /T /IM GATESRV.exe");
-        system("TaskKill /F /T /IM MasterHelper.exe");
+        std::thread t1(CrackingTool_Process);
+        t1.join();
         if(IsUserAnAdmin()){
-            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\uninstallCnt.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
-            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\Install64.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
-            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\Install32.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
-            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\vncviewer.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
-            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\tvnserver32.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
-            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\WfbsPnpInstall.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
-            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\WFBSMon.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
-            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\WFBSMlogon.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
-            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\WFBSSvrLogShow.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
-            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\ResetIp.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
-            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\FuncForWIN64.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
-            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\CertMgr.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
-            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\Fireware.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
-            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\BCDBootCopy.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
-            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\refreship.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
-            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\LenovoLockScreen.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
-            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\PortControl64.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
-            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DesktopCheck.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
-            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DeploymentManager.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
-            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DeploymentAgent.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
-            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\XYNTService.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
-            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\ProcHelper64.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
-            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\StudentMain.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
-            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DispcapHelper.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
-            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\SpecialSet.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
-            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\VRCwPlayer.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
-            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\InstHelpApp.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
-            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\TDOvrSet.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
-            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\GATESRV.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
-            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\MasterHelper.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
-            system("SC Config NcdAutoSetup Start= Disabled");
-            system("SC Config NetMsmqActivator Start= Disabled");
-            system("SC Config MSMQ Start= Disabled");
-            system("SC Config \"Intel Connectivity Network Service\" Start= Disabled");
-            system("SC Config netprofm Start= Disabled");
-            system("SC Config NlaSvc Start= Disabled");
-            system("SC Config EventLog Start= Disabled");
-            system("SC Config tvnserver Start= Disabled");
-            system("SC Config TDNetFilter Start= Disabled");
-            system("SC Config TDFileFilter Start= Disabled");
-            system("SC Config STUDSRV Start= Disabled");
-            system("SC Config BSAgentSvr Start= Disabled");
-            system("SC Config WFBSMlogon Start= Disabled");
-            system("Net Stop NcdAutoSetup");
-            system("Net Stop NetMsmqActivator");
-            system("Net Stop MSMQ");
-            system("Net Stop \"Intel Connectivity Network Service\"");
-            system("Net Stop netprofm");
-            system("Net Stop NlaSvc");
-            system("Net Stop EventLog");
-            system("Net Stop tvnserver");
-            system("Net Stop TDNetFilter");
-            system("Net Stop TDFileFilter");
-            system("Net Stop STUDSRV");
-            system("Net Stop BSAgentSvr");
-            system("Net Stop WFBSMlogon");
-        }
-        if(Code[0]=='1'){
-            break;
+            std::thread t2(CrackingTool_Reg);
+            t2.detach();
+            std::thread t3(CrackingTool_Net);
+            t3.join();
         }
         printf("\n休眠中...\n");
-        sleep(*sleepTimes);
+        sleep(sleepTimes);
     }
-    delete sleepTimes;
-    sleepTimes=NULL;
-    printf("\n########################################\n");
-    printf("按任意键返回主界面.\n\n");
-    system("Pause");
-    system("ClS");
-    Start();
+    if(Code[0]=='1'){
+        printf("\n########################################\n");
+        printf("按任意键返回主界面.\n\n");
+        system("Pause");
+        system("ClS");
+        Start();
+    }
 }
+#pragma GCC diagnostic pop
 void RecoveringMode(){
     if(!IsUserAnAdmin()){
         printf("[提示] 当前为 \"受限模式\", 已禁用此页面.\n");
