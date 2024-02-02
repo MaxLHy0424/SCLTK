@@ -186,12 +186,14 @@ void CrackingTool(){
     for(;;){
         system("ClS");
         std::thread t1(CrackingTool_Process);
-        t1.join();
         if(IsUserAnAdmin()){
+            t1.detach();
             std::thread t2(CrackingTool_Reg);
             t2.detach();
             std::thread t3(CrackingTool_Net);
             t3.join();
+        }else{
+            t1.join();
         }
         printf("\n休眠中...\n");
         sleep(sleepTimes);
