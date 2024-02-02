@@ -46,7 +46,7 @@ void CrackingTool(){
             while(sleepTimes<0.0||sleepTimes>10.0){
                 printf("输入错误, 请重新输入: ");
                 sleepTimes=0;
-                scanf("%f",sleepTimes);
+                scanf("%f",&sleepTimes);
             }
         }
     }
