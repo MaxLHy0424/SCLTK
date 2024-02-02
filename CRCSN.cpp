@@ -6,14 +6,14 @@ unsigned short Start();
 void About(){
     printf("<关于>\n\n");
     printf("   名称: 机房控制软件克星 (Computer Room Control Software Nemesis)\n");
-    printf("   版本: v3.0_Dev15\n");
+    printf("   版本: v3.0_Dev16\n");
     printf("   项目仓库: https://github.com/MaxLHy0424/Computer-Room-Control-Software-Nemesis\n");
     printf("   作者: MaxLHy0424\n");
     printf("   作者 B 站账号 UID: 1678066522\n");
     printf("   反馈邮箱: MaxLHy974413@outlook.com\n\n");
-    printf("   (C) Copyright 2023-2024 MaxLHy0424, All Rights Reserved.\n\n");
+    printf("   (C) 2023-2024 MaxLHy0424, All Rights Reserved.\n\n");
     printf("########################################\n\n");
-    sleep(1);
+    sleep(0.5);
     printf("按任意键返回主界面.\n\n");
     system("Pause");
     system("ClS");
@@ -34,20 +34,18 @@ void CrackingTool(){
         Code[0]=0,Code[1]=0,Code[2]=0;
         scanf("%s",&Code[0]);
     }
-    float* sleepTimes{new float{0}};
+    float sleepTimes{0};
     switch(Code[0]){
         case '0':{
-            delete sleepTimes;
-            sleepTimes=NULL;
             system("ClS");
             Start();
             break;
         }case '2':{
             printf("请输入 \"休眠\" 时间 (在每次执行操作后暂停执行一段时间, 单位 秒, 数值 0.0  ~ 10.0): ");
-            scanf("%f",sleepTimes);
-            while(*sleepTimes<0.0||*sleepTimes>10.0){
+            scanf("%f",&sleepTimes);
+            while(sleepTimes<0.0||sleepTimes>10.0){
                 printf("输入错误, 请重新输入: ");
-                *sleepTimes=0;
+                sleepTimes=0;
                 scanf("%f",sleepTimes);
             }
         }
@@ -70,10 +68,10 @@ void CrackingTool(){
         printf("已启用.\n");
     }
     printf("     \"休眠\": ");
-    if(*sleepTimes==0){
+    if(sleepTimes==0){
         printf("已禁用.\n\n");
     }else{
-        printf("已启用, %lg 秒.\n\n",*sleepTimes);
+        printf("已启用, %lg 秒.\n\n",sleepTimes);
     }
     printf("请确认 (Y: 继续, N: 放弃并返回): ");
     scanf("%s",&Code[1]);
@@ -86,8 +84,6 @@ void CrackingTool(){
         case 'Y':{
             break;
         }case 'N':{
-            delete sleepTimes;
-            sleepTimes=NULL;
             system("ClS");
             CrackingTool();
             break;
@@ -187,10 +183,8 @@ void CrackingTool(){
             break;
         }
         printf("\n休眠中...\n");
-        sleep(*sleepTimes);
+        sleep(sleepTimes);
     }
-    delete sleepTimes;
-    sleepTimes=NULL;
     printf("\n########################################\n");
     printf("按任意键返回主界面.\n\n");
     system("Pause");
@@ -287,7 +281,7 @@ void RecoveringMode(){
     printf("  极域电子教室: StudentMain.exe, GATESRV.exe, MasterHelper.exe, ProcHelper64.exe, DispcapHelper.exe, VRCwPlayer.exe\n\n");
     printf("请手动开启以上软件.\n");
     printf("########################################\n\n");
-    sleep(1);
+    sleep(0.5);
     printf("按任意键返回主界面.\n\n");
     system("Pause");
     system("ClS");
