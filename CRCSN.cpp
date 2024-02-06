@@ -6,10 +6,12 @@ unsigned short Start();
 void About(){
     printf("<关于>\n\n");
     printf("   [名    称] 机房控制软件克星 (Computer Room Control Software Nemesis)\n");
-    printf("   [版    本] v3.0.0 (Build 30170)\n");
+    printf("   [版    本] v3.0.0 (Build 30171)\n");
     printf("   [作    者] MaxLHy0424\n");
     printf("   [开源仓库] https://github.com/MaxLHy0424/Computer-Room-Control-Software-Nemesis\n\n");
     printf("   (C) Copyright 2023-2024 MaxLHy0424, All Rights Reserved.\n\n");
+    printf("########################################\n\n");
+    printf("开发版本, 仅用于技术测试, 出现问题请及时反馈, 禁止二次分发.\n\n");
     printf("########################################\n\n");
     sleep(1);
     printf("按任意键返回主界面.\n\n");
