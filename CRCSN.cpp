@@ -5,18 +5,16 @@ char Code[3]{0,0,0};
 unsigned short Start();
 void About(){
     printf("<关于>\n\n");
-    printf("   名称: 机房控制软件克星 (Computer Room Control Software Nemesis)\n");
-    printf("   版本: v3.0_Dev16\n");
-    printf("   项目仓库: https://github.com/MaxLHy0424/Computer-Room-Control-Software-Nemesis\n");
-    printf("   作者: MaxLHy0424\n");
-    printf("   作者 B 站账号 UID: 1678066522\n");
-    printf("   反馈邮箱: MaxLHy974413@outlook.com\n\n");
-    printf("   (C) 2023-2024 MaxLHy0424, All Rights Reserved.\n\n");
+    printf("   [名    称] 机房控制软件克星 (Computer Room Control Software Nemesis)\n");
+    printf("   [版    本] v3.0.0 (Build 30170)\n");
+    printf("   [作    者] MaxLHy0424\n");
+    printf("   [开源仓库] https://github.com/MaxLHy0424/Computer-Room-Control-Software-Nemesis\n\n");
+    printf("   (C) Copyright 2023-2024 MaxLHy0424, All Rights Reserved.\n\n");
     printf("########################################\n\n");
-    sleep(0.5);
+    sleep(1);
     printf("按任意键返回主界面.\n\n");
     system("Pause");
-    system("ClS");
+    system("cls");
     Start();
 }
 void CrackingTool(){
@@ -37,7 +35,7 @@ void CrackingTool(){
     float sleepTimes{0};
     switch(Code[0]){
         case '0':{
-            system("ClS");
+            system("cls");
             Start();
             break;
         }case '2':{
@@ -50,7 +48,7 @@ void CrackingTool(){
             }
         }
     }
-    system("ClS");
+    system("cls");
     printf("配置:\n       模式: ");
     switch(Code[0]){
         case '1':{
@@ -84,13 +82,13 @@ void CrackingTool(){
         case 'Y':{
             break;
         }case 'N':{
-            system("ClS");
+            system("cls");
             CrackingTool();
             break;
         }
     }
     for(;;){
-        system("ClS");
+        system("cls");
         system("TaskKill /F /T /IM uninstallCnt.exe");
         system("TaskKill /F /T /IM Install64.exe");
         system("TaskKill /F /T /IM Install32.exe");
@@ -188,17 +186,17 @@ void CrackingTool(){
     printf("\n########################################\n");
     printf("按任意键返回主界面.\n\n");
     system("Pause");
-    system("ClS");
+    system("cls");
     Start();
 }
-void RecoveringMode(){
+void RecoveringTool(){
     if(!IsUserAnAdmin()){
         printf("[提示] 当前为 \"受限模式\", 已禁用此页面.\n");
         printf("\n########################################\n\n");
-        sleep(0.5);
+        sleep(1);
         printf("按任意键返回主界面.\n\n");
         system("Pause");
-        system("ClS");
+        system("cls");
         Start();
     }
     printf("<恢复工具>\n\n");
@@ -214,12 +212,12 @@ void RecoveringMode(){
         case 'Y':{
             break;
         }case 'N':{
-            system("ClS");
+            system("cls");
             Start();
             break;
         }
     }
-    system("ClS");
+    system("cls");
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\uninstallCnt.exe\" /F");
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\Install64.exe\" /F");
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\Install32.exe\" /F");
@@ -281,14 +279,14 @@ void RecoveringMode(){
     printf("  极域电子教室: StudentMain.exe, GATESRV.exe, MasterHelper.exe, ProcHelper64.exe, DispcapHelper.exe, VRCwPlayer.exe\n\n");
     printf("请手动开启以上软件.\n");
     printf("########################################\n\n");
-    sleep(0.5);
+    sleep(1);
     printf("按任意键返回主界面.\n\n");
     system("Pause");
-    system("ClS");
+    system("cls");
     Start();
 }
 unsigned short Start(){
-    printf("欢迎您使用本软件!\n\n");
+    printf("欢迎使用 CRCSN !\n\n");
     printf("   [x] 退出软件\n");
     printf("   [0] 关于\n");
     printf("   [1] 破解工具\n");
@@ -300,7 +298,7 @@ unsigned short Start(){
         Code[0]=0,Code[1]=0,Code[2]=0;
         scanf("%s",&Code[0]);
     }
-    system("ClS");
+    system("cls");
     switch(Code[0]){
         case 'x':{
             exit(0);
@@ -311,7 +309,7 @@ unsigned short Start(){
             CrackingTool();
             break;
         }case '2':{
-            RecoveringMode();
+            RecoveringTool();
             break;
         }
     }
@@ -324,11 +322,12 @@ int main(){
         printf("[提示] 当前软件权限为 User, 建议以 Administrator 权限运行本软件.\n\n");
         printf("########################################\n\n");
         printf("按任意键以 \"受限模式\" 继续.\n\n");
-        sleep(0.5);
+        sleep(1);
         system("Pause");
-        system("ClS");
+        system("cls");
     }else{
         system("Title 机房控制软件克星");
     }
     Start();
+    return 0;
 }
