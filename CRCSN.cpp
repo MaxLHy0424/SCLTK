@@ -7,7 +7,7 @@ void About(){
     printf("<关于>\n\n");
     printf("   [软件名称] 机房控制软件克星 (Computer Room Control Software Nemesis)\n");
     printf("   [构建版本] Stable 30174\n");
-    printf("   [作软件者] MaxLHy0424\n");
+    printf("   [软件作者] MaxLHy0424\n");
     printf("   [开源仓库] https://github.com/MaxLHy0424/Computer-Room-Control-Software-Nemesis\n\n");
     printf("   (C) Copyright 2023-2024 MaxLHy0424, All Rights Reserved.\n\n");
     printf("########################################\n\n");
