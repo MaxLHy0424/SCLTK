@@ -6,12 +6,10 @@ unsigned short Start();
 void About(){
     printf("<关于>\n\n");
     printf("   [名    称] 机房控制软件克星 (Computer Room Control Software Nemesis)\n");
-    printf("   [版    本] v3.0.0 (Build 30171)\n");
+    printf("   [版    本] v3.0.0 (Build 30172)\n");
     printf("   [作    者] MaxLHy0424\n");
     printf("   [开源仓库] https://github.com/MaxLHy0424/Computer-Room-Control-Software-Nemesis\n\n");
     printf("   (C) Copyright 2023-2024 MaxLHy0424, All Rights Reserved.\n\n");
-    printf("########################################\n\n");
-    printf("开发版本, 仅用于技术测试, 出现问题请及时反馈, 禁止二次分发.\n\n");
     printf("########################################\n\n");
     sleep(1);
     printf("按任意键返回主界面.\n\n");
@@ -277,7 +275,7 @@ void RecoveringTool(){
     system("Net Start TDFileFilter");
     system("Net Start STUDSRV");
     printf("\n########################################\n");
-    printf("    联想云教室: vncviewer.exe, tvnserver32.exe, WFDeskShow.exe, WfbsPnpInstall.exe, WFBSMon.exe, WFBSMlogon.exe, refreship.exe, LenovoLockScreen.exe, DeploymentManager.exe, WFBSSvrLogShow.exe, ResetIp.exe, FuncForWIN64.exe, CertMgr.exe, Fireware.exe, BCDBootCopy.exe, PortControl64.exe, DesktopCheck.exe, DeploymentAgent.exe, XYNTService.exe\n");
+    printf("  联想云教室: vncviewer.exe, tvnserver32.exe, WFDeskShow.exe, WfbsPnpInstall.exe, WFBSMon.exe, WFBSMlogon.exe, refreship.exe, LenovoLockScreen.exe, DeploymentManager.exe, WFBSSvrLogShow.exe, ResetIp.exe, FuncForWIN64.exe, CertMgr.exe, Fireware.exe, BCDBootCopy.exe, PortControl64.exe, DesktopCheck.exe, DeploymentAgent.exe, XYNTService.exe\n");
     printf("  极域电子教室: StudentMain.exe, GATESRV.exe, MasterHelper.exe, ProcHelper64.exe, DispcapHelper.exe, VRCwPlayer.exe\n\n");
     printf("请手动开启以上软件.\n");
     printf("########################################\n\n");
@@ -320,7 +318,7 @@ unsigned short Start(){
 int main(){
     system("Color B");
     if(!IsUserAnAdmin()){
-        system("Title 机房控制软件克星 (受限模式)");
+        system("Title CRCSN (受限模式)");
         printf("[提示] 当前软件权限为 User, 建议以 Administrator 权限运行本软件.\n\n");
         printf("########################################\n\n");
         printf("按任意键以 \"受限模式\" 继续.\n\n");
@@ -328,7 +326,7 @@ int main(){
         system("Pause");
         system("cls");
     }else{
-        system("Title 机房控制软件克星");
+        system("Title CRCSN");
     }
     Start();
     return 0;
