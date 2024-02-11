@@ -11,7 +11,7 @@ void About(){
     printf("   [主 仓 库] https://github.com/MaxLHy0424/Computer-Room-Control-Software-Nemesis\n\n");
     printf("   (C) 2023-2024 MaxLHy0424, All Rights Reserved.\n\n");
     printf("########################################\n\n");
-    printf("开发版本, 仅用于版本预览与技术测试, 禁止二次分发.\n\n");
+    printf("开发版本, 仅用于预览与测试, 禁止二次分发.\n\n");
     printf("########################################\n\n");
     sleep(1);
     printf("按任意键返回主界面.\n\n");
@@ -33,7 +33,7 @@ void Cracking(){
         printf("输入错误, 请重新输入: ");
         scanf("%s",&CODE[0]);
     }
-    float sleepTimes{0};
+    float sleepTimeS{0};
     switch(CODE[0]){
         case '0':{
             system("CLS");
@@ -41,11 +41,11 @@ void Cracking(){
             break;
         }case '2':{
             printf("请输入 \"休眠\" 时间 (单位: 秒; 范围: 0 ~ 10): ");
-            scanf("%f",&sleepTimes);
-            while(sleepTimes<0.0||sleepTimes>10.0){
+            scanf("%f",&sleepTimeS);
+            while(sleepTimeS<0.0||sleepTimeS>10.0){
                 printf("输入错误, 请重新输入: ");
-                sleepTimes=0;
-                scanf("%f",&sleepTimes);
+                sleepTimeS=0;
+                scanf("%f",&sleepTimeS);
             }
         }
     }
@@ -67,10 +67,10 @@ void Cracking(){
         printf("已启用.\n");
     }
     printf("     \"休眠\": ");
-    if(sleepTimes==0){
+    if(sleepTimeS==0){
         printf("已禁用.\n\n");
     }else{
-        printf("已启用, %lg 秒.\n\n",sleepTimes);
+        printf("已启用, %lg 秒.\n\n",sleepTimeS);
     }
     printf("请确认 (Y: 继续, N: 放弃并返回): ");
     scanf("%s",&CODE[1]);
@@ -174,7 +174,7 @@ void Cracking(){
             break;
         }
         printf("\n休眠中...\n");
-        sleep(sleepTimes);
+        sleep(sleepTimeS);
     }
     printf("\n########################################\n\n");
     printf("按任意键返回主界面.\n\n");
