@@ -1,23 +1,25 @@
 #include<stdio.h>
 #include<unistd.h>
 #include<ShlObj.h>
-char Code[3]{0,0,0};
+char CODE[3]{0,0,0};
 unsigned short Start();
 void About(){
     printf("<关于>\n\n");
     printf("   [软件名称] 机房控制软件克星 (Computer Room Control Software Nemesis)\n");
-    printf("   [构建版本] Stable 30174\n");
+    printf("   [构建版本] Dev 3100.01\n");
     printf("   [软件作者] MaxLHy0424\n");
-    printf("   [开源仓库] https://github.com/MaxLHy0424/Computer-Room-Control-Software-Nemesis\n\n");
-    printf("   (C) Copyright 2023-2024 MaxLHy0424, All Rights Reserved.\n\n");
+    printf("   [主 仓 库] https://github.com/MaxLHy0424/Computer-Room-Control-Software-Nemesis\n\n");
+    printf("   (C) 2023-2024 MaxLHy0424, All Rights Reserved.\n\n");
+    printf("########################################\n\n");
+    printf("开发版本, 仅用于版本预览与技术测试, 禁止二次分发.\n\n");
     printf("########################################\n\n");
     sleep(1);
     printf("按任意键返回主界面.\n\n");
     system("Pause");
-    system("cls");
+    system("CLS");
     Start();
 }
-void CrackingTool(){
+void Cracking(){
     printf("<破解工具>\n\n");
     if(!IsUserAnAdmin()){
         printf("[提示] 当前为 \"受限模式\", 已限制此功能. 解除限制请以 Administrator 权限重启软件.\n\n");
@@ -26,15 +28,15 @@ void CrackingTool(){
     printf("   [1] 单次模式\n");
     printf("   [2] 循环模式\n\n");
     printf("请输入: ");
-    scanf("%s",&Code[0]);
-    while((Code[0]!='0'&&Code[0]!='1'&&Code[0]!='2')||Code[1]!=0){
+    scanf("%s",&CODE[0]);
+    while((CODE[0]!='0'&&CODE[0]!='1'&&CODE[0]!='2')||CODE[1]!=0){
         printf("输入错误, 请重新输入: ");
-        scanf("%s",&Code[0]);
+        scanf("%s",&CODE[0]);
     }
     float sleepTimes{0};
-    switch(Code[0]){
+    switch(CODE[0]){
         case '0':{
-            system("cls");
+            system("CLS");
             Start();
             break;
         }case '2':{
@@ -47,9 +49,9 @@ void CrackingTool(){
             }
         }
     }
-    system("cls");
+    system("CLS");
     printf("配置:\n       模式: ");
-    switch(Code[0]){
+    switch(CODE[0]){
         case '1':{
             printf("单次.\n");
             break;
@@ -71,22 +73,22 @@ void CrackingTool(){
         printf("已启用, %lg 秒.\n\n",sleepTimes);
     }
     printf("请确认 (Y: 继续, N: 放弃并返回): ");
-    scanf("%s",&Code[1]);
-    while((Code[1]!='Y'&&Code[1]!='N')||Code[2]!=0){
+    scanf("%s",&CODE[1]);
+    while((CODE[1]!='Y'&&CODE[1]!='N')||CODE[2]!=0){
         printf("输入错误, 请重新输入: ");
-        scanf("%s",&Code[1]);
+        scanf("%s",&CODE[1]);
     }
-    switch(Code[1]){
+    switch(CODE[1]){
         case 'Y':{
             break;
         }case 'N':{
-            system("cls");
-            CrackingTool();
+            system("CLS");
+            Cracking();
             break;
         }
     }
     for(;;){
-        system("cls");
+        system("CLS");
         system("TaskKill /F /T /IM uninstallCnt.exe");
         system("TaskKill /F /T /IM Install64.exe");
         system("TaskKill /F /T /IM Install32.exe");
@@ -118,6 +120,7 @@ void CrackingTool(){
         system("TaskKill /F /T /IM GATESRV.exe");
         system("TaskKill /F /T /IM MasterHelper.exe");
         if(IsUserAnAdmin()){
+            sleep(1);
             system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\uninstallCnt.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
             system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\Install64.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
             system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\Install32.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
@@ -175,7 +178,7 @@ void CrackingTool(){
             system("Net Stop BSAgentSvr");
             system("Net Stop WFBSMlogon");
         }
-        if(Code[0]=='1'){
+        if(CODE[0]=='1'){
             break;
         }
         printf("\n休眠中...\n");
@@ -184,37 +187,37 @@ void CrackingTool(){
     printf("\n########################################\n\n");
     printf("按任意键返回主界面.\n\n");
     system("Pause");
-    system("cls");
+    system("CLS");
     Start();
 }
-void RecoveringTool(){
+void Recoverying(){
     if(!IsUserAnAdmin()){
-        printf("[提示] 当前为 \"受限模式\", 已禁用此页面.\n\n");
+        printf("[提示] 当前为 \"受限模式\", 已禁用此功能.\n\n");
         printf("########################################\n\n");
         sleep(1);
         printf("按任意键返回主界面.\n\n");
         system("Pause");
-        system("cls");
+        system("CLS");
         Start();
     }
     printf("<恢复工具>\n\n");
     printf("本功能用于恢复破解时的部分操作, 部分情况下可能无法产生效果.\n\n");
     printf("请确认 (Y: 继续, N: 放弃并返回): ");
-    scanf("%s",&Code[1]);
-    while((Code[1]!='Y'&&Code[1]!='N')||Code[2]!=0){
+    scanf("%s",&CODE[1]);
+    while((CODE[1]!='Y'&&CODE[1]!='N')||CODE[2]!=0){
         printf("输入错误, 请重新输入: ");
-        scanf("%s",&Code[1]);
+        scanf("%s",&CODE[1]);
     }
-    switch(Code[1]){
+    switch(CODE[1]){
         case 'Y':{
             break;
         }case 'N':{
-            system("cls");
+            system("CLS");
             Start();
             break;
         }
     }
-    system("cls");
+    system("CLS");
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\uninstallCnt.exe\" /F");
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\Install64.exe\" /F");
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\Install32.exe\" /F");
@@ -279,50 +282,45 @@ void RecoveringTool(){
     sleep(1);
     printf("按任意键返回主界面.\n\n");
     system("Pause");
-    system("cls");
+    system("CLS");
     Start();
 }
 unsigned short Start(){
     printf("欢迎使用 CRCSN!\n\n");
-    printf("   [x] 退出软件\n");
     printf("   [0] 关于\n");
     printf("   [1] 破解工具\n");
     printf("   [2] 恢复工具\n\n");
     printf("请输入: ");
-    scanf("%s",&Code[0]);
-    while((Code[0]!='x'&&Code[0]!='0'&&Code[0]!='1'&&Code[0]!='2')||Code[1]!=0){
+    scanf("%s",&CODE[0]);
+    while((CODE[0]!='0'&&CODE[0]!='1'&&CODE[0]!='2')||CODE[1]!=0){
         printf("输入错误, 请重新输入: ");
-        scanf("%s",&Code[0]);
+        scanf("%s",&CODE[0]);
     }
-    system("cls");
-    switch(Code[0]){
-        case 'x':{
-            exit(1);
-        }case '0':{
+    system("CLS");
+    switch(CODE[0]){
+        case '0':{
             About();
             break;
         }case '1':{
-            CrackingTool();
+            Cracking();
             break;
         }case '2':{
-            RecoveringTool();
+            Recoverying();
             break;
         }
     }
-    return 0;
+    return false;
 }
 int main(){
     system("Color B");
+    system("Title CRCSN");
     if(!IsUserAnAdmin()){
-        system("Title [受限模式] CRCSN");
-        printf("[提示] 当前软件权限为 User, 建议以 Administrator 权限运行本软件.\n\n");
+        printf("[提示] 当前权限为 User, 建议以 Administrator 权限运行.\n\n");
         printf("########################################\n\n");
         printf("按任意键以 \"受限模式\" 继续.\n\n");
         sleep(1);
         system("Pause");
-        system("cls");
-    }else{
-        system("Title CRCSN");
+        system("CLS");
     }
     Start();
 }
