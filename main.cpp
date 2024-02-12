@@ -33,7 +33,7 @@ void Cracking(){
         printf("输入错误, 请重新输入: ");
         scanf("%s",&CODE[0]);
     }
-    double sleepTimeS{0};
+    float sleepTimeS{0};
     switch(CODE[0]){
         case '0':{
             system("CLS");
@@ -41,11 +41,11 @@ void Cracking(){
             break;
         }case '2':{
             printf("请输入 \"休眠\" 时间 (单位: 秒; 范围: 0 ~ 10): ");
-            scanf("%lf",&sleepTimeS);
+            scanf("%f",&sleepTimeS);
             while(sleepTimeS<0.0||sleepTimeS>10.0){
                 printf("输入错误, 请重新输入: ");
                 sleepTimeS=0;
-                scanf("%lf",&sleepTimeS);
+                scanf("%f",&sleepTimeS);
             }
         }
     }
