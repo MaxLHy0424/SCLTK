@@ -6,14 +6,13 @@ unsigned short Start();
 void About(){
     printf("<关于>\n\n");
     printf("   [软件名称] 机房控制软件克星 (Computer Room Control Software Nemesis)\n");
-    printf("   [构建版本] Dev 30183\n");
+    printf("   [构建版本] Dev 30184\n");
     printf("   [软件作者] MaxLHy0424\n");
     printf("   [主 仓 库] https://github.com/MaxLHy0424/Computer-Room-Control-Software-Nemesis\n\n");
     printf("   (C) 2023-2024 MaxLHy0424, All Rights Reserved.\n\n");
     printf("########################################\n\n");
     printf("开发版本, 仅用于预览与测试, 禁止二次分发.\n\n");
     printf("########################################\n\n");
-    sleep(1);
     printf("按任意键返回主界面.\n\n");
     system("Pause");
     system("CLS");
@@ -33,7 +32,7 @@ void Cracking(){
         printf("输入错误, 请重新输入: ");
         scanf("%s",&CODE[0]);
     }
-    float sleepTimeS{0};
+    double sleepTimeS{0};
     switch(CODE[0]){
         case '0':{
             system("CLS");
@@ -41,11 +40,11 @@ void Cracking(){
             break;
         }case '2':{
             printf("请输入 \"休眠\" 时间 (单位: 秒; 范围: 0 ~ 10): ");
-            scanf("%f",&sleepTimeS);
+            scanf("%lf",&sleepTimeS);
             while(sleepTimeS<0.0||sleepTimeS>10.0){
                 printf("输入错误, 请重新输入: ");
                 sleepTimeS=0;
-                scanf("%f",&sleepTimeS);
+                scanf("%lf",&sleepTimeS);
             }
         }
     }
@@ -116,7 +115,6 @@ void Cracking(){
         system("TaskKill /F /T /IM GATESRV.exe");
         system("TaskKill /F /T /IM MasterHelper.exe");
         if(IsUserAnAdmin()){
-            sleep(1);
             system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\vncviewer.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
             system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\tvnserver32.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
             system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\WfbsPnpInstall.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
@@ -143,7 +141,6 @@ void Cracking(){
             system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\TDOvrSet.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
             system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\GATESRV.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
             system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\MasterHelper.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
-            sleep(1);
             system("SC Config NcdAutoSetup Start= Disabled");
             system("SC Config NetMsmqActivator Start= Disabled");
             system("SC Config MSMQ Start= Disabled");
@@ -187,7 +184,6 @@ void Recoverying(){
     if(!IsUserAnAdmin()){
         printf("[提示] 当前为 \"受限模式\", 已禁用此功能.\n\n");
         printf("########################################\n\n");
-        sleep(1);
         printf("按任意键返回主界面.\n\n");
         system("Pause");
         system("CLS");
@@ -237,7 +233,6 @@ void Recoverying(){
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\TDOvrSet.exe\" /F");
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\GATESRV.exe\" /F");
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\MasterHelper.exe\" /F");
-    sleep(1);
     system("SC Config NcdAutoSetup Start= Auto");
     system("SC Config NetMsmqActivator Start= Auto");
     system("SC Config MSMQ Start= Auto");
@@ -269,7 +264,7 @@ void Recoverying(){
     printf("    极域电子教室: StudentMain.exe, GATESRV.exe, MasterHelper.exe, ProcHelper64.exe, DispcapHelper.exe, VRCwPlayer.exe\n\n");
     printf("请手动开启以上软件.\n");
     printf("########################################\n\n");
-    sleep(1);
+    sleep(5);
     printf("按任意键返回主界面.\n\n");
     system("Pause");
     system("CLS");
@@ -302,13 +297,13 @@ unsigned short Start(){
     return false;
 }
 int main(){
+    system("Net session >nul 2>&1 || mshta vbscript:CreateObject(\"Shell.Application\").ShellExecute(\"cmd.exe\",\"/c %~s0\",\"\",\"runas\",1)(window.close)&&exit");
     system("Color B");
     system("Title CRCSN");
     if(!IsUserAnAdmin()){
         printf("[提示] 当前权限为 User, 建议以 Administrator 权限运行.\n\n");
         printf("########################################\n\n");
         printf("按任意键以 \"受限模式\" 继续.\n\n");
-        sleep(1);
         system("Pause");
         system("CLS");
     }
