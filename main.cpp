@@ -299,23 +299,23 @@ unsigned short Start(){
 }
 int main(){
     std::ifstream fin;
-    fin.open("cfg.ini",std::ios::in);
+    fin.open("Config.ini",std::ios::in);
     if(fin.is_open()==false){
-        printf("无法读取配置文件 cfg.ini !\n\n");
+        printf("无法读取配置文件 Config.ini !\n\n");
         printf("########################################\n\n");
         printf("按任意键退出.\n\n");
         system("Pause");
         return false;
     }
-    std::string config[2];
+    std::string Config[2];
     for(unsigned short i{0};i<2;i++){
-        getline(fin,config[i]);
+        getline(fin,Config[i]);
     }
     fin.close();
-    config[0]="Color "+config[0];
-    system(config[0].c_str());
-    config[1]="Title "+config[1];
-    system(config[1].c_str());
+    Config[0]="Color "+Config[0];
+    system(Config[0].c_str());
+    Config[1]="Title "+Config[1];
+    system(Config[1].c_str());
     if(!IsUserAnAdmin()){
         printf("[提示] 当前权限为 User, 建议以 Administrator 权限运行.\n\n");
         printf("########################################\n\n");
