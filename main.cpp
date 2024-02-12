@@ -307,8 +307,8 @@ int main(){
         system("Pause");
         return false;
     }
-    std::string Config[2];
-    for(unsigned short i{0};i<2;i++){
+    std::string Config[3];
+    for(unsigned short i{0};i<3;i++){
         getline(fin,Config[i]);
     }
     fin.close();
@@ -316,6 +316,11 @@ int main(){
     system(Config[0].c_str());
     Config[1]="Title "+Config[1];
     system(Config[1].c_str());
+    if(Config[2]=="1"){
+        system("Set Path=%path%;\"C:\\Windows\\System32\\\"");
+        system("Set Path=%path%;\"C:\\Windows\\SysWOW64\\\"");
+        printf("1");
+    }
     if(!IsUserAnAdmin()){
         printf("[提示] 当前权限为 User, 建议以 Administrator 权限运行.\n\n");
         printf("########################################\n\n");
