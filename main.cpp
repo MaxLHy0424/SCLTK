@@ -1,12 +1,14 @@
-#include<stdio.h>
+#include<iostream>
+#include<fstream>
 #include<unistd.h>
 #include<ShlObj.h>
+using namespace std;
 char CODE[3]{0,0,0};
 unsigned short Start();
 void About(){
     printf("<关于>\n\n");
     printf("   [软件名称] 机房控制软件克星 (Computer Room Control Software Nemesis)\n");
-    printf("   [构建版本] Dev 30184\n");
+    printf("   [构建版本] Dev 31000\n");
     printf("   [软件作者] MaxLHy0424\n");
     printf("   [主 仓 库] https://github.com/MaxLHy0424/Computer-Room-Control-Software-Nemesis\n\n");
     printf("   (C) 2023-2024 MaxLHy0424, All Rights Reserved.\n\n");
@@ -297,8 +299,24 @@ unsigned short Start(){
     return false;
 }
 int main(){
-    system("Title CRCSN");
-    system("Color B");
+    ifstream fin;
+    fin.open("cfg.ini",ios::in);
+    if(fin.is_open()==false){
+        printf("无法读取配置文件 cfg.ini !\n\n");
+        printf("########################################\n\n");
+        printf("按任意键退出.\n\n");
+        system("Pause");
+        return false;
+    }
+    string config[2];
+    for(unsigned short i{0};i<2;i++){
+        getline(fin,config[i]);
+    }
+    fin.close();
+    config[0]="Color "+config[0];
+    system(config[0].c_str());
+    config[1]="Title "+config[1];
+    system(config[1].c_str());
     if(!IsUserAnAdmin()){
         printf("[提示] 当前权限为 User, 建议以 Administrator 权限运行.\n\n");
         printf("########################################\n\n");
