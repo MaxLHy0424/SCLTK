@@ -7,7 +7,7 @@ unsigned short Start();
 void About(){
     printf("<关于>\n\n");
     printf("   [软件名称] 机房控制软件克星 (Computer Room Control Software Nemesis)\n");
-    printf("   [构建版本] Dev 31000\n");
+    printf("   [构建版本] Dev 31001\n");
     printf("   [软件作者] MaxLHy0424\n");
     printf("   [主 仓 库] https://github.com/MaxLHy0424/Computer-Room-Control-Software-Nemesis\n\n");
     printf("   (C) 2023-2024 MaxLHy0424, All Rights Reserved.\n\n");
@@ -295,33 +295,39 @@ unsigned short Start(){
             break;
         }
     }
-    return false;
+    return 0;
 }
 int main(){
     std::ifstream fin;
     fin.open("Config.ini",std::ios::in);
-    if(fin.is_open()==false){
-        printf("无法读取配置文件 Config.ini !\n\n");
+    if(!fin.is_open()){
+        system("Color B");
+        system("Title CRCSN");
+        printf("[错误] 无法读取 Config.ini!\n\n");
         printf("########################################\n\n");
-        printf("按任意键退出.\n\n");
+        printf("按任意键以默认设置继续.\n\n");
         system("Pause");
-        return false;
+        system("CLS");
+        goto SkipConfiguration;
     }
-    std::string Config[3];
-    for(unsigned short i{0};i<3;i++){
-        getline(fin,Config[i]);
+    {
+        std::string Config[3];
+        for(unsigned short i{0};i<3;i++){
+            getline(fin,Config[i]);
+        }
+        fin.close();
+        Config[0]="Color "+Config[0];
+        system(Config[0].c_str());
+        Config[1]="Title "+Config[1];
+        system(Config[1].c_str());
+        if(Config[2]=="1"){
+            system("Set Path=%path%;\"C:\\Windows\\System32\\\"");
+            system("Set Path=%path%;\"C:\\Windows\\SysWOW64\\\"");
+        }
     }
-    fin.close();
-    Config[0]="Color "+Config[0];
-    system(Config[0].c_str());
-    Config[1]="Title "+Config[1];
-    system(Config[1].c_str());
-    if(Config[2]=="1"){
-        system("Set Path=%path%;\"C:\\Windows\\System32\\\"");
-        system("Set Path=%path%;\"C:\\Windows\\SysWOW64\\\"");
-        printf("1");
-    }
+SkipConfiguration:
     if(!IsUserAnAdmin()){
+        system("CLS");
         printf("[提示] 当前权限为 User, 建议以 Administrator 权限运行.\n\n");
         printf("########################################\n\n");
         printf("按任意键以 \"受限模式\" 继续.\n\n");
