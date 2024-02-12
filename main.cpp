@@ -2,7 +2,6 @@
 #include<fstream>
 #include<unistd.h>
 #include<ShlObj.h>
-using namespace std;
 char CODE[3]{0,0,0};
 unsigned short Start();
 void About(){
@@ -299,8 +298,8 @@ unsigned short Start(){
     return false;
 }
 int main(){
-    ifstream fin;
-    fin.open("cfg.ini",ios::in);
+    std::ifstream fin;
+    fin.open("cfg.ini",std::ios::in);
     if(fin.is_open()==false){
         printf("无法读取配置文件 cfg.ini !\n\n");
         printf("########################################\n\n");
@@ -308,7 +307,7 @@ int main(){
         system("Pause");
         return false;
     }
-    string config[2];
+    std::string config[2];
     for(unsigned short i{0};i<2;i++){
         getline(fin,config[i]);
     }
