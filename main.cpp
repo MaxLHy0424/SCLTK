@@ -297,9 +297,8 @@ unsigned short Start(){
     return false;
 }
 int main(){
-    system("Net session >nul 2>&1 || mshta vbscript:CreateObject(\"Shell.Application\").ShellExecute(\"cmd.exe\",\"/c %~s0\",\"\",\"runas\",1)(window.close)&&exit");
-    system("Color B");
     system("Title CRCSN");
+    system("Color B");
     if(!IsUserAnAdmin()){
         printf("[提示] 当前权限为 User, 建议以 Administrator 权限运行.\n\n");
         printf("########################################\n\n");
