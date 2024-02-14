@@ -6,11 +6,11 @@ char CODE[3]{0,0,0};
 unsigned short Start();
 void Configuration(bool ReConfigure){
     std::ifstream fin;
-    fin.open(".\\Config.ini",std::ios::in);
+    fin.open("config.ini",std::ios::in);
     if(!fin.is_open()){
         system("Color B");
         system("Title CRCSN");
-        printf("[错误] 无法读取 Config.ini !\n\n");
+        printf("[错误] 无法读取 config.ini !\n\n");
         printf("########################################\n\n");
         if(ReConfigure){
             printf("按任意键返回主界面.\n\n");

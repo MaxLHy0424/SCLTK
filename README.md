@@ -32,7 +32,7 @@
 
 > 该功能正在开发, 目前仅在于预发布版中.
 
-打开软件目录下的 `Config.ini` (推荐使用 Windows Notepad 或者 Visual Studio Code), 根据文件末尾的提示修改需要的选项. 
+打开软件目录下的 `config.ini` (推荐使用 Windows Notepad 或者 Visual Studio Code), 根据文件末尾的提示修改需要的选项. 
 
 接下来打开软件查看效果, 如果此时软件已经开启, 需要输入 `0` 来重新载入配置.
 
