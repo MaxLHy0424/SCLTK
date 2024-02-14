@@ -4,7 +4,7 @@
 #include<ShlObj.h>
 char CODE[3]{0,0,0};
 unsigned short Start();
-void Configuration(bool ReConfigure){
+void Configuration(bool reConfigure){
     std::ifstream fin;
     fin.open("config.ini",std::ios::in);
     if(!fin.is_open()){
@@ -12,7 +12,7 @@ void Configuration(bool ReConfigure){
         system("Title CRCSN");
         printf("[错误] 无法读取 config.ini !\n\n");
         printf("########################################\n\n");
-        if(ReConfigure){
+        if(reConfigure){
             printf("按任意键返回主界面.\n\n");
         }else{
             printf("按任意键以默认设置继续.\n\n");
@@ -34,7 +34,7 @@ void Configuration(bool ReConfigure){
             system("Set Path=%path%;\"C:\\Windows\\System32\\\"");
             system("Set Path=%path%;\"C:\\Windows\\SysWOW64\\\"");
         }
-        if(ReConfigure){
+        if(reConfigure){
             printf("[提示] 重载配置完成!\n\n");
             printf("########################################\n\n");
             printf("按任意键返回主界面.\n\n");
@@ -49,7 +49,7 @@ void Configuration(bool ReConfigure){
 void About(){
     printf("<关于>\n\n");
     printf("   [软件名称] 机房控制软件克星 (Computer Room Control Software Nemesis)\n");
-    printf("   [构建版本] Dev 31004\n");
+    printf("   [构建版本] Dev 31005\n");
     printf("   [软件作者] MaxLHy0424\n");
     printf("   [主 仓 库] https://github.com/MaxLHy0424/Computer-Room-Control-Software-Nemesis\n\n");
     printf("   (C) 2023-2024 MaxLHy0424, All Rights Reserved.\n\n");
@@ -64,7 +64,7 @@ void About(){
 void Cracking(){
     printf("<破解工具>\n\n");
     if(!IsUserAnAdmin()){
-        printf("[提示] 当前为 \"受限模式\", 已限制此功能. 解除限制请以 Administrator 权限重启软件.\n\n");
+        printf("[提示] 当前为 \"受限模式\", 已限制此功能. 以管理员权限重启软件解除限制.\n\n");
     }
     printf("   [0] 返回主界面\n");
     printf("   [1] 单次模式\n");
@@ -347,7 +347,7 @@ int main(){
     Configuration(false);
     if(!IsUserAnAdmin()){
         system("CLS");
-        printf("[提示] 当前权限为 User, 建议以 Administrator 权限运行.\n\n");
+        printf("[提示] 当前为普通用户权限, 建议以管理员权限运行.\n\n");
         printf("########################################\n\n");
         printf("按任意键以 \"受限模式\" 继续.\n\n");
         system("Pause");
