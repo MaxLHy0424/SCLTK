@@ -22,7 +22,6 @@ void Configuration(){
         for(unsigned short i{0};i<3;i++){
             getline(fin,Config[i]);
         }
-        fin.close();
         Config[0]="Color "+Config[0];
         system(Config[0].c_str());
         Config[1]="Title "+Config[1];
@@ -32,6 +31,7 @@ void Configuration(){
             system("Set Path=%path%;\"C:\\Windows\\SysWOW64\\\"");
         }
     }
+    fin.close();
     SkipConfiguration:
 }
 void About(){
@@ -303,7 +303,7 @@ void Recoverying(){
 }
 unsigned short Start(){
     printf("欢迎使用 CRCSN!\n\n");
-    printf("   [?] 关于");
+    printf("   [?] 关于\n");
     printf("   [0] 加载配置\n");
     printf("   [1] 破解工具\n");
     printf("   [2] 恢复工具\n\n");
