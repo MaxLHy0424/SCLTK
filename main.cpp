@@ -4,7 +4,7 @@
 #include<ShlObj.h>
 char CODE[3]{0,0,0};
 unsigned short Start();
-void Configuration(){
+void Configuration(bool reCfg){
     std::ifstream fin;
     fin.open("Config.ini",std::ios::in);
     if(!fin.is_open()){
@@ -12,7 +12,11 @@ void Configuration(){
         system("Title CRCSN");
         printf("[错误] 无法读取 Config.ini!\n\n");
         printf("########################################\n\n");
-        printf("按任意键以默认设置继续.\n\n");
+        if(reCfg){
+            printf("按任意键返回主界面.\n\n");
+        }else{
+            printf("按任意键以默认设置继续.\n\n");
+        }
         system("Pause");
         system("CLS");
         goto SkipConfiguration;
@@ -30,9 +34,17 @@ void Configuration(){
             system("Set Path=%path%;\"C:\\Windows\\System32\\\"");
             system("Set Path=%path%;\"C:\\Windows\\SysWOW64\\\"");
         }
+        if(reCfg){
+            printf("[提示] 重载配置完成!\n\n");
+            printf("########################################\n\n");
+            printf("按任意键返回主界面.\n\n");
+            system("Pause");
+        }
     }
     fin.close();
     SkipConfiguration:
+    system("CLS");
+    Start();
 }
 void About(){
     printf("<关于>\n\n");
@@ -319,7 +331,7 @@ unsigned short Start(){
             About();
             break;
         }case '0':{
-            Configuration();
+            Configuration(true);
             break;
         }case '1':{
             Cracking();
@@ -332,7 +344,7 @@ unsigned short Start(){
     return 0;
 }
 int main(){
-    Configuration();
+    Configuration(false);
     if(!IsUserAnAdmin()){
         system("CLS");
         printf("[提示] 当前权限为 User, 建议以 Administrator 权限运行.\n\n");
