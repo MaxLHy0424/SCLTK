@@ -4,7 +4,7 @@
 #include<ShlObj.h>
 char CODE[3]{0,0,0};
 unsigned short Start();
-void Configuration(bool reCfg){
+void Configuration(bool ReConfigure){
     std::ifstream fin;
     fin.open(".\\Config.ini",std::ios::in);
     if(!fin.is_open()){
@@ -12,7 +12,7 @@ void Configuration(bool reCfg){
         system("Title CRCSN");
         printf("[错误] 无法读取 Config.ini !\n\n");
         printf("########################################\n\n");
-        if(reCfg){
+        if(ReConfigure){
             printf("按任意键返回主界面.\n\n");
         }else{
             printf("按任意键以默认设置继续.\n\n");
@@ -34,7 +34,7 @@ void Configuration(bool reCfg){
             system("Set Path=%path%;\"C:\\Windows\\System32\\\"");
             system("Set Path=%path%;\"C:\\Windows\\SysWOW64\\\"");
         }
-        if(reCfg){
+        if(ReConfigure){
             printf("[提示] 重载配置完成!\n\n");
             printf("########################################\n\n");
             printf("按任意键返回主界面.\n\n");
