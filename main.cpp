@@ -4,10 +4,40 @@
 #include<ShlObj.h>
 char CODE[3]{0,0,0};
 unsigned short Start();
+void Configuration(){
+    std::ifstream fin;
+    fin.open("Config.ini",std::ios::in);
+    if(!fin.is_open()){
+        system("Color B");
+        system("Title CRCSN");
+        printf("[错误] 无法读取 Config.ini!\n\n");
+        printf("########################################\n\n");
+        printf("按任意键以默认设置继续.\n\n");
+        system("Pause");
+        system("CLS");
+        goto SkipConfiguration;
+    }
+    {
+        std::string Config[3];
+        for(unsigned short i{0};i<3;i++){
+            getline(fin,Config[i]);
+        }
+        fin.close();
+        Config[0]="Color "+Config[0];
+        system(Config[0].c_str());
+        Config[1]="Title "+Config[1];
+        system(Config[1].c_str());
+        if(Config[2]=="1"){
+            system("Set Path=%path%;\"C:\\Windows\\System32\\\"");
+            system("Set Path=%path%;\"C:\\Windows\\SysWOW64\\\"");
+        }
+    }
+    SkipConfiguration:
+}
 void About(){
     printf("<关于>\n\n");
     printf("   [软件名称] 机房控制软件克星 (Computer Room Control Software Nemesis)\n");
-    printf("   [构建版本] Dev 31001\n");
+    printf("   [构建版本] Dev 31002\n");
     printf("   [软件作者] MaxLHy0424\n");
     printf("   [主 仓 库] https://github.com/MaxLHy0424/Computer-Room-Control-Software-Nemesis\n\n");
     printf("   (C) 2023-2024 MaxLHy0424, All Rights Reserved.\n\n");
@@ -273,19 +303,23 @@ void Recoverying(){
 }
 unsigned short Start(){
     printf("欢迎使用 CRCSN!\n\n");
-    printf("   [0] 关于\n");
+    printf("   [?] 关于");
+    printf("   [0] 加载配置\n");
     printf("   [1] 破解工具\n");
     printf("   [2] 恢复工具\n\n");
     printf("请输入: ");
     scanf("%s",&CODE[0]);
-    while((CODE[0]!='0'&&CODE[0]!='1'&&CODE[0]!='2')||CODE[1]!=0){
+    while((CODE[0]!='?'&&CODE[0]!='0'&&CODE[0]!='1'&&CODE[0]!='2')||CODE[1]!=0){
         printf("输入错误, 请重新输入: ");
         scanf("%s",&CODE[0]);
     }
     system("CLS");
     switch(CODE[0]){
-        case '0':{
+        case '?':{
             About();
+            break;
+        }case '0':{
+            Configuration();
             break;
         }case '1':{
             Cracking();
@@ -298,34 +332,7 @@ unsigned short Start(){
     return 0;
 }
 int main(){
-    std::ifstream fin;
-    fin.open("Config.ini",std::ios::in);
-    if(!fin.is_open()){
-        system("Color B");
-        system("Title CRCSN");
-        printf("[错误] 无法读取 Config.ini!\n\n");
-        printf("########################################\n\n");
-        printf("按任意键以默认设置继续.\n\n");
-        system("Pause");
-        system("CLS");
-        goto SkipConfiguration;
-    }
-    {
-        std::string Config[3];
-        for(unsigned short i{0};i<3;i++){
-            getline(fin,Config[i]);
-        }
-        fin.close();
-        Config[0]="Color "+Config[0];
-        system(Config[0].c_str());
-        Config[1]="Title "+Config[1];
-        system(Config[1].c_str());
-        if(Config[2]=="1"){
-            system("Set Path=%path%;\"C:\\Windows\\System32\\\"");
-            system("Set Path=%path%;\"C:\\Windows\\SysWOW64\\\"");
-        }
-    }
-SkipConfiguration:
+    Configuration();
     if(!IsUserAnAdmin()){
         system("CLS");
         printf("[提示] 当前权限为 User, 建议以 Administrator 权限运行.\n\n");
