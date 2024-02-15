@@ -52,7 +52,7 @@ void About(){
     printf("   [构建版本] Dev 31005\n");
     printf("   [软件作者] MaxLHy0424\n");
     printf("   [主 仓 库] https://github.com/MaxLHy0424/Computer-Room-Control-Software-Nemesis\n\n");
-    printf("   (C) 2024 MaxLHy0424, All Rights Reserved.\n\n");
+    printf("   (C) Copyright 2023-2024 MaxLHy0424, All Rights Reserved.\n\n");
     printf("########################################\n\n");
     printf("开发版本, 仅用于预览与测试, 禁止二次分发.\n\n");
     printf("########################################\n\n");
