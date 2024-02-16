@@ -3,6 +3,8 @@
 
 **机房控制软件克星 (Computer Room Control Software Nemesis): 轻松脱离机房控制.**
 
+© Copyright 2023-2024 MaxLHy0424, All Rights Reserved.
+
 # 使用方式
 
 > 更新于 2024/02/15.
@@ -45,21 +47,21 @@
 
 # 常见问题
 
-## 1. GitHub 在中国大陆地区难以访问, 获取软件非常不方便
+## 1. GitHub 在中国大陆地区难以访问, 获取软件非常不方便.
 
 目前已经在国内云盘上传最新版本, 可以从[这里](https://www.123pan.com/s/HmR8jv-tZLN.html "点击跳转")下载.
 
-## 2. 运行软件时控制台界面总是输出 "命令提示符已被管理员禁用" 之类的提示, 无法正常使用
+## 2. 运行软件时控制台界面总是输出 "命令提示符已被管理员禁用" 之类的提示, 无法正常使用.
 
 这说明 CMD 已被禁用. 可以试试打开注册表编辑器, 定位到 `HKEY_CURRENT_USER\Software\Policies\Microsoft\Windows\System` 下, 看看有没有一个叫 `DisableCMD` 的 DWORD 值, 有的话就删掉. 再次打开软件试试.
 
-## 3. 软件无法在 32 位 Windows 系统中使用
+## 3. 软件无法在 32 位 Windows 系统中使用.
 
 软件无计划发布 32 位版本. 可以克隆软件仓库, 使用 MinGW-w32 编译源代码文件, 正常使用即可.
 
-## 4. 破解后一些软件打开提示 "找不到文件" 之类的错误, 并且打开的软件本身并没有损坏
+## 4. 破解后一些软件打开提示 "找不到文件" 之类的错误, 并且打开的软件本身并没有损坏.
 
-CRCSN v3.0 添加了通过注册表劫持控制软件, 间接达到禁止启动控制软件的效果, 但弊端是和控制软件的文件名一样的软件文件也无法打开了. 在不影响软件正常运行的情况下, 可以试试给软件文件修改一个名称, 再打开试试. 实在不行就打开注册表编辑器, 定位到 `HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\` 下, 找到和要运行的软件的文件名称相同的项, 删除项即可.
+CRCSN v3.0.0 添加了通过注册表劫持控制软件, 间接达到禁止启动控制软件. 但弊端是和控制软件的文件名一样的软件文件也无法打开了. 在不影响软件正常运行的情况下, 可以试试给软件文件修改一个名称, 再打开试试. 实在不行就打开注册表编辑器, 定位到 `HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\` 下, 找到和要运行的软件的文件名称相同的项, 删除项即可.
 
 # 鸣谢
 
