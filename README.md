@@ -1,5 +1,5 @@
 
-![Logo](logo.png "CRCSN 的 Logo")
+![Logo](logo.png)
 
 **机房控制软件克星 (Computer Room Control Software Nemesis): 轻松脱离机房控制.**
 
