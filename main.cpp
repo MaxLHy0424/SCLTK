@@ -18,7 +18,7 @@ void Configuration(bool reConfig){
             printf("按任意键以默认设置继续.\n\n");
         }
         system("Pause");
-        system("CLS");
+        system("cls");
         goto SkipConfiguration;
     }
     {
@@ -43,13 +43,13 @@ void Configuration(bool reConfig){
     }
     fIn.close();
     SkipConfiguration:
-    system("CLS");
+    system("cls");
     Start();
 }
 void About(){
     printf("<关于>\n\n");
     printf("   [软件名称] 机房控制软件克星 (Computer Room Control Software Nemesis)\n");
-    printf("   [构建版本] Dev 31007\n");
+    printf("   [构建版本] Dev 31008\n");
     printf("   [软件作者] MaxLHy0424\n");
     printf("   [主 仓 库] https://github.com/MaxLHy0424/Computer-Room-Control-Software-Nemesis\n\n");
     printf("   (C) Copyright 2023-2024 MaxLHy0424, All Rights Reserved.\n\n");
@@ -58,7 +58,7 @@ void About(){
     printf("########################################\n\n");
     printf("按任意键返回主界面.\n\n");
     system("Pause");
-    system("CLS");
+    system("cls");
     Start();
 }
 void Cracking(){
@@ -78,7 +78,7 @@ void Cracking(){
     float sleepTimeS{0};
     switch(CODE[0]){
         case '0':{
-            system("CLS");
+            system("cls");
             Start();
             break;
         }case '2':{
@@ -91,7 +91,7 @@ void Cracking(){
             }
         }
     }
-    system("CLS");
+    system("cls");
     printf("配置:\n       模式: ");
     switch(CODE[0]){
         case '1':{
@@ -124,13 +124,13 @@ void Cracking(){
         case 'Y':{
             break;
         }case 'N':{
-            system("CLS");
+            system("cls");
             Cracking();
             break;
         }
     }
     for(;;){
-        system("CLS");
+        system("cls");
         system("TaskKill /F /T /IM vncviewer.exe");
         system("TaskKill /F /T /IM tvnserver32.exe");
         system("TaskKill /F /T /IM WfbsPnpInstall.exe");
@@ -220,7 +220,7 @@ void Cracking(){
     printf("\n########################################\n\n");
     printf("按任意键返回主界面.\n\n");
     system("Pause");
-    system("CLS");
+    system("cls");
     Start();
 }
 void Recoverying(){
@@ -229,7 +229,7 @@ void Recoverying(){
         printf("########################################\n\n");
         printf("按任意键返回主界面.\n\n");
         system("Pause");
-        system("CLS");
+        system("cls");
         Start();
     }
     printf("<恢复工具>\n\n");
@@ -244,12 +244,12 @@ void Recoverying(){
         case 'Y':{
             break;
         }case 'N':{
-            system("CLS");
+            system("cls");
             Start();
             break;
         }
     }
-    system("CLS");
+    system("cls");
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\vncviewer.exe\" /F");
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\tvnserver32.exe\" /F");
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\WfbsPnpInstall.exe\" /F");
@@ -310,7 +310,7 @@ void Recoverying(){
     sleep(5);
     printf("按任意键返回主界面.\n\n");
     system("Pause");
-    system("CLS");
+    system("cls");
     Start();
 }
 unsigned short Start(){
@@ -325,7 +325,7 @@ unsigned short Start(){
         printf("输入错误, 请重新输入: ");
         scanf("%s",&CODE[0]);
     }
-    system("CLS");
+    system("cls");
     switch(CODE[0]){
         case '?':{
             About();
@@ -346,12 +346,12 @@ unsigned short Start(){
 int main(){
     Configuration(false);
     if(!IsUserAnAdmin()){
-        system("CLS");
+        system("cls");
         printf("[提示] 当前为普通用户权限, 建议以管理员权限运行.\n\n");
         printf("########################################\n\n");
         printf("按任意键以 \"受限模式\" 继续.\n\n");
         system("Pause");
-        system("CLS");
+        system("cls");
     }
     Start();
 }
