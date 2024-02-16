@@ -316,7 +316,7 @@ void Recoverying(){
 unsigned short Start(){
     printf("欢迎使用 CRCSN!\n\n");
     printf("   [?] 关于\n");
-    printf("   [0] 加载配置\n");
+    printf("   [0] 重载配置\n");
     printf("   [1] 破解工具\n");
     printf("   [2] 恢复工具\n\n");
     printf("请输入: ");
