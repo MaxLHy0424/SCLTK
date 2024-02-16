@@ -4,7 +4,7 @@
 #include<ShlObj.h>
 char CODE[3]{0,0,0};
 unsigned short Start();
-void Configuration(bool reConfigure){
+void Configuration(bool reConfig){
     std::ifstream fin;
     fin.open("config.ini",std::ios::in);
     if(!fin.is_open()){
@@ -12,7 +12,7 @@ void Configuration(bool reConfigure){
         system("Title CRCSN");
         printf("[错误] 无法读取 config.ini !\n\n");
         printf("########################################\n\n");
-        if(reConfigure){
+        if(reConfig){
             printf("按任意键返回主界面.\n\n");
         }else{
             printf("按任意键以默认设置继续.\n\n");
@@ -22,19 +22,19 @@ void Configuration(bool reConfigure){
         goto SkipConfiguration;
     }
     {
-        std::string Config[3];
+        std::string configItem[3];
         for(unsigned short i{0};i<3;i++){
-            getline(fin,Config[i]);
+            getline(fin,configItem[i]);
         }
-        Config[0]="Color "+Config[0];
-        system(Config[0].c_str());
-        Config[1]="Title "+Config[1];
-        system(Config[1].c_str());
-        if(Config[2]=="1"){
+        configItem[0]="Color "+configItem[0];
+        system(configItem[0].c_str());
+        configItem[1]="Title "+configItem[1];
+        system(configItem[1].c_str());
+        if(configItem[2]=="1"){
             system("Set Path=%path%;\"C:\\Windows\\System32\\\"");
             system("Set Path=%path%;\"C:\\Windows\\SysWOW64\\\"");
         }
-        if(reConfigure){
+        if(reConfig){
             printf("[提示] 重载配置完成!\n\n");
             printf("########################################\n\n");
             printf("按任意键返回主界面.\n\n");
@@ -49,7 +49,7 @@ void Configuration(bool reConfigure){
 void About(){
     printf("<关于>\n\n");
     printf("   [软件名称] 机房控制软件克星 (Computer Room Control Software Nemesis)\n");
-    printf("   [构建版本] Dev 31005\n");
+    printf("   [构建版本] Dev 31006\n");
     printf("   [软件作者] MaxLHy0424\n");
     printf("   [主 仓 库] https://github.com/MaxLHy0424/Computer-Room-Control-Software-Nemesis\n\n");
     printf("   (C) Copyright 2023-2024 MaxLHy0424, All Rights Reserved.\n\n");
