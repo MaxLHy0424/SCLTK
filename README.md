@@ -43,8 +43,6 @@
 
 软件按照 MIT 协议开源, 请在遵守 MIT 协议的情况下使用.
 
-© Copyright 2023-2024 MaxLHy0424, All Rights Reserved.
-
 # 常见问题
 
 ## 1. GitHub 在中国大陆地区难以访问, 获取软件非常不方便
