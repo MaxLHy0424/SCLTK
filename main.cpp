@@ -19,7 +19,7 @@ void Configuration(bool reConfig){
         }
         system("Pause");
         system("cls");
-        goto SkipConfiguration;
+        goto Skip;
     }
     {
         std::string configItem[4];
@@ -42,14 +42,14 @@ void Configuration(bool reConfig){
         }
     }
     fIn.close();
-    SkipConfiguration:
+    Skip:
     system("cls");
     Start();
 }
 void About(){
     printf("<关于>\n\n");
     printf("   [软件名称] 机房控制软件克星 (Computer Room Control Software Nemesis)\n");
-    printf("   [构建版本] Dev 31008\n");
+    printf("   [构建版本] Dev 31081\n");
     printf("   [软件作者] MaxLHy0424\n");
     printf("   [主 仓 库] https://github.com/MaxLHy0424/Computer-Room-Control-Software-Nemesis\n\n");
     printf("   (C) Copyright 2023-2024 MaxLHy0424, All Rights Reserved.\n\n");
