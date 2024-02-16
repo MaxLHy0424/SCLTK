@@ -5,9 +5,9 @@
 char CODE[3]{0,0,0};
 unsigned short Start();
 void Configuration(bool reConfig){
-    std::ifstream fin;
-    fin.open("config.ini",std::ios::in);
-    if(!fin.is_open()){
+    std::ifstream fIn;
+    fIn.open("config.ini",std::ios::in);
+    if(!fIn.is_open()){
         system("Color B");
         system("Title CRCSN");
         printf("[错误] 无法读取 config.ini !\n\n");
@@ -24,7 +24,7 @@ void Configuration(bool reConfig){
     {
         std::string configItem[3];
         for(unsigned short i{0};i<3;i++){
-            getline(fin,configItem[i]);
+            getline(fIn,configItem[i]);
         }
         configItem[0]="Color "+configItem[0];
         system(configItem[0].c_str());
@@ -41,7 +41,7 @@ void Configuration(bool reConfig){
             system("Pause");
         }
     }
-    fin.close();
+    fIn.close();
     SkipConfiguration:
     system("CLS");
     Start();
