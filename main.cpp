@@ -30,11 +30,11 @@ void Configuration(bool reConfig){
         system(configItem[0].c_str());
         configItem[1]="Title "+configItem[1];
         system(configItem[1].c_str());
-        if(configItem[2]=="true"){
+        if(configItem[3]=="true"){
             system("Set Path=%path%;\"C:\\Windows\\System32\\\"");
             system("Set Path=%path%;\"C:\\Windows\\SysWOW64\\\"");
         }
-        if(reConfig&&configItem[3]=="true"){
+        if(reConfig&&configItem[2]=="true"){
             printf("[提示] 重载配置完成!\n\n");
             printf("########################################\n\n");
             printf("按任意键返回主界面.\n\n");
@@ -49,7 +49,7 @@ void Configuration(bool reConfig){
 void About(){
     printf("<关于>\n\n");
     printf("   [软件名称] 机房控制软件克星 (Computer Room Control Software Nemesis)\n");
-    printf("   [构建版本] Dev 31081\n");
+    printf("   [构建版本] Dev 31082\n");
     printf("   [软件作者] MaxLHy0424\n");
     printf("   [主 仓 库] https://github.com/MaxLHy0424/Computer-Room-Control-Software-Nemesis\n\n");
     printf("   (C) Copyright 2023-2024 MaxLHy0424, All Rights Reserved.\n\n");
