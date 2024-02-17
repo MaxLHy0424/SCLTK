@@ -19,7 +19,7 @@ void Configuration(bool reConfig){
         }
         system("Pause");
         system("cls");
-        goto Skip;
+        goto SkipCfg;
     }
     {
         std::string configItem[4];
@@ -42,7 +42,7 @@ void Configuration(bool reConfig){
         }
     }
     fIn.close();
-    Skip:
+    SkipCfg:
     system("cls");
     Start();
 }
