@@ -51,7 +51,7 @@ bool Configuration(bool reConfig){
 void About(){
     printf("| 主菜单 > 关于 |\n\n");
     printf("    [软件名称] 机房控制软件克星 (Computer Room Control Software Nemesis)\n");
-    printf("    [构建版本] Dev 31083\n");
+    printf("    [构建版本] Dev 31084\n");
     printf("    [软件作者] MaxLHy0424\n");
     printf("    [主 仓 库] https://github.com/MaxLHy0424/Computer-Room-Control-Software-Nemesis\n\n");
     printf("    (C) Copyright 2023-2024 MaxLHy0424, all rights reserved.\n\n");
@@ -62,7 +62,7 @@ void About(){
     Start();
 }
 void Cracking(){
-    printf("| 主菜单 > 破解工具 |\n\n");
+    printf("| 主菜单 > 破解 |\n\n");
     if(!IsUserAnAdmin()){
         printf("[提示] 当前为受限模式, 已限制此功能. 以管理员权限重启软件解除限制.\n\n");
     }
@@ -92,7 +92,7 @@ void Cracking(){
         }
     }
     system("cls");
-    printf("| 主菜单 > 破解工具 > 确认配置与执行操作 |\n\n");
+    printf("| 主菜单 > 破解 > 确认配置与执行操作 |\n\n");
     printf("     [行为] ");
     switch(CODE[0]){
         case '1':{
@@ -225,6 +225,7 @@ void Cracking(){
     Start();
 }
 void Recoverying(){
+    printf("| 主菜单 > 恢复 |\n\n");
     if(!IsUserAnAdmin()){
         printf("[提示] 当前为受限模式, 已禁用此功能.\n\n");
         printf("########################################\n\n");
@@ -233,7 +234,6 @@ void Recoverying(){
         system("cls");
         Start();
     }
-    printf("| 主菜单 > 恢复工具 |\n\n");
     printf("本功能用于恢复破解时的部分操作, 部分情况下可能无法产生效果.\n\n");
     printf("请确认 (Y: 继续, N: 放弃并返回): ");
     scanf("%s",&CODE[1]);
@@ -314,15 +314,25 @@ void Recoverying(){
     system("cls");
     Start();
 }
+void ToolBox(){
+    printf("| 主菜单 > 工具箱 |\n\n");
+    printf("[提示] 本功能暂未开发, 将在后续版本开放.\n\n");
+    printf("########################################\n\n");
+    printf("按任意键返回主菜单.\n\n");
+    system("Pause");
+    system("cls");
+    Start();
+}
 unsigned short Start(){
     printf("| 主菜单 |\n\n");
-    printf("    [?] 关于\n");
+    printf("    [?] 关于本软件\n");
     printf("    [0] 重载配置\n");
-    printf("    [1] 破解工具\n");
-    printf("    [2] 恢复工具\n\n");
+    printf("    [1] 破解\n");
+    printf("    [2] 恢复\n");
+    printf("    [3] 工具箱\n\n");
     printf("请输入: ");
     scanf("%s",&CODE[0]);
-    while((CODE[0]!='?'&&CODE[0]!='0'&&CODE[0]!='1'&&CODE[0]!='2')||CODE[1]!=0){
+    while((CODE[0]!='?'&&CODE[0]!='0'&&CODE[0]!='1'&&CODE[0]!='2'&&CODE[0]!='3')||CODE[1]!=0){
         printf("输入错误, 请重新输入: ");
         scanf("%s",&CODE[0]);
     }
@@ -339,6 +349,9 @@ unsigned short Start(){
             break;
         }case '2':{
             Recoverying();
+            break;
+        }case '3':{
+            ToolBox();
             break;
         }
     }
