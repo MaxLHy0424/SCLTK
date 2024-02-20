@@ -1,0 +1,10 @@
+如使用 msys2 中安装的 gcc 编译 main.cpp, 编译的 *.exe 文件需要这些 DLL 文件, 请放在编译的程序文件相同的文件夹中.
+
+示例:
+
+| <CRCSN文件目录>
+|---main.exe
+|---config.ini
+|---libgcc_s_seh-1.dll
+|---libstdc++-6.dll
+|---libwinpthread-1.dll
