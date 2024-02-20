@@ -4,27 +4,28 @@
 #include<ShlObj.h>
 char CODE[3]{0,0,0};
 unsigned short Start();
-void Configuration(bool reConfig){
-    std::ifstream fIn;
-    fIn.open("config.ini",std::ios::in);
-    if(!fIn.is_open()){
-        system("Color B");
-        system("Title CRCSN");
+bool Configuration(bool reConfig){
+    if(reConfig){
+        printf("| 主菜单 > 重载配置 |\n\n");
+    }
+    std::ifstream fin;
+    fin.open("config.ini",std::ios::in);
+    if(!fin.is_open()){
+        if(!reConfig){
+            system("Color B");
+            system("Title CRCSN");
+        }
         printf("[错误] 无法读取 config.ini !\n\n");
         printf("########################################\n\n");
-        if(reConfig){
-            printf("按任意键返回主界面.\n\n");
-        }else{
-            printf("按任意键以默认设置继续.\n\n");
-        }
+        printf("按任意键继续.\n\n");
         system("Pause");
         system("cls");
-        goto SkipCfg;
+        goto skipConfig;
     }
     {
         std::string configItem[4];
         for(unsigned short i{0};i<4;i++){
-            getline(fIn,configItem[i]);
+            getline(fin,configItem[i]);
         }
         configItem[0]="Color "+configItem[0];
         system(configItem[0].c_str());
@@ -37,36 +38,35 @@ void Configuration(bool reConfig){
         if(reConfig&&configItem[2]=="true"){
             printf("[提示] 重载配置完成!\n\n");
             printf("########################################\n\n");
-            printf("按任意键返回主界面.\n\n");
+            printf("按任意键返回主菜单.\n\n");
             system("Pause");
         }
     }
-    fIn.close();
-    SkipCfg:
+    fin.close();
+    skipConfig:
     system("cls");
     Start();
+    return reConfig;
 }
 void About(){
-    printf("<关于>\n\n");
-    printf("   [软件名称] 机房控制软件克星 (Computer Room Control Software Nemesis)\n");
-    printf("   [构建版本] Dev 31082\n");
-    printf("   [软件作者] MaxLHy0424\n");
-    printf("   [主 仓 库] https://github.com/MaxLHy0424/Computer-Room-Control-Software-Nemesis\n\n");
-    printf("   (C) Copyright 2023-2024 MaxLHy0424, All Rights Reserved.\n\n");
+    printf("| 主菜单 > 关于 |\n\n");
+    printf("    [软件名称] 机房控制软件克星 (Computer Room Control Software Nemesis)\n");
+    printf("    [构建版本] Dev 31083\n");
+    printf("    [软件作者] MaxLHy0424\n");
+    printf("    [主 仓 库] https://github.com/MaxLHy0424/Computer-Room-Control-Software-Nemesis\n\n");
+    printf("    (C) Copyright 2023-2024 MaxLHy0424, all rights reserved.\n\n");
     printf("########################################\n\n");
-    printf("开发版本, 仅用于预览与测试, 禁止二次分发.\n\n");
-    printf("########################################\n\n");
-    printf("按任意键返回主界面.\n\n");
+    printf("按任意键返回主菜单.\n\n");
     system("Pause");
     system("cls");
     Start();
 }
 void Cracking(){
-    printf("<破解工具>\n\n");
+    printf("| 主菜单 > 破解工具 |\n\n");
     if(!IsUserAnAdmin()){
-        printf("[提示] 当前为 \"受限模式\", 已限制此功能. 以管理员权限重启软件解除限制.\n\n");
+        printf("[提示] 当前为受限模式, 已限制此功能. 以管理员权限重启软件解除限制.\n\n");
     }
-    printf("   [0] 返回主界面\n");
+    printf("   [0] 返回\n");
     printf("   [1] 单次模式\n");
     printf("   [2] 循环模式\n\n");
     printf("请输入: ");
@@ -82,7 +82,7 @@ void Cracking(){
             Start();
             break;
         }case '2':{
-            printf("请输入 \"休眠\" 时间 (单位: 秒; 范围: 0 ~ 10): ");
+            printf("请输入休眠时间 (单位: 秒; 范围: 0 ~ 10): ");
             scanf("%f",&sleepTimeS);
             while(sleepTimeS<0.0||sleepTimeS>10.0){
                 printf("输入错误, 请重新输入: ");
@@ -92,7 +92,8 @@ void Cracking(){
         }
     }
     system("cls");
-    printf("配置:\n       模式: ");
+    printf("| 主菜单 > 破解工具 > 确认配置与执行操作 |\n\n");
+    printf("     [行为] ");
     switch(CODE[0]){
         case '1':{
             printf("单次.\n");
@@ -102,13 +103,13 @@ void Cracking(){
             break;
         }
     }
-    printf(" \"受限模式\": ");
+    printf(" [受限模式] ");
     if(IsUserAnAdmin()){
         printf("已禁用.\n");
     }else{
         printf("已启用.\n");
     }
-    printf("     \"休眠\": ");
+    printf("     [休眠] ");
     if(sleepTimeS==0){
         printf("已禁用.\n\n");
     }else{
@@ -218,21 +219,21 @@ void Cracking(){
         sleep(sleepTimeS);
     }
     printf("\n########################################\n\n");
-    printf("按任意键返回主界面.\n\n");
+    printf("按任意键返回主菜单.\n\n");
     system("Pause");
     system("cls");
     Start();
 }
 void Recoverying(){
     if(!IsUserAnAdmin()){
-        printf("[提示] 当前为 \"受限模式\", 已禁用此功能.\n\n");
+        printf("[提示] 当前为受限模式, 已禁用此功能.\n\n");
         printf("########################################\n\n");
-        printf("按任意键返回主界面.\n\n");
+        printf("按任意键返回主菜单.\n\n");
         system("Pause");
         system("cls");
         Start();
     }
-    printf("<恢复工具>\n\n");
+    printf("| 主菜单 > 恢复工具 |\n\n");
     printf("本功能用于恢复破解时的部分操作, 部分情况下可能无法产生效果.\n\n");
     printf("请确认 (Y: 继续, N: 放弃并返回): ");
     scanf("%s",&CODE[1]);
@@ -308,17 +309,17 @@ void Recoverying(){
     printf("请手动开启以上软件.\n");
     printf("########################################\n\n");
     sleep(5);
-    printf("按任意键返回主界面.\n\n");
+    printf("按任意键返回主菜单.\n\n");
     system("Pause");
     system("cls");
     Start();
 }
 unsigned short Start(){
-    printf("欢迎使用 CRCSN!\n\n");
-    printf("   [?] 关于\n");
-    printf("   [0] 重载配置\n");
-    printf("   [1] 破解工具\n");
-    printf("   [2] 恢复工具\n\n");
+    printf("| 主菜单 |\n\n");
+    printf("    [?] 关于\n");
+    printf("    [0] 重载配置\n");
+    printf("    [1] 破解工具\n");
+    printf("    [2] 恢复工具\n\n");
     printf("请输入: ");
     scanf("%s",&CODE[0]);
     while((CODE[0]!='?'&&CODE[0]!='0'&&CODE[0]!='1'&&CODE[0]!='2')||CODE[1]!=0){
@@ -349,7 +350,7 @@ int main(){
         system("cls");
         printf("[提示] 当前为普通用户权限, 建议以管理员权限运行.\n\n");
         printf("########################################\n\n");
-        printf("按任意键以 \"受限模式\" 继续.\n\n");
+        printf("按任意键以受限模式继续.\n\n");
         system("Pause");
         system("cls");
     }
