@@ -19,22 +19,22 @@ bool Configuration(bool reConfig){
         printf("########################################\n\n");
         printf("按任意键继续.\n\n");
         system("Pause");
-        system("cls");
-        goto skipConfig;
+        system("CLS");
+        goto skipConfiguration;
     }
     {
-        std::string configItem[4];
+        std::string configItems[4];
         for(unsigned short i{0};i<4;i++){
-            getline(fin,configItem[i]);
+            getline(fin,configItems[i]);
         }
-        configItem[0]="Color "+configItem[0];
-        system(configItem[0].c_str());
-        configItem[1]="Title "+configItem[1];
-        system(configItem[1].c_str());
-        if(configItem[2]!="$SKIP$"){
-            system(configItem[2].c_str());
+        configItems[0]="Color "+configItems[0];
+        system(configItems[0].c_str());
+        configItems[1]="Title "+configItems[1];
+        system(configItems[1].c_str());
+        if(configItems[2]!="$SKIP$"){
+            system(configItems[2].c_str());
         }
-        if(reConfig&&configItem[3]=="1"){
+        if(reConfig&&configItems[3]=="1"){
             printf("[提示] 重载配置完成!\n\n");
             printf("########################################\n\n");
             printf("按任意键返回主菜单.\n\n");
@@ -42,22 +42,22 @@ bool Configuration(bool reConfig){
         }
     }
     fin.close();
-    skipConfig:
-    system("cls");
+    skipConfiguration:
+    system("CLS");
     Start();
     return reConfig;
 }
 void About(){
     printf("| 主菜单 > 关于 |\n\n");
     printf("    [软件名称] 机房控制软件克星 (Computer Room Control Software Nemesis)\n");
-    printf("    [版本信息] v3.1.0_Dev9\n");
+    printf("    [版本信息] v3.1.0_Dev10\n");
     printf("    [软件作者] MaxLHy0424\n");
     printf("    [主 仓 库] https://github.com/MaxLHy0424/Computer-Room-Control-Software-Nemesis\n\n");
     printf("    (C) Copyright 2023-2024 MaxLHy0424, all rights reserved.\n\n");
     printf("########################################\n\n");
     printf("按任意键返回主菜单.\n\n");
     system("Pause");
-    system("cls");
+    system("CLS");
     Start();
 }
 void Cracking(){
@@ -77,7 +77,7 @@ void Cracking(){
     float sleepTimeS{0};
     switch(CODE[0]){
         case '0':{
-            system("cls");
+            system("CLS");
             Start();
             break;
         }case '2':{
@@ -90,7 +90,7 @@ void Cracking(){
             }
         }
     }
-    system("cls");
+    system("CLS");
     printf("| 主菜单 > 破解 > 确认配置与执行操作 |\n\n");
     printf("     [行为] ");
     switch(CODE[0]){
@@ -124,13 +124,13 @@ void Cracking(){
         case 'Y':{
             break;
         }case 'N':{
-            system("cls");
+            system("CLS");
             Cracking();
             break;
         }
     }
     for(;;){
-        system("cls");
+        system("CLS");
         system("TaskKill /F /T /IM vncviewer.exe");
         system("TaskKill /F /T /IM tvnserver32.exe");
         system("TaskKill /F /T /IM WfbsPnpInstall.exe");
@@ -220,7 +220,7 @@ void Cracking(){
     printf("\n########################################\n\n");
     printf("按任意键返回主菜单.\n\n");
     system("Pause");
-    system("cls");
+    system("CLS");
     Start();
 }
 void Recoverying(){
@@ -230,7 +230,7 @@ void Recoverying(){
         printf("########################################\n\n");
         printf("按任意键返回主菜单.\n\n");
         system("Pause");
-        system("cls");
+        system("CLS");
         Start();
     }
     printf("本功能用于恢复破解时的部分操作, 部分情况下可能无法产生效果.\n\n");
@@ -244,12 +244,12 @@ void Recoverying(){
         case 'Y':{
             break;
         }case 'N':{
-            system("cls");
+            system("CLS");
             Start();
             break;
         }
     }
-    system("cls");
+    system("CLS");
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\vncviewer.exe\" /F");
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\tvnserver32.exe\" /F");
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\WfbsPnpInstall.exe\" /F");
@@ -310,7 +310,7 @@ void Recoverying(){
     sleep(5);
     printf("按任意键返回主菜单.\n\n");
     system("Pause");
-    system("cls");
+    system("CLS");
     Start();
 }
 void ToolBox(){
@@ -319,11 +319,12 @@ void ToolBox(){
     printf("########################################\n\n");
     printf("按任意键返回主菜单.\n\n");
     system("Pause");
-    system("cls");
+    system("CLS");
     Start();
 }
 unsigned short Start(){
     printf("| 主菜单 |\n\n");
+    printf("    [x] 退出");
     printf("    [?] 关于本软件\n");
     printf("    [0] 重载配置\n");
     printf("    [1] 破解\n");
@@ -331,13 +332,15 @@ unsigned short Start(){
     printf("    [3] 工具箱\n\n");
     printf("请输入: ");
     scanf("%s",&CODE[0]);
-    while((CODE[0]!='?'&&CODE[0]!='0'&&CODE[0]!='1'&&CODE[0]!='2'&&CODE[0]!='3')||CODE[1]!=0){
+    while((CODE[0]!='x'&&CODE[0]!='?'&&CODE[0]!='0'&&CODE[0]!='1'&&CODE[0]!='2'&&CODE[0]!='3')||CODE[1]!=0){
         printf("输入错误, 请重新输入: ");
         scanf("%s",&CODE[0]);
     }
-    system("cls");
+    system("CLS");
     switch(CODE[0]){
-        case '?':{
+        case 'x':{
+            exit(0);
+        }case '?':{
             About();
             break;
         }case '0':{
@@ -359,12 +362,12 @@ unsigned short Start(){
 int main(){
     Configuration(false);
     if(!IsUserAnAdmin()){
-        system("cls");
+        system("CLS");
         printf("[提示] 当前为普通用户权限, 建议以管理员权限运行.\n\n");
         printf("########################################\n\n");
         printf("按任意键以受限模式继续.\n\n");
         system("Pause");
-        system("cls");
+        system("CLS");
     }
     Start();
 }
