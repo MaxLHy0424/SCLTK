@@ -42,7 +42,7 @@ bool Configuration(bool reConfig){
         }
     }
     fin.close();
-    skipConfiguration:
+skipConfiguration:
     system("CLS");
     Start();
     return reConfig;
@@ -313,18 +313,46 @@ void Recoverying(){
     system("CLS");
     Start();
 }
+#pragma GCC diagnostic ignored "-Winfinite-recursion"
 void ToolBox(){
     printf("| 主菜单 > 工具箱 |\n\n");
-    printf("[提示] 本功能暂未开发, 将在后续版本开放.\n\n");
+    if(!IsUserAnAdmin()){
+        printf("[提示] 当前为受限模式, 已禁用此功能.\n\n");
+        printf("########################################\n\n");
+        printf("按任意键返回主菜单.\n\n");
+        system("Pause");
+        system("CLS");
+        Start();
+    }
+    printf("[提示] 此功能正在开发, 暂不完善.\n\n");
+    printf("    [0] 返回\n");
+    printf("    [1] 修复系统文件\n\n");
+    printf("请输入: ");
+    scanf("%s",&CODE[0]);
+    while((CODE[0]!='0'&&CODE[0]!='1')||CODE[1]!=0){
+        printf("输入错误, 请重新输入: ");
+        scanf("%s",&CODE[0]);
+    }
+    system("CLS");
+    switch(CODE[0]){
+        case '0':{
+            Start();
+            break;
+        }case '1':{
+            system("DISM /Online /Cleanup-Image /RestoreHealth");
+            system("SFC /ScanNow");
+            break;
+        }
+    }
     printf("########################################\n\n");
-    printf("按任意键返回主菜单.\n\n");
+    printf("按任意键返回 工具箱.\n\n");
     system("Pause");
     system("CLS");
-    Start();
+    ToolBox();
 }
+#pragma GCC diagnostic pop
 unsigned short Start(){
     printf("| 主菜单 |\n\n");
-    printf("    [x] 退出");
     printf("    [?] 关于本软件\n");
     printf("    [0] 重载配置\n");
     printf("    [1] 破解\n");
@@ -332,15 +360,13 @@ unsigned short Start(){
     printf("    [3] 工具箱\n\n");
     printf("请输入: ");
     scanf("%s",&CODE[0]);
-    while((CODE[0]!='x'&&CODE[0]!='?'&&CODE[0]!='0'&&CODE[0]!='1'&&CODE[0]!='2'&&CODE[0]!='3')||CODE[1]!=0){
+    while((CODE[0]!='?'&&CODE[0]!='0'&&CODE[0]!='1'&&CODE[0]!='2'&&CODE[0]!='3')||CODE[1]!=0){
         printf("输入错误, 请重新输入: ");
         scanf("%s",&CODE[0]);
     }
     system("CLS");
     switch(CODE[0]){
-        case 'x':{
-            exit(0);
-        }case '?':{
+        case '?':{
             About();
             break;
         }case '0':{
