@@ -55,7 +55,7 @@ void About(){
     printf("    [主 仓 库] https://github.com/MaxLHy0424/Computer-Room-Control-Software-Nemesis\n\n");
     printf("    (C) Copyright 2023-2024 MaxLHy0424, all rights reserved.\n\n");
     printf("########################################\n\n");
-    printf("按任意键返回主菜单.\n\n");
+    printf("按任意键返回.\n\n");
     system("Pause");
     system("CLS");
     Start();
@@ -361,7 +361,7 @@ void ToolBox(){
         }case '2':{
             for(unsigned short i{5};i>0;i--){
                 system("CLS");
-                printf("[警告] 请保存好文件, %hu 秒后将可重启至 WindowsRE.\n\n",i-1);
+                printf("[警告] 请保存好文件, %hu 秒后将可重启至 Windows RE.\n\n",i-1);
                 Sleep(1000u);
             }
             system("Pause");
@@ -371,7 +371,7 @@ void ToolBox(){
         }
     }
     printf("########################################\n\n");
-    printf("按任意键返回 工具箱.\n\n");
+    printf("按任意键返回.\n\n");
     system("Pause");
     system("CLS");
     ToolBox();
