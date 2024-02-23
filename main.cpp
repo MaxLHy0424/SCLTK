@@ -14,7 +14,7 @@ bool Configuration(bool reConfig){
     if(!fin.is_open()){
         if(!reConfig){
             system("Color B");
-            system("Title 机房控制软件克星");
+            system("Title CRCSN");
         }
         printf("[错误] 无法读取 config.ini !\n\n");
         printf("########################################\n\n");
