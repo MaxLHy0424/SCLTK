@@ -2,7 +2,7 @@
 #include<fstream>
 #include<ShlObj.h>
 #include<windows.h>
-char CODE[3]{0,0,0};
+char Code[3]{0,0,0};
 std::string CfgItems[5];
 unsigned short Start();
 bool Configuration(bool reConfig){
@@ -21,7 +21,7 @@ bool Configuration(bool reConfig){
         printf("按任意键继续.\n\n");
         system("Pause");
         system("CLS");
-        goto skipConfiguration;
+        goto skipConfig;
     }
     {
         for(unsigned short i{0};i<5;i++){
@@ -42,7 +42,7 @@ bool Configuration(bool reConfig){
         }
     }
     fin.close();
-skipConfiguration:
+skipConfig:
     system("CLS");
     Start();
     return reConfig;
@@ -69,13 +69,13 @@ void Cracking(){
     printf("   [1] 单次模式\n");
     printf("   [2] 循环模式\n\n");
     printf("请输入: ");
-    scanf("%s",&CODE[0]);
-    while((CODE[0]!='0'&&CODE[0]!='1'&&CODE[0]!='2')||CODE[1]!=0){
+    scanf("%s",&Code[0]);
+    while((Code[0]!='0'&&Code[0]!='1'&&Code[0]!='2')||Code[1]!=0){
         printf("输入错误, 请重新输入: ");
-        scanf("%s",&CODE[0]);
+        scanf("%s",&Code[0]);
     }
     float sleepTimeSeconds{0};
-    switch(CODE[0]){
+    switch(Code[0]){
         case '0':{
             system("CLS");
             Start();
@@ -93,7 +93,7 @@ void Cracking(){
     system("CLS");
     printf("| 主菜单 > 破解 > 确认配置与执行操作 |\n\n");
     printf("     [行为] ");
-    switch(CODE[0]){
+    switch(Code[0]){
         case '1':{
             printf("单次.\n");
             break;
@@ -115,12 +115,12 @@ void Cracking(){
         printf("已启用, %g 秒.\n\n",sleepTimeSeconds);
     }
     printf("请确认 (Y: 继续, N: 放弃并返回): ");
-    scanf("%s",&CODE[1]);
-    while((CODE[1]!='Y'&&CODE[1]!='N')||CODE[2]!=0){
+    scanf("%s",&Code[1]);
+    while((Code[1]!='Y'&&Code[1]!='N')||Code[2]!=0){
         printf("输入错误, 请重新输入: ");
-        scanf("%s",&CODE[1]);
+        scanf("%s",&Code[1]);
     }
-    switch(CODE[1]){
+    switch(Code[1]){
         case 'Y':{
             sleepTimeSeconds*=1000;
             break;
@@ -212,7 +212,7 @@ void Cracking(){
             system("Net Stop BSAgentSvr");
             system("Net Stop WFBSMlogon");
         }
-        if(CODE[0]=='1'){
+        if(Code[0]=='1'){
             break;
         }
         printf("\n休眠中...\n");
@@ -236,12 +236,12 @@ void Recoverying(){
     }
     printf("本功能用于恢复破解时的部分操作, 部分情况下可能无法产生效果.\n\n");
     printf("请确认 (Y: 继续, N: 放弃并返回): ");
-    scanf("%s",&CODE[1]);
-    while((CODE[1]!='Y'&&CODE[1]!='N')||CODE[2]!=0){
+    scanf("%s",&Code[1]);
+    while((Code[1]!='Y'&&Code[1]!='N')||Code[2]!=0){
         printf("输入错误, 请重新输入: ");
-        scanf("%s",&CODE[1]);
+        scanf("%s",&Code[1]);
     }
-    switch(CODE[1]){
+    switch(Code[1]){
         case 'Y':{
             break;
         }case 'N':{
@@ -344,13 +344,13 @@ void ToolBox(){
     printf("    [1] 修复系统文件\n");
     printf("    [2] 重启至 WindowsRE\n\n");
     printf("请输入: ");
-    scanf("%s",&CODE[0]);
-    while((CODE[0]!='0'&&CODE[0]!='1'&&CODE[0]!='2')||CODE[1]!=0){
+    scanf("%s",&Code[0]);
+    while((Code[0]!='0'&&Code[0]!='1'&&Code[0]!='2')||Code[1]!=0){
         printf("输入错误, 请重新输入: ");
-        scanf("%s",&CODE[0]);
+        scanf("%s",&Code[0]);
     }
     system("CLS");
-    switch(CODE[0]){
+    switch(Code[0]){
         case '0':{
 Back:
             Start();
@@ -386,13 +386,13 @@ unsigned short Start(){
     printf("    [2] 恢复\n");
     printf("    [3] 工具箱\n\n");
     printf("请输入: ");
-    scanf("%s",&CODE[0]);
-    while((CODE[0]!='?'&&CODE[0]!='0'&&CODE[0]!='1'&&CODE[0]!='2'&&CODE[0]!='3')||CODE[1]!=0){
+    scanf("%s",&Code[0]);
+    while((Code[0]!='?'&&Code[0]!='0'&&Code[0]!='1'&&Code[0]!='2'&&Code[0]!='3')||Code[1]!=0){
         printf("输入错误, 请重新输入: ");
-        scanf("%s",&CODE[0]);
+        scanf("%s",&Code[0]);
     }
     system("CLS");
-    switch(CODE[0]){
+    switch(Code[0]){
         case '?':{
             About();
             break;
