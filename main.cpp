@@ -1,6 +1,5 @@
 #include<iostream>
 #include<fstream>
-#include<unistd.h>
 #include<ShlObj.h>
 #include<windows.h>
 char CODE[3]{0,0,0};
@@ -123,6 +122,7 @@ void Cracking(){
     }
     switch(CODE[1]){
         case 'Y':{
+            sleepTimeS*=1000;
             break;
         }case 'N':{
             system("CLS");
@@ -216,7 +216,7 @@ void Cracking(){
             break;
         }
         printf("\n休眠中...\n");
-        sleep(sleepTimeS);
+        Sleep(sleepTimeS);
     }
     printf("\n########################################\n\n");
     printf("按任意键返回主菜单.\n\n");
@@ -308,7 +308,7 @@ void Recoverying(){
     printf("    极域电子教室: StudentMain.exe, GATESRV.exe, MasterHelper.exe, ProcHelper64.exe, DispcapHelper.exe, VRCwPlayer.exe\n\n");
     printf("请手动开启以上软件.\n");
     printf("########################################\n\n");
-    sleep(3);
+    Sleep(3000u);
     printf("按任意键返回主菜单.\n\n");
     system("Pause");
     system("CLS");
@@ -317,13 +317,27 @@ void Recoverying(){
 #pragma GCC diagnostic ignored "-Winfinite-recursion"
 void ToolBox(){
     printf("| 主菜单 > 工具箱 |\n\n");
-    if(!IsUserAnAdmin()){
-        printf("[提示] 当前为受限模式, 已禁用此功能.\n\n");
-        printf("########################################\n\n");
-        printf("按任意键返回主菜单.\n\n");
-        system("Pause");
-        system("CLS");
-        Start();
+    {
+        bool disableThisFeature{false};
+        typedef void(__stdcall*NTPROC)(DWORD*, DWORD*, DWORD*);
+        HINSTANCE inst{LoadLibrary(TEXT("ntdll.dll"))};
+        NTPROC getSysKernalVersion{(NTPROC)GetProcAddress(inst,"RtlGetNtVersionNumbers")};
+        DWORD major,minor;
+        getSysKernalVersion(&major,&minor,NULL);
+        if(major*10+minor<62){
+            printf("[提示] 当前 Windows 内核版本为 %lu.%lu, 此功能要求内核版本最低为 6.2 .\n",major,minor);
+            disableThisFeature=true;
+        }if(!IsUserAnAdmin()){
+            printf("[提示] 当前为受限模式, 已禁用此功能.\n");
+            disableThisFeature=true;
+        }
+        if(disableThisFeature){
+            printf("\n########################################\n\n");
+            printf("按任意键返回主菜单.\n\n");
+            system("Pause");
+            system("CLS");
+            Start();
+        }
     }
     printf("[提示] 此功能正在开发, 暂不完善.\n\n");
     printf("    [0] 返回\n");
