@@ -325,7 +325,7 @@ void ToolBox(){
         DWORD major,minor;
         getSysKernalVersion(&major,&minor,NULL);
         if(major*10+minor<62){
-            printf("[提示] 当前 Windows 内核版本为 %lu.%lu, 此功能要求内核版本最低为 6.2 .\n",major,minor);
+            printf("[提示] 当前 Windows 内核版本为 %lu.%lu, 低于 6.2.\n",major,minor);
             disableThisFeature=true;
         }if(!IsUserAnAdmin()){
             printf("[提示] 当前为受限模式, 已禁用此功能.\n");
