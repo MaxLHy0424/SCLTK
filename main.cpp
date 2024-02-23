@@ -341,11 +341,11 @@ void ToolBox(){
     }
     printf("[提示] 此功能正在开发, 暂不完善.\n\n");
     printf("    [0] 返回\n");
-    printf("    [1] 修复系统文件\n\n");
-    printf("    [2] 重启至 Windows 恢复环境");
+    printf("    [1] 修复系统文件\n");
+    printf("    [2] 重启至 WindowsRE\n\n");
     printf("请输入: ");
     scanf("%s",&CODE[0]);
-    while((CODE[0]!='0'&&CODE[0]!='1')||CODE[1]!=0){
+    while((CODE[0]!='0'&&CODE[0]!='1'&&CODE[0]!='2')||CODE[1]!=0){
         printf("输入错误, 请重新输入: ");
         scanf("%s",&CODE[0]);
     }
@@ -357,6 +357,16 @@ void ToolBox(){
         }case '1':{
             system("DISM /Online /Cleanup-Image /RestoreHealth");
             system("SFC /ScanNow");
+            break;
+        }case '2':{
+            for(unsigned short i{5};i>0;i--){
+                system("CLS");
+                printf("[警告] 请保存好文件, %hu 秒后将可重启至 WindowsRE.\n\n",i-1);
+                Sleep(1000u);
+            }
+            system("Pause");
+            system("ReAgentC /Enable");
+            system("Shutdown /R /O /T 0");
             break;
         }
     }
