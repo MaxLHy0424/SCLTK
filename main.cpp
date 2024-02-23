@@ -74,7 +74,7 @@ void Cracking(){
         printf("输入错误, 请重新输入: ");
         scanf("%s",&CODE[0]);
     }
-    float sleepTimeS{0};
+    float sleepTimeSeconds{0};
     switch(CODE[0]){
         case '0':{
             system("CLS");
@@ -82,11 +82,11 @@ void Cracking(){
             break;
         }case '2':{
             printf("请输入休眠时间 (单位: 秒; 范围: 0 ~ 10): ");
-            scanf("%f",&sleepTimeS);
-            while(sleepTimeS<0.0||sleepTimeS>10.0){
+            scanf("%f",&sleepTimeSeconds);
+            while(sleepTimeSeconds<0.0||sleepTimeSeconds>10.0){
                 printf("输入错误, 请重新输入: ");
-                sleepTimeS=0;
-                scanf("%f",&sleepTimeS);
+                sleepTimeSeconds=0;
+                scanf("%f",&sleepTimeSeconds);
             }
         }
     }
@@ -109,10 +109,10 @@ void Cracking(){
         printf("已启用.\n");
     }
     printf("     [休眠] ");
-    if(sleepTimeS==0){
+    if(sleepTimeSeconds==0){
         printf("已禁用.\n\n");
     }else{
-        printf("已启用, %g 秒.\n\n",sleepTimeS);
+        printf("已启用, %g 秒.\n\n",sleepTimeSeconds);
     }
     printf("请确认 (Y: 继续, N: 放弃并返回): ");
     scanf("%s",&CODE[1]);
@@ -122,7 +122,7 @@ void Cracking(){
     }
     switch(CODE[1]){
         case 'Y':{
-            sleepTimeS*=1000;
+            sleepTimeSeconds*=1000;
             break;
         }case 'N':{
             system("CLS");
@@ -216,7 +216,7 @@ void Cracking(){
             break;
         }
         printf("\n休眠中...\n");
-        Sleep(sleepTimeS);
+        Sleep(sleepTimeSeconds);
     }
     printf("\n########################################\n\n");
     printf("按任意键返回主菜单.\n\n");
