@@ -63,7 +63,7 @@ void About(){
 void Cracking(){
     printf("| 主菜单 > 破解 |\n\n");
     if(!IsUserAnAdmin()){
-        printf("[提示] 当前为受限模式, 已限制此功能. 以管理员权限重启软件解除限制.\n\n");
+        printf("[提示] 当前为受限模式, 以管理员权限重启软件解除限制.\n\n");
     }
     printf("   [0] 返回\n");
     printf("   [1] 单次模式\n");
@@ -325,14 +325,14 @@ void ToolBox(){
         DWORD major,minor;
         getSysKernalVersion(&major,&minor,NULL);
         if(major*10+minor<62){
-            printf("[提示] 当前 Windows 内核版本为 %lu.%lu, 低于 6.2.\n",major,minor);
+            printf("[提示] 当前 Windows 内核版本为 %lu.%lu, 低于 6.2.\n\n",major,minor);
             disableThisFeature=true;
         }if(!IsUserAnAdmin()){
-            printf("[提示] 当前为受限模式, 已禁用此功能.\n");
+            printf("[提示] 当前为受限模式, 已禁用此功能.\n\n");
             disableThisFeature=true;
         }
         if(disableThisFeature){
-            printf("\n########################################\n\n");
+            printf("########################################\n\n");
             printf("按任意键返回主菜单.\n\n");
             system("Pause");
             system("CLS");
