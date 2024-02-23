@@ -3,15 +3,16 @@
 #include<ShlObj.h>
 #include<windows.h>
 char CODE[3]{0,0,0};
+std::string CfgItems[5];
 unsigned short Start();
-bool Configuration(bool reConfiguration){
-    if(reConfiguration){
+bool Configuration(bool reConfig){
+    if(reConfig){
         printf("| 主菜单 > 重载配置 |\n\n");
     }
     std::ifstream fin;
     fin.open("config.ini",std::ios::in);
     if(!fin.is_open()){
-        if(!reConfiguration){
+        if(!reConfig){
             system("Color B");
             system("Title 机房控制软件克星");
         }
@@ -23,18 +24,17 @@ bool Configuration(bool reConfiguration){
         goto skipConfiguration;
     }
     {
-        std::string configItems[4];
-        for(unsigned short i{0};i<4;i++){
-            getline(fin,configItems[i]);
+        for(unsigned short i{0};i<5;i++){
+            getline(fin,CfgItems[i]);
         }
-        configItems[0]="Color "+configItems[0];
-        system(configItems[0].c_str());
-        configItems[1]="Title "+configItems[1];
-        system(configItems[1].c_str());
-        if(configItems[2]!="$SKIP$"){
-            system(configItems[2].c_str());
+        CfgItems[0]="Color "+CfgItems[0];
+        system(CfgItems[0].c_str());
+        CfgItems[1]="Title "+CfgItems[1];
+        system(CfgItems[1].c_str());
+        if(CfgItems[2]!="$SKIP$"){
+            system(CfgItems[2].c_str());
         }
-        if(reConfiguration&&configItems[3]=="1"){
+        if(reConfig&&CfgItems[3]=="1"){
             printf("[提示] 重载配置完成!\n\n");
             printf("########################################\n\n");
             printf("按任意键返回主菜单.\n\n");
@@ -45,7 +45,7 @@ bool Configuration(bool reConfiguration){
 skipConfiguration:
     system("CLS");
     Start();
-    return reConfiguration;
+    return reConfig;
 }
 void About(){
     printf("| 主菜单 > 关于 |\n\n");
@@ -324,7 +324,7 @@ void ToolBox(){
         NTPROC getSysKernalVersion{(NTPROC)GetProcAddress(inst,"RtlGetNtVersionNumbers")};
         DWORD major,minor;
         getSysKernalVersion(&major,&minor,NULL);
-        if(major*10+minor<62){
+        if(CfgItems[4]=="1"&&major*10+minor<62){
             printf("[提示] 当前 Windows 内核版本为 %lu.%lu, 低于 6.2.\n\n",major,minor);
             disableThisFeature=true;
         }if(!IsUserAnAdmin()){
@@ -336,7 +336,7 @@ void ToolBox(){
             printf("按任意键返回主菜单.\n\n");
             system("Pause");
             system("CLS");
-            Start();
+            goto Back;
         }
     }
     printf("[提示] 此功能正在开发, 暂不完善.\n\n");
@@ -352,6 +352,7 @@ void ToolBox(){
     system("CLS");
     switch(CODE[0]){
         case '0':{
+Back:
             Start();
             break;
         }case '1':{
