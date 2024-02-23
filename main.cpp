@@ -2,18 +2,19 @@
 #include<fstream>
 #include<unistd.h>
 #include<ShlObj.h>
+#include<windows.h>
 char CODE[3]{0,0,0};
 unsigned short Start();
-bool Configuration(bool reConfig){
-    if(reConfig){
+bool Configuration(bool reConfiguration){
+    if(reConfiguration){
         printf("| 主菜单 > 重载配置 |\n\n");
     }
     std::ifstream fin;
     fin.open("config.ini",std::ios::in);
     if(!fin.is_open()){
-        if(!reConfig){
+        if(!reConfiguration){
             system("Color B");
-            system("Title CRCSN");
+            system("Title 机房控制软件克星");
         }
         printf("[错误] 无法读取 config.ini !\n\n");
         printf("########################################\n\n");
@@ -34,7 +35,7 @@ bool Configuration(bool reConfig){
         if(configItems[2]!="$SKIP$"){
             system(configItems[2].c_str());
         }
-        if(reConfig&&configItems[3]=="1"){
+        if(reConfiguration&&configItems[3]=="1"){
             printf("[提示] 重载配置完成!\n\n");
             printf("########################################\n\n");
             printf("按任意键返回主菜单.\n\n");
@@ -45,12 +46,12 @@ bool Configuration(bool reConfig){
 skipConfiguration:
     system("CLS");
     Start();
-    return reConfig;
+    return reConfiguration;
 }
 void About(){
     printf("| 主菜单 > 关于 |\n\n");
     printf("    [软件名称] 机房控制软件克星 (Computer Room Control Software Nemesis)\n");
-    printf("    [版本信息] v3.1.0_Dev10\n");
+    printf("    [版本信息] v3.1.0_Dev11\n");
     printf("    [软件作者] MaxLHy0424\n");
     printf("    [主 仓 库] https://github.com/MaxLHy0424/Computer-Room-Control-Software-Nemesis\n\n");
     printf("    (C) Copyright 2023-2024 MaxLHy0424, all rights reserved.\n\n");
@@ -112,7 +113,7 @@ void Cracking(){
     if(sleepTimeS==0){
         printf("已禁用.\n\n");
     }else{
-        printf("已启用, %lg 秒.\n\n",sleepTimeS);
+        printf("已启用, %g 秒.\n\n",sleepTimeS);
     }
     printf("请确认 (Y: 继续, N: 放弃并返回): ");
     scanf("%s",&CODE[1]);
@@ -307,7 +308,7 @@ void Recoverying(){
     printf("    极域电子教室: StudentMain.exe, GATESRV.exe, MasterHelper.exe, ProcHelper64.exe, DispcapHelper.exe, VRCwPlayer.exe\n\n");
     printf("请手动开启以上软件.\n");
     printf("########################################\n\n");
-    sleep(5);
+    sleep(3);
     printf("按任意键返回主菜单.\n\n");
     system("Pause");
     system("CLS");
@@ -327,6 +328,7 @@ void ToolBox(){
     printf("[提示] 此功能正在开发, 暂不完善.\n\n");
     printf("    [0] 返回\n");
     printf("    [1] 修复系统文件\n\n");
+    printf("    [2] 重启至 Windows 恢复环境");
     printf("请输入: ");
     scanf("%s",&CODE[0]);
     while((CODE[0]!='0'&&CODE[0]!='1')||CODE[1]!=0){
