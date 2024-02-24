@@ -2,8 +2,8 @@
 #include<fstream>
 #include<ShlObj.h>
 #include<windows.h>
-char Code[3]{0,0,0};
-std::string CfgItems[5];
+char CODE[3];
+std::string CONFIG[5];
 unsigned short Start();
 bool Configuration(bool reConfig){
     if(reConfig){
@@ -21,20 +21,17 @@ bool Configuration(bool reConfig){
         printf("按任意键继续.\n\n");
         system("Pause");
         system("CLS");
-        goto skipConfig;
+        goto skipCfg;
     }
     {
         for(unsigned short i{0};i<5;i++){
-            getline(fin,CfgItems[i]);
+            getline(fin,CONFIG[i]);
         }
-        CfgItems[0]="Color "+CfgItems[0];
-        system(CfgItems[0].c_str());
-        CfgItems[1]="Title "+CfgItems[1];
-        system(CfgItems[1].c_str());
-        if(CfgItems[2]!="$SKIP$"){
-            system(CfgItems[2].c_str());
-        }
-        if(reConfig&&CfgItems[3]=="1"){
+        CONFIG[0]="Color "+CONFIG[0];
+        system(CONFIG[0].c_str());
+        CONFIG[1]="Title "+CONFIG[1];
+        system(CONFIG[1].c_str());
+        if(reConfig&&CONFIG[2]=="1"){
             printf("[提示] 重载配置完成!\n\n");
             printf("########################################\n\n");
             printf("按任意键返回主菜单.\n\n");
@@ -42,7 +39,7 @@ bool Configuration(bool reConfig){
         }
     }
     fin.close();
-skipConfig:
+skipCfg:
     system("CLS");
     Start();
     return reConfig;
@@ -69,13 +66,13 @@ void Cracking(){
     printf("   [1] 单次模式\n");
     printf("   [2] 循环模式\n\n");
     printf("请输入: ");
-    scanf("%s",&Code[0]);
-    while((Code[0]!='0'&&Code[0]!='1'&&Code[0]!='2')||Code[1]!=0){
+    scanf("%s",&CODE[0]);
+    while((CODE[0]!='0'&&CODE[0]!='1'&&CODE[0]!='2')||CODE[1]!=0){
         printf("输入错误, 请重新输入: ");
-        scanf("%s",&Code[0]);
+        scanf("%s",&CODE[0]);
     }
     float sleepTimeSeconds{0};
-    switch(Code[0]){
+    switch(CODE[0]){
         case '0':{
             system("CLS");
             Start();
@@ -93,7 +90,7 @@ void Cracking(){
     system("CLS");
     printf("| 主菜单 > 破解 > 确认配置与执行操作 |\n\n");
     printf("     [行为] ");
-    switch(Code[0]){
+    switch(CODE[0]){
         case '1':{
             printf("单次.\n");
             break;
@@ -115,12 +112,12 @@ void Cracking(){
         printf("已启用, %g 秒.\n\n",sleepTimeSeconds);
     }
     printf("请确认 (Y: 继续, N: 放弃并返回): ");
-    scanf("%s",&Code[1]);
-    while((Code[1]!='Y'&&Code[1]!='N')||Code[2]!=0){
+    scanf("%s",&CODE[1]);
+    while((CODE[1]!='Y'&&CODE[1]!='N')||CODE[2]!=0){
         printf("输入错误, 请重新输入: ");
-        scanf("%s",&Code[1]);
+        scanf("%s",&CODE[1]);
     }
-    switch(Code[1]){
+    switch(CODE[1]){
         case 'Y':{
             sleepTimeSeconds*=1000;
             break;
@@ -212,7 +209,7 @@ void Cracking(){
             system("Net Stop BSAgentSvr");
             system("Net Stop WFBSMlogon");
         }
-        if(Code[0]=='1'){
+        if(CODE[0]=='1'){
             break;
         }
         printf("\n休眠中...\n");
@@ -236,12 +233,12 @@ void Recoverying(){
     }
     printf("本功能用于恢复破解时的部分操作, 部分情况下可能无法产生效果.\n\n");
     printf("请确认 (Y: 继续, N: 放弃并返回): ");
-    scanf("%s",&Code[1]);
-    while((Code[1]!='Y'&&Code[1]!='N')||Code[2]!=0){
+    scanf("%s",&CODE[1]);
+    while((CODE[1]!='Y'&&CODE[1]!='N')||CODE[2]!=0){
         printf("输入错误, 请重新输入: ");
-        scanf("%s",&Code[1]);
+        scanf("%s",&CODE[1]);
     }
-    switch(Code[1]){
+    switch(CODE[1]){
         case 'Y':{
             break;
         }case 'N':{
@@ -324,7 +321,7 @@ void ToolBox(){
         NTPROC getSysKernalVersion{(NTPROC)GetProcAddress(inst,"RtlGetNtVersionNumbers")};
         DWORD major,minor;
         getSysKernalVersion(&major,&minor,NULL);
-        if(CfgItems[4]=="1"&&major*10+minor<62){
+        if(CONFIG[3]=="1"&&major*10+minor<62){
             printf("[提示] 当前 Windows 内核版本为 %lu.%lu, 低于 6.2.\n\n",major,minor);
             disableThisFeature=true;
         }if(!IsUserAnAdmin()){
@@ -341,19 +338,34 @@ void ToolBox(){
     }
     printf("[提示] 此功能正在开发, 暂不完善.\n\n");
     printf("    [0] 返回\n");
+    printf("    [$] 自定义命令\n");
     printf("    [1] 修复系统文件\n");
     printf("    [2] 重启至 WindowsRE\n\n");
     printf("请输入: ");
-    scanf("%s",&Code[0]);
-    while((Code[0]!='0'&&Code[0]!='1'&&Code[0]!='2')||Code[1]!=0){
+    scanf("%s",&CODE[0]);
+    while((CODE[0]!='0'&&CODE[0]!='$'&&CODE[0]!='1'&&CODE[0]!='2')||CODE[1]!=0){
         printf("输入错误, 请重新输入: ");
-        scanf("%s",&Code[0]);
+        scanf("%s",&CODE[0]);
     }
     system("CLS");
-    switch(Code[0]){
+    switch(CODE[0]){
         case '0':{
 Back:
             Start();
+            break;
+        }case '$':{
+            std::ifstream fin;
+            fin.open("config.ini",std::ios::in);
+            if(!fin.is_open()){
+                printf("[错误] 无法读取 config.ini !\n\n");
+                fin.close();
+            }else if(CONFIG[4]=="$NULL$"){
+                fin.close();
+                printf("[提示] 配置选项为 $NULL$ , 请编辑 config.ini.\n\n");
+            }else{
+                fin.close();
+                system(CONFIG[4].c_str());
+            }
             break;
         }case '1':{
             system("DISM /Online /Cleanup-Image /RestoreHealth");
@@ -362,9 +374,11 @@ Back:
         }case '2':{
             for(unsigned short i{5};i>0;i--){
                 system("CLS");
-                printf("[警告] 请保存好文件, %hu 秒后将可重启至 Windows RE.\n\n",i-1);
+                printf("[警告] 请保存好文件, %hu 秒后将可重启至 Windows RE.\n\n",i);
                 Sleep(1000u);
             }
+            system("CLS");
+            printf("[警告] 请保存好文件, 0 秒后将可重启至 Windows RE.\n\n");
             system("Pause");
             system("ReAgentC /Enable");
             system("Shutdown /R /O /T 0");
@@ -386,13 +400,13 @@ unsigned short Start(){
     printf("    [2] 恢复\n");
     printf("    [3] 工具箱\n\n");
     printf("请输入: ");
-    scanf("%s",&Code[0]);
-    while((Code[0]!='?'&&Code[0]!='0'&&Code[0]!='1'&&Code[0]!='2'&&Code[0]!='3')||Code[1]!=0){
+    scanf("%s",&CODE[0]);
+    while((CODE[0]!='?'&&CODE[0]!='0'&&CODE[0]!='1'&&CODE[0]!='2'&&CODE[0]!='3')||CODE[1]!=0){
         printf("输入错误, 请重新输入: ");
-        scanf("%s",&Code[0]);
+        scanf("%s",&CODE[0]);
     }
     system("CLS");
-    switch(Code[0]){
+    switch(CODE[0]){
         case '?':{
             About();
             break;
