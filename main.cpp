@@ -316,7 +316,7 @@ void ToolBox(){
     printf("| 主菜单 > 工具箱 |\n\n");
     {
         bool disableThisFeature{false};
-        typedef void(__stdcall*NTPROC)(DWORD*, DWORD*, DWORD*);
+        typedef void(__stdcall*NTPROC)(DWORD*,DWORD*,DWORD*);
         HINSTANCE inst{LoadLibrary(TEXT("ntdll.dll"))};
         NTPROC getSysKernalVersion{(NTPROC)GetProcAddress(inst,"RtlGetNtVersionNumbers")};
         DWORD major,minor;
