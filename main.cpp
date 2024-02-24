@@ -375,13 +375,11 @@ Back:
             break;
         }case '2':{
             for(unsigned short i{5};i>0;i--){
-                printf("| 主菜单 > 工具箱 > 重启至 WinRE |\n\n");
                 system("CLS");
-                printf("[警告] 请保存好文件, %hu 秒后将可重启至 WinRE.\n\n",i);
+                printf("| 主菜单 > 工具箱 > 重启至 WinRE |\n\n");
+                printf("[警告] 请保存好文件, %hu 秒后将可重启至 WinRE.\n\n",i-1);
                 Sleep(1000u);
             }
-            system("CLS");
-            printf("[警告] 请保存好文件, 0 秒后将可重启至 WinRE.\n\n");
             system("Pause");
             system("ReAgentC /Enable");
             system("Shutdown /R /O /T 0");
