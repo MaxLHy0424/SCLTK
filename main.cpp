@@ -5,14 +5,14 @@
 char CODE[3];
 std::string CONFIG[5];
 unsigned short Start();
-bool Configuration(bool reConfig){
-    if(reConfig){
+bool Configuration(bool reCfg){
+    if(reCfg){
         printf("| 主菜单 > 重载配置 |\n\n");
     }
     std::ifstream fin;
     fin.open("config.ini",std::ios::in);
     if(!fin.is_open()){
-        if(!reConfig){
+        if(!reCfg){
             system("Color B");
             system("Title CRCSN");
         }
@@ -31,7 +31,7 @@ bool Configuration(bool reConfig){
         system(CONFIG[0].c_str());
         CONFIG[1]="Title "+CONFIG[1];
         system(CONFIG[1].c_str());
-        if(reConfig&&CONFIG[2]=="1"){
+        if(reCfg&&CONFIG[2]=="1"){
             printf("[提示] 重载配置完成!\n\n");
             printf("########################################\n\n");
             printf("按任意键返回主菜单.\n\n");
@@ -42,7 +42,7 @@ bool Configuration(bool reConfig){
 skipCfg:
     system("CLS");
     Start();
-    return reConfig;
+    return reCfg;
 }
 void About(){
     printf("| 主菜单 > 关于 |\n\n");
