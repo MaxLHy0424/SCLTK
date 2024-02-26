@@ -2,8 +2,8 @@
 #include<fstream>
 #include<ShlObj.h>
 #include<windows.h>
-char CODE[3];
-std::string CONFIG[5];
+char Code[3];
+std::string Config[5];
 unsigned short Start();
 bool Configuration(bool reCfg){
     if(reCfg){
@@ -21,17 +21,17 @@ bool Configuration(bool reCfg){
         printf("按任意键继续.\n\n");
         system("Pause");
         system("CLS");
-        goto skipCfg;
+        goto skip;
     }
     {
         for(unsigned short i{0};i<5;i++){
-            getline(fin,CONFIG[i]);
+            getline(fin,Config[i]);
         }
-        CONFIG[0]="Color "+CONFIG[0];
-        system(CONFIG[0].c_str());
-        CONFIG[1]="Title "+CONFIG[1];
-        system(CONFIG[1].c_str());
-        if(reCfg&&CONFIG[2]=="1"){
+        Config[0]="Color "+Config[0];
+        system(Config[0].c_str());
+        Config[1]="Title "+Config[1];
+        system(Config[1].c_str());
+        if(reCfg&&Config[2]=="1"){
             printf("[提示] 重载配置完成!\n\n");
             printf("########################################\n\n");
             printf("按任意键返回主菜单.\n\n");
@@ -39,7 +39,7 @@ bool Configuration(bool reCfg){
         }
     }
     fin.close();
-skipCfg:
+skip:
     system("CLS");
     Start();
     return reCfg;
@@ -47,7 +47,7 @@ skipCfg:
 void About(){
     printf("| 主菜单 > 关于 |\n\n");
     printf("    [软件名称] 机房控制软件克星 (Computer Room Control Software Nemesis)\n");
-    printf("    [版本信息] v3.1.0_Dev12\n");
+    printf("    [版本信息] v3.1.0_Dev13\n");
     printf("    [软件作者] MaxLHy0424\n");
     printf("    [主 仓 库] https://github.com/MaxLHy0424/Computer-Room-Control-Software-Nemesis\n\n");
     printf("    (C) Copyright 2023-2024 MaxLHy0424, all rights reserved.\n\n");
@@ -66,13 +66,13 @@ void Cracking(){
     printf("   [1] 单次模式\n");
     printf("   [2] 循环模式\n\n");
     printf("请输入: ");
-    scanf("%s",&CODE[0]);
-    while((CODE[0]!='0'&&CODE[0]!='1'&&CODE[0]!='2')||CODE[1]!=0){
+    scanf("%s",&Code[0]);
+    while((Code[0]!='0'&&Code[0]!='1'&&Code[0]!='2')||Code[1]!=0){
         printf("输入错误, 请重新输入: ");
-        scanf("%s",&CODE[0]);
+        scanf("%s",&Code[0]);
     }
     float sleepTimeSeconds{0};
-    switch(CODE[0]){
+    switch(Code[0]){
         case '0':{
             system("CLS");
             Start();
@@ -82,7 +82,6 @@ void Cracking(){
             scanf("%f",&sleepTimeSeconds);
             while(sleepTimeSeconds<0.0||sleepTimeSeconds>10.0){
                 printf("输入错误, 请重新输入: ");
-                sleepTimeSeconds=0;
                 scanf("%f",&sleepTimeSeconds);
             }
         }
@@ -90,7 +89,7 @@ void Cracking(){
     system("CLS");
     printf("| 主菜单 > 破解 > 确认配置与执行操作 |\n\n");
     printf("     [行为] ");
-    switch(CODE[0]){
+    switch(Code[0]){
         case '1':{
             printf("单次.\n");
             break;
@@ -112,12 +111,12 @@ void Cracking(){
         printf("已启用, %g 秒.\n\n",sleepTimeSeconds);
     }
     printf("请确认 (Y: 继续, N: 放弃并返回): ");
-    scanf("%s",&CODE[1]);
-    while((CODE[1]!='Y'&&CODE[1]!='N')||CODE[2]!=0){
+    scanf("%s",&Code[1]);
+    while((Code[1]!='Y'&&Code[1]!='N')||Code[2]!=0){
         printf("输入错误, 请重新输入: ");
-        scanf("%s",&CODE[1]);
+        scanf("%s",&Code[1]);
     }
-    switch(CODE[1]){
+    switch(Code[1]){
         case 'Y':{
             sleepTimeSeconds*=1000;
             break;
@@ -209,7 +208,7 @@ void Cracking(){
             system("Net Stop BSAgentSvr");
             system("Net Stop WFBSMlogon");
         }
-        if(CODE[0]=='1'){
+        if(Code[0]=='1'){
             break;
         }
         printf("\n休眠中...\n");
@@ -233,12 +232,12 @@ void Recoverying(){
     }
     printf("本功能用于恢复破解时的部分操作, 部分情况下可能无法产生效果.\n\n");
     printf("请确认 (Y: 继续, N: 放弃并返回): ");
-    scanf("%s",&CODE[1]);
-    while((CODE[1]!='Y'&&CODE[1]!='N')||CODE[2]!=0){
+    scanf("%s",&Code[1]);
+    while((Code[1]!='Y'&&Code[1]!='N')||Code[2]!=0){
         printf("输入错误, 请重新输入: ");
-        scanf("%s",&CODE[1]);
+        scanf("%s",&Code[1]);
     }
-    switch(CODE[1]){
+    switch(Code[1]){
         case 'Y':{
             break;
         }case 'N':{
@@ -321,7 +320,7 @@ void ToolBox(){
         NTPROC getSysKernalVersion{(NTPROC)GetProcAddress(inst,"RtlGetNtVersionNumbers")};
         DWORD major,minor;
         getSysKernalVersion(&major,&minor,NULL);
-        if(CONFIG[3]=="1"&&major*10+minor<62){
+        if(Config[3]=="1"&&major*10+minor<62){
             printf("[提示] 当前 Windows 内核版本为 %lu.%lu, 低于 6.2.\n\n",major,minor);
             disableThisFeature=true;
         }if(!IsUserAnAdmin()){
@@ -333,24 +332,23 @@ void ToolBox(){
             printf("按任意键返回主菜单.\n\n");
             system("Pause");
             system("CLS");
-            goto Back;
+            goto backToTheMainMenu;
         }
     }
-    printf("[提示] 此功能正在开发, 暂不完善.\n\n");
     printf("    [0] 返回\n");
     printf("    [$] 自定义命令\n");
     printf("    [1] 修复系统文件\n");
     printf("    [2] 重启至 WinRE\n\n");
     printf("请输入: ");
-    scanf("%s",&CODE[0]);
-    while((CODE[0]!='0'&&CODE[0]!='$'&&CODE[0]!='1'&&CODE[0]!='2')||CODE[1]!=0){
+    scanf("%s",&Code[0]);
+    while((Code[0]!='0'&&Code[0]!='$'&&Code[0]!='1'&&Code[0]!='2')||Code[1]!=0){
         printf("输入错误, 请重新输入: ");
-        scanf("%s",&CODE[0]);
+        scanf("%s",&Code[0]);
     }
     system("CLS");
-    switch(CODE[0]){
+    switch(Code[0]){
         case '0':{
-Back:
+backToTheMainMenu:
             Start();
             break;
         }case '$':{
@@ -360,24 +358,32 @@ Back:
             if(!fin.is_open()){
                 printf("[错误] 无法读取 config.ini !\n\n");
                 fin.close();
-            }else if(CONFIG[4]=="$NULL$"){
+            }else if(Config[4]=="$NULL$"){
                 fin.close();
                 printf("[提示] 配置选项为 $NULL$ , 请编辑 config.ini.\n\n");
             }else{
                 fin.close();
-                system(CONFIG[4].c_str());
+                system(Config[4].c_str());
             }
             break;
         }case '1':{
             printf("| 主菜单 > 工具箱 > 修复系统文件|\n\n");
-            system("DISM /Online /Cleanup-Image /RestoreHealth");
-            system("SFC /ScanNow");
+            printf("请输入修复次数 (输入 0 返回): ");
+            unsigned short tmp{0};
+            scanf("%hu",&tmp);
+            if(tmp==0){
+                goto back;
+            }
+            for(unsigned short tmp{3};tmp>0;tmp--){
+                system("DISM /Online /Cleanup-Image /RestoreHealth");
+                system("SFC /ScanNow");
+            }
             break;
         }case '2':{
-            for(unsigned short i{5};i>0;i--){
+            for(unsigned short tmp{5};tmp>0;tmp--){
                 system("CLS");
                 printf("| 主菜单 > 工具箱 > 重启至 WinRE |\n\n");
-                printf("[警告] 请保存好文件, %hu 秒后将可重启至 WinRE.\n\n",i-1);
+                printf("[警告] 请保存好文件, %hu 秒后将可重启至 WinRE.\n\n",tmp-1);
                 Sleep(1000u);
             }
             system("Pause");
@@ -389,6 +395,7 @@ Back:
     printf("########################################\n\n");
     printf("按任意键返回.\n\n");
     system("Pause");
+back:
     system("CLS");
     ToolBox();
 }
@@ -401,13 +408,13 @@ unsigned short Start(){
     printf("    [2] 恢复\n");
     printf("    [3] 工具箱\n\n");
     printf("请输入: ");
-    scanf("%s",&CODE[0]);
-    while((CODE[0]!='?'&&CODE[0]!='0'&&CODE[0]!='1'&&CODE[0]!='2'&&CODE[0]!='3')||CODE[1]!=0){
+    scanf("%s",&Code[0]);
+    while((Code[0]!='?'&&Code[0]!='0'&&Code[0]!='1'&&Code[0]!='2'&&Code[0]!='3')||Code[1]!=0){
         printf("输入错误, 请重新输入: ");
-        scanf("%s",&CODE[0]);
+        scanf("%s",&Code[0]);
     }
     system("CLS");
-    switch(CODE[0]){
+    switch(Code[0]){
         case '?':{
             About();
             break;
