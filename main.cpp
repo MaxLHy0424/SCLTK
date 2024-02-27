@@ -1,4 +1,5 @@
-#include<iostream>
+#include<stdio.h>
+#include<string>
 #include<fstream>
 #include<ShlObj.h>
 #include<windows.h>
@@ -47,7 +48,7 @@ skip:
 void About(){
     printf("| 主菜单 > 关于 |\n\n");
     printf("    [软件名称] 机房控制软件克星 (Computer Room Control Software Nemesis)\n");
-    printf("    [版本信息] v3.1.0_Dev14\n");
+    printf("    [版本信息] v3.1.0_Dev15\n");
     printf("    [软件作者] MaxLHy0424\n");
     printf("    [主 仓 库] https://github.com/MaxLHy0424/Computer-Room-Control-Software-Nemesis\n\n");
     printf("    (C) Copyright 2023-2024 MaxLHy0424, all rights reserved.\n\n");
