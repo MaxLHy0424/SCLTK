@@ -47,7 +47,7 @@ skip:
 void About(){
     printf("| 主菜单 > 关于 |\n\n");
     printf("    [软件名称] 机房控制软件克星 (Computer Room Control Software Nemesis)\n");
-    printf("    [版本信息] v3.1.0_Dev13\n");
+    printf("    [版本信息] v3.1.0_Dev14\n");
     printf("    [软件作者] MaxLHy0424\n");
     printf("    [主 仓 库] https://github.com/MaxLHy0424/Computer-Room-Control-Software-Nemesis\n\n");
     printf("    (C) Copyright 2023-2024 MaxLHy0424, all rights reserved.\n\n");
@@ -71,7 +71,7 @@ void Cracking(){
         printf("输入错误, 请重新输入: ");
         scanf("%s",&Code[0]);
     }
-    float sleepTimeSeconds{0};
+    float sleepTime{0};
     switch(Code[0]){
         case '0':{
             system("CLS");
@@ -79,15 +79,15 @@ void Cracking(){
             break;
         }case '2':{
             printf("请输入休眠时间 (单位: 秒; 范围: 0 ~ 10): ");
-            scanf("%f",&sleepTimeSeconds);
-            while(sleepTimeSeconds<0.0||sleepTimeSeconds>10.0){
+            scanf("%f",&sleepTime);
+            while(sleepTime<0.0f||sleepTime>10.0f){
                 printf("输入错误, 请重新输入: ");
-                scanf("%f",&sleepTimeSeconds);
+                scanf("%f",&sleepTime);
             }
         }
     }
     system("CLS");
-    printf("| 主菜单 > 破解 > 确认配置与执行操作 |\n\n");
+    printf("| 主菜单 > 破解 > 确认配置 |\n\n");
     printf("     [行为] ");
     switch(Code[0]){
         case '1':{
@@ -105,10 +105,10 @@ void Cracking(){
         printf("已启用.\n");
     }
     printf("     [休眠] ");
-    if(sleepTimeSeconds==0){
+    if(!sleepTime){
         printf("已禁用.\n\n");
     }else{
-        printf("已启用, %g 秒.\n\n",sleepTimeSeconds);
+        printf("已启用, %g 秒.\n\n",sleepTime);
     }
     printf("请确认 (Y: 继续, N: 放弃并返回): ");
     scanf("%s",&Code[1]);
@@ -118,7 +118,7 @@ void Cracking(){
     }
     switch(Code[1]){
         case 'Y':{
-            sleepTimeSeconds*=1000;
+            sleepTime*=1000;
             break;
         }case 'N':{
             system("CLS");
@@ -181,25 +181,24 @@ void Cracking(){
             system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\TDOvrSet.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
             system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\GATESRV.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
             system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\MasterHelper.exe\" /t REG_SZ -v debugger /d \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
+            system("SC Config Wecsvc Start= Disabled");
+            system("SC Config EventLog Start= Disabled");
+            system("SC Config NlaSvc Start= Disabled");
             system("SC Config NcdAutoSetup Start= Disabled");
             system("SC Config NetMsmqActivator Start= Disabled");
             system("SC Config MSMQ Start= Disabled");
-            system("SC Config \"Intel Connectivity Network Service\" Start= Disabled");
             system("SC Config netprofm Start= Disabled");
-            system("SC Config NlaSvc Start= Disabled");
-            system("SC Config EventLog Start= Disabled");
             system("SC Config tvnserver Start= Disabled");
             system("SC Config TDNetFilter Start= Disabled");
             system("SC Config TDFileFilter Start= Disabled");
             system("SC Config STUDSRV Start= Disabled");
             system("SC Config BSAgentSvr Start= Disabled");
             system("SC Config WFBSMlogon Start= Disabled");
+            system("Net Stop NlaSvc");
             system("Net Stop NcdAutoSetup");
             system("Net Stop NetMsmqActivator");
             system("Net Stop MSMQ");
-            system("Net Stop \"Intel Connectivity Network Service\"");
             system("Net Stop netprofm");
-            system("Net Stop NlaSvc");
             system("Net Stop EventLog");
             system("Net Stop tvnserver");
             system("Net Stop TDNetFilter");
@@ -212,7 +211,7 @@ void Cracking(){
             break;
         }
         printf("\n休眠中...\n");
-        Sleep(sleepTimeSeconds);
+        Sleep(sleepTime);
     }
     printf("\n########################################\n\n");
     printf("按任意键返回主菜单.\n\n");
@@ -231,7 +230,7 @@ void Recoverying(){
         Start();
     }
     printf("本功能用于恢复破解时的部分操作, 部分情况下可能无法产生效果.\n\n");
-    printf("请确认 (Y: 继续, N: 放弃并返回): ");
+    printf("请确认 (Y: 继续, N: 返回主菜单): ");
     scanf("%s",&Code[1]);
     while((Code[1]!='Y'&&Code[1]!='N')||Code[2]!=0){
         printf("输入错误, 请重新输入: ");
@@ -273,26 +272,26 @@ void Recoverying(){
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\TDOvrSet.exe\" /F");
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\GATESRV.exe\" /F");
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\MasterHelper.exe\" /F");
+    system("SC Config Wecsvc Start= Auto");
+    system("SC Config EventLog Start= Auto");
+    system("SC Config NlaSvc Start= Auto");
     system("SC Config NcdAutoSetup Start= Auto");
     system("SC Config NetMsmqActivator Start= Auto");
     system("SC Config MSMQ Start= Auto");
-    system("SC Config \"Intel Connectivity Network Service\" Start= Auto");
     system("SC Config netprofm Start= Auto");
-    system("SC Config NlaSvc Start= Auto");
-    system("SC Config EventLog Start= Auto");
     system("SC Config tvnserver Start= Auto");
     system("SC Config BSAgentSvr Start= Auto");
     system("SC Config WFBSMlogon Start= Auto");
     system("SC Config TDNetFilter Start= Auto");
     system("SC Config TDFileFilter Start= Auto");
     system("SC Config STUDSRV Start= Auto");
+    system("Net Start Wecsvc");
+    system("Net Start EventLog");
+    system("Net Start NlaSvc");
     system("Net Start NcdAutoSetup");
     system("Net Start NetMsmqActivator");
     system("Net Start MSMQ");
-    system("Net Start \"Intel Connectivity Network Service\"");
     system("Net Start netprofm");
-    system("Net Start NlaSvc");
-    system("Net Start EventLog");
     system("Net Start tvnserver");
     system("Net Start BSAgentSvr");
     system("Net Start WFBSMlogon");
@@ -302,16 +301,16 @@ void Recoverying(){
     printf("\n########################################\n");
     printf("    联想云教室: vncviewer.exe, tvnserver32.exe, WFDeskShow.exe, WfbsPnpInstall.exe, WFBSMon.exe, WFBSMlogon.exe, refreship.exe, LenovoLockScreen.exe, DeploymentManager.exe, WFBSSvrLogShow.exe, ResetIp.exe, FuncForWIN64.exe, CertMgr.exe, Fireware.exe, BCDBootCopy.exe, PortControl64.exe, DesktopCheck.exe, DeploymentAgent.exe, XYNTService.exe\n");
     printf("    极域电子教室: StudentMain.exe, GATESRV.exe, MasterHelper.exe, ProcHelper64.exe, DispcapHelper.exe, VRCwPlayer.exe\n\n");
-    printf("请手动开启以上软件.\n");
+    printf("请手动开启以上可执行文件.\n");
     printf("########################################\n\n");
-    Sleep(3000u);
+    Sleep(2500u);
     printf("按任意键返回主菜单.\n\n");
     system("Pause");
     system("CLS");
     Start();
 }
 #pragma GCC diagnostic ignored "-Winfinite-recursion"
-void ToolBox(){
+void Toolkit(){
     printf("| 主菜单 > 工具箱 |\n\n");
     {
         bool disableThisFeature{false};
@@ -360,7 +359,7 @@ backToTheMainMenu:
                 fin.close();
             }else if(Config[4]=="$NULL$"){
                 fin.close();
-                printf("[提示] 配置选项为 $NULL$ , 请编辑 config.ini.\n\n");
+                printf("[提示] 配置选项为 $NULL$ , 请编辑并重载配置.\n\n");
             }else{
                 fin.close();
                 system(Config[4].c_str());
@@ -371,24 +370,28 @@ backToTheMainMenu:
             printf("请输入修复次数 (输入 0 返回): ");
             unsigned short tmp{0};
             scanf("%hu",&tmp);
-            if(tmp==0){
+            if(!tmp){
                 goto back;
             }
-            for(unsigned short tmp{3};tmp>0;tmp--){
+            for(;tmp>0;tmp--){
                 system("DISM /Online /Cleanup-Image /RestoreHealth");
                 system("SFC /ScanNow");
+                Sleep(500u);
             }
             break;
         }case '2':{
-            for(unsigned short tmp{5};tmp>0;tmp--){
+            for(unsigned short tmp{5};tmp>=0;tmp--){
                 system("CLS");
                 printf("| 主菜单 > 工具箱 > 重启至 WinRE |\n\n");
-                printf("[警告] 请保存好文件, %hu 秒后将可重启至 WinRE.\n\n",tmp-1);
+                printf("[警告] 请确认重要文件是否已保存, %hu 秒后将可重启至 WinRE.\n",tmp);
+                if(!tmp){
+                    break;
+                }
                 Sleep(1000u);
             }
             system("Pause");
             system("ReAgentC /Enable");
-            system("Shutdown /R /O /T 0");
+            system("Shutdown /F /R /O /T 10");
             break;
         }
     }
@@ -397,12 +400,12 @@ backToTheMainMenu:
     system("Pause");
 back:
     system("CLS");
-    ToolBox();
+    Toolkit();
 }
 #pragma GCC diagnostic pop
 unsigned short Start(){
     printf("| 主菜单 |\n\n");
-    printf("    [?] 关于本软件\n");
+    printf("    [?] 关于\n");
     printf("    [0] 重载配置\n");
     printf("    [1] 破解\n");
     printf("    [2] 恢复\n");
@@ -428,7 +431,7 @@ unsigned short Start(){
             Recoverying();
             break;
         }case '3':{
-            ToolBox();
+            Toolkit();
             break;
         }
     }
