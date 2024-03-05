@@ -379,13 +379,14 @@ backToTheMainMenu:
                 printf("| 主菜单 > 工具箱 > 重启至 WinRE |\n\n");
                 printf("[警告] 请确认重要文件是否已保存, %hu 秒后将可重启至 WinRE.\n",tmp);
                 if(!tmp){
+                    printf("\n");
                     break;
                 }
                 Sleep(1000u);
             }
             system("Pause");
             system("ReAgentC /Enable");
-            system("Shutdown /F /R /O /T 10");
+            system("Shutdown /F /R /O /T 0");
             break;
         }
     }
