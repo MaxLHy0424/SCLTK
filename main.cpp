@@ -7,13 +7,13 @@ bool Configuration(bool reCfg){
         printf("| 主菜单 > 重载配置 |\n\n");
     }
     std::ifstream fin;
-    fin.open("config.ini",std::ios::in);
+    fin.open("cfg.ini",std::ios::in);
     if(!fin.is_open()){
         if(!reCfg){
             system("Color B");
             system("Title CRCSN");
         }
-        printf("[错误] 无法读取 config.ini !\n\n");
+        printf("[错误] 无法读取 cfg.ini !\n\n");
         printf("########################################\n\n");
         printf("按任意键继续.\n\n");
         system("Pause");
@@ -324,9 +324,9 @@ void Toolkit(){
         }case '$':{
             printf("| 主菜单 > 工具箱 > 自定义命令 |\n\n");
             std::ifstream fin;
-            fin.open("config.ini",std::ios::in);
+            fin.open("cfg.ini",std::ios::in);
             if(!fin.is_open()){
-                printf("[错误] 无法读取 config.ini !\n\n");
+                printf("[错误] 无法读取 cfg.ini !\n\n");
                 fin.close();
             }else if(Config[3]=="$NULL$"){
                 fin.close();
