@@ -77,7 +77,7 @@ void Cracking(){
         }case '2':{
             printf("请输入休眠时间 (毫秒, 范围: 0 ~ 10,000): ");
             scanf("%hu",&sleepTime);
-            while(sleepTime<0u||sleepTime>10000u){
+            while(sleepTime<0U||sleepTime>10000U){
                 printf("输入错误, 请重新输入: ");
                 scanf("%hu",&sleepTime);
             }
@@ -288,7 +288,7 @@ void Recoverying(){
     printf("    极域电子教室: StudentMain.exe, GATESRV.exe, MasterHelper.exe, ProcHelper64.exe, DispcapHelper.exe, VRCwPlayer.exe\n\n");
     printf("请手动开启以上可执行文件.\n");
     printf("########################################\n\n");
-    Sleep(2500u);
+    Sleep(2500U);
     printf("按任意键返回主菜单.\n\n");
     system("Pause");
 back:
@@ -345,9 +345,11 @@ void Toolkit(){
                 break;
             }
             for(;tmp>0;tmp--){
-                system("DISM /Online /Cleanup-Image /RestoreHealth");
+                if(GetSysKernalVersion()>=62UL){
+                    system("DISM /Online /Cleanup-Image /RestoreHealth");
+                }
                 system("SFC /ScanNow");
-                Sleep(500u);
+                Sleep(100U);
             }
             break;
         }case '2':{
@@ -359,7 +361,7 @@ void Toolkit(){
                     printf("\n");
                     break;
                 }
-                Sleep(1000u);
+                Sleep(1000U);
             }
             system("Pause");
             system("ReAgentC /Enable");
