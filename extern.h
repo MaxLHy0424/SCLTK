@@ -3,7 +3,7 @@
 #include<fstream>
 #include<ShlObj.h>
 #include<windows.h>
-unsigned long GetNTKernalVersion(){
+unsigned long GetSysKernalVersion(){
     typedef void(__stdcall*NTPROC)(DWORD*,DWORD*,DWORD*);
     HINSTANCE inst{LoadLibrary(TEXT("ntdll.dll"))};
     NTPROC getSysKernalVersion{(NTPROC)GetProcAddress(inst,"RtlGetNtVersionNumbers")};
