@@ -25,7 +25,7 @@ bool Configuration(bool reCfg){
         goto skip;
     }
     {
-        for(unsigned short i{0};i<5;i++){
+        for(unsigned short i{};i<5;i++){
             getline(fin,Config[i]);
         }
         Config[0]="Color "+Config[0];
@@ -72,7 +72,7 @@ void Cracking(){
         printf("输入错误, 请重新输入: ");
         scanf("%s",&Code[0]);
     }
-    float sleepTime{0};
+    float sleepTime{};
     switch(Code[0]){
         case '0':{
             system("CLS");
@@ -325,7 +325,7 @@ void Toolkit(){
             printf("按任意键返回主菜单.\n\n");
             system("Pause");
             system("CLS");
-            goto backToTheMainMenu;
+            Start();
         }
     }
     printf("    [0] 返回\n");
@@ -341,7 +341,6 @@ void Toolkit(){
     system("CLS");
     switch(Code[0]){
         case '0':{
-backToTheMainMenu:
             Start();
             break;
         }case '$':{
@@ -362,10 +361,10 @@ backToTheMainMenu:
         }case '1':{
             printf("| 主菜单 > 工具箱 > 修复系统文件|\n\n");
             printf("请输入修复次数 (输入 0 返回): ");
-            unsigned short tmp{0};
+            unsigned short tmp{};
             scanf("%hu",&tmp);
             if(!tmp){
-                goto back;
+                break;
             }
             for(;tmp>0;tmp--){
                 system("DISM /Online /Cleanup-Image /RestoreHealth");
@@ -393,7 +392,6 @@ backToTheMainMenu:
     printf("########################################\n\n");
     printf("按任意键返回.\n\n");
     system("Pause");
-back:
     system("CLS");
     Toolkit();
 }
