@@ -261,8 +261,8 @@ void Recoverying(){
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\TDOvrSet.exe\" /F");
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\GATESRV.exe\" /F");
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\MasterHelper.exe\" /F");
-    system("SC Config NcdAutoSetup Start= Auto");
     system("SC Config netprofm Start= Auto");
+    system("SC Config NcdAutoSetup Start= Auto");
     system("SC Config EventLog Start= Auto");
     system("SC Config Wecsvc Start= Auto");
     system("SC Config NlaSvc Start= Auto");
@@ -272,8 +272,8 @@ void Recoverying(){
     system("SC Config TDNetFilter Start= Auto");
     system("SC Config TDFileFilter Start= Auto");
     system("SC Config STUDSRV Start= Auto");
-    system("Net Start NcdAutoSetup");
     system("Net Start netprofm");
+    system("Net Start NcdAutoSetup");
     system("Net Start EventLog");
     system("Net Start Wecsvc");
     system("Net Start NlaSvc");
