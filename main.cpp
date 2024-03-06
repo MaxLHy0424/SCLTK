@@ -228,11 +228,9 @@ void Recoverying(){
         scanf("%s",&Code[1]);
     }
     switch(Code[1]){
-        case 'Y':{
-            break;
-        }case 'N':{
+        case 'N':{
             system("CLS");
-            Start();
+            goto back;
             break;
         }
     }
@@ -293,6 +291,7 @@ void Recoverying(){
     Sleep(2500u);
     printf("按任意键返回主菜单.\n\n");
     system("Pause");
+back:
     system("CLS");
     Start();
 }
