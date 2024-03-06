@@ -4,7 +4,7 @@
 #include<ShlObj.h>
 #include<windows.h>
 char Code[3];
-std::string Config[5];
+std::string Config[4];
 unsigned short Start();
 bool Configuration(bool reCfg){
     if(reCfg){
@@ -25,7 +25,7 @@ bool Configuration(bool reCfg){
         goto skip;
     }
     {
-        for(unsigned short i{};i<5;i++){
+        for(unsigned short i{};i<4;i++){
             getline(fin,Config[i]);
         }
         Config[0]="Color "+Config[0];
@@ -313,7 +313,7 @@ void Toolkit(){
         NTPROC getSysKernalVersion{(NTPROC)GetProcAddress(inst,"RtlGetNtVersionNumbers")};
         DWORD major,minor;
         getSysKernalVersion(&major,&minor,NULL);
-        if(Config[3]=="1"&&major*10+minor<62){
+        if(major*10+minor<62){
             printf("[提示] 当前 Windows 内核版本为 %lu.%lu, 低于 6.2.\n\n",major,minor);
             disableThisFeature=true;
         }if(!IsUserAnAdmin()){
