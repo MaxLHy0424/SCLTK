@@ -356,6 +356,10 @@ void Toolkit(){
             for(unsigned short tmp{5};tmp>=0;tmp--){
                 system("CLS");
                 printf("| 主菜单 > 工具箱 > 重启至 WinRE |\n\n");
+                if(GetSysKernalVersion()<62UL){
+                    printf("[提示] 需要 Windows 8 及以上的 Windows 操作系统.\n\n");
+                    break;
+                }
                 printf("[警告] 请确认重要文件是否已保存, %hu 秒后将可重启至 WinRE.\n",tmp);
                 if(!tmp){
                     printf("\n");
