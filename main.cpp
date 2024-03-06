@@ -1,4 +1,4 @@
-#include"extern.h++"
+#include"extern.hpp"
 char Code[3];
 std::string Config[4];
 unsigned short Start();
