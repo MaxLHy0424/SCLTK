@@ -309,7 +309,7 @@ void Toolkit(){
     printf("    [0] 返回\n");
     printf("    [$] 自定义命令\n");
     printf("    [1] 修复系统文件\n");
-    printf("    [2] 重启至 WinRE\n\n");
+    printf("    [2] 重启至 RE\n\n");
     printf("请输入: ");
     scanf("%s",&Code[0]);
     while((Code[0]!='0'&&Code[0]!='$'&&Code[0]!='1'&&Code[0]!='2')||Code[1]!=0){
@@ -355,12 +355,12 @@ void Toolkit(){
         }case '2':{
             for(unsigned short tmp{5};tmp>=0;tmp--){
                 system("CLS");
-                printf("| 主菜单 > 工具箱 > 重启至 WinRE |\n\n");
+                printf("| 主菜单 > 工具箱 > 重启至 RE |\n\n");
                 if(GetSysKernalVersion()<62UL){
                     printf("[提示] 需要 Windows 8 及以上的 Windows 操作系统.\n\n");
                     break;
                 }
-                printf("[警告] 请确认重要文件是否已保存, %hu 秒后将可重启至 WinRE.\n",tmp);
+                printf("[警告] 请确认重要文件是否已保存, %hu 秒后将可重启至 RE.\n",tmp);
                 if(!tmp){
                     printf("\n");
                     break;
