@@ -72,18 +72,18 @@ void Cracking(){
         printf("输入错误, 请重新输入: ");
         scanf("%s",&Code[0]);
     }
-    float sleepTime{};
+    unsigned short sleepTime{};
     switch(Code[0]){
         case '0':{
             system("CLS");
             Start();
             break;
         }case '2':{
-            printf("请输入休眠时间 (单位: 秒; 范围: 0 ~ 10): ");
-            scanf("%f",&sleepTime);
-            while(sleepTime<0.0f||sleepTime>10.0f){
+            printf("请输入休眠时间 (毫秒, 范围: 0 ~ 10,000): ");
+            scanf("%hu",&sleepTime);
+            while(sleepTime<0u||sleepTime>10000u){
                 printf("输入错误, 请重新输入: ");
-                scanf("%f",&sleepTime);
+                scanf("%hu",&sleepTime);
             }
         }
     }
@@ -109,7 +109,7 @@ void Cracking(){
     if(!sleepTime){
         printf("已禁用.\n\n");
     }else{
-        printf("已启用, %g 秒.\n\n",sleepTime);
+        printf("已启用, %hu 毫秒.\n\n",sleepTime);
     }
     printf("请确认 (Y: 继续, N: 放弃并返回): ");
     scanf("%s",&Code[1]);
@@ -118,10 +118,7 @@ void Cracking(){
         scanf("%s",&Code[1]);
     }
     switch(Code[1]){
-        case 'Y':{
-            sleepTime*=1000;
-            break;
-        }case 'N':{
+        case 'N':{
             system("CLS");
             Cracking();
             break;
