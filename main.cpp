@@ -1,8 +1,4 @@
-#include<stdio.h>
-#include<string>
-#include<fstream>
-#include<ShlObj.h>
-#include<windows.h>
+#include"extern.h"
 char Code[3];
 std::string Config[4];
 unsigned short Start();
@@ -303,27 +299,13 @@ void Recoverying(){
 #pragma GCC diagnostic ignored "-Winfinite-recursion"
 void Toolkit(){
     printf("| 主菜单 > 工具箱 |\n\n");
-    {
-        bool disableThisFeature{false};
-        typedef void(__stdcall*NTPROC)(DWORD*,DWORD*,DWORD*);
-        HINSTANCE inst{LoadLibrary(TEXT("ntdll.dll"))};
-        NTPROC getSysKernalVersion{(NTPROC)GetProcAddress(inst,"RtlGetNtVersionNumbers")};
-        DWORD major,minor;
-        getSysKernalVersion(&major,&minor,NULL);
-        if(major*10+minor<62){
-            printf("[提示] 当前 Windows 内核版本为 %lu.%lu, 低于 6.2.\n\n",major,minor);
-            disableThisFeature=true;
-        }if(!IsUserAnAdmin()){
-            printf("[提示] 当前为受限模式, 已禁用此功能.\n\n");
-            disableThisFeature=true;
-        }
-        if(disableThisFeature){
-            printf("########################################\n\n");
-            printf("按任意键返回主菜单.\n\n");
-            system("Pause");
-            system("CLS");
-            Start();
-        }
+    if(!IsUserAnAdmin()){
+        printf("[提示] 当前为受限模式, 已禁用此功能.\n\n");
+        printf("########################################\n\n");
+        printf("按任意键返回主菜单.\n\n");
+        system("Pause");
+        system("CLS");
+        Start();
     }
     printf("    [0] 返回\n");
     printf("    [$] 自定义命令\n");
