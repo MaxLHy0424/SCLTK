@@ -44,7 +44,7 @@ skip:
 void About(){
     printf("| 主菜单 > 关于 |\n\n");
     printf("    [软件名称] 机房控制软件克星 (Computer Room Control Software Nemesis)\n");
-    printf("    [版本信息] v3.1.0_Dev15\n");
+    printf("    [版本信息] v3.1.0_Dev16\n");
     printf("    [软件作者] MaxLHy0424\n");
     printf("    [主 仓 库] https://github.com/MaxLHy0424/Computer-Room-Control-Software-Nemesis\n\n");
     printf("    (C) Copyright 2023-2024 MaxLHy0424, all rights reserved.\n\n");
@@ -75,7 +75,7 @@ void Cracking(){
             Start();
             break;
         }case '2':{
-            printf("请输入休眠时间 (毫秒, 范围: 0 ~ 10,000): ");
+            printf("请输入休眠时间 (毫秒, 范围: 0~10000): ");
             scanf("%hu",&sleepTime);
             while(sleepTime<0U||sleepTime>10000U){
                 printf("输入错误, 请重新输入: ");
@@ -220,7 +220,7 @@ void Recoverying(){
         system("CLS");
         Start();
     }
-    printf("本功能用于恢复破解时的部分操作, 部分情况下可能无法产生效果.\n\n");
+    printf("用于恢复破解时的部分操作, 部分情况下可能无效.\n\n");
     printf("请确认 (Y: 继续, N: 返回主菜单): ");
     scanf("%s",&Code[1]);
     while((Code[1]!='Y'&&Code[1]!='N')||Code[2]!=0){
@@ -286,7 +286,7 @@ void Recoverying(){
     printf("\n########################################\n");
     printf("    联想云教室: vncviewer.exe, tvnserver32.exe, WFDeskShow.exe, WfbsPnpInstall.exe, WFBSMon.exe, WFBSMlogon.exe, refreship.exe, LenovoLockScreen.exe, DeploymentManager.exe, WFBSSvrLogShow.exe, ResetIp.exe, FuncForWIN64.exe, CertMgr.exe, Fireware.exe, BCDBootCopy.exe, PortControl64.exe, DesktopCheck.exe, DeploymentAgent.exe, XYNTService.exe\n");
     printf("    极域电子教室: StudentMain.exe, GATESRV.exe, MasterHelper.exe, ProcHelper64.exe, DispcapHelper.exe, VRCwPlayer.exe\n\n");
-    printf("请手动开启以上可执行文件.\n");
+    printf("请手动启动以上可执行文件.\n");
     printf("########################################\n\n");
     Sleep(2500U);
     printf("按任意键返回主菜单.\n\n");
@@ -328,12 +328,12 @@ void Toolkit(){
             if(!fin.is_open()){
                 printf("[错误] 无法读取 config.ini !\n\n");
                 fin.close();
-            }else if(Config[4]=="$NULL$"){
+            }else if(Config[3]=="$NULL$"){
                 fin.close();
                 printf("[提示] 配置选项为 $NULL$ , 请编辑并重载配置.\n\n");
             }else{
                 fin.close();
-                system(Config[4].c_str());
+                system(Config[3].c_str());
             }
             break;
         }case '1':{
@@ -342,6 +342,7 @@ void Toolkit(){
             unsigned short tmp{};
             scanf("%hu",&tmp);
             if(!tmp){
+                goto back;
                 break;
             }
             for(;tmp>0;tmp--){
@@ -349,7 +350,6 @@ void Toolkit(){
                     system("DISM /Online /Cleanup-Image /RestoreHealth");
                 }
                 system("SFC /ScanNow");
-                Sleep(100U);
             }
             break;
         }case '2':{
@@ -376,6 +376,7 @@ void Toolkit(){
     printf("########################################\n\n");
     printf("按任意键返回.\n\n");
     system("Pause");
+back:
     system("CLS");
     Toolkit();
 }
