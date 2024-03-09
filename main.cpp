@@ -11,7 +11,11 @@ bool Configuration(bool reCfg){
     if(!fin.is_open()){
         if(!reCfg){
             system("Color B");
-            system("Title CRCSN");
+            if(!IsUserAnAdmin()){
+                system("Title [受限模式] CRCSN");
+            }else{
+                system("Title CRCSN");
+            }
         }
         printf("[错误] 无法读取 config.ini !\n\n");
         printf("########################################\n\n");
@@ -26,7 +30,11 @@ bool Configuration(bool reCfg){
         }
         Config[0]="Color "+Config[0];
         system(Config[0].c_str());
-        Config[1]="Title "+Config[1];
+        if(!IsUserAnAdmin()){
+            Config[1]="Title [受限模式] "+Config[1];
+        }else{
+            Config[1]="Title "+Config[1];
+        }
         system(Config[1].c_str());
         if(reCfg&&Config[2]=="1"){
             printf("[提示] 重载配置完成!\n\n");
@@ -56,9 +64,6 @@ void About(){
 }
 void Cracking(){
     printf("| 主菜单 > 破解 |\n\n");
-    if(!IsUserAnAdmin()){
-        printf("[提示] 当前为受限模式, 以管理员权限重启软件解除限制.\n\n");
-    }
     printf("   [0] 返回\n");
     printf("   [1] 单次模式\n");
     printf("   [2] 循环模式\n\n");
@@ -97,15 +102,15 @@ void Cracking(){
     }
     printf(" [受限模式] ");
     if(IsUserAnAdmin()){
-        printf("已禁用.\n");
+        printf("禁用.\n");
     }else{
-        printf("已启用.\n");
+        printf("启用.\n");
     }
     printf("     [休眠] ");
     if(!sleepTime){
-        printf("已禁用.\n\n");
+        printf("禁用.\n\n");
     }else{
-        printf("已启用, %hu 毫秒.\n\n",sleepTime);
+        printf("启用, %hu 毫秒.\n\n",sleepTime);
     }
     printf("请确认 (Y: 继续, N: 放弃并返回): ");
     scanf("%s",&Code[1]);
@@ -417,13 +422,5 @@ unsigned short Start(){
 }
 int main(){
     Configuration(false);
-    if(!IsUserAnAdmin()){
-        system("CLS");
-        printf("[提示] 当前为普通用户权限, 建议以管理员权限运行.\n\n");
-        printf("########################################\n\n");
-        printf("按任意键以受限模式继续.\n\n");
-        system("Pause");
-        system("CLS");
-    }
     Start();
 }
