@@ -340,13 +340,14 @@ void Toolkit(){
             }
             break;
         }case '2':{
+            if(GetSysKernalVersion()<62UL){
+                printf("| 主菜单 > 工具箱 > 重启至 RE |\n\n");
+                printf("[提示] 此功能需要 Windows 8 及以上的 Windows 操作系统.\n\n");
+                break;
+            }
             for(unsigned short tmp{5};tmp>=0;tmp--){
                 system("CLS");
                 printf("| 主菜单 > 工具箱 > 重启至 RE |\n\n");
-                if(GetSysKernalVersion()<62UL){
-                    printf("[提示] 此功能需要 Windows 8 及以上的 Windows 操作系统.\n\n");
-                    break;
-                }
                 printf("[警告] 请保存好文件, %hu 秒后可重启至 RE.\n",tmp);
                 if(!tmp){
                     printf("\n");
