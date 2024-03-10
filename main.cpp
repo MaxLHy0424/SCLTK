@@ -104,15 +104,15 @@ void Cracking(){
     }
     printf(" [受限模式] ");
     if(IsUserAnAdmin()){
-        printf("禁用.\n");
+        printf("已禁用.\n");
     }else{
-        printf("启用.\n");
+        printf("已启用.\n");
     }
     printf("     [休眠] ");
     if(!sleepTime){
-        printf("禁用.\n\n");
+        printf("已禁用.\n\n");
     }else{
-        printf("启用, %hu 毫秒.\n\n",sleepTime);
+        printf("已启用, %hu 毫秒.\n\n",sleepTime);
     }
     printf("请确认 (Y: 继续, N: 放弃并返回): ");
     scanf("%s",&Code[1]);
