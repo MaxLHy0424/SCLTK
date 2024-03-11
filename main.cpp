@@ -43,8 +43,8 @@ bool Configuration(bool reCfg){
             system("Pause");
         }
     }
-    fin.close();
 skip:
+    fin.close();
     system("CLS");
     if(!reCfg){
         Start();
