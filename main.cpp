@@ -25,7 +25,7 @@ bool Configuration(bool reCfg){
         goto skip;
     }
     {
-        for(unsigned short i{};i<4;i++){
+        for(unsigned short i{};i<4;++i){
             getline(fin,Config[i]);
         }
         Config[0]="Color "+Config[0];
