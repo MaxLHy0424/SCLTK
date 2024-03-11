@@ -333,14 +333,14 @@ void Toolkit(){
                 break;
             }
             for(;tmp>0;--tmp){
-                if(GetSysKernalVersion()>=62UL){
+                if(SysKernalVersion()>=62UL){
                     system("DISM /Online /Cleanup-Image /RestoreHealth");
                 }
                 system("SFC /ScanNow");
             }
             break;
         }case '2':{
-            if(GetSysKernalVersion()<62UL){
+            if(SysKernalVersion()<62UL){
                 printf("| 主菜单 > 工具箱 > 重启至 RE |\n\n");
                 printf("[提示] 此功能需要 Windows 8 及以上的 Windows 操作系统.\n\n");
                 break;
