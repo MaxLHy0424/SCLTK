@@ -332,7 +332,7 @@ void Toolkit(){
                 goto back;
                 break;
             }
-            for(;tmp>0;tmp--){
+            for(;tmp>0;--tmp){
                 if(GetSysKernalVersion()>=62UL){
                     system("DISM /Online /Cleanup-Image /RestoreHealth");
                 }
@@ -345,7 +345,7 @@ void Toolkit(){
                 printf("[提示] 此功能需要 Windows 8 及以上的 Windows 操作系统.\n\n");
                 break;
             }
-            for(unsigned short tmp{5};tmp>=0;tmp--){
+            for(unsigned short tmp{5};tmp>=0;--tmp){
                 system("CLS");
                 printf("| 主菜单 > 工具箱 > 重启至 RE |\n\n");
                 printf("[警告] 请保存好文件, %hu 秒后可重启至 RE.\n",tmp);
