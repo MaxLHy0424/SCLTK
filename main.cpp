@@ -17,7 +17,7 @@ bool Configuration(bool reCfg){
                 system("Title CRCSN");
             }
         }
-        printf("[错误] 无法读取 config.ini !\n\n");
+        printf("[!] 无法读取 config.ini !\n\n");
         printf("########################################\n\n");
         printf("按任意键继续.\n\n");
         system("Pause");
@@ -72,7 +72,7 @@ void Cracking(){
     printf("请输入: ");
     scanf("%s",&Code[0]);
     while((Code[0]!='0'&&Code[0]!='1'&&Code[0]!='2')||Code[1]!=0){
-        printf("输入错误, 请重新输入: ");
+        printf("输入错误: ");
         scanf("%s",&Code[0]);
     }
     unsigned short sleepTime{};
@@ -85,7 +85,7 @@ void Cracking(){
             printf("请输入休眠时间 (毫秒, 范围: 0~10000): ");
             scanf("%hu",&sleepTime);
             while(sleepTime<0U||sleepTime>10000U){
-                printf("输入错误, 请重新输入: ");
+                printf("输入错误: ");
                 scanf("%hu",&sleepTime);
             }
         }
@@ -117,7 +117,7 @@ void Cracking(){
     printf("请确认 (Y: 继续, N: 放弃并返回): ");
     scanf("%s",&Code[1]);
     while((Code[1]!='Y'&&Code[1]!='N')||Code[2]!=0){
-        printf("输入错误, 请重新输入: ");
+        printf("输入错误: ");
         scanf("%s",&Code[1]);
     }
     switch(Code[1]){
@@ -210,7 +210,7 @@ void Cracking(){
 void Recoverying(){
     printf("| 主菜单 > 恢复 |\n\n");
     if(!IsUserAnAdmin()){
-        printf("[提示] 当前为受限模式, 已禁用此功能.\n\n");
+        printf("当前为受限模式, 已禁用此功能.\n\n");
         printf("########################################\n\n");
         printf("按任意键返回主菜单.\n\n");
         system("Pause");
@@ -221,7 +221,7 @@ void Recoverying(){
     printf("请确认 (Y: 继续, N: 返回主菜单): ");
     scanf("%s",&Code[1]);
     while((Code[1]!='Y'&&Code[1]!='N')||Code[2]!=0){
-        printf("输入错误, 请重新输入: ");
+        printf("输入错误: ");
         scanf("%s",&Code[1]);
     }
     switch(Code[1]){
@@ -286,7 +286,7 @@ back:
 void Toolkit(){
     printf("| 主菜单 > 工具箱 |\n\n");
     if(!IsUserAnAdmin()){
-        printf("[提示] 当前为受限模式, 已禁用此功能.\n\n");
+        printf("当前为受限模式, 已禁用此功能.\n\n");
         printf("########################################\n\n");
         printf("按任意键返回主菜单.\n\n");
         system("Pause");
@@ -300,7 +300,7 @@ void Toolkit(){
     printf("请输入: ");
     scanf("%s",&Code[0]);
     while((Code[0]!='0'&&Code[0]!='$'&&Code[0]!='1'&&Code[0]!='2')||Code[1]!=0){
-        printf("输入错误, 请重新输入: ");
+        printf("输入错误: ");
         scanf("%s",&Code[0]);
     }
     system("CLS");
@@ -342,13 +342,13 @@ void Toolkit(){
         }case '2':{
             if(SysKernalVersion()<62UL){
                 printf("| 主菜单 > 工具箱 > 重启至 RE |\n\n");
-                printf("[提示] 此功能需要 Windows 8 及以上的 Windows 操作系统.\n\n");
+                printf("此功能需要 Windows 8 及以上的 Windows 操作系统.\n\n");
                 break;
             }
             for(unsigned short tmp{5};tmp>=0;--tmp){
                 system("CLS");
                 printf("| 主菜单 > 工具箱 > 重启至 RE |\n\n");
-                printf("[警告] 请保存好文件, %hu 秒后可重启至 RE.\n",tmp);
+                printf("[*] 请保存好文件, %hu 秒后可重启至 RE.\n",tmp);
                 if(!tmp){
                     printf("\n");
                     break;
@@ -379,7 +379,7 @@ unsigned short Start(){
     printf("请输入: ");
     scanf("%s",&Code[0]);
     while((Code[0]!='?'&&Code[0]!='0'&&Code[0]!='1'&&Code[0]!='2'&&Code[0]!='3')||Code[1]!=0){
-        printf("输入错误, 请重新输入: ");
+        printf("输入错误: ");
         scanf("%s",&Code[0]);
     }
     system("CLS");
