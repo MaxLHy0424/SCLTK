@@ -47,9 +47,10 @@ skip:
     fin.close();
     system("CLS");
     if(!reCfg){
-        Start();
+        return reCfg;
     }
-    return reCfg;
+    Start();
+    return 0;
 }
 void About(){
     printf("| 主菜单 > 关于 |\n\n");
