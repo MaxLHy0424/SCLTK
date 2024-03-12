@@ -10,7 +10,7 @@ bool Configuration(bool reCfg){
     fin.open("config.ini",std::ios::in);
     if(!fin.is_open()){
         if(!reCfg){
-            system("Color B");
+            system("Color 3");
             if(!IsUserAnAdmin()){
                 system("Title [受限模式] CRCSN");
             }else{
