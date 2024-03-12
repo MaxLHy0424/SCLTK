@@ -85,7 +85,7 @@ void Cracking(){
         }case '2':{
             printf("请输入休眠时间 (毫秒, 范围: 0~10000): ");
             scanf("%hu",&sleepTime);
-            while(sleepTime<0U||sleepTime>10000U){
+            while(sleepTime>10000U){
                 printf("输入错误, 请重新输入: ");
                 scanf("%hu",&sleepTime);
             }
@@ -276,7 +276,7 @@ void Recovering(){
     printf("    极域电子教室: StudentMain.exe, GATESRV.exe, MasterHelper.exe, ProcHelper64.exe, DispcapHelper.exe, VRCwPlayer.exe\n\n");
     printf("请手动启动以上可执行文件.\n");
     printf("########################################\n\n");
-    Sleep(2500U);
+    Sleep(5000U);
     printf("按任意键返回主菜单.\n\n");
     system("Pause");
 back:
@@ -325,7 +325,7 @@ void Toolkit(){
             }
             break;
         }case '1':{
-            printf("| 主菜单 > 工具箱 > 修复系统文件|\n\n");
+            printf("| 主菜单 > 工具箱 > 修复系统文件 |\n\n");
             printf("请输入修复次数 (输入 0 返回): ");
             unsigned short tmp{};
             scanf("%hu",&tmp);
