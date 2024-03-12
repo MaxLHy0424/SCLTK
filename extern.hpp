@@ -10,5 +10,5 @@ DWORD SysKernalVersion(){
     NTPROC GetKernalVersion{(NTPROC)GetProcAddress(inst,"RtlGetNtVersionNumbers")};
     DWORD major,minor;
     GetKernalVersion(&major,&minor,NULL);
-    return major*10U+minor;
+    return major*10UL+minor;
 }
