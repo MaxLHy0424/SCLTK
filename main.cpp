@@ -6,9 +6,9 @@ bool Configuration(bool reCfg){
     if(reCfg){
         printf("| 主菜单 > 重载配置 |\n\n");
     }
-    std::ifstream fin;
-    fin.open("config.ini",std::ios::in);
-    if(!fin.is_open()){
+    std::ifstream fOp;
+    fOp.open("config.ini",std::ios::in);
+    if(!fOp.is_open()){
         if(!reCfg){
             system("Color 3");
             if(!IsUserAnAdmin()){
@@ -22,11 +22,11 @@ bool Configuration(bool reCfg){
         printf("按任意键继续.\n\n");
         system("Pause");
         system("CLS");
-        goto skip;
+        goto SKIP;
     }
     {
         for(unsigned short i{};i<4;++i){
-            getline(fin,Config[i]);
+            getline(fOp,Config[i]);
         }
         Config[0]="Color "+Config[0];
         system(Config[0].c_str());
@@ -37,17 +37,17 @@ bool Configuration(bool reCfg){
         }
         system(Config[1].c_str());
         if(reCfg&&Config[2]=="1"){
-            printf("[i] 重载配置完成!\n\n");
+            printf("重载配置完成!\n\n");
             printf("########################################\n\n");
             printf("按任意键返回主菜单.\n\n");
             system("Pause");
         }
     }
-skip:
-    fin.close();
+SKIP:
+    fOp.close();
     system("CLS");
     if(!reCfg){
-        return reCfg;
+        return 1;
     }
     Start();
     return 0;
@@ -211,7 +211,7 @@ void Cracking(){
 void Recovering(){
     printf("| 主菜单 > 恢复 |\n\n");
     if(!IsUserAnAdmin()){
-        printf("[i] 当前为受限模式, 此功能不可用.\n\n");
+        printf("当前为受限模式, 此功能不可用.\n\n");
         printf("########################################\n\n");
         printf("按任意键返回主菜单.\n\n");
         system("Pause");
@@ -228,7 +228,7 @@ void Recovering(){
     switch(Code[1]){
         case 'N':{
             system("CLS");
-            goto back;
+            goto BACK;
             break;
         }
     }
@@ -279,7 +279,7 @@ void Recovering(){
     Sleep(5000U);
     printf("按任意键返回主菜单.\n\n");
     system("Pause");
-back:
+BACK:
     system("CLS");
     Start();
 }
@@ -287,7 +287,7 @@ back:
 void Toolkit(){
     printf("| 主菜单 > 工具箱 |\n\n");
     if(!IsUserAnAdmin()){
-        printf("[i] 当前为受限模式, 此功能不可用.\n\n");
+        printf("当前为受限模式, 此功能不可用.\n\n");
         printf("########################################\n\n");
         printf("按任意键返回主菜单.\n\n");
         system("Pause");
@@ -311,16 +311,16 @@ void Toolkit(){
             break;
         }case '$':{
             printf("| 主菜单 > 工具箱 > 自定义命令 |\n\n");
-            std::ifstream fin;
-            fin.open("config.ini",std::ios::in);
-            if(!fin.is_open()){
+            std::ifstream fOp;
+            fOp.open("config.ini",std::ios::in);
+            if(!fOp.is_open()){
                 printf("[x] 无法读取 config.ini !\n\n");
-                fin.close();
+                fOp.close();
             }else if(Config[3]=="$NULL$"){
-                fin.close();
-                printf("[i] 配置为 $NULL$, 请编辑并重载配置.\n\n");
+                fOp.close();
+                printf("配置为 $NULL$, 请编辑并重载配置.\n\n");
             }else{
-                fin.close();
+                fOp.close();
                 system(Config[3].c_str());
             }
             break;
@@ -330,7 +330,7 @@ void Toolkit(){
             unsigned short tmp{};
             scanf("%hu",&tmp);
             if(!tmp){
-                goto back;
+                goto BACK;
                 break;
             }
             for(;tmp>0;--tmp){
@@ -343,7 +343,7 @@ void Toolkit(){
         }case '2':{
             if(SysKernalVersion()<62UL){
                 printf("| 主菜单 > 工具箱 > 重启至 RE |\n\n");
-                printf("[i] 此功能需要 Windows 8 及以上的 Windows 操作系统.\n\n");
+                printf("此功能需要 Windows 8 及以上的 Windows 操作系统.\n\n");
                 break;
             }
             for(unsigned short tmp{5};tmp>=0;--tmp){
@@ -365,7 +365,7 @@ void Toolkit(){
     printf("########################################\n\n");
     printf("按任意键返回.\n\n");
     system("Pause");
-back:
+BACK:
     system("CLS");
     Toolkit();
 }
