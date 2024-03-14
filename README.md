@@ -12,7 +12,7 @@
 
 以管理员权限运行软件, 依次输入`1 1 Y`, 开始破解.
 
-如不起作用, 请检查是否有保护进程, 或在上一步所在的页面依次输入`1 2 0 Y`, 重复破解.
+不起作用的话, 请检查是否有保护进程, 或在上一步所在的页面依次输入`1 2 0 Y`, 重复破解.
 
 ## 恢复
 
@@ -32,19 +32,19 @@
 
 # 注意事项
 
-1. 软件为 Windows 8.x / 10 / 11 优先提供适配, Windows 7 及以下的 Windows 操作系统的专门适配可能会延后.
+1. 软件为 Windows 8.x / 10 / 11 优先提供适配, Windows 7 及以下的 Windows 操作系统的适配可能会延后.
 
-2. 请在遵守开源许可证的情况下使用本软件.
+2. 请在遵守开源许可证的情况下使用软件.
 
 # 常见问题
 
 ## 1. GitHub 在中国大陆地区难以访问, 获取软件非常不方便.
 
-目前已经在第三方云盘上传最新版本, 可以从[这里](https://www.123pan.com/s/HmR8jv-tZLN.html "点击跳转")下载.
+目前已经在第三方云盘上传最新版本, 可以从[这里](https://www.123pan.com/s/HmR8jv-tZLN.html)下载.
 
 ## 2. 运行软件时控制台界面总是输出 "命令提示符已被管理员禁用" 之类的提示, 无法正常使用.
 
-说明 CMD 被禁用. 可以试试打开注册表编辑器, 定位到`HKEY_CURRENT_USER\Software\Policies\Microsoft\Windows\System`下, 看看有没有一个叫`DisableCMD`的`DWORD`值, 有的话就删掉.
+可以试试打开注册表编辑器, 定位到`HKEY_CURRENT_USER\Software\Policies\Microsoft\Windows\System`下, 看看有没有一个叫`DisableCMD`的`DWORD`值, 有的话就删掉.
 
 ## 3. 软件无法在 32 位 Windows 系统中使用.
 
@@ -52,7 +52,7 @@
 
 ## 4. 破解后一些软件打开提示 "找不到文件" 之类的错误, 并且打开的软件本身并没有损坏.
 
-原因: CRCSN v3.0.0 添加了通过注册表劫持控制软件, 间接达到禁止启动控制软件. 但弊端是和控制软件的文件名一样的软件文件也无法打开了.
+CRCSN v3.0.0 添加了通过注册表劫持控制软件, 间接达到禁止启动控制软件. 但弊端是和控制软件的文件名一样的软件文件也无法打开了.
 
 在不影响软件正常运行的情况下, 可以试试给软件文件修改一个名称, 再打开试试. 实在不行就打开注册表编辑器, 定位到`HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\`, 找到和要运行的软件的文件名称相同的项, 删除即可.
 
@@ -64,15 +64,7 @@
 
 ## 6. 使用 msys2 安装的 gcc 编译`main.cpp`后, 在其他 Windows 操作系统打开`main.exe`提示缺少 DLL 文件.
 
-请从克隆仓库, 将`DLL`文件夹下的文件复制进 CRCSN 主程序`main.exe`所在的文件夹, 具体文件树可参考下方:
-
-> $ ...\ \
-> |----`config.ini`\
-> |----`libgcc_s_seh-1.dll`\
-> |----`libstdc++-6.dll`\
-> |----`libwinpthread-1.dll`\
-> |----`main.exe`
-
+请从克隆仓库, 将`DLL`文件夹下的文件复制进 CRCSN 主程序`main.exe`所在的文件夹, 再打开试试.
 
 # 鸣谢
 
