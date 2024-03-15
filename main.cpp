@@ -1,7 +1,7 @@
 #include"extern.hpp"
 char Code[3];
 std::string Config[4];
-unsigned short Start();
+void Start();
 bool Configuration(bool reCfg){
     if(reCfg){
         printf("| 主菜单 > 重载配置 |\n\n");
@@ -21,7 +21,6 @@ bool Configuration(bool reCfg){
         printf("########################################\n\n");
         printf("按任意键继续.\n\n");
         system("Pause");
-        system("CLS");
         goto SKIP;
     }
     {
@@ -45,27 +44,21 @@ bool Configuration(bool reCfg){
     }
 SKIP:
     fOp.close();
-    system("CLS");
-    if(!reCfg){
-        return 1;
-    }
-    Start();
     return 0;
 }
 void About(){
     printf("| 主菜单 > 关于 |\n\n");
     printf("    [软件名称] 机房控制软件克星 (Computer Room Control Software Nemesis)\n");
-    printf("    [版本信息] v3.1.0\n");
+    printf("    [版本信息] v3.1.0 (24w11a)\n");
     printf("    [软件作者] MaxLHy0424\n");
     printf("    [开源仓库] https://github.com/MaxLHy0424/Computer-Room-Control-Software-Nemesis\n\n");
     printf("    (C) Copyright 2023-2024 MaxLHy0424, all rights reserved.\n\n");
     printf("########################################\n\n");
     printf("按任意键返回.\n\n");
     system("Pause");
-    system("CLS");
-    Start();
 }
 void Cracking(){
+HEAD:
     printf("| 主菜单 > 破解 |\n\n");
     printf("   [0] 返回\n");
     printf("   [1] 单次模式\n");
@@ -79,9 +72,7 @@ void Cracking(){
     unsigned short sleepTime{};
     switch(Code[0]){
         case '0':{
-            system("CLS");
-            Start();
-            break;
+            return;
         }case '2':{
             printf("请输入休眠时间 (毫秒, 范围: 0~10000): ");
             scanf("%hu",&sleepTime);
@@ -89,6 +80,7 @@ void Cracking(){
                 printf("输入错误, 请重新输入: ");
                 scanf("%hu",&sleepTime);
             }
+            break;
         }
     }
     system("CLS");
@@ -121,12 +113,9 @@ void Cracking(){
         printf("输入错误, 请重新输入: ");
         scanf("%s",&Code[1]);
     }
-    switch(Code[1]){
-        case 'N':{
-            system("CLS");
-            Cracking();
-            break;
-        }
+    if(Code[1]=='N'){
+        system("CLS");
+        goto HEAD;
     }
     for(;;){
         system("CLS");
@@ -205,8 +194,7 @@ void Cracking(){
     printf("\n########################################\n\n");
     printf("按任意键返回主菜单.\n\n");
     system("Pause");
-    system("CLS");
-    Start();
+    return;
 }
 void Recovering(){
     printf("| 主菜单 > 恢复 |\n\n");
@@ -215,8 +203,7 @@ void Recovering(){
         printf("########################################\n\n");
         printf("按任意键返回主菜单.\n\n");
         system("Pause");
-        system("CLS");
-        Start();
+        return;
     }
     printf("用于恢复破解时的部分操作, 部分情况下可能无效.\n\n");
     printf("请确认 (Y: 继续, N: 返回主菜单): ");
@@ -225,12 +212,8 @@ void Recovering(){
         printf("输入错误, 请重新输入: ");
         scanf("%s",&Code[1]);
     }
-    switch(Code[1]){
-        case 'N':{
-            system("CLS");
-            goto BACK;
-            break;
-        }
+    if(Code[1]=='N'){
+        return;
     }
     system("CLS");
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\vncviewer.exe\" /F");
@@ -279,20 +262,18 @@ void Recovering(){
     Sleep(5000U);
     printf("按任意键返回主菜单.\n\n");
     system("Pause");
-BACK:
-    system("CLS");
-    Start();
+    return;
 }
 #pragma GCC diagnostic ignored "-Winfinite-recursion"
 void Toolkit(){
+    HEAD:
     printf("| 主菜单 > 工具箱 |\n\n");
     if(!IsUserAnAdmin()){
         printf("当前为受限模式, 此功能不可用.\n\n");
         printf("########################################\n\n");
         printf("按任意键返回主菜单.\n\n");
         system("Pause");
-        system("CLS");
-        Start();
+        return;
     }
     printf("    [0] 返回\n");
     printf("    [$] 自定义命令\n");
@@ -307,8 +288,7 @@ void Toolkit(){
     system("CLS");
     switch(Code[0]){
         case '0':{
-            Start();
-            break;
+            return;
         }case '$':{
             printf("| 主菜单 > 工具箱 > 自定义命令 |\n\n");
             std::ifstream fOp;
@@ -330,8 +310,8 @@ void Toolkit(){
             unsigned short tmp{};
             scanf("%hu",&tmp);
             if(!tmp){
-                goto BACK;
-                break;
+                system("CLS");
+                goto HEAD;
             }
             for(;tmp>0;--tmp){
                 if(SysKernalVersion()>=62UL){
@@ -365,12 +345,12 @@ void Toolkit(){
     printf("########################################\n\n");
     printf("按任意键返回.\n\n");
     system("Pause");
-BACK:
     system("CLS");
-    Toolkit();
+    goto HEAD;
 }
 #pragma GCC diagnostic pop
-unsigned short Start(){
+void Start(){
+HEAD:
     printf("| 主菜单 |\n\n");
     printf("    [?] 关于\n");
     printf("    [0] 重载配置\n");
@@ -402,7 +382,9 @@ unsigned short Start(){
             break;
         }
     }
-    return 0;
+    system("CLS");
+    goto HEAD;
+    return;
 }
 int main(){
     Configuration(false);
