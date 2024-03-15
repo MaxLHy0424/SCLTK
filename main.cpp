@@ -4,7 +4,7 @@ std::string Config[4];
 void Start();
 bool Configuration(bool reCfg){
     if(reCfg){
-        printf("| 主菜单 > 重载配置 |\n\n");
+        puts("| 主菜单 > 重载配置 |\n");
     }
     std::ifstream fOp;
     fOp.open("config.ini",std::ios::in);
@@ -17,9 +17,9 @@ bool Configuration(bool reCfg){
                 system("Title CRCSN");
             }
         }
-        printf("[x] 无法读取 config.ini !\n\n");
-        printf("########################################\n\n");
-        printf("按任意键继续.\n\n");
+        puts("[x] 无法读取 config.ini.\n");
+        puts("########################################\n");
+        puts("按任意键继续.\n");
         system("Pause");
         goto SKIP;
     }
@@ -36,9 +36,9 @@ bool Configuration(bool reCfg){
         }
         system(Config[1].c_str());
         if(reCfg&&Config[2]=="1"){
-            printf("重载配置完成!\n\n");
-            printf("########################################\n\n");
-            printf("按任意键返回主菜单.\n\n");
+            puts("重载配置完成.\n");
+            puts("########################################\n");
+            puts("按任意键返回主菜单.\n");
             system("Pause");
         }
     }
@@ -47,22 +47,22 @@ SKIP:
     return 0;
 }
 void About(){
-    printf("| 主菜单 > 关于 |\n\n");
-    printf("    [软件名称] 机房控制软件克星 (Computer Room Control Software Nemesis)\n");
-    printf("    [版本信息] v3.1.0 (24w11a)\n");
-    printf("    [软件作者] MaxLHy0424\n");
-    printf("    [开源仓库] https://github.com/MaxLHy0424/Computer-Room-Control-Software-Nemesis\n\n");
-    printf("    (C) Copyright 2023-2024 MaxLHy0424, all rights reserved.\n\n");
-    printf("########################################\n\n");
-    printf("按任意键返回.\n\n");
+    puts("| 主菜单 > 关于 |\n");
+    puts("   [软件名称] 机房控制软件克星 (Computer Room Control Software Nemesis)");
+    puts("   [版本信息] v3.1.0_rc2");
+    puts("   [软件作者] MaxLHy0424");
+    puts("   [开源仓库] https://github.com/MaxLHy0424/Computer-Room-Control-Software-Nemesis\n");
+    puts("   (C) Copyright 2023-2024 MaxLHy0424, all rights reserved.\n");
+    puts("########################################\n");
+    puts("按任意键返回.\n");
     system("Pause");
 }
 void Cracking(){
 HEAD:
-    printf("| 主菜单 > 破解 |\n\n");
-    printf("   [0] 返回\n");
-    printf("   [1] 单次模式\n");
-    printf("   [2] 循环模式\n\n");
+    puts("| 主菜单 > 破解 |\n");
+    puts("   [0] 返回");
+    puts("   [1] 单次模式");
+    puts("   [2] 循环模式\n");
     printf("请输入: ");
     scanf("%s",&Code[0]);
     while((Code[0]!='0'&&Code[0]!='1'&&Code[0]!='2')||Code[1]!=0){
@@ -84,28 +84,28 @@ HEAD:
         }
     }
     system("CLS");
-    printf("| 主菜单 > 破解 > 确认配置 |\n\n");
-    printf("     [行为] ");
+    puts("| 主菜单 > 破解 > 确认配置 |\n");
+    printf("    [行为] ");
     switch(Code[0]){
         case '1':{
-            printf("单次.\n");
+            puts("单次.");
             break;
         }case '2':{
-            printf("循环.\n");
+            puts("循环.");
             break;
         }
     }
     printf(" [受限模式] ");
     if(IsUserAnAdmin()){
-        printf("已禁用.\n");
+        puts("已禁用.");
     }else{
-        printf("已启用.\n");
+        puts("已启用.");
     }
-    printf("     [休眠] ");
+    printf("    [休眠] ");
     if(!sleepTime){
-        printf("已禁用.\n\n");
+        puts("已禁用.\n");
     }else{
-        printf("已启用, %hu 毫秒.\n\n",sleepTime);
+        printf("已启用, %hu 毫秒.\n",sleepTime);
     }
     printf("请确认 (Y: 继续, N: 放弃并返回): ");
     scanf("%s",&Code[1]);
@@ -188,24 +188,24 @@ HEAD:
         if(Code[0]=='1'){
             break;
         }
-        printf("\n休眠中...\n");
+        puts("\n休眠中...");
         Sleep(sleepTime);
     }
-    printf("\n########################################\n\n");
-    printf("按任意键返回主菜单.\n\n");
+    puts("\n########################################\n");
+    puts("按任意键返回主菜单.\n");
     system("Pause");
     return;
 }
 void Recovering(){
-    printf("| 主菜单 > 恢复 |\n\n");
+    puts("| 主菜单 > 恢复 |\n");
     if(!IsUserAnAdmin()){
-        printf("当前为受限模式, 此功能不可用.\n\n");
-        printf("########################################\n\n");
-        printf("按任意键返回主菜单.\n\n");
+        puts("当前为受限模式, 此功能不可用.\n");
+        puts("########################################\n");
+        puts("按任意键返回主菜单.\n");
         system("Pause");
         return;
     }
-    printf("用于恢复破解时的部分操作, 部分情况下可能无效.\n\n");
+    puts("用于恢复破解时的部分操作, 部分情况下可能无效.\n");
     printf("请确认 (Y: 继续, N: 返回主菜单): ");
     scanf("%s",&Code[1]);
     while((Code[1]!='Y'&&Code[1]!='N')||Code[2]!=0){
@@ -254,31 +254,31 @@ void Recovering(){
     system("Net Start TDNetFilter /Y");
     system("Net Start TDFileFilter /Y");
     system("Net Start STUDSRV /Y");
-    printf("\n########################################\n");
-    printf("    联想云教室: vncviewer.exe, tvnserver32.exe, WFDeskShow.exe, WfbsPnpInstall.exe, WFBSMon.exe, WFBSMlogon.exe, refreship.exe, LenovoLockScreen.exe, DeploymentManager.exe, WFBSSvrLogShow.exe, ResetIp.exe, FuncForWIN64.exe, CertMgr.exe, Fireware.exe, BCDBootCopy.exe, PortControl64.exe, DesktopCheck.exe, DeploymentAgent.exe, XYNTService.exe\n");
-    printf("    极域电子教室: StudentMain.exe, GATESRV.exe, MasterHelper.exe, ProcHelper64.exe, DispcapHelper.exe, VRCwPlayer.exe\n\n");
-    printf("请手动启动以上可执行文件.\n");
-    printf("########################################\n\n");
-    Sleep(5000U);
-    printf("按任意键返回主菜单.\n\n");
+    puts("\n########################################");
+    puts("    联想云教室: vncviewer.exe, tvnserver32.exe, WFDeskShow.exe, WfbsPnpInstall.exe, WFBSMon.exe, WFBSMlogon.exe, refreship.exe, LenovoLockScreen.exe, DeploymentManager.exe, WFBSSvrLogShow.exe, ResetIp.exe, FuncForWIN64.exe, CertMgr.exe, Fireware.exe, BCDBootCopy.exe, PortControl64.exe, DesktopCheck.exe, DeploymentAgent.exe, XYNTService.exe");
+    puts("    极域电子教室: StudentMain.exe, GATESRV.exe, MasterHelper.exe, ProcHelper64.exe, DispcapHelper.exe, VRCwPlayer.exe\n");
+    puts("请手动启动以上可执行文件.");
+    puts("########################################\n");
+    Sleep(2500U);
+    puts("按任意键返回主菜单.\n");
     system("Pause");
     return;
 }
 #pragma GCC diagnostic ignored "-Winfinite-recursion"
 void Toolkit(){
     HEAD:
-    printf("| 主菜单 > 工具箱 |\n\n");
+    puts("| 主菜单 > 工具箱 |\n");
     if(!IsUserAnAdmin()){
-        printf("当前为受限模式, 此功能不可用.\n\n");
-        printf("########################################\n\n");
-        printf("按任意键返回主菜单.\n\n");
+        puts("当前为受限模式, 此功能不可用.\n");
+        puts("########################################\n");
+        puts("按任意键返回主菜单.\n");
         system("Pause");
         return;
     }
-    printf("    [0] 返回\n");
-    printf("    [$] 自定义命令\n");
-    printf("    [1] 修复系统文件\n");
-    printf("    [2] 重启至 RE\n\n");
+    puts("   [0] 返回");
+    puts("   [$] 自定义命令");
+    puts("   [1] 修复系统文件");
+    puts("   [2] 重启至 RE\n");
     printf("请输入: ");
     scanf("%s",&Code[0]);
     while((Code[0]!='0'&&Code[0]!='$'&&Code[0]!='1'&&Code[0]!='2')||Code[1]!=0){
@@ -290,22 +290,22 @@ void Toolkit(){
         case '0':{
             return;
         }case '$':{
-            printf("| 主菜单 > 工具箱 > 自定义命令 |\n\n");
+            puts("| 主菜单 > 工具箱 > 自定义命令 |\n");
             std::ifstream fOp;
             fOp.open("config.ini",std::ios::in);
             if(!fOp.is_open()){
-                printf("[x] 无法读取 config.ini !\n\n");
+                puts("[x] 无法读取 config.ini.");
                 fOp.close();
             }else if(Config[3]=="$NULL$"){
                 fOp.close();
-                printf("配置为 $NULL$, 请编辑并重载配置.\n\n");
+                puts("配置为 $NULL$, 请编辑并重载配置.");
             }else{
                 fOp.close();
                 system(Config[3].c_str());
             }
             break;
         }case '1':{
-            printf("| 主菜单 > 工具箱 > 修复系统文件 |\n\n");
+            puts("| 主菜单 > 工具箱 > 修复系统文件 |\n");
             printf("请输入修复次数 (输入 0 返回): ");
             unsigned short tmp{};
             scanf("%hu",&tmp);
@@ -322,28 +322,29 @@ void Toolkit(){
             break;
         }case '2':{
             if(SysKernalVersion()<62UL){
-                printf("| 主菜单 > 工具箱 > 重启至 RE |\n\n");
-                printf("此功能需要 Windows 8 及以上的 Windows 操作系统.\n\n");
+                puts("| 主菜单 > 工具箱 > 重启至 RE |\n");
+                puts("此功能需要 Windows 8 及以上的 Windows 操作系统.\n");
                 break;
             }
             for(unsigned short tmp{5};tmp>=0;--tmp){
                 system("CLS");
-                printf("| 主菜单 > 工具箱 > 重启至 RE |\n\n");
-                printf("[!] 请保存好文件, %hu 秒后可重启至 RE.\n",tmp);
+                puts("| 主菜单 > 工具箱 > 重启至 RE |\n");
+                printf("[!] 请保存好文件, %hu 秒后可重启至 RE.",tmp);
                 if(!tmp){
-                    printf("\n");
                     break;
                 }
                 Sleep(1000U);
             }
+            puts("\n");
             system("Pause");
+            puts("\n");
             system("ReAgentC /Enable");
             system("Shutdown /F /R /O /T 0");
             break;
         }
     }
-    printf("########################################\n\n");
-    printf("按任意键返回.\n\n");
+    puts("\n########################################\n");
+    puts("按任意键返回.\n");
     system("Pause");
     system("CLS");
     goto HEAD;
@@ -351,12 +352,12 @@ void Toolkit(){
 #pragma GCC diagnostic pop
 void Start(){
 HEAD:
-    printf("| 主菜单 |\n\n");
-    printf("    [?] 关于\n");
-    printf("    [0] 重载配置\n");
-    printf("    [1] 破解\n");
-    printf("    [2] 恢复\n");
-    printf("    [3] 工具箱\n\n");
+    puts("| 主菜单 |\n");
+    puts("   [?] 关于");
+    puts("   [0] 重载配置");
+    puts("   [1] 破解");
+    puts("   [2] 恢复");
+    puts("   [3] 工具箱\n");
     printf("请输入: ");
     scanf("%s",&Code[0]);
     while((Code[0]!='?'&&Code[0]!='0'&&Code[0]!='1'&&Code[0]!='2'&&Code[0]!='3')||Code[1]!=0){
