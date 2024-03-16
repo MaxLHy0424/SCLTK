@@ -12,9 +12,9 @@ bool Configuration(bool reCfg){
         if(!reCfg){
             system("Color 9");
             if(!IsUserAnAdmin()){
-                system("Title [基本模式] CRCSN");
+                system("Title [基本会话] CRCSN");
             }else{
-                system("Title [增强模式] CRCSN");
+                system("Title [增强会话] CRCSN");
             }
         }
         puts("[x] 无法读取 config.ini.\n");
@@ -30,9 +30,9 @@ bool Configuration(bool reCfg){
         Config[0]="Color "+Config[0];
         system(Config[0].c_str());
         if(!IsUserAnAdmin()){
-            Config[1]="Title [基本模式] "+Config[1];
+            Config[1]="Title [基本会话] "+Config[1];
         }else{
-            Config[1]="Title [增强模式]"+Config[1];
+            Config[1]="Title [增强会话]"+Config[1];
         }
         system(Config[1].c_str());
         if(reCfg&&Config[2]=="1"){
@@ -50,7 +50,7 @@ SKIP:
 void About(){
     puts("| 主菜单 > 关于 |\n");
     puts("   [软件名称] 机房控制软件克星 (Computer Room Control Software Nemesis)");
-    puts("   [版本信息] v3.1.0_rc3");
+    puts("   [版本信息] v4.0.0_rc3");
     puts("   [软件作者] MaxLHy0424");
     puts("   [开源仓库] https://github.com/MaxLHy0424/Computer-Room-Control-Software-Nemesis\n");
     puts("   (C) Copyright 2023-2024 MaxLHy0424, all rights reserved.\n");
@@ -87,7 +87,7 @@ FuncHead:
     }
     system("CLS");
     puts("| 主菜单 > 破解 > 确认配置 |\n");
-    printf("    [行为] ");
+    printf("       [模式] ");
     switch(Code[0]){
         case '1':{
             puts("单次.");
@@ -97,13 +97,13 @@ FuncHead:
             break;
         }
     }
-    printf(" [基本模式] ");
+    printf(" [增强的破解] ");
     if(IsUserAnAdmin()){
-        puts("已禁用.");
-    }else{
         puts("已启用.");
+    }else{
+        puts("已禁用.");
     }
-    printf("    [休眠] ");
+    printf("       [休眠] ");
     if(!sleepTime){
         puts("已禁用.\n");
     }else{
