@@ -266,7 +266,6 @@ void Recovering(){
     system("Pause");
     return;
 }
-#pragma GCC diagnostic ignored "-Winfinite-recursion"
 void Toolkit(){
 FuncHead:
     puts("| 主菜单 > 工具箱 |\n");
@@ -351,7 +350,6 @@ FuncHead:
     system("CLS");
     goto FuncHead;
 }
-#pragma GCC diagnostic pop
 void Start(){
 FuncHead:
     puts("| 主菜单 |\n");
