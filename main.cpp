@@ -14,7 +14,7 @@ bool Configuration(bool reCfg){
             if(!IsUserAnAdmin()){
                 system("Title [基本模式] CRCSN");
             }else{
-                system("Title CRCSN");
+                system("Title [增强模式] CRCSN");
             }
         }
         puts("[x] 无法读取 config.ini.\n");
@@ -32,7 +32,7 @@ bool Configuration(bool reCfg){
         if(!IsUserAnAdmin()){
             Config[1]="Title [基本模式] "+Config[1];
         }else{
-            Config[1]="Title "+Config[1];
+            Config[1]="Title [增强模式]"+Config[1];
         }
         system(Config[1].c_str());
         if(reCfg&&Config[2]=="1"){
