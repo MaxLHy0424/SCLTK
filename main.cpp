@@ -10,9 +10,9 @@ bool Configuration(bool reCfg){
     fOp.open("config.ini",std::ios::in);
     if(!fOp.is_open()){
         if(!reCfg){
-            system("Color 3");
+            system("Color 9");
             if(!IsUserAnAdmin()){
-                system("Title [受限模式] CRCSN");
+                system("Title [基本模式] CRCSN");
             }else{
                 system("Title CRCSN");
             }
@@ -30,7 +30,7 @@ bool Configuration(bool reCfg){
         Config[0]="Color "+Config[0];
         system(Config[0].c_str());
         if(!IsUserAnAdmin()){
-            Config[1]="Title [受限模式] "+Config[1];
+            Config[1]="Title [基本模式] "+Config[1];
         }else{
             Config[1]="Title "+Config[1];
         }
@@ -97,7 +97,7 @@ FuncHead:
             break;
         }
     }
-    printf(" [受限模式] ");
+    printf(" [基本模式] ");
     if(IsUserAnAdmin()){
         puts("已禁用.");
     }else{
@@ -201,7 +201,7 @@ FuncHead:
 void Recovering(){
     puts("| 主菜单 > 恢复 |\n");
     if(!IsUserAnAdmin()){
-        puts("当前为受限模式, 此功能不可用.\n");
+        puts("当前为基本模式, 此功能不可用.\n");
         puts("########################################\n");
         puts("按任意键返回主菜单.\n");
         system("Pause");
@@ -271,7 +271,7 @@ void Toolkit(){
 FuncHead:
     puts("| 主菜单 > 工具箱 |\n");
     if(!IsUserAnAdmin()){
-        puts("当前为受限模式, 此功能不可用.\n");
+        puts("当前为基本模式, 此功能不可用.\n");
         puts("########################################\n");
         puts("按任意键返回主菜单.\n");
         system("Pause");
