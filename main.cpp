@@ -201,7 +201,7 @@ FuncHead:
 void Recovering(){
     puts("| 主菜单 > 恢复 |\n");
     if(!IsUserAnAdmin()){
-        puts("当前为基本模式, 此功能不可用.\n");
+        puts("当前为基本会话, 此功能不可用.\n");
         puts("########################################\n");
         puts("按任意键返回主菜单.\n");
         system("Pause");
@@ -271,7 +271,7 @@ void Toolkit(){
 FuncHead:
     puts("| 主菜单 > 工具箱 |\n");
     if(!IsUserAnAdmin()){
-        puts("当前为基本模式, 此功能不可用.\n");
+        puts("当前为基本会话, 此功能不可用.\n");
         puts("########################################\n");
         puts("按任意键返回主菜单.\n");
         system("Pause");
