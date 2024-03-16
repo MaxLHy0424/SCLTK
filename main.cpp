@@ -43,6 +43,7 @@ bool Configuration(bool reCfg){
         }
     }
 SKIP:
+    system("CLS");
     fOp.close();
     return 0;
 }
