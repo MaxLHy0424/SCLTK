@@ -32,7 +32,7 @@ bool Configuration(bool reCfg){
         if(!IsUserAnAdmin()){
             Config[1]="Title [基本会话] "+Config[1];
         }else{
-            Config[1]="Title [增强会话]"+Config[1];
+            Config[1]="Title [增强会话] "+Config[1];
         }
         system(Config[1].c_str());
         if(reCfg&&Config[2]=="1"){
