@@ -109,7 +109,7 @@ TOP:
     }else{
         printf("已启用, %hu 毫秒.\n",sleepTime);
     }
-    printf("请确认 (Y: 继续, N: 放弃并返回): ");
+    printf("是否继续? (Y/N): ");
     scanf("%s",&Code[1]);
     while((Code[1]!='Y'&&Code[1]!='N')||Code[2]!=0){
         printf("输入错误: ");
@@ -209,7 +209,7 @@ void Recovering(){
         return;
     }
     puts("用于恢复破解时的部分操作, 部分情况下可能无效.\n");
-    printf("请确认 (Y: 继续, N: 返回主菜单): ");
+    printf("是否继续? (Y/N): ");
     scanf("%s",&Code[1]);
     while((Code[1]!='Y'&&Code[1]!='N')||Code[2]!=0){
         printf("输入错误: ");
@@ -276,10 +276,11 @@ TOP:
     puts("   [0] 返回");
     puts("   [$] 自定义命令");
     puts("   [1] 修复系统文件");
-    puts("   [2] 高级启动\n");
+    puts("   [2] 系统激活");
+    puts("   [3] 高级启动\n");
     printf("请输入: ");
     scanf("%s",&Code[0]);
-    while((Code[0]!='0'&&Code[0]!='$'&&Code[0]!='1'&&Code[0]!='2')||Code[1]!=0){
+    while((Code[0]!='0'&&Code[0]!='$'&&Code[0]!='1'&&Code[0]!='2'&&Code[0]!='3')||Code[1]!=0){
         printf("输入错误: ");
         scanf("%s",&Code[0]);
     }
@@ -319,6 +320,26 @@ TOP:
             }
             break;
         }case '2':{
+            puts("| 主菜单 > 工具箱 > 系统激活 |\n");
+            puts("此功能需要联网并且系统内安装 PowerShell. 激活脚本为 Microsoft Activation Scripts, 长期使用请自行下载.\n");
+            printf("是否继续? (Y/N): ");
+            scanf("%s",&Code[1]);
+            while((Code[1]!='Y'&&Code[1]!='N')||Code[2]!=0){
+                printf("输入错误: ");
+                scanf("%s",&Code[1]);
+            }
+            switch(Code[1]){
+                case 'Y':{
+                    puts("请稍候...");
+                    system("PowerShell \"IRM https://massgrave.dev/get | IEX\"");
+                    break;
+                }case 'N':{
+                    break;
+                }
+            }
+            break;
+        }
+        case '3':{
             if(SysKernalVersion()<62UL){
                 puts("| 主菜单 > 工具箱 > 高级启动 |\n");
                 puts("此功能需要 Windows 8 及以上的 Windows 操作系统.\n");
