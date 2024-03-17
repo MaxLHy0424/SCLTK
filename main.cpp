@@ -328,18 +328,12 @@ TOP:
                 printf("输入错误: ");
                 scanf("%s",&Code[1]);
             }
-            switch(Code[1]){
-                case 'Y':{
-                    puts("请稍候...");
-                    system("PowerShell \"IRM https://massgrave.dev/get | IEX\"");
-                    break;
-                }case 'N':{
-                    break;
-                }
+            if(Code[1]=='Y'){
+                puts("请稍候...");
+                system("PowerShell \"IRM https://massgrave.dev/get | IEX\"");
             }
             break;
-        }
-        case '3':{
+        }case '3':{
             if(SysKernalVersion()<62UL){
                 puts("| 主菜单 > 工具箱 > 高级启动 |\n");
                 puts("此功能需要 Windows 8 及以上的 Windows 操作系统.\n");
