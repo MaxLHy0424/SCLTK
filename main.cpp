@@ -60,7 +60,7 @@ void About(){
     return;
 }
 void Cracking(){
-FUNCHEAD:
+TOP:
     puts("| 主菜单 > 破解 |\n");
     puts("   [0] 返回");
     puts("   [1] 单次模式");
@@ -117,7 +117,7 @@ FUNCHEAD:
     }
     if(Code[1]=='N'){
         system("CLS");
-        goto FUNCHEAD;
+        goto TOP;
     }
     for(;;){
         system("CLS");
@@ -264,7 +264,7 @@ void Recovering(){
     return;
 }
 void Toolkit(){
-FUNCHEAD:
+TOP:
     puts("| 主菜单 > 工具箱 |\n");
     if(!IsUserAnAdmin()){
         puts("当前为基本会话, 此功能不可用.\n");
@@ -309,7 +309,7 @@ FUNCHEAD:
             scanf("%hu",&tmp);
             if(!tmp){
                 system("CLS");
-                goto FUNCHEAD;
+                goto TOP;
             }
             for(;tmp>0;--tmp){
                 if(SysKernalVersion()>=62UL){
@@ -345,10 +345,10 @@ FUNCHEAD:
     puts("按任意键返回.\n");
     system("Pause");
     system("CLS");
-    goto FUNCHEAD;
+    goto TOP;
 }
 void Start(){
-FUNCHEAD:
+TOP:
     puts("| 主菜单 |\n");
     puts("   [?] 关于");
     puts("   [0] 重载配置");
@@ -381,7 +381,7 @@ FUNCHEAD:
         }
     }
     system("CLS");
-    goto FUNCHEAD;
+    goto TOP;
     return;
 }
 int main(){
