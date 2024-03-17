@@ -2,7 +2,7 @@
 char Code[3];
 std::string Config[4];
 void Start();
-bool Configuration(bool reCfg){
+void Configuration(bool reCfg){
     if(reCfg){
         puts("| 主菜单 > 重载配置 |\n");
     }
@@ -45,7 +45,7 @@ bool Configuration(bool reCfg){
 SKIP:
     system("CLS");
     fOp.close();
-    return 0;
+    return;
 }
 void About(){
     puts("| 主菜单 > 关于 |\n");
@@ -388,7 +388,7 @@ TOP:
             About();
             break;
         }case '0':{
-            Configuration(true);
+            Configuration(1);
             break;
         }case '1':{
             Cracking();
@@ -406,6 +406,6 @@ TOP:
     return;
 }
 int main(){
-    Configuration(false);
+    Configuration(0);
     Start();
 }
