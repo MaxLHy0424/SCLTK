@@ -50,7 +50,7 @@ SKIP:
 void About(){
     puts("| 主菜单 > 关于 |\n");
     puts("   [软件名称] 机房控制软件克星 (Computer Room Control Software Nemesis)");
-    puts("   [版本信息] v4.0.0_rc3");
+    puts("   [版本信息] v4.0.0_rc4");
     puts("   [软件作者] MaxLHy0424");
     puts("   [开源仓库] https://github.com/MaxLHy0424/Computer-Room-Control-Software-Nemesis\n");
     puts("   (C) Copyright 2023-2024 MaxLHy0424, all rights reserved.\n");
@@ -121,6 +121,7 @@ FuncHead:
     }
     for(;;){
         system("CLS");
+        puts("| 主菜单 > 破解 > 确认配置 > 实施破解 |\n");
         system("TaskKill /F /T /IM vncviewer.exe");
         system("TaskKill /F /T /IM tvnserver32.exe");
         system("TaskKill /F /T /IM WfbsPnpInstall.exe");
@@ -218,6 +219,7 @@ void Recovering(){
         return;
     }
     system("CLS");
+    puts("| 主菜单 > 恢复 > 实施恢复 |\n");
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\vncviewer.exe\" /F");
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\tvnserver32.exe\" /F");
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\WfbsPnpInstall.exe\" /F");
@@ -257,11 +259,6 @@ void Recovering(){
     system("Net Start TDFileFilter /Y");
     system("Net Start STUDSRV /Y");
     puts("\n########################################");
-    puts("    联想云教室: vncviewer.exe, tvnserver32.exe, WFDeskShow.exe, WfbsPnpInstall.exe, WFBSMon.exe, WFBSMlogon.exe, refreship.exe, LenovoLockScreen.exe, DeploymentManager.exe, WFBSSvrLogShow.exe, ResetIp.exe, FuncForWIN64.exe, CertMgr.exe, Fireware.exe, BCDBootCopy.exe, PortControl64.exe, DesktopCheck.exe, DeploymentAgent.exe, XYNTService.exe");
-    puts("    极域电子教室: StudentMain.exe, GATESRV.exe, MasterHelper.exe, ProcHelper64.exe, DispcapHelper.exe, VRCwPlayer.exe\n");
-    puts("请手动启动以上可执行文件.");
-    puts("########################################\n");
-    Sleep(2500U);
     puts("按任意键返回主菜单.\n");
     system("Pause");
     return;
