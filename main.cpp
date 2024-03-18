@@ -2,14 +2,14 @@
 char Code[3];
 std::string Config[4];
 void Start();
-void Configuration(bool reCfg){
-    if(reCfg){
+void Configuration(bool reload){
+    if(reload){
         puts("| 主菜单 > 重载配置 |\n");
     }
     std::ifstream fOp;
     fOp.open("config.ini",std::ios::in);
     if(!fOp.is_open()){
-        if(!reCfg){
+        if(!reload){
             system("Color 9");
             if(!IsUserAnAdmin()){
                 system("Title [基本会话] CRCSN");
@@ -21,36 +21,34 @@ void Configuration(bool reCfg){
         puts("########################################\n");
         puts("按任意键继续.\n");
         system("Pause");
+        system("CLS");
         goto SKIP;
     }
-    {
-        for(unsigned short i{};i<4;++i){
-            getline(fOp,Config[i]);
-        }
-        Config[0]="Color "+Config[0];
-        system(Config[0].c_str());
-        if(!IsUserAnAdmin()){
-            Config[1]="Title [基本会话] "+Config[1];
-        }else{
-            Config[1]="Title [增强会话] "+Config[1];
-        }
-        system(Config[1].c_str());
-        if(reCfg&&Config[2]=="1"){
-            puts("重载配置完成.\n");
-            puts("########################################\n");
-            puts("按任意键返回主菜单.\n");
-            system("Pause");
-        }
+    for(unsigned short i{};i<4;++i){
+        getline(fOp,Config[i]);
+    }
+    Config[0]="Color "+Config[0];
+    system(Config[0].c_str());
+    if(IsUserAnAdmin()){
+        Config[1]="Title [增强会话] "+Config[1];
+    }else{
+        Config[1]="Title [基本会话] "+Config[1];
+    }
+    system(Config[1].c_str());
+    if(reload&&Config[3]=="1"){
+        puts("重载配置完成.\n");
+        puts("########################################\n");
+        puts("按任意键返回主菜单.\n");
+        system("Pause");
     }
 SKIP:
-    system("CLS");
     fOp.close();
     return;
 }
 void About(){
     puts("| 主菜单 > 关于 |\n");
     puts("   [软件名称] 机房控制软件克星 (Computer Room Control Software Nemesis)");
-    puts("   [版本信息] v4.0.0_rc4");
+    puts("   [版本信息] v4.0.0_rc5");
     puts("   [软件作者] MaxLHy0424");
     puts("   [开源仓库] https://github.com/MaxLHy0424/Computer-Room-Control-Software-Nemesis\n");
     puts("   (C) Copyright 2023-2024 MaxLHy0424, all rights reserved.\n");
@@ -87,7 +85,7 @@ TOP:
     }
     system("CLS");
     puts("| 主菜单 > 破解 > 确认配置 |\n");
-    printf("       [模式] ");
+    printf("     [模式] ");
     switch(Code[0]){
         case '1':{
             puts("单次.");
@@ -97,13 +95,13 @@ TOP:
             break;
         }
     }
-    printf(" [增强的破解] ");
+    printf(" [高级破解] ");
     if(IsUserAnAdmin()){
         puts("已启用.");
     }else{
         puts("已禁用.");
     }
-    printf("       [休眠] ");
+    printf("     [休眠] ");
     if(!sleepTime){
         puts("已禁用.\n");
     }else{
@@ -119,6 +117,7 @@ TOP:
         system("CLS");
         goto TOP;
     }
+    printf("\033[?25l");
     for(;;){
         system("CLS");
         puts("| 主菜单 > 破解 > 确认配置 > 实施破解 |\n");
@@ -189,6 +188,7 @@ TOP:
             system("Net Stop STUDSRV /Y");
         }
         if(Code[0]=='1'){
+            printf("\033[?25h");
             break;
         }
         puts("\n休眠中...");
@@ -219,6 +219,7 @@ void Recovering(){
         return;
     }
     system("CLS");
+    printf("\033[?25l");
     puts("| 主菜单 > 恢复 > 实施恢复 |\n");
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\vncviewer.exe\" /F");
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\tvnserver32.exe\" /F");
@@ -258,7 +259,8 @@ void Recovering(){
     system("Net Start TDNetFilter /Y");
     system("Net Start TDFileFilter /Y");
     system("Net Start STUDSRV /Y");
-    puts("\n########################################");
+    printf("\033[?25h");
+    puts("\n########################################\n");
     puts("按任意键返回主菜单.\n");
     system("Pause");
     return;
@@ -312,12 +314,14 @@ TOP:
                 system("CLS");
                 goto TOP;
             }
+            printf("\033[?25l");
             for(;tmp>0;--tmp){
                 if(SysKernalVersion()>=62UL){
                     system("DISM /Online /Cleanup-Image /RestoreHealth");
                 }
                 system("SFC /ScanNow");
             }
+            printf("\033[?25h");
             break;
         }case '2':{
             puts("| 主菜单 > 工具箱 > 系统激活 |\n");
@@ -329,26 +333,27 @@ TOP:
                 scanf("%s",&Code[1]);
             }
             if(Code[1]=='Y'){
-                puts("请稍候...");
+                printf("\033[?25l");
+                puts("\n请稍候...");
                 system("PowerShell \"IRM https://massgrave.dev/get | IEX\"");
+                printf("\033[?25h");
             }
             break;
         }case '3':{
+            puts("| 主菜单 > 工具箱 > 高级启动 |\n");
             if(SysKernalVersion()<62UL){
-                puts("| 主菜单 > 工具箱 > 高级启动 |\n");
                 puts("此功能需要 Windows 8 及以上的 Windows 操作系统.\n");
                 break;
             }
+            printf("\033[?25l");
             for(unsigned short tmp{5};tmp>=0;--tmp){
-                system("CLS");
-                puts("| 主菜单 > 工具箱 > 高级启动 |\n");
-                printf("[!] 请保存好文件, %hu 秒后可重启.",tmp);
+                printf("[!] 请保存好文件, %hu 秒后可重启.\r",tmp);
                 if(!tmp){
                     break;
                 }
                 Sleep(1000U);
             }
-            puts("\n");
+            puts("\033[?25h\n");
             system("Pause");
             puts("\n");
             system("ReAgentC /Enable");
