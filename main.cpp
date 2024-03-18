@@ -97,15 +97,15 @@ TOP:
     }
     printf(" [高级破解] ");
     if(IsUserAnAdmin()){
-        puts("已启用.");
+        puts("启用.");
     }else{
-        puts("已禁用.");
+        puts("禁用.");
     }
     printf("     [休眠] ");
     if(!sleepTime){
-        puts("已禁用.\n");
+        puts("禁用.\n");
     }else{
-        printf("已启用, %hu 毫秒.\n",sleepTime);
+        printf("启用, %hu 毫秒.\n",sleepTime);
     }
     printf("是否继续? (Y/N): ");
     scanf("%s",&Code[1]);
@@ -120,7 +120,7 @@ TOP:
     printf("\033[?25l");
     for(;;){
         system("CLS");
-        puts("| 主菜单 > 破解 > 确认配置 > 实施操作|\n");
+        puts("| 主菜单 > 破解 > 确认配置 > 实施操作 |\n");
         system("TaskKill /F /T /IM vncviewer.exe");
         system("TaskKill /F /T /IM tvnserver32.exe");
         system("TaskKill /F /T /IM WfbsPnpInstall.exe");
@@ -278,7 +278,7 @@ TOP:
     puts("   [0] 返回");
     puts("   [$] 自定义命令");
     puts("   [1] 修复系统文件");
-    puts("   [2] 系统激活");
+    puts("   [2] 激活工具");
     puts("   [3] 高级启动\n");
     printf("请输入: ");
     scanf("%s",&Code[0]);
@@ -308,14 +308,14 @@ TOP:
         }case '1':{
             puts("| 主菜单 > 工具箱 > 修复系统文件 |\n");
             printf("请输入修复次数 (输入 0 返回): ");
-            unsigned short fixingNum{};
-            scanf("%hu",&fixingNum);
-            if(!fixingNum){
+            unsigned short counter{};
+            scanf("%hu",&counter);
+            if(!counter){
                 system("CLS");
                 goto TOP;
             }
             printf("\033[?25l");
-            for(;fixingNum>0;--fixingNum){
+            for(;counter>0;--counter){
                 if(SysKernalVersion()>=62UL){
                     system("DISM /Online /Cleanup-Image /RestoreHealth");
                 }
@@ -324,8 +324,8 @@ TOP:
             printf("\033[?25h");
             break;
         }case '2':{
-            puts("| 主菜单 > 工具箱 > 系统激活 |\n");
-            puts("此功能需要联网并且系统内安装 PowerShell. 激活脚本为 Microsoft Activation Scripts, 长期使用请自行下载.\n");
+            puts("| 主菜单 > 工具箱 > 激活工具 |\n");
+            puts("此功能需要联网和 PowerShell, 程序为 Microsoft Activation Scripts.\n");
             printf("是否继续? (Y/N): ");
             scanf("%s",&Code[1]);
             while((Code[1]!='Y'&&Code[1]!='N')||Code[2]!=0){
@@ -335,7 +335,7 @@ TOP:
             if(Code[1]=='Y'){
                 printf("\033[?25l");
                 puts("\n请稍候...");
-                system("PowerShell \"IRM https://massgrave.dev/get | IEX\"");
+                system("PowerShell \"IRM https://massgrave.dev/get|IEX\"");
                 printf("\033[?25h");
             }
             break;
