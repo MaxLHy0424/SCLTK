@@ -120,7 +120,7 @@ TOP:
     printf("\033[?25l");
     for(;;){
         system("CLS");
-        puts("| 主菜单 > 破解 > 确认配置 > 实施破解 |\n");
+        puts("| 主菜单 > 破解 > 确认配置 > 实施操作|\n");
         system("TaskKill /F /T /IM vncviewer.exe");
         system("TaskKill /F /T /IM tvnserver32.exe");
         system("TaskKill /F /T /IM WfbsPnpInstall.exe");
@@ -220,7 +220,7 @@ void Recovering(){
     }
     system("CLS");
     printf("\033[?25l");
-    puts("| 主菜单 > 恢复 > 实施恢复 |\n");
+    puts("| 主菜单 > 恢复 > 实施操作 |\n");
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\vncviewer.exe\" /F");
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\tvnserver32.exe\" /F");
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\WfbsPnpInstall.exe\" /F");
@@ -308,14 +308,14 @@ TOP:
         }case '1':{
             puts("| 主菜单 > 工具箱 > 修复系统文件 |\n");
             printf("请输入修复次数 (输入 0 返回): ");
-            unsigned short tmp{};
-            scanf("%hu",&tmp);
-            if(!tmp){
+            unsigned short fixingNum{};
+            scanf("%hu",&fixingNum);
+            if(!fixingNum){
                 system("CLS");
                 goto TOP;
             }
             printf("\033[?25l");
-            for(;tmp>0;--tmp){
+            for(;fixingNum>0;--fixingNum){
                 if(SysKernalVersion()>=62UL){
                     system("DISM /Online /Cleanup-Image /RestoreHealth");
                 }
@@ -346,9 +346,9 @@ TOP:
                 break;
             }
             printf("\033[?25l");
-            for(unsigned short tmp{5};tmp>=0;--tmp){
-                printf("[!] 请保存好文件, %hu 秒后可重启.\r",tmp);
-                if(!tmp){
+            for(unsigned short counter{5};counter>=0;--counter){
+                printf("[!] 请保存好文件, %hu 秒后可重启.\r",counter);
+                if(!counter){
                     break;
                 }
                 Sleep(1000U);
