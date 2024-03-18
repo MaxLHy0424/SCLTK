@@ -35,7 +35,7 @@ void Configuration(bool reload){
         Config[1]="Title [基本会话] "+Config[1];
     }
     system(Config[1].c_str());
-    if(reload&&Config[3]=="1"){
+    if(reload&&Config[2]=="1"){
         puts("重载配置完成.\n");
         puts("########################################\n");
         puts("按任意键返回主菜单.\n");
