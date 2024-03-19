@@ -52,7 +52,7 @@ void About(){
     puts("   [软件作者] MaxLHy0424");
     puts("   [开源仓库] https://github.com/MaxLHy0424/Computer-Room-Control-Software-Nemesis\n");
     puts("   开发代号 Millennium, 禁止泄露此版本.\n");
-    puts("   (C) 2024 MaxLHy0424, all rights reserved.\n");
+    puts("   (C) 2024 MaxLHy0424, 保留所有权利.\n");
     puts("########################################\n");
     puts("按任意键返回.\n");
     system("Pause");
