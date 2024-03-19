@@ -48,9 +48,10 @@ SKIP:
 void About(){
     puts("| 主菜单 > 关于 |\n");
     puts("   [软件名称] 机房控制软件克星 (Computer Room Control Software Nemesis)");
-    puts("   [版本信息] v4.0.0_rc5");
+    puts("   [版本信息] v4.0.0_rc6");
     puts("   [软件作者] MaxLHy0424");
     puts("   [开源仓库] https://github.com/MaxLHy0424/Computer-Room-Control-Software-Nemesis\n");
+    puts("   开发代号 Millennium, 禁止泄露此内部版本.\n");
     puts("   (C) Copyright 2023-2024 MaxLHy0424, all rights reserved.\n");
     puts("########################################\n");
     puts("按任意键返回.\n");
@@ -58,7 +59,7 @@ void About(){
     return;
 }
 void Cracking(){
-TOP:
+HEADER:
     puts("| 主菜单 > 破解 |\n");
     puts("   [0] 返回");
     puts("   [1] 单次模式");
@@ -66,7 +67,7 @@ TOP:
     printf("请输入: ");
     scanf("%s",&Code[0]);
     while((Code[0]!='0'&&Code[0]!='1'&&Code[0]!='2')||Code[1]!=0){
-        printf("输入错误: ");
+        printf("输入错误, 请重新输入: ");
         scanf("%s",&Code[0]);
     }
     unsigned short sleepTime{};
@@ -77,7 +78,7 @@ TOP:
             printf("请输入休眠时间 (毫秒, 0~10000): ");
             scanf("%hu",&sleepTime);
             while(sleepTime>10000U){
-                printf("输入错误: ");
+                printf("输入错误, 请重新输入: ");
                 scanf("%hu",&sleepTime);
             }
             break;
@@ -110,12 +111,12 @@ TOP:
     printf("是否继续? (Y/N): ");
     scanf("%s",&Code[1]);
     while((Code[1]!='Y'&&Code[1]!='N')||Code[2]!=0){
-        printf("输入错误: ");
+        printf("输入错误, 请重新输入: ");
         scanf("%s",&Code[1]);
     }
     if(Code[1]=='N'){
         system("CLS");
-        goto TOP;
+        goto HEADER;
     }
     printf("\033[?25l");
     for(;;){
@@ -188,14 +189,14 @@ TOP:
             system("Net Stop STUDSRV /Y");
         }
         if(Code[0]=='1'){
-            printf("\033[?25h");
             break;
         }
         puts("\n休眠中...");
         Sleep(sleepTime);
     }
-    puts("\n########################################\n");
+    puts("########################################\n");
     puts("按任意键返回主菜单.\n");
+    printf("\033[?25h");
     system("Pause");
     return;
 }
@@ -212,7 +213,7 @@ void Recovering(){
     printf("是否继续? (Y/N): ");
     scanf("%s",&Code[1]);
     while((Code[1]!='Y'&&Code[1]!='N')||Code[2]!=0){
-        printf("输入错误: ");
+        printf("输入错误, 请重新输入: ");
         scanf("%s",&Code[1]);
     }
     if(Code[1]=='N'){
@@ -259,14 +260,14 @@ void Recovering(){
     system("Net Start TDNetFilter /Y");
     system("Net Start TDFileFilter /Y");
     system("Net Start STUDSRV /Y");
-    printf("\033[?25h");
-    puts("\n########################################\n");
+    puts("########################################\n");
     puts("按任意键返回主菜单.\n");
+    printf("\033[?25h");
     system("Pause");
     return;
 }
 void Toolkit(){
-TOP:
+HEADER:
     puts("| 主菜单 > 工具箱 |\n");
     if(!IsUserAnAdmin()){
         puts("当前为基本会话, 此功能不可用.\n");
@@ -283,7 +284,7 @@ TOP:
     printf("请输入: ");
     scanf("%s",&Code[0]);
     while((Code[0]!='0'&&Code[0]!='$'&&Code[0]!='1'&&Code[0]!='2'&&Code[0]!='3')||Code[1]!=0){
-        printf("输入错误: ");
+        printf("输入错误, 请重新输入: ");
         scanf("%s",&Code[0]);
     }
     system("CLS");
@@ -312,7 +313,7 @@ TOP:
             scanf("%hu",&counter);
             if(!counter){
                 system("CLS");
-                goto TOP;
+                goto HEADER;
             }
             printf("\033[?25l");
             for(;counter>0;--counter){
@@ -329,7 +330,7 @@ TOP:
             printf("是否继续? (Y/N): ");
             scanf("%s",&Code[1]);
             while((Code[1]!='Y'&&Code[1]!='N')||Code[2]!=0){
-                printf("输入错误: ");
+                printf("输入错误, 请重新输入: ");
                 scanf("%s",&Code[1]);
             }
             if(Code[1]=='Y'){
@@ -365,10 +366,10 @@ TOP:
     puts("按任意键返回.\n");
     system("Pause");
     system("CLS");
-    goto TOP;
+    goto HEADER;
 }
 void Start(){
-TOP:
+HEADER:
     puts("| 主菜单 |\n");
     puts("   [?] 关于");
     puts("   [0] 重载配置");
@@ -378,7 +379,7 @@ TOP:
     printf("请输入: ");
     scanf("%s",&Code[0]);
     while((Code[0]!='?'&&Code[0]!='0'&&Code[0]!='1'&&Code[0]!='2'&&Code[0]!='3')||Code[1]!=0){
-        printf("输入错误: ");
+        printf("输入错误, 请重新输入: ");
         scanf("%s",&Code[0]);
     }
     system("CLS");
@@ -401,7 +402,7 @@ TOP:
         }
     }
     system("CLS");
-    goto TOP;
+    goto HEADER;
     return;
 }
 int main(){
