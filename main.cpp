@@ -298,9 +298,9 @@ HEADER:
             if(!fOp.is_open()){
                 puts("[x] 无法读取 cfg.ini.");
                 fOp.close();
-            }else if(Config[3]=="$NULL$"){
+            }else if(Config[3]=="$UNDEFINED$"){
                 fOp.close();
-                puts("配置为 $NULL$, 请编辑并重载配置.");
+                puts("配置为 $UNDEFINED$, 请编辑并重载配置.");
             }else{
                 fOp.close();
                 system(Config[3].c_str());
