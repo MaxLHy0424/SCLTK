@@ -7,7 +7,7 @@ void Configuration(bool reload){
         puts("| 主菜单 > 重载配置 |\n");
     }
     std::ifstream fOp;
-    fOp.open("config.ini",std::ios::in);
+    fOp.open("cfg.ini",std::ios::in);
     if(!fOp.is_open()){
         if(!reload){
             system("Color 9");
@@ -17,7 +17,7 @@ void Configuration(bool reload){
                 system("Title [增强会话] CRCSN");
             }
         }
-        puts("[x] 无法读取 config.ini.\n");
+        puts("[x] 无法读取 cfg.ini.\n");
         puts("########################################\n");
         puts("按任意键继续.\n");
         system("Pause");
@@ -277,7 +277,7 @@ TOP:
     }
     puts("   [0] 返回");
     puts("   [$] 自定义命令");
-    puts("   [1] 修复系统文件");
+    puts("   [1] 系统修复");
     puts("   [2] 激活工具");
     puts("   [3] 高级启动\n");
     printf("请输入: ");
@@ -293,9 +293,9 @@ TOP:
         }case '$':{
             puts("| 主菜单 > 工具箱 > 自定义命令 |\n");
             std::ifstream fOp;
-            fOp.open("config.ini",std::ios::in);
+            fOp.open("cfg.ini",std::ios::in);
             if(!fOp.is_open()){
-                puts("[x] 无法读取 config.ini.");
+                puts("[x] 无法读取 cfg.ini.");
                 fOp.close();
             }else if(Config[3]=="$NULL$"){
                 fOp.close();
@@ -306,8 +306,8 @@ TOP:
             }
             break;
         }case '1':{
-            puts("| 主菜单 > 工具箱 > 修复系统文件 |\n");
-            printf("请输入修复次数 (输入 0 返回): ");
+            puts("| 主菜单 > 工具箱 > 系统修复 |\n");
+            printf("请输入执行次数 (输入 0 返回): ");
             unsigned short counter{};
             scanf("%hu",&counter);
             if(!counter){
@@ -325,7 +325,7 @@ TOP:
             break;
         }case '2':{
             puts("| 主菜单 > 工具箱 > 激活工具 |\n");
-            puts("此功能需要联网和 PowerShell, 程序为 Microsoft Activation Scripts.\n");
+            puts("此功能需要联网, 且系统内有 PowerShell. 脚本为 Microsoft Activation Scripts.\n");
             printf("是否继续? (Y/N): ");
             scanf("%s",&Code[1]);
             while((Code[1]!='Y'&&Code[1]!='N')||Code[2]!=0){
