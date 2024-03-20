@@ -41,7 +41,6 @@ void Configuration(bool reload){
     }
 SKIP:
     fOp.close();
-    return;
 }
 void About(){
     puts("| 主菜单 > 关于 |\n");
@@ -49,19 +48,18 @@ void About(){
     puts("   [版本信息] v4.0.0_rc7");
     puts("   [软件作者] MaxLHy0424");
     puts("   [开源仓库] https://github.com/MaxLHy0424/Computer-Room-Control-Software-Nemesis\n");
-    puts("   内部版本, 仅供测试和评估, 禁止泄露.\n");
+    puts("   内部版本, 仅供测试和评估, 禁止泄露.");
     puts("   (C) 2024 MaxLHy0424, 保留所有权利.\n");
     puts("########################################\n");
     puts("按任意键返回.\n");
     system("Pause");
-    return;
 }
 void Cracking(){
-HEADER:
+BEGIN:
     puts("| 主菜单 > 破解 |\n");
     puts("   [0] 返回");
-    puts("   [1] 单次模式");
-    puts("   [2] 循环模式\n");
+    puts("   [1] 单次");
+    puts("   [2] 循环\n");
     printf("请输入: ");
     scanf("%s",&Data.Code[0]);
     while((Data.Code[0]!='0'&&Data.Code[0]!='1'&&Data.Code[0]!='2')||Data.Code[1]!=0){
@@ -73,9 +71,9 @@ HEADER:
         case '0':{
             return;
         }case '2':{
-            printf("请输入休眠时间 (毫秒, 0~10000): ");
+            printf("请输入休眠时间 (毫秒, 0~5000): ");
             scanf("%hu",&sleepTime);
-            while(sleepTime>10000U){
+            while(sleepTime>5000U){
                 printf("输入错误, 请重新输入: ");
                 scanf("%hu",&sleepTime);
             }
@@ -114,7 +112,7 @@ HEADER:
     }
     if(Data.Code[1]=='N'){
         system("CLS");
-        goto HEADER;
+        goto BEGIN;
     }
     for(;;){
         system("CLS");
@@ -194,7 +192,6 @@ HEADER:
     puts("########################################\n");
     puts("按任意键返回主菜单.\n");
     system("Pause");
-    return;
 }
 void Recovering(){
     puts("| 主菜单 > 恢复 |\n");
@@ -258,10 +255,9 @@ void Recovering(){
     puts("########################################\n");
     puts("按任意键返回主菜单.\n");
     system("Pause");
-    return;
 }
 void Toolkit(){
-HEADER:
+BEGIN:
     puts("| 主菜单 > 工具箱 |\n");
     if(!IsUserAnAdmin()){
         puts("当前为基本会话, 此功能不可用.\n");
@@ -307,7 +303,7 @@ HEADER:
             scanf("%hu",&counter);
             if(!counter){
                 system("CLS");
-                goto HEADER;
+                goto BEGIN;
             }
             for(;counter>0U;--counter){
                 if(SysKernalVersion()>=62UL){
@@ -355,10 +351,10 @@ HEADER:
     puts("按任意键返回.\n");
     system("Pause");
     system("CLS");
-    goto HEADER;
+    goto BEGIN;
 }
 void Start(){
-HEADER:
+BEGIN:
     puts("| 主菜单 |\n");
     puts("   [?] 关于");
     puts("   [0] 重载配置");
@@ -391,11 +387,10 @@ HEADER:
         }
     }
     system("CLS");
-    goto HEADER;
-    return;
+    goto BEGIN;
 }
 int main(){
-    printf("\033[?25l");
+    puts("\033[?25l");
     Configuration(0);
     Start();
 }
