@@ -3,6 +3,10 @@
 #include<fstream>
 #include<ShlObj.h>
 #include<windows.h>
+struct GlobalData{
+    char Code[3];
+    std::string Cfg[4];
+}Data;
 DWORD SysKernalVersion(){
     typedef void(__stdcall*NTPROC)(DWORD*,DWORD*,DWORD*);
     HINSTANCE inst{LoadLibrary(TEXT("ntdll.dll"))};
