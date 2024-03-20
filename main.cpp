@@ -24,8 +24,8 @@ void Configuration(bool reload){
         system("CLS");
         goto SKIP;
     }
-    for(unsigned short i{};i<4;++i){
-        getline(fOp,Config[i]);
+    for(unsigned short counter{};counter<4U;++counter){
+        getline(fOp,Config[counter]);
     }
     Config[0]="Color "+Config[0];
     system(Config[0].c_str());
@@ -48,7 +48,7 @@ SKIP:
 void About(){
     puts("| 主菜单 > 关于 |\n");
     puts("   [软件名称] 机房控制软件克星 (Computer Room Control Software Nemesis)");
-    puts("   [版本信息] v4.0.0_rc6");
+    puts("   [版本信息] v4.0.0_rc7");
     puts("   [软件作者] MaxLHy0424");
     puts("   [开源仓库] https://github.com/MaxLHy0424/Computer-Room-Control-Software-Nemesis\n");
     puts("   内部版本, 仅供测试和评估, 禁止泄露.\n");
@@ -316,7 +316,7 @@ HEADER:
                 goto HEADER;
             }
             printf("\033[?25l");
-            for(;counter>0;--counter){
+            for(;counter>0U;--counter){
                 if(SysKernalVersion()>=62UL){
                     system("DISM /Online /Cleanup-Image /RestoreHealth");
                 }
@@ -347,7 +347,7 @@ HEADER:
                 break;
             }
             printf("\033[?25l");
-            for(unsigned short counter{5};counter>=0;--counter){
+            for(unsigned short counter{5};;--counter){
                 printf("[!] 请保存好文件, %hu 秒后可重启.\r",counter);
                 if(!counter){
                     break;
