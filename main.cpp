@@ -116,7 +116,6 @@ HEADER:
         system("CLS");
         goto HEADER;
     }
-    printf("\033[?25l");
     for(;;){
         system("CLS");
         puts("| 主菜单 > 破解 > 确认配置 > 实施操作 |\n");
@@ -194,7 +193,6 @@ HEADER:
     }
     puts("########################################\n");
     puts("按任意键返回主菜单.\n");
-    printf("\033[?25h");
     system("Pause");
     return;
 }
@@ -218,7 +216,6 @@ void Recovering(){
         return;
     }
     system("CLS");
-    printf("\033[?25l");
     puts("| 主菜单 > 恢复 > 实施操作 |\n");
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\vncviewer.exe\" /F");
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\tvnserver32.exe\" /F");
@@ -260,7 +257,6 @@ void Recovering(){
     system("Net Start STUDSRV /Y");
     puts("########################################\n");
     puts("按任意键返回主菜单.\n");
-    printf("\033[?25h");
     system("Pause");
     return;
 }
@@ -313,14 +309,12 @@ HEADER:
                 system("CLS");
                 goto HEADER;
             }
-            printf("\033[?25l");
             for(;counter>0U;--counter){
                 if(SysKernalVersion()>=62UL){
                     system("DISM /Online /Cleanup-Image /RestoreHealth");
                 }
                 system("SFC /ScanNow");
             }
-            printf("\033[?25h");
             break;
         }case '2':{
             puts("| 主菜单 > 工具箱 > 激活工具 |\n");
@@ -332,10 +326,8 @@ HEADER:
                 scanf("%s",&Data.Code[1]);
             }
             if(Data.Code[1]=='Y'){
-                printf("\033[?25l");
                 puts("\n请稍候...");
                 system("PowerShell \"IRM https://massgrave.dev/get|IEX\"");
-                printf("\033[?25h");
             }
             break;
         }case '3':{
@@ -344,7 +336,6 @@ HEADER:
                 puts("此功能需要 Windows 8 及以上的 Windows 操作系统.\n");
                 break;
             }
-            printf("\033[?25l");
             for(unsigned short counter{5};;--counter){
                 printf("[!] 请保存好文件, %hu 秒后可重启.\r",counter);
                 if(!counter){
@@ -404,6 +395,7 @@ HEADER:
     return;
 }
 int main(){
+    printf("\033[?25l");
     Configuration(0);
     Start();
 }
