@@ -3,10 +3,8 @@
 #include<fstream>
 #include<ShlObj.h>
 #include<windows.h>
-struct GlobalData{
-    char Code[3];
-    std::string Cfg[4];
-}Data;
+char Code[3];
+std::string Cfg[4];
 DWORD SysKernalVersion(){
     typedef void(__stdcall*NTPROC)(DWORD*,DWORD*,DWORD*);
     HINSTANCE inst{LoadLibrary(TEXT("ntdll.dll"))};
@@ -14,4 +12,11 @@ DWORD SysKernalVersion(){
     DWORD major,minor;
     GetKernalVersion(&major,&minor,NULL);
     return major*10U+minor;
+}
+void ClearScreen(){
+    if(Cfg[2]=="1"){
+        system("Clear");
+    }else{
+        system("CLS");
+    }
 }

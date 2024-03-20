@@ -9,6 +9,7 @@ void Configuration(bool reload){
     if(!fOp.is_open()){
         if(!reload){
             system("Color 9");
+            Cfg[2]="0";
             if(!IsUserAnAdmin()){
                 system("Title [基本会话] CRCSN");
             }else{
@@ -19,21 +20,21 @@ void Configuration(bool reload){
         puts("########################################\n");
         puts("按任意键继续.\n");
         system("Pause");
-        system("CLS");
+        ClearScreen();
         goto SKIP;
     }
     for(unsigned short counter{};counter<4U;++counter){
-        getline(fOp,Data.Cfg[counter]);
+        getline(fOp,Cfg[counter]);
     }
-    Data.Cfg[0]="Color "+Data.Cfg[0];
-    system(Data.Cfg[0].c_str());
+    Cfg[0]="Color "+Cfg[0];
+    system(Cfg[0].c_str());
     if(IsUserAnAdmin()){
-        Data.Cfg[1]="Title [增强会话] "+Data.Cfg[1];
+        Cfg[1]="Title [增强会话] "+Cfg[1];
     }else{
-        Data.Cfg[1]="Title [基本会话] "+Data.Cfg[1];
+        Cfg[1]="Title [基本会话] "+Cfg[1];
     }
-    system(Data.Cfg[1].c_str());
-    if(reload&&Data.Cfg[2]=="1"){
+    system(Cfg[1].c_str());
+    if(reload){
         puts("重载配置完成.\n");
         puts("########################################\n");
         puts("按任意键返回主菜单.\n");
@@ -61,13 +62,13 @@ BEGIN:
     puts("   [1] 单次");
     puts("   [2] 循环\n");
     printf("请输入: ");
-    scanf("%s",&Data.Code[0]);
-    while((Data.Code[0]!='0'&&Data.Code[0]!='1'&&Data.Code[0]!='2')||Data.Code[1]!=0){
+    scanf("%s",&Code[0]);
+    while((Code[0]!='0'&&Code[0]!='1'&&Code[0]!='2')||Code[1]!=0){
         printf("输入错误, 请重新输入: ");
-        scanf("%s",&Data.Code[0]);
+        scanf("%s",&Code[0]);
     }
     unsigned short sleepTime{};
-    switch(Data.Code[0]){
+    switch(Code[0]){
         case '0':{
             return;
         }case '2':{
@@ -80,10 +81,10 @@ BEGIN:
             break;
         }
     }
-    system("CLS");
+    ClearScreen();
     puts("| 主菜单 > 破解 > 确认配置 |\n");
     printf("     [模式] ");
-    switch(Data.Code[0]){
+    switch(Code[0]){
         case '1':{
             puts("单次.");
             break;
@@ -105,17 +106,17 @@ BEGIN:
         printf("启用, %hu 毫秒.\n",sleepTime);
     }
     printf("是否继续? (Y/N): ");
-    scanf("%s",&Data.Code[1]);
-    while((Data.Code[1]!='Y'&&Data.Code[1]!='N')||Data.Code[2]!=0){
+    scanf("%s",&Code[1]);
+    while((Code[1]!='Y'&&Code[1]!='N')||Code[2]!=0){
         printf("输入错误, 请重新输入: ");
-        scanf("%s",&Data.Code[1]);
+        scanf("%s",&Code[1]);
     }
-    if(Data.Code[1]=='N'){
-        system("CLS");
+    if(Code[1]=='N'){
+        ClearScreen();
         goto BEGIN;
     }
     for(;;){
-        system("CLS");
+        ClearScreen();
         puts("| 主菜单 > 破解 > 确认配置 > 实施操作 |\n");
         system("TaskKill /F /T /IM vncviewer.exe");
         system("TaskKill /F /T /IM tvnserver32.exe");
@@ -170,12 +171,12 @@ BEGIN:
             system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\TDOvrSet.exe\" /T REG_SZ /V debugger /D \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
             system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\GATESRV.exe\" /T REG_SZ /V debugger /D \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
             system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\MasterHelper.exe\" /T REG_SZ /V debugger /D \"THIS_PROGRAM_HAS_BEEN_BLOCKED\" /F");
-            system("SC Data.Cfg tvnserver Start= Disabled");
-            system("SC Data.Cfg BSAgentSvr Start= Disabled");
-            system("SC Data.Cfg WFBSMlogon Start= Disabled");
-            system("SC Data.Cfg TDNetFilter Start= Disabled");
-            system("SC Data.Cfg TDFileFilter Start= Disabled");
-            system("SC Data.Cfg STUDSRV Start= Disabled");
+            system("SC Cfg tvnserver Start= Disabled");
+            system("SC Cfg BSAgentSvr Start= Disabled");
+            system("SC Cfg WFBSMlogon Start= Disabled");
+            system("SC Cfg TDNetFilter Start= Disabled");
+            system("SC Cfg TDFileFilter Start= Disabled");
+            system("SC Cfg STUDSRV Start= Disabled");
             system("Net Stop tvnserver /Y");
             system("Net Stop BSAgentSvr /Y");
             system("Net Stop WFBSMlogon /Y");
@@ -183,7 +184,7 @@ BEGIN:
             system("Net Stop TDFileFilter /Y");
             system("Net Stop STUDSRV /Y");
         }
-        if(Data.Code[0]=='1'){
+        if(Code[0]=='1'){
             break;
         }
         puts("\n休眠中...");
@@ -204,15 +205,15 @@ void Recovering(){
     }
     puts("用于恢复破解时的部分操作, 部分情况下可能无效.\n");
     printf("是否继续? (Y/N): ");
-    scanf("%s",&Data.Code[1]);
-    while((Data.Code[1]!='Y'&&Data.Code[1]!='N')||Data.Code[2]!=0){
+    scanf("%s",&Code[1]);
+    while((Code[1]!='Y'&&Code[1]!='N')||Code[2]!=0){
         printf("输入错误, 请重新输入: ");
-        scanf("%s",&Data.Code[1]);
+        scanf("%s",&Code[1]);
     }
-    if(Data.Code[1]=='N'){
+    if(Code[1]=='N'){
         return;
     }
-    system("CLS");
+    ClearScreen();
     puts("| 主菜单 > 恢复 > 实施操作 |\n");
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\vncviewer.exe\" /F");
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\tvnserver32.exe\" /F");
@@ -240,12 +241,12 @@ void Recovering(){
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\TDOvrSet.exe\" /F");
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\GATESRV.exe\" /F");
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\MasterHelper.exe\" /F");
-    system("SC Data.Cfg tvnserver Start= Auto");
-    system("SC Data.Cfg BSAgentSvr Start= Auto");
-    system("SC Data.Cfg WFBSMlogon Start= Auto");
-    system("SC Data.Cfg TDNetFilter Start= Auto");
-    system("SC Data.Cfg TDFileFilter Start= Auto");
-    system("SC Data.Cfg STUDSRV Start= Auto");
+    system("SC Cfg tvnserver Start= Auto");
+    system("SC Cfg BSAgentSvr Start= Auto");
+    system("SC Cfg WFBSMlogon Start= Auto");
+    system("SC Cfg TDNetFilter Start= Auto");
+    system("SC Cfg TDFileFilter Start= Auto");
+    system("SC Cfg STUDSRV Start= Auto");
     system("Net Start tvnserver /Y");
     system("Net Start BSAgentSvr /Y");
     system("Net Start WFBSMlogon /Y");
@@ -272,13 +273,13 @@ BEGIN:
     puts("   [2] 激活工具");
     puts("   [3] 高级启动\n");
     printf("请输入: ");
-    scanf("%s",&Data.Code[0]);
-    while((Data.Code[0]!='0'&&Data.Code[0]!='$'&&Data.Code[0]!='1'&&Data.Code[0]!='2'&&Data.Code[0]!='3')||Data.Code[1]!=0){
+    scanf("%s",&Code[0]);
+    while((Code[0]!='0'&&Code[0]!='$'&&Code[0]!='1'&&Code[0]!='2'&&Code[0]!='3')||Code[1]!=0){
         printf("输入错误, 请重新输入: ");
-        scanf("%s",&Data.Code[0]);
+        scanf("%s",&Code[0]);
     }
-    system("CLS");
-    switch(Data.Code[0]){
+    ClearScreen();
+    switch(Code[0]){
         case '0':{
             return;
         }case '$':{
@@ -286,14 +287,14 @@ BEGIN:
             std::ifstream fOp;
             fOp.open("cfg.ini",std::ios::in);
             if(!fOp.is_open()){
+                fOp.close();
                 puts("[x] 无法读取 cfg.ini.");
+            }else if(Cfg[3]=="$UNDEFINED$"){
                 fOp.close();
-            }else if(Data.Cfg[3]=="$UNDEFINED$"){
-                fOp.close();
-                puts("配置为 $UNDEFINED$, 请编辑并重载配置.");
+                puts("未配置此项, 请编辑并重载配置.");
             }else{
                 fOp.close();
-                system(Data.Cfg[3].c_str());
+                system(Cfg[3].c_str());
             }
             break;
         }case '1':{
@@ -302,7 +303,7 @@ BEGIN:
             unsigned short counter{};
             scanf("%hu",&counter);
             if(!counter){
-                system("CLS");
+                ClearScreen();
                 goto BEGIN;
             }
             for(;counter>0U;--counter){
@@ -316,12 +317,12 @@ BEGIN:
             puts("| 主菜单 > 工具箱 > 激活工具 |\n");
             puts("此功能需要联网, 且系统内有 PowerShell. 脚本为 Microsoft Activation Scripts.\n");
             printf("是否继续? (Y/N): ");
-            scanf("%s",&Data.Code[1]);
-            while((Data.Code[1]!='Y'&&Data.Code[1]!='N')||Data.Code[2]!=0){
+            scanf("%s",&Code[1]);
+            while((Code[1]!='Y'&&Code[1]!='N')||Code[2]!=0){
                 printf("输入错误, 请重新输入: ");
-                scanf("%s",&Data.Code[1]);
+                scanf("%s",&Code[1]);
             }
-            if(Data.Code[1]=='Y'){
+            if(Code[1]=='Y'){
                 puts("\n请稍候...");
                 system("PowerShell \"IRM https://massgrave.dev/get|IEX\"");
             }
@@ -350,7 +351,7 @@ BEGIN:
     puts("\n########################################\n");
     puts("按任意键返回.\n");
     system("Pause");
-    system("CLS");
+    ClearScreen();
     goto BEGIN;
 }
 void Start(){
@@ -362,13 +363,13 @@ BEGIN:
     puts("   [2] 恢复");
     puts("   [3] 工具箱\n");
     printf("请输入: ");
-    scanf("%s",&Data.Code[0]);
-    while((Data.Code[0]!='?'&&Data.Code[0]!='0'&&Data.Code[0]!='1'&&Data.Code[0]!='2'&&Data.Code[0]!='3')||Data.Code[1]!=0){
+    scanf("%s",&Code[0]);
+    while((Code[0]!='?'&&Code[0]!='0'&&Code[0]!='1'&&Code[0]!='2'&&Code[0]!='3')||Code[1]!=0){
         printf("输入错误, 请重新输入: ");
-        scanf("%s",&Data.Code[0]);
+        scanf("%s",&Code[0]);
     }
-    system("CLS");
-    switch(Data.Code[0]){
+    ClearScreen();
+    switch(Code[0]){
         case '?':{
             About();
             break;
@@ -386,11 +387,11 @@ BEGIN:
             break;
         }
     }
-    system("CLS");
+    ClearScreen();
     goto BEGIN;
 }
 int main(){
-    puts("\033[?25l");
+    printf("\033[?25l");
     Configuration(0);
     Start();
 }
