@@ -46,7 +46,7 @@
 
 可以克隆软件仓库, 使用 MinGW 编译源代码文件. 推荐的编译命令如下:
 ````batch
-g++ *.cpp -o3 -o main.exe -g -Wall -static-libgcc -static-libstdc++ -fexec-charset=GBK -std=c++23
+g++ *.cpp -o3 -o main.exe -g -Wall -static -fexec-charset=GBK -std=c++11
 ````
 编译完成后, 运行生成的`main.exe`, 正常使用即可.
 
