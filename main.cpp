@@ -391,7 +391,6 @@ BEGIN:
     goto BEGIN;
 }
 int main(){
-    printf("\033[?25l");
     Configuration(0);
     Start();
 }
