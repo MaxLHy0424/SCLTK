@@ -247,12 +247,12 @@ void Recovering(){
     system("SC Cfg TDNetFilter Start= Auto");
     system("SC Cfg TDFileFilter Start= Auto");
     system("SC Cfg STUDSRV Start= Auto");
-    system("Net Start tvnserver /Y");
-    system("Net Start BSAgentSvr /Y");
-    system("Net Start WFBSMlogon /Y");
-    system("Net Start TDNetFilter /Y");
-    system("Net Start TDFileFilter /Y");
-    system("Net Start STUDSRV /Y");
+    system("Net Start tvnserver");
+    system("Net Start BSAgentSvr");
+    system("Net Start WFBSMlogon");
+    system("Net Start TDNetFilter");
+    system("Net Start TDFileFilter");
+    system("Net Start STUDSRV");
     puts("########################################\n");
     puts("按任意键返回主菜单.\n");
     system("Pause");
