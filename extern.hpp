@@ -5,15 +5,15 @@
 #include<windows.h>
 char Code[3];
 std::string Cfg[4];
-DWORD SysKernalVersion(){
+DWORD SysKernalVer(){
     typedef void(__stdcall*NTPROC)(DWORD*,DWORD*,DWORD*);
     HINSTANCE inst{LoadLibrary(TEXT("ntdll.dll"))};
-    NTPROC GetKernalVersion{(NTPROC)GetProcAddress(inst,"RtlGetNtVersionNumbers")};
+    NTPROC GetSysKernalVer{(NTPROC)GetProcAddress(inst,"RtlGetNtVersionNumbers")};
     DWORD major,minor;
-    GetKernalVersion(&major,&minor,NULL);
+    GetSysKernalVer(&major,&minor,NULL);
     return major*10U+minor;
 }
-void ClearScreen(){
+void ClrScr(){
     if(Cfg[2]=="1"){
         system("Clear");
     }else{
