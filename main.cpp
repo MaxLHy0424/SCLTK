@@ -20,7 +20,7 @@ void Configuration(bool reload){
         puts("########################################\n");
         puts("按任意键继续.\n");
         system("Pause");
-        ClearScreen();
+        ClrScr();
         goto SKIP;
     }
     for(unsigned short counter{};counter<4U;++counter){
@@ -81,7 +81,7 @@ BEGIN:
             break;
         }
     }
-    ClearScreen();
+    ClrScr();
     puts("| 主菜单 > 破解 > 确认配置 |\n");
     printf("     [模式] ");
     switch(Code[0]){
@@ -112,11 +112,11 @@ BEGIN:
         scanf("%s",&Code[1]);
     }
     if(Code[1]=='N'){
-        ClearScreen();
+        ClrScr();
         goto BEGIN;
     }
     for(;;){
-        ClearScreen();
+        ClrScr();
         puts("| 主菜单 > 破解 > 确认配置 > 实施操作 |\n");
         system("TaskKill /F /T /IM vncviewer.exe");
         system("TaskKill /F /T /IM tvnserver32.exe");
@@ -213,7 +213,7 @@ void Recovering(){
     if(Code[1]=='N'){
         return;
     }
-    ClearScreen();
+    ClrScr();
     puts("| 主菜单 > 恢复 > 实施操作 |\n");
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\vncviewer.exe\" /F");
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\tvnserver32.exe\" /F");
@@ -278,7 +278,7 @@ BEGIN:
         printf("输入错误, 请重新输入: ");
         scanf("%s",&Code[0]);
     }
-    ClearScreen();
+    ClrScr();
     switch(Code[0]){
         case '0':{
             return;
@@ -303,11 +303,11 @@ BEGIN:
             unsigned short counter{};
             scanf("%hu",&counter);
             if(!counter){
-                ClearScreen();
+                ClrScr();
                 goto BEGIN;
             }
             for(;counter>0U;--counter){
-                if(SysKernalVersion()>=62UL){
+                if(SysKernalVer()>=62UL){
                     system("DISM /Online /Cleanup-Image /RestoreHealth");
                 }
                 system("SFC /ScanNow");
@@ -329,7 +329,7 @@ BEGIN:
             break;
         }case '3':{
             puts("| 主菜单 > 工具箱 > 高级启动 |\n");
-            if(SysKernalVersion()<62UL){
+            if(SysKernalVer()<62UL){
                 puts("此功能需要 Windows 8 及以上的 Windows 操作系统.\n");
                 break;
             }
@@ -351,7 +351,7 @@ BEGIN:
     puts("\n########################################\n");
     puts("按任意键返回.\n");
     system("Pause");
-    ClearScreen();
+    ClrScr();
     goto BEGIN;
 }
 void Start(){
@@ -368,7 +368,7 @@ BEGIN:
         printf("输入错误, 请重新输入: ");
         scanf("%s",&Code[0]);
     }
-    ClearScreen();
+    ClrScr();
     switch(Code[0]){
         case '?':{
             About();
@@ -387,7 +387,7 @@ BEGIN:
             break;
         }
     }
-    ClearScreen();
+    ClrScr();
     goto BEGIN;
 }
 int main(){
