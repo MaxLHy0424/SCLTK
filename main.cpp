@@ -5,22 +5,14 @@ void Configuration(bool reload){
         puts("| 主菜单 > 重载配置 |\n");
     }
     std::ifstream fOp;
-    fOp.open("cfg.ini",std::ios::in);
+    fOp.open("config.ini",std::ios::in);
     if(!fOp.is_open()){
-        if(!reload){
-            system("Color 9");
-            Cfg[2]="0";
-            if(!IsUserAnAdmin()){
-                system("Title [基本会话] CRCSN");
-            }else{
-                system("Title [增强会话] CRCSN");
-            }
-        }
-        puts("[x] 无法读取 cfg.ini.\n");
+        system("Color 9");
+        puts("[x] 无法读取 config.ini.\n");
         puts("########################################\n");
         puts("按任意键继续.\n");
         system("Pause");
-        ClrScr();
+        system("CLS");
         goto SKIP;
     }
     for(unsigned short counter{};counter<4U;++counter){
@@ -28,19 +20,23 @@ void Configuration(bool reload){
     }
     Cfg[0]="Color "+Cfg[0];
     system(Cfg[0].c_str());
-    if(IsUserAnAdmin()){
-        Cfg[1]="Title [增强会话] "+Cfg[1];
+SKIP:
+    if(Cfg[2]=="1"){
+        if(IsUserAnAdmin()){
+            Cfg[1]="Title [增强会话] "+Cfg[1];
+        }else{
+            Cfg[1]="Title [基本会话] "+Cfg[1];
+        }
     }else{
-        Cfg[1]="Title [基本会话] "+Cfg[1];
+        Cfg[1]="Title "+Cfg[1];
     }
     system(Cfg[1].c_str());
-    if(reload){
+    if(reload&&fOp.is_open()){
         puts("重载配置完成.\n");
         puts("########################################\n");
         puts("按任意键返回主菜单.\n");
         system("Pause");
     }
-SKIP:
     fOp.close();
 }
 void About(){
@@ -81,7 +77,7 @@ BEGIN:
             break;
         }
     }
-    ClrScr();
+    system("CLS");
     puts("| 主菜单 > 破解 > 确认配置 |\n");
     printf("     [模式] ");
     switch(Code[0]){
@@ -112,11 +108,11 @@ BEGIN:
         scanf("%s",&Code[1]);
     }
     if(Code[1]=='N'){
-        ClrScr();
+        system("CLS");
         goto BEGIN;
     }
     for(;;){
-        ClrScr();
+        system("CLS");
         puts("| 主菜单 > 破解 > 确认配置 > 实施操作 |\n");
         system("TaskKill /F /T /IM vncviewer.exe");
         system("TaskKill /F /T /IM tvnserver32.exe");
@@ -213,7 +209,7 @@ void Recovering(){
     if(Code[1]=='N'){
         return;
     }
-    ClrScr();
+    system("CLS");
     puts("| 主菜单 > 恢复 > 实施操作 |\n");
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\vncviewer.exe\" /F");
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\tvnserver32.exe\" /F");
@@ -278,17 +274,17 @@ BEGIN:
         printf("输入错误, 请重新输入: ");
         scanf("%s",&Code[0]);
     }
-    ClrScr();
+    system("CLS");
     switch(Code[0]){
         case '0':{
             return;
         }case '$':{
             puts("| 主菜单 > 工具箱 > 自定义命令 |\n");
             std::ifstream fOp;
-            fOp.open("cfg.ini",std::ios::in);
+            fOp.open("config.ini",std::ios::in);
             if(!fOp.is_open()){
                 fOp.close();
-                puts("[x] 无法读取 cfg.ini.");
+                puts("[x] 无法读取 config.ini.");
             }else if(Cfg[3]=="$UNDEFINED$"){
                 fOp.close();
                 puts("未配置此项, 请编辑并重载配置.");
@@ -303,7 +299,7 @@ BEGIN:
             unsigned short counter{};
             scanf("%hu",&counter);
             if(!counter){
-                ClrScr();
+                system("CLS");
                 goto BEGIN;
             }
             for(;counter>0U;--counter){
@@ -351,7 +347,7 @@ BEGIN:
     puts("\n########################################\n");
     puts("按任意键返回.\n");
     system("Pause");
-    ClrScr();
+    system("CLS");
     goto BEGIN;
 }
 void Start(){
@@ -368,7 +364,7 @@ BEGIN:
         printf("输入错误, 请重新输入: ");
         scanf("%s",&Code[0]);
     }
-    ClrScr();
+    system("CLS");
     switch(Code[0]){
         case '?':{
             About();
@@ -387,7 +383,7 @@ BEGIN:
             break;
         }
     }
-    ClrScr();
+    system("CLS");
     goto BEGIN;
 }
 int main(){
