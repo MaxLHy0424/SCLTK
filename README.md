@@ -62,7 +62,7 @@
 
 # 注意事项
 
-1. 软件为 Windows 8.x / Windows 10 / Windows 11 优先适配, Windows 7 及以下的 Windows 操作系统的适配可能会延后.
+1. 软件优先适配 Windows 8.x/10/11,  Windows 7 及以下的 Windows 操作系统的适配可能会延后.
 
 2. 请在遵守开源许可证的情况下使用软件.
 
