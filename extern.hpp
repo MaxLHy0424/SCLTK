@@ -4,7 +4,7 @@
 #include<ShlObj.h>
 #include<windows.h>
 char Code[3];
-std::string Cfg[4];
+std::string Cfg[4]{"","CRCSN","1","$UNDEFINED$"};
 DWORD SysKernalVer(){
     typedef void(__stdcall*NTPROC)(DWORD*,DWORD*,DWORD*);
     HINSTANCE inst{LoadLibrary(TEXT("ntdll.dll"))};
@@ -12,11 +12,4 @@ DWORD SysKernalVer(){
     DWORD major,minor;
     GetSysKernalVer(&major,&minor,NULL);
     return major*10U+minor;
-}
-void ClrScr(){
-    if(Cfg[2]=="1"){
-        system("Clear");
-    }else{
-        system("CLS");
-    }
 }
