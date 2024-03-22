@@ -7,7 +7,7 @@ void Configuration(bool reload){
     std::ifstream fOp;
     fOp.open("config.ini",std::ios::in);
     if(!fOp.is_open()){
-        system("Color 9");
+        system("Color 3");
         puts("[x] 无法读取 config.ini.\n");
         puts("########################################\n");
         puts("按任意键继续.\n");
