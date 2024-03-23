@@ -1,51 +1,50 @@
 #include"extern.hpp"
 void Start();
-void Configurator(bool reload){
-    if(reload){
+void Configurator(bool rld){
+    if(rld){
         puts("| 主菜单 > 重载配置 |\n");
     }
-    std::ifstream fOp;
-    fOp.open("cfg.ini",std::ios::in);
-    if(!fOp.is_open()){
+    std::ifstream FOp;
+    FOp.open("cfg.ini",std::ios::in);
+    if(!FOp.is_open()){
         system("Color 3");
-        puts("[x] 无法读取 cfg.ini.\n");
+        puts("[x] 读取 cfg.ini 时出现错误.\n");
         puts("########################################\n");
         puts("按任意键继续.\n");
         system("Pause");
         system("CLS");
-        goto SKP;
+        goto JMP;
     }
     for(unsigned short i{};i<4U;++i){
-        getline(fOp,CfgDat[i]);
+        getline(FOp,Config[i]);
     }
-    CfgDat[0]="Color "+CfgDat[0];
-    system(CfgDat[0].c_str());
-SKP:
-    if(CfgDat[2]=="1"){
+    Config[0]="Color "+Config[0];
+    system(Config[0].c_str());
+JMP:
+    if(Config[2]=="1"){
         if(IsUserAnAdmin()){
-            CfgDat[1]="Title [增强会话] "+CfgDat[1];
+            Config[1]="Title [增强会话] "+Config[1];
         }else{
-            CfgDat[1]="Title [基本会话] "+CfgDat[1];
+            Config[1]="Title [基本会话] "+Config[1];
         }
     }else{
-        CfgDat[1]="Title "+CfgDat[1];
+        Config[1]="Title "+Config[1];
     }
-    system(CfgDat[1].c_str());
-    if(reload&&fOp.is_open()){
+    system(Config[1].c_str());
+    if(rld&&FOp.is_open()){
         puts("重载配置完成.\n");
         puts("########################################\n");
         puts("按任意键返回主菜单.\n");
         system("Pause");
     }
-    fOp.close();
+    FOp.close();
 }
 void About(){
     puts("| 主菜单 > 关于 |\n");
     puts("   [软件名称] 机房控制软件克星 (Computer Room Control Software Nemesis)");
-    puts("   [版本信息] v4.0.0_rc9");
-    puts("   [软件作者] MaxLHy0424");
-    puts("   [开源仓库] https://github.com/MaxLHy0424/Computer-Room-Control-Software-Nemesis\n");
-    puts("   评估副本, 仅供测试.\n");
+    puts("   [版本信息] v4.0.0_rc10");
+    puts("   [项目作者] MaxLHy0424");
+    puts("   [项目仓库] https://github.com/MaxLHy0424/Computer-Room-Control-Software-Nemesis\n");
     puts("   (C) 2024 MaxLHy0424, 保留所有权利.\n");
     puts("########################################\n");
     puts("按任意键返回.\n");
@@ -99,7 +98,7 @@ BEGIN:
     if(!sleepTime){
         puts("禁用.\n");
     }else{
-        printf("启用, %hu 毫秒.\n",sleepTime);
+        printf("%hu 毫秒.\n\n",sleepTime);
     }
     printf("是否继续? (Y/N): ");
     scanf("%s",&Code[1]);
@@ -193,13 +192,12 @@ BEGIN:
 void Recoverer(){
     puts("| 主菜单 > 恢复 |\n");
     if(!IsUserAnAdmin()){
-        puts("基本会话, 此功能不可用.\n");
+        puts("此功能在基本会话下不可用.\n");
         puts("########################################\n");
         puts("按任意键返回主菜单.\n");
         system("Pause");
         return;
     }
-    puts("用于恢复破解时的部分操作, 部分情况下可能无效.\n");
     printf("是否继续? (Y/N): ");
     scanf("%s",&Code[1]);
     while((Code[1]!='Y'&&Code[1]!='y'&&Code[1]!='N'&&Code[1]!='n')||Code[2]!=0){
@@ -243,12 +241,12 @@ void Recoverer(){
     system("SC Config TDNetFilter Start= Auto");
     system("SC Config TDFileFilter Start= Auto");
     system("SC Config STUDSRV Start= Auto");
-    system("Net Start tvnserver /Y");
-    system("Net Start BSAgentSvr /Y");
-    system("Net Start WFBSMlogon /Y");
-    system("Net Start TDNetFilter /Y");
-    system("Net Start TDFileFilter /Y");
-    system("Net Start STUDSRV /Y");
+    system("Net Start tvnserver");
+    system("Net Start BSAgentSvr");
+    system("Net Start WFBSMlogon");
+    system("Net Start TDNetFilter");
+    system("Net Start TDFileFilter");
+    system("Net Start STUDSRV");
     puts("########################################\n");
     puts("按任意键返回主菜单.\n");
     system("Pause");
@@ -257,7 +255,7 @@ void Toolkit(){
 BEGIN:
     puts("| 主菜单 > 工具箱 |\n");
     if(!IsUserAnAdmin()){
-        puts("基本会话, 此功能不可用.\n");
+        puts("此功能在基本会话下不可用.\n");
         puts("########################################\n");
         puts("按任意键返回主菜单.\n");
         system("Pause");
@@ -280,16 +278,16 @@ BEGIN:
             return;
         }case '$':{
             puts("| 主菜单 > 工具箱 > 自定义命令 |\n");
-            std::ifstream fOp;
-            fOp.open("cfg.ini",std::ios::in);
-            if(!fOp.is_open()){
-                puts("[x] 无法读取 cfg.ini.");
-            }else if(CfgDat[3]=="$UNDEFINED$"){
+            std::ifstream FOp;
+            FOp.open("cfg.ini",std::ios::in);
+            if(!FOp.is_open()){
+                puts("[x] 读取 cfg.ini 时出现错误.");
+            }else if(Config[3]=="$UNDEFINED$"){
                 puts("未配置此项, 请编辑配置.");
             }else{
-                system(CfgDat[3].c_str());
+                system(Config[3].c_str());
             }
-            fOp.close();
+            FOp.close();
             break;
         }case '1':{
             puts("| 主菜单 > 工具箱 > 系统修复 |\n");
@@ -301,7 +299,7 @@ BEGIN:
                 goto BEGIN;
             }
             for(;i>0U;--i){
-                if(SysKernalVersion()>=62UL){
+                if(KernalVersion()>=62UL){
                     system("DISM /Online /Cleanup-Image /RestoreHealth");
                 }
                 system("SFC /ScanNow");
@@ -309,7 +307,7 @@ BEGIN:
             break;
         }case '2':{
             puts("| 主菜单 > 工具箱 > 激活工具 |\n");
-            puts("需要联网, 且系统内有 PowerShell. 脚本为 Microsoft Activation Scripts.\n");
+            puts("此功能需要联网且安装 PowerShell, 脚本为 Microsoft Activation Scripts.\n");
             printf("是否继续? (Y/N): ");
             scanf("%s",&Code[1]);
             while((Code[1]!='Y'&&Code[1]!='y'&&Code[1]!='N'&&Code[1]!='n')||Code[2]!=0){
@@ -319,12 +317,14 @@ BEGIN:
             if(Code[1]=='Y'||Code[1]=='y'){
                 puts("\n请稍候...");
                 system("PowerShell \"IRM https://massgrave.dev/get|IEX\"");
+                system(Config[1].c_str());
+                puts("\n已退出脚本.");
             }
             break;
         }case '3':{
             puts("| 主菜单 > 工具箱 > 高级启动 |\n");
-            if(SysKernalVersion()<62UL){
-                puts("需要 Windows 8 及以上的 Windows 操作系统.\n");
+            if(KernalVersion()<62UL){
+                puts("此功能需要 Windows 8 及以上的 Windows 操作系统.\n");
                 break;
             }
             for(unsigned short i{5};;--i){
@@ -332,9 +332,9 @@ BEGIN:
                 if(!i){
                     break;
                 }
-                Sleep(1000U);
+                Sleep(1000UL);
             }
-            puts("\033[?25h\n");
+            puts("\n");
             system("Pause");
             puts("\n");
             system("ReAgentC /Enable");
@@ -368,7 +368,7 @@ BEGIN:
             About();
             break;
         }case '0':{
-            Configurator(1);
+            Configurator(true);
             break;
         }case '1':{
             Cracker();
@@ -385,6 +385,6 @@ BEGIN:
     goto BEGIN;
 }
 int main(){
-    Configurator(0);
+    Configurator(false);
     Start();
 }
