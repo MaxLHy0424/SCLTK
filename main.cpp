@@ -301,7 +301,7 @@ BEGIN:
                 goto BEGIN;
             }
             for(;i>0U;--i){
-                if(SysKernalVer()>=62UL){
+                if(SysKernalVersion()>=62UL){
                     system("DISM /Online /Cleanup-Image /RestoreHealth");
                 }
                 system("SFC /ScanNow");
@@ -323,7 +323,7 @@ BEGIN:
             break;
         }case '3':{
             puts("| 主菜单 > 工具箱 > 高级启动 |\n");
-            if(SysKernalVer()<62UL){
+            if(SysKernalVersion()<62UL){
                 puts("需要 Windows 8 及以上的 Windows 操作系统.\n");
                 break;
             }
