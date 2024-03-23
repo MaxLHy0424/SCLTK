@@ -4,7 +4,7 @@
 #include<ShlObj.h>
 #include<windows.h>
 char Code[3];
-std::string Cfg[4]{"","CRCSN","1","$UNDEFINED$"};
+std::string CfgDat[4]{"","CRCSN","1","$UNDEFINED$"};
 DWORD SysKernalVer(){
     typedef void(__stdcall*NTPROC)(DWORD*,DWORD*,DWORD*);
     HINSTANCE inst{LoadLibrary(TEXT("ntdll.dll"))};
