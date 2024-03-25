@@ -3,8 +3,8 @@
 #include<fstream>
 #include<ShlObj.h>
 #include<windows.h>
-char Code[3];
-std::string Config[4]{"\0","CRCSN","1","\0"};
+char CODE[3];
+std::string CONFIG[4];
 DWORD KernalVersion(){
 	DWORD version{GetVersion()};
 	DWORD major{(DWORD)(LOBYTE(LOWORD(version)))};
