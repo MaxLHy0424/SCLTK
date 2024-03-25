@@ -1,48 +1,55 @@
 #include"extern.hpp"
 void Start();
-void Configurator(bool rld){
-    if(rld){
+void Configurator(bool reload){
+    if(reload){
         puts("| 主菜单 > 重载配置 |\n");
     }
     std::ifstream FOp;
     FOp.open("cfg.ini",std::ios::in);
     if(!FOp.is_open()){
-        system("Color 3");
-        puts("[x] 读取 cfg.ini 时出现错误.\n");
+        if(!reload){
+            system("Color 3");
+            if(IsUserAnAdmin()){
+                system("Title [增强会话] CRCSN");
+            }else{
+                system("Title [基本会话] CRCSN");
+            }
+        }
+        puts("[x] 无法读取 \"cfg.ini\".\n");
         puts("########################################\n");
         puts("按任意键继续.\n");
         system("Pause");
         system("CLS");
-        goto JMP;
+        goto SKP;
     }
     for(unsigned short i{};i<4U;++i){
-        getline(FOp,Config[i]);
+        getline(FOp,CONFIG[i]);
     }
-    Config[0]="Color "+Config[0];
-    system(Config[0].c_str());
-JMP:
-    if(Config[2]=="1"){
+    CONFIG[0]="Color "+CONFIG[0];
+    system(CONFIG[0].c_str());
+    if(CONFIG[2]=="1"){
         if(IsUserAnAdmin()){
-            Config[1]="Title [增强会话] "+Config[1];
+            CONFIG[1]="Title [增强会话] "+CONFIG[1];
         }else{
-            Config[1]="Title [基本会话] "+Config[1];
+            CONFIG[1]="Title [基本会话] "+CONFIG[1];
         }
     }else{
-        Config[1]="Title "+Config[1];
+        CONFIG[1]="Title "+CONFIG[1];
     }
-    system(Config[1].c_str());
-    if(rld&&FOp.is_open()){
-        puts("重载配置完成.\n");
+    system(CONFIG[1].c_str());
+    if(reload&&FOp.is_open()){
+        puts("重载配置完毕.\n");
         puts("########################################\n");
         puts("按任意键返回主菜单.\n");
         system("Pause");
     }
+SKP:
     FOp.close();
 }
 void About(){
     puts("| 主菜单 > 关于 |\n");
-    puts("   [软件名称] 机房控制软件克星 (Computer Room Control Software Nemesis)");
-    puts("   [版本信息] v4.0.0_rc10");
+    puts("   [软件名称] 机房控制软件克星");
+    puts("   [版本信息] v4.0.0_rc28");
     puts("   [项目作者] MaxLHy0424");
     puts("   [项目仓库] https://github.com/MaxLHy0424/Computer-Room-Control-Software-Nemesis\n");
     puts("   (C) 2024 MaxLHy0424, 保留所有权利.\n");
@@ -57,13 +64,13 @@ BEGIN:
     puts("   [1] 单次");
     puts("   [2] 循环\n");
     printf("请输入: ");
-    scanf("%s",&Code[0]);
-    while((Code[0]!='0'&&Code[0]!='1'&&Code[0]!='2')||Code[1]!=0){
+    scanf("%s",&CODE[0]);
+    while((CODE[0]!='0'&&CODE[0]!='1'&&CODE[0]!='2')||CODE[1]!=0){
         printf("输入错误, 请重新输入: ");
-        scanf("%s",&Code[0]);
+        scanf("%s",&CODE[0]);
     }
     unsigned short sleepTime{};
-    switch(Code[0]){
+    switch(CODE[0]){
         case '0':{
             return;
         }case '2':{
@@ -78,8 +85,8 @@ BEGIN:
     }
     system("CLS");
     puts("| 主菜单 > 破解 > 确认配置 |\n");
-    printf("     [模式] ");
-    switch(Code[0]){
+    printf("     [行为] ");
+    switch(CODE[0]){
         case '1':{
             puts("单次.");
             break;
@@ -95,18 +102,14 @@ BEGIN:
         puts("禁用.");
     }
     printf("     [休眠] ");
-    if(!sleepTime){
-        puts("禁用.\n");
-    }else{
-        printf("%hu 毫秒.\n\n",sleepTime);
-    }
+    printf("%hu 毫秒.\n\n",sleepTime);
     printf("是否继续? (Y/N): ");
-    scanf("%s",&Code[1]);
-    while((Code[1]!='Y'&&Code[1]!='y'&&Code[1]!='N'&&Code[1]!='n')||Code[2]!=0){
+    scanf("%s",&CODE[1]);
+    while((CODE[1]!='Y'&&CODE[1]!='N')||CODE[2]!=0){
         printf("输入错误, 请重新输入: ");
-        scanf("%s",&Code[1]);
+        scanf("%s",&CODE[1]);
     }
-    if(Code[1]=='N'||Code[1]=='n'){
+    if(CODE[1]=='N'){
         system("CLS");
         goto BEGIN;
     }
@@ -179,7 +182,7 @@ BEGIN:
             system("Net Stop TDFileFilter /Y");
             system("Net Stop STUDSRV /Y");
         }
-        if(Code[0]=='1'){
+        if(CODE[0]=='1'){
             break;
         }
         puts("\n休眠中...");
@@ -199,12 +202,12 @@ void Recoverer(){
         return;
     }
     printf("是否继续? (Y/N): ");
-    scanf("%s",&Code[1]);
-    while((Code[1]!='Y'&&Code[1]!='y'&&Code[1]!='N'&&Code[1]!='n')||Code[2]!=0){
+    scanf("%s",&CODE[1]);
+    while((CODE[1]!='Y'&&CODE[1]!='N')||CODE[2]!=0){
         printf("输入错误, 请重新输入: ");
-        scanf("%s",&Code[1]);
+        scanf("%s",&CODE[1]);
     }
-    if(Code[1]=='N'||Code[1]=='n'){
+    if(CODE[1]=='N'){
         return;
     }
     system("CLS");
@@ -267,13 +270,13 @@ BEGIN:
     puts("   [2] 激活工具");
     puts("   [3] 高级启动\n");
     printf("请输入: ");
-    scanf("%s",&Code[0]);
-    while((Code[0]!='0'&&Code[0]!='$'&&Code[0]!='1'&&Code[0]!='2'&&Code[0]!='3')||Code[1]!=0){
+    scanf("%s",&CODE[0]);
+    while((CODE[0]!='0'&&CODE[0]!='$'&&CODE[0]!='1'&&CODE[0]!='2'&&CODE[0]!='3')||CODE[1]!=0){
         printf("输入错误, 请重新输入: ");
-        scanf("%s",&Code[0]);
+        scanf("%s",&CODE[0]);
     }
     system("CLS");
-    switch(Code[0]){
+    switch(CODE[0]){
         case '0':{
             return;
         }case '$':{
@@ -281,11 +284,11 @@ BEGIN:
             std::ifstream FOp;
             FOp.open("cfg.ini",std::ios::in);
             if(!FOp.is_open()){
-                puts("[x] 读取 cfg.ini 时出现错误.");
-            }else if(Config[3]=="$UNDEFINED$"){
+                puts("[x] 无法读取 \"cfg.ini\".");
+            }else if(CONFIG[3]=="$UNDEFINED$"){
                 puts("未配置此项, 请编辑配置.");
             }else{
-                system(Config[3].c_str());
+                system(CONFIG[3].c_str());
             }
             FOp.close();
             break;
@@ -309,16 +312,16 @@ BEGIN:
             puts("| 主菜单 > 工具箱 > 激活工具 |\n");
             puts("此功能需要联网且安装 PowerShell, 脚本为 Microsoft Activation Scripts.\n");
             printf("是否继续? (Y/N): ");
-            scanf("%s",&Code[1]);
-            while((Code[1]!='Y'&&Code[1]!='y'&&Code[1]!='N'&&Code[1]!='n')||Code[2]!=0){
+            scanf("%s",&CODE[1]);
+            while((CODE[1]!='Y'&&CODE[1]!='N')||CODE[2]!=0){
                 printf("输入错误, 请重新输入: ");
-                scanf("%s",&Code[1]);
+                scanf("%s",&CODE[1]);
             }
-            if(Code[1]=='Y'||Code[1]=='y'){
+            if(CODE[1]=='Y'){
                 puts("\n请稍候...");
                 system("PowerShell \"IRM https://massgrave.dev/get|IEX\"");
-                system(Config[1].c_str());
-                puts("\n已退出脚本.");
+                system(CONFIG[1].c_str());
+                puts("\n已退出.");
             }
             break;
         }case '3':{
@@ -338,7 +341,7 @@ BEGIN:
             system("Pause");
             puts("\n");
             system("ReAgentC /Enable");
-            system("Shutdown /R /O /T 0");
+            system("Shutdown /F /R /O /T 0");
             break;
         }
     }
@@ -357,13 +360,13 @@ BEGIN:
     puts("   [2] 恢复");
     puts("   [3] 工具箱\n");
     printf("请输入: ");
-    scanf("%s",&Code[0]);
-    while((Code[0]!='?'&&Code[0]!='0'&&Code[0]!='1'&&Code[0]!='2'&&Code[0]!='3')||Code[1]!=0){
+    scanf("%s",&CODE[0]);
+    while((CODE[0]!='?'&&CODE[0]!='0'&&CODE[0]!='1'&&CODE[0]!='2'&&CODE[0]!='3')||CODE[1]!=0){
         printf("输入错误, 请重新输入: ");
-        scanf("%s",&Code[0]);
+        scanf("%s",&CODE[0]);
     }
     system("CLS");
-    switch(Code[0]){
+    switch(CODE[0]){
         case '?':{
             About();
             break;
