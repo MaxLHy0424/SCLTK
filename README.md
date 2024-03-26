@@ -1,5 +1,5 @@
 ![logo](logo.png)\
-**机房控制软件克星: 轻松脱离机房控制.**\
+**机房控制软件克星 (Computer Room Control Software Nemesis): 轻松脱离机房控制.**\
 *By @MaxLHy0424*
 
 # 使用方式
@@ -20,7 +20,7 @@
 
 ## 3. 编辑配置
 
-打开软件目录下的`cfg.ini`, 根据说明修改配置 
+打开软件目录下的`config.ini`, 根据说明修改配置 
 
 接下来运行软件查看效果. 如果此时软件已经运行, 需要在主菜单输入`0`重载配置.
 
@@ -80,7 +80,7 @@
 
 可以克隆软件仓库, 使用 MinGW 编译源代码文件. 推荐的编译命令如下:
 ````batch
-g++ main.cpp -o3 -o main.exe -Wextra -lm -static -fexec-charset=GBK -std=c++11
+g++ main.cpp -Os -Ofast -o main.exe -Wextra -lm -static -fexec-charset=GBK -std=c++11
 ````
 编译完毕后, 运行生成的`main.exe`, 正常使用即可.
 
@@ -90,9 +90,9 @@ CRCSN v3.0.0 及以后的版本会修改注册表劫持控制软件, 间接达�
 
 在不影响软件正常运行的情况下, 可以试试给软件文件修改一个名称, 再运行试试. 实在不行就运行注册表编辑器, 定位到`HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\`, 找到和要运行的软件的文件名称相同的项, 删除即可.
 
-## 5. 软件目录下存在`cfg.ini`, 但软件提示无法读取.
+## 5. 软件目录下存在`config.ini`, 但软件提示无法读取.
 
-请检查`cfg.ini`的属性 (右键`cfg.ini` > 属性 > 安全), 点击 "编辑", 依次点击上方列出的所有用户, 将下方的 "允许" 一栏全部勾选, "拒绝" 一栏全部取消勾选 (每栏的最后一个选项 "特殊权限" 可能无法 (取消) 勾选, 但并不影响), 再重载配置试试.
+请检查`config.ini`的属性 (右键`config.ini` > 属性 > 安全), 点击 "编辑", 依次点击上方列出的所有用户, 将下方的 "允许" 一栏全部勾选, "拒绝" 一栏全部取消勾选 (每栏的最后一个选项 "特殊权限" 可能无法 (取消) 勾选, 但并不影响), 再重载配置试试.
 
 # 鸣谢
 
