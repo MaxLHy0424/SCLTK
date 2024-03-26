@@ -4,9 +4,9 @@ void Configurator(bool reload){
     if(reload){
         puts("| 主菜单 > 重载配置 |\n");
     }
-    std::ifstream FOp;
-    FOp.open("config.ini",std::ios::in);
-    if(!FOp.is_open()){
+    std::ifstream fOp;
+    fOp.open("config.ini",std::ios::in);
+    if(!fOp.is_open()){
         if(!reload){
             system("Color 3");
             if(IsUserAnAdmin()){
@@ -23,7 +23,7 @@ void Configurator(bool reload){
         goto SKP;
     }
     for(unsigned short i{};i<4U;++i){
-        getline(FOp,CONFIG[i]);
+        getline(fOp,CONFIG[i]);
     }
     CONFIG[0]="Color "+CONFIG[0];
     system(CONFIG[0].c_str());
@@ -37,21 +37,21 @@ void Configurator(bool reload){
         CONFIG[1]="Title "+CONFIG[1];
     }
     system(CONFIG[1].c_str());
-    if(reload&&FOp.is_open()){
+    if(reload&&fOp.is_open()){
         puts("重载配置完毕.\n");
         puts("########################################\n");
         puts("按任意键返回主菜单.\n");
         system("Pause");
     }
 SKP:
-    FOp.close();
+    fOp.close();
 }
 void About(){
     puts("| 主菜单 > 关于 |\n");
     puts("   [软件名称] 机房控制软件克星 (Computer Room Control Software Nemesis)");
-    puts("   [版本信息] v4.0.0");
+    puts("   [版本信息] v4.0.1");
     puts("   [项目作者] MaxLHy0424");
-    puts("   [项目仓库] https://github.com/MaxLHy0424/Computer-Room-Control-Software-Nemesis\n");
+    puts("   [项目仓库] https://github.com/MaxLHy0424/CRCSN\n");
     puts("   (C) 2024 MaxLHy0424, 保留所有权利.\n");
     puts("########################################\n");
     puts("按任意键返回.\n");
@@ -61,8 +61,8 @@ void Cracker(){
 BEGIN:
     puts("| 主菜单 > 破解 |\n");
     puts("   [0] 返回");
-    puts("   [1] 单次");
-    puts("   [2] 循环\n");
+    puts("   [1] 单次破解");
+    puts("   [2] 循环破解\n");
     printf("请输入: ");
     scanf("%s",&CODE[0]);
     while((CODE[0]!='0'&&CODE[0]!='1'&&CODE[0]!='2')||CODE[1]!=0){
@@ -281,16 +281,16 @@ BEGIN:
             return;
         }case '$':{
             puts("| 主菜单 > 工具箱 > 自定义命令 |\n");
-            std::ifstream FOp;
-            FOp.open("config.ini",std::ios::in);
-            if(!FOp.is_open()){
+            std::ifstream fOp;
+            fOp.open("config.ini",std::ios::in);
+            if(!fOp.is_open()){
                 puts("无法读取 \"config.ini\".");
             }else if(CONFIG[3]=="$UNDEFINED$"){
                 puts("未配置此项, 请编辑配置.");
             }else{
                 system(CONFIG[3].c_str());
             }
-            FOp.close();
+            fOp.close();
             break;
         }case '1':{
             puts("| 主菜单 > 工具箱 > 系统修复 |\n");
@@ -310,7 +310,7 @@ BEGIN:
             break;
         }case '2':{
             puts("| 主菜单 > 工具箱 > 激活工具 |\n");
-            puts("此功能需要联网且安装 PowerShell, 脚本为 Microsoft Activation Scripts.\n");
+            puts("此功能需要联网且安装 PowerShell, 使用 Microsoft Activation Scripts.\n");
             printf("是否继续? (Y/N): ");
             scanf("%s",&CODE[1]);
             while((CODE[1]!='Y'&&CODE[1]!='N')||CODE[2]!=0){
@@ -341,7 +341,7 @@ BEGIN:
             system("Pause");
             puts("\n");
             system("ReAgentC /Enable");
-            system("Shutdown /F /R /O /T 0");
+            system("Shutdown /R /O /T 0");
             break;
         }
     }
