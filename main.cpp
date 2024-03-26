@@ -5,7 +5,7 @@ void Configurator(bool reload){
         puts("| 主菜单 > 重载配置 |\n");
     }
     std::ifstream FOp;
-    FOp.open("cfg.ini",std::ios::in);
+    FOp.open("config.ini",std::ios::in);
     if(!FOp.is_open()){
         if(!reload){
             system("Color 3");
@@ -15,7 +15,7 @@ void Configurator(bool reload){
                 system("Title [基本会话] CRCSN");
             }
         }
-        puts("[x] 无法读取 \"cfg.ini\".\n");
+        puts("无法读取 \"config.ini\".\n");
         puts("########################################\n");
         puts("按任意键继续.\n");
         system("Pause");
@@ -48,8 +48,8 @@ SKP:
 }
 void About(){
     puts("| 主菜单 > 关于 |\n");
-    puts("   [软件名称] 机房控制软件克星");
-    puts("   [版本信息] v4.0.0_rc28");
+    puts("   [软件名称] 机房控制软件克星 (Computer Room Control Software Nemesis)");
+    puts("   [版本信息] v4.0.0");
     puts("   [项目作者] MaxLHy0424");
     puts("   [项目仓库] https://github.com/MaxLHy0424/Computer-Room-Control-Software-Nemesis\n");
     puts("   (C) 2024 MaxLHy0424, 保留所有权利.\n");
@@ -282,9 +282,9 @@ BEGIN:
         }case '$':{
             puts("| 主菜单 > 工具箱 > 自定义命令 |\n");
             std::ifstream FOp;
-            FOp.open("cfg.ini",std::ios::in);
+            FOp.open("config.ini",std::ios::in);
             if(!FOp.is_open()){
-                puts("[x] 无法读取 \"cfg.ini\".");
+                puts("无法读取 \"config.ini\".");
             }else if(CONFIG[3]=="$UNDEFINED$"){
                 puts("未配置此项, 请编辑配置.");
             }else{
@@ -331,7 +331,7 @@ BEGIN:
                 break;
             }
             for(unsigned short i{5};;--i){
-                printf("[!] 请保存好文件, %hu 秒后可重启.\r",i);
+                printf("请保存好文件, %hu 秒后可重启.\r",i);
                 if(!i){
                     break;
                 }
