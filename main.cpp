@@ -1,13 +1,24 @@
 #include"extern.hpp"
 void Start();
-void Configurator(bool reload){
-    if(reload){
+void About(){
+    puts("| 主菜单 > 关于 |\n");
+    puts("   [软件名称] 机房控制软件克星 (Computer Room Control Software Nemesis)");
+    puts("   [版本信息] v4.1.0");
+    puts("   [项目作者] MaxLHy0424");
+    puts("   [项目仓库] https://github.com/MaxLHy0424/CRCSN\n");
+    puts("   (C) 2024 MaxLHy0424, 保留所有权利.\n");
+    puts("########################################\n");
+    puts("按任意键返回.\n");
+    system("Pause");
+}
+void Configurator(bool rld){
+    if(rld){
         puts("| 主菜单 > 重载配置 |\n");
     }
-    std::ifstream FOp;
-    FOp.open("config.ini",std::ios::in);
-    if(!FOp.is_open()){
-        if(!reload){
+    std::ifstream fOp;
+    fOp.open("config.ini",std::ios::in);
+    if(!fOp.is_open()){
+        if(!rld){
             system("Color 3");
             if(IsUserAnAdmin()){
                 system("Title [增强会话] CRCSN");
@@ -15,7 +26,7 @@ void Configurator(bool reload){
                 system("Title [基本会话] CRCSN");
             }
         }
-        puts("无法读取 \"config.ini\".\n");
+        puts("无法读取 config.ini.\n");
         puts("########################################\n");
         puts("按任意键继续.\n");
         system("Pause");
@@ -23,7 +34,7 @@ void Configurator(bool reload){
         goto SKP;
     }
     for(unsigned short i{};i<4U;++i){
-        getline(FOp,Config[i]);
+        getline(fOp,Config[i]);
     }
     Config[0]="Color "+Config[0];
     system(Config[0].c_str());
@@ -37,25 +48,14 @@ void Configurator(bool reload){
         Config[1]="Title "+Config[1];
     }
     system(Config[1].c_str());
-    if(reload&&FOp.is_open()){
-        puts("重载配置完毕.\n");
+    if(rld&&fOp.is_open()){
+        puts("重载完毕.\n");
         puts("########################################\n");
         puts("按任意键返回主菜单.\n");
         system("Pause");
     }
 SKP:
-    FOp.close();
-}
-void About(){
-    puts("| 主菜单 > 关于 |\n");
-    puts("   [软件名称] 机房控制软件克星 (Computer Room Control Software Nemesis)");
-    puts("   [版本信息] v4.0.3");
-    puts("   [项目作者] MaxLHy0424");
-    puts("   [项目仓库] https://github.com/MaxLHy0424/CRCSN\n");
-    puts("   (C) 2024 MaxLHy0424, 保留所有权利.\n");
-    puts("########################################\n");
-    puts("按任意键返回.\n");
-    system("Pause");
+    fOp.close();
 }
 void Cracker(){
 BEGIN:
@@ -66,7 +66,7 @@ BEGIN:
     printf("请输入: ");
     scanf("%s",&Code[0]);
     while((Code[0]!='0'&&Code[0]!='1'&&Code[0]!='2')||Code[1]!=0){
-        printf("输入错误: ");
+        printf("输入错误, 请重新输入: ");
         scanf("%s",&Code[0]);
     }
     unsigned short sleepTime{};
@@ -77,7 +77,7 @@ BEGIN:
             printf("请输入休眠时间 (毫秒, 0~5000): ");
             scanf("%hu",&sleepTime);
             while(sleepTime>5000U){
-                printf("输入错误: ");
+                printf("输入错误, 请重新输入: ");
                 scanf("%hu",&sleepTime);
             }
             break;
@@ -105,21 +105,21 @@ BEGIN:
     if(!sleepTime){
         puts("禁用.\n");
     }else{
-        printf("%hu 毫秒.\n\n",sleepTime);
+        printf("启用, %hu 毫秒.\n\n",sleepTime);
     }
     printf("是否继续? (Y/N): ");
     scanf("%s",&Code[1]);
-    while((Code[1]!='Y'&&Code[1]!='N')||Code[2]!=0){
-        printf("输入错误: ");
+    while((Code[1]!='Y'&&Code[1]!='y'&&Code[1]!='N'&&Code[1])!='n'||Code[2]!=0){
+        printf("输入错误, 请重新输入: ");
         scanf("%s",&Code[1]);
     }
-    if(Code[1]=='N'){
+    if(Code[1]=='N'||Code[1]=='n'){
         system("CLS");
         goto BEGIN;
     }
     for(;;){
         system("CLS");
-        puts("| 主菜单 > 破解 > 确认配置 > 实施操作 |\n");
+        puts("| 主菜单 > 破解 > 确认配置 > 执行操作 |\n");
         system("TaskKill /F /T /IM vncviewer.exe");
         system("TaskKill /F /T /IM tvnserver32.exe");
         system("TaskKill /F /T /IM WfbsPnpInstall.exe");
@@ -147,32 +147,32 @@ BEGIN:
         system("TaskKill /F /T /IM GATESRV.exe");
         system("TaskKill /F /T /IM MasterHelper.exe");
         if(IsUserAnAdmin()){
-            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\vncviewer.exe\" /T REG_SZ /V debugger /D \"CRCSN\" /F");
-            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\tvnserver32.exe\" /T REG_SZ /V debugger /D \"CRCSN\" /F");
-            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\WfbsPnpInstall.exe\" /T REG_SZ /V debugger /D \"CRCSN\" /F");
-            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\WFBSMon.exe\" /T REG_SZ /V debugger /D \"CRCSN\" /F");
-            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\WFBSMlogon.exe\" /T REG_SZ /V debugger /D \"CRCSN\" /F");
-            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\WFBSSvrLogShow.exe\" /T REG_SZ /V debugger /D \"CRCSN\" /F");
-            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\ResetIp.exe\" /T REG_SZ /V debugger /D \"CRCSN\" /F");
-            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\FuncForWIN64.exe\" /T REG_SZ /V debugger /D \"CRCSN\" /F");
-            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\CertMgr.exe\" /T REG_SZ /V debugger /D \"CRCSN\" /F");
-            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\Fireware.exe\" /T REG_SZ /V debugger /D \"CRCSN\" /F");
-            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\BCDBootCopy.exe\" /T REG_SZ /V debugger /D \"CRCSN\" /F");
-            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\refreship.exe\" /T REG_SZ /V debugger /D \"CRCSN\" /F");
-            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\LenovoLockScreen.exe\" /T REG_SZ /V debugger /D \"CRCSN\" /F");
-            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\PortControl64.exe\" /T REG_SZ /V debugger /D \"CRCSN\" /F");
-            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DesktopCheck.exe\" /T REG_SZ /V debugger /D \"CRCSN\" /F");
-            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DeploymentManager.exe\" /T REG_SZ /V debugger /D \"CRCSN\" /F");
-            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DeploymentAgent.exe\" /T REG_SZ /V debugger /D \"CRCSN\" /F");
-            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\XYNTService.exe\" /T REG_SZ /V debugger /D \"CRCSN\" /F");
-            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\ProcHelper64.exe\" /T REG_SZ /V debugger /D \"CRCSN\" /F");
-            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\StudentMain.exe\" /T REG_SZ /V debugger /D \"CRCSN\" /F");
-            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DispcapHelper.exe\" /T REG_SZ /V debugger /D \"CRCSN\" /F");
-            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\VRCwPlayer.exe\" /T REG_SZ /V debugger /D \"CRCSN\" /F");
-            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\InstHelpApp.exe\" /T REG_SZ /V debugger /D \"CRCSN\" /F");
-            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\TDOvrSet.exe\" /T REG_SZ /V debugger /D \"CRCSN\" /F");
-            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\GATESRV.exe\" /T REG_SZ /V debugger /D \"CRCSN\" /F");
-            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\MasterHelper.exe\" /T REG_SZ /V debugger /D \"CRCSN\" /F");
+            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\vncviewer.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
+            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\tvnserver32.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
+            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\WfbsPnpInstall.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
+            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\WFBSMon.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
+            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\WFBSMlogon.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
+            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\WFBSSvrLogShow.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
+            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\ResetIp.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
+            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\FuncForWIN64.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
+            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\CertMgr.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
+            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\Fireware.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
+            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\BCDBootCopy.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
+            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\refreship.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
+            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\LenovoLockScreen.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
+            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\PortControl64.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
+            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DesktopCheck.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
+            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DeploymentManager.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
+            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DeploymentAgent.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
+            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\XYNTService.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
+            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\ProcHelper64.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
+            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\StudentMain.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
+            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DispcapHelper.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
+            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\VRCwPlayer.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
+            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\InstHelpApp.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
+            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\TDOvrSet.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
+            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\GATESRV.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
+            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\MasterHelper.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
             system("SC Config tvnserver Start= Disabled");
             system("SC Config BSAgentSvr Start= Disabled");
             system("SC Config WFBSMlogon Start= Disabled");
@@ -207,15 +207,15 @@ void Recoverer(){
     }
     printf("是否继续? (Y/N): ");
     scanf("%s",&Code[1]);
-    while((Code[1]!='Y'&&Code[1]!='N')||Code[2]!=0){
-        printf("输入错误: ");
+    while((Code[1]!='Y'&&Code[1]!='y'&&Code[1]!='N'&&Code[1])!='n'||Code[2]!=0){
+        printf("输入错误, 请重新输入: ");
         scanf("%s",&Code[1]);
     }
-    if(Code[1]=='N'){
+    if(Code[1]=='N'||Code[1]=='n'){
         return;
     }
     system("CLS");
-    puts("| 主菜单 > 恢复 > 实施操作 |\n");
+    puts("| 主菜单 > 恢复 > 执行操作 |\n");
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\vncviewer.exe\" /F");
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\tvnserver32.exe\" /F");
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\WfbsPnpInstall.exe\" /F");
@@ -269,32 +269,32 @@ BEGIN:
         return;
     }
     puts("   [0] 返回");
-    puts("   [$] 自定义命令");
+    puts("   [/] 自定义命令");
     puts("   [1] 系统修复");
     puts("   [2] 激活工具");
     puts("   [3] 高级启动\n");
     printf("请输入: ");
     scanf("%s",&Code[0]);
-    while((Code[0]!='0'&&Code[0]!='$'&&Code[0]!='1'&&Code[0]!='2'&&Code[0]!='3')||Code[1]!=0){
-        printf("输入错误: ");
+    while((Code[0]!='0'&&Code[0]!='/'&&Code[0]!='1'&&Code[0]!='2'&&Code[0]!='3')||Code[1]!=0){
+        printf("输入错误, 请重新输入: ");
         scanf("%s",&Code[0]);
     }
     system("CLS");
     switch(Code[0]){
         case '0':{
             return;
-        }case '$':{
+        }case '/':{
             puts("| 主菜单 > 工具箱 > 自定义命令 |\n");
-            std::ifstream FOp;
-            FOp.open("config.ini",std::ios::in);
-            if(!FOp.is_open()){
-                puts("无法读取 \"config.ini\".");
-            }else if(Config[3]=="$UNDEFINED$"){
+            std::ifstream fOp;
+            fOp.open("config.ini",std::ios::in);
+            if(!fOp.is_open()){
+                puts("无法读取 config.ini.");
+            }else if(Config[3]=="UNDEFINED"){
                 puts("未配置此项, 请编辑配置.");
             }else{
                 system(Config[3].c_str());
             }
-            FOp.close();
+            fOp.close();
             break;
         }case '1':{
             puts("| 主菜单 > 工具箱 > 系统修复 |\n");
@@ -317,11 +317,11 @@ BEGIN:
             puts("此功能需要联网且安装 PowerShell, 使用 Microsoft Activation Scripts.\n");
             printf("是否继续? (Y/N): ");
             scanf("%s",&Code[1]);
-            while((Code[1]!='Y'&&Code[1]!='N')||Code[2]!=0){
-                printf("输入错误: ");
+            while((Code[1]!='Y'&&Code[1]!='y'&&Code[1]!='N'&&Code[1])!='n'||Code[2]!=0){
+                printf("输入错误, 请重新输入: ");
                 scanf("%s",&Code[1]);
             }
-            if(Code[1]=='Y'){
+            if(Code[1]=='Y'||Code[1]=='y'){
                 puts("\n请稍候...");
                 system("PowerShell \"IRM https://massgrave.dev/get|IEX\"");
                 puts("\n已退出.");
@@ -337,7 +337,7 @@ BEGIN:
                 break;
             }
             for(unsigned short i{5};;--i){
-                printf("请保存好文件, %hu 秒后可重启.\r",i);
+                printf("请保存文件, %hu 秒后可重启.\r",i);
                 if(!i){
                     break;
                 }
@@ -347,7 +347,7 @@ BEGIN:
             system("Pause");
             puts("\n");
             system("ReAgentC /Enable");
-            system("Shutdown /R /O /T 0");
+            system("Shutdown /F /R /O /T 0");
             break;
         }
     }
@@ -368,7 +368,7 @@ BEGIN:
     printf("请输入: ");
     scanf("%s",&Code[0]);
     while((Code[0]!='?'&&Code[0]!='0'&&Code[0]!='1'&&Code[0]!='2'&&Code[0]!='3')||Code[1]!=0){
-        printf("输入错误: ");
+        printf("输入错误, 请重新输入: ");
         scanf("%s",&Code[0]);
     }
     system("CLS");
