@@ -11,14 +11,14 @@ void About(){
     puts("按任意键返回.\n");
     system("Pause");
 }
-void Configurator(bool rld){
-    if(rld){
+void Configurator(bool reload){
+    if(reload){
         puts("| 主菜单 > 重载配置 |\n");
     }
     std::ifstream fOp;
     fOp.open("config.ini",std::ios::in);
     if(!fOp.is_open()){
-        if(!rld){
+        if(!reload){
             system("Color 3");
             if(IsUserAnAdmin()){
                 system("Title [增强会话] CRCSN");
@@ -48,7 +48,7 @@ void Configurator(bool rld){
         Config[1]="Title "+Config[1];
     }
     system(Config[1].c_str());
-    if(rld&&fOp.is_open()){
+    if(reload&&fOp.is_open()){
         puts("重载完毕.\n");
         puts("########################################\n");
         puts("按任意键返回主菜单.\n");
@@ -66,7 +66,7 @@ BEGIN:
     printf("请输入: ");
     scanf("%s",&Code[0]);
     while((Code[0]!='0'&&Code[0]!='1'&&Code[0]!='2')||Code[1]!=0){
-        printf("输入错误, 请重新输入: ");
+        printf("错误, 请重输: ");
         scanf("%s",&Code[0]);
     }
     unsigned short pauseTime{};
@@ -77,7 +77,7 @@ BEGIN:
             printf("请输入暂停时间 (毫秒, 0~10000): ");
             scanf("%hu",&pauseTime);
             while(pauseTime>10000U){
-                printf("输入错误, 请重新输入: ");
+                printf("错误, 请重输: ");
                 scanf("%hu",&pauseTime);
             }
             break;
@@ -110,7 +110,7 @@ BEGIN:
     printf("是否继续? (Y/N): ");
     scanf("%s",&Code[1]);
     while((Code[1]!='Y'&&Code[1]!='y'&&Code[1]!='N'&&Code[1])!='n'||Code[2]!=0){
-        printf("输入错误, 请重新输入: ");
+        printf("错误, 请重输: ");
         scanf("%s",&Code[1]);
     }
     if(Code[1]=='N'||Code[1]=='n'){
@@ -208,7 +208,7 @@ void Recoverer(){
     printf("是否继续? (Y/N): ");
     scanf("%s",&Code[1]);
     while((Code[1]!='Y'&&Code[1]!='y'&&Code[1]!='N'&&Code[1])!='n'||Code[2]!=0){
-        printf("输入错误, 请重新输入: ");
+        printf("错误, 请重输: ");
         scanf("%s",&Code[1]);
     }
     if(Code[1]=='N'||Code[1]=='n'){
@@ -276,7 +276,7 @@ BEGIN:
     printf("请输入: ");
     scanf("%s",&Code[0]);
     while((Code[0]!='0'&&Code[0]!='/'&&Code[0]!='1'&&Code[0]!='2'&&Code[0]!='3')||Code[1]!=0){
-        printf("输入错误, 请重新输入: ");
+        printf("错误, 请重输: ");
         scanf("%s",&Code[0]);
     }
     system("CLS");
@@ -318,7 +318,7 @@ BEGIN:
             printf("是否继续? (Y/N): ");
             scanf("%s",&Code[1]);
             while((Code[1]!='Y'&&Code[1]!='y'&&Code[1]!='N'&&Code[1])!='n'||Code[2]!=0){
-                printf("输入错误, 请重新输入: ");
+                printf("错误, 请重输: ");
                 scanf("%s",&Code[1]);
             }
             if(Code[1]=='Y'||Code[1]=='y'){
@@ -368,7 +368,7 @@ BEGIN:
     printf("请输入: ");
     scanf("%s",&Code[0]);
     while((Code[0]!='?'&&Code[0]!='0'&&Code[0]!='1'&&Code[0]!='2'&&Code[0]!='3')||Code[1]!=0){
-        printf("输入错误, 请重新输入: ");
+        printf("错误, 请重输: ");
         scanf("%s",&Code[0]);
     }
     system("CLS");
