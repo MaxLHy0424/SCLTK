@@ -69,16 +69,16 @@ BEGIN:
         printf("输入错误, 请重新输入: ");
         scanf("%s",&Code[0]);
     }
-    unsigned short sleepTime{};
+    unsigned short pauseTime{};
     switch(Code[0]){
         case '0':{
             return;
         }case '2':{
-            printf("请输入休眠时间 (毫秒, 0~5000): ");
-            scanf("%hu",&sleepTime);
-            while(sleepTime>5000U){
+            printf("请输入暂停时间 (毫秒, 0~10000): ");
+            scanf("%hu",&pauseTime);
+            while(pauseTime>10000U){
                 printf("输入错误, 请重新输入: ");
-                scanf("%hu",&sleepTime);
+                scanf("%hu",&pauseTime);
             }
             break;
         }
@@ -101,11 +101,11 @@ BEGIN:
     }else{
         puts("禁用.");
     }
-    printf("     [休眠] ");
-    if(!sleepTime){
+    printf("     [暂停] ");
+    if(!pauseTime){
         puts("禁用.\n");
     }else{
-        printf("启用, %hu 毫秒.\n\n",sleepTime);
+        printf("启用, %hu 毫秒.\n\n",pauseTime);
     }
     printf("是否继续? (Y/N): ");
     scanf("%s",&Code[1]);
@@ -189,8 +189,8 @@ BEGIN:
         if(Code[0]=='1'){
             break;
         }
-        puts("\n休眠中...");
-        Sleep(sleepTime);
+        puts("\n暂停中...");
+        Sleep(pauseTime);
     }
     puts("########################################\n");
     puts("按任意键返回主菜单.\n");
