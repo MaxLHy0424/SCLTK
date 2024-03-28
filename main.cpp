@@ -3,7 +3,7 @@ void Start();
 void About(){
     puts("| 主菜单 > 关于 |\n");
     puts("   [软件名称] 机房控制软件克星 (Computer Room Control Software Nemesis)");
-    puts("   [版本信息] v4.0.4");
+    puts("   [版本信息] v4.1.0_rc1");
     puts("   [项目作者] MaxLHy0424");
     puts("   [项目仓库] https://github.com/MaxLHy0424/CRCSN\n");
     puts("   (C) 2024 MaxLHy0424, 保留所有权利.\n");
