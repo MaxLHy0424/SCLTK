@@ -3,7 +3,7 @@ void Start();
 void About(){
     puts("| 主菜单 > 关于 |\n");
     puts("   [软件名称] 机房控制软件克星 (Computer Room Control Software Nemesis)");
-    puts("   [版本信息] v4.1.0_rc1");
+    puts("   [版本信息] v4.1.0_rc2");
     puts("   [项目作者] MaxLHy0424");
     puts("   [项目仓库] https://github.com/MaxLHy0424/CRCSN\n");
     puts("   (C) 2024 MaxLHy0424, 保留所有权利.\n");
@@ -15,9 +15,9 @@ void Configurator(bool reload){
     if(reload){
         puts("| 主菜单 > 重载配置 |\n");
     }
-    std::ifstream fOp;
-    fOp.open("config.ini",std::ios::in);
-    if(!fOp.is_open()){
+    std::ifstream fop;
+    fop.open("config.ini",std::ios::in);
+    if(!fop.is_open()){
         if(!reload){
             system("Color 3");
             if(IsUserAnAdmin()){
@@ -34,7 +34,7 @@ void Configurator(bool reload){
         goto SKP;
     }
     for(unsigned short i{};i<4U;++i){
-        getline(fOp,Config[i]);
+        getline(fop,Config[i]);
     }
     Config[0]="Color "+Config[0];
     system(Config[0].c_str());
@@ -48,14 +48,14 @@ void Configurator(bool reload){
         Config[1]="Title "+Config[1];
     }
     system(Config[1].c_str());
-    if(reload&&fOp.is_open()){
+    if(reload&&fop.is_open()){
         puts("重载完毕.\n");
         puts("########################################\n");
         puts("按任意键返回主菜单.\n");
         system("Pause");
     }
 SKP:
-    fOp.close();
+    fop.close();
 }
 void Cracker(){
 BEGIN:
@@ -66,7 +66,7 @@ BEGIN:
     printf("请输入: ");
     scanf("%s",&Code[0]);
     while((Code[0]!='0'&&Code[0]!='1'&&Code[0]!='2')||Code[1]!=0){
-        printf("错误, 请重输: ");
+        printf("输入错误, 请重输: ");
         scanf("%s",&Code[0]);
     }
     unsigned short pauseTime{};
@@ -77,7 +77,7 @@ BEGIN:
             printf("请输入暂停时间 (毫秒, 0~10000): ");
             scanf("%hu",&pauseTime);
             while(pauseTime>10000U){
-                printf("错误, 请重输: ");
+                printf("输入错误, 请重输: ");
                 scanf("%hu",&pauseTime);
             }
             break;
@@ -102,15 +102,15 @@ BEGIN:
         puts("禁用.");
     }
     printf("     [暂停] ");
-    if(!pauseTime){
+    if(pauseTime==0U){
         puts("禁用.\n");
     }else{
         printf("启用, %hu 毫秒.\n\n",pauseTime);
     }
-    printf("是否继续? (Y/N): ");
+    printf("是否继续 (Y/N): ");
     scanf("%s",&Code[1]);
     while((Code[1]!='Y'&&Code[1]!='y'&&Code[1]!='N'&&Code[1])!='n'||Code[2]!=0){
-        printf("错误, 请重输: ");
+        printf("输入错误, 请重输: ");
         scanf("%s",&Code[1]);
     }
     if(Code[1]=='N'||Code[1]=='n'){
@@ -205,10 +205,10 @@ void Recoverer(){
         system("Pause");
         return;
     }
-    printf("是否继续? (Y/N): ");
+    printf("是否继续 (Y/N): ");
     scanf("%s",&Code[1]);
     while((Code[1]!='Y'&&Code[1]!='y'&&Code[1]!='N'&&Code[1])!='n'||Code[2]!=0){
-        printf("错误, 请重输: ");
+        printf("输入错误, 请重输: ");
         scanf("%s",&Code[1]);
     }
     if(Code[1]=='N'||Code[1]=='n'){
@@ -269,39 +269,41 @@ BEGIN:
         return;
     }
     puts("   [0] 返回");
-    puts("   [/] 自定义命令");
+    puts("   [-] 自定义命令");
     puts("   [1] 系统修复");
     puts("   [2] 激活工具");
     puts("   [3] 高级启动\n");
     printf("请输入: ");
     scanf("%s",&Code[0]);
-    while((Code[0]!='0'&&Code[0]!='/'&&Code[0]!='1'&&Code[0]!='2'&&Code[0]!='3')||Code[1]!=0){
-        printf("错误, 请重输: ");
+    while((Code[0]!='0'&&Code[0]!='-'&&Code[0]!='1'&&Code[0]!='2'&&Code[0]!='3')||Code[1]!=0){
+        printf("输入错误, 请重输: ");
         scanf("%s",&Code[0]);
     }
     system("CLS");
     switch(Code[0]){
         case '0':{
             return;
-        }case '/':{
+        }case '-':{
             puts("| 主菜单 > 工具箱 > 自定义命令 |\n");
-            std::ifstream fOp;
-            fOp.open("config.ini",std::ios::in);
-            if(!fOp.is_open()){
+            std::ifstream fop;
+            fop.open("config.ini",std::ios::in);
+            if(!fop.is_open()){
+                fop.close();
                 puts("无法读取 config.ini.");
             }else if(Config[3]=="UNDEFINED"){
+                fop.close();
                 puts("未配置此项, 请编辑配置.");
             }else{
+                fop.close();
                 system(Config[3].c_str());
             }
-            fOp.close();
             break;
         }case '1':{
             puts("| 主菜单 > 工具箱 > 系统修复 |\n");
             printf("请输入执行次数 (0 返回): ");
             unsigned short i{};
             scanf("%hu",&i);
-            if(!i){
+            if(i==0){
                 system("CLS");
                 goto BEGIN;
             }
@@ -315,10 +317,10 @@ BEGIN:
         }case '2':{
             puts("| 主菜单 > 工具箱 > 激活工具 |\n");
             puts("此功能需要联网且安装 PowerShell, 使用 Microsoft Activation Scripts.\n");
-            printf("是否继续? (Y/N): ");
+            printf("是否继续 (Y/N): ");
             scanf("%s",&Code[1]);
             while((Code[1]!='Y'&&Code[1]!='y'&&Code[1]!='N'&&Code[1])!='n'||Code[2]!=0){
-                printf("错误, 请重输: ");
+                printf("输入错误, 请重输: ");
                 scanf("%s",&Code[1]);
             }
             if(Code[1]=='Y'||Code[1]=='y'){
@@ -338,7 +340,7 @@ BEGIN:
             }
             for(unsigned short i{5};;--i){
                 printf("请保存文件, %hu 秒后可重启.\r",i);
-                if(!i){
+                if(i==0){
                     break;
                 }
                 Sleep(1000UL);
@@ -368,7 +370,7 @@ BEGIN:
     printf("请输入: ");
     scanf("%s",&Code[0]);
     while((Code[0]!='?'&&Code[0]!='0'&&Code[0]!='1'&&Code[0]!='2'&&Code[0]!='3')||Code[1]!=0){
-        printf("错误, 请重输: ");
+        printf("输入错误, 请重输: ");
         scanf("%s",&Code[0]);
     }
     system("CLS");
