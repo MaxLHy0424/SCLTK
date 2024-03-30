@@ -3,7 +3,7 @@ void Start();
 void About(){
     puts("| 主菜单 > 关于 |\n");
     puts("   [软件名称] 机房控制软件克星 (Computer Room Control Software Nemesis)");
-    puts("   [版本信息] v4.1.1");
+    puts("   [版本信息] v4.1.2");
     puts("   [项目作者] MaxLHy0424");
     puts("   [项目仓库] https://github.com/MaxLHy0424/CRCSN\n");
     puts("   (C) 2024 MaxLHy0424, 保留所有权利.\n");
@@ -11,14 +11,14 @@ void About(){
     puts("按任意键返回.\n");
     system("Pause");
 }
-void Configurator(bool reload){
-    if(reload){
+void Configurator(bool rld){
+    if(rld){
         puts("| 主菜单 > 重载配置 |\n");
     }
     std::ifstream fop;
     fop.open("config.ini",std::ios::in);
     if(!fop.is_open()){
-        if(!reload){
+        if(!rld){
             system("Color 3");
             if(IsUserAnAdmin()){
                 system("Title [增强会话] CRCSN");
@@ -48,7 +48,7 @@ void Configurator(bool reload){
         Config[1]="Title "+Config[1];
     }
     system(Config[1].c_str());
-    if(reload&&fop.is_open()){
+    if(rld&&fop.is_open()){
         puts("重载完毕.\n");
         puts("########################################\n");
         puts("按任意键返回主菜单.\n");
@@ -269,13 +269,13 @@ BEGIN:
         return;
     }
     puts("   [0] 返回");
-    puts("   [-] 自定义命令");
+    puts("   [/] 自定义命令");
     puts("   [1] 系统修复");
-    puts("   [2] 激活工具");
+    puts("   [2] 垃圾清理");
     puts("   [3] 高级启动\n");
     printf("请输入: ");
     scanf("%s",&Code[0]);
-    while((Code[0]!='0'&&Code[0]!='-'&&Code[0]!='1'&&Code[0]!='2'&&Code[0]!='3')||Code[1]!=0){
+    while((Code[0]!='0'&&Code[0]!='/'&&Code[0]!='1'&&Code[0]!='2'&&Code[0]!='3')||Code[1]!=0){
         printf("输入错误, 请重新输入 ");
         scanf("%s",&Code[0]);
     }
@@ -283,7 +283,7 @@ BEGIN:
     switch(Code[0]){
         case '0':{
             return;
-        }case '-':{
+        }case '/':{
             puts("| 主菜单 > 工具箱 > 自定义命令 |\n");
             std::ifstream fop;
             fop.open("config.ini",std::ios::in);
@@ -315,20 +315,21 @@ BEGIN:
             }
             break;
         }case '2':{
-            puts("| 主菜单 > 工具箱 > 激活工具 |\n");
-            puts("此功能需要联网且安装 PowerShell, 使用 Microsoft Activation Scripts.\n");
+            puts("| 主菜单 > 工具箱 > 垃圾清理 |\n");
             printf("是否继续 (Y/N): ");
             scanf("%s",&Code[1]);
             while((Code[1]!='Y'&&Code[1]!='y'&&Code[1]!='N'&&Code[1]!='n')||Code[2]!=0){
                 printf("输入错误, 请重新输入 ");
-                scanf("%s",&Code[1]);
+               scanf("%s",&Code[1]);
             }
             if(Code[1]=='Y'||Code[1]=='y'){
-                puts("\n请稍候...");
-                system("PowerShell \"IRM https://massgrave.dev/get|IEX\"");
-                puts("\n已退出.");
+                puts("\n");
+                system("Del /F /S /Q %TEMP%\\*");
+                system("Del /F /S /Q %LocalAppData%\\IconCache.db");
+                if(KernalVersion()>=100UL){
+                    system("DISM /Online /Set-ReservedStorageState /State:Disabled");
+                }
             }else{
-                system("CLS");
                 goto BEGIN;
             }
             break;
@@ -338,9 +339,9 @@ BEGIN:
                 puts("此功能需要 Windows 8 及以上的 Windows 操作系统.\n");
                 break;
             }
-            for(unsigned short i{5};;--i){
-                printf("请保存文件, %hu 秒后可重启.\r",i);
-                if(i==0){
+            for(unsigned short t{5};;--t){
+                printf("请保存文件, %hu 秒后可重启.\r",t);
+                if(t==0){
                     break;
                 }
                 Sleep(1000UL);
