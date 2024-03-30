@@ -107,7 +107,7 @@ BEGIN:
     }else{
         printf("启用, %hu 毫秒.\n\n",pauseTime);
     }
-    printf("是否继续? (Y/N): ");
+    printf("是否继续 (Y/N): ");
     scanf("%s",&Code[1]);
     while((Code[1]!='Y'&&Code[1]!='y'&&Code[1]!='N'&&Code[1]!='n')||Code[2]!=0){
         printf("输入错误, 请重新输入 ");
@@ -205,7 +205,7 @@ void Recoverer(){
         system("Pause");
         return;
     }
-    printf("是否继续? (Y/N): ");
+    printf("是否继续 (Y/N): ");
     scanf("%s",&Code[1]);
     while((Code[1]!='Y'&&Code[1]!='y'&&Code[1]!='N'&&Code[1]!='n')||Code[2]!=0){
         printf("输入错误, 请重新输入 ");
@@ -317,7 +317,7 @@ BEGIN:
         }case '2':{
             puts("| 主菜单 > 工具箱 > 激活工具 |\n");
             puts("此功能需要联网且安装 PowerShell, 使用 Microsoft Activation Scripts.\n");
-            printf("是否继续? (Y/N): ");
+            printf("是否继续 (Y/N): ");
             scanf("%s",&Code[1]);
             while((Code[1]!='Y'&&Code[1]!='y'&&Code[1]!='N'&&Code[1]!='n')||Code[2]!=0){
                 printf("输入错误, 请重新输入 ");
