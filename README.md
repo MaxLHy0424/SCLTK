@@ -61,14 +61,13 @@
 如果将此项配置为`UNDEFINED`, 将视为配置 (即默认配置), 否则将会执行所配置的命令.
 
 此项请根据使用情况自行配置. 此处就抛砖引玉, 列出几个常用的命令, 供参考:
-
 ````batch
 Cmd #1
 WinGet Upgrade --All & Del /S /Q %TEMP%\* #2
 TaskKill /F /IM Explorer.exe #3
 ````
 
-> 仅支持传统命令. 如需使用 CmdLet 命令, 可以在使用英文半角双引号包住命令, 并在开头加上`PowerShell `.
+> 仅支持传统命令. 如需使用 CmdLet 命令, 可以用英文半角双引号包住命令, 并在开头加上`PowerShell `.
 
 # 注意事项
 
@@ -83,7 +82,7 @@ TaskKill /F /IM Explorer.exe #3
 
 ## 2 运行软件时控制台总是输出 "命令提示符已被管理员禁用", 无法正常使用.
 
-可以试试运行注册表编辑器, 定位到`HKEY_CURRENT_USER\Software\Policies\Microsoft\Windows\System`下, 看看有没有一个叫`DisableCMD`的`DWORD`值, 有的话就删掉, 再运行 CRCSN 试试.
+可以试试运行注册表编辑器, 定位到`HKEY_CURRENT_USER\Software\Policies\Microsoft\Windows\System`下, 看看有没有一个叫`DisableCMD`的`DWORD`值, 有的话就删掉, 再运行试试.
 
 ## 3 软件无法在 32 位 Windows 系统中使用.
 
