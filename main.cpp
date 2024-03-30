@@ -1,4 +1,6 @@
 #include"extern.hpp"
+char Code[3];
+std::string Config[4];
 void Start();
 void About(){
     puts("| 主菜单 > 关于 |\n");
