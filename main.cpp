@@ -7,27 +7,27 @@ void About(){
     puts("   [项目作者] MaxLHy0424");
     puts("   [项目仓库] https://github.com/MaxLHy0424/CRCSN\n");
     puts("   (C) 2024 MaxLHy0424, 保留所有权利.\n");
-    puts("########################################\n");
+    puts("========================================\n");
     puts("按任意键返回.\n");
     system("Pause");
 }
-void Configurator(bool rld){
-    if(rld){
+void Configurator(bool reload){
+    if(reload){
         puts("| 主菜单 > 重载配置 |\n");
     }
     std::ifstream fOp;
     fOp.open("config.ini",std::ios::in);
     if(!fOp.is_open()){
-        if(!rld){
-            system("Color 3");
+        if(!reload){
+            system("Color 9");
             if(IsUserAnAdmin()){
                 system("Title [增强会话] CRCSN");
             }else{
                 system("Title [基本会话] CRCSN");
             }
         }
-        puts("无法读取 config.ini.\n");
-        puts("########################################\n");
+        puts("找不到 config.ini.\n");
+        puts("========================================\n");
         puts("按任意键继续.\n");
         system("Pause");
         system("CLS");
@@ -47,9 +47,9 @@ void Configurator(bool rld){
     }else{
         system("Title CRCSN");
     }
-    if(rld&&fOp.is_open()){
+    if(reload&&fOp.is_open()){
         puts("重载完毕.\n");
-        puts("########################################\n");
+        puts("========================================\n");
         puts("按任意键返回主菜单.\n");
         system("Pause");
     }
@@ -60,8 +60,8 @@ void Cracker(){
 BEGIN:
     puts("| 主菜单 > 破解 |\n");
     puts("   [0] 返回");
-    puts("   [1] 单次破解");
-    puts("   [2] 循环破解\n");
+    puts("   [1] 单次");
+    puts("   [2] 循环\n");
     printf("请输入: ");
     scanf("%s",&Code[0]);
     while((Code[0]!='0'&&Code[0]!='1'&&Code[0]!='2')||Code[1]!=0){
@@ -73,9 +73,9 @@ BEGIN:
         case '0':{
             return;
         }case '2':{
-            printf("请输入暂停时间 (毫秒, 0~10000): ");
+            printf("请输入暂停时间 (毫秒, 0~5000): ");
             scanf("%hu",&pauseTime);
-            while(pauseTime>10000U){
+            while(pauseTime>5000U){
                 printf("输入错误, 请重新输入 ");
                 scanf("%hu",&pauseTime);
             }
@@ -104,7 +104,7 @@ BEGIN:
     if(pauseTime==0U){
         puts("禁用.\n");
     }else{
-        printf("启用, %hu 毫秒.\n\n",pauseTime);
+        printf("%hu 毫秒.\n\n",pauseTime);
     }
     if(PauseOp()==false){
         system("CLS");
@@ -185,7 +185,7 @@ BEGIN:
         puts("\n暂停中...");
         Sleep(pauseTime);
     }
-    puts("########################################\n");
+    puts("========================================\n");
     puts("按任意键返回主菜单.\n");
     system("Pause");
 }
@@ -193,7 +193,7 @@ void Recoverer(){
     puts("| 主菜单 > 恢复 |\n");
     if(!IsUserAnAdmin()){
         puts("此功能在基本会话下不可用.\n");
-        puts("########################################\n");
+        puts("========================================\n");
         puts("按任意键返回主菜单.\n");
         system("Pause");
         return;
@@ -241,7 +241,7 @@ void Recoverer(){
     system("Net Start TDNetFilter");
     system("Net Start TDFileFilter");
     system("Net Start STUDSRV");
-    puts("########################################\n");
+    puts("========================================\n");
     puts("按任意键返回主菜单.\n");
     system("Pause");
 }
@@ -250,7 +250,7 @@ BEGIN:
     puts("| 主菜单 > 工具箱 |\n");
     if(!IsUserAnAdmin()){
         puts("此功能在基本会话下不可用.\n");
-        puts("########################################\n");
+        puts("========================================\n");
         puts("按任意键返回主菜单.\n");
         system("Pause");
         return;
@@ -276,7 +276,7 @@ BEGIN:
             fOp.open("config.ini",std::ios::in);
             if(!fOp.is_open()){
                 fOp.close();
-                puts("无法读取 config.ini.");
+                puts("找不到 config.ini.");
             }else if(Config[3]=="UNDEFINED"){
                 fOp.close();
                 puts("未配置此项, 请编辑配置.");
@@ -290,7 +290,7 @@ BEGIN:
             printf("请输入执行次数 (0 返回): ");
             unsigned short i{};
             scanf("%hu",&i);
-            if(i==0){
+            if(i==0U){
                 system("CLS");
                 goto BEGIN;
             }
@@ -321,9 +321,9 @@ BEGIN:
                 puts("此功能需要 Windows 8 及以上的 Windows 操作系统.\n");
                 break;
             }
-            for(unsigned short t{5};;--t){
+            for(unsigned short t{5U};;--t){
                 printf("请保存文件, %hu 秒后可重启.\r",t);
-                if(t==0){
+                if(t==0U){
                     break;
                 }
                 Sleep(1000UL);
@@ -336,7 +336,7 @@ BEGIN:
             break;
         }
     }
-    puts("\n########################################\n");
+    puts("\n========================================\n");
     puts("按任意键返回.\n");
     system("Pause");
     system("CLS");
@@ -346,8 +346,7 @@ void Start(){
 BEGIN:
     puts("| 主菜单 |\n");
     if(Config[2]!="UNDEFINED"){
-        Config[2]+="\n\n";
-        printf("%s",Config[2].c_str());
+        printf("%s\n\n",Config[2].c_str());
     }
     puts("   [?] 关于");
     puts("   [0] 重载配置");
