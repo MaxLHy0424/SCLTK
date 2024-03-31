@@ -65,7 +65,7 @@ BEGIN:
     printf("请输入: ");
     scanf("%s",&Code[0]);
     while((Code[0]!='0'&&Code[0]!='1'&&Code[0]!='2')||Code[1]!=0){
-        printf("输入错误, 请重新输入 ");
+        printf("输入错误, 请重新输入: ");
         scanf("%s",&Code[0]);
     }
     unsigned short pauseTime{};
@@ -76,7 +76,7 @@ BEGIN:
             printf("请输入暂停时间 (ms, 0~5000): ");
             scanf("%hu",&pauseTime);
             while(pauseTime>5000U){
-                printf("输入错误, 请重新输入 ");
+                printf("输入错误, 请重新输入: ");
                 scanf("%hu",&pauseTime);
             }
             break;
@@ -100,12 +100,7 @@ BEGIN:
     }else{
         puts("禁用.");
     }
-    printf("     [暂停] ");
-    if(pauseTime==0U){
-        puts("禁用.\n");
-    }else{
-        printf("启用, %hums.\n\n",pauseTime);
-    }
+    printf("     [暂停] %hums.\n\n",pauseTime);
     if(PauseOp()==false){
         system("CLS");
         goto BEGIN;
@@ -263,7 +258,7 @@ BEGIN:
     printf("请输入: ");
     scanf("%s",&Code[0]);
     while((Code[0]!='0'&&Code[0]!='/'&&Code[0]!='1'&&Code[0]!='2'&&Code[0]!='3')||Code[1]!=0){
-        printf("输入错误, 请重新输入 ");
+        printf("输入错误, 请重新输入: ");
         scanf("%s",&Code[0]);
     }
     system("CLS");
@@ -356,7 +351,7 @@ BEGIN:
     printf("请输入: ");
     scanf("%s",&Code[0]);
     while((Code[0]!='?'&&Code[0]!='0'&&Code[0]!='1'&&Code[0]!='2'&&Code[0]!='3')||Code[1]!=0){
-        printf("输入错误, 请重新输入 ");
+        printf("输入错误, 请重新输入: ");
         scanf("%s",&Code[0]);
     }
     system("CLS");
