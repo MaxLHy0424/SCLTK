@@ -1,11 +1,9 @@
 #include"extern.hpp"
-char Code[3];
-std::string Config[4];
 void Start();
 void About(){
     puts("| 主菜单 > 关于 |\n");
     puts("   [软件名称] 机房控制软件克星 (Computer Room Control Software Nemesis)");
-    puts("   [版本信息] v4.1.2");
+    puts("   [版本信息] v4.2.0");
     puts("   [项目作者] MaxLHy0424");
     puts("   [项目仓库] https://github.com/MaxLHy0424/CRCSN\n");
     puts("   (C) 2024 MaxLHy0424, 保留所有权利.\n");
@@ -17,9 +15,9 @@ void Configurator(bool rld){
     if(rld){
         puts("| 主菜单 > 重载配置 |\n");
     }
-    std::ifstream fop;
-    fop.open("config.ini",std::ios::in);
-    if(!fop.is_open()){
+    std::ifstream fOp;
+    fOp.open("config.ini",std::ios::in);
+    if(!fOp.is_open()){
         if(!rld){
             system("Color 3");
             if(IsUserAnAdmin()){
@@ -33,31 +31,30 @@ void Configurator(bool rld){
         puts("按任意键继续.\n");
         system("Pause");
         system("CLS");
-        goto SKP;
+        goto SKIP;
     }
     for(unsigned short i{};i<4U;++i){
-        getline(fop,Config[i]);
+        getline(fOp,Config[i]);
     }
     Config[0]="Color "+Config[0];
     system(Config[0].c_str());
-    if(Config[2]=="1"){
+    if(Config[1]=="1"){
         if(IsUserAnAdmin()){
-            Config[1]="Title [增强会话] "+Config[1];
+            system("Title [增强会话] CRCSN");
         }else{
-            Config[1]="Title [基本会话] "+Config[1];
+            system("Title [基本会话] CRCSN");
         }
     }else{
-        Config[1]="Title "+Config[1];
+        system("Title CRCSN");
     }
-    system(Config[1].c_str());
-    if(rld&&fop.is_open()){
+    if(rld&&fOp.is_open()){
         puts("重载完毕.\n");
         puts("########################################\n");
         puts("按任意键返回主菜单.\n");
         system("Pause");
     }
-SKP:
-    fop.close();
+SKIP:
+    fOp.close();
 }
 void Cracker(){
 BEGIN:
@@ -109,13 +106,7 @@ BEGIN:
     }else{
         printf("启用, %hu 毫秒.\n\n",pauseTime);
     }
-    printf("是否继续 (Y/N): ");
-    scanf("%s",&Code[1]);
-    while((Code[1]!='Y'&&Code[1]!='y'&&Code[1]!='N'&&Code[1]!='n')||Code[2]!=0){
-        printf("输入错误, 请重新输入 ");
-        scanf("%s",&Code[1]);
-    }
-    if(Code[1]=='N'||Code[1]=='n'){
+    if(PauseOp()==false){
         system("CLS");
         goto BEGIN;
     }
@@ -207,13 +198,7 @@ void Recoverer(){
         system("Pause");
         return;
     }
-    printf("是否继续 (Y/N): ");
-    scanf("%s",&Code[1]);
-    while((Code[1]!='Y'&&Code[1]!='y'&&Code[1]!='N'&&Code[1]!='n')||Code[2]!=0){
-        printf("输入错误, 请重新输入 ");
-        scanf("%s",&Code[1]);
-    }
-    if(Code[1]=='N'||Code[1]=='n'){
+    if(PauseOp()==false){
         return;
     }
     system("CLS");
@@ -287,16 +272,16 @@ BEGIN:
             return;
         }case '/':{
             puts("| 主菜单 > 工具箱 > 自定义命令 |\n");
-            std::ifstream fop;
-            fop.open("config.ini",std::ios::in);
-            if(!fop.is_open()){
-                fop.close();
+            std::ifstream fOp;
+            fOp.open("config.ini",std::ios::in);
+            if(!fOp.is_open()){
+                fOp.close();
                 puts("无法读取 config.ini.");
             }else if(Config[3]=="UNDEFINED"){
-                fop.close();
+                fOp.close();
                 puts("未配置此项, 请编辑配置.");
             }else{
-                fop.close();
+                fOp.close();
                 system(Config[3].c_str());
             }
             break;
@@ -318,16 +303,11 @@ BEGIN:
             break;
         }case '2':{
             puts("| 主菜单 > 工具箱 > 垃圾清理 |\n");
-            printf("是否继续 (Y/N): ");
-            scanf("%s",&Code[1]);
-            while((Code[1]!='Y'&&Code[1]!='y'&&Code[1]!='N'&&Code[1]!='n')||Code[2]!=0){
-                printf("输入错误, 请重新输入 ");
-               scanf("%s",&Code[1]);
-            }
-            if(Code[1]=='Y'||Code[1]=='y'){
+            if(PauseOp()==true){
                 puts("\n");
                 system("Del /F /S /Q %TEMP%\\*");
                 system("Del /F /S /Q %LocalAppData%\\IconCache.db");
+                system("CleanMgr");
                 if(KernalVersion()>=100UL){
                     system("DISM /Online /Set-ReservedStorageState /State:Disabled");
                 }
@@ -352,7 +332,7 @@ BEGIN:
             system("Pause");
             puts("\n");
             system("ReAgentC /Enable");
-            system("Shutdown /F /R /O /T 0");
+            system("Shutdown /R /O /T 0");
             break;
         }
     }
@@ -365,6 +345,10 @@ BEGIN:
 void Start(){
 BEGIN:
     puts("| 主菜单 |\n");
+    if(Config[2]!="UNDEFINED"){
+        Config[2]+="\n\n";
+        printf("%s",Config[2].c_str());
+    }
     puts("   [?] 关于");
     puts("   [0] 重载配置");
     puts("   [1] 破解");
