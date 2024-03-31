@@ -100,9 +100,7 @@ g++ main.cpp -Ofast -Os -o main.exe -Wextra -lm -static -fexec-charset=GBK -std=
 
 ## 4 破解后一些软件运行时提示 "找不到文件" 之类的错误, 而运行的软件并没有损坏.
 
-CRCSN v3.0.0 及以后的版本会修改注册表劫持控制软件, 间接达到禁止运行的效果. 但弊端是和控制软件文件名一样的软件文件也无法运行了.
-
-在不影响软件正常运行的情况下, 可以试试给软件文件修改一个名称, 再运行试试. 实在不行就运行注册表编辑器, 定位到`HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\`, 找到和要运行的软件的文件名称相同的项, 删除即可.
+在不影响软件正常运行的情况下, 可以试试给软件文件修改一个名称, 再运行试试. 或者打开注册表编辑器, 定位到`HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\`, 找到和要运行的软件的文件名称相同的项, 删除即可.
 
 ## 5 软件目录下存在`config.ini`, 但软件提示无法读取.
 
