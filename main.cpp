@@ -3,7 +3,7 @@ void Start();
 void About(){
     puts("| 主菜单 > 关于 |\n");
     puts("   [软件名称] 机房控制软件克星 (Computer Room Control Software Nemesis)");
-    puts("   [版本信息] v4.2.0");
+    puts("   [版本信息] v4.2.1");
     puts("   [项目作者] MaxLHy0424");
     puts("   [项目仓库] https://github.com/MaxLHy0424/CRCSN\n");
     puts("   (C) 2024 MaxLHy0424, 保留所有权利.\n");
@@ -47,7 +47,7 @@ void Configurator(bool reload){
     }else{
         system("Title CRCSN");
     }
-    if(reload&&fOp.is_open()){
+    if(reload){
         puts("重载完毕.\n");
         puts("========================================\n");
         puts("按任意键返回主菜单.\n");
@@ -73,7 +73,7 @@ BEGIN:
         case '0':{
             return;
         }case '2':{
-            printf("请输入暂停时间 (毫秒, 0~5000): ");
+            printf("请输入暂停时间 (ms, 0~5000): ");
             scanf("%hu",&pauseTime);
             while(pauseTime>5000U){
                 printf("输入错误, 请重新输入 ");
@@ -104,7 +104,7 @@ BEGIN:
     if(pauseTime==0U){
         puts("禁用.\n");
     }else{
-        printf("%hu 毫秒.\n\n",pauseTime);
+        printf("启用, %hums.\n\n",pauseTime);
     }
     if(PauseOp()==false){
         system("CLS");
@@ -306,7 +306,6 @@ BEGIN:
             if(PauseOp()==true){
                 puts("\n");
                 system("Del /F /S /Q %TEMP%\\*");
-                system("Del /F /S /Q %LocalAppData%\\IconCache.db");
                 system("CleanMgr");
                 if(KernalVersion()>=100UL){
                     system("DISM /Online /Set-ReservedStorageState /State:Disabled");
@@ -322,17 +321,18 @@ BEGIN:
                 break;
             }
             for(unsigned short t{5U};;--t){
-                printf("请保存文件, %hu 秒后可重启.\r",t);
+                printf("请保存文件, %hus 后可重启.",t);
                 if(t==0U){
                     break;
                 }
                 Sleep(1000UL);
+                printf("\r");
             }
             puts("\n");
             system("Pause");
             puts("\n");
             system("ReAgentC /Enable");
-            system("Shutdown /R /O /T 0");
+            system("Shutdown /F /R /O /T 0");
             break;
         }
     }
