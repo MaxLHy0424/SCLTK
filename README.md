@@ -93,7 +93,7 @@ TaskKill /F /IM Explorer.exe #3
 ## 3 软件无法在 32 位 Windows 系统中使用.
 
 可以克隆软件仓库, 使用 MinGW 编译源代码文件. 编译命令如下:
-````batch
+````Batch
 g++ main.cpp -Ofast -Os -o main.exe -Wextra -lm -static -fexec-charset=GBK -std=c++11
 ````
 编译完毕后, 运行生成的`main.exe`, 正常使用即可.
