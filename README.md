@@ -69,7 +69,7 @@
 ````Batch
 PowerShell #1
 TaskKill /F /IM Explorer.exe #2
-Shutdown /S /T 600 #3
+Shutdown /S /T 600 && Echo 将于 10min 后关机, 按任意键取消. && Pause && Shutdown /A #3
 ````
 
 > 仅支持传统命令. 如需使用 CmdLet 命令, 可以用英文半角双引号包住命令, 并在开头加上`PowerShell `.
