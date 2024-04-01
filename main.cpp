@@ -10,7 +10,6 @@ void About(){
     puts("========================================\n");
     puts("按任意键返回.\n");
     system("Pause");
-    return;
 }
 void Configurator(bool rld){
     if(rld){
@@ -56,7 +55,6 @@ void Configurator(bool rld){
     }
 SKIP:
     fop.close();
-    return;
 }
 void Cracker(){
 BEGIN:
@@ -65,10 +63,13 @@ BEGIN:
     puts("   [1] 单次");
     puts("   [2] 循环\n");
     printf("请输入: ");
-    scanf("%s",&CODE[0]);
-    while((CODE[0]!='0'&&CODE[0]!='1'&&CODE[0]!='2')||CODE[1]!=0){
-        printf("输入错误, 请重试: ");
+    for(;;){
         scanf("%s",&CODE[0]);
+        if((CODE[0]=='0'||CODE[0]=='1'||CODE[0]=='2')&&CODE[1]==0){
+            break;
+        }else{
+            printf("输入错误, 请重试: ");
+        }
     }
     unsigned short pauseTime{};
     switch(CODE[0]){
@@ -76,10 +77,13 @@ BEGIN:
             return;
         }case '2':{
             printf("请输入暂停时间 (ms, 0~7500): ");
-            scanf("%hu",&pauseTime);
-            while(pauseTime>7500U){
-                printf("输入错误, 请重试: ");
+            for(;;){
                 scanf("%hu",&pauseTime);
+                if(pauseTime<=7500U){
+                    break;
+                }else{
+                    printf("输入错误, 请重试: ");
+                }
             }
             break;
         }
@@ -185,7 +189,6 @@ BEGIN:
     puts("========================================\n");
     puts("按任意键返回主菜单.\n");
     system("Pause");
-    return;
 }
 void Recoverer(){
     puts("| 主菜单 > 恢复 |\n");
@@ -242,7 +245,6 @@ void Recoverer(){
     puts("========================================\n");
     puts("按任意键返回主菜单.\n");
     system("Pause");
-    return;
 }
 void Toolkit(){
 BEGIN:
@@ -260,10 +262,13 @@ BEGIN:
     puts("   [2] 垃圾清理");
     puts("   [3] 高级启动\n");
     printf("请输入: ");
-    scanf("%s",&CODE[0]);
-    while((CODE[0]!='0'&&CODE[0]!='/'&&CODE[0]!='1'&&CODE[0]!='2'&&CODE[0]!='3')||CODE[1]!=0){
-        printf("输入错误, 请重试: ");
+    for(;;){
         scanf("%s",&CODE[0]);
+        if((CODE[0]=='0'||CODE[0]=='/'||CODE[0]=='1'||CODE[0]=='2'||CODE[0]=='3')&&CODE[1]==0){
+            break;
+        }else{
+            printf("输入错误, 请重试: ");
+        }
     }
     system("CLS");
     switch(CODE[0]){
@@ -353,10 +358,13 @@ BEGIN:
     puts("   [2] 恢复");
     puts("   [3] 工具箱\n");
     printf("请输入: ");
-    scanf("%s",&CODE[0]);
-    while((CODE[0]!='?'&&CODE[0]!='0'&&CODE[0]!='1'&&CODE[0]!='2'&&CODE[0]!='3')||CODE[1]!=0){
-        printf("输入错误, 请重试: ");
+    for(;;){
         scanf("%s",&CODE[0]);
+        if((CODE[0]!='?'&&CODE[0]!='0'&&CODE[0]!='1'&&CODE[0]!='2'&&CODE[0]!='3')||CODE[1]!=0){
+            break;
+        }else{
+            printf("输入错误, 请重试: ");
+        }
     }
     system("CLS");
     switch(CODE[0]){
