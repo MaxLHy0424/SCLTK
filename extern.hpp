@@ -3,8 +3,8 @@
 #include<fstream>
 #include<ShlObj.h>
 #include<windows.h>
-char Code[3];
-std::string Config[4]{"","","UNDEFINED",""};
+char CODE[3];
+std::string CONFIG[4]{"","","UNDEFINED",""};
 DWORD KernalVersion(){
 	DWORD version{GetVersion()};
 	DWORD major{(DWORD)(LOBYTE(LOWORD(version)))};
@@ -13,12 +13,12 @@ DWORD KernalVersion(){
 }
 bool PauseOp(){
 	printf("是否继续 (Y/N): ");
-	scanf("%s",&Code[1]);
-	while((Code[1]!='Y'&&Code[1]!='y'&&Code[1]!='N'&&Code[1]!='n')||Code[2]!=0){
-        printf("输入错误, 请重新输入: ");
-        scanf("%s",&Code[1]);
+	scanf("%s",&CODE[1]);
+	while((CODE[1]!='Y'&&CODE[1]!='y'&&CODE[1]!='N'&&CODE[1]!='n')||CODE[2]!=0){
+        printf("输入错误, 请重试: ");
+        scanf("%s",&CODE[1]);
     }
-	if(Code[1]=='Y'||Code[1]=='y'){
+	if(CODE[1]=='Y'||CODE[1]=='y'){
         return true;
     }
     return false;
