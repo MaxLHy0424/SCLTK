@@ -13,10 +13,13 @@ DWORD KernalVersion(){
 }
 bool PauseOp(){
 	printf("是否继续 (Y/N): ");
-	scanf("%s",&CODE[1]);
-	while((CODE[1]!='Y'&&CODE[1]!='y'&&CODE[1]!='N'&&CODE[1]!='n')||CODE[2]!=0){
-        printf("输入错误, 请重试: ");
+    for(;;){
         scanf("%s",&CODE[1]);
+        if((CODE[1]=='Y'||CODE[1]=='y'||CODE[1]=='N'||CODE[1]=='n')&&CODE[2]==0){
+            break;
+        }else{
+            printf("输入错误, 请重试: ");
+        }
     }
 	if(CODE[1]=='Y'||CODE[1]=='y'){
         return true;
