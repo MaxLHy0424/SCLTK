@@ -26,7 +26,7 @@ void Configurator(bool rld){
                 system("Title [基本会话] CRCSN");
             }
         }
-        puts("找不到 config.ini.\n");
+        puts("无法读取 config.ini.\n");
         puts("========================================\n");
         puts("按任意键继续.\n");
         system("Pause");
@@ -280,7 +280,7 @@ BEGIN:
             fop.open("config.ini",std::ios::in);
             if(!fop.is_open()){
                 fop.close();
-                puts("找不到 config.ini.");
+                puts("无法读取 config.ini.");
             }else if(CONFIG[3]=="UNDEFINED"){
                 fop.close();
                 puts("未配置此项, 请编辑配置.");
