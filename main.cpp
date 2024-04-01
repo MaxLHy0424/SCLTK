@@ -360,7 +360,7 @@ BEGIN:
     printf("请输入: ");
     for(;;){
         scanf("%s",&CODE[0]);
-        if((CODE[0]!='?'&&CODE[0]!='0'&&CODE[0]!='1'&&CODE[0]!='2'&&CODE[0]!='3')||CODE[1]!=0){
+        if((CODE[0]=='?'||CODE[0]=='0'||CODE[0]=='1'||CODE[0]=='2'||CODE[0]=='3')&&CODE[1]==0){
             break;
         }else{
             printf("输入错误, 请重试: ");
