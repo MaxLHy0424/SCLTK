@@ -12,7 +12,7 @@ DWORD KernalVersion(){
     return major*10UL+minor;
 }
 bool PauseOp(){
-	printf("是否继续 (Y/N): ");
+	printf("是否继续? (Y/N): ");
     for(;;){
         scanf("%s",&CODE[1]);
         if((CODE[1]=='Y'||CODE[1]=='y'||CODE[1]=='N'||CODE[1]=='n')&&CODE[2]==0){
