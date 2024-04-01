@@ -3,22 +3,23 @@ void Start();
 void About(){
     puts("| 主菜单 > 关于 |\n");
     puts("   [软件名称] 机房控制软件克星 (Computer Room Control Software Nemesis)");
-    puts("   [版本信息] v4.2.1");
+    puts("   [版本信息] v4.2.2");
     puts("   [项目作者] MaxLHy0424");
     puts("   [项目仓库] https://github.com/MaxLHy0424/CRCSN\n");
     puts("   (C) 2024 MaxLHy0424, 保留所有权利.\n");
     puts("========================================\n");
     puts("按任意键返回.\n");
     system("Pause");
+    return;
 }
-void Configurator(bool reload){
-    if(reload){
+void Configurator(bool rld){
+    if(rld){
         puts("| 主菜单 > 重载配置 |\n");
     }
-    std::ifstream fOp;
-    fOp.open("config.ini",std::ios::in);
-    if(!fOp.is_open()){
-        if(!reload){
+    std::ifstream fop;
+    fop.open("config.ini",std::ios::in);
+    if(!fop.is_open()){
+        if(!rld){
             system("Color 9");
             if(IsUserAnAdmin()){
                 system("Title [增强会话] CRCSN");
@@ -34,11 +35,11 @@ void Configurator(bool reload){
         goto SKIP;
     }
     for(unsigned short i{};i<4U;++i){
-        getline(fOp,Config[i]);
+        getline(fop,CONFIG[i]);
     }
-    Config[0]="Color "+Config[0];
-    system(Config[0].c_str());
-    if(Config[1]=="1"){
+    CONFIG[0]="Color "+CONFIG[0];
+    system(CONFIG[0].c_str());
+    if(CONFIG[1]=="1"){
         if(IsUserAnAdmin()){
             system("Title [增强会话] CRCSN");
         }else{
@@ -47,14 +48,15 @@ void Configurator(bool reload){
     }else{
         system("Title CRCSN");
     }
-    if(reload){
+    if(rld){
         puts("重载完毕.\n");
         puts("========================================\n");
         puts("按任意键返回主菜单.\n");
         system("Pause");
     }
 SKIP:
-    fOp.close();
+    fop.close();
+    return;
 }
 void Cracker(){
 BEGIN:
@@ -63,20 +65,20 @@ BEGIN:
     puts("   [1] 单次");
     puts("   [2] 循环\n");
     printf("请输入: ");
-    scanf("%s",&Code[0]);
-    while((Code[0]!='0'&&Code[0]!='1'&&Code[0]!='2')||Code[1]!=0){
-        printf("输入错误, 请重新输入: ");
-        scanf("%s",&Code[0]);
+    scanf("%s",&CODE[0]);
+    while((CODE[0]!='0'&&CODE[0]!='1'&&CODE[0]!='2')||CODE[1]!=0){
+        printf("输入错误, 请重试: ");
+        scanf("%s",&CODE[0]);
     }
     unsigned short pauseTime{};
-    switch(Code[0]){
+    switch(CODE[0]){
         case '0':{
             return;
         }case '2':{
-            printf("请输入暂停时间 (ms, 0~5000): ");
+            printf("请输入暂停时间 (ms, 0~7500): ");
             scanf("%hu",&pauseTime);
-            while(pauseTime>5000U){
-                printf("输入错误, 请重新输入: ");
+            while(pauseTime>7500U){
+                printf("输入错误, 请重试: ");
                 scanf("%hu",&pauseTime);
             }
             break;
@@ -85,7 +87,7 @@ BEGIN:
     system("CLS");
     puts("| 主菜单 > 破解 > 确认配置 |\n");
     printf("     [行为] ");
-    switch(Code[0]){
+    switch(CODE[0]){
         case '1':{
             puts("单次.");
             break;
@@ -174,7 +176,7 @@ BEGIN:
             system("Net Stop TDFileFilter /Y");
             system("Net Stop STUDSRV /Y");
         }
-        if(Code[0]=='1'){
+        if(CODE[0]=='1'){
             break;
         }
         puts("\n暂停中...");
@@ -183,6 +185,7 @@ BEGIN:
     puts("========================================\n");
     puts("按任意键返回主菜单.\n");
     system("Pause");
+    return;
 }
 void Recoverer(){
     puts("| 主菜单 > 恢复 |\n");
@@ -239,6 +242,7 @@ void Recoverer(){
     puts("========================================\n");
     puts("按任意键返回主菜单.\n");
     system("Pause");
+    return;
 }
 void Toolkit(){
 BEGIN:
@@ -256,40 +260,40 @@ BEGIN:
     puts("   [2] 垃圾清理");
     puts("   [3] 高级启动\n");
     printf("请输入: ");
-    scanf("%s",&Code[0]);
-    while((Code[0]!='0'&&Code[0]!='/'&&Code[0]!='1'&&Code[0]!='2'&&Code[0]!='3')||Code[1]!=0){
-        printf("输入错误, 请重新输入: ");
-        scanf("%s",&Code[0]);
+    scanf("%s",&CODE[0]);
+    while((CODE[0]!='0'&&CODE[0]!='/'&&CODE[0]!='1'&&CODE[0]!='2'&&CODE[0]!='3')||CODE[1]!=0){
+        printf("输入错误, 请重试: ");
+        scanf("%s",&CODE[0]);
     }
     system("CLS");
-    switch(Code[0]){
+    switch(CODE[0]){
         case '0':{
             return;
         }case '/':{
             puts("| 主菜单 > 工具箱 > 自定义命令 |\n");
-            std::ifstream fOp;
-            fOp.open("config.ini",std::ios::in);
-            if(!fOp.is_open()){
-                fOp.close();
+            std::ifstream fop;
+            fop.open("config.ini",std::ios::in);
+            if(!fop.is_open()){
+                fop.close();
                 puts("找不到 config.ini.");
-            }else if(Config[3]=="UNDEFINED"){
-                fOp.close();
+            }else if(CONFIG[3]=="UNDEFINED"){
+                fop.close();
                 puts("未配置此项, 请编辑配置.");
             }else{
-                fOp.close();
-                system(Config[3].c_str());
+                fop.close();
+                system(CONFIG[3].c_str());
             }
             break;
         }case '1':{
             puts("| 主菜单 > 工具箱 > 系统修复 |\n");
             printf("请输入执行次数 (0 返回): ");
-            unsigned short i{};
-            scanf("%hu",&i);
-            if(i==0U){
+            unsigned short n{};
+            scanf("%hu",&n);
+            if(n==0U){
                 system("CLS");
                 goto BEGIN;
             }
-            for(;i>0U;--i){
+            for(;n>0U;--n){
                 if(KernalVersion()>=62UL){
                     system("DISM /Online /Cleanup-Image /RestoreHealth");
                 }
@@ -340,8 +344,8 @@ BEGIN:
 void Start(){
 BEGIN:
     puts("| 主菜单 |\n");
-    if(Config[2]!="UNDEFINED"){
-        printf("%s\n\n",Config[2].c_str());
+    if(CONFIG[2]!="UNDEFINED"){
+        printf("%s\n\n",CONFIG[2].c_str());
     }
     puts("   [?] 关于");
     puts("   [0] 重载配置");
@@ -349,13 +353,13 @@ BEGIN:
     puts("   [2] 恢复");
     puts("   [3] 工具箱\n");
     printf("请输入: ");
-    scanf("%s",&Code[0]);
-    while((Code[0]!='?'&&Code[0]!='0'&&Code[0]!='1'&&Code[0]!='2'&&Code[0]!='3')||Code[1]!=0){
-        printf("输入错误, 请重新输入: ");
-        scanf("%s",&Code[0]);
+    scanf("%s",&CODE[0]);
+    while((CODE[0]!='?'&&CODE[0]!='0'&&CODE[0]!='1'&&CODE[0]!='2'&&CODE[0]!='3')||CODE[1]!=0){
+        printf("输入错误, 请重试: ");
+        scanf("%s",&CODE[0]);
     }
     system("CLS");
-    switch(Code[0]){
+    switch(CODE[0]){
         case '?':{
             About();
             break;
