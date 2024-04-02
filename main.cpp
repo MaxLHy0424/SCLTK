@@ -3,7 +3,7 @@ void Start();
 void About(){
     puts("| 主菜单 > 关于 |\n");
     puts("   [软件名称] 机房控制软件克星 (Computer Room Control Software Nemesis)");
-    puts("   [版本信息] v4.2.2");
+    puts("   [版本信息] v4.3.0");
     puts("   [项目作者] MaxLHy0424");
     puts("   [项目仓库] https://github.com/MaxLHy0424/CRCSN\n");
     puts("   (C) 2024 MaxLHy0424, 保留所有权利.\n");
@@ -15,46 +15,32 @@ void Configurator(bool rld){
     if(rld){
         puts("| 主菜单 > 重载配置 |\n");
     }
-    std::ifstream fop;
-    fop.open("config.ini",std::ios::in);
-    if(!fop.is_open()){
+    std::ifstream fOp;
+    fOp.open("cfg.ini",std::ios::in);
+    if(!fOp.is_open()){
         if(!rld){
             system("Color 9");
-            if(IsUserAnAdmin()){
-                system("Title [增强会话] CRCSN");
-            }else{
-                system("Title [基本会话] CRCSN");
-            }
         }
-        puts("无法读取 config.ini.\n");
+        puts("无法读取 cfg.ini.\n");
         puts("========================================\n");
         puts("按任意键继续.\n");
         system("Pause");
         system("CLS");
-        goto SKIP;
+        goto SKP;
     }
-    for(unsigned short i{};i<4U;++i){
-        getline(fop,CONFIG[i]);
+    for(unsigned short i{};i<3U;++i){
+        getline(fOp,CfgDat[i]);
     }
-    CONFIG[0]="Color "+CONFIG[0];
-    system(CONFIG[0].c_str());
-    if(CONFIG[1]=="1"){
-        if(IsUserAnAdmin()){
-            system("Title [增强会话] CRCSN");
-        }else{
-            system("Title [基本会话] CRCSN");
-        }
-    }else{
-        system("Title CRCSN");
-    }
+    CfgDat[0]="Color "+CfgDat[0];
+    system(CfgDat[0].c_str());
     if(rld){
         puts("重载完毕.\n");
         puts("========================================\n");
         puts("按任意键返回主菜单.\n");
         system("Pause");
     }
-SKIP:
-    fop.close();
+SKP:
+    fOp.close();
 }
 void Cracker(){
 BEGIN:
@@ -64,15 +50,15 @@ BEGIN:
     puts("   [2] 循环\n");
     printf("请输入: ");
     for(;;){
-        scanf("%s",&CODE[0]);
-        if((CODE[0]=='0'||CODE[0]=='1'||CODE[0]=='2')&&CODE[1]==0){
+        scanf("%s",&Code[0]);
+        if((Code[0]=='0'||Code[0]=='1'||Code[0]=='2')&&Code[1]==0){
             break;
         }else{
-            printf("输入错误, 请重试: ");
+            printf("输入错误, 请重新输入: ");
         }
     }
     unsigned short pauseTime{};
-    switch(CODE[0]){
+    switch(Code[0]){
         case '0':{
             return;
         }case '2':{
@@ -82,7 +68,7 @@ BEGIN:
                 if(pauseTime<=7500U){
                     break;
                 }else{
-                    printf("输入错误, 请重试: ");
+                    printf("输入错误, 请重新输入: ");
                 }
             }
             break;
@@ -91,7 +77,7 @@ BEGIN:
     system("CLS");
     puts("| 主菜单 > 破解 > 确认配置 |\n");
     printf("     [行为] ");
-    switch(CODE[0]){
+    switch(Code[0]){
         case '1':{
             puts("单次.");
             break;
@@ -121,8 +107,6 @@ BEGIN:
         system("TaskKill /F /T /IM WFBSMlogon.exe");
         system("TaskKill /F /T /IM WFBSSvrLogShow.exe");
         system("TaskKill /F /T /IM ResetIp.exe");
-        system("TaskKill /F /T /IM FuncForWIN64.exe");
-        system("TaskKill /F /T /IM CertMgr.exe");
         system("TaskKill /F /T /IM Fireware.exe");
         system("TaskKill /F /T /IM BCDBootCopy.exe");
         system("TaskKill /F /T /IM refreship.exe");
@@ -135,9 +119,7 @@ BEGIN:
         system("TaskKill /F /T /IM ProcHelper64.exe");
         system("TaskKill /F /T /IM StudentMain.exe");
         system("TaskKill /F /T /IM DispcapHelper.exe");
-        system("TaskKill /F /T /IM VRCwPlayer.exe");
         system("TaskKill /F /T /IM InstHelpApp.exe");
-        system("TaskKill /F /T /IM TDOvrSet.exe");
         system("TaskKill /F /T /IM GATESRV.exe");
         system("TaskKill /F /T /IM MasterHelper.exe");
         if(IsUserAnAdmin()){
@@ -164,6 +146,7 @@ BEGIN:
             system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DispcapHelper.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
             system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\VRCwPlayer.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
             system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\InstHelpApp.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
+            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\InstHelpApp64.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
             system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\TDOvrSet.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
             system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\GATESRV.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
             system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\MasterHelper.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
@@ -180,7 +163,7 @@ BEGIN:
             system("Net Stop TDFileFilter /Y");
             system("Net Stop STUDSRV /Y");
         }
-        if(CODE[0]=='1'){
+        if(Code[0]=='1'){
             break;
         }
         puts("\n暂停中...");
@@ -227,6 +210,7 @@ void Recoverer(){
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DispcapHelper.exe\" /F");
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\VRCwPlayer.exe\" /F");
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\InstHelpApp.exe\" /F");
+    system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\InstHelpApp64.exe\" /F");
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\TDOvrSet.exe\" /F");
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\GATESRV.exe\" /F");
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\MasterHelper.exe\" /F");
@@ -263,30 +247,30 @@ BEGIN:
     puts("   [3] 高级启动\n");
     printf("请输入: ");
     for(;;){
-        scanf("%s",&CODE[0]);
-        if((CODE[0]=='0'||CODE[0]=='/'||CODE[0]=='1'||CODE[0]=='2'||CODE[0]=='3')&&CODE[1]==0){
+        scanf("%s",&Code[0]);
+        if((Code[0]=='0'||Code[0]=='/'||Code[0]=='1'||Code[0]=='2'||Code[0]=='3')&&Code[1]==0){
             break;
         }else{
-            printf("输入错误, 请重试: ");
+            printf("输入错误, 请重新输入: ");
         }
     }
     system("CLS");
-    switch(CODE[0]){
+    switch(Code[0]){
         case '0':{
             return;
         }case '/':{
             puts("| 主菜单 > 工具箱 > 自定义命令 |\n");
-            std::ifstream fop;
-            fop.open("config.ini",std::ios::in);
-            if(!fop.is_open()){
-                fop.close();
-                puts("无法读取 config.ini.");
-            }else if(CONFIG[3]=="UNDEFINED"){
-                fop.close();
+            std::ifstream fOp;
+            fOp.open("cfg.ini",std::ios::in);
+            if(!fOp.is_open()){
+                fOp.close();
+                puts("无法读取 cfg.ini.");
+            }else if(CfgDat[3]=="UNDEFINED"){
+                fOp.close();
                 puts("未配置此项, 请编辑配置.");
             }else{
-                fop.close();
-                system(CONFIG[3].c_str());
+                fOp.close();
+                system(CfgDat[3].c_str());
             }
             break;
         }case '1':{
@@ -310,10 +294,10 @@ BEGIN:
             if(PauseOp()==true){
                 puts("\n");
                 system("Del /F /S /Q %TEMP%\\*");
-                system("CleanMgr");
                 if(KernalVersion()>=100UL){
                     system("DISM /Online /Set-ReservedStorageState /State:Disabled");
                 }
+                system("CleanMgr");
             }else{
                 goto BEGIN;
             }
@@ -349,8 +333,8 @@ BEGIN:
 void Start(){
 BEGIN:
     puts("| 主菜单 |\n");
-    if(CONFIG[2]!="UNDEFINED"){
-        printf("%s\n\n",CONFIG[2].c_str());
+    if(CfgDat[2]!="UNDEFINED"){
+        printf("%s\n\n",CfgDat[2].c_str());
     }
     puts("   [?] 关于");
     puts("   [0] 重载配置");
@@ -359,15 +343,15 @@ BEGIN:
     puts("   [3] 工具箱\n");
     printf("请输入: ");
     for(;;){
-        scanf("%s",&CODE[0]);
-        if((CODE[0]=='?'||CODE[0]=='0'||CODE[0]=='1'||CODE[0]=='2'||CODE[0]=='3')&&CODE[1]==0){
+        scanf("%s",&Code[0]);
+        if((Code[0]=='?'||Code[0]=='0'||Code[0]=='1'||Code[0]=='2'||Code[0]=='3')&&Code[1]==0){
             break;
         }else{
-            printf("输入错误, 请重试: ");
+            printf("输入错误, 请重新输入: ");
         }
     }
     system("CLS");
-    switch(CODE[0]){
+    switch(Code[0]){
         case '?':{
             About();
             break;
@@ -389,6 +373,11 @@ BEGIN:
     goto BEGIN;
 }
 int main(){
+    if(IsUserAnAdmin()){
+        system("Title [增强会话] CRCSN");
+    }else{
+        system("Title [基本会话] CRCSN");
+    }
     Configurator(false);
     Start();
 }
