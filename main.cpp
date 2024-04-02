@@ -241,14 +241,14 @@ BEGIN:
         return;
     }
     puts("   [0] 返回");
-    puts("   [/] 自定义命令");
+    puts("   [-] 自定义命令");
     puts("   [1] 系统修复");
     puts("   [2] 垃圾清理");
     puts("   [3] 高级启动\n");
     printf("请输入: ");
     for(;;){
         scanf("%s",&Code[0]);
-        if((Code[0]=='0'||Code[0]=='/'||Code[0]=='1'||Code[0]=='2'||Code[0]=='3')&&Code[1]==0){
+        if((Code[0]=='0'||Code[0]=='-'||Code[0]=='1'||Code[0]=='2'||Code[0]=='3')&&Code[1]==0){
             break;
         }else{
             printf("输入错误, 请重新输入: ");
@@ -258,7 +258,7 @@ BEGIN:
     switch(Code[0]){
         case '0':{
             return;
-        }case '/':{
+        }case '-':{
             puts("| 主菜单 > 工具箱 > 自定义命令 |\n");
             std::ifstream fOp;
             fOp.open("cfg.ini",std::ios::in);
