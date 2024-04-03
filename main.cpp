@@ -265,12 +265,12 @@ BEGIN:
             if(!fOp.is_open()){
                 fOp.close();
                 puts("无法读取 cfg.ini.");
-            }else if(CfgDat[3]=="UNDEFINED"){
+            }else if(CfgDat[2]=="UNDEFINED"){
                 fOp.close();
                 puts("未配置此项, 请编辑配置.");
             }else{
                 fOp.close();
-                system(CfgDat[3].c_str());
+                system(CfgDat[2].c_str());
             }
             break;
         }case '1':{
@@ -333,8 +333,8 @@ BEGIN:
 void Start(){
 BEGIN:
     puts("| 主菜单 |\n");
-    if(CfgDat[2]!="UNDEFINED"){
-        printf("%s\n\n",CfgDat[2].c_str());
+    if(CfgDat[1]!="UNDEFINED"){
+        printf("%s\n\n",CfgDat[1].c_str());
     }
     puts("   [?] 关于");
     puts("   [0] 重载配置");

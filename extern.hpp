@@ -4,7 +4,7 @@
 #include<ShlObj.h>
 #include<windows.h>
 char Code[3];
-std::string CfgDat[3]{"","","UNDEFINED"};
+std::string CfgDat[3]{"","UNDEFINED",""};
 DWORD KernalVersion(){
 	DWORD version{GetVersion()};
 	DWORD major{(DWORD)(LOBYTE(LOWORD(version)))};
