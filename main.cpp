@@ -3,7 +3,7 @@ void Start();
 void About(){
     puts("| 主菜单 > 关于 |\n");
     puts("   [软件名称] Computer Room Control Software Nemesis");
-    puts("   [版本信息] v4.3.0");
+    puts("   [版本信息] v4.3.1");
     puts("   [项目作者] MaxLHy0424");
     puts("   [项目仓库] https://github.com/MaxLHy0424/CRCSN\n");
     puts("   (C) 2024 MaxLHy0424, 保留所有权利.\n");
@@ -11,14 +11,14 @@ void About(){
     puts("按任意键返回.\n");
     system("Pause");
 }
-void Configurator(bool rld){
-    if(rld){
-        puts("| 主菜单 > 配置器 |\n");
+void Configurator(bool reload){
+    if(reload){
+        puts("| 主菜单 > 配置工具 |\n");
     }
     std::ifstream fs;
     fs.open("cfg.ini",std::ios::in);
     if(!fs.is_open()){
-        if(!rld){
+        if(!reload){
             system("Color 9");
         }
         puts("无法读取 cfg.ini.\n");
@@ -33,8 +33,8 @@ void Configurator(bool rld){
     }
     CfgDat[0]="Color "+CfgDat[0];
     system(CfgDat[0].c_str());
-    if(rld){
-        puts("加载配置完毕.\n");
+    if(reload){
+        puts("加载完毕.\n");
         puts("========================================\n");
         puts("按任意键返回主菜单.\n");
         system("Pause");
@@ -46,8 +46,8 @@ void Cracker(){
 BEGIN:
     puts("| 主菜单 > 破解 |\n");
     puts("   [0] 返回");
-    puts("   [1] 单次");
-    puts("   [2] 循环\n");
+    puts("   [1] 单次破解");
+    puts("   [2] 循环破解\n");
     printf("请输入: ");
     for(;;){
         scanf("%s",&Code[0]);
@@ -337,7 +337,7 @@ BEGIN:
         printf("%s\n\n",CfgDat[1].c_str());
     }
     puts("   [?] 关于");
-    puts("   [0] 配置器");
+    puts("   [0] 配置工具");
     puts("   [1] 破解");
     puts("   [2] 恢复");
     puts("   [3] 工具箱\n");
