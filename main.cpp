@@ -13,11 +13,11 @@ void About(){
 }
 void Configurator(bool rld){
     if(rld){
-        puts("| 主菜单 > 重载配置 |\n");
+        puts("| 主菜单 > 配置器 |\n");
     }
-    std::ifstream fOp;
-    fOp.open("cfg.ini",std::ios::in);
-    if(!fOp.is_open()){
+    std::ifstream fs;
+    fs.open("cfg.ini",std::ios::in);
+    if(!fs.is_open()){
         if(!rld){
             system("Color 9");
         }
@@ -29,18 +29,18 @@ void Configurator(bool rld){
         goto SKP;
     }
     for(unsigned short i{};i<3U;++i){
-        getline(fOp,CfgDat[i]);
+        getline(fs,CfgDat[i]);
     }
     CfgDat[0]="Color "+CfgDat[0];
     system(CfgDat[0].c_str());
     if(rld){
-        puts("重载完毕.\n");
+        puts("加载配置完毕.\n");
         puts("========================================\n");
         puts("按任意键返回主菜单.\n");
         system("Pause");
     }
 SKP:
-    fOp.close();
+    fs.close();
 }
 void Cracker(){
 BEGIN:
@@ -260,16 +260,16 @@ BEGIN:
             return;
         }case '-':{
             puts("| 主菜单 > 工具箱 > 自定义命令 |\n");
-            std::ifstream fOp;
-            fOp.open("cfg.ini",std::ios::in);
-            if(!fOp.is_open()){
-                fOp.close();
+            std::ifstream fs;
+            fs.open("cfg.ini",std::ios::in);
+            if(!fs.is_open()){
+                fs.close();
                 puts("无法读取 cfg.ini.");
             }else if(CfgDat[2]=="UNDEFINED"){
-                fOp.close();
+                fs.close();
                 puts("未配置此项, 请编辑配置.");
             }else{
-                fOp.close();
+                fs.close();
                 system(CfgDat[2].c_str());
             }
             break;
@@ -337,7 +337,7 @@ BEGIN:
         printf("%s\n\n",CfgDat[1].c_str());
     }
     puts("   [?] 关于");
-    puts("   [0] 重载配置");
+    puts("   [0] 配置器");
     puts("   [1] 破解");
     puts("   [2] 恢复");
     puts("   [3] 工具箱\n");
