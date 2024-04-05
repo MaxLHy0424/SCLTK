@@ -3,7 +3,7 @@ void Start();
 void About(){
     puts("| 主菜单 > 关于 |\n");
     puts("   [软件名称] Computer Room Control Software Nemesis");
-    puts("   [版本信息] v4.3.1");
+    puts("   [版本信息] v4.4.0");
     puts("   [项目作者] MaxLHy0424");
     puts("   [项目仓库] https://github.com/MaxLHy0424/CRCSN\n");
     puts("   (C) 2024 MaxLHy0424, 保留所有权利.\n");
@@ -16,12 +16,12 @@ void Configurator(bool reload){
         puts("| 主菜单 > 配置工具 |\n");
     }
     std::ifstream fs;
-    fs.open("cfg.ini",std::ios::in);
+    fs.open("dat.cfg",std::ios::in);
     if(!fs.is_open()){
         if(!reload){
             system("Color 9");
         }
-        puts("无法读取 cfg.ini.\n");
+        puts("无法读取 dat.cfg.\n");
         puts("========================================\n");
         puts("按任意键继续.\n");
         system("Pause");
@@ -62,10 +62,10 @@ BEGIN:
         case '0':{
             return;
         }case '2':{
-            printf("请输入暂停时间 (ms, 0~7500): ");
+            printf("请输入暂停时间 (ms, 0~5000): ");
             for(;;){
                 scanf("%hu",&pauseTime);
-                if(pauseTime<=7500U){
+                if(pauseTime<=5000U){
                     break;
                 }else{
                     printf("输入错误, 请重新输入: ");
@@ -97,9 +97,9 @@ BEGIN:
         system("CLS");
         goto BEGIN;
     }
+    system("CLS");
+    puts("| 主菜单 > 破解 > 确认配置 > 执行操作 |\n");
     for(;;){
-        system("CLS");
-        puts("| 主菜单 > 破解 > 确认配置 > 执行操作 |\n");
         system("TaskKill /F /T /IM vncviewer.exe");
         system("TaskKill /F /T /IM tvnserver32.exe");
         system("TaskKill /F /T /IM WfbsPnpInstall.exe");
@@ -261,10 +261,10 @@ BEGIN:
         }case '-':{
             puts("| 主菜单 > 工具箱 > 自定义命令 |\n");
             std::ifstream fs;
-            fs.open("cfg.ini",std::ios::in);
+            fs.open("dat.cfg",std::ios::in);
             if(!fs.is_open()){
                 fs.close();
-                puts("无法读取 cfg.ini.");
+                puts("无法读取 dat.cfg.");
             }else if(CfgDat[2]=="UNDEFINED"){
                 fs.close();
                 puts("未配置此项, 请编辑配置.");
@@ -294,10 +294,10 @@ BEGIN:
             if(PauseOp()==true){
                 puts("\n");
                 system("Del /F /S /Q %TEMP%\\*");
+                system("PowerCfg /H Off");
                 if(KernalVersion()>=100UL){
                     system("DISM /Online /Set-ReservedStorageState /State:Disabled");
                 }
-                system("CleanMgr");
             }else{
                 goto BEGIN;
             }
@@ -313,14 +313,14 @@ BEGIN:
                 if(t==0U){
                     break;
                 }
-                Sleep(1000UL);
+                Sleep(1000U);
                 printf("\r");
             }
             puts("\n");
             system("Pause");
             puts("\n");
             system("ReAgentC /Enable");
-            system("Shutdown /F /R /O /T 0");
+            system("Shutdown /R /O /T 0");
             break;
         }
     }
