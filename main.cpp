@@ -98,9 +98,9 @@ BEGIN:
         system("CLS");
         goto BEGIN;
     }
-    system("CLS");
-    puts("| 主菜单 > 破解 > 确认配置 > 执行操作 |\n");
     for(;;){
+        system("CLS");
+        puts("| 主菜单 > 破解 > 确认配置 > 执行操作 |\n");
         system("TaskKill /F /T /IM vncviewer.exe");
         system("TaskKill /F /T /IM tvnserver32.exe");
         system("TaskKill /F /T /IM WfbsPnpInstall.exe");
@@ -266,7 +266,7 @@ BEGIN:
             if(!fs.is_open()){
                 fs.close();
                 puts("无法读取 dat.cfg.");
-            }else if(CfgDat[2]=="UNDEFINED"){
+            }else if(CfgDat[2]=="NULL"){
                 fs.close();
                 puts("未配置此项, 请编辑配置.");
             }else{
@@ -334,7 +334,7 @@ BEGIN:
 void Start(){
 BEGIN:
     puts("| 主菜单 |\n");
-    if(CfgDat[1]!="UNDEFINED"){
+    if(CfgDat[1]!="NULL"){
         printf("%s\n\n",CfgDat[1].c_str());
     }
     puts("   [?] 关于");
