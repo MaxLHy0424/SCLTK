@@ -3,7 +3,7 @@ void Start();
 void About(){
     puts("| 主菜单 > 关于 |\n");
     puts("   [软件名称] Computer Room Control Software Nemesis");
-    puts("   [版本信息] v4.4.0");
+    puts("   [软件版本] v4.4.0");
     puts("   [项目作者] MaxLHy0424");
     puts("   [项目仓库] https://github.com/MaxLHy0424/CRCSN\n");
     puts("   (C) 2024 MaxLHy0424, 保留所有权利.\n");
@@ -11,14 +11,14 @@ void About(){
     puts("按任意键返回.\n");
     system("Pause");
 }
-void Configurator(bool reload){
-    if(reload){
+void Configurator(bool rld){
+    if(rld){
         puts("| 主菜单 > 配置工具 |\n");
     }
     std::ifstream fs;
     fs.open("dat.cfg",std::ios::in);
     if(!fs.is_open()){
-        if(!reload){
+        if(!rld){
             system("Color 9");
         }
         puts("无法读取 dat.cfg.\n");
@@ -33,7 +33,7 @@ void Configurator(bool reload){
     }
     CfgDat[0]="Color "+CfgDat[0];
     system(CfgDat[0].c_str());
-    if(reload){
+    if(rld){
         puts("加载完毕.\n");
         puts("配置文档见项目仓库 README.md.\n");
         puts("========================================\n");
@@ -94,7 +94,7 @@ BEGIN:
         puts("禁用.");
     }
     printf("     [暂停] %hums.\n\n",pauseTime);
-    if(PauseOp()==false){
+    if(PauseOp()==FALSE){
         system("CLS");
         goto BEGIN;
     }
@@ -183,7 +183,7 @@ void Recoverer(){
         system("Pause");
         return;
     }
-    if(PauseOp()==false){
+    if(PauseOp()==FALSE){
         return;
     }
     system("CLS");
@@ -292,7 +292,7 @@ BEGIN:
             break;
         }case '2':{
             puts("| 主菜单 > 工具箱 > 垃圾清理 |\n");
-            if(PauseOp()==true){
+            if(PauseOp()==TRUE){
                 puts("\n");
                 system("Del /F /S /Q %TEMP%\\*");
                 system("PowerCfg /H Off");
@@ -357,7 +357,7 @@ BEGIN:
             About();
             break;
         }case '0':{
-            Configurator(true);
+            Configurator(TRUE);
             break;
         }case '1':{
             Cracker();
@@ -379,6 +379,6 @@ int main(){
     }else{
         system("Title [基本会话] CRCSN");
     }
-    Configurator(false);
+    Configurator(FALSE);
     Start();
 }
