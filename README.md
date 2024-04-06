@@ -1,4 +1,4 @@
-![Logo](logo.png)\
+![logo](logo.png)\
 **Computer Room Control Software Nemesis: 轻松破解机房控制.**\
 *©️ 2024 MaxLHy0424, 保留所有权利.*
 
