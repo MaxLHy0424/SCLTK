@@ -3,15 +3,15 @@
 #include<fstream>
 #include<ShlObj.h>
 char Code[3]{};
-std::string CfgDat[3]{"\0","NULL","\0"};
+std::string CfgDt[3]{"\0","NULL","\0"};
 DWORD KernalVersion(){
     DWORD version{GetVersion()};
     DWORD major{(DWORD)(LOBYTE(LOWORD(version)))};
     DWORD minor{(DWORD)(HIBYTE(LOWORD(version)))};
     return major*10U+minor;
 }
-BOOL PauseOp(){
-    printf("是否继续 (Y/N): ");
+bool PauseOp(){
+    printf("是否继续? (Y/N): ");
     for(;;){
         scanf("%s",&Code[1]);
         if((Code[1]=='Y'||Code[1]=='y'||Code[1]=='N'||Code[1]=='n')&&Code[2]==0){
@@ -21,7 +21,7 @@ BOOL PauseOp(){
         }
     }
     if(Code[1]=='Y'||Code[1]=='y'){
-        return TRUE;
+        return true;
     }
-    return FALSE;
+    return false;
 }
