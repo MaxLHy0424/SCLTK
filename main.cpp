@@ -32,7 +32,7 @@ void Configurator(bool reload){
     system(CfgDat[0].c_str());
     if(reload){
         puts("加载完毕.\n");
-        puts("配置说明见项目仓库 README.md.\n");
+        puts("配置说明见项目 README.md.\n");
         puts("========================================\n");
         puts("按任意键返回主菜单.\n");
         system("Pause");
