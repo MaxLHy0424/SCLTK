@@ -3,10 +3,10 @@ void Start();
 void About(){
     puts("| 主菜单 > 关于 |\n");
     puts("   [软件名称] Computer Room Control Software Nemesis");
-    puts("   [软件版本] v4.4.1");
-    puts("   [项目作者] MaxLHy0424");
+    puts("   [软件版本] v4.4.2");
+    puts("   [项目作者] @MaxLHy0424");
     puts("   [项目仓库] https://github.com/MaxLHy0424/CRCSN\n");
-    puts("   (C) 2024 MaxLHy0424, 保留所有权利.\n");
+    puts("   (C) 2024 @MaxLHy0424, 保留所有权利.\n");
     puts("========================================\n");
     puts("按任意键返回.\n");
     system("Pause");
@@ -23,21 +23,21 @@ void Configurator(bool reload){
         puts("按任意键继续.\n");
         system("Pause");
         system("CLS");
-        goto SKP;
+        goto SKIP;
     }
     for(unsigned short i{};i<3U;++i){
-        getline(fs,CfgDt[i]);
+        getline(fs,CfgDat[i]);
     }
-    CfgDt[0]="Color "+CfgDt[0];
-    system(CfgDt[0].c_str());
+    CfgDat[0]="Color "+CfgDat[0];
+    system(CfgDat[0].c_str());
     if(reload){
         puts("加载完毕.\n");
-        puts("配置文档见项目仓库 README.md.\n");
+        puts("配置说明见项目仓库 README.md.\n");
         puts("========================================\n");
         puts("按任意键返回主菜单.\n");
         system("Pause");
     }
-SKP:
+SKIP:
     fs.close();
 }
 void Cracker(){
@@ -91,7 +91,7 @@ BEGIN:
         puts("禁用.");
     }
     printf("     [暂停] %hums.\n\n",pauseTime);
-    if(PauseOp()==false){
+    if(Confirm()==false){
         system("CLS");
         goto BEGIN;
     }
@@ -174,13 +174,13 @@ BEGIN:
 void Recoverer(){
     puts("| 主菜单 > 恢复 |\n");
     if(!IsUserAnAdmin()){
-        puts("此功能在基本会话下不可用.\n");
+        puts("基本会话下此功能不可用.\n");
         puts("========================================\n");
         puts("按任意键返回主菜单.\n");
         system("Pause");
         return;
     }
-    if(PauseOp()==false){
+    if(Confirm()==false){
         return;
     }
     system("CLS");
@@ -230,9 +230,9 @@ void Recoverer(){
 }
 void Toolkit(){
 BEGIN:
-    puts("| 主菜单 > 工具大全 |\n");
+    puts("| 主菜单 > 工具箱 |\n");
     if(!IsUserAnAdmin()){
-        puts("此功能在基本会话下不可用.\n");
+        puts("基本会话下此功能不可用.\n");
         puts("========================================\n");
         puts("按任意键返回主菜单.\n");
         system("Pause");
@@ -257,22 +257,17 @@ BEGIN:
         case '0':{
             return;
         }case '-':{
-            puts("| 主菜单 > 工具大全 > 自定义命令 |\n");
-            std::ifstream fs;
-            fs.open("dat.cfg",std::ios::in);
-            if(!fs.is_open()){
-                fs.close();
+            puts("| 主菜单 > 工具箱 > 自定义命令 |\n");
+            if(CfgDat[2]=="NONE"){
                 puts("无法读取 dat.cfg.");
-            }else if(CfgDt[2]=="NULL"){
-                fs.close();
+            }else if(CfgDat[2]=="NULL"){
                 puts("未配置此项, 请编辑配置.");
             }else{
-                fs.close();
-                system(CfgDt[2].c_str());
+                system(CfgDat[2].c_str());
             }
             break;
         }case '1':{
-            puts("| 主菜单 > 工具大全 > 系统修复 |\n");
+            puts("| 主菜单 > 工具箱 > 系统修复 |\n");
             printf("请输入执行次数 (0 返回): ");
             unsigned short n{};
             scanf("%hu",&n);
@@ -288,8 +283,8 @@ BEGIN:
             }
             break;
         }case '2':{
-            puts("| 主菜单 > 工具大全 > 垃圾清理 |\n");
-            if(PauseOp()==true){
+            puts("| 主菜单 > 工具箱 > 垃圾清理 |\n");
+            if(Confirm()==true){
                 puts("\n");
                 system("Del /F /S /Q %TEMP%\\*");
                 system("PowerCfg /H Off");
@@ -301,9 +296,9 @@ BEGIN:
             }
             break;
         }case '3':{
-            puts("| 主菜单 > 工具大全 > 高级启动 |\n");
+            puts("| 主菜单 > 工具箱 > 高级启动 |\n");
             if(KernalVersion()<62UL){
-                puts("此功能需要 Windows 8 及以上的 Windows 操作系统.\n");
+                puts("需要 Windows 8 及以上的 Windows 操作系统.\n");
                 break;
             }
             for(unsigned short t{5U};;--t){
@@ -331,14 +326,14 @@ BEGIN:
 void Start(){
 BEGIN:
     puts("| 主菜单 |\n");
-    if(CfgDt[1]!="NULL"){
-        printf("%s\n\n",CfgDt[1].c_str());
+    if(CfgDat[1]!="NULL"){
+        printf("%s\n\n",CfgDat[1].c_str());
     }
     puts("   [?] 关于");
     puts("   [0] 配置器");
     puts("   [1] 破解");
     puts("   [2] 恢复");
-    puts("   [3] 工具大全\n");
+    puts("   [3] 工具箱\n");
     printf("请输入: ");
     for(;;){
         scanf("%s",&Code[0]);
