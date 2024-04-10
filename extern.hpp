@@ -3,7 +3,7 @@
 #include<fstream>
 #include<ShlObj.h>
 char Code[3]{};
-std::string CfgDat[3]{"\0","NULL","NONE"};
+std::string CfgDat[3]{"\0","NULL","true"};
 DWORD KernalVersion(){
     DWORD version{GetVersion()};
     DWORD major{(DWORD)(LOBYTE(LOWORD(version)))};
@@ -20,9 +20,5 @@ bool Confirm(){
             printf("输入错误, 请重新输入: ");
         }
     }
-    if(Code[1]=='Y'||Code[1]=='y'){
-        return true;
-    }else{
-        return false;
-    }
+    return (Code[1]=='Y'||Code[1]=='y')?true:false;
 }
