@@ -19,5 +19,5 @@ bool Confirm(){
             printf("输入错误, 请重新输入: ");
         }
     }
-    return (Code[1]=='Y'||Code[1]=='y')?true:false;
+    return (Code[1]=='Y'||Code[1]=='y')?(true):(false);
 }
