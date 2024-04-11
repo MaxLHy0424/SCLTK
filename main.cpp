@@ -325,7 +325,7 @@ int main(){
     }
     system("Color 9");
     Configurator(false);
-    BEGIN:
+BEGIN:
     puts("| 主菜单 |\n");
     if(CfgDt[1]!="NULL"){
         printf("%s\n\n",CfgDt[1].c_str());
