@@ -1,9 +1,8 @@
 #include"extern.hpp"
-void Start();
 void About(){
     puts("| 主菜单 > 关于 |\n");
     puts("   [软件名称] Computer Room Control Software Nemesis");
-    puts("   [软件版本] v4.5.1");
+    puts("   [软件版本] v4.5.2");
     puts("   [项目作者] MaxLHy0424");
     puts("   [项目仓库] https://github.com/MaxLHy0424/CRCSN\n");
     puts("   (C) 2024 MaxLHy0424, 保留所有权利.\n");
@@ -59,10 +58,10 @@ BEGIN:
         case '0':{
             return;
         }case '2':{
-            printf("请输入暂停时间 (ms, 0~10000): ");
+            printf("请输入暂停时间 (毫秒, 0~5000): ");
             for(;;){
                 scanf("%hu",&pauseTime);
-                if(pauseTime<=10000U){
+                if(pauseTime<=5000U){
                     break;
                 }else{
                     printf("输入错误, 请重新输入: ");
@@ -89,7 +88,7 @@ BEGIN:
     }else{
         puts("禁用.");
     }
-    printf("     [暂停] %hums.\n\n",pauseTime);
+    printf("     [暂停] %hu 毫秒.\n\n",pauseTime);
     if(Confirm()==FALSE){
         system("Cls");
         goto BEGIN;
@@ -297,7 +296,7 @@ BEGIN:
                 break;
             }
             for(unsigned short t{5U};;--t){
-                printf("请保存文件, %hus 后可重启.",t);
+                printf("请保存文件, %hu 秒后可重启.",t);
                 if(t==0U){
                     break;
                 }
@@ -318,8 +317,15 @@ BEGIN:
     system("Cls");
     goto BEGIN;
 }
-void Start(){
-BEGIN:
+int main(){
+    if(IsUserAnAdmin()){
+        system("Title [增强会话] CRCSN");
+    }else{
+        system("Title [基本会话] CRCSN");
+    }
+    system("Color 9");
+    Configurator(FALSE);
+    BEGIN:
     puts("| 主菜单 |\n");
     if(CfgDt[1]!="NULL"){
         printf("%s\n\n",CfgDt[1].c_str());
@@ -359,14 +365,4 @@ BEGIN:
     }
     system("Cls");
     goto BEGIN;
-}
-int main(){
-    if(IsUserAnAdmin()){
-        system("Title [增强会话] CRCSN");
-    }else{
-        system("Title [基本会话] CRCSN");
-    }
-    system("Color 9");
-    Configurator(FALSE);
-    Start();
 }
