@@ -41,131 +41,81 @@ SKP:
 void Cracker(){
 BEGIN:
     puts("| 主菜单 > 破解 |\n");
-    puts("   [0] 返回");
-    puts("   [1] 单次");
-    puts("   [2] 循环\n");
-    printf("请输入: ");
-    for(;;){
-        scanf("%s",&Code[0]);
-        if((Code[0]=='0'||Code[0]=='1'||Code[0]=='2')&&Code[1]==0){
-            break;
-        }else{
-            printf("输入错误, 请重新输入: ");
-        }
+    printf("[高级破解] ");
+    if(IsUserAnAdmin()){
+        puts("启用.\n");
+    }else{
+        puts("禁用.\n");
     }
-    unsigned short pauseTime{};
-    switch(Code[0]){
-        case '0':{
-            return;
-        }case '2':{
-            printf("请输入暂停时间 (ms, 0~5000): ");
-            for(;;){
-                scanf("%hu",&pauseTime);
-                if(pauseTime<=5000U){
-                    break;
-                }else{
-                    printf("输入错误, 请重新输入: ");
-                }
-            }
-            break;
-        }
+    if(Confirm()==false){
+        return;
     }
     system("Cls");
-    puts("| 主菜单 > 破解 > 确认配置 |\n");
-    printf("     [行为] ");
-    switch(Code[0]){
-        case '1':{
-            puts("单次.");
-            break;
-        }case '2':{
-            puts("循环.");
-            break;
-        }
-    }
-    printf(" [高级破解] ");
+    puts("| 主菜单 > 破解 > 确认配置 > 执行操作 |\n");
+    system("TaskKill /F /T /IM vncviewer.exe");
+    system("TaskKill /F /T /IM tvnserver32.exe");
+    system("TaskKill /F /T /IM WfbsPnpInstall.exe");
+    system("TaskKill /F /T /IM WFBSMon.exe");
+    system("TaskKill /F /T /IM WFBSMlogon.exe");
+    system("TaskKill /F /T /IM WFBSSvrLogShow.exe");
+    system("TaskKill /F /T /IM ResetIp.exe");
+    system("TaskKill /F /T /IM Fireware.exe");
+    system("TaskKill /F /T /IM BCDBootCopy.exe");
+    system("TaskKill /F /T /IM refreship.exe");
+    system("TaskKill /F /T /IM LenovoLockScreen.exe");
+    system("TaskKill /F /T /IM PortControl64.exe");
+    system("TaskKill /F /T /IM DesktopCheck.exe");
+    system("TaskKill /F /T /IM DeploymentManager.exe");
+    system("TaskKill /F /T /IM DeploymentAgent.exe");
+    system("TaskKill /F /T /IM XYNTService.exe");
+    system("TaskKill /F /T /IM ProcHelper64.exe");
+    system("TaskKill /F /T /IM StudentMain.exe");
+    system("TaskKill /F /T /IM DispcapHelper.exe");
+    system("TaskKill /F /T /IM InstHelpApp.exe");
+    system("TaskKill /F /T /IM GATESRV.exe");
+    system("TaskKill /F /T /IM MasterHelper.exe");
     if(IsUserAnAdmin()){
-        puts("启用.");
-    }else{
-        puts("禁用.");
-    }
-    printf("     [暂停] %hums.\n\n",pauseTime);
-    if(Confirm()==false){
-        system("Cls");
-        goto BEGIN;
-    }
-    for(;;){
-        system("Cls");
-        puts("| 主菜单 > 破解 > 确认配置 > 执行操作 |\n");
-        system("TaskKill /F /T /IM vncviewer.exe");
-        system("TaskKill /F /T /IM tvnserver32.exe");
-        system("TaskKill /F /T /IM WfbsPnpInstall.exe");
-        system("TaskKill /F /T /IM WFBSMon.exe");
-        system("TaskKill /F /T /IM WFBSMlogon.exe");
-        system("TaskKill /F /T /IM WFBSSvrLogShow.exe");
-        system("TaskKill /F /T /IM ResetIp.exe");
-        system("TaskKill /F /T /IM Fireware.exe");
-        system("TaskKill /F /T /IM BCDBootCopy.exe");
-        system("TaskKill /F /T /IM refreship.exe");
-        system("TaskKill /F /T /IM LenovoLockScreen.exe");
-        system("TaskKill /F /T /IM PortControl64.exe");
-        system("TaskKill /F /T /IM DesktopCheck.exe");
-        system("TaskKill /F /T /IM DeploymentManager.exe");
-        system("TaskKill /F /T /IM DeploymentAgent.exe");
-        system("TaskKill /F /T /IM XYNTService.exe");
-        system("TaskKill /F /T /IM ProcHelper64.exe");
-        system("TaskKill /F /T /IM StudentMain.exe");
-        system("TaskKill /F /T /IM DispcapHelper.exe");
-        system("TaskKill /F /T /IM InstHelpApp.exe");
-        system("TaskKill /F /T /IM GATESRV.exe");
-        system("TaskKill /F /T /IM MasterHelper.exe");
-        if(IsUserAnAdmin()){
-            if(CfgDt[2]=="true"){
-                system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\vncviewer.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
-                system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\tvnserver32.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
-                system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\WfbsPnpInstall.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
-                system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\WFBSMon.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
-                system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\WFBSMlogon.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
-                system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\WFBSSvrLogShow.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
-                system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\ResetIp.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
-                system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\FuncForWIN64.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
-                system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\CertMgr.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
-                system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\Fireware.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
-                system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\BCDBootCopy.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
-                system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\refreship.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
-                system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\LenovoLockScreen.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
-                system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\PortControl64.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
-                system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DesktopCheck.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
-                system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DeploymentManager.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
-                system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DeploymentAgent.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
-                system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\XYNTService.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
-                system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\ProcHelper64.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
-                system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\StudentMain.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
-                system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DispcapHelper.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
-                system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\VRCwPlayer.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
-                system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\InstHelpApp.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
-                system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\InstHelpApp64.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
-                system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\TDOvrSet.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
-                system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\GATESRV.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
-                system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\MasterHelper.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
-            }
-            system("SC Config tvnserver Start= Disabled");
-            system("SC Config BSAgentSvr Start= Disabled");
-            system("SC Config WFBSMlogon Start= Disabled");
-            system("SC Config TDNetFilter Start= Disabled");
-            system("SC Config TDFileFilter Start= Disabled");
-            system("SC Config STUDSRV Start= Disabled");
-            system("Net Stop tvnserver /Y");
-            system("Net Stop BSAgentSvr /Y");
-            system("Net Stop WFBSMlogon /Y");
-            system("Net Stop TDNetFilter /Y");
-            system("Net Stop TDFileFilter /Y");
-            system("Net Stop STUDSRV /Y");
+        if(CfgDt[2]=="true"){
+            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\vncviewer.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
+            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\tvnserver32.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
+            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\WfbsPnpInstall.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
+            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\WFBSMon.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
+            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\WFBSMlogon.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
+            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\WFBSSvrLogShow.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
+            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\ResetIp.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
+            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\FuncForWIN64.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
+            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\CertMgr.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
+            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\Fireware.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
+            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\BCDBootCopy.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
+            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\refreship.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
+            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\LenovoLockScreen.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
+            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\PortControl64.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
+            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DesktopCheck.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
+            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DeploymentManager.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
+            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DeploymentAgent.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
+            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\XYNTService.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
+            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\ProcHelper64.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
+            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\StudentMain.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
+            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DispcapHelper.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
+            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\VRCwPlayer.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
+            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\InstHelpApp.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
+            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\InstHelpApp64.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
+            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\TDOvrSet.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
+            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\GATESRV.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
+            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\MasterHelper.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
         }
-        if(Code[0]=='1'){
-            break;
-        }
-        puts("\n暂停中...");
-        Sleep(pauseTime);
+        system("SC Config tvnserver Start= Disabled");
+        system("SC Config BSAgentSvr Start= Disabled");
+        system("SC Config WFBSMlogon Start= Disabled");
+        system("SC Config TDNetFilter Start= Disabled");
+        system("SC Config TDFileFilter Start= Disabled");
+        system("SC Config STUDSRV Start= Disabled");
+        system("Net Stop tvnserver /Y");
+        system("Net Stop BSAgentSvr /Y");
+        system("Net Stop WFBSMlogon /Y");
+        system("Net Stop TDNetFilter /Y");
+        system("Net Stop TDFileFilter /Y");
+        system("Net Stop STUDSRV /Y");
     }
     puts("========================================\n");
     puts("按任意键返回主菜单.\n");
