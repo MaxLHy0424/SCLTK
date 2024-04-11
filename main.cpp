@@ -10,7 +10,7 @@ void About(){
     puts("按任意键返回.\n");
     system("Pause");
 }
-void Configurator(BOOL rld){
+void Configurator(bool rld){
     if(rld){
         puts("| 主菜单 > 配置工具 |\n");
     }
@@ -58,7 +58,7 @@ BEGIN:
         case '0':{
             return;
         }case '2':{
-            printf("请输入暂停时间 (毫秒, 0~5000): ");
+            printf("请输入暂停时间 (ms, 0~5000): ");
             for(;;){
                 scanf("%hu",&pauseTime);
                 if(pauseTime<=5000U){
@@ -88,8 +88,8 @@ BEGIN:
     }else{
         puts("禁用.");
     }
-    printf("     [暂停] %hu 毫秒.\n\n",pauseTime);
-    if(Confirm()==FALSE){
+    printf("     [暂停] %hums.\n\n",pauseTime);
+    if(Confirm()==false){
         system("Cls");
         goto BEGIN;
     }
@@ -180,7 +180,7 @@ void Recoverer(){
         system("Pause");
         return;
     }
-    if(Confirm()==FALSE){
+    if(Confirm()==false){
         return;
     }
     system("Cls");
@@ -279,7 +279,7 @@ BEGIN:
             break;
         }case '2':{
             puts("| 主菜单 > 工具箱 > 垃圾清理 |\n");
-            if(Confirm()==TRUE){
+            if(Confirm()==true){
                 puts("\n");
                 system("Del /F /S /Q %TEMP%\\*");
                 if(KernalVersion()>=100UL){
@@ -296,11 +296,11 @@ BEGIN:
                 break;
             }
             for(unsigned short t{5U};;--t){
-                printf("请保存文件, %hu 秒后可重启.",t);
+                printf("请保存文件, %hus 后可重启.",t);
                 if(t==0U){
                     break;
                 }
-                Sleep(1000U);
+                Sleep(1000UL);
                 printf("\r");
             }
             puts("\n");
@@ -324,7 +324,7 @@ int main(){
         system("Title [基本会话] CRCSN");
     }
     system("Color 9");
-    Configurator(FALSE);
+    Configurator(false);
     BEGIN:
     puts("| 主菜单 |\n");
     if(CfgDt[1]!="NULL"){
@@ -350,7 +350,7 @@ int main(){
             About();
             break;
         }case '0':{
-            Configurator(TRUE);
+            Configurator(true);
             break;
         }case '1':{
             Cracker();
