@@ -4,7 +4,7 @@
 
 # 使用方式
 
-> 适用于 v4.5.2 及以上版本.
+> 适用于 v4.5.3 及以上版本.
 
 **CRCSN 涉及到修改注册表等操作, 使用时建议关闭防病毒软件. 如果 CRCSN 被报为恶意软件, 请添加排除项.**
 
@@ -46,7 +46,7 @@
 ````Markdown
 1. 欢迎使用 CRCSN!
 2. 夏莱的老师, 是来破解控制, 启动什亭之匣吗?
-3. 勇者, 愿 "光" 与你同在!
+3. 勇者, 愿 CRCSN 与你同在.
 ````
 
 ### 3-3 应用注册表劫持
@@ -71,7 +71,7 @@
 
 ## 2 运行软件时控制台总是输出 "命令提示符已被管理员禁用", 无法正常使用.
 
-可以试试运行注册表编辑器, 定位到`HKEY_CURRENT_USER\Software\Policies\Microsoft\Windows\System`下, 看看有没有一个叫`DisableCMD`的`DWORD`值, 有的话就删掉, 再运行试试.
+可以试试运行注册表编辑器, 定位到`HKEY_CURRENT_USER\Software\Policies\Microsoft\Windows\System`下, 看看有没有一个叫`DisableCMD`的 DWORD 值, 有的话就删掉, 再运行试试.
 
 ## 3 软件无法在 32 位 Windows 系统中使用.
 
