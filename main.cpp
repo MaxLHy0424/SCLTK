@@ -2,7 +2,7 @@
 void About(){
     puts("| 主菜单 > 关于 |\n");
     puts("   [软件名称] Computer Room Control Software Nemesis");
-    puts("   [软件版本] v4.5.2");
+    puts("   [软件版本] v4.5.3");
     puts("   [项目作者] MaxLHy0424");
     puts("   [项目仓库] https://github.com/MaxLHy0424/CRCSN\n");
     puts("   (C) 2024 MaxLHy0424, 保留所有权利.\n");
@@ -10,8 +10,8 @@ void About(){
     puts("按任意键返回.\n");
     system("Pause");
 }
-void Configurator(bool rld){
-    if(rld){
+void Configurator(bool reload){
+    if(reload){
         puts("| 主菜单 > 配置工具 |\n");
     }
     std::ifstream fs;
@@ -21,15 +21,15 @@ void Configurator(bool rld){
         puts("========================================\n");
         puts("按任意键继续.\n");
         system("Pause");
-        system("Cls");
+        system("CLS");
         goto SKP;
     }
     for(unsigned short i{};i<3U;++i){
-        getline(fs,CfgDt[i]);
+        getline(fs,CfgDat[i]);
     }
-    CfgDt[0]="Color "+CfgDt[0];
-    system(CfgDt[0].c_str());
-    if(rld){
+    CfgDat[0]="Color "+CfgDat[0];
+    system(CfgDat[0].c_str());
+    if(reload){
         puts("加载完毕.\n");
         puts("========================================\n");
         puts("按任意键返回主菜单.\n");
@@ -50,8 +50,8 @@ BEGIN:
     if(Confirm()==false){
         return;
     }
-    system("Cls");
-    puts("| 主菜单 > 破解 > 确认配置 > 执行操作 |\n");
+    system("CLS");
+    puts("| 主菜单 > 破解 > 执行操作 |\n");
     system("TaskKill /F /T /IM vncviewer.exe");
     system("TaskKill /F /T /IM tvnserver32.exe");
     system("TaskKill /F /T /IM WfbsPnpInstall.exe");
@@ -75,7 +75,7 @@ BEGIN:
     system("TaskKill /F /T /IM GATESRV.exe");
     system("TaskKill /F /T /IM MasterHelper.exe");
     if(IsUserAnAdmin()){
-        if(CfgDt[2]=="true"){
+        if(CfgDat[2]=="true"){
             system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\vncviewer.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
             system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\tvnserver32.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
             system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\WfbsPnpInstall.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
@@ -104,12 +104,6 @@ BEGIN:
             system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\GATESRV.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
             system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\MasterHelper.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
         }
-        system("SC Config tvnserver Start= Disabled");
-        system("SC Config BSAgentSvr Start= Disabled");
-        system("SC Config WFBSMlogon Start= Disabled");
-        system("SC Config TDNetFilter Start= Disabled");
-        system("SC Config TDFileFilter Start= Disabled");
-        system("SC Config STUDSRV Start= Disabled");
         system("Net Stop tvnserver /Y");
         system("Net Stop BSAgentSvr /Y");
         system("Net Stop WFBSMlogon /Y");
@@ -133,7 +127,7 @@ void Recoverer(){
     if(Confirm()==false){
         return;
     }
-    system("Cls");
+    system("CLS");
     puts("| 主菜单 > 恢复 > 执行操作 |\n");
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\vncviewer.exe\" /F");
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\tvnserver32.exe\" /F");
@@ -162,12 +156,6 @@ void Recoverer(){
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\TDOvrSet.exe\" /F");
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\GATESRV.exe\" /F");
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\MasterHelper.exe\" /F");
-    system("SC Config tvnserver Start= Auto");
-    system("SC Config BSAgentSvr Start= Auto");
-    system("SC Config WFBSMlogon Start= Auto");
-    system("SC Config TDNetFilter Start= Auto");
-    system("SC Config TDFileFilter Start= Auto");
-    system("SC Config STUDSRV Start= Auto");
     system("Net Start tvnserver");
     system("Net Start BSAgentSvr");
     system("Net Start WFBSMlogon");
@@ -198,17 +186,16 @@ BEGIN:
         scanf("%s",&Code[0]);
         if((Code[0]=='0'||Code[0]=='$'||Code[0]=='1'||Code[0]=='2'||Code[0]=='3')&&Code[1]==0){
             break;
-        }else{
-            printf("输入错误, 请重新输入: ");
         }
+        printf("输入错误, 请重新输入: ");
     }
-    system("Cls");
+    system("CLS");
     switch(Code[0]){
         case '0':{
             return;
         }case '$':{
             puts("| 主菜单 > 工具箱 > 命令提示符 |\n");
-            puts("输入 \"Exit\" 退出命令提示符.\n");
+            puts("输入 \"Exit\" 退出.\n");
             system("Cmd");
             break;
         }case '1':{
@@ -217,7 +204,7 @@ BEGIN:
             unsigned short n{};
             scanf("%hu",&n);
             if(n==0U){
-                system("Cls");
+                system("CLS");
                 goto BEGIN;
             }
             for(;n>0U;--n){
@@ -257,14 +244,14 @@ BEGIN:
             system("Pause");
             puts("\n");
             system("ReAgentC /Enable");
-            system("Shutdown /R /O /T 0");
+            system("Shutdown /F /R /O /T 0");
             break;
         }
     }
     puts("\n========================================\n");
     puts("按任意键返回.\n");
     system("Pause");
-    system("Cls");
+    system("CLS");
     goto BEGIN;
 }
 int main(){
@@ -277,8 +264,8 @@ int main(){
     Configurator(false);
 BEGIN:
     puts("| 主菜单 |\n");
-    if(CfgDt[1]!="NULL"){
-        printf("%s\n\n",CfgDt[1].c_str());
+    if(CfgDat[1]!="NULL"){
+        printf("%s\n\n",CfgDat[1].c_str());
     }
     puts("   [?] 关于");
     puts("   [0] 配置工具");
@@ -290,11 +277,10 @@ BEGIN:
         scanf("%s",&Code[0]);
         if((Code[0]=='?'||Code[0]=='0'||Code[0]=='1'||Code[0]=='2'||Code[0]=='3')&&Code[1]==0){
             break;
-        }else{
-            printf("输入错误, 请重新输入: ");
         }
+        printf("输入错误, 请重新输入: ");
     }
-    system("Cls");
+    system("CLS");
     switch(Code[0]){
         case '?':{
             About();
@@ -313,6 +299,6 @@ BEGIN:
             break;
         }
     }
-    system("Cls");
+    system("CLS");
     goto BEGIN;
 }
