@@ -2,7 +2,6 @@
 #include<stdio.h>
 #include<fstream>
 #include<ShlObj.h>
-#include<thread>
 char Code[3]{};
 std::string CfgDat[3]{"\0","UNDEFINED","0"};
 DWORD KernalVersion(){
