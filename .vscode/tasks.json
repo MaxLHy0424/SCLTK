@@ -6,11 +6,11 @@
             "type": "shell",
             "command": "g++",
             "args": [
-                "\"main.cpp\"",
+                "main.cpp",
                 "-Ofast",
                 "-Os",
                 "-o",
-                "\".\\bin\\main.exe\"",
+                ".\\bin\\main.exe",
                 "-g",
                 "-Wextra",
                 "-lm",
