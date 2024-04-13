@@ -30,8 +30,7 @@ void Configurator(bool reload){
     CfgDat[0]="Color "+CfgDat[0];
     system(CfgDat[0].c_str());
     if(CfgDat[2]=="1"){
-        OnForceShow(::GetForegroundWindow());
-        //::SetWindowPos(::GetForegroundWindow(),HWND_TOPMOST,0,0,100,100,SWP_NOMOVE|SWP_NOSIZE);
+        ::SetWindowPos(::GetForegroundWindow(),HWND_TOPMOST,0,0,100,100,SWP_NOMOVE|SWP_NOSIZE);
     }else{
         ::SetWindowPos(::GetForegroundWindow(),HWND_NOTOPMOST,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE);
     }
@@ -108,6 +107,14 @@ BEGIN:
         system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\TDOvrSet.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
         system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\GATESRV.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
         system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\MasterHelper.exe\" /T REG_SZ /V debugger /D \"BLOCK\" /F");
+        if(CfgDat[2]=="1"){
+            system("SC Config tvnserver Start= Disable");
+            system("SC Config BSAgentSvr Start= Disable");
+            system("SC Config WFBSMlogon Start= Disable");
+            system("SC Config TDNetFilter Start= Disable");
+            system("SC Config TDFileFilter Start= Disable");
+            system("SC Config STUDSRV Start= Disable");
+        }
         system("Net Stop tvnserver /Y");
         system("Net Stop BSAgentSvr /Y");
         system("Net Stop WFBSMlogon /Y");
@@ -160,6 +167,14 @@ void Recoverer(){
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\TDOvrSet.exe\" /F");
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\GATESRV.exe\" /F");
     system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\MasterHelper.exe\" /F");
+    if(CfgDat[2]=="1"){
+        system("SC Config tvnserver Start= Disable");
+        system("SC Config BSAgentSvr Start= Disable");
+        system("SC Config WFBSMlogon Start= Disable");
+        system("SC Config TDNetFilter Start= Disable");
+        system("SC Config TDFileFilter Start= Disable");
+        system("SC Config STUDSRV Start= Disable");
+    }
     system("Net Start tvnserver");
     system("Net Start BSAgentSvr");
     system("Net Start WFBSMlogon");
@@ -268,7 +283,7 @@ int main(){
     Configurator(false);
 BEGIN:
     puts("| 主菜单 |\n");
-    if(CfgDat[1]!="NUL"){
+    if(CfgDat[1]!="UNDEFINED"){
         printf("%s\n\n",CfgDat[1].c_str());
     }
     puts("   [?] 关于");
