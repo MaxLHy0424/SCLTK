@@ -21,7 +21,7 @@ bool Confirm(){
     }
     return (Code[1]=='Y'||Code[1]=='y')?(true):(false);
 }
-void OnForceShow(HWND hWnd){
+void OnForceShow(HWND Wnd){
     for(;;){
         if(CfgDat[2]!="1"){
             return;
@@ -30,10 +30,10 @@ void OnForceShow(HWND hWnd){
 	    DWORD ForeID{::GetWindowThreadProcessId(ForeWnd, NULL)};
 	    DWORD CurID{::GetCurrentThreadId()};
 	    ::AttachThreadInput(CurID,ForeID,TRUE);
-	    ::ShowWindow(hWnd,SW_SHOWNORMAL);
-	    ::SetWindowPos(hWnd,HWND_TOPMOST,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE);
-	    ::SetWindowPos(hWnd,HWND_NOTOPMOST,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE);
-	    ::SetForegroundWindow(hWnd);
+	    ::ShowWindow(Wnd,SW_SHOWNORMAL);
+	    ::SetWindowPos(Wnd,HWND_TOPMOST,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE);
+	    ::SetWindowPos(Wnd,HWND_NOTOPMOST,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE);
+	    ::SetForegroundWindow(Wnd);
 	    ::AttachThreadInput(CurID,ForeID,FALSE);
         ::SetWindowPos(::GetForegroundWindow(),HWND_TOPMOST,0,0,100,100,SWP_NOMOVE|SWP_NOSIZE);
         Sleep(500);
