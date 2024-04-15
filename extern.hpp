@@ -26,16 +26,15 @@ void OnForceShow(HWND Wnd){
         if(CfgDat[2]!="1"){
             return;
         }
-	    HWND ForeWnd{::GetForegroundWindow()};
-	    DWORD ForeID{::GetWindowThreadProcessId(ForeWnd, NULL)};
-	    DWORD CurID{::GetCurrentThreadId()};
-	    ::AttachThreadInput(CurID,ForeID,TRUE);
-	    ::ShowWindow(Wnd,SW_SHOWNORMAL);
-	    ::SetWindowPos(Wnd,HWND_TOPMOST,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE);
-	    ::SetWindowPos(Wnd,HWND_NOTOPMOST,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE);
-	    ::SetForegroundWindow(Wnd);
-	    ::AttachThreadInput(CurID,ForeID,FALSE);
-        ::SetWindowPos(::GetForegroundWindow(),HWND_TOPMOST,0,0,100,100,SWP_NOMOVE|SWP_NOSIZE);
-        Sleep(500);
+        DWORD ForeID{GetWindowThreadProcessId(Wnd,NULL)};
+	    DWORD CurID{GetCurrentThreadId()};
+	    AttachThreadInput(CurID,ForeID,TRUE);
+	    ShowWindow(Wnd,SW_SHOWNORMAL);
+	    SetWindowPos(Wnd,HWND_TOPMOST,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE);
+	    SetWindowPos(Wnd,HWND_NOTOPMOST,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE);
+	    SetForegroundWindow(Wnd);
+	    AttachThreadInput(CurID,ForeID,FALSE);
+        SetWindowPos(Wnd,HWND_TOPMOST,0,0,100,100,SWP_NOMOVE|SWP_NOSIZE);
+        Sleep(750);
     }
 }

@@ -2,7 +2,7 @@
 void About(){
     puts("| 主菜单 > 关于 |\n");
     puts("   [软件名称] Computer Room Control Software Nemesis");
-    puts("   [软件版本] v4.6.1");
+    puts("   [软件版本] v4.6.2");
     puts("   [项目作者] MaxLHy0424");
     puts("   [项目仓库] https://github.com/MaxLHy0424/CRCSN\n");
     puts("   (C) 2024 MaxLHy0424, 保留所有权利.\n");
@@ -30,10 +30,9 @@ void Configurator(bool reload){
     CfgDat[0]="Color "+CfgDat[0];
     system(CfgDat[0].c_str());
     if(CfgDat[2]=="1"){
-        std::thread OFSProc(OnForceShow,::GetForegroundWindow());
-        OFSProc.detach();
+        std::thread(OnForceShow,GetForegroundWindow()).detach();
     }else{
-        ::SetWindowPos(::GetForegroundWindow(),HWND_NOTOPMOST,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE);
+        SetWindowPos(GetForegroundWindow(),HWND_NOTOPMOST,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE);
     }
     if(reload){
         puts("重载完毕.\n");
@@ -47,12 +46,7 @@ SKP:
 void Cracker(){
 BEGIN:
     puts("| 主菜单 > 破解 |\n");
-    printf("[高级破解] ");
-    if(IsUserAnAdmin()){
-        puts("启用.\n");
-    }else{
-        puts("禁用.\n");
-    }
+    printf("[高级破解] %s\n\n",((IsUserAnAdmin())?("启用."):("禁用.")));
     if(Confirm()==false){
         return;
     }
