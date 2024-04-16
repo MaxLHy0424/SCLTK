@@ -29,15 +29,17 @@ void Configurator(bool reload){
     }
     CfgDat[0]="Color "+CfgDat[0];
     system(CfgDat[0].c_str());
-    if(CfgDat[2]=="1"){
-        std::thread(OnForceShow).detach();
-    }else{
-        SetWindowPos(GetForegroundWindow(),HWND_NOTOPMOST,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE);
+    static bool FSRunning{false};
+    if(CfgDat[2]=="1"&&FSRunning==false){
+        FSRunning=true;
+        std::thread(ForceShow).detach();
+    }else if(CfgDat[2]!="1"){
+        FSRunning=false;
     }
     if(reload){
         puts("重载完毕.\n");
         puts("========================================\n");
-        puts("按任意键返回主菜单.\n");
+        puts("按任意键返回.\n");
         system("Pause");
     }
 SKP:
@@ -118,7 +120,7 @@ void Recoverer(){
     if(!IsUserAnAdmin()){
         puts("基本会话下此功能不可用.\n");
         puts("========================================\n");
-        puts("按任意键返回主菜单.\n");
+        puts("按任意键返回.\n");
         system("Pause");
         return;
     }
@@ -170,7 +172,7 @@ BEGIN:
     if(!IsUserAnAdmin()){
         puts("基本会话下此功能不可用.\n");
         puts("========================================\n");
-        puts("按任意键返回主菜单.\n");
+        puts("按任意键返回.\n");
         system("Pause");
         return;
     }
@@ -230,7 +232,6 @@ BEGIN:
                 puts("需要 Windows 8 及以上的 Windows 操作系统.\n");
                 break;
             }
-            puts("继续将重启此计算机.\n");
             if(Confirm()==false){
                 break;
             }
