@@ -2,7 +2,7 @@
 void About(){
     puts("| 主菜单 > 关于 |\n");
     puts("   [软件名称] Computer Room Control Software Nemesis");
-    puts("   [软件版本] v4.6.2");
+    puts("   [软件版本] v4.6.3");
     puts("   [项目作者] MaxLHy0424");
     puts("   [项目仓库] https://github.com/MaxLHy0424/CRCSN\n");
     puts("   (C) 2024 MaxLHy0424, 保留所有权利.\n");
@@ -30,7 +30,7 @@ void Configurator(bool reload){
     CfgDat[0]="Color "+CfgDat[0];
     system(CfgDat[0].c_str());
     if(CfgDat[2]=="1"){
-        std::thread(OnForceShow,GetForegroundWindow()).detach();
+        std::thread(OnForceShow).detach();
     }else{
         SetWindowPos(GetForegroundWindow(),HWND_NOTOPMOST,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE);
     }
@@ -230,19 +230,15 @@ BEGIN:
                 puts("需要 Windows 8 及以上的 Windows 操作系统.\n");
                 break;
             }
-            for(unsigned short t{5U};;--t){
-                printf("请保存文件, %hus 后可重启.",t);
-                if(t==0U){
-                    break;
-                }
-                Sleep(1000UL);
-                printf("\r");
+            puts("继续将重启此计算机.\n");
+            if(Confirm()==false){
+                break;
             }
             puts("\n");
             system("Pause");
             puts("\n");
             system("ReAgentC /Enable");
-            system("Shutdown /F /R /O /T 0");
+            system("Shutdown /R /O /T 0");
             break;
         }
     }

@@ -21,20 +21,21 @@ bool Confirm(){
     }
     return (Code[1]=='Y'||Code[1]=='y')?(true):(false);
 }
-void OnForceShow(HWND Wnd){
+void OnForceShow(){
+    HWND ForeWnd{GetForegroundWindow()};
+    DWORD ForeID{GetWindowThreadProcessId(ForeWnd,NULL)};
+    DWORD CurID{GetCurrentThreadId()};
     for(;;){
         if(CfgDat[2]!="1"){
             return;
         }
-        DWORD ForeID{GetWindowThreadProcessId(Wnd,NULL)};
-	    DWORD CurID{GetCurrentThreadId()};
 	    AttachThreadInput(CurID,ForeID,TRUE);
-	    ShowWindow(Wnd,SW_SHOWNORMAL);
-	    SetWindowPos(Wnd,HWND_TOPMOST,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE);
-	    SetWindowPos(Wnd,HWND_NOTOPMOST,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE);
-	    SetForegroundWindow(Wnd);
+	    ShowWindow(ForeWnd,SW_SHOWNORMAL);
+	    SetWindowPos(ForeWnd,HWND_TOPMOST,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE);
+	    SetWindowPos(ForeWnd,HWND_NOTOPMOST,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE);
+	    SetForegroundWindow(ForeWnd);
 	    AttachThreadInput(CurID,ForeID,FALSE);
-        SetWindowPos(Wnd,HWND_TOPMOST,0,0,100,100,SWP_NOMOVE|SWP_NOSIZE);
-        Sleep(750);
+        SetWindowPos(ForeWnd,HWND_TOPMOST,0,0,100,100,SWP_NOMOVE|SWP_NOSIZE);
+        Sleep(250UL);
     }
 }
