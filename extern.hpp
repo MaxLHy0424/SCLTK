@@ -1,8 +1,8 @@
 #pragma once
 #include<stdio.h>
 #include<fstream>
-#include<thread>
 #include<ShlObj.h>
+#include<thread>
 char Code[3]{};
 std::string CfgDat[3]{"\0","UNDEFINED","0"};
 DWORD KernalVersion(){
@@ -21,21 +21,22 @@ bool Confirm(){
     }
     return (Code[1]=='Y'||Code[1]=='y')?(true):(false);
 }
-void OnForceShow(){
+void ForceShow(){
     HWND ForeWnd{GetForegroundWindow()};
     DWORD ForeID{GetWindowThreadProcessId(ForeWnd,NULL)};
     DWORD CurID{GetCurrentThreadId()};
     for(;;){
+        AttachThreadInput(CurID,ForeID,TRUE);
+        ShowWindow(ForeWnd,SW_SHOWNORMAL);
+        SetWindowPos(ForeWnd,HWND_TOPMOST,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE);
+        SetWindowPos(ForeWnd,HWND_NOTOPMOST,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE);
+        SetForegroundWindow(ForeWnd);
+        AttachThreadInput(CurID,ForeID,FALSE);
+        SetWindowPos(ForeWnd,HWND_TOPMOST,0,0,100,100,SWP_NOMOVE|SWP_NOSIZE);
         if(CfgDat[2]!="1"){
+            SetWindowPos(ForeWnd,HWND_NOTOPMOST,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE);
             return;
         }
-	    AttachThreadInput(CurID,ForeID,TRUE);
-	    ShowWindow(ForeWnd,SW_SHOWNORMAL);
-	    SetWindowPos(ForeWnd,HWND_TOPMOST,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE);
-	    SetWindowPos(ForeWnd,HWND_NOTOPMOST,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE);
-	    SetForegroundWindow(ForeWnd);
-	    AttachThreadInput(CurID,ForeID,FALSE);
-        SetWindowPos(ForeWnd,HWND_TOPMOST,0,0,100,100,SWP_NOMOVE|SWP_NOSIZE);
-        Sleep(250UL);
+        Sleep(500UL);
     }
 }
