@@ -2,10 +2,10 @@
 void About(){
     puts("| 主菜单 > 关于 |\n");
     puts("   [软件名称] Computer Room Control Software Nemesis");
-    puts("   [软件版本] v4.6.3");
+    puts("   [软件版本] v4.6.4");
     puts("   [项目作者] MaxLHy0424");
     puts("   [项目仓库] https://github.com/MaxLHy0424/CRCSN\n");
-    puts("   (C) 2024 MaxLHy0424, 保留所有权利.\n");
+    puts("   (C) 2023- MaxLHy0424, 保留所有权利.\n");
     puts("========================================\n");
     puts("按任意键返回.\n");
     system("Pause");
@@ -22,15 +22,17 @@ void Configurator(bool reload){
         puts("按任意键继续.\n");
         system("Pause");
         system("CLS");
-        goto SKP;
+        fs.close();
+        return;
     }
     for(unsigned short i{};i<3U;++i){
         getline(fs,CfgDat[i]);
     }
+    fs.close();
     CfgDat[0]="Color "+CfgDat[0];
     system(CfgDat[0].c_str());
     static bool FSRunning{false};
-    if(CfgDat[2]=="1"&&FSRunning==false){
+    if((CfgDat[2]=="1")&&(FSRunning==false)){
         FSRunning=true;
         std::thread(ForceShow).detach();
     }else if(CfgDat[2]!="1"){
@@ -42,8 +44,6 @@ void Configurator(bool reload){
         puts("按任意键返回.\n");
         system("Pause");
     }
-SKP:
-    fs.close();
 }
 void Cracker(){
 BEGIN:
@@ -111,14 +111,14 @@ BEGIN:
         system("Net Stop TDFileFilter /Y");
         system("Net Stop STUDSRV /Y");
     }
-    puts("========================================\n");
+    puts("\n========================================\n");
     puts("按任意键返回主菜单.\n");
     system("Pause");
 }
 void Recoverer(){
     puts("| 主菜单 > 恢复 |\n");
     if(!IsUserAnAdmin()){
-        puts("基本会话下此功能不可用.\n");
+        puts("基本会话下不可用.\n");
         puts("========================================\n");
         puts("按任意键返回.\n");
         system("Pause");
@@ -162,7 +162,7 @@ void Recoverer(){
     system("Net Start TDNetFilter");
     system("Net Start TDFileFilter");
     system("Net Start STUDSRV");
-    puts("========================================\n");
+    puts("\n========================================\n");
     puts("按任意键返回主菜单.\n");
     system("Pause");
 }
@@ -170,7 +170,7 @@ void Toolkit(){
 BEGIN:
     puts("| 主菜单 > 工具箱 |\n");
     if(!IsUserAnAdmin()){
-        puts("基本会话下此功能不可用.\n");
+        puts("基本会话下不可用.\n");
         puts("========================================\n");
         puts("按任意键返回.\n");
         system("Pause");
@@ -184,7 +184,7 @@ BEGIN:
     printf("请输入: ");
     for(;;){
         scanf("%s",&Code[0]);
-        if((Code[0]=='0'||Code[0]=='$'||Code[0]=='1'||Code[0]=='2'||Code[0]=='3')&&Code[1]==0){
+        if((Code[0]=='0'||Code[0]=='$'||Code[0]=='1'||Code[0]=='2'||Code[0]=='3')&&(Code[1]==0)){
             break;
         }
         printf("输入错误, 请重新输入: ");
@@ -229,7 +229,7 @@ BEGIN:
         }case '3':{
             puts("| 主菜单 > 工具箱 > 高级启动 |\n");
             if(KernalVersion()<62UL){
-                puts("需要 Windows 8 及以上的 Windows 操作系统.\n");
+                puts("仅支持 Windows 8 及以上的 Windows 操作系统.\n");
                 break;
             }
             if(Confirm()==false){
@@ -239,7 +239,7 @@ BEGIN:
             system("Pause");
             puts("\n");
             system("ReAgentC /Enable");
-            system("Shutdown /R /O /T 0");
+            system("Shutdown /F /R /O /T 15");
             break;
         }
     }
@@ -270,7 +270,7 @@ BEGIN:
     printf("请输入: ");
     for(;;){
         scanf("%s",&Code[0]);
-        if((Code[0]=='?'||Code[0]=='0'||Code[0]=='1'||Code[0]=='2'||Code[0]=='3')&&Code[1]==0){
+        if((Code[0]=='?'||Code[0]=='0'||Code[0]=='1'||Code[0]=='2'||Code[0]=='3')&&(Code[1]==0)){
             break;
         }
         printf("输入错误, 请重新输入: ");
