@@ -1,8 +1,8 @@
 #include"extern.hpp"
 void About(){
-    puts("| 主菜单 > 关于 |\n");
+    puts("| 主页 > 关于 |\n");
     puts("   [软件名称] Computer Room Control Software Nemesis");
-    puts("   [软件版本] v4.6.5");
+    puts("   [软件版本] v4.6.6");
     puts("   [项目作者] MaxLHy0424");
     puts("   [项目仓库] https://github.com/MaxLHy0424/CRCSN\n");
     puts("   (C) 2024 MaxLHy0424, 保留所有权利.\n");
@@ -10,9 +10,9 @@ void About(){
     puts("按任意键返回.\n");
     system("Pause");
 }
-void Configurator(bool reload){
-    if(reload){
-        puts("| 主菜单 > 重载配置 |\n");
+void Configurator(bool rld){
+    if(rld){
+        puts("| 主页 > 重载配置 |\n");
     }
     std::ifstream fs;
     fs.open("cfg.ini",std::ios::in);
@@ -21,25 +21,25 @@ void Configurator(bool reload){
         puts("========================================\n");
         puts("按任意键继续.\n");
         system("Pause");
-        system("CLS");
+        system("Cls");
         fs.close();
         return;
     }
     for(unsigned short i{};i<3U;++i){
-        getline(fs,CfgDat[i]);
+        getline(fs,Config[i]);
     }
     fs.close();
-    CfgDat[0]="Color "+CfgDat[0];
-    system(CfgDat[0].c_str());
-    static bool isFSRun{false};
-    if((CfgDat[2]=="1")&&(isFSRun==false)){
-        isFSRun=true;
+    Config[0]="Color "+Config[0];
+    system(Config[0].c_str());
+    static bool isFSRunning{false};
+    if((Config[2]=="1")&&(isFSRunning==false)){
+        isFSRunning=true;
         std::thread(ForceShow).detach();
-    }else if(CfgDat[2]!="1"){
-        isFSRun=false;
+    }else if(Config[2]!="1"){
+        isFSRunning=false;
     }
-    if(reload){
-        puts("重载完毕.\n");
+    if(rld){
+        puts("执行完毕.\n");
         puts("========================================\n");
         puts("按任意键返回.\n");
         system("Pause");
@@ -47,12 +47,12 @@ void Configurator(bool reload){
     return;
 }
 void Cracker(){
-BEGIN:
-    puts("| 主菜单 > 破解 |\n");
+Begin:
+    puts("| 主页 > 破解 |\n");
     printf("[高级破解] %s\n\n",((IsUserAnAdmin())?("启用."):("禁用.")));
     if(Confirm()==true){
-        system("CLS");
-        puts("| 主菜单 > 破解 > 执行操作 |\n");
+        system("Cls");
+        puts("| 主页 > 破解 > 执行操作 |\n");
         system("TaskKill /F /T /IM vncviewer.exe");
         system("TaskKill /F /T /IM tvnserver32.exe");
         system("TaskKill /F /T /IM WfbsPnpInstall.exe");
@@ -70,7 +70,7 @@ BEGIN:
         system("TaskKill /F /T /IM DeploymentAgent.exe");
         system("TaskKill /F /T /IM XYNTService.exe");
         system("TaskKill /F /T /IM ProcHelper64.exe");
-        system("TaskKill /F /T /IM StudentMain.exe");
+        system("TaskKill /F /T /IM Student主页.exe");
         system("TaskKill /F /T /IM DispcapHelper.exe");
         system("TaskKill /F /T /IM InstHelpApp.exe");
         system("TaskKill /F /T /IM GATESRV.exe");
@@ -95,7 +95,7 @@ BEGIN:
             system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DeploymentAgent.exe\" /T REG_SZ /V debugger /D \"BLK\" /F");
             system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\XYNTService.exe\" /T REG_SZ /V debugger /D \"BLK\" /F");
             system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\ProcHelper64.exe\" /T REG_SZ /V debugger /D \"BLK\" /F");
-            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\StudentMain.exe\" /T REG_SZ /V debugger /D \"BLK\" /F");
+            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\Student主页.exe\" /T REG_SZ /V debugger /D \"BLK\" /F");
             system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DispcapHelper.exe\" /T REG_SZ /V debugger /D \"BLK\" /F");
             system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\VRCwPlayer.exe\" /T REG_SZ /V debugger /D \"BLK\" /F");
             system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\InstHelpApp.exe\" /T REG_SZ /V debugger /D \"BLK\" /F");
@@ -117,7 +117,7 @@ BEGIN:
     return;
 }
 void Recoverer(){
-    puts("| 主菜单 > 恢复 |\n");
+    puts("| 主页 > 恢复 |\n");
     if(!IsUserAnAdmin()){
         puts("此功能在基本会话下不可用.\n");
         puts("========================================\n");
@@ -126,8 +126,8 @@ void Recoverer(){
         return;
     }
     if(Confirm()==true){
-        system("CLS");
-        puts("| 主菜单 > 恢复 > 执行操作 |\n");
+        system("Cls");
+        puts("| 主页 > 恢复 > 执行操作 |\n");
         system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\vncviewer.exe\" /F");
         system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\tvnserver32.exe\" /F");
         system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\WfbsPnpInstall.exe\" /F");
@@ -147,7 +147,7 @@ void Recoverer(){
         system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DeploymentAgent.exe\" /F");
         system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\XYNTService.exe\" /F");
         system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\ProcHelper64.exe\" /F");
-        system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\StudentMain.exe\" /F");
+        system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\Student主页.exe\" /F");
         system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DispcapHelper.exe\" /F");
         system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\VRCwPlayer.exe\" /F");
         system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\InstHelpApp.exe\" /F");
@@ -168,8 +168,8 @@ void Recoverer(){
     return;
 }
 void Toolkit(){
-BEGIN:
-    puts("| 主菜单 > 工具箱 |\n");
+Begin:
+    puts("| 主页 > 工具箱 |\n");
     if(!IsUserAnAdmin()){
         puts("此功能在基本会话下不可用.\n");
         puts("========================================\n");
@@ -178,35 +178,35 @@ BEGIN:
         return;
     }
     puts("   [0] 返回");
-    puts("   [/] 命令提示符");
+    puts("   [$] 命令提示符");
     puts("   [1] 系统修复");
     puts("   [2] 垃圾清理");
     puts("   [3] 高级启动\n");
     printf("请输入: ");
     for(;;){
         scanf("%s",&Code[0]);
-        if((Code[0]=='0'||Code[0]=='/'||Code[0]=='1'||Code[0]=='2'||Code[0]=='3')&&(Code[1]==0)){
+        if((Code[0]=='0'||Code[0]=='$'||Code[0]=='1'||Code[0]=='2'||Code[0]=='3')&&(Code[1]==0)){
             break;
         }
         printf("输入错误, 请重新输入: ");
     }
-    system("CLS");
+    system("Cls");
     switch(Code[0]){
         case '0':{
             return;
-        }case '/':{
-            puts("| 主菜单 > 工具箱 > 命令提示符 |\n");
+        }case '$':{
+            puts("| 主页 > 工具箱 > 命令提示符 |\n");
             puts("输入 \"Exit\" 退出.\n");
             system("Cmd");
             break;
         }case '1':{
-            puts("| 主菜单 > 工具箱 > 系统修复 |\n");
-            printf("请输入执行次数 (0 返回): ");
+            puts("| 主页 > 工具箱 > 系统修复 |\n");
+            printf("请输入次数 (0 返回): ");
             unsigned short n{};
             scanf("%hu",&n);
             if(n==0U){
-                system("CLS");
-                goto BEGIN;
+                system("Cls");
+                goto Begin;
             }
             for(;n>0U;--n){
                 if(KernalVersion()>=62UL){
@@ -216,7 +216,7 @@ BEGIN:
             }
             break;
         }case '2':{
-            puts("| 主菜单 > 工具箱 > 垃圾清理 |\n");
+            puts("| 主页 > 工具箱 > 垃圾清理 |\n");
             if(Confirm()==true){
                 puts("\n");
                 system("Del /F /S /Q %TEMP%\\*");
@@ -224,11 +224,11 @@ BEGIN:
                     system("DISM /Online /Set-ReservedStorageState /State:Disabled");
                 }
             }else{
-                goto BEGIN;
+                goto Begin;
             }
             break;
         }case '3':{
-            puts("| 主菜单 > 工具箱 > 高级启动 |\n");
+            puts("| 主页 > 工具箱 > 高级启动 |\n");
             if(KernalVersion()<62UL){
                 puts("仅支持 Windows 8 及以上的 Windows 操作系统.\n");
                 break;
@@ -240,15 +240,15 @@ BEGIN:
             system("Pause");
             puts("\n");
             system("ReAgentC /Enable");
-            system("Shutdown /R /O /T 10");
+            system("Shutdown /F /R /O /T 0");
             break;
         }
     }
     puts("\n========================================\n");
     puts("按任意键返回.\n");
     system("Pause");
-    system("CLS");
-    goto BEGIN;
+    system("Cls");
+    goto Begin;
 }
 int main(){
     if(IsUserAnAdmin()){
@@ -258,10 +258,10 @@ int main(){
     }
     system("Color 9");
     Configurator(false);
-BEGIN:
-    puts("| 主菜单 |\n");
-    if(CfgDat[1]!="UNDEFINED"){
-        printf("%s\n\n",CfgDat[1].c_str());
+Begin:
+    puts("| 主页 |\n");
+    if(Config[1]!="UNDEFINED"){
+        printf("%s\n\n",Config[1].c_str());
     }
     puts("   [?] 关于");
     puts("   [0] 重载配置");
@@ -276,7 +276,7 @@ BEGIN:
         }
         printf("输入错误, 请重新输入: ");
     }
-    system("CLS");
+    system("Cls");
     switch(Code[0]){
         case '?':{
             About();
@@ -295,6 +295,6 @@ BEGIN:
             break;
         }
     }
-    system("CLS");
-    goto BEGIN;
+    system("Cls");
+    goto Begin;
 }
