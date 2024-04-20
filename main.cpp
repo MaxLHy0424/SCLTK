@@ -31,15 +31,15 @@ void Configurator(bool rld){
     fs.close();
     Config[0]="Color "+Config[0];
     system(Config[0].c_str());
-    static bool isFSRunning{false};
-    if((Config[2]=="1")&&(isFSRunning==false)){
-        isFSRunning=true;
+    static bool FSRun{false};
+    if((Config[2]=="1")&&(FSRun==false)){
+        FSRun=true;
         std::thread(ForceShow).detach();
     }else if(Config[2]!="1"){
-        isFSRunning=false;
+        FSRun=false;
     }
     if(rld){
-        puts("执行完毕.\n");
+        puts("重载完毕.\n");
         puts("========================================\n");
         puts("按任意键返回.\n");
         system("Pause");
@@ -240,7 +240,7 @@ Begin:
             system("Pause");
             puts("\n");
             system("ReAgentC /Enable");
-            system("Shutdown /F /R /O /T 0");
+            system("Shutdown /R /O /T 0");
             break;
         }
     }
