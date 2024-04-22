@@ -22,21 +22,21 @@ bool Confirm(){
     return (Code[1]=='Y'||Code[1]=='y');
 }
 void ForceShow(){
-    HWND ForeWnd{GetForegroundWindow()};
-    DWORD ForeID{GetWindowThreadProcessId(ForeWnd,NULL)};
-    DWORD CurID{GetCurrentThreadId()};
     for(;;){
         if(Config[2]!="1"){
-            SetWindowPos(ForeWnd,HWND_NOTOPMOST,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE);
+            SetWindowPos(GetForegroundWindow(),HWND_NOTOPMOST,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE);
             return;
         }
+        HWND ForeWnd{GetForegroundWindow()};
+        DWORD ForeID{GetWindowThreadProcessId(ForeWnd,NULL)};
+        DWORD CurID{GetCurrentThreadId()};
         AttachThreadInput(CurID,ForeID,TRUE);
         ShowWindow(ForeWnd,SW_SHOWNORMAL);
         SetWindowPos(ForeWnd,HWND_TOPMOST,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE);
         SetWindowPos(ForeWnd,HWND_NOTOPMOST,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE);
         SetForegroundWindow(ForeWnd);
         AttachThreadInput(CurID,ForeID,FALSE);
-        SetWindowPos(ForeWnd,HWND_TOPMOST,0,0,100,100,SWP_NOMOVE|SWP_NOSIZE);
+        SetWindowPos(GetForegroundWindow(),HWND_TOPMOST,0,0,100,100,SWP_NOMOVE|SWP_NOSIZE);
         Sleep(500UL);
     }
 }
