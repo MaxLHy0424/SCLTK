@@ -64,15 +64,11 @@
 
 # 常见问题
 
-## 1 GitHub 在中国大陆地区难以访问, 获取软件非常不方便.
-
-目前已经在网盘上传最新版本, 可以从[这里](https://www.123pan.com/s/HmR8jv-tZLN.html)下载.
-
-## 2 运行软件时控制台总是输出 "命令提示符已被管理员禁用", 无法正常使用.
+## 1 运行软件时控制台总是输出 "命令提示符已被管理员禁用", 无法正常使用.
 
 可以试试运行注册表编辑器, 定位到`HKEY_CURRENT_USER\Software\Policies\Microsoft\Windows\System`下, 看看有没有一个叫`DisableCMD`的 DWORD 值, 有的话就删掉, 再运行试试.
 
-## 3 软件无法在 32 位 Windows 系统中使用.
+## 2 软件无法在 32 位 Windows 系统中使用.
 
 可以克隆软件仓库, 使用 MinGW 编译源代码文件. 编译命令如下:
 ````Batch
@@ -80,11 +76,11 @@ g++ main.cpp -Ofast -Os -o main.exe -Wextra -lm -static -fexec-charset=GBK -std=
 ````
 编译完毕后, 运行生成的`main.exe`, 正常使用即可.
 
-## 4 破解后一些软件运行时提示 "找不到文件" 之类的错误, 而运行的软件并没有损坏.
+## 3 破解后一些软件运行时提示 "找不到文件" 之类的错误, 而运行的软件并没有损坏.
 
 在不影响软件正常运行的情况下, 可以试试给软件文件修改一个名称, 再运行试试. 或者打开注册表编辑器, 定位到`HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\`, 找到和要运行的软件的文件名称相同的项, 删除即可.
 
-## 5 软件无法正常显示`cfg.ini`中的中文字符.
+## 4 软件无法正常显示`cfg.ini`中的中文字符.
 
 请检查`cfg.ini`的文字编码, 确保为 GBK 编码. 请使用支持 GBK 编码的纯文本编辑器 (例如 Windows Notepad) 开`cfg.ini`, 以 GBK 编码保存, 替换掉原来的`cfg.ini`.
 
