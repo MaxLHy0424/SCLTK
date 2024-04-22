@@ -178,14 +178,14 @@ Begin:
         return;
     }
     puts("   [0] 返回");
-    puts("   [$] 命令提示符");
+    puts("   [-] 命令提示符");
     puts("   [1] 系统修复");
     puts("   [2] 垃圾清理");
     puts("   [3] 高级启动\n");
     printf("请输入: ");
     for(;;){
         scanf("%s",&Code[0]);
-        if((Code[0]=='0'||Code[0]=='$'||Code[0]=='1'||Code[0]=='2'||Code[0]=='3')&&(Code[1]==0)){
+        if((Code[0]=='0'||Code[0]=='-'||Code[0]=='1'||Code[0]=='2'||Code[0]=='3')&&(Code[1]==0)){
             break;
         }
         printf("输入错误, 请重新输入: ");
@@ -194,7 +194,7 @@ Begin:
     switch(Code[0]){
         case '0':{
             return;
-        }case '$':{
+        }case '-':{
             puts("| ~ / 工具箱 / 命令提示符 |\n");
             puts("输入 \"Exit\" 退出.\n");
             system("Cmd");
