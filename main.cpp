@@ -1,8 +1,8 @@
 #include"extern.hpp"
 void About(){
-    puts("| 主页 > 关于 |\n");
+    puts("| ~ / 关于 |\n");
     puts("   [软件名称] Computer Room Control Software Nemesis");
-    puts("   [软件版本] v4.6.6");
+    puts("   [软件版本] v4.6.7");
     puts("   [项目作者] MaxLHy0424");
     puts("   [项目仓库] https://github.com/MaxLHy0424/CRCSN\n");
     puts("   (C) 2024 MaxLHy0424, 保留所有权利.\n");
@@ -12,7 +12,7 @@ void About(){
 }
 void Configurator(bool rld){
     if(rld){
-        puts("| 主页 > 重载配置 |\n");
+        puts("| ~ / 重载配置 |\n");
     }
     std::ifstream fs;
     fs.open("cfg.ini",std::ios::in);
@@ -48,11 +48,11 @@ void Configurator(bool rld){
 }
 void Cracker(){
 Begin:
-    puts("| 主页 > 破解 |\n");
+    puts("| ~ / 破解 |\n");
     printf("[高级破解] %s\n\n",((IsUserAnAdmin())?("启用."):("禁用.")));
     if(Confirm()==true){
         system("Cls");
-        puts("| 主页 > 破解 > 执行操作 |\n");
+        puts("| ~ / 破解 / 执行操作 |\n");
         system("TaskKill /F /T /IM vncviewer.exe");
         system("TaskKill /F /T /IM tvnserver32.exe");
         system("TaskKill /F /T /IM WfbsPnpInstall.exe");
@@ -70,7 +70,7 @@ Begin:
         system("TaskKill /F /T /IM DeploymentAgent.exe");
         system("TaskKill /F /T /IM XYNTService.exe");
         system("TaskKill /F /T /IM ProcHelper64.exe");
-        system("TaskKill /F /T /IM Student主页.exe");
+        system("TaskKill /F /T /IM Student~.exe");
         system("TaskKill /F /T /IM DispcapHelper.exe");
         system("TaskKill /F /T /IM InstHelpApp.exe");
         system("TaskKill /F /T /IM GATESRV.exe");
@@ -95,7 +95,7 @@ Begin:
             system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DeploymentAgent.exe\" /T REG_SZ /V debugger /D \"BLK\" /F");
             system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\XYNTService.exe\" /T REG_SZ /V debugger /D \"BLK\" /F");
             system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\ProcHelper64.exe\" /T REG_SZ /V debugger /D \"BLK\" /F");
-            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\Student主页.exe\" /T REG_SZ /V debugger /D \"BLK\" /F");
+            system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\Student~.exe\" /T REG_SZ /V debugger /D \"BLK\" /F");
             system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DispcapHelper.exe\" /T REG_SZ /V debugger /D \"BLK\" /F");
             system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\VRCwPlayer.exe\" /T REG_SZ /V debugger /D \"BLK\" /F");
             system("Reg Add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\InstHelpApp.exe\" /T REG_SZ /V debugger /D \"BLK\" /F");
@@ -117,7 +117,7 @@ Begin:
     return;
 }
 void Recoverer(){
-    puts("| 主页 > 恢复 |\n");
+    puts("| ~ / 恢复 |\n");
     if(!IsUserAnAdmin()){
         puts("此功能在基本会话下不可用.\n");
         puts("========================================\n");
@@ -127,7 +127,7 @@ void Recoverer(){
     }
     if(Confirm()==true){
         system("Cls");
-        puts("| 主页 > 恢复 > 执行操作 |\n");
+        puts("| ~ / 恢复 / 执行操作 |\n");
         system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\vncviewer.exe\" /F");
         system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\tvnserver32.exe\" /F");
         system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\WfbsPnpInstall.exe\" /F");
@@ -147,7 +147,7 @@ void Recoverer(){
         system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DeploymentAgent.exe\" /F");
         system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\XYNTService.exe\" /F");
         system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\ProcHelper64.exe\" /F");
-        system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\Student主页.exe\" /F");
+        system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\Student~.exe\" /F");
         system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DispcapHelper.exe\" /F");
         system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\VRCwPlayer.exe\" /F");
         system("Reg Delete \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\InstHelpApp.exe\" /F");
@@ -169,7 +169,7 @@ void Recoverer(){
 }
 void Toolkit(){
 Begin:
-    puts("| 主页 > 工具箱 |\n");
+    puts("| ~ / 工具箱 |\n");
     if(!IsUserAnAdmin()){
         puts("此功能在基本会话下不可用.\n");
         puts("========================================\n");
@@ -195,12 +195,12 @@ Begin:
         case '0':{
             return;
         }case '$':{
-            puts("| 主页 > 工具箱 > 命令提示符 |\n");
+            puts("| ~ / 工具箱 / 命令提示符 |\n");
             puts("输入 \"Exit\" 退出.\n");
             system("Cmd");
             break;
         }case '1':{
-            puts("| 主页 > 工具箱 > 系统修复 |\n");
+            puts("| ~ / 工具箱 / 系统修复 |\n");
             printf("请输入次数 (0 返回): ");
             unsigned short n{};
             scanf("%hu",&n);
@@ -216,7 +216,7 @@ Begin:
             }
             break;
         }case '2':{
-            puts("| 主页 > 工具箱 > 垃圾清理 |\n");
+            puts("| ~ / 工具箱 / 垃圾清理 |\n");
             if(Confirm()==true){
                 puts("\n");
                 system("Del /F /S /Q %TEMP%\\*");
@@ -228,7 +228,7 @@ Begin:
             }
             break;
         }case '3':{
-            puts("| 主页 > 工具箱 > 高级启动 |\n");
+            puts("| ~ / 工具箱 / 高级启动 |\n");
             if(KernalVersion()<62UL){
                 puts("仅支持 Windows 8 及以上的 Windows 操作系统.\n");
                 break;
@@ -259,7 +259,7 @@ int main(){
     system("Color 9");
     Configurator(false);
 Begin:
-    puts("| 主页 |\n");
+    puts("| ~ |\n");
     if(Config[1]!="UNDEFINED"){
         printf("%s\n\n",Config[1].c_str());
     }
