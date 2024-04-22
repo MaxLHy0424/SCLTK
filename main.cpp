@@ -230,7 +230,7 @@ Begin:
         }case '3':{
             puts("| ~ / 工具箱 / 高级启动 |\n");
             if(KernalVersion()<62UL){
-                puts("仅支持 Windows 8 及以上的 Windows 操作系统.\n");
+                puts("仅支持 Windows 8 及以上的 Windows 操作系统.");
                 break;
             }
             if(Confirm()==false){
