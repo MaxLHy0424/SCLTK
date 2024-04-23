@@ -4,10 +4,10 @@
 #include<ShlObj.h>
 #include<thread>
 char Code[3]{};
-std::string Config[3]{"","UNDEFINED",""};
+std::string CfgDt[3]{"","NUL",""};
 DWORD KernalVersion(){
-    DWORD ver{GetVersion()};
-    DWORD major{(DWORD)(LOBYTE(LOWORD(ver)))},minor{(DWORD)(HIBYTE(LOWORD(ver)))};
+    DWORD version{GetVersion()};
+    DWORD major{(DWORD)(LOBYTE(LOWORD(version)))},minor{(DWORD)(HIBYTE(LOWORD(version)))};
     return major*10UL+minor;
 }
 bool Confirm(){
@@ -26,7 +26,7 @@ void ForceShow(){
     DWORD ForeID{GetWindowThreadProcessId(ForeWnd,NULL)};
     DWORD CurID{GetCurrentThreadId()};
     for(;;){
-        if(Config[2]!="1"){
+        if(CfgDt[2]!="1"){
             SetWindowPos(ForeWnd,HWND_NOTOPMOST,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE);
             return;
         }
