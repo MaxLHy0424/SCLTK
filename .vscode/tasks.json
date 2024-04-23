@@ -15,7 +15,7 @@
                 "-lm",
                 "-static",
                 "-fexec-charset=GBK",
-                "-std=c++23"
+                "-std=gnu++23"
             ],
             "group":{
                 "kind":"build",
