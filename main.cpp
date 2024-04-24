@@ -278,11 +278,12 @@ BEGIN:
                 break;
             }
             if(Confirm()==false){
-                break;
+                system("Cls");
+                goto BEGIN;
             }
             puts("\n");
             system("Pause");
-            system("Shutdown /F /R /O /T 0");
+            system("Shutdown /R /O /T 0");
             break;
         }
     }
