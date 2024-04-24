@@ -1,11 +1,11 @@
 #include"extern.hpp"
 void About(){
-    puts("| Home / 关于 |\n");
+    puts("| 关于 |\n");
     puts("   [软件名称] Computer Room Control Software Nemesis");
-    puts("   [软件版本] v4.7.0");
     puts("   [项目作者] MaxLHy0424");
+    puts("   [软件版本] v4.7.1");
+    puts("   [提交编号] ");
     puts("   [项目仓库] https://github.com/MaxLHy0424/CRCSN\n");
-    printf("   [系统内核] NT %.1lf\n\n",KernalVersion()/10.0);
     puts("   (C) 2024 MaxLHy0424, 保留所有权利.\n");
     puts("========================================\n");
     puts("按任意键返回.\n");
@@ -13,23 +13,23 @@ void About(){
 }
 void Configurator(bool rld){
     if(rld){
-        puts("| Home / 重载配置 |\n");
+        puts("| 重载配置 |\n");
     }
-    std::ifstream ifs;
-    ifs.open("cfg.ini",std::ios::in);
-    if(!ifs.is_open()){
+    std::ifstream fs;
+    fs.open("cfg.ini",std::ios::in);
+    if(!fs.is_open()){
         puts("无法读取 cfg.ini.\n");
         puts("========================================\n");
         puts("按任意键继续.\n");
         system("Pause");
         system("Cls");
-        ifs.close();
+        fs.close();
         return;
     }
     for(unsigned short i{};i<3U;++i){
-        getline(ifs,CfgDt[i]);
+        getline(fs,CfgDt[i]);
     }
-    ifs.close();
+    fs.close();
     CfgDt[0]="Color "+CfgDt[0];
     system(CfgDt[0].c_str());
     static bool FSRun{false};
@@ -49,7 +49,7 @@ void Configurator(bool rld){
 }
 void Cracker(){
 Begin:
-    puts("| Home / 破解 |\n");
+    puts("| 破解 |\n");
     puts("   [0] 返回");
     puts("   [1] 极域电子教室");
     puts("   [2] 联想云教室\n");
@@ -59,15 +59,15 @@ Begin:
         if((Code[0]=='0'||Code[0]=='1'||Code[0]=='2')&&(Code[1]==0)){
             break;
         }
-        printf("输入错误, 请重新输入: ");
+        printf("输入有误, 请重试: ");
     }
     if(Code[0]=='0'){
         return;
     }
-    printf("已%s用 [高级破解], ",((IsUserAnAdmin())?("启"):("禁")));
+    printf("[高级破解] 已%s用, ",((IsUserAnAdmin())?("启"):("禁")));
     if(Confirm()==true){
         system("Cls");
-        puts("| Home / 破解 / 执行操作 |\n");
+        puts("| 破解 > 执行操作 |\n");
         switch(Code[0]){
             case '1':{
                 system("TaskKill /F /T /IM StudentMain.exe");
@@ -141,7 +141,7 @@ Begin:
     return;
 }
 void Recoverer(){
-    puts("| Home / 恢复 |\n");
+    puts("| 恢复 |\n");
     if(!IsUserAnAdmin()){
         puts("基本会话下不可用.\n");
         puts("========================================\n");
@@ -158,14 +158,14 @@ void Recoverer(){
         if((Code[0]=='0'||Code[0]=='1'||Code[0]=='2')&&(Code[1]==0)){
             break;
         }
-        printf("输入错误, 请重新输入: ");
+        printf("输入有误, 请重试: ");
     }
     if(Code[0]=='0'){
         return;
     }
     if(Confirm()==true){
         system("Cls");
-        puts("| Home / 恢复 / 执行操作 |\n");
+        puts("| 恢复 > 执行操作 |\n");
         switch(Code[0]){
             case '1':{
                 system("Reg Delete \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\StudentMain.exe\" /F");
@@ -214,7 +214,7 @@ void Recoverer(){
 }
 void Toolkit(){
 Begin:
-    puts("| Home / 工具箱 |\n");
+    puts("| 工具箱 |\n");
     if(!IsUserAnAdmin()){
         puts("基本会话下不可用.\n");
         puts("========================================\n");
@@ -233,19 +233,19 @@ Begin:
         if((Code[0]=='0'||Code[0]=='$'||Code[0]=='1'||Code[0]=='2'||Code[0]=='3')&&(Code[1]==0)){
             break;
         }
-        printf("输入错误, 请重新输入: ");
+        printf("输入有误, 请重试: ");
     }
     system("Cls");
     switch(Code[0]){
         case '0':{
             return;
         }case '$':{
-            puts("| Home / 工具箱 / 命令提示符 |\n");
+            puts("| 工具箱 > 命令提示符 |\n");
             puts("\"Exit\" 退出.\n");
             system("Cmd");
             break;
         }case '1':{
-            puts("| Home / 工具箱 / 系统修复 |\n");
+            puts("| 工具箱 > 系统修复 |\n");
             printf("请输入次数 (0 返回): ");
             unsigned short n{};
             scanf("%hu",&n);
@@ -261,7 +261,7 @@ Begin:
             }
             break;
         }case '2':{
-            puts("| Home / 工具箱 / 垃圾清理 |\n");
+            puts("| 工具箱 > 垃圾清理 |\n");
             if(Confirm()==true){
                 puts("\n");
                 system("Del /F /S /Q %TEMP%\\*");
@@ -273,7 +273,7 @@ Begin:
             }
             break;
         }case '3':{
-            puts("| Home / 工具箱 / 高级启动 |\n");
+            puts("| 工具箱 > 高级启动 |\n");
             if(KernalVersion()<62UL){
                 puts("仅支持 Windows 8 及以上的 Windows 操作系统.");
                 break;
@@ -302,7 +302,7 @@ int main(){
     system("Color 9");
     Configurator(false);
 Begin:
-    puts("| Home |\n");
+    puts("| 主页 |\n");
     if(CfgDt[1]!="NUL"){
         printf("%s\n\n",CfgDt[1].c_str());
     }
@@ -317,7 +317,7 @@ Begin:
         if((Code[0]=='?'||Code[0]=='0'||Code[0]=='1'||Code[0]=='2'||Code[0]=='3')&&(Code[1]==0)){
             break;
         }
-        printf("输入错误, 请重新输入: ");
+        printf("输入有误, 请重试: ");
     }
     system("Cls");
     switch(Code[0]){
