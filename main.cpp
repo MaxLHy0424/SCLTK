@@ -4,8 +4,8 @@ void About(){
     puts("   [软件名称] Computer Room Control Software Nemesis");
     puts("   [项目作者] MaxLHy0424");
     puts("   [软件版本] v4.7.1");
-    puts("   [提交编号] ");
     puts("   [项目仓库] https://github.com/MaxLHy0424/CRCSN\n");
+    printf("   [系统内核] NT %.1lf\n\n",KernalVersion()/10.0);
     puts("   (C) 2024 MaxLHy0424, 保留所有权利.\n");
     puts("========================================\n");
     puts("按任意键返回.\n");
@@ -48,7 +48,6 @@ void Configurator(bool rld){
     return;
 }
 void Cracker(){
-Begin:
     puts("| 破解 |\n");
     puts("   [0] 返回");
     puts("   [1] 极域电子教室");
@@ -213,7 +212,7 @@ void Recoverer(){
     return;
 }
 void Toolkit(){
-Begin:
+BEGIN:
     puts("| 工具箱 |\n");
     if(!IsUserAnAdmin()){
         puts("基本会话下不可用.\n");
@@ -251,7 +250,7 @@ Begin:
             scanf("%hu",&n);
             if(n==0U){
                 system("Cls");
-                goto Begin;
+                goto BEGIN;
             }
             for(;n>0U;--n){
                 if(KernalVersion()>=62UL){
@@ -269,7 +268,7 @@ Begin:
                     system("DISM /Online /Set-ReservedStorageState /State:Disabled");
                 }
             }else{
-                goto Begin;
+                goto BEGIN;
             }
             break;
         }case '3':{
@@ -291,7 +290,7 @@ Begin:
     puts("按任意键返回.\n");
     system("Pause");
     system("Cls");
-    goto Begin;
+    goto BEGIN;
 }
 int main(){
     if(IsUserAnAdmin()){
@@ -301,7 +300,7 @@ int main(){
     }
     system("Color 9");
     Configurator(false);
-Begin:
+BEGIN:
     puts("| 主页 |\n");
     if(CfgDt[1]!="NUL"){
         printf("%s\n\n",CfgDt[1].c_str());
@@ -339,5 +338,5 @@ Begin:
         }
     }
     system("Cls");
-    goto Begin;
+    goto BEGIN;
 }
