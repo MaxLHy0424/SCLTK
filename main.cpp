@@ -64,7 +64,7 @@ void Cracker(){
     if(Code[0]=='0'){
         return;
     }
-    printf("[高级破解] 已%s用, ",((IsUserAnAdmin())?("启"):("禁")));
+    printf("已%s用 [高级破解], ",((IsUserAnAdmin())?("启"):("禁")));
     if(Confirm()==true){
         system("Cls");
         puts("| 破解 > 执行操作 |\n");
@@ -263,7 +263,6 @@ BEGIN:
         }case '2':{
             puts("| 工具箱 > 垃圾清理 |\n");
             if(Confirm()==true){
-                puts("\n");
                 system("Del /F /S /Q %Temp%\\*");
                 if(KernalVersion()>=100UL){
                     system("DISM /Online /Set-ReservedStorageState /State:Disabled");
