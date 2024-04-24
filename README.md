@@ -4,7 +4,7 @@
 
 # 使用方式
 
-> 适用于 v4.7.0 及以上版本.
+> 适用于 v4.7.1 及以上版本.
 
 **CRCSN 涉及到修改注册表等操作, 使用时建议关闭防病毒软件. 如果 CRCSN 被报为恶意软件, 请添加排除项.**
 
@@ -38,7 +38,7 @@
 
 ### 3-2 主页文本
 
-设置在主页 (以`Home`表示) 显示的额外文本, 默认为`NUL`.
+设置在主页显示的额外文本, 默认为`NUL`.
 
 选项为`NUL`时, 不会显示额外文本, 否则将会显示所配置的文本. 文本将会显示在导航栏和列表之间.
 
@@ -72,7 +72,7 @@
 
 可以克隆软件仓库, 使用 MinGW 编译源代码文件. 编译命令如下:
 ````Batch
-g++ main.cpp -Ofast -Os -o main.exe -Wextra -lm -static -fexec-charset=GBK -std=c++11
+g++ main.cpp -Ofast -Os -o main.exe -Wextra -lm -static -fexec-charset=GBK -std=gnu++11
 ````
 编译完毕后, 运行生成的`main.exe`, 正常使用即可.
 
