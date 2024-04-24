@@ -72,7 +72,7 @@
 
 可以克隆软件仓库, 使用 MinGW 编译源代码文件. 编译命令如下:
 ````Batch
-g++ main.cpp -Ofast -Os -o main.exe -Wextra -lm -static -fexec-charset=GBK -std=gnu++11
+g++ main.cpp -fexec-charset=GBK -std=gnu++11 -Wall -Wextra -g -lm -static -Ofast -Os -o main.exe
 ````
 编译完毕后, 运行生成的`main.exe`, 正常使用即可.
 
