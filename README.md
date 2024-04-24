@@ -66,7 +66,7 @@
 
 ## 1 运行软件时控制台总是输出 "命令提示符已被管理员禁用", 无法正常使用.
 
-可以试试运行注册表编辑器, 定位到`HKEY_CURRENT_USER\Software\Policies\Microsoft\Windows\System`下, 看看有没有一个叫`DisableCMD`的 DWORD 值, 有的话就删掉, 再运行试试.
+可以运行注册表编辑器, 定位到`HKEY_CURRENT_USER\Software\Policies\Microsoft\Windows\System`下, 看看有没有一个叫`DisableCMD`的值, 有的话就删掉, 再试试.
 
 ## 2 软件无法在 32 位 Windows 系统中使用.
 
@@ -78,11 +78,11 @@ g++ main.cpp -fexec-charset=GBK -std=gnu++11 -Wall -Wextra -g -lm -static -Ofast
 
 ## 3 破解后一些软件运行时提示 "找不到文件" 之类的错误, 而运行的软件并没有损坏.
 
-在不影响软件正常运行的情况下, 可以试试给软件文件修改一个名称, 再运行试试. 或者打开注册表编辑器, 定位到`HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\`, 找到和要运行的软件的文件名称相同的项, 删除即可.
+在不影响软件正常运行的情况下, 可以给软件文件修改一个名称, 再试试. 或者打开注册表编辑器, 定位到`HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\`, 找到和要运行的软件的文件名称相同的项, 删除即可.
 
 ## 4 软件无法正常显示`cfg.ini`中的中文字符.
 
-请检查`cfg.ini`的文字编码, 确保为 GBK 编码. 请使用支持 GBK 编码的纯文本编辑器 (例如 Windows Notepad) 开`cfg.ini`, 以 GBK 编码保存, 替换掉原来的`cfg.ini`.
+请检查`cfg.ini`是否为 GBK 编码. 如果`cfg.ini`不是 GBK 编码, 请使用支持 GBK 编码的纯文本编辑器 (例如 Windows Notepad) 打开`cfg.ini`, 以 GBK 编码保存, 替换掉原来的`cfg.ini`.
 
 # 鸣谢
 
