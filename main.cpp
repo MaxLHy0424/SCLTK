@@ -6,7 +6,7 @@ void About(){
     puts("   [软件版本] v4.7.1");
     puts("   [项目仓库] https://github.com/MaxLHy0424/CRCSN\n");
     printf("   [系统内核] NT %.1f\n\n",KernalVersion()/10.0F);
-    puts("   (C) 2024 MaxLHy0424, 保留所有权利.\n");
+    puts("   (C) 2023- MaxLHy0424, 保留所有权利.\n");
     puts("========================================\n");
     puts("按任意键返回.\n");
     system("Pause");
