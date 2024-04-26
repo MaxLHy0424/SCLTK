@@ -3,9 +3,9 @@ void About(){
     puts("| 关于 |\n");
     puts("   [软件名称] Computer Room Control Software Nemesis");
     puts("   [项目作者] MaxLHy0424");
-    puts("   [软件版本] v4.7.1");
+    puts("   [软件版本] v4.7.2");
     puts("   [项目仓库] https://github.com/MaxLHy0424/CRCSN\n");
-    printf("   [系统内核] NT %.1f\n\n",KernalVersion()/10.0F);
+    printf("   [系统内核] NT %.1lf\n\n",KernalVersion()/10.0);
     puts("   (C) 2023- MaxLHy0424, 保留所有权利.\n");
     puts("========================================\n");
     puts("按任意键返回.\n");
@@ -16,20 +16,21 @@ void Configurator(bool rld){
     if(rld){
         puts("| 重载配置 |\n");
     }
-    std::ifstream fs;
-    fs.open("cfg.ini",std::ios::in);
-    if(!fs.is_open()){
+    std::ifstream ifs;
+    ifs.open("cfg.ini",std::ios::in);
+    if(!ifs.is_open()){
+        ifs.close();
         puts("无法读取 cfg.ini.\n");
         puts("========================================\n");
         puts("按任意键继续.\n");
         system("Pause");
         system("Cls");
-        goto SKP;
+        return;
     }
     for(unsigned short i{};i<3U;++i){
-        getline(fs,CfgDt[i]);
+        getline(ifs,CfgDt[i]);
     }
-    fs.close();
+    ifs.close();
     CfgDt[0]="Color "+CfgDt[0];
     system(CfgDt[0].c_str());
     static bool FSRun{false};
@@ -45,7 +46,6 @@ void Configurator(bool rld){
         puts("按任意键返回.\n");
         system("Pause");
     }
-SKP:
     return;
 }
 void Cracker(){
@@ -59,7 +59,7 @@ void Cracker(){
         if((Code[0]=='0'||Code[0]=='1'||Code[0]=='2')&&(Code[1]==0)){
             break;
         }
-        printf("输入有误, 请重试: ");
+        printf("输入错误, 请重新输入: ");
     }
     if(Code[0]=='0'){
         return;
@@ -143,7 +143,7 @@ void Cracker(){
 void Recoverer(){
     puts("| 恢复 |\n");
     if(!IsUserAnAdmin()){
-        puts("基本会话下不可用.\n");
+        puts("基本会话下此功能不可用.\n");
         puts("========================================\n");
         puts("按任意键返回.\n");
         system("Pause");
@@ -158,7 +158,7 @@ void Recoverer(){
         if((Code[0]=='0'||Code[0]=='1'||Code[0]=='2')&&(Code[1]==0)){
             break;
         }
-        printf("输入有误, 请重试: ");
+        printf("输入错误, 请重新输入: ");
     }
     if(Code[0]=='0'){
         return;
@@ -216,7 +216,7 @@ void Toolkit(){
 BEGIN:
     puts("| 工具箱 |\n");
     if(!IsUserAnAdmin()){
-        puts("基本会话下不可用.\n");
+        puts("基本会话下此功能不可用.\n");
         puts("========================================\n");
         puts("按任意键返回.\n");
         system("Pause");
@@ -233,7 +233,7 @@ BEGIN:
         if((Code[0]=='0'||Code[0]=='/'||Code[0]=='1'||Code[0]=='2'||Code[0]=='3')&&(Code[1]==0)){
             break;
         }
-        printf("输入有误, 请重试: ");
+        printf("输入错误, 请重新输入: ");
     }
     system("Cls");
     switch(Code[0]){
@@ -263,7 +263,7 @@ BEGIN:
         }case '2':{
             puts("| 工具箱 > 垃圾清理 |\n");
             if(Confirm()==true){
-                system("Del /F /S /Q %Temp%\\*");
+                system("Del /F /S /Q %Temp%");
                 if(KernalVersion()>=100UL){
                     system("DISM /Online /Set-ReservedStorageState /State:Disabled");
                 }
@@ -274,7 +274,7 @@ BEGIN:
         }case '3':{
             puts("| 工具箱 > 高级启动 |\n");
             if(KernalVersion()<62UL){
-                puts("系统内核版本低于 6.2.\n");
+                puts("仅支持 NT 6.2+.\n");
                 break;
             }
             if(Confirm()==false){
@@ -317,7 +317,7 @@ BEGIN:
         if((Code[0]=='?'||Code[0]=='0'||Code[0]=='1'||Code[0]=='2'||Code[0]=='3')&&(Code[1]==0)){
             break;
         }
-        printf("输入有误, 请重试: ");
+        printf("输入错误, 请重新输入: ");
     }
     system("Cls");
     switch(Code[0]){
