@@ -1,9 +1,9 @@
 #include"extern.hpp"
 void About(){
     puts("| 关于 |\n");
-    puts("   [软件名称] Computer Room Control Software Nemesis");
+    puts("   [软件名称] Computer Room Controlling Software Nemesis");
     puts("   [项目作者] MaxLHy0424");
-    puts("   [软件版本] v4.7.2");
+    puts("   [软件版本] v4.7.3");
     puts("   [项目仓库] https://github.com/MaxLHy0424/CRCSN\n");
     printf("   [系统内核] NT %.1lf\n\n",KernalVersion()/10.0);
     puts("   (C) 2023- MaxLHy0424, 保留所有权利.\n");
@@ -16,8 +16,7 @@ void Configurator(bool rld){
     if(rld){
         puts("| 重载配置 |\n");
     }
-    std::ifstream ifs;
-    ifs.open("cfg.ini",std::ios::in);
+    std::ifstream ifs("cfg.ini",std::ios::in);
     if(!ifs.is_open()){
         ifs.close();
         puts("无法读取 cfg.ini.\n");
@@ -33,12 +32,12 @@ void Configurator(bool rld){
     ifs.close();
     CfgDt[0]="Color "+CfgDt[0];
     system(CfgDt[0].c_str());
-    static bool FSRun{false};
-    if((CfgDt[2]=="1")&&(FSRun==false)){
-        FSRun=true;
+    static bool fsState{false};
+    if((CfgDt[2]=="1")&&(fsState==false)){
+        fsState=true;
         std::thread(ForceShow).detach();
     }else if(CfgDt[2]!="1"){
-        FSRun=false;
+        fsState=false;
     }
     if(rld){
         puts("重载完毕.\n");
@@ -247,13 +246,13 @@ BEGIN:
         }case '1':{
             puts("| 工具箱 > 系统修复 |\n");
             printf("请输入次数 (0 返回): ");
-            unsigned short n{};
-            scanf("%hu",&n);
-            if(n==0U){
+            unsigned short i{};
+            scanf("%hu",&i);
+            if(i==0U){
                 system("Cls");
                 goto BEGIN;
             }
-            for(;n>0U;--n){
+            for(;i>0U;--i){
                 if(KernalVersion()>=62UL){
                     system("DISM /Online /Cleanup-Image /RestoreHealth");
                 }
@@ -263,10 +262,10 @@ BEGIN:
         }case '2':{
             puts("| 工具箱 > 垃圾清理 |\n");
             if(Confirm()==true){
-                system("Del /F /S /Q %Temp%");
                 if(KernalVersion()>=100UL){
                     system("DISM /Online /Set-ReservedStorageState /State:Disabled");
                 }
+                system("Del /F /S /Q %TEMP%");
             }else{
                 goto BEGIN;
             }
