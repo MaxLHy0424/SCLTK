@@ -8,7 +8,7 @@ std::string CfgDt[3]{"","NUL",""};
 DWORD KernalVersion(){
     DWORD version{GetVersion()};
     DWORD major{(DWORD)(LOBYTE(LOWORD(version)))},minor{(DWORD)(HIBYTE(LOWORD(version)))};
-    return major*10UL+minor;
+    return (major*10UL+minor);
 }
 bool Confirm(){
     printf("是否继续? (Y/N): ");
