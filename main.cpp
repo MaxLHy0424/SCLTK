@@ -2,8 +2,8 @@
 void About(){
     puts("| 关于 |\n");
     puts("   [软件名称] Computer Room Controlling Software Nemesis");
-    puts("   [项目作者] MaxLHy0424");
-    puts("   [软件版本] v4.7.3");
+    puts("   [项目作者] MaxLHy0424 (Mingxu Ye)");
+    puts("   [软件版本] v4.7.4");
     puts("   [项目仓库] https://github.com/MaxLHy0424/CRCSN\n");
     printf("   [系统内核] NT %.1lf\n\n",KernalVersion()/10.0);
     puts("   (C) 2023- MaxLHy0424, 保留所有权利.\n");
@@ -142,7 +142,7 @@ void Cracker(){
 void Recoverer(){
     puts("| 恢复 |\n");
     if(!IsUserAnAdmin()){
-        puts("基本会话下此功能不可用.\n");
+        puts("基本会话下不可用.\n");
         puts("========================================\n");
         puts("按任意键返回.\n");
         system("Pause");
@@ -215,7 +215,7 @@ void Toolkit(){
 BEGIN:
     puts("| 工具箱 |\n");
     if(!IsUserAnAdmin()){
-        puts("基本会话下此功能不可用.\n");
+        puts("基本会话下不可用.\n");
         puts("========================================\n");
         puts("按任意键返回.\n");
         system("Pause");
@@ -245,29 +245,24 @@ BEGIN:
             break;
         }case '1':{
             puts("| 工具箱 > 系统修复 |\n");
-            printf("请输入次数 (0 返回): ");
-            unsigned short i{};
-            scanf("%hu",&i);
-            if(i==0U){
+            if(Confirm()==false){
                 system("Cls");
                 goto BEGIN;
             }
-            for(;i>0U;--i){
-                if(KernalVersion()>=62UL){
-                    system("DISM /Online /Cleanup-Image /RestoreHealth");
-                }
-                system("SFC /ScanNow");
+            if(KernalVersion()>=62UL){
+                system("DISM /Online /Cleanup-Image /RestoreHealth");
             }
+            system("SFC /ScanNow");
             break;
         }case '2':{
             puts("| 工具箱 > 垃圾清理 |\n");
-            if(Confirm()==true){
-                if(KernalVersion()>=100UL){
-                    system("DISM /Online /Set-ReservedStorageState /State:Disabled");
-                }
-                system("Del /F /S /Q %TEMP%");
-            }else{
+            if(Confirm()==false){
+                system("Cls");
                 goto BEGIN;
+            }
+            system("Del /F /S /Q %TEMP%");
+            if(KernalVersion()>=100UL){
+                system("DISM /Online /Set-ReservedStorageState /State:Disabled");
             }
             break;
         }case '3':{
