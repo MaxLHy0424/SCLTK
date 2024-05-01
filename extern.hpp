@@ -1,10 +1,9 @@
 #pragma once
 #include<stdio.h>
-#include<fstream>
+#include<string>
 #include<ShlObj.h>
 #include<thread>
-char Code[3]{};
-std::string CfgDt[3]{"","NUL",""};
+char Code[3];
 DWORD KernalVersion(){
     DWORD version{GetVersion()};
     DWORD major{(DWORD)(LOBYTE(LOWORD(version)))},minor{(DWORD)(HIBYTE(LOWORD(version)))};
@@ -19,17 +18,13 @@ bool Confirm(){
         }
         printf("输入错误, 请重新输入: ");
     }
-    return (Code[1]=='Y'||Code[1]=='y');
+    return ((Code[1]=='Y'||Code[1]=='y')?(true):(false));
 }
 void ForceShow(){
     HWND ForeWnd{GetForegroundWindow()};
     DWORD ForeID{GetWindowThreadProcessId(ForeWnd,NULL)};
     DWORD CurID{GetCurrentThreadId()};
     for(;;){
-        if(CfgDt[2]!="1"){
-            SetWindowPos(GetForegroundWindow(),HWND_NOTOPMOST,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE);
-            return;
-        }
         AttachThreadInput(CurID,ForeID,TRUE);
         ShowWindow(ForeWnd,SW_SHOWNORMAL);
         SetWindowPos(ForeWnd,HWND_TOPMOST,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE);
