@@ -28,7 +28,7 @@ BEGIN:
     if(Code[0]=='0'){
         return;
     }
-    printf("使用%s规则进行破解, ",((IsUserAnAdmin())?("增强"):("基础")));
+    printf("当前会话将使用%s规则进行破解, ",((IsUserAnAdmin())?("增强"):("基础")));
     if(Confirm()==true){
         system("Cls");
         puts("| 破解 / 执行操作 |\n");
