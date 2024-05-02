@@ -2,7 +2,7 @@
 void About(){
     puts("| 关于 |\n");
     puts("   [名称] Computer Room Controlling Software Nemesis");
-    puts("   [版本] v4.8.1");
+    puts("   [版本] v4.8.2");
     puts("   [作者] MaxLHy0424");
     puts("   [网址] https://github.com/MaxLHy0424/CRCSN\n");
     puts("   (C) 2024 MaxLHy0424, 保留所有权利.\n");
