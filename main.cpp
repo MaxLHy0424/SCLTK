@@ -1,10 +1,10 @@
 #include"extern.hpp"
 void About(){
     puts("| 关于 |\n");
-    puts("   [软件名称] Computer Room Controlling Software Nemesis");
-    puts("   [项目作者] MaxLHy0424");
-    puts("   [软件版本] v4.8.1");
-    puts("   [项目仓库] https://github.com/MaxLHy0424/CRCSN\n");
+    puts("   [名称] Computer Room Controlling Software Nemesis");
+    puts("   [版本] v4.8.1");
+    puts("   [作者] MaxLHy0424");
+    puts("   [网址] https://github.com/MaxLHy0424/CRCSN\n");
     puts("   (C) 2024 MaxLHy0424, 保留所有权利.\n");
     puts("========================================\n");
     puts("按任意键返回.\n");
