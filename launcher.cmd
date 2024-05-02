@@ -5,4 +5,4 @@ PUSHD %~DP0 & CD /D "%~dp0"
 %1 %2
 : MsHta Vbscript:CreateObject("Shell.Application").ShellExecute("%~S0","Goto :RunAs","","RunAs",1)(Window.Close)&Goto:EOF
 :RunAs
-.\bin\main.exe -con=09
+.\bin\main.exe -clr=09
