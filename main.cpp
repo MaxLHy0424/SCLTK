@@ -255,7 +255,6 @@ END:
     goto BEGIN;
 }
 int main(int argc,char* argv[]){
-    system("Color 09");
     if(IsUserAnAdmin()){
         system("Title [增强会话] CRCSN");
     }else{
@@ -265,17 +264,15 @@ int main(int argc,char* argv[]){
         goto BEGIN;
     }
     {
-        bool lock[2]{false,false};
+        std::string opts[argc-1]{},tmp{};
         for(int i{1};i<argc;++i){
-            std::string opt{argv[i]};
-            if((opt.substr(0,5)=="-clr=")&&(lock[0]==false)){
-                lock[0]=true;
-                opt.erase(0,5);
-                opt="Color "+opt;
-                system(opt.c_str());
+            tmp=argv[i];
+            if((tmp.substr(0,5)=="-clr=")&&(opts[0]=="")){
+                tmp.erase(0,5);
+                opts[i-1]="Color "+tmp;
                 continue;
-            }else if((opt=="-beta")&&(lock[1]==false)){
-                lock[1]=true;
+            }else if((tmp=="-beta")&&(opts[1]=="")){
+                opts[1]="beta";
                 continue;
             }
             puts("启动参数错误.\n");
@@ -284,7 +281,8 @@ int main(int argc,char* argv[]){
             system("Pause");
             return 0;
         }
-        if(lock[1]==true){
+        system(opts[0].c_str());
+        if(opts[1]=="beta"){
             std::thread(ForceShow).detach();
         }
     }
