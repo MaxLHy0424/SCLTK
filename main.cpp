@@ -2,10 +2,10 @@
 void About(){
     puts("| 关于 |\n");
     puts("   [名称] Computer Room Controlling Software Nemesis");
-    puts("   [版本] v4.8.2");
+    puts("   [版本] v4.8.3");
     puts("   [作者] MaxLHy0424");
     puts("   [网址] https://github.com/MaxLHy0424/CRCSN\n");
-    puts("   (C) 2024 MaxLHy0424, 保留所有权利.\n");
+    puts("   (C) 2023- MaxLHy0424, 保留所有权利.\n");
     puts("========================================\n");
     puts("按任意键返回.\n");
     system("Pause");
@@ -28,7 +28,7 @@ BEGIN:
     if(Code[0]=='0'){
         return;
     }
-    printf("当前会话将使用%s规则进行破解, ",((IsUserAnAdmin())?("增强"):("基础")));
+    printf("已%s用高级破解, ",((IsUserAnAdmin())?("启"):("禁")));
     if(Confirm()==true){
         system("Cls");
         puts("| 破解 / 执行操作 |\n");
@@ -108,7 +108,7 @@ BEGIN:
 void Recoverer(){
 BEGIN:
     puts("| 恢复 |\n");
-    if(!IsUserAnAdmin()){
+    if(IsUserAnAdmin()==false){
         puts("基本会话下不可用.\n");
         puts("========================================\n");
         puts("按任意键返回.\n");
@@ -182,7 +182,7 @@ BEGIN:
 void Toolkit(){
 BEGIN:
     puts("| 工具箱 |\n");
-    if(!IsUserAnAdmin()){
+    if(IsUserAnAdmin()==false){
         puts("基本会话下不可用.\n");
         puts("========================================\n");
         puts("按任意键返回.\n");
@@ -243,7 +243,7 @@ BEGIN:
             }
             puts("\n");
             system("Pause");
-            system("Shutdown /F /R /O /T 0");
+            system("Shutdown /R /O /T 15");
             break;
         }
     }
@@ -287,7 +287,7 @@ int main(int argc,char* argv[]){
         }
     }
 BEGIN:
-    puts("| 主页 |\n");
+    puts("| HOME |\n");
     puts("   [?] 关于");
     puts("   [1] 破解");
     puts("   [2] 恢复");
