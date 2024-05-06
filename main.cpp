@@ -17,20 +17,20 @@ BEGIN:
     puts("   [0] 返回");
     puts("   [1] 极域电子教室");
     puts("   [2] 联想云教室\n");
-    printf("请输入: ");
+    printf("请键入: ");
     for(;;){
         scanf("%s",&Code[0]);
         if((Code[0]=='0'||Code[0]=='1'||Code[0]=='2')&&(Code[1]==0)){
             break;
         }
-        printf("输入错误, 请重新输入: ");
+        printf("键入错误, 请重试: ");
     }
     if(Code[0]=='0'){
         return;
     }
     printf("已%s用高级破解, ",((IsUserAnAdmin())?("启"):("禁")));
-    if(Confirm()==true){
-        system("Cls");
+    if(ConfirmOp()==true){
+        system("CLS");
         puts("| 破解 / 执行操作 |\n");
         switch(Code[0]){
             case '1':{
@@ -102,7 +102,7 @@ BEGIN:
         puts("按任意键返回.\n");
         system("Pause");
     }
-    system("Cls");
+    system("CLS");
     goto BEGIN;
 }
 void Recoverer(){
@@ -118,19 +118,19 @@ BEGIN:
     puts("   [0] 返回");
     puts("   [1] 极域电子教室");
     puts("   [2] 联想云教室\n");
-    printf("请输入: ");
+    printf("请键入: ");
     for(;;){
         scanf("%s",&Code[0]);
         if((Code[0]=='0'||Code[0]=='1'||Code[0]=='2')&&(Code[1]==0)){
             break;
         }
-        printf("输入错误, 请重新输入: ");
+        printf("键入错误, 请重试: ");
     }
     if(Code[0]=='0'){
         return;
     }
-    if(Confirm()==true){
-        system("Cls");
+    if(ConfirmOp()==true){
+        system("CLS");
         puts("| 恢复 / 执行操作 |\n");
         switch(Code[0]){
             case '1':{
@@ -176,10 +176,10 @@ BEGIN:
         puts("按任意键返回.\n");
         system("Pause");
     }
-    system("Cls");
+    system("CLS");
     goto BEGIN;
 }
-void Toolkit(){
+void Tools(){
 BEGIN:
     puts("| 工具箱 |\n");
     if(IsUserAnAdmin()==false){
@@ -194,15 +194,15 @@ BEGIN:
     puts("   [1] 系统修复");
     puts("   [2] 磁盘清理");
     puts("   [3] 高级启动\n");
-    printf("请输入: ");
+    printf("请键入: ");
     for(;;){
         scanf("%s",&Code[0]);
         if((Code[0]=='0'||Code[0]=='/'||Code[0]=='1'||Code[0]=='2'||Code[0]=='3')&&(Code[1]==0)){
             break;
         }
-        printf("输入错误, 请重新输入: ");
+        printf("键入错误, 请重试: ");
     }
-    system("Cls");
+    system("CLS");
     switch(Code[0]){
         case '0':{
             return;
@@ -213,8 +213,8 @@ BEGIN:
             break;
         }case '1':{
             puts("| 工具箱 / 系统修复 |\n");
-            if(Confirm()==false){
-                system("Cls");
+            if(ConfirmOp()==false){
+                system("CLS");
                 goto BEGIN;
             }
             if(KernalVersion()>=62UL){
@@ -224,13 +224,13 @@ BEGIN:
             break;
         }case '2':{
             puts("| 工具箱 / 垃圾清理 |\n");
-            if(Confirm()==false){
+            if(ConfirmOp()==false){
                 goto END;
             }
-            system("Del /F /S /Q %TEMP%");
             if(KernalVersion()>=100UL){
                 system("DISM /Online /Set-ReservedStorageState /State:Disabled");
             }
+            system("Del /F /S /Q %TEMP%");
             break;
         }case '3':{
             puts("| 工具箱 / 高级启动 |\n");
@@ -238,12 +238,12 @@ BEGIN:
                 puts("仅支持 Windows 8+.\n");
                 break;
             }
-            if(Confirm()==false){
+            if(ConfirmOp()==false){
                 goto END;
             }
             puts("\n");
             system("Pause");
-            system("Shutdown /R /O /T 15");
+            system("Shutdown /R /O /T 0");
             break;
         }
     }
@@ -251,7 +251,7 @@ BEGIN:
     puts("按任意键返回.\n");
     system("Pause");
 END:
-    system("Cls");
+    system("CLS");
     goto BEGIN;
 }
 int main(int argc,char* argv[]){
@@ -292,15 +292,15 @@ BEGIN:
     puts("   [1] 破解");
     puts("   [2] 恢复");
     puts("   [3] 工具箱\n");
-    printf("请输入: ");
+    printf("请键入: ");
     for(;;){
         scanf("%s",&Code[0]);
         if((Code[0]=='?'||Code[0]=='1'||Code[0]=='2'||Code[0]=='3')&&(Code[1]==0)){
             break;
         }
-        printf("输入错误, 请重新输入: ");
+        printf("键入错误, 请重试: ");
     }
-    system("Cls");
+    system("CLS");
     switch(Code[0]){
         case '?':{
             About();
@@ -312,10 +312,10 @@ BEGIN:
             Recoverer();
             break;
         }case '3':{
-            Toolkit();
+            Tools();
             break;
         }
     }
-    system("Cls");
+    system("CLS");
     goto BEGIN;
 }
