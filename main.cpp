@@ -2,10 +2,10 @@
 void Info(){
     puts("| 关于 |\n");
     puts("   [软件名称] Computer Room Controlling Software Nemesis");
-    puts("   [构建版本] v4.8.4");
+    puts("   [构建版本] v4.8.5");
     puts("   [开 发 者] MaxLHy0424");
     puts("   [项目仓库] https://github.com/MaxLHy0424/CRCSN\n");
-    puts("   (C) 2023- MaxLHy0424, 保留所有权利.\n");
+    puts("   (C) 2023- MaxLHy0424, All Rights Reserved.\n");
     puts("========================================\n");
     puts("按任意键返回.\n");
     system("Pause");
@@ -34,12 +34,12 @@ BEGIN:
         puts("| 破解 > 执行操作 |\n");
         switch(IptDat[0]){
             case '1':{
-                system("TaskKill /F /T /IM StudentMain.exe");
-                system("TaskKill /F /T /IM DispcapHelper.exe");
-                system("TaskKill /F /T /IM InstHelpApp.exe");
-                system("TaskKill /F /T /IM GATESRV.exe");
-                system("TaskKill /F /T /IM ProcHelper64.exe");
-                system("TaskKill /F /T /IM MasterHelper.exe");
+                system("TaskKill /F /IM StudentMain.exe");
+                system("TaskKill /F /IM DispcapHelper.exe");
+                system("TaskKill /F /IM InstHelpApp.exe");
+                system("TaskKill /F /IM GATESRV.exe");
+                system("TaskKill /F /IM ProcHelper64.exe");
+                system("TaskKill /F /IM MasterHelper.exe");
                 if(IsUserAnAdmin()){
                     system("Reg Add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\StudentMain.exe\" /F /T REG_SZ /V debugger /D \"BLOCK\"");
                     system("Reg Add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DispcapHelper.exe\" /F /T REG_SZ /V debugger /D \"BLOCK\"");
@@ -56,22 +56,22 @@ BEGIN:
                 }
                 break;
             }case '2':{
-                system("TaskKill /F /T /IM vncviewer.exe");
-                system("TaskKill /F /T /IM tvnserver32.exe");
-                system("TaskKill /F /T /IM WfbsPnpInstall.exe");
-                system("TaskKill /F /T /IM WFBSMon.exe");
-                system("TaskKill /F /T /IM WFBSMlogon.exe");
-                system("TaskKill /F /T /IM WFBSSvrLogShow.exe");
-                system("TaskKill /F /T /IM ResetIp.exe");
-                system("TaskKill /F /T /IM Fireware.exe");
-                system("TaskKill /F /T /IM BCDBootCopy.exe");
-                system("TaskKill /F /T /IM refreship.exe");
-                system("TaskKill /F /T /IM LenovoLockScreen.exe");
-                system("TaskKill /F /T /IM PortControl64.exe");
-                system("TaskKill /F /T /IM DesktopCheck.exe");
-                system("TaskKill /F /T /IM DeploymentManager.exe");
-                system("TaskKill /F /T /IM DeploymentAgent.exe");
-                system("TaskKill /F /T /IM XYNTService.exe");
+                system("TaskKill /F /IM vncviewer.exe");
+                system("TaskKill /F /IM tvnserver32.exe");
+                system("TaskKill /F /IM WfbsPnpInstall.exe");
+                system("TaskKill /F /IM WFBSMon.exe");
+                system("TaskKill /F /IM WFBSMlogon.exe");
+                system("TaskKill /F /IM WFBSSvrLogShow.exe");
+                system("TaskKill /F /IM ResetIp.exe");
+                system("TaskKill /F /IM Fireware.exe");
+                system("TaskKill /F /IM BCDBootCopy.exe");
+                system("TaskKill /F /IM refreship.exe");
+                system("TaskKill /F /IM LenovoLockScreen.exe");
+                system("TaskKill /F /IM PortControl64.exe");
+                system("TaskKill /F /IM DesktopCheck.exe");
+                system("TaskKill /F /IM DeploymentManager.exe");
+                system("TaskKill /F /IM DeploymentAgent.exe");
+                system("TaskKill /F /IM XYNTService.exe");
                 if(IsUserAnAdmin()){
                     system("Reg Add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\vncviewer.exe\" /F /T REG_SZ /V debugger /D \"BLOCK\"");
                     system("Reg Add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\tvnserver32.exe\" /F /T REG_SZ /V debugger /D \"BLOCK\"");
