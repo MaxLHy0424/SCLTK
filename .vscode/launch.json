@@ -7,7 +7,7 @@
             "request":"launch",
             "program":"${fileDirname}\\bin\\${fileBasenameNoExtension}.exe",
             "args":[
-                "-clr=9",
+                "-clr=3",
                 "-beta"
             ],
             "stopAtEntry":false,
