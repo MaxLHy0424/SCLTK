@@ -3,23 +3,7 @@
 #include<string>
 #include<ShlObj.h>
 #include<thread>
-char Code[3];
-DWORD KernalVersion(){
-    DWORD version{GetVersion()};
-    DWORD major{(DWORD)(LOBYTE(LOWORD(version)))},minor{(DWORD)(HIBYTE(LOWORD(version)))};
-    return (major*10UL+minor);
-}
-bool ConfirmOp(){
-    printf("是否继续? (Y/N): ");
-    for(;;){
-        scanf("%s",&Code[1]);
-        if((Code[1]=='Y'||Code[1]=='y'||Code[1]=='N'||Code[1]=='n')&&(Code[2]==0)){
-            break;
-        }
-        printf("键入错误, 请重试: ");
-    }
-    return ((Code[1]=='Y'||Code[1]=='y')?(true):(false));
-}
+char IptDat[3]{};
 void ForceShow(){
     HWND ForeWnd{GetForegroundWindow()};
     DWORD ForeID{GetWindowThreadProcessId(ForeWnd,NULL)};
@@ -34,4 +18,20 @@ void ForceShow(){
         SetWindowPos(ForeWnd,HWND_TOPMOST,0,0,100,100,SWP_NOMOVE|SWP_NOSIZE);
         Sleep(250UL);
     }
+}
+bool ConfirmOp(){
+    printf("是否继续? (Y/N): ");
+    for(;;){
+        scanf("%s",&IptDat[1]);
+        if((IptDat[1]=='Y'||IptDat[1]=='y'||IptDat[1]=='N'||IptDat[1]=='n')&&(IptDat[2]==0)){
+            break;
+        }
+        printf("键入错误, 请重试: ");
+    }
+    return ((bool)(IptDat[1]=='Y'||IptDat[1]=='y'));
+}
+DWORD KernalVersion(){
+    DWORD version{GetVersion()};
+    DWORD major{(DWORD)(LOBYTE(LOWORD(version)))},minor{(DWORD)(HIBYTE(LOWORD(version)))};
+    return (major*10UL+minor);
 }
