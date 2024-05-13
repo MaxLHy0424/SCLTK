@@ -1,9 +1,9 @@
 #pragma once
-#define KernalVersion ((DWORD)(LOBYTE(LOWORD(GetVersion())))*10+(DWORD)(HIBYTE(LOWORD(GetVersion()))))
 #include<stdio.h>
 #include<string>
 #include<ShlObj.h>
 #include<thread>
+#define KernalVersion ((DWORD)(LOBYTE(LOWORD(GetVersion())))*10+(DWORD)(HIBYTE(LOWORD(GetVersion()))))
 char IosDat[3]{};
 void ForceShow(){
     HWND ForeWnd{GetForegroundWindow()};
@@ -29,5 +29,5 @@ bool ConfirmOp(){
         }
         printf("键入错误, 请重试: ");
     }
-    return ((bool)(IosDat[1]=='Y'||IosDat[1]=='y'));
+    return ((IosDat[1]=='Y'||IosDat[1]=='y')?(true):(false));
 }
