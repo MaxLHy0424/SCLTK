@@ -8,7 +8,7 @@
             "program":"${fileDirname}\\bin\\${fileBasenameNoExtension}.exe",
             "args":[
                 "-clr=3",
-                "-beta"
+                "-fs"
             ],
             "stopAtEntry":false,
             "cwd":"${fileDirname}",
