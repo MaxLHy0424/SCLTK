@@ -1,4 +1,5 @@
 #pragma once
+#define KernalVersion ((DWORD)(LOBYTE(LOWORD(GetVersion())))*10+(DWORD)(HIBYTE(LOWORD(GetVersion()))))
 #include<stdio.h>
 #include<string>
 #include<ShlObj.h>
@@ -29,9 +30,4 @@ bool ConfirmOp(){
         printf("键入错误, 请重试: ");
     }
     return ((bool)(IptDat[1]=='Y'||IptDat[1]=='y'));
-}
-DWORD KernalVersion(){
-    DWORD version{GetVersion()};
-    DWORD major{(DWORD)(LOBYTE(LOWORD(version)))},minor{(DWORD)(HIBYTE(LOWORD(version)))};
-    return (major*10UL+minor);
 }
