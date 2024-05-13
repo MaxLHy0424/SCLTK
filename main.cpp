@@ -18,20 +18,20 @@ BEGIN:
     puts("   [2] 联想云教室\n");
     printf("请键入: ");
     for(;;){
-        scanf("%s",&IosDat[0]);
-        if((IosDat[0]=='0'||IosDat[0]=='1'||IosDat[0]=='2')&&(IosDat[1]==0)){
+        scanf("%s",&IptDat[0]);
+        if((IptDat[0]=='0'||IptDat[0]=='1'||IptDat[0]=='2')&&(IptDat[1]==0)){
             break;
         }
         printf("键入错误, 请重试: ");
     }
-    if(IosDat[0]=='0'){
+    if(IptDat[0]=='0'){
         return;
     }
     printf("已%s用高级破解, ",((IsUserAnAdmin())?("启"):("禁")));
     if(ConfirmOp()==true){
         system("Cls");
         puts("| 破解 > 执行操作 |\n");
-        switch(IosDat[0]){
+        switch(IptDat[0]){
             case '1':{
                 system("TaskKill /F /IM StudentMain.exe");
                 system("TaskKill /F /IM DispcapHelper.exe");
@@ -119,19 +119,19 @@ BEGIN:
     puts("   [2] 联想云教室\n");
     printf("请键入: ");
     for(;;){
-        scanf("%s",&IosDat[0]);
-        if((IosDat[0]=='0'||IosDat[0]=='1'||IosDat[0]=='2')&&(IosDat[1]==0)){
+        scanf("%s",&IptDat[0]);
+        if((IptDat[0]=='0'||IptDat[0]=='1'||IptDat[0]=='2')&&(IptDat[1]==0)){
             break;
         }
         printf("键入错误, 请重试: ");
     }
-    if(IosDat[0]=='0'){
+    if(IptDat[0]=='0'){
         return;
     }
     if(ConfirmOp()==true){
         system("Cls");
         puts("| 恢复 > 执行操作 |\n");
-        switch(IosDat[0]){
+        switch(IptDat[0]){
             case '1':{
                 system("Reg Delete \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\StudentMain.exe\" /F");
                 system("Reg Delete \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DispcapHelper.exe\" /F");
@@ -195,14 +195,14 @@ BEGIN:
     puts("   [3] 高级启动\n");
     printf("请键入: ");
     for(;;){
-        scanf("%s",&IosDat[0]);
-        if((IosDat[0]=='0'||IosDat[0]=='/'||IosDat[0]=='1'||IosDat[0]=='2'||IosDat[0]=='3')&&(IosDat[1]==0)){
+        scanf("%s",&IptDat[0]);
+        if((IptDat[0]=='0'||IptDat[0]=='/'||IptDat[0]=='1'||IptDat[0]=='2'||IptDat[0]=='3')&&(IptDat[1]==0)){
             break;
         }
         printf("键入错误, 请重试: ");
     }
     system("Cls");
-    switch(IosDat[0]){
+    switch(IptDat[0]){
         case '0':{
             return;
         }case '/':{
@@ -292,17 +292,14 @@ BEGIN:
     puts("   [3] 工具箱\n");
     printf("请键入: ");
     for(;;){
-        scanf("%s",&IosDat[0]);
-        if((IosDat[0]=='i'||IosDat[0]=='I'||IosDat[0]=='1'||IosDat[0]=='2'||IosDat[0]=='3')&&(IosDat[1]==0)){
-            if(IosDat[0]=='I'){
-                IosDat[0]=='i';
-            }
+        scanf("%s",&IptDat[0]);
+        if((IptDat[0]=='i'||IptDat[0]=='1'||IptDat[0]=='2'||IptDat[0]=='3')&&(IptDat[1]==0)){
             break;
         }
         printf("键入错误, 请重试: ");
     }
     system("Cls");
-    switch(IosDat[0]){
+    switch(IptDat[0]){
         case 'i':{
             Info();
             break;
