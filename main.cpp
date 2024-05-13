@@ -2,7 +2,7 @@
 void Info(){
     puts("| 关于 |\n");
     puts("   [软件名称] Computer Room Controlling Software Nemesis");
-    puts("   [构建版本] v4.8.6");
+    puts("   [构建版本] v4.8.7");
     puts("   [项目仓库] https://github.com/MaxLHy0424/CRCSN\n");
     puts("   (C) 2023- MaxLHy0424, All Rights Reserved.\n");
     puts("========================================\n");
@@ -286,21 +286,24 @@ int main(int argc,char* argv[]){
     }
 BEGIN:
     puts("| 主页 |\n");
-    puts("   [?] 关于");
+    puts("   [i] 关于");
     puts("   [1] 破解");
     puts("   [2] 恢复");
     puts("   [3] 工具箱\n");
     printf("请键入: ");
     for(;;){
         scanf("%s",&IosDat[0]);
-        if((IosDat[0]=='?'||IosDat[0]=='1'||IosDat[0]=='2'||IosDat[0]=='3')&&(IosDat[1]==0)){
+        if((IosDat[0]=='i'||IosDat[0]=='I'||IosDat[0]=='1'||IosDat[0]=='2'||IosDat[0]=='3')&&(IosDat[1]==0)){
+            if(IosDat[0]=='I'){
+                IosDat[0]=='i';
+            }
             break;
         }
         printf("键入错误, 请重试: ");
     }
     system("Cls");
     switch(IosDat[0]){
-        case '?':{
+        case 'i':{
             Info();
             break;
         }case '1':{
