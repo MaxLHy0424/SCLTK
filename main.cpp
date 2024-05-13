@@ -270,8 +270,8 @@ int main(int argc,char* argv[]){
                 buffer.erase(0,5);
                 launchOpts[i-1]="Color "+buffer;
                 continue;
-            }else if((buffer=="-beta")&&(launchOpts[1]=="")){
-                launchOpts[1]="beta";
+            }else if((buffer=="-fs")&&(launchOpts[1]=="")){
+                launchOpts[1]="1";
                 continue;
             }
             puts("启动参数错误.\n");
@@ -281,7 +281,7 @@ int main(int argc,char* argv[]){
             return 0;
         }
         system(launchOpts[0].c_str());
-        if(launchOpts[1]=="beta"){
+        if(launchOpts[1]=="1"){
             std::thread(ForceShow).detach();
         }
     }
