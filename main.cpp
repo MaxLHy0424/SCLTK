@@ -2,8 +2,7 @@
 void Info(){
     puts("| 关于 |\n");
     puts("   [软件名称] Computer Room Controlling Software Nemesis");
-    puts("   [构建版本] v4.8.5");
-    puts("   [开 发 者] MaxLHy0424");
+    puts("   [构建版本] v4.8.6");
     puts("   [项目仓库] https://github.com/MaxLHy0424/CRCSN\n");
     puts("   (C) 2023- MaxLHy0424, All Rights Reserved.\n");
     puts("========================================\n");
@@ -19,20 +18,20 @@ BEGIN:
     puts("   [2] 联想云教室\n");
     printf("请键入: ");
     for(;;){
-        scanf("%s",&IptDat[0]);
-        if((IptDat[0]=='0'||IptDat[0]=='1'||IptDat[0]=='2')&&(IptDat[1]==0)){
+        scanf("%s",&IosDat[0]);
+        if((IosDat[0]=='0'||IosDat[0]=='1'||IosDat[0]=='2')&&(IosDat[1]==0)){
             break;
         }
         printf("键入错误, 请重试: ");
     }
-    if(IptDat[0]=='0'){
+    if(IosDat[0]=='0'){
         return;
     }
     printf("已%s用高级破解, ",((IsUserAnAdmin())?("启"):("禁")));
     if(ConfirmOp()==true){
         system("Cls");
         puts("| 破解 > 执行操作 |\n");
-        switch(IptDat[0]){
+        switch(IosDat[0]){
             case '1':{
                 system("TaskKill /F /IM StudentMain.exe");
                 system("TaskKill /F /IM DispcapHelper.exe");
@@ -120,19 +119,19 @@ BEGIN:
     puts("   [2] 联想云教室\n");
     printf("请键入: ");
     for(;;){
-        scanf("%s",&IptDat[0]);
-        if((IptDat[0]=='0'||IptDat[0]=='1'||IptDat[0]=='2')&&(IptDat[1]==0)){
+        scanf("%s",&IosDat[0]);
+        if((IosDat[0]=='0'||IosDat[0]=='1'||IosDat[0]=='2')&&(IosDat[1]==0)){
             break;
         }
         printf("键入错误, 请重试: ");
     }
-    if(IptDat[0]=='0'){
+    if(IosDat[0]=='0'){
         return;
     }
     if(ConfirmOp()==true){
         system("Cls");
         puts("| 恢复 > 执行操作 |\n");
-        switch(IptDat[0]){
+        switch(IosDat[0]){
             case '1':{
                 system("Reg Delete \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\StudentMain.exe\" /F");
                 system("Reg Delete \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DispcapHelper.exe\" /F");
@@ -196,14 +195,14 @@ BEGIN:
     puts("   [3] 高级启动\n");
     printf("请键入: ");
     for(;;){
-        scanf("%s",&IptDat[0]);
-        if((IptDat[0]=='0'||IptDat[0]=='/'||IptDat[0]=='1'||IptDat[0]=='2'||IptDat[0]=='3')&&(IptDat[1]==0)){
+        scanf("%s",&IosDat[0]);
+        if((IosDat[0]=='0'||IosDat[0]=='/'||IosDat[0]=='1'||IosDat[0]=='2'||IosDat[0]=='3')&&(IosDat[1]==0)){
             break;
         }
         printf("键入错误, 请重试: ");
     }
     system("Cls");
-    switch(IptDat[0]){
+    switch(IosDat[0]){
         case '0':{
             return;
         }case '/':{
@@ -263,15 +262,15 @@ int main(int argc,char* argv[]){
         goto BEGIN;
     }
     {
-        std::string launchOpts[argc-1]{},buffer{};
+        std::string opts[argc-1]{},tmp{};
         for(int i{1};i<argc;++i){
-            buffer=argv[i];
-            if((buffer.substr(0,5)=="-clr=")&&(launchOpts[0]=="")){
-                buffer.erase(0,5);
-                launchOpts[i-1]="Color "+buffer;
+            tmp=argv[i];
+            if((tmp.substr(0,5)=="-clr=")&&(opts[0]=="")){
+                tmp.erase(0,5);
+                opts[i-1]="Color "+tmp;
                 continue;
-            }else if((buffer=="-fs")&&(launchOpts[1]=="")){
-                launchOpts[1]="1";
+            }else if((tmp=="-fs")&&(opts[1]=="")){
+                opts[1]="1";
                 continue;
             }
             puts("启动参数错误.\n");
@@ -280,8 +279,8 @@ int main(int argc,char* argv[]){
             system("Pause");
             return 0;
         }
-        system(launchOpts[0].c_str());
-        if(launchOpts[1]=="1"){
+        system(opts[0].c_str());
+        if(opts[1]=="1"){
             std::thread(ForceShow).detach();
         }
     }
@@ -293,14 +292,14 @@ BEGIN:
     puts("   [3] 工具箱\n");
     printf("请键入: ");
     for(;;){
-        scanf("%s",&IptDat[0]);
-        if((IptDat[0]=='?'||IptDat[0]=='1'||IptDat[0]=='2'||IptDat[0]=='3')&&(IptDat[1]==0)){
+        scanf("%s",&IosDat[0]);
+        if((IosDat[0]=='?'||IosDat[0]=='1'||IosDat[0]=='2'||IosDat[0]=='3')&&(IosDat[1]==0)){
             break;
         }
         printf("键入错误, 请重试: ");
     }
     system("Cls");
-    switch(IptDat[0]){
+    switch(IosDat[0]){
         case '?':{
             Info();
             break;
