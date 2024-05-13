@@ -16,7 +16,7 @@ void ForceShow(){
         SetForegroundWindow(ForeWnd);
         AttachThreadInput(CurID,ForeID,FALSE);
         SetWindowPos(ForeWnd,HWND_TOPMOST,0,0,100,100,SWP_NOMOVE|SWP_NOSIZE);
-        Sleep(250UL);
+        Sleep(500UL);
     }
 }
 bool ConfirmOp(){
