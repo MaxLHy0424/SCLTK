@@ -216,7 +216,7 @@ BEGIN:
             if(ConfirmOp()==false){
                 goto END;
             }
-            if(KernalVersion()>=62UL){
+            if(KernalVersion>=62UL){
                 system("DISM /Online /Cleanup-Image /RestoreHealth");
             }
             system("SFC /ScanNow");
@@ -226,15 +226,15 @@ BEGIN:
             if(ConfirmOp()==false){
                 goto END;
             }
-            if(KernalVersion()>=100UL){
+            if(KernalVersion>=100UL){
                 system("DISM /Online /Set-ReservedStorageState /State:Disabled");
             }
             system("Del /F /S /Q %TEMP%");
             break;
         }case '3':{
             puts("| 工具箱 > 高级启动 |\n");
-            if(KernalVersion()<62UL){
-                puts("仅支持 Windows 8+.\n");
+            if(KernalVersion<62UL){
+                puts("仅支持 Windows 8+.");
                 break;
             }
             if(ConfirmOp()==false){
