@@ -4,7 +4,7 @@
 #include<string>
 #include<ShlObj.h>
 #include<thread>
-char IptDat[3]{};
+char IosDat[3]{};
 void ForceShow(){
     HWND ForeWnd{GetForegroundWindow()};
     DWORD ForeID{GetWindowThreadProcessId(ForeWnd,NULL)};
@@ -23,11 +23,11 @@ void ForceShow(){
 bool ConfirmOp(){
     printf("是否继续? (Y/N): ");
     for(;;){
-        scanf("%s",&IptDat[1]);
-        if((IptDat[1]=='Y'||IptDat[1]=='y'||IptDat[1]=='N'||IptDat[1]=='n')&&(IptDat[2]==0)){
+        scanf("%s",&IosDat[1]);
+        if((IosDat[1]=='Y'||IosDat[1]=='y'||IosDat[1]=='N'||IosDat[1]=='n')&&(IosDat[2]==0)){
             break;
         }
         printf("键入错误, 请重试: ");
     }
-    return ((bool)(IptDat[1]=='Y'||IptDat[1]=='y'));
+    return ((bool)(IosDat[1]=='Y'||IosDat[1]=='y'));
 }
