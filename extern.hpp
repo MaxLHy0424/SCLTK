@@ -2,8 +2,8 @@
 #include<string>
 #include<ShlObj.h>
 #include<thread>
-#define KernalVersion ((DWORD)(LOBYTE(LOWORD(GetVersion())))*10+(DWORD)(HIBYTE(LOWORD(GetVersion()))))
-char IptDat[3]{};
+#define KernalVersion (((DWORD)(LOBYTE(LOWORD(GetVersion()))))*10UL+((DWORD)(HIBYTE(LOWORD(GetVersion())))))
+char InDat[3]{};
 void ForceShow(){
     HWND ForeWnd{GetForegroundWindow()};
     DWORD ForeID{GetWindowThreadProcessId(ForeWnd,NULL)};
@@ -19,14 +19,14 @@ void ForceShow(){
         Sleep(500UL);
     }
 }
-bool ConfirmOp(){
+bool Confirm(){
     printf("是否继续? (Y/N): ");
     for(;;){
-        scanf("%s",&IptDat[1]);
-        if((IptDat[1]=='Y'||IptDat[1]=='y'||IptDat[1]=='N'||IptDat[1]=='n')&&(IptDat[2]==0)){
+        scanf("%s",&InDat[1]);
+        if((InDat[1]=='Y'||InDat[1]=='y'||InDat[1]=='N'||InDat[1]=='n')&&(InDat[2]==0)){
             break;
         }
         printf("键入错误, 请重试: ");
     }
-    return ((IptDat[1]=='Y'||IptDat[1]=='y')?(true):(false));
+    return ((bool)(InDat[1]=='Y'||InDat[1]=='y'));
 }
