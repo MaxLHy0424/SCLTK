@@ -5,7 +5,7 @@
             "type":"shell",
             "command":"g++",
             "args":[
-                "\"${file}\"",
+                "*.cpp",
                 "-fexec-charset=GBK",
                 "-std=gnu++23",
                 "-Wall",
@@ -16,7 +16,7 @@
                 "-Ofast",
                 "-Os",
                 "-o",
-                "\"${fileDirname}\\bin\\${fileBasenameNoExtension}.exe\"",
+                ".\\bin\\main.exe",
             ],
             "group":{
                 "kind":"build",
