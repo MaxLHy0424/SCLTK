@@ -8,7 +8,7 @@
 
 **CRCSN 涉及到修改注册表等操作, 使用时建议关闭防病毒软件. 倘若 CRCSN 被报为恶意软件, 请添加排除项.**
 
-> 适用于最新正式发行版, 其他版本可能有所不同.
+> 仅为最新正式发行版编写, 其他版本可能有所不同.
 
 ## 0 启动
 
@@ -21,7 +21,7 @@
 找到这一行:
 
 ````Cmd
-: MsHta Vbscript:CreateObject("Shell.Application").ShellExecute("%~S0","goto :RunAs","","RunAs",1)(Window.Close)&Goto:EOF
+: MsHta VbScript:CreateObject("Shell.Application").ShellExecute("%~S0","GoTo:RunAs","","RunAs",1)(Window.Close)&GoTo:EOF
 ````
 
 将开头的`: `去掉即可. 再运行 CRCSN, 将会强制以管理员权限运行. 
