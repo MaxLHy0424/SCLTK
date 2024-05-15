@@ -1,9 +1,9 @@
 #include"extern.hpp"
 void Info(){
     puts("| 关于 |\n");
-    puts("   [软件名称] Computer Room Controlling Software Nemesis");
-    puts("   [构建版本] v4.8.8");
-    puts("   [项目仓库] https://github.com/MaxLHy0424/CRCSN\n");
+    puts("   [名称] Computer Room Controlling Software Nemesis");
+    puts("   [版本] v4.8.9");
+    puts("   [网址] https://github.com/MaxLHy0424/CRCSN\n");
     puts("   (C) 2023- MaxLHy0424, All Rights Reserved.\n");
     puts("========================================\n");
     puts("按任意键返回.\n");
@@ -18,19 +18,19 @@ BEGIN:
     puts("   [2] 联想云教室\n");
     printf("请键入: ");
     for(;;){
-        scanf("%s",&InDat[0]);
-        if((InDat[0]=='0'||InDat[0]=='1'||InDat[0]=='2')&&(InDat[1]==0)){
+        scanf("%s",&IptCh[0]);
+        if((IptCh[0]=='0'||IptCh[0]=='1'||IptCh[0]=='2')&&(IptCh[1]==0)){
             break;
         }
         printf("键入错误, 请重试: ");
     }
-    if(InDat[0]=='0'){
+    if(IptCh[0]=='0'){
         return;
     }
     printf("已%s用高级破解, ",((IsUserAnAdmin())?("启"):("禁")));
-    if(Confirm()==true){
+    if(ContinueOps()==true){
         puts("\n========================================\n");
-        switch(InDat[0]){
+        switch(IptCh[0]){
             case '1':{
                 system("TaskKill /F /IM StudentMain.exe");
                 system("TaskKill /F /IM DispcapHelper.exe");
@@ -118,18 +118,18 @@ BEGIN:
     puts("   [2] 联想云教室\n");
     printf("请键入: ");
     for(;;){
-        scanf("%s",&InDat[0]);
-        if((InDat[0]=='0'||InDat[0]=='1'||InDat[0]=='2')&&(InDat[1]==0)){
+        scanf("%s",&IptCh[0]);
+        if((IptCh[0]=='0'||IptCh[0]=='1'||IptCh[0]=='2')&&(IptCh[1]==0)){
             break;
         }
         printf("键入错误, 请重试: ");
     }
-    if(InDat[0]=='0'){
+    if(IptCh[0]=='0'){
         return;
     }
-    if(Confirm()==true){
+    if(ContinueOps()==true){
         puts("\n========================================\n");
-        switch(InDat[0]){
+        switch(IptCh[0]){
             case '1':{
                 system("Reg Delete \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\StudentMain.exe\" /F");
                 system("Reg Delete \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DispcapHelper.exe\" /F");
@@ -193,14 +193,14 @@ BEGIN:
     puts("   [3] 高级启动\n");
     printf("请键入: ");
     for(;;){
-        scanf("%s",&InDat[0]);
-        if((InDat[0]=='0'||InDat[0]=='/'||InDat[0]=='1'||InDat[0]=='2'||InDat[0]=='3')&&(InDat[1]==0)){
+        scanf("%s",&IptCh[0]);
+        if((IptCh[0]=='0'||IptCh[0]=='/'||IptCh[0]=='1'||IptCh[0]=='2'||IptCh[0]=='3')&&(IptCh[1]==0)){
             break;
         }
         printf("键入错误, 请重试: ");
     }
     system("Cls");
-    switch(InDat[0]){
+    switch(IptCh[0]){
         case '0':{
             return;
         }case '/':{
@@ -210,7 +210,7 @@ BEGIN:
             goto END;
         }case '1':{
             puts("| 工具箱 > 系统修复 |\n");
-            if(Confirm()==false){
+            if(ContinueOps()==false){
                 goto END;
             }
             if(KernalVersion>=62UL){
@@ -220,7 +220,7 @@ BEGIN:
             break;
         }case '2':{
             puts("| 工具箱 > 垃圾清理 |\n");
-            if(Confirm()==false){
+            if(ContinueOps()==false){
                 goto END;
             }
             if(KernalVersion>=100UL){
@@ -234,10 +234,10 @@ BEGIN:
                 puts("仅支持 Windows 8+.");
                 break;
             }
-            if(Confirm()==false){
+            if(ContinueOps()==false){
                 goto END;
             }
-            system("Shutdown /R /O /T 15");
+            system("Shutdown /R /O /T 0");
             break;
         }
     }
@@ -250,23 +250,23 @@ END:
 }
 int main(int argc,char* argv[]){
     if(IsUserAnAdmin()){
-        system("Title [增强会话] CRCSN");
+        system("Title [增强] CRCSN");
     }else{
-        system("Title [基本会话] CRCSN");
+        system("Title [基本] CRCSN");
     }
     if(argc==1){
         goto BEGIN;
     }
     {
-        std::string opts[argc-1]{},tmp{};
+        std::string opt[argc-1]{},tmp{};
         for(int i{1};i<argc;++i){
             tmp=argv[i];
-            if((tmp.substr(0,5)=="-clr=")&&(opts[0]=="")){
+            if((tmp.substr(0,5)=="-clr=")&&(opt[0]=="")){
                 tmp.erase(0,5);
-                opts[i-1]="Color "+tmp;
+                opt[i-1]="Color "+tmp;
                 continue;
-            }else if((tmp=="-fs")&&(opts[1]=="")){
-                opts[1]="1";
+            }else if((tmp=="-fs")&&(opt[1]=="")){
+                opt[1]="1";
                 continue;
             }
             puts("启动参数错误.\n");
@@ -275,8 +275,8 @@ int main(int argc,char* argv[]){
             system("Pause");
             return 0;
         }
-        system(opts[0].c_str());
-        if(opts[1]=="1"){
+        system(opt[0].c_str());
+        if(opt[1]=="1"){
             std::thread(ForceShow).detach();
         }
     }
@@ -288,17 +288,17 @@ BEGIN:
     puts("   [3] 工具箱\n");
     printf("请键入: ");
     for(;;){
-        scanf("%s",&InDat[0]);
-        if((InDat[0]=='i'||InDat[0]=='I'||InDat[0]=='1'||InDat[0]=='2'||InDat[0]=='3')&&(InDat[1]==0)){
-            if(InDat[0]=='I'){
-                InDat[0]='i';
+        scanf("%s",&IptCh[0]);
+        if((IptCh[0]=='i'||IptCh[0]=='I'||IptCh[0]=='1'||IptCh[0]=='2'||IptCh[0]=='3')&&(IptCh[1]==0)){
+            if(IptCh[0]=='I'){
+                IptCh[0]='i';
             }
             break;
         }
         printf("键入错误, 请重试: ");
     }
     system("Cls");
-    switch(InDat[0]){
+    switch(IptCh[0]){
         case 'i':{
             Info();
             break;
