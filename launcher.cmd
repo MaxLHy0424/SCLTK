@@ -1,8 +1,8 @@
 @Echo Off
 SetLocal EnableDelayedExpansion
 Title CRCSN Launcher
-PushD %~DP0 & CD /D "%~dp0"
+PushD %~DP0&CD /D "%~dp0"
 %1 %2
-: MsHta Vbscript:CreateObject("Shell.Application").ShellExecute("%~S0","Goto :RunAs","","RunAs",1)(Window.Close)&Goto:EOF
+: MsHta VbScript:CreateObject("Shell.Application").ShellExecute("%~S0","GoTo:RunAs","","RunAs",1)(Window.Close)&GoTo:EOF
 :RunAs
 .\bin\main.exe -clr=3
