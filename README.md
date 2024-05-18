@@ -2,7 +2,7 @@
 **Computer Room Controlling Software Nemesis: 轻松破解机房控制.**\
 *©️ 2023- MaxLHy0424, 保留所有权利.*
 
-[立即下载最新发行版 (v4.8.9)!](https://github.com/MaxLHy0424/CRCSN/releases/download/v4.8.9/CRCSN_v4-8-9_x64.7z)
+[立即下载最新发行版 (v4.8.10)!](https://github.com/MaxLHy0424/CRCSN/releases/download/v4.8.10/CRCSN_v4-8-10_x64.7z)
 
 # 使用方式
 
@@ -30,20 +30,20 @@
 
 ### 0-2 修改控制台颜色
 
-找到最后一行, 编辑`-clr=`后面的字符, 例如:
+找到最后一行, 在末尾加上`-clr=`, 并在后面添加参数, 例如:
 
 ````Cmd
-.\bin\main.exe -clr=F0 其他选项
+.\bin\main.exe -clr=9
 ````
 
-具体参数详见`Color`命令帮助.
+参数详见`Color`命令帮助.
 
 ### 0-3 窗口置顶
 
 找到最后一行. 如需启用, 请在末尾加上`-fs`, 修改后见下:
 
 ````Cmd
-.\bin\main.exe -fs 其他选项
+.\bin\main.exe -fs
 ````
 
 如需禁用, 将`-fs`删去即可.
