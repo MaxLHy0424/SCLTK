@@ -2,7 +2,7 @@
 void Info(){
     puts("| 关于 |\n");
     puts("   [名称] Computer Room Controlling Software Nemesis");
-    puts("   [版本] v4.8.9");
+    puts("   [版本] v4.8.10");
     puts("   [网址] https://github.com/MaxLHy0424/CRCSN\n");
     puts("   (C) 2023- MaxLHy0424, All Rights Reserved.\n");
     puts("========================================\n");
@@ -18,19 +18,19 @@ BEGIN:
     puts("   [2] 联想云教室\n");
     printf("请键入: ");
     for(;;){
-        scanf("%s",&IptCh[0]);
-        if((IptCh[0]=='0'||IptCh[0]=='1'||IptCh[0]=='2')&&(IptCh[1]==0)){
+        scanf("%s",&IptDat[0]);
+        if((IptDat[0]=='0'||IptDat[0]=='1'||IptDat[0]=='2')&&(IptDat[1]==0)){
             break;
         }
         printf("键入错误, 请重试: ");
     }
-    if(IptCh[0]=='0'){
+    if(IptDat[0]=='0'){
         return;
     }
-    printf("已%s用高级破解, ",((IsUserAnAdmin())?("启"):("禁")));
-    if(ContinueOps()==true){
+    printf("使用%s破解, ",((IsUserAnAdmin())?("高级"):("基本")));
+    if(ContinueOps()){
         puts("\n========================================\n");
-        switch(IptCh[0]){
+        switch(IptDat[0]){
             case '1':{
                 system("TaskKill /F /IM StudentMain.exe");
                 system("TaskKill /F /IM DispcapHelper.exe");
@@ -107,7 +107,7 @@ void Recoverer(){
 BEGIN:
     puts("| 恢复 |\n");
     if(!IsUserAnAdmin()){
-        puts("此功能在基本会话下不可用.\n");
+        puts("基本会话下此功能不可用.\n");
         puts("========================================\n");
         puts("按任意键返回.\n");
         system("Pause");
@@ -118,18 +118,18 @@ BEGIN:
     puts("   [2] 联想云教室\n");
     printf("请键入: ");
     for(;;){
-        scanf("%s",&IptCh[0]);
-        if((IptCh[0]=='0'||IptCh[0]=='1'||IptCh[0]=='2')&&(IptCh[1]==0)){
+        scanf("%s",&IptDat[0]);
+        if((IptDat[0]=='0'||IptDat[0]=='1'||IptDat[0]=='2')&&(IptDat[1]==0)){
             break;
         }
         printf("键入错误, 请重试: ");
     }
-    if(IptCh[0]=='0'){
+    if(IptDat[0]=='0'){
         return;
     }
-    if(ContinueOps()==true){
+    if(ContinueOps()){
         puts("\n========================================\n");
-        switch(IptCh[0]){
+        switch(IptDat[0]){
             case '1':{
                 system("Reg Delete \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\StudentMain.exe\" /F");
                 system("Reg Delete \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DispcapHelper.exe\" /F");
@@ -180,7 +180,7 @@ void Tools(){
 BEGIN:
     puts("| 工具箱 |\n");
     if(!IsUserAnAdmin()){
-        puts("此功能在基本会话下不可用.\n");
+        puts("基本会话下此功能不可用.\n");
         puts("========================================\n");
         puts("按任意键返回.\n");
         system("Pause");
@@ -193,14 +193,14 @@ BEGIN:
     puts("   [3] 高级启动\n");
     printf("请键入: ");
     for(;;){
-        scanf("%s",&IptCh[0]);
-        if((IptCh[0]=='0'||IptCh[0]=='/'||IptCh[0]=='1'||IptCh[0]=='2'||IptCh[0]=='3')&&(IptCh[1]==0)){
+        scanf("%s",&IptDat[0]);
+        if((IptDat[0]=='0'||IptDat[0]=='/'||IptDat[0]=='1'||IptDat[0]=='2'||IptDat[0]=='3')&&(IptDat[1]==0)){
             break;
         }
         printf("键入错误, 请重试: ");
     }
     system("Cls");
-    switch(IptCh[0]){
+    switch(IptDat[0]){
         case '0':{
             return;
         }case '/':{
@@ -210,31 +210,31 @@ BEGIN:
             goto END;
         }case '1':{
             puts("| 工具箱 > 系统修复 |\n");
-            if(ContinueOps()==false){
+            if(!ContinueOps()){
                 goto END;
             }
-            if(KernalVersion>=62UL){
+            if(KernelVersion>=62UL){
                 system("DISM /Online /Cleanup-Image /RestoreHealth");
             }
             system("SFC /ScanNow");
             break;
         }case '2':{
             puts("| 工具箱 > 垃圾清理 |\n");
-            if(ContinueOps()==false){
+            if(!ContinueOps()){
                 goto END;
             }
-            if(KernalVersion>=100UL){
+            if(KernelVersion>=100UL){
                 system("DISM /Online /Set-ReservedStorageState /State:Disabled");
             }
-            system("Del /F /S /Q %TEMP%");
+            system("Del /F /S /Q %Temp%");
             break;
         }case '3':{
             puts("| 工具箱 > 高级启动 |\n");
-            if(KernalVersion<62UL){
+            if(KernelVersion<62UL){
                 puts("仅支持 Windows 8+.");
                 break;
             }
-            if(ContinueOps()==false){
+            if(!ContinueOps()){
                 goto END;
             }
             system("Shutdown /R /O /T 0");
@@ -250,9 +250,9 @@ END:
 }
 int main(int argc,char* argv[]){
     if(IsUserAnAdmin()){
-        system("Title [增强] CRCSN");
+        system("Title [增强会话] CRCSN");
     }else{
-        system("Title [基本] CRCSN");
+        system("Title [基本会话] CRCSN");
     }
     if(argc==1){
         goto BEGIN;
@@ -288,17 +288,17 @@ BEGIN:
     puts("   [3] 工具箱\n");
     printf("请键入: ");
     for(;;){
-        scanf("%s",&IptCh[0]);
-        if((IptCh[0]=='i'||IptCh[0]=='I'||IptCh[0]=='1'||IptCh[0]=='2'||IptCh[0]=='3')&&(IptCh[1]==0)){
-            if(IptCh[0]=='I'){
-                IptCh[0]='i';
+        scanf("%s",&IptDat[0]);
+        if((IptDat[0]=='i'||IptDat[0]=='I'||IptDat[0]=='1'||IptDat[0]=='2'||IptDat[0]=='3')&&(IptDat[1]==0)){
+            if(IptDat[0]=='I'){
+                IptDat[0]='i';
             }
             break;
         }
         printf("键入错误, 请重试: ");
     }
     system("Cls");
-    switch(IptCh[0]){
+    switch(IptDat[0]){
         case 'i':{
             Info();
             break;
