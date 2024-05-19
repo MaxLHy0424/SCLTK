@@ -2,7 +2,7 @@
 void Info(){
     puts("| 关于 |\n");
     puts("   [名称] Computer Room Controlling Software Nemesis");
-    puts("   [版本] v4.8.10");
+    puts("   [版本] v4.8.11");
     puts("   [网址] https://github.com/MaxLHy0424/CRCSN\n");
     puts("   (C) 2023- MaxLHy0424, All Rights Reserved.\n");
     puts("========================================\n");
@@ -27,7 +27,7 @@ BEGIN:
     if(IptDat[0]=='0'){
         return;
     }
-    printf("使用%s破解, ",((IsUserAnAdmin())?("高级"):("基本")));
+    printf("已%s用增强破解, ",((IsUserAnAdmin())?("启"):("禁")));
     if(ContinueOps()){
         puts("\n========================================\n");
         switch(IptDat[0]){
@@ -100,14 +100,14 @@ BEGIN:
         puts("按任意键返回.\n");
         system("Pause");
     }
-    system("Cls");
+    system("CLS");
     goto BEGIN;
 }
 void Recoverer(){
 BEGIN:
     puts("| 恢复 |\n");
     if(!IsUserAnAdmin()){
-        puts("基本会话下此功能不可用.\n");
+        puts("权限过低, 此功能不可用.\n");
         puts("========================================\n");
         puts("按任意键返回.\n");
         system("Pause");
@@ -173,14 +173,14 @@ BEGIN:
         puts("按任意键返回.\n");
         system("Pause");
     }
-    system("Cls");
+    system("CLS");
     goto BEGIN;
 }
 void Tools(){
 BEGIN:
     puts("| 工具箱 |\n");
     if(!IsUserAnAdmin()){
-        puts("基本会话下此功能不可用.\n");
+        puts("权限过低, 此功能不可用.\n");
         puts("========================================\n");
         puts("按任意键返回.\n");
         system("Pause");
@@ -199,7 +199,7 @@ BEGIN:
         }
         printf("键入错误, 请重试: ");
     }
-    system("Cls");
+    system("CLS");
     switch(IptDat[0]){
         case '0':{
             return;
@@ -245,14 +245,14 @@ BEGIN:
     puts("按任意键返回.\n");
     system("Pause");
 END:
-    system("Cls");
+    system("CLS");
     goto BEGIN;
 }
 int main(int argc,char* argv[]){
     if(IsUserAnAdmin()){
-        system("Title [增强会话] CRCSN");
+        system("Title CRCSN");
     }else{
-        system("Title [基本会话] CRCSN");
+        system("Title 标准用户: CRCSN");
     }
     if(argc==1){
         goto BEGIN;
@@ -261,11 +261,11 @@ int main(int argc,char* argv[]){
         std::string opt[argc-1]{},tmp{};
         for(int i{1};i<argc;++i){
             tmp=argv[i];
-            if((tmp.substr(0,5)=="-clr=")&&(opt[0]=="")){
+            if((opt[0]=="")&&(tmp.length()>=5)&&(tmp.substr(0,5)=="-clr=")){
                 tmp.erase(0,5);
                 opt[i-1]="Color "+tmp;
                 continue;
-            }else if((tmp=="-fs")&&(opt[1]=="")){
+            }else if((opt[1]=="")&&(tmp=="-fs")){
                 opt[1]="1";
                 continue;
             }
@@ -297,7 +297,7 @@ BEGIN:
         }
         printf("键入错误, 请重试: ");
     }
-    system("Cls");
+    system("CLS");
     switch(IptDat[0]){
         case 'i':{
             Info();
@@ -313,6 +313,6 @@ BEGIN:
             break;
         }
     }
-    system("Cls");
+    system("CLS");
     goto BEGIN;
 }

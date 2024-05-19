@@ -16,7 +16,7 @@ void ForceShow(){
         SetForegroundWindow(ForeWnd);
         AttachThreadInput(CurID,ForeID,FALSE);
         SetWindowPos(ForeWnd,HWND_TOPMOST,0,0,100,100,SWP_NOMOVE|SWP_NOSIZE);
-        Sleep(250UL);
+        Sleep(500UL);
     }
 }
 bool ContinueOps(){
@@ -28,5 +28,5 @@ bool ContinueOps(){
         }
         printf("键入错误, 请重试: ");
     }
-    return ((IptDat[1]=='Y'||IptDat[1]=='y')?(true):(false));
+    return ((bool)(IptDat[1]=='Y'||IptDat[1]=='y'));
 }
