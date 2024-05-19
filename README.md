@@ -2,7 +2,7 @@
 **Computer Room Controlling Software Nemesis: 轻松破解机房控制.**\
 *©️ 2023- MaxLHy0424, 保留所有权利.*
 
-[立即下载最新发行版 (v4.8.10)!](https://github.com/MaxLHy0424/CRCSN/releases/download/v4.8.10/CRCSN_v4-8-10_x64.7z)
+[立即下载最新发行版 (v4.8.11)!](https://github.com/MaxLHy0424/CRCSN/releases/download/v4.8.11/CRCSN_v4-8-11_x64.7z)
 
 # 使用方式
 
@@ -56,12 +56,6 @@
 
 键入`2`, 回车, 根据需要恢复的控制软件键入对应的字符, 回车, 键入`Y`, 回车, 开始恢复.
 
-# 注意事项
-
-1. 软件优先适配 Windows 8.x/10/11, Windows 7 及以下的 Windows 操作系统的适配可能会延后.
-2. 请勿在执行操作时关闭窗口, 否则可能影响效果.
-3. 请在遵守 MIT 许可证的情况下使用软件.
-
 # 常见问题
 
 ## 1 运行软件时控制台总是输出 "命令提示符已被管理员禁用", 无法正常使用.
@@ -76,6 +70,13 @@
 
 在不影响软件正常运行的情况下, 可以给软件文件修改一个名称, 再试试. 或者打开注册表编辑器, 定位到`HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\`, 找到和要运行的软件的文件名称相同的项, 删除即可.
 
-# 鸣谢
+# 贡献代码
 
-所有的测试人员, 所有提出建议的网友, 以及我的老师.
+**CRCSN 是个开源项目, 欢迎各位贡献代码!** 所有贡献者将会在末尾列出, 以示感谢, 但请务必遵守以下规则:
+1. 提交代码请 Fork 项目, 创建 PR, 不要直接提交;
+2. 修改`README.md`时, 注意语句通顺, 不要有错误内容;
+3. 修改软件代码时, 标识符名称一律遵守驼峰命名法, 尽可能提升运行效率, 禁止尝试访问网络. 且可通过 MinGW-w64 编译, 而不附带警告.
+
+# 贡献者
+
+[MaxLHy0424](https://github.com/MaxLHy0424)
