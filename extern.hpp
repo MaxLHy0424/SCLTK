@@ -28,5 +28,5 @@ bool ContinueOps(){
         }
         printf("键入错误, 请重试: ");
     }
-    return ((bool)(IptDat[1]=='Y'||IptDat[1]=='y'));
+    return ((IptDat[1]=='Y'||IptDat[1]=='y')?(true):(false));
 }

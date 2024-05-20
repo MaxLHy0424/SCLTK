@@ -2,7 +2,7 @@
 void Info(){
     puts("| 关于 |\n");
     puts("   [名称] Computer Room Controlling Software Nemesis");
-    puts("   [版本] v4.8.11");
+    puts("   [版本] v4.8.12");
     puts("   [网址] https://github.com/MaxLHy0424/CRCSN\n");
     puts("   (C) 2023- MaxLHy0424, All Rights Reserved.\n");
     puts("========================================\n");
@@ -249,11 +249,7 @@ END:
     goto BEGIN;
 }
 int main(int argc,char* argv[]){
-    if(IsUserAnAdmin()){
-        system("Title CRCSN");
-    }else{
-        system("Title 标准用户: CRCSN");
-    }
+    system((IsUserAnAdmin())?("Title CRCSN"):("Title 标准用户: CRCSN"));
     if(argc==1){
         goto BEGIN;
     }
@@ -263,7 +259,7 @@ int main(int argc,char* argv[]){
             tmp=argv[i];
             if((opt[0]=="")&&(tmp.length()>=5)&&(tmp.substr(0,5)=="-clr=")){
                 tmp.erase(0,5);
-                opt[i-1]="Color "+tmp;
+                opt[0]="Color "+tmp;
                 continue;
             }else if((opt[1]=="")&&(tmp=="-fs")){
                 opt[1]="1";
@@ -289,10 +285,7 @@ BEGIN:
     printf("请键入: ");
     for(;;){
         scanf("%s",&IptDat[0]);
-        if((IptDat[0]=='i'||IptDat[0]=='I'||IptDat[0]=='1'||IptDat[0]=='2'||IptDat[0]=='3')&&(IptDat[1]==0)){
-            if(IptDat[0]=='I'){
-                IptDat[0]='i';
-            }
+        if((IptDat[0]=='i'||IptDat[0]=='1'||IptDat[0]=='2'||IptDat[0]=='3')&&(IptDat[1]==0)){
             break;
         }
         printf("键入错误, 请重试: ");
