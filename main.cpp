@@ -27,7 +27,7 @@ BEGIN:
     if(IptDat[0]=='0'){
         return;
     }
-    printf("使用%s破解, ",((IsUserAnAdmin())?("增强"):("基本")));
+    printf("%s破解, ",((IsUserAnAdmin())?("增强"):("基本")));
     if(Continue()){
         puts("\n========================================\n");
         switch(IptDat[0]){
@@ -231,7 +231,7 @@ BEGIN:
         }case '3':{
             puts("| 工具箱 > 高级启动 |\n");
             if(KernelVersion<62UL){
-                puts("仅支持 Windows 8+.");
+                puts("仅支持 NT 6.2+.");
                 break;
             }
             if(!Continue()){
