@@ -2,7 +2,7 @@
 **Computer Room Controlling Software Nemesis: 轻松破解机房控制.**\
 *©️ 2023- MaxLHy0424, 保留所有权利.*
 
-[下载最新发行版 (v4.8.12).](https://github.com/MaxLHy0424/CRCSN/releases/download/v4.8.12/CRCSN_v4-8-12_x64.7z)
+[下载最新发行版 (v4.8.13).](https://github.com/MaxLHy0424/CRCSN/releases/download/v4.8.13/CRCSN_v4-8-13_x64.7z)
 
 # 使用方式
 
@@ -21,7 +21,7 @@
 找到这一行:
 
 ````Cmd
-: MsHta VbScript:CreateObject("Shell.Application").ShellExecute("%~S0","GoTo:RunAs","","RunAs",1)(Window.Close)&GoTo:EOF
+: MsHta VbScript:CreateObject("Shell.Application").ShellExecute("%~S0","GoTo:RunAs","","RunAs",1)(Window.Close) & GoTo:EOF
 ````
 
 将开头的`: `去掉即可. 再运行 CRCSN, 将会强制以管理员权限运行. 
