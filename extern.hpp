@@ -1,6 +1,6 @@
 #include<stdio.h>
-#include<string>
 #include<ShlObj.h>
+#include<string>
 #include<thread>
 #define KernelVersion (((DWORD)(LOBYTE(LOWORD(GetVersion()))))*10UL+((DWORD)(HIBYTE(LOWORD(GetVersion())))))
 char IptDat[3]{};
@@ -16,10 +16,10 @@ void ForceShow(){
         SetForegroundWindow(ForeWnd);
         AttachThreadInput(CurID,ForeID,FALSE);
         SetWindowPos(ForeWnd,HWND_TOPMOST,0,0,100,100,SWP_NOMOVE|SWP_NOSIZE);
-        Sleep(500UL);
+        Sleep(250UL);
     }
 }
-bool ContinueOps(){
+bool Continue(){
     printf("是否继续? (Y/N): ");
     for(;;){
         scanf("%s",&IptDat[1]);
@@ -28,5 +28,5 @@ bool ContinueOps(){
         }
         printf("键入错误, 请重试: ");
     }
-    return ((IptDat[1]=='Y'||IptDat[1]=='y')?(true):(false));
+    return ((bool)(IptDat[1]=='Y'||IptDat[1]=='y'));
 }
