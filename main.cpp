@@ -2,7 +2,7 @@
 void Info(){
     puts("| 关于 |\n");
     puts("   [名称] Computer Room Controlling Software Nemesis");
-    puts("   [版本] v4.8.12");
+    puts("   [版本] v4.8.13");
     puts("   [网址] https://github.com/MaxLHy0424/CRCSN\n");
     puts("   (C) 2023- MaxLHy0424, All Rights Reserved.\n");
     puts("========================================\n");
@@ -27,8 +27,8 @@ BEGIN:
     if(IptDat[0]=='0'){
         return;
     }
-    printf("已%s用增强破解, ",((IsUserAnAdmin())?("启"):("禁")));
-    if(ContinueOps()){
+    printf("使用%s破解, ",((IsUserAnAdmin())?("增强"):("基本")));
+    if(Continue()){
         puts("\n========================================\n");
         switch(IptDat[0]){
             case '1':{
@@ -107,7 +107,7 @@ void Recoverer(){
 BEGIN:
     puts("| 恢复 |\n");
     if(!IsUserAnAdmin()){
-        puts("权限过低, 此功能不可用.\n");
+        puts("标准用户权限下不可用.\n");
         puts("========================================\n");
         puts("按任意键返回.\n");
         system("Pause");
@@ -127,7 +127,7 @@ BEGIN:
     if(IptDat[0]=='0'){
         return;
     }
-    if(ContinueOps()){
+    if(Continue()){
         puts("\n========================================\n");
         switch(IptDat[0]){
             case '1':{
@@ -176,11 +176,11 @@ BEGIN:
     system("CLS");
     goto BEGIN;
 }
-void Tools(){
+void Toolkit(){
 BEGIN:
     puts("| 工具箱 |\n");
     if(!IsUserAnAdmin()){
-        puts("权限过低, 此功能不可用.\n");
+        puts("标准用户权限下不可用.\n");
         puts("========================================\n");
         puts("按任意键返回.\n");
         system("Pause");
@@ -210,7 +210,7 @@ BEGIN:
             goto END;
         }case '1':{
             puts("| 工具箱 > 系统修复 |\n");
-            if(!ContinueOps()){
+            if(!Continue()){
                 goto END;
             }
             if(KernelVersion>=62UL){
@@ -220,13 +220,13 @@ BEGIN:
             break;
         }case '2':{
             puts("| 工具箱 > 垃圾清理 |\n");
-            if(!ContinueOps()){
+            if(!Continue()){
                 goto END;
             }
             if(KernelVersion>=100UL){
                 system("DISM /Online /Set-ReservedStorageState /State:Disabled");
             }
-            system("Del /F /S /Q %Temp%");
+            system("Del /S /Q %Temp%");
             break;
         }case '3':{
             puts("| 工具箱 > 高级启动 |\n");
@@ -234,7 +234,7 @@ BEGIN:
                 puts("仅支持 Windows 8+.");
                 break;
             }
-            if(!ContinueOps()){
+            if(!Continue()){
                 goto END;
             }
             system("Shutdown /R /O /T 0");
@@ -260,16 +260,16 @@ int main(int argc,char* argv[]){
             if((opt[0]=="")&&(tmp.length()>=5)&&(tmp.substr(0,5)=="-clr=")){
                 tmp.erase(0,5);
                 opt[0]="Color "+tmp;
-                continue;
             }else if((opt[1]=="")&&(tmp=="-fs")){
                 opt[1]="1";
-                continue;
             }
-            puts("启动参数错误.\n");
-            puts("========================================\n");
-            puts("按任意键退出.\n");
-            system("Pause");
-            return 0;
+            else{
+                puts("启动参数错误.\n");
+                puts("========================================\n");
+                puts("按任意键退出.\n");
+                system("Pause");
+                return 0;
+            }
         }
         system(opt[0].c_str());
         if(opt[1]=="1"){
@@ -302,7 +302,7 @@ BEGIN:
             Recoverer();
             break;
         }case '3':{
-            Tools();
+            Toolkit();
             break;
         }
     }
