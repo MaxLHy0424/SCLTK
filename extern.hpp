@@ -1,9 +1,9 @@
 #include<stdio.h>
-#include<ShlObj.h>
 #include<string>
 #include<thread>
+#include<ShlObj.h>
 #define KernelVersion (((DWORD)(LOBYTE(LOWORD(GetVersion()))))*10UL+((DWORD)(HIBYTE(LOWORD(GetVersion())))))
-char IptDat[3]{};
+char Input[3]{};
 void ForceShow(){
     HWND ForeWnd{GetForegroundWindow()};
     DWORD ForeID{GetWindowThreadProcessId(ForeWnd,NULL)};
@@ -16,17 +16,17 @@ void ForceShow(){
         SetForegroundWindow(ForeWnd);
         AttachThreadInput(CurID,ForeID,FALSE);
         SetWindowPos(ForeWnd,HWND_TOPMOST,0,0,100,100,SWP_NOMOVE|SWP_NOSIZE);
-        Sleep(250UL);
+        Sleep(200UL);
     }
 }
 bool Continue(){
     printf("是否继续? (Y/N): ");
     for(;;){
-        scanf("%s",&IptDat[1]);
-        if((IptDat[1]=='Y'||IptDat[1]=='y'||IptDat[1]=='N'||IptDat[1]=='n')&&(IptDat[2]==0)){
+        scanf("%s",&Input[1]);
+        if((Input[1]=='Y'||Input[1]=='y'||Input[1]=='N'||Input[1]=='n')&&(Input[2]==0)){
             break;
         }
-        printf("键入错误, 请重试: ");
+        printf("输入错误, 请重试: ");
     }
-    return ((bool)(IptDat[1]=='Y'||IptDat[1]=='y'));
+    return (Input[1]=='Y'||Input[1]=='y');
 }
