@@ -2,7 +2,7 @@
 void Info(){
     puts("| 关于 |\n");
     puts("   [名称] Computer Room Controlling Software Nemesis");
-    puts("   [版本] v4.8.13");
+    puts("   [版本] v4.8.14");
     puts("   [网址] https://github.com/MaxLHy0424/CRCSN\n");
     puts("   (C) 2023- MaxLHy0424, All Rights Reserved.\n");
     puts("========================================\n");
@@ -10,27 +10,27 @@ void Info(){
     system("Pause");
     return;
 }
-void Cracker(){
+void Crack(){
 BEGIN:
     puts("| 破解 |\n");
     puts("   [0] 返回");
     puts("   [1] 极域电子教室");
     puts("   [2] 联想云教室\n");
-    printf("请键入: ");
+    printf("请输入: ");
     for(;;){
-        scanf("%s",&IptDat[0]);
-        if((IptDat[0]=='0'||IptDat[0]=='1'||IptDat[0]=='2')&&(IptDat[1]==0)){
+        scanf("%s",&Input[0]);
+        if((Input[0]=='0'||Input[0]=='1'||Input[0]=='2')&&(Input[1]==0)){
             break;
         }
-        printf("键入错误, 请重试: ");
+        printf("输入错误, 请重试: ");
     }
-    if(IptDat[0]=='0'){
+    if(Input[0]=='0'){
         return;
     }
-    printf("%s破解, ",((IsUserAnAdmin())?("增强"):("基本")));
+    printf("使用%s破解, ",((IsUserAnAdmin())?("增强"):("基本")));
     if(Continue()){
         puts("\n========================================\n");
-        switch(IptDat[0]){
+        switch(Input[0]){
             case '1':{
                 system("TaskKill /F /IM StudentMain.exe");
                 system("TaskKill /F /IM DispcapHelper.exe");
@@ -103,7 +103,7 @@ BEGIN:
     system("CLS");
     goto BEGIN;
 }
-void Recoverer(){
+void Recovery(){
 BEGIN:
     puts("| 恢复 |\n");
     if(!IsUserAnAdmin()){
@@ -116,20 +116,20 @@ BEGIN:
     puts("   [0] 返回");
     puts("   [1] 极域电子教室");
     puts("   [2] 联想云教室\n");
-    printf("请键入: ");
+    printf("请输入: ");
     for(;;){
-        scanf("%s",&IptDat[0]);
-        if((IptDat[0]=='0'||IptDat[0]=='1'||IptDat[0]=='2')&&(IptDat[1]==0)){
+        scanf("%s",&Input[0]);
+        if((Input[0]=='0'||Input[0]=='1'||Input[0]=='2')&&(Input[1]==0)){
             break;
         }
-        printf("键入错误, 请重试: ");
+        printf("输入错误, 请重试: ");
     }
-    if(IptDat[0]=='0'){
+    if(Input[0]=='0'){
         return;
     }
     if(Continue()){
         puts("\n========================================\n");
-        switch(IptDat[0]){
+        switch(Input[0]){
             case '1':{
                 system("Reg Delete \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\StudentMain.exe\" /F");
                 system("Reg Delete \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DispcapHelper.exe\" /F");
@@ -191,16 +191,16 @@ BEGIN:
     puts("   [1] 系统修复");
     puts("   [2] 磁盘清理");
     puts("   [3] 高级启动\n");
-    printf("请键入: ");
+    printf("请输入: ");
     for(;;){
-        scanf("%s",&IptDat[0]);
-        if((IptDat[0]=='0'||IptDat[0]=='/'||IptDat[0]=='1'||IptDat[0]=='2'||IptDat[0]=='3')&&(IptDat[1]==0)){
+        scanf("%s",&Input[0]);
+        if((Input[0]=='0'||Input[0]=='/'||Input[0]=='1'||Input[0]=='2'||Input[0]=='3')&&(Input[1]==0)){
             break;
         }
-        printf("键入错误, 请重试: ");
+        printf("输入错误, 请重试: ");
     }
     system("CLS");
-    switch(IptDat[0]){
+    switch(Input[0]){
         case '0':{
             return;
         }case '/':{
@@ -226,7 +226,7 @@ BEGIN:
             if(KernelVersion>=100UL){
                 system("DISM /Online /Set-ReservedStorageState /State:Disabled");
             }
-            system("Del /S /Q %Temp%");
+            system("Del /S /Q %TEMP%");
             break;
         }case '3':{
             puts("| 工具箱 > 高级启动 |\n");
@@ -249,7 +249,7 @@ END:
     goto BEGIN;
 }
 int main(int argc,char* argv[]){
-    system((IsUserAnAdmin())?("Title CRCSN"):("Title 标准用户: CRCSN"));
+    system("Title CRCSN");
     if(argc==1){
         goto BEGIN;
     }
@@ -264,7 +264,7 @@ int main(int argc,char* argv[]){
                 opt[1]="1";
             }
             else{
-                puts("启动参数错误.\n");
+                puts("参数错误.\n");
                 puts("========================================\n");
                 puts("按任意键退出.\n");
                 system("Pause");
@@ -282,24 +282,24 @@ BEGIN:
     puts("   [1] 破解");
     puts("   [2] 恢复");
     puts("   [3] 工具箱\n");
-    printf("请键入: ");
+    printf("请输入: ");
     for(;;){
-        scanf("%s",&IptDat[0]);
-        if((IptDat[0]=='i'||IptDat[0]=='1'||IptDat[0]=='2'||IptDat[0]=='3')&&(IptDat[1]==0)){
+        scanf("%s",&Input[0]);
+        if((Input[0]=='i'||Input[0]=='1'||Input[0]=='2'||Input[0]=='3')&&(Input[1]==0)){
             break;
         }
-        printf("键入错误, 请重试: ");
+        printf("输入错误, 请重试: ");
     }
     system("CLS");
-    switch(IptDat[0]){
+    switch(Input[0]){
         case 'i':{
             Info();
             break;
         }case '1':{
-            Cracker();
+            Crack();
             break;
         }case '2':{
-            Recoverer();
+            Recovery();
             break;
         }case '3':{
             Toolkit();
