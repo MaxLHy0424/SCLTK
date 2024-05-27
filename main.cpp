@@ -13,7 +13,7 @@ void SwInfo(){
 void Crack(){
 BEGIN:
     puts("| 破解 |\n");
-    printf("[破解模式] %s\n\n",((IsUserAnAdmin())?("增强"):("基本")));
+    printf("[%s破解]\n\n",((IsUserAnAdmin())?("增强"):("基本")));
     puts("  [0] 返回");
     puts("  [1] 极域电子教室");
     puts("  [2] 联想云教室\n");
@@ -264,7 +264,7 @@ int main(int argc,char* argv[]){
                 opt[1]="1";
             }
             else{
-                puts("启动参数错误.\n");
+                puts("参数错误.\n");
                 puts("========================================\n");
                 puts("按任意键退出.\n");
                 system("Pause");
