@@ -2,7 +2,7 @@
 **Computer Room Controlling Software Nemesis: 轻松破解机房控制.**\
 *©️ 2023- MaxLHy0424, 保留所有权利.*
 
-[下载最新发行版 (v4.8.15).](https://github.com/MaxLHy0424/CRCSN/releases/download/v4.8.15/CRCSN_v4-8-15_x64.7z)
+[下载最新发行版 (v4.8.16).](https://github.com/MaxLHy0424/CRCSN/releases/download/v4.8.16/CRCSN_v4-8-16_x64.7z)
 
 # 使用方式
 
@@ -16,7 +16,7 @@
 
 如果默认的启动命令不满足您的需求, 可以根据下文修改.
 
-### 0-1 以 Administrator 权运行
+### 0-1 以 Administrator 权限运行
 
 找到:
 ````Cmd
