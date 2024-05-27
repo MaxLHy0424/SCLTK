@@ -1,10 +1,10 @@
 #include"extern.hpp"
 void Info(){
     puts("| 关于 |\n");
-    puts("   [名称] Computer Room Controlling Software Nemesis");
-    puts("   [版本] v4.8.15");
-    puts("   [网址] https://github.com/MaxLHy0424/CRCSN\n");
-    puts("   (C) 2023- MaxLHy0424, All Rights Reserved.\n");
+    puts("  [名称] Computer Room Controlling Software Nemesis");
+    puts("  [版本] v4.8.15");
+    puts("  [网址] https://github.com/MaxLHy0424/CRCSN\n");
+    puts("  (C) 2023- MaxLHy0424, All Rights Reserved.\n");
     puts("========================================\n");
     puts("按任意键返回.\n");
     system("Pause");
@@ -14,9 +14,9 @@ void Crack(){
 BEGIN:
     puts("| 破解 |\n");
     printf("[模式] %s\n\n",((IsUserAnAdmin())?("增强"):("基本")));
-    puts("   [0] 返回");
-    puts("   [1] 极域电子教室");
-    puts("   [2] 联想云教室\n");
+    puts("  [0] 返回");
+    puts("  [1] 极域电子教室");
+    puts("  [2] 联想云教室\n");
     printf("请输入: ");
     for(;;){
         scanf("%s",&InDat[0]);
@@ -113,9 +113,9 @@ BEGIN:
         system("Pause");
         return;
     }
-    puts("   [0] 返回");
-    puts("   [1] 极域电子教室");
-    puts("   [2] 联想云教室\n");
+    puts("  [0] 返回");
+    puts("  [1] 极域电子教室");
+    puts("  [2] 联想云教室\n");
     printf("请输入: ");
     for(;;){
         scanf("%s",&InDat[0]);
@@ -186,11 +186,11 @@ BEGIN:
         system("Pause");
         return;
     }
-    puts("   [0] 返回");
-    puts("   [/] 命令提示符");
-    puts("   [1] 系统修复");
-    puts("   [2] 磁盘清理");
-    puts("   [3] 高级启动\n");
+    puts("  [0] 返回");
+    puts("  [/] 命令提示符");
+    puts("  [1] 系统修复");
+    puts("  [2] 磁盘清理");
+    puts("  [3] 高级启动\n");
     printf("请输入: ");
     for(;;){
         scanf("%s",&InDat[0]);
@@ -278,10 +278,10 @@ int main(int argc,char* argv[]){
     }
 BEGIN:
     puts("| 主页 |\n");
-    puts("   [i] 关于");
-    puts("   [1] 破解");
-    puts("   [2] 恢复");
-    puts("   [3] 工具箱\n");
+    puts("  [i] 关于");
+    puts("  [1] 破解");
+    puts("  [2] 恢复");
+    puts("  [3] 工具箱\n");
     printf("请输入: ");
     for(;;){
         scanf("%s",&InDat[0]);
