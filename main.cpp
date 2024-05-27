@@ -19,18 +19,18 @@ BEGIN:
     puts("  [2] 联想云教室\n");
     printf("请输入: ");
     for(;;){
-        scanf("%s",&Data[0]);
-        if((Data[0]=='0'||Data[0]=='1'||Data[0]=='2')&&(Data[1]==0)){
+        scanf("%s",&Dat[0]);
+        if((Dat[0]=='0'||Dat[0]=='1'||Dat[0]=='2')&&(Dat[1]==0)){
             break;
         }
         printf("输入错误, 请重试: ");
     }
-    if(Data[0]=='0'){
+    if(Dat[0]=='0'){
         return;
     }
     if(Continue()){
         puts("\n========================================\n");
-        switch(Data[0]){
+        switch(Dat[0]){
             case '1':{
                 system("TaskKill /F /IM StudentMain.exe");
                 system("TaskKill /F /IM DispcapHelper.exe");
@@ -118,18 +118,18 @@ BEGIN:
     puts("  [2] 联想云教室\n");
     printf("请输入: ");
     for(;;){
-        scanf("%s",&Data[0]);
-        if((Data[0]=='0'||Data[0]=='1'||Data[0]=='2')&&(Data[1]==0)){
+        scanf("%s",&Dat[0]);
+        if((Dat[0]=='0'||Dat[0]=='1'||Dat[0]=='2')&&(Dat[1]==0)){
             break;
         }
         printf("输入错误, 请重试: ");
     }
-    if(Data[0]=='0'){
+    if(Dat[0]=='0'){
         return;
     }
     if(Continue()){
         puts("\n========================================\n");
-        switch(Data[0]){
+        switch(Dat[0]){
             case '1':{
                 system("Reg Delete \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\StudentMain.exe\" /F");
                 system("Reg Delete \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DispcapHelper.exe\" /F");
@@ -193,14 +193,14 @@ BEGIN:
     puts("  [3] 高级启动\n");
     printf("请输入: ");
     for(;;){
-        scanf("%s",&Data[0]);
-        if((Data[0]=='0'||Data[0]=='/'||Data[0]=='1'||Data[0]=='2'||Data[0]=='3')&&(Data[1]==0)){
+        scanf("%s",&Dat[0]);
+        if((Dat[0]=='0'||Dat[0]=='/'||Dat[0]=='1'||Dat[0]=='2'||Dat[0]=='3')&&(Dat[1]==0)){
             break;
         }
         printf("输入错误, 请重试: ");
     }
     system("CLS");
-    switch(Data[0]){
+    switch(Dat[0]){
         case '0':{
             return;
         }case '/':{
@@ -284,14 +284,14 @@ BEGIN:
     puts("  [3] 工具箱\n");
     printf("请输入: ");
     for(;;){
-        scanf("%s",&Data[0]);
-        if((Data[0]=='i'||Data[0]=='1'||Data[0]=='2'||Data[0]=='3')&&(Data[1]==0)){
+        scanf("%s",&Dat[0]);
+        if((Dat[0]=='i'||Dat[0]=='1'||Dat[0]=='2'||Dat[0]=='3')&&(Dat[1]==0)){
             break;
         }
         printf("输入错误, 请重试: ");
     }
     system("CLS");
-    switch(Data[0]){
+    switch(Dat[0]){
         case 'i':{
             SwInfo();
             break;
