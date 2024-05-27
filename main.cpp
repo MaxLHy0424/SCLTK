@@ -2,7 +2,7 @@
 void Info(){
     puts("| 关于 |\n");
     puts("   [名称] Computer Room Controlling Software Nemesis");
-    puts("   [版本] v4.8.14");
+    puts("   [版本] v4.8.15");
     puts("   [网址] https://github.com/MaxLHy0424/CRCSN\n");
     puts("   (C) 2023- MaxLHy0424, All Rights Reserved.\n");
     puts("========================================\n");
@@ -13,24 +13,24 @@ void Info(){
 void Crack(){
 BEGIN:
     puts("| 破解 |\n");
+    printf("[模式] %s\n\n",((IsUserAnAdmin())?("增强"):("基本")));
     puts("   [0] 返回");
     puts("   [1] 极域电子教室");
     puts("   [2] 联想云教室\n");
     printf("请输入: ");
     for(;;){
-        scanf("%s",&Input[0]);
-        if((Input[0]=='0'||Input[0]=='1'||Input[0]=='2')&&(Input[1]==0)){
+        scanf("%s",&InDat[0]);
+        if((InDat[0]=='0'||InDat[0]=='1'||InDat[0]=='2')&&(InDat[1]==0)){
             break;
         }
         printf("输入错误, 请重试: ");
     }
-    if(Input[0]=='0'){
+    if(InDat[0]=='0'){
         return;
     }
-    printf("使用%s破解, ",((IsUserAnAdmin())?("增强"):("基本")));
     if(Continue()){
         puts("\n========================================\n");
-        switch(Input[0]){
+        switch(InDat[0]){
             case '1':{
                 system("TaskKill /F /IM StudentMain.exe");
                 system("TaskKill /F /IM DispcapHelper.exe");
@@ -107,7 +107,7 @@ void Recovery(){
 BEGIN:
     puts("| 恢复 |\n");
     if(!IsUserAnAdmin()){
-        puts("标准用户权限下不可用.\n");
+        puts("User 权限下不可用.\n");
         puts("========================================\n");
         puts("按任意键返回.\n");
         system("Pause");
@@ -118,18 +118,18 @@ BEGIN:
     puts("   [2] 联想云教室\n");
     printf("请输入: ");
     for(;;){
-        scanf("%s",&Input[0]);
-        if((Input[0]=='0'||Input[0]=='1'||Input[0]=='2')&&(Input[1]==0)){
+        scanf("%s",&InDat[0]);
+        if((InDat[0]=='0'||InDat[0]=='1'||InDat[0]=='2')&&(InDat[1]==0)){
             break;
         }
         printf("输入错误, 请重试: ");
     }
-    if(Input[0]=='0'){
+    if(InDat[0]=='0'){
         return;
     }
     if(Continue()){
         puts("\n========================================\n");
-        switch(Input[0]){
+        switch(InDat[0]){
             case '1':{
                 system("Reg Delete \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\StudentMain.exe\" /F");
                 system("Reg Delete \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DispcapHelper.exe\" /F");
@@ -180,7 +180,7 @@ void Toolkit(){
 BEGIN:
     puts("| 工具箱 |\n");
     if(!IsUserAnAdmin()){
-        puts("标准用户权限下不可用.\n");
+        puts("User 权限下不可用.\n");
         puts("========================================\n");
         puts("按任意键返回.\n");
         system("Pause");
@@ -193,14 +193,14 @@ BEGIN:
     puts("   [3] 高级启动\n");
     printf("请输入: ");
     for(;;){
-        scanf("%s",&Input[0]);
-        if((Input[0]=='0'||Input[0]=='/'||Input[0]=='1'||Input[0]=='2'||Input[0]=='3')&&(Input[1]==0)){
+        scanf("%s",&InDat[0]);
+        if((InDat[0]=='0'||InDat[0]=='/'||InDat[0]=='1'||InDat[0]=='2'||InDat[0]=='3')&&(InDat[1]==0)){
             break;
         }
         printf("输入错误, 请重试: ");
     }
     system("CLS");
-    switch(Input[0]){
+    switch(InDat[0]){
         case '0':{
             return;
         }case '/':{
@@ -226,7 +226,7 @@ BEGIN:
             if(KernelVersion>=100UL){
                 system("DISM /Online /Set-ReservedStorageState /State:Disabled");
             }
-            system("Del /S /Q %TEMP%");
+            system("Del /F /S /Q %TEMP%\\*");
             break;
         }case '3':{
             puts("| 工具箱 > 高级启动 |\n");
@@ -255,7 +255,7 @@ int main(int argc,char* argv[]){
     }
     {
         std::string opt[argc-1]{},tmp{};
-        for(int i{1};i<argc;++i){
+        for(unsigned short i{1};i<argc;++i){
             tmp=argv[i];
             if((opt[0]=="")&&(tmp.length()>=5)&&(tmp.substr(0,5)=="-clr=")){
                 tmp.erase(0,5);
@@ -284,14 +284,14 @@ BEGIN:
     puts("   [3] 工具箱\n");
     printf("请输入: ");
     for(;;){
-        scanf("%s",&Input[0]);
-        if((Input[0]=='i'||Input[0]=='1'||Input[0]=='2'||Input[0]=='3')&&(Input[1]==0)){
+        scanf("%s",&InDat[0]);
+        if((InDat[0]=='i'||InDat[0]=='1'||InDat[0]=='2'||InDat[0]=='3')&&(InDat[1]==0)){
             break;
         }
         printf("输入错误, 请重试: ");
     }
     system("CLS");
-    switch(Input[0]){
+    switch(InDat[0]){
         case 'i':{
             Info();
             break;
