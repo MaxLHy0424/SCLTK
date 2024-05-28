@@ -2,7 +2,7 @@
 **Computer Room Controlling Software Nemesis: 轻松破解机房控制.**\
 *©️ 2023- MaxLHy0424, 保留所有权利.*
 
-[下载最新发行版 (v4.8.16).](https://github.com/MaxLHy0424/CRCSN/releases/download/v4.8.16/CRCSN_v4-8-16_x64.7z)
+[下载最新发行版 (v4.8.17).](https://github.com/MaxLHy0424/CRCSN/releases/download/v4.8.17/CRCSN_v4-8-17_x64.7z)
 
 # 使用方式
 
@@ -20,9 +20,9 @@
 
 找到:
 ````Cmd
-: SetLocal EnableDelayedExpansion
+: setLocal enableDelayedExpansion
 : %1 %2
-: MsHta VbScript:CreateObject("Shell.Application").ShellExecute("%~S0","GoTo:RunAs","","RunAs",1)(Window.Close) & GoTo:EOF
+: msHta vbscript:createObject("shell.application").shellExecute("%~s0","goTo:runAs","","runAs",1)(window.close) & goTo:EOF
 ````
 
 将每行开头的`: `去掉即可. 再运行启动脚本, 将会强制以 Administrator 权限运行. 
