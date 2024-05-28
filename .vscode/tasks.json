@@ -13,8 +13,6 @@
                 "-g",
                 "-lm",
                 "-static",
-                "-Ofast",
-                "-Os",
                 "-o",
                 ".\\bin\\main.exe",
             ],
