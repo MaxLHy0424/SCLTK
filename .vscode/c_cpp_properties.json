@@ -1,28 +1,28 @@
 {
-    "configurations": [
+    "configurations":[
         {
-            "name": "Win32",
-            "includePath": [
-                "${workspaceFolder}/**"
+            "name":"Win32",
+            "includePath":[
+                "${workspaceFolder}\\*"
             ],
-            "defines": [
+            "defines":[
                 "_DEBUG",
                 "UNICODE",
                 "_UNICODE"
             ],
-            "compilerPath": "C:\\Software\\MSYS2\\ucrt64\\bin\\gcc.exe",
-            "compilerArgs": [
+            "compilerPath":"C:\\Software\\MSYS2\\ucrt64\\bin\\gcc.exe",
+            "compilerArgs":[
                 "-fexec-charset=GBK",
                 "-lm",
                 "-static",
                 "-Ofast",
-                "-Os",
+                "-Os"
             ],
-            "intelliSenseMode": "windows-gcc-x64",
-            "cStandard": "c23",
-            "cppStandard": "gnu++23",
-            "mergeConfigurations": false
+            "intelliSenseMode":"windows-gcc-x64",
+            "cStandard":"c23",
+            "cppStandard":"gnu++23",
+            "mergeConfigurations":false
         }
     ],
-    "version": 4
+    "version":4
 }
