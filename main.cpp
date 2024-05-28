@@ -11,7 +11,7 @@ void SwInfo(){
     return;
 }
 void Crack(){
-BG:
+BEGIN:
     puts("| 破解 |\n");
     printf("[%s破解]\n\n",((IsUserAnAdmin())?("增强"):("基本")));
     puts("  [0] 返回");
@@ -101,10 +101,10 @@ BG:
         system("pause");
     }
     system("cls");
-    goto BG;
+    goto BEGIN;
 }
 void Recovery(){
-BG:
+BEGIN:
     puts("| 恢复 |\n");
     if(!IsUserAnAdmin()){
         puts("User 权限下不可用.\n");
@@ -174,10 +174,10 @@ BG:
         system("pause");
     }
     system("cls");
-    goto BG;
+    goto BEGIN;
 }
 void Toolkit(){
-BG:
+BEGIN:
     puts("| 工具箱 |\n");
     if(!IsUserAnAdmin()){
         puts("User 权限下不可用.\n");
@@ -207,11 +207,11 @@ BG:
             puts("| 工具箱 > 命令提示符 |\n");
             puts("执行 \"exit\" 退出.\n");
             system("cmd");
-            goto ED;
+            goto END;
         }case '1':{
             puts("| 工具箱 > 系统修复 |\n");
             if(!Continue()){
-                goto ED;
+                goto END;
             }
             if(KernelVersion>=62UL){
                 system("dism /online /cleanup-image /restoreHealth");
@@ -221,7 +221,7 @@ BG:
         }case '2':{
             puts("| 工具箱 > 垃圾清理 |\n");
             if(!Continue()){
-                goto ED;
+                goto END;
             }
             if(KernelVersion>=100UL){
                 system("dism /online /set-reservedStorageState /state:disabled");
@@ -235,7 +235,7 @@ BG:
                 break;
             }
             if(!Continue()){
-                goto ED;
+                goto END;
             }
             system("shutdown /r /o /t 0");
             break;
@@ -244,14 +244,14 @@ BG:
     puts("\n========================================\n");
     puts("按任意键返回.\n");
     system("pause");
-ED:
+END:
     system("cls");
-    goto BG;
+    goto BEGIN;
 }
 int main(int argc,char* argv[]){
     system("title CRCSN");
     if(argc==1){
-        goto BG;
+        goto BEGIN;
     }
     {
         std::string opt[argc-1]{},tmp{};
@@ -276,7 +276,7 @@ int main(int argc,char* argv[]){
             std::thread(ForceShow).detach();
         }
     }
-BG:
+BEGIN:
     puts("| 主页 |\n");
     puts("  [i] 关于");
     puts("  [1] 破解");
@@ -307,5 +307,5 @@ BG:
         }
     }
     system("cls");
-    goto BG;
+    goto BEGIN;
 }
