@@ -5,7 +5,7 @@ void SwInfo(){
     puts("  [版本] v4.8.17");
     puts("  [网址] https://github.com/MaxLHy0424/CRCSN\n");
     puts("  (C) 2023- MaxLHy0424, All Rights Reserved.\n");
-    puts("========================================\n");
+    puts("==================================================\n");
     puts("按任意键返回.\n");
     system("pause");
     return;
@@ -13,7 +13,7 @@ void SwInfo(){
 void Crack(){
 BEGIN:
     puts("| 破解 |\n");
-    printf("[%s破解]\n\n",((IsUserAnAdmin())?("增强"):("基本")));
+    printf("[模式] %s\n\n",((IsUserAnAdmin())?("增强"):("基本")));
     puts("  [0] 返回");
     puts("  [1] 极域电子教室");
     puts("  [2] 联想云教室\n");
