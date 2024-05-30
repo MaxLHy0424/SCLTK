@@ -11,8 +11,6 @@
                 "-Wall",
                 "-Wextra",
                 "-g",
-                "-lm",
-                "-static",
                 "-o",
                 ".\\bin\\main.exe",
             ],
