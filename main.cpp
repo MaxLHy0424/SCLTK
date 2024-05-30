@@ -213,7 +213,7 @@ BEGIN:
             if(!Continue()){
                 goto END;
             }
-            if(KernelVersion>=62UL){
+            if(NtKernel>=62UL){
                 system("dism /online /cleanup-image /restoreHealth");
             }
             system("sfc /scanNow");
@@ -223,14 +223,14 @@ BEGIN:
             if(!Continue()){
                 goto END;
             }
-            if(KernelVersion>=100UL){
+            if(NtKernel>=100UL){
                 system("dism /online /set-reservedStorageState /state:disabled");
             }
             system("del /f /s /q %temp%");
             break;
         }case '3':{
             puts("| 工具箱 > 高级启动 |\n");
-            if(KernelVersion<62UL){
+            if(NtKernel<62UL){
                 puts("Windows 8+.");
                 break;
             }

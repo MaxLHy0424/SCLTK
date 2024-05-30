@@ -2,7 +2,7 @@
 #include<ShlObj.h>
 #include<string>
 #include<thread>
-#define KernelVersion (((DWORD)(LOBYTE(LOWORD(GetVersion()))))*10UL+((DWORD)(HIBYTE(LOWORD(GetVersion())))))
+#define NtKernel (((DWORD)(LOBYTE(LOWORD(GetVersion()))))*10UL+((DWORD)(HIBYTE(LOWORD(GetVersion())))))
 char Data[3]{};
 void ForceShow(){
     HWND ForeWnd{GetForegroundWindow()};
@@ -16,7 +16,7 @@ void ForceShow(){
         SetForegroundWindow(ForeWnd);
         AttachThreadInput(CurID,ForeID,FALSE);
         SetWindowPos(ForeWnd,HWND_TOPMOST,0,0,100,100,SWP_NOMOVE|SWP_NOSIZE);
-        Sleep(100UL);
+        Sleep(250UL);
     }
 }
 bool Continue(){
@@ -28,5 +28,5 @@ bool Continue(){
         }
         printf("输入错误, 请重试: ");
     }
-    return ((Data[1]=='Y'||Data[1]=='y')?(true):(false));
+    return (Data[1]=='Y'||Data[1]=='y');
 }
