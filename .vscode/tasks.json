@@ -5,7 +5,7 @@
             "type":"shell",
             "command":"g++",
             "args":[
-                "*.cpp",
+                "main.cpp",
                 "-fexec-charset=GBK",
                 "-std=gnu++23",
                 "-Wall",
