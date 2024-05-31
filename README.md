@@ -1,8 +1,8 @@
 ![logo](logo.png)\
 **Computer Room Control Software Nemesis: 轻松破解机房控制.**\
-*©️ 2023- MaxLHy0424, 保留所有权利.*
+*©️ 2024 MaxLHy0424, 保留所有权利.*
 
-[下载最新发行版 (v4.8.20).](https://github.com/MaxLHy0424/CRCSN/releases/download/v4.8.20/CRCSN_v4-8-20_x64.7z)
+[下载最新发行版 (v4.9.0).](https://github.com/MaxLHy0424/CRCSN/releases/download/v4.9.0/CRCSN_v4-9-0_x64.7z)
 
 # 使用方式
 
@@ -20,7 +20,7 @@
 
 找到:
 ````batch
-: msHta vbscript:createObject("shell.application").shellExecute("%~s0","goTo:runAs","","runAs",1)(window.close) & goTo:eof
+: MSHTA VBScript:CreateObject("Shell.application").ShellExecute("%~S0","GoTo:RunAs","","RunAs",1)(Window.Close) & GoTo:EOF
 ````
 
 将开头的`: `去掉即可. 再运行启动脚本, 将会启用该项. 

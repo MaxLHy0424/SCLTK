@@ -1,8 +1,7 @@
-@echo off
-title CRCSN Launcher v1.0.14
-cd /d "%~dp0"
-setLocal enableDelayedExpansion
+@Echo Off
+Title CRCSN Launcher v1.0.15
+CD /D "%~DP0"
 %1 %2
-: msHta vbscript:createObject("shell.application").shellExecute("%~s0","goTo:runAs","","runAs",1)(window.close) & goTo:eof
-:runAs
+: MSHTA VBScript:CreateObject("Shell.application").ShellExecute("%~S0","GoTo:RunAs","","RunAs",1)(Window.Close) & GoTo:EOF
+:RunAs
 .\bin\main.exe
