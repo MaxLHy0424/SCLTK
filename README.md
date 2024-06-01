@@ -2,13 +2,13 @@
 **Computer Room Control Software Nemesis: 轻松破解机房控制.**\
 *©️ 2024 MaxLHy0424, 保留所有权利.*
 
-[下载最新发行版 (v4.9.0).](https://github.com/MaxLHy0424/CRCSN/releases/download/v4.9.0/CRCSN_v4-9-0_x64.7z)
+[下载最新发行版 (v4.9.1).](https://github.com/MaxLHy0424/CRCSN/releases/download/v4.9.1/CRCSN_v4-9-1_x64.7z)
 
-# 使用方式
+# 使用方法
 
 **CRCSN 涉及到修改注册表等操作, 使用时建议关闭防病毒软件. 若 CRCSN 被报为恶意软件, 请添加排除项.**
 
-> 仅为最新正式发行版编写, 其他版本可能有所不同.
+> 仅为最新发行版编写, 其他版本可能有所不同.
 
 ## 0 启动
 
@@ -20,7 +20,7 @@
 
 找到:
 ````batch
-: MSHTA VBScript:CreateObject("Shell.application").ShellExecute("%~S0","GoTo:RunAs","","RunAs",1)(Window.Close) & GoTo:EOF
+: MSHTA VBScript:CreateObject("Shell.Application").ShellExecute("%~S0","GoTo:RunAs","","RunAs",1)(Window.Close) & GoTo:EOF
 ````
 
 将开头的`: `去掉即可. 再运行启动脚本, 将会启用该项. 
@@ -29,7 +29,7 @@
 
 ### 0-2 修改控制台颜色
 
-找到最后一行, 在末尾加上`-clr=`, 并在后面添加参数 (详见`color`命令帮助), 例如:
+找到最后一行, 在末尾加上`-clr=`, 并在后面添加参数 (详见`Color`命令帮助), 例如:
 ````batch
 .\bin\main.exe -clr=9
 ````
@@ -45,11 +45,11 @@
 
 ## 1 破解
 
-输入`1`, 回车, 根据需要破解的控制软件输入对应的字符, 回车, 输入`y`, 回车, 开始破解.
+输入`1`, 回车, 根据需要破解的控制软件输入对应的字符, 回车, 输入`Y`(不区分大小写), 回车, 开始破解.
 
 ## 2 恢复
 
-输入`2`, 回车, 根据需要恢复的控制软件输入对应的字符, 回车, 输入`y`, 回车, 开始恢复.
+输入`2`, 回车, 根据需要恢复的控制软件输入对应的字符, 回车, 输入`Y`(不区分大小写), 回车, 开始恢复.
 
 # 常见问题
 
