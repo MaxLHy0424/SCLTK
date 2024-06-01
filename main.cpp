@@ -1,12 +1,12 @@
 #include"extern.hpp"
 void Info(){
-    puts("[信息]\n");
+    puts("[关于]\n");
     puts("  Computer Room Control Software Nemesis");
-    puts("\t\tv4.9.0\n");
+    puts("\t\tv4.9.1\n");
     puts("  https://github.com/MaxLHy0424/CRCSN");
     puts("  (C) 2024 MaxLHy0424, All Rights Reserved.\n");
     puts("---------------------------------------------\n");
-    Pause;
+    system("Pause");
     return;
 }
 void Crack(){
@@ -17,18 +17,18 @@ BEGIN:
     puts("  2 联想云教室\n");
     printf("请输入: ");
     for(;;){
-        scanf("%s",&Data[0]);
-        if((Data[0]=='0'||Data[0]=='1'||Data[0]=='2')&&(Data[1]==0)){
+        scanf("%s",&Dat[0]);
+        if((Dat[0]=='0'||Dat[0]=='1'||Dat[0]=='2')&&(Dat[1]==0)){
             break;
         }
         printf("输入错误, 请重试: ");
     }
-    if(Data[0]=='0'){
+    if(Dat[0]=='0'){
         return;
     }
     if(Continue()){
         puts("\n----------------------------------------\n");
-        switch(Data[0]){
+        switch(Dat[0]){
             case '1':{
                 system("TaskKill /F /IM StudentMain.exe");
                 system("TaskKill /F /IM DispcapHelper.exe");
@@ -37,15 +37,15 @@ BEGIN:
                 system("TaskKill /F /IM ProcHelper64.exe");
                 system("TaskKill /F /IM MasterHelper.exe");
                 if(IsUserAnAdmin()){
-                    system("Reg Add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\StudentMain.exe\" /F /T Reg_SZ /V debugger /D \"?\"");
-                    system("Reg Add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DispcapHelper.exe\" /F /T Reg_SZ /V debugger /D \"?\"");
-                    system("Reg Add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\VRCwPlayer.exe\" /F /T Reg_SZ /V debugger /D \"?\"");
-                    system("Reg Add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\InstHelpApp.exe\" /F /T Reg_SZ /V debugger /D \"?\"");
-                    system("Reg Add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\InstHelpApp64.exe\" /F /T Reg_SZ /V debugger /D \"?\"");
-                    system("Reg Add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\TDOvrSet.exe\" /F /T Reg_SZ /V debugger /D \"?\"");
-                    system("Reg Add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\GATESRV.exe\" /F /T Reg_SZ /V debugger /D \"?\"");
-                    system("Reg Add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\ProcHelper64.exe\" /F /T Reg_SZ /V debugger /D \"?\"");
-                    system("Reg Add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\MasterHelper.exe\" /F /T Reg_SZ /V debugger /D \"?\"");
+                    system("Reg Add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\StudentMain.exe\" /F /T REG_SZ /V debugger /D ?");
+                    system("Reg Add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DispcapHelper.exe\" /F /T REG_SZ /V debugger /D ?");
+                    system("Reg Add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\VRCwPlayer.exe\" /F /T REG_SZ /V debugger /D ?");
+                    system("Reg Add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\InstHelpApp.exe\" /F /T REG_SZ /V debugger /D ?");
+                    system("Reg Add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\InstHelpApp64.exe\" /F /T REG_SZ /V debugger /D ?");
+                    system("Reg Add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\TDOvrSet.exe\" /F /T REG_SZ /V debugger /D ?");
+                    system("Reg Add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\GATESRV.exe\" /F /T REG_SZ /V debugger /D ?");
+                    system("Reg Add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\ProcHelper64.exe\" /F /T REG_SZ /V debugger /D ?");
+                    system("Reg Add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\MasterHelper.exe\" /F /T REG_SZ /V debugger /D ?");
                     system("Net Stop TDNetFilter /Y");
                     system("Net Stop TDFileFilter /Y");
                     system("Net Stop STUDSRV /Y");
@@ -69,24 +69,24 @@ BEGIN:
                 system("TaskKill /F /IM DeploymentAgent.exe");
                 system("TaskKill /F /IM XYNTService.exe");
                 if(IsUserAnAdmin()){
-                    system("Reg Add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\vncviewer.exe\" /F /T Reg_SZ /V debugger /D \"?\"");
-                    system("Reg Add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\tvnserver32.exe\" /F /T Reg_SZ /V debugger /D \"?\"");
-                    system("Reg Add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\WfbsPnpInstall.exe\" /F /T Reg_SZ /V debugger /D \"?\"");
-                    system("Reg Add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\WFBSMon.exe\" /F /T Reg_SZ /V debugger /D \"?\"");
-                    system("Reg Add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\WFBSMlogon.exe\" /F /T Reg_SZ /V debugger /D \"?\"");
-                    system("Reg Add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\WFBSSvrLogShow.exe\" /F /T Reg_SZ /V debugger /D \"?\"");
-                    system("Reg Add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\ResetIp.exe\" /F /T Reg_SZ /V debugger /D \"?\"");
-                    system("Reg Add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\FuncForWIN64.exe\" /F /T Reg_SZ /V debugger /D \"?\"");
-                    system("Reg Add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\CertMgr.exe\" /F /T Reg_SZ /V debugger /D \"?\"");
-                    system("Reg Add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\Fireware.exe\" /F /T Reg_SZ /V debugger /D \"?\"");
-                    system("Reg Add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\BCDBootCopy.exe\" /F /T Reg_SZ /V debugger /D \"?\"");
-                    system("Reg Add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\refreship.exe\" /F /T Reg_SZ /V debugger /D \"?\"");
-                    system("Reg Add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\LenovoLockScreen.exe\" /F /T Reg_SZ /V debugger /D \"?\"");
-                    system("Reg Add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\PortControl64.exe\" /F /T Reg_SZ /V debugger /D \"?\"");
-                    system("Reg Add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DesktopCheck.exe\" /F /T Reg_SZ /V debugger /D \"?\"");
-                    system("Reg Add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DeploymentManager.exe\" /F /T Reg_SZ /V debugger /D \"?\"");
-                    system("Reg Add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DeploymentAgent.exe\" /F /T Reg_SZ /V debugger /D \"?\"");
-                    system("Reg Add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\XYNTService.exe\" /F /T Reg_SZ /V debugger /D \"?\"");
+                    system("Reg Add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\vncviewer.exe\" /F /T REG_SZ /V debugger /D ?");
+                    system("Reg Add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\tvnserver32.exe\" /F /T REG_SZ /V debugger /D ?");
+                    system("Reg Add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\WfbsPnpInstall.exe\" /F /T REG_SZ /V debugger /D ?");
+                    system("Reg Add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\WFBSMon.exe\" /F /T REG_SZ /V debugger /D ?");
+                    system("Reg Add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\WFBSMlogon.exe\" /F /T REG_SZ /V debugger /D ?");
+                    system("Reg Add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\WFBSSvrLogShow.exe\" /F /T REG_SZ /V debugger /D ?");
+                    system("Reg Add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\ResetIp.exe\" /F /T REG_SZ /V debugger /D ?");
+                    system("Reg Add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\FuncForWIN64.exe\" /F /T REG_SZ /V debugger /D ?");
+                    system("Reg Add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\CertMgr.exe\" /F /T REG_SZ /V debugger /D ?");
+                    system("Reg Add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\Fireware.exe\" /F /T REG_SZ /V debugger /D ?");
+                    system("Reg Add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\BCDBootCopy.exe\" /F /T REG_SZ /V debugger /D ?");
+                    system("Reg Add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\refreship.exe\" /F /T REG_SZ /V debugger /D ?");
+                    system("Reg Add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\LenovoLockScreen.exe\" /F /T REG_SZ /V debugger /D ?");
+                    system("Reg Add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\PortControl64.exe\" /F /T REG_SZ /V debugger /D ?");
+                    system("Reg Add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DesktopCheck.exe\" /F /T REG_SZ /V debugger /D ?");
+                    system("Reg Add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DeploymentManager.exe\" /F /T REG_SZ /V debugger /D ?");
+                    system("Reg Add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DeploymentAgent.exe\" /F /T REG_SZ /V debugger /D ?");
+                    system("Reg Add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\XYNTService.exe\" /F /T REG_SZ /V debugger /D ?");
                     system("Net Stop tvnserver /Y");
                     system("Net Stop BSAgentSvr /Y");
                     system("Net Stop WFBSMlogon /Y");
@@ -95,9 +95,9 @@ BEGIN:
             }
         }
         puts("\n----------------------------------------\n");
-        Pause;
+        system("Pause");
     }
-    Clear;
+    system("CLS");
     goto BEGIN;
 }
 void Recovery(){
@@ -106,7 +106,7 @@ BEGIN:
     if(!IsUserAnAdmin()){
         puts("User 权限下不可用.\n");
         puts("--------------------\n");
-        Pause;
+        system("Pause");
         return;
     }
     puts("  0 返回");
@@ -114,18 +114,18 @@ BEGIN:
     puts("  2 联想云教室\n");
     printf("请输入: ");
     for(;;){
-        scanf("%s",&Data[0]);
-        if((Data[0]=='0'||Data[0]=='1'||Data[0]=='2')&&(Data[1]==0)){
+        scanf("%s",&Dat[0]);
+        if((Dat[0]=='0'||Dat[0]=='1'||Dat[0]=='2')&&(Dat[1]==0)){
             break;
         }
         printf("输入错误, 请重试: ");
     }
-    if(Data[0]=='0'){
+    if(Dat[0]=='0'){
         return;
     }
     if(Continue()){
         puts("\n----------------------------------------\n");
-        switch(Data[0]){
+        switch(Dat[0]){
             case '1':{
                 system("Reg Delete \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\StudentMain.exe\" /F");
                 system("Reg Delete \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DispcapHelper.exe\" /F");
@@ -166,9 +166,9 @@ BEGIN:
             }
         }
         puts("----------------------------------------\n");
-        Pause;
+        system("Pause");
     }
-    Clear;
+    system("CLS");
     goto BEGIN;
 }
 void Terminal(){
@@ -189,24 +189,24 @@ int main(int argc,char* argv[]){
             tmp=argv[i];
             if((opt[0]=="")&&(tmp.length()>=5)&&(tmp.substr(0,5)=="-clr=")){
                 tmp.erase(0,5);
-                opt[0]="color "+tmp;
+                opt[0]="Color "+tmp;
             }else if((opt[1]=="")&&(tmp=="-fs")){
                 opt[1]="1";
             }
             else{
                 puts("参数错误.\n");
                 puts("--------------------\n");
-                Pause;
+                system("Pause");
                 goto BEGIN;
             }
         }
         system(opt[0].c_str());
-        if(opt[1]=="1"){
+        if(opt[1]!=""){
             std::thread(ForceShow).detach();
         }
     }
 BEGIN:
-    Clear;
+    system("CLS");
     puts("[主页]\n");
     puts("  ? 关于");
     puts("  1 破解");
@@ -214,14 +214,14 @@ BEGIN:
     puts("  3 终端\n");
     printf("请输入: ");
     for(;;){
-        scanf("%s",&Data[0]);
-        if((Data[0]=='?'||Data[0]=='1'||Data[0]=='2'||Data[0]=='3')&&(Data[1]==0)){
+        scanf("%s",&Dat[0]);
+        if((Dat[0]=='?'||Dat[0]=='1'||Dat[0]=='2'||Dat[0]=='3')&&(Dat[1]==0)){
             break;
         }
         printf("输入错误, 请重试: ");
     }
-    Clear;
-    switch(Data[0]){
+    system("CLS");
+    switch(Dat[0]){
         case '?':{
             Info();
             break;

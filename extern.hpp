@@ -2,19 +2,17 @@
 #include<string>
 #include<ShlObj.h>
 #include<thread>
-#define Pause system("Pause")
-#define Clear system("CLS")
-char Data[3]{};
+char Dat[3]{};
 bool Continue(){
     printf("是否继续? (Y/N): ");
     for(;;){
-        scanf("%s",&Data[1]);
-        if((Data[1]=='Y'||Data[1]=='y'||Data[1]=='N'||Data[1]=='n')&&(Data[2]==0)){
+        scanf("%s",&Dat[1]);
+        if((Dat[1]=='Y'||Dat[1]=='y'||Dat[1]=='N'||Dat[1]=='n')&&(Dat[2]==0)){
             break;
         }
         printf("输入错误, 请重试: ");
     }
-    return (Data[1]=='Y'||Data[1]=='y');
+    return (Dat[1]=='Y'||Dat[1]=='y');
 }
 void ForceShow(){
     HWND ForeWnd{GetForegroundWindow()};
