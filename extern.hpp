@@ -2,8 +2,6 @@
 #include<string>
 #include<ShlObj.h>
 #include<thread>
-#define Pause system("Pause")
-#define CLS system("CLS")
 char Dat[3]{};
 bool Continue(){
     printf("是否继续? (Y/N): ");
@@ -12,7 +10,7 @@ bool Continue(){
         if((Dat[1]=='Y'||Dat[1]=='y'||Dat[1]=='N'||Dat[1]=='n')&&(Dat[2]==0)){
             break;
         }
-        printf("键入错误, 请重试: ");
+        printf("输入错误, 请重试: ");
     }
     return (Dat[1]=='Y'||Dat[1]=='y');
 }
@@ -27,7 +25,7 @@ void ForceShow(){
         SetWindowPos(ForeWnd,HWND_NOTOPMOST,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE);
         SetForegroundWindow(ForeWnd);
         AttachThreadInput(CurID,ForeID,FALSE);
-        SetWindowPos(ForeWnd,HWND_TOPMOST,0,0,100,100,SWP_NOMOVE|SWP_NOSIZE);
+        SetWindowPos(GetForegroundWindow(),HWND_TOPMOST,0,0,100,100,SWP_NOMOVE|SWP_NOSIZE);
         Sleep(100UL);
     }
 }
