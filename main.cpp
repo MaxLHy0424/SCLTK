@@ -1,8 +1,8 @@
 #include"extern.hpp"
 void About(){
-    puts("<关于>\n");
+    puts("[关于]\n");
     puts("  Computer Room Control Software Nemesis");
-    puts("\t\tv4.9.2\n");
+    puts("\t\tv4.9.3\n");
     puts("  https://github.com/MaxLHy0424/CRCSN");
     puts("  (C) 2023- MaxLHy0424, All Rights Reserved.\n");
     puts("---------------------------------------------\n");
@@ -11,11 +11,11 @@ void About(){
 }
 void Crack(){
 BEGIN:
-    puts("<破解>\n");
+    puts("[破解]\n");
     puts("  0 返回");
     puts("  1 极域电子教室");
     puts("  2 联想云教室\n");
-    printf("请输入: ");
+    printf("请键入: ");
     for(;;){
         scanf("%s",&Dat[0]);
         if((Dat[0]=='0'||Dat[0]=='1'||Dat[0]=='2')&&(Dat[1]==0)){
@@ -102,7 +102,7 @@ BEGIN:
 }
 void Recovery(){
 BEGIN:
-    puts("<恢复>\n");
+    puts("[恢复]\n");
     if(!IsUserAnAdmin()){
         puts("权限过低.\n");
         puts("--------------------\n");
@@ -112,7 +112,7 @@ BEGIN:
     puts("  0 返回");
     puts("  1 极域电子教室");
     puts("  2 联想云教室\n");
-    printf("请输入: ");
+    printf("请键入: ");
     for(;;){
         scanf("%s",&Dat[0]);
         if((Dat[0]=='0'||Dat[0]=='1'||Dat[0]=='2')&&(Dat[1]==0)){
@@ -172,7 +172,7 @@ BEGIN:
     goto BEGIN;
 }
 void Cmd(){
-    puts("<终端>\n");
+    puts("[终端]\n");
     puts("执行 \"Exit\" 退出.\n");
     puts("---------------------------------------------\n");
     system("CMD");
@@ -190,15 +190,15 @@ int main(int argc,char* argv[]){
             if((opt[0]=="")&&(tmp.length()>5)&&(tmp.substr(0,5)=="-clr=")){
                 tmp.erase(0,5);
                 opt[0]="Color "+tmp;
-                continue;
             }else if((opt[1]=="")&&(tmp=="-fs")){
                 opt[1]="1";
-                continue;
             }
-            puts("参数错误.\n");
-            puts("--------------------\n");
-            Pause;
-            goto BEGIN;
+            else{
+                puts("参数错误.\n");
+                puts("--------------------\n");
+                Pause;
+                goto BEGIN;
+            }
         }
         system(opt[0].c_str());
         if(opt[1]=="1"){
@@ -207,12 +207,12 @@ int main(int argc,char* argv[]){
     }
 BEGIN:
     CLS;
-    puts("<主页>\n");
+    puts("[主页]\n");
     puts("  ? 关于");
     puts("  1 破解");
     puts("  2 恢复");
     puts("  3 终端\n");
-    printf("请输入: ");
+    printf("请键入: ");
     for(;;){
         scanf("%s",&Dat[0]);
         if((Dat[0]=='?'||Dat[0]=='1'||Dat[0]=='2'||Dat[0]=='3')&&(Dat[1]==0)){
