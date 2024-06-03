@@ -1,8 +1,8 @@
 ![logo](logo.png)\
 **Computer Room Control Software Nemesis: 轻松破解机房控制.**\
-*©️ 2024 MaxLHy0424, 保留所有权利.*
+*©️ 2023- MaxLHy0424, 保留所有权利.*
 
-[下载最新发行版 (v4.9.1).](https://github.com/MaxLHy0424/CRCSN/releases/download/v4.9.1/CRCSN_v4-9-1_x64.7z)
+[下载最新发行版 (v4.9.2).](https://github.com/MaxLHy0424/CRCSN/releases/download/v4.9.2/CRCSN_v4-9-2_x64.7z)
 
 # 使用方法
 
@@ -16,12 +16,14 @@
 
 如果默认的启动命令不满足您的需求, 可以根据下文修改.
 
-### 0-1 强制以 Administrator 权限运行
+> 请注意: 参数区分大小写.
+
+### 0-1 强制以管理员限运行
 
 找到:
-````batch
-: MSHTA VBScript:CreateObject("Shell.Application").ShellExecute("%~S0","GoTo:RunAs","","RunAs",1)(Window.Close) & GoTo:EOF
-````
+```Batch
+: MsHta VBScript:CreateObject("Shell.Application").ShellExecute("%~S0","GoTo:RunAs","","RunAs",1)(Window.Close) & GoTo:EOF
+```
 
 将开头的`: `去掉即可. 再运行启动脚本, 将会启用该项. 
 
@@ -30,14 +32,14 @@
 ### 0-2 修改控制台颜色
 
 找到最后一行, 在末尾加上`-clr=`, 并在后面添加参数 (详见`Color`命令帮助), 例如:
-````batch
+````Batch
 .\bin\main.exe -clr=9
 ````
 
 ### 0-3 窗口置顶
 
 找到最后一行. 如需启用, 请在末尾加上`-fs`, 见下:
-````batch
+````Batch
 .\bin\main.exe -fs
 ````
 
@@ -45,11 +47,11 @@
 
 ## 1 破解
 
-输入`1`, 回车, 根据需要破解的控制软件输入对应的字符, 回车, 输入`Y`(不区分大小写), 回车, 开始破解.
+输入`1`, 回车, 根据需要破解的控制软件输入对应的字符, 回车, 输入`y`(不区分大小写), 回车, 开始破解.
 
 ## 2 恢复
 
-输入`2`, 回车, 根据需要恢复的控制软件输入对应的字符, 回车, 输入`Y`(不区分大小写), 回车, 开始恢复.
+输入`2`, 回车, 根据需要恢复的控制软件输入对应的字符, 回车, 输入`y`(不区分大小写), 回车, 开始恢复.
 
 # 常见问题
 
@@ -67,11 +69,11 @@
 
 # 贡献代码
 
-**CRCSN 是个开源项目, 欢迎各位贡献代码!** 所有贡献者将会在末尾列出, 以示感谢. 但请务必遵守以下规则:
+**欢迎各位贡献代码!** 所有贡献者将会在下方列出, 以示感谢. 但务必遵守以下规则:
 1. 提交代码请创建 PR, 不要直接提交;
 2. 修改`README.md`时, 注意语句通顺, 不要有错误内容;
-3. 修改软件代码时, 标识符名称一律遵守驼峰命名法, 代码风格与项目保持统一, 尽可能提升运行效率, 同时可通过最新 MinGW-w64 (Built by MSYS2 project) 编译, 并且不附带警告.
+3. 提交的代码的风格请与项目保持统一, 尽可能提升运行效率, 同时可通过最新 MinGW-w64 (for MSYS2) 编译, 并且不附带警告.
 
-# 贡献者
+## 贡献者
 
 - [MaxLHy0424](https://github.com/MaxLHy0424)
