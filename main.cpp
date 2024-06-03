@@ -1,17 +1,17 @@
 #include"extern.hpp"
-void Info(){
-    puts("[关于]\n");
+void About(){
+    puts("<关于>\n");
     puts("  Computer Room Control Software Nemesis");
-    puts("\t\tv4.9.1\n");
+    puts("\t\tv4.9.2\n");
     puts("  https://github.com/MaxLHy0424/CRCSN");
-    puts("  (C) 2024 MaxLHy0424, All Rights Reserved.\n");
+    puts("  (C) 2023- MaxLHy0424, All Rights Reserved.\n");
     puts("---------------------------------------------\n");
-    system("Pause");
+    Pause;
     return;
 }
 void Crack(){
 BEGIN:
-    puts("[破解]\n");
+    puts("<破解>\n");
     puts("  0 返回");
     puts("  1 极域电子教室");
     puts("  2 联想云教室\n");
@@ -21,7 +21,7 @@ BEGIN:
         if((Dat[0]=='0'||Dat[0]=='1'||Dat[0]=='2')&&(Dat[1]==0)){
             break;
         }
-        printf("输入错误, 请重试: ");
+        printf("键入错误, 请重试: ");
     }
     if(Dat[0]=='0'){
         return;
@@ -95,18 +95,18 @@ BEGIN:
             }
         }
         puts("\n----------------------------------------\n");
-        system("Pause");
+        Pause;
     }
-    system("CLS");
+    CLS;
     goto BEGIN;
 }
 void Recovery(){
 BEGIN:
-    puts("[恢复]\n");
+    puts("<恢复>\n");
     if(!IsUserAnAdmin()){
-        puts("User 权限下不可用.\n");
+        puts("权限过低.\n");
         puts("--------------------\n");
-        system("Pause");
+        Pause;
         return;
     }
     puts("  0 返回");
@@ -118,7 +118,7 @@ BEGIN:
         if((Dat[0]=='0'||Dat[0]=='1'||Dat[0]=='2')&&(Dat[1]==0)){
             break;
         }
-        printf("输入错误, 请重试: ");
+        printf("键入错误, 请重试: ");
     }
     if(Dat[0]=='0'){
         return;
@@ -166,13 +166,13 @@ BEGIN:
             }
         }
         puts("----------------------------------------\n");
-        system("Pause");
+        Pause;
     }
-    system("CLS");
+    CLS;
     goto BEGIN;
 }
-void Terminal(){
-    puts("[终端]\n");
+void Cmd(){
+    puts("<终端>\n");
     puts("执行 \"Exit\" 退出.\n");
     puts("---------------------------------------------\n");
     system("CMD");
@@ -187,27 +187,27 @@ int main(int argc,char* argv[]){
         std::string opt[argc-1]{},tmp{};
         for(unsigned short i{1};i<argc;++i){
             tmp=argv[i];
-            if((opt[0]=="")&&(tmp.length()>=5)&&(tmp.substr(0,5)=="-clr=")){
+            if((opt[0]=="")&&(tmp.length()>5)&&(tmp.substr(0,5)=="-clr=")){
                 tmp.erase(0,5);
                 opt[0]="Color "+tmp;
+                continue;
             }else if((opt[1]=="")&&(tmp=="-fs")){
                 opt[1]="1";
+                continue;
             }
-            else{
-                puts("参数错误.\n");
-                puts("--------------------\n");
-                system("Pause");
-                goto BEGIN;
-            }
+            puts("参数错误.\n");
+            puts("--------------------\n");
+            Pause;
+            goto BEGIN;
         }
         system(opt[0].c_str());
-        if(opt[1]!=""){
+        if(opt[1]=="1"){
             std::thread(ForceShow).detach();
         }
     }
 BEGIN:
-    system("CLS");
-    puts("[主页]\n");
+    CLS;
+    puts("<主页>\n");
     puts("  ? 关于");
     puts("  1 破解");
     puts("  2 恢复");
@@ -218,12 +218,12 @@ BEGIN:
         if((Dat[0]=='?'||Dat[0]=='1'||Dat[0]=='2'||Dat[0]=='3')&&(Dat[1]==0)){
             break;
         }
-        printf("输入错误, 请重试: ");
+        printf("键入错误, 请重试: ");
     }
-    system("CLS");
+    CLS;
     switch(Dat[0]){
         case '?':{
-            Info();
+            About();
             break;
         }case '1':{
             Crack();
@@ -232,7 +232,7 @@ BEGIN:
             Recovery();
             break;
         }case '3':{
-            Terminal();
+            Cmd();
             break;
         }
     }
