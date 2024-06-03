@@ -1,6 +1,6 @@
 ![logo](logo.png)\
 **Computer Room Control Software Nemesis: 轻松破解机房控制.**\
-*©️ 2023- MaxLHy0424, 保留所有权利.*
+*©️ 2024 MaxLHy0424, All Rights Reserved.*
 
 [下载最新发行版 (v4.9.3).](https://github.com/MaxLHy0424/CRCSN/releases/download/v4.9.3/CRCSN_v4-9-3_x64.7z)
 
@@ -39,14 +39,14 @@ TimeOut /NoBreak /T 3
 
 ### 0-3 修改控制台颜色
 
-找到最后一行, 在末尾加上`-clr=`, 并在后面添加参数 (详见`Color`命令帮助), 例如:
+找到倒数第二行, 在末尾加上`-clr=`, 并在后面添加参数 (详见`Color`命令帮助), 例如:
 ```Batch
 .\bin\main.exe -clr=9
 ```
 
 ### 0-4 窗口置顶
 
-找到最后一行. 如需启用, 请在末尾加上`-fs`, 见下:
+找到倒数第二行. 如需启用, 请在末尾加上`-fs`, 见下:
 ```Batch
 .\bin\main.exe -fs
 ```
