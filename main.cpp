@@ -194,7 +194,7 @@ int main(int argc,char* argv[]){
                 opt[1]="F";
                 continue;
             }
-            puts("启动参数错误.\n");
+            puts("参数错误.\n");
             puts("--------------------\n");
             system("Pause");
             goto BEGIN;
