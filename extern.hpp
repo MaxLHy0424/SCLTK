@@ -10,7 +10,7 @@ bool Continue(){
         if((Dat[1]=='Y'||Dat[1]=='y'||Dat[1]=='N'||Dat[1]=='n')&&(Dat[2]==0)){
             break;
         }
-        printf("输入错误, 请重试: ");
+        printf("键入错误, 请重试: ");
     }
     return (Dat[1]=='Y'||Dat[1]=='y');
 }
@@ -25,7 +25,7 @@ void ForceShow(){
         SetWindowPos(ForeWnd,HWND_NOTOPMOST,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE);
         SetForegroundWindow(ForeWnd);
         AttachThreadInput(CurID,ForeID,FALSE);
-        SetWindowPos(GetForegroundWindow(),HWND_TOPMOST,0,0,100,100,SWP_NOMOVE|SWP_NOSIZE);
+        SetWindowPos(ForeWnd,HWND_TOPMOST,0,0,100,100,SWP_NOMOVE|SWP_NOSIZE);
         Sleep(100UL);
     }
 }
