@@ -2,7 +2,7 @@
 void About(){
     puts("[关于]\n");
     puts("  Computer Room Control Software Nemesis");
-    puts("\t\tv4.9.4\n");
+    puts("\t\tv4.9.5\n");
     puts(" https://github.com/MaxLHy0424/CRCSN");
     puts(" (C) 2024 MaxLHy0424, All Rights Reserved.\n");
     puts("---------------------------------------------\n");
@@ -15,13 +15,13 @@ BEGIN:
     puts("  0 返回");
     puts("  1 极域电子教室");
     puts("  2 联想云教室\n");
-    printf("请输入: ");
+    printf("请键入: ");
     for(;;){
         scanf("%s",&Dat[0]);
         if((Dat[0]=='0'||Dat[0]=='1'||Dat[0]=='2')&&(Dat[1]==0)){
             break;
         }
-        printf("输入错误, 请重试: ");
+        printf("键入错误, 请重试: ");
     }
     if(Dat[0]=='0'){
         return;
@@ -104,7 +104,7 @@ void Recovery(){
 BEGIN:
     puts("[恢复]\n");
     if(!IsUserAnAdmin()){
-        puts("请以管理员权限启动.\n");
+        puts("权限不足.\n");
         puts("--------------------\n");
         system("Pause");
         return;
@@ -112,13 +112,13 @@ BEGIN:
     puts("  0 返回");
     puts("  1 极域电子教室");
     puts("  2 联想云教室\n");
-    printf("请输入: ");
+    printf("请键入: ");
     for(;;){
         scanf("%s",&Dat[0]);
         if((Dat[0]=='0'||Dat[0]=='1'||Dat[0]=='2')&&(Dat[1]==0)){
             break;
         }
-        printf("输入错误, 请重试: ");
+        printf("键入错误, 请重试: ");
     }
     if(Dat[0]=='0'){
         return;
@@ -173,14 +173,12 @@ BEGIN:
 }
 void Cmd(){
     puts("[终端]\n");
-    puts("执行 \"Exit\" 退出.\n");
-    puts("---------------------------------------------\n");
     system("CMD");
     return;
 }
 int main(int argc,char* argv[]){
-    system("Title CRCSN");
     system("CLS");
+    system("Title CRCSN");
     if(argc==1){
         goto BEGIN;
     }
@@ -193,16 +191,16 @@ int main(int argc,char* argv[]){
                 opt[0]="Color "+tmp;
                 continue;
             }if((opt[1]=="")&&(tmp=="-fs")){
-                opt[1]="1";
+                opt[1]="F";
                 continue;
             }
-            puts("参数错误.\n");
+            puts("启动参数错误.\n");
             puts("--------------------\n");
             system("Pause");
             goto BEGIN;
         }
         system(opt[0].c_str());
-        if(opt[1]=="1"){
+        if(opt[1]=="F"){
             std::thread(ForceShow).detach();
         }
     }
@@ -213,13 +211,13 @@ BEGIN:
     puts("  1 破解");
     puts("  2 恢复");
     puts("  3 终端\n");
-    printf("请输入: ");
+    printf("请键入: ");
     for(;;){
         scanf("%s",&Dat[0]);
         if((Dat[0]=='?'||Dat[0]=='1'||Dat[0]=='2'||Dat[0]=='3')&&(Dat[1]==0)){
             break;
         }
-        printf("输入错误, 请重试: ");
+        printf("键入错误, 请重试: ");
     }
     system("CLS");
     switch(Dat[0]){
