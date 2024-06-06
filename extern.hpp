@@ -10,9 +10,9 @@ bool Continue(){
         if((Dat[1]=='Y'||Dat[1]=='y'||Dat[1]=='N'||Dat[1]=='n')&&(Dat[2]==0)){
             break;
         }
-        printf("键入错误, 请重试: ");
+        printf("输入错误, 请重试: ");
     }
-    return (Dat[1]=='Y'||Dat[1]=='y');
+    return ((Dat[1]=='Y'||Dat[1]=='y')?(true):(false));
 }
 void ForceShow(){
     HWND ForeWnd{GetForegroundWindow()};
