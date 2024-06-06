@@ -171,7 +171,7 @@ BEGIN:
     system("Cls");
     goto BEGIN;
 }
-void Shell(){
+void Sh(){
     puts("[终端]\n");
     system("Cmd");
     return;
@@ -231,7 +231,7 @@ BEGIN:
             Recovery();
             break;
         }case '3':{
-            Shell();
+            Sh();
             break;
         }
     }
