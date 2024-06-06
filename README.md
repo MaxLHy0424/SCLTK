@@ -2,7 +2,7 @@
 **Computer Room Control Software Nemesis: 轻松破解机房控制.**\
 *©️ 2024 MaxLHy0424, All Rights Reserved.*
 
-[下载最新发行版 (v4.9.5).](https://github.com/MaxLHy0424/CRCSN/releases/download/v4.9.5/CRCSN_v4-9-5_x64.7z)
+[下载最新发行版 (v4.9.6).](https://github.com/MaxLHy0424/CRCSN/releases/download/v4.9.6/CRCSN_v4-9-6_x64.7z)
 
 # 使用方法
 
@@ -55,11 +55,11 @@ TimeOut /NoBreak /T 3
 
 ## 1 破解
 
-键入`1`, 回车, 根据需要破解的控制软件键入对应的字符, 回车, 键入`y`(不区分大小写), 回车, 开始破解.
+输入`1`, 回车, 根据需要破解的控制软件输入对应的字符, 回车, 输入`y`(不区分大小写), 回车, 开始破解.
 
 ## 2 恢复
 
-键入`2`, 回车, 根据需要恢复的控制软件键入对应的字符, 回车, 键入`y`(不区分大小写), 回车, 开始恢复.
+输入`2`, 回车, 根据需要恢复的控制软件输入对应的字符, 回车, 输入`y`(不区分大小写), 回车, 开始恢复.
 
 # 常见问题
 
