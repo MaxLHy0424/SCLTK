@@ -189,15 +189,15 @@ int main(int argc,char* argv[]){
             if((opt[0]=="")&&(tmp.length()>5)&&(tmp.substr(0,5)=="-clr=")){
                 tmp.erase(0,5);
                 opt[0]="Color "+tmp;
+                continue;
             }if((opt[1]=="")&&(tmp=="-fs")){
                 opt[1]="1";
+                continue;
             }
-            else{
-                puts("参数错误.\n");
-                puts("--------------------\n");
-                system("Pause");
-                goto BEGIN;
-            }
+            puts("参数错误.\n");
+            puts("--------------------\n");
+            system("Pause");
+            goto BEGIN;
         }
         system(opt[0].c_str());
         if(opt[1]=="1"){
