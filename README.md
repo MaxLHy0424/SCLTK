@@ -2,7 +2,7 @@
 **Computer Room Control Software Nemesis: 轻松破解机房控制.**\
 *©️ 2024 MaxLHy0424, All Rights Reserved.*
 
-[下载最新发行版 (v4.9.6).](https://github.com/MaxLHy0424/CRCSN/releases/download/v4.9.6/CRCSN_v4-9-6_x64.7z)
+[下载最新发行版 (v4.9.7).](https://github.com/MaxLHy0424/CRCSN/releases/download/v4.9.7/CRCSN_v4-9-7_x64.7z)
 
 # 使用方法
 
@@ -41,14 +41,14 @@ TimeOut /NoBreak /T 3
 
 找到倒数第二行, 在末尾加上`-clr=`, 并在后面添加参数 (详见`Color`命令帮助), 例如:
 ```Batch
-.\bin\main.exe -clr=9
+    .\bin\main.exe -clr=9
 ```
 
 ### 0-4 窗口置顶
 
 找到倒数第二行. 如需启用, 请在末尾加上`-fs`, 见下:
 ```Batch
-.\bin\main.exe -fs
+    .\bin\main.exe -fs
 ```
 
 如需禁用, 将`-fs`删去即可.
