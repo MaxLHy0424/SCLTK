@@ -2,11 +2,12 @@
 void About(){
     puts("[关于]\n");
     puts("  Computer Room Control Software Nemesis");
-    puts("\t\tv4.9.7\n");
+    puts("\t\tv4.9.8\n");
     puts(" https://github.com/MaxLHy0424/CRCSN");
     puts(" (C) 2024 MaxLHy0424, All Rights Reserved.\n");
     puts("---------------------------------------------\n");
-    system("Echo 按任意键返回.&Pause>NUL");
+    printf("按任意键返回. ");
+    system("Pause>NUL");
     return;
 }
 void Crack(){
@@ -16,7 +17,7 @@ BEGIN:
     puts("  1 极域电子教室");
     puts("  2 联想云教室\n");
     printf("请输入: ");
-    while(true){
+    for(;;){
         scanf("%s",&Dat[0]);
         if((Dat[0]=='0'||Dat[0]=='1'||Dat[0]=='2')&&(Dat[1]==0)){
             break;
@@ -46,9 +47,9 @@ BEGIN:
                     system("Reg Add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\GATESRV.exe\" /F /T REG_SZ /V debugger /D ?");
                     system("Reg Add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\ProcHelper64.exe\" /F /T REG_SZ /V debugger /D ?");
                     system("Reg Add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\MasterHelper.exe\" /F /T REG_SZ /V debugger /D ?");
+                    system("Net Stop STUDSRV /Y");
                     system("Net Stop TDNetFilter /Y");
                     system("Net Stop TDFileFilter /Y");
-                    system("Net Stop STUDSRV /Y");
                 }
                 break;
             }case '2':{
@@ -87,15 +88,16 @@ BEGIN:
                     system("Reg Add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DeploymentManager.exe\" /F /T REG_SZ /V debugger /D ?");
                     system("Reg Add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DeploymentAgent.exe\" /F /T REG_SZ /V debugger /D ?");
                     system("Reg Add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\XYNTService.exe\" /F /T REG_SZ /V debugger /D ?");
-                    system("Net Stop tvnserver /Y");
                     system("Net Stop BSAgentSvr /Y");
                     system("Net Stop WFBSMlogon /Y");
+                    system("Net Stop tvnserver /Y");
                 }
                 break;
             }
         }
         puts("\n----------------------------------------\n");
-        system("Echo 按任意键返回.&Pause>NUL");
+        printf("按任意键返回. ");
+        system("Pause>NUL");
     }
     system("Cls");
     goto BEGIN;
@@ -106,14 +108,15 @@ BEGIN:
     if(!IsUserAnAdmin()){
         puts("需要管理员权限.\n");
         puts("--------------------\n");
-        system("Echo 按任意键返回.&Pause>NUL");
+        printf("按任意键返回. ");
+        system("Pause>NUL");
         return;
     }
     puts("  0 返回");
     puts("  1 极域电子教室");
     puts("  2 联想云教室\n");
     printf("请输入: ");
-    while(true){
+    for(;;){
         scanf("%s",&Dat[0]);
         if((Dat[0]=='0'||Dat[0]=='1'||Dat[0]=='2')&&(Dat[1]==0)){
             break;
@@ -166,7 +169,8 @@ BEGIN:
             }
         }
         puts("----------------------------------------\n");
-        system("Echo 按任意键返回.&Pause>NUL");
+        printf("按任意键返回. ");
+        system("Pause>NUL");
     }
     system("Cls");
     goto BEGIN;
@@ -195,7 +199,8 @@ int main(int argc,char* argv[]){
             else{
                 puts("参数错误.\n");
                 puts("--------------------\n");
-                system("Echo 按任意键继续.&Pause>NUL");
+                printf("按任意键继续. ");
+                system("Pause>NUL");
                 goto BEGIN;
             }
         }
@@ -210,9 +215,9 @@ BEGIN:
     puts("  ? 关于");
     puts("  1 破解");
     puts("  2 恢复");
-    puts("  3 命令\n");
+    puts("  3 CMD\n");
     printf("请输入: ");
-    while(true){
+    for(;;){
         scanf("%s",&Dat[0]);
         if((Dat[0]=='?'||Dat[0]=='1'||Dat[0]=='2'||Dat[0]=='3')&&(Dat[1]==0)){
             break;
