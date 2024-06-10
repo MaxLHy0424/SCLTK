@@ -2,7 +2,7 @@
 **Computer Room Control Software Nemesis: 轻松破解机房控制.**\
 *©️ 2024 MaxLHy0424, All Rights Reserved.*
 
-[下载最新发行版 (v4.9.8).](https://github.com/MaxLHy0424/CRCSN/releases/download/v4.9.8/CRCSN_v4-9-8_x64.7z)
+[下载最新发行版 (v4.10.0).](https://github.com/MaxLHy0424/CRCSN/releases/download/v4.10.0/CRCSN_v4-10-0_x64.7z)
 
 # 使用方法
 
@@ -16,13 +16,13 @@
 
 如果默认的启动方式不满足您的需求, 可以根据下文修改.
 
-> 请注意: 参数区分大小写.
+> 提示: 参数区分大小写.
 
 ### 0-1 强制以管理员限运行
 
 找到:
 ```Batch
-: MsHta VBScript:CreateObject("Shell.Application").ShellExecute("%~S0","GoTo:RunAs","","RunAs",1)(Window.Close) & GoTo:EOF
+: MsHta VbScript:CreateObject("Shell.Application").ShellExecute("%~S0","GoTo:RunAs","","RunAs",1)(Window.Close) & GoTo:EOF
 ```
 
 将开头的`: `去掉即可. 再运行启动脚本, 将会启用该项. 
@@ -41,14 +41,14 @@ TimeOut /NoBreak /T 3
 
 找到倒数第二行, 在末尾加上`-clr=`, 并在后面添加参数 (详见`Color`命令帮助), 例如:
 ```Batch
-    .\bin\main.exe -clr=9
+.\bin\main.exe -clr=3
 ```
 
 ### 0-4 窗口置顶
 
 找到倒数第二行. 如需启用, 请在末尾加上`-fs`, 见下:
 ```Batch
-    .\bin\main.exe -fs
+.\bin\main.exe -fs
 ```
 
 如需禁用, 将`-fs`删去即可.
@@ -78,10 +78,10 @@ TimeOut /NoBreak /T 3
 # 贡献代码
 
 **欢迎各位贡献代码!** 所有贡献者将会在下方列出, 以示感谢. 但务必遵守以下规则:
-1. 提交代码请创建 PR, 不要直接提交;
-2. 修改`README.md`时, 注意语句通顺, 不要有错误内容;
-3. 提交的代码的风格请与项目保持统一, 尽可能提升运行效率, 同时可通过最新 MinGW-w64 (for MSYS2) 编译, 并且不附带警告.
+- 提交代码请创建拉取请求, 不要直接提交;
+- 修改`README.md`时, 注意语句通顺, 不要有错误内容;
+- 提交的代码的风格请与项目保持统一, 尽可能提升运行效率, 同时可通过最新 MinGW-w64 GNU GCC (MSYS2: mingw-w64-ucrt-x86_64-toolchain) 编译, 并且不附带警告.
 
 ## 贡献者
 
-- [MaxLHy0424](https://github.com/MaxLHy0424)
+- [MaxLHy0424 (Mingxu Ye)](https://github.com/MaxLHy0424)
