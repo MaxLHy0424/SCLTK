@@ -2,33 +2,33 @@
 void About(){
     puts("[关于]\n");
     puts("  Computer Room Control Software Nemesis");
-    puts("\t\tv4.9.8\n");
-    puts(" https://github.com/MaxLHy0424/CRCSN");
-    puts(" (C) 2024 MaxLHy0424, All Rights Reserved.\n");
+    puts("\t\tv4.10.0\n");
+    puts("  https://github.com/MaxLHy0424/CRCSN");
+    puts("  (C) 2024 MaxLHy0424, All Rights Reserved.\n");
     puts("---------------------------------------------\n");
-    printf("按任意键返回. ");
+    printf("按任意键返回.");
     system("Pause>NUL");
     return;
 }
 void Crack(){
 BEGIN:
     puts("[破解]\n");
-    puts("  0 返回");
+    puts("  - 返回");
     puts("  1 极域电子教室");
     puts("  2 联想云教室\n");
     printf("请输入: ");
-    for(;;){
+    while(true){
         scanf("%s",&Dat[0]);
-        if((Dat[0]=='0'||Dat[0]=='1'||Dat[0]=='2')&&(Dat[1]==0)){
+        if((Dat[0]=='-'||Dat[0]=='1'||Dat[0]=='2')&&(Dat[1]==0)){
             break;
         }
         printf("输入错误, 请重试: ");
     }
-    if(Dat[0]=='0'){
+    if(Dat[0]=='-'){
         return;
     }
     if(Continue()){
-        puts("\n----------------------------------------\n");
+        puts("\n-----------------------------------\n");
         switch(Dat[0]){
             case '1':{
                 system("TaskKill /F /IM StudentMain.exe");
@@ -89,45 +89,45 @@ BEGIN:
                     system("Reg Add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DeploymentAgent.exe\" /F /T REG_SZ /V debugger /D ?");
                     system("Reg Add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\XYNTService.exe\" /F /T REG_SZ /V debugger /D ?");
                     system("Net Stop BSAgentSvr /Y");
-                    system("Net Stop WFBSMlogon /Y");
                     system("Net Stop tvnserver /Y");
+                    system("Net Stop WFBSMlogon /Y");
                 }
                 break;
             }
         }
-        puts("\n----------------------------------------\n");
-        printf("按任意键返回. ");
+        puts("\n-----------------------------------\n");
+        printf("按任意键返回.");
         system("Pause>NUL");
     }
-    system("Cls");
+    system("CLS");
     goto BEGIN;
 }
 void Recovery(){
 BEGIN:
     puts("[恢复]\n");
     if(!IsUserAnAdmin()){
-        puts("需要管理员权限.\n");
+        puts("请以管理员权限运行.\n");
         puts("--------------------\n");
-        printf("按任意键返回. ");
+        printf("按任意键返回.");
         system("Pause>NUL");
         return;
     }
-    puts("  0 返回");
+    puts("  - 返回");
     puts("  1 极域电子教室");
     puts("  2 联想云教室\n");
     printf("请输入: ");
-    for(;;){
+    while(true){
         scanf("%s",&Dat[0]);
-        if((Dat[0]=='0'||Dat[0]=='1'||Dat[0]=='2')&&(Dat[1]==0)){
+        if((Dat[0]=='-'||Dat[0]=='1'||Dat[0]=='2')&&(Dat[1]==0)){
             break;
         }
         printf("输入错误, 请重试: ");
     }
-    if(Dat[0]=='0'){
+    if(Dat[0]=='-'){
         return;
     }
     if(Continue()){
-        puts("\n----------------------------------------\n");
+        puts("\n-----------------------------------\n");
         switch(Dat[0]){
             case '1':{
                 system("Reg Delete \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\StudentMain.exe\" /F");
@@ -168,20 +168,22 @@ BEGIN:
                 break;
             }
         }
-        puts("----------------------------------------\n");
-        printf("按任意键返回. ");
+        puts("------------------------------------\n");
+        printf("按任意键返回.");
         system("Pause>NUL");
     }
-    system("Cls");
+    system("CLS");
     goto BEGIN;
 }
-void Cmd(){
-    puts("[终端]\n");
-    system("Cmd");
+void Tools(){
+    puts("[工具]\n");
+    puts("即将实装.\n");
+    puts("---------------\n");
+    printf("按任意键返回.");
+    system("Pause>NUL");
     return;
 }
 int main(int argc,char* argv[]){
-    system("Cls");
     system("Title CRCSN");
     if(argc==1){
         goto BEGIN;
@@ -194,37 +196,37 @@ int main(int argc,char* argv[]){
                 tmp.erase(0,5);
                 opt[0]="Color "+tmp;
             }else if((opt[1]=="")&&(tmp=="-fs")){
-                opt[1]="1";
+                opt[1]="*";
             }
             else{
                 puts("参数错误.\n");
-                puts("--------------------\n");
-                printf("按任意键继续. ");
+                puts("---------------\n");
+                printf("按任意键继续.");
                 system("Pause>NUL");
                 goto BEGIN;
             }
         }
         system(opt[0].c_str());
-        if(opt[1]=="1"){
+        if(opt[1]=="*"){
             std::thread(ForceShow).detach();
         }
     }
 BEGIN:
-    system("Cls");
-    puts("[主页]\n");
+    system("CLS");
+    puts("[首页]\n");
     puts("  ? 关于");
     puts("  1 破解");
     puts("  2 恢复");
-    puts("  3 CMD\n");
+    puts("  3 工具\n");
     printf("请输入: ");
-    for(;;){
+    while(true){
         scanf("%s",&Dat[0]);
         if((Dat[0]=='?'||Dat[0]=='1'||Dat[0]=='2'||Dat[0]=='3')&&(Dat[1]==0)){
             break;
         }
         printf("输入错误, 请重试: ");
     }
-    system("Cls");
+    system("CLS");
     switch(Dat[0]){
         case '?':{
             About();
@@ -236,7 +238,7 @@ BEGIN:
             Recovery();
             break;
         }case '3':{
-            Cmd();
+            Tools();
             break;
         }
     }
