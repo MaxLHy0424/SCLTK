@@ -6,10 +6,7 @@
             "type":"cppdbg",
             "request":"launch",
             "program":"${fileDirname}\\bin\\${fileBasenameNoExtension}.exe",
-            "args":[
-                "-clr=3",
-                "-fs"
-            ],
+            "args":[],
             "stopAtEntry":false,
             "cwd":"${fileDirname}",
             "environment":[],
