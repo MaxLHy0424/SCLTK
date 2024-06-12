@@ -2,7 +2,7 @@
 void About(){
     puts("[关于]\n");
     puts("  Computer Room Control Software Nemesis");
-    puts("\t\tv4.10.0\n");
+    puts("\t\tv4.10.1\n");
     puts("  https://github.com/MaxLHy0424/CRCSN");
     puts("  (C) 2024 MaxLHy0424, All Rights Reserved.\n");
     puts("---------------------------------------------\n");
@@ -13,18 +13,18 @@ void About(){
 void Crack(){
 BEGIN:
     puts("[破解]\n");
-    puts("  - 返回");
+    puts("  = 返回");
     puts("  1 极域电子教室");
     puts("  2 联想云教室\n");
     printf("请输入: ");
     while(true){
         scanf("%s",&Dat[0]);
-        if((Dat[0]=='-'||Dat[0]=='1'||Dat[0]=='2')&&(Dat[1]==0)){
+        if((Dat[0]=='='||Dat[0]=='1'||Dat[0]=='2')&&(Dat[1]==0)){
             break;
         }
         printf("输入错误, 请重试: ");
     }
-    if(Dat[0]=='-'){
+    if(Dat[0]=='='){
         return;
     }
     if(Continue()){
@@ -112,18 +112,18 @@ BEGIN:
         system("Pause>NUL");
         return;
     }
-    puts("  - 返回");
+    puts("  = 返回");
     puts("  1 极域电子教室");
     puts("  2 联想云教室\n");
     printf("请输入: ");
     while(true){
         scanf("%s",&Dat[0]);
-        if((Dat[0]=='-'||Dat[0]=='1'||Dat[0]=='2')&&(Dat[1]==0)){
+        if((Dat[0]=='='||Dat[0]=='1'||Dat[0]=='2')&&(Dat[1]==0)){
             break;
         }
         printf("输入错误, 请重试: ");
     }
-    if(Dat[0]=='-'){
+    if(Dat[0]=='='){
         return;
     }
     if(Continue()){
@@ -139,9 +139,9 @@ BEGIN:
                 system("Reg Delete \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\GATESRV.exe\" /F");
                 system("Reg Delete \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\ProcHelper64.exe\" /F");
                 system("Reg Delete \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\MasterHelper.exe\" /F");
+                system("Net Start STUDSRV");
                 system("Net Start TDNetFilter");
                 system("Net Start TDFileFilter");
-                system("Net Start STUDSRV");
                 break;
             }case '2':{
                 system("Reg Delete \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\vncviewer.exe\" /F");
@@ -177,7 +177,7 @@ BEGIN:
 }
 void Tools(){
     puts("[工具]\n");
-    puts("即将实装.\n");
+    puts("有待开发.\n");
     puts("---------------\n");
     printf("按任意键返回.");
     system("Pause>NUL");
@@ -189,13 +189,13 @@ int main(int argc,char* argv[]){
         goto BEGIN;
     }
     {
-        std::string opt[2]{},tmp{};
+        std::string opt[2]{},t{};
         for(int i{1};i<argc;++i){
-            tmp=argv[i];
-            if((opt[0]=="")&&(tmp.substr(0,5)=="-clr=")&&(tmp.length()>5)){
-                tmp.erase(0,5);
-                opt[0]="Color "+tmp;
-            }else if((opt[1]=="")&&(tmp=="-fs")){
+            t=argv[i];
+            if((opt[0]=="")&&(t.substr(0,5)=="-clr=")&&(t.length()>5)){
+                t.erase(0,5);
+                opt[0]="Color "+t;
+            }else if((opt[1]=="")&&(t=="-fs")){
                 opt[1]="*";
             }
             else{
