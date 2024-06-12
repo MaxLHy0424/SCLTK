@@ -15,16 +15,16 @@ bool Continue(){
     return (Dat[1]=='Y'||Dat[1]=='y');
 }
 void ForceShow(){
-    HWND ForeWin{GetForegroundWindow()};
-    DWORD ForeId{GetWindowThreadProcessId(ForeWin,NULL)},CurId{GetCurrentThreadId()};
+    HWND ForeWnd{GetForegroundWindow()};
+    DWORD ForeId{GetWindowThreadProcessId(ForeWnd,NULL)},CurId{GetCurrentThreadId()};
     while(true){
         AttachThreadInput(CurId,ForeId,TRUE);
-        ShowWindow(ForeWin,SW_SHOWNORMAL);
-        SetWindowPos(ForeWin,HWND_TOPMOST,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE);
-        SetWindowPos(ForeWin,HWND_NOTOPMOST,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE);
-        SetForegroundWindow(ForeWin);
+        ShowWindow(ForeWnd,SW_SHOWNORMAL);
+        SetWindowPos(ForeWnd,HWND_TOPMOST,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE);
+        SetWindowPos(ForeWnd,HWND_NOTOPMOST,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE);
+        SetForegroundWindow(ForeWnd);
         AttachThreadInput(CurId,ForeId,FALSE);
-        SetWindowPos(ForeWin,HWND_TOPMOST,0,0,100,100,SWP_NOMOVE|SWP_NOSIZE);
+        SetWindowPos(ForeWnd,HWND_TOPMOST,0,0,100,100,SWP_NOMOVE|SWP_NOSIZE);
         Sleep(100UL);
     }
 }
