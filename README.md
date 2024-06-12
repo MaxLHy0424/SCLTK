@@ -1,8 +1,8 @@
 ![logo](logo.png)\
 **Computer Room Control Software Nemesis: 轻松破解机房控制.**\
-*©️ 2024 MaxLHy0424, All Rights Reserved.*
+*(C) 2024 MaxLHy0424, All Rights Reserved.*
 
-[下载最新发行版 (v4.10.0).](https://github.com/MaxLHy0424/CRCSN/releases/download/v4.10.0/CRCSN_v4-10-0_x64.7z)
+[下载最新发行版 (v4.10.1).](https://github.com/MaxLHy0424/CRCSN/releases/download/v4.10.1/CRCSN_v4-10-1_x64.7z)
 
 # 使用方法
 
@@ -16,9 +16,7 @@
 
 如果默认的启动方式不满足您的需求, 可以根据下文修改.
 
-> 提示: 参数区分大小写.
-
-### 0-1 强制以管理员限运行
+### 0.1 强制以管理员限运行
 
 找到:
 ```Batch
@@ -29,7 +27,7 @@
 
 如需禁用, 将`: `加回去头即可.
 
-### 0-2 修改等待时间
+### 0.2 修改等待时间
 
 找到:
 ```Batch
@@ -37,14 +35,18 @@ TimeOut /NoBreak /T 3
 ```
 修改最后的数字 (单位: 秒), 禁用可改为`0`.
 
-### 0-3 修改控制台颜色
+### 0.3 修改控制台颜色
+
+> 此项参数区分大小写.
 
 找到倒数第二行, 在末尾加上`-clr=`, 并在后面添加参数 (详见`Color`命令帮助), 例如:
 ```Batch
 .\bin\main.exe -clr=3
 ```
 
-### 0-4 窗口置顶
+### 0.4 窗口置顶
+
+> 此项参数区分大小写.
 
 找到倒数第二行. 如需启用, 请在末尾加上`-fs`, 见下:
 ```Batch
@@ -69,7 +71,7 @@ TimeOut /NoBreak /T 3
 
 ## 2 软件无法在 32 位 Windows 系统中使用.
 
-软件暂无计划发布 32 位版本. 如有需要, 请使用 MinGW 自行编译.
+由于开发中使用的一些头文件无法在 MinGW GNU GCC 下编译, 所以暂不提供 32 位发行版.
 
 ## 3 破解后一些软件运行时提示 "找不到文件" 之类的错误, 而运行的软件并没有损坏.
 
