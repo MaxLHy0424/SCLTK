@@ -1,1 +1,2 @@
-bin/main.exe
+bin/*
+!bin/.gitkeep
