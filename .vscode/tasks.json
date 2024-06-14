@@ -5,14 +5,14 @@
             "type":"shell",
             "command":"g++",
             "args":[
-                "main.cpp",
+                "\"${file}\"",
                 "-fexec-charset=GBK",
                 "-std=gnu++23",
                 "-Wall",
                 "-Wextra",
                 "-g",
                 "-o",
-                ".\\bin\\main.exe",
+                "\"${fileDirname}\\bin\\${fileBasenameNoExtension}.exe\"",
             ],
             "group":{
                 "kind":"build",
