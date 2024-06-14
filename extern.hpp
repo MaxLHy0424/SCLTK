@@ -5,7 +5,7 @@
 char Dat[3]{};
 bool Continue(){
     printf("是否继续? (Y/N): ");
-    while(true){
+    for(;;){
         scanf("%s",&Dat[1]);
         if((Dat[1]=='y'||Dat[1]=='n'||Dat[1]=='Y'||Dat[1]=='N')&&(Dat[2]==0)){
             break;
@@ -17,7 +17,7 @@ bool Continue(){
 void ForceShow(){
     HWND ForeWnd{GetForegroundWindow()};
     DWORD ForeId{GetWindowThreadProcessId(ForeWnd,NULL)},CurId{GetCurrentThreadId()};
-    while(true){
+    for(;;){
         AttachThreadInput(CurId,ForeId,TRUE);
         ShowWindow(ForeWnd,SW_SHOWNORMAL);
         SetWindowPos(ForeWnd,HWND_TOPMOST,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE);
