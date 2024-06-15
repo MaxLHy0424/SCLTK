@@ -5,19 +5,19 @@
 char Dat[3]{};
 bool Continue(){
     printf("是否继续? (Y/N): ");
-    for(;;){
+    while(true){
         scanf("%s",&Dat[1]);
-        if((Dat[1]=='y'||Dat[1]=='n'||Dat[1]=='Y'||Dat[1]=='N')&&(Dat[2]==0)){
+        if((Dat[1]=='y'||Dat[1]=='Y'||Dat[1]=='n'||Dat[1]=='N')&&(Dat[2]==0)){
             break;
         }
         printf("输入错误, 请重试: ");
     }
-    return (Dat[1]=='Y'||Dat[1]=='y');
+    return ((Dat[1]=='Y'||Dat[1]=='y')?(true):(false));
 }
 void ForceShow(){
     HWND ForeWnd{GetForegroundWindow()};
     DWORD ForeId{GetWindowThreadProcessId(ForeWnd,NULL)},CurId{GetCurrentThreadId()};
-    for(;;){
+    while(true){
         AttachThreadInput(CurId,ForeId,TRUE);
         ShowWindow(ForeWnd,SW_SHOWNORMAL);
         SetWindowPos(ForeWnd,HWND_TOPMOST,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE);
