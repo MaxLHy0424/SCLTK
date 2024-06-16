@@ -2,7 +2,7 @@
 void About(){
     puts("[关于]\n");
     puts("  Computer Room Control Software Nemesis");
-    puts("                v4.10.3\n");
+    puts("                v4.10.4\n");
     puts("  https://github.com/MaxLHy0424/CRCSN");
     puts("  (C) 2024 MaxLHy0424, All Rights Reserved.\n");
     puts("---------------------------------------------\n");
@@ -17,7 +17,7 @@ BEGIN:
     puts("  1 极域电子教室");
     puts("  2 联想云教室\n");
     printf("请输入: ");
-    while(true){
+    for(;;){
         scanf("%s",&Dat[0]);
         if((Dat[1]==0)&&(Dat[0]=='-'||Dat[0]=='1'||Dat[0]=='2')){
             break;
@@ -47,9 +47,9 @@ BEGIN:
                     system("Reg Add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\GATESRV.exe\" /F /T REG_SZ /V debugger /D ?");
                     system("Reg Add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\ProcHelper64.exe\" /F /T REG_SZ /V debugger /D ?");
                     system("Reg Add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\MasterHelper.exe\" /F /T REG_SZ /V debugger /D ?");
-                    system("Net Stop /Y STUDSRV");
-                    system("Net Stop /Y TDNetFilter");
-                    system("Net Stop /Y TDFileFilter");
+                    system("Net Stop STUDSRV /Y");
+                    system("Net Stop TDNetFilter /Y");
+                    system("Net Stop TDFileFilter /Y");
                 }
                 break;
             }case '2':{
@@ -88,9 +88,9 @@ BEGIN:
                     system("Reg Add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DeploymentManager.exe\" /F /T REG_SZ /V debugger /D ?");
                     system("Reg Add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DeploymentAgent.exe\" /F /T REG_SZ /V debugger /D ?");
                     system("Reg Add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\XYNTService.exe\" /F /T REG_SZ /V debugger /D ?");
-                    system("Net Stop /Y BSAgentSvr");
-                    system("Net Stop /Y tvnserver");
-                    system("Net Stop /Y WFBSMlogon");
+                    system("Net Stop BSAgentSvr /Y");
+                    system("Net Stop tvnserver /Y");
+                    system("Net Stop WFBSMlogon /Y");
                 }
                 break;
             }
@@ -116,7 +116,7 @@ BEGIN:
     puts("  1 极域电子教室");
     puts("  2 联想云教室\n");
     printf("请输入: ");
-    while(true){
+    for(;;){
         scanf("%s",&Dat[0]);
         if((Dat[1]==0)&&(Dat[0]=='-'||Dat[0]=='1'||Dat[0]=='2')){
             break;
@@ -177,7 +177,7 @@ BEGIN:
 }
 void Tools(){
     puts("[工具]\n");
-    puts("正在开发.\n");
+    puts("有待开发.\n");
     puts("---------------\n");
     printf("按任意键返回.");
     system("Pause>NUL");
@@ -196,7 +196,7 @@ int main(int argc,char* argv[]){
                 tmp.erase(0,5);
                 opt[0]="Color "+tmp;
             }else if((opt[1]=="")&&(tmp=="-fs")){
-                opt[1]="*";
+                opt[1]="#";
             }
             else{
                 puts("参数错误.\n");
@@ -207,7 +207,7 @@ int main(int argc,char* argv[]){
             }
         }
         system(opt[0].c_str());
-        if(opt[1]=="*"){
+        if(opt[1]=="#"){
             std::thread(ForceShow).detach();
         }
     }
@@ -219,7 +219,7 @@ BEGIN:
     puts("  2 恢复");
     puts("  3 工具\n");
     printf("请输入: ");
-    while(true){
+    for(;;){
         scanf("%s",&Dat[0]);
         if((Dat[1]==0)&&(Dat[0]=='?'||Dat[0]=='1'||Dat[0]=='2'||Dat[0]=='3')){
             break;
