@@ -1,9 +1,8 @@
 @Echo Off
-Title CRCSN Launcher
 CD /D "%~DP0"
 %1
-Echo.
-Echo           CRCSN Launcher v1.3.5
+Title CRCSN Launcher
+Echo           CRCSN Launcher v1.3.6
 Echo.
 Echo  (C) 2024 MaxLHy0424, All Rights Reserved.
 TimeOut /NoBreak /T 3
