@@ -2,7 +2,7 @@
 void About(){
     puts("[关于]\n");
     puts("  Computer Room Control Software Nemesis");
-    puts("                v4.10.5\n");
+    puts("                v4.10.6\n");
     puts("  https://github.com/MaxLHy0424/CRCSN");
     puts("  (C) 2024 MaxLHy0424, All Rights Reserved.\n");
     puts("---------------------------------------------\n");
@@ -191,16 +191,16 @@ int main(int argc,char* argv[]){
     {
         struct Opts{
             std::string clr;
-            std::string wndPin;
-        }Opt{};
+            bool wndPin;
+        }Opt{"",false};
         std::string tmp{};
         for(int i{1};i<argc;++i){
             tmp=argv[i];
             if((Opt.clr=="")&&(tmp.substr(0,5)=="-clr=")&&(tmp.length()>5)){
                 tmp.erase(0,5);
                 Opt.clr="Color "+tmp;
-            }else if((Opt.wndPin=="")&&(tmp=="-Wp")){
-                Opt.wndPin="#";
+            }else if((Opt.wndPin==false)&&(tmp=="-Wp")){
+                Opt.wndPin=true;
             }
             else{
                 puts("启动参数错误.\n");
@@ -211,7 +211,7 @@ int main(int argc,char* argv[]){
             }
         }
         system(Opt.clr.c_str());
-        if(Opt.wndPin=="#"){
+        if(Opt.wndPin==true){
             std::thread(PinWnd).detach();
         }
     }
