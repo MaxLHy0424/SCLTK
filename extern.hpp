@@ -1,11 +1,11 @@
 #include<stdio.h>
-#include<ShlObj.h>
 #include<string>
 #include<thread>
+#include<ShlObj.h>
 char Dat[3]{};
 bool Continue(){
     printf("是否继续? (Y/N): ");
-    for(;;){
+    while(true){
         scanf("%s",&Dat[1]);
         if((Dat[1]=='y'||Dat[1]=='Y'||Dat[1]=='n'||Dat[1]=='N')&&(Dat[2]==0)){
             break;
@@ -14,10 +14,10 @@ bool Continue(){
     }
     return ((Dat[1]=='Y'||Dat[1]=='y')?(true):(false));
 }
-void ForceShow(){
+void PinWnd(){
     HWND foreWnd{GetForegroundWindow()};
     DWORD foreId{GetWindowThreadProcessId(foreWnd,NULL)},curId{GetCurrentThreadId()};
-    for(;;){
+    while(true){
         AttachThreadInput(curId,foreId,TRUE);
         ShowWindow(foreWnd,SW_SHOWNORMAL);
         SetWindowPos(foreWnd,HWND_TOPMOST,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE);
