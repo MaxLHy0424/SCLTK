@@ -2,7 +2,7 @@
 void About(){
     puts("[关于]\n");
     puts("  Computer Room Control Software Nemesis");
-    puts("                v4.10.4\n");
+    puts("                v4.10.5\n");
     puts("  https://github.com/MaxLHy0424/CRCSN");
     puts("  (C) 2024 MaxLHy0424, All Rights Reserved.\n");
     puts("---------------------------------------------\n");
@@ -17,7 +17,7 @@ BEGIN:
     puts("  1 极域电子教室");
     puts("  2 联想云教室\n");
     printf("请输入: ");
-    for(;;){
+    while(true){
         scanf("%s",&Dat[0]);
         if((Dat[1]==0)&&(Dat[0]=='-'||Dat[0]=='1'||Dat[0]=='2')){
             break;
@@ -116,7 +116,7 @@ BEGIN:
     puts("  1 极域电子教室");
     puts("  2 联想云教室\n");
     printf("请输入: ");
-    for(;;){
+    while(true){
         scanf("%s",&Dat[0]);
         if((Dat[1]==0)&&(Dat[0]=='-'||Dat[0]=='1'||Dat[0]=='2')){
             break;
@@ -177,7 +177,7 @@ BEGIN:
 }
 void Tools(){
     puts("[工具]\n");
-    puts("有待开发.\n");
+    puts("正在开发.\n");
     puts("---------------\n");
     printf("按任意键返回.");
     system("Pause>NUL");
@@ -189,26 +189,30 @@ int main(int argc,char* argv[]){
         goto BEGIN;
     }
     {
-        std::string opt[2]{},tmp{};
+        struct Opts{
+            std::string clr;
+            std::string wndPin;
+        }Opt{};
+        std::string tmp{};
         for(int i{1};i<argc;++i){
             tmp=argv[i];
-            if((opt[0]=="")&&(tmp.substr(0,5)=="-clr=")&&(tmp.length()>5)){
+            if((Opt.clr=="")&&(tmp.substr(0,5)=="-clr=")&&(tmp.length()>5)){
                 tmp.erase(0,5);
-                opt[0]="Color "+tmp;
-            }else if((opt[1]=="")&&(tmp=="-fs")){
-                opt[1]="#";
+                Opt.clr="Color "+tmp;
+            }else if((Opt.wndPin=="")&&(tmp=="-Wp")){
+                Opt.wndPin="#";
             }
             else{
-                puts("参数错误.\n");
+                puts("启动参数错误.\n");
                 puts("---------------\n");
                 printf("按任意键继续.");
                 system("Pause>NUL");
                 goto BEGIN;
             }
         }
-        system(opt[0].c_str());
-        if(opt[1]=="#"){
-            std::thread(ForceShow).detach();
+        system(Opt.clr.c_str());
+        if(Opt.wndPin=="#"){
+            std::thread(PinWnd).detach();
         }
     }
 BEGIN:
@@ -219,7 +223,7 @@ BEGIN:
     puts("  2 恢复");
     puts("  3 工具\n");
     printf("请输入: ");
-    for(;;){
+    while(true){
         scanf("%s",&Dat[0]);
         if((Dat[1]==0)&&(Dat[0]=='?'||Dat[0]=='1'||Dat[0]=='2'||Dat[0]=='3')){
             break;
