@@ -12,7 +12,7 @@ bool Continue(){
         }
         printf("输入错误, 请重试: ");
     }
-    return ((Dat[1]=='Y'||Dat[1]=='y')?(true):(false));
+    return ((bool)(Dat[1]=='Y'||Dat[1]=='y'));
 }
 void PinWnd(){
     HWND foreWnd{GetForegroundWindow()};
