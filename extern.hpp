@@ -5,19 +5,19 @@
 char Dat[3]{};
 bool Continue(){
     printf("是否继续? (Y/N): ");
-    while(true){
+    for(;;){
         scanf("%s",&Dat[1]);
-        if((Dat[1]=='y'||Dat[1]=='Y'||Dat[1]=='n'||Dat[1]=='N')&&(Dat[2]==0)){
+        if((Dat[1]=='y'||Dat[1]=='n'||Dat[1]=='Y'||Dat[1]=='N')&&(Dat[2]==0)){
             break;
         }
         printf("输入错误, 请重试: ");
     }
-    return ((bool)(Dat[1]=='Y'||Dat[1]=='y'));
+    return ((Dat[1]=='Y'||Dat[1]=='y')?(true):(false));
 }
 void PinWnd(){
     HWND foreWnd{GetForegroundWindow()};
     DWORD foreId{GetWindowThreadProcessId(foreWnd,NULL)},curId{GetCurrentThreadId()};
-    while(true){
+    for(;;){
         AttachThreadInput(curId,foreId,TRUE);
         ShowWindow(foreWnd,SW_SHOWNORMAL);
         SetWindowPos(foreWnd,HWND_TOPMOST,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE);

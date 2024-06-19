@@ -1,8 +1,8 @@
 #include"extern.hpp"
-void About(){
-    puts("[关于]\n");
+void Info(){
+    puts("[信息]\n");
     puts("  Computer Room Control Software Nemesis");
-    puts("                v4.10.6\n");
+    puts("               v4.10.7\n");
     puts("  https://github.com/MaxLHy0424/CRCSN");
     puts("  (C) 2024 MaxLHy0424, All Rights Reserved.\n");
     puts("---------------------------------------------\n");
@@ -17,7 +17,7 @@ BEGIN:
     puts("  1 极域电子教室");
     puts("  2 联想云教室\n");
     printf("请输入: ");
-    while(true){
+    for(;;){
         scanf("%s",&Dat[0]);
         if((Dat[1]==0)&&(Dat[0]=='-'||Dat[0]=='1'||Dat[0]=='2')){
             break;
@@ -116,7 +116,7 @@ BEGIN:
     puts("  1 极域电子教室");
     puts("  2 联想云教室\n");
     printf("请输入: ");
-    while(true){
+    for(;;){
         scanf("%s",&Dat[0]);
         if((Dat[1]==0)&&(Dat[0]=='-'||Dat[0]=='1'||Dat[0]=='2')){
             break;
@@ -189,16 +189,16 @@ int main(int argc,char* argv[]){
         goto BEGIN;
     }
     {
-        struct Opts{
-            std::string clr;
+        struct Options{
+            std::string color;
             bool wndPin;
-        }Opt{"",false};
+        }Opt{};
         std::string tmp{};
         for(int i{1};i<argc;++i){
             tmp=argv[i];
-            if((Opt.clr=="")&&(tmp.substr(0,5)=="-clr=")&&(tmp.length()>5)){
-                tmp.erase(0,5);
-                Opt.clr="Color "+tmp;
+            if((Opt.color=="")&&(tmp.substr(0,7)=="-color=")&&(tmp.length()>7)){
+                tmp.erase(0,7);
+                Opt.color="Color "+tmp;
             }else if((Opt.wndPin==false)&&(tmp=="-Wp")){
                 Opt.wndPin=true;
             }
@@ -210,7 +210,7 @@ int main(int argc,char* argv[]){
                 goto BEGIN;
             }
         }
-        system(Opt.clr.c_str());
+        system(Opt.color.c_str());
         if(Opt.wndPin==true){
             std::thread(PinWnd).detach();
         }
@@ -218,12 +218,12 @@ int main(int argc,char* argv[]){
 BEGIN:
     system("CLS");
     puts("[首页]\n");
-    puts("  ? 关于");
+    puts("  ? 信息");
     puts("  1 破解");
     puts("  2 恢复");
     puts("  3 工具\n");
     printf("请输入: ");
-    while(true){
+    for(;;){
         scanf("%s",&Dat[0]);
         if((Dat[1]==0)&&(Dat[0]=='?'||Dat[0]=='1'||Dat[0]=='2'||Dat[0]=='3')){
             break;
@@ -233,7 +233,7 @@ BEGIN:
     system("CLS");
     switch(Dat[0]){
         case '?':{
-            About();
+            Info();
             break;
         }case '1':{
             Crack();
