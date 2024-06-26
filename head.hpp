@@ -1,4 +1,5 @@
-#include<stdio.h>
-#include<string>
+#include<iostream>
+#include<iomanip>
+#include<vector>
 #include<thread>
 #include<ShlObj.h>
