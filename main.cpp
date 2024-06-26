@@ -3,7 +3,7 @@ char Dat[3]{};
 #include"module.hpp"
 #include"ui.hpp"
 Menu Activity;
-bool About(){
+bool About(Parameter){
     puts("[关于]\n");
     puts(" Computer Room Control Software Nemesis");
     puts("                24w27a\n");
@@ -14,7 +14,7 @@ bool About(){
     system("Pause>NUL");
     return false;
 }
-void Crack(){
+bool Crack(Parameter){
 BEGIN:
     puts("[破解]\n");
     puts(" - 返回");
@@ -29,7 +29,7 @@ BEGIN:
         printf("输入错误, 请重试: ");
     }
     if(Dat[0]=='-'){
-        return;
+        return false;
     }
     if(Continue()){
         puts("\n-----------------------------------\n");
@@ -106,7 +106,7 @@ BEGIN:
     system("CLS");
     goto BEGIN;
 }
-void Recovery(){
+bool Recovery(Parameter){
 BEGIN:
     puts("[恢复]\n");
     if(!IsUserAnAdmin()){
@@ -114,7 +114,7 @@ BEGIN:
         puts("--------------------\n");
         printf("按任意键返回.");
         system("Pause>NUL");
-        return;
+        return false;
     }
     puts("  - 返回");
     puts("  1 极域电子教室");
@@ -128,7 +128,7 @@ BEGIN:
         printf("输入错误, 请重试: ");
     }
     if(Dat[0]=='-'){
-        return;
+        return false;
     }
     if(Continue()){
         puts("\n-----------------------------------\n");
@@ -179,13 +179,13 @@ BEGIN:
     system("CLS");
     goto BEGIN;
 }
-void Tools(){
+bool Tools(Parameter){
     puts("[工具]\n");
     puts("正在开发.\n");
     puts("---------------\n");
     printf("按任意键返回.");
     system("Pause>NUL");
-    return;
+    return false;
 }
 int main(int argc,char* argv[]){
     system("Title CRCSN");
