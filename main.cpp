@@ -1,8 +1,11 @@
-#include"extern.hpp"
+char Dat[3]{};
+#include"head.hpp"
+#include"module.hpp"
+#include"ui.hpp"
 void Info(){
     puts("[信息]\n");
     puts("  Computer Room Control Software Nemesis");
-    puts("               v4.10.7\n");
+    puts("                 24w27a\n");
     puts("  https://github.com/MaxLHy0424/CRCSN");
     puts("  (C) 2024 MaxLHy0424, All Rights Reserved.\n");
     puts("---------------------------------------------\n");
