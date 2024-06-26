@@ -6,7 +6,7 @@ Menu Activity;
 bool About(Parameter){
     puts("[关于]\n");
     puts(" Computer Room Control Software Nemesis");
-    puts("                24w27a\n");
+    puts("                24w27b\n");
     puts(" https://github.com/MaxLHy0424/CRCSN");
     puts(" (C) 2024 MaxLHy0424, All Rights Reserved.\n");
     puts("---------------------------------------------\n");
