@@ -1,8 +1,3 @@
-#include<stdio.h>
-#include<string>
-#include<thread>
-#include<ShlObj.h>
-char Dat[3]{};
 bool Continue(){
     printf("是否继续? (Y/N): ");
     for(;;){
