@@ -1,29 +1,29 @@
 {
-    "configurations": [
+    "configurations":[
         {
-            "name": "Win32",
-            "includePath": [
+            "name":"Win32",
+            "includePath":[
                 "${workspaceFolder}\\*"
             ],
-            "defines": [
+            "defines":[
                 "_DEBUG",
                 "UNICODE",
                 "_UNICODE"
             ],
-            "compilerPath": "C:\\Software\\MSYS2\\ucrt64\\bin\\g++.exe",
-            "compilerArgs": [
+            "compilerPath":"C:\\Software\\MSYS2\\ucrt64\\bin\\g++.exe",
+            "compilerArgs":[
                 "-fexec-charset=GBK",
                 "-lm",
                 "-static",
                 "-Ofast",
                 "-Os"
             ],
-            "intelliSenseMode": "windows-gcc-x64",
-            "cStandard": "c23",
-            "cppStandard": "gnu++23",
-            "mergeConfigurations": false,
-            "configurationProvider": "ms-vscode.makefile-tools"
+            "intelliSenseMode":"windows-gcc-x64",
+            "cStandard":"c23",
+            "cppStandard":"gnu++23",
+            "mergeConfigurations":false,
+            "configurationProvider":"ms-vscode.makefile-tools"
         }
     ],
-    "version": 4
+    "version":4
 }
