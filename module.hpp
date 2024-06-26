@@ -9,7 +9,7 @@ bool Continue(){
     }
     return ((Dat[1]=='Y'||Dat[1]=='y')?(true):(false));
 }
-void PinWnd(){
+void WndPin(){
     HWND foreWnd{GetForegroundWindow()};
     DWORD foreId{GetWindowThreadProcessId(foreWnd,NULL)},curId{GetCurrentThreadId()};
     for(;;){
