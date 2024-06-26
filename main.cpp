@@ -189,6 +189,9 @@ bool Tools(Parameter){
 }
 int main(int argc,char* argv[]){
     system("Title CRCSN");
+	char cmd[64];
+	sprintf(cmd,"mode con cols=%d lines=%d",50,25);
+    system(cmd);
     if(argc==1){
         goto BEGIN;
     }
