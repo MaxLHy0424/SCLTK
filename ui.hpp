@@ -112,7 +112,7 @@ class Menu{
 			consoleHeight=tmp.dwSize.Y;
 			consoleWidth=tmp.dwSize.X;
 		}
-		void clearScreen(){
+		void ClearScreen(){
 			GetConsoleSize();
 			SetTheCursor({0,0});
 			for(short i{};i<consoleHeight;++i){
@@ -138,7 +138,7 @@ class Menu{
 			SetTheCursor({0,data.position.Y});
 		}
 		void initializePosition(){
-			clearScreen();
+			ClearScreen();
 			for(auto&data:lineData){
 				data.position=GetTheTheCursor();
 				data.color.setDefault();
@@ -162,7 +162,7 @@ class Menu{
 			for(auto&data:lineData){
 				if(data==mouseEvent.dwMousePosition){
 					if(data.function!=nullptr){
-						clearScreen();
+						ClearScreen();
 						data.color.setDefault();
 						AddAttributes();
 						ShowTheCursor();
@@ -218,7 +218,7 @@ class Menu{
 					}
 				}
 			}
-			clearScreen();
+			ClearScreen();
 			Sleep(100);
 		}
 };
