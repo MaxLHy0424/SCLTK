@@ -71,7 +71,7 @@
   										// 在菜单尾部添加按钮并设置颜色，按下时执行function();
   Menu&pop_back();	// 从菜单尾部弹出一行
   Menu&clear();		// 清空菜单
-  void showMenu();	// 显示菜单
+  void ShowMenu();	// 显示菜单
   ```
 
 - ## 使用方法详解
@@ -144,11 +144,11 @@
 
       1. $function$ 可以是任意合法的函数名，$data$ 可以是任意合法的变量名
 
-      2. 函数的返回类型必须是 $bool$。若返回 $false$ 表示继续显示菜单；返回 $true$ 表示退出菜单界面，退出 `void showMenu()`函数
+      2. 函数的返回类型必须是 $bool$。若返回 $false$ 表示继续显示菜单；返回 $true$ 表示退出菜单界面，退出 `void ShowMenu()`函数
 
       3. 函数参数必须仅有一个，且必须为 $Parameter$ 类
 
-      4. `void showMenu()`函数在调用 $function$ 前会自动清屏，不需要手动处理
+      4. `void ShowMenu()`函数在调用 $function$ 前会自动清屏，不需要手动处理
 
       5. 有关如何使用回调函数 $(callback)function$ ，可参见上文  “Menu类使用方法”  中  “在目录末尾添加按钮”  方法。这里给出示例：`loop.push_back("Button", function);`（注意，函数名 $function$ 后不带括号，具体格式可以自行查询有关  “c++函数指针”  的语法）
 
