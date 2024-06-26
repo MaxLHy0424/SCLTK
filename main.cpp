@@ -3,7 +3,7 @@ char Dat[3]{};
 #include"module.hpp"
 #include"ui.hpp"
 Menu Activity;
-void About(){
+bool About(){
     puts("[关于]\n");
     puts(" Computer Room Control Software Nemesis");
     puts("                24w27a\n");
@@ -12,7 +12,7 @@ void About(){
     puts("---------------------------------------------\n");
     printf("按任意键返回.");
     system("Pause>NUL");
-    return;
+    return false;
 }
 void Crack(){
 BEGIN:
@@ -219,13 +219,13 @@ int main(int argc,char* argv[]){
             std::thread(WndPin).detach();
         }
     }
-    system("CLS");
 BEGIN:
+    system("CLS");
     Activity.push_back("[首页]\n");
     Activity.push_back(" ? 关于 ",(callback)About);
     Activity.push_back(" 1 破解 ",(callback)Crack);
     Activity.push_back(" 2 恢复 ",(callback)Recovery);
     Activity.push_back(" 3 工具 ",(callback)Tools);
     Activity.ShowMenu();
-    goto BEGIN;
+    return 0;
 }
