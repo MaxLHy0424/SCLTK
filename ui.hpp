@@ -222,8 +222,8 @@ class Menu{
 			Sleep(100);
 		}
 };
-bool _exitMenu(Parameter){
+bool _ExitMenu(Parameter){
 	return true;
 }
-#define exitMenu _exitMenu
+#define ExitMenu _ExitMenu
 #endif
