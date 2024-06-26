@@ -222,10 +222,10 @@ int main(int argc,char* argv[]){
     system("CLS");
 BEGIN:
     Activity.push_back("[首页]\n");
-    Activity.push_back(" ? 关于",(callback)About);
-    Activity.push_back(" 1 破解",(callback)Crack);
-    Activity.push_back(" 2 恢复",(callback)Recovery);
-    Activity.push_back(" 3 工具",(callback)Tools);
+    Activity.push_back(" ? 关于 ",(callback)About);
+    Activity.push_back(" 1 破解 ",(callback)Crack);
+    Activity.push_back(" 2 恢复 ",(callback)Recovery);
+    Activity.push_back(" 3 工具 ",(callback)Tools);
     Activity.ShowMenu();
     goto BEGIN;
 }
