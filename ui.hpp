@@ -182,7 +182,7 @@ class Menu{
 		Menu&push_back(std::string text="",callback function=nullptr,short colorDefault=BlackWhite,short colorHighlight=BlackCyan){
 			if(function==nullptr){
 				lineData.push_back(Text(text,Color(colorDefault,colorDefault),function));
-			} else{
+			}else{
 				lineData.push_back(Text(text,Color(colorDefault,colorHighlight),function));
 			}
 			return *this;
@@ -195,7 +195,7 @@ class Menu{
 			lineData.clear();
 			return *this;
 		}
-		void showMenu(){
+		void ShowMenu(){
 			RemoveAttributes();
 			HideTheCursor();
 			MOUSE_EVENT_RECORD mouseEvent;
