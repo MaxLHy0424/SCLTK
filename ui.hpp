@@ -56,16 +56,16 @@ std::ostream&operator<<(std::ostream&pout,const COORD&tmp){
 #define BlackCyan 0x0b
 #define YellowBlue 0xe9
 struct Color{
-    short Default,Highlight,lastColor;
-    Color():Default(BlackWhite),Highlight(BlackCyan),lastColor(BlackWhite){}
-    Color(short Default=BlackWhite,short Highlight=BlackCyan):Default(Default),Highlight(Highlight),lastColor(BlackWhite){}
-    void setDefault(){
+    short Default,highlight,lastColor;
+    Color():Default(BlackWhite),highlight(BlackCyan),lastColor(BlackWhite){}
+    Color(short Default=BlackWhite,short highlight=BlackCyan):Default(Default),highlight(highlight),lastColor(BlackWhite){}
+    void SetDefault(){
         SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),Default);
         lastColor=Default;
     }
-    void setHighlight(){
-        SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),Highlight);
-        lastColor=Highlight;
+    void SetHighlight(){
+        SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),highlight);
+        lastColor=highlight;
     }
 };
 class Menu;
@@ -102,7 +102,7 @@ struct Text{
 };
 class Menu{
     private:
-        long sleepTime;
+        unsigned long sleepTime;
         short consoleHeight,consoleWidth;
         std::vector<Text>lineData;
     protected:
@@ -122,38 +122,38 @@ class Menu{
             }
             SetTheCursor({0,0});
         }
-        void write(std::string text,bool isEndl=false){
+        void Write(std::string text,bool isEndl=false){
             printf("%s",text.c_str());
             if(isEndl){
                 printf("\n");
             }
         }
-        void rewrite(Text data){
+        void ReWrite(Text data){
             SetTheCursor({0,data.position.Y});
             for(short j{};j<data.position.X;++j){
-                write(" ");
+                Write(" ");
             }
             SetTheCursor({0,data.position.Y});
-            write(data.text);
+            Write(data.text);
             SetTheCursor({0,data.position.Y});
         }
-        void initializePosition(){
+        void InitPosition(){
             ClearScreen();
             for(auto&data:lineData){
                 data.position=GetTheTheCursor();
-                data.color.setDefault();
-                write(data.text,true);
+                data.color.SetDefault();
+                Write(data.text,true);
             }
         }
-        void refresh(COORD hangPosition){
+        void Refresh(COORD hangPosition){
             for(auto&data:lineData){
-                if(data==hangPosition&&data.color.lastColor!=data.color.Highlight){
-                    data.color.setHighlight();
-                    rewrite(data);
+                if(data==hangPosition&&data.color.lastColor!=data.color.highlight){
+                    data.color.SetHighlight();
+                    ReWrite(data);
                 }
                 if(data!=hangPosition&&data.color.lastColor!=data.color.Default){
-                    data.color.setDefault();
-                    rewrite(data);
+                    data.color.SetDefault();
+                    ReWrite(data);
                 }
             }
         }
@@ -163,13 +163,13 @@ class Menu{
                 if(data==mouseEvent.dwMousePosition){
                     if(data.function!=nullptr){
                         ClearScreen();
-                        data.color.setDefault();
+                        data.color.SetDefault();
                         AddAttributes();
                         ShowTheCursor();
                         isExit=data.function(Parameter(mouseEvent,this));
                         RemoveAttributes();
                         HideTheCursor();
-                        initializePosition();
+                        InitPosition();
                     }
                     break;
                 }
@@ -179,11 +179,11 @@ class Menu{
     public:
         Menu():sleepTime(50),consoleHeight(0),consoleWidth(0){}
         ~Menu(){}
-        Menu&push_back(std::string text="",callback function=nullptr,short colorDefault=BlackWhite,short colorHighlight=BlackCyan){
+        Menu&push_back(std::string text="",callback function=nullptr,short colorDefault=BlackWhite,short colorhighlight=BlackCyan){
             if(function==nullptr){
                 lineData.push_back(Text(text,Color(colorDefault,colorDefault),function));
             }else{
-                lineData.push_back(Text(text,Color(colorDefault,colorHighlight),function));
+                lineData.push_back(Text(text,Color(colorDefault,colorhighlight),function));
             }
             return *this;
         }
@@ -199,18 +199,17 @@ class Menu{
             RemoveAttributes();
             HideTheCursor();
             MOUSE_EVENT_RECORD mouseEvent;
-            Sleep(100);
-            initializePosition();
+            Sleep(100UL);
+            InitPosition();
             bool isExit=false;
             while(!isExit){
                 Sleep(sleepTime);
                 mouseEvent=WaitMouseEvent();
                 switch(mouseEvent.dwEventFlags){
                     case MouseMove:{
-                        refresh(mouseEvent.dwMousePosition);
+                        Refresh(mouseEvent.dwMousePosition);
                         break;
-                    }
-                    case MouseClick:{
+                    }case MouseClick:{
                         if(mouseEvent.dwButtonState&&mouseEvent.dwButtonState!=MouseWheel){
                             isExit=implement(mouseEvent);
                         }
@@ -219,7 +218,7 @@ class Menu{
                 }
             }
             ClearScreen();
-            Sleep(100);
+            Sleep(100UL);
         }
 };
 bool _ExitMenu(Parameter){
