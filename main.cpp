@@ -194,16 +194,12 @@ int main(int argc,char* argv[]){
     }
     {
         struct Options{
-            std::string color;
             bool wndPin;
         }Opt{};
         std::string tmp{};
         for(int i{1};i<argc;++i){
             tmp=argv[i];
-            if((Opt.color=="")&&(tmp.substr(0,7)=="-color=")&&(tmp.length()>7)){
-                tmp.erase(0,7);
-                Opt.color="Color "+tmp;
-            }else if((Opt.wndPin==false)&&(tmp=="-Wp")){
+            if((Opt.wndPin==false)&&(tmp=="-Wp")){
                 Opt.wndPin=true;
             }
             else{
@@ -214,7 +210,6 @@ int main(int argc,char* argv[]){
                 goto BEGIN;
             }
         }
-        system(Opt.color.c_str());
         if(Opt.wndPin==true){
             std::thread(WndPin).detach();
         }
