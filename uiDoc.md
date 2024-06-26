@@ -51,12 +51,12 @@
   
   private:
   long sleepTime;		// 循环中等待时间，类似于帧率。值越小CPU占用率越高、画面越流畅。一般为50
-  short consoleHeight, consoleWidth;		// 控制台长、宽属性，一般仅用于clearScreen函数
+  short consoleHeight, consoleWidth;		// 控制台长、宽属性，一般仅用于ClearScreen函数
   vector<Text> lineData;		// Text型vector数组。存放菜单每行的信息，详见Text类
   
   protected:
   void GetConsoleSize();		// 获取控制台大小
-  void clearScreen();		// 清屏，可以用system("cls");代替
+  void ClearScreen();		// 清屏，可以用system("cls");代替
   void write(std::string text, bool isEndl=false);		// 输出，可以选择传入第二个参数表示是否要换行
   void rewrite(Text data);		// 整行覆盖输出
   void initializePosition();			// 输出菜单，并对lineData内position成员变量初始化
