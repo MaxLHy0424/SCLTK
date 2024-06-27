@@ -36,12 +36,12 @@ BEGIN:
     Activity.push_back(" 退出 ",ExitMenu).push_back("\0");
     Activity.push_back(" 关于 ",(callback)CRCSN::About);
     Activity.push_back("\n[破解]\n");
-    Activity.push_back(" 极域电子教室 ",(callback)CRCSN::Crack::MythwareClassroom);
-    Activity.push_back(" 联想云教室 ",(callback)CRCSN::Crack::LenovoCloudClassroom);
+    Activity.push_back(" 极域电子教室 ",(callback)CRCSN::Crack::ELearningClass);
+    Activity.push_back(" 联想云教室 ",(callback)CRCSN::Crack::LenovoEClass);
     Activity.push_back("\n[恢复]\n");
     if(IsUserAnAdmin()){
-        Activity.push_back(" 极域电子教室 ",(callback)CRCSN::Recovery::MythwareClassroom);
-        Activity.push_back(" 联想云教室 ",(callback)CRCSN::Recovery::LenovoCloudClassroom);
+        Activity.push_back(" 极域电子教室 ",(callback)CRCSN::Recovery::ELearningClass);
+        Activity.push_back(" 联想云教室 ",(callback)CRCSN::Recovery::LenovoEClass);
     }else{
         Activity.push_back(" (i) 权限过低, 不可使用.");
     }

@@ -36,7 +36,7 @@ namespace CRCSN{
         return false;
     }
     namespace Crack{
-        bool MythwareClassroom(Parameter){
+        bool ELearningClass(Parameter){
             system("CLS");
             system("TaskKill /F /IM StudentMain.exe");
             system("TaskKill /F /IM DispcapHelper.exe");
@@ -61,7 +61,7 @@ namespace CRCSN{
             system("CLS");
             return false;
         }
-        bool LenovoCloudClassroom(Parameter){
+        bool LenovoEClass(Parameter){
             system("TaskKill /F /IM vncviewer.exe");
             system("TaskKill /F /IM tvnserver32.exe");
             system("TaskKill /F /IM WfbsPnpInstall.exe");
@@ -106,7 +106,7 @@ namespace CRCSN{
         }
     }
     namespace Recovery{
-        bool MythwareClassroom(Parameter){
+        bool ELearningClass(Parameter){
             system("Reg Delete \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\StudentMain.exe\" /F");
             system("Reg Delete \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\DispcapHelper.exe\" /F");
             system("Reg Delete \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\VRCwPlayer.exe\" /F");
@@ -122,7 +122,7 @@ namespace CRCSN{
             system("CLS");
             return false;
         }
-        bool LenovoCloudClassroom(Parameter){
+        bool LenovoEClass(Parameter){
             system("Reg Delete \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\vncviewer.exe\" /F");
             system("Reg Delete \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\tvnserver32.exe\" /F");
             system("Reg Delete \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\WfbsPnpInstall.exe\" /F");
