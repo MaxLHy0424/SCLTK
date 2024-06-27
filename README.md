@@ -23,15 +23,13 @@
 : MSHTA VBScript:CreateObject("Shell.Application").ShellExecute("%~S0","GoTo:RunAs","","RunAs",1)(Window.Close) & GoTo:EOF
 ```
 
-将开头的`: `去掉即可. 再运行启动脚本, 将会启用该项. 
-
-如需禁用, 将`: `加回去头即可.
+将开头的`: `去掉即可. 再运行启动脚本, 将会强制以管理员限运行. 如需禁用, 将`: `加回去头即可.
 
 ### 0.2 修改等待时间
 
 找到:
 ```Batch
-TimeOut /NoBreak /T 2
+TimeOut /NoBreak /T 3
 ```
 修改最后的数字 (单位: 秒), 禁用可改为`0`.
 
@@ -39,12 +37,12 @@ TimeOut /NoBreak /T 2
 
 > 此项参数区分大小写.
 
-找到倒数第二行. 如需启用, 请在末尾加上`-Wp`, 见下:
+找到:
 ```Batch
-.\bin\main.exe -Wp
+.\bin\main.exe
 ```
 
-如需禁用, 将`-Wp`删去即可.
+如需启用, 请在末尾加上`-Wp`; 如需禁用, 将`-Wp`删去即可.
 
 ## 1 破解
 
