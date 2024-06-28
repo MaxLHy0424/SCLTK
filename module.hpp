@@ -2,10 +2,10 @@ namespace CRCSN{
     namespace Task{
         void WndInit(){
             system("Title CRCSN");
-            SetWindowLongPtrA(GetConsoleWindow(),GWL_STYLE,GetWindowLongPtrA(GetConsoleWindow(),GWL_STYLE)&~WS_SIZEBOX&~WS_MAXIMIZEBOX&~WS_MINIMIZEBOX);
             char cmd[32]{};
             sprintf(cmd,"mode con cols=%d lines=%d",50,25);
             system(cmd);
+            SetWindowLongPtrA(GetConsoleWindow(),GWL_STYLE,GetWindowLongPtrA(GetConsoleWindow(),GWL_STYLE)&~WS_SIZEBOX&~WS_MAXIMIZEBOX&~WS_MINIMIZEBOX);
         }
         void WndPin(){
             HWND foreWnd{GetForegroundWindow()};
@@ -21,19 +21,6 @@ namespace CRCSN{
                 Sleep(100UL);
             }
         }
-    }
-    bool About(Parameter){
-        system("CLS");
-        puts("[关于]\n");
-        puts(" Computer Room Control Software Nemesis");
-        puts("                24w27c\n");
-        puts(" https://github.com/MaxLHy0424/CRCSN");
-        puts(" (C) 2024 MaxLHy0424, All Rights Reserved.\n");
-        puts("---------------------------------------------\n");
-        printf("按任意键返回.");
-        system("Pause>NUL");
-        system("CLS");
-        return false;
     }
     namespace Crack{
         bool ELearningClass(Parameter){
