@@ -2,7 +2,7 @@
 Title CRCSN Launcher
 CD /D "%~DP0"
 %1
-Echo          CRCSN Launcher v1.4.0
+Echo          CRCSN Launcher 24w27d
 Echo.
 Echo (C) 2024 MaxLHy0424, All Rights Reserved.
 TimeOut /NoBreak /T 2
