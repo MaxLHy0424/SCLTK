@@ -29,10 +29,10 @@ int main(int argc,char* argv[]){
     }
 BEGIN:
     system("CLS");
-    Activity.push_back("< Computer Room Control Software Nemesis >");
-    Activity.push_back("                  24w27d");
-    Activity.push_back("    https://github.com/MaxLHy0424/CRCSN");
-    Activity.push_back(" (C) 2024 MaxLHy0424, All Rights Reserved.\n\n");
+    Activity.push_back("   < Computer Room Control Software Nemesis >\n");
+    Activity.push_back("                    24w27d");
+    Activity.push_back("     https://github.com/MaxLHy0424/CRCSN");
+    Activity.push_back("   (C) 2024 MaxLHy0424, All Rights Reserved.\n\n");
     if(initState==1U){
         Activity.push_back("(!) 启动参数错误.\n\n");
     }
