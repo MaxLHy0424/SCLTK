@@ -53,12 +53,12 @@ std::ostream&operator<<(std::ostream&pout,const COORD&tmp){
     return pout;
 }
 #define BlackWhite 0x07
-#define BlackCyan 0x0b
+#define BlackBlue 0x03
 #define YellowBlue 0xe9
 struct Color{
     short Default,highlight,lastColor;
-    Color():Default(BlackWhite),highlight(BlackCyan),lastColor(BlackWhite){}
-    Color(short Default=BlackWhite,short highlight=BlackCyan):Default(Default),highlight(highlight),lastColor(BlackWhite){}
+    Color():Default(BlackWhite),highlight(BlackBlue),lastColor(BlackWhite){}
+    Color(short Default=BlackWhite,short highlight=BlackBlue):Default(Default),highlight(highlight),lastColor(BlackWhite){}
     void SetDefault(){
         SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),Default);
         lastColor=Default;
@@ -179,11 +179,11 @@ class Menu{
     public:
         Menu():sleepTime(50),consoleHeight(0),consoleWidth(0){}
         ~Menu(){}
-        Menu&push_back(std::string text="",callback function=nullptr,short colorDefault=BlackWhite,short colorhighlight=BlackCyan){
+        Menu&push_back(std::string text="",callback function=nullptr,short colorHighlight=BlackBlue,short colorDefault=BlackWhite){
             if(function==nullptr){
                 lineData.push_back(Text(text,Color(colorDefault,colorDefault),function));
             }else{
-                lineData.push_back(Text(text,Color(colorDefault,colorhighlight),function));
+                lineData.push_back(Text(text,Color(colorDefault,colorHighlight),function));
             }
             return *this;
         }
