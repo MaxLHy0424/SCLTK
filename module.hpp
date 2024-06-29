@@ -1,11 +1,11 @@
 namespace CRCSN{
     namespace Task{
-        void WndInit(bool wndBig,bool wndAlpha){
+        void WndInit(bool wndBigger,bool wndAlpha){
             system("Title CRCSN");
             SetWindowLongPtrA(GetConsoleWindow(),GWL_STYLE,GetWindowLongPtrA(GetConsoleWindow(),GWL_STYLE)&~WS_SIZEBOX&~WS_MAXIMIZEBOX&~WS_MINIMIZEBOX);
             SetLayeredWindowAttributes(GetForegroundWindow(),0,((wndAlpha)?(204):(255)),LWA_ALPHA);
             char cmd[32]{};
-            sprintf(cmd,"mode con cols=%d lines=%d",50,((wndBig)?(30):(25)));
+            sprintf(cmd,"mode con cols=%d lines=%d",50,((wndBigger)?(35):(30)));
             system(cmd);
         }
         void WndPin(){
