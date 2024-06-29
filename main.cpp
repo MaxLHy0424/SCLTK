@@ -6,7 +6,7 @@ int main(int argc,char* argv[]){
     char error{};
     {
         struct Options{
-            bool wndPin,wndBig,wndAlpha;
+            bool wndPin,wndBigger,wndAlpha;
         }Opt{};
         std::string tmp{};
         if(argc==1){
@@ -21,7 +21,7 @@ int main(int argc,char* argv[]){
                             Opt.wndPin=true;
                             break;
                         }case 'b':{
-                            Opt.wndBig=true;
+                            Opt.wndBigger=true;
                             break;
                         }case 'a':{
                             Opt.wndAlpha=true;
@@ -40,7 +40,7 @@ int main(int argc,char* argv[]){
             std::thread(CRCSN::Task::WndPin).detach();
         }
 BEGIN:
-        CRCSN::Task::WndInit(Opt.wndBig,Opt.wndAlpha);
+        CRCSN::Task::WndInit(Opt.wndBigger,Opt.wndAlpha);
     }
     system("CLS");
     Activity.PushBack("   < Computer Room Control Software Nemesis >\n");
