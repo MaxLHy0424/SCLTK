@@ -11,7 +11,7 @@ namespace CRCSN{
         void WndPin(){
             HWND foreWnd{GetForegroundWindow()};
             DWORD foreId{GetWindowThreadProcessId(foreWnd,NULL)},curId{GetCurrentThreadId()};
-            for(;;){
+            while(true){
                 AttachThreadInput(curId,foreId,TRUE);
                 ShowWindow(foreWnd,SW_SHOWNORMAL);
                 SetWindowPos(foreWnd,HWND_TOPMOST,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE);
