@@ -179,7 +179,7 @@ class Menu{
     public:
         Menu():sleepTime(50),consoleHeight(0),consoleWidth(0){}
         ~Menu(){}
-        Menu&push_back(std::string text="",callback function=nullptr,short colorHighlight=BlackBlue,short colorDefault=BlackWhite){
+        Menu&PushBack(std::string text="",callback function=nullptr,short colorHighlight=BlackBlue,short colorDefault=BlackWhite){
             if(function==nullptr){
                 lineData.push_back(Text(text,Color(colorDefault,colorDefault),function));
             }else{
@@ -187,11 +187,11 @@ class Menu{
             }
             return *this;
         }
-        Menu&pop_back(){
+        Menu&PopBack(){
             lineData.pop_back();
             return *this;
         }
-        Menu&clear(){
+        Menu&Clear(){
             lineData.clear();
             return *this;
         }
