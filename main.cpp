@@ -15,8 +15,8 @@ int main(int argc,char* argv[]){
         for(int i{1};i<argc;++i){
             tmp=argv[i];
             if((tmp.length()>2)&&(tmp.substr(0,2)=="-W")){
-                for(unsigned long long i{2};i<tmp.length();++i){
-                    switch(tmp[i]){
+                for(unsigned long long j{2};j<tmp.length();++j){
+                    switch(tmp[j]){
                         case 'p':{
                             Opt.wndPin=true;
                             break;
