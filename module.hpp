@@ -1,14 +1,16 @@
 namespace CRCSN{
-    namespace Task{
-        void WndInit(bool wndBigger,bool wndAlpha){
-            system("Title CRCSN");
-            SetWindowLongPtrA(GetConsoleWindow(),GWL_STYLE,GetWindowLongPtrA(GetConsoleWindow(),GWL_STYLE)&~WS_SIZEBOX&~WS_MAXIMIZEBOX&~WS_MINIMIZEBOX);
-            SetLayeredWindowAttributes(GetForegroundWindow(),0,((wndAlpha)?(204):(255)),LWA_ALPHA);
-            char cmd[32]{};
-            sprintf(cmd,"mode con cols=%d lines=%d",50,((wndBigger)?(35):(30)));
-            system(cmd);
+    namespace Wnd{
+        void Init(bool controls,bool alpha){
+            std::string strTitle{(IsUserAnAdmin())?("[Admin]"):("[User]")};
+            strTitle+=" CRCSN";
+            SetConsoleTitle(strTitle.c_str());
+            if(controls==false){
+                SetWindowLongPtrA(GetConsoleWindow(),GWL_STYLE,GetWindowLongPtrA(GetConsoleWindow(),GWL_STYLE)&~WS_SIZEBOX&~WS_MAXIMIZEBOX&~WS_MINIMIZEBOX);
+            }
+            system("mode con cols=50 lines=30");
+            SetLayeredWindowAttributes(GetForegroundWindow(),0,((alpha)?(204):(255)),LWA_ALPHA);
         }
-        void WndPin(){
+        void Pin(){
             HWND foreWnd{GetForegroundWindow()};
             DWORD foreId{GetWindowThreadProcessId(foreWnd,NULL)},curId{GetCurrentThreadId()};
             while(true){
