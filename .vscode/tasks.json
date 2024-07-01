@@ -12,7 +12,7 @@
                 "-Wextra",
                 "-g",
                 "-o",
-                "\"${fileDirname}\\bin\\${fileBasenameNoExtension}.exe\"",
+                "\"${fileDirname}\\bin\\${fileBasenameNoExtension}_dbg.exe\"",
             ],
             "group":{
                 "kind":"build",
