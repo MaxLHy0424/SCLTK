@@ -1,16 +1,16 @@
 #ifndef MENU_HPP
 #define MENU_HP
 void HideTheCursor(){
-    CONSOLE_CURSOR_INFO TheCursorInfo;
-    GetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&TheCursorInfo);
-    TheCursorInfo.bVisible=false;
-    SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&TheCursorInfo);
+    CONSOLE_CURSOR_INFO theCursorInfo;
+    GetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&theCursorInfo);
+    theCursorInfo.bVisible=false;
+    SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&theCursorInfo);
 }
 void ShowTheCursor(){
-    CONSOLE_CURSOR_INFO TheCursorInfo;
-    GetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&TheCursorInfo);
-    TheCursorInfo.bVisible=true;
-    SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&TheCursorInfo);
+    CONSOLE_CURSOR_INFO theCursorInfo;
+    GetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&theCursorInfo);
+    theCursorInfo.bVisible=true;
+    SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&theCursorInfo);
 }
 void RemoveAttributes(){
     DWORD mode;
