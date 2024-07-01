@@ -1,4 +1,4 @@
-msys2Path = C:\Software\MSYS2
+msys2Path=C:\Software\MSYS2
 main:
 	$(msys2Path)\mingw64\bin\g++.exe main.cpp\
  -fexec-charset=GBK -std=gnu++23 -Wall -Wextra -static -Ofast -Os -flto -o\
