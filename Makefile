@@ -1,8 +1,6 @@
-msys2Path=C:\Software\MSYS2
+pathMsys2=C:\Software\MSYS2
+compiler=g++.exe
+argv=-fexec-charset=GBK -std=gnu++23 -Wall -Wextra -static -Ofast -Os -flto -o
 main:
-	$(msys2Path)\mingw64\bin\g++.exe main.cpp\
- -fexec-charset=GBK -std=gnu++23 -Wall -Wextra -static -Ofast -Os -flto -o\
- .\bin\main_msvcrt64.exe
-	$(msys2Path)\ucrt64\bin\g++.exe main.cpp\
- -fexec-charset=GBK -std=gnu++23 -Wall -Wextra -static -Ofast -Os -flto -o\
- .\bin\main_ucrt64.exe
+	$(pathMsys2)\mingw64\bin\$(compiler) main.cpp $(argv) .\bin\main_msvcrt64.exe
+	$(pathMsys2)\ucrt64\bin\$(compiler) main.cpp $(argv) .\bin\main_ucrt64.exe
