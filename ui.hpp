@@ -47,11 +47,6 @@ MOUSE_EVENT_RECORD WaitMouseEvent(bool move=true){
         }
     }
 }
-std::ostream&operator<<(std::ostream&pout,const COORD&tmp){
-    pout.setf(std::ios_base::fixed);
-    pout<<"[TheCursor Position] X: "<<std::setw(2)<<tmp.X<<"  Y: "<<std::setw(2)<<tmp.Y;
-    return pout;
-}
 #define BlackWhite 0x07
 #define BlackBlue 0x03
 #define YellowBlue 0xe9
