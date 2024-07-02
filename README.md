@@ -87,7 +87,7 @@ Set bin = "msvcrt64"
 **欢迎各位贡献代码!** 所有贡献者将会在下方列出, 以示感谢. 但务必遵守以下规则:
 - 提交代码请创建拉取请求, 不要直接提交;
 - 修改`README.md`时, 注意语句通顺, 不要有错误内容;
-- 提交的代码的风格请与项目保持统一, 尽可能提升运行效率, 同时可通过最新 MinGW-w64 GNU GCC (MSYS2: mingw-w64-ucrt-x86_64-toolchain) 编译, 并且不附带警告.
+- 提交的代码的风格请与项目保持统一, 尽可能提升运行效率, 同时可通过最新 MinGW-w64 GNU GCC (MSYS2: mingw-w64-ucrt-x86_64-toolchain && mingw-w64-x86_64-toolchain) 编译, 并且不附带警告.
 
 ## 贡献者
 
