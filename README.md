@@ -20,7 +20,7 @@
 
 找到:
 ```Batch
-: MsHta VbScript:CreateObject("Shell.Application").ShellExecute("%~S0","GoTo:RunAs","","RunAs",1)(Window.Close) & GoTo:EOF
+: msHta vbScript:createObject("shell.application").shellExecute("%~s0","goTo:runAs","","runAs",1)(window.close) & goTo:EOF
 ```
 
 将开头的`: `去掉即可. 再运行启动脚本, 将会强制以管理员限运行. 如需禁用, 将`: `加回去头即可.
@@ -29,14 +29,14 @@
 
 找到:
 ```Batch
-Set bin="msvcrt64"
+Set bin = "msvcrt64"
 ```
 
 软件编译版本如下:
  - `msvcrt64`(默认): 使用 MSYS2 的`mingw-w64-x86_64-toolchain`编译, Runtime 已过时, 支持大部分 Windows 操作系统.
- - `ucrt64`: 使用 MSYS2 的`mingw-w64-ucrt-x86_64-toolchain`编译, Runtime 受支持, 支持 Windows 10 以上的 Windows 操作系统.
+ - `ucrt64`(推荐): 使用 MSYS2 的`mingw-w64-ucrt-x86_64-toolchain`编译, Runtime 受支持, 支持 Windows 10 以上的 Windows 操作系统.
 
-根据上述内容, 选择需要版本的对应字符串填入引号内即可. 建议优先使用`ucrt64`.
+根据上述内容, 选择需要版本的对应字符串填入引号内即可.
 
 ### 0.3 窗口操作
 
