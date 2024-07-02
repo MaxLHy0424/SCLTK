@@ -1,7 +1,7 @@
 @echo off
 title CRCSN Launcher
-set bin = "msvcrt64"
-set branch = "dev"
+set bin="msvcrt64"
+set branch="dev"
 cd /d "%~dp0"
 %1
 mode con cols=50 lines=30
