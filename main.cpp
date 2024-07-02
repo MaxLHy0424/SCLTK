@@ -3,7 +3,7 @@
 Menu Activity;
 #include"module.hpp"
 int main(int argc,char* argv[]){
-    char error{};
+    bool errArgv{};
     {
         struct Options{
             bool wndControls,wndAlpha,wndPin;
@@ -27,12 +27,12 @@ int main(int argc,char* argv[]){
                             break;
                         }default:{
                             Opt={};
-                            error=2;
+                            errArgv=true;
                         }
                     }
                 }
             }else{
-                error=1;
+                errArgv=true;
                 goto BEGIN;
             }
         }
@@ -42,13 +42,13 @@ BEGIN:
             std::thread(CRCSN::Wnd::Pin).detach();
         }
     }
-    system("CLS");
+    system("cls");
     Activity.PushBack("   | Computer Room Control Software Nemesis |");
-    Activity.PushBack("                    24w28a");
+    Activity.PushBack("                    24w28b");
     Activity.PushBack("     https://github.com/MaxLHy0424/CRCSN");
     Activity.PushBack("    (C) 2024 MaxLHy0424, All Rights Reserved.\n");
-    if(error!=0){
-        Activity.PushBack(" (!) 发生错误 "+std::to_string(error)+".\n");
+    if(errArgv){
+        Activity.PushBack(" (!) 启动参数错误.\n");
     }
     Activity.PushBack(" > 退出 ",ExitProc);
     Activity.PushBack("\n[  破  解  ]\n");
