@@ -1,10 +1,10 @@
 namespace CRCSN{
     namespace Wnd{
-        void Init(bool controls,bool alpha){
-            std::string strTitle{(IsUserAnAdmin())?("[Admin]"):("[User]")};
-            strTitle+=" CRCSN";
-            SetConsoleTitle(strTitle.c_str());
-            if(controls==false){
+        void Init(bool ctrls,bool alpha){
+            std::string title{(IsUserAnAdmin())?("[Admin]"):("[User]")};
+            title+=" CRCSN";
+            SetConsoleTitle(title.c_str());
+            if(ctrls==false){
                 SetWindowLongPtrA(GetConsoleWindow(),GWL_STYLE,GetWindowLongPtrA(GetConsoleWindow(),GWL_STYLE)&~WS_SIZEBOX&~WS_MAXIMIZEBOX&~WS_MINIMIZEBOX);
             }
             system("mode con cols=50 lines=30");
