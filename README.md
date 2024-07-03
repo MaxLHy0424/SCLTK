@@ -51,13 +51,10 @@ Set bin="msvcrt64"
 
 使用示例:
 ```Batch
-.\bin\main.exe -Wc
+.\bin\main.exe -Wp
 ```
 ```Batch
-.\bin\main.exe -Wbp
-```
-```Batch
-.\bin\main.exe -Wpcb
+.\bin\main.exe -Wpca
 ```
 
 ## 1 破解
