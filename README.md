@@ -29,7 +29,7 @@
 
 找到:
 ```Batch
-Set bin="msvcrt64"
+set bin="msvcrt64"
 ```
 
 软件编译版本如下:
