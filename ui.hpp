@@ -217,7 +217,6 @@ class Menu{
         }
 };
 bool _ExitProc(Parameter){
-    exit(0);
     return true;
 }
 #define ExitProc _ExitProc
