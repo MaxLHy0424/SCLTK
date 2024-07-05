@@ -2,7 +2,7 @@
 chcp 65001
 set branch="dev"
 set os="x86_64"
-set bin="msvcrt64"
+set bin="msvcrt"
 cd /d "%~dp0"
 %1
 mode con cols=50 lines=30
