@@ -1,11 +1,9 @@
 namespace CRCSN{
     namespace Wnd{
         void Init(bool ctrls,bool alpha){
-            if(IsUserAnAdmin()){
-                SetConsoleTitle(L"[Admin] CRCSN");
-            }else{
-                SetConsoleTitle(L"[User] CRCSN");
-            }
+            std::string title{(IsUserAnAdmin())?("[Admin"):("[User")};
+            title+="] CRCSN";
+            SetConsoleTitle(title.c_str());
             if(ctrls==false){
                 SetWindowLongPtrA(GetConsoleWindow(),GWL_STYLE,GetWindowLongPtrA(GetConsoleWindow(),GWL_STYLE)&~WS_SIZEBOX&~WS_MAXIMIZEBOX&~WS_MINIMIZEBOX);
             }
