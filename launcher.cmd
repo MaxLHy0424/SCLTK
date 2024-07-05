@@ -1,5 +1,6 @@
 @echo off
 chcp 65001
+set branch="dev"
 set os="x86_64"
 set bin="msvcrt64"
 cd /d "%~dp0"
@@ -15,4 +16,4 @@ echo 按任意键启动 CRCSN... & pause > nul
 :runAs
   chcp 936
   cls
-  .\bin\%os%-%bin%.exe
+  .\bin\%branch%-%os%-%bin%.exe
