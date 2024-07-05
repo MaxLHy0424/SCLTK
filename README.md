@@ -29,12 +29,12 @@
 
 找到:
 ```Batch
-set bin="msvcrt64"
+set bin="msvcrt"
 ```
 
 软件编译版本如下:
- - `msvcrt64`(默认): 使用 MSYS2 的`mingw-w64-x86_64-toolchain`编译, Runtime 已过时, 支持大部分 Windows OS.
- - `ucrt64`(推荐): 使用 MSYS2 的`mingw-w64-ucrt-x86_64-toolchain`编译, Runtime 受支持, 支持 Windows 10 以上的 Windows OS (部分 Windows OS 在安装最新补丁后支持运行).
+ - `msvcrt`(默认): 使用 MSYS2 的`mingw-w64-x86_64-toolchain`编译, Runtime 已过时, 支持大部分 Windows OS.
+ - `ucrt`(推荐): 使用 MSYS2 的`mingw-w64-ucrt-x86_64-toolchain`编译, Runtime 受支持, 支持 Windows 10 以上的 Windows OS (部分 Windows OS 在安装最新补丁后支持运行).
 
 根据上述内容, 选择需要版本的对应字符串填入引号内即可.
 
