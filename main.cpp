@@ -1,6 +1,6 @@
 #include"head.hpp"
 #include"ui.hpp"
-Menu Ui;
+Menu UI;
 #include"module.hpp"
 int main(int argc,char* argv[]){
     bool errArgv{};
@@ -44,26 +44,26 @@ BEGIN:
         }
     }
     system("cls");
-    Ui.PushBack("   | Computer Room Control Software Nemesis |");
-    Ui.PushBack("                    24w28c");
-    Ui.PushBack("     https://github.com/MaxLHy0424/CRCSN");
-    Ui.PushBack("    (C) 2024 MaxLHy0424, All Rights Reserved.\n");
+    UI.PushBack("   | Computer Room Control Software Nemesis |");
+    UI.PushBack("                    24w28d");
+    UI.PushBack("     https://github.com/MaxLHy0424/CRCSN");
+    UI.PushBack("    (C) 2024 MaxLHy0424, All Rights Reserved.\n");
     if(errArgv){
-        Ui.PushBack(" (!) 参数错误.\n");
+        UI.PushBack(" (!) 参数错误.\n");
     }
-    Ui.PushBack(" > 退出 ",ExitProc);
-    Ui.PushBack("\n[  破  解  ]\n");
-    Ui.PushBack(" > 极域电子教室 ",CRCSN::Crack::ELearningClass);
-    Ui.PushBack(" > 联想云教室 ",CRCSN::Crack::LenovoEClass);
-    Ui.PushBack("\n[  恢  复  ]\n");
+    UI.PushBack(" > 退出 ",ExitProc);
+    UI.PushBack("\n[  破  解  ]\n");
+    UI.PushBack(" > 极域电子教室 ",CRCSN::Crack::ELearningClass);
+    UI.PushBack(" > 联想云教室 ",CRCSN::Crack::LenovoEClass);
+    UI.PushBack("\n[  恢  复  ]\n");
     if(IsUserAnAdmin()){
-        Ui.PushBack(" > 极域电子教室 ",CRCSN::Recovery::ELearningClass);
-        Ui.PushBack(" > 联想云教室 ",CRCSN::Recovery::LenovoEClass);
+        UI.PushBack(" > 极域电子教室 ",CRCSN::Recovery::ELearningClass);
+        UI.PushBack(" > 联想云教室 ",CRCSN::Recovery::LenovoEClass);
     }else{
-        Ui.PushBack(" (i) 需要管理员权限.");
+        UI.PushBack(" (i) 需要管理员权限.");
     }
-    Ui.PushBack("\n[ 工 具 箱 ]\n");
-    Ui.PushBack(" (i) 正在开发.");
-    Ui.ShowMenu();
+    UI.PushBack("\n[ 工 具 箱 ]\n");
+    UI.PushBack(" (i) 正在开发.");
+    UI.ShowMenu();
     return 0;
 }
