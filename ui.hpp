@@ -15,17 +15,13 @@ void ShowTheCursor(){
 void RemoveAttributes(){
     DWORD mode;
     GetConsoleMode(GetStdHandle(STD_INPUT_HANDLE),&mode);
-    mode&=~ENABLE_QUICK_EDIT_MODE;
-    mode&=~ENABLE_INSERT_MODE;
-    mode|=ENABLE_MOUSE_INPUT;
+    mode&=~ENABLE_QUICK_EDIT_MODE,mode&=~ENABLE_INSERT_MODE,mode|=ENABLE_MOUSE_INPUT;
     SetConsoleMode(GetStdHandle(STD_INPUT_HANDLE),mode);
 }
 void AddAttributes(){
     DWORD mode;
     GetConsoleMode(GetStdHandle(STD_INPUT_HANDLE),&mode);
-    mode|=ENABLE_QUICK_EDIT_MODE;
-    mode|=ENABLE_INSERT_MODE;
-    mode|=ENABLE_MOUSE_INPUT;
+    mode|=ENABLE_QUICK_EDIT_MODE,mode|=ENABLE_INSERT_MODE,mode|=ENABLE_MOUSE_INPUT;
     SetConsoleMode(GetStdHandle(STD_INPUT_HANDLE),mode);
 }
 COORD GetTheTheCursor(){
@@ -42,7 +38,7 @@ MOUSE_EVENT_RECORD WaitMouseEvent(bool move=true){
     while(true){
         Sleep(10UL);
         ReadConsoleInput(GetStdHandle(STD_INPUT_HANDLE),&record,1,&reg);
-        if(record.EventType==MOUSE_EVENT&&(move|(record.Event.MouseEvent.dwEventFlags!=MOUSE_MOVED))){
+        if((record.EventType==MOUSE_EVENT)&&(move|(record.Event.MouseEvent.dwEventFlags!=MOUSE_MOVED))){
             return record.Event.MouseEvent;
         }
     }
@@ -73,9 +69,9 @@ class Menu;
 #define MouseWheel MOUSE_WHEELED
 struct Parameter{
     DWORD buttonState,controlKeyState,eventFlag;
-    Menu *menu;
+    Menu*menu;
     Parameter():buttonState(MouseLeftButton),controlKeyState(0),eventFlag(0),menu(nullptr){}
-    Parameter(MOUSE_EVENT_RECORD mouseEvent,Menu *menu):buttonState(mouseEvent.dwButtonState),controlKeyState(mouseEvent.dwControlKeyState),eventFlag(mouseEvent.dwEventFlags),menu(menu){}
+    Parameter(MOUSE_EVENT_RECORD mouseEvent,Menu*menu):buttonState(mouseEvent.dwButtonState),controlKeyState(mouseEvent.dwControlKeyState),eventFlag(mouseEvent.dwEventFlags),menu(menu){}
 };
 typedef bool(*callback)(Parameter);
 struct Text{
@@ -86,10 +82,7 @@ struct Text{
     Text():text(""),color(Color(0,0)),position({0,0}),function(nullptr){}
     Text(std::string text,Color color,callback function):text(text),color(color),position({0,0}),function(function){}
     bool operator==(const COORD&mousePosition)const{
-        if((position.Y==mousePosition.Y)&&(position.X<=mousePosition.X)&&(mousePosition.X<(position.X+(short)text.length()))){
-            return true;
-        }
-        return false;
+        return (((position.Y==mousePosition.Y)&&(position.X<=mousePosition.X)&&(mousePosition.X<(position.X+(short)text.length())))?(true):(false));
     }
     bool operator!=(const COORD&mousePosition)const{
         return !operator==(mousePosition);
@@ -123,7 +116,7 @@ class Menu{
                 printf("\n");
             }
         }
-        void ReWrite(Text data){
+        void Rewrite(Text data){
             SetTheCursor({0,data.position.Y});
             for(short j{};j<data.position.X;++j){
                 Write(" ");
@@ -142,13 +135,13 @@ class Menu{
         }
         void Refresh(COORD hangPosition){
             for(auto&data:lineData){
-                if(data==hangPosition&&data.color.lastColor!=data.color.highlight){
+                if((data==hangPosition)&&(data.color.lastColor!=data.color.highlight)){
                     data.color.SetHighlight();
-                    ReWrite(data);
+                    Rewrite(data);
                 }
-                if(data!=hangPosition&&data.color.lastColor!=data.color.Default){
+                if((data!=hangPosition)&&(data.color.lastColor!=data.color.Default)){
                     data.color.SetDefault();
-                    ReWrite(data);
+                    Rewrite(data);
                 }
             }
         }
@@ -175,11 +168,7 @@ class Menu{
         Menu():sleepTime(50),consoleHeight(0),consoleWidth(0){}
         ~Menu(){}
         Menu&PushBack(std::string text="",callback function=nullptr,short colorHighlight=BlackBlue,short colorDefault=BlackWhite){
-            if(function==nullptr){
-                lineData.push_back(Text(text,Color(colorDefault,colorDefault),function));
-            }else{
-                lineData.push_back(Text(text,Color(colorDefault,colorHighlight),function));
-            }
+            lineData.push_back(Text(text,Color(colorDefault,((function==nullptr)?(colorDefault):(colorHighlight))),function));
             return *this;
         }
         Menu&PopBack(){
@@ -190,7 +179,7 @@ class Menu{
             lineData.clear();
             return *this;
         }
-        void ShowMenu(){
+        void Show(){
             RemoveAttributes();
             HideTheCursor();
             MOUSE_EVENT_RECORD mouseEvent;
@@ -205,7 +194,7 @@ class Menu{
                         Refresh(mouseEvent.dwMousePosition);
                         break;
                     }case MouseClick:{
-                        if(mouseEvent.dwButtonState&&mouseEvent.dwButtonState!=MouseWheel){
+                        if((mouseEvent.dwButtonState)&&(mouseEvent.dwButtonState!=MouseWheel)){
                             isExit=implement(mouseEvent);
                         }
                         break;
@@ -215,7 +204,7 @@ class Menu{
             ClearScreen();
             Sleep(100UL);
         }
-};
+}UI;
 bool ExitProc(Parameter){
     return true;
 }
