@@ -1,10 +1,10 @@
 namespace CRCSN{
     namespace Wnd{
         void Init(bool ctrls,bool alpha){
-            std::string title{(IsUserAnAdmin())?("[Admin"):("[User")};
-            title+="] CRCSN";
+            std::string title{(IsUserAnAdmin())?("Admin"):("User")};
+            title="["+title+"] CRCSN";
             SetConsoleTitle(title.c_str());
-            if(ctrls==false){
+            if(!ctrls){
                 SetWindowLongPtrA(GetConsoleWindow(),GWL_STYLE,GetWindowLongPtrA(GetConsoleWindow(),GWL_STYLE)&~WS_SIZEBOX&~WS_MAXIMIZEBOX&~WS_MINIMIZEBOX);
             }
             system("mode con cols=50 lines=30");
@@ -27,7 +27,6 @@ namespace CRCSN{
     }
     namespace Crack{
         bool ELearningClass(Parameter){
-            system("cls");
             system("taskKill /f /im StudentMain.exe");
             system("taskKill /f /im DispcapHelper.exe");
             system("taskKill /f /im InstHelpApp.exe");
