@@ -1,12 +1,12 @@
 #include"head.hpp"
 #include"ui.hpp"
-Menu UI;
 #include"module.hpp"
 int main(int argc,char* argv[]){
+    system("chcp 936 & cls");
     bool errArgv{};
     {
         struct Options{
-            bool wndCtrls,wndAlpha,wndPin;
+            bool wndCtrls,wndPin,wndAlpha;
         }Opt{};
         std::string tmp{};
         if(argc==1){
@@ -39,31 +39,30 @@ int main(int argc,char* argv[]){
         }
 BEGIN:
         CRCSN::Wnd::Init(Opt.wndCtrls,Opt.wndAlpha);
-        if(Opt.wndPin==true){
+        if(Opt.wndPin){
             std::thread(CRCSN::Wnd::Pin).detach();
         }
     }
-    system("cls");
     UI.PushBack("   | Computer Room Control Software Nemesis |");
-    UI.PushBack("                    24w28d");
+    UI.PushBack("                    24w31a");
     UI.PushBack("     https://github.com/MaxLHy0424/CRCSN");
     UI.PushBack("    (C) 2024 MaxLHy0424, All Rights Reserved.\n");
     if(errArgv){
         UI.PushBack(" (!) 参数错误.\n");
     }
     UI.PushBack(" > 退出 ",ExitProc);
-    UI.PushBack("\n[  破  解  ]\n");
+    UI.PushBack("\n[ 破 解 ]\n");
     UI.PushBack(" > 极域电子教室 ",CRCSN::Crack::ELearningClass);
     UI.PushBack(" > 联想云教室 ",CRCSN::Crack::LenovoEClass);
-    UI.PushBack("\n[  恢  复  ]\n");
+    UI.PushBack("\n[ 恢 复 ]\n");
     if(IsUserAnAdmin()){
         UI.PushBack(" > 极域电子教室 ",CRCSN::Recovery::ELearningClass);
         UI.PushBack(" > 联想云教室 ",CRCSN::Recovery::LenovoEClass);
     }else{
         UI.PushBack(" (i) 需要管理员权限.");
     }
-    UI.PushBack("\n[ 工 具 箱 ]\n");
+    UI.PushBack("\n[ 移 除 ]\n");
     UI.PushBack(" (i) 正在开发.");
-    UI.ShowMenu();
+    UI.Show();
     return 0;
 }
