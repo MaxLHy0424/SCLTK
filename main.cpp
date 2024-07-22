@@ -2,7 +2,7 @@
 #include"ui.hpp"
 #include"module.hpp"
 int main(int argc,char* argv[]){
-    system("chcp 936 & cls");
+    system("chcp 936");
     bool errArgv{};
     {
         struct Options{
