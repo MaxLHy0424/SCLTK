@@ -1,7 +1,7 @@
 @echo off
 chcp 65001
 set branch="dev"
-set os="x86_64"
+set arch="x86_64"
 set bin="msvcrt"
 cd /d "%~dp0"
 %1
@@ -14,6 +14,4 @@ echo.
 echo 按任意键启动 CRCSN... & pause > nul
 : msHta vbScript:createObject("shell.application").shellExecute("%~s0","goTo:runAs","","runAs",1)(window.close) & goTo:eof
 :runAs
-  chcp 936
-  cls
-  .\bin\%branch%-%os%-%bin%.exe
+.\bin\%branch%-%arch%-%bin%.exe
