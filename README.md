@@ -51,19 +51,19 @@ set bin="msvcrt"
 
 使用示例:
 ```Batch
-.\bin\main.exe -Wp
+.\bin\%branch%-%arch%-%bin%.exe -Wp
 ```
 ```Batch
-.\bin\main.exe -Wcap
+.\bin\%branch%-%arch%-%bin%.exe -Wcap
 ```
 
 ## 1 破解
 
-找到`[  破  解  ]`一栏, 选择需要破解的控制软件, 点击即可.
+找到`[ 破 解 ]`一栏, 选择需要破解的控制软件, 点击即可.
 
 ## 2 恢复
 
-找到`[  恢  复  ]`一栏, 选择需要恢复的控制软件, 点击即可.
+找到`[ 恢 复 ]`一栏, 选择需要恢复的控制软件, 点击即可.
 
 # 常见问题
 
@@ -88,6 +88,5 @@ set bin="msvcrt"
 
 ## 鸣谢
 
-感谢:
 - Bilibili 用户[lateworker_晚工](https://space.bilibili.com/39337803)提供 ConsoleUI 代码 (详见[此处](https://www.bilibili.com/video/BV1X14y1n7S4/), 软件有修改之处);
 - Bilibili 用户[痕继痕迹](https://space.bilibili.com/39337803)指导软件 UI 设计.
