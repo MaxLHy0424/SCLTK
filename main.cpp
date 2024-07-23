@@ -44,7 +44,7 @@ BEGIN:
         }
     }
     UI.PushBack("   | Computer Room Control Software Nemesis |");
-    UI.PushBack("                    24w31a");
+    UI.PushBack("                    24w31b");
     UI.PushBack("     https://github.com/MaxLHy0424/CRCSN");
     UI.PushBack("    (C) 2024 MaxLHy0424, All Rights Reserved.\n");
     if(errArgv){
@@ -52,6 +52,9 @@ BEGIN:
     }
     UI.PushBack(" > 退出 ",ExitProc);
     UI.PushBack("\n[ 破 解 ]\n");
+    if(!IsUserAnAdmin()){
+        UI.PushBack(" (i) 当前权限破解可能无效.\n");
+    }
     UI.PushBack(" > 极域电子教室 ",CRCSN::Crack::ELearningClass);
     UI.PushBack(" > 联想云教室 ",CRCSN::Crack::LenovoEClass);
     UI.PushBack("\n[ 恢 复 ]\n");
