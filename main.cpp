@@ -2,7 +2,6 @@
 #include"ui.hpp"
 #include"module.hpp"
 int main(int argc,char* argv[]){
-    system("chcp 936");
     bool errArgv{};
     {
         struct Options{
@@ -38,9 +37,9 @@ int main(int argc,char* argv[]){
             }
         }
 BEGIN:
-        CRCSN::Wnd::Init(Opt.wndCtrls,Opt.wndAlpha);
+        CRCSN::Tsk::Init(Opt.wndCtrls,Opt.wndAlpha);
         if(Opt.wndPin){
-            std::thread(CRCSN::Wnd::Pin).detach();
+            std::thread(CRCSN::Tsk::Pin).detach();
         }
     }
     UI.PushBack("   | Computer Room Control Software Nemesis |");
