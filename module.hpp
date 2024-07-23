@@ -1,5 +1,5 @@
 namespace CRCSN{
-    namespace Wnd{
+    namespace Tsk{
         void Init(bool ctrls,bool alpha){
             std::string title{(IsUserAnAdmin())?("Admin"):("User")};
             title="["+title+"] CRCSN";
@@ -9,6 +9,7 @@ namespace CRCSN{
             }
             system("mode con cols=50 lines=30");
             SetLayeredWindowAttributes(GetForegroundWindow(),0,((alpha)?(204):(255)),LWA_ALPHA);
+            system("chcp 936");
         }
         void Pin(){
             HWND foreWnd{GetForegroundWindow()};
