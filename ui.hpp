@@ -69,7 +69,7 @@ class Menu;
 #define MouseWheel MOUSE_WHEELED
 struct Parameter{
     DWORD buttonState,controlKeyState,eventFlag;
-    Menu*menu;
+    Menu* menu;
     Parameter():buttonState(MouseLeftButton),controlKeyState(0),eventFlag(0),menu(nullptr){}
     Parameter(MOUSE_EVENT_RECORD mouseEvent,Menu*menu):buttonState(mouseEvent.dwButtonState),controlKeyState(mouseEvent.dwControlKeyState),eventFlag(mouseEvent.dwEventFlags),menu(menu){}
 };
@@ -146,7 +146,7 @@ class Menu{
             }
         }
         bool implement(MOUSE_EVENT_RECORD mouseEvent){
-            bool isExit=false;
+            bool isExit{};
             for(auto&data:lineData){
                 if(data==mouseEvent.dwMousePosition){
                     if(data.function!=nullptr){
@@ -185,7 +185,7 @@ class Menu{
             MOUSE_EVENT_RECORD mouseEvent;
             Sleep(100UL);
             InitPosition();
-            bool isExit=false;
+            bool isExit{};
             while(!isExit){
                 Sleep(sleepTime);
                 mouseEvent=WaitMouseEvent();
