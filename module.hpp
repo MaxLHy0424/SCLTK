@@ -57,19 +57,19 @@ namespace CRCSN{
         }
     };
     namespace Crack{
-        void Base(std::string* exe,int n,std::string* svc,int m){
+        void Base(std::string* exe,uint16_t n,std::string* svc,uint16_t m){
             system("cls");
             std::string cmd;
-            for(int i{};i<n;++i){
+            for(uint16_t i{};i<n;++i){
                 cmd="taskKill /f /im "+exe[i]+".exe";
                 system(cmd.c_str());
             }
             if(IsUserAnAdmin()){
-                for(int i{};i<n;++i){
+                for(uint16_t i{};i<n;++i){
                     cmd="reg add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\"+exe[i]+".exe\" /f /t reg_sz /v debugger /d ?";
                     system(cmd.c_str());
                 }
-                for(int i{};i<m;++i){
+                for(uint16_t i{};i<m;++i){
                     cmd="net stop "+svc[i]+" /y";
                     system(cmd.c_str());
                 }
@@ -87,14 +87,14 @@ namespace CRCSN{
         }
     };
     namespace Recovery{
-        void Base(std::string* exe,int n,std::string* svc,int m){
+        void Base(std::string* exe,uint16_t n,std::string* svc,uint16_t m){
             system("cls");
             std::string cmd;
-            for(int i{};i<n;++i){
+            for(uint16_t i{};i<n;++i){
                 cmd="reg delete \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\"+exe[i]+".exe\" /f";
                 system(cmd.c_str());
             }
-            for(int i{};i<m;++i){
+            for(uint16_t i{};i<m;++i){
                 cmd="net start "+svc[i];
                 system(cmd.c_str());
             }
