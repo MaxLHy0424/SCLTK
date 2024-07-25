@@ -43,18 +43,18 @@ set bin="msvcrt"
 > 此项参数区分大小写.
 
 窗口操作的主参数为`-W`, 附加参数如下:
+ - `f`: 置顶窗口并每间隔 100ms 将窗口设为焦点.
  - `c`: 启用窗口控件, 允许缩放窗口 (可能导致意外行为);
- - `p`: 置顶窗口并每间隔 100ms 将窗口设为焦点.
  - `a`: 将窗口不透明度设为 80% (仅支持使用新版控制台的 Windows OS, 如 Windows 10);
 
 附加参数的顺序不影响应用效果.
 
 使用示例:
 ```Batch
-.\bin\%branch%-%arch%-%bin%.exe -Wp
+.\bin\%branch%-%arch%-%bin%.exe -Wa
 ```
 ```Batch
-.\bin\%branch%-%arch%-%bin%.exe -Wcap
+.\bin\%branch%-%arch%-%bin%.exe -Wacf
 ```
 
 ## 1 破解
