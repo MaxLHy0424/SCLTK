@@ -1,5 +1,35 @@
 namespace CRCSN{
-    namespace Tsk{
+    struct Opt{
+        bool wndCtrls,wndForceShow,wndAlpha;
+    }Opt;
+    struct Rule{
+        struct Mythware{
+            std::string exe[9],svc[3];
+        }Mythware{
+            {
+                "StudentMain","DispcapHelper","VRCwPlayer",
+                "InstHelpApp","InstHelpApp64","TDOvrSet",
+                "GATESRV","ProcHelper64","MasterHelper"
+            },{
+                "STUDSRV","TDNetFilter","TDFileFilter"
+            }
+        };
+        struct Lenovo{
+            std::string exe[18],svc[3];
+        }Lenovo{
+            {
+                "vncviewer","tvnserver32","WfbsPnpInstall",
+                "WFBSMon","WFBSMlogon","WFBSSvrLogShow",
+                "ResetIp","FuncForWIN64","CertMgr",
+                "Fireware","BCDBootCopy","refreship",
+                "LenovoLockScreen","PortControl64","DesktopCheck",
+                "DeploymentManager","DeploymentAgent","XYNTService"
+            },{
+                "BSAgentSvr","tvnserver","WFBSMlogon"
+            }
+        };
+    }Rule;
+    namespace General{
         void Init(bool ctrls,bool alpha){
             std::string title{(IsUserAnAdmin())?("Admin"):("User")};
             title="["+title+"] CRCSN";
@@ -11,7 +41,7 @@ namespace CRCSN{
             SetLayeredWindowAttributes(GetForegroundWindow(),0,((alpha)?(204):(255)),LWA_ALPHA);
             system("chcp 936");
         }
-        void Pin(){
+        void ForceShow(){
             HWND foreWnd{GetForegroundWindow()};
             DWORD foreId{GetWindowThreadProcessId(foreWnd,NULL)},curId{GetCurrentThreadId()};
             while(true){
@@ -25,106 +55,58 @@ namespace CRCSN{
                 Sleep(100UL);
             }
         }
-    }
+    };
     namespace Crack{
-        bool ELearningClass(Parameter){
+        void Base(std::string* exe,int n,std::string* svc,int m){
             system("cls");
-            std::string exe[9]{
-                "StudentMain","DispcapHelper","VRCwPlayer",
-                "InstHelpApp","InstHelpApp64","TDOvrSet",
-                "GATESRV","ProcHelper64","MasterHelper"
-            },svc[3]{
-                "STUDSRV","TDNetFilter","TDFileFilter"
-            },tmp{};
-            for(unsigned short i{};i<9;++i){
-                tmp="taskKill /f /im "+exe[i]+".exe";
-                system(tmp.c_str());
+            std::string cmd;
+            for(int i{};i<n;++i){
+                cmd="taskKill /f /im "+exe[i]+".exe";
+                system(cmd.c_str());
             }
             if(IsUserAnAdmin()){
-                for(unsigned short i{};i<9;++i){
-                    tmp="reg add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\"+exe[i]+".exe\" /f /t reg_sz /v debugger /d ?";
-                    system(tmp.c_str());
+                for(int i{};i<n;++i){
+                    cmd="reg add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\"+exe[i]+".exe\" /f /t reg_sz /v debugger /d ?";
+                    system(cmd.c_str());
                 }
-                for(unsigned short i{};i<3;++i){
-                    tmp="net stop "+svc[i]+" /y";
-                    system(tmp.c_str());
+                for(int i{};i<m;++i){
+                    cmd="net stop "+svc[i]+" /y";
+                    system(cmd.c_str());
                 }
             }
             system("cls");
+            return;
+        }
+        bool Mythware(Parameter){
+            CRCSN::Crack::Base(CRCSN::Rule.Mythware.exe,9,CRCSN::Rule.Mythware.svc,3);
             return false;
         }
-        bool LenovoEClass(Parameter){
-            system("cls");
-            std::string exe[18]{
-                "vncviewer","tvnserver32","WfbsPnpInstall",
-                "WFBSMon","WFBSMlogon","WFBSSvrLogShow",
-                "ResetIp","FuncForWIN64","CertMgr",
-                "Fireware","BCDBootCopy","refreship",
-                "LenovoLockScreen","PortControl64","DesktopCheck",
-                "DeploymentManager","DeploymentAgent","XYNTService"
-            },svc[3]{
-                "BSAgentSvr","tvnserver","WFBSMlogon"
-            },tmp{};
-            for(unsigned short i{};i<18;++i){
-                tmp="taskKill /f /im "+exe[i]+".exe";
-                system(tmp.c_str());
-            }
-            if(IsUserAnAdmin()){
-                for(unsigned short i{};i<18;++i){
-                    tmp="reg add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\"+exe[i]+".exe\" /f /t reg_sz /v debugger /d ?";
-                    system(tmp.c_str());
-                }
-                for(unsigned short i{};i<3;++i){
-                    tmp="net stop "+svc[i]+" /y";
-                    system(tmp.c_str());
-                }
-            }
-            system("cls");
+        bool Lenovo(Parameter){
+            CRCSN::Crack::Base(CRCSN::Rule.Lenovo.exe,18,CRCSN::Rule.Lenovo.svc,3);
             return false;
         }
-    }
+    };
     namespace Recovery{
-        bool ELearningClass(Parameter){
+        void Base(std::string* exe,int n,std::string* svc,int m){
             system("cls");
-            std::string exe[9]{
-                "StudentMain","DispcapHelper","VRCwPlayer",
-                "InstHelpApp","InstHelpApp64","TDOvrSet",
-                "GATESRV","ProcHelper64","MasterHelper"
-            },svc[3]{
-                "STUDSRV","TDNetFilter","TDFileFilter"
-            },tmp{};
-            for(unsigned short i{};i<9;++i){
-                tmp="reg delete \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\"+exe[i]+".exe\" /f";
-                system(tmp.c_str());
+            std::string cmd;
+            for(int i{};i<n;++i){
+                cmd="reg delete \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\"+exe[i]+".exe\" /f";
+                system(cmd.c_str());
             }
-            for(unsigned short i{};i<3;++i){
-                tmp="net start "+svc[i];
-                system(tmp.c_str());
+            for(int i{};i<m;++i){
+                cmd="net start "+svc[i];
+                system(cmd.c_str());
             }
             system("cls");
+            return;
+        }
+        bool Mythware(Parameter){
+            CRCSN::Recovery::Base(CRCSN::Rule.Mythware.exe,9,CRCSN::Rule.Mythware.svc,3);
             return false;
         }
-        bool LenovoEClass(Parameter){
-            system("cls");
-            std::string exe[18]{
-                "vncviewer","tvnserver32","WfbsPnpInstall",
-                "WFBSMon","WFBSMlogon","WFBSSvrLogShow",
-                "ResetIp","FuncForWIN64","CertMgr",
-                "Fireware","BCDBootCopy","refreship",
-                "LenovoLockScreen","PortControl64","DesktopCheck",
-                "DeploymentManager","DeploymentAgent","XYNTService"
-            },svc[3]{
-                "BSAgentSvr","tvnserver","WFBSMlogon"
-            },tmp{};
-            for(unsigned short i{};i<18;++i){
-                tmp="reg delete \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\"+exe[i]+".exe\" /f";
-                system(tmp.c_str());
-            }
-            for(unsigned short i{};i<3;++i){
-                tmp="net start "+svc[i];
-                system(tmp.c_str());
-            }
-            system("cls");
+        bool Lenovo(Parameter){
+            CRCSN::Recovery::Base(CRCSN::Rule.Lenovo.exe,18,CRCSN::Rule.Lenovo.svc,3);
             return false;
         }
     }
