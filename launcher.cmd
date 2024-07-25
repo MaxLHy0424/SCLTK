@@ -9,7 +9,7 @@ mode con cols=50 lines=30
 title CRCSN Launcher
 echo                  CRCSN Launcher
 echo                      24w31c
-echo     (C) 2023 MaxLHy0424, All Rights Reserved.
+echo     (C) 2023 MaxLHy0424. All Rights Reserved.
 echo.
 echo 按任意键启动 CRCSN.
 echo.
