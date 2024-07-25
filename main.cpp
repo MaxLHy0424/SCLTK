@@ -42,7 +42,7 @@ BEGIN:
     UI.PushBack("   | Computer Room Control Software Nemesis |");
     UI.PushBack("                    24w31c");
     UI.PushBack("     https://github.com/MaxLHy0424/CRCSN");
-    UI.PushBack("    (C) 2024 MaxLHy0424. All Rights Reserved.\n");
+    UI.PushBack("    (C) 2023 MaxLHy0424. All Rights Reserved.\n");
     if(errArgv){
         UI.PushBack(" (!) 参数错误.\n");
     }
