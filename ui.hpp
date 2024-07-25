@@ -70,8 +70,8 @@ class Menu;
 struct Parameter{
     DWORD buttonState,controlKeyState,eventFlag;
     Menu* menu;
-    Parameter():buttonState(MouseLeftButton),controlKeyState(0),eventFlag(0),menu(nullptr){}
-    Parameter(MOUSE_EVENT_RECORD mouseEvent,Menu*menu):buttonState(mouseEvent.dwButtonState),controlKeyState(mouseEvent.dwControlKeyState),eventFlag(mouseEvent.dwEventFlags),menu(menu){}
+    Parameter():buttonState(MouseLeftButton),controlKeyState(0UL),eventFlag(0UL),menu(nullptr){}
+    Parameter(MOUSE_EVENT_RECORD mouseEvent,Menu* menu):buttonState(mouseEvent.dwButtonState),controlKeyState(mouseEvent.dwControlKeyState),eventFlag(mouseEvent.dwEventFlags),menu(menu){}
 };
 typedef bool(*callback)(Parameter);
 struct Text{
@@ -165,7 +165,7 @@ class Menu{
             return isExit;
         }
     public:
-        Menu():sleepTime(50),consoleHeight(0),consoleWidth(0){}
+        Menu():sleepTime(50UL),consoleHeight(0),consoleWidth(0){}
         ~Menu(){}
         Menu&PushBack(std::string text="",callback function=nullptr,short colorHighlight=BlackBlue,short colorDefault=BlackWhite){
             lineData.push_back(Text(text,Color(colorDefault,((function==nullptr)?(colorDefault):(colorHighlight))),function));
