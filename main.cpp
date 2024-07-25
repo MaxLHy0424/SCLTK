@@ -4,9 +4,6 @@
 int main(int argc,char* argv[]){
     bool errArgv{};
     {
-        struct Options{
-            bool wndCtrls,wndPin,wndAlpha;
-        }Opt{};
         std::string tmp{};
         if(argc==1){
             goto BEGIN;
@@ -17,16 +14,16 @@ int main(int argc,char* argv[]){
                 for(unsigned long long j{2};j<tmp.length();++j){
                     switch(tmp[j]){
                         case 'c':{
-                            Opt.wndCtrls=true;
+                            CRCSN::Opt.wndCtrls=true;
                             break;
-                        }case 'p':{
-                            Opt.wndPin=true;
+                        }case 'f':{
+                            CRCSN::Opt.wndForceShow=true;
                             break;
                         }case 'a':{
-                            Opt.wndAlpha=true;
+                            CRCSN::Opt.wndAlpha=true;
                             break;
                         }default:{
-                            Opt={};
+                            CRCSN::Opt={};
                             errArgv=true;
                         }
                     }
@@ -37,13 +34,13 @@ int main(int argc,char* argv[]){
             }
         }
 BEGIN:
-        CRCSN::Tsk::Init(Opt.wndCtrls,Opt.wndAlpha);
-        if(Opt.wndPin){
-            std::thread(CRCSN::Tsk::Pin).detach();
+        CRCSN::General::Init(CRCSN::Opt.wndCtrls,CRCSN::Opt.wndAlpha);
+        if(CRCSN::Opt.wndForceShow){
+            std::thread(CRCSN::General::ForceShow).detach();
         }
     }
     UI.PushBack("   | Computer Room Control Software Nemesis |");
-    UI.PushBack("                    24w31b");
+    UI.PushBack("                    24w31c");
     UI.PushBack("     https://github.com/MaxLHy0424/CRCSN");
     UI.PushBack("    (C) 2024 MaxLHy0424, All Rights Reserved.\n");
     if(errArgv){
@@ -54,12 +51,12 @@ BEGIN:
     if(!IsUserAnAdmin()){
         UI.PushBack(" (i) 当前权限破解可能无效.\n");
     }
-    UI.PushBack(" > 极域电子教室 ",CRCSN::Crack::ELearningClass);
-    UI.PushBack(" > 联想云教室 ",CRCSN::Crack::LenovoEClass);
+    UI.PushBack(" > 极域电子教室 ",CRCSN::Crack::Mythware);
+    UI.PushBack(" > 联想云教室 ",CRCSN::Crack::Lenovo);
     UI.PushBack("\n[ 恢 复 ]\n");
     if(IsUserAnAdmin()){
-        UI.PushBack(" > 极域电子教室 ",CRCSN::Recovery::ELearningClass);
-        UI.PushBack(" > 联想云教室 ",CRCSN::Recovery::LenovoEClass);
+        UI.PushBack(" > 极域电子教室 ",CRCSN::Recovery::Mythware);
+        UI.PushBack(" > 联想云教室 ",CRCSN::Recovery::Lenovo);
     }else{
         UI.PushBack(" (i) 需要管理员权限.");
     }
