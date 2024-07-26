@@ -205,7 +205,8 @@ class Menu{
             Sleep(100UL);
         }
 }UI;
-bool ExitProc(Parameter){
+bool _Exit(Parameter){
     return true;
 }
+#define Exit _Exit
 #endif

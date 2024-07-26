@@ -46,7 +46,7 @@ BEGIN:
     if(errArgv){
         UI.PushBack(" (!) 参数错误.\n");
     }
-    UI.PushBack(" > 退出 ",ExitProc);
+    UI.PushBack(" > 退出 ",Exit);
     UI.PushBack("\n[ 破 解 ]\n");
     if(!IsUserAnAdmin()){
         UI.PushBack(" (i) 当前权限破解可能无效.\n");
