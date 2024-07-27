@@ -5,10 +5,10 @@ set bin=msvcrt
 cd /d "%~dp0"
 chcp 65001
 %1
-mode con cols=50 lines=30
+mode con cols=50 lines=25
 title CRCSN Launcher
 echo                  CRCSN Launcher
-echo                      24w31c
+echo                      24w31d
 echo     (C) 2023 MaxLHy0424. All Rights Reserved.
 echo.
 echo 按任意键启动 CRCSN.
