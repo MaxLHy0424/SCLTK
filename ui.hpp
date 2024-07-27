@@ -1,16 +1,16 @@
 #ifndef MENU_HPP
 #define MENU_HP
-void HideTheCursor(){
-    CONSOLE_CURSOR_INFO TheCursorInfo;
-    GetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&TheCursorInfo);
-    TheCursorInfo.bVisible=false;
-    SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&TheCursorInfo);
+void HideCursor(){
+    CONSOLE_CURSOR_INFO CursorInfo;
+    GetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&CursorInfo);
+    CursorInfo.bVisible=false;
+    SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&CursorInfo);
 }
-void ShowTheCursor(){
-    CONSOLE_CURSOR_INFO TheCursorInfo;
-    GetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&TheCursorInfo);
-    TheCursorInfo.bVisible=true;
-    SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&TheCursorInfo);
+void ShowCursor(){
+    CONSOLE_CURSOR_INFO CursorInfo;
+    GetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&CursorInfo);
+    CursorInfo.bVisible=true;
+    SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&CursorInfo);
 }
 void RemoveAttributes(){
     DWORD mode;
@@ -24,12 +24,12 @@ void AddAttributes(){
     mode|=ENABLE_QUICK_EDIT_MODE,mode|=ENABLE_INSERT_MODE,mode|=ENABLE_MOUSE_INPUT;
     SetConsoleMode(GetStdHandle(STD_INPUT_HANDLE),mode);
 }
-COORD GetTheTheCursor(){
+COORD GetTheCursor(){
     CONSOLE_SCREEN_BUFFER_INFO tmp;
     GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE),&tmp);
     return tmp.dwCursorPosition;
 }
-void SetTheCursor(const COORD&tmp={0,0}){
+void SetCursor(const COORD&tmp={0,0}){
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE),tmp);
 }
 MOUSE_EVENT_RECORD WaitMouseEvent(bool move=true){
@@ -38,7 +38,7 @@ MOUSE_EVENT_RECORD WaitMouseEvent(bool move=true){
     while(true){
         Sleep(10UL);
         ReadConsoleInput(GetStdHandle(STD_INPUT_HANDLE),&record,1,&reg);
-        if((record.EventType==MOUSE_EVENT)&&(move|(record.Event.MouseEvent.dwEventFlags!=MOUSE_MOVED))){
+        if(!(record.EventType^MOUSE_EVENT)&&(move|(record.Event.MouseEvent.dwEventFlags!=MOUSE_MOVED))){
             return record.Event.MouseEvent;
         }
     }
@@ -82,7 +82,7 @@ struct Text{
     Text():text(""),color(Color(0,0)),position({0,0}),function(nullptr){}
     Text(std::string text,Color color,callback function):text(text),color(color),position({0,0}),function(function){}
     bool operator==(const COORD&mousePosition)const{
-        return (((position.Y==mousePosition.Y)&&(position.X<=mousePosition.X)&&(mousePosition.X<(position.X+(short)text.length())))?(true):(false));
+        return ((!(position.Y^mousePosition.Y)&&(position.X<=mousePosition.X)&&(mousePosition.X<(position.X+(short)text.length())))?(true):(false));
     }
     bool operator!=(const COORD&mousePosition)const{
         return !operator==(mousePosition);
@@ -102,13 +102,13 @@ class Menu{
         }
         void ClearScreen(){
             GetConsoleSize();
-            SetTheCursor({0,0});
+            SetCursor({0,0});
             for(short i{};i<consoleHeight;++i){
                 for(short j{};j<consoleWidth;++j){
                     printf(" ");
                 }
             }
-            SetTheCursor({0,0});
+            SetCursor({0,0});
         }
         void Write(std::string text,bool isEndl=false){
             printf("%s",text.c_str());
@@ -117,18 +117,18 @@ class Menu{
             }
         }
         void Rewrite(Text data){
-            SetTheCursor({0,data.position.Y});
+            SetCursor({0,data.position.Y});
             for(short j{};j<data.position.X;++j){
                 Write(" ");
             }
-            SetTheCursor({0,data.position.Y});
+            SetCursor({0,data.position.Y});
             Write(data.text);
-            SetTheCursor({0,data.position.Y});
+            SetCursor({0,data.position.Y});
         }
         void InitPosition(){
             ClearScreen();
             for(auto&data:lineData){
-                data.position=GetTheTheCursor();
+                data.position=GetTheCursor();
                 data.color.SetDefault();
                 Write(data.text,true);
             }
@@ -153,10 +153,10 @@ class Menu{
                         ClearScreen();
                         data.color.SetDefault();
                         AddAttributes();
-                        ShowTheCursor();
+                        ShowCursor();
                         isExit=data.function(Parameter(mouseEvent,this));
                         RemoveAttributes();
-                        HideTheCursor();
+                        HideCursor();
                         InitPosition();
                     }
                     break;
@@ -181,7 +181,7 @@ class Menu{
         }
         void Show(){
             RemoveAttributes();
-            HideTheCursor();
+            HideCursor();
             MOUSE_EVENT_RECORD mouseEvent;
             Sleep(100UL);
             InitPosition();
