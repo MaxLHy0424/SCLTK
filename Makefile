@@ -1,6 +1,6 @@
 pathMsys2 = C:\Software\MSYS2
 compiler = g++.exe
-argv = -fexec-charset=GBK -std=gnu++23 -Wall -Wextra -pipe -static -Ofast -Os -flto -o
+argv = -fexec-charset=GBK -std=gnu++23 -Wall -Wextra -pipe -DNDEBUG -static -Ofast -Os -flto -o
 branch = dev
 arch = x86_64
 compile:
