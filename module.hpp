@@ -1,6 +1,6 @@
 namespace CRCSN{
     struct Opt{
-        bool wndCtrls,wndForceShow,wndAlpha;
+        bool wndCtrls,wndFrontShow,wndAlpha;
     }Opt;
     struct Rule{
         struct Mythware{
@@ -37,11 +37,11 @@ namespace CRCSN{
             if(!ctrls){
                 SetWindowLongPtrA(GetConsoleWindow(),GWL_STYLE,GetWindowLongPtrA(GetConsoleWindow(),GWL_STYLE)&~WS_SIZEBOX&~WS_MAXIMIZEBOX&~WS_MINIMIZEBOX);
             }
-            system("mode con cols=50 lines=30");
+            system("mode con cols=50 lines=25");
             SetLayeredWindowAttributes(GetForegroundWindow(),0,((alpha)?(204):(255)),LWA_ALPHA);
             system("chcp 936");
         }
-        void ForceShow(){
+        void FrontShow(){
             HWND foreWnd{GetForegroundWindow()};
             DWORD foreId{GetWindowThreadProcessId(foreWnd,NULL)},curId{GetCurrentThreadId()};
             while(true){
