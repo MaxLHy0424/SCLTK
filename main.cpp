@@ -39,29 +39,30 @@ int main(int argc,char* argv[]){
             std::thread(CRCSN::General::FrontShow).detach();
         }
     }
-    UI.PushBack("   | Computer Room Control Software Nemesis |");
-    UI.PushBack("                    24w31d");
-    UI.PushBack("     https://github.com/MaxLHy0424/CRCSN");
-    UI.PushBack("    (C) 2023 MaxLHy0424. All Rights Reserved.\n");
+    UI.Push("   | Computer Room Control Software Nemesis |");
+    UI.Push("                     24w31e");
+    UI.Push("      https://github.com/MaxLHy0424/CRCSN");
+    UI.Push("    (C) 2023 MaxLHy0424. All Rights Reserved.\n");
     if(errOpt){
-        UI.PushBack(" (!) 参数错误.\n");
+        UI.Push(" (!) 参数错误.\n");
     }
-    UI.PushBack(" > 退出 ",Exit);
-    UI.PushBack("\n[ 破 解 ]\n");
+    UI.Push(" > 退出 ",Exit);
+    UI.Push(" > 命令提示符",CRCSN::Cmd);
+    UI.Push("\n[ 破 解 ]\n");
     if(!IsUserAnAdmin()){
-        UI.PushBack(" (i) 当前权限破解可能无效.\n");
+        UI.Push(" (i) 当前权限破解可能无效.\n");
     }
-    UI.PushBack(" > 极域电子教室 ",CRCSN::Crack::Mythware);
-    UI.PushBack(" > 联想云教室 ",CRCSN::Crack::Lenovo);
-    UI.PushBack("\n[ 恢 复 ]\n");
+    UI.Push(" > 极域电子教室 ",CRCSN::Crack::Mythware);
+    UI.Push(" > 联想云教室 ",CRCSN::Crack::Lenovo);
+    UI.Push("\n[ 恢 复 ]\n");
     if(IsUserAnAdmin()){
-        UI.PushBack(" > 极域电子教室 ",CRCSN::Recovery::Mythware);
-        UI.PushBack(" > 联想云教室 ",CRCSN::Recovery::Lenovo);
+        UI.Push(" > 极域电子教室 ",CRCSN::Recovery::Mythware);
+        UI.Push(" > 联想云教室 ",CRCSN::Recovery::Lenovo);
     }else{
-        UI.PushBack(" (i) 需要管理员权限.");
+        UI.Push(" (i) 需要管理员权限.");
     }
-    UI.PushBack("\n[ 移 除 ]\n");
-    UI.PushBack(" (i) 正在开发.");
+    UI.Push("\n[ 移 除 ]\n");
+    UI.Push(" (i) 正在开发.");
     UI.Show();
     return 0;
 }
