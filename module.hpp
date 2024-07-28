@@ -110,4 +110,9 @@ namespace CRCSN{
             return false;
         }
     }
+    bool Cmd(Parameter){
+        system("cls & cd C:\\ & cmd");
+        CRCSN::General::Init(CRCSN::Opt.wndCtrls,CRCSN::Opt.wndAlpha);
+        return false;
+    }
 }
