@@ -13,7 +13,7 @@
                 "-pipe",
                 "-g3",
                 "-o",
-                "\"${fileDirname}\\bin\\${fileBasenameNoExtension}_dbg.exe\"",
+                "\"${fileDirname}\\bin\\${fileBasenameNoExtension}_debug.exe\"",
             ],
             "group":{
                 "kind":"build",
@@ -31,7 +31,7 @@
             "label":"run",
             "type":"shell",
             "dependsOn":"build",
-            "command":"${fileDirname}\\bin\\${fileBasenameNoExtension}.exe",
+            "command":"${fileDirname}\\bin\\${fileBasenameNoExtension}_debug.exe",
             "group":{
                 "kind":"test",
                 "isDefault":true

@@ -5,7 +5,7 @@
             "name":"Debug",
             "type":"cppdbg",
             "request":"launch",
-            "program":"${fileDirname}\\bin\\${fileBasenameNoExtension}_dbg.exe",
+            "program":"${fileDirname}\\bin\\${fileBasenameNoExtension}_debug.exe",
             "args":[],
             "stopAtEntry":false,
             "cwd":"${fileDirname}",
