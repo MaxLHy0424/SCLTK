@@ -24,7 +24,7 @@ void AddAttributes(){
     mode|=ENABLE_QUICK_EDIT_MODE,mode|=ENABLE_INSERT_MODE,mode|=ENABLE_MOUSE_INPUT;
     SetConsoleMode(GetStdHandle(STD_INPUT_HANDLE),mode);
 }
-COORD GetTheCursor(){
+COORD GetCursorPos(){
     CONSOLE_SCREEN_BUFFER_INFO tmp;
     GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE),&tmp);
     return tmp.dwCursorPosition;
@@ -90,21 +90,21 @@ struct Text{
 };
 class Menu{
     private:
-        unsigned long sleepTime;
-        short consoleHeight,consoleWidth;
+        DWORD sleepTime;
+        short height,width;
         std::vector<Text>lineData;
     protected:
         void GetConsoleSize(){
             CONSOLE_SCREEN_BUFFER_INFO tmp;
             GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE),&tmp);
-            consoleHeight=tmp.dwSize.Y;
-            consoleWidth=tmp.dwSize.X;
+            height=tmp.dwSize.Y;
+            width=tmp.dwSize.X;
         }
         void ClearScreen(){
             GetConsoleSize();
             SetCursor({0,0});
-            for(short i{};i<consoleHeight;++i){
-                for(short j{};j<consoleWidth;++j){
+            for(short i{};i<height;++i){
+                for(short j{};j<width;++j){
                     printf(" ");
                 }
             }
@@ -128,7 +128,7 @@ class Menu{
         void InitPosition(){
             ClearScreen();
             for(auto &data:lineData){
-                data.position=GetTheCursor();
+                data.position=GetCursorPos();
                 data.color.SetDef();
                 Write(data.text,true);
             }
@@ -165,7 +165,7 @@ class Menu{
             return isExit;
         }
     public:
-        Menu():sleepTime(50UL),consoleHeight(0),consoleWidth(0){}
+        Menu():sleepTime(50UL),height(0),width(0){}
         ~Menu(){}
         Menu& Push(std::string text="",callback function=nullptr,short colorHighlight=BlackBlue,short colordef=BlackWhite){
             lineData.push_back(Text(text,Color(colordef,((function==nullptr)?(colordef):(colorHighlight))),function));
