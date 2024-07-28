@@ -47,12 +47,12 @@ MOUSE_EVENT_RECORD WaitMouseEvent(bool move=true){
 #define BlackBlue 0x03
 #define YellowBlue 0xe9
 struct Color{
-    short Default,highlight,lastColor;
-    Color():Default(BlackWhite),highlight(BlackBlue),lastColor(BlackWhite){}
-    Color(short Default=BlackWhite,short highlight=BlackBlue):Default(Default),highlight(highlight),lastColor(BlackWhite){}
-    void SetDefault(){
-        SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),Default);
-        lastColor=Default;
+    short def,highlight,lastColor;
+    Color():def(BlackWhite),highlight(BlackBlue),lastColor(BlackWhite){}
+    Color(short def=BlackWhite,short highlight=BlackBlue):def(def),highlight(highlight),lastColor(BlackWhite){}
+    void SetDef(){
+        SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),def);
+        lastColor=def;
     }
     void SetHighlight(){
         SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),highlight);
@@ -127,31 +127,31 @@ class Menu{
         }
         void InitPosition(){
             ClearScreen();
-            for(auto&data:lineData){
+            for(auto &data:lineData){
                 data.position=GetTheCursor();
-                data.color.SetDefault();
+                data.color.SetDef();
                 Write(data.text,true);
             }
         }
         void Refresh(COORD hangPosition){
-            for(auto&data:lineData){
+            for(auto &data:lineData){
                 if((data==hangPosition)&&(data.color.lastColor!=data.color.highlight)){
                     data.color.SetHighlight();
                     Rewrite(data);
                 }
-                if((data!=hangPosition)&&(data.color.lastColor!=data.color.Default)){
-                    data.color.SetDefault();
+                if((data!=hangPosition)&&(data.color.lastColor!=data.color.def)){
+                    data.color.SetDef();
                     Rewrite(data);
                 }
             }
         }
         bool implement(MOUSE_EVENT_RECORD mouseEvent){
             bool isExit{};
-            for(auto&data:lineData){
+            for(auto &data:lineData){
                 if(data==mouseEvent.dwMousePosition){
                     if(data.function!=nullptr){
                         ClearScreen();
-                        data.color.SetDefault();
+                        data.color.SetDef();
                         AddAttributes();
                         ShowCursor();
                         isExit=data.function(Parameter(mouseEvent,this));
@@ -167,15 +167,15 @@ class Menu{
     public:
         Menu():sleepTime(50UL),consoleHeight(0),consoleWidth(0){}
         ~Menu(){}
-        Menu&PushBack(std::string text="",callback function=nullptr,short colorHighlight=BlackBlue,short colorDefault=BlackWhite){
-            lineData.push_back(Text(text,Color(colorDefault,((function==nullptr)?(colorDefault):(colorHighlight))),function));
+        Menu& PushBack(std::string text="",callback function=nullptr,short colorHighlight=BlackBlue,short colordef=BlackWhite){
+            lineData.push_back(Text(text,Color(colordef,((function==nullptr)?(colordef):(colorHighlight))),function));
             return *this;
         }
-        Menu&PopBack(){
+        Menu& PopBack(){
             lineData.pop_back();
             return *this;
         }
-        Menu&Clear(){
+        Menu& Clear(){
             lineData.clear();
             return *this;
         }
