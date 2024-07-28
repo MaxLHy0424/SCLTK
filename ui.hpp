@@ -167,11 +167,11 @@ class Menu{
     public:
         Menu():sleepTime(50UL),consoleHeight(0),consoleWidth(0){}
         ~Menu(){}
-        Menu& PushBack(std::string text="",callback function=nullptr,short colorHighlight=BlackBlue,short colordef=BlackWhite){
+        Menu& Push(std::string text="",callback function=nullptr,short colorHighlight=BlackBlue,short colordef=BlackWhite){
             lineData.push_back(Text(text,Color(colordef,((function==nullptr)?(colordef):(colorHighlight))),function));
             return *this;
         }
-        Menu& PopBack(){
+        Menu& Pop(){
             lineData.pop_back();
             return *this;
         }
