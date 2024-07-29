@@ -204,7 +204,7 @@ class Menu{
             ClearScreen();
             Sleep(100UL);
         }
-}UI;
+};
 bool _Exit(Parameter){
     return true;
 }
