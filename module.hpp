@@ -102,17 +102,17 @@ namespace CRCSN{
             return;
         }
         bool Mythware(Parameter){
-            CRCSN::Recovery::Core(CRCSN::Rule.Mythware.exe,9U,CRCSN::Rule.Mythware.svc,3U);
+            Core(Rule.Mythware.exe,9U,Rule.Mythware.svc,3U);
             return false;
         }
         bool Lenovo(Parameter){
-            CRCSN::Recovery::Core(CRCSN::Rule.Lenovo.exe,18U,CRCSN::Rule.Lenovo.svc,3U);
+            Core(Rule.Lenovo.exe,18U,Rule.Lenovo.svc,3U);
             return false;
         }
     }
     bool Cmd(Parameter){
         system("cls & cd C:\\ & cmd");
-        CRCSN::General::Init(CRCSN::Opt.wndCtrls,CRCSN::Opt.wndAlpha);
+        CRCSN::General::Init(Opt.wndCtrls,Opt.wndAlpha);
         return false;
     }
 }

@@ -1,5 +1,6 @@
 #include"head.hpp"
 #include"ui.hpp"
+Menu UI;
 #include"module.hpp"
 int main(int argc,char* argv[]){
     bool errOpt{};
