@@ -29,31 +29,30 @@ namespace CRCSN{
             }
         };
     }Rule;
-    namespace General{
-        void Init(bool ctrls,bool alpha){
-            SetConsoleTitle("CRCSN");
-            if(!ctrls){
-                SetWindowLongPtrA(GetConsoleWindow(),GWL_STYLE,GetWindowLongPtrA(GetConsoleWindow(),GWL_STYLE)&~WS_SIZEBOX&~WS_MAXIMIZEBOX&~WS_MINIMIZEBOX);
-            }
-            system("mode con cols=50 lines=25");
-            SetLayeredWindowAttributes(GetForegroundWindow(),0,((alpha)?(204):(255)),LWA_ALPHA);
-            system("chcp 936");
+    void Init(bool ctrls,bool alpha){
+        SetConsoleTitle("CRCSN");
+        if(!ctrls){
+            SetWindowLongPtrA(GetConsoleWindow(),GWL_STYLE,GetWindowLongPtrA(GetConsoleWindow(),GWL_STYLE)&~WS_SIZEBOX&~WS_MAXIMIZEBOX&~WS_MINIMIZEBOX);
         }
-        void FrontShow(){
-            HWND foreWnd{GetForegroundWindow()};
-            DWORD foreId{GetWindowThreadProcessId(foreWnd,NULL)},curId{GetCurrentThreadId()};
-            while(true){
-                AttachThreadInput(curId,foreId,TRUE);
-                ShowWindow(foreWnd,SW_SHOWNORMAL);
-                SetWindowPos(foreWnd,HWND_TOPMOST,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE);
-                SetWindowPos(foreWnd,HWND_NOTOPMOST,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE);
-                SetForegroundWindow(foreWnd);
-                AttachThreadInput(curId,foreId,FALSE);
-                SetWindowPos(foreWnd,HWND_TOPMOST,0,0,100,100,SWP_NOMOVE|SWP_NOSIZE);
-                Sleep(100UL);
-            }
+        system("mode con cols=50 lines=25");
+        SetLayeredWindowAttributes(GetForegroundWindow(),0,((alpha)?(204):(255)),LWA_ALPHA);
+        system("chcp 936");
+        return;
+    }
+    void FrontShow(){
+        HWND foreWnd{GetForegroundWindow()};
+        DWORD foreId{GetWindowThreadProcessId(foreWnd,NULL)},curId{GetCurrentThreadId()};
+        while(true){
+            AttachThreadInput(curId,foreId,TRUE);
+            ShowWindow(foreWnd,SW_SHOWNORMAL);
+            SetWindowPos(foreWnd,HWND_TOPMOST,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE);
+            SetWindowPos(foreWnd,HWND_NOTOPMOST,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE);
+            SetForegroundWindow(foreWnd);
+            AttachThreadInput(curId,foreId,FALSE);
+            SetWindowPos(foreWnd,HWND_TOPMOST,0,0,100,100,SWP_NOMOVE|SWP_NOSIZE);
+            Sleep(100UL);
         }
-    };
+    }
     namespace Crack{
         void Core(std::string* exe,uint16_t n,std::string* svc,uint16_t m){
             system("cls");
@@ -76,11 +75,11 @@ namespace CRCSN{
             return;
         }
         bool Mythware(Parameter){
-            CRCSN::Crack::Core(CRCSN::Rule.Mythware.exe,9,CRCSN::Rule.Mythware.svc,3);
+            Core(Rule.Mythware.exe,9,Rule.Mythware.svc,3);
             return false;
         }
         bool Lenovo(Parameter){
-            CRCSN::Crack::Core(CRCSN::Rule.Lenovo.exe,18,CRCSN::Rule.Lenovo.svc,3);
+            Core(Rule.Lenovo.exe,18,Rule.Lenovo.svc,3);
             return false;
         }
     };
@@ -110,7 +109,7 @@ namespace CRCSN{
     }
     bool Cmd(Parameter){
         system("cls & cd C:\\ & cmd");
-        CRCSN::General::Init(Opt.ctrls,Opt.alphaWnd);
+        Init(Opt.ctrls,Opt.alphaWnd);
         return false;
     }
 }
