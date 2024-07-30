@@ -23,7 +23,7 @@
 ### 0.1 强制以管理员限运行
 
 找到:
-```Batch
+```batch
 : msHta vbScript:createObject("shell.application").shellExecute("%~s0","goTo:runAs","","runAs",1)(window.close) & goTo:eof
 ```
 
@@ -32,7 +32,7 @@
 ### 0.2 修改软件编译版本
 
 找到:
-```Batch
+```batch
 set bin="msvcrt"
 ```
 
@@ -54,10 +54,10 @@ set bin="msvcrt"
 附加参数的顺序不影响应用效果.
 
 使用示例:
-```Batch
+```batch
 .\bin\%branch%-%arch%-%bin%.exe -Wa
 ```
-```Batch
+```batch
 .\bin\%branch%-%arch%-%bin%.exe -Wacf
 ```
 
