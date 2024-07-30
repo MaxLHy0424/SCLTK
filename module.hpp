@@ -30,6 +30,7 @@ namespace CRCSN{
         };
     }Rule;
     void Init(bool ctrls,bool alpha){
+        system("chcp 936");
         #if EvaluateCopy
             SetConsoleTitle("[评估副本] CRCSN");
         #else
@@ -40,7 +41,6 @@ namespace CRCSN{
         }
         system("mode con cols=50 lines=25");
         SetLayeredWindowAttributes(GetForegroundWindow(),0,((alpha)?(204):(255)),LWA_ALPHA);
-        system("chcp 936");
         return;
     }
     void FrontShow(){
