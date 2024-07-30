@@ -29,7 +29,7 @@ COORD GetCursorPos(){
     GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE),&tmp);
     return tmp.dwCursorPosition;
 }
-void SetCursor(const COORD&tmp={0,0}){
+void SetCursor(const COORD& tmp={0,0}){
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE),tmp);
 }
 MOUSE_EVENT_RECORD WaitMouseEvent(bool move=true){
@@ -145,9 +145,9 @@ class Menu{
                 }
             }
         }
-        bool implement(MOUSE_EVENT_RECORD mouseEvent){
+        bool Implement(MOUSE_EVENT_RECORD mouseEvent){
             bool isExit{};
-            for(auto &data:lineData){
+            for(auto& data:lineData){
                 if(data==mouseEvent.dwMousePosition){
                     if(data.function!=nullptr){
                         ClearScreen();
@@ -167,8 +167,8 @@ class Menu{
     public:
         Menu():sleepTime(50UL),height(0),width(0){}
         ~Menu(){}
-        Menu& Push(std::string text="",callback function=nullptr,short colorHighlight=BlackBlue,short colordef=BlackWhite){
-            lineData.push_back(Text(text,Color(colordef,((function==nullptr)?(colordef):(colorHighlight))),function));
+        Menu& Push(std::string text="",callback function=nullptr,short colorHighlight=BlackBlue,short colorDef=BlackWhite){
+            lineData.push_back(Text(text,Color(colorDef,((function==nullptr)?(colorDef):(colorHighlight))),function));
             return *this;
         }
         Menu& Pop(){
@@ -195,7 +195,7 @@ class Menu{
                         break;
                     }case MouseClick:{
                         if((mouseEvent.dwButtonState)&&(mouseEvent.dwButtonState!=MouseWheel)){
-                            isExit=implement(mouseEvent);
+                            isExit=Implement(mouseEvent);
                         }
                         break;
                     }
