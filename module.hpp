@@ -1,6 +1,6 @@
 namespace CRCSN{
     struct Opt{
-        bool wndCtrls,wndFrontShow,wndAlpha;
+        bool ctrls,frontShow,alphaWnd;
     }Opt;
     struct Rule{
         struct Mythware{
@@ -31,13 +31,11 @@ namespace CRCSN{
     }Rule;
     namespace General{
         void Init(bool ctrls,bool alpha){
-            std::string title{(IsUserAnAdmin())?("Admin"):("User")};
-            title="["+title+"] CRCSN";
-            SetConsoleTitleA(title.c_str());
+            SetConsoleTitle("CRCSN");
             if(!ctrls){
                 SetWindowLongPtrA(GetConsoleWindow(),GWL_STYLE,GetWindowLongPtrA(GetConsoleWindow(),GWL_STYLE)&~WS_SIZEBOX&~WS_MAXIMIZEBOX&~WS_MINIMIZEBOX);
             }
-            system("mode con cols=50 lines=30");
+            system("mode con cols=50 lines=25");
             SetLayeredWindowAttributes(GetForegroundWindow(),0,((alpha)?(204):(255)),LWA_ALPHA);
             system("chcp 936");
         }
@@ -112,7 +110,7 @@ namespace CRCSN{
     }
     bool Cmd(Parameter){
         system("cls & cd C:\\ & cmd");
-        CRCSN::General::Init(Opt.wndCtrls,Opt.wndAlpha);
+        CRCSN::General::Init(Opt.ctrls,Opt.alphaWnd);
         return false;
     }
 }
