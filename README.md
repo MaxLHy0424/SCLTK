@@ -55,10 +55,10 @@ set bin="msvcrt"
 
 使用示例:
 ```batch
-.\bin\%branch%-%arch%-%bin%.exe -Wa
+.\bin\CRCSN-%arch%-%bin%.exe -Wa
 ```
 ```batch
-.\bin\%branch%-%arch%-%bin%.exe -Wacf
+.\bin\CRCSN-%arch%-%bin%.exe -Wacf
 ```
 
 ## 1 破解
