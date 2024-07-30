@@ -35,9 +35,9 @@ int main(int argc,char* argv[]){
             }
         }
     BEGIN:
-        CRCSN::General::Init(CRCSN::Opt.ctrls,CRCSN::Opt.alphaWnd);
+        CRCSN::Init(CRCSN::Opt.ctrls,CRCSN::Opt.alphaWnd);
         if(CRCSN::Opt.frontShow){
-            std::thread(CRCSN::General::FrontShow).detach();
+            std::thread(CRCSN::FrontShow).detach();
         }
     }
     UI.Push("   | Computer Room Control Software Nemesis |");
