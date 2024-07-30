@@ -30,7 +30,11 @@ namespace CRCSN{
         };
     }Rule;
     void Init(bool ctrls,bool alpha){
-        SetConsoleTitle("CRCSN");
+        #if EvaluateCopy
+            SetConsoleTitle("[评估副本] CRCSN");
+        #else
+            SetConsoleTitle("CRCSN");
+        #endif
         if(!ctrls){
             SetWindowLongPtrA(GetConsoleWindow(),GWL_STYLE,GetWindowLongPtrA(GetConsoleWindow(),GWL_STYLE)&~WS_SIZEBOX&~WS_MAXIMIZEBOX&~WS_MINIMIZEBOX);
         }
