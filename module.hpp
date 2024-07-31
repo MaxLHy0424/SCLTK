@@ -112,7 +112,7 @@ namespace CRCSN{
         }
     }
     bool Cmd(Parameter){
-        system("cls & cd C:\\ & cmd");
+        system("cls & cd %UserProfile% & cmd");
         Init(Opt.ctrls,Opt.alphaWnd);
         return false;
     }
