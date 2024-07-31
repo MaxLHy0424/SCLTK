@@ -11,6 +11,7 @@
                 "-Wall",
                 "-Wextra",
                 "-pipe",
+                "-O0",
                 "-g3",
                 "-o",
                 "\"${fileDirname}\\bin\\${fileBasenameNoExtension}.debug.exe\"",
