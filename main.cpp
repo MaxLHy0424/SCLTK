@@ -1,6 +1,5 @@
 #include"ld.hpp"
 #include"ui.hpp"
-Menu UI;
 #include"module.hpp"
 int main(int argc,char* argv[]){
     bool errOpt{};
@@ -41,7 +40,7 @@ int main(int argc,char* argv[]){
         }
     }
     UI.Push("   | Computer Room Control Software Nemesis |");
-    UI.Push("                     24w32a");
+    UI.Push("                     24w32b");
     UI.Push("      https://github.com/MaxLHy0424/CRCSN");
     UI.Push("    (C) 2023 MaxLHy0424. All Rights Reserved.\n");
     if(errOpt){
@@ -50,14 +49,18 @@ int main(int argc,char* argv[]){
     UI.Push(" > 退出 ",Exit);
     UI.Push(" > 命令提示符 ",CRCSN::Cmd);
     UI.Push("\n[ 破 解 ]\n");
-    UI.Push(" > 极域电子教室 ",CRCSN::Crack::Mythware);
-    UI.Push(" > 联想云教室 ",CRCSN::Crack::Lenovo);
+    if(IsUserAnAdmin()){
+        UI.Push(" > 极域电子教室 ",CRCSN::Crack::Mythware);
+        UI.Push(" > 联想云教室 ",CRCSN::Crack::Lenovo);
+    }else{
+        UI.Push(" (i) 需要管理员权限.");
+    }
     UI.Push("\n[ 恢 复 ]\n");
     if(IsUserAnAdmin()){
         UI.Push(" > 极域电子教室 ",CRCSN::Recovery::Mythware);
         UI.Push(" > 联想云教室 ",CRCSN::Recovery::Lenovo);
     }else{
-        UI.Push(" (i) 需要 Admin 权限.");
+        UI.Push(" (i) 需要管理员权限.");
     }
     UI.Show();
     return 0;
