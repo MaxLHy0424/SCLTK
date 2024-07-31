@@ -65,15 +65,13 @@ namespace CRCSN{
                 cmd="taskKill /f /im "+exe[i]+".exe";
                 system(cmd.c_str());
             }
-            if(IsUserAnAdmin()){
-                for(uint16_t i{};i<n;++i){
-                    cmd="reg add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\"+exe[i]+".exe\" /f /t reg_sz /v debugger /d ?";
-                    system(cmd.c_str());
-                }
-                for(uint16_t i{};i<m;++i){
-                    cmd="net stop "+svc[i]+" /y";
-                    system(cmd.c_str());
-                }
+            for(uint16_t i{};i<n;++i){
+                cmd="reg add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\"+exe[i]+".exe\" /f /t reg_sz /v debugger /d ?";
+                system(cmd.c_str());
+            }
+            for(uint16_t i{};i<m;++i){
+                cmd="net stop "+svc[i]+" /y";
+                system(cmd.c_str());
             }
             system("cls");
             return;
