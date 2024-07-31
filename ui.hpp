@@ -82,7 +82,7 @@ struct Text{
     Text():text(""),color(Color(0,0)),position({0,0}),function(nullptr){}
     Text(std::string text,Color color,callback function):text(text),color(color),position({0,0}),function(function){}
     bool operator==(const COORD&mousePosition)const{
-        return ((!(position.Y^mousePosition.Y)&&(position.X<=mousePosition.X)&&(mousePosition.X<(position.X+(short)text.length())))?(true):(false));
+        return (((!(position.Y^mousePosition.Y))&&(position.X<=mousePosition.X)&&(mousePosition.X<(position.X+(short)text.length())))?(true):(false));
     }
     bool operator!=(const COORD&mousePosition)const{
         return !operator==(mousePosition);
@@ -204,9 +204,8 @@ class Menu{
             ClearScreen();
             Sleep(100UL);
         }
-};
-bool _Exit(Parameter){
+}UI;
+bool Exit(Parameter){
     return true;
 }
-#define Exit _Exit
 #endif
