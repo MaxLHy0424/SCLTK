@@ -24,14 +24,14 @@
 
 找到:
 ```batch
-set runtime="msvcrt"
+set runtime=msvcrt
 ```
 
-软件编译版本如下:
- - `msvcrt`(默认): 使用 MSYS2 的`mingw-w64-x86_64-toolchain`编译, Runtime 已过时, 支持大部分 Windows OS.
- - `ucrt`(推荐): 使用 MSYS2 的`mingw-w64-ucrt-x86_64-toolchain`编译, Runtime 受支持, 支持 Windows 10 以上的 Windows OS (部分 Windows OS 在安装最新补丁后支持运行).
+软件支持的 Runtime 如下:
+ - `msvcrt`(默认): 使用 *MSYS2* `mingw-w64-x86_64-toolchain`编译, Runtime 为老旧的 *Microsoft Visual C Runtime*, 支持大部分 Windows OS.
+ - `ucrt`(推荐): 使用 *MSYS2* `mingw-w64-ucrt-x86_64-toolchain`编译,  Runtime 为新式的 *Universal C Runtime*, 支持 Windows 10 以上的 Windows OS (部分 Windows OS 在安装最新补丁后支持运行).
 
-根据上述内容, 选择需要版本的对应字符串填入引号内即可.
+根据上述内容, 选择需要版本的对应字符串替换即可.
 
 ### 1.2 窗口操作
 
@@ -40,17 +40,21 @@ set runtime="msvcrt"
 窗口操作的主参数为`-W`, 附加参数如下:
  - `f`: 置顶窗口并每间隔 100ms 将窗口设为焦点.
  - `c`: 启用窗口控件, 允许缩放窗口 (可能导致意外行为);
- - `a`: 将窗口不透明度设为 80% (仅支持使用新版控制台的 Windows OS, 如 Windows 10);
+ - `a`: 将窗口不透明度设为 80% (仅支持使用新版控制台的 Windows OS, 例如 Windows 10);
 
 附加参数的顺序不影响应用效果.
 
 使用示例:
 ```batch
-.\bin\CRCSN-%arch%-%runtime%.exe -Wa
+.\bin\%branch%-%arch%-%runtime%.exe -Wa
 ```
 ```batch
-.\bin\CRCSN-%arch%-%runtime%.exe -Wfac
+.\bin\%branch%-%arch%-%runtime%.exe -Wfac
 ```
+
+## 1.3 自定义启动脚本
+
+软件启动脚本属于 Windows 命令脚本, 可以根据需要修改启动脚本.
 
 ## 2 功能使用及说明
 
@@ -76,20 +80,13 @@ set runtime="msvcrt"
 
 ## 2 软件无法在 x86 或 arm64 架构的 Windows OS 中使用.
 
-受限于开发环境, 编译的二进制文件架构仅支持 x86_64 架构.
+受限于开发工具链, 编译的二进制文件架构仅支持 x86_64 架构.
 
 ## 3 破解后一些软件运行时提示 "找不到文件" 之类的错误, 而运行的软件并没有损坏.
 
 在不影响软件正常运行的情况下, 可以给软件文件修改一个名称, 再试试. 或者打开注册表编辑器, 定位到`HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\`, 找到和要运行的软件的文件名称相同的项, 删除即可.
 
-# 贡献代码
+# 鸣谢
 
-**欢迎各位贡献代码!** 所有贡献者将会在下方列出, 以示感谢. 但务必遵守以下规则:
-- 提交代码请创建拉取请求, 不要直接提交;
-- 修改`README.md`时, 注意语句通顺, 不要有错误内容;
-- 提交的代码的风格请与项目保持统一, 尽可能提升运行效率, 同时可通过最新 MinGW-w64 GNU GCC (MSYS2: mingw-w64-ucrt-x86_64-toolchain mingw-w64-x86_64-toolchain) 编译, 并且不附带警告.
-
-## 鸣谢
-
-- Bilibili 用户[lateworker_晚工](https://space.bilibili.com/39337803)提供 ConsoleUI 代码 (详见[此处](https://www.bilibili.com/video/BV1X14y1n7S4/), 软件有修改之处);
+- Bilibili 用户[lateworker_晚工](https://space.bilibili.com/39337803)提供 Console UI 代码 (详见[此处](https://www.bilibili.com/video/BV1X14y1n7S4/), 软件有修改之处);
 - Bilibili 用户[痕继痕迹](https://space.bilibili.com/39337803)指导软件 UI 设计.
