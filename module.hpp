@@ -29,7 +29,7 @@ namespace CRCSN{
             }
         };
     }Rule;
-    void Init(bool ctrls,bool alpha){
+    auto Init(bool ctrls,bool alpha){
         system("chcp 936");
         #if EvaluateCopy
             SetConsoleTitle("[评估副本] CRCSN");
@@ -43,7 +43,7 @@ namespace CRCSN{
         SetLayeredWindowAttributes(GetForegroundWindow(),0,((alpha)?(204):(255)),LWA_ALPHA);
         return;
     }
-    void FrontShow(){
+    auto FrontShow(){
         HWND foreWnd{GetForegroundWindow()};
         DWORD foreId{GetWindowThreadProcessId(foreWnd,NULL)},curId{GetCurrentThreadId()};
         while(true){
@@ -58,7 +58,7 @@ namespace CRCSN{
         }
     }
     namespace Crack{
-        void Core(std::string* exe,uint16_t n,std::string* svc,uint16_t m){
+        auto Core(std::string* exe,uint16_t n,std::string* svc,uint16_t m){
             system("cls");
             std::string cmd;
             for(uint16_t i{};i<n;++i){
@@ -76,17 +76,17 @@ namespace CRCSN{
             system("cls");
             return;
         }
-        bool Mythware(Parameter){
+        auto Mythware(Parameter){
             Core(Rule.Mythware.exe,9,Rule.Mythware.svc,3);
             return false;
         }
-        bool Lenovo(Parameter){
+        auto Lenovo(Parameter){
             Core(Rule.Lenovo.exe,18,Rule.Lenovo.svc,3);
             return false;
         }
     };
     namespace Recovery{
-        void Core(std::string* exe,uint16_t n,std::string* svc,uint16_t m){
+        auto Core(std::string* exe,uint16_t n,std::string* svc,uint16_t m){
             system("cls");
             std::string cmd;
             for(uint16_t i{};i<n;++i){
@@ -100,16 +100,16 @@ namespace CRCSN{
             system("cls");
             return;
         }
-        bool Mythware(Parameter){
+        auto Mythware(Parameter){
             Core(Rule.Mythware.exe,9U,Rule.Mythware.svc,3U);
             return false;
         }
-        bool Lenovo(Parameter){
+        auto Lenovo(Parameter){
             Core(Rule.Lenovo.exe,18U,Rule.Lenovo.svc,3U);
             return false;
         }
     }
-    bool Cmd(Parameter){
+    auto Cmd(Parameter){
         system("cls & cd %UserProfile% & cmd");
         Init(Opt.ctrls,Opt.alphaWnd);
         return false;

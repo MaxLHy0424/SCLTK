@@ -1,7 +1,7 @@
 #include"ld.hpp"
 #include"ui.hpp"
 #include"module.hpp"
-int main(int argc,char* argv[]){
+auto main(int argc,char* argv[])->int{
     bool errOpt{};
     {
         std::string tmp;

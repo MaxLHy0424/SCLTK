@@ -1,43 +1,43 @@
 #ifndef MENU_HPP
 #define MENU_HP
-void HideCursor(){
+auto HideCursor(){
     CONSOLE_CURSOR_INFO CursorInfo;
     GetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&CursorInfo);
     CursorInfo.bVisible=false;
     SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&CursorInfo);
     return;
 }
-void ShowCursor(){
+auto ShowCursor(){
     CONSOLE_CURSOR_INFO CursorInfo;
     GetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&CursorInfo);
     CursorInfo.bVisible=true;
     SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&CursorInfo);
     return;
 }
-void RemoveAttributes(){
+auto RemoveAttributes(){
     DWORD mode;
     GetConsoleMode(GetStdHandle(STD_INPUT_HANDLE),&mode);
     mode&=~ENABLE_QUICK_EDIT_MODE,mode&=~ENABLE_INSERT_MODE,mode|=ENABLE_MOUSE_INPUT;
     SetConsoleMode(GetStdHandle(STD_INPUT_HANDLE),mode);
     return;
 }
-void AddAttributes(){
+auto AddAttributes(){
     DWORD mode;
     GetConsoleMode(GetStdHandle(STD_INPUT_HANDLE),&mode);
     mode|=ENABLE_QUICK_EDIT_MODE,mode|=ENABLE_INSERT_MODE,mode|=ENABLE_MOUSE_INPUT;
     SetConsoleMode(GetStdHandle(STD_INPUT_HANDLE),mode);
     return;
 }
-COORD GetCursorPos(){
+auto GetCursorPos()->COORD{
     CONSOLE_SCREEN_BUFFER_INFO tmp;
     GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE),&tmp);
     return tmp.dwCursorPosition;
 }
-void SetCursor(const COORD& tmp={0,0}){
+auto SetCursor(const COORD& tmp={0,0}){
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE),tmp);
     return;
 }
-MOUSE_EVENT_RECORD WaitMouseEvent(bool move=true){
+auto WaitMouseEvent(bool move=true)->MOUSE_EVENT_RECORD{
     INPUT_RECORD record;
     DWORD reg;
     while(true){
@@ -55,12 +55,12 @@ struct Color{
     short def,highlight,lastColor;
     Color():def(BlackWhite),highlight(BlackBlue),lastColor(BlackWhite){}
     Color(short def=BlackWhite,short highlight=BlackBlue):def(def),highlight(highlight),lastColor(BlackWhite){}
-    void SetDef(){
+    auto SetDef(){
         SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),def);
         lastColor=def;
         return;
     }
-    void SetHighlight(){
+    auto SetHighlight(){
         SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),highlight);
         lastColor=highlight;
         return;
@@ -101,14 +101,14 @@ class Menu{
         short height,width;
         std::vector<Text>lineData;
     protected:
-        void GetConsoleSize(){
+        auto GetConsoleSize(){
             CONSOLE_SCREEN_BUFFER_INFO tmp;
             GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE),&tmp);
             height=tmp.dwSize.Y;
             width=tmp.dwSize.X;
             return;
         }
-        void ClearScreen(){
+        auto ClearScreen(){
             GetConsoleSize();
             SetCursor({0,0});
             for(short i{};i<height;++i){
@@ -119,14 +119,14 @@ class Menu{
             SetCursor({0,0});
             return;
         }
-        void Write(std::string text,bool isEndl=false){
+        auto Write(std::string text,bool isEndl=false){
             printf("%s",text.c_str());
             if(isEndl){
                 printf("\n");
             }
             return;
         }
-        void Rewrite(Text data){
+        auto Rewrite(Text data){
             SetCursor({0,data.position.Y});
             for(short j{};j<data.position.X;++j){
                 Write(" ");
@@ -136,7 +136,7 @@ class Menu{
             SetCursor({0,data.position.Y});
             return;
         }
-        void InitPosition(){
+        auto InitPosition(){
             ClearScreen();
             for(auto &data:lineData){
                 data.position=GetCursorPos();
@@ -145,7 +145,7 @@ class Menu{
             }
             return;
         }
-        void Refresh(COORD hangPosition){
+        auto Refresh(COORD hangPosition){
             for(auto &data:lineData){
                 if((data==hangPosition)&&(data.color.lastColor!=data.color.highlight)){
                     data.color.SetHighlight();
@@ -158,7 +158,7 @@ class Menu{
             }
             return;
         }
-        bool Implement(MOUSE_EVENT_RECORD mouseEvent){
+        auto Implement(MOUSE_EVENT_RECORD mouseEvent){
             bool isExit{};
             for(auto& data:lineData){
                 if(data==mouseEvent.dwMousePosition){
@@ -180,19 +180,19 @@ class Menu{
     public:
         Menu():sleepTime(50UL),height(0),width(0){}
         ~Menu(){}
-        Menu& Push(std::string text="",callback function=nullptr,short colorHighlight=BlackBlue,short colorDef=BlackWhite){
+        auto Push(std::string text="",callback function=nullptr,short colorHighlight=BlackBlue,short colorDef=BlackWhite)->Menu&{
             lineData.push_back(Text(text,Color(colorDef,((function==nullptr)?(colorDef):(colorHighlight))),function));
             return *this;
         }
-        Menu& Pop(){
+        auto Pop()->Menu&{
             lineData.pop_back();
             return *this;
         }
-        Menu& Clear(){
+        auto Clear()->Menu&{
             lineData.clear();
             return *this;
         }
-        void Show(){
+        auto Show(){
             RemoveAttributes();
             HideCursor();
             MOUSE_EVENT_RECORD mouseEvent;
@@ -219,7 +219,7 @@ class Menu{
             return;
         }
 }UI;
-bool Exit(Parameter){
+auto Exit(Parameter){
     return true;
 }
 #endif
