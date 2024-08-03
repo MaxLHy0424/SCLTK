@@ -10,7 +10,7 @@ auto main(int argc,char* argv[])->int{
         }
         for(int i{1};i<argc;++i){
             tmp=argv[i];
-            if((tmp.size()>2UL)&&(tmp.substr(0,2)=="-W")){
+            if((tmp.size()>2ULL)&&(tmp.substr(0,2)=="-W")){
                 for(uint64_t j{2};j<tmp.size();++j){
                     switch(tmp[j]){
                         case 'c':{
