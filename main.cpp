@@ -40,7 +40,7 @@ auto main(int argc,char* argv[])->int{
         }
     }
     UI.Push("   | Computer Room Control Software Nemesis |");
-    UI.Push("                     24w32b");
+    UI.Push("                     24w32c");
     UI.Push("      https://github.com/MaxLHy0424/CRCSN");
     UI.Push("    (C) 2023 MaxLHy0424. All Rights Reserved.\n");
     if(errOpt){
