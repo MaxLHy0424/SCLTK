@@ -1,7 +1,7 @@
 namespace CRCSN{
     struct Opt{
         bool ctrls,frontShow,alphaWnd;
-    }Opt;
+    }Opt{};
     struct Rule{
         struct Mythware{
             std::string exe[9],svc[3];
