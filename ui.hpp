@@ -25,12 +25,12 @@ auto AddAttributes(){
     SetConsoleMode(GetStdHandle(STD_INPUT_HANDLE),mode);
 }
 auto GetCursorPos()->COORD{
-    CONSOLE_SCREEN_BUFFER_INFO tmp;
-    GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE),&tmp);
-    return tmp.dwCursorPosition;
+    CONSOLE_SCREEN_BUFFER_INFO t;
+    GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE),&t);
+    return t.dwCursorPosition;
 }
-auto SetCursor(const COORD& tmp={0,0}){
-    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE),tmp);
+auto SetCursor(const COORD& t={0,0}){
+    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE),t);
 }
 auto WaitMouseEvent(bool move=true)->MOUSE_EVENT_RECORD{
     INPUT_RECORD record;
@@ -95,10 +95,10 @@ class Menu{
         std::vector<Text>lineData;
     protected:
         auto GetConsoleSize(){
-            CONSOLE_SCREEN_BUFFER_INFO tmp;
-            GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE),&tmp);
-            height=tmp.dwSize.Y;
-            width=tmp.dwSize.X;
+            CONSOLE_SCREEN_BUFFER_INFO t;
+            GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE),&t);
+            height=t.dwSize.Y;
+            width=t.dwSize.X;
         }
         auto ClearScreen(){
             GetConsoleSize();

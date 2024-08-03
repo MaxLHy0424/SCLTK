@@ -4,15 +4,15 @@
 auto main(int argc,char* argv[])->int{
     bool errOpt{};
     {
-        std::string tmp;
+        std::string t;
         if(!(argc^1)){
             goto BEGIN;
         }
         for(int i{1};i<argc;++i){
-            tmp=argv[i];
-            if((tmp.size()>2ULL)&&(tmp.substr(0,2)=="-W")){
-                for(uint64_t j{2};j<tmp.size();++j){
-                    switch(tmp[j]){
+            t=argv[i];
+            if((t.size()>2ULL)&&(t.substr(0,2)=="-W")){
+                for(uint64_t j{2};j<t.size();++j){
+                    switch(t[j]){
                         case 'c':{
                             CRCSN::Opt.ctrls=true;
                             break;
