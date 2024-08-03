@@ -41,7 +41,6 @@ namespace CRCSN{
         }
         system("mode con cols=50 lines=25");
         SetLayeredWindowAttributes(GetForegroundWindow(),0,((alpha)?(204):(255)),LWA_ALPHA);
-        return;
     }
     auto FrontShow(){
         HWND foreWnd{GetForegroundWindow()};
@@ -74,7 +73,6 @@ namespace CRCSN{
                 system(cmd.c_str());
             }
             system("cls");
-            return;
         }
         auto Mythware(Parameter){
             Core(Rule.Mythware.exe,9,Rule.Mythware.svc,3);
@@ -98,7 +96,6 @@ namespace CRCSN{
                 system(cmd.c_str());
             }
             system("cls");
-            return;
         }
         auto Mythware(Parameter){
             Core(Rule.Mythware.exe,9U,Rule.Mythware.svc,3U);
