@@ -75,11 +75,11 @@ namespace CRCSN{
             system("cls");
         }
         auto Mythware(Parameter){
-            Core(Rule.Mythware.exe,9,Rule.Mythware.svc,3);
+            Core(Rule.Mythware.exe,9U,Rule.Mythware.svc,3U);
             return false;
         }
         auto Lenovo(Parameter){
-            Core(Rule.Lenovo.exe,18,Rule.Lenovo.svc,3);
+            Core(Rule.Lenovo.exe,18U,Rule.Lenovo.svc,3U);
             return false;
         }
     };
