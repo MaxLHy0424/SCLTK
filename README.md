@@ -35,7 +35,12 @@ set runtime=msvcrt
 
 ### 1.2 窗口操作
 
-> 此项参数区分大小写.
+> 此参数区分大小写.
+
+找到:
+```batch
+set argv=
+```
 
 窗口操作的主参数为`-W`, 附加参数如下:
  - `f`: 置顶窗口并每间隔 100ms 将窗口设为焦点.
@@ -46,10 +51,10 @@ set runtime=msvcrt
 
 使用示例:
 ```batch
-.\bin\%branch%-%arch%-%runtime%.exe -Wa
+set argv=-Wa
 ```
 ```batch
-.\bin\%branch%-%arch%-%runtime%.exe -Wfac
+set argv=-Wfac
 ```
 
 ## 1.3 自定义启动脚本
