@@ -3,12 +3,12 @@ chcp 65001
 cd /d "%~dp0"
 %1
 mode con cols=50 lines=25
-set evaluateCopy=true
 set branch=dev
 set arch=x86_64
 set runtime=msvcrt
 set argv=
-if "%evaluateCopy%"=="true" (
+set EVALUATE_COPY=true
+if "%EVALUATE_COPY%"=="true" (
     title [评估副本] CRCSN Launcher
 ) else (
     title CRCSN Launcher
