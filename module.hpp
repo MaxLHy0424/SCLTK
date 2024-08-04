@@ -64,7 +64,7 @@ namespace CRCSN{
         return false;
     }
     namespace Crack{
-        auto Core(std::string* exe,uint16_t n,std::string* svc,uint16_t m){
+        auto Base(std::string* exe,uint16_t n,std::string* svc,uint16_t m){
             system("cls");
             std::string cmd;
             for(uint16_t i{};i<n;++i){
@@ -82,16 +82,16 @@ namespace CRCSN{
             system("cls");
         }
         auto Mythware(Parameter){
-            Core(Rule.Mythware.exe,9U,Rule.Mythware.svc,3U);
+            Base(Rule.Mythware.exe,9U,Rule.Mythware.svc,3U);
             return false;
         }
         auto Lenovo(Parameter){
-            Core(Rule.Lenovo.exe,18U,Rule.Lenovo.svc,3U);
+            Base(Rule.Lenovo.exe,18U,Rule.Lenovo.svc,3U);
             return false;
         }
     };
     namespace Recovery{
-        auto Core(std::string* exe,uint16_t n,std::string* svc,uint16_t m){
+        auto Base(std::string* exe,uint16_t n,std::string* svc,uint16_t m){
             system("cls");
             std::string cmd;
             for(uint16_t i{};i<n;++i){
@@ -105,11 +105,11 @@ namespace CRCSN{
             system("cls");
         }
         auto Mythware(Parameter){
-            Core(Rule.Mythware.exe,9U,Rule.Mythware.svc,3U);
+            Base(Rule.Mythware.exe,9U,Rule.Mythware.svc,3U);
             return false;
         }
         auto Lenovo(Parameter){
-            Core(Rule.Lenovo.exe,18U,Rule.Lenovo.svc,3U);
+            Base(Rule.Lenovo.exe,18U,Rule.Lenovo.svc,3U);
             return false;
         }
     }
