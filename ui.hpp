@@ -36,7 +36,7 @@ auto WaitMouseEvent(bool move=true)->MOUSE_EVENT_RECORD{
     INPUT_RECORD record;
     DWORD reg;
     while(true){
-        Sleep(10UL);
+        Sleep(10ul);
         ReadConsoleInput(GetStdHandle(STD_INPUT_HANDLE),&record,1,&reg);
         if(!(record.EventType^MOUSE_EVENT)&&(move|(record.Event.MouseEvent.dwEventFlags!=MOUSE_MOVED))){
             return record.Event.MouseEvent;
@@ -69,9 +69,9 @@ class CUI;
 #define MouseWheel MOUSE_WHEELED
 struct Parameter{
     DWORD buttonState,controlKeyState,eventFlag;
-    CUI* cui;
-    Parameter():buttonState(MouseLeftButton),controlKeyState(0UL),eventFlag(0UL),cui(nullptr){}
-    Parameter(MOUSE_EVENT_RECORD mouseEvent,CUI* cui):buttonState(mouseEvent.dwButtonState),controlKeyState(mouseEvent.dwControlKeyState),eventFlag(mouseEvent.dwEventFlags),cui(cui){}
+    CUI* ui;
+    Parameter():buttonState(MouseLeftButton),controlKeyState(0ul),eventFlag(0ul),ui(nullptr){}
+    Parameter(MOUSE_EVENT_RECORD mouseEvent,CUI* ui):buttonState(mouseEvent.dwButtonState),controlKeyState(mouseEvent.dwControlKeyState),eventFlag(mouseEvent.dwEventFlags),ui(ui){}
 };
 typedef bool(*callback)(Parameter);
 struct Text{
@@ -165,7 +165,7 @@ class CUI{
             return isExit;
         }
     public:
-        CUI():sleepTime(50UL),height(0),width(0){}
+        CUI():sleepTime(50ul),height(0),width(0){}
         ~CUI(){}
         auto Push(std::string text="",callback function=nullptr,short colorHighlight=BlackBlue,short colorDef=BlackWhite)->CUI&{
             lineData.push_back(Text(text,Color(colorDef,((function==nullptr)?(colorDef):(colorHighlight))),function));
@@ -183,7 +183,7 @@ class CUI{
             RemoveAttributes();
             HideCursor();
             MOUSE_EVENT_RECORD mouseEvent;
-            Sleep(100UL);
+            Sleep(100ul);
             InitPosition();
             bool isExit{};
             while(!isExit){
@@ -202,7 +202,7 @@ class CUI{
                 }
             }
             ClearScreen();
-            Sleep(100UL);
+            Sleep(100ul);
         }
 }UI;
 auto Exit(Parameter){
