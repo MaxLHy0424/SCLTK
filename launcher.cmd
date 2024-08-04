@@ -1,19 +1,18 @@
 @echo off
 chcp 65001
-cd /d "%~dp0"
-%1
-mode con cols=50 lines=25
 set EVALUATE_COPY=true
+if "%EVALUATE_COPY%"=="true" (
+    title [评估副本] CRCSN Launcher
+) else (
+    title CRCSN Launcher
+)
+mode con cols=50 lines=25
 set branch=dev
 set arch=x86_64
 set runtime=msvcrt
 set argv=
-if "%EVALUATE_COPY%"=="true" (
-    title [评估副本] CRCSN Launcher
-) ^
-else (
-    title CRCSN Launcher
-)
+cd /d "%~dp0"
+%1
 echo                  CRCSN Launcher
 echo                  v2.0.0-beta.1
 echo     (C) 2023 MaxLHy0424. All Rights Reserved.
