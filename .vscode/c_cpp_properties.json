@@ -13,10 +13,15 @@
             "compilerPath":"C:\\Software\\MSYS2\\ucrt64\\bin\\g++.exe",
             "compilerArgs":[
                 "-fexec-charset=GBK",
-                "-lm",
+                "-std=gnu++23",
+                "-Wall",
+                "-Wextra",
+                "-pipe",
+                "-DNDEBUG",
                 "-static",
                 "-Ofast",
-                "-Os"
+                "-Os",
+                "-flto"
             ],
             "intelliSenseMode":"windows-gcc-x64",
             "cStandard":"c23",
