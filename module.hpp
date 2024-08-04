@@ -41,7 +41,7 @@ namespace CRCSN{
         if(!ctrls){
             SetWindowLongPtr(GetConsoleWindow(),GWL_STYLE,GetWindowLongPtrA(GetConsoleWindow(),GWL_STYLE)&~WS_SIZEBOX&~WS_MAXIMIZEBOX&~WS_MINIMIZEBOX);
         }
-        system("mode con cols=50 lines=25");
+        system("mode con cols=50 lines=30");
         SetLayeredWindowAttributes(GetForegroundWindow(),0UL,((alpha)?(230U):(255U)),LWA_ALPHA);
     }
     auto FrontShow(){
