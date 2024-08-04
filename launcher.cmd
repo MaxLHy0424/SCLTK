@@ -6,7 +6,7 @@ if "%EVALUATE_COPY%"=="true" (
 ) else (
     title CRCSN Launcher
 )
-mode con cols=50 lines=25
+mode con cols=50 lines=30
 set branch=dev
 set arch=x86_64
 set runtime=msvcrt
