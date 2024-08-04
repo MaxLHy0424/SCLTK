@@ -10,7 +10,8 @@ set argv=
 set EVALUATE_COPY=true
 if "%EVALUATE_COPY%"=="true" (
     title [评估副本] CRCSN Launcher
-) else (
+) ^
+else (
     title CRCSN Launcher
 )
 echo                  CRCSN Launcher
