@@ -4,19 +4,19 @@
 
 # 获取
 
-- [GitHub Release (v5.0.0, 即将推出)](https://github.com/MaxLHy0424/CRCSN/releases/download/v5.0.0/CRCSN-v5.0.0.7z)
-- [GitHub Release (v4.10.7)](https://github.com/MaxLHy0424/CRCSN/releases/download/v4.10.7/CRCSN_v4-10-7_x64.7z)
-- [中国大陆镜像站点](https://www.123pan.com/s/UzthTd-MkTRh.html)
+- [GitHub Repository Release (v5.0.0-beta.1)](https://github.com/MaxLHy0424/CRCSN/releases/download/v5.0.0-beta.1/CRCSN-v5.0.0-beta.1.7z)
+- [GitHub Repository Release (v4.10.7)](https://github.com/MaxLHy0424/CRCSN/releases/download/v4.10.7/CRCSN_v4-10-7_x64.7z)
+- [中国大陆云盘镜像站点](https://www.123pan.com/s/UzthTd-MkTRh.html)
 
 # 使用指南
 
-***CRCSN* 涉及到修改注册表等操作, 使用时建议关闭防病毒软件. 若 *CRCSN* 被报为恶意软件, 请添加排除项.**
+**CRCSN 涉及到修改注册表等操作, 使用时建议关闭防病毒软件. 若 CRCSN 被报为恶意软件, 请添加排除项.**
 
-> 仅适用于 *CRCSN* v5.0.0.
+> 适用于 CRCSN v5.0.0-beta.1.
 
 ## 1 启动
 
-一般情况下, 运行`launcher.cmd`即可启动 *CRCSN*.
+一般情况下, 运行`launcher.cmd`即可启动 CRCSN.
 
 如果默认的启动方式不满足您的需求, 可以根据下文修改.
 
@@ -28,8 +28,8 @@ set runtime=msvcrt
 ```
 
 软件支持的 Runtime 如下:
- - `msvcrt`(默认): 使用 *MSYS2* `mingw-w64-x86_64-toolchain`编译, Runtime 为老旧的 *Microsoft Visual C Runtime*, 支持大部分 *Windows OS*.
- - `ucrt`(推荐): 使用 *MSYS2* `mingw-w64-ucrt-x86_64-toolchain`编译,  Runtime 为新式的 *Universal C Runtime*, 支持 *Windows 10* 以上的 *Windows OS* (部分 *Windows OS* 在安装最新补丁后支持运行).
+ - `msvcrt`(默认): 使用 *MSYS2* `mingw-w64-x86_64-toolchain`编译, Runtime 为老旧的 *Microsoft Visual C Runtime*, 支持大部分 Windows OS.
+ - `ucrt`(推荐): 使用 *MSYS2* `mingw-w64-ucrt-x86_64-toolchain`编译,  Runtime 为新式的 *Universal C Runtime*, 支持 Windows 10 以上的 Windows OS (部分 Windows OS 在安装最新补丁后支持运行).
 
 根据上述内容, 选择需要版本的对应字符串替换即可.
 
@@ -45,7 +45,7 @@ set argv=
 窗口操作的主参数为`-W`, 附加参数如下:
  - `f`: 置顶窗口并每间隔 100ms 将窗口设为焦点.
  - `c`: 启用窗口控件, 允许缩放窗口 (可能导致意外行为);
- - `a`: 将窗口不透明度设为 90% (仅支持使用新版控制台的 *Windows OS*, 例如 *Windows 10*);
+ - `a`: 将窗口不透明度设为 90% (仅支持新版控制台);
 
 附加参数的顺序不影响应用效果.
 
@@ -59,7 +59,7 @@ set argv=-Wfac
 
 ## 1.3 自定义启动脚本
 
-软件启动脚本属于 *Windows OS* 命令脚本, 可以根据需要修改启动脚本.
+软件启动脚本属于 Windows OS 命令脚本, 可以根据需要修改启动脚本.
 
 ## 2 功能使用及说明
 
@@ -83,9 +83,9 @@ set argv=-Wfac
 
 可以运行注册表编辑器, 定位到`HKEY_CURRENT_USER\Software\Policies\Microsoft\Windows\System`下, 看看有没有一个叫`DisableCMD`的值, 有的话就删掉, 再试试.
 
-## 2 软件无法在 *x86* 或 *arm64* 架构的 *Windows OS* 中使用.
+## 2 软件无法在 x86 或 arm64 架构的 Windows OS 中使用.
 
-受限于开发工具链, 编译的二进制文件架构仅支持 *x86_64* 架构.
+受限于开发工具链, 编译的二进制文件架构仅支持 x86_64 架构.
 
 ## 3 破解后一些软件运行时提示 "找不到文件" 之类的错误, 而运行的软件并没有损坏.
 
