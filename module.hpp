@@ -33,7 +33,7 @@ namespace CRCSN{
     };
     auto Init(bool ctrls,bool alpha){
         system("chcp 936");
-        #if EvaluateCopy
+        #if EVALUATE_COPY
             SetConsoleTitle("[评估副本] CRCSN");
         #else
             SetConsoleTitle("CRCSN");
