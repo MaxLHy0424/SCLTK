@@ -5,7 +5,12 @@ namespace CRCSN{
     struct Rule{
         struct Mythware{
             std::string exe[9],svc[3];
-        }Mythware{
+        }Mythware;
+        struct Lenovo{
+            std::string exe[18],svc[3];
+        }Lenovo;
+    }Rule{
+        {
             {
                 "StudentMain","DispcapHelper","VRCwPlayer",
                 "InstHelpApp","InstHelpApp64","TDOvrSet",
@@ -13,10 +18,7 @@ namespace CRCSN{
             },{
                 "STUDSRV","TDNetFilter","TDFileFilter"
             }
-        };
-        struct Lenovo{
-            std::string exe[18],svc[3];
-        }Lenovo{
+        },{
             {
                 "vncviewer","tvnserver32","WfbsPnpInstall",
                 "WFBSMon","WFBSMlogon","WFBSSvrLogShow",
@@ -27,8 +29,8 @@ namespace CRCSN{
             },{
                 "BSAgentSvr","tvnserver","WFBSMlogon"
             }
-        };
-    }Rule;
+        }
+    };
     auto Init(bool ctrls,bool alpha){
         system("chcp 936");
         #if EvaluateCopy
@@ -55,6 +57,11 @@ namespace CRCSN{
             SetWindowPos(foreWnd,HWND_TOPMOST,0,0,100,100,SWP_NOMOVE|SWP_NOSIZE);
             Sleep(100UL);
         }
+    }
+    auto Cmd(Parameter){
+        system("cls & cd %UserProfile% & cmd");
+        Init(Opt.ctrls,Opt.alphaWnd);
+        return false;
     }
     namespace Crack{
         auto Core(std::string* exe,uint16_t n,std::string* svc,uint16_t m){
@@ -105,10 +112,5 @@ namespace CRCSN{
             Core(Rule.Lenovo.exe,18U,Rule.Lenovo.svc,3U);
             return false;
         }
-    }
-    auto Cmd(Parameter){
-        system("cls & cd %UserProfile% & cmd");
-        Init(Opt.ctrls,Opt.alphaWnd);
-        return false;
     }
 }
