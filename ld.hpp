@@ -2,4 +2,4 @@
 #include<vector>
 #include<thread>
 #include<shlobj.h>
-#define EvaluateCopy true
+#define EVALUATE_COPY true

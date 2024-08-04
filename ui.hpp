@@ -59,7 +59,7 @@ struct Color{
         lastColor=highlight;
     }
 };
-class Menu;
+class CUI;
 #define MouseLeftButton FROM_LEFT_1ST_BUTTON_PRESSED
 #define MouseMiddleButton FROM_LEFT_2ND_BUTTON_PRESSED
 #define MouseRightButton RIGHTMOST_BUTTON_PRESSED
@@ -69,9 +69,9 @@ class Menu;
 #define MouseWheel MOUSE_WHEELED
 struct Parameter{
     DWORD buttonState,controlKeyState,eventFlag;
-    Menu* menu;
-    Parameter():buttonState(MouseLeftButton),controlKeyState(0UL),eventFlag(0UL),menu(nullptr){}
-    Parameter(MOUSE_EVENT_RECORD mouseEvent,Menu* menu):buttonState(mouseEvent.dwButtonState),controlKeyState(mouseEvent.dwControlKeyState),eventFlag(mouseEvent.dwEventFlags),menu(menu){}
+    CUI* cui;
+    Parameter():buttonState(MouseLeftButton),controlKeyState(0UL),eventFlag(0UL),cui(nullptr){}
+    Parameter(MOUSE_EVENT_RECORD mouseEvent,CUI* cui):buttonState(mouseEvent.dwButtonState),controlKeyState(mouseEvent.dwControlKeyState),eventFlag(mouseEvent.dwEventFlags),cui(cui){}
 };
 typedef bool(*callback)(Parameter);
 struct Text{
@@ -88,7 +88,7 @@ struct Text{
         return !operator==(mousePosition);
     }
 };
-class Menu{
+class CUI{
     private:
         DWORD sleepTime;
         short height,width;
@@ -165,17 +165,17 @@ class Menu{
             return isExit;
         }
     public:
-        Menu():sleepTime(50UL),height(0),width(0){}
-        ~Menu(){}
-        auto Push(std::string text="",callback function=nullptr,short colorHighlight=BlackBlue,short colorDef=BlackWhite)->Menu&{
+        CUI():sleepTime(50UL),height(0),width(0){}
+        ~CUI(){}
+        auto Push(std::string text="",callback function=nullptr,short colorHighlight=BlackBlue,short colorDef=BlackWhite)->CUI&{
             lineData.push_back(Text(text,Color(colorDef,((function==nullptr)?(colorDef):(colorHighlight))),function));
             return *this;
         }
-        auto Pop()->Menu&{
+        auto Pop()->CUI&{
             lineData.pop_back();
             return *this;
         }
-        auto Clear()->Menu&{
+        auto Clear()->CUI&{
             lineData.clear();
             return *this;
         }
