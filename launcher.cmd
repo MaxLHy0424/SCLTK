@@ -15,7 +15,7 @@ else (
     title CRCSN Launcher
 )
 echo                  CRCSN Launcher
-echo                      24w32d
+echo                  v2.0.0-beta.1
 echo     (C) 2023 MaxLHy0424. All Rights Reserved.
 echo.
 echo 按任意键启动 CRCSN (%branch%, %arch%, %runtime%)...
