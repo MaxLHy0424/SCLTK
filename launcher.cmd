@@ -3,7 +3,8 @@ chcp 65001
 set EVALUATE_COPY=true
 if "%EVALUATE_COPY%"=="true" (
     title [评估副本] CRCSN Launcher
-) else (
+) ^
+else (
     title CRCSN Launcher
 )
 mode con cols=50 lines=30
