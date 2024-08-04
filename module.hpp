@@ -42,7 +42,7 @@ namespace CRCSN{
             SetWindowLongPtr(GetConsoleWindow(),GWL_STYLE,GetWindowLongPtrA(GetConsoleWindow(),GWL_STYLE)&~WS_SIZEBOX&~WS_MAXIMIZEBOX&~WS_MINIMIZEBOX);
         }
         system("mode con cols=50 lines=30");
-        SetLayeredWindowAttributes(GetForegroundWindow(),0UL,((alpha)?(230U):(255U)),LWA_ALPHA);
+        SetLayeredWindowAttributes(GetForegroundWindow(),0ul,((alpha)?(230u):(255u)),LWA_ALPHA);
     }
     auto FrontShow(){
         HWND foreWnd{GetForegroundWindow()};
@@ -55,11 +55,11 @@ namespace CRCSN{
             SetForegroundWindow(foreWnd);
             AttachThreadInput(curId,foreId,FALSE);
             SetWindowPos(foreWnd,HWND_TOPMOST,0,0,100,100,SWP_NOMOVE|SWP_NOSIZE);
-            Sleep(100UL);
+            Sleep(100ul);
         }
     }
     auto Cmd(Parameter){
-        system("cls & cd %UserProfile% & cmd");
+        system("cls & cd %userProfile% & cmd");
         Init(Opt.ctrls,Opt.alphaWnd);
         return false;
     }
@@ -82,11 +82,11 @@ namespace CRCSN{
             system("cls");
         }
         auto Mythware(Parameter){
-            Base(Rule.Mythware.exe,9U,Rule.Mythware.svc,3U);
+            Base(Rule.Mythware.exe,9u,Rule.Mythware.svc,3u);
             return false;
         }
         auto Lenovo(Parameter){
-            Base(Rule.Lenovo.exe,18U,Rule.Lenovo.svc,3U);
+            Base(Rule.Lenovo.exe,18u,Rule.Lenovo.svc,3u);
             return false;
         }
     };
@@ -105,11 +105,11 @@ namespace CRCSN{
             system("cls");
         }
         auto Mythware(Parameter){
-            Base(Rule.Mythware.exe,9U,Rule.Mythware.svc,3U);
+            Base(Rule.Mythware.exe,9u,Rule.Mythware.svc,3u);
             return false;
         }
         auto Lenovo(Parameter){
-            Base(Rule.Lenovo.exe,18U,Rule.Lenovo.svc,3U);
+            Base(Rule.Lenovo.exe,18u,Rule.Lenovo.svc,3u);
             return false;
         }
     }
