@@ -167,7 +167,7 @@ class CUI{
     public:
         CUI():sleepTime(50ul),height(0),width(0){}
         ~CUI(){}
-        auto Push(std::string text="",callback function=nullptr,short colorHighlight=BlackBlue,short colorDef=BlackWhite)->CUI&{
+        auto Push(std::string text,callback function=nullptr,short colorHighlight=BlackBlue,short colorDef=BlackWhite)->CUI&{
             lineData.push_back(Text(text,Color(colorDef,((function==nullptr)?(colorDef):(colorHighlight))),function));
             return *this;
         }
