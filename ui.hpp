@@ -1,16 +1,16 @@
 #ifndef MENU_HPP
 #define MENU_HP
 auto HideCursor(){
-    CONSOLE_CURSOR_INFO CursorInfo;
-    GetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&CursorInfo);
-    CursorInfo.bVisible=false;
-    SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&CursorInfo);
+    CONSOLE_CURSOR_INFO cursorInfo;
+    GetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&cursorInfo);
+    cursorInfo.bVisible=false;
+    SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&cursorInfo);
 }
 auto ShowCursor(){
-    CONSOLE_CURSOR_INFO CursorInfo;
-    GetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&CursorInfo);
-    CursorInfo.bVisible=true;
-    SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&CursorInfo);
+    CONSOLE_CURSOR_INFO cursorInfo;
+    GetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&cursorInfo);
+    cursorInfo.bVisible=true;
+    SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&cursorInfo);
 }
 auto RemoveAttributes(){
     DWORD mode;
