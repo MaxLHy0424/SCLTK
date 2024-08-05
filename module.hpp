@@ -41,7 +41,7 @@ namespace CRCSN{
         if(!ctrls){
             SetWindowLongPtr(GetConsoleWindow(),GWL_STYLE,GetWindowLongPtrA(GetConsoleWindow(),GWL_STYLE)&~WS_SIZEBOX&~WS_MAXIMIZEBOX&~WS_MINIMIZEBOX);
         }
-        system("mode con cols=50 lines=30");
+        system("mode con cols=50 lines=25");
         SetLayeredWindowAttributes(GetForegroundWindow(),0ul,((alpha)?(230u):(255u)),LWA_ALPHA);
     }
     auto FrontShow(){
@@ -59,7 +59,7 @@ namespace CRCSN{
         }
     }
     auto Cmd(Parameter){
-        system("cls & cd %userProfile% & cmd");
+        system("cls & cmd");
         Init(Opt.ctrls,Opt.alphaWnd);
         return false;
     }
