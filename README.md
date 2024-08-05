@@ -4,7 +4,7 @@
 
 # 获取
 
-- [GitHub Repository Release (v5.0.0-beta.1, 即将推出)](https://github.com/MaxLHy0424/CRCSN/releases/download/v5.0.0-beta.1/CRCSN-v5.0.0-beta.1.7z)
+- [GitHub Repository Release (v5.0.0-beta.1)](https://github.com/MaxLHy0424/CRCSN/releases/download/v5.0.0-beta.1/CRCSN-v5.0.0-beta.1.7z)
 - [GitHub Repository Release (v4.10.7)](https://github.com/MaxLHy0424/CRCSN/releases/download/v4.10.7/CRCSN_v4-10-7_x64.7z)
 - [中国大陆云盘镜像站点](https://www.123pan.com/s/UzthTd-MkTRh.html)
 
