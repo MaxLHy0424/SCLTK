@@ -32,7 +32,7 @@ namespace CRCSN{
         }
     };
     auto Init(bool ctrls,bool alpha){
-        system("chcp 936");
+        system("chcp 936 > nul");
         #if EVALUATE_COPY
             SetConsoleTitle("[评估副本] CRCSN");
         #else
@@ -59,7 +59,7 @@ namespace CRCSN{
         }
     }
     auto Cmd(Parameter){
-        system("cls & cmd");
+        system("cls & cmd & cls");
         Init(Opt.ctrls,Opt.alphaWnd);
         return false;
     }
