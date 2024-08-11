@@ -37,7 +37,7 @@ auto WaitMouseEvent(bool move=true)->MOUSE_EVENT_RECORD{
     DWORD reg;
     while(true){
         Sleep(10ul);
-        ReadConsoleInput(GetStdHandle(STD_INPUT_HANDLE),&record,1,&reg);
+        ReadConsoleInput(GetStdHandle(STD_INPUT_HANDLE),&record,1ul,&reg);
         if(!(record.EventType^MOUSE_EVENT)&&(move|(record.Event.MouseEvent.dwEventFlags^MOUSE_MOVED))){
             return record.Event.MouseEvent;
         }
