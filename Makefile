@@ -1,16 +1,15 @@
 msys2 = C:\\Software\\MSYS2
 argv = -fexec-charset=GBK -std=gnu++23 -Wall -Wextra -pipe -m64 -DNDEBUG -static -Ofast -Os -flto -o
-build: bin bin/x86_64/main-msvcrt.exe bin/x86_64/main-ucrt.exe
-bin/x86_64:
+build: bin/x86_64/.gitkeep bin/x86_64/main-msvcrt.exe bin/x86_64/main-ucrt.exe
+bin/x86_64/.gitkeep:
 	$(msys2)\\usr\\bin\\mkdir.exe bin/x86_64 -p
 	$(msys2)\\usr\\bin\\touch.exe bin/.gitkeep
-bin: bin/x86_64
-bin/x86_64/main-msvcrt.exe: bin/favicon.o bin
-	$(msys2)\\mingw64\\bin\\g++.exe src/main.cpp $< $(argv) $@
-bin/x86_64/main-ucrt.exe: bin/favicon.o bin
-	$(msys2)\\ucrt64\\bin\\g++.exe src/main.cpp $< $(argv) $@
-bin/favicon.o: bin
-	$(msys2)\\usr\\bin\\windres.exe -i favicon.rc -o bin/favicon.o
+bin/x86_64/main-msvcrt.exe: src/main.cpp bin/favicon.o
+	$(msys2)\\mingw64\\bin\\g++.exe $^ $(argv) $@
+bin/x86_64/main-ucrt.exe: src/main.cpp bin/favicon.o
+	$(msys2)\\ucrt64\\bin\\g++.exe $^ $(argv) $@
+bin/favicon.o: favicon.rc img/favicon.ico
+	$(msys2)\\usr\\bin\\windres.exe -i $< -o $@
 clean_std:
 	$(msys2)\\usr\\bin\\rm.exe -rf\
 	 bin/__debug.exe\
