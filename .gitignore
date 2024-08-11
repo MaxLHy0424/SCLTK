@@ -1,2 +1,2 @@
-!bin/.gitkeep
 bin/*
+!bin/.gitkeep
