@@ -5,7 +5,7 @@
             "type":"shell",
             "command":"g++",
             "args":[
-                "${workspaceRoot}/src/*.cpp",
+                "src/*.cpp",
                 "-fexec-charset=GBK",
                 "-std=gnu++23",
                 "-Wall",
@@ -14,7 +14,7 @@
                 "-O0",
                 "-g3",
                 "-o",
-                "${workspaceRoot}/bin/__debug.exe",
+                "bin/__debug.exe",
             ],
             "group":{
                 "kind":"build",
