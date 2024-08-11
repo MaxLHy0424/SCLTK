@@ -63,53 +63,55 @@ namespace CRCSN{
         Init(Opt.ctrls,Opt.alphaWnd);
         return false;
     }
-    namespace Crack{
-        auto Base(std::string* exe,uint16_t n,std::string* svc,uint16_t m){
-            system("cls");
-            std::string cmd;
-            for(uint16_t i{};i<n;++i){
-                cmd="taskKill /f /im "+exe[i]+".exe";
-                system(cmd.c_str());
+    auto OpBase(char mode,std::string* exe,uint16_t n,std::string* svc,uint16_t m){
+        system("cls");
+        std::string cmd;
+        switch(mode){
+            case 'c':{
+                for(uint16_t i{};i<n;++i){
+                    cmd="taskKill /f /im "+exe[i]+".exe";
+                    system(cmd.c_str());
+                }
+                for(uint16_t i{};i<n;++i){
+                    cmd="reg add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\"+exe[i]+".exe\" /f /t reg_sz /v debugger /d ?";
+                    system(cmd.c_str());
+                }
+                for(uint16_t i{};i<m;++i){
+                    cmd="net stop "+svc[i]+" /y";
+                    system(cmd.c_str());
+                }
+                break;
+            }case 'r':{
+                for(uint16_t i{};i<n;++i){
+                    cmd="reg delete \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\"+exe[i]+".exe\" /f";
+                    system(cmd.c_str());
+                }
+                for(uint16_t i{};i<m;++i){
+                    cmd="net start "+svc[i];
+                    system(cmd.c_str());
+                }
+                break;
             }
-            for(uint16_t i{};i<n;++i){
-                cmd="reg add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\"+exe[i]+".exe\" /f /t reg_sz /v debugger /d ?";
-                system(cmd.c_str());
-            }
-            for(uint16_t i{};i<m;++i){
-                cmd="net stop "+svc[i]+" /y";
-                system(cmd.c_str());
-            }
-            system("cls");
         }
+        system("cls");
+    }
+    namespace Crack{
         auto Mythware(Parameter){
-            Base(Rule.Mythware.exe,9u,Rule.Mythware.svc,3u);
+            OpBase('c',Rule.Mythware.exe,9u,Rule.Mythware.svc,3u);
             return false;
         }
         auto Lenovo(Parameter){
-            Base(Rule.Lenovo.exe,18u,Rule.Lenovo.svc,3u);
+            OpBase('c',Rule.Lenovo.exe,18u,Rule.Lenovo.svc,3u);
             return false;
         }
     };
     namespace Recovery{
-        auto Base(std::string* exe,uint16_t n,std::string* svc,uint16_t m){
-            system("cls");
-            std::string cmd;
-            for(uint16_t i{};i<n;++i){
-                cmd="reg delete \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\"+exe[i]+".exe\" /f";
-                system(cmd.c_str());
-            }
-            for(uint16_t i{};i<m;++i){
-                cmd="net start "+svc[i];
-                system(cmd.c_str());
-            }
-            system("cls");
-        }
         auto Mythware(Parameter){
-            Base(Rule.Mythware.exe,9u,Rule.Mythware.svc,3u);
+            OpBase('r',Rule.Mythware.exe,9u,Rule.Mythware.svc,3u);
             return false;
         }
         auto Lenovo(Parameter){
-            Base(Rule.Lenovo.exe,18u,Rule.Lenovo.svc,3u);
+            OpBase('r',Rule.Lenovo.exe,18u,Rule.Lenovo.svc,3u);
             return false;
         }
     }
