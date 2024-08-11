@@ -21,4 +21,4 @@ pause > nul
 msHta vbScript:createObject("shell.application").shellExecute("%~s0","goTo:runAs","","runAs",1)(window.close) & goTo:eof
 :runAs
     start .\bin\%arch%\main-%runtime%.exe %argv% /command
-    exit /b 0
+    exit
