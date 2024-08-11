@@ -38,18 +38,18 @@ auto WaitMouseEvent(bool move=true)->MOUSE_EVENT_RECORD{
     while(true){
         Sleep(10ul);
         ReadConsoleInput(GetStdHandle(STD_INPUT_HANDLE),&record,1,&reg);
-        if(!(record.EventType^MOUSE_EVENT)&&(move|(record.Event.MouseEvent.dwEventFlags!=MOUSE_MOVED))){
+        if(!(record.EventType^MOUSE_EVENT)&&(move|(record.Event.MouseEvent.dwEventFlags^MOUSE_MOVED))){
             return record.Event.MouseEvent;
         }
     }
 }
-#define BlackWhite 0x07
-#define BlackBlue 0x03
-#define YellowBlue 0xe9
+#define BLACK_WHITE 0x07
+#define BLACK_BLUE 0x03
+#define YELLOW_BLUE 0xe9
 struct Color{
     short def,highlight,lastColor;
-    Color():def(BlackWhite),highlight(BlackBlue),lastColor(BlackWhite){}
-    Color(short def=BlackWhite,short highlight=BlackBlue):def(def),highlight(highlight),lastColor(BlackWhite){}
+    Color():def(BLACK_WHITE),highlight(BLACK_BLUE),lastColor(BLACK_WHITE){}
+    Color(short def=BLACK_WHITE,short highlight=BLACK_BLUE):def(def),highlight(highlight),lastColor(BLACK_WHITE){}
     auto SetDef(){
         SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),def);
         lastColor=def;
@@ -60,17 +60,17 @@ struct Color{
     }
 };
 class CUI;
-#define MouseLeftButton FROM_LEFT_1ST_BUTTON_PRESSED
-#define MouseMiddleButton FROM_LEFT_2ND_BUTTON_PRESSED
-#define MouseRightButton RIGHTMOST_BUTTON_PRESSED
-#define MouseClick 0x0
-#define MouseMove MOUSE_MOVED
-#define MouseDoubleClick DOUBLE_CLICK
-#define MouseWheel MOUSE_WHEELED
+#define MOUSE_LEFT_BUTTON FROM_LEFT_1ST_BUTTON_PRESSED
+#define MOUSE_MIDDLE_BUTTON FROM_LEFT_2ND_BUTTON_PRESSED
+#define MOUSE_RIGHT_BUTTON RIGHTMOST_BUTTON_PRESSED
+#define MOUSE_CLICK 0x0
+#define MOUSE_MOVE MOUSE_MOVED
+#define MOUSE_DOUBLE_CLICK DOUBLE_CLICK
+#define MOUSE_WHEEL MOUSE_WHEELED
 struct Parameter{
     DWORD buttonState,controlKeyState,eventFlag;
     CUI* ui;
-    Parameter():buttonState(MouseLeftButton),controlKeyState(0ul),eventFlag(0ul),ui(nullptr){}
+    Parameter():buttonState(MOUSE_LEFT_BUTTON),controlKeyState(0ul),eventFlag(0ul),ui(nullptr){}
     Parameter(MOUSE_EVENT_RECORD mouseEvent,CUI* ui):buttonState(mouseEvent.dwButtonState),controlKeyState(mouseEvent.dwControlKeyState),eventFlag(mouseEvent.dwEventFlags),ui(ui){}
 };
 typedef bool(*callback)(Parameter);
@@ -135,11 +135,11 @@ class CUI{
         }
         auto Refresh(COORD hangPosition){
             for(auto &data:lineData){
-                if((data==hangPosition)&&(data.color.lastColor!=data.color.highlight)){
+                if((data==hangPosition)&&(data.color.lastColor^data.color.highlight)){
                     data.color.SetHighlight();
                     Rewrite(data);
                 }
-                if((data!=hangPosition)&&(data.color.lastColor!=data.color.def)){
+                if((data!=hangPosition)&&(data.color.lastColor^data.color.def)){
                     data.color.SetDef();
                     Rewrite(data);
                 }
@@ -167,7 +167,7 @@ class CUI{
     public:
         CUI():sleepTime(50ul),height(0),width(0){}
         ~CUI(){}
-        auto Push(std::string text,callback function=nullptr,short colorHighlight=BlackBlue,short colorDef=BlackWhite)->CUI&{
+        auto Push(std::string text,callback function=nullptr,short colorHighlight=BLACK_BLUE,short colorDef=BLACK_WHITE)->CUI&{
             lineData.push_back(Text(text,Color(colorDef,((function==nullptr)?(colorDef):(colorHighlight))),function));
             return *this;
         }
@@ -190,11 +190,11 @@ class CUI{
                 Sleep(sleepTime);
                 mouseEvent=WaitMouseEvent();
                 switch(mouseEvent.dwEventFlags){
-                    case MouseMove:{
+                    case MOUSE_MOVE:{
                         Refresh(mouseEvent.dwMousePosition);
                         break;
-                    }case MouseClick:{
-                        if((mouseEvent.dwButtonState)&&(mouseEvent.dwButtonState!=MouseWheel)){
+                    }case MOUSE_CLICK:{
+                        if((mouseEvent.dwButtonState)&&(mouseEvent.dwButtonState^MOUSE_WHEEL)){
                             isExit=Implement(mouseEvent);
                         }
                         break;
