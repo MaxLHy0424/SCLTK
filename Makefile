@@ -18,4 +18,4 @@ clean_full: clean_std
 	$(msys2)\\usr\\bin\\rm.exe -rf\
 	 bin/CRCSN-x86_64-msvcrt.exe\
 	 bin/CRCSN-x86_64-ucrt.exe
-.PHONY: build clean
+.PHONY: build clean_std clean_full
