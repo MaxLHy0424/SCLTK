@@ -5,7 +5,7 @@
             "type":"shell",
             "command":"g++",
             "args":[
-                "\"*.cpp\"",
+                "${workspaceRoot}/src/*.cpp",
                 "-fexec-charset=GBK",
                 "-std=gnu++23",
                 "-Wall",
@@ -14,7 +14,7 @@
                 "-O0",
                 "-g3",
                 "-o",
-                "\"${fileDirname}\\bin\\main.debug.exe\"",
+                "${workspaceRoot}/bin/__debug.exe",
             ],
             "group":{
                 "kind":"build",
@@ -32,7 +32,7 @@
             "label":"run",
             "type":"shell",
             "dependsOn":"build",
-            "command":"${fileDirname}\\bin\\main.debug.exe",
+            "command":"${workspaceRoot}/bin/__debug.exe",
             "group":{
                 "kind":"test",
                 "isDefault":true
