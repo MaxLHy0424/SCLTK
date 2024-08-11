@@ -1,4 +1,4 @@
-#include"hd.hpp"
+#include"header.hpp"
 #include"ui.hpp"
 #include"module.hpp"
 auto main(int argc,char* argv[])->int{
@@ -28,6 +28,8 @@ auto main(int argc,char* argv[])->int{
                         }
                     }
                 }
+            }else if(t=="/command"){
+                continue;
             }else{
                 errOpt=true;
                 goto BEGIN;
@@ -40,11 +42,11 @@ auto main(int argc,char* argv[])->int{
         }
     }
     UI.Push("   | Computer Room Control Software Nemesis |");
-    UI.Push("                  v5.0.0-beta.1");
+    UI.Push("                  v5.0.0-beta.2");
     UI.Push("       https://github.com/MaxLHy0424/CRCSN");
     UI.Push("    (C) 2023 MaxLHy0424. All Rights Reserved.\n");
     if(errOpt){
-        UI.Push(" (!) 命令行参数错误.\n");
+        UI.Push(" (!) 参数错误.\n");
     }
     UI.Push(" > 退出 ",Exit);
     UI.Push(" > 命令提示符 ",CRCSN::Cmd);
