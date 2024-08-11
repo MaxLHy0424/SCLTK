@@ -1,6 +1,6 @@
 namespace CRCSN{
     struct Opt{
-        bool ctrls,frontShow,alphaWnd;
+        bool wndCtrls,frontShow,alphaWnd;
     }Opt{};
     struct Rule{
         struct Mythware{
@@ -31,14 +31,14 @@ namespace CRCSN{
             }
         }
     };
-    auto Init(bool ctrls,bool alpha){
+    auto Init(bool wndCtrls,bool alpha){
         system("chcp 936 > nul");
         #if EVALUATE_COPY
             SetConsoleTitle("[评估副本] CRCSN");
         #else
             SetConsoleTitle("CRCSN");
         #endif
-        if(!ctrls){
+        if(!wndCtrls){
             SetWindowLongPtr(GetConsoleWindow(),GWL_STYLE,GetWindowLongPtrA(GetConsoleWindow(),GWL_STYLE)&~WS_SIZEBOX&~WS_MAXIMIZEBOX&~WS_MINIMIZEBOX);
         }
         system("mode con cols=50 lines=25");
@@ -60,7 +60,7 @@ namespace CRCSN{
     }
     auto Cmd(Parameter){
         system("cls & cmd & cls");
-        Init(Opt.ctrls,Opt.alphaWnd);
+        Init(Opt.wndCtrls,Opt.alphaWnd);
         return false;
     }
     auto OpBase(char mode,std::string* exe,u16 n,std::string* svc,u16 m){

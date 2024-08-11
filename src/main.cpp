@@ -14,7 +14,7 @@ auto main(int argc,char* argv[])->int{
                 for(u64 j{2};j<t.size();++j){
                     switch(t[j]){
                         case 'c':{
-                            CRCSN::Opt.ctrls=true;
+                            CRCSN::Opt.wndCtrls=true;
                             break;
                         }case 'f':{
                             CRCSN::Opt.frontShow=true;
@@ -36,7 +36,7 @@ auto main(int argc,char* argv[])->int{
             }
         }
     BEGIN:
-        CRCSN::Init(CRCSN::Opt.ctrls,CRCSN::Opt.alphaWnd);
+        CRCSN::Init(CRCSN::Opt.wndCtrls,CRCSN::Opt.alphaWnd);
         if(CRCSN::Opt.frontShow){
             std::thread(CRCSN::FrontShow).detach();
         }
