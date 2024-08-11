@@ -41,7 +41,7 @@ auto main(int argc,char* argv[])->int{
             std::thread(CRCSN::FrontShow).detach();
         }
     }
-    UI.Push("   | Computer Room Control Software Nemesis |");
+    UI.Push("   [ Computer Room Control Software Nemesis ]");
     UI.Push("                  v5.0.0-beta.2");
     UI.Push("       https://github.com/MaxLHy0424/CRCSN");
     UI.Push("    (C) 2023 MaxLHy0424. All Rights Reserved.\n");
