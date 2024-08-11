@@ -10,10 +10,9 @@ bin/x86_64/main-ucrt.exe: src/main.cpp bin/favicon.o
 	$(msys2)\\ucrt64\\bin\\g++.exe $^ $(argv) $@
 bin/favicon.o: favicon.rc img/favicon.ico
 	$(msys2)\\usr\\bin\\windres.exe -i $< -o $@
-clean_std:
+clean:
 	$(msys2)\\usr\\bin\\rm.exe -rf\
 	 bin/__debug.exe\
-	 bin/favicon.o
-clean_full: clean_std
-	$(msys2)\\usr\\bin\\rm.exe -rf bin/x86_64
-.PHONY: build clean_std clean_full
+	 bin/favicon.o\
+	 bin/x86_64
+.PHONY: build clean
