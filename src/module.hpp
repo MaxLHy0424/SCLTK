@@ -1,12 +1,12 @@
 namespace CRCSN{
-    struct Opt{
+    struct{
         bool wndCtrls,frontShow,alphaWnd;
     }Opt{};
-    struct Rule{
-        struct Mythware{
+    struct{
+        struct{
             std::string exe[9],svc[3];
         }Mythware;
-        struct Lenovo{
+        struct{
             std::string exe[18],svc[3];
         }Lenovo;
     }Rule{
