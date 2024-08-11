@@ -1,18 +1,21 @@
-![logo](logo.png)\
+![logo](img/title.png)\
 **Computer Room Control Software Nemesis: 轻松破解机房控制.**\
 ©️ 2023 MaxLHy0424. All Rights Reserved.
 
 # 获取
 
-- [GitHub Repository Release (v5.0.0-beta.1)](https://github.com/MaxLHy0424/CRCSN/releases/download/v5.0.0-beta.1/CRCSN-v5.0.0-beta.1.7z)
-- [GitHub Repository Release (v4.10.7)](https://github.com/MaxLHy0424/CRCSN/releases/download/v4.10.7/CRCSN_v4-10-7_x64.7z)
-- [中国大陆云盘镜像站点](https://www.123pan.com/s/UzthTd-MkTRh.html)
+**稳定发行版: [v4.10.7](https://github.com/MaxLHy0424/CRCSN/releases/download/v4.10.7/CRCSN_v4-10-7_x64.7z)**.\
+**评估发行版: [v5.0.0-beta.2](https://github.com/MaxLHy0424/CRCSN/releases/download/v5.0.0-beta.1/CRCSN-vv5.0.0-beta.1.7z)**.
+
+或者:
+- [GitHub Repository Release](https://github.com/MaxLHy0424/CRCSN/releases).
+- [中国大陆云盘镜像站点 (不含预发行版)](https://www.123pan.com/s/UzthTd-MkTRh.html).
 
 # 使用指南
 
-**CRCSN 涉及到修改注册表等操作, 使用时建议关闭防病毒软件. 若 CRCSN 被报为恶意软件, 请添加排除项.**
+**由于 CRCSN 存在敏感操作, 使用时建议关闭防病毒软件. 若 CRCSN 被报为恶意软件, 请添加排除项.**
 
-> 适用于 CRCSN v5.0.0-beta.1.
+> 适用于 CRCSN v5.0.0-beta.2.
 
 ## 1 启动
 
@@ -23,7 +26,7 @@
 ### 1.1 修改软件运行时
 
 找到:
-```batch
+```dos
 set runtime=msvcrt
 ```
 
@@ -38,7 +41,7 @@ set runtime=msvcrt
 > 此参数区分大小写.
 
 找到:
-```batch
+```dos
 set argv=
 ```
 
@@ -50,10 +53,10 @@ set argv=
 不可以仅使用主参数, 附加参数的顺序不影响应用效果.
 
 使用示例:
-```batch
+```dos
 set argv=-Wa
 ```
-```batch
+```dos
 set argv=-Wfac
 ```
 
@@ -99,5 +102,5 @@ set argv=-Wfac
 
 # 鸣谢
 
-- Bilibili 用户[lateworker_晚工](https://space.bilibili.com/39337803)提供界面代码 (详见[此处](https://www.bilibili.com/video/BV1X14y1n7S4/), 软件有修改之处);
-- Bilibili 用户[痕继痕迹](https://space.bilibili.com/39337803)指导软件界面设计.
+- Bilibili 用户 [lateworker_晚工](https://space.bilibili.com/39337803) 提供界面代码 (详见[此处](https://www.bilibili.com/video/BV1X14y1n7S4/), 软件有修改之处);
+- Bilibili 用户 [痕继痕迹](https://space.bilibili.com/39337803) 指导软件界面设计.
