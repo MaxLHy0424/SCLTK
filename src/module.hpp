@@ -104,7 +104,7 @@ namespace CRCSN{
             OpBase('c',Rule.Lenovo.exe,18u,Rule.Lenovo.svc,3u);
             return false;
         }
-    };
+    }
     namespace Recovery{
         auto Mythware(Parameter){
             OpBase('r',Rule.Mythware.exe,9u,Rule.Mythware.svc,3u);
