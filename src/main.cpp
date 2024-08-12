@@ -48,7 +48,7 @@ auto main(int argc,char* argv[])->int{
     if(errOpt){
         UI.Push(" (!) 命令行参数错误.\n");
     }
-    UI.Push(" > 退出 ",Exit);
+    UI.Push(" > 退出 ",EXIT);
     UI.Push(" > 命令提示符 ",CRCSN::Cmd);
     UI.Push("\n[ 破 解 ]\n");
     if(IsUserAnAdmin()){
