@@ -63,30 +63,30 @@ namespace CRCSN{
         Init(Opt.wndCtrls,Opt.alphaWnd);
         return false;
     }
-    auto OpCore(char mode,std::string* exe,u16 n,std::string* svc,u16 m){
+    auto OpCore(char mode,std::string* exe,uint16_t n,std::string* svc,uint16_t m){
         system("cls");
         std::string cmd;
         switch(mode){
             case 'c':{
-                for(u16 i{};i<n;++i){
+                for(uint16_t i{};i<n;++i){
                     cmd="taskKill /f /im "+exe[i]+".exe";
                     system(cmd.c_str());
                 }
-                for(u16 i{};i<n;++i){
+                for(uint16_t i{};i<n;++i){
                     cmd="reg add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\"+exe[i]+".exe\" /f /t reg_sz /v debugger /d ?";
                     system(cmd.c_str());
                 }
-                for(u16 i{};i<m;++i){
+                for(uint16_t i{};i<m;++i){
                     cmd="net stop "+svc[i]+" /y";
                     system(cmd.c_str());
                 }
                 break;
             }case 'r':{
-                for(u16 i{};i<n;++i){
+                for(uint16_t i{};i<n;++i){
                     cmd="reg delete \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\"+exe[i]+".exe\" /f";
                     system(cmd.c_str());
                 }
-                for(u16 i{};i<m;++i){
+                for(uint16_t i{};i<m;++i){
                     cmd="net start "+svc[i];
                     system(cmd.c_str());
                 }
