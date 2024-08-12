@@ -63,7 +63,7 @@ namespace CRCSN{
         Init(Opt.wndCtrls,Opt.alphaWnd);
         return false;
     }
-    auto OpBase(char mode,std::string* exe,u16 n,std::string* svc,u16 m){
+    auto OpCore(char mode,std::string* exe,u16 n,std::string* svc,u16 m){
         system("cls");
         std::string cmd;
         switch(mode){
@@ -97,21 +97,21 @@ namespace CRCSN{
     }
     namespace Crack{
         auto Mythware(Parameter){
-            OpBase('c',Rule.Mythware.exe,9u,Rule.Mythware.svc,3u);
+            OpCore('c',Rule.Mythware.exe,9u,Rule.Mythware.svc,3u);
             return false;
         }
         auto Lenovo(Parameter){
-            OpBase('c',Rule.Lenovo.exe,18u,Rule.Lenovo.svc,3u);
+            OpCore('c',Rule.Lenovo.exe,18u,Rule.Lenovo.svc,3u);
             return false;
         }
     }
     namespace Recovery{
         auto Mythware(Parameter){
-            OpBase('r',Rule.Mythware.exe,9u,Rule.Mythware.svc,3u);
+            OpCore('r',Rule.Mythware.exe,9u,Rule.Mythware.svc,3u);
             return false;
         }
         auto Lenovo(Parameter){
-            OpBase('r',Rule.Lenovo.exe,18u,Rule.Lenovo.svc,3u);
+            OpCore('r',Rule.Lenovo.exe,18u,Rule.Lenovo.svc,3u);
             return false;
         }
     }
