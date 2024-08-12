@@ -208,4 +208,5 @@ class CUI{
 auto Exit(Parameter){
     return true;
 }
+#define EXIT Exit
 #endif
