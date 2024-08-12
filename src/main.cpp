@@ -43,8 +43,8 @@ auto main(int argc,char* argv[])->int{
     }
     UI.Push("    [ Computer Room Control Software Nemesis ]");
     UI.Push("                  v5.0.0-beta.2");
-    UI.Push("      https://github.com/MaxLHy0424/CRCSN");
-    UI.Push("    (C) 2023 MaxLHy0424. All Rights Reserved.\n");
+    UI.Push("       https://github.com/MaxLHy0424/CRCSN");
+    UI.Push("     (C) 2023 MaxLHy0424. All Rights Reserved.\n");
     if(errOpt){
         UI.Push(" (!) 参数错误.\n");
     }
