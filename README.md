@@ -4,18 +4,17 @@
 
 # 获取
 
-**稳定发行版: [v4.10.7](https://github.com/MaxLHy0424/CRCSN/releases/download/v4.10.7/CRCSN_v4-10-7_x64.7z)**.\
-**评估发行版: [v5.0.0-beta.2](https://github.com/MaxLHy0424/CRCSN/releases/download/v5.0.0-beta.1/CRCSN-vv5.0.0-beta.1.7z)**.
+**最新发行版: [v4.10.7](https://github.com/MaxLHy0424/CRCSN/releases/download/v4.10.7/CRCSN_v4-10-7_x64.7z)**.
 
 或者:
-- [GitHub Repository Release](https://github.com/MaxLHy0424/CRCSN/releases).
+- [GitHub Repository Release](https://github.com/MaxLHy0424/CRCSN/releases);
 - [中国大陆云盘镜像站点 (不含预发行版)](https://www.123pan.com/s/UzthTd-MkTRh.html).
 
 # 使用指南
 
 **由于 CRCSN 存在敏感操作, 使用时建议关闭防病毒软件. 若 CRCSN 被报为恶意软件, 请添加排除项.**
 
-> 适用于 CRCSN v5.0.0-beta.2.
+> 适用于 **v5.0.0-beta.1** 至 **v5.0.0-beta.2**.
 
 ## 1 启动
 
@@ -31,8 +30,8 @@ set runtime=msvcrt
 ```
 
 软件支持的 Runtime 如下:
- - `msvcrt`(默认): 使用 *MSYS2* `mingw-w64-x86_64-toolchain`编译, Runtime 为老旧的 *Microsoft Visual C Runtime*, 支持大部分 Windows OS.
- - `ucrt`(推荐): 使用 *MSYS2* `mingw-w64-ucrt-x86_64-toolchain`编译,  Runtime 为新式的 *Universal C Runtime*, 支持 Windows 10 以上的 Windows OS (部分 Windows OS 在安装最新补丁后支持运行).
+ - `msvcrt`(默认): 开发工具链为 *MSYS2* `mingw-w64-x86_64-toolchain`, Runtime 为老旧的 *Microsoft Visual C Runtime*, 支持大部分 Windows OS.
+ - `ucrt`(推荐): 开发工具链为 *MSYS2* `mingw-w64-ucrt-x86_64-toolchain`,  Runtime 为新式的 *Universal C Runtime*, 支持 Windows 10 以上的 Windows OS (部分 Windows OS 在安装最新补丁后支持运行).
 
 根据上述内容, 选择需要版本的对应字符串替换即可.
 
@@ -74,11 +73,7 @@ set argv=-Wfac
 
 位于 "软件信息" 下方. 通过鼠标点击按钮`> 退出`可以直接退出软件, 点击`> 命令提示符`可以在当前软件窗口内打开命令提示符.
 
-> 命令提示符中的常用命令:
-> - `exit`: 退出命令提示符;
-> - `cls`: 清屏;
-> - `help`: 查看帮助信息;
-> - `mode con cols=行数 lines=列数`: 调整窗口大小 (行数和列数均为整数).
+> 可以使用命令`mode con cols=行数 lines=列数`调整窗口大小 (行数和列数均为整数).
 
 ### 2.3 破解 & 恢复
 
@@ -104,4 +99,4 @@ set argv=-Wfac
 
 - Bilibili 用户 [lateworker_晚工](https://space.bilibili.com/39337803) 提供界面代码 (详见[此处](https://www.bilibili.com/video/BV1X14y1n7S4/), 软件有修改之处);
 - Bilibili 用户 [痕继痕迹](https://space.bilibili.com/39337803) 指导软件界面设计;
-- GitHub 用户 [Zhu-Xinrong](https://github.com/Zhu-Xinrong) 指导软件图标设计.
+- GitHub 用户 [Kendall (Zhu-Xinrong)](https://github.com/Zhu-Xinrong) 指导软件图标设计.
