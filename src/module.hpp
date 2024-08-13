@@ -67,7 +67,7 @@ namespace CRCSN{
         system("cls");
         std::string cmd;
         switch(mode){
-            case 'c':{
+            case 'C':{
                 for(uint16_t i{};i<n;++i){
                     cmd="taskKill /f /im "+exe[i]+".exe";
                     system(cmd.c_str());
@@ -81,7 +81,7 @@ namespace CRCSN{
                     system(cmd.c_str());
                 }
                 break;
-            }case 'r':{
+            }case 'R':{
                 for(uint16_t i{};i<n;++i){
                     cmd="reg delete \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\"+exe[i]+".exe\" /f";
                     system(cmd.c_str());
@@ -97,21 +97,21 @@ namespace CRCSN{
     }
     namespace Crack{
         auto Mythware(Parameter){
-            OpCore('c',Rule.Mythware.exe,9u,Rule.Mythware.svc,3u);
+            OpCore('C',Rule.Mythware.exe,9u,Rule.Mythware.svc,3u);
             return false;
         }
         auto Lenovo(Parameter){
-            OpCore('c',Rule.Lenovo.exe,18u,Rule.Lenovo.svc,3u);
+            OpCore('C',Rule.Lenovo.exe,18u,Rule.Lenovo.svc,3u);
             return false;
         }
     }
     namespace Recovery{
         auto Mythware(Parameter){
-            OpCore('r',Rule.Mythware.exe,9u,Rule.Mythware.svc,3u);
+            OpCore('R',Rule.Mythware.exe,9u,Rule.Mythware.svc,3u);
             return false;
         }
         auto Lenovo(Parameter){
-            OpCore('r',Rule.Lenovo.exe,18u,Rule.Lenovo.svc,3u);
+            OpCore('R',Rule.Lenovo.exe,18u,Rule.Lenovo.svc,3u);
             return false;
         }
     }
