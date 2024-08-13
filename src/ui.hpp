@@ -45,7 +45,6 @@ auto WaitMouseEvent(bool move=true)->MOUSE_EVENT_RECORD{
 }
 #define BLACK_WHITE 0x07
 #define BLACK_BLUE 0x03
-#define YELLOW_BLUE 0xe9
 struct Color{
     short def,highlight,lastColor;
     Color():def(BLACK_WHITE),highlight(BLACK_BLUE),lastColor(BLACK_WHITE){}
