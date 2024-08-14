@@ -126,14 +126,14 @@ class CUI{
         }
         auto InitPosition(){
             ClearScreen();
-            for(auto &data:lineData){
+            for(auto& data:lineData){
                 data.position=GetCursorPos();
                 data.color.SetDef();
                 Write(data.text,true);
             }
         }
         auto Refresh(COORD hangPosition){
-            for(auto &data:lineData){
+            for(auto& data:lineData){
                 if((data==hangPosition)&&(data.color.lastColor^data.color.highlight)){
                     data.color.SetHighlight();
                     Rewrite(data);
