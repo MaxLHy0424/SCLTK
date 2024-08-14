@@ -6,11 +6,13 @@
             "command":"g++",
             "args":[
                 "src/main.cpp",
+                "-C",
                 "-fexec-charset=GBK",
                 "-std=gnu++23",
                 "-Wall",
                 "-Wextra",
                 "-pipe",
+                "-m64",
                 "-O0",
                 "-g3",
                 "-o",
