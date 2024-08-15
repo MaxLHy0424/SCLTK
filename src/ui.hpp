@@ -38,7 +38,7 @@ auto waitMouseEvent(bool move=true)->MOUSE_EVENT_RECORD{
     while(true){
         Sleep(10ul);
         ReadConsoleInput(GetStdHandle(STD_INPUT_HANDLE),&record,1ul,&reg);
-        if((record.EventType==MOUSE_EVENT)&&(move|(record.Event.MouseEvent.dwEventFlags^MOUSE_MOVED))){
+        if(!(record.EventType^MOUSE_EVENT)&&(move|(record.Event.MouseEvent.dwEventFlags^MOUSE_MOVED))){
             return record.Event.MouseEvent;
         }
     }
@@ -81,7 +81,7 @@ struct Text{
     Text():text(""),color(Color(0,0)),position({0,0}),function(nullptr){}
     Text(std::string text,Color color,callback function):text(text),color(color),position({0,0}),function(function){}
     bool operator==(const COORD& mousePosition)const{
-        return ((position.Y==mousePosition.Y)&&(position.X<=mousePosition.X)&&(mousePosition.X<(position.X+(short)text.size())))?(true):(false);
+        return (!(position.Y^mousePosition.Y)&&(position.X<=mousePosition.X)&&(mousePosition.X<(position.X+(short)text.size())))?(true):(false);
     }
     bool operator!=(const COORD& mousePosition)const{
         return !(operator==(mousePosition));
