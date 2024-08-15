@@ -59,18 +59,18 @@ set argv=-Wa
 set argv=-Wfac
 ```
 
-## 1.3 紧凑视图
+## 1.3 宽松视图
 
 > 此参数区分大小写.
 
-CRCSN 默认使用宽松视图.
+CRCSN 默认使用紧凑视图.
 
 找到:
 ```dos
 set argv=
 ```
 
-添加参数`--compact-view`, 即可使用紧凑视图.
+添加参数`--sparse-view`, 即可使用宽松视图.
 
 ## 1.4 自定义启动脚本
 
