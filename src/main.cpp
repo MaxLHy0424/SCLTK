@@ -1,5 +1,6 @@
 #include"header.hpp"
 #include"ui.hpp"
+CUI ui;
 #include"module.hpp"
 auto main(int argc,char* argv[])->int{
     bool errOpt{};
@@ -14,13 +15,13 @@ auto main(int argc,char* argv[])->int{
                 for(uint64_t j{2ull};j<t.size();++j){
                     switch(t[j]){
                         case 'c':{
-                            CRCSN::Opt.wndCtrls=true;
+                            CRCSN::opt.wndCtrls=true;
                             break;
                         }case 'f':{
-                            CRCSN::Opt.frontShow=true;
+                            CRCSN::opt.frontShowWnd=true;
                             break;
                         }case 'a':{
-                            CRCSN::Opt.alphaWnd=true;
+                            CRCSN::opt.alphaWnd=true;
                             break;
                         }default:{
                             errOpt=true;
@@ -28,7 +29,7 @@ auto main(int argc,char* argv[])->int{
                     }
                 }
             }else if(t=="--compact-view"){
-                CRCSN::Opt.compactView=true;
+                CRCSN::opt.compactView=true;
             }else if(t=="/command"){
                 continue;
             }else{
@@ -38,48 +39,48 @@ auto main(int argc,char* argv[])->int{
         }
     BEGIN:
         if(errOpt){
-            CRCSN::Opt={};
+            CRCSN::opt={};
         }
-        CRCSN::Init(CRCSN::Opt.wndCtrls,CRCSN::Opt.alphaWnd);
-        if(CRCSN::Opt.frontShow){
-            std::thread(CRCSN::FrontShow).detach();
+        CRCSN::init(CRCSN::opt.wndCtrls,CRCSN::opt.alphaWnd);
+        if(CRCSN::opt.frontShowWnd){
+            std::thread(CRCSN::frontShow).detach();
         }
     }
-    UI.Push("    [ Computer Room Control Software Nemesis ]");
-    if(!CRCSN::Opt.compactView){
-        UI.Push("\0");
+    ui.push("    [ Computer Room Control Software Nemesis ]");
+    if(!CRCSN::opt.compactView){
+        ui.push("\0");
     }
-    UI.Push("                  v5.0.0-beta.2");
-    UI.Push("       https://github.com/MaxLHy0424/CRCSN");
-    UI.Push("     (C) 2023 MaxLHy0424. All Rights Reserved.\n");
+    ui.push("                  v5.0.0-beta.2");
+    ui.push("       https://github.com/MaxLHy0424/CRCSN");
+    ui.push("     (C) 2023 MaxLHy0424. All Rights Reserved.\n");
     if(errOpt){
-        UI.Push(" (!) 存在未知的命令行参数.\n");
+        ui.push(" (!) 存在未知的命令行参数.\n");
     }
-    UI.Push(" > 退出 ",EXIT);
-    if(!CRCSN::Opt.compactView){
-        UI.Push("\0");
+    ui.push(" > 退出 ",EXIT);
+    if(!CRCSN::opt.compactView){
+        ui.push("\0");
     }
-    UI.Push(" > 命令提示符 ",CRCSN::Cmd);
-    UI.Push("\n[ 破 解 ]\n");
+    ui.push(" > 命令提示符 ",CRCSN::cmd);
+    ui.push("\n[ 破 解 ]\n");
     if(IsUserAnAdmin()){
-        UI.Push(" > 极域电子教室 ",CRCSN::Crack::Mythware);
-        if(!CRCSN::Opt.compactView){
-            UI.Push("\0");
+        ui.push(" > 极域电子教室 ",CRCSN::Crack::mythware);
+        if(!CRCSN::opt.compactView){
+            ui.push("\0");
         }
-        UI.Push(" > 联想云教室 ",CRCSN::Crack::Lenovo);
+        ui.push(" > 联想云教室 ",CRCSN::Crack::lenovo);
     }else{
-        UI.Push(" (i) 需要管理员权限.");
+        ui.push(" (i) 需要管理员权限.");
     }
-    UI.Push("\n[ 恢 复 ]\n");
+    ui.push("\n[ 恢 复 ]\n");
     if(IsUserAnAdmin()){
-        UI.Push(" > 极域电子教室 ",CRCSN::Recovery::Mythware);
-        if(!CRCSN::Opt.compactView){
-            UI.Push("\0");
+        ui.push(" > 极域电子教室 ",CRCSN::Recovery::mythware);
+        if(!CRCSN::opt.compactView){
+            ui.push("\0");
         }
-        UI.Push(" > 联想云教室 ",CRCSN::Recovery::Lenovo);
+        ui.push(" > 联想云教室 ",CRCSN::Recovery::lenovo);
     }else{
-        UI.Push(" (i) 需要管理员权限.");
+        ui.push(" (i) 需要管理员权限.");
     }
-    UI.Show();
+    ui.show();
     return 0;
 }

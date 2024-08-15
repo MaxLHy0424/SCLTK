@@ -1,38 +1,38 @@
 #ifndef MENU_HPP
 #define MENU_HP
-auto HideCursor(){
+auto hideCursor(){
     CONSOLE_CURSOR_INFO cursorInfo;
     GetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&cursorInfo);
     cursorInfo.bVisible=false;
     SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&cursorInfo);
 }
-auto ShowCursor(){
+auto showCursor(){
     CONSOLE_CURSOR_INFO cursorInfo;
     GetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&cursorInfo);
     cursorInfo.bVisible=true;
     SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&cursorInfo);
 }
-auto RemoveAttributes(){
+auto removeAttributes(){
     DWORD mode;
     GetConsoleMode(GetStdHandle(STD_INPUT_HANDLE),&mode);
     mode&=~ENABLE_QUICK_EDIT_MODE,mode&=~ENABLE_INSERT_MODE,mode|=ENABLE_MOUSE_INPUT;
     SetConsoleMode(GetStdHandle(STD_INPUT_HANDLE),mode);
 }
-auto AddAttributes(){
+auto addAttributes(){
     DWORD mode;
     GetConsoleMode(GetStdHandle(STD_INPUT_HANDLE),&mode);
     mode|=ENABLE_QUICK_EDIT_MODE,mode|=ENABLE_INSERT_MODE,mode|=ENABLE_MOUSE_INPUT;
     SetConsoleMode(GetStdHandle(STD_INPUT_HANDLE),mode);
 }
-auto GetCursorPos()->COORD{
+auto getCursor()->COORD{
     CONSOLE_SCREEN_BUFFER_INFO t;
     GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE),&t);
     return t.dwCursorPosition;
 }
-auto SetCursor(const COORD& t={0,0}){
+auto setCursor(const COORD& t={0,0}){
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE),t);
 }
-auto WaitMouseEvent(bool move=true)->MOUSE_EVENT_RECORD{
+auto waitMouseEvent(bool move=true)->MOUSE_EVENT_RECORD{
     INPUT_RECORD record;
     DWORD reg;
     while(true){
@@ -49,11 +49,11 @@ struct Color{
     short def,highlight,lastColor;
     Color():def(BLACK_WHITE),highlight(BLACK_BLUE),lastColor(BLACK_WHITE){}
     Color(short def=BLACK_WHITE,short highlight=BLACK_BLUE):def(def),highlight(highlight),lastColor(BLACK_WHITE){}
-    auto SetDef(){
+    auto setDefault(){
         SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),def);
         lastColor=def;
     }
-    auto SetHighlight(){
+    auto setHighlight(){
         SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),highlight);
         lastColor=highlight;
     }
@@ -67,10 +67,10 @@ class CUI;
 #define MOUSE_DOUBLE_CLICK DOUBLE_CLICK
 #define MOUSE_WHEEL MOUSE_WHEELED
 struct Parameter{
-    DWORD buttonState,controlKeyState,eventFlag;
+    DWORD buttonState,ctrlKeyState,eventFlag;
     CUI* ui;
-    Parameter():buttonState(MOUSE_LEFT_BUTTON),controlKeyState(0ul),eventFlag(0ul),ui(nullptr){}
-    Parameter(MOUSE_EVENT_RECORD mouseEvent,CUI* ui):buttonState(mouseEvent.dwButtonState),controlKeyState(mouseEvent.dwControlKeyState),eventFlag(mouseEvent.dwEventFlags),ui(ui){}
+    Parameter():buttonState(MOUSE_LEFT_BUTTON),ctrlKeyState(0ul),eventFlag(0ul),ui(nullptr){}
+    Parameter(MOUSE_EVENT_RECORD mouseEvent,CUI* ui):buttonState(mouseEvent.dwButtonState),ctrlKeyState(mouseEvent.dwControlKeyState),eventFlag(mouseEvent.dwEventFlags),ui(ui){}
 };
 typedef bool(*callback)(Parameter);
 struct Text{
@@ -93,70 +93,70 @@ class CUI{
         short height,width;
         std::vector<Text>lineData;
     protected:
-        auto GetConsoleSize(){
+        auto getConsoleSize(){
             CONSOLE_SCREEN_BUFFER_INFO t;
             GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE),&t);
             height=t.dwSize.Y;
             width=t.dwSize.X;
         }
-        auto ClearScreen(){
-            GetConsoleSize();
-            SetCursor({0,0});
+        auto clearScreen(){
+            getConsoleSize();
+            setCursor({0,0});
             for(short i{};i<height;++i){
                 for(short j{};j<width;++j){
                     printf(" ");
                 }
             }
-            SetCursor({0,0});
+            setCursor({0,0});
         }
-        auto Write(std::string text,bool isEndl=false){
+        auto write(std::string text,bool isEndl=false){
             printf("%s",text.c_str());
             if(isEndl){
                 printf("\n");
             }
         }
-        auto Rewrite(Text data){
-            SetCursor({0,data.position.Y});
+        auto rewrite(Text data){
+            setCursor({0,data.position.Y});
             for(short j{};j<data.position.X;++j){
-                Write(" ");
+                write(" ");
             }
-            SetCursor({0,data.position.Y});
-            Write(data.text);
-            SetCursor({0,data.position.Y});
+            setCursor({0,data.position.Y});
+            write(data.text);
+            setCursor({0,data.position.Y});
         }
-        auto InitPosition(){
-            ClearScreen();
+        auto initPosition(){
+            clearScreen();
             for(auto& data:lineData){
-                data.position=GetCursorPos();
-                data.color.SetDef();
-                Write(data.text,true);
+                data.position=getCursor();
+                data.color.setDefault();
+                write(data.text,true);
             }
         }
-        auto Refresh(COORD hangPosition){
+        auto refresh(COORD hangPosition){
             for(auto& data:lineData){
                 if((data==hangPosition)&&(data.color.lastColor^data.color.highlight)){
-                    data.color.SetHighlight();
-                    Rewrite(data);
+                    data.color.setHighlight();
+                    rewrite(data);
                 }
                 if((data!=hangPosition)&&(data.color.lastColor^data.color.def)){
-                    data.color.SetDef();
-                    Rewrite(data);
+                    data.color.setDefault();
+                    rewrite(data);
                 }
             }
         }
-        auto Implement(MOUSE_EVENT_RECORD mouseEvent){
+        auto implement(MOUSE_EVENT_RECORD mouseEvent){
             bool isExit{};
             for(auto& data:lineData){
                 if(data==mouseEvent.dwMousePosition){
                     if(data.function!=nullptr){
-                        ClearScreen();
-                        data.color.SetDef();
-                        AddAttributes();
-                        ShowCursor();
+                        clearScreen();
+                        data.color.setDefault();
+                        addAttributes();
+                        showCursor();
                         isExit=data.function(Parameter(mouseEvent,this));
-                        RemoveAttributes();
-                        HideCursor();
-                        InitPosition();
+                        removeAttributes();
+                        hideCursor();
+                        initPosition();
                     }
                     break;
                 }
@@ -166,46 +166,46 @@ class CUI{
     public:
         CUI():sleepTime(50ul),height(0),width(0){}
         ~CUI(){}
-        auto Push(std::string text,callback function=nullptr,short colorHighlight=BLACK_BLUE,short colorDef=BLACK_WHITE)->CUI&{
+        auto push(std::string text,callback function=nullptr,short colorHighlight=BLACK_BLUE,short colorDef=BLACK_WHITE)->CUI&{
             lineData.push_back(Text(text,Color(colorDef,((function==nullptr)?(colorDef):(colorHighlight))),function));
             return *this;
         }
-        auto Pop()->CUI&{
+        auto pop()->CUI&{
             lineData.pop_back();
             return *this;
         }
-        auto Clear()->CUI&{
+        auto clear()->CUI&{
             lineData.clear();
             return *this;
         }
-        auto Show(){
-            RemoveAttributes();
-            HideCursor();
+        auto show(){
+            removeAttributes();
+            hideCursor();
             MOUSE_EVENT_RECORD mouseEvent;
             Sleep(100ul);
-            InitPosition();
+            initPosition();
             bool isExit{};
             while(!isExit){
                 Sleep(sleepTime);
-                mouseEvent=WaitMouseEvent();
+                mouseEvent=waitMouseEvent();
                 switch(mouseEvent.dwEventFlags){
                     case MOUSE_MOVE:{
-                        Refresh(mouseEvent.dwMousePosition);
+                        refresh(mouseEvent.dwMousePosition);
                         break;
                     }case MOUSE_CLICK:{
                         if((mouseEvent.dwButtonState)&&(mouseEvent.dwButtonState^MOUSE_WHEEL)){
-                            isExit=Implement(mouseEvent);
+                            isExit=implement(mouseEvent);
                         }
                         break;
                     }
                 }
             }
-            ClearScreen();
+            clearScreen();
             Sleep(100ul);
         }
-}UI;
-auto Exit(Parameter){
+};
+auto _exit(Parameter){
     return true;
 }
-#define EXIT Exit
+#define EXIT _exit
 #endif
