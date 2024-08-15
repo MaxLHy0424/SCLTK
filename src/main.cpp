@@ -5,7 +5,7 @@ auto main(int argc,char* argv[])->int{
     bool errOpt{};
     {
         std::string t;
-        if(!(argc^1)){
+        if(argc==1){
             goto BEGIN;
         }
         for(int i{1};i<argc;++i){
