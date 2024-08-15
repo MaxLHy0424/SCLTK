@@ -11,7 +11,7 @@ auto main(int argc,char* argv[])->int{
         }
         for(int i{1};i<argc;++i){
             t=argv[i];
-            if((t.size()>2ull)&&(t.substr(0,2)=="-W")){
+            if((t.substr(0,2)=="-W")&&(t.size()>2ull)){
                 for(uint64_t j{2ull};j<t.size();++j){
                     switch(t[j]){
                         case 'c':{
