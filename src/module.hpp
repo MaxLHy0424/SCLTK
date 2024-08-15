@@ -1,6 +1,6 @@
 namespace CRCSN{
     struct{
-        bool wndCtrls,frontShowWnd,alphaWnd,sparseView;
+        bool wndCtrls,frontShow,alphaWnd,sparseView;
     }opt{};
     struct{
         struct{

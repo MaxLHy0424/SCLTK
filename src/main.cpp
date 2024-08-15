@@ -18,7 +18,7 @@ auto main(int argc,char* argv[])->int{
                             CRCSN::opt.wndCtrls=true;
                             break;
                         }case 'f':{
-                            CRCSN::opt.frontShowWnd=true;
+                            CRCSN::opt.frontShow=true;
                             break;
                         }case 'a':{
                             CRCSN::opt.alphaWnd=true;
@@ -42,7 +42,7 @@ auto main(int argc,char* argv[])->int{
             CRCSN::opt={};
         }
         CRCSN::init(CRCSN::opt.wndCtrls,CRCSN::opt.alphaWnd);
-        if(CRCSN::opt.frontShowWnd){
+        if(CRCSN::opt.frontShow){
             std::thread(CRCSN::frontShow).detach();
         }
     }
