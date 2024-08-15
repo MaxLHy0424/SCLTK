@@ -13,7 +13,7 @@ bin/favicon.o: favicon.rc img/favicon.ico bin
 	$(msys2)\\usr\\bin\\windres.exe -i $< -o $@ -F pe-x86-64
 clean:
 	$(msys2)\\usr\\bin\\rm.exe -rf\
-	 bin/__debug.exe\
+	 bin/__debug__.exe\
 	 bin/favicon.o\
 	 bin/x86_64
 .PHONY: build clean
