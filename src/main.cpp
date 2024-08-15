@@ -23,7 +23,6 @@ auto main(int argc,char* argv[])->int{
                             CRCSN::Opt.alphaWnd=true;
                             break;
                         }default:{
-                            CRCSN::Opt={};
                             errOpt=true;
                         }
                     }
@@ -38,6 +37,9 @@ auto main(int argc,char* argv[])->int{
             }
         }
     BEGIN:
+        if(errOpt){
+            CRCSN::Opt={};
+        }
         CRCSN::Init(CRCSN::Opt.wndCtrls,CRCSN::Opt.alphaWnd);
         if(CRCSN::Opt.frontShow){
             std::thread(CRCSN::FrontShow).detach();
