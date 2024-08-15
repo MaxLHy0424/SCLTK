@@ -5,7 +5,7 @@
             "name":"Debug",
             "type":"cppdbg",
             "request":"launch",
-            "program":"${workspaceRoot}\\bin\\__debug.exe",
+            "program":"${workspaceRoot}\\bin\\__debug__.exe",
             "args":[],
             "stopAtEntry":false,
             "cwd":"${workspaceRoot}",
