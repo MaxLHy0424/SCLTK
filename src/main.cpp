@@ -1,7 +1,7 @@
 #include"header.hpp"
 #include"ui.hpp"
 CUI ui;
-#include"module.hpp"
+#include"modules.hpp"
 auto main(int argc,char* argv[])->int{
     bool errOpt{};
     {
