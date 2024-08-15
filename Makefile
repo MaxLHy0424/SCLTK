@@ -1,6 +1,6 @@
 msys2 = C:\\Software\\MSYS2
 argv = -fexec-charset=GBK -C -std=gnu++23 -Wall -Wextra -pipe -m64 -DNDEBUG -static -Ofast -Os -flto -o
-build: bin bin/x86_64/main-msvcrt.exe bin/x86_64/main-ucrt.exe
+build: bin/x86_64/main-msvcrt.exe bin/x86_64/main-ucrt.exe
 bin/x86_64:
 	$(msys2)\\usr\\bin\\mkdir.exe bin/x86_64 -p
 bin: bin/x86_64
