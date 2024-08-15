@@ -28,8 +28,8 @@ auto main(int argc,char* argv[])->int{
                         }
                     }
                 }
-            }else if(t=="--compact-view"){
-                CRCSN::opt.compactView=true;
+            }else if(t=="--sparse-view"){
+                CRCSN::opt.sparseView=true;
             }else if(t=="/command"){
                 continue;
             }else{
@@ -47,7 +47,7 @@ auto main(int argc,char* argv[])->int{
         }
     }
     ui.push("    [ Computer Room Control Software Nemesis ]");
-    if(!CRCSN::opt.compactView){
+    if(CRCSN::opt.sparseView){
         ui.push("\0");
     }
     ui.push("                  v5.0.0-beta.2");
@@ -57,14 +57,14 @@ auto main(int argc,char* argv[])->int{
         ui.push(" (!) 存在未知的命令行参数.\n");
     }
     ui.push(" > 退出 ",EXIT);
-    if(!CRCSN::opt.compactView){
+    if(CRCSN::opt.sparseView){
         ui.push("\0");
     }
     ui.push(" > 命令提示符 ",CRCSN::cmd);
     ui.push("\n[ 破 解 ]\n");
     if(IsUserAnAdmin()){
         ui.push(" > 极域电子教室 ",CRCSN::Crack::mythware);
-        if(!CRCSN::opt.compactView){
+        if(CRCSN::opt.sparseView){
             ui.push("\0");
         }
         ui.push(" > 联想云教室 ",CRCSN::Crack::lenovo);
@@ -74,7 +74,7 @@ auto main(int argc,char* argv[])->int{
     ui.push("\n[ 恢 复 ]\n");
     if(IsUserAnAdmin()){
         ui.push(" > 极域电子教室 ",CRCSN::Recovery::mythware);
-        if(!CRCSN::opt.compactView){
+        if(CRCSN::opt.sparseView){
             ui.push("\0");
         }
         ui.push(" > 联想云教室 ",CRCSN::Recovery::lenovo);
