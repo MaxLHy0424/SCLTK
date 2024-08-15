@@ -1,15 +1,15 @@
 namespace CRCSN{
     struct{
-        bool wndCtrls,frontShow,alphaWnd,compactView;
-    }Opt{};
+        bool wndCtrls,frontShowWnd,alphaWnd,compactView;
+    }opt{};
     struct{
         struct{
             std::string exe[9],svc[3];
-        }Mythware;
+        }mythware;
         struct{
             std::string exe[18],svc[3];
-        }Lenovo;
-    }Rule{
+        }lenovo;
+    }rule{
         {
             {
                 "StudentMain","DispcapHelper","VRCwPlayer",
@@ -24,14 +24,14 @@ namespace CRCSN{
                 "WFBSMon","WFBSMlogon","WFBSSvrLogShow",
                 "ResetIp","FuncForWIN64","CertMgr",
                 "Fireware","BCDBootCopy","refreship",
-                "LenovoLockScreen","PortControl64","DesktopCheck",
+                "lenovoLockScreen","PortControl64","DesktopCheck",
                 "DeploymentManager","DeploymentAgent","XYNTService"
             },{
                 "BSAgentSvr","tvnserver","WFBSMlogon"
             }
         }
     };
-    auto Init(bool wndCtrls,bool alpha){
+    auto init(bool wndCtrls,bool alpha){
         system("chcp 936 > nul");
         #if EVALUATE_COPY
             SetConsoleTitle("[评估副本] CRCSN");
@@ -44,7 +44,7 @@ namespace CRCSN{
         system("mode con cols=50 lines=25");
         SetLayeredWindowAttributes(GetForegroundWindow(),0ul,((alpha)?(230u):(255u)),LWA_ALPHA);
     }
-    auto FrontShow(){
+    auto frontShow(){
         HWND foreWnd{GetForegroundWindow()};
         DWORD foreId{GetWindowThreadProcessId(foreWnd,NULL)},curId{GetCurrentThreadId()};
         while(true){
@@ -58,12 +58,12 @@ namespace CRCSN{
             Sleep(100ul);
         }
     }
-    auto Cmd(Parameter){
+    auto cmd(Parameter){
         system("cls & cmd & cls");
-        Init(Opt.wndCtrls,Opt.alphaWnd);
+        init(opt.wndCtrls,opt.alphaWnd);
         return false;
     }
-    auto OpCore(char mode,std::string* exe,uint16_t n,std::string* svc,uint16_t m){
+    auto opBase(char mode,std::string* exe,uint16_t n,std::string* svc,uint16_t m){
         system("cls");
         std::string cmd;
         switch(mode){
@@ -73,7 +73,7 @@ namespace CRCSN{
                     system(cmd.c_str());
                 }
                 for(uint16_t i{};i<n;++i){
-                    cmd="reg add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\"+exe[i]+".exe\" /f /t reg_sz /v debugger /d ?";
+                    cmd="reg add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\"+exe[i]+".exe\" /f /t reg_sz /v debugger /d ?";
                     system(cmd.c_str());
                 }
                 for(uint16_t i{};i<m;++i){
@@ -83,7 +83,7 @@ namespace CRCSN{
                 break;
             }case 'R':{
                 for(uint16_t i{};i<n;++i){
-                    cmd="reg delete \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\"+exe[i]+".exe\" /f";
+                    cmd="reg delete \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\"+exe[i]+".exe\" /f";
                     system(cmd.c_str());
                 }
                 for(uint16_t i{};i<m;++i){
@@ -96,22 +96,22 @@ namespace CRCSN{
         system("cls");
     }
     namespace Crack{
-        auto Mythware(Parameter){
-            OpCore('C',Rule.Mythware.exe,9u,Rule.Mythware.svc,3u);
+        auto mythware(Parameter){
+            opBase('C',rule.mythware.exe,9u,rule.mythware.svc,3u);
             return false;
         }
-        auto Lenovo(Parameter){
-            OpCore('C',Rule.Lenovo.exe,18u,Rule.Lenovo.svc,3u);
+        auto lenovo(Parameter){
+            opBase('C',rule.lenovo.exe,18u,rule.lenovo.svc,3u);
             return false;
         }
     }
     namespace Recovery{
-        auto Mythware(Parameter){
-            OpCore('R',Rule.Mythware.exe,9u,Rule.Mythware.svc,3u);
+        auto mythware(Parameter){
+            opBase('R',rule.mythware.exe,9u,rule.mythware.svc,3u);
             return false;
         }
-        auto Lenovo(Parameter){
-            OpCore('R',Rule.Lenovo.exe,18u,Rule.Lenovo.svc,3u);
+        auto lenovo(Parameter){
+            opBase('R',rule.lenovo.exe,18u,rule.lenovo.svc,3u);
             return false;
         }
     }
