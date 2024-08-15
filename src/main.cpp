@@ -53,7 +53,7 @@ auto main(int argc,char* argv[])->int{
     UI.Push("       https://github.com/MaxLHy0424/CRCSN");
     UI.Push("     (C) 2023 MaxLHy0424. All Rights Reserved.\n");
     if(errOpt){
-        UI.Push(" (!) 命令行参数错误.\n");
+        UI.Push(" (!) 存在未知的命令行参数.\n");
     }
     UI.Push(" > 退出 ",EXIT);
     if(!CRCSN::Opt.compactView){
