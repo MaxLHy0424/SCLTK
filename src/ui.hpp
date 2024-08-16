@@ -74,14 +74,14 @@ struct Parameter{
 };
 typedef bool(*callback)(Parameter);
 struct Text{
-    std::string text;
+    const char* text;
     Color color;
     COORD position;
     callback function;
     Text():text(""),color(Color(0,0)),position({0,0}),function(nullptr){}
-    Text(std::string text,Color color,callback function):text(text),color(color),position({0,0}),function(function){}
+    Text(const char* text,Color color,callback function):text(text),color(color),position({0,0}),function(function){}
     bool operator==(const COORD& mousePosition)const{
-        return ((position.Y==mousePosition.Y)&&(position.X<=mousePosition.X)&&(mousePosition.X<(position.X+(short)text.size())))?(true):(false);
+        return ((position.Y==mousePosition.Y)&&(position.X<=mousePosition.X)&&(mousePosition.X<(position.X+(short)strlen(text))))?(true):(false);
     }
     bool operator!=(const COORD& mousePosition)const{
         return !(operator==(mousePosition));
@@ -109,8 +109,8 @@ class CUI{
             }
             setCursor({0,0});
         }
-        auto write(std::string text,bool isEndl=false){
-            printf("%s",text.c_str());
+        auto write(const char* text,bool isEndl=false){
+            printf("%s",text);
             if(isEndl){
                 printf("\n");
             }
@@ -166,7 +166,7 @@ class CUI{
     public:
         CUI():sleepTime(50ul),height(0),width(0){}
         ~CUI(){}
-        auto push(std::string text,callback function=nullptr,short colorHighlight=BLACK_BLUE,short colorDef=BLACK_WHITE)->CUI&{
+        auto push(const char* text,callback function=nullptr,short colorHighlight=BLACK_BLUE,short colorDef=BLACK_WHITE)->CUI&{
             lineData.push_back(Text(text,Color(colorDef,((function==nullptr)?(colorDef):(colorHighlight))),function));
             return *this;
         }
