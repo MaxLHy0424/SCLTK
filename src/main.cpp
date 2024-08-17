@@ -2,17 +2,17 @@
 #include"ui.hpp"
 CUI ui;
 #include"modules.hpp"
-auto main(int argc,char* argv[])->int{
+auto main(i32 argc,char* argv[])->i32{
     bool errOpt{};
     {
         std::string tmp;
         if(argc==1){
             goto BEGIN;
         }
-        for(int i{1};i<argc;++i){
+        for(i32 i{1};i<argc;++i){
             tmp=argv[i];
             if((tmp.substr(0,2)=="-W")&&(tmp.size()>2ull)){
-                for(uint64_t j{2ull};j<tmp.size();++j){
+                for(u64 j{2ull};j<tmp.size();++j){
                     switch(tmp[j]){
                         case 'c':{
                             Pvt::opt.wndCtrls=true;
