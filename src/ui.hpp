@@ -89,7 +89,6 @@ struct Text{
 };
 class CUI{
     private:
-        DWORD sleepTime;
         i16 height,width;
         std::vector<Text>lineData;
     protected:
@@ -164,7 +163,7 @@ class CUI{
             return isExit;
         }
     public:
-        CUI():sleepTime(50ul),height(0),width(0){}
+        CUI():height(0),width(0){}
         ~CUI(){}
         auto push(const char* text,callback function=nullptr,i16 colorHighlight=BLACK_BLUE,i16 colorDef=BLACK_WHITE)->CUI&{
             lineData.push_back(Text(text,Color(colorDef,((function==nullptr)?(colorDef):(colorHighlight))),function));
@@ -186,7 +185,7 @@ class CUI{
             initPosition();
             bool isExit{};
             while(!isExit){
-                Sleep(sleepTime);
+                Sleep(50ul);
                 mouseEvent=waitMouseEvent();
                 switch(mouseEvent.dwEventFlags){
                     case MOUSE_MOVE:{
