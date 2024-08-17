@@ -2,6 +2,7 @@
 #include<iostream>
 #include<thread>
 #include<vector>
+typedef const char* cstr;
 typedef int i32;
 typedef short i16;
 typedef unsigned long long u64;

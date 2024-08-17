@@ -74,12 +74,12 @@ struct Parameter{
 };
 typedef bool(*callback)(Parameter);
 struct Text{
-    const char* text;
+    cstr text;
     Color color;
     COORD position;
     callback function;
     Text():text(""),color(Color(0,0)),position({0,0}),function(nullptr){}
-    Text(const char* text,Color color,callback function):text(text),color(color),position({0,0}),function(function){}
+    Text(cstr text,Color color,callback function):text(text),color(color),position({0,0}),function(function){}
     bool operator==(const COORD& mousePosition)const{
         return ((position.Y==mousePosition.Y)&&(position.X<=mousePosition.X)&&(mousePosition.X<(position.X+(i16)strlen(text))))?(true):(false);
     }
@@ -108,7 +108,7 @@ class CUI{
             }
             setCursor({0,0});
         }
-        auto write(const char* text,bool isEndl=false){
+        auto write(cstr text,bool isEndl=false){
             printf("%s",text);
             if(isEndl){
                 printf("\n");
@@ -165,7 +165,7 @@ class CUI{
     public:
         CUI():height(0),width(0){}
         ~CUI(){}
-        auto push(const char* text,callback function=nullptr,i16 colorHighlight=BLACK_BLUE,i16 colorDef=BLACK_WHITE)->CUI&{
+        auto push(cstr text,callback function=nullptr,i16 colorHighlight=BLACK_BLUE,i16 colorDef=BLACK_WHITE)->CUI&{
             lineData.push_back(Text(text,Color(colorDef,((function==nullptr)?(colorDef):(colorHighlight))),function));
             return *this;
         }
