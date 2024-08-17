@@ -46,9 +46,9 @@ auto waitMouseEvent(bool move=true)->MOUSE_EVENT_RECORD{
 #define BLACK_WHITE 0x07
 #define BLACK_BLUE 0x03
 struct Color{
-    short def,highlight,lastColor;
+    i16 def,highlight,lastColor;
     Color():def(BLACK_WHITE),highlight(BLACK_BLUE),lastColor(BLACK_WHITE){}
-    Color(short def=BLACK_WHITE,short highlight=BLACK_BLUE):def(def),highlight(highlight),lastColor(BLACK_WHITE){}
+    Color(i16 def=BLACK_WHITE,i16 highlight=BLACK_BLUE):def(def),highlight(highlight),lastColor(BLACK_WHITE){}
     auto setDefault(){
         SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),def);
         lastColor=def;
@@ -81,7 +81,7 @@ struct Text{
     Text():text(""),color(Color(0,0)),position({0,0}),function(nullptr){}
     Text(const char* text,Color color,callback function):text(text),color(color),position({0,0}),function(function){}
     bool operator==(const COORD& mousePosition)const{
-        return ((position.Y==mousePosition.Y)&&(position.X<=mousePosition.X)&&(mousePosition.X<(position.X+(short)strlen(text))))?(true):(false);
+        return ((position.Y==mousePosition.Y)&&(position.X<=mousePosition.X)&&(mousePosition.X<(position.X+(i16)strlen(text))))?(true):(false);
     }
     bool operator!=(const COORD& mousePosition)const{
         return !(operator==(mousePosition));
@@ -90,7 +90,7 @@ struct Text{
 class CUI{
     private:
         DWORD sleepTime;
-        short height,width;
+        i16 height,width;
         std::vector<Text>lineData;
     protected:
         auto getConsoleSize(){
@@ -102,8 +102,8 @@ class CUI{
         auto clearScreen(){
             getConsoleSize();
             setCursor({0,0});
-            for(short i{};i<height;++i){
-                for(short j{};j<width;++j){
+            for(i16 i{};i<height;++i){
+                for(i16 j{};j<width;++j){
                     printf(" ");
                 }
             }
@@ -117,7 +117,7 @@ class CUI{
         }
         auto rewrite(Text data){
             setCursor({0,data.position.Y});
-            for(short j{};j<data.position.X;++j){
+            for(i16 j{};j<data.position.X;++j){
                 write(" ");
             }
             setCursor({0,data.position.Y});
@@ -166,7 +166,7 @@ class CUI{
     public:
         CUI():sleepTime(50ul),height(0),width(0){}
         ~CUI(){}
-        auto push(const char* text,callback function=nullptr,short colorHighlight=BLACK_BLUE,short colorDef=BLACK_WHITE)->CUI&{
+        auto push(const char* text,callback function=nullptr,i16 colorHighlight=BLACK_BLUE,i16 colorDef=BLACK_WHITE)->CUI&{
             lineData.push_back(Text(text,Color(colorDef,((function==nullptr)?(colorDef):(colorHighlight))),function));
             return *this;
         }
