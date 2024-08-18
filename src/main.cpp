@@ -3,7 +3,7 @@
 CUI ui;
 #include"modules.hpp"
 auto main(i32 argc,char* argv[])->i32{
-    bool errOpt{};
+    bool optError{};
     {
         std::string t;
         if(argc==1){
@@ -24,7 +24,7 @@ auto main(i32 argc,char* argv[])->i32{
                             Pvt::opt.alphaWnd=true;
                             break;
                         }default:{
-                            errOpt=true;
+                            optError=true;
                         }
                     }
                 }
@@ -33,11 +33,11 @@ auto main(i32 argc,char* argv[])->i32{
             }else if(t=="/command"){
                 continue;
             }else{
-                errOpt=true;
+                optError=true;
                 break;
             }
         }
-        if(errOpt){
+        if(optError){
             Pvt::opt={};
         }
     BEGIN:
@@ -53,7 +53,7 @@ auto main(i32 argc,char* argv[])->i32{
     ui.push("                     v5.0.0");
     ui.push("       https://github.com/MaxLHy0424/CRCSN");
     ui.push("     (C) 2023 MaxLHy0424. All Rights Reserved.\n");
-    if(errOpt){
+    if(optError){
         ui.push(" (!) 命令行参数错误.\n");
     }
     ui.push(" > 退出 ",EXIT);
