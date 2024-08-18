@@ -15,13 +15,13 @@ auto main(i32 argc,char* argv[])->i32{
                 for(u64 j{2ull};j<t.size();++j){
                     switch(t[j]){
                         case 'c':{
-                            Pvt::opt.wndCtrls=true;
+                            Lib::opt.wndCtrls=true;
                             break;
                         }case 'f':{
-                            Pvt::opt.frontShow=true;
+                            Lib::opt.frontShow=true;
                             break;
                         }case 'a':{
-                            Pvt::opt.alphaWnd=true;
+                            Lib::opt.alphaWnd=true;
                             break;
                         }default:{
                             optError=true;
@@ -29,7 +29,7 @@ auto main(i32 argc,char* argv[])->i32{
                     }
                 }
             }else if(t=="--sparse-view"){
-                Pvt::opt.sparseView=true;
+                Lib::opt.sparseView=true;
             }else if(t=="/command"){
                 continue;
             }else{
@@ -38,16 +38,16 @@ auto main(i32 argc,char* argv[])->i32{
             }
         }
         if(optError){
-            Pvt::opt={};
+            Lib::opt={};
         }
     BEGIN:
-        Pvt::init(Pvt::opt.wndCtrls,Pvt::opt.alphaWnd);
-        if(Pvt::opt.frontShow){
-            std::thread(Pvt::frontShow).detach();
+        Lib::init(Lib::opt.wndCtrls,Lib::opt.alphaWnd);
+        if(Lib::opt.frontShow){
+            std::thread(Lib::frontShow).detach();
         }
     }
     ui.push("    [ Computer Room Control Software Nemesis ]");
-    if(Pvt::opt.sparseView){
+    if(Lib::opt.sparseView){
         ui.push("\0");
     }
     ui.push("                     v5.0.0");
@@ -57,27 +57,27 @@ auto main(i32 argc,char* argv[])->i32{
         ui.push(" (!) 存在未知的命令行参数.\n");
     }
     ui.push(" > 退出 ",EXIT);
-    if(Pvt::opt.sparseView){
+    if(Lib::opt.sparseView){
         ui.push("\0");
     }
-    ui.push(" > 命令提示符 ",Pvt::cmd);
+    ui.push(" > 命令提示符 ",Lib::cmd);
     ui.push("\n[ 破 解 ]\n");
     if(IsUserAnAdmin()){
-        ui.push(" > 极域电子教室 ",Pvt::Crack::mythware);
-        if(Pvt::opt.sparseView){
+        ui.push(" > 极域电子教室 ",Lib::Crack::mythware);
+        if(Lib::opt.sparseView){
             ui.push("\0");
         }
-        ui.push(" > 联想云教室 ",Pvt::Crack::lenovo);
+        ui.push(" > 联想云教室 ",Lib::Crack::lenovo);
     }else{
         ui.push(" (i) 需要管理员权限.");
     }
     ui.push("\n[ 恢 复 ]\n");
     if(IsUserAnAdmin()){
-        ui.push(" > 极域电子教室 ",Pvt::Recovery::mythware);
-        if(Pvt::opt.sparseView){
+        ui.push(" > 极域电子教室 ",Lib::Recovery::mythware);
+        if(Lib::opt.sparseView){
             ui.push("\0");
         }
-        ui.push(" > 联想云教室 ",Pvt::Recovery::lenovo);
+        ui.push(" > 联想云教室 ",Lib::Recovery::lenovo);
     }else{
         ui.push(" (i) 需要管理员权限.");
     }
