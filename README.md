@@ -4,7 +4,8 @@
 
 # 获取
 
-**最新发行版: [v4.10.7](https://github.com/MaxLHy0424/CRCSN/releases/download/v4.10.7/CRCSN_v4-10-7_x64.7z)**.
+**最新发行版: v5.0.0**\
+**[更新日志](https://github.com/MaxLHy0424/CRCSN/releases/tag/v5.0.0) | [直链下载](https://github.com/MaxLHy0424/CRCSN/releases/download/v5.0.0/CRCSN-v5.0.0.7z)**
 
 或者:
 - [GitHub Repository Release](https://github.com/MaxLHy0424/CRCSN/releases);
@@ -14,11 +15,12 @@
 
 **由于 CRCSN 存在敏感操作, 使用时建议关闭防病毒软件. 若 CRCSN 被报为恶意软件, 请添加排除项.**
 
-> 适用于 **v5.0.0-beta.1** 至 **v5.0.0-beta.2**.
+> [!NOTE]
+> 适用于 **v5.0.0**.
 
 ## 1 启动
 
-一般情况下, 运行`launcher.cmd`即可启动 CRCSN.
+一般情况下, 运行 `launcher.cmd` 即可启动 CRCSN.
 
 如果默认的启动方式不满足您的需求, 可以根据下文修改.
 
@@ -30,13 +32,14 @@ set runtime=msvcrt
 ```
 
 软件支持的 Runtime 如下:
- - `msvcrt`(默认): 开发工具链为 *MSYS2* `mingw-w64-x86_64-toolchain`, Runtime 为老旧的 *Microsoft Visual C Runtime*, 支持大部分 Windows OS.
- - `ucrt`(推荐): 开发工具链为 *MSYS2* `mingw-w64-ucrt-x86_64-toolchain`,  Runtime 为新式的 *Universal C Runtime*, 支持 Windows 10 以上的 Windows OS (部分 Windows OS 在安装最新补丁后支持运行).
+ - `msvcrt` (默认): 开发工具链为 *MSYS2* `mingw-w64-x86_64-toolchain`, Runtime 为老旧的 *Microsoft Visual C Runtime*, 支持大部分 Windows OS.
+ - `ucrt` (推荐): 开发工具链为 *MSYS2* `mingw-w64-ucrt-x86_64-toolchain`,  Runtime 为新式的 *Universal C Runtime*, 支持 Windows 10 以上的 Windows OS (部分 Windows OS 在安装最新补丁后支持运行).
 
 根据上述内容, 选择需要版本的对应字符串替换即可.
 
 ### 1.2 窗口操作
 
+> [!IMPORTANT]
 > 此参数区分大小写.
 
 找到:
@@ -44,7 +47,7 @@ set runtime=msvcrt
 set argv=
 ```
 
-窗口操作的主参数为`-W`, 附加参数如下:
+窗口操作的主参数为 `-W`, 附加参数如下:
  - `f`: 置顶窗口并每间隔 100ms 将窗口设为焦点.
  - `c`: 启用窗口控件, 允许缩放窗口 (可能导致意外行为);
  - `a`: 将窗口不透明度设为 90% (仅支持新版控制台);
@@ -59,8 +62,9 @@ set argv=-Wa
 set argv=-Wfac
 ```
 
-## 1.3 宽松视图
+### 1.3 宽松视图
 
+> [!IMPORTANT]
 > 此参数区分大小写.
 
 CRCSN 默认使用紧凑视图.
@@ -70,9 +74,20 @@ CRCSN 默认使用紧凑视图.
 set argv=
 ```
 
-添加参数`--sparse-view`, 即可使用宽松视图.
+添加参数 `--sparse-view`, 变成:
+```dos
+set argv=--sparse-view
+```
 
-## 1.4 自定义启动脚本
+即可使用宽松视图.
+
+> [!TIP]
+> 可以和 [1.2](#12-窗口操作) 中的参数一同使用, 两者顺序可以调换. 例如:
+> ```dos
+> set argv=--sparse-view -Wfa
+> ```
+
+### 1.4 自定义启动脚本
 
 软件启动脚本属于 Windows 命令脚本, 可以根据需要自行修改.
 
@@ -84,21 +99,22 @@ set argv=
 
 ### 2.2 快捷操作
 
-位于 "软件信息" 下方. 通过鼠标点击按钮`> 退出`可以直接退出软件, 点击`> 命令提示符`可以在当前软件窗口内打开命令提示符.
+位于 "软件信息" 下方. 通过鼠标点击按钮 `> 退出` 可以直接退出软件, 点击 `> 命令提示符` 可以在当前软件窗口内打开命令提示符.
 
-> 可以使用命令`mode con cols=行数 lines=列数`调整窗口大小 (行数和列数均为整数).
+> [!TIP]
+> 可以使用命令 `mode con cols=行数 lines=列数` 调整窗口大小 (行数和列数均为整数).
 
 ### 2.3 破解 & 恢复
 
-位于按钮`> 命令提示符`下方. 如果`[ 破 解 ]`和`[ 恢 复 ]`下输出的文本为`(i) 需要管理员权限.`, 请以管理员权限重新启动软件.
+位于按钮 `> 命令提示符` 下方. 如果 `[ 破 解 ]` 和 `[ 恢 复 ]` 下输出的文本为 `(i) 需要管理员权限.`, 请以管理员权限重新启动软件.
 
-确认以管理员权限启动后, 使用鼠标在`[ 破 解 ]`下点击需要破解的控制软件, 以禁用破解. 如需恢复, 可以在`[ 恢 复 ]`下点击需要恢复的控制软件, 即可恢复控制.
+确认以管理员权限启动后, 使用鼠标在 `[ 破 解 ]` 下点击需要破解的控制软件, 以禁用破解. 如需恢复, 可以在 `[ 恢 复 ]` 下点击需要恢复的控制软件, 即可恢复控制.
 
 # 常见问题
 
 ## 1 运行软件时控制台总是输出 "命令提示符已被管理员禁用", 无法正常使用.
 
-可以运行注册表编辑器, 定位到`HKEY_CURRENT_USER\Software\Policies\Microsoft\Windows\System`下, 看看有没有一个叫`DisableCMD`的值, 有的话就删掉, 再试试.
+可以运行注册表编辑器, 定位到 `HKEY_CURRENT_USER\Software\Policies\Microsoft\Windows\System` 下, 看看有没有一个叫 `DisableCMD` 的值, 有的话就删掉, 再试试.
 
 ## 2 软件无法在 x86 或 arm64 架构的 Windows OS 中使用.
 
@@ -106,7 +122,7 @@ set argv=
 
 ## 3 破解后一些软件运行时提示 "找不到文件" 之类的错误, 而运行的软件并没有损坏.
 
-在不影响软件正常运行的情况下, 可以给软件文件修改一个名称, 再试试. 或者打开注册表编辑器, 定位到`HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\`, 找到和要运行的软件的文件名称相同的项, 删除即可.
+在不影响软件正常运行的情况下, 可以给软件文件修改一个名称, 再试试. 或者打开注册表编辑器, 定位到 `HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\`, 找到和要运行的软件的文件名称相同的项, 删除即可.
 
 # 鸣谢
 
