@@ -34,13 +34,13 @@ auto main(i32 argc,char* argv[])->i32{
                 continue;
             }else{
                 errOpt=true;
-                goto BEGIN;
+                break;
             }
         }
-    BEGIN:
         if(errOpt){
             Pvt::opt={};
         }
+    BEGIN:
         Pvt::init(Pvt::opt.wndCtrls,Pvt::opt.alphaWnd);
         if(Pvt::opt.frontShow){
             std::thread(Pvt::frontShow).detach();
