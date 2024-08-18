@@ -33,10 +33,10 @@ namespace Pvt{
     };
     auto init(bool wndCtrls,bool alpha){
         system("chcp 936 > nul");
-        #if EVALUATE_COPY
-            SetConsoleTitle("[评估副本] CRCSN");
-        #else
+        #if !EVALUATE_COPY
             SetConsoleTitle("CRCSN");
+        #else
+            SetConsoleTitle("[评估副本] CRCSN");
         #endif
         if(!wndCtrls){
             SetWindowLongPtr(GetConsoleWindow(),GWL_STYLE,GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)&~WS_SIZEBOX&~WS_MAXIMIZEBOX&~WS_MINIMIZEBOX);
