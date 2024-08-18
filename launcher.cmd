@@ -1,6 +1,6 @@
 @echo off
 chcp 65001 > nul
-set EVALUATE_COPY=1
+set EVALUATE_COPY=0
 if %EVALUATE_COPY%==0 (
     title CRCSN Launcher
 ) else (
