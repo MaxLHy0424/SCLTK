@@ -72,7 +72,7 @@ struct Parameter{
     Parameter():buttonState(MOUSE_LEFT_BUTTON),ctrlKeyState(0ul),eventFlag(0ul),ui(nullptr){}
     Parameter(MOUSE_EVENT_RECORD mouseEvent,CUI* ui):buttonState(mouseEvent.dwButtonState),ctrlKeyState(mouseEvent.dwControlKeyState),eventFlag(mouseEvent.dwEventFlags),ui(ui){}
 };
-typedef bool(*callback)(Parameter);
+typedef bool (*callback)(Parameter);
 struct Text{
     cstr text;
     Color color;
