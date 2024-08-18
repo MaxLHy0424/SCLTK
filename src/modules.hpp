@@ -63,10 +63,10 @@ namespace Pvt{
         init(opt.wndCtrls,opt.alphaWnd);
         return false;
     }
-    auto opBase(char mode,std::string* exe,u16 n,std::string* svc,u16 m){
+    auto opBase(char op,std::string* exe,u16 n,std::string* svc,u16 m){
         system("cls");
         std::string cmd;
-        switch(mode){
+        switch(op){
             case 'C':{
                 for(u16 i{};i<n;++i){
                     cmd="taskKill /f /im "+exe[i]+".exe";
