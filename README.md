@@ -128,4 +128,4 @@ set argv=--sparse-view
 
 - Bilibili 用户 [lateworker_晚工](https://space.bilibili.com/39337803) 提供界面代码 (详见[此处](https://www.bilibili.com/video/BV1X14y1n7S4/), 软件有修改之处);
 - Bilibili 用户 [痕继痕迹](https://space.bilibili.com/39337803) 指导软件界面设计;
-- GitHub 用户 [Kendall (Zhu-Xinrong)](https://github.com/Zhu-Xinrong) 指导软件图标设计.
+- GitHub 用户 [Zhu-Xinrong(Kendall)](https://github.com/Zhu-Xinrong) 指导软件图标设计.
