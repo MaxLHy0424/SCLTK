@@ -4,11 +4,8 @@ CUI ui;
 #include"modules.hpp"
 auto main(i32 argc,char* argv[])->i32{
     bool optError{};
-    {
+    if(argc>1){
         std::string t;
-        if(argc==1){
-            goto BEGIN;
-        }
         for(i32 i{1};i<argc;++i){
             t=argv[i];
             if((t.substr(0,2)=="-W")&&(t.size()>2ull)){
@@ -25,6 +22,7 @@ auto main(i32 argc,char* argv[])->i32{
                             break;
                         }default:{
                             optError=true;
+                            goto INIT;
                         }
                     }
                 }
@@ -37,14 +35,14 @@ auto main(i32 argc,char* argv[])->i32{
                 break;
             }
         }
+    INIT:
         if(optError){
             Lib::opt={};
         }
-    BEGIN:
-        Lib::init(Lib::opt.wndCtrls,Lib::opt.alphaWnd);
-        if(Lib::opt.frontShow){
-            std::thread(Lib::frontShow).detach();
-        }
+    }
+    Lib::init(Lib::opt.wndCtrls,Lib::opt.alphaWnd);
+    if(Lib::opt.frontShow){
+        std::thread(Lib::frontShow).detach();
     }
     ui.push("    [ Computer Room Control Software Nemesis ]");
     if(Lib::opt.sparseView){
@@ -54,7 +52,7 @@ auto main(i32 argc,char* argv[])->i32{
     ui.push("       https://github.com/MaxLHy0424/CRCSN");
     ui.push("     (C) 2023 MaxLHy0424. All Rights Reserved.\n");
     if(optError){
-        ui.push(" (!) 存在未知的命令行参数.\n");
+        ui.push(" (!) 存在错误的命令行参数.\n");
     }
     ui.push(" > 退出 ",EXIT);
     if(Lib::opt.sparseView){
