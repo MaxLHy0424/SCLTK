@@ -36,9 +36,9 @@ namespace Lib{
         #if CHANNEL==0
             SetConsoleTitle("CRCSN");
         #elif CHANNEL==1
-            SetConsoleTitle("[BETA] CRCSN");
+            SetConsoleTitle("[Beta] CRCSN");
         #elif CHANNEL==2
-            SetConsoleTitle("[DEV] CRCSN");
+            SetConsoleTitle("[Dev] CRCSN");
         #else
             SetConsoleTitle("[UKN] CRCSN");
         #endif

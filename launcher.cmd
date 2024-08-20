@@ -4,9 +4,9 @@ set CHANNEL=1
 if %CHANNEL%==0 (
     title CRCSN Launcher
 ) else if %CHANNEL%==1 (
-    title [BETA] CRCSN Launcher
+    title [Beta] CRCSN Launcher
 ) else if %CHANNEL%==2 (
-    title [DEV] CRCSN Launcher
+    title [Dev] CRCSN Launcher
 ) else (
     title [UKN] CRCSN Launcher
 )
