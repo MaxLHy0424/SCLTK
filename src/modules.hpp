@@ -50,7 +50,7 @@ namespace Lib{
         SetLayeredWindowAttributes(GetForegroundWindow(),0ul,((alpha)?(230u):(255u)),LWA_ALPHA);
     }
     auto frontShow(){
-        HWND foreWnd{GetForegroundWindow()};
+        HWND foreWnd{GetConsoleWindow()};
         DWORD foreId{GetWindowThreadProcessId(foreWnd,NULL)},curId{GetCurrentThreadId()};
         while(true){
             AttachThreadInput(curId,foreId,TRUE);
