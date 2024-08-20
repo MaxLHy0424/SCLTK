@@ -42,9 +42,10 @@ namespace Lib{
         #else
             SetConsoleTitle("[Custom] CRCSN");
         #endif
-        if(!wndCtrls){
-            SetWindowLongPtr(GetConsoleWindow(),GWL_STYLE,GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)&~WS_SIZEBOX&~WS_MAXIMIZEBOX&~WS_MINIMIZEBOX);
-        }
+        SetWindowLongPtr(GetConsoleWindow(),GWL_STYLE,\
+            (wndCtrls)?(GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)|WS_SIZEBOX|WS_MAXIMIZEBOX|WS_MINIMIZEBOX):\
+            (GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)&~WS_SIZEBOX&~WS_MAXIMIZEBOX&~WS_MINIMIZEBOX)
+        );
         system("mode con cols=50 lines=25");
         SetLayeredWindowAttributes(GetForegroundWindow(),0ul,((alpha)?(230u):(255u)),LWA_ALPHA);
     }
