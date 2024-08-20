@@ -42,8 +42,8 @@ namespace Lib{
         #else
             SetConsoleTitle("[N/A] CRCSN");
         #endif
-        SetWindowLongPtr(GetConsoleWindow(),GWL_STYLE,\
-            (wndCtrls)?(GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)|WS_SIZEBOX|WS_MAXIMIZEBOX):\
+        SetWindowLongPtr(GetConsoleWindow(),GWL_STYLE,(wndCtrls)?\
+            (GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)|WS_SIZEBOX|WS_MAXIMIZEBOX):\
             (GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)&~WS_SIZEBOX&~WS_MAXIMIZEBOX)
         );
         system("mode con cols=50 lines=25");
