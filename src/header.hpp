@@ -9,4 +9,4 @@ typedef int i32;
 typedef short i16;
 typedef unsigned long long u64;
 typedef unsigned short u16;
-#define EVALUATE_COPY true
+#define CHANNEL 2
