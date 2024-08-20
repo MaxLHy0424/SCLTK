@@ -58,7 +58,6 @@ struct Color{
         lastColor=highlight;
     }
 };
-class CUI;
 #define MOUSE_LEFT_BUTTON FROM_LEFT_1ST_BUTTON_PRESSED
 #define MOUSE_MIDDLE_BUTTON FROM_LEFT_2ND_BUTTON_PRESSED
 #define MOUSE_RIGHT_BUTTON RIGHTMOST_BUTTON_PRESSED
@@ -66,6 +65,7 @@ class CUI;
 #define MOUSE_MOVE MOUSE_MOVED
 #define MOUSE_DOUBLE_CLICK DOUBLE_CLICK
 #define MOUSE_WHEEL MOUSE_WHEELED
+class CUI;
 struct Parameter{
     DWORD buttonState,ctrlKeyState,eventFlag;
     CUI* ui;
