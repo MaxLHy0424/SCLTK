@@ -1,10 +1,14 @@
 @echo off
 chcp 65001 > nul
-set EVALUATE_COPY=1
-if %EVALUATE_COPY%==0 (
+set CHANNEL=1
+if %CHANNEL%==0 (
     title CRCSN Launcher
+) else if %CHANNEL%==1 (
+    title [Beta] CRCSN Launcher
+) else if %CHANNEL%==2 (
+    title [Dev] CRCSN Launcher
 ) else (
-    title [评估副本] CRCSN Launcher
+    title [Custom] CRCSN Launcher
 )
 mode con cols=50 lines=25
 set arch=x86_64

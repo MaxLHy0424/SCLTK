@@ -33,10 +33,14 @@ namespace Lib{
     };
     auto init(bool wndCtrls,bool alpha){
         system("chcp 936 > nul");
-        #if !EVALUATE_COPY
+        #if CHANNEL==0
             SetConsoleTitle("CRCSN");
+        #elif CHANNEL==1
+            SetConsoleTitle("[Beta] CRCSN");
+        #elif CHANNEL==2
+            SetConsoleTitle("[Dev] CRCSN");
         #else
-            SetConsoleTitle("[评估副本] CRCSN");
+            SetConsoleTitle("[Custom] CRCSN");
         #endif
         if(!wndCtrls){
             SetWindowLongPtr(GetConsoleWindow(),GWL_STYLE,GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)&~WS_SIZEBOX&~WS_MAXIMIZEBOX&~WS_MINIMIZEBOX);
