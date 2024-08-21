@@ -43,8 +43,16 @@ auto waitMouseEvent(bool move=true)->MOUSE_EVENT_RECORD{
         }
     }
 }
+#define MOUSE_LEFT_BUTTON FROM_LEFT_1ST_BUTTON_PRESSED
+#define MOUSE_MIDDLE_BUTTON FROM_LEFT_2ND_BUTTON_PRESSED
+#define MOUSE_RIGHT_BUTTON RIGHTMOST_BUTTON_PRESSED
+#define MOUSE_CLICK 0x0
+#define MOUSE_MOVE MOUSE_MOVED
+#define MOUSE_DOUBLE_CLICK DOUBLE_CLICK
+#define MOUSE_WHEEL MOUSE_WHEELED
 #define BLACK_WHITE 0x07
 #define BLACK_BLUE 0x03
+class CUI;
 struct Color{
     i16 def,highlight,lastColor;
     Color():def(BLACK_WHITE),highlight(BLACK_BLUE),lastColor(BLACK_WHITE){}
@@ -58,14 +66,6 @@ struct Color{
         lastColor=highlight;
     }
 };
-#define MOUSE_LEFT_BUTTON FROM_LEFT_1ST_BUTTON_PRESSED
-#define MOUSE_MIDDLE_BUTTON FROM_LEFT_2ND_BUTTON_PRESSED
-#define MOUSE_RIGHT_BUTTON RIGHTMOST_BUTTON_PRESSED
-#define MOUSE_CLICK 0x0
-#define MOUSE_MOVE MOUSE_MOVED
-#define MOUSE_DOUBLE_CLICK DOUBLE_CLICK
-#define MOUSE_WHEEL MOUSE_WHEELED
-class CUI;
 struct Parameter{
     DWORD buttonState,ctrlKeyState,eventFlag;
     CUI* ui;
