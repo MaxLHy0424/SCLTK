@@ -4,7 +4,7 @@
 #include<thread>
 #include<vector>
 #include<shlobj.h>
-#define CHANNEL 1
+#define CHANNEL 2
 typedef const char* cstr;
 typedef int i32;
 typedef short i16;
