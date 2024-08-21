@@ -1,48 +1,5 @@
 #ifndef MENU_HPP
 #define MENU_HP
-auto hideCursor(){
-    CONSOLE_CURSOR_INFO cursorInfo;
-    GetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&cursorInfo);
-    cursorInfo.bVisible=false;
-    SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&cursorInfo);
-}
-auto showCursor(){
-    CONSOLE_CURSOR_INFO cursorInfo;
-    GetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&cursorInfo);
-    cursorInfo.bVisible=true;
-    SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&cursorInfo);
-}
-auto removeAttributes(){
-    DWORD mode;
-    GetConsoleMode(GetStdHandle(STD_INPUT_HANDLE),&mode);
-    mode&=~ENABLE_QUICK_EDIT_MODE,mode&=~ENABLE_INSERT_MODE,mode|=ENABLE_MOUSE_INPUT;
-    SetConsoleMode(GetStdHandle(STD_INPUT_HANDLE),mode);
-}
-auto addAttributes(){
-    DWORD mode;
-    GetConsoleMode(GetStdHandle(STD_INPUT_HANDLE),&mode);
-    mode|=ENABLE_QUICK_EDIT_MODE,mode|=ENABLE_INSERT_MODE,mode|=ENABLE_MOUSE_INPUT;
-    SetConsoleMode(GetStdHandle(STD_INPUT_HANDLE),mode);
-}
-auto getCursor()->COORD{
-    CONSOLE_SCREEN_BUFFER_INFO tmp;
-    GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE),&tmp);
-    return tmp.dwCursorPosition;
-}
-auto setCursor(const COORD& tmp={0,0}){
-    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE),tmp);
-}
-auto waitMouseEvent(bool move=true)->MOUSE_EVENT_RECORD{
-    INPUT_RECORD record;
-    DWORD reg;
-    while(true){
-        Sleep(10ul);
-        ReadConsoleInput(GetStdHandle(STD_INPUT_HANDLE),&record,1ul,&reg);
-        if((record.EventType==MOUSE_EVENT)&&(move|(record.Event.MouseEvent.dwEventFlags!=MOUSE_MOVED))){
-            return record.Event.MouseEvent;
-        }
-    }
-}
 #define MOUSE_LEFT_BUTTON FROM_LEFT_1ST_BUTTON_PRESSED
 #define MOUSE_MIDDLE_BUTTON FROM_LEFT_2ND_BUTTON_PRESSED
 #define MOUSE_RIGHT_BUTTON RIGHTMOST_BUTTON_PRESSED
@@ -92,6 +49,49 @@ class CUI{
         i16 height,width;
         std::vector<Text>lineData;
     protected:
+        auto hideCursor(){
+            CONSOLE_CURSOR_INFO cursorInfo;
+            GetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&cursorInfo);
+            cursorInfo.bVisible=false;
+            SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&cursorInfo);
+        }
+        auto showCursor(){
+            CONSOLE_CURSOR_INFO cursorInfo;
+            GetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&cursorInfo);
+            cursorInfo.bVisible=true;
+            SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&cursorInfo);
+        }
+        auto removeAttributes(){
+            DWORD mode;
+            GetConsoleMode(GetStdHandle(STD_INPUT_HANDLE),&mode);
+            mode&=~ENABLE_QUICK_EDIT_MODE,mode&=~ENABLE_INSERT_MODE,mode|=ENABLE_MOUSE_INPUT;
+            SetConsoleMode(GetStdHandle(STD_INPUT_HANDLE),mode);
+        }
+        auto addAttributes(){
+            DWORD mode;
+            GetConsoleMode(GetStdHandle(STD_INPUT_HANDLE),&mode);
+            mode|=ENABLE_QUICK_EDIT_MODE,mode|=ENABLE_INSERT_MODE,mode|=ENABLE_MOUSE_INPUT;
+            SetConsoleMode(GetStdHandle(STD_INPUT_HANDLE),mode);
+        }
+        auto getCursor()->COORD{
+            CONSOLE_SCREEN_BUFFER_INFO tmp;
+            GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE),&tmp);
+            return tmp.dwCursorPosition;
+        }
+        auto setCursor(const COORD& tmp={0,0}){
+            SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE),tmp);
+        }
+        auto waitMouseEvent(bool move=true)->MOUSE_EVENT_RECORD{
+            INPUT_RECORD record;
+            DWORD reg;
+            while(true){
+                Sleep(10ul);
+                ReadConsoleInput(GetStdHandle(STD_INPUT_HANDLE),&record,1ul,&reg);
+                if((record.EventType==MOUSE_EVENT)&&(move|(record.Event.MouseEvent.dwEventFlags!=MOUSE_MOVED))){
+                    return record.Event.MouseEvent;
+                }
+            }
+        }
         auto getConsoleSize(){
             CONSOLE_SCREEN_BUFFER_INFO tmp;
             GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE),&tmp);
