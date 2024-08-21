@@ -1,4 +1,4 @@
-namespace Lib{
+namespace Pvt{
     struct{
         bool wndCtrls,frontShow,alphaWnd,sparseView;
     }opt{};
