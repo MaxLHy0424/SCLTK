@@ -62,12 +62,12 @@ set argv=-Wa
 set argv=-Wfac
 ```
 
-### 1.3 宽松视图
+### 1.3 疏松视图
 
 > [!IMPORTANT]
 > 此命令行参数区分大小写.
 
-CRCSN 默认使用紧凑视图.
+软件默认使用紧凑视图.
 
 找到:
 ```dos
@@ -119,7 +119,6 @@ set argv=--sparse-view
 ## 2 运行软件时控制台总是输出 "命令提示符已被管理员禁用", 无法正常使用.
 
 可以运行注册表编辑器, 定位到 `HKEY_CURRENT_USER\Software\Policies\Microsoft\Windows\System` 下, 看看有没有一个叫 `DisableCMD` 的值, 有的话就删掉, 再试试.
-
 
 ## 3 破解后一些软件运行时提示 "找不到文件" 之类的错误, 而运行的软件并没有损坏.
 
