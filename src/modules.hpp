@@ -2,35 +2,6 @@ namespace Pvt{
     struct{
         bool wndCtrls,frontShow,alphaWnd,sparseView;
     }opt{};
-    struct{
-        struct{
-            std::string exe[9],svc[3];
-        }mythware;
-        struct{
-            std::string exe[18],svc[3];
-        }lenovo;
-    }rule{
-        {
-            {
-                "StudentMain","DispcapHelper","VRCwPlayer",
-                "InstHelpApp","InstHelpApp64","TDOvrSet",
-                "GATESRV","ProcHelper64","MasterHelper"
-            },{
-                "STUDSRV","TDNetFilter","TDFileFilter"
-            }
-        },{
-            {
-                "vncviewer","tvnserver32","WfbsPnpInstall",
-                "WFBSMon","WFBSMlogon","WFBSSvrLogShow",
-                "ResetIp","FuncForWIN64","CertMgr",
-                "Fireware","BCDBootCopy","refreship",
-                "lenovoLockScreen","PortControl64","DesktopCheck",
-                "DeploymentManager","DeploymentAgent","XYNTService"
-            },{
-                "BSAgentSvr","tvnserver","WFBSMlogon"
-            }
-        }
-    };
     auto init(bool wndCtrls,bool alpha){
         system("chcp 936 > nul");
         #if CHANNEL==0
@@ -68,6 +39,35 @@ namespace Pvt{
         init(opt.wndCtrls,opt.alphaWnd);
         return false;
     }
+    struct{
+        struct{
+            std::string exe[9],svc[3];
+        }mythware;
+        struct{
+            std::string exe[18],svc[3];
+        }lenovo;
+    }rule{
+        {
+            {
+                "StudentMain","DispcapHelper","VRCwPlayer",
+                "InstHelpApp","InstHelpApp64","TDOvrSet",
+                "GATESRV","ProcHelper64","MasterHelper"
+            },{
+                "STUDSRV","TDNetFilter","TDFileFilter"
+            }
+        },{
+            {
+                "vncviewer","tvnserver32","WfbsPnpInstall",
+                "WFBSMon","WFBSMlogon","WFBSSvrLogShow",
+                "ResetIp","FuncForWIN64","CertMgr",
+                "Fireware","BCDBootCopy","refreship",
+                "lenovoLockScreen","PortControl64","DesktopCheck",
+                "DeploymentManager","DeploymentAgent","XYNTService"
+            },{
+                "BSAgentSvr","tvnserver","WFBSMlogon"
+            }
+        }
+    };
     auto opBase(char op,std::string* exe,u16 n,std::string* svc,u16 m){
         system("cls");
         std::string cmd;
