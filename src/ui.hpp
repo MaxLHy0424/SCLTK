@@ -7,8 +7,9 @@
 #define MOUSE_MOVE MOUSE_MOVED
 #define MOUSE_DOUBLE_CLICK DOUBLE_CLICK
 #define MOUSE_WHEEL MOUSE_WHEELED
-#define BLACK_WHITE 0x07
-#define BLACK_BLUE 0x03
+#define BLACK_WHITE (i16)0x07
+#define BLACK_BLUE (i16)0x03
+#define BLACK_RED (i16)0x04
 class CUI;
 struct Color{
     i16 def,highlight,lastColor;
