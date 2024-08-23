@@ -10,6 +10,7 @@
 #define BLACK_WHITE (i16)0x07
 #define BLACK_BLUE (i16)0x03
 #define BLACK_RED (i16)0x04
+#define BLACK_RED_PALE (i16)0x0c
 class CUI;
 struct Color{
     i16 def,highlight,lastColor;
