@@ -5,12 +5,12 @@ CUI ui;
 auto main(i32 argc,cstr argv[])->i32{
     bool optError{};
     if(argc>1){
-        std::string tmp;
+        std::string t;
         for(i32 i{1};i<argc;++i){
-            tmp=argv[i];
-            if((tmp.substr(0,2)=="-W")&&(tmp.length()>2ull)){
-                for(u64 j{2ull};j<tmp.length();++j){
-                    switch(tmp[j]){
+            t=argv[i];
+            if((t.substr(0,2)=="-W")&&(t.length()>2ull)){
+                for(u64 j{2ull};j<t.length();++j){
+                    switch(t[j]){
                         case 'c':{
                             Pvt::opt.wndCtrls=true;
                             break;
@@ -26,9 +26,9 @@ auto main(i32 argc,cstr argv[])->i32{
                         }
                     }
                 }
-            }else if(tmp=="--sparse-view"){
+            }else if(t=="--sparse-view"){
                 Pvt::opt.sparseView=true;
-            }else if(tmp=="/command"){
+            }else if(t=="/command"){
                 continue;
             }else{
                 optError=true;
