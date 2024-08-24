@@ -11,9 +11,11 @@ bin/x86_64/main-ucrt.exe: $(usedFile) src/*.hpp bin
 	$(msys2)\\ucrt64\\bin\\g++.exe $(usedFile) $(argv) $@
 bin/favicon.o: favicon.rc img/favicon.ico bin
 	$(msys2)\\usr\\bin\\windres.exe -i $< -o $@ -F pe-x86-64
-clean:
+clean_std:
 	$(msys2)\\usr\\bin\\rm.exe -rf\
 	 bin/__debug__.exe\
-	 bin/favicon.o\
+	 bin/favicon.o
+clean_full: clean_std
+	$(msys2)\\usr\\bin\\rm.exe -rf\
 	 bin/x86_64
 .PHONY: build clean
