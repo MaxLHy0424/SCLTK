@@ -7,14 +7,14 @@
 #define MOUSE_MOVE MOUSE_MOVED
 #define MOUSE_DOUBLE_CLICK DOUBLE_CLICK
 #define MOUSE_WHEEL MOUSE_WHEELED
-#define BLACK_WHITE (i16)0x07
-#define BLACK_BLUE (i16)0x03
-#define BLACK_RED_PALE (i16)0x0c
+#define CON_WHITE (i16)0x07
+#define CON_BLUE (i16)0x03
+#define CON_PALE_RED (i16)0x0c
 class CUI;
 struct Color{
     i16 def,highlight,lastColor;
-    Color():def(BLACK_WHITE),highlight(BLACK_BLUE),lastColor(BLACK_WHITE){}
-    Color(i16 def=BLACK_WHITE,i16 highlight=BLACK_BLUE):def(def),highlight(highlight),lastColor(BLACK_WHITE){}
+    Color():def(CON_WHITE),highlight(CON_BLUE),lastColor(CON_WHITE){}
+    Color(i16 def=CON_WHITE,i16 highlight=CON_BLUE):def(def),highlight(highlight),lastColor(CON_WHITE){}
     auto setDefault(){
         SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),def);
         lastColor=def;
@@ -30,16 +30,16 @@ struct Parameter{
     Parameter():buttonState(MOUSE_LEFT_BUTTON),ctrlKeyState(0ul),eventFlag(0ul),ui(nullptr){}
     Parameter(MOUSE_EVENT_RECORD mouseEvent,CUI* ui):buttonState(mouseEvent.dwButtonState),ctrlKeyState(mouseEvent.dwControlKeyState),eventFlag(mouseEvent.dwEventFlags),ui(ui){}
 };
-typedef bool (*callback)(Parameter);
+typedef bool (*fnptr)(Parameter);
 struct Text{
-    cstr text;
+    cstr txt;
     Color color;
     COORD position;
-    callback function;
-    Text():text(""),color(Color(0,0)),position({0,0}),function(nullptr){}
-    Text(cstr text,Color color,callback function):text(text),color(color),position({0,0}),function(function){}
+    fnptr fn;
+    Text():txt(""),color(Color(0,0)),position({0,0}),fn(nullptr){}
+    Text(cstr txt,Color color,fnptr fn):txt(txt),color(color),position({0,0}),fn(fn){}
     bool operator==(const COORD& mousePosition)const{
-        return ((position.Y==mousePosition.Y)&&(position.X<=mousePosition.X)&&(mousePosition.X<(position.X+(i16)strlen(text))))?(true):(false);
+        return ((position.Y==mousePosition.Y)&&(position.X<=mousePosition.X)&&(mousePosition.X<(position.X+(i16)strlen(txt))))?(true):(false);
     }
     bool operator!=(const COORD& mousePosition)const{
         return !(operator==(mousePosition));
@@ -109,8 +109,8 @@ class CUI{
             }
             setCursor({0,0});
         }
-        auto write(cstr text,bool isEndl=false){
-            printf("%s",text);
+        auto write(cstr txt,bool isEndl=false){
+            printf("%s",txt);
             if(isEndl){
                 printf("\n");
             }
@@ -121,7 +121,7 @@ class CUI{
                 write(" ");
             }
             setCursor({0,data.position.Y});
-            write(data.text);
+            write(data.txt);
             setCursor({0,data.position.Y});
         }
         auto initPosition(){
@@ -129,7 +129,7 @@ class CUI{
             for(auto& data:lineData){
                 data.position=getCursor();
                 data.color.setDefault();
-                write(data.text,true);
+                write(data.txt,true);
             }
         }
         auto refresh(COORD hangPosition){
@@ -148,12 +148,12 @@ class CUI{
             bool isExit{};
             for(auto& data:lineData){
                 if(data==mouseEvent.dwMousePosition){
-                    if(data.function!=nullptr){
+                    if(data.fn!=nullptr){
                         clearScreen();
                         data.color.setDefault();
                         addAttributes();
                         showCursor();
-                        isExit=data.function(Parameter(mouseEvent,this));
+                        isExit=data.fn(Parameter(mouseEvent,this));
                         removeAttributes();
                         hideCursor();
                         initPosition();
@@ -166,8 +166,8 @@ class CUI{
     public:
         CUI():height(0),width(0){}
         ~CUI(){}
-        auto push(cstr text,callback function=nullptr,i16 colorHighlight=BLACK_BLUE,i16 colorDef=BLACK_WHITE)->CUI&{
-            lineData.push_back(Text(text,Color(colorDef,((function==nullptr)?(colorDef):(colorHighlight))),function));
+        auto push(cstr txt,fnptr fn=nullptr,i16 colorHighlight=CON_BLUE,i16 colorDef=CON_WHITE)->CUI&{
+            lineData.push_back(Text(txt,Color(colorDef,((fn==nullptr)?(colorDef):(colorHighlight))),fn));
             return *this;
         }
         auto pop()->CUI&{
