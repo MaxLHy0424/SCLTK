@@ -54,7 +54,7 @@ auto main(i32 argc,cstr argv[])->i32{
     if(optError){
         ui.push(" (!) 命令行参数错误.\n");
     }
-    ui.push(" > 退出 ",EXIT,CON_PALE_RED);
+    ui.push(" > 退出 ",EXIT,CON_RED_PALE);
     if(Pvt::opt.sparseView){
         ui.push("\0");
     }
