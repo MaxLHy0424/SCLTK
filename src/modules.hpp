@@ -18,7 +18,7 @@ namespace Pvt{
             (GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)&~WS_SIZEBOX&~WS_MAXIMIZEBOX)
         );
         system("mode con cols=50 lines=25");
-        SetLayeredWindowAttributes(GetForegroundWindow(),0ul,((alpha)?(230u):(255u)),LWA_ALPHA);
+        SetLayeredWindowAttributes(GetForegroundWindow(),0,((alpha)?(230):(255)),LWA_ALPHA);
     }
     auto frontShow(){
         HWND foreWnd{GetConsoleWindow()};
@@ -102,21 +102,21 @@ namespace Pvt{
     }
     namespace Crack{
         auto mythware(Parameter){
-            opBase('C',rule.mythware.exe,9u,rule.mythware.svc,3u);
+            opBase('C',rule.mythware.exe,9,rule.mythware.svc,3);
             return false;
         }
         auto lenovo(Parameter){
-            opBase('C',rule.lenovo.exe,18u,rule.lenovo.svc,3u);
+            opBase('C',rule.lenovo.exe,18,rule.lenovo.svc,3);
             return false;
         }
     }
     namespace Recovery{
         auto mythware(Parameter){
-            opBase('R',rule.mythware.exe,9u,rule.mythware.svc,3u);
+            opBase('R',rule.mythware.exe,9,rule.mythware.svc,3);
             return false;
         }
         auto lenovo(Parameter){
-            opBase('R',rule.lenovo.exe,18u,rule.lenovo.svc,3u);
+            opBase('R',rule.lenovo.exe,18,rule.lenovo.svc,3);
             return false;
         }
     }

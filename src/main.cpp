@@ -8,8 +8,8 @@ auto main(i32 argc,cstr argv[])->i32{
         std::string t;
         for(i32 i{1};i<argc;++i){
             t=argv[i];
-            if((t.substr(0,2)=="-W")&&(t.length()>2ull)){
-                for(u64 j{2ull};j<t.length();++j){
+            if((t.substr(0,2)=="-W")&&(t.length()>2)){
+                for(u64 j{2};j<t.length();++j){
                     switch(t[j]){
                         case 'c':{
                             Pvt::opt.wndCtrls=true;
