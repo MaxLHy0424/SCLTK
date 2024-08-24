@@ -7,9 +7,9 @@
 #define MOUSE_MOVE MOUSE_MOVED
 #define MOUSE_DOUBLE_CLICK DOUBLE_CLICK
 #define MOUSE_WHEEL MOUSE_WHEELED
-#define CON_WHITE (i16)0x07
-#define CON_BLUE (i16)0x03
-#define CON_PALE_RED (i16)0x0c
+#define CON_WHITE 0x07
+#define CON_BLUE 0x03
+#define CON_PALE_RED 0x0c
 class CUI;
 struct Color{
     i16 def,highlight,lastColor;
@@ -27,7 +27,7 @@ struct Color{
 struct Parameter{
     DWORD buttonState,ctrlKeyState,eventFlag;
     CUI* ui;
-    Parameter():buttonState(MOUSE_LEFT_BUTTON),ctrlKeyState(0ul),eventFlag(0ul),ui(nullptr){}
+    Parameter():buttonState(MOUSE_LEFT_BUTTON),ctrlKeyState(0),eventFlag(0),ui(nullptr){}
     Parameter(MOUSE_EVENT_RECORD mouseEvent,CUI* ui):buttonState(mouseEvent.dwButtonState),ctrlKeyState(mouseEvent.dwControlKeyState),eventFlag(mouseEvent.dwEventFlags),ui(ui){}
 };
 typedef bool (*fnptr)(Parameter);
@@ -87,7 +87,7 @@ class CUI{
             DWORD reg;
             while(true){
                 Sleep(10ul);
-                ReadConsoleInput(GetStdHandle(STD_INPUT_HANDLE),&record,1ul,&reg);
+                ReadConsoleInput(GetStdHandle(STD_INPUT_HANDLE),&record,1,&reg);
                 if((record.EventType==MOUSE_EVENT)&&(move|(record.Event.MouseEvent.dwEventFlags!=MOUSE_MOVED))){
                     return record.Event.MouseEvent;
                 }
@@ -182,11 +182,11 @@ class CUI{
             removeAttributes();
             hideCursor();
             MOUSE_EVENT_RECORD mouseEvent;
-            Sleep(100ul);
+            Sleep(100);
             initPosition();
             bool isExit{};
             while(!isExit){
-                Sleep(50ul);
+                Sleep(50);
                 mouseEvent=waitMouseEvent();
                 switch(mouseEvent.dwEventFlags){
                     case MOUSE_MOVE:{
@@ -201,7 +201,7 @@ class CUI{
                 }
             }
             clearScreen();
-            Sleep(100ul);
+            Sleep(100);
         }
 };
 auto _exit(Parameter){
