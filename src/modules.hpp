@@ -7,11 +7,11 @@ namespace Pvt{
         #if CHANNEL==0
             SetConsoleTitle("CRCSN");
         #elif CHANNEL==1
-            SetConsoleTitle("[Beta] CRCSN");
+            SetConsoleTitle("[BETA] CRCSN");
         #elif CHANNEL==2
-            SetConsoleTitle("[Dev] CRCSN");
+            SetConsoleTitle("[DEV] CRCSN");
         #else
-            SetConsoleTitle("[N/A] CRCSN");
+            SetConsoleTitle("[CUSTOM] CRCSN");
         #endif
         SetWindowLongPtr(GetConsoleWindow(),GWL_STYLE,(wndCtrls)?\
             (GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)|WS_SIZEBOX|WS_MAXIMIZEBOX):\
