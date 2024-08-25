@@ -45,7 +45,7 @@ struct Text{
     Text(cstr txt,Color color,fnptr fn):\
         txt{txt},color{color},position{},fn{fn}{}
     bool operator==(const COORD& mousePosition)const{
-        return ((position.Y==mousePosition.Y)&&(position.X<=mousePosition.X)&&(mousePosition.X<(position.X+(i16)strlen(txt))))?(true):(false);
+        return (position.Y==mousePosition.Y)&&(position.X<=mousePosition.X)&&(mousePosition.X<(position.X+(i16)strlen(txt)));
     }
     bool operator!=(const COORD& mousePosition)const{
         return !(operator==(mousePosition));
