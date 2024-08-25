@@ -13,8 +13,10 @@
 class CUI;
 struct Color{
     i16 def,highlight,lastColor;
-    Color():def(CON_WHITE),highlight(CON_BLUE),lastColor(CON_WHITE){}
-    Color(i16 def=CON_WHITE,i16 highlight=CON_BLUE):def(def),highlight(highlight),lastColor(CON_WHITE){}
+    Color():\
+        def{CON_WHITE},highlight{CON_BLUE},lastColor{CON_WHITE}{}
+    Color(i16 def=CON_WHITE,i16 highlight=CON_BLUE):\
+        def{def},highlight{highlight},lastColor{CON_WHITE}{}
     auto setDefault(){
         SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),def);
         lastColor=def;
@@ -27,8 +29,10 @@ struct Color{
 struct Parameter{
     DWORD buttonState,ctrlKeyState,eventFlag;
     CUI* ui;
-    Parameter():buttonState(MOUSE_BUTTON_LEFT),ctrlKeyState(0),eventFlag(0),ui(nullptr){}
-    Parameter(MOUSE_EVENT_RECORD mouseEvent,CUI* ui):buttonState(mouseEvent.dwButtonState),ctrlKeyState(mouseEvent.dwControlKeyState),eventFlag(mouseEvent.dwEventFlags),ui(ui){}
+    Parameter():\
+        buttonState{MOUSE_BUTTON_LEFT},ctrlKeyState{},eventFlag{},ui{nullptr}{}
+    Parameter(MOUSE_EVENT_RECORD mouseEvent,CUI* ui):\
+        buttonState{mouseEvent.dwButtonState},ctrlKeyState{mouseEvent.dwControlKeyState},eventFlag{mouseEvent.dwEventFlags},ui{ui}{}
 };
 typedef bool (*fnptr)(Parameter);
 struct Text{
@@ -36,8 +40,10 @@ struct Text{
     Color color;
     COORD position;
     fnptr fn;
-    Text():txt(""),color(Color(0,0)),position({0,0}),fn(nullptr){}
-    Text(cstr txt,Color color,fnptr fn):txt(txt),color(color),position({0,0}),fn(fn){}
+    Text():\
+        txt{},color{Color{0,0}},position{},fn{nullptr}{}
+    Text(cstr txt,Color color,fnptr fn):\
+        txt{txt},color{color},position{},fn{fn}{}
     bool operator==(const COORD& mousePosition)const{
         return ((position.Y==mousePosition.Y)&&(position.X<=mousePosition.X)&&(mousePosition.X<(position.X+(i16)strlen(txt))))?(true):(false);
     }
@@ -164,7 +170,8 @@ class CUI{
             return isExit;
         }
     public:
-        CUI():height(0),width(0){}
+        CUI():\
+            height{},width{}{}
         ~CUI(){}
         auto push(cstr txt,fnptr fn=nullptr,i16 colorHighlight=CON_BLUE,i16 colorDef=CON_WHITE)->CUI&{
             lineData.push_back(Text(txt,Color(colorDef,((fn==nullptr)?(colorDef):(colorHighlight))),fn));
