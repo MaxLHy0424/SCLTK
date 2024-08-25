@@ -18,7 +18,7 @@ namespace Mod{
             (GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)&~WS_SIZEBOX&~WS_MAXIMIZEBOX)
         );
         system("mode con cols=50 lines=25");
-        SetLayeredWindowAttributes(GetForegroundWindow(),0,((alpha)?(230):(255)),LWA_ALPHA);
+        SetLayeredWindowAttributes(GetForegroundWindow(),0,((alpha)?(204):(255)),LWA_ALPHA);
     }
     auto frontShow(){
         HWND foreWnd{GetConsoleWindow()};
