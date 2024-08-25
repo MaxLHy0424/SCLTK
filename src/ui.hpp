@@ -211,8 +211,4 @@ class CUI{
             Sleep(100);
         }
 };
-auto _exit(Parameter){
-    return true;
-}
-#define EXIT _exit
 #endif

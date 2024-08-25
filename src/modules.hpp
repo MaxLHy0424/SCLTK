@@ -34,6 +34,10 @@ namespace Mod{
             Sleep(100ul);
         }
     }
+    auto exit(Parameter){
+        return true;
+    }
+    #define EXIT Mod::exit
     auto cmd(Parameter){
         system("cls & cmd & cls");
         init(opt.wndSize,opt.alphaWnd);
