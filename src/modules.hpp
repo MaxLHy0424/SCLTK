@@ -1,8 +1,8 @@
 namespace Pvt{
     struct{
-        bool wndCtrls,frontShow,alphaWnd,sparseView;
+        bool wndSize,frontShow,alphaWnd,sparseView;
     }opt{};
-    auto init(bool wndCtrls,bool alpha){
+    auto init(bool wndSize,bool alpha){
         system("chcp 936 > nul");
         #if CHANNEL==0
             SetConsoleTitle("CRCSN");
@@ -13,7 +13,7 @@ namespace Pvt{
         #else
             SetConsoleTitle("[CUSTOM] CRCSN");
         #endif
-        SetWindowLongPtr(GetConsoleWindow(),GWL_STYLE,(wndCtrls)?\
+        SetWindowLongPtr(GetConsoleWindow(),GWL_STYLE,(wndSize)?\
             (GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)|WS_SIZEBOX|WS_MAXIMIZEBOX):\
             (GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)&~WS_SIZEBOX&~WS_MAXIMIZEBOX)
         );
@@ -36,7 +36,7 @@ namespace Pvt{
     }
     auto cmd(Parameter){
         system("cls & cmd & cls");
-        init(opt.wndCtrls,opt.alphaWnd);
+        init(opt.wndSize,opt.alphaWnd);
         return false;
     }
     struct{

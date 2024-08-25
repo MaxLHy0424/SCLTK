@@ -11,8 +11,8 @@ auto main(i32 argc,cstr argv[])->i32{
             if((t.substr(0,2)=="-W")&&(t.length()>2)){
                 for(u64 j{2};j<t.length();++j){
                     switch(t[j]){
-                        case 'c':{
-                            Pvt::opt.wndCtrls=true;
+                        case 's':{
+                            Pvt::opt.wndSize=true;
                             break;
                         }case 'f':{
                             Pvt::opt.frontShow=true;
@@ -40,7 +40,7 @@ auto main(i32 argc,cstr argv[])->i32{
             Pvt::opt={};
         }
     }
-    Pvt::init(Pvt::opt.wndCtrls,Pvt::opt.alphaWnd);
+    Pvt::init(Pvt::opt.wndSize,Pvt::opt.alphaWnd);
     if(Pvt::opt.frontShow){
         std::thread(Pvt::frontShow).detach();
     }
