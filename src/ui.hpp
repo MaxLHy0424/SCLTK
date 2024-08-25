@@ -1,11 +1,11 @@
 #ifndef MENU_HPP
 #define MENU_HP
-#define MOUSE_LEFT_BUTTON FROM_LEFT_1ST_BUTTON_PRESSED
-#define MOUSE_MIDDLE_BUTTON FROM_LEFT_2ND_BUTTON_PRESSED
-#define MOUSE_RIGHT_BUTTON RIGHTMOST_BUTTON_PRESSED
+#define MOUSE_BUTTON_LEFT FROM_LEFT_1ST_BUTTON_PRESSED
+#define MOUSE_BUTTON_MIDDLE FROM_LEFT_2ND_BUTTON_PRESSED
+#define MOUSE_BUTTON_RIGHT RIGHTMOST_BUTTON_PRESSED
 #define MOUSE_CLICK 0x0
+#define MOUSE_CLICK_DOUBLE DOUBLE_CLICK
 #define MOUSE_MOVE MOUSE_MOVED
-#define MOUSE_DOUBLE_CLICK DOUBLE_CLICK
 #define MOUSE_WHEEL MOUSE_WHEELED
 #define CON_WHITE 0x07
 #define CON_BLUE 0x03
@@ -27,7 +27,7 @@ struct Color{
 struct Parameter{
     DWORD buttonState,ctrlKeyState,eventFlag;
     CUI* ui;
-    Parameter():buttonState(MOUSE_LEFT_BUTTON),ctrlKeyState(0),eventFlag(0),ui(nullptr){}
+    Parameter():buttonState(MOUSE_BUTTON_LEFT),ctrlKeyState(0),eventFlag(0),ui(nullptr){}
     Parameter(MOUSE_EVENT_RECORD mouseEvent,CUI* ui):buttonState(mouseEvent.dwButtonState),ctrlKeyState(mouseEvent.dwControlKeyState),eventFlag(mouseEvent.dwEventFlags),ui(ui){}
 };
 typedef bool (*fnptr)(Parameter);
