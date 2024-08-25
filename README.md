@@ -8,6 +8,7 @@
 **[更新日志](https://github.com/MaxLHy0424/CRCSN/releases/tag/v5.0.0) | [直链下载](https://github.com/MaxLHy0424/CRCSN/releases/download/v5.0.0/CRCSN-v5.0.0.7z)**
 
 或者:
+
 - [GitHub Repository Release](https://github.com/MaxLHy0424/CRCSN/releases);
 - [中国大陆云盘镜像站点 (不含预发行版)](https://www.123pan.com/s/UzthTd-MkTRh.html).
 
@@ -27,11 +28,13 @@
 ### 1.1 修改软件 Runtime
 
 找到:
+
 ```dos
 set runtime=msvcrt
 ```
 
 软件支持的 Runtime 如下:
+
  - `msvcrt` (默认): 开发工具链为 *MSYS2* `mingw-w64-x86_64-toolchain`, Runtime 为老旧的 *Microsoft Visual C Runtime*, 支持大部分 Windows OS.
  - `ucrt` (推荐): 开发工具链为 *MSYS2* `mingw-w64-ucrt-x86_64-toolchain`,  Runtime 为新式的 *Universal C Runtime*, 支持 Windows 10 以上的 Windows OS (部分 Windows OS 在安装最新补丁后支持运行).
 
@@ -43,11 +46,13 @@ set runtime=msvcrt
 > 此命令行参数区分大小写.
 
 找到:
+
 ```dos
 set argv=
 ```
 
 窗口操作的主参数为 `-W`, 附加参数如下:
+
  - `f`: 置顶窗口并每间隔 100ms 将窗口设为焦点.
  - `s`: 允许缩放和最大化窗口 (可能导致意外行为);
  - `a`: 将窗口不透明度设为 90% (仅支持新版控制台);
@@ -55,9 +60,11 @@ set argv=
 不可以仅使用主参数, 附加参数的顺序不影响应用效果.
 
 使用示例:
+
 ```dos
 set argv=-Wa
 ```
+
 ```dos
 set argv=-Wfac
 ```
@@ -70,11 +77,13 @@ set argv=-Wfac
 软件默认使用紧凑视图.
 
 找到:
+
 ```dos
 set argv=
 ```
 
 添加参数 `--sparse-view`, 变成:
+
 ```dos
 set argv=--sparse-view
 ```
@@ -83,6 +92,7 @@ set argv=--sparse-view
 
 > [!NOTE]
 > 可以和[上一节](#12-窗口操作)中的参数一同使用, 两者顺序可以调换. 例如:
+> 
 > ```dos
 > set argv=--sparse-view -Wfa
 > ```
