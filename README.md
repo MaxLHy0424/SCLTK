@@ -66,7 +66,7 @@ set argv=-Wa
 ```
 
 ```dos
-set argv=-Wfac
+set argv=-Wfas
 ```
 
 ### 1.3 疏松视图
