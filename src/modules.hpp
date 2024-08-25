@@ -1,4 +1,4 @@
-namespace Pvt{
+namespace Mod{
     struct{
         bool wndSize,frontShow,alphaWnd,sparseView;
     }opt{};
