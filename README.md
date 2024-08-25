@@ -1,89 +1,141 @@
-![logo](logo.png)\
+![logo](img/title.png)\
 **Computer Room Control Software Nemesis: 轻松破解机房控制.**\
-©️ 2024 MaxLHy0424, All Rights Reserved.
+©️ 2023 MaxLHy0424. All Rights Reserved.
 
-[下载最新发行版 (v4.10.7).](https://github.com/MaxLHy0424/CRCSN/releases/download/v4.10.7/CRCSN_v4-10-7_x64.7z)
+# 获取
 
-# 使用方法
+**最新发行版: v5.0.0.**\
+**[更新日志](https://github.com/MaxLHy0424/CRCSN/releases/tag/v5.0.0) | [直链下载](https://github.com/MaxLHy0424/CRCSN/releases/download/v5.0.0/CRCSN-v5.0.0.7z)**
 
-**CRCSN 涉及到修改注册表等操作, 使用时建议关闭防病毒软件. 若 CRCSN 被报为恶意软件, 请添加排除项.**
+或者:
 
-> 仅为最新发行版编写, 其他版本可能有所不同.
+- [GitHub Repository Release](https://github.com/MaxLHy0424/CRCSN/releases);
+- [中国大陆云盘镜像站点 (不含预发行版)](https://www.123pan.com/s/UzthTd-MkTRh.html).
 
-## 0 启动
+# 使用指南
 
-一般情况下, 运行`launcher.cmd`即可启动 CRCSN.
+**由于 CRCSN 存在敏感操作, 使用时建议关闭防病毒软件. 若 CRCSN 被报为恶意软件, 请添加排除项.**
+
+> [!NOTE]
+> 适用于 v5.0.0.
+
+## 1 启动
+
+一般情况下, 运行 `launcher.cmd` 即可启动 CRCSN.
 
 如果默认的启动方式不满足您的需求, 可以根据下文修改.
 
-### 0.1 强制以管理员限运行
+### 1.1 修改软件 Runtime
 
 找到:
-```Batch
-: MSHTA VBScript:CreateObject("Shell.Application").ShellExecute("%~S0","GoTo:RunAs","","RunAs",1)(Window.Close) & GoTo:EOF
+
+```dos
+set runtime=msvcrt
 ```
 
-将开头的`: `去掉即可. 再运行启动脚本, 将会启用该项. 
+软件支持的 Runtime 如下:
 
-如需禁用, 将`: `加回去头即可.
+ - `msvcrt` (默认): 开发工具链为 *MSYS2* `mingw-w64-x86_64-toolchain`, Runtime 为老旧的 *Microsoft Visual C Runtime*, 支持大部分 Windows OS.
+ - `ucrt` (推荐): 开发工具链为 *MSYS2* `mingw-w64-ucrt-x86_64-toolchain`,  Runtime 为新式的 *Universal C Runtime*, 支持 Windows 10 以上的 Windows OS (部分 Windows OS 在安装最新补丁后支持运行).
 
-### 0.2 修改等待时间
+根据上述内容, 选择需要版本的对应字符串替换即可.
+
+### 1.2 窗口操作
+
+> [!IMPORTANT]
+> 此命令行参数区分大小写.
 
 找到:
-```Batch
-TimeOut /NoBreak /T 2
-```
-修改最后的数字 (单位: 秒), 禁用可改为`0`.
 
-### 0.3 修改控制台颜色
-
-> 此项参数区分大小写.
-
-找到倒数第二行, 在末尾加上`-color=`, 并在后面添加参数 (详见`Color`命令帮助), 例如:
-```Batch
-.\bin\main.exe -color=3
+```dos
+set argv=
 ```
 
-### 0.4 窗口置顶
+窗口操作的主参数为 `-W`, 附加参数如下:
 
-> 此项参数区分大小写.
+ - `f`: 置顶窗口并每间隔 100ms 将窗口设为焦点.
+ - `s`: 允许缩放和最大化窗口 (可能导致意外行为);
+ - `a`: 将窗口不透明度设为 80% (仅支持新版控制台);
 
-找到倒数第二行. 如需启用, 请在末尾加上`-Wp`, 见下:
-```Batch
-.\bin\main.exe -Wp
+不可以仅使用主参数, 附加参数的顺序不影响应用效果.
+
+使用示例:
+
+```dos
+set argv=-Wa
 ```
 
-如需禁用, 将`-Wp`删去即可.
+```dos
+set argv=-Wfas
+```
 
-## 1 破解
+### 1.3 疏松视图
 
-输入`1`, 回车, 根据需要破解的控制软件输入对应的字符, 回车, 输入`y`(不区分大小写), 回车, 开始破解.
+> [!IMPORTANT]
+> 此命令行参数区分大小写.
 
-## 2 恢复
+软件默认使用紧凑视图.
 
-输入`2`, 回车, 根据需要恢复的控制软件输入对应的字符, 回车, 输入`y`(不区分大小写), 回车, 开始恢复.
+找到:
+
+```dos
+set argv=
+```
+
+添加参数 `--sparse-view`, 变成:
+
+```dos
+set argv=--sparse-view
+```
+
+即可使用宽松视图.
+
+> [!NOTE]
+> 可以和[上一节](#12-窗口操作)中的参数一同使用, 两者顺序可以调换. 例如:
+> 
+> ```dos
+> set argv=--sparse-view -Wfa
+> ```
+
+### 1.4 深度自定义
+
+启动脚本属于 Windows 命令脚本, 可以根据需要自行修改.
+
+## 2 功能使用及说明
+
+### 2.1 软件信息
+
+位于软件窗口顶部往下几行, 从上到下, 依次显示: 软件名称, 软件版本, 仓库链接, 版权信息.
+
+### 2.2 快捷操作
+
+位于 "软件信息" 区域下方. 通过鼠标点击按钮 `> 退出` 可以直接退出软件, 点击 `> 命令提示符` 可以在当前软件窗口内打开命令提示符.
+
+> [!TIP]
+> 启动命令提示符后, 可以使用命令 `mode con cols=行数 lines=列数` 调整窗口大小. 退出后将会重置.
+
+### 2.3 破解 & 恢复
+
+位于 "快捷操作" 区域下方. 如果 `[ 破 解 ]` 和 `[ 恢 复 ]` 下输出的文本为 `(i) 需要管理员权限.`, 请以管理员权限重新启动软件.
+
+确认以管理员权限启动后, 使用鼠标在 `[ 破 解 ]` 下点击需要破解的控制软件, 以禁用破解. 如需恢复, 可以在 `[ 恢 复 ]` 下点击需要恢复的控制软件, 即可恢复控制.
 
 # 常见问题
 
-## 1 运行软件时控制台总是输出 "命令提示符已被管理员禁用", 无法正常使用.
+## 1 软件无法非 x86_64 架构的 Windows OS 中使用.
 
-可以运行注册表编辑器, 定位到`HKEY_CURRENT_USER\Software\Policies\Microsoft\Windows\System`下, 看看有没有一个叫`DisableCMD`的值, 有的话就删掉, 再试试.
+受限于开发工具链, 构建出的二进制文件架构仅支持 x86_64 架构.
 
-## 2 软件无法在 32 位 Windows 系统中使用.
+## 2 运行软件时控制台总是输出 "命令提示符已被管理员禁用", 无法正常使用.
 
-由于开发中使用的一些头文件无法在 MinGW GNU GCC 下编译, 所以暂不提供 32 位发行版.
+可以运行注册表编辑器, 定位到 `HKEY_CURRENT_USER\Software\Policies\Microsoft\Windows\System` 下, 看看有没有一个叫 `DisableCMD` 的值, 有的话就删掉, 再试试.
 
 ## 3 破解后一些软件运行时提示 "找不到文件" 之类的错误, 而运行的软件并没有损坏.
 
-在不影响软件正常运行的情况下, 可以给软件文件修改一个名称, 再试试. 或者打开注册表编辑器, 定位到`HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\`, 找到和要运行的软件的文件名称相同的项, 删除即可.
+在不影响软件正常运行的情况下, 可以给软件文件修改一个名称, 再试试. 或者打开注册表编辑器, 定位到 `HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\`, 找到和要运行的软件的文件名称相同的项, 删除即可.
 
-# 贡献代码
+# 鸣谢
 
-**欢迎各位贡献代码!** 所有贡献者将会在下方列出, 以示感谢. 但务必遵守以下规则:
-- 提交代码请创建拉取请求, 不要直接提交;
-- 修改`README.md`时, 注意语句通顺, 不要有错误内容;
-- 提交的代码的风格请与项目保持统一, 尽可能提升运行效率, 同时可通过最新 MinGW-w64 GNU GCC (MSYS2: mingw-w64-ucrt-x86_64-toolchain) 编译, 并且不附带警告.
-
-## 贡献者
-
-- [MaxLHy0424 (Mingxu Ye)](https://github.com/MaxLHy0424)
+- Bilibili 用户 [lateworker_晚工](https://space.bilibili.com/39337803) 提供界面代码 (详见[此处](https://www.bilibili.com/video/BV1X14y1n7S4/), 软件有修改之处);
+- Bilibili 用户 [痕继痕迹](https://space.bilibili.com/39337803) 指导软件界面设计;
+- GitHub 用户 [Zhu-Xinrong (Kendall)](https://github.com/Zhu-Xinrong) 指导软件图标设计.
