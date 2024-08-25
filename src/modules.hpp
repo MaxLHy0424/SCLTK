@@ -2,7 +2,7 @@ namespace Mod{
     struct{
         bool wndSize,frontShow,alphaWnd,sparseView;
     }opt{};
-    auto init(bool wndSize,bool alpha){
+    auto init(bool size,bool alpha){
         system("chcp 936 > nul");
         #if CHANNEL==0
             SetConsoleTitle("CRCSN");
@@ -13,10 +13,9 @@ namespace Mod{
         #else
             SetConsoleTitle("[CUSTOM] CRCSN");
         #endif
-        SetWindowLongPtr(GetConsoleWindow(),GWL_STYLE,(wndSize)?\
-            (GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)|WS_SIZEBOX|WS_MAXIMIZEBOX):\
-            (GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)&~WS_SIZEBOX&~WS_MAXIMIZEBOX)
-        );
+        if(!size){
+            SetWindowLongPtr(GetConsoleWindow(),GWL_STYLE,GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)&~WS_SIZEBOX&~WS_MAXIMIZEBOX);
+        }
         system("mode con cols=50 lines=25");
         SetLayeredWindowAttributes(GetForegroundWindow(),0,((alpha)?(204):(255)),LWA_ALPHA);
     }
@@ -35,6 +34,7 @@ namespace Mod{
         }
     }
     auto exit(Parameter){
+        SetWindowLongPtr(GetConsoleWindow(),GWL_STYLE,GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)|WS_SIZEBOX|WS_MAXIMIZEBOX);
         return true;
     }
     #define EXIT Mod::exit
