@@ -1,6 +1,6 @@
 @echo off
 chcp 65001 > nul
-set CHANNEL=2
+set CHANNEL=0
 if %CHANNEL%==0 (
     title CRCSN Launcher
 ) else if %CHANNEL%==1 (
