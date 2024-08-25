@@ -18,4 +18,4 @@ clean_std:
 clean_full: clean_std
 	$(msys2)\\usr\\bin\\rm.exe -rf\
 	 bin/x86_64
-.PHONY: build clean
+.PHONY: build clean_std clean_full
