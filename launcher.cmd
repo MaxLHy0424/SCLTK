@@ -20,10 +20,10 @@ echo                  CRCSN Launcher
 echo                      v2.0.0
 echo     (C) 2023 MaxLHy0424. All Rights Reserved.
 echo.
-echo 按任意键启动 CRCSN (%arch%, %runtime%)...
+echo (i) 按任意键启动 CRCSN (%arch%, %runtime%).
 pause > nul
 msHta vbScript:createObject("shell.application").shellExecute("%~s0","goTo:runAs","","runAs",1)(window.close) & goTo:eof
 :runAs
-    echo 请稍候...
+    echo (i) 请稍候...
     start .\bin\%arch%\main-%runtime%.exe %argv% /command
     exit
