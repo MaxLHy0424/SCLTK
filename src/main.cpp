@@ -1,7 +1,7 @@
 #include"header.hpp"
 #include"ui.hpp"
 CUI ui;
-#include"pvtModules.hpp"
+#include"modules.hpp"
 auto main(i32 argc,cstr argv[])->i32{
     bool optError{};
     if(argc>1){
