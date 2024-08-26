@@ -1,6 +1,7 @@
 @echo off
 chcp 65001 > nul
 set CHANNEL=0
+set CUSTOM_TITLE=[Custom] CRCSN Launcher
 if %CHANNEL%==0 (
     title CRCSN Launcher
 ) else if %CHANNEL%==1 (
@@ -8,7 +9,7 @@ if %CHANNEL%==0 (
 ) else if %CHANNEL%==2 (
     title [DevSnap] CRCSN Launcher
 ) else (
-    title [???] CRCSN Launcher
+    title %CUSTOM_TITLE%
 )
 mode con cols=50 lines=25
 set arch=x86_64
