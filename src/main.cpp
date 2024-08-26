@@ -11,12 +11,21 @@ auto main(i32 argc,cstr argv[])->i32{
             if((tmp.substr(0,2)=="-W")&&(tmp.length()>2)){
                 for(u64 j{2};j<tmp.length();++j){
                     switch(tmp[j]){
+<<<<<<< HEAD
                         case 's':{
                             Mod::opt.wndSize=true;
                             break;
                         }case 'f':{
                             Mod::opt.frontShow=true;
                             break;
+=======
+                        case 'f':{
+                            Mod::opt.frontShow=true;
+                            break;
+                        }case 's':{
+                            Mod::opt.wndSize=true;
+                            break;
+>>>>>>> origin/dev
                         }case 'a':{
                             Mod::opt.alphaWnd=true;
                             break;
@@ -48,6 +57,7 @@ auto main(i32 argc,cstr argv[])->i32{
     if(Mod::opt.sparseView){
         ui.push("\0");
     }
+<<<<<<< HEAD
     ui.push("                     v5.0.0");
     ui.push("       https://github.com/MaxLHy0424/CRCSN");
     ui.push("     (C) 2023 MaxLHy0424. All Rights Reserved.\n");
@@ -55,6 +65,15 @@ auto main(i32 argc,cstr argv[])->i32{
         ui.push(" (!) 命令行参数错误.\n");
     }
     ui.push(" > 退出 ",EXIT,CON_RED_PALE);
+=======
+    ui.push("                     v5.0.1");
+    ui.push("       https://github.com/MaxLHy0424/CRCSN");
+    ui.push("     (C) 2023 MaxLHy0424. All Rights Reserved.\n");
+    if(optErr){
+        ui.push(" (!) 参数错误.\n");
+    }
+    ui.push(" > 退出 ",Mod::exit,CON_RED_PALE);
+>>>>>>> origin/dev
     if(Mod::opt.sparseView){
         ui.push("\0");
     }
@@ -67,7 +86,11 @@ auto main(i32 argc,cstr argv[])->i32{
         }
         ui.push(" > 联想云教室 ",Mod::Crack::lenovo);
     }else{
+<<<<<<< HEAD
         ui.push(" (i) 需要管理员权限.");
+=======
+        ui.push(" (i) 需要提升权限.");
+>>>>>>> origin/dev
     }
     ui.push("\n[ 恢 复 ]\n");
     if(IsUserAnAdmin()){
@@ -77,7 +100,11 @@ auto main(i32 argc,cstr argv[])->i32{
         }
         ui.push(" > 联想云教室 ",Mod::Recovery::lenovo);
     }else{
+<<<<<<< HEAD
         ui.push(" (i) 需要管理员权限.");
+=======
+        ui.push(" (i) 需要提升权限.");
+>>>>>>> origin/dev
     }
     ui.show();
     return 0;

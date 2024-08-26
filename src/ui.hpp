@@ -20,10 +20,18 @@ struct Color{
     auto setDefault(){
         SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),def);
         lastColor=def;
+<<<<<<< HEAD
+=======
+        return;
+>>>>>>> origin/dev
     }
     auto setHighlight(){
         SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),highlight);
         lastColor=highlight;
+<<<<<<< HEAD
+=======
+        return;
+>>>>>>> origin/dev
     }
 };
 struct Parameter{
@@ -61,24 +69,40 @@ class CUI{
             GetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&cursorInfo);
             cursorInfo.bVisible=false;
             SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&cursorInfo);
+<<<<<<< HEAD
+=======
+            return;
+>>>>>>> origin/dev
         }
         auto showCursor(){
             CONSOLE_CURSOR_INFO cursorInfo;
             GetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&cursorInfo);
             cursorInfo.bVisible=true;
             SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&cursorInfo);
+<<<<<<< HEAD
+=======
+            return;
+>>>>>>> origin/dev
         }
         auto removeAttributes(){
             DWORD mode;
             GetConsoleMode(GetStdHandle(STD_INPUT_HANDLE),&mode);
             mode&=~ENABLE_QUICK_EDIT_MODE,mode&=~ENABLE_INSERT_MODE,mode|=ENABLE_MOUSE_INPUT;
             SetConsoleMode(GetStdHandle(STD_INPUT_HANDLE),mode);
+<<<<<<< HEAD
+=======
+            return;
+>>>>>>> origin/dev
         }
         auto addAttributes(){
             DWORD mode;
             GetConsoleMode(GetStdHandle(STD_INPUT_HANDLE),&mode);
             mode|=ENABLE_QUICK_EDIT_MODE,mode|=ENABLE_INSERT_MODE,mode|=ENABLE_MOUSE_INPUT;
             SetConsoleMode(GetStdHandle(STD_INPUT_HANDLE),mode);
+<<<<<<< HEAD
+=======
+            return;
+>>>>>>> origin/dev
         }
         auto getCursor()->COORD{
             CONSOLE_SCREEN_BUFFER_INFO tmp;
@@ -87,6 +111,10 @@ class CUI{
         }
         auto setCursor(const COORD& tmp={0,0}){
             SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE),tmp);
+<<<<<<< HEAD
+=======
+            return;
+>>>>>>> origin/dev
         }
         auto waitMouseEvent(bool move=true)->MOUSE_EVENT_RECORD{
             INPUT_RECORD record;
@@ -104,6 +132,10 @@ class CUI{
             GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE),&tmp);
             height=tmp.dwSize.Y;
             width=tmp.dwSize.X;
+<<<<<<< HEAD
+=======
+            return;
+>>>>>>> origin/dev
         }
         auto clearScreen(){
             getConsoleSize();
@@ -114,12 +146,20 @@ class CUI{
                 }
             }
             setCursor({0,0});
+<<<<<<< HEAD
+=======
+            return;
+>>>>>>> origin/dev
         }
         auto write(cstr txt,bool isEndl=false){
             printf("%s",txt);
             if(isEndl){
                 printf("\n");
             }
+<<<<<<< HEAD
+=======
+            return;
+>>>>>>> origin/dev
         }
         auto rewrite(Text data){
             setCursor({0,data.position.Y});
@@ -129,6 +169,10 @@ class CUI{
             setCursor({0,data.position.Y});
             write(data.txt);
             setCursor({0,data.position.Y});
+<<<<<<< HEAD
+=======
+            return;
+>>>>>>> origin/dev
         }
         auto initPosition(){
             clearScreen();
@@ -137,6 +181,10 @@ class CUI{
                 data.color.setDefault();
                 write(data.txt,true);
             }
+<<<<<<< HEAD
+=======
+            return;
+>>>>>>> origin/dev
         }
         auto refresh(COORD hangPosition){
             for(auto& data:lineData){
@@ -149,6 +197,10 @@ class CUI{
                     rewrite(data);
                 }
             }
+<<<<<<< HEAD
+=======
+            return;
+>>>>>>> origin/dev
         }
         auto implement(MOUSE_EVENT_RECORD mouseEvent){
             bool isExit{};
@@ -172,7 +224,11 @@ class CUI{
     public:
         CUI():\
             height{},width{}{}
+<<<<<<< HEAD
         ~CUI(){}
+=======
+        virtual ~CUI(){}
+>>>>>>> origin/dev
         auto push(cstr txt,fnptr fn=nullptr,i16 colorHighlight=CON_BLUE,i16 colorDef=CON_WHITE)->CUI&{
             lineData.push_back(Text(txt,Color(colorDef,((fn==nullptr)?(colorDef):(colorHighlight))),fn));
             return *this;
@@ -209,6 +265,10 @@ class CUI{
             }
             clearScreen();
             Sleep(100);
+<<<<<<< HEAD
+=======
+            return;
+>>>>>>> origin/dev
         }
 };
 #endif
