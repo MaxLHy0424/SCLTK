@@ -7,11 +7,11 @@ namespace Mod{
         #if CHANNEL==0
             SetConsoleTitle("CRCSN");
         #elif CHANNEL==1
-            SetConsoleTitle("[Beta] CRCSN");
+            SetConsoleTitle("[Preview] CRCSN");
         #elif CHANNEL==2
-            SetConsoleTitle("[Dev] CRCSN");
+            SetConsoleTitle("[DevSnap] CRCSN");
         #else
-            SetConsoleTitle("[CUSTOM] CRCSN");
+            SetConsoleTitle("[???] CRCSN");
         #endif
         if(!size){
             SetWindowLongPtr(GetConsoleWindow(),GWL_STYLE,GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)&~WS_SIZEBOX&~WS_MAXIMIZEBOX);

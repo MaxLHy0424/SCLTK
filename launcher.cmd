@@ -4,11 +4,11 @@ set CHANNEL=0
 if %CHANNEL%==0 (
     title CRCSN Launcher
 ) else if %CHANNEL%==1 (
-    title [Beta] CRCSN Launcher
+    title [Preview] CRCSN Launcher
 ) else if %CHANNEL%==2 (
-    title [Dev] CRCSN Launcher
+    title [DevSnap] CRCSN Launcher
 ) else (
-    title [CUSTOM] CRCSN Launcher
+    title [???] CRCSN Launcher
 )
 mode con cols=50 lines=25
 set arch=x86_64
