@@ -1,13 +1,31 @@
-@Echo Off
-Title CRCSN Launcher
-CD /D "%~DP0"
+@echo off
+chcp 65001 > nul
+set CHANNEL=0
+set CUSTOM_TITLE=[Custom] CRCSN Launcher
+if %CHANNEL%==0 (
+  title CRCSN Launcher
+) else if %CHANNEL%==1 (
+  title [Preview] CRCSN Launcher
+) else if %CHANNEL%==2 (
+  title [DevSnap] CRCSN Launcher
+) else (
+  title %CUSTOM_TITLE%
+)
+mode con cols=50 lines=25
+set arch=x86_64
+set runtime=msvcrt
+set argv=
+cd /d "%~dp0"
 %1
-Echo          CRCSN Launcher v1.3.9
-Echo.
-Echo (C) 2024 MaxLHy0424, All Rights Reserved.
-TimeOut /NoBreak /T 2
-: MSHTA VBScript:CreateObject("Shell.Application").ShellExecute("%~S0","GoTo:RunAs","","RunAs",1)(Window.Close) & GoTo:EOF
-:RunAs
-  CLS
-  .\bin\main.exe
-GoTo RunAs
+echo                  CRCSN Launcher
+echo                      v2.0.0
+echo                      v2.0.1
+echo     (C) 2023 MaxLHy0424. All Rights Reserved.
+echo.
+echo (i) 按任意键启动 CRCSN (%arch%, %runtime%).
+pause > nul
+msHta vbScript:createObject("shell.application").shellExecute("%~s0","goTo:runAs","","runAs",1)(window.close) & goTo:eof
+:runAs
+  echo (i) 请稍候...
+  start .\bin\%arch%\main-%runtime%.exe %argv% /command
+  exit
