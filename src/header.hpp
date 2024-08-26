@@ -4,9 +4,10 @@
 #include<thread>
 #include<vector>
 #include<shlobj.h>
-typedef const char* cstr;
+typedef char i8;
 typedef int i32;
 typedef short i16;
 typedef unsigned long long u64;
 typedef unsigned short u16;
+typedef const i8* cstr;
 #define CHANNEL 0

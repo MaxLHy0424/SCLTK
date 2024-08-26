@@ -71,7 +71,7 @@ namespace Mod{
             }
         }
     };
-    auto opBase(char op,std::string* exe,u16 n,std::string* svc,u16 m){
+    auto opBase(i8 op,std::string* exe,u16 n,std::string* svc,u16 m){
         system("cls");
         std::string cmd;
         switch(op){
