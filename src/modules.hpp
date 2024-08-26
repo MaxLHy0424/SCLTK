@@ -11,7 +11,7 @@ namespace Mod{
         #elif CHANNEL==2
             SetConsoleTitle("[DevSnap] CRCSN");
         #else
-            SetConsoleTitle("[???] CRCSN");
+            SetConsoleTitle(CUSTOM_TITLE);
         #endif
         if(!size){
             SetWindowLongPtr(GetConsoleWindow(),GWL_STYLE,GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)&~WS_SIZEBOX&~WS_MAXIMIZEBOX);

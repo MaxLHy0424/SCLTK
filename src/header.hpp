@@ -11,3 +11,4 @@ typedef unsigned long long u64;
 typedef unsigned short u16;
 typedef const i8* cstr;
 #define CHANNEL 0
+#define CUSTOM_TITLE "[Custom] CRCSN"
