@@ -7,32 +7,20 @@ namespace Mod{
         #if CHANNEL==0
             SetConsoleTitle("CRCSN");
         #elif CHANNEL==1
-<<<<<<< HEAD
-            SetConsoleTitle("[Beta] CRCSN");
-        #elif CHANNEL==2
-            SetConsoleTitle("[Dev] CRCSN");
-        #else
-            SetConsoleTitle("[CUSTOM] CRCSN");
-=======
             SetConsoleTitle("[Preview] CRCSN");
         #elif CHANNEL==2
             SetConsoleTitle("[DevSnap] CRCSN");
         #else
             SetConsoleTitle(CUSTOM_TITLE);
->>>>>>> origin/dev
         #endif
         if(!size){
             SetWindowLongPtr(GetConsoleWindow(),GWL_STYLE,GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)&~WS_SIZEBOX&~WS_MAXIMIZEBOX);
         }
         system("mode con cols=50 lines=25");
-<<<<<<< HEAD
-        SetLayeredWindowAttributes(GetForegroundWindow(),0,((alpha)?(204):(255)),LWA_ALPHA);
-=======
         if(alpha){
             SetLayeredWindowAttributes(GetConsoleWindow(),0,204,LWA_ALPHA);
         }
         return;
->>>>>>> origin/dev
     }
     auto frontShow(){
         HWND foreWnd{GetConsoleWindow()};
@@ -50,15 +38,9 @@ namespace Mod{
     }
     auto exit(Parameter){
         SetWindowLongPtr(GetConsoleWindow(),GWL_STYLE,GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)|WS_SIZEBOX|WS_MAXIMIZEBOX);
-<<<<<<< HEAD
-        return true;
-    }
-    #define EXIT Mod::exit
-=======
         SetLayeredWindowAttributes(GetConsoleWindow(),0,255,LWA_ALPHA);
         return true;
     }
->>>>>>> origin/dev
     auto cmd(Parameter){
         system("cls & cmd & cls");
         init(opt.wndSize,opt.alphaWnd);
@@ -93,11 +75,7 @@ namespace Mod{
             }
         }
     };
-<<<<<<< HEAD
-    auto opBase(char op,std::string* exe,u16 n,std::string* svc,u16 m){
-=======
     auto opBase(i8 op,std::string* exe,u16 n,std::string* svc,u16 m){
->>>>>>> origin/dev
         system("cls");
         std::string cmd;
         switch(op){
@@ -128,10 +106,7 @@ namespace Mod{
             }
         }
         system("cls");
-<<<<<<< HEAD
-=======
         return;
->>>>>>> origin/dev
     }
     namespace Crack{
         auto mythware(Parameter){
