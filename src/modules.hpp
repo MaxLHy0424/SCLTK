@@ -37,7 +37,6 @@ namespace Mod{
         SetWindowLongPtr(GetConsoleWindow(),GWL_STYLE,GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)|WS_SIZEBOX|WS_MAXIMIZEBOX);
         return true;
     }
-    #define EXIT Mod::exit
     auto cmd(Parameter){
         system("cls & cmd & cls");
         init(opt.wndSize,opt.alphaWnd);
