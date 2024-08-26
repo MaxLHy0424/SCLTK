@@ -18,7 +18,7 @@ namespace Mod{
         }
         system("mode con cols=50 lines=25");
         if(alpha){
-            SetLayeredWindowAttributes(GetForegroundWindow(),0,204,LWA_ALPHA);
+            SetLayeredWindowAttributes(GetConsoleWindow(),0,204,LWA_ALPHA);
         }
         return;
     }
@@ -38,7 +38,7 @@ namespace Mod{
     }
     auto exit(Parameter){
         SetWindowLongPtr(GetConsoleWindow(),GWL_STYLE,GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)|WS_SIZEBOX|WS_MAXIMIZEBOX);
-        SetLayeredWindowAttributes(GetForegroundWindow(),0,255,LWA_ALPHA);
+        SetLayeredWindowAttributes(GetConsoleWindow(),0,255,LWA_ALPHA);
         return true;
     }
     auto cmd(Parameter){
