@@ -11,11 +11,11 @@ auto main(i32 argc,cstr argv[])->i32{
             if((tmp.substr(0,2)=="-W")&&(tmp.length()>2)){
                 for(u64 j{2};j<tmp.length();++j){
                     switch(tmp[j]){
-                        case 's':{
-                            Mod::opt.wndSize=true;
-                            break;
-                        }case 'f':{
+                        case 'f':{
                             Mod::opt.frontShow=true;
+                            break;
+                        }case 's':{
+                            Mod::opt.wndSize=true;
                             break;
                         }case 'a':{
                             Mod::opt.alphaWnd=true;
