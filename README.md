@@ -120,6 +120,29 @@ set argv=--sparse-view
 
 确认以管理员权限启动后, 使用鼠标在 `[ 破 解 ]` 下点击需要破解的控制软件, 以禁用破解. 如需恢复, 可以在 `[ 恢 复 ]` 下点击需要恢复的控制软件, 即可恢复控制.
 
+# 许可证
+
+CRCSN 以 [MIT License](LICENSE) 开源. 详细内容请自行阅读.
+
+# 二次开发
+
+非常欢迎大家二次开发 CRCSN!
+
+二次开发时, 请务必修改 `header.hpp` 和 `launcher.cmd` 中的宏定义 `CHANNEL` 和 `CUSTOM_TITLE`, 以做区分.
+
+> [!NOTE]
+> **推荐做法**
+> 
+> - 将 `CHANNEL` 修改为负数, 或遵循 Pascal 命名法的字符串.\
+> 示例: `-2`, `"RevisedByLateWorker"`.
+> - 将 `CUSTOM_TITLE` 修改为 `[Revised by xxx] ` 加上 `CRCSN` (`header.hpp`) 或 `CRCSN Launcher` (`launcher.cmd`). 在 `header.hpp` 中修改, 务必加上英文半角双引号 (不然无法通过编译).\
+> 示例: `"[Revised by MaxTech] CRCSN"`, `[Revised by Kendall] CRCSN Launcher`.
+
+版权声明部分, 请在遵守许可证的情况下修改. 推荐将二次开发版本开源至 GitHub, 在许可证允许的情况下, 官方版本可能会采纳修改.
+
+> [!IMPORTANT]
+> 不在 GitHub 上开源的二次开发版本的修改不会被采纳.
+
 # 常见问题
 
 ## 1 软件无法非 x86_64 架构的 Windows OS 中使用.
