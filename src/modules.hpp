@@ -18,6 +18,7 @@ namespace Mod{
         }
         system("mode con cols=50 lines=25");
         SetLayeredWindowAttributes(GetForegroundWindow(),0,((alpha)?(204):(255)),LWA_ALPHA);
+        return;
     }
     auto frontShow(){
         HWND foreWnd{GetConsoleWindow()};
@@ -102,6 +103,7 @@ namespace Mod{
             }
         }
         system("cls");
+        return;
     }
     namespace Crack{
         auto mythware(Parameter){
