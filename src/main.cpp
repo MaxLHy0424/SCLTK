@@ -52,7 +52,7 @@ auto main(i32 argc,cstr argv[])->i32{
     ui.push("       https://github.com/MaxLHy0424/CRCSN");
     ui.push("     (C) 2023 MaxLHy0424. All Rights Reserved.\n");
     if(optErr){
-        ui.push(" (!) 命令行参数错误.\n");
+        ui.push(" (!) 参数错误.\n");
     }
     ui.push(" > 退出 ",Mod::exit,CON_RED_PALE);
     if(Mod::opt.sparseView){
