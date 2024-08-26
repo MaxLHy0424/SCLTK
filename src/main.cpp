@@ -48,7 +48,7 @@ auto main(i32 argc,cstr argv[])->i32{
     if(Mod::opt.sparseView){
         ui.push("\0");
     }
-    ui.push("                     v5.0.0");
+    ui.push("                     v5.0.1");
     ui.push("       https://github.com/MaxLHy0424/CRCSN");
     ui.push("     (C) 2023 MaxLHy0424. All Rights Reserved.\n");
     if(optErr){
