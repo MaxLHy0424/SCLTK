@@ -1,3 +1,6 @@
+#ifndef _MODULES_HPP_
+#define _MODULES_HPP_
+#include"header.hpp"
 namespace Mod{
     struct{
         bool wndSize,frontShow,alphaWnd,sparseView;
@@ -129,3 +132,4 @@ namespace Mod{
         }
     }
 }
+#endif
