@@ -1,5 +1,5 @@
-#ifndef _UI_HPP_
-#define _UI_HPP_
+#ifndef _HPP_UI_
+#define _HPP_UI_
 #include"header.hpp"
 #define MOUSE_BUTTON_LEFT FROM_LEFT_1ST_BUTTON_PRESSED
 #define MOUSE_BUTTON_MIDDLE FROM_LEFT_2ND_BUTTON_PRESSED
