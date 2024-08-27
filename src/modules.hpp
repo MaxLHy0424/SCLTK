@@ -1,5 +1,5 @@
-#ifndef _MODULES_HPP_
-#define _MODULES_HPP_
+#ifndef _HPP_MODULES_
+#define _HPP_MODULES_
 #include"header.hpp"
 namespace Mod{
     struct{

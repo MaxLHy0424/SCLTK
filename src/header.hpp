@@ -1,5 +1,5 @@
-#ifndef _HEADER_HPP_
-#define _HEADER_HPP_
+#ifndef _HPP_HEADER_
+#define _HPP_HEADER_
 #define _CRT_SECURE_NO_WARNINGS
 #pragma once
 #include<stdio.h>
