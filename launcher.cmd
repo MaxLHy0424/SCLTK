@@ -25,6 +25,5 @@ echo 按任意键启动 CRCSN (%arch%, %runtime%)...
 pause > nul
 msHta vbScript:createObject("shell.application").shellExecute("%~s0","goTo:runAs","","runAs",1)(window.close) & goTo:eof
 :runAs
-  echo (i) 正在启动, 请稍候.
   start .\bin\%arch%\main-%runtime%.exe %argv% /command
   exit
