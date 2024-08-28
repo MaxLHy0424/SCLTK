@@ -4,7 +4,7 @@ build: bin/x86_64/main-msvcrt.exe bin/x86_64/main-ucrt.exe
 bin/x86_64:
 	$(msys2)\\usr\\bin\\mkdir.exe bin/x86_64 -p
 bin: bin/x86_64
-mainFile = src/main.cpp bin/favicon.o
+mainFile = src/*.cpp bin/favicon.o
 bin/x86_64/main-msvcrt.exe: $(mainFile) src/*.hpp bin
 	$(msys2)\\mingw64\\bin\\g++.exe $(mainFile) $(argv) $@
 bin/x86_64/main-ucrt.exe: $(mainFile) src/*.hpp bin
