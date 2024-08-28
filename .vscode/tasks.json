@@ -5,8 +5,8 @@
             "type":"shell",
             "command":"g++",
             "args":[
-                "src/main.cpp",
                 "-C",
+                "src/*.cpp",
                 "-fexec-charset=GBK",
                 "-std=gnu++23",
                 "-Wall",
@@ -16,7 +16,7 @@
                 "-O0",
                 "-g3",
                 "-o",
-                "bin/__debug__.exe",
+                "bin/__debug__.exe"
             ],
             "group":{
                 "kind":"build",

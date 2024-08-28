@@ -12,14 +12,21 @@
             ],
             "compilerPath":"C:\\Software\\MSYS2\\ucrt64\\bin\\g++.exe",
             "compilerArgs":[
+                "-C",
+                "src/*.cpp",
                 "-fexec-charset=GBK",
+                "-std=gnu++23",
                 "-Wall",
                 "-Wextra",
+                "-pipe",
+                "-m64",
                 "-DNDEBUG",
                 "-static",
                 "-Ofast",
                 "-Os",
-                "-flto"
+                "-flto",
+                "-o",
+                "bin/__debug__.exe"
             ],
             "intelliSenseMode":"windows-gcc-x64",
             "cStandard":"c23",
