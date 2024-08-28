@@ -1,5 +1,4 @@
-#ifndef _HPP_MODULES_
-#define _HPP_MODULES_
+#pragma once
 #include"header.hpp"
 namespace Mod{
     struct{
@@ -132,4 +131,3 @@ namespace Mod{
         }
     }
 }
-#endif
