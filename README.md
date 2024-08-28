@@ -138,7 +138,7 @@ CRCSN 以 [MIT License](LICENSE) 开源. 详细内容请自行阅读.
 > - 将 `CUSTOM_TITLE` 修改为 `[Revised by xxx] ` 加上 `CRCSN` (`header.hpp`) 或 `CRCSN Launcher` (`launcher.cmd`). 在 `header.hpp` 中修改, 务必加上英文半角双引号 (不然无法通过编译).\
 > 示例: `"[Revised by MaxTech] CRCSN"`, `[Revised by Kendall] CRCSN Launcher`.
 
-版权声明部分, 请在遵守许可证的情况下修改. 推荐将二次开发版本开源至 GitHub, 在许可证允许的情况下, 官方版本可能会采纳修改.
+版权声明部分, 请在遵守许可证的情况下修改. 推荐将二次开发版本开源至 GitHub, 在许可证允许的情况下, 可能会被采纳.
 
 > [!IMPORTANT]
 > 不在 GitHub 上开源的二次开发版本的修改不会被采纳.
