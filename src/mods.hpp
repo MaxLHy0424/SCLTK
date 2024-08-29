@@ -82,7 +82,7 @@ namespace Mod{
         system("cls");
         std::string cmd;
         switch(op){
-            case 'C':{
+            case 'c':{
                 for(u16 i{};i<n;++i){
                     cmd="taskKill /f /im "+exe[i]+".exe";
                     system(cmd.c_str());
@@ -96,7 +96,7 @@ namespace Mod{
                     system(cmd.c_str());
                 }
                 break;
-            }case 'R':{
+            }case 'r':{
                 for(u16 i{};i<n;++i){
                     cmd="reg delete \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\"+exe[i]+".exe\" /f";
                     system(cmd.c_str());
@@ -113,21 +113,21 @@ namespace Mod{
     }
     namespace Crack{
         auto mythware(Parameter){
-            opBase('C',rule.mythware.exe,9,rule.mythware.svc,3);
+            opBase('c',rule.mythware.exe,9,rule.mythware.svc,3);
             return false;
         }
         auto lenovo(Parameter){
-            opBase('C',rule.lenovo.exe,18,rule.lenovo.svc,3);
+            opBase('c',rule.lenovo.exe,18,rule.lenovo.svc,3);
             return false;
         }
     }
     namespace Recovery{
         auto mythware(Parameter){
-            opBase('R',rule.mythware.exe,9,rule.mythware.svc,3);
+            opBase('r',rule.mythware.exe,9,rule.mythware.svc,3);
             return false;
         }
         auto lenovo(Parameter){
-            opBase('R',rule.lenovo.exe,18,rule.lenovo.svc,3);
+            opBase('r',rule.lenovo.exe,18,rule.lenovo.svc,3);
             return false;
         }
     }
