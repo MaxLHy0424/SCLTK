@@ -1,6 +1,6 @@
 @echo off
 chcp 65001 > nul
-set CHANNEL=2
+set CHANNEL=0
 set CUSTOM_TITLE=[Custom] CRCSN Launcher
 if %CHANNEL%==0 (
   title CRCSN Launcher
