@@ -3,12 +3,12 @@ argv = -fexec-charset=GBK -C -std=gnu++23 -Wall -Wextra -pipe -m64 -DNDEBUG -sta
 .PHONY: build clean
 build: bin/x86_64/main-msvcrt.exe bin/x86_64/main-ucrt.exe
 obj = src/*.cpp bin/favicon.o
+bin/favicon.o: favicon.rc img/favicon.ico bin
+	$(msys2)\\usr\\bin\\windres.exe -i $< -o $@ -F pe-x86-64
 bin/x86_64/main-msvcrt.exe: $(obj) src/*.hpp bin
 	$(msys2)\\mingw64\\bin\\g++.exe $(obj) $(argv) $@
 bin/x86_64/main-ucrt.exe: $(obj) src/*.hpp bin
 	$(msys2)\\ucrt64\\bin\\g++.exe $(obj) $(argv) $@
-bin/favicon.o: favicon.rc img/favicon.ico bin
-	$(msys2)\\usr\\bin\\windres.exe -i $< -o $@ -F pe-x86-64
 bin: bin/x86_64
 bin/x86_64:
 	$(msys2)\\usr\\bin\\mkdir.exe bin/x86_64 -p
