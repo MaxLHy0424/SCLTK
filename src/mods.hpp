@@ -3,7 +3,7 @@
 #include"ui.hpp"
 namespace Mod{
     struct{
-        bool wndSize,frontShow,alphaWnd,sparseView;
+        bool wndSize,frontShow,alphaWnd,looseView;
     }opt{};
     auto init(bool size,bool alpha){
         system("chcp 936 > nul");
