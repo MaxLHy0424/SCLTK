@@ -69,7 +69,7 @@ set argv=-Wa
 set argv=-Wfas
 ```
 
-### 1.3 疏松视图
+### 1.3 宽松视图
 
 > [!IMPORTANT]
 > 此参数区分大小写.
@@ -82,10 +82,10 @@ set argv=-Wfas
 set argv=
 ```
 
-添加参数 `--sparse-view`, 变成:
+添加参数 `--loose-view`, 变成:
 
 ```dos
-set argv=--sparse-view
+set argv=--loose-view
 ```
 
 即可使用宽松视图.
@@ -94,7 +94,7 @@ set argv=--sparse-view
 > 可以和[上一节](#12-窗口操作)中的参数一同使用, 两者顺序可以调换. 例如:
 > 
 > ```dos
-> set argv=--sparse-view -Wfa
+> set argv=--loose-view -Wfa
 > ```
 
 ### 1.4 深度自定义

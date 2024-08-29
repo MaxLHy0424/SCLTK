@@ -26,8 +26,8 @@ auto main(i32 argc,cstr argv[])->i32{
                         }
                     }
                 }
-            }else if(tmp=="--sparse-view"){
-                Mod::opt.sparseView=true;
+            }else if(tmp=="--loose-view"){
+                Mod::opt.looseView=true;
             }else if(tmp=="/command"){
                 continue;
             }else{
@@ -45,7 +45,7 @@ auto main(i32 argc,cstr argv[])->i32{
         std::thread(Mod::frontShow).detach();
     }
     ui.push("    [ Computer Room Control Software Nemesis ]");
-    if(Mod::opt.sparseView){
+    if(Mod::opt.looseView){
         ui.push("\0");
     }
     ui.push("                     v5.0.2");
@@ -55,14 +55,14 @@ auto main(i32 argc,cstr argv[])->i32{
         ui.push(" (!) 参数错误.\n");
     }
     ui.push(" > 退出 ",Mod::exit,CON_RED_PALE);
-    if(Mod::opt.sparseView){
+    if(Mod::opt.looseView){
         ui.push("\0");
     }
     ui.push(" > 命令提示符 ",Mod::cmd);
     ui.push("\n[ 破 解 ]\n");
     if(IsUserAnAdmin()){
         ui.push(" > 极域电子教室 ",Mod::Crack::mythware);
-        if(Mod::opt.sparseView){
+        if(Mod::opt.looseView){
             ui.push("\0");
         }
         ui.push(" > 联想云教室 ",Mod::Crack::lenovo);
@@ -72,7 +72,7 @@ auto main(i32 argc,cstr argv[])->i32{
     ui.push("\n[ 恢 复 ]\n");
     if(IsUserAnAdmin()){
         ui.push(" > 极域电子教室 ",Mod::Recovery::mythware);
-        if(Mod::opt.sparseView){
+        if(Mod::opt.looseView){
             ui.push("\0");
         }
         ui.push(" > 联想云教室 ",Mod::Recovery::lenovo);
