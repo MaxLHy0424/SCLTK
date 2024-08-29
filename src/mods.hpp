@@ -1,6 +1,9 @@
 #pragma once
 #include"header.hpp"
 #include"ui.hpp"
+struct{
+    bool wndSize,frontShow,alphaWnd,looseView;
+}opt{};
 namespace Mod{
     auto init(){
         system("chcp 936 > nul");
