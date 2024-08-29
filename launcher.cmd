@@ -18,7 +18,7 @@ set argv=
 cd /d "%~dp0"
 %1
 echo                  CRCSN Launcher
-echo                      v2.0.2
+echo                      v2.0.3
 echo     (C) 2023 MaxLHy0424. All Rights Reserved.
 echo.
 echo 按任意键启动 CRCSN (%arch%, %runtime%)...
