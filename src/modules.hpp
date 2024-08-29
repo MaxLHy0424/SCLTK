@@ -1,5 +1,6 @@
 #pragma once
 #include"header.hpp"
+#include"ui.hpp"
 namespace Mod{
     struct{
         bool wndSize,frontShow,alphaWnd,sparseView;
