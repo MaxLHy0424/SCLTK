@@ -43,7 +43,7 @@ auto main(i32 argc,cstr argv[])->i32{
             opt={};
         }
     }
-    Mod::init(opt.wndSize,opt.alphaWnd);
+    Mod::init();
     if(opt.frontShow){
         std::thread(Mod::frontShow).detach();
     }

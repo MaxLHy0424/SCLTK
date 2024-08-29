@@ -2,7 +2,7 @@
 #include"header.hpp"
 #include"ui.hpp"
 namespace Mod{
-    auto init(bool size,bool alpha){
+    auto init(){
         system("chcp 936 > nul");
         #if CHANNEL==0
             SetConsoleTitle("CRCSN");
@@ -13,11 +13,11 @@ namespace Mod{
         #else
             SetConsoleTitle(CUSTOM_TITLE);
         #endif
-        if(!size){
+        if(!opt.wndSize){
             SetWindowLongPtr(GetConsoleWindow(),GWL_STYLE,GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)&~WS_SIZEBOX&~WS_MAXIMIZEBOX);
         }
         system("mode con cols=50 lines=25");
-        if(alpha){
+        if(opt.alphaWnd){
             SetLayeredWindowAttributes(GetConsoleWindow(),0,204,LWA_ALPHA);
         }
         return;
@@ -43,7 +43,7 @@ namespace Mod{
     }
     auto cmd(Parameter){
         system("cls & cmd & cls");
-        init(opt.wndSize,opt.alphaWnd);
+        init();
         return false;
     }
     struct{
