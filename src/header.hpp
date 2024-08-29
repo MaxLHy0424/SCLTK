@@ -1,12 +1,12 @@
 #pragma once
 #define _CRT_SECURE_NO_WARNINGS
+#define ANSI
+#define _ANSI
 #include<stdio.h>
 #include<string>
 #include<thread>
 #include<vector>
 #include<shlobj.h>
-#define ANSI
-#define _ANSI
 typedef char i8;
 typedef int i32;
 typedef short i16;
