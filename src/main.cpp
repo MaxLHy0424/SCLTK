@@ -1,4 +1,7 @@
 #include"header.hpp"
+struct{
+    bool wndSize,frontShow,alphaWnd,looseView;
+}opt{};
 #include"ui.hpp"
 CUI ui;
 #include"mods.hpp"
@@ -12,13 +15,13 @@ auto main(i32 argc,cstr argv[])->i32{
                 for(u64 j{2};j<tmp.size();++j){
                     switch(tmp[j]){
                         case 'f':{
-                            Mod::opt.frontShow=true;
+                            opt.frontShow=true;
                             break;
                         }case 's':{
-                            Mod::opt.wndSize=true;
+                            opt.wndSize=true;
                             break;
                         }case 'a':{
-                            Mod::opt.alphaWnd=true;
+                            opt.alphaWnd=true;
                             break;
                         }default:{
                             optError=true;
@@ -27,7 +30,7 @@ auto main(i32 argc,cstr argv[])->i32{
                     }
                 }
             }else if(tmp=="--loose-view"){
-                Mod::opt.looseView=true;
+                opt.looseView=true;
             }else if(tmp=="/command"){
                 continue;
             }else{
@@ -37,15 +40,15 @@ auto main(i32 argc,cstr argv[])->i32{
         }
     INIT:
         if(optError){
-            Mod::opt={};
+            opt={};
         }
     }
-    Mod::init(Mod::opt.wndSize,Mod::opt.alphaWnd);
-    if(Mod::opt.frontShow){
+    Mod::init(opt.wndSize,opt.alphaWnd);
+    if(opt.frontShow){
         std::thread(Mod::frontShow).detach();
     }
     ui.push("    [ Computer Room Control Software Nemesis ]");
-    if(Mod::opt.looseView){
+    if(opt.looseView){
         ui.push("\0");
     }
     ui.push("                     v5.0.2");
@@ -55,14 +58,14 @@ auto main(i32 argc,cstr argv[])->i32{
         ui.push(" (!) 参数错误.\n");
     }
     ui.push(" > 退出 ",Mod::exit,CON_RED_PALE);
-    if(Mod::opt.looseView){
+    if(opt.looseView){
         ui.push("\0");
     }
     ui.push(" > 命令提示符 ",Mod::cmd);
     ui.push("\n[ 破 解 ]\n");
     if(IsUserAnAdmin()){
         ui.push(" > 极域电子教室 ",Mod::Crack::mythware);
-        if(Mod::opt.looseView){
+        if(opt.looseView){
             ui.push("\0");
         }
         ui.push(" > 联想云教室 ",Mod::Crack::lenovo);
@@ -72,7 +75,7 @@ auto main(i32 argc,cstr argv[])->i32{
     ui.push("\n[ 恢 复 ]\n");
     if(IsUserAnAdmin()){
         ui.push(" > 极域电子教室 ",Mod::Recovery::mythware);
-        if(Mod::opt.looseView){
+        if(opt.looseView){
             ui.push("\0");
         }
         ui.push(" > 联想云教室 ",Mod::Recovery::lenovo);
