@@ -1,7 +1,4 @@
 #include"header.hpp"
-struct{
-    bool wndSize,frontShow,alphaWnd,looseView;
-}opt{};
 #include"ui.hpp"
 CUI ui;
 #include"mods.hpp"
