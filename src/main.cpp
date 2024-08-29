@@ -8,9 +8,7 @@ auto main(i32 argc,cstr argv[])->i32{
         std::string tmp;
         for(i32 i{1};i<argc;++i){
             tmp=argv[i];
-            if(tmp=="/command"){
-                continue;
-            }else if((tmp.substr(0,2)=="-W")&&(tmp.size()>2)){
+            if((tmp.substr(0,2)=="-W")&&(tmp.size()>2)){
                 for(u64 j{2};j<tmp.size();++j){
                     switch(tmp[j]){
                         case 'f':{
@@ -30,6 +28,8 @@ auto main(i32 argc,cstr argv[])->i32{
                 }
             }else if(tmp=="--sparse-view"){
                 Mod::opt.sparseView=true;
+            }else if(tmp=="/command"){
+                continue;
             }else{
                 optError=true;
                 break;
