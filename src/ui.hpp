@@ -185,7 +185,7 @@ class CUI{
     public:
         CUI():\
             height{},width{}{}
-        virtual ~CUI(){}
+        ~CUI(){}
         auto push(cstr txt,fnptr fn=nullptr,i16 colorHighlight=CON_BLUE,i16 colorDef=CON_WHITE)->CUI&{
             lineData.push_back(Text(txt,Color(colorDef,((fn==nullptr)?(colorDef):(colorHighlight))),fn));
             return *this;
