@@ -69,16 +69,12 @@ set argv=
  - `a`: 将窗口不透明度设为 80% (仅支持新版控制台);
  - `s`: 允许缩放和最大化窗口 (可能导致意外行为).
 
-不可以仅使用主参数, 附加参数的顺序不影响应用效果.
+可以有多个附加参数, 其顺序不影响应用效果, 但不可以仅使用主参数.
 
 使用示例:
 
 ```dos
-set argv=-Wa
-```
-
-```dos
-set argv=-Wfas
+set argv=-Waf
 ```
 
 ### 1.4 宽大视图
@@ -94,13 +90,13 @@ set argv=-Wfas
 set argv=
 ```
 
-添加参数 `--wide-view`, 变成:
+添加参数 `--wide-view`:
 
 ```dos
 set argv=--wide-view
 ```
 
-即可使用宽大视图.
+即可启用宽大视图.
 
 > [!NOTE]
 > 可以和[上一节](#12-窗口操作)中的参数一同使用, 两者顺序可以调换. 例如:
@@ -134,7 +130,7 @@ set argv=--wide-view
 
 # 许可证
 
-CRCSN 以 [MIT License](LICENSE) 开源. 详细内容请自行阅读.
+CRCSN 使用 [MIT License](LICENSE). 详细内容请自行阅读.
 
 # 二次开发
 
