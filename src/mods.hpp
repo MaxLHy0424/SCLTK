@@ -51,10 +51,10 @@ namespace Mod{
     }
     struct{
         struct{
-            std::string exe[9],svc[3];
+            std::vector<cstr>exe,svc;
         }mythware;
         struct{
-            std::string exe[18],svc[3];
+            std::vector<cstr>exe,svc;
         }lenovo;
     }rule{
         {
@@ -78,31 +78,33 @@ namespace Mod{
             }
         }
     };
-    auto opBase(i8 op,std::string* exe,u16 n,std::string* svc,u16 m){
+    auto opBase(i8 op,std::vector<cstr>&exe,std::vector<cstr>&svc){
         system("cls");
         std::string cmd;
         switch(op){
             case 'c':{
-                for(u16 i{};i<n;++i){
-                    cmd="taskKill /f /im "+exe[i]+".exe";
+                for(auto i:exe){
+                    cmd="taskKill /f /im "+(std::string)i+".exe";
                     system(cmd.c_str());
                 }
-                for(u16 i{};i<n;++i){
-                    cmd="reg add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\"+exe[i]+".exe\" /f /t reg_sz /v debugger /d ?";
+                for(auto i:exe){
+                    cmd="reg add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\"\
+                        +(std::string)i+".exe\" /f /t reg_sz /v debugger /d ?";
                     system(cmd.c_str());
                 }
-                for(u16 i{};i<m;++i){
-                    cmd="net stop "+svc[i]+" /y";
+                for(auto i:svc){
+                    cmd="net stop "+(std::string)i+" /y";
                     system(cmd.c_str());
                 }
                 break;
             }case 'r':{
-                for(u16 i{};i<n;++i){
-                    cmd="reg delete \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\"+exe[i]+".exe\" /f";
+                for(auto i:exe){
+                    cmd="reg delete \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\"\
+                        +(std::string)i+".exe\" /f";
                     system(cmd.c_str());
                 }
-                for(u16 i{};i<m;++i){
-                    cmd="net start "+svc[i];
+                for(auto i:svc){
+                    cmd="net start "+(std::string)i;
                     system(cmd.c_str());
                 }
                 break;
@@ -113,21 +115,21 @@ namespace Mod{
     }
     namespace Crack{
         auto mythware(Parameter){
-            opBase('c',rule.mythware.exe,9,rule.mythware.svc,3);
+            opBase('c',rule.mythware.exe,rule.mythware.svc);
             return false;
         }
         auto lenovo(Parameter){
-            opBase('c',rule.lenovo.exe,18,rule.lenovo.svc,3);
+            opBase('c',rule.lenovo.exe,rule.lenovo.svc);
             return false;
         }
     }
     namespace Recovery{
         auto mythware(Parameter){
-            opBase('r',rule.mythware.exe,9,rule.mythware.svc,3);
+            opBase('r',rule.mythware.exe,rule.mythware.svc);
             return false;
         }
         auto lenovo(Parameter){
-            opBase('r',rule.lenovo.exe,18,rule.lenovo.svc,3);
+            opBase('r',rule.lenovo.exe,rule.lenovo.svc);
             return false;
         }
     }
