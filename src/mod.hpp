@@ -23,7 +23,6 @@ namespace Mod{
         if(opt.alphaWnd){
             SetLayeredWindowAttributes(GetConsoleWindow(),0,204,LWA_ALPHA);
         }
-        return;
     }
     auto frontShow(){
         HWND foreWnd{GetConsoleWindow()};
@@ -111,7 +110,6 @@ namespace Mod{
             }
         }
         system("cls");
-        return;
     }
     namespace Crack{
         auto mythware(Parameter){

@@ -20,12 +20,10 @@ struct Color{
     auto setDefault(){
         SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),def);
         lastColor=def;
-        return;
     }
     auto setHighlight(){
         SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),highlight);
         lastColor=highlight;
-        return;
     }
 };
 struct Parameter{
@@ -63,28 +61,24 @@ class CUI{
             GetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&cursorInfo);
             cursorInfo.bVisible=false;
             SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&cursorInfo);
-            return;
         }
         auto showCursor(){
             CONSOLE_CURSOR_INFO cursorInfo;
             GetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&cursorInfo);
             cursorInfo.bVisible=true;
             SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&cursorInfo);
-            return;
         }
         auto removeAttributes(){
             DWORD mode;
             GetConsoleMode(GetStdHandle(STD_INPUT_HANDLE),&mode);
             mode&=~ENABLE_QUICK_EDIT_MODE,mode&=~ENABLE_INSERT_MODE,mode|=ENABLE_MOUSE_INPUT;
             SetConsoleMode(GetStdHandle(STD_INPUT_HANDLE),mode);
-            return;
         }
         auto addAttributes(){
             DWORD mode;
             GetConsoleMode(GetStdHandle(STD_INPUT_HANDLE),&mode);
             mode|=ENABLE_QUICK_EDIT_MODE,mode|=ENABLE_INSERT_MODE,mode|=ENABLE_MOUSE_INPUT;
             SetConsoleMode(GetStdHandle(STD_INPUT_HANDLE),mode);
-            return;
         }
         auto getCursor()->COORD{
             CONSOLE_SCREEN_BUFFER_INFO tmp;
@@ -93,7 +87,6 @@ class CUI{
         }
         auto setCursor(const COORD& tmp={0,0}){
             SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE),tmp);
-            return;
         }
         auto waitMouseEvent(bool move=true)->MOUSE_EVENT_RECORD{
             INPUT_RECORD record;
@@ -111,7 +104,6 @@ class CUI{
             GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE),&tmp);
             height=tmp.dwSize.Y;
             width=tmp.dwSize.X;
-            return;
         }
         auto clearScreen(){
             getConsoleSize();
@@ -122,14 +114,12 @@ class CUI{
                 }
             }
             setCursor({0,0});
-            return;
         }
         auto write(cstr txt,bool isEndl=false){
             printf("%s",txt);
             if(isEndl){
                 printf("\n");
             }
-            return;
         }
         auto rewrite(Text data){
             setCursor({0,data.position.Y});
@@ -139,7 +129,6 @@ class CUI{
             setCursor({0,data.position.Y});
             write(data.txt);
             setCursor({0,data.position.Y});
-            return;
         }
         auto initPosition(){
             clearScreen();
@@ -148,7 +137,6 @@ class CUI{
                 data.color.setDefault();
                 write(data.txt,true);
             }
-            return;
         }
         auto refresh(COORD hangPosition){
             for(auto& data:lineData){
@@ -161,7 +149,6 @@ class CUI{
                     rewrite(data);
                 }
             }
-            return;
         }
         auto implement(MOUSE_EVENT_RECORD mouseEvent){
             bool isExit{};
@@ -222,6 +209,5 @@ class CUI{
             }
             clearScreen();
             Sleep(100);
-            return;
         }
 };
