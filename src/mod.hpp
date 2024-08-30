@@ -78,7 +78,7 @@ namespace Mod{
             }
         }
     };
-    auto op(i8 mode,std::vector<cstr> &exe,std::vector<cstr> &svc){
+    auto op(i8 mode,std::vector<cstr>& exe,std::vector<cstr>& svc){
         system("cls");
         std::string cmd;
         switch(mode){
