@@ -15,17 +15,17 @@ if %CHANNEL%==0 (
 mode con cols=50 lines=25
 set arch=x86_64
 set runtime=msvcrt
-set argv=
+set argv=-Wfa
 cd /d "%~dp0"
 %1
 echo                  CRCSN Launcher
 echo                      v2.0.3
 echo     (C) 2023 MaxLHy0424. All Rights Reserved.
 echo.
-echo   (i) 将要启动: CRCSN (%arch%, %runtime%).
+echo (i) 架构: %arch%; Runtime: %runtime%.
 if %AUTO_LAUNCH%==0 (
   echo.
-  echo 按任意键继续...
+  echo 按任意键启动...
   pause > nul
 )
 msHta vbScript:createObject("shell.application").shellExecute("%~s0","goTo:runAs","","runAs",1)(window.close) & goTo:eof
