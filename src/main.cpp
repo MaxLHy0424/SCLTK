@@ -28,8 +28,6 @@ auto main(i32 argc,cstr argv[])->i32{
                 }
             }else if(tmp=="--wide-view"){
                 opt.looseView=true;
-            }else if(tmp=="/command"){
-                continue;
             }else{
                 optErr=true;
                 break;
