@@ -15,7 +15,7 @@ if %CHANNEL%==0 (
 mode con cols=50 lines=25
 set arch=x86_64
 set runtime=msvcrt
-set argv=-Wfa
+set argv=
 cd /d "%~dp0"
 %1
 echo                  CRCSN Launcher
