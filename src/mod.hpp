@@ -1,5 +1,5 @@
 #pragma once
-#include"header.hpp"
+#include"set.hpp"
 #include"ui.hpp"
 struct{
     bool wndSize,frontShow,alphaWnd,looseView;
