@@ -36,7 +36,7 @@ namespace Mod{
             SetForegroundWindow(foreWnd);
             AttachThreadInput(curId,foreId,FALSE);
             SetWindowPos(foreWnd,HWND_TOPMOST,0,0,100,100,SWP_NOMOVE|SWP_NOSIZE);
-            Sleep(100ul);
+            Sleep(100);
         }
     }
     auto exit(Parameter){
@@ -78,10 +78,10 @@ namespace Mod{
             }
         }
     };
-    auto op(i8 m,std::vector<cstr> &exe,std::vector<cstr> &svc){
+    auto op(i8 mode,std::vector<cstr> &exe,std::vector<cstr> &svc){
         system("cls");
         std::string cmd;
-        switch(m){
+        switch(mode){
             case 'c':{
                 for(auto i:exe){
                     cmd="taskKill /f /im "+(std::string)i+".exe";
