@@ -14,11 +14,11 @@ auto main(i32 argc,cstr argv[])->i32{
                         case 'f':{
                             opt.frontShow=true;
                             break;
-                        }case 's':{
-                            opt.wndSize=true;
-                            break;
                         }case 'a':{
                             opt.alphaWnd=true;
+                            break;
+                        }case 's':{
+                            opt.wndSize=true;
                             break;
                         }default:{
                             optErr=true;
