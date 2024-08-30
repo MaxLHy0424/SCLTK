@@ -2,7 +2,7 @@
 #include"set.hpp"
 #include"ui.hpp"
 struct{
-    bool wndSize,frontShow,alphaWnd,looseView;
+    bool frontShow,alphaWnd,wndChangeSize,looseView;
 }opt{};
 namespace Mod{
     auto init(){
@@ -16,7 +16,7 @@ namespace Mod{
         #else
             SetConsoleTitle(CUSTOM_TITLE);
         #endif
-        if(!opt.wndSize){
+        if(!opt.wndChangeSize){
             SetWindowLongPtr(GetConsoleWindow(),GWL_STYLE,GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)&~WS_SIZEBOX&~WS_MAXIMIZEBOX);
         }
         system("mode con cols=50 lines=25");
