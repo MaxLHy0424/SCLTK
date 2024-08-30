@@ -1,7 +1,7 @@
-#include"header.hpp"
+#include"set.hpp"
 #include"ui.hpp"
 CUI ui;
-#include"mods.hpp"
+#include"mod.hpp"
 auto main(i32 argc,cstr argv[])->i32{
     bool optErr{};
     if(argc>1){
