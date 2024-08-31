@@ -7,17 +7,17 @@
 #define MOUSE_CLICK_DOUBLE DOUBLE_CLICK
 #define MOUSE_MOVE MOUSE_MOVED
 #define MOUSE_WHEEL MOUSE_WHEELED
-#define CON_WHITE 0x07
-#define CON_BLUE 0x03
-#define CON_RED_PALE 0x0c
+#define WC_WHITE 0x07
+#define WC_BLUE 0x03
+#define WC_RED_PALE 0x0c
 class CUI;
 struct Color{
     const i16 def,highlight;
     i16 lastColor;
     Color():\
-        def{CON_WHITE},highlight{CON_BLUE},lastColor{CON_WHITE}{}
-    Color(const i16 def=CON_WHITE,const i16 highlight=CON_BLUE):\
-        def{def},highlight{highlight},lastColor{CON_WHITE}{}
+        def{WC_WHITE},highlight{WC_BLUE},lastColor{WC_WHITE}{}
+    Color(const i16 def=WC_WHITE,const i16 highlight=WC_BLUE):\
+        def{def},highlight{highlight},lastColor{WC_WHITE}{}
     auto setDefault(){
         SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),def);
         lastColor=def;
@@ -174,7 +174,7 @@ class CUI{
         CUI():\
             height{},width{}{}
         ~CUI(){}
-        auto push(cstr text,const fnptr fn=nullptr,const i16 colorHighlight=CON_BLUE,const i16 colorDef=CON_WHITE)->CUI&{
+        auto push(cstr text,const fnptr fn=nullptr,const i16 colorHighlight=WC_BLUE,const i16 colorDef=WC_WHITE)->CUI&{
             lineData.push_back(Text(text,Color(colorDef,((fn==nullptr)?(colorDef):(colorHighlight))),fn));
             return *this;
         }
