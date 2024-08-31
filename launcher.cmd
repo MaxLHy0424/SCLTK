@@ -30,5 +30,5 @@ if %AUTO_LAUNCH%==0 (
 )
 msHta vbScript:createObject("shell.application").shellExecute("%~s0","goTo:runAs","","runAs",1)(window.close) & goTo:eof
 :runAs
-  start .\bin\%arch%\main-%runtime%.exe %argv%
+  start .\bin\%arch%\CRCSN-%runtime%.exe %argv%
   exit
