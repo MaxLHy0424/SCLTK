@@ -144,7 +144,7 @@ CRCSN 使用 [MIT License](LICENSE). 详细内容请自行阅读.
 > - 将 `CHANNEL` 修改为负数, 或遵循 Pascal 命名法的字符串.\
 > 示例: `-2`, `"RevisedByLateWorker"`.
 > - 将 `CUSTOM_TITLE` 修改为 `[Revised by xxx] ` 加上 `CRCSN` (`def.hpp`) 或 `CRCSN Launcher` (`launcher.cmd`). 在 `def.hpp` 中修改, 务必加上英文半角双引号 (不然无法通过编译).\
-> 示例: `"[Revised by MaxTech] CRCSN"`, `[Revised by Kendall] CRCSN Launcher`.
+> 示例: `"[Revised by Ethylene] CRCSN"`, `[Revised by Kendall] CRCSN Launcher`.
 
 版权声明部分, 请在遵守许可证的情况下修改. 推荐将二次开发版本开源至 GitHub, 在许可证允许的情况下, 可能会被采纳.
 
