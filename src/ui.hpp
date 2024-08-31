@@ -13,9 +13,9 @@
 class CUI;
 struct Color{
     i16 def,highlight,lastColor;
-    Color():\
+    Color():
         def{WC_WHITE},highlight{WC_BLUE},lastColor{WC_WHITE}{}
-    Color(const i16 def=WC_WHITE,const i16 highlight=WC_BLUE):\
+    Color(const i16 def=WC_WHITE,const i16 highlight=WC_BLUE):
         def{def},highlight{highlight},lastColor{WC_WHITE}{}
     auto setDefault(){
         SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),def);
@@ -29,9 +29,9 @@ struct Color{
 struct Parameter{
     DWORD buttonState,ctrlKeyState,eventFlag;
     CUI *ui;
-    Parameter():\
+    Parameter():
         buttonState{MOUSE_BUTTON_LEFT},ctrlKeyState{},eventFlag{},ui{nullptr}{}
-    Parameter(MOUSE_EVENT_RECORD mouseEvent,CUI *ui):\
+    Parameter(MOUSE_EVENT_RECORD mouseEvent,CUI *ui):
         buttonState{mouseEvent.dwButtonState},ctrlKeyState{mouseEvent.dwControlKeyState},eventFlag{mouseEvent.dwEventFlags},ui{ui}{}
 };
 typedef bool (*fnptr)(Parameter);
@@ -40,9 +40,9 @@ struct Text{
     Color color;
     COORD pos;
     fnptr fn;
-    Text():\
+    Text():
         text{},color{Color{0,0}},pos{},fn{nullptr}{}
-    Text(cstr text,Color color,fnptr fn):\
+    Text(cstr text,Color color,fnptr fn):
         text{text},color{color},pos{},fn{fn}{}
     bool operator==(const COORD &mousePosition)const{
         return (pos.Y==mousePosition.Y)&&(pos.X<=mousePosition.X)&&(mousePosition.X<(pos.X+(i16)strlen(text)));
@@ -170,7 +170,7 @@ class CUI{
             return isExit;
         }
     public:
-        CUI():\
+        CUI():
             height{},width{}{}
         ~CUI(){}
         auto push(cstr text,const fnptr fn=nullptr,const i16 colorHighlight=WC_BLUE,const i16 colorDef=WC_WHITE)->CUI&{
