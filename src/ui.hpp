@@ -12,8 +12,7 @@
 #define WC_RED_PALE 0x0c
 class CUI;
 struct Color{
-    const i16 def,highlight;
-    i16 lastColor;
+    i16 def,highlight,lastColor;
     Color():\
         def{WC_WHITE},highlight{WC_BLUE},lastColor{WC_WHITE}{}
     Color(const i16 def=WC_WHITE,const i16 highlight=WC_BLUE):\
@@ -28,8 +27,8 @@ struct Color{
     }
 };
 struct Parameter{
-    const DWORD buttonState,ctrlKeyState,eventFlag;
-    const CUI *ui;
+    DWORD buttonState,ctrlKeyState,eventFlag;
+    CUI *ui;
     Parameter():\
         buttonState{MOUSE_BUTTON_LEFT},ctrlKeyState{},eventFlag{},ui{nullptr}{}
     Parameter(MOUSE_EVENT_RECORD mouseEvent,CUI *ui):\
