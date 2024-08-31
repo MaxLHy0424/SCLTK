@@ -83,27 +83,27 @@ namespace Mod{
         std::string cmd;
         switch(mode){
             case 'c':{
-                for(auto i:exe){
+                for(const auto &i:exe){
                     cmd="taskKill /f /im "+(std::string)i+".exe";
                     system(cmd.c_str());
                 }
-                for(auto i:exe){
+                for(const auto &i:exe){
                     cmd="reg add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\"\
                         +(std::string)i+".exe\" /f /t reg_sz /v debugger /d ?";
                     system(cmd.c_str());
                 }
-                for(auto i:svc){
+                for(const auto &i:svc){
                     cmd="net stop "+(std::string)i+" /y";
                     system(cmd.c_str());
                 }
                 break;
             }case 'r':{
-                for(auto i:exe){
+                for(const auto &i:exe){
                     cmd="reg delete \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\"\
                         +(std::string)i+".exe\" /f";
                     system(cmd.c_str());
                 }
-                for(auto i:svc){
+                for(const auto &i:svc){
                     cmd="net start "+(std::string)i;
                     system(cmd.c_str());
                 }
