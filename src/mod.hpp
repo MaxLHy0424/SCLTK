@@ -3,7 +3,7 @@
 #include"ui.hpp"
 #define DEFAULT_OPTIONS false,false,true,false
 struct{
-    bool frontShow,alphaWnd,fixWndSize,looseView;
+    bool frontShow,alphaWnd,fixWndSize,compactView;
 }opt{DEFAULT_OPTIONS};
 namespace Mod{
     auto init(){

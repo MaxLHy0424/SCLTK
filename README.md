@@ -77,12 +77,12 @@ set argv=
 set argv=-Waf
 ```
 
-### 1.4 宽大视图
+### 1.4 紧凑视图
 
 > [!IMPORTANT]
 > 此参数区分大小写.
 
-软件默认使用紧凑视图.
+软件默认使用宽大视图.
 
 找到:
 
@@ -90,19 +90,19 @@ set argv=-Waf
 set argv=
 ```
 
-添加参数 `--wide-view`:
+添加参数 `--compact-view`:
 
 ```dos
-set argv=--wide-view
+set argv=--compact-view
 ```
 
-即可启用宽大视图.
+即可启用紧凑视图.
 
 > [!NOTE]
 > 可以和[上一节](#12-窗口操作)中的参数一同使用, 两者顺序可以调换. 例如:
 > 
 > ```dos
-> set argv=--wide-view -Wfa
+> set argv=--compact-view -Wfa
 > ```
 
 ### 1.5 深度自定义
