@@ -4,7 +4,7 @@ set arch=x86_64
 set runtime=msvcrt
 set argv=
 set AUTO_LAUNCH=0
-set CHANNEL=2
+set CHANNEL=0
 set CUSTOM_TITLE=[CUSTOM] CRCSN Launcher
 if %CHANNEL%==0 (
   title CRCSN Launcher
@@ -19,7 +19,7 @@ mode con cols=50 lines=25
 cd /d "%~dp0"
 %1
 echo                  CRCSN Launcher
-echo                      v2.1.1
+echo                      v5.1.2
 echo     (C) 2023 MaxLHy0424. All Rights Reserved.
 echo.
 echo  (i) 将要启动 CRCSN %arch% %runtime%.
