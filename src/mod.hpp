@@ -40,8 +40,8 @@ namespace Mod{
         }
     }
     auto exit(Parameter){
-        SetWindowLongPtr(GetConsoleWindow(),GWL_STYLE,GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)|WS_SIZEBOX|WS_MAXIMIZEBOX);
         SetLayeredWindowAttributes(GetConsoleWindow(),0,255,LWA_ALPHA);
+        SetWindowLongPtr(GetConsoleWindow(),GWL_STYLE,GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)|WS_SIZEBOX|WS_MAXIMIZEBOX);
         return true;
     }
     auto cmd(Parameter){
