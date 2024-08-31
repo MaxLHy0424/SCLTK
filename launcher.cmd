@@ -22,7 +22,7 @@ echo                  CRCSN Launcher
 echo                      v2.1.1
 echo     (C) 2023 MaxLHy0424. All Rights Reserved.
 echo.
-echo (i) 将要启动: CRCSN %arch% %runtime%.
+echo (i) 将要启动 CRCSN %arch% %runtime%.
 if %AUTO_LAUNCH%==0 (
   echo.
   echo 按任意键启动...
