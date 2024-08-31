@@ -54,7 +54,7 @@ struct Text{
 class CUI{
     private:
         i16 height,width;
-        std::vector<Text>lineData;
+        std::vector<Text> lineData;
     protected:
         auto hideCursor(){
             CONSOLE_CURSOR_INFO cursorInfo;
