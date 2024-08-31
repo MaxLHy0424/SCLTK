@@ -36,16 +36,16 @@ struct Parameter{
 };
 typedef bool (*fnptr)(Parameter);
 struct Text{
-    cstr txt;
+    cstr text;
     Color color;
-    COORD position;
+    COORD pos;
     fnptr fn;
     Text():\
-        txt{},color{Color{0,0}},position{},fn{nullptr}{}
-    Text(cstr txt,Color color,fnptr fn):\
-        txt{txt},color{color},position{},fn{fn}{}
+        text{},color{Color{0,0}},pos{},fn{nullptr}{}
+    Text(cstr text,Color color,fnptr fn):\
+        text{text},color{color},pos{},fn{fn}{}
     bool operator==(const COORD& mousePosition)const{
-        return (position.Y==mousePosition.Y)&&(position.X<=mousePosition.X)&&(mousePosition.X<(position.X+(i16)strlen(txt)));
+        return (pos.Y==mousePosition.Y)&&(pos.X<=mousePosition.X)&&(mousePosition.X<(pos.X+(i16)strlen(text)));
     }
     bool operator!=(const COORD& mousePosition)const{
         return !(operator==(mousePosition));
@@ -115,27 +115,27 @@ class CUI{
             }
             setCursor({0,0});
         }
-        auto write(cstr txt,bool isEndl=false){
-            printf("%s",txt);
+        auto write(cstr text,bool isEndl=false){
+            printf("%s",text);
             if(isEndl){
                 printf("\n");
             }
         }
         auto rewrite(Text data){
-            setCursor({0,data.position.Y});
-            for(i16 j{};j<data.position.X;++j){
+            setCursor({0,data.pos.Y});
+            for(i16 j{};j<data.pos.X;++j){
                 write(" ");
             }
-            setCursor({0,data.position.Y});
-            write(data.txt);
-            setCursor({0,data.position.Y});
+            setCursor({0,data.pos.Y});
+            write(data.text);
+            setCursor({0,data.pos.Y});
         }
         auto initPosition(){
             clearScreen();
             for(auto& data:lineData){
-                data.position=getCursor();
+                data.pos=getCursor();
                 data.color.setDefault();
-                write(data.txt,true);
+                write(data.text,true);
             }
         }
         auto refresh(COORD hangPosition){
@@ -173,8 +173,8 @@ class CUI{
         CUI():\
             height{},width{}{}
         ~CUI(){}
-        auto push(cstr txt,fnptr fn=nullptr,i16 colorHighlight=CON_BLUE,i16 colorDef=CON_WHITE)->CUI&{
-            lineData.push_back(Text(txt,Color(colorDef,((fn==nullptr)?(colorDef):(colorHighlight))),fn));
+        auto push(cstr text,fnptr fn=nullptr,i16 colorHighlight=CON_BLUE,i16 colorDef=CON_WHITE)->CUI&{
+            lineData.push_back(Text(text,Color(colorDef,((fn==nullptr)?(colorDef):(colorHighlight))),fn));
             return *this;
         }
         auto pop()->CUI&{
