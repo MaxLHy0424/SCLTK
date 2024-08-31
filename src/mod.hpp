@@ -11,9 +11,9 @@ namespace Mod{
         #if CHANNEL==0
             SetConsoleTitle("CRCSN");
         #elif CHANNEL==1
-            SetConsoleTitle("[Preview] CRCSN");
+            SetConsoleTitle("[Evaluate] CRCSN");
         #elif CHANNEL==2
-            SetConsoleTitle("[DevSnap] CRCSN");
+            SetConsoleTitle("[Snapshot] CRCSN");
         #else
             SetConsoleTitle(CUSTOM_TITLE);
         #endif
