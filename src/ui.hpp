@@ -12,10 +12,11 @@
 #define CON_RED_PALE 0x0c
 class CUI;
 struct Color{
-    i16 def,highlight,lastColor;
+    const i16 def,highlight;
+    i16 lastColor;
     Color():\
         def{CON_WHITE},highlight{CON_BLUE},lastColor{CON_WHITE}{}
-    Color(i16 def=CON_WHITE,i16 highlight=CON_BLUE):\
+    Color(const i16 def=CON_WHITE,const i16 highlight=CON_BLUE):\
         def{def},highlight{highlight},lastColor{CON_WHITE}{}
     auto setDefault(){
         SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),def);
@@ -27,8 +28,8 @@ struct Color{
     }
 };
 struct Parameter{
-    DWORD buttonState,ctrlKeyState,eventFlag;
-    CUI *ui;
+    const DWORD buttonState,ctrlKeyState,eventFlag;
+    const CUI *ui;
     Parameter():\
         buttonState{MOUSE_BUTTON_LEFT},ctrlKeyState{},eventFlag{},ui{nullptr}{}
     Parameter(MOUSE_EVENT_RECORD mouseEvent,CUI *ui):\
@@ -88,7 +89,7 @@ class CUI{
         auto setCursor(const COORD &tmp={0,0}){
             SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE),tmp);
         }
-        auto waitMouseEvent(bool move=true)->MOUSE_EVENT_RECORD{
+        auto waitMouseEvent(const bool move=true)->MOUSE_EVENT_RECORD{
             INPUT_RECORD record;
             DWORD reg;
             while(true){
@@ -115,13 +116,13 @@ class CUI{
             }
             setCursor({0,0});
         }
-        auto write(cstr text,bool isEndl=false){
+        auto write(cstr text,const bool isEndl=false){
             printf("%s",text);
             if(isEndl){
                 printf("\n");
             }
         }
-        auto rewrite(Text data){
+        auto rewrite(const Text data){
             setCursor({0,data.pos.Y});
             for(i16 j{};j<data.pos.X;++j){
                 write(" ");
@@ -138,7 +139,7 @@ class CUI{
                 write(data.text,true);
             }
         }
-        auto refresh(COORD hangPosition){
+        auto refresh(const COORD hangPosition){
             for(auto &data:lineData){
                 if((data==hangPosition)&&(data.color.lastColor!=data.color.highlight)){
                     data.color.setHighlight();
@@ -150,7 +151,7 @@ class CUI{
                 }
             }
         }
-        auto implement(MOUSE_EVENT_RECORD mouseEvent){
+        auto implement(const MOUSE_EVENT_RECORD mouseEvent){
             bool isExit{};
             for(auto &data:lineData){
                 if(data==mouseEvent.dwMousePosition){
@@ -173,7 +174,7 @@ class CUI{
         CUI():\
             height{},width{}{}
         ~CUI(){}
-        auto push(cstr text,fnptr fn=nullptr,i16 colorHighlight=CON_BLUE,i16 colorDef=CON_WHITE)->CUI&{
+        auto push(cstr text,const fnptr fn=nullptr,const i16 colorHighlight=CON_BLUE,const i16 colorDef=CON_WHITE)->CUI&{
             lineData.push_back(Text(text,Color(colorDef,((fn==nullptr)?(colorDef):(colorHighlight))),fn));
             return *this;
         }
