@@ -12,6 +12,6 @@ typedef int i32;
 typedef short i16;
 typedef unsigned long long u64;
 typedef unsigned short u16;
-typedef const i8* cstr;
+typedef const i8 * cstr;
 #define CHANNEL 2
 #define CUSTOM_TITLE "[CUSTOM] CRCSN"

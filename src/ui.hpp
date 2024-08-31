@@ -28,10 +28,10 @@ struct Color{
 };
 struct Parameter{
     DWORD buttonState,ctrlKeyState,eventFlag;
-    CUI* ui;
+    CUI *ui;
     Parameter():\
         buttonState{MOUSE_BUTTON_LEFT},ctrlKeyState{},eventFlag{},ui{nullptr}{}
-    Parameter(MOUSE_EVENT_RECORD mouseEvent,CUI* ui):\
+    Parameter(MOUSE_EVENT_RECORD mouseEvent,CUI *ui):\
         buttonState{mouseEvent.dwButtonState},ctrlKeyState{mouseEvent.dwControlKeyState},eventFlag{mouseEvent.dwEventFlags},ui{ui}{}
 };
 typedef bool (*fnptr)(Parameter);
@@ -44,10 +44,10 @@ struct Text{
         text{},color{Color{0,0}},pos{},fn{nullptr}{}
     Text(cstr text,Color color,fnptr fn):\
         text{text},color{color},pos{},fn{fn}{}
-    bool operator==(const COORD& mousePosition)const{
+    bool operator==(const COORD &mousePosition)const{
         return (pos.Y==mousePosition.Y)&&(pos.X<=mousePosition.X)&&(mousePosition.X<(pos.X+(i16)strlen(text)));
     }
-    bool operator!=(const COORD& mousePosition)const{
+    bool operator!=(const COORD &mousePosition)const{
         return !(operator==(mousePosition));
     }
 };
@@ -85,14 +85,14 @@ class CUI{
             GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE),&tmp);
             return tmp.dwCursorPosition;
         }
-        auto setCursor(const COORD& tmp={0,0}){
+        auto setCursor(const COORD &tmp={0,0}){
             SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE),tmp);
         }
         auto waitMouseEvent(bool move=true)->MOUSE_EVENT_RECORD{
             INPUT_RECORD record;
             DWORD reg;
             while(true){
-                Sleep(10ul);
+                Sleep(10);
                 ReadConsoleInput(GetStdHandle(STD_INPUT_HANDLE),&record,1,&reg);
                 if((record.EventType==MOUSE_EVENT)&&(move|(record.Event.MouseEvent.dwEventFlags!=MOUSE_MOVED))){
                     return record.Event.MouseEvent;
@@ -132,14 +132,14 @@ class CUI{
         }
         auto initPosition(){
             clearScreen();
-            for(auto& data:lineData){
+            for(auto &data:lineData){
                 data.pos=getCursor();
                 data.color.setDefault();
                 write(data.text,true);
             }
         }
         auto refresh(COORD hangPosition){
-            for(auto& data:lineData){
+            for(auto &data:lineData){
                 if((data==hangPosition)&&(data.color.lastColor!=data.color.highlight)){
                     data.color.setHighlight();
                     rewrite(data);
@@ -152,7 +152,7 @@ class CUI{
         }
         auto implement(MOUSE_EVENT_RECORD mouseEvent){
             bool isExit{};
-            for(auto& data:lineData){
+            for(auto &data:lineData){
                 if(data==mouseEvent.dwMousePosition){
                     if(data.fn!=nullptr){
                         clearScreen();
