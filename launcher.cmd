@@ -20,7 +20,7 @@ cd /d "%~dp0"
 %1
 echo                  CRCSN Launcher
 echo                      v5.1.3
-echo     (C) 2023 MaxLHy0424. All Rights Reserved.
+echo     (C) 2023 MaxLHy0424, All Rights Reserved.
 echo.
 echo  (i) 将要启动 CRCSN {%arch%, %runtime%}.
 if %AUTO_LAUNCH%==0 (
