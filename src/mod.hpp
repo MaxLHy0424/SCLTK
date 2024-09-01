@@ -45,7 +45,7 @@ namespace Mod{
         return true;
     }
     auto cmd(Parameter){
-        system("cls & cmd & cls");
+        system("cmd & cls");
         init();
         return false;
     }
