@@ -174,7 +174,7 @@ class CUI{
             height{},width{}{}
         ~CUI(){}
         auto push(cstr text,const fnptr fn=nullptr,const i16 colorHighlight=WC_BLUE,const i16 colorDef=WC_WHITE)->CUI&{
-            lineData.push_back(Text(text,Color(colorDef,((fn==nullptr)?(colorDef):(colorHighlight))),fn));
+            lineData.push_back(Text(text,Color(colorDef,(fn==nullptr)?(colorDef):(colorHighlight)),fn));
             return *this;
         }
         auto pop()->CUI&{
