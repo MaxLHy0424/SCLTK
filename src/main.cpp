@@ -9,8 +9,7 @@ auto main(const i32 argc,cstr argv[])->i32{
         for(i32 i{1};i<argc;++i){
             tmp=argv[i];
             if((tmp.substr(0,2)=="-W")&&(tmp.size()>2)){
-                tmp=tmp.substr(2);
-                for(const auto &j:tmp){
+                for(const auto &j:tmp.substr(2)){
                     switch(j){
                         case 'f':{
                             opt.frontShow=true;
