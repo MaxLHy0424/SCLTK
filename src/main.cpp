@@ -9,7 +9,7 @@ auto main(const i32 argc,cstr argv[])->i32{
         for(i32 i{1};i<argc;++i){
             tmp=argv[i];
             if((tmp.substr(0,2)=="-W")&&(tmp.size()>2)){
-                for(u64 j{2};j<tmp.size();++j){
+                for(std::string::size_type j{2};j<tmp.size();++j){
                     switch(tmp[j]){
                         case 'f':{
                             opt.frontShow=true;
