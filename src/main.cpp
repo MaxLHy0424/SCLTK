@@ -43,7 +43,7 @@ auto main(const i32 argc,cstr argv[])->i32{
         std::thread(Mod::frontShow).detach();
     }
     ui.push("    [ Computer Room Control Software Nemesis ]");
-    ui.push("                     v5.1.2");
+    ui.push("                     v5.1.3");
     ui.push("       https://github.com/MaxLHy0424/CRCSN");
     ui.push("     (C) 2023 MaxLHy0424, All Rights Reserved.\n");
     if(optErr){
