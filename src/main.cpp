@@ -52,14 +52,14 @@ auto main(const i32 argc,cstr argv[])->i32{
     }
     ui.push(" > 退出 ",Mod::exit,WC_RED_PALE);
     if(!opt.compactView){
-        ui.push("");
+        ui.push("\0");
     }
     ui.push(" > 命令提示符 ",Mod::cmd);
     ui.push("\n[ 破 解 ]\n");
     if(IsUserAnAdmin()){
         ui.push(" > 极域电子教室 ",Mod::Crack::mythware);
         if(!opt.compactView){
-            ui.push("");
+            ui.push("\0");
         }
         ui.push(" > 联想云教室 ",Mod::Crack::lenovo);
     }else{
@@ -69,7 +69,7 @@ auto main(const i32 argc,cstr argv[])->i32{
     if(IsUserAnAdmin()){
         ui.push(" > 极域电子教室 ",Mod::Recovery::mythware);
         if(!opt.compactView){
-            ui.push("");
+            ui.push("\0");
         }
         ui.push(" > 联想云教室 ",Mod::Recovery::lenovo);
     }else{
