@@ -62,7 +62,7 @@ auto main(const i32 argc,cstr argv[])->i32{
         }
         ui.push(" > 联想云教室 ",Mod::Crack::lenovo);
     }else{
-        ui.push(" (i) 需要提权.");
+        ui.push(" (i) 需要提升权限.");
     }
     ui.push("\n[ 恢 复 ]\n");
     if(IsUserAnAdmin()){
@@ -72,7 +72,7 @@ auto main(const i32 argc,cstr argv[])->i32{
         }
         ui.push(" > 联想云教室 ",Mod::Recovery::lenovo);
     }else{
-        ui.push(" (i) 需要提权.");
+        ui.push(" (i) 需要提升权限.");
     }
     ui.show();
     return 0;
