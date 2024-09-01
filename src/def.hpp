@@ -13,4 +13,4 @@ typedef short i16;
 typedef unsigned short u16;
 typedef int i32;
 #define CHANNEL 2
-#define CUSTOM_TITLE "[CUSTOM] CRCSN"
+#define CUSTOM_TITLE "[[CUSTOM]] CRCSN"
