@@ -11,14 +11,13 @@ BEGIN
 			VALUE "FileVersion","v5.1.3"
 			VALUE "InternalName","CRCSN"
 			VALUE "LegalCopyright","(C) 2023 MaxLHy0424, All Rights Reserved."
-			VALUE "OriginalFilename","CRCSN-$(CRT).exe"
 			VALUE "ProductName","Computer Room Control Software Nemesis"
 			VALUE "ProductVersion","v5.1.3"
         END
     END
     BLOCK "VarFileInfo"
     BEGIN
-            VALUE "Translation",0x804,0x4B0
+        VALUE "Translation",0x804,0x4B0
     END
 END
 1 ICON "img/favicon.ico"
