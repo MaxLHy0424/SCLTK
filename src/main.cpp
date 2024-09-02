@@ -40,7 +40,7 @@ auto main(i32 argc,cstr argv[])->i32{
     }
     Mod::init();
     if(opt.frontShow){
-        std::thread(Mod::frontShow).detach();
+        std::thread{Mod::frontShow}.detach();
     }
     ui.push("    [ Computer Room Control Software Nemesis ]");
     ui.push("                     v5.2.0");
