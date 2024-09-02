@@ -48,35 +48,6 @@ namespace Mod{
         init();
         return false;
     }
-    struct{
-        struct{
-            std::vector<cstr> exe,svc;
-        }mythware;
-        struct{
-            std::vector<cstr> exe,svc;
-        }lenovo;
-    }rule{
-        {
-            {
-                "StudentMain","DispcapHelper","VRCwPlayer",
-                "InstHelpApp","InstHelpApp64","TDOvrSet",
-                "GATESRV","ProcHelper64","MasterHelper"
-            },{
-                "STUDSRV","TDNetFilter","TDFileFilter"
-            }
-        },{
-            {
-                "vncviewer","tvnserver32","WfbsPnpInstall",
-                "WFBSMon","WFBSMlogon","WFBSSvrLogShow",
-                "ResetIp","FuncForWIN64","CertMgr",
-                "Fireware","BCDBootCopy","refreship",
-                "lenovoLockScreen","PortControl64","DesktopCheck",
-                "DeploymentManager","DeploymentAgent","XYNTService"
-            },{
-                "BSAgentSvr","tvnserver","WFBSMlogon"
-            }
-        }
-    };
     auto op(i8 m,std::vector<cstr> &exe,std::vector<cstr> &svc){
         system("cls");
         std::string cmd;
@@ -111,6 +82,35 @@ namespace Mod{
         }
         system("cls");
     }
+    struct{
+        struct{
+            std::vector<cstr> exe,svc;
+        }mythware;
+        struct{
+            std::vector<cstr> exe,svc;
+        }lenovo;
+    }rule{
+        {
+            {
+                "StudentMain","DispcapHelper","VRCwPlayer",
+                "InstHelpApp","InstHelpApp64","TDOvrSet",
+                "GATESRV","ProcHelper64","MasterHelper"
+            },{
+                "STUDSRV","TDNetFilter","TDFileFilter"
+            }
+        },{
+            {
+                "vncviewer","tvnserver32","WfbsPnpInstall",
+                "WFBSMon","WFBSMlogon","WFBSSvrLogShow",
+                "ResetIp","FuncForWIN64","CertMgr",
+                "Fireware","BCDBootCopy","refreship",
+                "lenovoLockScreen","PortControl64","DesktopCheck",
+                "DeploymentManager","DeploymentAgent","XYNTService"
+            },{
+                "BSAgentSvr","tvnserver","WFBSMlogon"
+            }
+        }
+    };
     namespace Crack{
         auto mythware(Parameter){
             op('c',rule.mythware.exe,rule.mythware.svc);
