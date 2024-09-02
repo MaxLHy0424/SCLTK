@@ -18,7 +18,7 @@ auto main(i32 argc,cstr argv[])->i32{
                             opt.alphaWnd=true;
                             break;
                         }case 's':{
-                            opt.fixWndSize=false;
+                            opt.wndSizeBox=true;
                             break;
                         }default:{
                             optErr=true;
@@ -35,7 +35,7 @@ auto main(i32 argc,cstr argv[])->i32{
         }
     INIT:
         if(optErr){
-            opt={DEFAULT_OPTIONS};
+            opt={};
         }
     }
     Mod::init();
