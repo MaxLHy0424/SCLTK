@@ -8,7 +8,7 @@ auto main(i32 argc,cstr argv[])->i32{
         std::string t;
         for(i32 i{1};i<argc;++i){
             t=argv[i];
-            if((t.size()>2)?((t.substr(0,2)=="-W")?(true):(false)):(false)){
+            if((t.size()>2)?(t.substr(0,2)=="-W"):(false)){
                 for(const auto &j:t.substr(2)){
                     switch(j){
                         case 'f':{
