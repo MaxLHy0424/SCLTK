@@ -5,11 +5,11 @@ CUI ui;
 auto main(i32 argc,cstr argv[])->i32{
     bool optErr{};
     if(argc>1){
-        std::string t;
+        std::string tmp;
         for(i32 i{1};i<argc;++i){
-            t=argv[i];
-            if((t.size()>2)?(t.substr(0,2)=="-W"):(false)){
-                for(const auto &j:t.substr(2)){
+            tmp=argv[i];
+            if((tmp.size()>2)?(tmp.substr(0,2)=="-W"):(false)){
+                for(const auto &j:tmp.substr(2)){
                     switch(j){
                         case 'f':{
                             opt.frontShow=true;
@@ -26,7 +26,7 @@ auto main(i32 argc,cstr argv[])->i32{
                         }
                     }
                 }
-            }else if(t=="--large-view"){
+            }else if(tmp=="--large-view"){
                 opt.largeView=true;
             }else{
                 optErr=true;

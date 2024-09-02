@@ -81,12 +81,12 @@ class CUI{
             SetConsoleMode(GetStdHandle(STD_INPUT_HANDLE),mode);
         }
         auto getCursor()->COORD{
-            CONSOLE_SCREEN_BUFFER_INFO t;
-            GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE),&t);
-            return t.dwCursorPosition;
+            CONSOLE_SCREEN_BUFFER_INFO tmp;
+            GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE),&tmp);
+            return tmp.dwCursorPosition;
         }
-        auto setCursor(const COORD &t={0,0}){
-            SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE),t);
+        auto setCursor(const COORD &tmp={0,0}){
+            SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE),tmp);
         }
         auto waitMouseEvent(bool move=true)->MOUSE_EVENT_RECORD{
             INPUT_RECORD record;
@@ -100,10 +100,10 @@ class CUI{
             }
         }
         auto getConsoleSize(){
-            CONSOLE_SCREEN_BUFFER_INFO t;
-            GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE),&t);
-            height=t.dwSize.Y;
-            width=t.dwSize.X;
+            CONSOLE_SCREEN_BUFFER_INFO tmp;
+            GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE),&tmp);
+            height=tmp.dwSize.Y;
+            width=tmp.dwSize.X;
         }
         auto clearScreen(){
             getConsoleSize();
