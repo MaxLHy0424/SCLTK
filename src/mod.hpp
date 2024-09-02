@@ -51,10 +51,10 @@ namespace Mod{
     }
     struct{
         struct{
-            const std::vector<cstr> exe,svc;
+            std::vector<cstr> exe,svc;
         }mythware;
         struct{
-            const std::vector<cstr> exe,svc;
+            std::vector<cstr> exe,svc;
         }lenovo;
     }rule{
         {
@@ -78,7 +78,7 @@ namespace Mod{
             }
         }
     };
-    auto op(const i8 mode,const std::vector<cstr> &exe,const std::vector<cstr> &svc){
+    auto op(i8 mode,std::vector<cstr> &exe,std::vector<cstr> &svc){
         system("cls");
         std::string cmd;
         switch(mode){

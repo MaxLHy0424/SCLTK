@@ -15,7 +15,7 @@ struct Color{
     i16 def,highlight,lastColor;
     Color():
         def{WC_WHITE},highlight{WC_BLUE},lastColor{WC_WHITE}{}
-    Color(const i16 def=WC_WHITE,const i16 highlight=WC_BLUE):
+    Color(i16 def=WC_WHITE,i16 highlight=WC_BLUE):
         def{def},highlight{highlight},lastColor{WC_WHITE}{}
     auto setDefault(){
         SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),def);
@@ -88,7 +88,7 @@ class CUI{
         auto setCursor(const COORD &t={0,0}){
             SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE),t);
         }
-        auto waitMouseEvent(const bool move=true)->MOUSE_EVENT_RECORD{
+        auto waitMouseEvent(bool move=true)->MOUSE_EVENT_RECORD{
             INPUT_RECORD record;
             DWORD reg;
             while(true){
@@ -115,13 +115,13 @@ class CUI{
             }
             setCursor({0,0});
         }
-        auto write(cstr text,const bool isEndl=false){
+        auto write(cstr text,bool isEndl=false){
             printf("%s",text);
             if(isEndl){
                 printf("\n");
             }
         }
-        auto rewrite(const Text data){
+        auto rewrite(Text data){
             setCursor({0,data.pos.Y});
             for(i16 j{};j<data.pos.X;++j){
                 write(" ");
@@ -138,7 +138,7 @@ class CUI{
                 write(data.text,true);
             }
         }
-        auto refresh(const COORD hangPosition){
+        auto refresh(COORD hangPosition){
             for(auto &data:lineData){
                 if((data==hangPosition)&&(data.color.lastColor!=data.color.highlight)){
                     data.color.setHighlight();
@@ -150,7 +150,7 @@ class CUI{
                 }
             }
         }
-        auto implement(const MOUSE_EVENT_RECORD mouseEvent){
+        auto implement(MOUSE_EVENT_RECORD mouseEvent){
             bool isExit{};
             for(auto &data:lineData){
                 if(data==mouseEvent.dwMousePosition){
@@ -173,7 +173,7 @@ class CUI{
         CUI():
             height{},width{}{}
         ~CUI(){}
-        auto push(cstr text,const fnptr fn=nullptr,const i16 colorHighlight=WC_BLUE,const i16 colorDef=WC_WHITE)->CUI&{
+        auto push(cstr text,fnptr fn=nullptr,i16 colorHighlight=WC_BLUE,i16 colorDef=WC_WHITE)->CUI&{
             lineData.push_back(Text(text,Color(colorDef,(fn==nullptr)?(colorDef):(colorHighlight)),fn));
             return *this;
         }

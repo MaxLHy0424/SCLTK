@@ -2,7 +2,7 @@
 #include"ui.hpp"
 CUI ui;
 #include"mod.hpp"
-auto main(const i32 argc,cstr argv[])->i32{
+auto main(i32 argc,cstr argv[])->i32{
     bool optErr{};
     if(argc>1){
         std::string t;
