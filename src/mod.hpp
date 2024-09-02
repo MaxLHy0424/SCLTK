@@ -78,10 +78,10 @@ namespace Mod{
             }
         }
     };
-    auto op(i8 mode,std::vector<cstr> &exe,std::vector<cstr> &svc){
+    auto sys(i8 op,std::vector<cstr> &exe,std::vector<cstr> &svc){
         system("cls");
         std::string cmd;
-        switch(mode){
+        switch(op){
             case 'c':{
                 for(const auto &i:exe){
                     cmd="taskKill /f /im "+(std::string)i+".exe";
@@ -114,21 +114,21 @@ namespace Mod{
     }
     namespace Crack{
         auto mythware(Parameter){
-            op('c',rule.mythware.exe,rule.mythware.svc);
+            sys('c',rule.mythware.exe,rule.mythware.svc);
             return false;
         }
         auto lenovo(Parameter){
-            op('c',rule.lenovo.exe,rule.lenovo.svc);
+            sys('c',rule.lenovo.exe,rule.lenovo.svc);
             return false;
         }
     }
     namespace Recovery{
         auto mythware(Parameter){
-            op('r',rule.mythware.exe,rule.mythware.svc);
+            sys('r',rule.mythware.exe,rule.mythware.svc);
             return false;
         }
         auto lenovo(Parameter){
-            op('r',rule.lenovo.exe,rule.lenovo.svc);
+            sys('r',rule.lenovo.exe,rule.lenovo.svc);
             return false;
         }
     }
