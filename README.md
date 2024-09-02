@@ -4,8 +4,8 @@
 
 # 获取
 
-**最新发行版: v5.1.3.**\
-**[更新日志](https://github.com/MaxLHy0424/CRCSN/releases/tag/v5.1.3) | [直链下载](https://github.com/MaxLHy0424/CRCSN/releases/download/v5.1.3/CRCSN-v5.1.3-Stable.7z)**
+**最新发行版: v5.2.0.**\
+**[更新日志](https://github.com/MaxLHy0424/CRCSN/releases/tag/v5.2.0) | [直链下载](https://github.com/MaxLHy0424/CRCSN/releases/download/v5.2.0/CRCSN-v5.2.0-Stable.7z)**
 
 或者:
 
@@ -17,7 +17,7 @@
 **由于 CRCSN 存在敏感操作, 使用时建议关闭防病毒软件. 若 CRCSN 被报为恶意软件, 请添加排除项.**
 
 > [!NOTE]
-> 适用于 v5.1.3.
+> 适用于 v5.2.0.
 
 ## 1 启动
 

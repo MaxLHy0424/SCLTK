@@ -19,7 +19,7 @@ mode con cols=50 lines=25
 cd /d "%~dp0"
 %1
 echo                  CRCSN Launcher
-echo                      v5.1.3
+echo                      v5.2.0
 echo     (C) 2023 MaxLHy0424, All Rights Reserved.
 if %AUTO_LAUNCH%==0 (
   echo.
