@@ -44,10 +44,10 @@ struct Text{
         text{},color{Color{0,0}},pos{},fn{nullptr}{}
     Text(cstr text,Color color,fnptr fn):
         text{text},color{color},pos{},fn{fn}{}
-    bool operator==(const COORD &mousePosition)const{
+    auto operator==(const COORD &mousePosition)const{
         return (pos.Y==mousePosition.Y)&&(pos.X<=mousePosition.X)&&(mousePosition.X<(pos.X+(i16)strlen(text)));
     }
-    bool operator!=(const COORD &mousePosition)const{
+    auto operator!=(const COORD &mousePosition)const{
         return !(operator==(mousePosition));
     }
 };
