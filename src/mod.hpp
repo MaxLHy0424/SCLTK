@@ -1,10 +1,9 @@
 #pragma once
 #include"def.hpp"
 #include"ui.hpp"
-#define DEFAULT_OPTIONS false,false,true,false
 struct{
-    bool frontShow,alphaWnd,fixWndSize,largeView;
-}opt{DEFAULT_OPTIONS};
+    bool frontShow,alphaWnd,wndSizeBox,largeView;
+}opt{};
 namespace Mod{
     auto init(){
         system("chcp 936 > nul");
@@ -17,7 +16,7 @@ namespace Mod{
         #else
             SetConsoleTitle(CUSTOM_TITLE);
         #endif
-        if(opt.fixWndSize){
+        if(!opt.wndSizeBox){
             SetWindowLongPtr(GetConsoleWindow(),GWL_STYLE,GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)&~WS_SIZEBOX&~WS_MAXIMIZEBOX);
         }
         system("mode con cols=50 lines=25");
