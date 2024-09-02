@@ -50,14 +50,14 @@ auto main(i32 argc,cstr argv[])->i32{
         ui.push(" (!) 参数错误.\n");
     }
     ui.push(" > 退出 ",Mod::exit,WC_RED_PALE);
-    if(!opt.largeView){
+    if(opt.largeView){
         ui.push("\0");
     }
     ui.push(" > 命令提示符 ",Mod::cmd);
     ui.push("\n[ 破 解 ]\n");
     if(IsUserAnAdmin()){
         ui.push(" > 极域电子教室 ",Mod::Crack::mythware);
-        if(!opt.largeView){
+        if(opt.largeView){
             ui.push("\0");
         }
         ui.push(" > 联想云教室 ",Mod::Crack::lenovo);
@@ -67,7 +67,7 @@ auto main(i32 argc,cstr argv[])->i32{
     ui.push("\n[ 恢 复 ]\n");
     if(IsUserAnAdmin()){
         ui.push(" > 极域电子教室 ",Mod::Recovery::mythware);
-        if(!opt.largeView){
+        if(opt.largeView){
             ui.push("\0");
         }
         ui.push(" > 联想云教室 ",Mod::Recovery::lenovo);
