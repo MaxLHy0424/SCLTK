@@ -6,8 +6,8 @@
                 "${workspaceFolder}\\*"
             ],
             "defines":[
-                "ANSI",
-                "_ANSI"
+                "UNICODE",
+                "_UNICODE"
             ],
             "compilerPath":"C:\\Software\\MSYS2\\ucrt64\\bin\\g++.exe",
             "compilerArgs":[

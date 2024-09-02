@@ -8,11 +8,11 @@ namespace Mod{
     auto init(){
         system("chcp 936 > nul");
         #if CHANNEL==0
-            SetConsoleTitle("CRCSN");
+            SetConsoleTitle(L"CRCSN");
         #elif CHANNEL==1
-            SetConsoleTitle("[Evaluate] CRCSN");
+            SetConsoleTitle(L"[Evaluate] CRCSN");
         #elif CHANNEL==2
-            SetConsoleTitle("[Snapshot] CRCSN");
+            SetConsoleTitle(L"[Snapshot] CRCSN");
         #else
             SetConsoleTitle(CUSTOM_TITLE);
         #endif

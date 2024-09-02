@@ -1,7 +1,7 @@
 #pragma once
 #define _CRT_SECURE_NO_WARNINGS
-#define ANSI
-#define _ANSI
+#define UNICODE
+#define _UNICODE
 #include<stdio.h>
 #include<string>
 #include<thread>
@@ -13,4 +13,4 @@ typedef short i16;
 typedef unsigned short u16;
 typedef int i32;
 #define CHANNEL 2
-#define CUSTOM_TITLE "[<CUSTOM>] CRCSN"
+#define CUSTOM_TITLE L"[<CUSTOM>] CRCSN"
