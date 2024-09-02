@@ -21,11 +21,9 @@ cd /d "%~dp0"
 echo                  CRCSN Launcher
 echo                      v5.1.3
 echo     (C) 2023 MaxLHy0424, All Rights Reserved.
-echo.
-echo  (i) 将要启动 CRCSN %arch%, %runtime%.
 if %AUTO_LAUNCH%==0 (
   echo.
-  echo 按任意键继续...
+  echo 按任意键启动 CRCSN...
   pause > nul
 )
 msHta vbScript:createObject("shell.application").shellExecute("%~s0","goTo:runAs","","runAs",1)(window.close) & goTo:eof
