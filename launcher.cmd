@@ -1,8 +1,5 @@
 @echo off
 chcp 65001 > nul
-set arch=x86_64
-set runtime=msvcrt
-set argv=
 set AUTO_LAUNCH=0
 set CHANNEL=2
 set CUSTOM_TITLE=[<CUSTOM>] CRCSN Launcher
@@ -16,6 +13,9 @@ if %CHANNEL%==0 (
   title %CUSTOM_TITLE%
 )
 mode con cols=50 lines=25
+set arch=x86_64
+set runtime=msvcrt
+set argv=
 cd /d "%~dp0"
 %1
 echo                  CRCSN Launcher
