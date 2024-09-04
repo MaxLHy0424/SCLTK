@@ -26,7 +26,7 @@ namespace Mod{
     }
     auto frontShow(){
         HWND foreWnd{GetConsoleWindow()};
-        DWORD foreId{GetWindowThreadProcessId(foreWnd,NULL)},curId{GetCurrentThreadId()};
+        DWORD foreId{GetWindowThreadProcessId(foreWnd,nullptr)},curId{GetCurrentThreadId()};
         while(true){
             AttachThreadInput(curId,foreId,TRUE);
             ShowWindow(foreWnd,SW_SHOWNORMAL);
