@@ -23,7 +23,7 @@ echo                      v2.2.2
 echo     (C) 2023 MaxLHy0424, All Rights Reserved.
 if %AUTO_LAUNCH%==0 (
   echo.
-  echo 按任意键启动 CRCSN (%arch%, %runtime%)...
+  echo 按任意键启动 CRCSN [%arch%, %runtime%]...
   pause > nul
 )
 msHta vbScript:createObject("shell.application").shellExecute("%~s0","goTo:runAs","","runAs",1)(window.close) & goTo:eof
