@@ -48,40 +48,6 @@ namespace Mod{
         init();
         return false;
     }
-    auto op(i8 m,std::vector<cstr> &exe,std::vector<cstr> &svc){
-        system("cls");
-        std::string cmd;
-        switch(m){
-            case 'c':{
-                for(const auto &i:exe){
-                    cmd="taskKill /f /im "+(std::string)i+".exe";
-                    system(cmd.c_str());
-                }
-                for(const auto &i:exe){
-                    cmd="reg add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\"
-                        +(std::string)i+".exe\" /f /t reg_sz /v debugger /d ?";
-                    system(cmd.c_str());
-                }
-                for(const auto &i:svc){
-                    cmd="net stop "+(std::string)i+" /y";
-                    system(cmd.c_str());
-                }
-                break;
-            }case 'r':{
-                for(const auto &i:exe){
-                    cmd="reg delete \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\"
-                        +(std::string)i+".exe\" /f";
-                    system(cmd.c_str());
-                }
-                for(const auto &i:svc){
-                    cmd="net start "+(std::string)i;
-                    system(cmd.c_str());
-                }
-                break;
-            }
-        }
-        system("cls");
-    }
     struct{
         struct{
             std::vector<cstr> exe,svc;
@@ -111,24 +77,43 @@ namespace Mod{
             }
         }
     };
-    namespace Crack{
-        auto mythware(Argv){
-            op('c',rule.mythware.exe,rule.mythware.svc);
-            return false;
+    struct OpDat{
+        i8 m;
+        std::vector<cstr> &exe,&svc;
+    };
+    auto op(Argv argv){
+        system("cls");
+        std::string cmd;
+        switch(((OpDat*)argv.fArg)->m){
+            case 'c':{
+                for(const auto &i:((OpDat*)argv.fArg)->exe){
+                    cmd="taskKill /f /im "+(std::string)i+".exe";
+                    system(cmd.c_str());
+                }
+                for(const auto &i:((OpDat*)argv.fArg)->exe){
+                    cmd="reg add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\"
+                        +(std::string)i+".exe\" /f /t reg_sz /v debugger /d ?";
+                    system(cmd.c_str());
+                }
+                for(const auto &i:((OpDat*)argv.fArg)->svc){
+                    cmd="net stop "+(std::string)i+" /y";
+                    system(cmd.c_str());
+                }
+                break;
+            }case 'r':{
+                for(const auto &i:((OpDat*)argv.fArg)->exe){
+                    cmd="reg delete \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\"
+                        +(std::string)i+".exe\" /f";
+                    system(cmd.c_str());
+                }
+                for(const auto &i:((OpDat*)argv.fArg)->svc){
+                    cmd="net start "+(std::string)i;
+                    system(cmd.c_str());
+                }
+                break;
+            }
         }
-        auto lenovo(Argv){
-            op('c',rule.lenovo.exe,rule.lenovo.svc);
-            return false;
-        }
-    }
-    namespace Recovery{
-        auto mythware(Argv){
-            op('r',rule.mythware.exe,rule.mythware.svc);
-            return false;
-        }
-        auto lenovo(Argv){
-            op('r',rule.lenovo.exe,rule.lenovo.svc);
-            return false;
-        }
+        system("cls");
+        return false;
     }
 }
