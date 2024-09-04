@@ -56,21 +56,21 @@ auto main(i32 argc,cstr argv[])->i32{
     ui.push(" > 命令提示符 ",Mod::cmd);
     ui.push("\n[ 破 解 ]\n");
     if(IsUserAnAdmin()){
-        ui.push(" > 极域电子教室 ",Mod::op,new Mod::ArgvOp{'c',Mod::rule.mythware.exe,Mod::rule.mythware.svc});
+        ui.push(" > 极域电子教室 ",Mod::op,new Mod::OpArg{'c',Mod::rule.mythware.exe,Mod::rule.mythware.svc});
         if(opt.largeView){
             ui.push("\0");
         }
-        ui.push(" > 联想云教室 ",Mod::op,new Mod::ArgvOp{'c',Mod::rule.lenovo.exe,Mod::rule.lenovo.svc});
+        ui.push(" > 联想云教室 ",Mod::op,new Mod::OpArg{'c',Mod::rule.lenovo.exe,Mod::rule.lenovo.svc});
     }else{
         ui.push(" (i) 需要提权.");
     }
     ui.push("\n[ 恢 复 ]\n");
     if(IsUserAnAdmin()){
-        ui.push(" > 极域电子教室 ",Mod::op,new Mod::ArgvOp{'r',Mod::rule.mythware.exe,Mod::rule.mythware.svc});
+        ui.push(" > 极域电子教室 ",Mod::op,new Mod::OpArg{'r',Mod::rule.mythware.exe,Mod::rule.mythware.svc});
         if(opt.largeView){
             ui.push("\0");
         }
-        ui.push(" > 联想云教室 ",Mod::op,new Mod::ArgvOp{'r',Mod::rule.lenovo.exe,Mod::rule.lenovo.svc});
+        ui.push(" > 联想云教室 ",Mod::op,new Mod::OpArg{'r',Mod::rule.lenovo.exe,Mod::rule.lenovo.svc});
     }else{
         ui.push(" (i) 需要提权.");
     }
