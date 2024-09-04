@@ -49,7 +49,7 @@ auto main(i32 argc,cstr argv[])->i32{
     if(optErr){
         ui.push(" (!) 参数错误.\n");
     }
-    ui.push(" > 退出 ",Mod::exit,{},CON_RED_PALE);
+    ui.push(" > 退出 ",Mod::exit,nullptr,CON_RED_PALE);
     if(opt.largeView){
         ui.push("\0");
     }
