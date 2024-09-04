@@ -7,10 +7,10 @@
 #include<thread>
 #include<vector>
 #include<shlobj.h>
-typedef char i8;
-typedef const i8 * cstr;
-typedef short i16;
-typedef unsigned short u16;
-typedef int i32;
+using i8=char;
+using cstr=const i8 *;
+using i16=short;
+using u16=unsigned i16;
+using i32=int;
 #define CHANNEL 2
 #define CUSTOM_TITLE L"[<CUSTOM>] CRCSN"

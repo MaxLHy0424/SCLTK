@@ -35,7 +35,7 @@ struct Argv{
     Argv(MOUSE_EVENT_RECORD mouseEvent,CUI *ui,void *fArg):
         buttonState{mouseEvent.dwButtonState},ctrlKeyState{mouseEvent.dwControlKeyState},eventFlag{mouseEvent.dwEventFlags},ui{ui},fArg{fArg}{}
 };
-typedef bool (*fnptr)(Argv);
+using fnptr=bool(*)(Argv);
 struct Text{
     cstr text;
     Color color;
