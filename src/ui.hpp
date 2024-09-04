@@ -29,10 +29,11 @@ struct Color{
 struct Argv{
     DWORD buttonState,ctrlKeyState,eventFlag;
     CUI *ui;
+    void *fArg;
     Argv():
-        buttonState{MOUSE_BUTTON_LEFT},ctrlKeyState{},eventFlag{},ui{nullptr}{}
-    Argv(MOUSE_EVENT_RECORD mouseEvent,CUI *ui):
-        buttonState{mouseEvent.dwButtonState},ctrlKeyState{mouseEvent.dwControlKeyState},eventFlag{mouseEvent.dwEventFlags},ui{ui}{}
+        buttonState{MOUSE_BUTTON_LEFT},ctrlKeyState{},eventFlag{},ui{nullptr},fArg{nullptr}{}
+    Argv(MOUSE_EVENT_RECORD mouseEvent,CUI *ui,void *fArg):
+        buttonState{mouseEvent.dwButtonState},ctrlKeyState{mouseEvent.dwControlKeyState},eventFlag{mouseEvent.dwEventFlags},ui{ui},fArg{fArg}{}
 };
 typedef bool (*fnptr)(Argv);
 struct Text{
@@ -40,10 +41,11 @@ struct Text{
     Color color;
     COORD pos;
     fnptr fn;
+    void *fArg;
     Text():
         text{},color{Color{0,0}},pos{},fn{nullptr}{}
-    Text(cstr text,Color color,fnptr fn):
-        text{text},color{color},pos{},fn{fn}{}
+    Text(cstr text,Color color,fnptr fn,void *fArg):
+        text{text},color{color},pos{},fn{fn},fArg{fArg}{}
     auto operator==(const COORD &mousePosition)const{
         return (pos.Y==mousePosition.Y)&&(pos.X<=mousePosition.X)&&(mousePosition.X<(pos.X+(i16)strlen(text)));
     }
@@ -159,7 +161,7 @@ class CUI{
                         data.color.setDefault();
                         addAttributes();
                         showCursor();
-                        isExit=data.fn(Argv(mouseEvent,this));
+                        isExit=data.fn(Argv(mouseEvent,this,data.fArg));
                         removeAttributes();
                         hideCursor();
                         initPosition();
@@ -173,8 +175,8 @@ class CUI{
         CUI():
             height{},width{}{}
         ~CUI(){}
-        auto push(cstr text,fnptr fn=nullptr,i16 colorHighlight=CON_BLUE,i16 colorDef=CON_WHITE)->CUI&{
-            lineData.push_back(Text(text,Color(colorDef,(fn==nullptr)?(colorDef):(colorHighlight)),fn));
+        auto push(cstr text,fnptr fn=nullptr,void *argv=nullptr,i16 colorHighlight=CON_BLUE,i16 colorDef=CON_WHITE)->CUI&{
+            lineData.push_back(Text(text,Color(colorDef,(fn==nullptr)?(colorDef):(colorHighlight)),fn,argv));
             return *this;
         }
         auto pop()->CUI&{
