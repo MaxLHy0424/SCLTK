@@ -1,6 +1,5 @@
 #include"def.hpp"
 #include"ui.hpp"
-CUI ui;
 #include"mod.hpp"
 auto main(i32 argc,cstr argv[])->i32{
     bool optErr{};
@@ -42,6 +41,7 @@ auto main(i32 argc,cstr argv[])->i32{
     if(opt.frontShow){
         std::thread{Mod::frontShow}.detach();
     }
+    CUI ui;
     ui.push("    [ Computer Room Control Software Nemesis ]");
     ui.push("                     v5.3.0");
     ui.push("       https://github.com/MaxLHy0424/CRCSN");
