@@ -1,7 +1,7 @@
 @echo off
 chcp 65001 > nul
 set AUTO_LAUNCH=0
-set CHANNEL=0
+set CHANNEL=2
 set CUSTOM_TITLE=[<CUSTOM>] CRCSN Launcher
 if %CHANNEL%==0 (
   title CRCSN Launcher
@@ -22,7 +22,7 @@ echo                  CRCSN Launcher
 echo                      v2.2.1
 echo     (C) 2023 MaxLHy0424, All Rights Reserved.
 echo.
-echo (i) CRCSN: v5.2.1, %arch%, %runtime%.
+echo (i) CRCSN: v5.3.0, %arch%, %runtime%.
 if %AUTO_LAUNCH%==0 (
   echo.
   echo 按任意键启动 CRCSN...
