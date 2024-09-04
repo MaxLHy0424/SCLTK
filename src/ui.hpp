@@ -26,15 +26,15 @@ struct Color{
         lastColor=highlight;
     }
 };
-struct Parameter{
+struct Argv{
     DWORD buttonState,ctrlKeyState,eventFlag;
     CUI *ui;
-    Parameter():
+    Argv():
         buttonState{MOUSE_BUTTON_LEFT},ctrlKeyState{},eventFlag{},ui{nullptr}{}
-    Parameter(MOUSE_EVENT_RECORD mouseEvent,CUI *ui):
+    Argv(MOUSE_EVENT_RECORD mouseEvent,CUI *ui):
         buttonState{mouseEvent.dwButtonState},ctrlKeyState{mouseEvent.dwControlKeyState},eventFlag{mouseEvent.dwEventFlags},ui{ui}{}
 };
-typedef bool (*fnptr)(Parameter);
+typedef bool (*fnptr)(Argv);
 struct Text{
     cstr text;
     Color color;
@@ -159,7 +159,7 @@ class CUI{
                         data.color.setDefault();
                         addAttributes();
                         showCursor();
-                        isExit=data.fn(Parameter(mouseEvent,this));
+                        isExit=data.fn(Argv(mouseEvent,this));
                         removeAttributes();
                         hideCursor();
                         initPosition();

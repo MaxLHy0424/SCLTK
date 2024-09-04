@@ -38,12 +38,12 @@ namespace Mod{
             Sleep(100);
         }
     }
-    auto exit(Parameter){
+    auto exit(Argv){
         SetLayeredWindowAttributes(GetConsoleWindow(),0,255,LWA_ALPHA);
         SetWindowLongPtr(GetConsoleWindow(),GWL_STYLE,GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)|WS_SIZEBOX|WS_MAXIMIZEBOX);
         return true;
     }
-    auto cmd(Parameter){
+    auto cmd(Argv){
         system("cmd & cls");
         init();
         return false;
@@ -112,21 +112,21 @@ namespace Mod{
         }
     };
     namespace Crack{
-        auto mythware(Parameter){
+        auto mythware(Argv){
             op('c',rule.mythware.exe,rule.mythware.svc);
             return false;
         }
-        auto lenovo(Parameter){
+        auto lenovo(Argv){
             op('c',rule.lenovo.exe,rule.lenovo.svc);
             return false;
         }
     }
     namespace Recovery{
-        auto mythware(Parameter){
+        auto mythware(Argv){
             op('r',rule.mythware.exe,rule.mythware.svc);
             return false;
         }
-        auto lenovo(Parameter){
+        auto lenovo(Argv){
             op('r',rule.lenovo.exe,rule.lenovo.svc);
             return false;
         }
