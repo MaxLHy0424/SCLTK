@@ -7,15 +7,15 @@ struct{
 namespace Mod{
     auto init(){
         system("chcp 936 > nul");
-        #if CHANNEL==0
+        if constexpr(CHANNEL==0){
             SetConsoleTitle(L"CRCSN");
-        #elif CHANNEL==1
+        }else if constexpr(CHANNEL==1){
             SetConsoleTitle(L"[Evaluate] CRCSN");
-        #elif CHANNEL==2
+        }else if constexpr(CHANNEL==2){
             SetConsoleTitle(L"[Snapshot] CRCSN");
-        #else
+        }else{
             SetConsoleTitle(CUSTOM_TITLE);
-        #endif
+        }
         if(!opt.wndSizeBox){
             SetWindowLongPtr(GetConsoleWindow(),GWL_STYLE,GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)&~WS_SIZEBOX&~WS_MAXIMIZEBOX);
         }
