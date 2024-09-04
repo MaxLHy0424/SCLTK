@@ -77,36 +77,36 @@ namespace Mod{
             }
         }
     };
-    struct OpDat{
+    struct ArgvOp{
         i8 m;
         std::vector<cstr> &exe,&svc;
     };
     auto op(Argv argv){
         system("cls");
         std::string cmd;
-        switch(((OpDat*)argv.fArg)->m){
+        switch(((ArgvOp*)argv.fArg)->m){
             case 'c':{
-                for(const auto &i:((OpDat*)argv.fArg)->exe){
+                for(const auto &i:((ArgvOp*)argv.fArg)->exe){
                     cmd="taskKill /f /im "+(std::string)i+".exe";
                     system(cmd.c_str());
                 }
-                for(const auto &i:((OpDat*)argv.fArg)->exe){
+                for(const auto &i:((ArgvOp*)argv.fArg)->exe){
                     cmd="reg add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\"
                         +(std::string)i+".exe\" /f /t reg_sz /v debugger /d ?";
                     system(cmd.c_str());
                 }
-                for(const auto &i:((OpDat*)argv.fArg)->svc){
+                for(const auto &i:((ArgvOp*)argv.fArg)->svc){
                     cmd="net stop "+(std::string)i+" /y";
                     system(cmd.c_str());
                 }
                 break;
             }case 'r':{
-                for(const auto &i:((OpDat*)argv.fArg)->exe){
+                for(const auto &i:((ArgvOp*)argv.fArg)->exe){
                     cmd="reg delete \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\"
                         +(std::string)i+".exe\" /f";
                     system(cmd.c_str());
                 }
-                for(const auto &i:((OpDat*)argv.fArg)->svc){
+                for(const auto &i:((ArgvOp*)argv.fArg)->svc){
                     cmd="net start "+(std::string)i;
                     system(cmd.c_str());
                 }

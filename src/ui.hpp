@@ -161,7 +161,7 @@ class CUI{
                         data.color.setDefault();
                         addAttributes();
                         showCursor();
-                        isExit=data.fn(Argv(mouseEvent,this,data.fArg));
+                        isExit=data.fn(Argv{mouseEvent,this,data.fArg});
                         removeAttributes();
                         hideCursor();
                         initPosition();
@@ -176,7 +176,7 @@ class CUI{
             height{},width{}{}
         ~CUI(){}
         auto push(cstr text,fnptr fn=nullptr,void *argv=nullptr,i16 colorHighlight=CON_BLUE,i16 colorDef=CON_WHITE)->CUI&{
-            lineData.push_back(Text(text,Color(colorDef,(fn==nullptr)?(colorDef):(colorHighlight)),fn,argv));
+            lineData.push_back(Text{text,Color{colorDef,(fn==nullptr)?(colorDef):(colorHighlight)},fn,argv});
             return *this;
         }
         auto pop()->CUI&{
