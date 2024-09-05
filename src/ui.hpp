@@ -191,7 +191,7 @@ class CUI{
             removeAttributes();
             hideCursor();
             MOUSE_EVENT_RECORD mouseEvent;
-            Sleep(100);
+            Sleep(50);
             initPosition();
             bool isExit{};
             while(!isExit){
@@ -210,6 +210,6 @@ class CUI{
                 }
             }
             clearScreen();
-            Sleep(100);
+            Sleep(50);
         }
 };
