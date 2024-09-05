@@ -123,7 +123,7 @@ class CUI{
                 printf("\n");
             }
         }
-        auto rewrite(Text data){
+        auto rewrite(Text &data){
             setCursor({0,data.pos.Y});
             for(i16 j{};j<data.pos.X;++j){
                 write(" ");
@@ -140,7 +140,7 @@ class CUI{
                 write(data.text,true);
             }
         }
-        auto refresh(COORD hangPosition){
+        auto refresh(COORD &hangPosition){
             for(auto &data:lineData){
                 if((data==hangPosition)&&(data.color.lastColor!=data.color.highlight)){
                     data.color.setHighlight();
@@ -152,7 +152,7 @@ class CUI{
                 }
             }
         }
-        auto impl(MOUSE_EVENT_RECORD mouseEvent){
+        auto impl(MOUSE_EVENT_RECORD &mouseEvent){
             bool isExit{};
             for(auto &data:lineData){
                 if(data==mouseEvent.dwMousePosition){
