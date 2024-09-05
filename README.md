@@ -142,7 +142,7 @@ CRCSN 使用 [MIT License](LICENSE), 详细内容请自行阅读.
 > **推荐做法**
 > 
 > - 将 `CHANNEL` 修改为一个负数.\
-> 示例: `-240721`, `-1`.
+> 示例: `-240721`, `-120424`.
 > - 将 `CUSTOM_TITLE` 修改为 `[Revised by xxx] ` 加上 `CRCSN` (`def.hpp`) 或 `CRCSN Launcher` (`launcher.cmd`). 在 `def.hpp` 中修改, 务必加上英文半角双引号, 并在最前面加上 `L` (不然无法通过编译).\
 > 示例: `L"[Revised by Ethylene] CRCSN"`, `[Revised by Kendall] CRCSN Launcher`.
 
