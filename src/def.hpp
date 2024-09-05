@@ -4,8 +4,8 @@
 #define _UNICODE
 #include<stdio.h>
 #include<string>
-#include<thread>
 #include<vector>
+#include<thread>
 #include<shlobj.h>
 using i8=char;
 using cstr=const i8 *;
