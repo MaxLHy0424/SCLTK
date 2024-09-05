@@ -19,13 +19,14 @@ set argv=
 cd /d "%~dp0"
 %1
 echo                  CRCSN Launcher
-echo                      v2.2.2
+echo.
 echo     (C) 2023 MaxLHy0424, All Rights Reserved.
 if %AUTO_LAUNCH%==0 (
   echo.
-  echo 按任意键启动 CRCSN [%arch%, %runtime%]...
+  echo 按任意键启动 CRCSN ^(v5.3.1, %arch%, %runtime%^)...
   pause > nul
 )
 msHta vbScript:createObject("shell.application").shellExecute("%~s0","goTo:runAs","","runAs",1)(window.close) & goTo:eof
 :runAs
   start .\bin\%arch%\CRCSN-%runtime%.exe %argv%
+  exit /b %CHANNEL%
