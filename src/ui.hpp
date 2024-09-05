@@ -26,26 +26,26 @@ struct Color{
         lastColor=highlight;
     }
 };
-struct Argv{
+struct Data{
     DWORD buttonState,ctrlKeyState,eventFlag;
     CUI *ui;
-    void *fArg;
-    Argv():
-        buttonState{MOUSE_BUTTON_LEFT},ctrlKeyState{},eventFlag{},ui{nullptr},fArg{nullptr}{}
-    Argv(MOUSE_EVENT_RECORD mouseEvent,CUI *ui,void *fArg):
-        buttonState{mouseEvent.dwButtonState},ctrlKeyState{mouseEvent.dwControlKeyState},eventFlag{mouseEvent.dwEventFlags},ui{ui},fArg{fArg}{}
+    void *argv;
+    Data():
+        buttonState{MOUSE_BUTTON_LEFT},ctrlKeyState{},eventFlag{},ui{nullptr},argv{nullptr}{}
+    Data(MOUSE_EVENT_RECORD mouseEvent,CUI *ui,void *argv):
+        buttonState{mouseEvent.dwButtonState},ctrlKeyState{mouseEvent.dwControlKeyState},eventFlag{mouseEvent.dwEventFlags},ui{ui},argv{argv}{}
 };
-using callback=bool(*)(Argv);
+using callback=bool(*)(Data);
 struct Text{
     cstr text;
     Color color;
     COORD pos;
     callback fn;
-    void *fArg;
+    void *argv;
     Text():
         text{},color{Color{0,0}},pos{},fn{nullptr}{}
-    Text(cstr text,Color color,callback fn,void *fArg):
-        text{text},color{color},pos{},fn{fn},fArg{fArg}{}
+    Text(cstr text,Color color,callback fn,void *argv):
+        text{text},color{color},pos{},fn{fn},argv{argv}{}
     auto operator==(const COORD &mousePosition)const{
         return (pos.Y==mousePosition.Y)&&(pos.X<=mousePosition.X)&&(mousePosition.X<(pos.X+(i16)strlen(text)));
     }
@@ -161,7 +161,7 @@ class CUI{
                         data.color.setDefault();
                         addAttrs();
                         showCursor();
-                        isExit=data.fn(Argv{mouseEvent,this,data.fArg});
+                        isExit=data.fn(Data{mouseEvent,this,data.argv});
                         removeAttrs();
                         hideCursor();
                         initPosition();

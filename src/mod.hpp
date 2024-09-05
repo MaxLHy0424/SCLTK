@@ -38,12 +38,12 @@ namespace Mod{
             Sleep(100);
         }
     }
-    auto exit(Argv){
+    auto exit(Data){
         SetLayeredWindowAttributes(GetConsoleWindow(),0,255,LWA_ALPHA);
         SetWindowLongPtr(GetConsoleWindow(),GWL_STYLE,GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)|WS_SIZEBOX|WS_MAXIMIZEBOX);
         return true;
     }
-    auto cmd(Argv){
+    auto cmd(Data){
         system("cmd & cls");
         init();
         return false;
@@ -81,32 +81,32 @@ namespace Mod{
         i8 m;
         std::vector<cstr> &exe,&svc;
     };
-    auto op(Argv argv){
+    auto op(Data argv){
         system("cls");
         std::string cmd;
-        switch(((OpArg*)argv.fArg)->m){
+        switch(((OpArg*)argv.argv)->m){
             case 'c':{
-                for(const auto &i:((OpArg*)argv.fArg)->exe){
+                for(const auto &i:((OpArg*)argv.argv)->exe){
                     cmd="taskKill /f /im "+(std::string)i+".exe";
                     system(cmd.c_str());
                 }
-                for(const auto &i:((OpArg*)argv.fArg)->exe){
+                for(const auto &i:((OpArg*)argv.argv)->exe){
                     cmd="reg add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\"
                         +(std::string)i+".exe\" /f /t reg_sz /v debugger /d ?";
                     system(cmd.c_str());
                 }
-                for(const auto &i:((OpArg*)argv.fArg)->svc){
+                for(const auto &i:((OpArg*)argv.argv)->svc){
                     cmd="net stop "+(std::string)i+" /y";
                     system(cmd.c_str());
                 }
                 break;
             }case 'r':{
-                for(const auto &i:((OpArg*)argv.fArg)->exe){
+                for(const auto &i:((OpArg*)argv.argv)->exe){
                     cmd="reg delete \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\"
                         +(std::string)i+".exe\" /f";
                     system(cmd.c_str());
                 }
-                for(const auto &i:((OpArg*)argv.fArg)->svc){
+                for(const auto &i:((OpArg*)argv.argv)->svc){
                     cmd="net start "+(std::string)i;
                     system(cmd.c_str());
                 }
