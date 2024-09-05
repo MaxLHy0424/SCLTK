@@ -70,13 +70,13 @@ class CUI{
             cursorInfo.bVisible=true;
             SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&cursorInfo);
         }
-        auto removeAttributes(){
+        auto removeAttrs(){
             DWORD mode;
             GetConsoleMode(GetStdHandle(STD_INPUT_HANDLE),&mode);
             mode&=~ENABLE_QUICK_EDIT_MODE,mode&=~ENABLE_INSERT_MODE,mode|=ENABLE_MOUSE_INPUT;
             SetConsoleMode(GetStdHandle(STD_INPUT_HANDLE),mode);
         }
-        auto addAttributes(){
+        auto addAttrs(){
             DWORD mode;
             GetConsoleMode(GetStdHandle(STD_INPUT_HANDLE),&mode);
             mode|=ENABLE_QUICK_EDIT_MODE,mode|=ENABLE_INSERT_MODE,mode|=ENABLE_MOUSE_INPUT;
@@ -152,17 +152,17 @@ class CUI{
                 }
             }
         }
-        auto implement(MOUSE_EVENT_RECORD mouseEvent){
+        auto impl(MOUSE_EVENT_RECORD mouseEvent){
             bool isExit{};
             for(auto &data:lineData){
                 if(data==mouseEvent.dwMousePosition){
                     if(data.fn!=nullptr){
                         clearScreen();
                         data.color.setDefault();
-                        addAttributes();
+                        addAttrs();
                         showCursor();
                         isExit=data.fn(Argv{mouseEvent,this,data.fArg});
-                        removeAttributes();
+                        removeAttrs();
                         hideCursor();
                         initPosition();
                     }
@@ -188,7 +188,7 @@ class CUI{
             return *this;
         }
         auto show(){
-            removeAttributes();
+            removeAttrs();
             hideCursor();
             MOUSE_EVENT_RECORD mouseEvent;
             Sleep(50);
@@ -203,7 +203,7 @@ class CUI{
                         break;
                     }case MOUSE_CLICK:{
                         if((mouseEvent.dwButtonState)&&(mouseEvent.dwButtonState!=MOUSE_WHEEL)){
-                            isExit=implement(mouseEvent);
+                            isExit=impl(mouseEvent);
                         }
                         break;
                     }
