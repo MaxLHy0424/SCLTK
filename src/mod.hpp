@@ -84,7 +84,7 @@ namespace Mod{
         system("cls");
         std::string cmd;
         switch(((OpArgv*)data.argv)->m){
-            case 'c':{
+            case 'C':{
                 for(const auto &i:((OpArgv*)data.argv)->exe){
                     cmd="reg add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\"
                         +(std::string)i+".exe\" /f /t reg_sz /v debugger /d ?";
@@ -99,7 +99,7 @@ namespace Mod{
                     system(cmd.c_str());
                 }
                 break;
-            }case 'r':{
+            }case 'R':{
                 for(const auto &i:((OpArgv*)data.argv)->exe){
                     cmd="reg delete \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\"
                         +(std::string)i+".exe\" /f";
