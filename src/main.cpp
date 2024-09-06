@@ -43,9 +43,9 @@ auto main(i32 argc,cstr argv[])->i32{
     }
     CUI ui;
     ui.push("    [ Computer Room Control Software Nemesis ]\n");
-    ui.push("                     v5.3.1");
+    ui.push("                     v5.3.2");
     ui.push("       https://github.com/MaxLHy0424/CRCSN");
-    ui.push("     (C) 2023 MaxLHy0424, All Rights Reserved.\n");
+    ui.push("     (C) 2023 MaxLHy0424. All rights reserved.\n");
     if(optError){
         ui.push(" (!) 参数错误.\n");
     }
