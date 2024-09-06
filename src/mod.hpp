@@ -7,11 +7,11 @@ struct{
 namespace Mod{
     auto init(){
         system("chcp 936 > nul");
-        if constexpr(CHANNEL==0){
+        if constexpr(CHANNEL==1){
             SetConsoleTitle(L"CRCSN");
-        }else if constexpr(CHANNEL==1){
-            SetConsoleTitle(L"[Evaluate] CRCSN");
         }else if constexpr(CHANNEL==2){
+            SetConsoleTitle(L"[Evaluate] CRCSN");
+        }else if constexpr(CHANNEL==3){
             SetConsoleTitle(L"[Snapshot] CRCSN");
         }else{
             SetConsoleTitle(CUSTOM_TITLE);
