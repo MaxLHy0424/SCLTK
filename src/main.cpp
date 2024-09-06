@@ -25,8 +25,8 @@ auto main(i32 argc,cstr argv[])->i32{
                         }
                     }
                 }
-            }else if(tmp=="--large-view"){
-                opt.largeView=true;
+            }else if(tmp=="--wide-view"){
+                opt.wideView=true;
             }else{
                 optError=true;
                 break;
@@ -50,14 +50,14 @@ auto main(i32 argc,cstr argv[])->i32{
         ui.push(" (!) 参数错误.\n");
     }
     ui.push(" > 退出 ",Mod::exit,nullptr,CON_RED_PALE);
-    if(opt.largeView){
+    if(opt.wideView){
         ui.push("\0");
     }
     ui.push(" > 命令提示符 ",Mod::cmd);
     ui.push("\n[ 破 解 ]\n");
     if(IsUserAnAdmin()){
         ui.push(" > 极域电子教室 ",Mod::op,new Mod::OpArgv{'C',Mod::rule.mythware.exe,Mod::rule.mythware.svc});
-        if(opt.largeView){
+        if(opt.wideView){
             ui.push("\0");
         }
         ui.push(" > 联想云教室 ",Mod::op,new Mod::OpArgv{'C',Mod::rule.lenovo.exe,Mod::rule.lenovo.svc});
@@ -67,7 +67,7 @@ auto main(i32 argc,cstr argv[])->i32{
     ui.push("\n[ 恢 复 ]\n");
     if(IsUserAnAdmin()){
         ui.push(" > 极域电子教室 ",Mod::op,new Mod::OpArgv{'R',Mod::rule.mythware.exe,Mod::rule.mythware.svc});
-        if(opt.largeView){
+        if(opt.wideView){
             ui.push("\0");
         }
         ui.push(" > 联想云教室 ",Mod::op,new Mod::OpArgv{'R',Mod::rule.lenovo.exe,Mod::rule.lenovo.svc});
