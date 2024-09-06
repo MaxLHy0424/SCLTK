@@ -18,10 +18,10 @@ set runtime=msvcrt
 set argv=
 cd /d "%~dp0"
 %1
-echo                  CRCSN Launcher
-echo.
-echo     (C) 2023 MaxLHy0424, All Rights Reserved.
 if %AUTO_LAUNCH%==0 (
+  echo                  CRCSN Launcher
+  echo.
+  echo     (C) 2023 MaxLHy0424, All Rights Reserved.
   echo.
   echo 按任意键启动 CRCSN ^(v5.3.1, %arch%, %runtime%^)...
   pause > nul
