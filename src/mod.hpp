@@ -16,13 +16,13 @@ namespace Mod{
         }else{
             SetConsoleTitle(CUSTOM_TITLE);
         }
-        if(!opt.wndSizeBox){
-            SetWindowLongPtr(GetConsoleWindow(),GWL_STYLE,GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)&~WS_SIZEBOX&~WS_MAXIMIZEBOX);
-        }
+        SetWindowLongPtr(
+            GetConsoleWindow(),GWL_STYLE,(opt.wndSizeBox)?
+            (GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)|WS_SIZEBOX|WS_MAXIMIZEBOX):
+            (GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)&~WS_SIZEBOX&~WS_MAXIMIZEBOX)
+        );
         system("mode con cols=50 lines=25");
-        if(opt.alphaWnd){
-            SetLayeredWindowAttributes(GetConsoleWindow(),0,204,LWA_ALPHA);
-        }
+        SetLayeredWindowAttributes(GetConsoleWindow(),0,(opt.alphaWnd)?(204):(255),LWA_ALPHA);
     }
     auto frontShow(){
         HWND foreWnd{GetConsoleWindow()};
@@ -39,8 +39,7 @@ namespace Mod{
         }
     }
     auto exit(Data){
-        SetLayeredWindowAttributes(GetConsoleWindow(),0,255,LWA_ALPHA);
-        SetWindowLongPtr(GetConsoleWindow(),GWL_STYLE,GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)|WS_SIZEBOX|WS_MAXIMIZEBOX);
+        init();
         return true;
     }
     auto cmd(Data){
