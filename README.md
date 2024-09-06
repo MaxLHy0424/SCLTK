@@ -90,10 +90,10 @@ set argv=-Waf
 set argv=
 ```
 
-添加参数 `--large-view`:
+添加参数 `--wide-view`:
 
 ```dos
-set argv=--large-view
+set argv=--wide-view
 ```
 
 即可启用宽大视图.
@@ -102,7 +102,7 @@ set argv=--large-view
 > 可以和[上一节](#12-窗口操作)中的参数一同使用, 两者顺序可以调换. 例如:
 > 
 > ```dos
-> set argv=--large-view -Wfa
+> set argv=--wide-view -Wfa
 > ```
 
 ### 1.5 深度自定义
