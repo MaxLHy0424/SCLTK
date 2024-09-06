@@ -2,7 +2,7 @@
 #include"ui.hpp"
 #include"mod.hpp"
 auto main(i32 argc,cstr argv[])->i32{
-    bool optErr{};
+    bool optError{};
     if(argc>1){
         std::string tmp;
         for(i32 i{1};i<argc;++i){
@@ -20,7 +20,7 @@ auto main(i32 argc,cstr argv[])->i32{
                             opt.wndSizeBox=true;
                             break;
                         }default:{
-                            optErr=true;
+                            optError=true;
                             goto INIT;
                         }
                     }
@@ -28,12 +28,12 @@ auto main(i32 argc,cstr argv[])->i32{
             }else if(tmp=="--large-view"){
                 opt.largeView=true;
             }else{
-                optErr=true;
+                optError=true;
                 break;
             }
         }
     INIT:
-        if(optErr){
+        if(optError){
             opt={};
         }
     }
@@ -46,7 +46,7 @@ auto main(i32 argc,cstr argv[])->i32{
     ui.push("                     v5.3.1");
     ui.push("       https://github.com/MaxLHy0424/CRCSN");
     ui.push("     (C) 2023 MaxLHy0424, All Rights Reserved.\n");
-    if(optErr){
+    if(optError){
         ui.push(" (!) 参数错误.\n");
     }
     ui.push(" > 退出 ",Mod::exit,nullptr,CON_RED_PALE);
