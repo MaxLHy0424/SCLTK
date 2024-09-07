@@ -38,16 +38,16 @@ struct Data{
         eventFlag{mouseEvent.dwEventFlags},ui{ui},argv{argv}{}
     ~Data(){}
 };
-using call=bool(*)(Data);
+using callback=bool(*)(Data);
 struct Text{
     cstr text;
     Color color;
     COORD pos;
-    call fn;
+    callback fn;
     void *argv;
     Text():
         text{},color{Color{0,0}},pos{},fn{nullptr}{}
-    Text(cstr text,Color color,call fn,void *argv):
+    Text(cstr text,Color color,callback fn,void *argv):
         text{text},color{color},pos{},fn{fn},argv{argv}{}
     ~Text(){}
     auto operator==(const COORD &mousePosition)const{
@@ -179,7 +179,7 @@ class CUI{
         CUI():
             height{},width{}{}
         ~CUI(){}
-        auto push(cstr text,call fn=nullptr,void *argv=nullptr,i16 colorHighlight=CON_BLUE,i16 colorDef=CON_WHITE)->CUI&{
+        auto push(cstr text,callback fn=nullptr,void *argv=nullptr,i16 colorHighlight=CON_BLUE,i16 colorDef=CON_WHITE)->CUI&{
             lineData.push_back(Text{text,Color{colorDef,(fn==nullptr)?(colorDef):(colorHighlight)},fn,argv});
             return *this;
         }
