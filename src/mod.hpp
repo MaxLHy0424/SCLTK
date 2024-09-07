@@ -44,7 +44,7 @@ namespace Mod{
         return true;
     }
     auto cmd(Data){
-        system("cmd & cls");
+        system("cmd");
         init();
         return false;
     }
@@ -82,7 +82,6 @@ namespace Mod{
         std::vector<cstr> &exe,&svc;
     };
     auto op(Data data){
-        system("cls");
         std::string cmd;
         switch(((ArgvOp*)data.argv)->k){
             case 'C':{
@@ -113,7 +112,6 @@ namespace Mod{
                 break;
             }
         }
-        system("cls");
         return false;
     }
 }
