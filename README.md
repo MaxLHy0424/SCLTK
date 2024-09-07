@@ -4,8 +4,8 @@
 
 # 获取
 
-**最新发行版: v5.3.2.**\
-**[更新日志](https://github.com/MaxLHy0424/CRCSN/releases/tag/v5.3.2) | [直链下载](https://github.com/MaxLHy0424/CRCSN/releases/download/v5.3.2/CRCSN-v5.3.2-Stable.7z)**
+**最新发行版: v5.3.3.**\
+**[更新日志](https://github.com/MaxLHy0424/CRCSN/releases/tag/v5.3.3) | [直链下载](https://github.com/MaxLHy0424/CRCSN/releases/download/v5.3.3/CRCSN-v5.3.3-Stable.7z)**
 
 或者:
 
@@ -17,7 +17,7 @@
 **由于 CRCSN 存在敏感操作, 使用时建议关闭防病毒软件. 若 CRCSN 被报为恶意软件, 请添加排除项.**
 
 > [!NOTE]
-> 适用于 v5.3.2.
+> 适用于 v5.3.3.
 
 ## 1 启动
 
@@ -30,7 +30,6 @@
 启用时, 启动脚本在输出必要信息后, 将会直接启动 CRCSN, 无需确认.
 
 找到:
-
 ```dos
 set AUTO_LAUNCH=0
 ```
@@ -40,13 +39,11 @@ set AUTO_LAUNCH=0
 ### 1.2 修改 Runtime
 
 找到:
-
 ```dos
 set runtime=msvcrt
 ```
 
 软件支持的 Runtime 如下:
-
  - `msvcrt` (默认): 开发工具链为 *MSYS2* `mingw-w64-x86_64-toolchain`, Runtime 为老旧的 *Microsoft Visual C Runtime*, 支持大部分 Windows OS.
  - `ucrt` (推荐): 开发工具链为 *MSYS2* `mingw-w64-ucrt-x86_64-toolchain`,  Runtime 为新式的 *Universal C Runtime*, 支持 Windows 10 以上的 Windows OS (部分 Windows OS 在安装最新补丁后支持运行).
 
@@ -58,13 +55,11 @@ set runtime=msvcrt
 > 此参数区分大小写.
 
 找到:
-
 ```dos
 set argv=
 ```
 
 窗口操作的主参数为 `-W`, 附加参数如下:
-
  - `f`: 置顶窗口并每间隔 100ms 将窗口设为焦点;
  - `a`: 将窗口不透明度设为 80% (仅支持新版控制台);
  - `s`: 允许缩放和最大化窗口 (可能导致意外行为).
@@ -72,7 +67,6 @@ set argv=
 可以有多个附加参数, 其顺序不影响应用效果, 但不可以仅使用主参数.
 
 使用示例:
-
 ```dos
 set argv=-Waf
 ```
@@ -85,13 +79,11 @@ set argv=-Waf
 软件默认使用紧凑视图.
 
 找到:
-
 ```dos
 set argv=
 ```
 
 添加参数 `--wide-view`:
-
 ```dos
 set argv=--wide-view
 ```
@@ -100,7 +92,6 @@ set argv=--wide-view
 
 > [!NOTE]
 > 可以和[上一节](#12-窗口操作)中的参数一同使用, 两者顺序可以调换. 例如:
-> 
 > ```dos
 > set argv=--wide-view -Wfa
 > ```
@@ -134,15 +125,17 @@ CRCSN 使用 [MIT License](LICENSE), 详细内容请自行阅读.
 
 # 二次开发
 
+> [!NOTE]
+> 适用于 v5.3.3.
+
 非常欢迎大家二次开发 CRCSN!
 
 二次开发时, 请务必修改 `def.hpp` 和 `launcher.cmd` 中的宏定义 `CHANNEL` 和 `CUSTOM_TITLE`, 以做区分.
 
 > [!NOTE]
 > **推荐做法**
-> 
-> - 将 `CHANNEL` 修改为一个负数.\
-> 示例: `-240721`, `-120424`.
+> - 将 `CHANNEL` 修改为一个负整数, 整数位通常是修改版的发布日期.\
+> 示例: `-240721`, `-231215`.
 > - 将 `CUSTOM_TITLE` 修改为 `[Revised by xxx] ` 加上 `CRCSN` (`def.hpp`) 或 `CRCSN Launcher` (`launcher.cmd`). 在 `def.hpp` 中修改, 务必加上英文半角双引号, 并在最前面加上 `L` (不然无法通过编译).\
 > 示例: `L"[Revised by Ethylene] CRCSN"`, `[Revised by Kendall] CRCSN Launcher`.
 
