@@ -80,6 +80,8 @@ namespace Mod{
     struct ArgvOp{
         i8 k;
         std::vector<cstr> &exe,&svc;
+        ArgvOp(i8 k,std::vector<cstr> &exe,std::vector<cstr> &svc):
+            k{k},exe{exe},svc{svc}{}
     };
     auto op(Data data){
         std::string cmd;
