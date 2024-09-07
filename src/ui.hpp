@@ -34,7 +34,8 @@ struct Data{
     Data():
         buttonState{MOUSE_BUTTON_LEFT},ctrlKeyState{},eventFlag{},ui{nullptr},argv{nullptr}{}
     Data(MOUSE_EVENT_RECORD mouseEvent,CUI *ui,void *argv):
-        buttonState{mouseEvent.dwButtonState},ctrlKeyState{mouseEvent.dwControlKeyState},eventFlag{mouseEvent.dwEventFlags},ui{ui},argv{argv}{}
+        buttonState{mouseEvent.dwButtonState},ctrlKeyState{mouseEvent.dwControlKeyState},
+        eventFlag{mouseEvent.dwEventFlags},ui{ui},argv{argv}{}
     ~Data(){}
 };
 using call=bool(*)(Data);
