@@ -42,7 +42,7 @@ auto main(i32 argc,cstr argv[])->i32{
         std::thread{Mod::frontShow}.detach();
     }
     CUI ui;
-    ui.push("    [ Computer Room Control Software Nemesis ]\n");
+    ui.push("    < Computer Room Control Software Nemesis >\n");
     ui.push("                     v5.3.2");
     ui.push("       https://github.com/MaxLHy0424/CRCSN");
     ui.push("     (C) 2023 MaxLHy0424. All rights reserved.\n");
@@ -54,7 +54,7 @@ auto main(i32 argc,cstr argv[])->i32{
         ui.push("\0");
     }
     ui.push(" > 命令提示符 ",Mod::cmd);
-    ui.push("\n[ 破 解 ]\n");
+    ui.push("\n[破解]\n");
     if(IsUserAnAdmin()){
         ui.push(" > 极域电子教室 ",Mod::op,new Mod::ArgvOp{'C',Mod::rule.mythware.exe,Mod::rule.mythware.svc});
         if(opt.wideView){
@@ -64,7 +64,7 @@ auto main(i32 argc,cstr argv[])->i32{
     }else{
         ui.push(" (i) 需要提权.");
     }
-    ui.push("\n[ 恢 复 ]\n");
+    ui.push("\n[恢复]\n");
     if(IsUserAnAdmin()){
         ui.push(" > 极域电子教室 ",Mod::op,new Mod::ArgvOp{'R',Mod::rule.mythware.exe,Mod::rule.mythware.svc});
         if(opt.wideView){
