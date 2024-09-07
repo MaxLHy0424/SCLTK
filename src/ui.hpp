@@ -35,16 +35,16 @@ struct Data{
     Data(MOUSE_EVENT_RECORD mouseEvent,CUI *ui,void *argv):
         buttonState{mouseEvent.dwButtonState},ctrlKeyState{mouseEvent.dwControlKeyState},eventFlag{mouseEvent.dwEventFlags},ui{ui},argv{argv}{}
 };
-using fncall=bool(*)(Data);
+using call=bool(*)(Data);
 struct Text{
     cstr text;
     Color color;
     COORD pos;
-    fncall fn;
+    call fn;
     void *argv;
     Text():
         text{},color{Color{0,0}},pos{},fn{nullptr}{}
-    Text(cstr text,Color color,fncall fn,void *argv):
+    Text(cstr text,Color color,call fn,void *argv):
         text{text},color{color},pos{},fn{fn},argv{argv}{}
     auto operator==(const COORD &mousePosition)const{
         return (pos.Y==mousePosition.Y)&&(pos.X<=mousePosition.X)&&(mousePosition.X<(pos.X+(i16)strlen(text)));
@@ -175,7 +175,7 @@ class CUI{
         CUI():
             height{},width{}{}
         ~CUI(){}
-        auto push(cstr text,fncall fn=nullptr,void *argv=nullptr,i16 colorHighlight=CON_BLUE,i16 colorDef=CON_WHITE)->CUI&{
+        auto push(cstr text,call fn=nullptr,void *argv=nullptr,i16 colorHighlight=CON_BLUE,i16 colorDef=CON_WHITE)->CUI&{
             lineData.push_back(Text{text,Color{colorDef,(fn==nullptr)?(colorDef):(colorHighlight)},fn,argv});
             return *this;
         }
