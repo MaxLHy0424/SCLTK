@@ -17,6 +17,7 @@ struct Color{
         def{CON_WHITE},highlight{CON_BLUE},lastColor{CON_WHITE}{}
     Color(i16 def=CON_WHITE,i16 highlight=CON_BLUE):
         def{def},highlight{highlight},lastColor{CON_WHITE}{}
+    ~Color(){}
     auto setDefault(){
         SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),def);
         lastColor=def;
@@ -34,6 +35,7 @@ struct Data{
         buttonState{MOUSE_BUTTON_LEFT},ctrlKeyState{},eventFlag{},ui{nullptr},argv{nullptr}{}
     Data(MOUSE_EVENT_RECORD mouseEvent,CUI *ui,void *argv):
         buttonState{mouseEvent.dwButtonState},ctrlKeyState{mouseEvent.dwControlKeyState},eventFlag{mouseEvent.dwEventFlags},ui{ui},argv{argv}{}
+    ~Data(){}
 };
 using call=bool(*)(Data);
 struct Text{
@@ -46,6 +48,7 @@ struct Text{
         text{},color{Color{0,0}},pos{},fn{nullptr}{}
     Text(cstr text,Color color,call fn,void *argv):
         text{text},color{color},pos{},fn{fn},argv{argv}{}
+    ~Text(){}
     auto operator==(const COORD &mousePosition)const{
         return (pos.Y==mousePosition.Y)&&(pos.X<=mousePosition.X)&&(mousePosition.X<(pos.X+(i16)strlen(text)));
     }
