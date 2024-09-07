@@ -82,6 +82,7 @@ namespace Mod{
         std::vector<cstr> &exe,&svc;
         ArgvOp(i8 k,std::vector<cstr> &exe,std::vector<cstr> &svc):
             k{k},exe{exe},svc{svc}{}
+        ~ArgvOp(){}
     };
     auto op(Data data){
         std::string cmd;
