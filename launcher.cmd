@@ -1,7 +1,7 @@
 @echo off
 chcp 65001 > nul
 set AUTO_LAUNCH=0
-set CHANNEL=1
+set CHANNEL=3
 set CUSTOM_TITLE=[<CUSTOM>] CRCSN Launcher
 if %CHANNEL%==1 (
   title CRCSN Launcher
@@ -23,7 +23,7 @@ if %AUTO_LAUNCH%==0 (
   echo.
   echo     ^(C^) 2023 MaxLHy0424. All rights reserved.
   echo.
-  echo 按任意键启动 CRCSN ^(v5.3.2, %arch%, %runtime%^)...
+  echo 按任意键启动 CRCSN ^(v5.3.3, %arch%, %runtime%^)...
   pause > nul
 )
 msHta vbScript:createObject("shell.application").shellExecute("%~s0","goTo:runAs","","runAs",1)(window.close) & goTo:eof
