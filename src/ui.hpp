@@ -111,7 +111,7 @@ class CUI{
             height=tmp.dwSize.Y;
             width=tmp.dwSize.X;
         }
-        auto clearScreen(){
+        auto cls(){
             getConsoleSize();
             setCursor({0,0});
             for(i16 i{};i<height;++i){
@@ -137,7 +137,7 @@ class CUI{
             setCursor({0,data.pos.Y});
         }
         auto initPosition(){
-            clearScreen();
+            cls();
             for(auto &data:lineData){
                 data.pos=getCursor();
                 data.color.setDefault();
@@ -161,7 +161,7 @@ class CUI{
             for(auto &data:lineData){
                 if(data==mouseEvent.dwMousePosition){
                     if(data.fn!=nullptr){
-                        clearScreen();
+                        cls();
                         data.color.setDefault();
                         addAttrs();
                         showCursor();
@@ -213,7 +213,7 @@ class CUI{
                     }
                 }
             }
-            clearScreen();
+            cls();
             Sleep(50);
         }
 };
