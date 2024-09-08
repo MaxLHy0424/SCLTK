@@ -12,10 +12,10 @@ auto main(i32 argc,i8 *argv[])->i32{
                 for(const auto &j:tmp.substr(2)){
                     switch(j){
                         case 'f':{
-                            opt.frontShow=true;
+                            opt.wndFrontShow=true;
                             break;
                         }case 'a':{
-                            opt.alphaWnd=true;
+                            opt.wndAlpha=true;
                             break;
                         }case 's':{
                             opt.wndSizeBox=true;
@@ -27,7 +27,7 @@ auto main(i32 argc,i8 *argv[])->i32{
                     }
                 }
             }else if(tmp=="--wide-view"){
-                opt.wideView=true;
+                opt.viewWide=true;
             }else{
                 optError=true;
                 break;
@@ -39,7 +39,7 @@ auto main(i32 argc,i8 *argv[])->i32{
         }
     }
     Mod::init();
-    if(opt.frontShow){
+    if(opt.wndFrontShow){
         std::thread{Mod::frontShow}.detach();
     }
     ui.push("    < Computer Room Control Software Nemesis >\n");
@@ -50,7 +50,7 @@ auto main(i32 argc,i8 *argv[])->i32{
         ui.push(" (!) 参数错误.\n");
     }
     ui.push(" > 退出 ",Mod::exit,nullptr,CON_RED_PALE);
-    if(opt.wideView){
+    if(opt.viewWide){
         ui.push("\0");
     }
     ui.push(" > 命令提示符 ",Mod::cmd);
@@ -60,7 +60,7 @@ auto main(i32 argc,i8 *argv[])->i32{
             " > 极域电子教室 ",Mod::op,
             new Mod::ArgvOp{'c',Mod::rule.mythware.exe,Mod::rule.mythware.svc}
         );
-        if(opt.wideView){
+        if(opt.viewWide){
             ui.push("\0");
         }
         ui.push(
@@ -76,7 +76,7 @@ auto main(i32 argc,i8 *argv[])->i32{
             " > 极域电子教室 ",Mod::op,
             new Mod::ArgvOp{'r',Mod::rule.mythware.exe,Mod::rule.mythware.svc}
         );
-        if(opt.wideView){
+        if(opt.viewWide){
             ui.push("\0");
         }
         ui.push(
