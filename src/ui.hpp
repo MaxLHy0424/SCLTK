@@ -11,22 +11,6 @@
 #define CON_BLUE 0x03
 #define CON_RED_PALE 0x0c
 class CUI;
-struct Color{
-    i16 def,highlight,lastColor;
-    Color():
-        def{CON_WHITE},highlight{CON_BLUE},lastColor{CON_WHITE}{}
-    Color(i16 def=CON_WHITE,i16 highlight=CON_BLUE):
-        def{def},highlight{highlight},lastColor{CON_WHITE}{}
-    ~Color(){}
-    auto setDefault(){
-        SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),def);
-        lastColor=def;
-    }
-    auto setHighlight(){
-        SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),highlight);
-        lastColor=highlight;
-    }
-};
 struct Data{
     DWORD buttonState,ctrlKeyState,eventFlag;
     CUI *ui;
@@ -39,17 +23,25 @@ struct Data{
     ~Data(){}
 };
 using callback=bool(*)(Data);
-struct Text{
+struct Item{
     const i8 *text;
-    Color color;
+    i16 colorDef,colorHighlight,colorLast;
     COORD pos;
     callback fn;
     void *argv;
-    Text():
-        text{},color{Color{0,0}},pos{},fn{nullptr}{}
-    Text(const i8 *text,Color color,callback fn,void *argv):
-        text{text},color{color},pos{},fn{fn},argv{argv}{}
-    ~Text(){}
+    Item():
+        text{},colorDef{CON_WHITE},colorHighlight{CON_BLUE},colorLast{CON_WHITE},pos{},fn{nullptr}{}
+    Item(const i8 *text,i16 def,i16 highlight,callback fn,void *argv):
+        text{text},colorDef{def},colorHighlight{highlight},colorLast{CON_WHITE},pos{},fn{fn},argv{argv}{}
+    ~Item(){}
+    auto setColDef(){
+        SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),colorDef);
+        colorLast=colorDef;
+    }
+    auto setColHighlight(){
+        SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),colorHighlight);
+        colorLast=colorHighlight;
+    }
     auto operator==(const COORD &mousePosition)const{
         return (pos.Y==mousePosition.Y)&&(pos.X<=mousePosition.X)&&(mousePosition.X<(pos.X+(i16)strlen(text)));
     }
@@ -60,7 +52,7 @@ struct Text{
 class CUI{
     private:
         i16 height,width;
-        std::vector<Text> lineData;
+        std::vector<Item> lineData;
     protected:
         auto hideCursor(){
             CONSOLE_CURSOR_INFO cursorInfo;
@@ -127,7 +119,7 @@ class CUI{
                 printf("\n");
             }
         }
-        auto rewrite(Text &data){
+        auto rewrite(Item &data){
             setCursor({0,data.pos.Y});
             for(i16 j{};j<data.pos.X;++j){
                 write(" ");
@@ -140,18 +132,18 @@ class CUI{
             cls();
             for(auto &data:lineData){
                 data.pos=getCursor();
-                data.color.setDefault();
+                data.setColDef();
                 write(data.text,true);
             }
         }
         auto refresh(COORD &hangPosition){
             for(auto &data:lineData){
-                if((data==hangPosition)&&(data.color.lastColor!=data.color.highlight)){
-                    data.color.setHighlight();
+                if((data==hangPosition)&&(data.colorLast!=data.colorHighlight)){
+                    data.setColHighlight();
                     rewrite(data);
                 }
-                if((data!=hangPosition)&&(data.color.lastColor!=data.color.def)){
-                    data.color.setDefault();
+                if((data!=hangPosition)&&(data.colorLast!=data.colorDef)){
+                    data.setColDef();
                     rewrite(data);
                 }
             }
@@ -163,7 +155,7 @@ class CUI{
                     if(data.fn!=nullptr){
                         system("cls");
                         cls();
-                        data.color.setDefault();
+                        data.setColDef();
                         addAttrs();
                         showCursor();
                         isExit=data.fn(Data{mouseEvent,this,data.argv});
@@ -181,7 +173,7 @@ class CUI{
             height{},width{}{}
         ~CUI(){}
         auto push(const i8 *text,callback fn=nullptr,void *argv=nullptr,i16 colorHighlight=CON_BLUE,i16 colorDef=CON_WHITE)->CUI&{
-            lineData.push_back(Text{text,Color{colorDef,(fn==nullptr)?(colorDef):(colorHighlight)},fn,argv});
+            lineData.push_back(Item{text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,argv});
             return *this;
         }
         auto pop()->CUI&{
