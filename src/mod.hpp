@@ -90,8 +90,6 @@ namespace Mod{
                     cmd="reg add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\"
                         +(std::string)i+".exe\" /f /t reg_sz /v debugger /d ?";
                     system(cmd.c_str());
-                }
-                for(const auto &i:((ArgvOp*)data.argv)->exe){
                     cmd="taskKill /f /im "+(std::string)i+".exe";
                     system(cmd.c_str());
                 }
