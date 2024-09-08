@@ -118,9 +118,8 @@ namespace Mod{
             puts(" (i) 仅用于调试.");
             puts("\n[占用内存大小]\n");
             printf(" CUI: %llu Byte.\n",sizeof(CUI));
-            printf(" Color: %llu Byte.\n",sizeof(Color));
             printf(" Data: %llu Byte.\n",sizeof(Data));
-            printf(" Text: %llu Byte.\n",sizeof(Text));
+            printf(" Item: %llu Byte.\n",sizeof(Item));
             printf(" ArgvOp: %llu Byte.\n",sizeof(ArgvOp));
             puts("\n");
             system("pause");
