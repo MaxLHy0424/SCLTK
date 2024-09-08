@@ -51,7 +51,7 @@ struct Item{
         return (pos.Y==mousePosition.Y)&&(pos.X<=mousePosition.X)&&(mousePosition.X<(pos.X+(i16)strlen(text)));
     }
     auto operator!=(const COORD &mousePosition)const{
-        return !(operator==(mousePosition));
+        return !operator==(mousePosition);
     }
 };
 class CUI{
