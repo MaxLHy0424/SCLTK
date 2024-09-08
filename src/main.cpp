@@ -1,7 +1,7 @@
 #include"def.hpp"
 #include"ui.hpp"
 #include"mod.hpp"
-auto main(i32 argc,cstr argv[])->i32{
+auto main(i32 argc,i8 *argv[])->i32{
     bool optError{};
     if(argc>1){
         std::string tmp;

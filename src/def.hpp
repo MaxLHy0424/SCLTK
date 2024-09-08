@@ -8,7 +8,6 @@
 #include<thread>
 #include<shlobj.h>
 using i8=char;
-using cstr=const i8 *;
 using i16=short;
 using u16=unsigned i16;
 using i32=int;
