@@ -39,11 +39,6 @@ namespace Mod{
         }
     }
     auto exit(Data){
-        SetWindowLongPtr(
-            GetConsoleWindow(),
-            GWL_STYLE,GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)|WS_SIZEBOX|WS_MAXIMIZEBOX
-        );
-        SetLayeredWindowAttributes(GetConsoleWindow(),0,255,LWA_ALPHA);
         return true;
     }
     auto cmd(Data){
