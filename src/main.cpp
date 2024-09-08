@@ -49,13 +49,16 @@ auto main(i32 argc,i8 *argv[])->i32{
     if(optError){
         ui.push(" (!) 参数错误.\n");
     }
-    #if CHANNEL==3
-        ui.push(" > 调试 ",Mod::debug);
-    #endif
     ui.push(" > 退出 ",Mod::exit,nullptr,CON_RED_PALE);
     if(opt.viewWide){
         ui.push("\0");
     }
+    #if CHANNEL==3
+        ui.push(" > 调试 ",Mod::debug);
+        if(opt.viewWide){
+            ui.push("\0");
+        }
+    #endif
     ui.push(" > 命令提示符 ",Mod::cmd);
     ui.push("\n[破解]\n");
     if(IsUserAnAdmin()){
