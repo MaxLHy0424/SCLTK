@@ -40,14 +40,14 @@ struct Data{
 };
 using callback=bool(*)(Data);
 struct Text{
-    cstr text;
+    const i8 *text;
     Color color;
     COORD pos;
     callback fn;
     void *argv;
     Text():
         text{},color{Color{0,0}},pos{},fn{nullptr}{}
-    Text(cstr text,Color color,callback fn,void *argv):
+    Text(const i8 *text,Color color,callback fn,void *argv):
         text{text},color{color},pos{},fn{fn},argv{argv}{}
     ~Text(){}
     auto operator==(const COORD &mousePosition)const{
@@ -121,7 +121,7 @@ class CUI{
             }
             setCursor({0,0});
         }
-        auto write(cstr text,bool isEndl=false){
+        auto write(const i8 *text,bool isEndl=false){
             printf("%s",text);
             if(isEndl){
                 printf("\n");
@@ -179,7 +179,7 @@ class CUI{
         CUI():
             height{},width{}{}
         ~CUI(){}
-        auto push(cstr text,callback fn=nullptr,void *argv=nullptr,i16 colorHighlight=CON_BLUE,i16 colorDef=CON_WHITE)->CUI&{
+        auto push(const i8 *text,callback fn=nullptr,void *argv=nullptr,i16 colorHighlight=CON_BLUE,i16 colorDef=CON_WHITE)->CUI&{
             lineData.push_back(Text{text,Color{colorDef,(fn==nullptr)?(colorDef):(colorHighlight)},fn,argv});
             return *this;
         }

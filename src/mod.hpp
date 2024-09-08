@@ -53,10 +53,10 @@ namespace Mod{
     }
     struct{
         struct{
-            std::vector<cstr> exe,svc;
+            std::vector<const i8 *> exe,svc;
         }mythware;
         struct{
-            std::vector<cstr> exe,svc;
+            std::vector<const i8 *> exe,svc;
         }lenovo;
     }rule{
         {
@@ -82,8 +82,8 @@ namespace Mod{
     };
     struct ArgvOp{
         i8 k;
-        std::vector<cstr> &exe,&svc;
-        ArgvOp(i8 k,std::vector<cstr> &exe,std::vector<cstr> &svc):
+        std::vector<const i8 *> &exe,&svc;
+        ArgvOp(i8 k,std::vector<const i8 *> &exe,std::vector<const i8 *> &svc):
             k{k},exe{exe},svc{svc}{}
         ~ArgvOp(){}
     };
