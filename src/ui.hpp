@@ -199,7 +199,6 @@ class CUI{
             initPosition();
             bool isExit{};
             while(!isExit){
-                Sleep(50);
                 mouseEvent=waitMouseEvent();
                 switch(mouseEvent.dwEventFlags){
                     case MOUSE_MOVE:{
@@ -212,6 +211,7 @@ class CUI{
                         break;
                     }
                 }
+                Sleep(50);
             }
             cls();
             Sleep(50);
