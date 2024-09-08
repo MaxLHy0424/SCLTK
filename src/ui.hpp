@@ -34,13 +34,18 @@ struct Item{
     Item(const i8 *text,i16 def,i16 highlight,callback fn,void *argv):
         text{text},colorDef{def},colorHighlight{highlight},colorLast{CON_WHITE},pos{},fn{fn},argv{argv}{}
     ~Item(){}
-    auto setColDef(){
-        SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),colorDef);
-        colorLast=colorDef;
-    }
-    auto setColHighlight(){
-        SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),colorHighlight);
-        colorLast=colorHighlight;
+    auto setColor(i8 m){
+        switch(m){
+            case 'D':{
+                SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),colorDef);
+                colorLast=colorDef;
+                break;
+            }case 'H':{
+                SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),colorHighlight);
+                colorLast=colorHighlight;
+                break;
+            }
+        }
     }
     auto operator==(const COORD &mousePosition)const{
         return (pos.Y==mousePosition.Y)&&(pos.X<=mousePosition.X)&&(mousePosition.X<(pos.X+(i16)strlen(text)));
@@ -132,18 +137,18 @@ class CUI{
             cls();
             for(auto &data:lineData){
                 data.pos=getCursor();
-                data.setColDef();
+                data.setColor('D');
                 write(data.text,true);
             }
         }
         auto refresh(COORD &hangPosition){
             for(auto &data:lineData){
                 if((data==hangPosition)&&(data.colorLast!=data.colorHighlight)){
-                    data.setColHighlight();
+                    data.setColor('H');
                     rewrite(data);
                 }
                 if((data!=hangPosition)&&(data.colorLast!=data.colorDef)){
-                    data.setColDef();
+                    data.setColor('D');
                     rewrite(data);
                 }
             }
@@ -155,7 +160,7 @@ class CUI{
                     if(data.fn!=nullptr){
                         system("cls");
                         cls();
-                        data.setColDef();
+                        data.setColor('D');
                         addAttrs();
                         showCursor();
                         isExit=data.fn(Data{mouseEvent,this,data.argv});
