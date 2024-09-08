@@ -2,7 +2,7 @@
 #include"def.hpp"
 #include"ui.hpp"
 struct{
-    bool frontShow,alphaWnd,wndSizeBox,wideView;
+    bool wndFrontShow,wndAlpha,wndSizeBox,viewWide;
 }opt{};
 namespace Mod{
     auto init(){
@@ -22,7 +22,7 @@ namespace Mod{
             (GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)&~WS_SIZEBOX&~WS_MAXIMIZEBOX)
         );
         system("mode con cols=50 lines=25");
-        SetLayeredWindowAttributes(GetConsoleWindow(),0,(opt.alphaWnd)?(204):(255),LWA_ALPHA);
+        SetLayeredWindowAttributes(GetConsoleWindow(),0,(opt.wndAlpha)?(204):(255),LWA_ALPHA);
     }
     auto frontShow(){
         HWND foreWnd{GetConsoleWindow()};
