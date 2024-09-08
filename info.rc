@@ -1,6 +1,6 @@
 1 VERSIONINFO
-PRODUCTVERSION 5,3,4
-FILEVERSION 5,3,4
+PRODUCTVERSION 5,4,0
+FILEVERSION 5,4,0
 BEGIN
     BLOCK "StringFileInfo"
     BEGIN
@@ -8,11 +8,11 @@ BEGIN
         BEGIN
 			VALUE "CompanyName","MaxLHy0424"
 			VALUE "FileDescription","CRCSN"
-			VALUE "FileVersion","v5.3.4"
+			VALUE "FileVersion","v5.4.0"
 			VALUE "InternalName","CRCSN"
 			VALUE "LegalCopyright","(C) 2023 MaxLHy0424. All rights reserved."
 			VALUE "ProductName","Computer Room Control Software Nemesis"
-			VALUE "ProductVersion","v5.3.4"
+			VALUE "ProductVersion","v5.4.0"
         END
     END
     BLOCK "VarFileInfo"
