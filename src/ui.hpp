@@ -161,6 +161,7 @@ class CUI{
             for(auto &data:lineData){
                 if(data==mouseEvent.dwMousePosition){
                     if(data.fn!=nullptr){
+                        system("cls");
                         cls();
                         data.color.setDefault();
                         addAttrs();
