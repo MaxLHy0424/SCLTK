@@ -48,10 +48,10 @@ namespace Mod{
     }
     struct{
         struct{
-            std::vector<const i8 *> exe,svc;
+            std::vector<const i8*> exe,svc;
         }mythware;
         struct{
-            std::vector<const i8 *> exe,svc;
+            std::vector<const i8*> exe,svc;
         }lenovo;
     }rule{
         {
@@ -76,15 +76,15 @@ namespace Mod{
         }
     };
     struct ArgvOp{
-        i8 k;
-        std::vector<const i8 *> &exe,&svc;
-        ArgvOp(i8 k,std::vector<const i8 *> &exe,std::vector<const i8 *> &svc):
-            k{k},exe{exe},svc{svc}{}
+        i8 m;
+        std::vector<const i8*> &exe,&svc;
+        ArgvOp(i8 m,std::vector<const i8*> &exe,std::vector<const i8*> &svc):
+            m{m},exe{exe},svc{svc}{}
         ~ArgvOp(){}
     };
     auto op(Data data){
         std::string cmd;
-        switch(((ArgvOp*)data.argv)->k){
+        switch(((ArgvOp*)data.argv)->m){
             case 'c':{
                 for(const auto &i:((ArgvOp*)data.argv)->exe){
                     cmd="reg add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\"
