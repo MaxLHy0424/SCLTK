@@ -47,11 +47,11 @@ struct Item{
             }
         }
     }
-    auto operator==(const COORD &mousePosition)const{
-        return (pos.Y==mousePosition.Y)&&(pos.X<=mousePosition.X)&&(mousePosition.X<(pos.X+(i16)strlen(text)));
+    auto operator==(const COORD &mousePos)const{
+        return (pos.Y==mousePos.Y)&&(pos.X<=mousePos.X)&&(mousePos.X<(pos.X+(i16)strlen(text)));
     }
-    auto operator!=(const COORD &mousePosition)const{
-        return !operator==(mousePosition);
+    auto operator!=(const COORD &mousePos)const{
+        return !operator==(mousePos);
     }
 };
 class CUI{
@@ -59,28 +59,32 @@ class CUI{
         i16 height,width;
         std::vector<Item> lineData;
     protected:
-        auto hideCursor(){
+        auto opCursor(char m){
             CONSOLE_CURSOR_INFO cursorInfo;
             GetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&cursorInfo);
-            cursorInfo.bVisible=false;
+            switch(m){
+                case 'H':{
+                    cursorInfo.bVisible=false;
+                    break;
+                }case 'S':{
+                    cursorInfo.bVisible=true;
+                    break;
+                }
+            }
             SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&cursorInfo);
         }
-        auto showCursor(){
-            CONSOLE_CURSOR_INFO cursorInfo;
-            GetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&cursorInfo);
-            cursorInfo.bVisible=true;
-            SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&cursorInfo);
-        }
-        auto removeAttrs(){
+        auto opAttrs(char m){
             DWORD mode;
             GetConsoleMode(GetStdHandle(STD_INPUT_HANDLE),&mode);
-            mode&=~ENABLE_QUICK_EDIT_MODE,mode&=~ENABLE_INSERT_MODE,mode|=ENABLE_MOUSE_INPUT;
-            SetConsoleMode(GetStdHandle(STD_INPUT_HANDLE),mode);
-        }
-        auto addAttrs(){
-            DWORD mode;
-            GetConsoleMode(GetStdHandle(STD_INPUT_HANDLE),&mode);
-            mode|=ENABLE_QUICK_EDIT_MODE,mode|=ENABLE_INSERT_MODE,mode|=ENABLE_MOUSE_INPUT;
+            switch(m){
+                case '+':{
+                    mode|=ENABLE_QUICK_EDIT_MODE,mode|=ENABLE_INSERT_MODE,mode|=ENABLE_MOUSE_INPUT;
+                    break;
+                }case '-':{
+                    mode&=~ENABLE_QUICK_EDIT_MODE,mode&=~ENABLE_INSERT_MODE,mode|=ENABLE_MOUSE_INPUT;
+                    break;
+                }
+            }
             SetConsoleMode(GetStdHandle(STD_INPUT_HANDLE),mode);
         }
         auto getCursor()->COORD{
@@ -133,7 +137,7 @@ class CUI{
             write(data.text);
             setCursor({0,data.pos.Y});
         }
-        auto initPosition(){
+        auto initPos(){
             cls();
             for(auto &data:lineData){
                 data.pos=getCursor();
@@ -141,13 +145,13 @@ class CUI{
                 write(data.text,true);
             }
         }
-        auto refresh(COORD &hangPosition){
+        auto refresh(COORD &hangPos){
             for(auto &data:lineData){
-                if((data==hangPosition)&&(data.colorLast!=data.colorHighlight)){
+                if((data==hangPos)&&(data.colorLast!=data.colorHighlight)){
                     data.setColor('H');
                     rewrite(data);
                 }
-                if((data!=hangPosition)&&(data.colorLast!=data.colorDef)){
+                if((data!=hangPos)&&(data.colorLast!=data.colorDef)){
                     data.setColor('D');
                     rewrite(data);
                 }
@@ -161,12 +165,12 @@ class CUI{
                         system("cls");
                         cls();
                         data.setColor('D');
-                        addAttrs();
-                        showCursor();
+                        opAttrs('+');
+                        opCursor('S');
                         isExit=data.fn(Data{mouseEvent,this,data.argv});
-                        removeAttrs();
-                        hideCursor();
-                        initPosition();
+                        opAttrs('-');
+                        opCursor('H');
+                        initPos();
                     }
                     break;
                 }
@@ -190,11 +194,11 @@ class CUI{
             return *this;
         }
         auto show(){
-            removeAttrs();
-            hideCursor();
+            opAttrs('-');
+            opCursor('H');
             MOUSE_EVENT_RECORD mouseEvent;
             Sleep(50);
-            initPosition();
+            initPos();
             bool isExit{};
             while(!isExit){
                 mouseEvent=waitMouseEvent();
