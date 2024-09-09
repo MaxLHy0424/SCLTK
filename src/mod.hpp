@@ -113,17 +113,4 @@ namespace Mod{
         }
         return false;
     }
-    #if CHANNEL==3
-        auto debug(Data){
-            puts(" (i) 仅用于调试.");
-            puts("\n[占用内存大小]\n");
-            printf(" CUI: %llu Byte.\n",sizeof(CUI));
-            printf(" Data: %llu Byte.\n",sizeof(Data));
-            printf(" Item: %llu Byte.\n",sizeof(Item));
-            printf(" ArgvOp: %llu Byte.\n",sizeof(ArgvOp));
-            puts("\n");
-            system("pause");
-            return false;
-        }
-    #endif
 }

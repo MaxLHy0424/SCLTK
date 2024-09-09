@@ -53,12 +53,6 @@ auto main(i32 argc,i8 *argv[])->i32{
     if(opt.viewWide){
         ui.push("\0");
     }
-    #if CHANNEL==3
-        ui.push(" > 调试 ",Mod::debug);
-        if(opt.viewWide){
-            ui.push("\0");
-        }
-    #endif
     ui.push(" > 命令提示符 ",Mod::cmd);
     ui.push("\n[破解]\n");
     if(IsUserAnAdmin()){
