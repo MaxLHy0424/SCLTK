@@ -5,9 +5,9 @@ set runtime=msvcrt
 set argv=
 set AUTO_LAUNCH=0
 set CHANNEL=1
-set CUSTOM_TITLE=[[CUSTOM]] CRCSN Launcher
+set CUSTOM_TITLE=[#CUSTOM#] CRCSN Launcher
 if %CHANNEL%==1 (
-  title CRCSN Launcher
+  title [Stable] CRCSN Launcher
 ) else if %CHANNEL%==2 (
   title [Evaluate] CRCSN Launcher
 ) else if %CHANNEL%==3 (
