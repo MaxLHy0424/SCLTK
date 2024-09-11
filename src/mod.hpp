@@ -8,7 +8,7 @@ namespace Mod{
     auto init(){
         system("chcp 936 > nul");
         if constexpr(CHANNEL==1){
-            SetConsoleTitle(L"CRCSN");
+            SetConsoleTitle(L"[Stable] CRCSN");
         }else if constexpr(CHANNEL==2){
             SetConsoleTitle(L"[Evaluate] CRCSN");
         }else if constexpr(CHANNEL==3){
