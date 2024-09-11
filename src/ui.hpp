@@ -23,7 +23,7 @@ struct Data{
     ~Data(){}
 };
 using callback=bool(*)(Data);
-class CUI{
+class CUI final{
     private:
         struct Item{
             const i8 *text;
@@ -58,7 +58,6 @@ class CUI{
         };
         i16 height,width;
         std::vector<Item> lineData;
-    protected:
         auto opCursor(char m){
             CONSOLE_CURSOR_INFO cursorInfo;
             GetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&cursorInfo);
