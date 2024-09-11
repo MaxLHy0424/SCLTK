@@ -23,39 +23,39 @@ struct Data{
     ~Data(){}
 };
 using callback=bool(*)(Data);
-struct Item{
-    const i8 *text;
-    i16 colorDef,colorHighlight,colorLast;
-    COORD pos;
-    callback fn;
-    void *argv;
-    Item():
-        text{},colorDef{CON_WHITE},colorHighlight{CON_BLUE},colorLast{CON_WHITE},pos{},fn{nullptr}{}
-    Item(const i8 *text,i16 def,i16 highlight,callback fn,void *argv):
-        text{text},colorDef{def},colorHighlight{highlight},colorLast{CON_WHITE},pos{},fn{fn},argv{argv}{}
-    ~Item(){}
-    auto setColor(i8 m){
-        switch(m){
-            case 'D':{
-                SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),colorDef);
-                colorLast=colorDef;
-                break;
-            }case 'H':{
-                SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),colorHighlight);
-                colorLast=colorHighlight;
-                break;
-            }
-        }
-    }
-    auto operator==(const COORD &mousePos)const{
-        return (pos.Y==mousePos.Y)&&(pos.X<=mousePos.X)&&(mousePos.X<(pos.X+(i16)strlen(text)));
-    }
-    auto operator!=(const COORD &mousePos)const{
-        return !operator==(mousePos);
-    }
-};
 class CUI{
     private:
+        struct Item{
+            const i8 *text;
+            i16 colorDef,colorHighlight,colorLast;
+            COORD pos;
+            callback fn;
+            void *argv;
+            Item():
+                text{},colorDef{CON_WHITE},colorHighlight{CON_BLUE},colorLast{CON_WHITE},pos{},fn{nullptr}{}
+            Item(const i8 *text,i16 def,i16 highlight,callback fn,void *argv):
+                text{text},colorDef{def},colorHighlight{highlight},colorLast{CON_WHITE},pos{},fn{fn},argv{argv}{}
+            ~Item(){}
+            auto setColor(i8 m){
+                switch(m){
+                    case 'D':{
+                        SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),colorDef);
+                        colorLast=colorDef;
+                        break;
+                    }case 'H':{
+                        SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),colorHighlight);
+                        colorLast=colorHighlight;
+                        break;
+                    }
+                }
+            }
+            auto operator==(const COORD &mousePos)const{
+                return (pos.Y==mousePos.Y)&&(pos.X<=mousePos.X)&&(mousePos.X<(pos.X+(i16)strlen(text)));
+            }
+            auto operator!=(const COORD &mousePos)const{
+                return !operator==(mousePos);
+            }
+        };
         i16 height,width;
         std::vector<Item> lineData;
     protected:
