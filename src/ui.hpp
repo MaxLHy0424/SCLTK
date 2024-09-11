@@ -57,7 +57,7 @@ class CUI final{
             }
         };
         i16 height,width;
-        std::vector<Item> lineData;
+        std::vector<Item> uiItem;
         auto opCursor(char m){
             CONSOLE_CURSOR_INFO cursorInfo;
             GetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&cursorInfo);
@@ -127,46 +127,46 @@ class CUI final{
                 printf("\n");
             }
         }
-        auto rewrite(Item &data){
-            setCursor({0,data.pos.Y});
-            for(i16 j{};j<data.pos.X;++j){
+        auto rewrite(Item &ref){
+            setCursor({0,ref.pos.Y});
+            for(i16 j{};j<ref.pos.X;++j){
                 write(" ");
             }
-            setCursor({0,data.pos.Y});
-            write(data.text);
-            setCursor({0,data.pos.Y});
+            setCursor({0,ref.pos.Y});
+            write(ref.text);
+            setCursor({0,ref.pos.Y});
         }
         auto initPos(){
             cls();
-            for(auto &data:lineData){
-                data.pos=getCursor();
-                data.setColor('D');
-                write(data.text,true);
+            for(auto &ref:uiItem){
+                ref.pos=getCursor();
+                ref.setColor('D');
+                write(ref.text,true);
             }
         }
         auto refresh(COORD &hangPos){
-            for(auto &data:lineData){
-                if((data==hangPos)&&(data.colorLast!=data.colorHighlight)){
-                    data.setColor('H');
-                    rewrite(data);
+            for(auto &ref:uiItem){
+                if((ref==hangPos)&&(ref.colorLast!=ref.colorHighlight)){
+                    ref.setColor('H');
+                    rewrite(ref);
                 }
-                if((data!=hangPos)&&(data.colorLast!=data.colorDef)){
-                    data.setColor('D');
-                    rewrite(data);
+                if((ref!=hangPos)&&(ref.colorLast!=ref.colorDef)){
+                    ref.setColor('D');
+                    rewrite(ref);
                 }
             }
         }
         auto impl(MOUSE_EVENT_RECORD &mouseEvent){
             bool isExit{};
-            for(auto &data:lineData){
-                if(data==mouseEvent.dwMousePosition){
-                    if(data.fn!=nullptr){
+            for(auto &ref:uiItem){
+                if(ref==mouseEvent.dwMousePosition){
+                    if(ref.fn!=nullptr){
                         system("cls");
                         cls();
-                        data.setColor('D');
+                        ref.setColor('D');
                         opAttrs('+');
                         opCursor('S');
-                        isExit=data.fn(Data{mouseEvent,this,data.argv});
+                        isExit=ref.fn(Data{mouseEvent,this,ref.argv});
                         opAttrs('-');
                         opCursor('H');
                         initPos();
@@ -181,15 +181,15 @@ class CUI final{
             height{},width{}{}
         ~CUI(){}
         auto push(const i8 *text,callback fn=nullptr,void *argv=nullptr,i16 colorHighlight=CON_BLUE,i16 colorDef=CON_WHITE)->CUI&{
-            lineData.push_back(Item{text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,argv});
+            uiItem.push_back(Item{text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,argv});
             return *this;
         }
         auto pop()->CUI&{
-            lineData.pop_back();
+            uiItem.pop_back();
             return *this;
         }
         auto clear()->CUI&{
-            lineData.clear();
+            uiItem.clear();
             return *this;
         }
         auto show(){
