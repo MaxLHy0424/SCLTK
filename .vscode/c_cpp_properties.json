@@ -6,6 +6,7 @@
                 "${workspaceFolder}\\*"
             ],
             "defines":[
+                "_CRT_SECURE_NO_WARNINGS",
                 "UNICODE",
                 "_UNICODE"
             ],
