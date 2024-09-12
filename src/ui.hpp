@@ -161,7 +161,6 @@ class CUI final{
             for(auto &ref:uiItem){
                 if(ref==mouseEvent.dwMousePosition){
                     if(ref.fn!=nullptr){
-                        system("cls");
                         cls();
                         ref.setColor('d');
                         opAttrs('+');
