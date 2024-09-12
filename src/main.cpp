@@ -54,7 +54,7 @@ auto main(i32 argc,i8 *argv[])->i32{
         ui.push("\0");
     }
     ui.push(" > 命令提示符 ",Mod::cmd);
-    ui.push("\n[破解]\n");
+    ui.push("\n[ 破 解 ]\n");
     if(IsUserAnAdmin()){
         ui.push(
             " > 极域电子教室 ",Mod::op,
@@ -70,7 +70,7 @@ auto main(i32 argc,i8 *argv[])->i32{
     }else{
         ui.push(" (i) 需要提权.");
     }
-    ui.push("\n[恢复]\n");
+    ui.push("\n[ 恢 复 ]\n");
     if(IsUserAnAdmin()){
         ui.push(
             " > 极域电子教室 ",Mod::op,
