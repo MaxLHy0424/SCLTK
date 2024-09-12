@@ -57,7 +57,7 @@ class CUI final{
             }
         };
         i16 height,width;
-        std::vector<Item> uiItem;
+        std::vector<Item> items;
         auto opCursor(char m){
             CONSOLE_CURSOR_INFO cursorInfo;
             GetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&cursorInfo);
@@ -138,14 +138,14 @@ class CUI final{
         }
         auto initPos(){
             cls();
-            for(auto &ref:uiItem){
+            for(auto &ref:items){
                 ref.pos=getCursor();
                 ref.setColor('d');
                 write(ref.text,true);
             }
         }
         auto refresh(COORD &hangPos){
-            for(auto &ref:uiItem){
+            for(auto &ref:items){
                 if((ref==hangPos)&&(ref.colorLast!=ref.colorHighlight)){
                     ref.setColor('h');
                     rewrite(ref);
@@ -158,7 +158,7 @@ class CUI final{
         }
         auto impl(MOUSE_EVENT_RECORD &mouseEvent){
             bool isExit{};
-            for(auto &ref:uiItem){
+            for(auto &ref:items){
                 if(ref==mouseEvent.dwMousePosition){
                     if(ref.fn!=nullptr){
                         cls();
@@ -180,15 +180,15 @@ class CUI final{
             height{},width{}{}
         ~CUI(){}
         auto push(const i8 *text,callback fn=nullptr,void *argv=nullptr,i16 colorHighlight=CON_BLUE,i16 colorDef=CON_WHITE)->CUI&{
-            uiItem.push_back(Item{text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,argv});
+            items.push_back(Item{text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,argv});
             return *this;
         }
         auto pop()->CUI&{
-            uiItem.pop_back();
+            items.pop_back();
             return *this;
         }
         auto clear()->CUI&{
-            uiItem.clear();
+            items.clear();
             return *this;
         }
         auto show(){
