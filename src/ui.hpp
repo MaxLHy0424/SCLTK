@@ -22,9 +22,9 @@ struct Data{
         eventFlag{mouseEvent.dwEventFlags},ui{ui},argv{argv}{}
     ~Data(){}
 };
-using callback=bool(*)(Data);
 class CUI final{
     private:
+        using callback=bool(*)(Data);
         struct Item{
             const i8 *text;
             i16 colorDef,colorHighlight,colorLast;
