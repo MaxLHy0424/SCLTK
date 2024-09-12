@@ -1,5 +1,6 @@
+1 ICON "img/favicon.ico"
 1 VERSIONINFO
-FILEVERSION 5,4,2
+FILEVERSION 5,4,3
 BEGIN
     BLOCK "StringFileInfo"
     BEGIN
@@ -10,7 +11,7 @@ BEGIN
 			VALUE "InternalName","CRCSN"
 			VALUE "LegalCopyright","(C) 2023 MaxLHy0424. All rights reserved."
 			VALUE "ProductName","Computer Room Control Software Nemesis"
-			VALUE "ProductVersion","v5.4.2"
+			VALUE "ProductVersion","v5.4.3"
         END
     END
     BLOCK "VarFileInfo"
@@ -18,4 +19,3 @@ BEGIN
         VALUE "Translation",0x804,0x4B0
     END
 END
-1 ICON "img/favicon.ico"
