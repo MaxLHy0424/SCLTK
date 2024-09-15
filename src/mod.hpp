@@ -6,7 +6,6 @@ struct{
 }opt{};
 namespace Mod{
     auto init(){
-        system("chcp 936 > nul");
         if constexpr(CHANNEL==0){
             SetConsoleTitle(L"CRCSN");
         }else if constexpr(CHANNEL==1){
@@ -43,7 +42,6 @@ namespace Mod{
     }
     auto cmd(Data){
         system("cmd");
-        init();
         return false;
     }
     struct{
