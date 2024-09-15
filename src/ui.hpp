@@ -1,5 +1,5 @@
 #pragma once
-#include"def.hpp"
+#include"dflt.hpp"
 #define MOUSE_BUTTON_LEFT FROM_LEFT_1ST_BUTTON_PRESSED
 #define MOUSE_BUTTON_MIDDLE FROM_LEFT_2ND_BUTTON_PRESSED
 #define MOUSE_BUTTON_RIGHT RIGHTMOST_BUTTON_PRESSED
@@ -32,8 +32,8 @@ class CUI final{
             void *argv;
             Item():
                 text{},colorDef{CON_WHITE},colorHighlight{CON_BLUE},colorLast{CON_WHITE},pos{},fn{nullptr}{}
-            Item(const i8 *text,i16 def,i16 highlight,callback fn,void *argv):
-                text{text},colorDef{def},colorHighlight{highlight},colorLast{CON_WHITE},pos{},fn{fn},argv{argv}{}
+            Item(const i8 *text,i16 dflt,i16 highlight,callback fn,void *argv):
+                text{text},colorDef{dflt},colorHighlight{highlight},colorLast{CON_WHITE},pos{},fn{fn},argv{argv}{}
             auto setColor(i8 f){
                 switch(f){
                     case 'D':{
