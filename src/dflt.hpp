@@ -9,7 +9,6 @@
 #include<thread>
 using i8=char;
 using i16=short;
-using u16=unsigned i16;
 using i32=int;
 #define CHANNEL 0
 #define CUSTOM_TITLE L"[#CUSTOM#] CRCSN"
