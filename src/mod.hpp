@@ -10,8 +10,6 @@ namespace Mod{
             SetConsoleTitle(L"CRCSN");
         }else if constexpr(CHANNEL==1){
             SetConsoleTitle(L"[Preview] CRCSN");
-        }else if constexpr(CHANNEL==2){
-            SetConsoleTitle(L"[DevSnap] CRCSN");
         }else{
             SetConsoleTitle(CUSTOM_TITLE);
         }
