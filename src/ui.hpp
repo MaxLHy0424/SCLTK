@@ -11,7 +11,7 @@
 #define CON_BLUE 0x09
 #define CON_RED_PALE 0x0c
 class CUI;
-struct Data{
+struct Data final{
     DWORD buttonState,ctrlKeyState,eventFlag;
     CUI *ui;
     void *argv;
@@ -24,7 +24,7 @@ struct Data{
 class CUI final{
     private:
         using fncall=bool(*)(Data);
-        struct Item{
+        struct Item final{
             const i8 *text;
             i16 colorDef,colorHighlight,colorLast;
             COORD pos;

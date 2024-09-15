@@ -71,7 +71,7 @@ namespace Mod{
             }
         }
     };
-    struct OpArgv{
+    struct OpArgv final{
         i8 f;
         std::vector<const i8*> &exe,&svc;
     };
