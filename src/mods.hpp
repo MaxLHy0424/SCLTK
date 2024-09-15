@@ -1,5 +1,5 @@
 #pragma once
-#include"def.hpp"
+#include"dflt.hpp"
 #include"ui.hpp"
 struct{
     bool wndFrontShow,wndAlpha,wndSizeBox,viewWide;
