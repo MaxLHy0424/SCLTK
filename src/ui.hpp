@@ -23,16 +23,16 @@ struct Data{
 };
 class CUI final{
     private:
-        using callback=bool(*)(Data);
+        using fncall=bool(*)(Data);
         struct Item{
             const i8 *text;
             i16 colorDef,colorHighlight,colorLast;
             COORD pos;
-            callback fn;
+            fncall fn;
             void *argv;
             Item():
                 text{},colorDef{CON_WHITE},colorHighlight{CON_BLUE},colorLast{CON_WHITE},pos{},fn{nullptr}{}
-            Item(const i8 *text,i16 dflt,i16 highlight,callback fn,void *argv):
+            Item(const i8 *text,i16 dflt,i16 highlight,fncall fn,void *argv):
                 text{text},colorDef{dflt},colorHighlight{highlight},colorLast{CON_WHITE},pos{},fn{fn},argv{argv}{}
             auto setColor(i8 f){
                 switch(f){
@@ -177,7 +177,7 @@ class CUI final{
         CUI():
             height{},width{}{}
         ~CUI(){}
-        auto push(const i8 *text,callback fn=nullptr,void *argv=nullptr,i16 colorHighlight=CON_BLUE,i16 colorDef=CON_WHITE)->CUI&{
+        auto push(const i8 *text,fncall fn=nullptr,void *argv=nullptr,i16 colorHighlight=CON_BLUE,i16 colorDef=CON_WHITE)->CUI&{
             items.push_back(Item{text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,argv});
             return *this;
         }
