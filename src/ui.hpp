@@ -36,11 +36,11 @@ class CUI final{
                 text{text},colorDef{def},colorHighlight{highlight},colorLast{CON_WHITE},pos{},fn{fn},argv{argv}{}
             auto setColor(i8 m){
                 switch(m){
-                    case 'd':{
+                    case 'D':{
                         SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),colorDef);
                         colorLast=colorDef;
                         break;
-                    }case 'h':{
+                    }case 'H':{
                         SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),colorHighlight);
                         colorLast=colorHighlight;
                         break;
@@ -60,10 +60,10 @@ class CUI final{
             CONSOLE_CURSOR_INFO cursorInfo;
             GetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&cursorInfo);
             switch(m){
-                case 'h':{
+                case 'H':{
                     cursorInfo.bVisible=false;
                     break;
-                }case 's':{
+                }case 'S':{
                     cursorInfo.bVisible=true;
                     break;
                 }
@@ -138,18 +138,18 @@ class CUI final{
             cls();
             for(auto &ref:items){
                 ref.pos=getCursor();
-                ref.setColor('d');
+                ref.setColor('D');
                 write(ref.text,true);
             }
         }
         auto refresh(COORD &hangPos){
             for(auto &ref:items){
                 if((ref==hangPos)&&(ref.colorLast!=ref.colorHighlight)){
-                    ref.setColor('h');
+                    ref.setColor('H');
                     rewrite(ref);
                 }
                 if((ref!=hangPos)&&(ref.colorLast!=ref.colorDef)){
-                    ref.setColor('d');
+                    ref.setColor('D');
                     rewrite(ref);
                 }
             }
@@ -160,12 +160,12 @@ class CUI final{
                 if(ref==mouseEvent.dwMousePosition){
                     if(ref.fn!=nullptr){
                         cls();
-                        ref.setColor('d');
+                        ref.setColor('D');
                         opAttrs('+');
-                        opCursor('s');
+                        opCursor('S');
                         isExit=ref.fn(Data{mouseEvent,this,ref.argv});
                         opAttrs('-');
-                        opCursor('h');
+                        opCursor('H');
                         initPos();
                     }
                     break;
@@ -191,7 +191,7 @@ class CUI final{
         }
         auto show(){
             opAttrs('-');
-            opCursor('h');
+            opCursor('H');
             MOUSE_EVENT_RECORD mouseEvent;
             Sleep(50);
             initPos();
