@@ -21,7 +21,7 @@ auto main(i32 argc,i8 *argv[])->i32{
                             break;
                         }default:{
                             optError=true;
-                            goto INIT;
+                            goto END;
                         }
                     }
                 }
@@ -32,7 +32,7 @@ auto main(i32 argc,i8 *argv[])->i32{
                 break;
             }
         }
-    INIT:
+    END:
         if(optError){
             opt={};
         }
