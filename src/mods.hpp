@@ -9,7 +9,7 @@ namespace Mod{
         if constexpr(CHANNEL==0){
             SetConsoleTitle(L"CRCSN");
         }else if constexpr(CHANNEL==1){
-            SetConsoleTitle(L"[Preview] CRCSN");
+            SetConsoleTitle(L"[Snapshot] CRCSN");
         }else{
             SetConsoleTitle(CUSTOM_TITLE);
         }
