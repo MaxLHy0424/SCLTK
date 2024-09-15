@@ -7,7 +7,7 @@ set CUSTOM_TITLE=[#CUSTOM#] CRCSN Launcher
 if %CHANNEL%==0 (
   title CRCSN Launcher
 ) else if %CHANNEL%==1 (
-  title [Preview] CRCSN Launcher
+  title [Snapshot] CRCSN Launcher
 ) else (
   title %CUSTOM_TITLE%
 )
