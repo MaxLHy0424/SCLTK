@@ -137,13 +137,13 @@ CRCSN 使用 [MIT License](LICENSE), 详细内容请自行阅读.
 
 非常欢迎大家二次开发 CRCSN!
 
-二次开发时, 请务必修改 `dflt.hpp` 和 `launcher.cmd` 中的宏定义 `CHANNEL` 和 `CUSTOM_TITLE`, 以做区分.
+二次开发时, 请务必修改 `def.hpp` 和 `launcher.cmd` 中的宏定义 `CHANNEL` 和 `CUSTOM_TITLE`, 以做区分.
 
 > [!NOTE]
 > **推荐做法**
 > - 将 `CHANNEL` 修改为一个负整数, 整数位通常是修改版的发布日期.\
 > 示例: `-240721`, `-231215`.
-> - 将 `CUSTOM_TITLE` 修改为 `[Revised by xxx] ` 加上 `CRCSN` (`dflt.hpp`) 或 `CRCSN Launcher` (`launcher.cmd`). 在 `dflt.hpp` 中修改, 务必加上英文半角双引号, 并在最前面加上 `L` (不然无法通过编译).\
+> - 将 `CUSTOM_TITLE` 修改为 `[Revised by xxx] ` 加上 `CRCSN` (`def.hpp`) 或 `CRCSN Launcher` (`launcher.cmd`). 在 `def.hpp` 中修改, 务必加上英文半角双引号, 并在最前面加上 `L` (不然无法通过编译).\
 > 示例: `L"[Revised by Ethylene] CRCSN"`, `[Revised by Kendall] CRCSN Launcher`.
 
 版权声明部分, 请在遵守许可证的情况下修改. 推荐将二次开发版本开源至 GitHub, 在许可证允许的情况下, 可能会被采纳.

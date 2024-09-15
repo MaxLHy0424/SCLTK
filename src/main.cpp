@@ -1,6 +1,6 @@
-#include"dflt.hpp"
+#include"def.hpp"
 #include"ui.hpp"
-#include"mods.hpp"
+#include"mod.hpp"
 auto main(i32 argc,i8 *argv[])->i32{
     bool optError{};
     if(argc>1){
