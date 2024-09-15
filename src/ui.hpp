@@ -8,7 +8,7 @@
 #define MOUSE_MOVE MOUSE_MOVED
 #define MOUSE_WHEEL MOUSE_WHEELED
 #define CON_WHITE 0x07
-#define CON_BLUE 0x03
+#define CON_BLUE 0x09
 #define CON_RED_PALE 0x0c
 class CUI;
 struct Data{
