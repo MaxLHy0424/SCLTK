@@ -5,7 +5,7 @@ struct{
     bool wndFrontShow,wndAlpha,wndCtrls;
 }opt{};
 namespace Mod{
-    auto init(){
+    inline auto init(){
         SetConsoleTitle(WINDOW_TITLE);
         SetWindowLongPtr(
             GetConsoleWindow(),GWL_STYLE,(opt.wndCtrls)?
