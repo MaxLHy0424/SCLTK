@@ -42,14 +42,15 @@ auto main(i32 argc,i8 *argv[])->i32{
         std::thread{Mod::frontShow}.detach();
     }
     CUI ui;
-    ui.add("    [ Computer Room Control Software Nemesis ]\n");
-    ui.add("                     v5.5.0");
-    ui.add("       https://github.com/MaxLHy0424/CRCSN");
-    ui.add("     (C) 2023 MaxLHy0424. All rights reserved.\n");
+    ui.add("                    [ 主  页 ]\n\n");
     if(optError){
         ui.add(" (!) 参数错误.\n");
     }
     ui.add(" > 退出 ",Mod::quit,nullptr,CON_RED_PALE);
+    if(opt.viewSparse){
+        ui.add("\0");
+    }
+    ui.add(" > 关于 ",Mod::info);
     if(opt.viewSparse){
         ui.add("\0");
     }
