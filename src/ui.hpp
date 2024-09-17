@@ -16,7 +16,7 @@ struct Data final{
     CUI *ui;
     void *argv;
     Data():
-        buttonState{MOUSE_BUTTON_LEFT},ctrlKeyState{},eventFlag{},ui{nullptr},argv{nullptr}{}
+        buttonState{MOUSE_BUTTON_LEFT},ctrlKeyState{},eventFlag{},ui{},argv{}{}
     Data(MOUSE_EVENT_RECORD mouseEvent,CUI *ui,void *argv):
         buttonState{mouseEvent.dwButtonState},ctrlKeyState{mouseEvent.dwControlKeyState},
         eventFlag{mouseEvent.dwEventFlags},ui{ui},argv{argv}{}
@@ -31,7 +31,7 @@ class CUI final{
             fncall fn;
             void *argv;
             Item():
-                text{},colorDef{CON_WHITE},colorHighlight{CON_BLUE},colorLast{CON_WHITE},pos{},fn{nullptr}{}
+                text{},colorDef{CON_WHITE},colorHighlight{CON_BLUE},colorLast{CON_WHITE},pos{},fn{}{}
             Item(const i8 *text,i16 def,i16 highlight,fncall fn,void *argv):
                 text{text},colorDef{def},colorHighlight{highlight},colorLast{CON_WHITE},pos{},fn{fn},argv{argv}{}
             auto setColor(i8 f){
