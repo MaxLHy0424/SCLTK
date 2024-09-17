@@ -10,5 +10,4 @@
 using i8=char;
 using i16=short;
 using i32=int;
-#define CHANNEL 0
-#define CUSTOM_TITLE L"[#CUSTOM#] CRCSN"
+#define WINDOW_TITLE L"CRCSN"

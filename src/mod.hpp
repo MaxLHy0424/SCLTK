@@ -6,13 +6,7 @@ struct{
 }opt{};
 namespace Mod{
     auto init(){
-        if constexpr(CHANNEL==0){
-            SetConsoleTitle(L"CRCSN");
-        }else if constexpr(CHANNEL==1){
-            SetConsoleTitle(L"[Snapshot] CRCSN");
-        }else{
-            SetConsoleTitle(CUSTOM_TITLE);
-        }
+        SetConsoleTitle(WINDOW_TITLE);
         SetWindowLongPtr(
             GetConsoleWindow(),GWL_STYLE,(opt.wndCtrls)?
             (GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)|WS_SIZEBOX|WS_MAXIMIZEBOX|WS_MINIMIZEBOX):
