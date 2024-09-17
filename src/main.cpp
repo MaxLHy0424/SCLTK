@@ -25,8 +25,6 @@ auto main(i32 argc,i8 *argv[])->i32{
                         }
                     }
                 }
-            }else if(tmp=="--sparce-view"){
-                opt.viewSparse=true;
             }else{
                 optError=true;
                 break;
@@ -47,13 +45,7 @@ auto main(i32 argc,i8 *argv[])->i32{
         ui.add(" (!) 参数错误.\n");
     }
     ui.add(" > 退出 ",Mod::quit,nullptr,CON_RED_PALE);
-    if(opt.viewSparse){
-        ui.add("\0");
-    }
     ui.add(" > 关于 ",Mod::info);
-    if(opt.viewSparse){
-        ui.add("\0");
-    }
     ui.add(" > 命令提示符 ",Mod::cmd);
     ui.add("\n[破解]\n");
     if(IsUserAnAdmin()){
@@ -61,9 +53,6 @@ auto main(i32 argc,i8 *argv[])->i32{
             " > 极域电子教室 ",Mod::op,
             new Mod::OpArgv{'C',Mod::rule.mythware.exe,Mod::rule.mythware.svc}
         );
-        if(opt.viewSparse){
-            ui.add("\0");
-        }
         ui.add(
             " > 联想云教室 ",Mod::op,
             new Mod::OpArgv{'C',Mod::rule.lenovo.exe,Mod::rule.lenovo.svc}
@@ -77,9 +66,6 @@ auto main(i32 argc,i8 *argv[])->i32{
             " > 极域电子教室 ",Mod::op,
             new Mod::OpArgv{'R',Mod::rule.mythware.exe,Mod::rule.mythware.svc}
         );
-        if(opt.viewSparse){
-            ui.add("\0");
-        }
         ui.add(
             " > 联想云教室 ",Mod::op,
             new Mod::OpArgv{'R',Mod::rule.lenovo.exe,Mod::rule.lenovo.svc}
