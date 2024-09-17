@@ -42,49 +42,49 @@ auto main(i32 argc,i8 *argv[])->i32{
         std::thread{Mod::frontShow}.detach();
     }
     CUI ui;
-    ui.push("    [ Computer Room Control Software Nemesis ]\n");
-    ui.push("                     v5.5.0");
-    ui.push("       https://github.com/MaxLHy0424/CRCSN");
-    ui.push("     (C) 2023 MaxLHy0424. All rights reserved.\n");
+    ui.add("    [ Computer Room Control Software Nemesis ]\n");
+    ui.add("                     v5.5.0");
+    ui.add("       https://github.com/MaxLHy0424/CRCSN");
+    ui.add("     (C) 2023 MaxLHy0424. All rights reserved.\n");
     if(optError){
-        ui.push(" (!) 参数错误.\n");
+        ui.add(" (!) 参数错误.\n");
     }
-    ui.push(" > 退出 ",Mod::exit,nullptr,CON_RED_PALE);
+    ui.add(" > 退出 ",Mod::exit,nullptr,CON_RED_PALE);
     if(opt.viewSparse){
-        ui.push("\0");
+        ui.add("\0");
     }
-    ui.push(" > 命令提示符 ",Mod::cmd);
-    ui.push("\n[破解]\n");
+    ui.add(" > 命令提示符 ",Mod::cmd);
+    ui.add("\n[破解]\n");
     if(IsUserAnAdmin()){
-        ui.push(
+        ui.add(
             " > 极域电子教室 ",Mod::op,
             new Mod::OpArgv{'C',Mod::rule.mythware.exe,Mod::rule.mythware.svc}
         );
         if(opt.viewSparse){
-            ui.push("\0");
+            ui.add("\0");
         }
-        ui.push(
+        ui.add(
             " > 联想云教室 ",Mod::op,
             new Mod::OpArgv{'C',Mod::rule.lenovo.exe,Mod::rule.lenovo.svc}
         );
     }else{
-        ui.push(" (i) 需要提权.");
+        ui.add(" (i) 需要提权.");
     }
-    ui.push("\n[恢复]\n");
+    ui.add("\n[恢复]\n");
     if(IsUserAnAdmin()){
-        ui.push(
+        ui.add(
             " > 极域电子教室 ",Mod::op,
             new Mod::OpArgv{'R',Mod::rule.mythware.exe,Mod::rule.mythware.svc}
         );
         if(opt.viewSparse){
-            ui.push("\0");
+            ui.add("\0");
         }
-        ui.push(
+        ui.add(
             " > 联想云教室 ",Mod::op,
             new Mod::OpArgv{'R',Mod::rule.lenovo.exe,Mod::rule.lenovo.svc}
         );
     }else{
-        ui.push(" (i) 需要提权.");
+        ui.add(" (i) 需要提权.");
     }
     ui.show();
     return 0;
