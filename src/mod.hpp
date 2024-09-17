@@ -34,13 +34,13 @@ namespace Mod{
     }
     auto info(Data){
         CUI ui;
-        ui.add("                    [ 关  于 ]\n\n");
+        ui.add("                    < 关  于 >\n\n");
         ui.add(" > 返回 ",Mod::exit,nullptr,CON_RED_PALE);
-        ui.add("\n[ 名称 ]\n");
+        ui.add("\n[名称]\n");
         ui.add(" Computer Room Control Software Nemesis");
-        ui.add("\n[ 版本 ]\n");
+        ui.add("\n[版本]\n");
         ui.add(" " VERSION_INFO);
-        ui.add("\n[ 仓库 ]\n");
+        ui.add("\n[仓库]\n");
         ui.add(" https://github.com/MaxLHy0424/CRCSN");
         ui.add("\n[许可证]\n");
         ui.add(" MIT License");
