@@ -42,7 +42,7 @@ namespace Mod{
         CUI ui;
         ui.add("                    [ 关  于 ]\n\n");
         ui.add(" > 返回 ",Mod::exit,nullptr,CON_RED_PALE).add("\0");
-        ui.add("\n [名称] Computer Room Control Software Nemesis");
+        ui.add(" [名称] Computer Room Control Software Nemesis");
         ui.add(" [版本] v5.5.0");
         ui.add(" [仓库] https://github.com/MaxLHy0424/CRCSN");
         ui.add("\n (C) 2023 MaxLHy0424. All rights reserved.");
