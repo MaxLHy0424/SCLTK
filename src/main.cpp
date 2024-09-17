@@ -44,7 +44,7 @@ auto main(i32 argc,i8 *argv[])->i32{
     if(optError){
         ui.add(" (!) 参数错误.\n");
     }
-    ui.add(" > 退出 ",Mod::exit,nullptr,CON_RED_PALE).add("\0");
+    ui.add(" > 退出 ",Mod::exit,nullptr,CON_RED_PALE);
     ui.add(" > 关于 ",Mod::info);
     ui.add(" > 命令提示符 ",Mod::cmd);
     ui.add("\n[破解]\n");
