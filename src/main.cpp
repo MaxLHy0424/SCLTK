@@ -1,12 +1,12 @@
 #include"def.hpp"
 #include"ui.hpp"
 #include"mod.hpp"
-auto main(i32 argc,i8 *argv[])->i32{
+auto main(i32 argc,i8 *args[])->i32{
     bool optError{};
     if(argc>1){
         std::string tmp;
         for(i32 i{1};i<argc;++i){
-            tmp=argv[i];
+            tmp=args[i];
             if((tmp.size()>2)?(tmp.substr(0,2)=="-W"):(false)){
                 for(const auto &j:tmp.substr(2)){
                     switch(j){

@@ -67,7 +67,7 @@ set SHOW_VERBOSE_INFO=0
 
 找到:
 ```dos
-set argv=
+set args=
 ```
 
 窗口操作的主参数为 `-W`, 附加参数如下:
@@ -79,7 +79,7 @@ set argv=
 
 使用示例:
 ```dos
-set argv=-Waf
+set args=-Waf
 ```
 
 ### 1.5 深度自定义
