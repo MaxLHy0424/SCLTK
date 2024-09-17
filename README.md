@@ -82,7 +82,7 @@ set argv=
 set argv=-Waf
 ```
 
-### 1.5 宽大视图
+### 1.5 稀疏视图
 
 > [!IMPORTANT]
 > 此参数区分大小写.
@@ -94,17 +94,17 @@ set argv=-Waf
 set argv=
 ```
 
-添加参数 `--wide-view`:
+添加参数 `--sparce-view`:
 ```dos
-set argv=--wide-view
+set argv=--sparce-view
 ```
 
-即可启用宽大视图.
+即可启用稀疏视图.
 
 > [!NOTE]
 > 可以和[上一节](#12-窗口操作)中的参数一同使用, 两者顺序可以调换. 例如:
 > ```dos
-> set argv=--wide-view -Wfa
+> set argv=--sparce-view -Wfa
 > ```
 
 ## 2 功能使用及说明

@@ -25,8 +25,8 @@ auto main(i32 argc,i8 *argv[])->i32{
                         }
                     }
                 }
-            }else if(tmp=="--wide-view"){
-                opt.viewWide=true;
+            }else if(tmp=="--sparce-view"){
+                opt.viewSparse=true;
             }else{
                 optError=true;
                 break;
@@ -50,7 +50,7 @@ auto main(i32 argc,i8 *argv[])->i32{
         ui.push(" (!) 参数错误.\n");
     }
     ui.push(" > 退出 ",Mod::exit,nullptr,CON_RED_PALE);
-    if(opt.viewWide){
+    if(opt.viewSparse){
         ui.push("\0");
     }
     ui.push(" > 命令提示符 ",Mod::cmd);
@@ -60,7 +60,7 @@ auto main(i32 argc,i8 *argv[])->i32{
             " > 极域电子教室 ",Mod::op,
             new Mod::OpArgv{'C',Mod::rule.mythware.exe,Mod::rule.mythware.svc}
         );
-        if(opt.viewWide){
+        if(opt.viewSparse){
             ui.push("\0");
         }
         ui.push(
@@ -76,7 +76,7 @@ auto main(i32 argc,i8 *argv[])->i32{
             " > 极域电子教室 ",Mod::op,
             new Mod::OpArgv{'R',Mod::rule.mythware.exe,Mod::rule.mythware.svc}
         );
-        if(opt.viewWide){
+        if(opt.viewSparse){
             ui.push("\0");
         }
         ui.push(
