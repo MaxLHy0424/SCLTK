@@ -4,8 +4,8 @@
 
 # 获取
 
-**最新发行版: v5.5.0.**\
-**[更新日志](https://github.com/MaxLHy0424/CRCSN/releases/tag/v5.5.0) | [直链下载](https://github.com/MaxLHy0424/CRCSN/releases/download/v5.5.0/CRCSN-v5.5.0-Stable.7z)**
+**最新发行版: v5.6.0.**\
+**[更新日志](https://github.com/MaxLHy0424/CRCSN/releases/tag/v5.6.0) | [直链下载](https://github.com/MaxLHy0424/CRCSN/releases/download/v5.6.0/CRCSN-v5.6.0-Stable.7z)**
 
 或者:
 
@@ -17,7 +17,7 @@
 **由于 CRCSN 存在敏感操作, 使用时建议关闭防病毒软件. 若 CRCSN 被报为恶意软件, 请添加排除项.**
 
 > [!NOTE]
-> 适用于 v5.5.0.
+> 适用于 v5.6.0.
 
 ## 1 启动
 
@@ -112,7 +112,7 @@ CRCSN 使用 [MIT License](LICENSE), 详细内容请自行阅读.
 # 二次开发
 
 > [!NOTE]
-> 适用于 v5.5.0.
+> 适用于 v5.6.0.
 
 非常欢迎大家二次开发 CRCSN!
 
@@ -135,10 +135,10 @@ CRCSN 使用 [MIT License](LICENSE), 详细内容请自行阅读.
 
 ## 3 破解后一些软件运行时提示 "找不到文件" 之类的错误, 而运行的软件并没有损坏.
 
-在不影响软件正常运行的情况下, 可以给软件文件修改一个名称, 再试试. 或者打开注册表编辑器, 定位到 `HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\`, 找到和要运行的软件的文件名称相同的项, 删除即可.
+在不影响软件正常运行的情况下, 可以给软件文件修改一个名称, 再试试. 或者打开注册表编辑器, 定位到 `HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options`, 找到和要运行的软件的文件名称相同的项, 删除即可.
 
 # 鸣谢
 
-- Bilibili 用户 [lateworker_晚工](https://space.bilibili.com/454920362) 提供界面代码 (详见[此处](https://www.bilibili.com/video/BV1X14y1n7S4/), 软件有修改之处);
+- Bilibili 用户 [lateworker_晚工](https://space.bilibili.com/454920362) 提供界面代码 (详见[此处](https://www.bilibili.com/video/BV1X14y1n7S4), 软件有修改之处);
 - Bilibili 用户 [痕继痕迹](https://space.bilibili.com/39337803) 指导软件界面设计;
 - GitHub 用户 [Zhu-Xinrong (Kendall)](https://github.com/Zhu-Xinrong) 指导软件图标设计.
