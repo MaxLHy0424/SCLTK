@@ -35,13 +35,13 @@ namespace Mod{
             Sleep(100);
         }
     }
-    auto quit(Data){
+    auto exit(Data){
         return true;
     }
     auto info(Data){
         CUI ui;
         ui.add("                    [ 关  于 ]\n\n");
-        ui.add(" > 返回 ",Mod::quit,nullptr,CON_RED_PALE).add("\0");
+        ui.add(" > 返回 ",Mod::exit,nullptr,CON_RED_PALE).add("\0");
         ui.add("\n [名称] Computer Room Control Software Nemesis");
         ui.add(" [版本] v5.5.0");
         ui.add(" [仓库] https://github.com/MaxLHy0424/CRCSN");
