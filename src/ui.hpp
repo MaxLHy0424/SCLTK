@@ -14,12 +14,12 @@ class CUI;
 struct Data final{
     DWORD buttonState,ctrlKeyState,eventFlag;
     CUI *ui;
-    void *argv;
+    void *args;
     Data():
-        buttonState{MOUSE_BUTTON_LEFT},ctrlKeyState{},eventFlag{},ui{},argv{}{}
-    Data(MOUSE_EVENT_RECORD mouseEvent,CUI *ui,void *argv):
+        buttonState{MOUSE_BUTTON_LEFT},ctrlKeyState{},eventFlag{},ui{},args{}{}
+    Data(MOUSE_EVENT_RECORD mouseEvent,CUI *ui,void *args):
         buttonState{mouseEvent.dwButtonState},ctrlKeyState{mouseEvent.dwControlKeyState},
-        eventFlag{mouseEvent.dwEventFlags},ui{ui},argv{argv}{}
+        eventFlag{mouseEvent.dwEventFlags},ui{ui},args{args}{}
 };
 class CUI final{
     private:
@@ -29,11 +29,11 @@ class CUI final{
             i16 colorDef,colorHighlight,colorLast;
             COORD pos;
             call fn;
-            void *argv;
+            void *args;
             Item():
                 text{},colorDef{CON_WHITE},colorHighlight{CON_BLUE},colorLast{CON_WHITE},pos{},fn{}{}
-            Item(const i8 *text,i16 def,i16 highlight,call fn,void *argv):
-                text{text},colorDef{def},colorHighlight{highlight},colorLast{CON_WHITE},pos{},fn{fn},argv{argv}{}
+            Item(const i8 *text,i16 def,i16 highlight,call fn,void *args):
+                text{text},colorDef{def},colorHighlight{highlight},colorLast{CON_WHITE},pos{},fn{fn},args{args}{}
             auto setColor(i8 f){
                 switch(f){
                     case 'D':{
@@ -163,7 +163,7 @@ class CUI final{
                         ref.setColor('D');
                         opAttrs('+');
                         opCursor('S');
-                        isExit=ref.fn(Data{mouseEvent,this,ref.argv});
+                        isExit=ref.fn(Data{mouseEvent,this,ref.args});
                         opAttrs('-');
                         opCursor('H');
                         initPos();
@@ -177,8 +177,8 @@ class CUI final{
         CUI():
             height{},width{}{}
         ~CUI(){}
-        auto add(const i8 *text,call fn=nullptr,void *argv=nullptr,i16 colorHighlight=CON_BLUE,i16 colorDef=CON_WHITE)->CUI&{
-            items.push_back(Item{text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,argv});
+        auto add(const i8 *text,call fn=nullptr,void *args=nullptr,i16 colorHighlight=CON_BLUE,i16 colorDef=CON_WHITE)->CUI&{
+            items.push_back(Item{text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args});
             return *this;
         }
         auto rm()->CUI&{

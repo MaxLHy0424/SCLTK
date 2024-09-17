@@ -8,7 +8,7 @@ mode con cols=50 lines=25
 cd /d "%~dp0"
 set arch=x86_64
 set runtime=msvcrt
-set argv=
+set args=
 %1
 if %AUTO_LAUNCH%==0 (
   echo                    [ Launcher ]
@@ -25,5 +25,5 @@ if %AUTO_LAUNCH%==0 (
 msHta vbScript:createObject("shell.application").shellExecute("%~s0","goTo:runAs","","runAs",1)(window.close) & goTo:eof
 :runAs
   chcp 936 > nul
-  start .\bin\%arch%\CRCSN-%runtime%.exe %argv%
+  start .\bin\%arch%\CRCSN-%runtime%.exe %args%
   exit /b
