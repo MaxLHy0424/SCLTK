@@ -49,7 +49,7 @@ auto main(i32 argc,i8 *argv[])->i32{
     if(optError){
         ui.add(" (!) 参数错误.\n");
     }
-    ui.add(" > 退出 ",Mod::exit,nullptr,CON_RED_PALE);
+    ui.add(" > 退出 ",Mod::quit,nullptr,CON_RED_PALE);
     if(opt.viewSparse){
         ui.add("\0");
     }
