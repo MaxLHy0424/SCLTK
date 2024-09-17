@@ -35,7 +35,7 @@ namespace Mod{
             Sleep(100);
         }
     }
-    auto exit(Data){
+    auto quit(Data){
         return true;
     }
     auto cmd(Data){
