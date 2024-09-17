@@ -39,8 +39,7 @@ namespace Mod{
         ui.add("\n[ 名称 ]\n");
         ui.add(" Computer Room Control Software Nemesis");
         ui.add("\n[ 版本 ]\n");
-        ui.add(" v5.5.0");
-        ui.add(" Stable 通道");
+        ui.add(" " VERSION_INFO);
         ui.add("\n[ 仓库 ]\n");
         ui.add(" https://github.com/MaxLHy0424/CRCSN");
         ui.add("\n[许可证]\n");
