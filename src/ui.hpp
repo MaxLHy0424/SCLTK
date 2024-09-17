@@ -84,7 +84,7 @@ class CUI final{
             }
             SetConsoleMode(GetStdHandle(STD_INPUT_HANDLE),mode);
         }
-        auto getCursor()->COORD{
+        auto getCursor(){
             CONSOLE_SCREEN_BUFFER_INFO tmp;
             GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE),&tmp);
             return tmp.dwCursorPosition;
@@ -92,7 +92,7 @@ class CUI final{
         auto setCursor(const COORD &tmp={0,0}){
             SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE),tmp);
         }
-        auto waitMouseEvent(bool move=true)->MOUSE_EVENT_RECORD{
+        auto waitMouseEvent(bool move=true){
             INPUT_RECORD record;
             DWORD reg;
             while(true){
