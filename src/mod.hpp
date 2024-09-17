@@ -2,7 +2,7 @@
 #include"def.hpp"
 #include"ui.hpp"
 struct{
-    bool wndFrontShow,wndAlpha,wndSizeBox,viewSparse;
+    bool wndFrontShow,wndAlpha,wndCtrls,viewSparse;
 }opt{};
 namespace Mod{
     auto init(){
@@ -14,7 +14,7 @@ namespace Mod{
             SetConsoleTitle(CUSTOM_TITLE);
         }
         SetWindowLongPtr(
-            GetConsoleWindow(),GWL_STYLE,(opt.wndSizeBox)?
+            GetConsoleWindow(),GWL_STYLE,(opt.wndCtrls)?
             (GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)|WS_SIZEBOX|WS_MAXIMIZEBOX|WS_MINIMIZEBOX):
             (GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)&~WS_SIZEBOX&~WS_MAXIMIZEBOX&~WS_MINIMIZEBOX)
         );
