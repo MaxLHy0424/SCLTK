@@ -2,15 +2,8 @@
 chcp 65001 > nul
 set AUTO_LAUNCH=0
 set SHOW_VERBOSE_INFO=0
-set CHANNEL=0
-set CUSTOM_TITLE=[#CUSTOM#] CRCSN Launcher
-if %CHANNEL%==0 (
-  title CRCSN Launcher
-) else if %CHANNEL%==1 (
-  title [Snapshot] CRCSN Launcher
-) else (
-  title %CUSTOM_TITLE%
-)
+set WINDOW_TITLE=CRCSN Launcher
+title %WINDOW_TITLE%
 mode con cols=50 lines=25
 cd /d "%~dp0"
 set arch=x86_64
