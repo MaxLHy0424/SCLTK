@@ -16,8 +16,8 @@ auto main(i32 argc,i8 *argv[])->i32{
                         }case 'a':{
                             opt.wndAlpha=true;
                             break;
-                        }case 's':{
-                            opt.wndSizeBox=true;
+                        }case 'c':{
+                            opt.wndCtrls=true;
                             break;
                         }default:{
                             optError=true;
