@@ -1,6 +1,6 @@
 msys2=C:\\Software\\MSYS2
 CC=g++.exe
-argv=-C -fexec-charset=GBK -std=gnu++23 -Wall -Wextra -pipe -m64 -DNDEBUG -static -Ofast -Os -flto -o
+argv=-C -fexec-charset=GBK -std=gnu++23 -Wall -Wextra -pipe -m64 -DNDEBUG -static -Ofast -flto -o
 .PHONY:build clean
 build:bin/x86_64/CRCSN-msvcrt.exe bin/x86_64/CRCSN-ucrt.exe
 obj=src/*.cpp bin/info.obj
