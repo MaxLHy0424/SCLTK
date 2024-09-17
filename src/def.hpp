@@ -11,3 +11,4 @@ using i8=char;
 using i16=short;
 using i32=int;
 #define WINDOW_TITLE L"CRCSN"
+#define VERSION_INFO "v5.5.0 (Stable)"
