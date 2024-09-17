@@ -82,30 +82,9 @@ set argv=
 set argv=-Waf
 ```
 
-### 1.5 稀疏视图
+### 1.5 深度自定义
 
-> [!IMPORTANT]
-> 此参数区分大小写.
-
-软件默认使用紧凑视图.
-
-找到:
-```dos
-set argv=
-```
-
-添加参数 `--sparce-view`:
-```dos
-set argv=--sparce-view
-```
-
-即可启用稀疏视图.
-
-> [!NOTE]
-> 可以和[上一节](#12-窗口操作)中的参数一同使用, 两者顺序可以调换. 例如:
-> ```dos
-> set argv=--sparce-view -Wfa
-> ```
+启动脚本的本质是 Windows 命令脚本, 可以根据需求深度自定义.
 
 ## 2 功能使用及说明
 

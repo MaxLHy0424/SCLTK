@@ -2,7 +2,7 @@
 #include"def.hpp"
 #include"ui.hpp"
 struct{
-    bool wndFrontShow,wndAlpha,wndCtrls,viewSparse;
+    bool wndFrontShow,wndAlpha,wndCtrls;
 }opt{};
 namespace Mod{
     auto init(){
