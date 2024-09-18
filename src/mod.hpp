@@ -7,11 +7,12 @@ struct{
 namespace Mod{
     inline auto init(){
         SetConsoleTitle(WINDOW_TITLE);
-        SetWindowLongPtr(
-            GetConsoleWindow(),GWL_STYLE,(opt.wndCtrls)?
-            (GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)|WS_SIZEBOX|WS_MAXIMIZEBOX|WS_MINIMIZEBOX):
-            (GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)&~WS_SIZEBOX&~WS_MAXIMIZEBOX&~WS_MINIMIZEBOX)
-        );
+        if(!opt.wndCtrls){
+            SetWindowLongPtr(
+                GetConsoleWindow(),GWL_STYLE,
+                GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)&~WS_SIZEBOX&~WS_MAXIMIZEBOX&~WS_MINIMIZEBOX
+            );
+        }
         system("mode con cols=50 lines=25");
         SetLayeredWindowAttributes(GetConsoleWindow(),0,(opt.wndAlpha)?(204):(255),LWA_ALPHA);
     }
