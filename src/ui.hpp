@@ -31,9 +31,11 @@ class CUI final{
             call fn;
             void *args;
             Item():
-                text{},colorDef{CON_WHITE},colorHighlight{CON_BLUE},colorLast{CON_WHITE},pos{},fn{}{}
+                text{},colorDef{CON_WHITE},colorHighlight{CON_BLUE},
+                colorLast{CON_WHITE},pos{},fn{},args{}{}
             Item(const i8 *text,i16 def,i16 highlight,call fn,void *args):
-                text{text},colorDef{def},colorHighlight{highlight},colorLast{CON_WHITE},pos{},fn{fn},args{args}{}
+                text{text},colorDef{def},colorHighlight{highlight},
+                colorLast{CON_WHITE},pos{},fn{fn},args{args}{}
             auto setColor(i8 f){
                 switch(f){
                     case 'D':{
