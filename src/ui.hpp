@@ -179,15 +179,15 @@ class CUI final{
         CUI():
             height{},width{}{}
         ~CUI(){}
-        auto add(const i8 *text,call fn=nullptr,void *args=nullptr,i16 colorHighlight=CON_BLUE,i16 colorDef=CON_WHITE)->CUI&{
+        auto &add(const i8 *text,call fn=nullptr,void *args=nullptr,i16 colorHighlight=CON_BLUE,i16 colorDef=CON_WHITE){
             items.push_back(Item{text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args});
             return *this;
         }
-        auto rm()->CUI&{
+        auto &rm(){
             items.pop_back();
             return *this;
         }
-        auto clear()->CUI&{
+        auto &clear(){
             items.clear();
             return *this;
         }
