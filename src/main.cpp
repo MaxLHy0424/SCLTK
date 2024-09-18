@@ -57,7 +57,7 @@ auto main(i32 argc,i8 *args[])->i32{
             new Mod::ArgsOp{'C',Mod::rule.lenovo.exe,Mod::rule.lenovo.svc}
         );
     }else{
-        ui.add(" (i) 需要提权.");
+        ui.add(" (i) 权限不足.");
     }
     ui.add("\n[恢复]\n");
     if(IsUserAnAdmin()){
@@ -69,7 +69,7 @@ auto main(i32 argc,i8 *args[])->i32{
             new Mod::ArgsOp{'R',Mod::rule.lenovo.exe,Mod::rule.lenovo.svc}
         );
     }else{
-        ui.add(" (i) 需要提权.");
+        ui.add(" (i) 权限不足.");
     }
     ui.show();
     return 0;
