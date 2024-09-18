@@ -44,16 +44,15 @@ auto main(i32 argc,i8 *args[])->i32{
     if(optError){
         ui.add(" (!) 参数错误.\n");
     }
-    ui.add(" > 退出 ",Mod::exit,nullptr,CON_RED_PALE);
-    ui.add(" > 信息 ",Mod::info);
-    ui.add(" > 命令提示符 ",Mod::cmd);
-    ui.add("\n[破解]\n");
+    ui.add(" > 退出 ",Mod::exit,nullptr,CON_RED_PALE)
+    .add(" > 信息 ",Mod::info)
+    .add(" > 命令提示符 ",Mod::cmd)
+    .add("\n[破解]\n");
     if(IsUserAnAdmin()){
         ui.add(
             " > 极域电子教室 ",Mod::op,
             new Mod::ArgsOp{'C',Mod::rule.mythware.exe,Mod::rule.mythware.svc}
-        );
-        ui.add(
+        ).add(
             " > 联想云教室 ",Mod::op,
             new Mod::ArgsOp{'C',Mod::rule.lenovo.exe,Mod::rule.lenovo.svc}
         );
@@ -65,8 +64,7 @@ auto main(i32 argc,i8 *args[])->i32{
         ui.add(
             " > 极域电子教室 ",Mod::op,
             new Mod::ArgsOp{'R',Mod::rule.mythware.exe,Mod::rule.mythware.svc}
-        );
-        ui.add(
+        ).add(
             " > 联想云教室 ",Mod::op,
             new Mod::ArgsOp{'R',Mod::rule.lenovo.exe,Mod::rule.lenovo.svc}
         );
