@@ -5,7 +5,7 @@ struct{
     bool wndFrontShow,wndAlpha,wndCtrls;
 }opt{};
 namespace Mod{
-    inline auto init(){
+    auto init(){
         SetConsoleTitle(WINDOW_TITLE);
         if(!opt.wndCtrls){
             SetWindowLongPtr(
