@@ -11,7 +11,7 @@ BEGIN
 			VALUE "InternalName","CRCSN"
 			VALUE "LegalCopyright","(C) 2023 MaxLHy0424. All rights reserved."
 			VALUE "ProductName","Computer Room Control Software Nemesis"
-			VALUE "ProductVersion","v5.6.1"
+			VALUE "ProductVersion","v5.6.2"
         END
     END
     BLOCK "VarFileInfo"
