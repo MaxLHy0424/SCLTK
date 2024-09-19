@@ -190,6 +190,10 @@ class CUI final{
             items.emplace(items.begin()+x,Item{text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args});
             return *this;
         }
+        auto &reset(int x,const i8 *text,call fn=nullptr,void *args=nullptr,i16 colorHighlight=CON_BLUE,i16 colorDef=CON_WHITE){
+            items[x]=Item{text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args};
+            return *this;
+        }
         auto &rm(){
             items.pop_back();
             return *this;
