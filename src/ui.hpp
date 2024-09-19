@@ -57,7 +57,7 @@ class CUI final{
             }
         };
         i16 height,width;
-        std::vector<Item> items;
+        std::vector<Item> item;
         auto opCursor(char f){
             CONSOLE_CURSOR_INFO cursorInfo;
             GetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&cursorInfo);
@@ -138,14 +138,14 @@ class CUI final{
         }
         auto initPos(){
             cls();
-            for(auto &ref:items){
+            for(auto &ref:item){
                 ref.pos=getCursor();
                 ref.setColor('D');
                 write(ref.text,true);
             }
         }
         auto refresh(COORD &hangPos){
-            for(auto &ref:items){
+            for(auto &ref:item){
                 if((ref==hangPos)&&(ref.colorLast!=ref.colorHighlight)){
                     ref.setColor('H');
                     rewrite(ref);
@@ -158,7 +158,7 @@ class CUI final{
         }
         auto impl(MOUSE_EVENT_RECORD &mouseEvent){
             bool isExit{};
-            for(auto &ref:items){
+            for(auto &ref:item){
                 if(ref==mouseEvent.dwMousePosition){
                     if(ref.fn!=nullptr){
                         cls();
@@ -180,30 +180,30 @@ class CUI final{
             height{},width{}{}
         ~CUI(){}
         auto size(){
-            return items.size();
+            return item.size();
         }
         auto &add(const i8 *text,call fn=nullptr,void *args=nullptr,i16 colorHighlight=CON_BLUE,i16 colorDef=CON_WHITE){
-            items.emplace_back(Item{text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args});
+            item.emplace_back(Item{text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args});
             return *this;
         }
-        auto &add(int x,const i8 *text,call fn=nullptr,void *args=nullptr,i16 colorHighlight=CON_BLUE,i16 colorDef=CON_WHITE){
-            items.emplace(items.begin()+x,Item{text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args});
+        auto &add(int i,const i8 *text,call fn=nullptr,void *args=nullptr,i16 colorHighlight=CON_BLUE,i16 colorDef=CON_WHITE){
+            item.emplace(item.begin()+i,Item{text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args});
             return *this;
         }
-        auto &reset(int x,const i8 *text,call fn=nullptr,void *args=nullptr,i16 colorHighlight=CON_BLUE,i16 colorDef=CON_WHITE){
-            items[x]=Item{text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args};
+        auto &reset(int i,const i8 *text,call fn=nullptr,void *args=nullptr,i16 colorHighlight=CON_BLUE,i16 colorDef=CON_WHITE){
+            item[i]=Item{text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args};
             return *this;
         }
         auto &rm(){
-            items.pop_back();
+            item.pop_back();
             return *this;
         }
         auto &rm(int begin,int end){
-            items.erase(items.begin()+begin,items.begin()+end);
+            item.erase(item.begin()+begin,item.begin()+end);
             return *this;
         }
         auto &clear(){
-            items.clear();
+            item.clear();
             return *this;
         }
         auto show(){
