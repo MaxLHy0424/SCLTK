@@ -40,12 +40,12 @@ auto main(i32 argc,i8 *args[])->i32{
         std::thread{Mod::frontShow}.detach();
     }
     CUI ui;
-    ui.add("                    < 主  页 >\n\n");
+    ui.add("                    | 主  页 |\n\n");
     if(optError){
         ui.add(" (!) 参数错误.\n");
     }
     ui.add(" > 退出 ",Mod::exit,nullptr,CON_RED_PALE)
-      .add(" > 信息 ",Mod::info)
+      .add(" > 关于 ",Mod::info)
       .add(" > 命令提示符 ",Mod::cmd)
       .add("\n[破解]\n");
     if(IsUserAnAdmin()){
