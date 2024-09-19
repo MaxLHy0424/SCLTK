@@ -179,12 +179,23 @@ class CUI final{
         CUI():
             height{},width{}{}
         ~CUI(){}
+        auto size(){
+            return items.size();
+        }
         auto &add(const i8 *text,call fn=nullptr,void *args=nullptr,i16 colorHighlight=CON_BLUE,i16 colorDef=CON_WHITE){
-            items.push_back(Item{text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args});
+            items.emplace_back(Item{text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args});
+            return *this;
+        }
+        auto &add(int x,const i8 *text,call fn=nullptr,void *args=nullptr,i16 colorHighlight=CON_BLUE,i16 colorDef=CON_WHITE){
+            items.emplace(items.begin()+x,Item{text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args});
             return *this;
         }
         auto &rm(){
             items.pop_back();
+            return *this;
+        }
+        auto &rm(int begin,int end){
+            items.erase(items.begin()+begin,items.begin()+end);
             return *this;
         }
         auto &clear(){
