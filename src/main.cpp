@@ -51,10 +51,10 @@ auto main(i32 argc,i8 *args[])->i32{
     if(IsUserAnAdmin()){
         ui.add(
             " > 极域电子教室 ",Mod::op,
-            new Mod::ArgsOp{'C',Mod::rule.mythware.exe,Mod::rule.mythware.svc}
+            new Mod::ArgsOp{'c',Mod::rule.mythware.exe,Mod::rule.mythware.svc}
         ).add(
             " > 联想云教室 ",Mod::op,
-            new Mod::ArgsOp{'C',Mod::rule.lenovo.exe,Mod::rule.lenovo.svc}
+            new Mod::ArgsOp{'c',Mod::rule.lenovo.exe,Mod::rule.lenovo.svc}
         );
     }else{
         ui.add(" (i) 权限不足.");
@@ -63,10 +63,10 @@ auto main(i32 argc,i8 *args[])->i32{
     if(IsUserAnAdmin()){
         ui.add(
             " > 极域电子教室 ",Mod::op,
-            new Mod::ArgsOp{'R',Mod::rule.mythware.exe,Mod::rule.mythware.svc}
+            new Mod::ArgsOp{'r',Mod::rule.mythware.exe,Mod::rule.mythware.svc}
         ).add(
             " > 联想云教室 ",Mod::op,
-            new Mod::ArgsOp{'R',Mod::rule.lenovo.exe,Mod::rule.lenovo.svc}
+            new Mod::ArgsOp{'r',Mod::rule.lenovo.exe,Mod::rule.lenovo.svc}
         );
     }else{
         ui.add(" (i) 权限不足.");

@@ -89,7 +89,7 @@ namespace Mod{
     auto op(Data data){
         std::string cmd;
         switch(((ArgsOp*)data.args)->f){
-            case 'C':{
+            case 'c':{
                 for(const auto &ref:((ArgsOp*)data.args)->exe){
                     cmd="reg add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\"
                         +(std::string)ref+".exe\" /f /t reg_sz /v debugger /d ?";
@@ -102,7 +102,7 @@ namespace Mod{
                     system(cmd.c_str());
                 }
                 break;
-            }case 'R':{
+            }case 'r':{
                 for(const auto &ref:((ArgsOp*)data.args)->exe){
                     cmd="reg delete \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\"
                         +(std::string)ref+".exe\" /f";
