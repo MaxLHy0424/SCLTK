@@ -35,7 +35,7 @@ namespace Mod{
     }
     auto info(Data){
         CUI ui;
-        ui.add("                    < 关  于 >\n\n")
+        ui.add("                    | 关  于 |\n\n")
           .add(" > 返回 ",Mod::exit,nullptr,CON_RED_PALE)
           .add("\n[名称]\n")
           .add(" Computer Room Control Software Nemesis")
