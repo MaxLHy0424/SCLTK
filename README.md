@@ -113,7 +113,7 @@ CRCSN 使用 [MIT License](LICENSE), 详细内容请自行阅读.
 
 非常欢迎大家二次开发 CRCSN!
 
-二次开发时, 请务必修改 `def.hpp` 和 `launcher.cmd` 中的宏定义 `WINDOW_TITLE` 和  `VERSION_INFO`, 以做区分.
+二次开发时, 请务必修改 `def.hpp` 和 `launcher.cmd` 中的宏定义 `TITLE` 和  `VERSION_INFO`, 以做区分.
 
 版权声明部分, 请在遵守许可证的情况下修改. 推荐将二次开发版本开源至 GitHub, 在许可证允许的情况下, 可能会被采纳.
 

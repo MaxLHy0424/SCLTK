@@ -6,7 +6,7 @@ struct{
 }opt{};
 namespace Mod{
     auto init(){
-        SetConsoleTitle(WINDOW_TITLE);
+        SetConsoleTitle(TITLE);
         if(!opt.wndCtrls){
             SetWindowLongPtr(
                 GetConsoleWindow(),GWL_STYLE,
