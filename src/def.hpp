@@ -11,4 +11,4 @@ using i8=char;
 using i16=short;
 using i32=int;
 #define TITLE L"CRCSN"
-#define VERSION_INFO "v5.6.1 (Stable)"
+#define VERSION_INFO "v5.6.2 (Stable)"
