@@ -36,8 +36,8 @@ class CUI final{
             Item(const i8 *text,i16 def,i16 highlight,call fn,void *args):
                 text{text},colorDef{def},colorHighlight{highlight},
                 colorLast{CON_WHITE},pos{},fn{fn},args{args}{}
-            auto setColor(i8 m){
-                switch(m){
+            auto setColor(i8 key){
+                switch(key){
                     case 'd':{
                         SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),colorDef);
                         colorLast=colorDef;
@@ -58,10 +58,10 @@ class CUI final{
         };
         i16 height,width;
         std::vector<Item> item;
-        auto opCursor(char m){
+        auto opCursor(char key){
             CONSOLE_CURSOR_INFO cursorInfo;
             GetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&cursorInfo);
-            switch(m){
+            switch(key){
                 case 'h':{
                     cursorInfo.bVisible=false;
                     break;
@@ -72,10 +72,10 @@ class CUI final{
             }
             SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&cursorInfo);
         }
-        auto opAttrs(char m){
+        auto opAttrs(char key){
             DWORD mode;
             GetConsoleMode(GetStdHandle(STD_INPUT_HANDLE),&mode);
-            switch(m){
+            switch(key){
                 case '+':{
                     mode|=ENABLE_QUICK_EDIT_MODE,mode|=ENABLE_INSERT_MODE,mode|=ENABLE_MOUSE_INPUT;
                     break;
