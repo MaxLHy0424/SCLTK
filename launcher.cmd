@@ -12,7 +12,7 @@ set runtime=msvcrt
 set args=
 %1
 if %AUTO_LAUNCH%==0 (
-  echo                    ^| Launcher ^|
+  echo                      Launcher
   echo.
   echo     ^(C^) 2023 MaxLHy0424. All rights reserved.
   echo.
