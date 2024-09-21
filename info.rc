@@ -1,4 +1,4 @@
-#define BUILD_INFO
+#define _BUILD_INFO_
 #include"src/def.hpp"
 1 ICON "img/favicon.ico"
 1 VERSIONINFO
