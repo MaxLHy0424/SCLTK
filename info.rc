@@ -1,3 +1,5 @@
+#define BUILD_INFO
+#include"src/def.hpp"
 1 ICON "img/favicon.ico"
 1 VERSIONINFO
 FILEVERSION 1,0,0,0
@@ -11,7 +13,7 @@ BEGIN
 			VALUE "InternalName","CRCSN"
 			VALUE "LegalCopyright","(C) 2023 MaxLHy0424. All rights reserved."
 			VALUE "ProductName","Computer Room Control Software Nemesis"
-			VALUE "ProductVersion","v5.6.2"
+			VALUE "ProductVersion",VERSION_INFO
         END
     END
     BLOCK "VarFileInfo"
