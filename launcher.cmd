@@ -22,8 +22,8 @@ if %AUTO_LAUNCH%==0 (
   )
   pause > nul
 )
-msHta vbScript:createObject("shell.application").shellExecute("%~s0","goTo:runAs","","runAs",1)(window.close) & goTo:eof
-:runAs
+msHta vbScript:createObject("shell.application").shellExecute("%~s0","goTo:launch","","runAs",1)(window.close) & goTo:eof
+:launch
   chcp 936 > nul
   start .\bin\%arch%\CRCSN-%runtime%.exe %args%
   exit /b
