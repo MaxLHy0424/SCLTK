@@ -114,11 +114,7 @@ class CUI final{
         auto cls(){
             getConsoleSize();
             setCursor({0,0});
-            for(i16 i{};i<height;++i){
-                for(i16 j{};j<width;++j){
-                    printf(" ");
-                }
-            }
+            printf("%s",std::string(width*height,' ').c_str());
             setCursor({0,0});
         }
         auto write(const i8 *text,bool isEndl=false){
