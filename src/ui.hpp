@@ -10,18 +10,18 @@
 #define CON_WHITE 0x07
 #define CON_BLUE 0x09
 #define CON_RED_PALE 0x0c
-class CUI;
+class UI;
 struct Data final{
     DWORD buttonState,ctrlKeyState,eventFlag;
-    CUI *ui;
+    UI *ui;
     void *args;
     Data():
         buttonState{MOUSE_BUTTON_LEFT},ctrlKeyState{},eventFlag{},ui{},args{}{}
-    Data(MOUSE_EVENT_RECORD mouseEvent,CUI *ui,void *args):
+    Data(MOUSE_EVENT_RECORD mouseEvent,UI *ui,void *args):
         buttonState{mouseEvent.dwButtonState},ctrlKeyState{mouseEvent.dwControlKeyState},
         eventFlag{mouseEvent.dwEventFlags},ui{ui},args{args}{}
 };
-class CUI final{
+class UI final{
     private:
         using call=bool(*)(Data);
         struct Item final{
@@ -172,9 +172,9 @@ class CUI final{
             return isExit;
         }
     public:
-        CUI():
+        UI():
             height{},width{}{}
-        ~CUI(){}
+        ~UI(){}
         auto size(){
             return item.size();
         }
