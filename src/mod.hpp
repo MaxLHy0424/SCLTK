@@ -34,7 +34,7 @@ namespace Mod{
     }
     auto info(Data){
         CUI ui;
-        ui.add("                    | 关  于 |\n\n")
+        ui.add("                    | 信  息 |\n\n")
           .add(" < 返回 ",Mod::exit,nullptr,CON_RED_PALE)
           .add("\n[  名  称  ]\n")
           .add(" " INFO_NAME)

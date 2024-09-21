@@ -45,7 +45,7 @@ auto main(i32 argc,i8 *args[])->i32{
         ui.add(" (!) 参数错误.\n");
     }
     ui.add(" > 退出 ",Mod::exit,nullptr,CON_RED_PALE)
-      .add(" > 关于 ",Mod::info)
+      .add(" > 信息 ",Mod::info)
       .add(" > 命令提示符 ",Mod::cmd)
       .add("\n[ 破 解 ]\n");
     if(IsUserAnAdmin()){
