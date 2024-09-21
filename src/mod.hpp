@@ -37,14 +37,14 @@ namespace Mod{
         ui.add("                    | 关  于 |\n\n")
           .add(" > 返回 ",Mod::exit,nullptr,CON_RED_PALE)
           .add("\n[名称]\n")
-          .add(" " SOFTWARE_INFO_FULL_NAME)
+          .add(" " INFO_FULL_NAME)
           .add("\n[版本]\n")
-          .add(" " SOFTWARE_INFO_VERSION)
+          .add(" " INFO_VERSION)
           .add("\n[仓库]\n")
-          .add(" " SOFTWARE_INFO_REPO)
+          .add(" " INFO_REPO)
           .add("\n[许可证]\n")
-          .add(" " SOFTWARE_INFO_LICENSE)
-          .add(" " SOFTWARE_INFO_COPYRIGHT)
+          .add(" " INFO_LICENSE)
+          .add(" " INFO_COPYRIGHT)
           .show();
         return false;
     }
