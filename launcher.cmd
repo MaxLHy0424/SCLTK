@@ -2,8 +2,8 @@
 chcp 65001 > nul
 set AUTO_LAUNCH=0
 set SHOW_VERBOSE_INFO=0
-set TITLE=CRCSN Launcher
-title %TITLE%
+set WINDOW_TITLE=CRCSN Launcher
+title %WINDOW_TITLE%
 mode con cols=50 lines=25
 cd /d "%~dp0"
 set version=v5.6.2

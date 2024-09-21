@@ -19,4 +19,4 @@ using i32=int;
 #define INFO_PUBLISHER "MaxLHy0424"
 #define INFO_LICENSE "MIT License"
 #define INFO_COPYRIGHT "(C) 2023 MaxLHy0424. All rights reserved."
-#define TITLE L"CRCSN"
+#define WINDOW_TITLE L"CRCSN"
