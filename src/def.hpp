@@ -1,8 +1,8 @@
 #pragma once
-#ifndef BUILD_INFO
+#ifndef _BUILD_INFO_
 #define _CRT_SECURE_NO_WARNINGS
-#define ANSI
 #define _ANSI
+#define ANSI
 #include<stdio.h>
 #include<shlobj.h>
 #include<vector>
