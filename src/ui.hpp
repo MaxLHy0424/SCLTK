@@ -186,19 +186,19 @@ class CUI final{
             item.emplace_back(Item{text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args});
             return *this;
         }
-        auto &add(int i,const i8 *text,call fn=nullptr,void *args=nullptr,i16 colorHighlight=CON_BLUE,i16 colorDef=CON_WHITE){
+        auto &insert(int i,const i8 *text,call fn=nullptr,void *args=nullptr,i16 colorHighlight=CON_BLUE,i16 colorDef=CON_WHITE){
             item.emplace(item.begin()+i,Item{text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args});
             return *this;
         }
-        auto &reset(int i,const i8 *text,call fn=nullptr,void *args=nullptr,i16 colorHighlight=CON_BLUE,i16 colorDef=CON_WHITE){
+        auto &set(int i,const i8 *text,call fn=nullptr,void *args=nullptr,i16 colorHighlight=CON_BLUE,i16 colorDef=CON_WHITE){
             item[i]=Item{text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args};
             return *this;
         }
-        auto &rm(){
+        auto &remove(){
             item.pop_back();
             return *this;
         }
-        auto &rm(int begin,int end){
+        auto &remove(int begin,int end){
             item.erase(item.begin()+begin,item.begin()+end);
             return *this;
         }
