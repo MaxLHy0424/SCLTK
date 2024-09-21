@@ -210,7 +210,6 @@ class CUI final{
             opAttrs('-');
             opCursor('h');
             MOUSE_EVENT_RECORD mouseEvent;
-            Sleep(50);
             initPos();
             bool isExit{};
             while(!isExit){
@@ -226,9 +225,8 @@ class CUI final{
                         break;
                     }
                 }
-                Sleep(10);
+                Sleep(50);
             }
             cls();
-            Sleep(50);
         }
 };
