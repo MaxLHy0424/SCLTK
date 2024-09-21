@@ -187,7 +187,7 @@ class UI final{
             return *this;
         }
         auto &edit(int index,const i8 *text,call function=nullptr,void *args=nullptr,i16 colorHighlight=CON_BLUE,i16 colorDef=CON_WHITE){
-            item[index]=Item(text,colorDef,(function==nullptr)?(colorDef):(colorHighlight),function,args);
+            item[index]={text,colorDef,(function==nullptr)?(colorDef):(colorHighlight),function,args};
             return *this;
         }
         auto &remove(){
