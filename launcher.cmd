@@ -26,5 +26,5 @@ if %AUTO_LAUNCH%==0 (
 msHta vbScript:createObject("shell.application").shellExecute("%~s0","goTo:launch","","runAs",1)(window.close) & goTo:eof
 :launch
   chcp 936 > nul
-  start .\bin\%version%\main-%runtime%.exe %args%
+  start .\bin\%version%\main-%arch%-%runtime%.exe %args%
   exit /b
