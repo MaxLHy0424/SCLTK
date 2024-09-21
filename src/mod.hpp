@@ -82,12 +82,12 @@ namespace Mod{
         }
     };
     struct ArgsOp final{
-        i8 key;
+        i8 k;
         std::vector<const i8*> &exe,&svc;
     };
     auto op(Data data){
         std::string cmd;
-        switch(((ArgsOp*)data.args)->key){
+        switch(((ArgsOp*)data.args)->k){
             case 'c':{
                 for(const auto &ref:((ArgsOp*)data.args)->exe){
                     cmd="reg add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\"
