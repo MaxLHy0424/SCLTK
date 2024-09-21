@@ -8,12 +8,12 @@ BEGIN
     BEGIN
         BLOCK "040904B0"
         BEGIN
-            VALUE "ProductName",SOFTWARE_INFO_FULL_NAME
-            VALUE "InternalName",SOFTWARE_INFO_NAME
-            VALUE "FileDescription",SOFTWARE_INFO_NAME
-            VALUE "ProductVersion",SOFTWARE_INFO_VERSION
-			VALUE "CompanyName",SOFTWARE_INFO_PUBLISHER
-			VALUE "LegalCopyright",SOFTWARE_INFO_COPYRIGHT
+            VALUE "ProductName",INFO_FULL_NAME
+            VALUE "InternalName",INFO_NAME
+            VALUE "FileDescription",INFO_NAME
+            VALUE "ProductVersion",INFO_VERSION
+			VALUE "CompanyName",INFO_PUBLISHER
+			VALUE "LegalCopyright",INFO_COPYRIGHT
         END
     END
     BLOCK "VarFileInfo"
