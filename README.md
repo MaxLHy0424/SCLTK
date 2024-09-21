@@ -34,7 +34,7 @@ set runtime=msvcrt
 
 软件支持的 Runtime 如下:
  - `msvcrt` (默认): 开发工具链为 *MSYS2* `mingw-w64-x86_64-toolchain`, Runtime 为老旧的 *Microsoft Visual C Runtime*, 支持大部分 Windows OS.
- - `ucrt` (推荐): 开发工具链为 *MSYS2* `mingw-w64-ucrt-x86_64-toolchain`,  Runtime 为新式的 *Universal C Runtime*, 支持 Windows 10 以上的 Windows OS (部分 Windows OS 在安装最新补丁后支持运行).
+ - `ucrt` (推荐): 开发工具链为 *MSYS2* `mingw-w64-ucrt-x86_64-toolchain`, Runtime 为新式的 *Universal C Runtime*, 支持 Windows 10 以上的 Windows OS (部分 Windows OS 在安装最新补丁后支持运行).
 
 根据上述内容, 选择需要版本的对应字符串替换即可.
 
@@ -113,7 +113,7 @@ CRCSN 使用 [MIT License](LICENSE), 详细内容请自行阅读.
 
 非常欢迎大家二次开发 CRCSN!
 
-二次开发时, 请务必修改 `def.hpp` 和 `launcher.cmd` 中的宏定义 `TITLE` 和  `VERSION_INFO`, 以做区分.
+二次开发时, 请务必修改 `def.hpp` 和 `launcher.cmd` 中的宏定义, 以做区分.
 
 版权声明部分, 请在遵守许可证的情况下修改. 推荐将二次开发版本开源至 GitHub, 在许可证允许的情况下, 可能会被采纳.
 
