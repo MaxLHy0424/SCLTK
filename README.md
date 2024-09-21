@@ -5,7 +5,7 @@
 # 获取
 
 **最新发行版: v5.6.3.**\
-**[更新日志](https://github.com/MaxLHy0424/CRCSN/releases/tag/v5.6.3) | [直链下载](https://github.com/MaxLHy0424/CRCSN/releases/download/v5.6.3/CRCSN-v5.6.3-Stable.7z)**
+**[更新日志](https://github.com/MaxLHy0424/CRCSN/releases/tag/v5.6.3) | [直链下载](https://github.com/MaxLHy0424/CRCSN/releases/download/v5.6.3/CRCSN.7z)**
 
 或者:
 
