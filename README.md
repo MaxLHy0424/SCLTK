@@ -34,7 +34,7 @@ set runtime=msvcrt
 
 软件支持的 Runtime 如下:
  - `msvcrt` (默认): 开发工具链为 *MSYS2* `mingw-w64-x86_64-toolchain`, Runtime 为老旧的 *Microsoft Visual C Runtime*, 支持大部分 Windows OS.
- - `ucrt` (推荐): 开发工具链为 *MSYS2* `mingw-w64-ucrt-x86_64-toolchain`, Runtime 为新式的 *Universal C Runtime*, 支持 Windows 10 以上的 Windows OS (部分 Windows OS 在安装最新补丁后支持运行).
+ - `ucrt` (推荐): 开发工具链为 *MSYS2* `mingw-w64-ucrt-x86_64-toolchain`, Runtime 为新式的 *Universal C Runtime*, 支持 Windows 10 以上的 Windows OS (部分 Windows OS 在安装最新补丁后可以运行).
 
 根据上述内容, 选择需要版本的对应字符串替换即可.
 
