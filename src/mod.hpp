@@ -33,7 +33,7 @@ namespace Mod{
         return true;
     }
     auto info(Data){
-        CUI ui;
+        UI ui;
         ui.add("                    | 信  息 |\n\n")
           .add(" < 返回 ",Mod::exit,nullptr,CON_RED_PALE)
           .add("\n[  名  称  ]\n")
