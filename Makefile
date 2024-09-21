@@ -1,6 +1,6 @@
 msys2=C:\\Software\\MSYS2
 CC=g++.exe
-args=-C -fexec-charset=GBK -std=gnu++23 -Wall -Wextra -pipe -m64 -DNDEBUG -static -Ofast -flto -o
+args=-C -fexec-charset=GBK -std=gnu++23 -Wall -Wextra -pipe -m64 -DNDEBUG -static -Os -flto -o
 .PHONY:build clean
 arch=x86_64
 version=v5.6.3
