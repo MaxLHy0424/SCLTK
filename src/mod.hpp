@@ -42,7 +42,7 @@ namespace Mod{
           .add("\n[  版  本  ]\n")
           .add(" " INFO_VERSION)
           .add("\n[  仓  库  ]\n")
-          .add(" " INFO_REPO)
+          .add(" " INFO_REPO_URL)
           .add("\n[ 许 可 证 ]\n")
           .add(" " INFO_LICENSE)
           .add(" " INFO_COPYRIGHT)
