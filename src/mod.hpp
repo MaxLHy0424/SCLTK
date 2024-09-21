@@ -38,14 +38,14 @@ namespace Mod{
         ui.add("                    | 关  于 |\n\n")
           .add(" > 返回 ",Mod::exit,nullptr,CON_RED_PALE)
           .add("\n[名称]\n")
-          .add(" Computer Room Control Software Nemesis")
+          .add(" " INFO_FULL_NAME)
           .add("\n[版本]\n")
-          .add(" " VERSION_INFO)
+          .add(" " INFO_VERSION)
           .add("\n[仓库]\n")
-          .add(" https://github.com/MaxLHy0424/CRCSN")
+          .add(" " INFO_REPO)
           .add("\n[许可证]\n")
-          .add(" MIT License")
-          .add(" (C) 2023 MaxLHy0424. All rights reserved.")
+          .add(" " INFO_LICENSE)
+          .add(" " INFO_COPYRIGHT)
           .show();
         return false;
     }

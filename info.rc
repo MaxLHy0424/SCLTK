@@ -8,12 +8,12 @@ BEGIN
     BEGIN
         BLOCK "040904B0"
         BEGIN
-			VALUE "CompanyName","MaxLHy0424"
-			VALUE "FileDescription","CRCSN"
-			VALUE "InternalName","CRCSN"
-			VALUE "LegalCopyright","(C) 2023 MaxLHy0424. All rights reserved."
-			VALUE "ProductName","Computer Room Control Software Nemesis"
-			VALUE "ProductVersion",VERSION_INFO
+            VALUE "ProductName",INFO_FULL_NAME
+            VALUE "InternalName",INFO_NAME
+            VALUE "FileDescription",INFO_NAME
+            VALUE "ProductVersion",INFO_VERSION
+			VALUE "CompanyName",INFO_PUBLISHER
+			VALUE "LegalCopyright",INFO_COPYRIGHT
         END
     END
     BLOCK "VarFileInfo"
