@@ -5,9 +5,9 @@
 #define _ANSI
 #include<stdio.h>
 #include<shlobj.h>
-#include<thread>
 #include<vector>
 #include<string>
+#include<thread>
 using i8=char;
 using i16=short;
 using i32=int;
