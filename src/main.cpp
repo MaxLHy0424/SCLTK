@@ -37,7 +37,7 @@ auto main(i32 argc,i8 *args[])->i32{
     }
     Mod::init();
     if(opt.wndFrontShow){
-        std::thread{Mod::frontShow}.detach();
+        std::thread(Mod::frontShow).detach();
     }
     CUI ui;
     ui.add("                    | 主  页 |\n\n");

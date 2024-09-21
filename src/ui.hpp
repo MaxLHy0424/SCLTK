@@ -161,7 +161,7 @@ class CUI final{
                         ref.setColor('d');
                         opAttrs('+');
                         opCursor('s');
-                        isExit=ref.fn(Data{mouseEvent,this,ref.args});
+                        isExit=ref.fn(Data(mouseEvent,this,ref.args));
                         opAttrs('-');
                         opCursor('h');
                         initPos();
@@ -179,15 +179,15 @@ class CUI final{
             return item.size();
         }
         auto &add(const i8 *text,call fn=nullptr,void *args=nullptr,i16 colorHighlight=CON_BLUE,i16 colorDef=CON_WHITE){
-            item.emplace_back(Item{text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args});
+            item.emplace_back(Item(text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args));
             return *this;
         }
         auto &insert(int i,const i8 *text,call fn=nullptr,void *args=nullptr,i16 colorHighlight=CON_BLUE,i16 colorDef=CON_WHITE){
-            item.emplace(item.begin()+i,Item{text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args});
+            item.emplace(item.begin()+i,Item(text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args));
             return *this;
         }
         auto &edit(int i,const i8 *text,call fn=nullptr,void *args=nullptr,i16 colorHighlight=CON_BLUE,i16 colorDef=CON_WHITE){
-            item[i]=Item{text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args};
+            item[i]=Item(text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args);
             return *this;
         }
         auto &remove(){
