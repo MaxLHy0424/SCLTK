@@ -21,7 +21,7 @@
                 "-m64",
                 "-DNDEBUG",
                 "-static",
-                "-Ofast",
+                "-Os",
                 "-flto",
                 "-o",
                 "bin/__debug__.exe"
