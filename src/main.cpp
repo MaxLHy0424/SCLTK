@@ -51,10 +51,10 @@ auto main(i32 argc,i8 *args[])->i32{
     if(IsUserAnAdmin()){
         ui.add(
             " > 极域电子教室 ",Mod::op,
-            new Mod::ArgsOp{'c',Mod::rule.mythware.exe,Mod::rule.mythware.svc}
+            new Mod::OpArgs{'c',Mod::rule.mythware.exe,Mod::rule.mythware.svc}
         ).add(
             " > 联想云教室 ",Mod::op,
-            new Mod::ArgsOp{'c',Mod::rule.lenovo.exe,Mod::rule.lenovo.svc}
+            new Mod::OpArgs{'c',Mod::rule.lenovo.exe,Mod::rule.lenovo.svc}
         );
     }else{
         ui.add(" (i) 需要提权.");
@@ -63,10 +63,10 @@ auto main(i32 argc,i8 *args[])->i32{
     if(IsUserAnAdmin()){
         ui.add(
             " > 极域电子教室 ",Mod::op,
-            new Mod::ArgsOp{'r',Mod::rule.mythware.exe,Mod::rule.mythware.svc}
+            new Mod::OpArgs{'r',Mod::rule.mythware.exe,Mod::rule.mythware.svc}
         ).add(
             " > 联想云教室 ",Mod::op,
-            new Mod::ArgsOp{'r',Mod::rule.lenovo.exe,Mod::rule.lenovo.svc}
+            new Mod::OpArgs{'r',Mod::rule.lenovo.exe,Mod::rule.lenovo.svc}
         );
     }else{
         ui.add(" (i) 需要提权.");
