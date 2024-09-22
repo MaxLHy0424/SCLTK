@@ -4,8 +4,8 @@
 
 # 获取
 
-**最新发行版: v5.6.3.**\
-**[更新日志](https://github.com/MaxLHy0424/CRCSN/releases/tag/v5.6.3) | [直链下载](https://github.com/MaxLHy0424/CRCSN/releases/download/v5.6.3/CRCSN.7z)**
+**最新发行版: v5.6.4.**\
+**[更新日志](https://github.com/MaxLHy0424/CRCSN/releases/tag/v5.6.4) | [直链下载](https://github.com/MaxLHy0424/CRCSN/releases/download/v5.6.4/CRCSN.7z)**
 
 或者:
 
@@ -17,7 +17,7 @@
 **由于 CRCSN 存在敏感操作, 使用时建议关闭防病毒软件. 若 CRCSN 被报为恶意软件, 请添加排除项.**
 
 > [!NOTE]
-> 适用于 v5.6.3.
+> 适用于 v5.6.4.
 
 ## 1 启动
 
@@ -33,8 +33,8 @@ set runtime=msvcrt
 ```
 
 软件支持的 Runtime 如下:
- - `msvcrt` (默认): 开发工具链为 *MSYS2* `mingw-w64-x86_64-toolchain`, Runtime 为老旧的 *Microsoft Visual C Runtime*, 支持大部分 Windows OS.
- - `ucrt` (推荐): 开发工具链为 *MSYS2* `mingw-w64-ucrt-x86_64-toolchain`, Runtime 为新式的 *Universal C Runtime*, 支持 Windows 10 以上的 Windows OS (部分 Windows OS 在安装最新补丁后可以运行).
+- `msvcrt` (默认): 开发工具链为 *MSYS2* `mingw-w64-x86_64-toolchain`, Runtime 为老旧的 *Microsoft Visual C Runtime*, 支持大部分 Windows OS.
+- `ucrt` (推荐): 开发工具链为 *MSYS2* `mingw-w64-ucrt-x86_64-toolchain`, Runtime 为新式的 *Universal C Runtime*, 支持 Windows 10 以上的 Windows OS (部分 Windows OS 在安装最新补丁后可以运行).
 
 根据上述内容, 选择需要版本的对应字符串替换即可.
 
@@ -71,9 +71,9 @@ set args=
 ```
 
 窗口操作的主参数为 `-W`, 附加参数如下:
- - `f`: 置顶窗口并每间隔 100ms 将窗口设为焦点;
- - `a`: 将窗口不透明度设为 80% (仅支持新版控制台);
- - `c`: 允许缩放 / 最大化 / 最小化窗口 (可能导致意外行为).
+- `f`: 置顶窗口并每间隔 100ms 将窗口设为焦点;
+- `a`: 将窗口不透明度设为 80% (仅支持新版控制台);
+- `c`: 允许缩放 / 最大化 / 最小化窗口 (可能导致意外行为).
 
 可以有多个附加参数, 其顺序不影响应用效果, 但不可以仅使用主参数.
 
@@ -109,7 +109,7 @@ CRCSN 使用 [MIT License](LICENSE), 详细内容请自行阅读.
 # 二次开发
 
 > [!NOTE]
-> 适用于 v5.6.3.
+> 适用于 v5.6.4.
 
 非常欢迎大家二次开发 CRCSN!
 

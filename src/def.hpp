@@ -15,7 +15,7 @@ using i32=int;
 #endif
 #define INFO_NAME "CRCSN"
 #define INFO_FULL_NAME "Computer Room Control Software Nemesis"
-#define INFO_VERSION "v5.6.3 (Stable)"
+#define INFO_VERSION "v5.6.4 (Stable)"
 #define INFO_REPO_URL "https://github.com/MaxLHy0424/CRCSN"
 #define INFO_PUBLISHER "MaxLHy0424"
 #define INFO_LICENSE "MIT License"
