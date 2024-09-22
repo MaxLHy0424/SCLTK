@@ -38,7 +38,6 @@ namespace Mod{
           .add(" < 返回 ",Mod::exit,nullptr,CON_RED_PALE)
           .add("\n[  名  称  ]\n")
           .add(" " INFO_NAME)
-          .add(" " INFO_FULL_NAME)
           .add("\n[  版  本  ]\n")
           .add(" " INFO_VERSION)
           .add("\n[  仓  库  ]\n")

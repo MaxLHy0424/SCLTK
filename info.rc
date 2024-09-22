@@ -8,7 +8,7 @@ BEGIN
     BEGIN
         BLOCK "040904B0"
         BEGIN
-            VALUE "ProductName",INFO_FULL_NAME
+            VALUE "ProductName",INFO_NAME
             VALUE "InternalName",INFO_NAME
             VALUE "FileDescription",INFO_NAME
             VALUE "ProductVersion",INFO_VERSION
