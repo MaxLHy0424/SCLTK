@@ -27,9 +27,10 @@
                 "bin/__debug__.exe"
             ],
             "intelliSenseMode":"windows-gcc-x64",
-            "cStandard":"c23",
+            "cStandard":"gnu23",
             "cppStandard":"gnu++23",
-            "mergeConfigurations":false
+            "mergeConfigurations":false,
+            "configurationProvider":"ms-vscode.makefile-tools"
         }
     ],
     "version":4
