@@ -51,6 +51,7 @@ namespace Mod{
     }
     auto cmd(Data){
         system("cmd");
+        init();
         return false;
     }
     struct{
