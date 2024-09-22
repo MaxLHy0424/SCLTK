@@ -82,13 +82,13 @@ namespace Mod{
         }
     };
     struct OpArgs final{
-        i8 k;
+        i8 key;
         std::vector<const i8*> &exe,&svc;
     };
     auto op(Data data){
         std::string cmd;
-        switch(((OpArgs*)data.args)->k){
-            case 'c':{
+        switch(((OpArgs*)data.args)->key){
+            case 'C':{
                 for(const auto &ref:((OpArgs*)data.args)->exe){
                     cmd="reg add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\"
                         +(std::string)ref+".exe\" /f /t reg_sz /v debugger /d ?";
@@ -101,7 +101,7 @@ namespace Mod{
                     system(cmd.c_str());
                 }
                 break;
-            }case 'r':{
+            }case 'R':{
                 for(const auto &ref:((OpArgs*)data.args)->exe){
                     cmd="reg delete \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\"
                         +(std::string)ref+".exe\" /f";
