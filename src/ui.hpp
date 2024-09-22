@@ -36,13 +36,13 @@ private:
         Item(const i8 *text,i16 def,i16 highlight,call fn,void *args):
             text{text},colorDef{def},colorHighlight{highlight},
             colorLast{CON_WHITE},pos{},fn{fn},args{args}{}
-        auto setColor(i8 k){
-            switch(k){
-                case 'd':{
+        auto setColor(i8 key){
+            switch(key){
+                case 'D':{
                     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),colorDef);
                     colorLast=colorDef;
                     break;
-                }case 'h':{
+                }case 'H':{
                     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),colorHighlight);
                     colorLast=colorHighlight;
                     break;
@@ -58,24 +58,24 @@ private:
     };
     i16 height,width;
     std::vector<Item> item;
-    auto opCursor(char k){
+    auto opCursor(char key){
         CONSOLE_CURSOR_INFO cursorInfo;
         GetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&cursorInfo);
-        switch(k){
-            case 'h':{
+        switch(key){
+            case 'H':{
                 cursorInfo.bVisible=false;
                 break;
-            }case 's':{
+            }case 'S':{
                 cursorInfo.bVisible=true;
                 break;
             }
         }
         SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&cursorInfo);
     }
-    auto opAttrs(char k){
+    auto opAttrs(char key){
         DWORD mode;
         GetConsoleMode(GetStdHandle(STD_INPUT_HANDLE),&mode);
-        switch(k){
+        switch(key){
             case '+':{
                 mode|=ENABLE_QUICK_EDIT_MODE,mode|=ENABLE_INSERT_MODE,mode|=ENABLE_MOUSE_INPUT;
                 break;
@@ -136,18 +136,18 @@ private:
         cls();
         for(auto &ref:item){
             ref.pos=getCursor();
-            ref.setColor('d');
+            ref.setColor('D');
             write(ref.text,true);
         }
     }
     auto refresh(COORD &hangPos){
         for(auto &ref:item){
             if((ref==hangPos)&&(ref.colorLast!=ref.colorHighlight)){
-                ref.setColor('h');
+                ref.setColor('H');
                 rewrite(ref);
             }
             if((ref!=hangPos)&&(ref.colorLast!=ref.colorDef)){
-                ref.setColor('d');
+                ref.setColor('D');
                 rewrite(ref);
             }
         }
@@ -158,12 +158,12 @@ private:
             if(ref==mouseEvent.dwMousePosition){
                 if(ref.fn!=nullptr){
                     cls();
-                    ref.setColor('d');
+                    ref.setColor('D');
                     opAttrs('+');
-                    opCursor('s');
+                    opCursor('S');
                     isExit=ref.fn(Data(mouseEvent,this,ref.args));
                     opAttrs('-');
-                    opCursor('h');
+                    opCursor('H');
                     initPos();
                 }
                 break;
@@ -204,7 +204,7 @@ public:
     }
     auto show(){
         opAttrs('-');
-        opCursor('h');
+        opCursor('H');
         MOUSE_EVENT_RECORD mouseEvent;
         initPos();
         bool isExit{};
