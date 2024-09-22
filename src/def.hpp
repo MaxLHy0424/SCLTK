@@ -1,17 +1,17 @@
 #pragma once
 #ifndef _BUILD_INFO_
-    #define _CRT_SECURE_NO_WARNINGS
-    #define _ANSI
-    #define ANSI
-    #include<stdio.h>
-    #include<shlobj.h>
-    #include<vector>
-    #include<string>
-    #include<thread>
-    using i8=char;
-    using i16=short;
-    using i32=int;
-    #define WINDOW_TITLE "CRCSN"
+#define _CRT_SECURE_NO_WARNINGS
+#define _ANSI
+#define ANSI
+#include<stdio.h>
+#include<shlobj.h>
+#include<vector>
+#include<string>
+#include<thread>
+using i8=char;
+using i16=short;
+using i32=int;
+#define WINDOW_TITLE "CRCSN"
 #endif
 #define INFO_NAME "CRCSN"
 #define INFO_FULL_NAME "Computer Room Control Software Nemesis"
