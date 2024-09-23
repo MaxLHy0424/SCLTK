@@ -50,7 +50,9 @@ namespace Mod{
     }
     auto cmd(Data){
         system("cmd");
-        init();
+        if(opt.wndCtrls){
+            init();
+        }
         return false;
     }
     struct{
