@@ -4,6 +4,7 @@
 struct{
     bool wndFrontShow,wndAlpha,wndCtrls;
 }opt{};
+bool optError{};
 namespace Mod{
     auto init(){
         SetConsoleTitle(WINDOW_TITLE);
