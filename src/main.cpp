@@ -2,7 +2,6 @@
 #include"ui.hpp"
 #include"mod.hpp"
 auto main(i32 argc,i8 *args[])->i32{
-    bool optError{};
     if(argc>1){
         std::string tmp;
         for(i32 i{1};i<argc;++i){
