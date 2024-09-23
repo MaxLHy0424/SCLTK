@@ -4,11 +4,11 @@ args=-C -fexec-charset=GBK -std=gnu++23 -Wall -Wextra -pipe -m64 -DNDEBUG -stati
 .PHONY:build clean
 arch=x86_64
 version=v5.6.6
-build:bin/$(version)/main-$(arch)-msvcrt.exe bin/$(version)/main-$(arch)-ucrt.exe
+build:bin/$(version)/std-$(arch)-msvcrt.exe bin/$(version)/std-$(arch)-ucrt.exe
 obj=src/*.cpp bin/info.obj
-bin/$(version)/main-$(arch)-msvcrt.exe:$(obj) src/*.hpp bin
+bin/$(version)/std-$(arch)-msvcrt.exe:$(obj) src/*.hpp bin
 	$(msys2)\\mingw64\\bin\\$(CC) $(obj) $(args) $@
-bin/$(version)/main-$(arch)-ucrt.exe:$(obj) src/*.hpp bin
+bin/$(version)/std-$(arch)-ucrt.exe:$(obj) src/*.hpp bin
 	$(msys2)\\ucrt64\\bin\\$(CC) $(obj) $(args) $@
 bin/info.obj:info.rc img/favicon.ico bin
 	$(msys2)\\usr\\bin\\windres.exe -i $< -o $@ -F pe-x86-64
