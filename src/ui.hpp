@@ -7,9 +7,9 @@
 #define MOUSE_CLICK_DOUBLE DOUBLE_CLICK
 #define MOUSE_MOVE MOUSE_MOVED
 #define MOUSE_WHEEL MOUSE_WHEELED
-#define CON_WHITE 0x07
-#define CON_BLUE 0x09
-#define CON_RED_PALE 0x0c
+#define WC_WHITE 0x07
+#define WC_BLUE 0x09
+#define WC_RED_PALE 0x0c
 class UI;
 struct Data final{
     DWORD buttonState,ctrlKeyState,eventFlag;
@@ -31,11 +31,11 @@ private:
         fncall fn;
         void *args;
         Item():
-            text{},colorDef{CON_WHITE},colorHighlight{CON_BLUE},
-            colorLast{CON_WHITE},pos{},fn{},args{}{}
+            text{},colorDef{WC_WHITE},colorHighlight{WC_BLUE},
+            colorLast{WC_WHITE},pos{},fn{},args{}{}
         Item(const i8 *text,i16 def,i16 highlight,fncall fn,void *args):
             text{text},colorDef{def},colorHighlight{highlight},
-            colorLast{CON_WHITE},pos{},fn{fn},args{args}{}
+            colorLast{WC_WHITE},pos{},fn{fn},args{args}{}
         auto setColor(i8 key){
             switch(key){
                 case 'D':{
@@ -178,15 +178,15 @@ public:
     auto size(){
         return item.size();
     }
-    auto &add(const i8 *text,fncall fn=nullptr,void *args=nullptr,i16 colorHighlight=CON_BLUE,i16 colorDef=CON_WHITE){
+    auto &add(const i8 *text,fncall fn=nullptr,void *args=nullptr,i16 colorHighlight=WC_BLUE,i16 colorDef=WC_WHITE){
         item.emplace_back(Item(text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args));
         return *this;
     }
-    auto &insert(int idx,const i8 *text,fncall fn=nullptr,void *args=nullptr,i16 colorHighlight=CON_BLUE,i16 colorDef=CON_WHITE){
+    auto &insert(int idx,const i8 *text,fncall fn=nullptr,void *args=nullptr,i16 colorHighlight=WC_BLUE,i16 colorDef=WC_WHITE){
         item.emplace(item.begin()+idx,Item(text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args));
         return *this;
     }
-    auto &edit(int idx,const i8 *text,fncall fn=nullptr,void *args=nullptr,i16 colorHighlight=CON_BLUE,i16 colorDef=CON_WHITE){
+    auto &edit(int idx,const i8 *text,fncall fn=nullptr,void *args=nullptr,i16 colorHighlight=WC_BLUE,i16 colorDef=WC_WHITE){
         item[idx]={text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args};
         return *this;
     }
