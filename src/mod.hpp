@@ -51,7 +51,7 @@ namespace Mod{
     }
     auto cmd(Data){
         system("cmd");
-        if(opt.wndCtrls){
+        if(!opt.wndCtrls){
             init();
         }
         return false;
