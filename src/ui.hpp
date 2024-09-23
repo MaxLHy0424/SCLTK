@@ -226,3 +226,10 @@ public:
         cls();
     }
 };
+#undef MOUSE_BUTTON_LEFT
+#undef MOUSE_BUTTON_MIDDLE
+#undef MOUSE_BUTTON_RIGHT
+#undef MOUSE_CLICK
+#undef MOUSE_CLICK_DOUBLE
+#undef MOUSE_MOVE
+#undef MOUSE_WHEEL
