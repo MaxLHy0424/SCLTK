@@ -1,9 +1,9 @@
 @echo off
 chcp 65001 > nul
-set AUTO_LAUNCH=0
-set SHOW_VERBOSE_INFO=0
-set WINDOW_TITLE=CRCSN Launcher
-title %WINDOW_TITLE%
+set opt.autoLaunch=0
+set opt.showVerboseInfo=0
+set opt.windowTitle=CRCSN Launcher
+windowTitle %opt.windowTitle%
 mode con cols=50 lines=25
 cd /d "%~dp0"
 set version=v5.6.5
@@ -11,12 +11,12 @@ set arch=x86_64
 set runtime=msvcrt
 set args=
 %1
-if %AUTO_LAUNCH%==0 (
+if %opt.autoLaunch%==0 (
   echo                   CRCSN Launcher
   echo.
   echo     ^(C^) 2023 MaxLHy0424. All rights reserved.
   echo.
-  if %SHOW_VERBOSE_INFO%==0 (
+  if %opt.showVerboseInfo%==0 (
     echo 按任意键启动 CRCSN...
   ) else (
     echo 按任意键启动 CRCSN ^(%version%, %arch%, %runtime%^)...
