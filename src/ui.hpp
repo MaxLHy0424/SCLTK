@@ -23,19 +23,19 @@ struct Data final{
 };
 class UI final{
 private:
-    using call=bool(*)(Data);
+    using callback=bool(*)(Data);
     struct Item final{
         const i8 *text;
         i16 colorDef,colorHighlight,colorLast;
-        COORD pos;
-        call fn;
+        COORD position;
+        callback function;
         void *args;
         Item():
             text{},colorDef{CON_WHITE},colorHighlight{CON_BLUE},
-            colorLast{CON_WHITE},pos{},fn{},args{}{}
-        Item(const i8 *text,i16 def,i16 highlight,call fn,void *args):
+            colorLast{CON_WHITE},position{},function{},args{}{}
+        Item(const i8 *text,i16 def,i16 highlight,callback function,void *args):
             text{text},colorDef{def},colorHighlight{highlight},
-            colorLast{CON_WHITE},pos{},fn{fn},args{args}{}
+            colorLast{CON_WHITE},position{},function{function},args{args}{}
         auto setColor(i8 key){
             switch(key){
                 case 'D':{
@@ -50,7 +50,7 @@ private:
             }
         }
         auto operator==(const COORD &mousePos)const{
-            return (pos.Y==mousePos.Y)&&(pos.X<=mousePos.X)&&(mousePos.X<(pos.X+(i16)strlen(text)));
+            return (position.Y==mousePos.Y)&&(position.X<=mousePos.X)&&(mousePos.X<(position.X+(i16)strlen(text)));
         }
         auto operator!=(const COORD &mousePos)const{
             return !operator==(mousePos);
@@ -124,18 +124,18 @@ private:
         }
     }
     auto rewrite(Item &ref){
-        setCursor({0,ref.pos.Y});
-        for(i16 j{};j<ref.pos.X;++j){
+        setCursor({0,ref.position.Y});
+        for(i16 j{};j<ref.position.X;++j){
             write(" ");
         }
-        setCursor({0,ref.pos.Y});
+        setCursor({0,ref.position.Y});
         write(ref.text);
-        setCursor({0,ref.pos.Y});
+        setCursor({0,ref.position.Y});
     }
     auto initPos(){
         cls();
         for(auto &ref:item){
-            ref.pos=getCursor();
+            ref.position=getCursor();
             ref.setColor('D');
             write(ref.text,true);
         }
@@ -156,12 +156,12 @@ private:
         bool isExit{};
         for(auto &ref:item){
             if(ref==mouseEvent.dwMousePosition){
-                if(ref.fn!=nullptr){
+                if(ref.function!=nullptr){
                     cls();
                     ref.setColor('D');
                     opAttrs('+');
                     opCursor('S');
-                    isExit=ref.fn(Data(mouseEvent,this,ref.args));
+                    isExit=ref.function(Data(mouseEvent,this,ref.args));
                     opAttrs('-');
                     opCursor('H');
                     initPos();
@@ -178,16 +178,16 @@ public:
     auto size(){
         return item.size();
     }
-    auto &add(const i8 *text,call fn=nullptr,void *args=nullptr,i16 colorHighlight=CON_BLUE,i16 colorDef=CON_WHITE){
-        item.emplace_back(Item(text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args));
+    auto &add(const i8 *text,callback function=nullptr,void *args=nullptr,i16 colorHighlight=CON_BLUE,i16 colorDef=CON_WHITE){
+        item.emplace_back(Item(text,colorDef,(function==nullptr)?(colorDef):(colorHighlight),function,args));
         return *this;
     }
-    auto &insert(int idx,const i8 *text,call fn=nullptr,void *args=nullptr,i16 colorHighlight=CON_BLUE,i16 colorDef=CON_WHITE){
-        item.emplace(item.begin()+idx,Item(text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args));
+    auto &insert(int idx,const i8 *text,callback function=nullptr,void *args=nullptr,i16 colorHighlight=CON_BLUE,i16 colorDef=CON_WHITE){
+        item.emplace(item.begin()+idx,Item(text,colorDef,(function==nullptr)?(colorDef):(colorHighlight),function,args));
         return *this;
     }
-    auto &edit(int idx,const i8 *text,call fn=nullptr,void *args=nullptr,i16 colorHighlight=CON_BLUE,i16 colorDef=CON_WHITE){
-        item[idx]={text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args};
+    auto &edit(int idx,const i8 *text,callback function=nullptr,void *args=nullptr,i16 colorHighlight=CON_BLUE,i16 colorDef=CON_WHITE){
+        item[idx]={text,colorDef,(function==nullptr)?(colorDef):(colorHighlight),function,args};
         return *this;
     }
     auto &remove(){
