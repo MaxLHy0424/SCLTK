@@ -13,8 +13,8 @@
 class UI;
 struct Data final{
     const DWORD buttonState,ctrlKeyState,eventFlag;
-    UI *ui;
-    const void *args;
+    UI *const ui;
+    void *const args;
     Data():
         buttonState{MOUSE_BUTTON_LEFT},ctrlKeyState{},eventFlag{},ui{},args{}{}
     Data(MOUSE_EVENT_RECORD mouseEvent,UI *ui,void *args):
