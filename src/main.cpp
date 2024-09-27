@@ -38,11 +38,11 @@ auto main(i32 argc,i8 *args[])->i32{
     if(opt.wndFrontShow){
         std::thread(Mod::frontShow).detach();
     }
-    static void *argsFn[]{
-        new Mod::ArgsOp{'C',Mod::rule.mythware.exe,Mod::rule.mythware.svc},
-        new Mod::ArgsOp{'C',Mod::rule.lenovo.exe,Mod::rule.lenovo.svc},
-        new Mod::ArgsOp{'R',Mod::rule.mythware.exe,Mod::rule.mythware.svc},
-        new Mod::ArgsOp{'R',Mod::rule.lenovo.exe,Mod::rule.lenovo.svc}
+    Mod::ArgsOp argsOp[]{
+        {'C',Mod::rule.mythware.exe,Mod::rule.mythware.svc},
+        {'C',Mod::rule.lenovo.exe,Mod::rule.lenovo.svc},
+        {'R',Mod::rule.mythware.exe,Mod::rule.mythware.svc},
+        {'R',Mod::rule.lenovo.exe,Mod::rule.lenovo.svc}
     };
     UI ui;
     ui.add("                      主  页\n\n");
@@ -54,15 +54,15 @@ auto main(i32 argc,i8 *args[])->i32{
       .add(" > 命令提示符 ",Mod::cmd)
       .add("\n[ 破 解 ]\n");
     if(IsUserAnAdmin()){
-        ui.add(" > 极域电子教室 ",Mod::op,argsFn[0])
-          .add(" > 联想云教室 ",Mod::op,argsFn[1]);
+        ui.add(" > 极域电子教室 ",Mod::op,(void*)&argsOp[0])
+          .add(" > 联想云教室 ",Mod::op,(void*)&argsOp[1]);
     }else{
         ui.add(" (i) 需要提权.");
     }
     ui.add("\n[ 恢 复 ]\n");
     if(IsUserAnAdmin()){
-        ui.add(" > 极域电子教室 ",Mod::op,argsFn[2])
-          .add(" > 联想云教室 ",Mod::op,argsFn[3]);
+        ui.add(" > 极域电子教室 ",Mod::op,(void*)&argsOp[2])
+          .add(" > 联想云教室 ",Mod::op,(void*)&argsOp[3]);
     }else{
         ui.add(" (i) 需要提权.");
     }
