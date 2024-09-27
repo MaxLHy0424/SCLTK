@@ -11,6 +11,7 @@
 using i8=char;
 using i16=short;
 using i32=int;
+using ci8=const i8;
 #define WINDOW_TITLE "CRCSN"
 #endif
 #define INFO_NAME "Computer Room Control Software Nemesis"
