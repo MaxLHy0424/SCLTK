@@ -3,7 +3,7 @@ CC=g++.exe
 args=-C -fexec-charset=GBK -std=gnu++23 -Wall -Wextra -pipe -m64 -DNDEBUG -static -Os -flto -o
 .PHONY:build clean
 arch=x86_64
-version=v5.6.6
+version=v5.6.7
 build:bin/$(version)/std-$(arch)-msvcrt.exe bin/$(version)/std-$(arch)-ucrt.exe
 obj=src/*.cpp bin/info.obj
 bin/$(version)/std-$(arch)-msvcrt.exe:$(obj) src/*.hpp bin
