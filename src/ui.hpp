@@ -175,11 +175,17 @@ public:
     UI():
         height{},width{}{}
     ~UI(){}
-    auto &add(cstr text,fncall fn=nullptr,void *args=nullptr,i16 colorHighlight=WC_BLUE,i16 colorDef=WC_WHITE){
+    auto &add(
+        cstr text,fncall fn=nullptr,void *args=nullptr,
+        i16 colorHighlight=WC_BLUE,i16 colorDef=WC_WHITE
+    ){
         item.emplace_back(Item(text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args));
         return *this;
     }
-    auto &insert(i32 idx,cstr text,fncall fn=nullptr,void *args=nullptr,i16 colorHighlight=WC_BLUE,i16 colorDef=WC_WHITE){
+    auto &insert(
+        i32 idx,cstr text,fncall fn=nullptr,void *args=nullptr,
+        i16 colorHighlight=WC_BLUE,i16 colorDef=WC_WHITE
+    ){
         item.emplace(item.begin()+idx,Item(text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args));
         return *this;
     }
