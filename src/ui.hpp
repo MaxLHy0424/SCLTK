@@ -175,9 +175,6 @@ public:
     UI():
         height{},width{}{}
     ~UI(){}
-    auto size(){
-        return item.size();
-    }
     auto &add(ci8 *text,fncall fn=nullptr,void *args=nullptr,i16 colorHighlight=WC_BLUE,i16 colorDef=WC_WHITE){
         item.emplace_back(Item(text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args));
         return *this;
@@ -186,12 +183,12 @@ public:
         item.emplace(item.begin()+idx,Item(text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args));
         return *this;
     }
-    auto &edit(int idx,ci8 *text,fncall fn=nullptr,void *args=nullptr,i16 colorHighlight=WC_BLUE,i16 colorDef=WC_WHITE){
-        item[idx]={text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args};
-        return *this;
-    }
     auto &remove(){
         item.pop_back();
+        return *this;
+    }
+    auto &remove(int begin){
+        item.erase(item.begin()+begin,item.end());
         return *this;
     }
     auto &remove(int begin,int end){
