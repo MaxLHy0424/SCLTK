@@ -58,10 +58,10 @@ namespace Mod{
     }
     struct{
         struct{
-            const std::vector<const i8*> exe,svc;
+            std::vector<cstr> exe,svc;
         }mythware;
         struct{
-            const std::vector<const i8*> exe,svc;
+            std::vector<cstr> exe,svc;
         }lenovo;
     }rule{
         {
@@ -87,31 +87,31 @@ namespace Mod{
     };
     struct ArgsOp final{
         i8 key;
-        const std::vector<const i8*> &exe,&svc;
+        std::vector<cstr> &exe,&svc;
     };
     auto op(Data data){
         std::string cmd;
         switch(((ArgsOp*)data.args)->key){
             case 'C':{
-                for(const auto &ref:((ArgsOp*)data.args)->exe){
+                for(auto &ref:((ArgsOp*)data.args)->exe){
                     cmd="reg add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\"
                         +(std::string)ref+".exe\" /f /t reg_sz /v debugger /d ?";
                     system(cmd.c_str());
                     cmd="taskKill /f /im "+(std::string)ref+".exe";
                     system(cmd.c_str());
                 }
-                for(const auto &ref:((ArgsOp*)data.args)->svc){
+                for(auto &ref:((ArgsOp*)data.args)->svc){
                     cmd="net stop "+(std::string)ref+" /y";
                     system(cmd.c_str());
                 }
                 break;
             }case 'R':{
-                for(const auto &ref:((ArgsOp*)data.args)->exe){
+                for(auto &ref:((ArgsOp*)data.args)->exe){
                     cmd="reg delete \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\"
                         +(std::string)ref+".exe\" /f";
                     system(cmd.c_str());
                 }
-                for(const auto &ref:((ArgsOp*)data.args)->svc){
+                for(auto &ref:((ArgsOp*)data.args)->svc){
                     cmd="net start "+(std::string)ref;
                     system(cmd.c_str());
                 }
