@@ -12,9 +12,9 @@
 #define WC_RED_PALE 0x0c
 class UI;
 struct Data final{
-    DWORD buttonState,ctrlKeyState,eventFlag;
+    const DWORD buttonState,ctrlKeyState,eventFlag;
     UI *ui;
-    void *args;
+    const void *args;
     Data():
         buttonState{MOUSE_BUTTON_LEFT},ctrlKeyState{},eventFlag{},ui{},args{}{}
     Data(MOUSE_EVENT_RECORD mouseEvent,UI *ui,void *args):
@@ -140,7 +140,7 @@ private:
             write(ref.text,true);
         }
     }
-    auto refresh(COORD &hangPos){
+    auto refresh(const COORD &hangPos){
         for(auto &ref:item){
             if((ref==hangPos)&&(ref.colorLast!=ref.colorHighlight)){
                 ref.setColor('H');
@@ -152,7 +152,7 @@ private:
             }
         }
     }
-    auto impl(MOUSE_EVENT_RECORD &mouseEvent){
+    auto impl(const MOUSE_EVENT_RECORD &mouseEvent){
         bool isExit{};
         for(auto &ref:item){
             if(ref==mouseEvent.dwMousePosition){
