@@ -9,6 +9,7 @@
 #include<string>
 #include<thread>
 using i8=char;
+using ci8=const char;
 using i16=short;
 using i32=int;
 #define WINDOW_TITLE "CRCSN"

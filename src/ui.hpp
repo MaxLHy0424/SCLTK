@@ -25,7 +25,7 @@ class UI final{
 private:
     using fncall=bool(*)(Data);
     struct Item final{
-        const i8 *text;
+        ci8 *text;
         i16 colorDef,colorHighlight,colorLast;
         COORD pos;
         fncall fn;
@@ -33,7 +33,7 @@ private:
         Item():
             text{},colorDef{WC_WHITE},colorHighlight{WC_BLUE},
             colorLast{WC_WHITE},pos{},fn{},args{}{}
-        Item(const i8 *text,i16 def,i16 highlight,fncall fn,void *args):
+        Item(ci8 *text,i16 def,i16 highlight,fncall fn,void *args):
             text{text},colorDef{def},colorHighlight{highlight},
             colorLast{WC_WHITE},pos{},fn{fn},args{args}{}
         auto setColor(i8 key){
@@ -117,7 +117,7 @@ private:
         printf("%s",std::string(width*height,' ').c_str());
         setCursor({0,0});
     }
-    auto write(const i8 *text,bool isEndl=false){
+    auto write(ci8 *text,bool isEndl=false){
         printf("%s",text);
         if(isEndl){
             printf("\n");
@@ -176,21 +176,21 @@ public:
         height{},width{}{}
     ~UI(){}
     auto &add(
-        const i8 *text,fncall fn=nullptr,void *args=nullptr,
+        ci8 *text,fncall fn=nullptr,void *args=nullptr,
         i16 colorHighlight=WC_BLUE,i16 colorDef=WC_WHITE
     ){
         item.emplace_back(Item(text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args));
         return *this;
     }
     auto &insert(
-        i32 idx,const i8 *text,fncall fn=nullptr,void *args=nullptr,
+        i32 idx,ci8 *text,fncall fn=nullptr,void *args=nullptr,
         i16 colorHighlight=WC_BLUE,i16 colorDef=WC_WHITE
     ){
         item.emplace(item.begin()+idx,Item(text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args));
         return *this;
     }
     auto &edit(
-        i32 idx,const i8 *text,fncall fn=nullptr,void *args=nullptr,
+        i32 idx,ci8 *text,fncall fn=nullptr,void *args=nullptr,
         i16 colorHighlight=WC_BLUE,i16 colorDef=WC_WHITE
     ){
         item[idx]=Item(text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args);

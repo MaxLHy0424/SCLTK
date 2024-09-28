@@ -35,7 +35,7 @@ namespace Mod{
     }
     auto info(Data){
         UI ui;
-        ui.add("                      关  于\n\n")
+        ui.add("                      信  息\n\n")
           .add(" < 返回 ",Mod::exit,nullptr,WC_RED_PALE)
           .add("\n[  名  称  ]\n")
           .add(" " INFO_NAME)
@@ -58,10 +58,10 @@ namespace Mod{
     }
     struct{
         struct{
-            std::vector<const i8*> exe,svc;
+            std::vector<ci8*> exe,svc;
         }mythware;
         struct{
-            std::vector<const i8*> exe,svc;
+            std::vector<ci8*> exe,svc;
         }lenovo;
     }rule{
         {
@@ -87,7 +87,7 @@ namespace Mod{
     };
     struct ArgsOp final{
         i8 key;
-        std::vector<const i8*> &exe,&svc;
+        std::vector<ci8*> &exe,&svc;
     };
     auto op(Data data){
         std::string cmd;
