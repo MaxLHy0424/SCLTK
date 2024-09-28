@@ -38,13 +38,13 @@ auto main(i32 argc,i8 *args[])->i32{
     if(opt.wndFrontShow){
         std::thread(Mod::frontShow).detach();
     }
+    UI ui;
     static void *argsOp[]{
         new Mod::ArgsOp{'C',Mod::rule.mythware.exe,Mod::rule.mythware.svc},
         new Mod::ArgsOp{'C',Mod::rule.lenovo.exe,Mod::rule.lenovo.svc},
         new Mod::ArgsOp{'R',Mod::rule.mythware.exe,Mod::rule.mythware.svc},
         new Mod::ArgsOp{'R',Mod::rule.lenovo.exe,Mod::rule.lenovo.svc}
     };
-    UI ui;
     ui.add("                      主  页\n\n");
     if(optError){
         ui.add(" (!) 参数错误.\n");
