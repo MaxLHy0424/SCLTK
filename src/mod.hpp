@@ -58,10 +58,10 @@ namespace Mod{
     }
     struct{
         struct{
-            std::vector<const char*> exe,svc;
+            std::vector<const i8*> exe,svc;
         }mythware;
         struct{
-            std::vector<const char*> exe,svc;
+            std::vector<const i8*> exe,svc;
         }lenovo;
     }rule{
         {
@@ -86,8 +86,8 @@ namespace Mod{
         }
     };
     struct ArgsOp final{
-        char key;
-        std::vector<const char*> &exe,&svc;
+        i8 key;
+        std::vector<const i8*> &exe,&svc;
     };
     auto op(Data data){
         std::string cmd;

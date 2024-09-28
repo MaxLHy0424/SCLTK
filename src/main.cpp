@@ -1,10 +1,10 @@
 #include"def.hpp"
 #include"ui.hpp"
 #include"mod.hpp"
-auto main(int argc,char *args[])->int{
+auto main(i32 argc,i8 *args[])->i32{
     if(argc>1){
         std::string tmp;
-        for(int i{1};i<argc;++i){
+        for(i32 i{1};i<argc;++i){
             tmp=args[i];
             if((tmp.size()>2)&&(tmp.substr(0,2)=="-W")){
                 for(auto &j:tmp.substr(2)){
