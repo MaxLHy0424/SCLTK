@@ -189,6 +189,13 @@ public:
         item.emplace(item.begin()+idx,Item(text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args));
         return *this;
     }
+    auto &edit(
+        int idx,const char *text,fncall fn=nullptr,void *args=nullptr,
+        short colorHighlight=WC_BLUE,short colorDef=WC_WHITE
+    ){
+        item[idx]=Item(text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args);
+        return *this;
+    }
     auto &remove(){
         item.pop_back();
         return *this;
