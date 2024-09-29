@@ -23,17 +23,17 @@ struct Data final{
 };
 class UI final{
 private:
-    using fncall=bool(*)(Data);
+    using callback=bool(*)(Data);
     struct Item final{
         const i8 *text;
         i16 colorDef,colorHighlight,colorLast;
         COORD pos;
-        fncall fn;
+        callback fn;
         std::any args;
         Item():
             text{},colorDef{WC_WHITE},colorHighlight{WC_BLUE},
             colorLast{WC_WHITE},pos{},fn{},args{}{}
-        Item(const i8 *text,i16 def,i16 highlight,fncall fn,std::any args):
+        Item(const i8 *text,i16 def,i16 highlight,callback fn,std::any args):
             text{text},colorDef{def},colorHighlight{highlight},
             colorLast{WC_WHITE},pos{},fn{fn},args{args}{}
         auto setColor(i8 key){
@@ -176,21 +176,21 @@ public:
         height{},width{}{}
     ~UI(){}
     auto &add(
-        const i8 *text,fncall fn=nullptr,std::any args={},
+        const i8 *text,callback fn=nullptr,std::any args={},
         i16 colorHighlight=WC_BLUE,i16 colorDef=WC_WHITE
     ){
         item.emplace_back(Item(text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args));
         return *this;
     }
     auto &insert(
-        i32 idx,const i8 *text,fncall fn=nullptr,std::any args={},
+        i32 idx,const i8 *text,callback fn=nullptr,std::any args={},
         i16 colorHighlight=WC_BLUE,i16 colorDef=WC_WHITE
     ){
         item.emplace(item.begin()+idx,Item(text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args));
         return *this;
     }
     auto &edit(
-        i32 idx,const i8 *text,fncall fn=nullptr,std::any args={},
+        i32 idx,const i8 *text,callback fn=nullptr,std::any args={},
         i16 colorHighlight=WC_BLUE,i16 colorDef=WC_WHITE
     ){
         item[idx]=Item(text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args);
