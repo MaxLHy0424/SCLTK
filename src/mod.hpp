@@ -91,27 +91,27 @@ namespace Mod{
     };
     auto op(Data data){
         std::string cmd;
-        switch(((ArgsOp*)data.args)->key){
+        switch(std::any_cast<ArgsOp>(data.args).key){
             case 'C':{
-                for(auto &ref:((ArgsOp*)data.args)->exe){
+                for(auto &ref:std::any_cast<ArgsOp>(data.args).exe){
                     cmd="reg add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\"
                         +(std::string)ref+".exe\" /f /t reg_sz /v debugger /d ?";
                     system(cmd.c_str());
                     cmd="taskKill /f /im "+(std::string)ref+".exe";
                     system(cmd.c_str());
                 }
-                for(auto &ref:((ArgsOp*)data.args)->svc){
+                for(auto &ref:std::any_cast<ArgsOp>(data.args).svc){
                     cmd="net stop "+(std::string)ref+" /y";
                     system(cmd.c_str());
                 }
                 break;
             }case 'R':{
-                for(auto &ref:((ArgsOp*)data.args)->exe){
+                for(auto &ref:std::any_cast<ArgsOp>(data.args).exe){
                     cmd="reg delete \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\"
                         +(std::string)ref+".exe\" /f";
                     system(cmd.c_str());
                 }
-                for(auto &ref:((ArgsOp*)data.args)->svc){
+                for(auto &ref:std::any_cast<ArgsOp>(data.args).svc){
                     cmd="net start "+(std::string)ref;
                     system(cmd.c_str());
                 }
