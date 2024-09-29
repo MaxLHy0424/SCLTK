@@ -14,10 +14,10 @@ class UI;
 struct Data final{
     const DWORD buttonState,ctrlKeyState,eventFlag;
     UI *const ui;
-    void *const args;
+    std::any args;
     Data():
         buttonState{MOUSE_BUTTON_LEFT},ctrlKeyState{},eventFlag{},ui{},args{}{}
-    Data(MOUSE_EVENT_RECORD mouseEvent,UI *ui,void *args):
+    Data(MOUSE_EVENT_RECORD mouseEvent,UI *ui,std::any args):
         buttonState{mouseEvent.dwButtonState},ctrlKeyState{mouseEvent.dwControlKeyState},
         eventFlag{mouseEvent.dwEventFlags},ui{ui},args{args}{}
 };
@@ -29,11 +29,11 @@ private:
         i16 colorDef,colorHighlight,colorLast;
         COORD pos;
         fncall fn;
-        void *args;
+        std::any args;
         Item():
             text{},colorDef{WC_WHITE},colorHighlight{WC_BLUE},
             colorLast{WC_WHITE},pos{},fn{},args{}{}
-        Item(ci8 *text,i16 def,i16 highlight,fncall fn,void *args):
+        Item(ci8 *text,i16 def,i16 highlight,fncall fn,std::any args):
             text{text},colorDef{def},colorHighlight{highlight},
             colorLast{WC_WHITE},pos{},fn{fn},args{args}{}
         auto setColor(i8 key){
@@ -176,17 +176,24 @@ public:
         height{},width{}{}
     ~UI(){}
     auto &add(
-        ci8 *text,fncall fn=nullptr,void *args=nullptr,
+        ci8 *text,fncall fn=nullptr,std::any args={},
         i16 colorHighlight=WC_BLUE,i16 colorDef=WC_WHITE
     ){
         item.emplace_back(Item(text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args));
         return *this;
     }
     auto &insert(
-        i32 idx,ci8 *text,fncall fn=nullptr,void *args=nullptr,
+        i32 idx,ci8 *text,fncall fn=nullptr,std::any args={},
         i16 colorHighlight=WC_BLUE,i16 colorDef=WC_WHITE
     ){
         item.emplace(item.begin()+idx,Item(text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args));
+        return *this;
+    }
+    auto &edit(
+        i32 idx,ci8 *text,fncall fn=nullptr,std::any args={},
+        i16 colorHighlight=WC_BLUE,i16 colorDef=WC_WHITE
+    ){
+        item[idx]=Item(text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args);
         return *this;
     }
     auto &remove(){
