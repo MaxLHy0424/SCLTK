@@ -14,7 +14,7 @@ set args=
 if %opt.autoLaunch%==0 (
   echo                   CRCSN Launcher
   echo.
-  echo     ^(C^) 2023 MaxLHy0424. All rights reserved.
+  echo     ^(C^) 2023 MaxLHy0424. All Rights Reserved.
   echo.
   if %opt.showVerboseInfo%==0 (
     echo 按任意键启动 CRCSN...
