@@ -123,14 +123,14 @@ private:
             printf("\n");
         }
     }
-    auto rewrite(Item &ref){
-        setCursor({0,ref.pos.Y});
-        for(i16 j{};j<ref.pos.X;++j){
+    auto rewrite(COORD &pos,ci8 *&text){
+        setCursor({0,pos.Y});
+        for(i16 j{};j<pos.X;++j){
             write(" ");
         }
-        setCursor({0,ref.pos.Y});
-        write(ref.text);
-        setCursor({0,ref.pos.Y});
+        setCursor({0,pos.Y});
+        write(text);
+        setCursor({0,pos.Y});
     }
     auto initPos(){
         cls();
@@ -144,11 +144,11 @@ private:
         for(auto &ref:item){
             if((ref==hangPos)&&(ref.colorLast!=ref.colorHighlight)){
                 ref.setColor('H');
-                rewrite(ref);
+                rewrite(ref.pos,ref.text);
             }
             if((ref!=hangPos)&&(ref.colorLast!=ref.colorDef)){
                 ref.setColor('D');
-                rewrite(ref);
+                rewrite(ref.pos,ref.text);
             }
         }
     }
