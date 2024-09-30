@@ -10,7 +10,7 @@
 或者:
 
 - [GitHub Repository Release](https://github.com/MaxLHy0424/CRCSN/releases);
-- [中国大陆云盘镜像站点 (不含预发行版)](https://www.123pan.com/s/UzthTd-MkTRh.html).
+- [中国大陆云盘镜像站点 (不含预发行版)](https://pan.huang1111.cn/s/y548jt6).
 
 # 使用指南
 
