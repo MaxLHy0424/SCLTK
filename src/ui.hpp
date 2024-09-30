@@ -20,6 +20,7 @@ struct Data final{
     Data(MOUSE_EVENT_RECORD mouseEvent,UI *ui,std::any args):
         buttonState{mouseEvent.dwButtonState},ctrlKeyState{mouseEvent.dwControlKeyState},
         eventFlag{mouseEvent.dwEventFlags},ui{ui},args{args}{}
+    ~Data(){}
 };
 class UI final{
 private:
@@ -36,6 +37,7 @@ private:
         Item(const i8 *text,i16 def,i16 highlight,callback fn,std::any args):
             text{text},colorDef{def},colorHighlight{highlight},
             colorLast{WC_WHITE},pos{},fn{fn},args{args}{}
+        ~Item(){}
         auto setColor(i8 key){
             switch(key){
                 case 'D':{

@@ -88,6 +88,11 @@ namespace Mod{
     struct ArgsOp final{
         i8 key;
         const std::vector<const i8*> &exe,&svc;
+        ArgsOp(
+            i8 key,
+            const std::vector<const i8*> &exe,const std::vector<const i8*> &svc
+        ):key{key},exe{exe},svc{svc}{}
+        ~ArgsOp(){}
     };
     auto op(Data data){
         std::string cmd;
