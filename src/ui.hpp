@@ -185,17 +185,17 @@ public:
         return *this;
     }
     auto &insert(
-        i32 idx,const i8 *text,callback fn=nullptr,std::any args={},
+        i32 index,const i8 *text,callback fn=nullptr,std::any args={},
         i16 colorHighlight=WC_BLUE,i16 colorDef=WC_WHITE
     ){
-        item.emplace(item.begin()+idx,Item(text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args));
+        item.emplace(item.begin()+index,Item(text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args));
         return *this;
     }
     auto &edit(
-        i32 idx,const i8 *text,callback fn=nullptr,std::any args={},
+        i32 index,const i8 *text,callback fn=nullptr,std::any args={},
         i16 colorHighlight=WC_BLUE,i16 colorDef=WC_WHITE
     ){
-        item[idx]=Item(text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args);
+        item[index]=Item(text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args);
         return *this;
     }
     auto &remove(){
