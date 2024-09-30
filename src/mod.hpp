@@ -17,8 +17,8 @@ namespace Mod{
         SetLayeredWindowAttributes(GetConsoleWindow(),0,(opt.wndAlpha)?(230):(255),LWA_ALPHA);
     }
     auto frontShow(){
-        HWND foreWnd{GetConsoleWindow()};
-        DWORD foreId{GetWindowThreadProcessId(foreWnd,nullptr)},curId{GetCurrentThreadId()};
+        const HWND foreWnd{GetConsoleWindow()};
+        const DWORD foreId{GetWindowThreadProcessId(foreWnd,nullptr)},curId{GetCurrentThreadId()};
         while(true){
             AttachThreadInput(curId,foreId,TRUE);
             ShowWindow(foreWnd,SW_SHOWNORMAL);
