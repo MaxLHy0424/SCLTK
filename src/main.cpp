@@ -7,8 +7,8 @@ auto main(i32 argc,i8 *args[])->i32{
         for(i32 i{1};i<argc;++i){
             tmp=args[i];
             if((tmp.size()>2)&&(tmp.substr(0,2)=="-W")){
-                for(const auto &j:tmp.substr(2)){
-                    switch(j){
+                for(const auto &ref:tmp.substr(2)){
+                    switch(ref){
                         case 'f':{
                             opt.wndFrontShow=true;
                             break;
