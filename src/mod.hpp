@@ -37,13 +37,13 @@ namespace Mod{
         UI ui;
         ui.add("                    [ 信  息 ]\n\n")
           .add(" < 返回 ",Mod::exit,nullptr,WC_RED_PALE)
-          .add("\n[  名  称  ]\n")
+          .add("\n[名称]\n")
           .add(" " INFO_NAME)
-          .add("\n[  版  本  ]\n")
+          .add("\n[版本]\n")
           .add(" " INFO_VERSION)
-          .add("\n[  仓  库  ]\n")
+          .add("\n[仓库]\n")
           .add(" " INFO_REPO)
-          .add("\n[ 许 可 证 ]\n")
+          .add("\n[许可证]\n")
           .add(" " INFO_LICENSE)
           .add(" " INFO_COPYRIGHT)
           .show();

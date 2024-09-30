@@ -46,7 +46,7 @@ auto main(i32 argc,i8 *args[])->i32{
     ui.add(" > 退出 ",Mod::exit,{},WC_RED_PALE)
       .add(" > 信息 ",Mod::info)
       .add(" > 命令提示符 ",Mod::cmd)
-      .add("\n[ 破 解 ]\n");
+      .add("\n[破解]\n");
     if(IsUserAnAdmin()){
         ui.add(
             " > 极域电子教室 ",Mod::op,
@@ -58,7 +58,7 @@ auto main(i32 argc,i8 *args[])->i32{
     }else{
         ui.add(" (i) 需要提权.");
     }
-    ui.add("\n[ 恢 复 ]\n");
+    ui.add("\n[恢复]\n");
     if(IsUserAnAdmin()){
         ui.add(
             " > 极域电子教室 ",Mod::op,
