@@ -6,7 +6,7 @@ set opt.windowTitle=CRCSN Launcher
 title %opt.windowTitle%
 mode con cols=50 lines=25
 cd /d "%~dp0"
-set version=v5.6.7
+set version=v5.7.0
 set arch=x86_64
 set runtime=msvcrt
 set args=
