@@ -125,14 +125,14 @@ private:
             printf("\n");
         }
     }
-    auto rewrite(const COORD &pos,const i8 *&text){
-        setCursor({0,pos.Y});
-        for(i16 j{};j<pos.X;++j){
+    auto rewrite(const COORD &refPos,const i8 *&refText){
+        setCursor({0,refPos.Y});
+        for(i16 j{};j<refPos.X;++j){
             write(" ");
         }
-        setCursor({0,pos.Y});
-        write(text);
-        setCursor({0,pos.Y});
+        setCursor({0,refPos.Y});
+        write(refText);
+        setCursor({0,refPos.Y});
     }
     auto initPos(){
         cls();
