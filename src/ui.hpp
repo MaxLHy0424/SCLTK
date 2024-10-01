@@ -17,7 +17,7 @@ struct Data final{
     std::any args;
     Data():
         buttonState{MOUSE_BUTTON_LEFT},ctrlKeyState{},eventFlag{},ui{},args{}{}
-    Data(MOUSE_EVENT_RECORD mouseEvent,UI *ui,std::any args):
+    Data(const MOUSE_EVENT_RECORD mouseEvent,UI *const ui,const std::any args):
         buttonState{mouseEvent.dwButtonState},ctrlKeyState{mouseEvent.dwControlKeyState},
         eventFlag{mouseEvent.dwEventFlags},ui{ui},args{args}{}
     ~Data(){}
@@ -34,11 +34,14 @@ private:
         Item():
             text{},colorDef{WC_WHITE},colorHighlight{WC_BLUE},
             colorLast{WC_WHITE},pos{},fn{},args{}{}
-        Item(const i8 *text,i16 def,i16 highlight,callback fn,std::any args):
-            text{text},colorDef{def},colorHighlight{highlight},
-            colorLast{WC_WHITE},pos{},fn{fn},args{args}{}
+        Item(
+            const i8 *const text,
+            const i16 def,const i16 highlight,
+            const callback fn,const std::any args
+        ):text{text},colorDef{def},colorHighlight{highlight},
+          colorLast{WC_WHITE},pos{},fn{fn},args{args}{}
         ~Item(){}
-        auto setColor(i8 key){
+        auto setColor(const i8 key){
             switch(key){
                 case 'D':{
                     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),colorDef);
@@ -60,7 +63,7 @@ private:
     };
     i16 height,width;
     std::vector<Item> item;
-    auto opCursor(i8 key){
+    auto opCursor(const i8 key){
         CONSOLE_CURSOR_INFO cursorInfo;
         GetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&cursorInfo);
         switch(key){
@@ -74,7 +77,7 @@ private:
         }
         SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&cursorInfo);
     }
-    auto opAttrs(i8 key){
+    auto opAttrs(const i8 key){
         DWORD mode;
         GetConsoleMode(GetStdHandle(STD_INPUT_HANDLE),&mode);
         switch(key){
@@ -96,7 +99,7 @@ private:
     auto setCursor(const COORD &tmp={0,0}){
         SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE),tmp);
     }
-    auto waitMouseEvent(bool move=true){
+    auto waitMouseEvent(const bool move=true){
         INPUT_RECORD record;
         DWORD reg;
         while(true){
@@ -119,13 +122,13 @@ private:
         printf("%s",std::string(width*height,' ').c_str());
         setCursor({0,0});
     }
-    auto write(const i8 *text,bool isEndl=false){
+    auto write(const i8 *const text,const bool isEndl=false){
         printf("%s",text);
         if(isEndl){
             printf("\n");
         }
     }
-    auto rewrite(const COORD &refPos,const i8 *&refText){
+    auto rewrite(const COORD &refPos,const i8 *const &refText){
         setCursor({0,refPos.Y});
         for(i16 j{};j<refPos.X;++j){
             write(" ");
@@ -181,22 +184,25 @@ public:
         return item.size();
     }
     auto &add(
-        const i8 *text,callback fn=nullptr,std::any args={},
-        i16 colorHighlight=WC_BLUE,i16 colorDef=WC_WHITE
+        const i8 *const text,
+        const callback fn=nullptr,const std::any args={},
+        const i16 colorHighlight=WC_BLUE,const i16 colorDef=WC_WHITE
     ){
         item.emplace_back(Item(text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args));
         return *this;
     }
     auto &insert(
-        i32 index,const i8 *text,callback fn=nullptr,std::any args={},
-        i16 colorHighlight=WC_BLUE,i16 colorDef=WC_WHITE
+        const i32 index,const i8 *const text,
+        const callback fn=nullptr,const std::any args={},
+        const i16 colorHighlight=WC_BLUE,const i16 colorDef=WC_WHITE
     ){
         item.emplace(item.begin()+index,Item(text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args));
         return *this;
     }
     auto &edit(
-        i32 index,const i8 *text,callback fn=nullptr,std::any args={},
-        i16 colorHighlight=WC_BLUE,i16 colorDef=WC_WHITE
+        const i32 index,const i8 *const text,
+        const callback fn=nullptr,const std::any args={},
+        const i16 colorHighlight=WC_BLUE,const i16 colorDef=WC_WHITE
     ){
         item[index]=Item(text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args);
         return *this;
@@ -205,7 +211,7 @@ public:
         item.pop_back();
         return *this;
     }
-    auto &remove(i32 begin,i32 end){
+    auto &remove(const i32 begin,const i32 end){
         item.erase(item.begin()+begin,item.begin()+end);
         return *this;
     }

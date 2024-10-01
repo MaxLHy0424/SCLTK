@@ -2,7 +2,7 @@
 #include"def.hpp"
 #include"ui.hpp"
 #include"mod.hpp"
-auto main(i32 argc,i8 *args[])->i32{
+auto main(const i32 argc,const i8 *const args[])->i32{
     if(argc>1){
         std::string tmp;
         for(i32 i{1};i<argc;++i){
