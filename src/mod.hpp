@@ -144,7 +144,7 @@ namespace Mod{
               .add(" > 否 ",exit);
         }else{
             ui.add(" < 返回 ",exit,{},WC_RED_PALE);
-            ui.add("\n (i) 需要提权.");
+            ui.add("\n (i) 需要管理员权限.");
         }
         ui.show();
         return false;
