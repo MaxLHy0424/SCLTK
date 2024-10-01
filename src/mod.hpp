@@ -1,10 +1,9 @@
 #pragma once
 #include"def.hpp"
 #include"ui.hpp"
-#define DEFAULT_OPTIONS false,false,false,true
 struct{
-    bool wndFrontShow,wndAlpha,wndCtrls,uiConfirm;
-}opt{DEFAULT_OPTIONS};
+    bool wndFrontShow,wndAlpha,wndCtrls;
+}opt{};
 bool optError{};
 namespace Mod{
     auto init(){
@@ -135,9 +134,6 @@ namespace Mod{
                     return true;
                 }
             };
-            if(!opt.uiConfirm){
-                return !base(Data({},{},data.args));
-            }
             ui.add(" (i) 是否继续?\n")
               .add(" > 是 ",base,data.args)
               .add(" > 否 ",exit);
