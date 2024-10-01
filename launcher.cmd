@@ -7,7 +7,7 @@ title %opt.windowTitle%
 mode con cols=50 lines=25
 cd /d "%~dp0"
 set branch=std
-set version=v5.7.0
+set version=v5.7.1
 set arch=x86_64
 set runtime=msvcrt
 set args=
