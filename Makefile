@@ -4,7 +4,7 @@ args=-fexec-charset=GBK -std=gnu++23 -Wall -Wextra -pipe -m64 -DNDEBUG -static -
 .PHONY:build clean
 branch=std
 arch=x86_64
-version=v5.7.0
+version=v5.7.1
 build:bin/$(version)/$(branch)-$(arch)-msvcrt.exe bin/$(version)/$(branch)-$(arch)-ucrt.exe
 obj=src/*.cpp bin/info.obj
 bin/$(version)/$(branch)-$(arch)-msvcrt.exe:$(obj) src/*.hpp bin
