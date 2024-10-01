@@ -6,7 +6,7 @@ set opt.windowTitle=CRCSN Launcher
 title %opt.windowTitle%
 mode con cols=50 lines=25
 cd /d "%~dp0"
-set channel=std
+set branch=std
 set version=v5.7.0
 set arch=x86_64
 set runtime=msvcrt
@@ -18,14 +18,14 @@ if %opt.autoLaunch%==0 (
   echo     ^(C^) 2023 MaxLHy0424. All Rights Reserved.
   echo.
   if %opt.showVerboseInfo%==0 (
-    echo 按任意键启动 CRCSN...
+    echo 按任意键启动 CRCSN.
   ) else (
-    echo 按任意键启动 CRCSN ^(%version%, %arch%, %runtime%^)...
+    echo 按任意键启动 CRCSN ^(%branch%, %version%, %arch%, %runtime%^).
   )
   pause > nul
 )
 msHta vbScript:createObject("shell.application").shellExecute("%~s0","goTo:launch","","runAs",1)(window.close) & goTo:eof
 :launch
   chcp 936 > nul
-  start .\bin\%version%\%channel%-%arch%-%runtime%.exe %args%
+  start .\bin\%version%\%branch%-%arch%-%runtime%.exe %args%
   exit /b
