@@ -1,3 +1,4 @@
+#ifdef _WIN32
 #include"def.hpp"
 #include"ui.hpp"
 #include"mod.hpp"
@@ -73,3 +74,4 @@ auto main(i32 argc,i8 *args[])->i32{
     ui.show();
     return 0;
 }
+#endif
