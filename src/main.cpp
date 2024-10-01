@@ -42,7 +42,7 @@ auto main(const i32 argc,const i8 *const args[])->i32{
         std::thread(Mod::frontShow).detach();
     }
     UI ui;
-    ui.add("                    [ 主  页 ]\n\n");
+    ui.add("                    < 主  页 >\n\n");
     if(optError){
         ui.add(" (!) 参数错误.\n");
     }
