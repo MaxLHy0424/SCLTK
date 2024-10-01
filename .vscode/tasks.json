@@ -34,7 +34,7 @@
             "label":"run",
             "type":"shell",
             "dependsOn":"build",
-            "command":"${workspaceRoot}/bin/__debug__.exe",
+            "command":"${workspaceFolder}/bin/__debug__.exe",
             "group":{
                 "kind":"test",
                 "isDefault":true
