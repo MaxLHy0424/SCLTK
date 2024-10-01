@@ -177,6 +177,9 @@ public:
     UI():
         height{},width{}{}
     ~UI(){}
+    auto size(){
+        return item.size();
+    }
     auto &add(
         const i8 *text,callback fn=nullptr,std::any args={},
         i16 colorHighlight=WC_BLUE,i16 colorDef=WC_WHITE
@@ -200,10 +203,6 @@ public:
     }
     auto &remove(){
         item.pop_back();
-        return *this;
-    }
-    auto &remove(i32 begin){
-        item.erase(item.begin()+begin,item.end());
         return *this;
     }
     auto &remove(i32 begin,i32 end){
