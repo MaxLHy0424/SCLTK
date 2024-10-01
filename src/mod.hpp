@@ -97,7 +97,7 @@ namespace Mod{
     };
     auto op(Data data){
         UI ui;
-        ui.add("                 [ 破 解 / 恢 复 ]\n\n");
+        ui.add("                 [ 破 解 | 恢 复 ]\n\n");
         if(IsUserAnAdmin()){
             auto base{
                 [](Data data){
