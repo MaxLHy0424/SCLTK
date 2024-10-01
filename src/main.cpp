@@ -44,7 +44,7 @@ auto main(const i32 argc,const i8 *const args[])->i32{
     if(optError){
         ui.add(" (!) 参数错误.\n");
     }
-    ui.add(" > 退出 ",Mod::exit,{},WC_RED_PALE)
+    ui.add(" > 退出 ",Mod::exit,{},WC_RED)
       .add(" > 信息 ",Mod::info)
       .add(" > 命令提示符 ",Mod::cmd)
       .add("\n[破解]\n")

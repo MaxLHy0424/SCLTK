@@ -9,7 +9,7 @@
 #define MOUSE_WHEEL MOUSE_WHEELED
 #define WC_WHITE 0x07
 #define WC_BLUE 0x09
-#define WC_RED_PALE 0x0c
+#define WC_RED 0x0c
 class UI;
 struct Data final{
     const DWORD buttonState,ctrlKeyState,eventFlag;
@@ -24,12 +24,12 @@ struct Data final{
 };
 class UI final{
 private:
-    using callback=bool(*)(Data);
+    using call=bool(*)(Data);
     struct Item final{
         const i8 *text;
         i16 colorDef,colorHighlight,colorLast;
         COORD pos;
-        callback fn;
+        call fn;
         std::any args;
         Item():
             text{},colorDef{WC_WHITE},colorHighlight{WC_BLUE},
@@ -37,7 +37,7 @@ private:
         Item(
             const i8 *const text,
             const i16 def,const i16 highlight,
-            const callback fn,const std::any args
+            const call fn,const std::any args
         ):text{text},colorDef{def},colorHighlight{highlight},
           colorLast{WC_WHITE},pos{},fn{fn},args{args}{}
         ~Item(){}
@@ -54,11 +54,11 @@ private:
                 }
             }
         }
-        auto operator==(const COORD &mousePos)const{
-            return (pos.Y==mousePos.Y)&&(pos.X<=mousePos.X)&&(mousePos.X<(pos.X+(i16)strlen(text)));
+        auto operator==(const COORD &refMousePos)const{
+            return (pos.Y==refMousePos.Y)&&(pos.X<=refMousePos.X)&&(refMousePos.X<(pos.X+(i16)strlen(text)));
         }
-        auto operator!=(const COORD &mousePos)const{
-            return !operator==(mousePos);
+        auto operator!=(const COORD &refMousePos)const{
+            return !operator==(refMousePos);
         }
     };
     i16 height,width;
@@ -185,7 +185,7 @@ public:
     }
     auto &add(
         const i8 *const text,
-        const callback fn=nullptr,const std::any args={},
+        const call fn=nullptr,const std::any args={},
         const i16 colorHighlight=WC_BLUE,const i16 colorDef=WC_WHITE
     ){
         item.emplace_back(Item(text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args));
@@ -193,7 +193,7 @@ public:
     }
     auto &insert(
         const i32 index,const i8 *const text,
-        const callback fn=nullptr,const std::any args={},
+        const call fn=nullptr,const std::any args={},
         const i16 colorHighlight=WC_BLUE,const i16 colorDef=WC_WHITE
     ){
         item.emplace(item.begin()+index,Item(text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args));
@@ -201,7 +201,7 @@ public:
     }
     auto &edit(
         const i32 index,const i8 *const text,
-        const callback fn=nullptr,const std::any args={},
+        const call fn=nullptr,const std::any args={},
         const i16 colorHighlight=WC_BLUE,const i16 colorDef=WC_WHITE
     ){
         item[index]=Item(text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args);
