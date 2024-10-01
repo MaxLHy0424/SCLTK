@@ -99,7 +99,8 @@ namespace Mod{
         switch(std::any_cast<ArgsOp>(data.args).key){
             case 'C':{
                 for(const auto &ref:std::any_cast<ArgsOp>(data.args).exe){
-                    cmd="reg add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\"
+                    cmd="reg add "
+                        "\"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\"
                         +(std::string)ref+".exe\" /f /t reg_sz /v debugger /d ?";
                     system(cmd.c_str());
                     cmd="taskKill /f /im "+(std::string)ref+".exe";
@@ -112,7 +113,8 @@ namespace Mod{
                 break;
             }case 'R':{
                 for(const auto &ref:std::any_cast<ArgsOp>(data.args).exe){
-                    cmd="reg delete \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\"
+                    cmd="reg delete "
+                        "\"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\"
                         +(std::string)ref+".exe\" /f";
                     system(cmd.c_str());
                 }
