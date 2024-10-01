@@ -25,6 +25,8 @@ auto main(const i32 argc,const i8 *const args[])->i32{
                         }
                     }
                 }
+            }else if(tmp=="--disable-confirm"){
+                opt.uiConfirm=false;
             }else{
                 optError=true;
                 break;
