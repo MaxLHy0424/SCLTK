@@ -36,7 +36,7 @@ namespace Mod{
     auto info(Data){
         UI ui;
         ui.add("                    < 信  息 >\n\n")
-          .add(" < 返回 ",Mod::exit,{},WC_RED_PALE)
+          .add(" < 返回 ",Mod::exit,{},WC_RED)
           .add("\n[名称]\n")
           .add(" " INFO_NAME)
           .add("\n[版本]\n")
@@ -138,7 +138,7 @@ namespace Mod{
               .add(" > 是 ",base,data.args)
               .add(" > 否 ",exit);
         }else{
-            ui.add(" < 返回 ",exit,{},WC_RED_PALE);
+            ui.add(" < 返回 ",exit,{},WC_RED);
             ui.add("\n (i) 需要管理员权限.");
         }
         ui.show();
