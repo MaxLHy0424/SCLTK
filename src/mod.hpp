@@ -36,7 +36,7 @@ namespace Mod{
     auto info(Data){
         UI ui;
         ui.add("                    [ 信  息 ]\n\n")
-          .add(" < 返回 ",Mod::exit,nullptr,WC_RED_PALE)
+          .add(" < 返回 ",Mod::exit,{},WC_RED_PALE)
           .add("\n[名称]\n")
           .add(" " INFO_NAME)
           .add("\n[版本]\n")
