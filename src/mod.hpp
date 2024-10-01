@@ -96,7 +96,6 @@ namespace Mod{
         ~ArgsOp(){}
     };
     auto op(Data data){
-        std::string cmd;
         UI ui;
         ui.add("                 [ 破 解 / 恢 复 ]\n\n");
         if(IsUserAnAdmin()){
