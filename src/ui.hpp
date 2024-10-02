@@ -192,19 +192,19 @@ public:
         return *this;
     }
     auto &insert(
-        const size_t index,const i8 *const text,
+        const size_t idx,const i8 *const text,
         const call fn=nullptr,const std::any args={},
         const i16 colorHighlight=WC_BLUE,const i16 colorDef=WC_WHITE
     ){
-        item.emplace(item.begin()+index,Item(text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args));
+        item.emplace(item.begin()+idx,Item(text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args));
         return *this;
     }
     auto &edit(
-        const size_t index,const i8 *const text,
+        const size_t idx,const i8 *const text,
         const call fn=nullptr,const std::any args={},
         const i16 colorHighlight=WC_BLUE,const i16 colorDef=WC_WHITE
     ){
-        item.at(index)=Item(text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args);
+        item.at(idx)=Item(text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args);
         return *this;
     }
     auto &remove(){
