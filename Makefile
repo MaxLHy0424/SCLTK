@@ -3,7 +3,7 @@ CC=g++.exe
 args=-fexec-charset=GBK -std=gnu++23 -Wall -Wextra -pipe -m64 -DNDEBUG -static -Os -flto -o
 flag=std
 arch=x86_64
-version=v5.7.1
+version=v5.7.2
 .PHONY:init build clean
 init:
 	$(msys2)\\usr\\bin\\pacman.exe -Syyu --noconfirm --needed\
