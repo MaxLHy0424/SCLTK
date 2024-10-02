@@ -8,7 +8,7 @@
             "program":"${workspaceFolder}\\bin\\__debug__.exe",
             "args":[],
             "stopAtEntry":false,
-            "cwd":"${workspaceRoot}",
+            "cwd":"${workspaceFloder}",
             "environment":[],
             "externalConsole":true,
             "internalConsoleOptions":"neverOpen",
