@@ -98,42 +98,40 @@ namespace Mod{
         UI ui;
         ui.add("                 < 破 解 | 恢 复 >\n\n");
         if(IsUserAnAdmin()){
-            auto base{
-                [](Data data){
-                    ArgsOp args{std::any_cast<ArgsOp>(data.args)};
-                    std::string cmd;
-                    switch(args.key){
-                        case 'C':{
-                            for(const auto &ref:args.exe){
-                                cmd="reg add "
-                                    "\"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\"
-                                    +(std::string)ref+".exe\" /f /t reg_sz /v debugger /d ?";
-                                system(cmd.c_str());
-                                cmd="taskKill /f /im "+(std::string)ref+".exe";
-                                system(cmd.c_str());
-                            }
-                            for(const auto &ref:args.svc){
-                                cmd="net stop "+(std::string)ref+" /y";
-                                system(cmd.c_str());
-                            }
-                            break;
-                        }case 'R':{
-                            for(const auto &ref:args.exe){
-                                cmd="reg delete "
-                                    "\"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\"
-                                    +(std::string)ref+".exe\" /f";
-                                system(cmd.c_str());
-                            }
-                            for(const auto &ref:args.svc){
-                                cmd="net start "+(std::string)ref;
-                                system(cmd.c_str());
-                            }
-                            break;
+            auto base{[](Data data){
+                ArgsOp args{std::any_cast<ArgsOp>(data.args)};
+                std::string cmd;
+                switch(args.key){
+                    case 'C':{
+                        for(const auto &ref:args.exe){
+                            cmd="reg add "
+                                "\"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\"
+                                +(std::string)ref+".exe\" /f /t reg_sz /v debugger /d ?";
+                            system(cmd.c_str());
+                            cmd="taskKill /f /im "+(std::string)ref+".exe";
+                            system(cmd.c_str());
                         }
+                        for(const auto &ref:args.svc){
+                            cmd="net stop "+(std::string)ref+" /y";
+                            system(cmd.c_str());
+                        }
+                        break;
+                    }case 'R':{
+                        for(const auto &ref:args.exe){
+                            cmd="reg delete "
+                                "\"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\"
+                                +(std::string)ref+".exe\" /f";
+                            system(cmd.c_str());
+                        }
+                        for(const auto &ref:args.svc){
+                            cmd="net start "+(std::string)ref;
+                            system(cmd.c_str());
+                        }
+                        break;
                     }
-                    return true;
                 }
-            };
+                return true;
+            }};
             ui.add(" (i) 是否继续?\n")
               .add(" > 是 ",base,data.args)
               .add(" > 否 ",exit);
