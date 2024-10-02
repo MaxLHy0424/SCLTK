@@ -29,7 +29,7 @@
 
 找到:
 ```dos
-set runtime=msvcrt
+set item.runtime=msvcrt
 ```
 
 软件支持的 Runtime 如下:
@@ -67,7 +67,7 @@ set opt.showVerboseInfo=0
 
 找到:
 ```dos
-set args=
+set item.args=
 ```
 
 窗口操作的主参数为 `-W`, 附加参数如下:
@@ -79,7 +79,7 @@ set args=
 
 使用示例:
 ```dos
-set args=-Waf
+set item.args=-Waf
 ```
 
 ### 1.5 深度自定义
