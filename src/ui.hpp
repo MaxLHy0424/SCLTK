@@ -192,7 +192,7 @@ public:
         return *this;
     }
     auto &insert(
-        const i32 index,const i8 *const text,
+        const size_t index,const i8 *const text,
         const call fn=nullptr,const std::any args={},
         const i16 colorHighlight=WC_BLUE,const i16 colorDef=WC_WHITE
     ){
@@ -200,7 +200,7 @@ public:
         return *this;
     }
     auto &edit(
-        const i32 index,const i8 *const text,
+        const size_t index,const i8 *const text,
         const call fn=nullptr,const std::any args={},
         const i16 colorHighlight=WC_BLUE,const i16 colorDef=WC_WHITE
     ){
@@ -211,7 +211,7 @@ public:
         item.pop_back();
         return *this;
     }
-    auto &remove(const i32 begin,const i32 end){
+    auto &remove(const size_t begin,const size_t end){
         item.erase(item.begin()+begin,item.begin()+end);
         return *this;
     }
