@@ -6,6 +6,7 @@
 #include<stdio.h>
 #include<shlobj.h>
 #include<any>
+#include<functional>
 #include<vector>
 #include<string>
 #include<thread>
