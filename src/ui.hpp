@@ -24,12 +24,12 @@ struct Data final{
 };
 class UI final{
 private:
-    using call=std::function<bool(Data)>;
+    using callback=std::function<bool(Data)>;
     struct Item final{
         const i8 *text;
         i16 colorDef,colorHighlight,colorLast;
         COORD pos;
-        call fn;
+        callback fn;
         std::any args;
         Item():
             text{},colorDef{WC_WHITE},colorHighlight{WC_BLUE},
@@ -37,12 +37,12 @@ private:
         Item(
             const i8 *const text,
             const i16 def,const i16 highlight,
-            const call fn,const std::any args
+            const callback fn,const std::any args
         ):text{text},colorDef{def},colorHighlight{highlight},
           colorLast{WC_WHITE},pos{},fn{fn},args{args}{}
         ~Item(){}
-        auto setColor(const i8 key){
-            switch(key){
+        auto setColor(const i8 k){
+            switch(k){
                 case 'D':{
                     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),colorDef);
                     colorLast=colorDef;
@@ -63,10 +63,10 @@ private:
     };
     i16 height,width;
     std::vector<Item> item;
-    auto opCursor(const i8 key){
+    auto opCursor(const i8 k){
         CONSOLE_CURSOR_INFO cursorInfo;
         GetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&cursorInfo);
-        switch(key){
+        switch(k){
             case 'H':{
                 cursorInfo.bVisible=false;
                 break;
@@ -77,10 +77,10 @@ private:
         }
         SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&cursorInfo);
     }
-    auto opAttrs(const i8 key){
+    auto opAttrs(const i8 k){
         DWORD mode;
         GetConsoleMode(GetStdHandle(STD_INPUT_HANDLE),&mode);
-        switch(key){
+        switch(k){
             case '+':{
                 mode|=ENABLE_QUICK_EDIT_MODE,mode|=ENABLE_INSERT_MODE,mode|=ENABLE_MOUSE_INPUT;
                 break;
@@ -185,7 +185,7 @@ public:
     }
     auto &add(
         const i8 *const text,
-        const call fn=nullptr,const std::any args={},
+        const callback fn=nullptr,const std::any args={},
         const i16 colorHighlight=WC_BLUE,const i16 colorDef=WC_WHITE
     ){
         item.emplace_back(Item(text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args));
@@ -193,7 +193,7 @@ public:
     }
     auto &insert(
         const size_t idx,const i8 *const text,
-        const call fn=nullptr,const std::any args={},
+        const callback fn=nullptr,const std::any args={},
         const i16 colorHighlight=WC_BLUE,const i16 colorDef=WC_WHITE
     ){
         item.emplace(item.begin()+idx,Item(text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args));
@@ -201,7 +201,7 @@ public:
     }
     auto &edit(
         const size_t idx,const i8 *const text,
-        const call fn=nullptr,const std::any args={},
+        const callback fn=nullptr,const std::any args={},
         const i16 colorHighlight=WC_BLUE,const i16 colorDef=WC_WHITE
     ){
         item.at(idx)=Item(text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args);
