@@ -47,10 +47,10 @@ auto main(const i32 argc,const i8 *const args[])->i32{
     ui.add(" > 退出 ",Mod::exit,{},WC_RED)
       .add(" > 信息 ",Mod::info)
       .add(" > 命令提示符 ",Mod::cmd)
-      .add("\n[破解]\n")
+      .add("\n[ 破 解 ]\n")
       .add(" > 极域电子教室 ",Mod::op,Mod::ArgsOp('C',Mod::rule.mythware.exe,Mod::rule.mythware.svc))
       .add(" > 联想云教室 ",Mod::op,Mod::ArgsOp('C',Mod::rule.lenovo.exe,Mod::rule.lenovo.svc))
-      .add("\n[恢复]\n")
+      .add("\n[ 恢 复 ]\n")
       .add(" > 极域电子教室 ",Mod::op,Mod::ArgsOp('R',Mod::rule.mythware.exe,Mod::rule.mythware.svc))
       .add(" > 联想云教室 ",Mod::op,Mod::ArgsOp('R',Mod::rule.lenovo.exe,Mod::rule.lenovo.svc))
       .show();
