@@ -45,7 +45,7 @@ namespace Mod{
           .add(" " INFO_REPO_URL)
           .add("\n[ 许 可 证 ]\n")
           .add(" " INFO_LICENSE)
-          .add(" " INFO_COPYRIGHT)
+          .add(" (C) 2023 " INFO_PUBLISHER ". All Rights Reserved.")
           .show();
         return false;
     }
