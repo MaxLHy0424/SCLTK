@@ -98,7 +98,7 @@ namespace Mod{
         UI ui;
         ui.add("                 < 破 解 | 恢 复 >\n\n");
         if(IsUserAnAdmin()){
-            auto base{[&](Data){
+            auto base{[&data](Data){
                 ArgsOp args{std::any_cast<ArgsOp>(data.args)};
                 std::string cmd;
                 switch(args.key){
