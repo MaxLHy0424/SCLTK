@@ -4,11 +4,11 @@
 #include"mod.hpp"
 auto main(const i32 argc,const i8 *const args[])->i32{
     if(argc>1){
-        std::string tmp;
+        std::string k;
         for(i32 i{1};i<argc;++i){
-            tmp=args[i];
-            if((tmp.size()>2)&&(tmp.substr(0,2)=="-W")){
-                for(const auto &ref:tmp.substr(2,tmp.size())){
+            k=args[i];
+            if((k.size()>2)&&(k.substr(0,2)=="-W")){
+                for(const auto &ref:k.substr(2,k.size())){
                     switch(ref){
                         case 'f':{
                             opt.wndFrontShow=true;

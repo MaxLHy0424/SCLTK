@@ -46,7 +46,7 @@ namespace Mod{
           .add(" " INFO_REPO_URL)
           .add("\n[ 许 可 证 ]\n")
           .add(" " INFO_LICENSE)
-          .add(" (C) 2023 " INFO_PUBLISHER ". All Rights Reserved.")
+          .add(" (C) 2023 " INFO_DEVELOPER ". All Rights Reserved.")
           .show();
         return false;
     }
@@ -87,12 +87,12 @@ namespace Mod{
         }
     };
     struct ArgsOp final{
-        const i8 k;
+        const i8 key;
         const std::vector<const i8*> &exe,&svc;
         ArgsOp(
-            const i8 k,
+            const i8 key,
             const std::vector<const i8*> &exe,const std::vector<const i8*> &svc
-        ):k{k},exe{exe},svc{svc}{}
+        ):key{key},exe{exe},svc{svc}{}
         ~ArgsOp(){}
     };
     auto op(Data data){
@@ -102,7 +102,7 @@ namespace Mod{
             auto base{[&data](Data){
                 ArgsOp args{std::any_cast<ArgsOp>(data.args)};
                 std::string cmd;
-                switch(args.k){
+                switch(args.key){
                     case 'C':{
                         for(const auto &ref:args.exe){
                             cmd="reg add "

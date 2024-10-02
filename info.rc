@@ -11,8 +11,8 @@ BEGIN
             VALUE "ProductName",INFO_NAME
             VALUE "FileDescription",INFO_NAME
             VALUE "ProductVersion",INFO_VERSION
-			VALUE "CompanyName",INFO_PUBLISHER
-			VALUE "LegalCopyright","(C) 2023 " INFO_PUBLISHER ". All Rights Reserved."
+			VALUE "CompanyName",INFO_DEVELOPER
+			VALUE "LegalCopyright","(C) 2023 " INFO_DEVELOPER ". All Rights Reserved."
         END
     END
     BLOCK "VarFileInfo"
