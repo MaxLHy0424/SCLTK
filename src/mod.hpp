@@ -86,12 +86,12 @@ namespace Mod{
         }
     };
     struct ArgsOp final{
-        const i8 key;
+        const i8 k;
         const std::vector<const i8*> &exe,&svc;
         ArgsOp(
-            const i8 key,
+            const i8 k,
             const std::vector<const i8*> &exe,const std::vector<const i8*> &svc
-        ):key{key},exe{exe},svc{svc}{}
+        ):k{k},exe{exe},svc{svc}{}
         ~ArgsOp(){}
     };
     auto op(Data data){
@@ -101,7 +101,7 @@ namespace Mod{
             auto base{[&data](Data){
                 ArgsOp args{std::any_cast<ArgsOp>(data.args)};
                 std::string cmd;
-                switch(args.key){
+                switch(args.k){
                     case 'C':{
                         for(const auto &ref:args.exe){
                             cmd="reg add "
