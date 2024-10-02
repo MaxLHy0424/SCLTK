@@ -41,8 +41,8 @@ private:
         ):text{text},colorDef{def},colorHighlight{highlight},
           colorLast{WC_WHITE},pos{},fn{fn},args{args}{}
         ~Item(){}
-        auto setColor(const i8 k){
-            switch(k){
+        auto setColor(const i8 key){
+            switch(key){
                 case 'D':{
                     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),colorDef);
                     colorLast=colorDef;
@@ -63,10 +63,10 @@ private:
     };
     i16 height,width;
     std::vector<Item> item;
-    auto opCursor(const i8 k){
+    auto opCursor(const i8 key){
         CONSOLE_CURSOR_INFO cursorInfo;
         GetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&cursorInfo);
-        switch(k){
+        switch(key){
             case 'H':{
                 cursorInfo.bVisible=false;
                 break;
@@ -77,10 +77,10 @@ private:
         }
         SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&cursorInfo);
     }
-    auto opAttrs(const i8 k){
+    auto opAttrs(const i8 key){
         DWORD mode;
         GetConsoleMode(GetStdHandle(STD_INPUT_HANDLE),&mode);
-        switch(k){
+        switch(key){
             case '+':{
                 mode|=ENABLE_QUICK_EDIT_MODE,mode|=ENABLE_INSERT_MODE,mode|=ENABLE_MOUSE_INPUT;
                 break;
