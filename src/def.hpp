@@ -19,4 +19,3 @@ using i32=int;
 #define INFO_REPO_URL "https://github.com/MaxLHy0424/CRCSN"
 #define INFO_PUBLISHER "MaxLHy0424"
 #define INFO_LICENSE "MIT License"
-#define INFO_COPYRIGHT "(C) 2023 " INFO_PUBLISHER ". All Rights Reserved."
