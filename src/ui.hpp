@@ -24,7 +24,7 @@ struct Data final{
 };
 class UI final{
 private:
-    using call=bool(*)(Data);
+    using call=std::function<bool(Data)>;
     struct Item final{
         const i8 *text;
         i16 colorDef,colorHighlight,colorLast;

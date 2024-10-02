@@ -98,7 +98,7 @@ namespace Mod{
         UI ui;
         ui.add("                 < 破 解 | 恢 复 >\n\n");
         if(IsUserAnAdmin()){
-            auto base{[](Data data){
+            auto base{[&](Data){
                 ArgsOp args{std::any_cast<ArgsOp>(data.args)};
                 std::string cmd;
                 switch(args.key){
@@ -133,7 +133,7 @@ namespace Mod{
                 return true;
             }};
             ui.add(" (i) 是否继续?\n")
-              .add(" > 是 ",base,data.args)
+              .add(" > 是 ",base)
               .add(" > 否 ",exit);
         }else{
             ui.add(" < 返回 ",exit,{},WC_RED);
