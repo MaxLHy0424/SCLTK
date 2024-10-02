@@ -7,6 +7,7 @@ struct{
 bool optError{};
 namespace Mod{
     auto init(){
+        system("chcp 936 > nul");
         SetConsoleTitle(WINDOW_TITLE);
         SetWindowLongPtr(
             GetConsoleWindow(),GWL_STYLE,(opt.wndCtrls)
