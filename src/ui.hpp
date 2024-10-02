@@ -204,7 +204,7 @@ public:
         const call fn=nullptr,const std::any args={},
         const i16 colorHighlight=WC_BLUE,const i16 colorDef=WC_WHITE
     ){
-        item[index]=Item(text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args);
+        item.at(index)=Item(text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args);
         return *this;
     }
     auto &remove(){
