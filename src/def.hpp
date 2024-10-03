@@ -5,14 +5,12 @@
 #define ANSI
 #define WINDOW_TITLE "CRCSN"
 #define _THE_NEXT_MAIN_UPDATE_
-#ifdef _THE_NEXT_MAIN_UPDATE_
-#include<stdio.h>
-#include<fstream>
-#else
-#include<stdio.h>
-#endif
+#include<cstdio>
 #include<shlobj.h>
 #include<any>
+#ifdef _THE_NEXT_MAIN_UPDATE_
+#include<fstream>
+#endif
 #include<functional>
 #include<vector>
 #include<string>

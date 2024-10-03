@@ -120,13 +120,13 @@ private:
     auto cls(){
         getConsoleSize();
         setCursor({0,0});
-        printf("%s",std::string(width*height,' ').c_str());
+        std::printf("%s",std::string(width*height,' ').c_str());
         setCursor({0,0});
     }
     auto write(const i8 *const text,const bool isEndl=false){
-        printf("%s",text);
+        std::printf("%s",text);
         if(isEndl){
-            printf("\n");
+            std::printf("\n");
         }
     }
     auto rewrite(const COORD &refPos,const i8 *const &refText){
