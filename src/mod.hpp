@@ -4,7 +4,7 @@
 struct{
     bool wndFrontShow,wndAlpha,wndCtrls;
 }settings{};
-bool optError{};
+bool settingsError{};
 namespace Mod{
     auto IsRunAsAdmin(){  
         BOOL isAdmin{};
@@ -88,7 +88,8 @@ namespace Mod{
                 }else if(item=="wndFrontShow"){
                     settings.wndFrontShow=true;
                 }else{
-                    optError=true;
+                    settings={};
+                    settingsError=true;
                     break;
                 }
             }
