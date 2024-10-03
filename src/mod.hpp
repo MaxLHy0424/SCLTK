@@ -6,7 +6,7 @@ struct{
 }settings{};
 bool settingsError{};
 namespace Mod{
-    auto IsRunAsAdmin(){  
+    auto isRunAsAdmin(){  
         BOOL isAdmin{};
         PSID adminsGroup{};
         SID_IDENTIFIER_AUTHORITY ntAuthority{SECURITY_NT_AUTHORITY};
@@ -181,7 +181,7 @@ namespace Mod{
         UI ui;
         ui.add("                 < 破 解 | 恢 复 >\n\n");
     #ifndef _THE_NEXT_MAJOR_UPDATE_
-        if(IsRunAsAdmin()){
+        if(isRunAsAdmin()){
     #endif
             auto base{[&data](Data){
                 ArgsOp args{std::any_cast<ArgsOp>(data.args)};
