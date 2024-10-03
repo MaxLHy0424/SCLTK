@@ -3,6 +3,8 @@
 #define _CRT_SECURE_NO_WARNINGS
 #define _ANSI
 #define ANSI
+#define WINDOW_TITLE "CRCSN"
+#define _THE_NEXT_UPDATE_
 #include<stdio.h>
 #include<shlobj.h>
 #include<any>
@@ -10,10 +12,12 @@
 #include<vector>
 #include<string>
 #include<thread>
+#ifdef _THE_NEXT_UPDATE_
+#include<fstream>
+#endif
 using i8=char;
 using i16=short;
 using i32=int;
-#define WINDOW_TITLE "CRCSN"
 #endif
 #define INFO_NAME "Computer Room Control Software Nemesis"
 #define INFO_VERSION "v5.7.2 (Stable)"

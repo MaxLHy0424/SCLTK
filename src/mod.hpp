@@ -57,6 +57,41 @@ namespace Mod{
         }
         return false;
     }
+#ifdef _THE_NEXT_UPDATE_
+    auto settings(Data){
+        auto save{[](Data){
+            std::string item;
+            if(opt.wndAlpha){
+                item=item+"wndAlpha\n";
+            }if(opt.wndCtrls){
+                item=item+"wndCtrls\n";
+            }if(opt.wndFrontShow){
+                item=item+"wndFrontShow\n";
+            }
+            if(item[item.size()-1]=='\n'){
+                item=item.substr(0,item.size()-1);
+            }
+            std::ofstream file("settings.ini",std::ios::out|std::ios::trunc);
+            file.write(item.c_str(),item.size());
+            file.close();
+            return true;
+        }};
+        UI ui;
+        ui.add("                    < 设  置 >\n\n")
+          .add(" < 保存并返回",save,{},WC_RED)
+          .add("\n[ 半透明窗口 ]\n")
+          .add(" > 启用 ",[](Data){opt.wndAlpha=true;return false;})
+          .add(" > 禁用 ",[](Data){opt.wndAlpha=false;return false;})
+          .add("\n[ 置顶窗口 ]\n")
+          .add(" > 启用 ",[](Data){opt.wndFrontShow=true;return false;})
+          .add(" > 禁用 ",[](Data){opt.wndFrontShow=false;return false;})
+          .add("\n[ 窗口控件 ]\n")
+          .add(" > 启用 ",[](Data){opt.wndCtrls=true;return false;})
+          .add(" > 禁用 ",[](Data){opt.wndCtrls=false;return false;})
+          .show();
+        return false;
+    }
+#endif
     struct{
         struct{
             const std::vector<const i8*> exe,svc;

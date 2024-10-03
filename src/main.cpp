@@ -46,6 +46,9 @@ auto main(const i32 argc,const i8 *const args[])->i32{
     }
     ui.add(" > 退出 ",Mod::exit,{},WC_RED)
       .add(" > 信息 ",Mod::info)
+    #ifdef _THE_NEXT_UPDATE_
+      .add(" > 设置 ",Mod::settings)
+    #endif
       .add(" > 命令提示符 ",Mod::cmd)
       .add("\n[ 破 解 ]\n")
       .add(" > 极域电子教室 ",Mod::op,Mod::ArgsOp('C',Mod::rule.mythware.exe,Mod::rule.mythware.svc))
