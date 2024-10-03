@@ -3,7 +3,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 #define _UNICODE
 #define UNICODE
-#define WINDOW_TITLE "CRCSN"
+#define WINDOW_TITLE L"CRCSN"
 #define _THE_NEXT_UPDATE_
 #include<stdio.h>
 #include<shlobj.h>
