@@ -5,16 +5,16 @@
 #define ANSI
 #define WINDOW_TITLE "CRCSN"
 #define _THE_NEXT_MAIN_UPDATE_
-#include<cstdio>
-#include<shlobj.h>
-#include<any>
+#include<stdio.h>
 #ifdef _THE_NEXT_MAIN_UPDATE_
 #include<fstream>
 #endif
-#include<functional>
+#include<any>
 #include<vector>
 #include<string>
 #include<thread>
+#include<functional>
+#include<shlobj.h>
 using i8=char;
 using i16=short;
 using i32=int;
