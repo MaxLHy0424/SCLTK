@@ -247,7 +247,7 @@ public:
                     break;
                 }
             }
-            Sleep(50);
+            Sleep(10);
         }
         cls();
     }
