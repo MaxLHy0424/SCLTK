@@ -4,7 +4,7 @@
 #define _UNICODE
 #define UNICODE
 #define WINDOW_TITLE L"CRCSN"
-#define _THE_NEXT_UPDATE_
+#define _THE_NEXT_MAJOR_UPDATE_
 #include<stdio.h>
 #include<shlobj.h>
 #include<any>
@@ -12,7 +12,7 @@
 #include<vector>
 #include<string>
 #include<thread>
-#ifdef _THE_NEXT_UPDATE_
+#ifdef _THE_NEXT_MAJOR_UPDATE_
 #include<fstream>
 #endif
 using i8=char;
