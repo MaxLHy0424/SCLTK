@@ -6,7 +6,7 @@
 #define WINDOW_TITLE "CRCSN"
 #define _THE_NEXT_MAIN_UPDATE_
 #ifdef _THE_NEXT_MAIN_UPDATE_
-#include<iostream>
+#include<stdio.h>
 #include<fstream>
 #else
 #include<stdio.h>
