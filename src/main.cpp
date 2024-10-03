@@ -41,7 +41,7 @@ auto main()->i32{
     if(!Mod::isRunAsAdmin()){
         i8 path[MAX_PATH];
         GetModuleFileName(NULL,path,MAX_PATH);
-        ShellExecute(NULL,"runas",path,NULL,NULL,SW_SHOWNORMAL);
+        ShellExecute(NULL,"runAs",path,NULL,NULL,SW_SHOWNORMAL);
         return 0;
     }
     Mod::settingsRead();
