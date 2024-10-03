@@ -12,13 +12,13 @@ auto main(const i32 argc,const i8 *const args[])->i32{
                 for(const auto &ref:k.substr(2,k.size())){
                     switch(ref){
                         case 'f':{
-                            opt.wndFrontShow=true;
+                            settings.wndFrontShow=true;
                             break;
                         }case 'a':{
-                            opt.wndAlpha=true;
+                            settings.wndAlpha=true;
                             break;
                         }case 'c':{
-                            opt.wndCtrls=true;
+                            settings.wndCtrls=true;
                             break;
                         }default:{
                             optError=true;
@@ -33,7 +33,7 @@ auto main(const i32 argc,const i8 *const args[])->i32{
         }
     END:
         if(optError){
-            opt={};
+            settings={};
         }
     }
 #else
@@ -41,7 +41,7 @@ auto main()->i32{
     Mod::settingsRead();
 #endif
     Mod::init();
-    if(opt.wndFrontShow){
+    if(settings.wndFrontShow){
         std::thread(Mod::frontShow).detach();
     }
     UI ui;
