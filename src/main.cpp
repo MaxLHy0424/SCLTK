@@ -2,6 +2,7 @@
 #include"def.hpp"
 #include"ui.hpp"
 #include"mod.hpp"
+#ifndef _THE_NEXT_UPDATE_
 auto main(const i32 argc,const i8 *const args[])->i32{
     if(argc>1){
         std::string k;
@@ -35,6 +36,10 @@ auto main(const i32 argc,const i8 *const args[])->i32{
             opt={};
         }
     }
+#else
+auto main()->i32{
+    Mod::settingsRead();
+#endif
     Mod::init();
     if(opt.wndFrontShow){
         std::thread(Mod::frontShow).detach();
@@ -42,12 +47,16 @@ auto main(const i32 argc,const i8 *const args[])->i32{
     UI ui;
     ui.add("                    < 主  页 >\n\n");
     if(optError){
+    #ifdef _THE_NEXT_UPDATE_
+        ui.add(" (!) 配置项目错误.\n");
+    #else
         ui.add(" (!) 参数错误.\n");
+    #endif
     }
     ui.add(" > 退出 ",Mod::exit,{},WC_RED)
       .add(" > 信息 ",Mod::info)
     #ifdef _THE_NEXT_UPDATE_
-      .add(" > 设置 ",Mod::settings)
+      .add(" > 设置 ",Mod::settingsEdit)
     #endif
       .add(" > 命令提示符 ",Mod::cmd)
       .add("\n[ 破 解 ]\n")

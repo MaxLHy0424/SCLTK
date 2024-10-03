@@ -58,7 +58,31 @@ namespace Mod{
         return false;
     }
 #ifdef _THE_NEXT_UPDATE_
-    auto settings(Data){
+    auto settingsRead(){
+        std::ifstream file("settings.ini",std::ios::in);
+        if(!file.is_open()){
+            goto END;
+        }
+        {
+            std::string item{};
+            while(std::getline(file,item)){
+                if(item=="wndAlpha"){
+                    opt.wndAlpha=true;
+                }else if(item=="wndCtrls"){
+                    opt.wndCtrls=true;
+                }else if(item=="wndFrontShow"){
+                    opt.wndFrontShow=true;
+                }else{
+                    optError=true;
+                    break;
+                }
+            }
+        }
+    END:
+        file.close();
+        return;
+    }
+    auto settingsEdit(Data){
         auto save{[](Data){
             std::string item;
             if(opt.wndAlpha){
