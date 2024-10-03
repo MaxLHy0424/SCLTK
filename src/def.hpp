@@ -1,9 +1,9 @@
 #pragma once
 #ifndef _BUILD_INFO_
 #define _CRT_SECURE_NO_WARNINGS
-#define _UNICODE
-#define UNICODE
-#define WINDOW_TITLE L"CRCSN"
+#define _ANSI
+#define ANSI
+#define WINDOW_TITLE "CRCSN"
 #define _THE_NEXT_MAJOR_UPDATE_
 #include<stdio.h>
 #include<shlobj.h>

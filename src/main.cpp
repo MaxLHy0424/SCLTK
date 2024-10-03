@@ -40,8 +40,8 @@ auto main(const i32 argc,const i8 *const args[])->i32{
 auto main()->i32{
     if(!Mod::isRunAsAdmin()){
         i8 path[MAX_PATH];
-        GetModuleFileNameA(NULL,path,MAX_PATH);
-        ShellExecuteA(NULL,"runas",path,NULL,NULL,SW_SHOWNORMAL);
+        GetModuleFileName(NULL,path,MAX_PATH);
+        ShellExecute(NULL,"runas",path,NULL,NULL,SW_SHOWNORMAL);
         return 0;
     }
     Mod::settingsRead();
