@@ -24,12 +24,13 @@ struct Data final{
 };
 class UI final{
 private:
-    using callback=std::function<bool(Data)>;
+    using fnCall=std::function<bool(Data)>;
+    using sizeType=size_t;
     struct Item final{
         const i8 *text;
         i16 colorDef,colorHighlight,colorLast;
         COORD pos;
-        callback fn;
+        fnCall fn;
         std::any args;
         Item():
             text{},colorDef{WC_WHITE},colorHighlight{WC_BLUE},
@@ -37,7 +38,7 @@ private:
         Item(
             const i8 *const text,
             const i16 def,const i16 highlight,
-            const callback fn,const std::any args
+            const fnCall fn,const std::any args
         ):text{text},colorDef{def},colorHighlight{highlight},
           colorLast{WC_WHITE},pos{},fn{fn},args{args}{}
         ~Item(){}
@@ -185,23 +186,23 @@ public:
     }
     auto &add(
         const i8 *const text,
-        const callback fn=nullptr,const std::any args={},
+        const fnCall fn=nullptr,const std::any args={},
         const i16 colorHighlight=WC_BLUE,const i16 colorDef=WC_WHITE
     ){
         item.emplace_back(Item(text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args));
         return *this;
     }
     auto &insert(
-        const size_t idx,const i8 *const text,
-        const callback fn=nullptr,const std::any args={},
+        const sizeType idx,const i8 *const text,
+        const fnCall fn=nullptr,const std::any args={},
         const i16 colorHighlight=WC_BLUE,const i16 colorDef=WC_WHITE
     ){
         item.emplace(item.begin()+idx,Item(text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args));
         return *this;
     }
     auto &edit(
-        const size_t idx,const i8 *const text,
-        const callback fn=nullptr,const std::any args={},
+        const sizeType idx,const i8 *const text,
+        const fnCall fn=nullptr,const std::any args={},
         const i16 colorHighlight=WC_BLUE,const i16 colorDef=WC_WHITE
     ){
         item.at(idx)=Item(text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args);
@@ -211,7 +212,7 @@ public:
         item.pop_back();
         return *this;
     }
-    auto &remove(const size_t begin,const size_t end){
+    auto &remove(const sizeType begin,const sizeType end){
         item.erase(item.begin()+begin,item.begin()+end);
         return *this;
     }
