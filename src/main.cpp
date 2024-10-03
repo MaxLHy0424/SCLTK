@@ -59,10 +59,10 @@ auto main()->i32{
       .add(" > 设置 ",Mod::settingsEdit)
     #endif
       .add(" > 命令提示符 ",Mod::cmd)
-      .add("\n[ 破 解 ]\n")
+      .add("\n[破解]\n")
       .add(" > 极域电子教室 ",Mod::op,Mod::ArgsOp('C',Mod::rule.mythware.exe,Mod::rule.mythware.svc))
       .add(" > 联想云教室 ",Mod::op,Mod::ArgsOp('C',Mod::rule.lenovo.exe,Mod::rule.lenovo.svc))
-      .add("\n[ 恢 复 ]\n")
+      .add("\n[恢复]\n")
       .add(" > 极域电子教室 ",Mod::op,Mod::ArgsOp('R',Mod::rule.mythware.exe,Mod::rule.mythware.svc))
       .add(" > 联想云教室 ",Mod::op,Mod::ArgsOp('R',Mod::rule.lenovo.exe,Mod::rule.lenovo.svc))
       .show();
