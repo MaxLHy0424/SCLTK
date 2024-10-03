@@ -7,8 +7,8 @@
             ],
             "defines":[
                 "_CRT_SECURE_NO_WARNINGS",
-                "UNICODE",
-                "_UNICODE"
+                "ANSI",
+                "_ANSI"
             ],
             "compilerPath":"C:\\Software\\MSYS2\\ucrt64\\bin\\g++.exe",
             "compilerArgs":[
