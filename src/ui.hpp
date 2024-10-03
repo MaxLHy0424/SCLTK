@@ -120,14 +120,22 @@ private:
     auto cls(){
         getConsoleSize();
         setCursor({0,0});
+    #ifdef _THE_NEXT_MAIN_UPDATE_
+        std::cout<<std::string(width*height,' ');
+    #else
         printf("%s",std::string(width*height,' ').c_str());
+    #endif
         setCursor({0,0});
     }
     auto write(const i8 *const text,const bool isEndl=false){
+    #ifdef _THE_NEXT_MAIN_UPDATE_
+        std::cout<<text<<(isEndl?"\n":"");
+    #else
         printf("%s",text);
         if(isEndl){
             printf("\n");
         }
+    #endif
     }
     auto rewrite(const COORD &refPos,const i8 *const &refText){
         setCursor({0,refPos.Y});
