@@ -122,6 +122,7 @@ namespace Mod{
         }};
         UI ui;
         ui.add("                    < 设  置 >\n\n")
+          .add(" (i) 下次启动时生效.\n")
           .add(" < 保存并返回 ",save,{},WC_RED)
           .add(" < 重置并返回 ",reset,{},WC_RED)
           .add("\n[半透明窗口]\n")
