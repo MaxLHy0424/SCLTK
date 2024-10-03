@@ -21,18 +21,18 @@ auto main(const i32 argc,const i8 *const args[])->i32{
                             settings.wndCtrls=true;
                             break;
                         }default:{
-                            optError=true;
+                            settingsError=true;
                             goto END;
                         }
                     }
                 }
             }else{
-                optError=true;
+                settingsError=true;
                 break;
             }
         }
     END:
-        if(optError){
+        if(settingsError){
             settings={};
         }
     }
@@ -52,7 +52,7 @@ auto main()->i32{
     }
     UI ui;
     ui.add("                    < 主  页 >\n\n");
-    if(optError){
+    if(settingsError){
     #ifdef _THE_NEXT_UPDATE_
         ui.add(" (!) 配置项目错误.\n");
     #else
