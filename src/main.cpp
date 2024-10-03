@@ -2,7 +2,7 @@
 #include"def.hpp"
 #include"ui.hpp"
 #include"mod.hpp"
-#ifndef _THE_NEXT_UPDATE_
+#ifndef _THE_NEXT_MAJOR_UPDATE_
 auto main(const i32 argc,const i8 *const args[])->i32{
     if(argc>1){
         std::string k;
@@ -53,7 +53,7 @@ auto main()->i32{
     UI ui;
     ui.add("                    < 主  页 >\n\n");
     if(settingsError){
-    #ifdef _THE_NEXT_UPDATE_
+    #ifdef _THE_NEXT_MAJOR_UPDATE_
         ui.add(" (!) 配置项目错误.\n");
     #else
         ui.add(" (!) 参数错误.\n");
@@ -61,7 +61,7 @@ auto main()->i32{
     }
     ui.add(" > 退出 ",Mod::exit,{},WC_RED)
       .add(" > 信息 ",Mod::info)
-    #ifdef _THE_NEXT_UPDATE_
+    #ifdef _THE_NEXT_MAJOR_UPDATE_
       .add(" > 设置 ",Mod::settingsEdit)
     #endif
       .add(" > 命令提示符 ",Mod::cmd)
