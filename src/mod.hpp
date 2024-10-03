@@ -6,6 +6,21 @@ struct{
 }settings{};
 bool optError{};
 namespace Mod{
+    auto IsRunAsAdmin(){  
+        BOOL isAdmin{};
+        PSID adminsGroup{};
+        SID_IDENTIFIER_AUTHORITY ntAuthority{SECURITY_NT_AUTHORITY};
+        if(
+            AllocateAndInitializeSid(
+                &ntAuthority,2,SECURITY_BUILTIN_DOMAIN_RID,
+                DOMAIN_ALIAS_RID_ADMINS,0,0,0,0,0,0,&adminsGroup
+            )
+        ){
+            CheckTokenMembership(NULL,adminsGroup,&isAdmin);
+            FreeSid(adminsGroup);
+        }
+        return isAdmin;
+    }
     auto init(){
         system("chcp 936 > nul");
         SetConsoleTitle(WINDOW_TITLE);
@@ -163,7 +178,9 @@ namespace Mod{
     auto op(Data data){
         UI ui;
         ui.add("                 < 破 解 | 恢 复 >\n\n");
-        if(IsUserAnAdmin()){
+    #ifndef _THE_NEXT_UPDATE_
+        if(IsRunAsAdmin()){
+    #endif
             auto base{[&data](Data){
                 ArgsOp args{std::any_cast<ArgsOp>(data.args)};
                 std::string cmd;
@@ -201,10 +218,12 @@ namespace Mod{
             ui.add(" (i) 是否继续?\n")
               .add(" > 是 ",base)
               .add(" > 否 ",exit);
+    #ifndef _THE_NEXT_UPDATE_
         }else{
             ui.add(" < 返回 ",exit,{},WC_RED);
             ui.add("\n (i) 需要管理员权限.");
         }
+    #endif
         ui.show();
         return false;
     }

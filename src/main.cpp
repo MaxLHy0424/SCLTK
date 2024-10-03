@@ -38,8 +38,8 @@ auto main(const i32 argc,const i8 *const args[])->i32{
     }
 #else
 auto main()->i32{
-    if(!IsUserAnAdmin()){
-        char path[MAX_PATH];
+    if(!Mod::IsRunAsAdmin()){
+        i8 path[MAX_PATH];
         GetModuleFileNameA(NULL,path,MAX_PATH);
         ShellExecuteA(NULL,"runas",path,NULL,NULL,SW_SHOWNORMAL);
         exit(0);
