@@ -76,9 +76,15 @@ namespace Mod{
             file.close();
             return true;
         }};
+        auto reset{[](Data){
+            std::ofstream file("settings.ini",std::ios::out|std::ios::trunc);
+            file.close();
+            return true;
+        }};
         UI ui;
         ui.add("                    < 设  置 >\n\n")
-          .add(" < 保存并返回",save,{},WC_RED)
+          .add(" < 保存并返回 ",save,{},WC_RED)
+          .add(" < 重置并返回 ",reset,{},WC_RED)
           .add("\n[ 半透明窗口 ]\n")
           .add(" > 启用 ",[](Data){opt.wndAlpha=true;return false;})
           .add(" > 禁用 ",[](Data){opt.wndAlpha=false;return false;})
