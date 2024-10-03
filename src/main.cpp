@@ -42,7 +42,7 @@ auto main()->i32{
         i8 path[MAX_PATH];
         GetModuleFileNameA(NULL,path,MAX_PATH);
         ShellExecuteA(NULL,"runas",path,NULL,NULL,SW_SHOWNORMAL);
-        exit(0);
+        return 0;
     }
     Mod::settingsRead();
 #endif
