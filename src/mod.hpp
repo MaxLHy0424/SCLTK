@@ -3,19 +3,19 @@
 #include"ui.hpp"
 struct{
     bool wndFrontShow,wndAlpha,wndCtrls;
-}opt{};
+}settings{};
 bool optError{};
 namespace Mod{
     auto init(){
         system("chcp 936 > nul");
         SetConsoleTitle(WINDOW_TITLE);
         SetWindowLongPtr(
-            GetConsoleWindow(),GWL_STYLE,(opt.wndCtrls)
+            GetConsoleWindow(),GWL_STYLE,(settings.wndCtrls)
                 ?(GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)|WS_SIZEBOX|WS_MAXIMIZEBOX|WS_MINIMIZEBOX)
                 :(GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)&~WS_SIZEBOX&~WS_MAXIMIZEBOX&~WS_MINIMIZEBOX)
         );
         system("mode con cols=50 lines=25");
-        SetLayeredWindowAttributes(GetConsoleWindow(),0,(opt.wndAlpha)?(230):(255),LWA_ALPHA);
+        SetLayeredWindowAttributes(GetConsoleWindow(),0,(settings.wndAlpha)?(230):(255),LWA_ALPHA);
     }
     auto frontShow(){
         const HWND foreWnd{GetConsoleWindow()};
@@ -52,7 +52,7 @@ namespace Mod{
     }
     auto cmd(Data){
         system("cmd");
-        if(!opt.wndCtrls){
+        if(!settings.wndCtrls){
             init();
         }
         return false;
@@ -67,11 +67,11 @@ namespace Mod{
             std::string item{};
             while(std::getline(file,item)){
                 if(item=="wndAlpha"){
-                    opt.wndAlpha=true;
+                    settings.wndAlpha=true;
                 }else if(item=="wndCtrls"){
-                    opt.wndCtrls=true;
+                    settings.wndCtrls=true;
                 }else if(item=="wndFrontShow"){
-                    opt.wndFrontShow=true;
+                    settings.wndFrontShow=true;
                 }else{
                     optError=true;
                     break;
@@ -85,11 +85,11 @@ namespace Mod{
     auto settingsEdit(Data){
         auto save{[](Data){
             std::string item;
-            if(opt.wndAlpha){
+            if(settings.wndAlpha){
                 item=item+"wndAlpha\n";
-            }if(opt.wndCtrls){
+            }if(settings.wndCtrls){
                 item=item+"wndCtrls\n";
-            }if(opt.wndFrontShow){
+            }if(settings.wndFrontShow){
                 item=item+"wndFrontShow\n";
             }
             if(item[item.size()-1]=='\n'){
@@ -110,14 +110,14 @@ namespace Mod{
           .add(" < 保存并返回 ",save,{},WC_RED)
           .add(" < 重置并返回 ",reset,{},WC_RED)
           .add("\n[ 半透明窗口 ]\n")
-          .add(" > 启用 ",[](Data){opt.wndAlpha=true;return false;})
-          .add(" > 禁用 ",[](Data){opt.wndAlpha=false;return false;})
+          .add(" > 启用 ",[](Data){settings.wndAlpha=true;return false;})
+          .add(" > 禁用 ",[](Data){settings.wndAlpha=false;return false;})
           .add("\n[ 置顶窗口 ]\n")
-          .add(" > 启用 ",[](Data){opt.wndFrontShow=true;return false;})
-          .add(" > 禁用 ",[](Data){opt.wndFrontShow=false;return false;})
+          .add(" > 启用 ",[](Data){settings.wndFrontShow=true;return false;})
+          .add(" > 禁用 ",[](Data){settings.wndFrontShow=false;return false;})
           .add("\n[ 窗口控件 ]\n")
-          .add(" > 启用 ",[](Data){opt.wndCtrls=true;return false;})
-          .add(" > 禁用 ",[](Data){opt.wndCtrls=false;return false;})
+          .add(" > 启用 ",[](Data){settings.wndCtrls=true;return false;})
+          .add(" > 禁用 ",[](Data){settings.wndCtrls=false;return false;})
           .show();
         return false;
     }
