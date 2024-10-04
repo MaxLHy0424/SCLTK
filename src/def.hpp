@@ -14,9 +14,6 @@
 #include<thread>
 #include<functional>
 #include<shlobj.h>
-using i8=char;
-using i16=short;
-using i32=int;
 #endif
 #define INFO_NAME "Computer Room Control Software Nemesis"
 #define INFO_VERSION "v5.8.0"

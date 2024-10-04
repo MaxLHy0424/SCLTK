@@ -3,10 +3,10 @@
 #include"ui.hpp"
 #include"mod.hpp"
 #ifndef _DEV_
-auto main(const i32 argc,const i8 *const args[])->i32{
+auto main(const int argc,const char *const args[])->int{
     if(argc>1){
         std::string k;
-        for(i32 i{1};i<argc;++i){
+        for(int i{1};i<argc;++i){
             k=args[i];
             if((k.size()>2)&&(k.substr(0,2)=="-W")){
                 for(const auto &ref:k.substr(2,k.size())){
@@ -37,9 +37,9 @@ auto main(const i32 argc,const i8 *const args[])->i32{
         }
     }
 #else
-auto main()->i32{
+auto main()->int{
     if(!Mod::isRunAsAdmin()){
-        i8 path[MAX_PATH];
+        char path[MAX_PATH];
         GetModuleFileName(NULL,path,MAX_PATH);
         ShellExecute(NULL,"runAs",path,NULL,NULL,SW_SHOWNORMAL);
         return 0;

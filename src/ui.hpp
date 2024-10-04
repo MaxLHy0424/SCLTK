@@ -27,8 +27,8 @@ private:
     using fnCall=std::function<bool(Data)>;
     using sizeType=size_t;
     struct Item final{
-        const i8 *text;
-        i16 colorDef,colorHighlight,colorLast;
+        const char *text;
+        short colorDef,colorHighlight,colorLast;
         COORD pos;
         fnCall fn;
         std::any args;
@@ -36,13 +36,13 @@ private:
             text{},colorDef{WC_WHITE},colorHighlight{WC_BLUE},
             colorLast{WC_WHITE},pos{},fn{},args{}{}
         Item(
-            const i8 *const text,
-            const i16 def,const i16 highlight,
+            const char *const text,
+            const short def,const short highlight,
             const fnCall fn,const std::any args
         ):text{text},colorDef{def},colorHighlight{highlight},
           colorLast{WC_WHITE},pos{},fn{fn},args{args}{}
         ~Item(){}
-        auto setColor(const i8 key){
+        auto setColor(const char key){
             switch(key){
                 case 'D':{
                     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),colorDef);
@@ -56,15 +56,15 @@ private:
             }
         }
         auto operator==(const COORD &refMousePos)const{
-            return (pos.Y==refMousePos.Y)&&(pos.X<=refMousePos.X)&&(refMousePos.X<(pos.X+(i16)strlen(text)));
+            return (pos.Y==refMousePos.Y)&&(pos.X<=refMousePos.X)&&(refMousePos.X<(pos.X+(short)strlen(text)));
         }
         auto operator!=(const COORD &refMousePos)const{
             return !operator==(refMousePos);
         }
     };
-    i16 height,width;
+    short height,width;
     std::vector<Item> item;
-    auto opCursor(const i8 key){
+    auto opCursor(const char key){
         CONSOLE_CURSOR_INFO cursorInfo;
         GetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&cursorInfo);
         switch(key){
@@ -78,7 +78,7 @@ private:
         }
         SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&cursorInfo);
     }
-    auto opAttrs(const i8 key){
+    auto opAttrs(const char key){
         DWORD mode;
         GetConsoleMode(GetStdHandle(STD_INPUT_HANDLE),&mode);
         switch(key){
@@ -123,15 +123,15 @@ private:
         std::printf("%s",std::string(width*height,' ').c_str());
         setCursor({0,0});
     }
-    auto write(const i8 *const text,const bool isEndl=false){
+    auto write(const char *const text,const bool isEndl=false){
         std::printf("%s",text);
         if(isEndl){
             std::printf("\n");
         }
     }
-    auto rewrite(const COORD &refPos,const i8 *const &refText){
+    auto rewrite(const COORD &refPos,const char *const &refText){
         setCursor({0,refPos.Y});
-        for(i16 j{};j<refPos.X;++j){
+        for(short j{};j<refPos.X;++j){
             write(" ");
         }
         setCursor({0,refPos.Y});
@@ -185,25 +185,25 @@ public:
         return item.size();
     }
     auto &add(
-        const i8 *const text,
+        const char *const text,
         const fnCall fn=nullptr,const std::any args={},
-        const i16 colorHighlight=WC_BLUE,const i16 colorDef=WC_WHITE
+        const short colorHighlight=WC_BLUE,const short colorDef=WC_WHITE
     ){
         item.emplace_back(Item(text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args));
         return *this;
     }
     auto &insert(
-        const sizeType idx,const i8 *const text,
+        const sizeType idx,const char *const text,
         const fnCall fn=nullptr,const std::any args={},
-        const i16 colorHighlight=WC_BLUE,const i16 colorDef=WC_WHITE
+        const short colorHighlight=WC_BLUE,const short colorDef=WC_WHITE
     ){
         item.emplace(item.begin()+idx,Item(text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args));
         return *this;
     }
     auto &edit(
-        const sizeType idx,const i8 *const text,
+        const sizeType idx,const char *const text,
         const fnCall fn=nullptr,const std::any args={},
-        const i16 colorHighlight=WC_BLUE,const i16 colorDef=WC_WHITE
+        const short colorHighlight=WC_BLUE,const short colorDef=WC_WHITE
     ){
         item.at(idx)=Item(text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args);
         return *this;

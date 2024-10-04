@@ -141,10 +141,10 @@ namespace Mod{
 #endif
     struct{
         struct{
-            const std::vector<const i8*> exe,svc;
+            const std::vector<const char*> exe,svc;
         }mythware;
         struct{
-            const std::vector<const i8*> exe,svc;
+            const std::vector<const char*> exe,svc;
         }lenovo;
     }rule{
         {
@@ -169,11 +169,11 @@ namespace Mod{
         }
     };
     struct ArgsOp final{
-        const i8 key;
-        const std::vector<const i8*> &exe,&svc;
+        const char key;
+        const std::vector<const char*> &exe,&svc;
         ArgsOp(
-            const i8 key,
-            const std::vector<const i8*> &exe,const std::vector<const i8*> &svc
+            const char key,
+            const std::vector<const char*> &exe,const std::vector<const char*> &svc
         ):key{key},exe{exe},svc{svc}{}
         ~ArgsOp(){}
     };
