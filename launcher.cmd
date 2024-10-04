@@ -7,7 +7,7 @@ title %settings.windowTitle%
 mode con cols=50 lines=25
 cd /d "%~dp0"
 set item.flag=std
-set item.version=v5.7.2
+set item.version=v5.8.0
 set item.arch=x86_64
 set item.runtime=msvcrt
 set item.args=
