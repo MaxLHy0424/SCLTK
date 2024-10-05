@@ -165,71 +165,77 @@ namespace Mod{
             }
         }
     };
-    struct ArgsOp final{
+    class Op final{
+    private:
         const char key;
         const std::vector<const char*> &exe,&svc;
-        explicit ArgsOp(
+        class Base final{
+        private:
+            const char key;
+            const std::vector<const char*> &exe,&svc;
+        public:
+            explicit Base(
+                const char key,
+                const std::vector<const char*> &exe,const std::vector<const char*> &svc
+            ):key{key},exe{exe},svc{svc}{}
+            ~Base(){}
+            auto operator()(Data){
+                std::string cmd;
+                switch(key){
+                    case 'C':{
+                        for(const auto &ref:exe){
+                            cmd="reg add "
+                                "\"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\"
+                                +(std::string)ref+".exe\" /f /t reg_sz /v debugger /d ?";
+                            system(cmd.c_str());
+                            cmd="taskKill /f /im "+(std::string)ref+".exe";
+                            system(cmd.c_str());
+                        }
+                        for(const auto &ref:svc){
+                            cmd="net stop "+(std::string)ref+" /y";
+                            system(cmd.c_str());
+                        }
+                        break;
+                    }case 'R':{
+                        for(const auto &ref:exe){
+                            cmd="reg delete "
+                                "\"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\"
+                                +(std::string)ref+".exe\" /f";
+                            system(cmd.c_str());
+                        }
+                        for(const auto &ref:svc){
+                            cmd="net start "+(std::string)ref;
+                            system(cmd.c_str());
+                        }
+                        break;
+                    }
+                }
+                return true;
+            }
+        };
+    public:
+        explicit Op(
             const char key,
             const std::vector<const char*> &exe,const std::vector<const char*> &svc
         ):key{key},exe{exe},svc{svc}{}
-        ~ArgsOp(){}
-    };
-    auto op(Data data){
-        UI ui;
-        ui.add("                 < 破 解 | 恢 复 >\n\n");
-    #ifndef _THE_NEXT_MAJOR_UPDATE_
-        if(isRunAsAdmin()){
-    #endif
-            class Base final{
-            private:
-                ArgsOp args;
-            public:
-                Base(ArgsOp args):args{args}{}
-                ~Base(){}
-                auto operator()(Data){
-                    std::string cmd;
-                    switch(args.key){
-                        case 'C':{
-                            for(const auto &ref:args.exe){
-                                cmd="reg add "
-                                    "\"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\"
-                                    +(std::string)ref+".exe\" /f /t reg_sz /v debugger /d ?";
-                                system(cmd.c_str());
-                                cmd="taskKill /f /im "+(std::string)ref+".exe";
-                                system(cmd.c_str());
-                            }
-                            for(const auto &ref:args.svc){
-                                cmd="net stop "+(std::string)ref+" /y";
-                                system(cmd.c_str());
-                            }
-                            break;
-                        }case 'R':{
-                            for(const auto &ref:args.exe){
-                                cmd="reg delete "
-                                    "\"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\"
-                                    +(std::string)ref+".exe\" /f";
-                                system(cmd.c_str());
-                            }
-                            for(const auto &ref:args.svc){
-                                cmd="net start "+(std::string)ref;
-                                system(cmd.c_str());
-                            }
-                            break;
-                        }
-                    }
-                    return true;
-                }
-            };
-            ui.add(" (i) 是否继续?\n")
-              .add(" > 是 ",Base(std::any_cast<ArgsOp>(data.args)))
-              .add(" > 否 ",exit);
-    #ifndef _THE_NEXT_MAJOR_UPDATE_
-        }else{
-            ui.add(" < 返回 ",exit,{},WC_RED);
-            ui.add("\n (i) 需要管理员权限.");
+        ~Op(){}
+        auto operator()(Data){
+            UI ui;
+            ui.add("                 < 破 解 | 恢 复 >\n\n");
+        #ifndef _THE_NEXT_MAJOR_UPDATE_
+            if(isRunAsAdmin()){
+        #endif
+                ui.add(" (i) 是否继续?\n")
+                  .add(" > 是 ",Base(key,exe,svc))
+                  .add(" > 否 ",exit);
+        #ifndef _THE_NEXT_MAJOR_UPDATE_
+            }else{
+                ui.add(" < 返回 ",exit,{},WC_RED)
+                  .add("\n (i) 需要管理员权限.");
+            }
+        #endif
+            ui.show();
+            return false;
         }
-    #endif
-        ui.show();
-        return false;
-    }
+    };
 }
