@@ -99,25 +99,30 @@ namespace Mod{
         return;
     }
     auto settingsEdit(Data){
-        auto save{[](Data){
-            std::string item;
-            if(settings.wndAlpha){
-                item=item+"wndAlpha\n";
-            }if(settings.wndCtrls){
-                item=item+"wndCtrls\n";
-            }if(settings.wndFrontShow){
-                item=item+"wndFrontShow\n";
+        class Save final{
+        public:
+            Save(){}
+            ~Save(){}
+            auto operator()(Data){
+                std::string item;
+                if(settings.wndAlpha){
+                    item=item+"wndAlpha\n";
+                }if(settings.wndCtrls){
+                    item=item+"wndCtrls\n";
+                }if(settings.wndFrontShow){
+                    item=item+"wndFrontShow\n";
+                }
+                std::ofstream file("settings.ini",std::ios::out|std::ios::trunc);
+                file.write(item.c_str(),item.size());
+                file.close();
+                return true;
             }
-            std::ofstream file("settings.ini",std::ios::out|std::ios::trunc);
-            file.write(item.c_str(),item.size());
-            file.close();
-            return true;
-        }};
+        };
         UI ui;
         ui.add("                    < 设  置 >\n\n")
           .add(" (i) 下次启动时生效.\n")
           .add(" < 放弃并返回 ",exit,{},WC_RED)
-          .add(" < 保存并返回 ",save,{},WC_GREEN)
+          .add(" < 保存并返回 ",Save(),{},WC_GREEN)
           .add("\n[半透明窗口]\n")
           .add(" > 启用 ",[](Data){settings.wndAlpha=true;return false;})
           .add(" > 禁用 ",[](Data){settings.wndAlpha=false;return false;})
@@ -174,43 +179,49 @@ namespace Mod{
         ui.add("                 < 破 解 | 恢 复 >\n\n");
     #ifndef _THE_NEXT_MAJOR_UPDATE_
         if(isRunAsAdmin()){
-    #endif
-            auto base{[&data](Data){
-                ArgsOp args{std::any_cast<ArgsOp>(data.args)};
-                std::string cmd;
-                switch(args.key){
-                    case 'C':{
-                        for(const auto &ref:args.exe){
-                            cmd="reg add "
-                                "\"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\"
-                                +(std::string)ref+".exe\" /f /t reg_sz /v debugger /d ?";
-                            system(cmd.c_str());
-                            cmd="taskKill /f /im "+(std::string)ref+".exe";
-                            system(cmd.c_str());
+        #endif
+            class Base final{
+            private:
+                ArgsOp args;
+            public:
+                Base(ArgsOp args):args{args}{}
+                ~Base(){}
+                auto operator()(Data){
+                    std::string cmd;
+                    switch(args.key){
+                        case 'C':{
+                            for(const auto &ref:args.exe){
+                                cmd="reg add "
+                                    "\"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\"
+                                    +(std::string)ref+".exe\" /f /t reg_sz /v debugger /d ?";
+                                system(cmd.c_str());
+                                cmd="taskKill /f /im "+(std::string)ref+".exe";
+                                system(cmd.c_str());
+                            }
+                            for(const auto &ref:args.svc){
+                                cmd="net stop "+(std::string)ref+" /y";
+                                system(cmd.c_str());
+                            }
+                            break;
+                        }case 'R':{
+                            for(const auto &ref:args.exe){
+                                cmd="reg delete "
+                                    "\"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\"
+                                    +(std::string)ref+".exe\" /f";
+                                system(cmd.c_str());
+                            }
+                            for(const auto &ref:args.svc){
+                                cmd="net start "+(std::string)ref;
+                                system(cmd.c_str());
+                            }
+                            break;
                         }
-                        for(const auto &ref:args.svc){
-                            cmd="net stop "+(std::string)ref+" /y";
-                            system(cmd.c_str());
-                        }
-                        break;
-                    }case 'R':{
-                        for(const auto &ref:args.exe){
-                            cmd="reg delete "
-                                "\"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\"
-                                +(std::string)ref+".exe\" /f";
-                            system(cmd.c_str());
-                        }
-                        for(const auto &ref:args.svc){
-                            cmd="net start "+(std::string)ref;
-                            system(cmd.c_str());
-                        }
-                        break;
                     }
+                    return true;
                 }
-                return true;
-            }};
+            };
             ui.add(" (i) 是否继续?\n")
-              .add(" > 是 ",base)
+              .add(" > 是 ",Base(std::any_cast<ArgsOp>(data.args)))
               .add(" > 否 ",exit);
     #ifndef _THE_NEXT_MAJOR_UPDATE_
         }else{
