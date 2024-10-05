@@ -5,7 +5,7 @@
 #define ANSI
 #define WINDOW_TITLE "CRCSN"
 #include<stdio.h>
-#ifdef _DEV_
+#ifdef _THE_NEXT_MAJOR_UPDATE_
 #include<fstream>
 #endif
 #include<any>
