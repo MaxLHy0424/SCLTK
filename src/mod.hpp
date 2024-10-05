@@ -72,7 +72,7 @@ namespace Mod{
         }
         return false;
     }
-#ifdef _DEV_
+#ifdef _THE_NEXT_MAJOR_UPDATE_
     auto settingsRead(){
         std::ifstream file("settings.ini",std::ios::in);
         if(!file.is_open()){
@@ -180,7 +180,7 @@ namespace Mod{
     auto op(Data data){
         UI ui;
         ui.add("                 < 破 解 | 恢 复 >\n\n");
-    #ifndef _DEV_
+    #ifndef _THE_NEXT_MAJOR_UPDATE_
         if(isRunAsAdmin()){
     #endif
             auto base{[&data](Data){
@@ -220,7 +220,7 @@ namespace Mod{
             ui.add(" (i) 是否继续?\n")
               .add(" > 是 ",base)
               .add(" > 否 ",exit);
-    #ifndef _DEV_
+    #ifndef _THE_NEXT_MAJOR_UPDATE_
         }else{
             ui.add(" < 返回 ",exit,{},WC_RED);
             ui.add("\n (i) 需要管理员权限.");
