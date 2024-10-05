@@ -9,7 +9,7 @@ auto main(const int argc,const char *const args[])->int{
         for(int i{1};i<argc;++i){
             k=args[i];
             if((k.size()>2)&&(k.substr(0,2)=="-W")){
-                for(const auto &ref:k.substr(2,k.size())){
+                for(const auto &ref:k.substr(2)){
                     switch(ref){
                         case 'f':{
                             settings.wndFrontShow=true;
