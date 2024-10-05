@@ -60,7 +60,7 @@ auto main()->int{
     #endif
     }
     ui.add(" > 退出 ",Mod::exit,WC_RED)
-      .add(" > 信息 ",Mod::info)
+      .add(" > 关于 ",Mod::info)
     #ifdef _THE_NEXT_MAJOR_UPDATE_
       .add(" > 设置 ",Mod::settingsEdit)
     #endif

@@ -51,7 +51,7 @@ namespace Mod{
     }
     auto info(Data){
         UI ui;
-        ui.add("                    < 信  息 >\n\n")
+        ui.add("                    < 关  于 >\n\n")
           .add(" < 返回 ",Mod::exit,WC_RED)
           .add("\n[名称]\n")
           .add(" " INFO_NAME)
