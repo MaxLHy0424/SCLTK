@@ -101,7 +101,7 @@ namespace Mod{
     auto settingsEdit(Data){
         class Save final{
         public:
-            Save(){}
+            explicit Save(){}
             ~Save(){}
             auto operator()(Data){
                 std::string item;
