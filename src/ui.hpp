@@ -119,13 +119,13 @@ private:
     auto cls(){
         getConsoleSize();
         setCursor({0,0});
-        std::printf("%s",std::string(width*height,' ').c_str());
+        printf("%s",std::string(width*height,' ').c_str());
         setCursor({0,0});
     }
     auto write(const char *const text,const bool isEndl=false){
-        std::printf("%s",text);
+        printf("%s",text);
         if(isEndl){
-            std::printf("\n");
+            printf("\n");
         }
     }
     auto rewrite(const COORD &refPos,const char *const &refText){
