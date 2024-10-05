@@ -9,6 +9,7 @@
 #define MOUSE_WHEEL MOUSE_WHEELED
 #define WC_WHITE 0x07
 #define WC_BLUE 0x09
+#define WC_GREEN 0x0a
 #define WC_RED 0x0c
 class UI;
 struct Data final{
