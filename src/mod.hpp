@@ -16,7 +16,7 @@ namespace Mod{
                 DOMAIN_ALIAS_RID_ADMINS,0,0,0,0,0,0,&adminsGroup
             )
         ){
-            CheckTokenMembership(NULL,adminsGroup,&isAdmin);
+            CheckTokenMembership(nullptr,adminsGroup,&isAdmin);
             FreeSid(adminsGroup);
         }
         return isAdmin;
