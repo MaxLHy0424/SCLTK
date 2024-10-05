@@ -179,7 +179,7 @@ namespace Mod{
         ui.add("                 < 破 解 | 恢 复 >\n\n");
     #ifndef _THE_NEXT_MAJOR_UPDATE_
         if(isRunAsAdmin()){
-        #endif
+    #endif
             class Base final{
             private:
                 ArgsOp args;
