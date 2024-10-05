@@ -24,13 +24,12 @@ struct Data final{
 };
 class UI final{
 private:
-    using fnCall=std::function<bool(Data)>;
-    using sizeType=size_t;
+    using callback=std::function<bool(Data)>;
     struct Item final{
         const char *text;
         short colorDef,colorHighlight,colorLast;
         COORD pos;
-        fnCall fn;
+        callback fn;
         std::any args;
         explicit Item():
             text{},colorDef{WC_WHITE},colorHighlight{WC_BLUE},
@@ -38,7 +37,7 @@ private:
         explicit Item(
             const char *const text,
             const short def,const short highlight,
-            const fnCall fn,const std::any args
+            const callback fn,const std::any args
         ):text{text},colorDef{def},colorHighlight{highlight},
           colorLast{WC_WHITE},pos{},fn{fn},args{args}{}
         ~Item(){}
@@ -186,23 +185,23 @@ public:
     }
     auto &add(
         const char *const text,
-        const fnCall fn=nullptr,const std::any args={},
+        const callback fn=nullptr,const std::any args={},
         const short colorHighlight=WC_BLUE,const short colorDef=WC_WHITE
     ){
         item.emplace_back(Item(text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args));
         return *this;
     }
     auto &insert(
-        const sizeType idx,const char *const text,
-        const fnCall fn=nullptr,const std::any args={},
+        const size_t idx,const char *const text,
+        const callback fn=nullptr,const std::any args={},
         const short colorHighlight=WC_BLUE,const short colorDef=WC_WHITE
     ){
         item.emplace(item.begin()+idx,Item(text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args));
         return *this;
     }
     auto &edit(
-        const sizeType idx,const char *const text,
-        const fnCall fn=nullptr,const std::any args={},
+        const size_t idx,const char *const text,
+        const callback fn=nullptr,const std::any args={},
         const short colorHighlight=WC_BLUE,const short colorDef=WC_WHITE
     ){
         item.at(idx)=Item(text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args);
@@ -212,7 +211,7 @@ public:
         item.pop_back();
         return *this;
     }
-    auto &remove(const sizeType begin,const sizeType end){
+    auto &remove(const size_t begin,const size_t end){
         item.erase(item.begin()+begin,item.begin()+end);
         return *this;
     }
