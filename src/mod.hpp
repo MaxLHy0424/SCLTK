@@ -52,7 +52,7 @@ namespace Mod{
     auto info(Data){
         UI ui;
         ui.add("                    < 信  息 >\n\n")
-          .add(" < 返回 ",Mod::exit,{},WC_RED)
+          .add(" < 返回 ",Mod::exit,WC_RED)
           .add("\n[名称]\n")
           .add(" " INFO_NAME)
           .add("\n[版本]\n")
@@ -121,8 +121,8 @@ namespace Mod{
         UI ui;
         ui.add("                    < 设  置 >\n\n")
           .add(" (i) 下次启动时生效.\n")
-          .add(" < 放弃并返回 ",exit,{},WC_RED)
-          .add(" < 保存并返回 ",Save(),{},WC_GREEN)
+          .add(" < 放弃并返回 ",exit,WC_RED)
+          .add(" < 保存并返回 ",Save(),WC_GREEN)
           .add("\n[半透明窗口]\n")
           .add(" > 启用 ",[](Data){settings.wndAlpha=true;return false;})
           .add(" > 禁用 ",[](Data){settings.wndAlpha=false;return false;})
@@ -230,7 +230,7 @@ namespace Mod{
                   .add(" > 否 ",exit);
         #ifndef _THE_NEXT_MAJOR_UPDATE_
             }else{
-                ui.add(" < 返回 ",exit,{},WC_RED)
+                ui.add(" < 返回 ",exit,WC_RED)
                   .add("\n (i) 需要管理员权限.");
             }
         #endif

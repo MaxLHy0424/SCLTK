@@ -59,7 +59,7 @@ auto main()->int{
         ui.add(" (!) 参数错误.\n");
     #endif
     }
-    ui.add(" > 退出 ",Mod::exit,{},WC_RED)
+    ui.add(" > 退出 ",Mod::exit,WC_RED)
       .add(" > 信息 ",Mod::info)
     #ifdef _THE_NEXT_MAJOR_UPDATE_
       .add(" > 设置 ",Mod::settingsEdit)
