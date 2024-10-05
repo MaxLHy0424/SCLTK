@@ -15,9 +15,9 @@ struct Data final{
     const DWORD buttonState,ctrlKeyState,eventFlag;
     UI *const ui;
     std::any args;
-    Data():
+    explicit Data():
         buttonState{MOUSE_BUTTON_LEFT},ctrlKeyState{},eventFlag{},ui{},args{}{}
-    Data(const MOUSE_EVENT_RECORD mouseEvent,UI *const ui,const std::any args):
+    explicit Data(const MOUSE_EVENT_RECORD mouseEvent,UI *const ui,const std::any args):
         buttonState{mouseEvent.dwButtonState},ctrlKeyState{mouseEvent.dwControlKeyState},
         eventFlag{mouseEvent.dwEventFlags},ui{ui},args{args}{}
     ~Data(){}
@@ -32,10 +32,10 @@ private:
         COORD pos;
         fnCall fn;
         std::any args;
-        Item():
+        explicit Item():
             text{},colorDef{WC_WHITE},colorHighlight{WC_BLUE},
             colorLast{WC_WHITE},pos{},fn{},args{}{}
-        Item(
+        explicit Item(
             const char *const text,
             const short def,const short highlight,
             const fnCall fn,const std::any args
@@ -178,7 +178,7 @@ private:
         return isExit;
     }
 public:
-    UI():
+    explicit UI():
         height{},width{}{}
     ~UI(){}
     auto size(){
