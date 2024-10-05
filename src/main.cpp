@@ -40,8 +40,8 @@ auto main(const int argc,const char *const args[])->int{
 auto main()->int{
     if(!Mod::isRunAsAdmin()){
         char path[MAX_PATH];
-        GetModuleFileName(NULL,path,MAX_PATH);
-        ShellExecute(NULL,"runAs",path,NULL,NULL,SW_SHOWNORMAL);
+        GetModuleFileName(nullptr,path,MAX_PATH);
+        ShellExecute(nullptr,"runAs",path,nullptr,nullptr,SW_SHOWNORMAL);
         return 0;
     }
     Mod::settingsRead();
