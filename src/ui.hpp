@@ -15,12 +15,11 @@ class UI;
 struct Data final{
     const DWORD buttonState,ctrlKeyState,eventFlag;
     UI *const ui;
-    std::any args;
     explicit Data():
-        buttonState{MOUSE_BUTTON_LEFT},ctrlKeyState{},eventFlag{},ui{},args{}{}
-    explicit Data(const MOUSE_EVENT_RECORD mouseEvent,UI *const ui,const std::any args):
+        buttonState{MOUSE_BUTTON_LEFT},ctrlKeyState{},eventFlag{},ui{}{}
+    explicit Data(const MOUSE_EVENT_RECORD mouseEvent,UI *const ui):
         buttonState{mouseEvent.dwButtonState},ctrlKeyState{mouseEvent.dwControlKeyState},
-        eventFlag{mouseEvent.dwEventFlags},ui{ui},args{args}{}
+        eventFlag{mouseEvent.dwEventFlags},ui{ui}{}
     ~Data(){}
 };
 class UI final{
@@ -31,16 +30,15 @@ private:
         short colorDef,colorHighlight,colorLast;
         COORD pos;
         callback fn;
-        std::any args;
         explicit Item():
             text{},colorDef{WC_WHITE},colorHighlight{WC_BLUE},
-            colorLast{WC_WHITE},pos{},fn{},args{}{}
+            colorLast{WC_WHITE},pos{},fn{}{}
         explicit Item(
             const char *const text,
             const short def,const short highlight,
-            const callback fn,const std::any args
+            const callback fn
         ):text{text},colorDef{def},colorHighlight{highlight},
-          colorLast{WC_WHITE},pos{},fn{fn},args{args}{}
+          colorLast{WC_WHITE},pos{},fn{fn}{}
         ~Item(){}
         auto setColor(const char key){
             switch(key){
@@ -167,7 +165,7 @@ private:
                     ref.setColor('D');
                     opAttrs('+');
                     opCursor('S');
-                    isExit=ref.fn(Data(mouseEvent,this,ref.args));
+                    isExit=ref.fn(Data(mouseEvent,this));
                     opAttrs('-');
                     opCursor('H');
                     initPos();
@@ -186,26 +184,26 @@ public:
     }
     auto &add(
         const char *const text,
-        const callback fn=nullptr,const std::any args={},
+        const callback fn=nullptr,
         const short colorHighlight=WC_BLUE,const short colorDef=WC_WHITE
     ){
-        item.emplace_back(Item(text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args));
+        item.emplace_back(Item(text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn));
         return *this;
     }
     auto &insert(
         const size_t idx,const char *const text,
-        const callback fn=nullptr,const std::any args={},
+        const callback fn=nullptr,
         const short colorHighlight=WC_BLUE,const short colorDef=WC_WHITE
     ){
-        item.emplace(item.begin()+idx,Item(text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args));
+        item.emplace(item.begin()+idx,Item(text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn));
         return *this;
     }
     auto &edit(
         const size_t idx,const char *const text,
-        const callback fn=nullptr,const std::any args={},
+        const callback fn=nullptr,
         const short colorHighlight=WC_BLUE,const short colorDef=WC_WHITE
     ){
-        item.at(idx)=Item(text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn,args);
+        item.at(idx)=Item(text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn);
         return *this;
     }
     auto &remove(){
