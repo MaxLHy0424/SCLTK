@@ -108,9 +108,6 @@ namespace Mod{
             }if(settings.wndFrontShow){
                 item=item+"wndFrontShow\n";
             }
-            if(item[item.size()-1]=='\n'){
-                item=item.substr(0,item.size()-1);
-            }
             std::ofstream file("settings.ini",std::ios::out|std::ios::trunc);
             file.write(item.c_str(),item.size());
             file.close();
