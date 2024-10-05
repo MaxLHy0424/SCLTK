@@ -11,8 +11,8 @@
 #include<any>
 #include<vector>
 #include<string>
-#include<thread>
 #include<functional>
+#include<thread>
 #include<shlobj.h>
 #endif
 #define INFO_NAME "Computer Room Control Software Nemesis"
