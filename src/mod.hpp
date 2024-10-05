@@ -171,7 +171,7 @@ namespace Mod{
     struct ArgsOp final{
         const char key;
         const std::vector<const char*> &exe,&svc;
-        ArgsOp(
+        explicit ArgsOp(
             const char key,
             const std::vector<const char*> &exe,const std::vector<const char*> &svc
         ):key{key},exe{exe},svc{svc}{}
