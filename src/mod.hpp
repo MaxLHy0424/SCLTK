@@ -117,7 +117,7 @@ namespace Mod{
         ui.add("                    < 设  置 >\n\n")
           .add(" (i) 下次启动时生效.\n")
           .add(" < 放弃并返回 ",exit,{},WC_RED)
-          .add(" < 保存并返回 ",save,{},WC_RED)
+          .add(" < 保存并返回 ",save,{},WC_GREEN)
           .add("\n[半透明窗口]\n")
           .add(" > 启用 ",[](Data){settings.wndAlpha=true;return false;})
           .add(" > 禁用 ",[](Data){settings.wndAlpha=false;return false;})
