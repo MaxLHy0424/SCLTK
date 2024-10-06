@@ -180,26 +180,26 @@ namespace Mod{
             switch(key){
                 case 'C':{
                     for(const auto &ref:exe){
-                        cmd="reg add "
+                        cmd=(std::string)"reg add "
                             "\"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\"
-                            +(std::string)ref+".exe\" /f /t reg_sz /v debugger /d ?"
-                            " && taskKill /f /im "+(std::string)ref+".exe";
+                            +ref+".exe\" /f /t reg_sz /v debugger /d ?"
+                            " && taskKill /f /im "+ref+".exe";
                         system(cmd.c_str());
                     }
                     for(const auto &ref:svc){
-                        cmd="net stop "+(std::string)ref+" /y";
+                        cmd=(std::string)"net stop "+ref+" /y";
                         system(cmd.c_str());
                     }
                     break;
                 }case 'R':{
                     for(const auto &ref:exe){
-                        cmd="reg delete "
+                        cmd=(std::string)"reg delete "
                             "\"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\"
-                            +(std::string)ref+".exe\" /f";
+                            +ref+".exe\" /f";
                         system(cmd.c_str());
                     }
                     for(const auto &ref:svc){
-                        cmd="net start "+(std::string)ref;
+                        cmd=(std::string)"net start "+ref;
                         system(cmd.c_str());
                     }
                     break;
