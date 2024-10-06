@@ -6,11 +6,11 @@ set settings.windowTitle=CRCSN Launcher
 title %settings.windowTitle%
 mode con cols=50 lines=25
 cd /d "%~dp0"
-set item.flag=std
-set item.version=v5.8.0
-set item.arch=x86_64
-set item.runtime=msvcrt
-set item.args=
+sbootIt item.tag=std
+set bootItem.version=v5.8.0
+set bootItem.arch=x86_64
+set bootItem.runtime=msvcrt
+set bootItem.args=
 %1
 if %settings.autoLaunch%==0 (
   echo                 ^< CRCSN Launcher ^>
@@ -20,11 +20,11 @@ if %settings.autoLaunch%==0 (
   if %settings.showVerboseInfo%==0 (
     echo 按任意键启动 CRCSN.
   ) else (
-    echo 按任意键启动 CRCSN ^(%item.flag%, %item.version%, %item.arch%, %item.runtime%^).
+    echo 按任意键启动 CRCSN ^(%bootItem.tag%, %bootItem.version%, %bootItem.arch%, %bootItem.runtime%^).
   )
   pause > nul
 )
 msHta vbScript:createObject("shell.application").shellExecute("%~s0","goTo:launch","","runAs",1)(window.close) & goTo:eof
 :launch
-  start .\bin\%item.version%\%item.flag%-%item.arch%-%item.runtime%.exe %item.args%
+  start .\bin\%bootItem.version%\%bootItem.tag%-%bootItem.arch%-%bootItem.runtime%.exe %bootItem.args%
   exit /b
