@@ -12,13 +12,13 @@ auto main()->int{
     }
     Mod::settingsRead();
 #else
-auto main(const int argc,const char *const args[])->int{
+auto main(int argc,char *args[])->int{
     if(argc>1){
         std::string k;
         for(int i{1};i<argc;++i){
             k=args[i];
             if((k.size()>2)&&(k.substr(0,2)=="-W")){
-                for(const auto &ref:k.substr(2)){
+                for(auto &ref:k.substr(2)){
                     switch(ref){
                         case 'f':{
                             settings.wndFrontShow=true;
