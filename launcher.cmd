@@ -9,7 +9,7 @@ cd /d "%~dp0"
 sbootIt item.tag=std
 set bootItem.version=v5.9.0
 set bootItem.arch=x86_64
-set bootItem.runtime=msvcrt
+set bootItem.runtime=ucrt
 set bootItem.args=
 %1
 if %config.autoLaunch%==0 (
