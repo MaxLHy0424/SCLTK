@@ -124,7 +124,7 @@ private:
             printf("\n");
         }
     }
-    auto rewrite(const COORD &refPos,const char *&refText){
+    auto rewrite(COORD &refPos,const char *&refText){
         setCursor({0,refPos.Y});
         for(short j{};j<refPos.X;++j){
             write(" ");
@@ -141,7 +141,7 @@ private:
             write(ref.text,true);
         }
     }
-    auto refresh(const COORD &hangPos){
+    auto refresh(COORD &hangPos){
         for(auto &ref:item){
             if((ref==hangPos)&&(ref.colorLast!=ref.colorHighlight)){
                 ref.setColor('h');
@@ -153,7 +153,7 @@ private:
             }
         }
     }
-    auto impl(const MOUSE_EVENT_RECORD &mouseEvent){
+    auto impl(MOUSE_EVENT_RECORD &mouseEvent){
         bool isExit{};
         for(auto &ref:item){
             if(ref==mouseEvent.dwMousePosition){

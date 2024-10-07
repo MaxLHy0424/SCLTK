@@ -177,25 +177,25 @@ namespace Mod{
             std::string cmd;
             switch(key){
                 case 'c':{
-                    for(const auto &ref:exe){
+                    for(auto &ref:exe){
                         cmd=std::string(
                             "reg add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\"
                         )+ref+".exe\" /f /t reg_sz /v debugger /d ? && taskKill /f /im "+ref+".exe";
                         system(cmd.c_str());
                     }
-                    for(const auto &ref:svc){
+                    for(auto &ref:svc){
                         cmd=std::string("net stop ")+ref+" /y";
                         system(cmd.c_str());
                     }
                     break;
                 }case 'r':{
-                    for(const auto &ref:exe){
+                    for(auto &ref:exe){
                         cmd=std::string(
                             "reg delete \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\"
                         )+ref+".exe\" /f";
                         system(cmd.c_str());
                     }
-                    for(const auto &ref:svc){
+                    for(auto &ref:svc){
                         cmd=std::string("net start ")+ref;
                         system(cmd.c_str());
                     }
