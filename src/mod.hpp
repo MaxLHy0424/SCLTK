@@ -74,13 +74,13 @@ namespace Mod{
     }
 #ifdef _THE_NEXT_MAJOR_UPDATE_
     auto settingsRead(){
-        std::ifstream file("settings.ini",std::ios::in);
-        if(!file.is_open()){
+        std::ifstream fs("settings.ini",std::ios::in);
+        if(!fs.is_open()){
             goto END;
         }
         {
-            std::string item{};
-            while(std::getline(file,item)){
+            std::string item;
+            while(std::getline(fs,item)){
                 if(item=="wndAlpha"){
                     settings.wndAlpha=true;
                 }else if(item=="wndCtrls"){
@@ -95,7 +95,7 @@ namespace Mod{
             }
         }
     END:
-        file.close();
+        fs.close();
         return;
     }
     auto settingsEdit(Data){
@@ -112,9 +112,9 @@ namespace Mod{
                 }if(settings.wndFrontShow){
                     item=item+"wndFrontShow\n";
                 }
-                std::ofstream file("settings.ini",std::ios::out|std::ios::trunc);
-                file.write(item.c_str(),item.size());
-                file.close();
+                std::ofstream fs("settings.ini",std::ios::out|std::ios::trunc);
+                fs.write(item.c_str(),item.size());
+                fs.close();
                 return true;
             }
         };
