@@ -42,11 +42,11 @@ private:
         ~Item(){}
         auto setColor(const char key){
             switch(key){
-                case 'D':{
+                case 'd':{
                     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),colorDef);
                     colorLast=colorDef;
                     break;
-                }case 'H':{
+                }case 'h':{
                     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),colorHighlight);
                     colorLast=colorHighlight;
                     break;
@@ -66,10 +66,10 @@ private:
         CONSOLE_CURSOR_INFO cursorInfo;
         GetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&cursorInfo);
         switch(key){
-            case 'H':{
+            case 'h':{
                 cursorInfo.bVisible=false;
                 break;
-            }case 'S':{
+            }case 's':{
                 cursorInfo.bVisible=true;
                 break;
             }
@@ -140,18 +140,18 @@ private:
         cls();
         for(auto &ref:item){
             ref.pos=getCursor();
-            ref.setColor('D');
+            ref.setColor('d');
             write(ref.text,true);
         }
     }
     auto refresh(const COORD &hangPos){
         for(auto &ref:item){
             if((ref==hangPos)&&(ref.colorLast!=ref.colorHighlight)){
-                ref.setColor('H');
+                ref.setColor('h');
                 rewrite(ref.pos,ref.text);
             }
             if((ref!=hangPos)&&(ref.colorLast!=ref.colorDef)){
-                ref.setColor('D');
+                ref.setColor('d');
                 rewrite(ref.pos,ref.text);
             }
         }
@@ -162,12 +162,12 @@ private:
             if(ref==mouseEvent.dwMousePosition){
                 if(ref.fn!=nullptr){
                     cls();
-                    ref.setColor('D');
+                    ref.setColor('d');
                     opAttrs('+');
-                    opCursor('S');
+                    opCursor('s');
                     isExit=ref.fn(Data(mouseEvent,this));
                     opAttrs('-');
-                    opCursor('H');
+                    opCursor('h');
                     initPos();
                 }
                 break;
@@ -220,7 +220,7 @@ public:
     }
     auto show(){
         opAttrs('-');
-        opCursor('H');
+        opCursor('h');
         MOUSE_EVENT_RECORD mouseEvent;
         initPos();
         bool isExit{};
