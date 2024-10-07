@@ -6,7 +6,7 @@ struct{
 }settings{};
 bool settingsError{};
 namespace Mod{
-    auto isRunAsAdmin(){  
+    auto isRunAsAdmin(){
         BOOL isAdmin{};
         PSID adminsGroup{};
         SID_IDENTIFIER_AUTHORITY ntAuthority{SECURITY_NT_AUTHORITY};
