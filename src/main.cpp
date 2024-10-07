@@ -14,11 +14,11 @@ auto main()->int{
 #else
 auto main(int argc,char *args[])->int{
     if(argc>1){
-        std::string k;
+        std::string tmp;
         for(int i{1};i<argc;++i){
-            k=args[i];
-            if((k.size()>2)&&(k.substr(0,2)=="-W")){
-                for(auto &ref:k.substr(2,k.size()-1)){
+            tmp=args[i];
+            if((tmp.size()>2)&&(tmp.substr(0,2)=="-W")){
+                for(auto &ref:tmp.substr(2,tmp.size()-1)){
                     switch(ref){
                         case 'f':{
                             config.wndFrontShow=true;

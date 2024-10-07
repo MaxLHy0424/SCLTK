@@ -167,15 +167,15 @@ namespace Mod{
     };
     class Op final{
     private:
-        char key;
+        char mod;
         std::vector<const char*> &exe,&svc;
     public:
-        explicit Op(char key,std::vector<const char*> &exe,std::vector<const char*> &svc):
-            key{key},exe{exe},svc{svc}{}
+        explicit Op(char mod,std::vector<const char*> &exe,std::vector<const char*> &svc):
+            mod{mod},exe{exe},svc{svc}{}
         ~Op(){}
         auto operator()(Data){
             std::string cmd;
-            switch(key){
+            switch(mod){
                 case 'c':{
                     for(auto &ref:exe){
                         cmd=std::string(
