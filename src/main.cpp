@@ -2,7 +2,16 @@
 #include"def.hpp"
 #include"ui.hpp"
 #include"mod.hpp"
-#ifndef _THE_NEXT_MAJOR_UPDATE_
+#ifdef _THE_NEXT_MAJOR_UPDATE_
+auto main()->int{
+    if(!Mod::isRunAsAdmin()){
+        char path[MAX_PATH];
+        GetModuleFileName(nullptr,path,MAX_PATH);
+        ShellExecute(nullptr,"runAs",path,nullptr,nullptr,SW_SHOWNORMAL);
+        return 0;
+    }
+    Mod::settingsRead();
+#else
 auto main(const int argc,const char *const args[])->int{
     if(argc>1){
         std::string k;
@@ -36,15 +45,6 @@ auto main(const int argc,const char *const args[])->int{
             settings={};
         }
     }
-#else
-auto main()->int{
-    if(!Mod::isRunAsAdmin()){
-        char path[MAX_PATH];
-        GetModuleFileName(nullptr,path,MAX_PATH);
-        ShellExecute(nullptr,"runAs",path,nullptr,nullptr,SW_SHOWNORMAL);
-        return 0;
-    }
-    Mod::settingsRead();
 #endif
     Mod::init();
     if(settings.wndFrontShow){
