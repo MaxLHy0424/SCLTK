@@ -18,7 +18,7 @@ auto main(int argc,char *args[])->int{
         for(int i{1};i<argc;++i){
             k=args[i];
             if((k.size()>2)&&(k.substr(0,2)=="-W")){
-                for(auto &ref:k.substr(2)){
+                for(auto &ref:k.substr(2,k.size()-1)){
                     switch(ref){
                         case 'f':{
                             config.wndFrontShow=true;
