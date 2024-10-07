@@ -7,7 +7,7 @@ title %config.windowTitle%
 mode con cols=50 lines=25
 cd /d "%~dp0"
 sbootIt item.tag=std
-set bootItem.version=v5.9.0
+set bootItem.version=v5.9.1
 set bootItem.arch=x86_64
 set bootItem.runtime=ucrt
 set bootItem.args=
