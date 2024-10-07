@@ -72,7 +72,7 @@ namespace Mod{
         }
         return false;
     }
-#ifdef _THE_NEXT_MAJOR_UPDATE_
+#ifdef _THE_NEXT_UPDATE_
     auto configRead(){
         std::ifstream fs("config.ini",std::ios::in);
         if(!fs.is_open()){
