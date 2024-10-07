@@ -17,7 +17,7 @@ struct Data final{
     UI *const ui;
     explicit Data():
         buttonState{MOUSE_BUTTON_LEFT},ctrlKeyState{},eventFlag{},ui{}{}
-    explicit Data(const MOUSE_EVENT_RECORD mouseEvent,UI *const ui):
+    explicit Data(MOUSE_EVENT_RECORD mouseEvent,UI *ui):
         buttonState{mouseEvent.dwButtonState},ctrlKeyState{mouseEvent.dwControlKeyState},
         eventFlag{mouseEvent.dwEventFlags},ui{ui}{}
     ~Data(){}
@@ -33,14 +33,11 @@ private:
         explicit Item():
             text{},colorDef{WC_WHITE},colorHighlight{WC_BLUE},
             colorLast{WC_WHITE},pos{},fn{}{}
-        explicit Item(
-            const char *const text,
-            const short def,const short highlight,
-            const callback fn
-        ):text{text},colorDef{def},colorHighlight{highlight},
-          colorLast{WC_WHITE},pos{},fn{fn}{}
+        explicit Item(const char *text,short def,short highlight,callback fn):
+            text{text},colorDef{def},colorHighlight{highlight},
+            colorLast{WC_WHITE},pos{},fn{fn}{}
         ~Item(){}
-        auto setColor(const char key){
+        auto setColor(char key){
             switch(key){
                 case 'd':{
                     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),colorDef);
@@ -62,7 +59,7 @@ private:
     };
     short height,width;
     std::vector<Item> item;
-    auto opCursor(const char key){
+    auto opCursor(char key){
         CONSOLE_CURSOR_INFO cursorInfo;
         GetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&cursorInfo);
         switch(key){
@@ -76,7 +73,7 @@ private:
         }
         SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&cursorInfo);
     }
-    auto opAttrs(const char key){
+    auto opAttrs(char key){
         DWORD mode;
         GetConsoleMode(GetStdHandle(STD_INPUT_HANDLE),&mode);
         switch(key){
@@ -98,7 +95,7 @@ private:
     auto setCursor(const COORD &tmp={0,0}){
         SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE),tmp);
     }
-    auto waitMouseEvent(const bool move=true){
+    auto waitMouseEvent(bool move=true){
         INPUT_RECORD record;
         DWORD reg;
         while(true){
@@ -121,13 +118,13 @@ private:
         printf("%s",std::string(width*height,' ').c_str());
         setCursor({0,0});
     }
-    auto write(const char *const text,const bool isEndl=false){
+    auto write(const char *text,bool isEndl=false){
         printf("%s",text);
         if(isEndl){
             printf("\n");
         }
     }
-    auto rewrite(const COORD &refPos,const char *const &refText){
+    auto rewrite(const COORD &refPos,const char *&refText){
         setCursor({0,refPos.Y});
         for(short j{};j<refPos.X;++j){
             write(" ");
@@ -183,25 +180,22 @@ public:
         return item.size();
     }
     auto &add(
-        const char *const text,
-        const callback fn=nullptr,
-        const short colorHighlight=WC_BLUE,const short colorDef=WC_WHITE
+        const char *text,callback fn=nullptr,
+        short colorHighlight=WC_BLUE,short colorDef=WC_WHITE
     ){
         item.emplace_back(Item(text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn));
         return *this;
     }
     auto &insert(
-        const size_t index,const char *const text,
-        const callback fn=nullptr,
-        const short colorHighlight=WC_BLUE,const short colorDef=WC_WHITE
+        size_t index,const char *text,callback fn=nullptr,
+        short colorHighlight=WC_BLUE,short colorDef=WC_WHITE
     ){
         item.emplace(item.begin()+index,Item(text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn));
         return *this;
     }
     auto &edit(
-        const size_t index,const char *const text,
-        const callback fn=nullptr,
-        const short colorHighlight=WC_BLUE,const short colorDef=WC_WHITE
+        size_t index,const char *text,callback fn=nullptr,
+        short colorHighlight=WC_BLUE,short colorDef=WC_WHITE
     ){
         item.at(index)=Item(text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn);
         return *this;
@@ -210,7 +204,7 @@ public:
         item.pop_back();
         return *this;
     }
-    auto &remove(const size_t begin,const size_t end){
+    auto &remove(size_t begin,size_t end){
         item.erase(item.begin()+begin,item.begin()+end);
         return *this;
     }

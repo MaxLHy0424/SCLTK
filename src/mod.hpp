@@ -33,8 +33,8 @@ namespace Mod{
         SetLayeredWindowAttributes(GetConsoleWindow(),0,(settings.wndAlpha)?(230):(255),LWA_ALPHA);
     }
     auto frontShow(){
-        const HWND foreWnd{GetConsoleWindow()};
-        const DWORD foreId{GetWindowThreadProcessId(foreWnd,nullptr)},curId{GetCurrentThreadId()};
+        HWND foreWnd{GetConsoleWindow()};
+        DWORD foreId{GetWindowThreadProcessId(foreWnd,nullptr)},curId{GetCurrentThreadId()};
         while(true){
             AttachThreadInput(curId,foreId,TRUE);
             ShowWindow(foreWnd,SW_SHOWNORMAL);
@@ -138,10 +138,10 @@ namespace Mod{
 #endif
     struct{
         struct{
-            const std::vector<const char*> exe,svc;
+            std::vector<const char*> exe,svc;
         }mythware;
         struct{
-            const std::vector<const char*> exe,svc;
+            std::vector<const char*> exe,svc;
         }lenovo;
     }rule{
         {
@@ -167,13 +167,11 @@ namespace Mod{
     };
     class Op final{
     private:
-        const char key;
-        const std::vector<const char*> &exe,&svc;
+        char key;
+        std::vector<const char*> &exe,&svc;
     public:
-        explicit Op(
-            const char key,
-            const std::vector<const char*> &exe,const std::vector<const char*> &svc
-        ):key{key},exe{exe},svc{svc}{}
+        explicit Op(char key,std::vector<const char*> &exe,std::vector<const char*> &svc):
+            key{key},exe{exe},svc{svc}{}
         ~Op(){}
         auto operator()(Data){
             using namespace std::string_literals;
