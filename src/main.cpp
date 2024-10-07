@@ -10,7 +10,7 @@ auto main()->int{
         ShellExecute(nullptr,"runAs",path,nullptr,nullptr,SW_SHOWNORMAL);
         return 0;
     }
-    Mod::settingsRead();
+    Mod::configRead();
 #else
 auto main(int argc,char *args[])->int{
     if(argc>1){
@@ -21,38 +21,38 @@ auto main(int argc,char *args[])->int{
                 for(auto &ref:k.substr(2)){
                     switch(ref){
                         case 'f':{
-                            settings.wndFrontShow=true;
+                            config.wndFrontShow=true;
                             break;
                         }case 'a':{
-                            settings.wndAlpha=true;
+                            config.wndAlpha=true;
                             break;
                         }case 'c':{
-                            settings.wndCtrls=true;
+                            config.wndCtrls=true;
                             break;
                         }default:{
-                            settingsError=true;
+                            configError=true;
                             goto END;
                         }
                     }
                 }
             }else{
-                settingsError=true;
+                configError=true;
                 break;
             }
         }
     END:
-        if(settingsError){
-            settings={};
+        if(configError){
+            config={};
         }
     }
 #endif
     Mod::init();
-    if(settings.wndFrontShow){
+    if(config.wndFrontShow){
         std::thread(Mod::frontShow).detach();
     }
     UI ui;
     ui.add("                    < 主  页 >\n\n");
-    if(settingsError){
+    if(configError){
 #ifdef _THE_NEXT_MAJOR_UPDATE_
         ui.add(" (!) 配置项目错误.\n");
 #else
@@ -62,7 +62,7 @@ auto main(int argc,char *args[])->int{
     ui.add(" > 退出 ",Mod::exit,WC_RED)
       .add(" > 关于 ",Mod::info)
 #ifdef _THE_NEXT_MAJOR_UPDATE_
-      .add(" > 设置 ",Mod::settingsEdit)
+      .add(" > 设置 ",Mod::configEdit)
 #endif
       .add(" > 命令提示符 ",Mod::cmd)
       .add("\n[破解]\n")

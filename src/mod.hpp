@@ -3,8 +3,8 @@
 #include"ui.hpp"
 struct{
     bool wndFrontShow,wndAlpha,wndCtrls;
-}settings{};
-bool settingsError{};
+}config{};
+bool configError{};
 namespace Mod{
     auto isRunAsAdmin(){
         BOOL isAdmin{};
@@ -25,12 +25,12 @@ namespace Mod{
         system("chcp 936 > nul");
         SetConsoleTitle(WINDOW_TITLE);
         SetWindowLongPtr(
-            GetConsoleWindow(),GWL_STYLE,(settings.wndCtrls)
+            GetConsoleWindow(),GWL_STYLE,(config.wndCtrls)
                 ?(GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)|WS_SIZEBOX|WS_MAXIMIZEBOX|WS_MINIMIZEBOX)
                 :(GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)&~WS_SIZEBOX&~WS_MAXIMIZEBOX&~WS_MINIMIZEBOX)
         );
         system("mode con cols=50 lines=25");
-        SetLayeredWindowAttributes(GetConsoleWindow(),0,(settings.wndAlpha)?(230):(255),LWA_ALPHA);
+        SetLayeredWindowAttributes(GetConsoleWindow(),0,(config.wndAlpha)?(230):(255),LWA_ALPHA);
     }
     auto frontShow(){
         HWND foreWnd{GetConsoleWindow()};
@@ -67,14 +67,14 @@ namespace Mod{
     }
     auto cmd(Data){
         system("cmd");
-        if(!settings.wndCtrls){
+        if(!config.wndCtrls){
             init();
         }
         return false;
     }
 #ifdef _THE_NEXT_MAJOR_UPDATE_
-    auto settingsRead(){
-        std::ifstream fs("settings.ini",std::ios::in);
+    auto configRead(){
+        std::ifstream fs("config.ini",std::ios::in);
         if(!fs.is_open()){
             goto END;
         }
@@ -82,14 +82,14 @@ namespace Mod{
             std::string item;
             while(std::getline(fs,item)){
                 if(item=="wndAlpha"){
-                    settings.wndAlpha=true;
+                    config.wndAlpha=true;
                 }else if(item=="wndCtrls"){
-                    settings.wndCtrls=true;
+                    config.wndCtrls=true;
                 }else if(item=="wndFrontShow"){
-                    settings.wndFrontShow=true;
+                    config.wndFrontShow=true;
                 }else{
-                    settings={};
-                    settingsError=true;
+                    config={};
+                    configError=true;
                     break;
                 }
             }
@@ -98,21 +98,21 @@ namespace Mod{
         fs.close();
         return;
     }
-    auto settingsEdit(Data){
+    auto configEdit(Data){
         class Save final{
         public:
             explicit Save(){}
             ~Save(){}
             auto operator()(Data){
                 std::string item;
-                if(settings.wndAlpha){
+                if(config.wndAlpha){
                     item=item+"wndAlpha\n";
-                }if(settings.wndCtrls){
+                }if(config.wndCtrls){
                     item=item+"wndCtrls\n";
-                }if(settings.wndFrontShow){
+                }if(config.wndFrontShow){
                     item=item+"wndFrontShow\n";
                 }
-                std::ofstream fs("settings.ini",std::ios::out|std::ios::trunc);
+                std::ofstream fs("config.ini",std::ios::out|std::ios::trunc);
                 fs.write(item.c_str(),item.size());
                 fs.close();
                 return true;
@@ -124,14 +124,14 @@ namespace Mod{
           .add(" < 放弃并返回 ",exit,WC_RED)
           .add(" < 保存并返回 ",Save(),WC_GREEN)
           .add("\n[半透明窗口]\n")
-          .add(" > 启用 ",[](Data){settings.wndAlpha=true;return false;})
-          .add(" > 禁用 ",[](Data){settings.wndAlpha=false;return false;})
+          .add(" > 启用 ",[](Data){config.wndAlpha=true;return false;})
+          .add(" > 禁用 ",[](Data){config.wndAlpha=false;return false;})
           .add("\n[置顶窗口]\n")
-          .add(" > 启用 ",[](Data){settings.wndFrontShow=true;return false;})
-          .add(" > 禁用 ",[](Data){settings.wndFrontShow=false;return false;})
+          .add(" > 启用 ",[](Data){config.wndFrontShow=true;return false;})
+          .add(" > 禁用 ",[](Data){config.wndFrontShow=false;return false;})
           .add("\n[窗口控件]\n")
-          .add(" > 启用 ",[](Data){settings.wndCtrls=true;return false;})
-          .add(" > 禁用 ",[](Data){settings.wndCtrls=false;return false;})
+          .add(" > 启用 ",[](Data){config.wndCtrls=true;return false;})
+          .add(" > 禁用 ",[](Data){config.wndCtrls=false;return false;})
           .show();
         return false;
     }

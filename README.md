@@ -44,7 +44,7 @@ set bootItem.runtime=msvcrt
 
 找到:
 ```dos
-set settings.autoLaunch=0
+set config.autoLaunch=0
 ```
 
 将等号后面的数字改为 `0` 之外的其他数字, 即可启用. 禁用只需改回去即可.
@@ -55,7 +55,7 @@ set settings.autoLaunch=0
 
 找到:
 ```dos
-set settings.showVerboseInfo=0
+set config.showVerboseInfo=0
 ```
 
 将等号后面的数字改为 `0` 之外的其他数字, 即可启用. 禁用只需改回去即可.

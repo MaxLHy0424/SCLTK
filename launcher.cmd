@@ -1,9 +1,9 @@
 @echo off
 chcp 65001 > nul
-set settings.autoLaunch=0
-set settings.showVerboseInfo=0
-set settings.windowTitle=CRCSN Launcher
-title %settings.windowTitle%
+set config.autoLaunch=0
+set config.showVerboseInfo=0
+set config.windowTitle=CRCSN Launcher
+title %config.windowTitle%
 mode con cols=50 lines=25
 cd /d "%~dp0"
 sbootIt item.tag=std
@@ -12,12 +12,12 @@ set bootItem.arch=x86_64
 set bootItem.runtime=msvcrt
 set bootItem.args=
 %1
-if %settings.autoLaunch%==0 (
+if %config.autoLaunch%==0 (
   echo                 ^< CRCSN Launcher ^>
   echo.
   echo     ^(C^) 2023 MaxLHy0424. All Rights Reserved.
   echo.
-  if %settings.showVerboseInfo%==0 (
+  if %config.showVerboseInfo%==0 (
     echo 按任意键启动 CRCSN.
   ) else (
     echo 按任意键启动 CRCSN ^(%bootItem.tag%, %bootItem.version%, %bootItem.arch%, %bootItem.runtime%^).
