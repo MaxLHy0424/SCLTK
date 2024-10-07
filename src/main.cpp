@@ -53,17 +53,17 @@ auto main()->int{
     UI ui;
     ui.add("                    < 主  页 >\n\n");
     if(settingsError){
-#ifdef _THE_NEXT_MAJOR_UPDATE_
+# ifdef _THE_NEXT_MAJOR_UPDATE_
         ui.add(" (!) 配置项目错误.\n");
-#else
+# else
         ui.add(" (!) 参数错误.\n");
-#endif
+# endif
     }
     ui.add(" > 退出 ",Mod::exit,WC_RED)
       .add(" > 关于 ",Mod::info)
-#ifdef _THE_NEXT_MAJOR_UPDATE_
+# ifdef _THE_NEXT_MAJOR_UPDATE_
       .add(" > 设置 ",Mod::settingsEdit)
-#endif
+# endif
       .add(" > 命令提示符 ",Mod::cmd)
       .add("\n[破解]\n")
       .add(" > 极域电子教室 ",Mod::Op('C',Mod::rule.mythware.exe,Mod::rule.mythware.svc))
