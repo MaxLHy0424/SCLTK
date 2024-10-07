@@ -178,7 +178,7 @@ namespace Mod{
         auto operator()(Data){
             std::string cmd;
             switch(key){
-                case 'C':{
+                case 'c':{
                     for(const auto &ref:exe){
                         cmd=std::string()
                             +"reg add "
@@ -192,7 +192,7 @@ namespace Mod{
                         system(cmd.c_str());
                     }
                     break;
-                }case 'R':{
+                }case 'r':{
                     for(const auto &ref:exe){
                         cmd=std::string()
                             +"reg delete "
