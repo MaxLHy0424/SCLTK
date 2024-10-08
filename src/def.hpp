@@ -4,7 +4,6 @@
 #define _ANSI
 #define ANSI
 #define WINDOW_TITLE "CRCSN"
-#define _THE_NEXT_UPDATE_
 #include<stdio.h>
 #ifdef _THE_NEXT_UPDATE_
 #include<fstream>
