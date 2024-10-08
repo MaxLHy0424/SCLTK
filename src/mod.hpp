@@ -81,6 +81,9 @@ namespace Mod{
         {
             std::string item;
             while(std::getline(fs,item)){
+                if(item.at(0)=='#'){
+                    continue;
+                }
                 if(item=="wndAlpha"){
                     config.wndAlpha=true;
                 }else if(item=="wndCtrls"){
