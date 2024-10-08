@@ -1,6 +1,8 @@
 msys2=C:\\Software\\MSYS2
 CC=g++.exe
-args=-fexec-charset=GBK -std=gnu++23 -Wall -Wextra -pipe -m64 -DNDEBUG -static -Os -flto -o
+args=-fexec-charset=GBK -std=gnu++23 -Wall -Wextra -pipe -m64\
+ -DNDEBUG\
+ -static -Os -flto -o
 tag=std
 arch=x86_64
 version=v5.9.1
