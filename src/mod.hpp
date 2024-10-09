@@ -52,7 +52,7 @@ namespace Mod{
     auto info(Data){
         UI ui;
         ui.add("                    < 关  于 >\n\n")
-          .add(" < 返回 ",Mod::exit,WC_RED)
+          .add(" < 返回 ",Mod::exit,WCC_RED)
           .add("\n[名称]\n")
           .add(" " INFO_NAME)
           .add("\n[版本]\n")
@@ -72,7 +72,7 @@ namespace Mod{
         }
         return false;
     }
-#ifdef _THE_NEXT_UPDATE_
+#ifdef _THE_NEXT_MAJOR_UPDATE_
     auto configRead(){
         std::ifstream fs("config.ini",std::ios::in);
         if(!fs.is_open()){
@@ -124,8 +124,8 @@ namespace Mod{
         UI ui;
         ui.add("                    < 设  置 >\n\n")
           .add(" (i) 下次启动时生效.\n")
-          .add(" < 放弃并返回 ",exit,WC_RED)
-          .add(" < 保存并返回 ",Save(),WC_GREEN)
+          .add(" < 放弃并返回 ",exit,WCC_RED)
+          .add(" < 保存并返回 ",Save(),WCC_GREEN)
           .add("\n[半透明窗口]\n")
           .add(" > 启用 ",[](Data){config.wndAlpha=true;return false;})
           .add(" > 禁用 ",[](Data){config.wndAlpha=false;return false;})
