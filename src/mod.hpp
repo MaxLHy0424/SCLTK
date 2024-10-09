@@ -177,29 +177,30 @@ namespace Mod{
             mod{mod},exe{exe},svc{svc}{}
         ~Op(){}
         auto operator()(Data){
+            using namespace std::string_literals;
             std::string cmd;
             switch(mod){
                 case 'c':{
                     for(auto &ref:exe){
-                        cmd=std::string(
-                            "reg add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\"
-                        )+ref+".exe\" /f /t reg_sz /v debugger /d ? && taskKill /f /im "+ref+".exe";
+                        cmd="reg add "
+                        "\"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\"s
+                        +ref+".exe\" /f /t reg_sz /v debugger /d ? && taskKill /f /im "+ref+".exe";
                         system(cmd.c_str());
                     }
                     for(auto &ref:svc){
-                        cmd=std::string("net stop ")+ref+" /y";
+                        cmd="net stop "s+ref+" /y";
                         system(cmd.c_str());
                     }
                     break;
                 }case 'r':{
                     for(auto &ref:exe){
-                        cmd=std::string(
-                            "reg delete \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\"
-                        )+ref+".exe\" /f";
+                        cmd="reg delete "
+                        "\"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\"s
+                        +ref+".exe\" /f";
                         system(cmd.c_str());
                     }
                     for(auto &ref:svc){
-                        cmd=std::string("net start ")+ref;
+                        cmd="net start "s+ref;
                         system(cmd.c_str());
                     }
                     break;
