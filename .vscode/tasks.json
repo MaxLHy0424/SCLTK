@@ -4,19 +4,9 @@
         {
             "label":"build",
             "type":"shell",
-            "command":"g++",
+            "command":"make",
             "args":[
-                "src/*.cpp",
-                "-fexec-charset=GBK",
-                "-std=gnu++23",
-                "-Wall",
-                "-Wextra",
-                "-pipe",
-                "-m64",
-                "-O0",
-                "-g3",
-                "-o",
-                "bin/__debug__.exe"
+                "debug"
             ],
             "group":{
                 "kind":"build",

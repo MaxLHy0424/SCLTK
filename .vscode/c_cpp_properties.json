@@ -6,25 +6,15 @@
                 "${workspaceFolder}\\*"
             ],
             "defines":[
+                "NDEBUG",
+                //"_THE_NEXT_UPDATE",
                 "_CRT_SECURE_NO_WARNINGS",
                 "ANSI",
                 "_ANSI"
             ],
             "compilerPath":"C:\\Software\\MSYS2\\ucrt64\\bin\\g++.exe",
             "compilerArgs":[
-                "src/*.cpp",
-                "-fexec-charset=GBK",
-                "-std=gnu++23",
-                "-Wall",
-                "-Wextra",
-                "-pipe",
-                "-m64",
-                "-DNDEBUG",
-                "-static",
-                "-Os",
-                "-flto",
-                "-o",
-                "bin/__debug__.exe"
+                "src/*.cpp"
             ],
             "intelliSenseMode":"windows-gcc-x64",
             "cStandard":"gnu23",
