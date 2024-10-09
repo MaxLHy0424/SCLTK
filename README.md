@@ -2,7 +2,7 @@
 **Computer Room Control Software Nemesis: 轻松破解机房控制.**\
 ©️ 2023 MaxLHy0424. All Rights Reserved.
 
-# 获取
+# 📦 获取
 
 **最新发行版: v5.9.1.**\
 **[更新日志](https://github.com/MaxLHy0424/CRCSN/releases/tag/v5.9.1) | [直链下载](https://github.com/MaxLHy0424/CRCSN/releases/download/v5.9.1/CRCSN.7z)**
@@ -12,18 +12,21 @@
 - [GitHub Repository Release](https://github.com/MaxLHy0424/CRCSN/releases);
 - [中国大陆云盘镜像站点 (不含预发行版)](https://pan.huang1111.cn/s/y548jt6).
 
-# 使用指南
+# 📖 使用指南
 
 **使用 CRCSN 时建议关闭防病毒软件. 若 CRCSN 被报为恶意软件, 请添加排除项.**
 
 > [!NOTE]
 > 适用于 v5.9.1.
 
-## 1 启动
+## 1  启动
 
 一般情况下, 运行 `launcher.cmd` 即可启动 CRCSN.
 
 如果默认的启动方式不满足您的需求, 可以根据下文修改.
+
+> [!IMPORTANT]
+> 启动脚本已进入维护阶段, 不再添加新功能. 在 CRCSN 的下一个主要更新中将被移除.
 
 ### 1.1 修改 Runtime
 
@@ -102,11 +105,29 @@ set bootItem.args=-Waf
 
 确认以管理员权限启动后, 使用鼠标在 `[破解]` 下点击需要破解的控制软件, 以禁用破解. 如需恢复, 可以在 `[恢复]` 下点击需要恢复的控制软件, 即可恢复控制.
 
-# 许可证
+# 🧪 下一个主要更新
+
+CRCSN 的下一个主要更新已经开始!
+
+### 基本完成
+
+- 弃用命令行参数, 使用配置文件;
+- 自动申请管理员权限.
+
+### 计划执行
+
+- 移除 `launcher.cmd`.
+
+### 正在讨论
+
+- 添加命令行模式.
+- 使用 Windows API 代替 Windows 命令调用.
+
+# 📃 许可证
 
 CRCSN 使用 [MIT License](LICENSE), 详细内容请自行阅读.
 
-# 二次开发
+# 🛠️ 二次开发
 
 > [!NOTE]
 > 适用于 v5.9.1.
@@ -120,7 +141,7 @@ CRCSN 使用 [MIT License](LICENSE), 详细内容请自行阅读.
 > [!IMPORTANT]
 > 不在 GitHub 上开源的二次开发版本的修改不会被采纳.
 
-# 常见问题
+# ❓ 常见问题
 
 ## 1 软件无法非 x86_64 架构的 Windows OS 中使用.
 
@@ -134,7 +155,7 @@ CRCSN 使用 [MIT License](LICENSE), 详细内容请自行阅读.
 
 在不影响软件正常运行的情况下, 可以给软件文件修改一个名称, 再试试. 或者打开注册表编辑器, 定位到 `HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options`, 找到和要运行的软件的文件名称相同的项, 删除即可.
 
-# 鸣谢
+# ❤️ 鸣谢
 
 - Bilibili 用户 [lateworker_晚工](https://space.bilibili.com/454920362) 提供界面代码 (详见[此处](https://www.bilibili.com/video/BV1X14y1n7S4), 软件有修改);
 - Bilibili 用户 [痕继痕迹](https://space.bilibili.com/39337803) 指导软件界面设计;
