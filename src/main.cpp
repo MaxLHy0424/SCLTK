@@ -5,9 +5,9 @@
 #ifdef _THE_NEXT_UPDATE_
 auto main()->int{
     if(!Mod::isRunAsAdmin()){
-        char path[MAX_PATH];
-        GetModuleFileName(nullptr,path,MAX_PATH);
-        ShellExecute(nullptr,"runAs",path,nullptr,nullptr,SW_SHOWNORMAL);
+        std::string path(MAX_PATH,0);
+        GetModuleFileName(nullptr,path.data(),MAX_PATH);
+        ShellExecute(nullptr,"runAs",path.data(),nullptr,nullptr,SW_SHOWNORMAL);
         return 0;
     }
     Mod::configRead();
