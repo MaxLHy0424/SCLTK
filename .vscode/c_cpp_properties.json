@@ -7,7 +7,7 @@
             ],
             "defines":[
                 "NDEBUG",
-                //"_THE_NEXT_UPDATE_",
+                //"_THE_NEXT_MAJOR_UPDATE_",
                 "_CRT_SECURE_NO_WARNINGS",
                 "ANSI",
                 "_ANSI"
