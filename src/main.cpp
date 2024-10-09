@@ -2,7 +2,7 @@
 #include"def.hpp"
 #include"ui.hpp"
 #include"mod.hpp"
-#ifdef _THE_NEXT_UPDATE_
+#ifdef _THE_NEXT_MAJOR_UPDATE_
 auto main()->int{
     if(!Mod::isRunAsAdmin()){
         std::string path(MAX_PATH,0);
@@ -53,15 +53,15 @@ auto main(int argc,char *args[])->int{
     UI ui;
     ui.add("                    < 主  页 >\n\n");
     if(configError){
-#ifdef _THE_NEXT_UPDATE_
+#ifdef _THE_NEXT_MAJOR_UPDATE_
         ui.add(" (!) 配置项目错误.\n");
 #else
         ui.add(" (!) 参数错误.\n");
 #endif
     }
-    ui.add(" > 退出 ",Mod::exit,WC_RED)
+    ui.add(" > 退出 ",Mod::exit,WCC_RED)
       .add(" > 关于 ",Mod::info)
-#ifdef _THE_NEXT_UPDATE_
+#ifdef _THE_NEXT_MAJOR_UPDATE_
       .add(" > 设置 ",Mod::configEdit)
 #endif
       .add(" > 命令提示符 ",Mod::cmd)

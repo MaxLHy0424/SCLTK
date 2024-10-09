@@ -7,10 +7,10 @@
 #define MOUSE_CLICK_DOUBLE DOUBLE_CLICK
 #define MOUSE_MOVE MOUSE_MOVED
 #define MOUSE_WHEEL MOUSE_WHEELED
-#define WC_WHITE 0x07
-#define WC_BLUE 0x09
-#define WC_GREEN 0x0a
-#define WC_RED 0x0c
+#define WCC_WHITE 0x07
+#define WCC_BLUE 0x09
+#define WCC_GREEN 0x0a
+#define WCC_RED 0x0c
 class UI;
 struct Data final{
     const DWORD buttonState,ctrlKeyState,eventFlag;
@@ -31,11 +31,11 @@ private:
         COORD pos;
         callback fn;
         explicit Item():
-            text{},colorDef{WC_WHITE},colorHighlight{WC_BLUE},
-            colorLast{WC_WHITE},pos{},fn{}{}
+            text{},colorDef{WCC_WHITE},colorHighlight{WCC_BLUE},
+            colorLast{WCC_WHITE},pos{},fn{}{}
         explicit Item(const char *text,short def,short highlight,callback fn):
             text{text},colorDef{def},colorHighlight{highlight},
-            colorLast{WC_WHITE},pos{},fn{fn}{}
+            colorLast{WCC_WHITE},pos{},fn{fn}{}
         ~Item(){}
         auto setColor(char mod){
             switch(mod){
@@ -181,21 +181,21 @@ public:
     }
     auto &add(
         const char *text,callback fn=nullptr,
-        short colorHighlight=WC_BLUE,short colorDef=WC_WHITE
+        short colorHighlight=WCC_BLUE,short colorDef=WCC_WHITE
     ){
         item.emplace_back(Item(text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn));
         return *this;
     }
     auto &insert(
         size_t index,const char *text,callback fn=nullptr,
-        short colorHighlight=WC_BLUE,short colorDef=WC_WHITE
+        short colorHighlight=WCC_BLUE,short colorDef=WCC_WHITE
     ){
         item.emplace(item.begin()+index,Item(text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn));
         return *this;
     }
     auto &edit(
         size_t index,const char *text,callback fn=nullptr,
-        short colorHighlight=WC_BLUE,short colorDef=WC_WHITE
+        short colorHighlight=WCC_BLUE,short colorDef=WCC_WHITE
     ){
         item.at(index)=Item(text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn);
         return *this;
