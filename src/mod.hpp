@@ -33,8 +33,8 @@ namespace Mod{
         SetLayeredWindowAttributes(GetConsoleWindow(),0,(config.wndAlpha)?(230):(255),LWA_ALPHA);
     }
     auto frontShow(){
-        HWND foreWnd{GetConsoleWindow()};
-        DWORD foreId{GetWindowThreadProcessId(foreWnd,nullptr)},curId{GetCurrentThreadId()};
+        const HWND foreWnd{GetConsoleWindow()};
+        const DWORD foreId{GetWindowThreadProcessId(foreWnd,nullptr)},curId{GetCurrentThreadId()};
         while(true){
             AttachThreadInput(curId,foreId,TRUE);
             ShowWindow(foreWnd,SW_SHOWNORMAL);
@@ -141,10 +141,10 @@ namespace Mod{
 #endif
     struct{
         struct{
-            std::vector<const char*> exe,svc;
+            const std::vector<const char*> exe,svc;
         }mythware;
         struct{
-            std::vector<const char*> exe,svc;
+            const std::vector<const char*> exe,svc;
         }lenovo;
     }rule{
         {
@@ -170,36 +170,39 @@ namespace Mod{
     };
     class Op final{
     private:
-        char mod;
-        std::vector<const char*> &exe,&svc;
+        const char mod;
+        const std::vector<const char*> &exe,&svc;
     public:
-        explicit Op(char mod,std::vector<const char*> &exe,std::vector<const char*> &svc):
-            mod{mod},exe{exe},svc{svc}{}
+        explicit Op(
+            const char mod,
+            const std::vector<const char*> &exe,
+            const std::vector<const char*> &svc
+        ):mod{mod},exe{exe},svc{svc}{}
         ~Op(){}
         auto operator()(Data){
             using namespace std::string_literals;
             std::string cmd;
             switch(mod){
                 case 'c':{
-                    for(auto &ref:exe){
+                    for(const auto &ref:exe){
                         cmd="reg add "
                         "\"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\"s
                         +ref+".exe\" /f /t reg_sz /v debugger /d ? && taskKill /f /im "+ref+".exe";
                         system(cmd.c_str());
                     }
-                    for(auto &ref:svc){
+                    for(const auto &ref:svc){
                         cmd="net stop "s+ref+" /y";
                         system(cmd.c_str());
                     }
                     break;
                 }case 'r':{
-                    for(auto &ref:exe){
+                    for(const auto &ref:exe){
                         cmd="reg delete "
                         "\"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\"s
                         +ref+".exe\" /f";
                         system(cmd.c_str());
                     }
-                    for(auto &ref:svc){
+                    for(const auto &ref:svc){
                         cmd="net start "s+ref;
                         system(cmd.c_str());
                     }

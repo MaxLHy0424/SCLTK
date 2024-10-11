@@ -17,7 +17,7 @@ struct Data final{
     UI *const ui;
     explicit Data():
         buttonState{MOUSE_BUTTON_LEFT},ctrlKeyState{},eventFlag{},ui{}{}
-    explicit Data(MOUSE_EVENT_RECORD mouseEvent,UI *ui):
+    explicit Data(const MOUSE_EVENT_RECORD mouseEvent,UI *const ui):
         buttonState{mouseEvent.dwButtonState},ctrlKeyState{mouseEvent.dwControlKeyState},
         eventFlag{mouseEvent.dwEventFlags},ui{ui}{}
     ~Data(){}
@@ -33,11 +33,15 @@ private:
         explicit Item():
             text{},colorDef{WCC_WHITE},colorHighlight{WCC_BLUE},
             colorLast{WCC_WHITE},pos{},fn{}{}
-        explicit Item(const char *text,short def,short highlight,callback fn):
-            text{text},colorDef{def},colorHighlight{highlight},
-            colorLast{WCC_WHITE},pos{},fn{fn}{}
+        explicit Item(
+            const char *const text,
+            const short def,
+            const short highlight,
+            const callback fn
+        ):text{text},colorDef{def},colorHighlight{highlight},
+          colorLast{WCC_WHITE},pos{},fn{fn}{}
         ~Item(){}
-        auto setColor(char mod){
+        auto setColor(const char mod){
             switch(mod){
                 case 'd':{
                     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),colorDef);
@@ -59,7 +63,7 @@ private:
     };
     short height,width;
     std::vector<Item> item;
-    auto opCursor(char mod){
+    auto opCursor(const char mod){
         CONSOLE_CURSOR_INFO cursorInfo;
         GetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&cursorInfo);
         switch(mod){
@@ -73,7 +77,7 @@ private:
         }
         SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&cursorInfo);
     }
-    auto opAttrs(char mod){
+    auto opAttrs(const char mod){
         DWORD mode;
         GetConsoleMode(GetStdHandle(STD_INPUT_HANDLE),&mode);
         switch(mod){
@@ -95,7 +99,7 @@ private:
     auto setCursor(const COORD &tmp={0,0}){
         SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE),tmp);
     }
-    auto waitMouseEvent(bool move=true){
+    auto waitMouseEvent(const bool move=true){
         INPUT_RECORD record;
         DWORD reg;
         while(true){
@@ -118,13 +122,13 @@ private:
         printf("%s",std::string(width*height,' ').c_str());
         setCursor({0,0});
     }
-    auto write(const char *text,bool isEndl=false){
+    auto write(const char *const text,const bool isEndl=false){
         printf("%s",text);
         if(isEndl){
             printf("\n");
         }
     }
-    auto rewrite(COORD &refPos,const char *&refText){
+    auto rewrite(const COORD &refPos,const char *const &refText){
         setCursor({0,refPos.Y});
         for(short j{};j<refPos.X;++j){
             write(" ");
@@ -141,7 +145,7 @@ private:
             write(ref.text,true);
         }
     }
-    auto refresh(COORD &hangPos){
+    auto refresh(const COORD &hangPos){
         for(auto &ref:item){
             if((ref==hangPos)&&(ref.colorLast!=ref.colorHighlight)){
                 ref.setColor('h');
@@ -153,7 +157,7 @@ private:
             }
         }
     }
-    auto impl(MOUSE_EVENT_RECORD &mouseEvent){
+    auto impl(const MOUSE_EVENT_RECORD &mouseEvent){
         bool isExit{};
         for(auto &ref:item){
             if(ref==mouseEvent.dwMousePosition){
@@ -180,22 +184,30 @@ public:
         return item.size();
     }
     auto &add(
-        const char *text,callback fn=nullptr,
-        short colorHighlight=WCC_BLUE,short colorDef=WCC_WHITE
+        const char *const text,
+        const callback fn=nullptr,
+        const short colorHighlight=WCC_BLUE,
+        const short colorDef=WCC_WHITE
     ){
         item.emplace_back(Item(text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn));
         return *this;
     }
     auto &insert(
-        size_t index,const char *text,callback fn=nullptr,
-        short colorHighlight=WCC_BLUE,short colorDef=WCC_WHITE
+        const size_t index,
+        const char *const text,
+        const callback fn=nullptr,
+        const short colorHighlight=WCC_BLUE,
+        const short colorDef=WCC_WHITE
     ){
         item.emplace(item.begin()+index,Item(text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn));
         return *this;
     }
     auto &edit(
-        size_t index,const char *text,callback fn=nullptr,
-        short colorHighlight=WCC_BLUE,short colorDef=WCC_WHITE
+        const size_t index,
+        const char *const text,
+        const callback fn=nullptr,
+        const short colorHighlight=WCC_BLUE,
+        const short colorDef=WCC_WHITE
     ){
         item.at(index)=Item(text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn);
         return *this;
@@ -204,7 +216,7 @@ public:
         item.pop_back();
         return *this;
     }
-    auto &remove(size_t begin,size_t end){
+    auto &remove(const size_t begin,const size_t end){
         item.erase(item.begin()+begin,item.begin()+end);
         return *this;
     }
