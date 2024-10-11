@@ -130,9 +130,7 @@ private:
     }
     auto rewrite(const COORD &refPos,const char *const &refText){
         setCursor({0,refPos.Y});
-        for(short j{};j<refPos.X;++j){
-            write(" ");
-        }
+        write(std::string(refPos.X,' ').c_str());
         setCursor({0,refPos.Y});
         write(refText);
         setCursor({0,refPos.Y});
