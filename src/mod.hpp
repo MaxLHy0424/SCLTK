@@ -51,7 +51,7 @@ namespace Mod{
     }
     auto info(Data){
         UI ui;
-        ui.add("                    < 关  于 >\n\n")
+        ui.add("                    [ 关  于 ]\n\n")
           .add(" < 返回 ",Mod::exit,WCC_RED)
           .add("\n[名称]\n")
           .add(" " INFO_NAME)
@@ -122,7 +122,7 @@ namespace Mod{
             }
         };
         UI ui;
-        ui.add("                    < 设  置 >\n\n")
+        ui.add("                    [ 设  置 ]\n\n")
           .add(" (i) 下次启动时生效.\n")
           .add(" < 放弃并返回 ",exit,WCC_RED)
           .add(" < 保存并返回 ",Save(),WCC_GREEN)

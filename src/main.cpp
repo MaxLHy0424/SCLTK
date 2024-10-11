@@ -51,7 +51,7 @@ auto main(const int argc,const char *const args[])->int{
         std::thread(Mod::frontShow).detach();
     }
     UI ui;
-    ui.add("                    < 主  页 >\n\n");
+    ui.add("                    [ 主  页 ]\n\n");
     if(configError){
 #ifdef _THE_NEXT_MAJOR_UPDATE_
         ui.add(" (!) 配置项目错误.\n");
