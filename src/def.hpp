@@ -1,10 +1,10 @@
 #pragma once
 #ifndef _BUILD_INFO_
-#define _CRT_SECURE_NO_WARNINGS
 #define _ANSI
 #define ANSI
 #define WINDOW_TITLE "CRCSN"
 #include<stdio.h>
+#include<shlobj.h>
 #ifdef _THE_NEXT_MAJOR_UPDATE_
 #include<fstream>
 #endif
@@ -12,7 +12,6 @@
 #include<string>
 #include<functional>
 #include<thread>
-#include<shlobj.h>
 #endif
 #define INFO_NAME "Computer Room Control Software Nemesis"
 #define INFO_VERSION "v5.9.2"
