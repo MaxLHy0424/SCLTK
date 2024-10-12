@@ -2,14 +2,14 @@
     "version":"2.0.0",
     "tasks":[
         {
-            "label":"build",
+            "label":"debug",
             "type":"shell",
             "command":"make",
             "args":[
                 "debug"
             ],
             "group":{
-                "kind":"build",
+                "kind":"test",
                 "isDefault":true
             },
             "presentation":{
@@ -23,7 +23,7 @@
         {
             "label":"run",
             "type":"shell",
-            "dependsOn":"build",
+            "dependsOn":"debug",
             "command":"${workspaceFolder}/bin/__debug__.exe",
             "group":{
                 "kind":"test",
