@@ -109,11 +109,11 @@ namespace Mod{
             auto operator()(Data){
                 std::string text;
                 if(config.wndAlpha){
-                    text=text+"wndAlpha\n";
+                    text.append("wndAlpha\n");
                 }if(config.wndCtrls){
-                    text=text+"wndCtrls\n";
+                    text.append("wndCtrls\n");
                 }if(config.wndFrontShow){
-                    text=text+"wndFrontShow\n";
+                    text.append("wndFrontShow\n");
                 }
                 std::ofstream fs("config.ini",std::ios::out|std::ios::trunc);
                 fs.write(text.c_str(),text.size());
@@ -180,31 +180,39 @@ namespace Mod{
         ):mod{mod},exe{exe},svc{svc}{}
         ~Op(){}
         auto operator()(Data){
-            using namespace std::string_literals;
             std::string cmd;
             switch(mod){
                 case 'c':{
                     for(const auto &ref:exe){
-                        cmd="reg add "
-                        "\"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\"s
-                        +ref+".exe\" /f /t reg_sz /v debugger /d ? & taskKill /f /im "+ref+".exe";
+                        cmd.append("reg add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\")
+                           .append(ref)
+                           .append(".exe\" /f /t reg_sz /v debugger /d ? & taskKill /f /im ")
+                           .append(ref)
+                           .append(".exe");
                         system(cmd.c_str());
+                        cmd.clear();
                     }
                     for(const auto &ref:svc){
-                        cmd="net stop "s+ref+" /y";
+                        cmd.append("net stop ")
+                           .append(ref)
+                           .append(" /y");
                         system(cmd.c_str());
+                        cmd.clear();
                     }
                     break;
                 }case 'r':{
                     for(const auto &ref:exe){
-                        cmd="reg delete "
-                        "\"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\"s
-                        +ref+".exe\" /f";
+                        cmd.append("reg delete \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\")
+                           .append(ref)
+                           .append(".exe\" /f");
                         system(cmd.c_str());
+                        cmd.clear();
                     }
                     for(const auto &ref:svc){
-                        cmd="net start "s+ref;
+                        cmd.append("net start ")
+                           .append(ref);
                         system(cmd.c_str());
+                        cmd.clear();
                     }
                     break;
                 }
