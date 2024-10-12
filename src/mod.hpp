@@ -181,6 +181,7 @@ namespace Mod{
         ~Op(){}
         auto operator()(Data){
             std::string cmd;
+            puts("=> 生成命令.");
             switch(mod){
                 case 'c':{
                     for(const auto &ref:exe){
@@ -210,7 +211,11 @@ namespace Mod{
                     break;
                 }
             }
+            puts("=> 执行命令.");
+            printf("%s\n",std::string(50,'-').c_str());
             system(cmd.c_str());
+            printf("%s\n",std::string(50,'-').c_str());
+            puts("=> 释放内存.");
             return false;
         }
     };
