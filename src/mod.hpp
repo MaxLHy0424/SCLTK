@@ -180,8 +180,8 @@ namespace Mod{
         ):mod{mod},exe{exe},svc{svc}{}
         ~Op(){}
         auto operator()(Data){
-            std::string cmd;
             puts("=> 生成命令.");
+            std::string cmd;
             switch(mod){
                 case 'c':{
                     for(const auto &ref:exe){
