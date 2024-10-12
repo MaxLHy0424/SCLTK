@@ -79,16 +79,16 @@ namespace Mod{
             goto END;
         }
         {
-            std::string item;
-            while(std::getline(fs,item)){
-                if(item.at(0)=='#'){
+            std::string text;
+            while(std::getline(fs,text)){
+                if(text.at(0)=='#'){
                     continue;
                 }
-                if(item=="wndAlpha"){
+                if(text=="wndAlpha"){
                     config.wndAlpha=true;
-                }else if(item=="wndCtrls"){
+                }else if(text=="wndCtrls"){
                     config.wndCtrls=true;
-                }else if(item=="wndFrontShow"){
+                }else if(text=="wndFrontShow"){
                     config.wndFrontShow=true;
                 }else{
                     config={};
@@ -107,16 +107,16 @@ namespace Mod{
             explicit Save(){}
             ~Save(){}
             auto operator()(Data){
-                std::string item;
+                std::string text;
                 if(config.wndAlpha){
-                    item=item+"wndAlpha\n";
+                    text=text+"wndAlpha\n";
                 }if(config.wndCtrls){
-                    item=item+"wndCtrls\n";
+                    text=text+"wndCtrls\n";
                 }if(config.wndFrontShow){
-                    item=item+"wndFrontShow\n";
+                    text=text+"wndFrontShow\n";
                 }
                 std::ofstream fs("config.ini",std::ios::out|std::ios::trunc);
-                fs.write(item.c_str(),item.size());
+                fs.write(text.c_str(),text.size());
                 fs.close();
                 return true;
             }
