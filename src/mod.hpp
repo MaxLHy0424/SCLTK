@@ -187,7 +187,7 @@ namespace Mod{
                     for(const auto &ref:exe){
                         cmd="reg add "
                         "\"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\"s
-                        +ref+".exe\" /f /t reg_sz /v debugger /d ? && taskKill /f /im "+ref+".exe";
+                        +ref+".exe\" /f /t reg_sz /v debugger /d ? & taskKill /f /im "+ref+".exe";
                         system(cmd.c_str());
                     }
                     for(const auto &ref:svc){
