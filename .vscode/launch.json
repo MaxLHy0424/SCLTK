@@ -14,7 +14,7 @@
             "internalConsoleOptions":"neverOpen",
             "MIMode":"gdb",
             "miDebuggerPath":"C:\\Software\\MSYS2\\ucrt64\\bin\\gdb.exe",
-            "preLaunchTask":"build"
+            "preLaunchTask":"debug"
         }
     ]
 }
