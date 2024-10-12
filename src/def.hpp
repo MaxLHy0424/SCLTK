@@ -1,7 +1,5 @@
 #pragma once
 #ifndef _BUILD_INFO_
-#define _ANSI
-#define ANSI
 #define WINDOW_TITLE "CRCSN"
 #include<stdio.h>
 #include<shlobj.h>
