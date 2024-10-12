@@ -188,35 +188,29 @@ namespace Mod{
                            .append(ref)
                            .append(".exe\" /f /t reg_sz /v debugger /d ? & taskKill /f /im ")
                            .append(ref)
-                           .append(".exe");
-                        system(cmd.c_str());
-                        cmd.clear();
+                           .append(".exe & ");
                     }
                     for(const auto &ref:svc){
                         cmd.append("net stop ")
                            .append(ref)
-                           .append(" /y");
-                        system(cmd.c_str());
-                        cmd.clear();
+                           .append(" /y & ");
                     }
                     break;
                 }case 'r':{
                     for(const auto &ref:exe){
                         cmd.append("reg delete \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\")
                            .append(ref)
-                           .append(".exe\" /f");
-                        system(cmd.c_str());
-                        cmd.clear();
+                           .append(".exe\" /f & ");
                     }
                     for(const auto &ref:svc){
                         cmd.append("net start ")
-                           .append(ref);
-                        system(cmd.c_str());
-                        cmd.clear();
+                           .append(ref)
+                           .append(" & ");
                     }
                     break;
                 }
             }
+            system(cmd.c_str());
             return false;
         }
     };
