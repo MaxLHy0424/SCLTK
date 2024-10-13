@@ -3,7 +3,7 @@ CC=g++.exe
 def=-DNDEBUG -D_CRT_SECURE_NO_WARNINGS -DANSI -D_ANSI
 argsBase=-fexec-charset=GBK -std=gnu++23 -Wall -Wextra -pipe -m64
 argsRelease=$(argsBase) -static -Os -flto -o
-argsDebug=$(argsBase) -O0 -o
+argsDebug=$(argsBase) -O0 -g3 o
 tag=std
 arch=x86_64
 version=v5.9.2
