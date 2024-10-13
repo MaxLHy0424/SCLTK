@@ -96,7 +96,7 @@ private:
         GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE),&tmp);
         return tmp.dwCursorPosition;
     }
-    auto setCursor(const COORD &tmp={0,0}){
+    auto setCursor(const COORD &tmp){
         SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE),tmp);
     }
     auto waitMouseEvent(const bool move=true){
@@ -177,6 +177,8 @@ private:
 public:
     explicit UI():
         height{},width{}{}
+    explicit UI(const UI &ui)=delete;
+    explicit UI(const UI &&ui)=delete;
     ~UI(){}
     auto size(){
         return item.size();
