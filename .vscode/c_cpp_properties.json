@@ -1,4 +1,5 @@
 {
+    "version":4,
     "configurations":[
         {
             "name":"Win32",
@@ -6,8 +7,8 @@
                 "${workspaceFolder}\\*"
             ],
             "defines":[
-                "NDEBUG",
                 //"_THE_NEXT_MAJOR_UPDATE_",
+                "NDEBUG",
                 "_CRT_SECURE_NO_WARNINGS",
                 "ANSI",
                 "_ANSI"
@@ -22,6 +23,5 @@
             "mergeConfigurations":false,
             "configurationProvider":"ms-vscode.makefile-tools"
         }
-    ],
-    "version":4
+    ]
 }
