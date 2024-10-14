@@ -13,13 +13,13 @@
 #define WCC_RED 0x0c
 class UI;
 struct Data final{
-    const DWORD buttonState,ctrlKeyState,eventFlag;
+    const DWORD stateButton,stateCtrlKey,flagEvent;
     UI *const ui;
     explicit Data():
-        buttonState{MOUSE_BUTTON_LEFT},ctrlKeyState{},eventFlag{},ui{}{}
+        stateButton{MOUSE_BUTTON_LEFT},stateCtrlKey{},flagEvent{},ui{}{}
     explicit Data(const MOUSE_EVENT_RECORD mouseEvent,UI *const ui):
-        buttonState{mouseEvent.dwButtonState},ctrlKeyState{mouseEvent.dwControlKeyState},
-        eventFlag{mouseEvent.dwEventFlags},ui{ui}{}
+        stateButton{mouseEvent.dwButtonState},stateCtrlKey{mouseEvent.dwControlKeyState},
+        flagEvent{mouseEvent.dwEventFlags},ui{ui}{}
     ~Data(){}
 };
 class UI final{
@@ -28,18 +28,18 @@ private:
     struct Item final{
         const char *text;
         short colorDef,colorHighlight,colorLast;
-        COORD pos;
-        callback fn;
+        COORD position;
+        callback function;
         explicit Item():
             text{},colorDef{WCC_WHITE},colorHighlight{WCC_BLUE},
-            colorLast{WCC_WHITE},pos{},fn{}{}
+            colorLast{WCC_WHITE},position{},function{}{}
         explicit Item(
             const char *const text,
-            const short def,
-            const short highlight,
-            const callback fn
-        ):text{text},colorDef{def},colorHighlight{highlight},
-          colorLast{WCC_WHITE},pos{},fn{fn}{}
+            const short colorDef,
+            const short colorHighlight,
+            const callback function
+        ):text{text},colorDef{colorDef},colorHighlight{colorHighlight},
+          colorLast{WCC_WHITE},position{},function{function}{}
         ~Item(){}
         auto setColor(const char mod){
             switch(mod){
@@ -54,28 +54,30 @@ private:
                 }
             }
         }
-        auto operator==(const COORD &refMousePos)const{
-            return (pos.Y==refMousePos.Y)&&(pos.X<=refMousePos.X)&&(refMousePos.X<(pos.X+(short)strlen(text)));
+        auto operator==(const COORD &mousePosition)const{
+            return (position.Y==mousePosition.Y)&&
+                   (position.X<=mousePosition.X)&&
+                   (mousePosition.X<(position.X+(short)strlen(text)));
         }
-        auto operator!=(const COORD &refMousePos)const{
-            return !operator==(refMousePos);
+        auto operator!=(const COORD &mousePosition)const{
+            return !operator==(mousePosition);
         }
     };
     short height,width;
     std::vector<Item> item;
     auto opCursor(const char mod){
-        CONSOLE_CURSOR_INFO cursorInfo;
-        GetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&cursorInfo);
+        CONSOLE_CURSOR_INFO infoCursor;
+        GetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&infoCursor);
         switch(mod){
             case 'h':{
-                cursorInfo.bVisible=false;
+                infoCursor.bVisible=false;
                 break;
             }case 's':{
-                cursorInfo.bVisible=true;
+                infoCursor.bVisible=true;
                 break;
             }
         }
-        SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&cursorInfo);
+        SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&infoCursor);
     }
     auto opAttrs(const char mod){
         DWORD mode;
@@ -92,12 +94,12 @@ private:
         SetConsoleMode(GetStdHandle(STD_INPUT_HANDLE),mode);
     }
     auto getCursor(){
-        CONSOLE_SCREEN_BUFFER_INFO tmp;
-        GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE),&tmp);
-        return tmp.dwCursorPosition;
+        CONSOLE_SCREEN_BUFFER_INFO infoConsole;
+        GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE),&infoConsole);
+        return infoConsole.dwCursorPosition;
     }
-    auto setCursor(const COORD &tmp){
-        SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE),tmp);
+    auto setCursor(const COORD &position){
+        SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE),position);
     }
     auto waitMouseEvent(const bool move=true){
         INPUT_RECORD record;
@@ -111,10 +113,10 @@ private:
         }
     }
     auto getConsoleSize(){
-        CONSOLE_SCREEN_BUFFER_INFO tmp;
-        GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE),&tmp);
-        height=tmp.dwSize.Y;
-        width=tmp.dwSize.X;
+        CONSOLE_SCREEN_BUFFER_INFO infoConsole;
+        GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE),&infoConsole);
+        height=infoConsole.dwSize.Y;
+        width=infoConsole.dwSize.X;
     }
     auto cls(){
         getConsoleSize();
@@ -128,43 +130,43 @@ private:
             printf("\n");
         }
     }
-    auto rewrite(const COORD &refPos,const char *const &refText){
-        setCursor({0,refPos.Y});
-        write(std::string(refPos.X,' ').c_str());
-        setCursor({0,refPos.Y});
-        write(refText);
-        setCursor({0,refPos.Y});
+    auto rewrite(const COORD &position,const char *const &text){
+        setCursor({0,position.Y});
+        write(std::string(position.X,' ').c_str());
+        setCursor({0,position.Y});
+        write(text);
+        setCursor({0,position.Y});
     }
     auto initPos(){
         cls();
-        for(auto &ref:item){
-            ref.pos=getCursor();
-            ref.setColor('d');
-            write(ref.text,true);
+        for(auto &line:item){
+            line.position=getCursor();
+            line.setColor('d');
+            write(line.text,true);
         }
     }
-    auto refresh(const COORD &hangPos){
-        for(auto &ref:item){
-            if((ref==hangPos)&&(ref.colorLast!=ref.colorHighlight)){
-                ref.setColor('h');
-                rewrite(ref.pos,ref.text);
+    auto refresh(const COORD &hangPosition){
+        for(auto &line:item){
+            if((line==hangPosition)&&(line.colorLast!=line.colorHighlight)){
+                line.setColor('h');
+                rewrite(line.position,line.text);
             }
-            if((ref!=hangPos)&&(ref.colorLast!=ref.colorDef)){
-                ref.setColor('d');
-                rewrite(ref.pos,ref.text);
+            if((line!=hangPosition)&&(line.colorLast!=line.colorDef)){
+                line.setColor('d');
+                rewrite(line.position,line.text);
             }
         }
     }
     auto impl(const MOUSE_EVENT_RECORD &mouseEvent){
         bool isExit{};
-        for(auto &ref:item){
-            if(ref==mouseEvent.dwMousePosition){
-                if(ref.fn!=nullptr){
+        for(auto &line:item){
+            if(line==mouseEvent.dwMousePosition){
+                if(line.function!=nullptr){
                     cls();
-                    ref.setColor('d');
+                    line.setColor('d');
                     opAttrs('+');
                     opCursor('s');
-                    isExit=ref.fn(Data(mouseEvent,this));
+                    isExit=line.function(Data(mouseEvent,this));
                     opAttrs('-');
                     opCursor('h');
                     initPos();
@@ -185,31 +187,31 @@ public:
     }
     auto &add(
         const char *const text,
-        const callback fn=nullptr,
+        const callback function=nullptr,
         const short colorHighlight=WCC_BLUE,
         const short colorDef=WCC_WHITE
     ){
-        item.emplace_back(Item(text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn));
+        item.emplace_back(Item(text,colorDef,(function==nullptr)?(colorDef):(colorHighlight),function));
         return *this;
     }
     auto &insert(
         const size_t index,
         const char *const text,
-        const callback fn=nullptr,
+        const callback function=nullptr,
         const short colorHighlight=WCC_BLUE,
         const short colorDef=WCC_WHITE
     ){
-        item.emplace(item.begin()+index,Item(text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn));
+        item.emplace(item.begin()+index,Item(text,colorDef,(function==nullptr)?(colorDef):(colorHighlight),function));
         return *this;
     }
     auto &edit(
         const size_t index,
         const char *const text,
-        const callback fn=nullptr,
+        const callback function=nullptr,
         const short colorHighlight=WCC_BLUE,
         const short colorDef=WCC_WHITE
     ){
-        item.at(index)=Item(text,colorDef,(fn==nullptr)?(colorDef):(colorHighlight),fn);
+        item.at(index)=Item(text,colorDef,(function==nullptr)?(colorDef):(colorHighlight),function);
         return *this;
     }
     auto &remove(){

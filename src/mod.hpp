@@ -6,7 +6,7 @@ struct{
 }config{};
 bool configError{};
 namespace Mod{
-    auto isRunAsAdmin(){
+    auto isRunAsAdmin{[](){
         BOOL isAdmin{};
         PSID adminsGroup{};
         SID_IDENTIFIER_AUTHORITY ntAuthority{SECURITY_NT_AUTHORITY};
@@ -20,8 +20,8 @@ namespace Mod{
             FreeSid(adminsGroup);
         }
         return isAdmin;
-    }
-    auto init(){
+    }};
+    auto init{[](){
         system("chcp 936 > nul");
         SetConsoleTitle(WINDOW_TITLE);
         SetWindowLongPtr(
@@ -31,8 +31,8 @@ namespace Mod{
         );
         system("mode con cols=50 lines=25");
         SetLayeredWindowAttributes(GetConsoleWindow(),0,(config.wndAlpha)?(230):(255),LWA_ALPHA);
-    }
-    auto frontShow(){
+    }};
+    auto frontShow{[](){
         const HWND foreWnd{GetConsoleWindow()};
         const DWORD foreId{GetWindowThreadProcessId(foreWnd,nullptr)},curId{GetCurrentThreadId()};
         while(true){
@@ -45,11 +45,11 @@ namespace Mod{
             SetWindowPos(foreWnd,HWND_TOPMOST,0,0,100,100,SWP_NOMOVE|SWP_NOSIZE);
             Sleep(100);
         }
-    }
-    auto exit(Data){
+    }};
+    auto exit{[](Data){
         return true;
-    }
-    auto info(Data){
+    }};
+    auto info{[](Data){
         UI ui;
         ui.add("                    [ 关  于 ]\n\n")
           .add(" < 返回 ",Mod::exit,WCC_RED)
@@ -64,31 +64,31 @@ namespace Mod{
           .add(" (C) 2023 " INFO_DEVELOPER ". All Rights Reserved.")
           .show();
         return false;
-    }
-    auto cmd(Data){
+    }};
+    auto cmd{[](Data){
         system("cmd");
         if(!config.wndCtrls){
             init();
         }
         return false;
-    }
+    }};
 #ifdef _THE_NEXT_MAJOR_UPDATE_
-    auto configRead(){
-        std::ifstream fs("config.ini",std::ios::in);
-        if(!fs.is_open()){
+    auto configRead{[](){
+        std::ifstream configFile("config.ini",std::ios::in);
+        if(!configFile.is_open()){
             goto END;
         }
         {
-            std::string text;
-            while(std::getline(fs,text)){
-                if(text.at(0)=='#'){
+            std::string line;
+            while(std::getline(configFile,line)){
+                if(line.at(0)=='#'){
                     continue;
                 }
-                if(text=="wndAlpha"){
+                if(line=="wndAlpha"){
                     config.wndAlpha=true;
-                }else if(text=="wndCtrls"){
+                }else if(line=="wndCtrls"){
                     config.wndCtrls=true;
-                }else if(text=="wndFrontShow"){
+                }else if(line=="wndFrontShow"){
                     config.wndFrontShow=true;
                 }else{
                     config={};
@@ -98,10 +98,10 @@ namespace Mod{
             }
         }
     END:
-        fs.close();
+        configFile.close();
         return;
-    }
-    auto configEdit(Data){
+    }};
+    auto configEdit{[](Data){
         class Save final{
         public:
             explicit Save(){}
@@ -115,9 +115,9 @@ namespace Mod{
                 }if(config.wndFrontShow){
                     text.append("wndFrontShow\n");
                 }
-                std::ofstream fs("config.ini",std::ios::out|std::ios::trunc);
-                fs.write(text.c_str(),text.size());
-                fs.close();
+                std::ofstream configFile("config.ini",std::ios::out|std::ios::trunc);
+                configFile.write(text.c_str(),text.size());
+                configFile.close();
                 return true;
             }
         };
@@ -137,7 +137,7 @@ namespace Mod{
           .add(" > 禁用 ",[](Data){config.wndCtrls=false;return false;})
           .show();
         return false;
-    }
+    }};
 #endif
     struct{
         struct{
@@ -184,28 +184,28 @@ namespace Mod{
             std::string cmd;
             switch(mod){
                 case 'c':{
-                    for(const auto &ref:exe){
+                    for(const auto &itemExe:exe){
                         cmd.append("reg add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\")
-                           .append(ref)
+                           .append(itemExe)
                            .append(".exe\" /f /t reg_sz /v debugger /d ? & taskKill /f /im ")
-                           .append(ref)
+                           .append(itemExe)
                            .append(".exe & ");
                     }
-                    for(const auto &ref:svc){
+                    for(const auto &itemSvc:svc){
                         cmd.append("net stop ")
-                           .append(ref)
+                           .append(itemSvc)
                            .append(" /y & ");
                     }
                     break;
                 }case 'r':{
-                    for(const auto &ref:exe){
+                    for(const auto &itemExe:exe){
                         cmd.append("reg delete \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\")
-                           .append(ref)
+                           .append(itemExe)
                            .append(".exe\" /f & ");
                     }
-                    for(const auto &ref:svc){
+                    for(const auto &itemSvc:svc){
                         cmd.append("net start ")
-                           .append(ref)
+                           .append(itemSvc)
                            .append(" & ");
                     }
                     break;
