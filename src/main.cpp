@@ -18,8 +18,8 @@ auto main(const int argc,const char *const args[])->int{
         for(int i{1};i<argc;++i){
             tmp=args[i];
             if((tmp.size()>2)&&(tmp.substr(0,2)=="-W")){
-                for(const auto &ref:tmp.substr(2)){
-                    switch(ref){
+                for(const auto &subArg:tmp.substr(2)){
+                    switch(subArg){
                         case 'f':{
                             config.wndFrontShow=true;
                             break;
