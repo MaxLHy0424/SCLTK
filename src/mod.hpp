@@ -174,6 +174,7 @@ namespace Mod{
         ):mod{mod},exe{exe},svc{svc}{}
         ~Op(){}
         auto operator()(Data){
+            const char *divider{std::string(50,'-').c_str()};
             puts("=> 生成命令.");
             std::string cmd;
             switch(mod){
@@ -206,9 +207,9 @@ namespace Mod{
                 }
             }
             puts("=> 执行命令.");
-            printf("%s\n",std::string(50,'-').c_str());
+            puts(divider);
             system(cmd.c_str());
-            printf("%s\n",std::string(50,'-').c_str());
+            puts(divider);
             puts("=> 释放内存.");
             return false;
         }
