@@ -6,7 +6,7 @@ struct{
 }config{};
 bool configError{};
 namespace Mod{
-    auto isRunAsAdmin{[](){
+    auto isRunAsAdmin(){
         BOOL isAdmin{};
         PSID adminsGroup{};
         SID_IDENTIFIER_AUTHORITY ntAuthority{SECURITY_NT_AUTHORITY};
@@ -20,8 +20,8 @@ namespace Mod{
             FreeSid(adminsGroup);
         }
         return isAdmin;
-    }};
-    auto init{[](){
+    }
+    auto init(){
         system("chcp 936 > nul");
         SetConsoleTitle(WINDOW_TITLE);
         SetWindowLongPtr(
@@ -31,8 +31,8 @@ namespace Mod{
         );
         system("mode con cols=50 lines=25");
         SetLayeredWindowAttributes(GetConsoleWindow(),0,(config.wndAlpha)?(230):(255),LWA_ALPHA);
-    }};
-    auto frontShow{[](){
+    }
+    auto frontShow(){
         const HWND foreWnd{GetConsoleWindow()};
         const DWORD foreId{GetWindowThreadProcessId(foreWnd,nullptr)},curId{GetCurrentThreadId()};
         while(true){
@@ -45,11 +45,11 @@ namespace Mod{
             SetWindowPos(foreWnd,HWND_TOPMOST,0,0,100,100,SWP_NOMOVE|SWP_NOSIZE);
             Sleep(100);
         }
-    }};
-    auto exit{[](Data){
+    }
+    auto exit(Data){
         return true;
-    }};
-    auto info{[](Data){
+    }
+    auto info(Data){
         UI ui;
         ui.add("                    [ 关  于 ]\n\n")
           .add(" < 返回 ",Mod::exit,WCC_RED)
@@ -64,16 +64,16 @@ namespace Mod{
           .add(" (C) 2023 " INFO_DEVELOPER ". All Rights Reserved.")
           .show();
         return false;
-    }};
-    auto cmd{[](Data){
+    }
+    auto cmd(Data){
         system("cmd");
         if(!config.wndCtrls){
             init();
         }
         return false;
-    }};
+    }
 #ifdef _THE_NEXT_MAJOR_UPDATE_
-    auto configRead{[](){
+    auto configRead(){
         std::ifstream configFile("config.ini",std::ios::in);
         if(!configFile.is_open()){
             goto END;
@@ -100,8 +100,8 @@ namespace Mod{
     END:
         configFile.close();
         return;
-    }};
-    auto configEdit{[](Data){
+    }
+    auto configEdit(Data){
         class Save final{
         public:
             explicit Save(){}
@@ -137,7 +137,7 @@ namespace Mod{
           .add(" > 禁用 ",[](Data){config.wndCtrls=false;return false;})
           .show();
         return false;
-    }};
+    }
 #endif
     struct{
         struct{
