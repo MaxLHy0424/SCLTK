@@ -7,7 +7,7 @@ auto main()->int{
     if(!Mod::isRunAsAdmin()){
         std::string path(MAX_PATH,0);
         GetModuleFileName(nullptr,path.data(),MAX_PATH);
-        ShellExecute(nullptr,"runAs",path.data(),nullptr,nullptr,SW_SHOWNORMAL);
+        ShellExecute(nullptr,"runAs",path.c_str(),nullptr,nullptr,SW_SHOWNORMAL);
         return 0;
     }
     Mod::configRead();
