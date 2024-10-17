@@ -6,7 +6,7 @@ struct{
 }config{};
 bool configError{};
 namespace Mod{
-    auto isRunAsAdmin(){
+    inline auto isRunAsAdmin(){
         BOOL isAdmin{};
         PSID adminsGroup{};
         SID_IDENTIFIER_AUTHORITY ntAuthority{SECURITY_NT_AUTHORITY};
@@ -21,7 +21,7 @@ namespace Mod{
         }
         return isAdmin;
     }
-    auto init(){
+    inline auto init(){
         system("chcp 936 > nul");
         SetConsoleTitle(WINDOW_TITLE);
         SetWindowLongPtr(
@@ -32,7 +32,7 @@ namespace Mod{
         system("mode con cols=50 lines=25");
         SetLayeredWindowAttributes(GetConsoleWindow(),0,(config.wndAlpha)?(230):(255),LWA_ALPHA);
     }
-    auto frontShow(){
+    inline auto frontShow(){
         const HWND foreWnd{GetConsoleWindow()};
         const DWORD foreId{GetWindowThreadProcessId(foreWnd,nullptr)},curId{GetCurrentThreadId()};
         while(true){
@@ -46,10 +46,10 @@ namespace Mod{
             Sleep(100);
         }
     }
-    auto exit(Data){
+    inline auto exit(Data){
         return true;
     }
-    auto info(Data){
+    inline auto info(Data){
         UI ui;
         ui.add("                    [ 关  于 ]\n\n")
           .add(" < 返回 ",Mod::exit,COLOR_RED)
@@ -65,7 +65,7 @@ namespace Mod{
           .show();
         return false;
     }
-    auto cmd(Data){
+    inline auto cmd(Data){
         system("cmd");
         if(!config.wndCtrls){
             init();
@@ -73,7 +73,7 @@ namespace Mod{
         return false;
     }
 #ifdef _THE_NEXT_MAJOR_UPDATE_
-    auto configRead(){
+    inline auto configRead(){
         std::ifstream configFile("config.ini",std::ios::in);
         if(!configFile.is_open()){
             goto END;
@@ -101,7 +101,7 @@ namespace Mod{
         configFile.close();
         return;
     }
-    auto configEdit(Data){
+    inline auto configEdit(Data){
         auto save{[](Data){
             std::string text;
             if(config.wndAlpha){
@@ -165,10 +165,10 @@ namespace Mod{
         const char mod;
         const Rule &rule;
     public:
-        explicit Op(const char mod,const Rule &rule):
+        inline explicit Op(const char mod,const Rule &rule):
             mod{mod},rule{rule}{}
-        ~Op(){}
-        auto operator()(Data){
+        inline ~Op(){}
+        inline auto operator()(Data){
             const char *divider{std::string(50,'-').c_str()};
             puts("=> 生成命令.");
             std::string cmd;
