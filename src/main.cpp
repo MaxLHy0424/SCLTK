@@ -66,11 +66,11 @@ auto main(const int argc,const char *const args[])->int{
 #endif
       .add(" > 命令提示符 ",Mod::cmd)
       .add("\n[破解]\n")
-      .add(" > 极域电子教室 ",Mod::Op('c',Mod::rule.mythware.exe,Mod::rule.mythware.svc))
-      .add(" > 联想云教室 ",Mod::Op('c',Mod::rule.lenovo.exe,Mod::rule.lenovo.svc))
+      .add(" > 极域电子教室 ",Mod::Op('c',Mod::rule.mythware))
+      .add(" > 联想云教室 ",Mod::Op('c',Mod::rule.lenovo))
       .add("\n[恢复]\n")
-      .add(" > 极域电子教室 ",Mod::Op('r',Mod::rule.mythware.exe,Mod::rule.mythware.svc))
-      .add(" > 联想云教室 ",Mod::Op('r',Mod::rule.lenovo.exe,Mod::rule.lenovo.svc))
+      .add(" > 极域电子教室 ",Mod::Op('r',Mod::rule.mythware))
+      .add(" > 联想云教室 ",Mod::Op('r',Mod::rule.lenovo))
       .show();
     return 0;
 }
