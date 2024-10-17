@@ -133,13 +133,11 @@ namespace Mod{
         return false;
     }
 #endif
+    struct Rule final{
+        const std::vector<const char*> exe,svc;
+    };
     struct{
-        struct{
-            const std::vector<const char*> exe,svc;
-        }mythware;
-        struct{
-            const std::vector<const char*> exe,svc;
-        }lenovo;
+        const Rule mythware,lenovo;
     }rule{
         {
             {
@@ -165,13 +163,10 @@ namespace Mod{
     class Op final{
     private:
         const char mod;
-        const std::vector<const char*> &exe,&svc;
+        const Rule &rule;
     public:
-        explicit Op(
-            const char mod,
-            const std::vector<const char*> &exe,
-            const std::vector<const char*> &svc
-        ):mod{mod},exe{exe},svc{svc}{}
+        explicit Op(const char mod,const Rule &rule):
+            mod{mod},rule{rule}{}
         ~Op(){}
         auto operator()(Data){
             const char *divider{std::string(50,'-').c_str()};
@@ -179,26 +174,26 @@ namespace Mod{
             std::string cmd;
             switch(mod){
                 case 'c':{
-                    for(const auto &itemExe:exe){
+                    for(const auto &itemExe:rule.exe){
                         cmd.append("reg add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\")
                            .append(itemExe)
                            .append(".exe\" /f /t reg_sz /v debugger /d ? & taskKill /f /im ")
                            .append(itemExe)
                            .append(".exe & ");
                     }
-                    for(const auto &itemSvc:svc){
+                    for(const auto &itemSvc:rule.svc){
                         cmd.append("net stop ")
                            .append(itemSvc)
                            .append(" /y & ");
                     }
                     break;
                 }case 'r':{
-                    for(const auto &itemExe:exe){
+                    for(const auto &itemExe:rule.exe){
                         cmd.append("reg delete \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\")
                            .append(itemExe)
                            .append(".exe\" /f & ");
                     }
-                    for(const auto &itemSvc:svc){
+                    for(const auto &itemSvc:rule.svc){
                         cmd.append("net start ")
                            .append(itemSvc)
                            .append(" & ");
