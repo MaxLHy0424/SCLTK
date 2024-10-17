@@ -52,7 +52,7 @@ namespace Mod{
     auto info(Data){
         UI ui;
         ui.add("                    [ 关  于 ]\n\n")
-          .add(" < 返回 ",Mod::exit,WCC_RED)
+          .add(" < 返回 ",Mod::exit,COLOR_RED)
           .add("\n[名称]\n")
           .add(" " INFO_NAME)
           .add("\n[版本]\n")
@@ -119,7 +119,7 @@ namespace Mod{
         UI ui;
         ui.add("                    [ 设  置 ]\n\n")
           .add(" (i) 下次启动时生效.\n")
-          .add(" < 保存并返回 ",save,WCC_RED)
+          .add(" < 保存并返回 ",save,COLOR_RED)
           .add("\n[半透明窗口]\n")
           .add(" > 启用 ",[](Data){config.wndAlpha=true;return false;})
           .add(" > 禁用 ",[](Data){config.wndAlpha=false;return false;})
