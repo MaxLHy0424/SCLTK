@@ -33,16 +33,17 @@ namespace Mod{
         SetLayeredWindowAttributes(GetConsoleWindow(),0,(config.wndAlpha)?(230):(255),LWA_ALPHA);
     }
     inline auto frontShow(){
-        const HWND foreWnd{GetConsoleWindow()};
-        const DWORD foreId{GetWindowThreadProcessId(foreWnd,nullptr)},curId{GetCurrentThreadId()};
+        const HWND wndThis{GetConsoleWindow()};
+        const DWORD idForeground{GetWindowThreadProcessId(wndThis,nullptr)},
+                    idCurrent{GetCurrentThreadId()};
         while(true){
-            AttachThreadInput(curId,foreId,TRUE);
-            ShowWindow(foreWnd,SW_SHOWNORMAL);
-            SetWindowPos(foreWnd,HWND_TOPMOST,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE);
-            SetWindowPos(foreWnd,HWND_NOTOPMOST,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE);
-            SetForegroundWindow(foreWnd);
-            AttachThreadInput(curId,foreId,FALSE);
-            SetWindowPos(foreWnd,HWND_TOPMOST,0,0,100,100,SWP_NOMOVE|SWP_NOSIZE);
+            AttachThreadInput(idCurrent,idForeground,TRUE);
+            ShowWindow(wndThis,SW_SHOWNORMAL);
+            SetWindowPos(wndThis,HWND_TOPMOST,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE);
+            SetWindowPos(wndThis,HWND_NOTOPMOST,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE);
+            SetForegroundWindow(wndThis);
+            AttachThreadInput(idCurrent,idForeground,FALSE);
+            SetWindowPos(wndThis,HWND_TOPMOST,0,0,100,100,SWP_NOMOVE|SWP_NOSIZE);
             Sleep(100);
         }
     }
