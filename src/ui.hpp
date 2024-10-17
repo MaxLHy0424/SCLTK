@@ -14,12 +14,12 @@ class UI;
 struct Data final{
     const DWORD stateButton,stateCtrlKey,flagEvent;
     UI *const ui;
-    explicit Data():
+    inline explicit Data():
         stateButton{MOUSE_BUTTON_LEFT},stateCtrlKey{},flagEvent{},ui{}{}
-    explicit Data(const MOUSE_EVENT_RECORD mouseEvent,UI *const ui):
+    inline explicit Data(const MOUSE_EVENT_RECORD mouseEvent,UI *const ui):
         stateButton{mouseEvent.dwButtonState},stateCtrlKey{mouseEvent.dwControlKeyState},
         flagEvent{mouseEvent.dwEventFlags},ui{ui}{}
-    ~Data(){}
+    inline ~Data(){}
 };
 class UI final{
 private:
@@ -29,18 +29,18 @@ private:
         short colorDef,colorHighlight,colorLast;
         COORD position;
         callback function;
-        explicit Item():
+        inline explicit Item():
             text{},colorDef{COLOR_WHITE},colorHighlight{COLOR_BLUE},
             colorLast{COLOR_WHITE},position{},function{}{}
-        explicit Item(
+        inline explicit Item(
             const char *const text,
             const short colorDef,
             const short colorHighlight,
             const callback function
         ):text{text},colorDef{colorDef},colorHighlight{colorHighlight},
           colorLast{COLOR_WHITE},position{},function{function}{}
-        ~Item(){}
-        auto setColor(const char mod){
+        inline ~Item(){}
+        inline auto setColor(const char mod){
             switch(mod){
                 case 'd':{
                     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),colorDef);
@@ -53,18 +53,18 @@ private:
                 }
             }
         }
-        auto operator==(const COORD &mousePosition)const{
+        inline auto operator==(const COORD &mousePosition)const{
             return (position.Y==mousePosition.Y)&&
                    (position.X<=mousePosition.X)&&
                    (mousePosition.X<(position.X+(short)strlen(text)));
         }
-        auto operator!=(const COORD &mousePosition)const{
+        inline auto operator!=(const COORD &mousePosition)const{
             return !operator==(mousePosition);
         }
     };
     short height,width;
     std::vector<Item> item;
-    auto opCursor(const char mod){
+    inline auto opCursor(const char mod){
         CONSOLE_CURSOR_INFO infoCursor;
         GetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&infoCursor);
         switch(mod){
@@ -78,7 +78,7 @@ private:
         }
         SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&infoCursor);
     }
-    auto opAttrs(const char mod){
+    inline auto opAttrs(const char mod){
         DWORD mode;
         GetConsoleMode(GetStdHandle(STD_INPUT_HANDLE),&mode);
         switch(mod){
@@ -92,15 +92,15 @@ private:
         }
         SetConsoleMode(GetStdHandle(STD_INPUT_HANDLE),mode);
     }
-    auto getCursor(){
+    inline auto getCursor(){
         CONSOLE_SCREEN_BUFFER_INFO infoConsole;
         GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE),&infoConsole);
         return infoConsole.dwCursorPosition;
     }
-    auto setCursor(const COORD &position){
+    inline auto setCursor(const COORD &position){
         SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE),position);
     }
-    auto waitMouseEvent(const bool move=true){
+    inline auto waitMouseEvent(const bool move=true){
         INPUT_RECORD record;
         DWORD reg;
         while(true){
@@ -111,32 +111,32 @@ private:
             }
         }
     }
-    auto getConsoleSize(){
+    inline auto getConsoleSize(){
         CONSOLE_SCREEN_BUFFER_INFO infoConsole;
         GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE),&infoConsole);
         height=infoConsole.dwSize.Y;
         width=infoConsole.dwSize.X;
     }
-    auto cls(){
+    inline auto cls(){
         getConsoleSize();
         setCursor({0,0});
         printf("%s",std::string(width*height,' ').c_str());
         setCursor({0,0});
     }
-    auto write(const char *const text,const bool isEndl=false){
+    inline auto write(const char *const text,const bool isEndl=false){
         printf("%s",text);
         if(isEndl){
             printf("\n");
         }
     }
-    auto rewrite(const COORD &position,const char *const &text){
+    inline auto rewrite(const COORD &position,const char *const &text){
         setCursor({0,position.Y});
         write(std::string(position.X,' ').c_str());
         setCursor({0,position.Y});
         write(text);
         setCursor({0,position.Y});
     }
-    auto initPos(){
+    inline auto initPos(){
         cls();
         for(auto &line:item){
             line.position=getCursor();
@@ -144,7 +144,7 @@ private:
             write(line.text,true);
         }
     }
-    auto refresh(const COORD &hangPosition){
+    inline auto refresh(const COORD &hangPosition){
         for(auto &line:item){
             if((line==hangPosition)&&(line.colorLast!=line.colorHighlight)){
                 line.setColor('h');
@@ -156,7 +156,7 @@ private:
             }
         }
     }
-    auto impl(const MOUSE_EVENT_RECORD &mouseEvent){
+    inline auto impl(const MOUSE_EVENT_RECORD &mouseEvent){
         bool isExit{};
         for(auto &line:item){
             if(line==mouseEvent.dwMousePosition){
@@ -176,15 +176,15 @@ private:
         return isExit;
     }
 public:
-    explicit UI():
+    inline explicit UI():
         height{},width{}{}
-    explicit UI(const UI &ui)=delete;
-    explicit UI(const UI &&ui)=delete;
-    ~UI(){}
-    auto size(){
+    inline explicit UI(const UI &ui)=delete;
+    inline explicit UI(const UI &&ui)=delete;
+    inline ~UI(){}
+    inline auto size(){
         return item.size();
     }
-    auto &add(
+    inline auto &add(
         const char *const text,
         const callback function=nullptr,
         const short colorHighlight=COLOR_BLUE,
@@ -193,7 +193,7 @@ public:
         item.emplace_back(Item(text,colorDef,(function==nullptr)?(colorDef):(colorHighlight),function));
         return *this;
     }
-    auto &insert(
+    inline auto &insert(
         const size_t index,
         const char *const text,
         const callback function=nullptr,
@@ -203,7 +203,7 @@ public:
         item.emplace(item.begin()+index,Item(text,colorDef,(function==nullptr)?(colorDef):(colorHighlight),function));
         return *this;
     }
-    auto &edit(
+    inline auto &edit(
         const size_t index,
         const char *const text,
         const callback function=nullptr,
@@ -213,19 +213,19 @@ public:
         item.at(index)=Item(text,colorDef,(function==nullptr)?(colorDef):(colorHighlight),function);
         return *this;
     }
-    auto &remove(){
+    inline auto &remove(){
         item.pop_back();
         return *this;
     }
-    auto &remove(const size_t begin,const size_t end){
+    inline auto &remove(const size_t begin,const size_t end){
         item.erase(item.begin()+begin,item.begin()+end);
         return *this;
     }
-    auto &clear(){
+    inline auto &clear(){
         item.clear();
         return *this;
     }
-    auto show(){
+    inline auto show(){
         opAttrs('-');
         opCursor('h');
         MOUSE_EVENT_RECORD mouseEvent;
