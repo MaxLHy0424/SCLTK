@@ -170,6 +170,14 @@ namespace Mod{
             mod{mod},rule{rule}{}
         inline ~Op(){}
         inline auto operator()(Data){
+            if(!isRunAsAdmin()){
+                puts(" (!) 请以管理员权限运行.\n");
+                for(short i{3};i>0;--i){
+                    printf("%d 秒后自动退出.\r",i);
+                    Sleep(1000);
+                }
+                return false;
+            }
             const char *divider{std::string(50,'-').c_str()};
             puts("=> 生成命令.");
             std::string cmd;
