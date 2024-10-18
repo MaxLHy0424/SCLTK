@@ -170,6 +170,7 @@ namespace Mod{
             mod{mod},rule{rule}{}
         inline ~Op(){}
         inline auto operator()(Data){
+#ifndef _THE_NEXT_MAJOR_UPDATE_
             if(!isRunAsAdmin()){
                 puts(" (!) 请以管理员权限运行.\n");
                 for(short i{3};i>0;--i){
@@ -178,6 +179,7 @@ namespace Mod{
                 }
                 return false;
             }
+#endif
             puts("=> 生成命令.");
             std::string cmd;
             switch(mod){
