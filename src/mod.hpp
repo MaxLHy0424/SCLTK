@@ -241,6 +241,14 @@ namespace Mod{
                 return false;
             }
 #endif
+            if((rule.exe.empty())&&(rule.svc.empty())){
+                puts(" (!) 规则为空.\n");
+                for(short i{3};i>0;--i){
+                    printf("%d 秒后自动退出.\r",i);
+                    Sleep(1000);
+                }
+                return false;
+            }
             puts("=> 生成命令.");
             std::string cmd;
             switch(mod){
