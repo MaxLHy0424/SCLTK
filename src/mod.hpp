@@ -161,14 +161,14 @@ namespace Mod{
             }
         }
     };
-    class Op final{
+    class OpSys final{
     private:
         const char mod;
         const Rule &rule;
     public:
-        inline explicit Op(const char mod,const Rule &rule):
+        inline explicit OpSys(const char mod,const Rule &rule):
             mod{mod},rule{rule}{}
-        inline ~Op(){}
+        inline ~OpSys(){}
         inline auto operator()(Data){
 #ifndef _THE_NEXT_MAJOR_UPDATE_
             if(!isRunAsAdmin()){
