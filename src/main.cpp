@@ -62,7 +62,7 @@ auto main(const int argc,const char *const args[])->int{
     ui.add(" < 退出 ",Mod::exit,COLOR_RED)
       .add(" > 关于 ",Mod::info)
 #ifdef _THE_NEXT_MAJOR_UPDATE_
-      .add(" > 设置 ",Mod::OpConfig('e'))
+      .add(" > 配置 ",Mod::OpConfig('e'))
 #endif
       .add(" > 命令提示符 ",Mod::cmd)
       .add("\n[破解]\n")
