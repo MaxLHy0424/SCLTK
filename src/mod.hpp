@@ -6,6 +6,34 @@ struct{
 }config{};
 bool configError{};
 namespace Mod{
+    struct Rule final{
+        std::vector<const char*> exe,svc;
+    };
+    struct{
+        const Rule mythware,lenovo;
+        Rule custom;
+    }rule{
+        {
+            {
+                "StudentMain","DispcapHelper","VRCwPlayer",
+                "InstHelpApp","InstHelpApp64","TDOvrSet",
+                "GATESRV","ProcHelper64","MasterHelper"
+            },{
+                "STUDSRV","TDNetFilter","TDFileFilter"
+            }
+        },{
+            {
+                "vncviewer","tvnserver32","WfbsPnpInstall",
+                "WFBSMon","WFBSMlogon","WFBSSvrLogShow",
+                "ResetIp","FuncForWIN64","CertMgr",
+                "Fireware","BCDBootCopy","refreship",
+                "lenovoLockScreen","PortControl64","DesktopCheck",
+                "DeploymentManager","DeploymentAgent","XYNTService"
+            },{
+                "BSAgentSvr","tvnserver","WFBSMlogon"
+            }
+        },{}
+    };
     inline auto isRunAsAdmin(){
         BOOL isAdmin{};
         PSID adminsGroup{};
@@ -74,93 +102,120 @@ namespace Mod{
         return false;
     }
 #ifdef _THE_NEXT_MAJOR_UPDATE_
-    inline auto configRead(){
-        std::ifstream configFile("config.ini",std::ios::in);
-        if(!configFile.is_open()){
-            goto END;
-        }
-        {
-            std::string line;
-            while(std::getline(configFile,line)){
-                if(line.at(0)=='#'){
-                    continue;
+    class OpConfig final{
+    private:
+        char mod;
+        inline auto read(){
+            std::ifstream configFile("config.ini",std::ios::in);
+            if(!configFile.is_open()){
+                goto END;
+            }
+            {
+                std::string line;
+                enum{Settings=0,CustomExe=1,CustomSvc=2} configItem{Settings};
+                while(std::getline(configFile,line)){
+                    if(line.at(0)=='#'){
+                        continue;
+                    }
+                    if(line=="[Settings]"){
+                        configItem=Settings;
+                        continue;
+                    }else if(line=="[CustomExe]"){
+                        configItem=CustomExe;
+                        continue;
+                    }else if(line=="[CustomSvc]"){
+                        configItem=CustomSvc;
+                        continue;
+                    }
+                    switch(configItem){
+                        case Settings:{
+                            if(line=="wndAlpha"){
+                                config.wndAlpha=true;
+                            }else if(line=="wndCtrls"){
+                                config.wndCtrls=true;
+                            }else if(line=="wndFrontShow"){
+                                config.wndFrontShow=true;
+                            }else{
+                                config={};
+                                configError=true;
+                            }
+                            break;
+                        }case CustomExe:{
+                            rule.custom.exe.emplace_back(line.c_str());
+                            break;
+                        }case CustomSvc:{
+                            rule.custom.svc.emplace_back(line.c_str());
+                            break;
+                        }
+                    }
                 }
-                if(line=="wndAlpha"){
-                    config.wndAlpha=true;
-                }else if(line=="wndCtrls"){
-                    config.wndCtrls=true;
-                }else if(line=="wndFrontShow"){
-                    config.wndFrontShow=true;
-                }else{
-                    config={};
-                    configError=true;
+            }
+        END:
+            configFile.close();
+            return;
+        }
+        inline auto edit(){
+            auto save{[](Data){
+                std::string text;
+                text.append("[Settings]\n");
+                if(config.wndAlpha){
+                    text.append("wndAlpha\n");
+                }if(config.wndCtrls){
+                    text.append("wndCtrls\n");
+                }if(config.wndFrontShow){
+                    text.append("wndFrontShow\n");
+                }
+                if(!rule.custom.exe.empty()){
+                    text.append("[CustomExe]\n");
+                    for(const auto &item:rule.custom.exe){
+                        text.append(item);
+                    }
+                }
+                if(!rule.custom.exe.empty()){
+                    text.append("[CustomSvc]\n");
+                    for(const auto &item:rule.custom.svc){
+                        text.append(item);
+                    }
+                }
+                std::ofstream configFile("config.ini",std::ios::out|std::ios::trunc);
+                configFile.write(text.c_str(),text.size());
+                configFile.close();
+                return true;
+            }};
+            UI ui;
+            ui.add("                    [ 设  置 ]\n\n")
+              .add(" (i) 下次启动时生效.\n")
+              .add(" < 保存并返回 ",save,COLOR_RED)
+              .add("\n[半透明窗口]\n")
+              .add(" > 启用 ",[](Data){config.wndAlpha=true;return false;})
+              .add(" > 禁用 ",[](Data){config.wndAlpha=false;return false;})
+              .add("\n[置顶窗口]\n")
+              .add(" > 启用 ",[](Data){config.wndFrontShow=true;return false;})
+              .add(" > 禁用 ",[](Data){config.wndFrontShow=false;return false;})
+              .add("\n[窗口控件]\n")
+              .add(" > 启用 ",[](Data){config.wndCtrls=true;return false;})
+              .add(" > 禁用 ",[](Data){config.wndCtrls=false;return false;})
+              .show();
+            return false;
+        }
+    public:
+        inline explicit OpConfig(const char mod):
+            mod{mod}{}
+        inline ~OpConfig(){}
+        inline auto operator()(Data){
+            switch(mod){
+                case 'r':{
+                    read();
+                    break;
+                }case 'e':{
+                    edit();
                     break;
                 }
             }
+            return false;
         }
-    END:
-        configFile.close();
-        return;
-    }
-    inline auto configEdit(Data){
-        auto save{[](Data){
-            std::string text;
-            if(config.wndAlpha){
-                text.append("wndAlpha\n");
-            }if(config.wndCtrls){
-                text.append("wndCtrls\n");
-            }if(config.wndFrontShow){
-                text.append("wndFrontShow\n");
-            }
-            std::ofstream configFile("config.ini",std::ios::out|std::ios::trunc);
-            configFile.write(text.c_str(),text.size());
-            configFile.close();
-            return true;
-        }};
-        UI ui;
-        ui.add("                    [ 设  置 ]\n\n")
-          .add(" (i) 下次启动时生效.\n")
-          .add(" < 保存并返回 ",save,COLOR_RED)
-          .add("\n[半透明窗口]\n")
-          .add(" > 启用 ",[](Data){config.wndAlpha=true;return false;})
-          .add(" > 禁用 ",[](Data){config.wndAlpha=false;return false;})
-          .add("\n[置顶窗口]\n")
-          .add(" > 启用 ",[](Data){config.wndFrontShow=true;return false;})
-          .add(" > 禁用 ",[](Data){config.wndFrontShow=false;return false;})
-          .add("\n[窗口控件]\n")
-          .add(" > 启用 ",[](Data){config.wndCtrls=true;return false;})
-          .add(" > 禁用 ",[](Data){config.wndCtrls=false;return false;})
-          .show();
-        return false;
-    }
+    };
 #endif
-    struct Rule final{
-        std::vector<const char*> exe,svc;
-    };
-    struct{
-        const Rule mythware,lenovo;
-    }rule{
-        {
-            {
-                "StudentMain","DispcapHelper","VRCwPlayer",
-                "InstHelpApp","InstHelpApp64","TDOvrSet",
-                "GATESRV","ProcHelper64","MasterHelper"
-            },{
-                "STUDSRV","TDNetFilter","TDFileFilter"
-            }
-        },{
-            {
-                "vncviewer","tvnserver32","WfbsPnpInstall",
-                "WFBSMon","WFBSMlogon","WFBSSvrLogShow",
-                "ResetIp","FuncForWIN64","CertMgr",
-                "Fireware","BCDBootCopy","refreship",
-                "lenovoLockScreen","PortControl64","DesktopCheck",
-                "DeploymentManager","DeploymentAgent","XYNTService"
-            },{
-                "BSAgentSvr","tvnserver","WFBSMlogon"
-            }
-        }
-    };
     class OpSys final{
     private:
         const char mod;
