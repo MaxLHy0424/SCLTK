@@ -187,9 +187,9 @@ namespace Mod{
                     for(const auto &item:rule.exe){
                         cmd.append("reg add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\")
                            .append(item)
-                           .append(".exe\" /f /t reg_sz /v debugger /d ? & taskKill /f /im ")
+                           .append(".exe\" /f /t reg_sz /v debugger /d ? & taskKill /f /im \"")
                            .append(item)
-                           .append(".exe & ");
+                           .append(".exe\" & ");
                     }
                     for(const auto &item:rule.svc){
                         cmd.append("net stop ")
