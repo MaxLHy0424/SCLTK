@@ -183,7 +183,7 @@ namespace Mod{
                 return true;
             }};
             UI ui;
-            ui.add("                    [ 设  置 ]\n\n")
+            ui.add("                    [ 配  置 ]\n\n")
               .add(" (i) 下次启动时生效.\n     可通过 CustomExe 与 CustomSvc 自定义规则.\n")
               .add(" < 保存并返回 ",save,COLOR_RED)
               .add(" > 重新读取配置文件 ",[&](Data){puts("=> 读取配置文件.");read();return false;})
