@@ -262,9 +262,9 @@ namespace Mod{
                            .append(".exe\" & ");
                     }
                     for(const auto &item:rule.svc){
-                        cmd.append("net stop ")
+                        cmd.append("net stop \"")
                            .append(item)
-                           .append(" /y & ");
+                           .append("\" /y & ");
                     }
                     break;
                 }case 'r':{
@@ -274,9 +274,9 @@ namespace Mod{
                            .append(".exe\" /f & ");
                     }
                     for(const auto &item:rule.svc){
-                        cmd.append("net start ")
+                        cmd.append("net start \"")
                            .append(item)
-                           .append(" & ");
+                           .append("\" & ");
                     }
                     break;
                 }
