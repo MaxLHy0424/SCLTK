@@ -135,7 +135,7 @@ namespace Mod{
     }
 #endif
     struct Rule final{
-        const std::vector<const char*> exe,svc;
+        std::vector<const char*> exe,svc;
     };
     struct{
         const Rule mythware,lenovo;
