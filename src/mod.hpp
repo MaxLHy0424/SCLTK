@@ -117,13 +117,13 @@ namespace Mod{
                     if(line.at(0)=='#'||line=="\n"){
                         continue;
                     }
-                    if(line=="[Settings]"){
+                    if(line=="<Settings>"){
                         configItem=Settings;
                         continue;
-                    }else if(line=="[CustomExe]"){
+                    }else if(line=="<CustomExe>"){
                         configItem=CustomExe;
                         continue;
-                    }else if(line=="[CustomSvc]"){
+                    }else if(line=="<CustomSvc>"){
                         configItem=CustomSvc;
                         continue;
                     }
