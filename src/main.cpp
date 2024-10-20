@@ -68,9 +68,15 @@ auto main(const int argc,const char *const args[])->int{
       .add("\n[破解]\n")
       .add(" > 极域电子教室 ",Mod::OpSys('c',Mod::rule.mythware))
       .add(" > 联想云教室 ",Mod::OpSys('c',Mod::rule.lenovo))
+#ifdef _THE_NEXT_MAJOR_UPDATE_
+      .add(" > 自定义 ",Mod::OpSys('c',Mod::rule.custom))
+#endif
       .add("\n[恢复]\n")
       .add(" > 极域电子教室 ",Mod::OpSys('r',Mod::rule.mythware))
       .add(" > 联想云教室 ",Mod::OpSys('r',Mod::rule.lenovo))
+#ifdef _THE_NEXT_MAJOR_UPDATE_
+      .add(" > 自定义 ",Mod::OpSys('r',Mod::rule.custom))
+#endif
       .show();
     return 0;
 }
