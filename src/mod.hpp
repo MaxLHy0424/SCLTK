@@ -168,13 +168,13 @@ namespace Mod{
                 text.append("<CustomExe>\n");
                 if(!rule.custom.exe.empty()){
                     for(const auto &item:rule.custom.exe){
-                        text.append(item);
+                        text.append(item).push_back('\n');
                     }
                 }
                 text.append("<CustomSvc>\n");
                 if(!rule.custom.exe.empty()){
                     for(const auto &item:rule.custom.svc){
-                        text.append(item);
+                        text.append(item).push_back('\n');
                     }
                 }
                 std::ofstream configFile("config.ini",std::ios::out|std::ios::trunc);
