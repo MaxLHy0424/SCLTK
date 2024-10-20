@@ -193,17 +193,20 @@ namespace Mod{
                 configFile.close();
                 return true;
             }};
+            auto reRead{[&](Data){
+                read();
+                return false;
+            }};
+            auto openConfigFile{[](Data){
+                ShellExecute(nullptr,"","config.ini",nullptr,nullptr,SW_SHOWNORMAL);
+                return false;
+            }};
             UI ui;
             ui.add("                    [ 配  置 ]\n\n")
               .add(" (i) 下次启动时生效.\n     可通过 <RuleExe> 与 <RuleSvc> 自定义规则.\n")
-              .add(" < 清除注释后保存并返回 ",save,COLOR_RED)
-              .add(" > 重新读取配置文件 ",[&](Data){read();return false;})
-              .add(" > 打开配置文件 ",
-                [](Data){
-                    ShellExecute(nullptr,"","config.ini",nullptr,nullptr,SW_SHOWNORMAL);
-                    return false;
-                }
-              )
+              .add(" < 清除注释后保存并返回 ",std::move(save),COLOR_RED)
+              .add(" > 重新读取配置文件 ",std::move(reRead))
+              .add(" > 打开配置文件 ",std::move(openConfigFile))
               .add("\n[半透明窗口]\n")
               .add(" > 启用 ",[](Data){config.wndAlpha=true;return false;})
               .add(" > 禁用 ",[](Data){config.wndAlpha=false;return false;})
