@@ -120,6 +120,7 @@ namespace Mod{
                 goto END;
             }
             {
+                puts("=> 读取配置文件.");
                 config={};
                 rule.custom.exe.clear(),rule.custom.svc.clear();
                 std::string line;
@@ -196,7 +197,7 @@ namespace Mod{
             ui.add("                    [ 配  置 ]\n\n")
               .add(" (i) 下次启动时生效.\n     可通过 <RuleExe> 与 <RuleSvc> 自定义规则.\n")
               .add(" < 清除注释后保存并返回 ",save,COLOR_RED)
-              .add(" > 重新读取配置文件 ",[&](Data){puts("=> 读取配置文件.");read();return false;})
+              .add(" > 重新读取配置文件 ",[&](Data){read();return false;})
               .add(" > 打开配置文件 ",
                 [](Data){
                     ShellExecute(nullptr,"","config.ini",nullptr,nullptr,SW_SHOWNORMAL);
