@@ -38,9 +38,9 @@ namespace Mod{
             },{
                 "BSAgentSvr","tvnserver","WFBSMlogon"
             }
-        },
+        }
 #ifdef _THE_NEXT_MAJOR_UPDATE_
-        {}
+        ,{}
 #endif
     };
     inline auto isRunAsAdmin(){
@@ -120,6 +120,8 @@ namespace Mod{
                 goto END;
             }
             {
+                config={};
+                rule.custom.exe.clear(),rule.custom.svc.clear();
                 std::string line;
                 enum{Settings=0,CustomExe=1,CustomSvc=2} configItem{Settings};
                 while(std::getline(configFile,line)){
