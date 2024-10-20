@@ -257,7 +257,7 @@ namespace Mod{
             }
 #else
             if(!isRunAsAdmin()){
-                puts(" (!) 请以管理员权限运行.\n");
+                puts(" (!) 需要提权.\n");
                 for(short i{3};i>0;--i){
                     printf("%d 秒后自动退出.\r",i);
                     Sleep(1000);
