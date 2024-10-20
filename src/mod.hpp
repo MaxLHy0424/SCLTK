@@ -123,7 +123,7 @@ namespace Mod{
                 config={};
                 rule.custom.exe.clear(),rule.custom.svc.clear();
                 std::string line;
-                enum{Settings=0,CustomExe=1,CustomSvc=2} configItem{Settings};
+                enum{Settings=0,RuleExe=1,RuleSvc=2} configItem{Settings};
                 while(std::getline(configFile,line)){
                     if(line==""||line.at(0)=='#'){
                         continue;
@@ -131,11 +131,11 @@ namespace Mod{
                     if(line=="<Settings>"){
                         configItem=Settings;
                         continue;
-                    }else if(line=="<CustomExe>"){
-                        configItem=CustomExe;
+                    }else if(line=="<RuleExe>"){
+                        configItem=RuleExe;
                         continue;
-                    }else if(line=="<CustomSvc>"){
-                        configItem=CustomSvc;
+                    }else if(line=="<RuleSvc>"){
+                        configItem=RuleSvc;
                         continue;
                     }
                     switch(configItem){
@@ -150,10 +150,10 @@ namespace Mod{
                                 configError=true;
                             }
                             break;
-                        }case CustomExe:{
+                        }case RuleExe:{
                             rule.custom.exe.emplace_back(line);
                             break;
-                        }case CustomSvc:{
+                        }case RuleSvc:{
                             rule.custom.svc.emplace_back(line);
                             break;
                         }
@@ -175,13 +175,13 @@ namespace Mod{
                 }if(config.wndFrontShow){
                     text.append("wndFrontShow\n");
                 }
-                text.append("<CustomExe>\n");
+                text.append("<RuleExe>\n");
                 if(!rule.custom.exe.empty()){
                     for(const auto &item:rule.custom.exe){
                         text.append(item).push_back('\n');
                     }
                 }
-                text.append("<CustomSvc>\n");
+                text.append("<RuleSvc>\n");
                 if(!rule.custom.exe.empty()){
                     for(const auto &item:rule.custom.svc){
                         text.append(item).push_back('\n');
@@ -194,7 +194,7 @@ namespace Mod{
             }};
             UI ui;
             ui.add("                    [ 配  置 ]\n\n")
-              .add(" (i) 下次启动时生效.\n     可通过 CustomExe 与 CustomSvc 自定义规则.\n")
+              .add(" (i) 下次启动时生效.\n     可通过 RuleExe 与 RuleSvc 自定义规则.\n")
               .add(" < 保存并返回 ",save,COLOR_RED)
               .add(" > 重新读取配置文件 ",[&](Data){puts("=> 读取配置文件.");read();return false;})
               .add(" > 打开配置文件 ",
