@@ -114,7 +114,7 @@ namespace Mod{
                 std::string line;
                 enum{Settings=0,CustomExe=1,CustomSvc=2} configItem{Settings};
                 while(std::getline(configFile,line)){
-                    if(line.at(0)=='#'||line=="\n"){
+                    if(line==""||line.at(0)=='#'){
                         continue;
                     }
                     if(line=="<Settings>"){
