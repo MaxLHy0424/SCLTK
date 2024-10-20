@@ -165,14 +165,14 @@ namespace Mod{
                 }if(config.wndFrontShow){
                     text.append("wndFrontShow\n");
                 }
+                text.append("[CustomExe]\n");
                 if(!rule.custom.exe.empty()){
-                    text.append("[CustomExe]\n");
                     for(const auto &item:rule.custom.exe){
                         text.append(item);
                     }
                 }
+                text.append("[CustomSvc]\n");
                 if(!rule.custom.exe.empty()){
-                    text.append("[CustomSvc]\n");
                     for(const auto &item:rule.custom.svc){
                         text.append(item);
                     }
