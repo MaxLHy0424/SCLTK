@@ -203,8 +203,8 @@ namespace Mod{
             }};
             UI ui;
             ui.add("                    [ 配  置 ]\n\n")
-              .add(" (i) 下次启动时生效.\n     可通过 <RuleExe> 与 <RuleSvc> 自定义规则.\n")
-              .add(" < 清除注释后保存并返回 ",std::move(save),COLOR_RED)
+              .add(" (i) 部分更改将在下次启动时生效.\n     可通过 <RuleExe> 与 <RuleSvc> 自定义规则.\n")
+              .add(" < 格式化保存并返回 ",std::move(save),COLOR_RED)
               .add(" > 重新读取配置文件 ",std::move(reRead))
               .add(" > 打开配置文件 ",std::move(openConfigFile))
               .add("\n[半透明窗口]\n")
