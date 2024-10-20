@@ -7,11 +7,17 @@ struct{
 bool configError{};
 namespace Mod{
     struct Rule final{
+#ifdef _THE_NEXT_MAJOR_UPDATE_
+        std::vector<std::string> exe,svc;
+#else
         std::vector<const char*> exe,svc;
+#endif
     };
     struct{
         const Rule mythware,lenovo;
+#ifdef _THE_NEXT_MAJOR_UPDATE_
         Rule custom;
+#endif
     }rule{
         {
             {
@@ -32,7 +38,10 @@ namespace Mod{
             },{
                 "BSAgentSvr","tvnserver","WFBSMlogon"
             }
-        },{}
+        },
+#ifdef _THE_NEXT_MAJOR_UPDATE_
+        {}
+#endif
     };
     inline auto isRunAsAdmin(){
         BOOL isAdmin{};
@@ -141,10 +150,10 @@ namespace Mod{
                             }
                             break;
                         }case CustomExe:{
-                            rule.custom.exe.emplace_back(line.c_str());
+                            rule.custom.exe.emplace_back(line);
                             break;
                         }case CustomSvc:{
-                            rule.custom.svc.emplace_back(line.c_str());
+                            rule.custom.svc.emplace_back(line);
                             break;
                         }
                     }
