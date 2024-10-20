@@ -157,7 +157,7 @@ namespace Mod{
         inline auto edit(){
             auto save{[](Data){
                 std::string text;
-                text.append("[Settings]\n");
+                text.append("<Settings>\n");
                 if(config.wndAlpha){
                     text.append("wndAlpha\n");
                 }if(config.wndCtrls){
@@ -165,13 +165,13 @@ namespace Mod{
                 }if(config.wndFrontShow){
                     text.append("wndFrontShow\n");
                 }
-                text.append("[CustomExe]\n");
+                text.append("<CustomExe>\n");
                 if(!rule.custom.exe.empty()){
                     for(const auto &item:rule.custom.exe){
                         text.append(item);
                     }
                 }
-                text.append("[CustomSvc]\n");
+                text.append("<CustomSvc>\n");
                 if(!rule.custom.exe.empty()){
                     for(const auto &item:rule.custom.svc){
                         text.append(item);
