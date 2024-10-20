@@ -145,7 +145,6 @@ namespace Mod{
                             }else if(line=="wndFrontShow"){
                                 config.wndFrontShow=true;
                             }else{
-                                config={};
                                 configError=true;
                             }
                             break;

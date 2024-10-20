@@ -54,7 +54,7 @@ auto main(const int argc,const char *const args[])->int{
     ui.add("                    [ 主  页 ]\n\n");
     if(configError){
 #ifdef _THE_NEXT_MAJOR_UPDATE_
-        ui.add(" (!) 配置项目错误.\n");
+        ui.add(" (!) 配置存在错误.\n");
 #else
         ui.add(" (!) 参数错误.\n");
 #endif
