@@ -167,6 +167,7 @@ namespace Mod{
         }
         inline auto edit(){
             auto save{[](Data){
+                puts("=> 格式化保存配置文件.");
                 std::string text;
                 text.append("<Settings>\n");
                 if(config.wndAlpha){
@@ -198,6 +199,7 @@ namespace Mod{
                 return false;
             }};
             auto openConfigFile{[](Data){
+                puts("=> 打开配置文件.");
                 ShellExecute(nullptr,"","config.ini",nullptr,nullptr,SW_SHOWNORMAL);
                 return false;
             }};

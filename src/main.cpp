@@ -4,7 +4,9 @@
 #include"mod.hpp"
 #ifdef _THE_NEXT_MAJOR_UPDATE_
 auto main()->int{
+    puts("=> 检测运行权限.");
     if(!Mod::isRunAsAdmin()){
+        puts("=> 申请管理员权限.");
         std::string path(MAX_PATH,0);
         GetModuleFileName(nullptr,path.data(),MAX_PATH);
         ShellExecute(nullptr,"runAs",path.c_str(),nullptr,nullptr,SW_SHOWNORMAL);
