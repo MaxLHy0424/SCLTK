@@ -4,8 +4,8 @@
 
 # 📦 获取
 
-**最新发行版: v5.9.3.**\
-**[更新日志](https://github.com/MaxLHy0424/CRCSN/releases/tag/v5.9.3) | [直链下载](https://github.com/MaxLHy0424/CRCSN/releases/download/v5.9.3/CRCSN.7z)**
+**最新发行版: v5.10.0.**\
+**[更新日志](https://github.com/MaxLHy0424/CRCSN/releases/tag/v5.10.0) | [直链下载](https://github.com/MaxLHy0424/CRCSN/releases/download/v5.10.0/CRCSN.7z)**
 
 或者:
 
@@ -17,7 +17,7 @@
 **使用 CRCSN 时建议关闭防病毒软件. 若 CRCSN 被报为恶意软件, 请添加排除项.**
 
 > [!NOTE]
-> 适用于 v5.9.3.
+> 适用于 v5.10.0.
 
 ## 0 开始之前
 
@@ -136,7 +136,7 @@ CRCSN 使用 [MIT License](LICENSE), 详细内容请自行阅读.
 # 🛠️ 二次开发
 
 > [!NOTE]
-> 适用于 v5.9.3.
+> 适用于 v5.10.0.
 
 非常欢迎大家二次开发 CRCSN!
 
