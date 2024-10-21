@@ -90,7 +90,7 @@ namespace Mod{
     inline auto info(Data){
         UI ui;
         ui.add("                    [ 关  于 ]\n\n")
-          .add(" < 返回 ",Mod::exit,WCC_RED)
+          .add(" < 返回 ",Mod::exit,COLOR_RED)
           .add("\n[名称]\n")
           .add(" " INFO_NAME)
           .add("\n[版本]\n")
@@ -194,7 +194,7 @@ namespace Mod{
                 configFile.close();
                 return true;
             }};
-            auto reRead{[&](Data){
+            auto reload{[&](Data){
                 read();
                 return false;
             }};
@@ -206,8 +206,8 @@ namespace Mod{
             UI ui;
             ui.add("                    [ 配  置 ]\n\n")
               .add(" (i) 部分更改将在下次启动时生效.\n     可通过 <RuleExe> 与 <RuleSvc> 自定义规则.\n")
-              .add(" < 格式化保存并返回 ",std::move(save),WCC_RED)
-              .add(" > 重新读取配置文件 ",std::move(reRead))
+              .add(" < 格式化保存并返回 ",std::move(save),COLOR_RED)
+              .add(" > 重新读取配置文件 ",std::move(reload))
               .add(" > 打开配置文件 ",std::move(openConfigFile))
               .add("\n[半透明窗口]\n")
               .add(" > 启用 ",[](Data){config.wndAlpha=true;return false;})
