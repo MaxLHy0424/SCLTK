@@ -178,8 +178,10 @@ private:
 public:
     inline explicit UI():
         height{},width{}{}
-    inline explicit UI(const UI &ui)=delete;
-    inline explicit UI(const UI &&ui)=delete;
+    inline explicit UI(const UI &obj){
+        this->item=obj.item;
+    }
+    inline explicit UI(const UI &&obj)=delete;
     inline ~UI(){}
     inline auto size(){
         return item.size();
