@@ -115,7 +115,7 @@ namespace Mod{
     private:
         char mod;
         inline auto read(){
-            std::ifstream configFile("config.ini",std::ios::in);
+            std::ifstream configFile{"config.ini",std::ios::in};
             if(!configFile.is_open()){
                 goto END;
             }
