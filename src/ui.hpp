@@ -62,8 +62,8 @@ private:
             return !operator==(mousePosition);
         }
     };
-    short height,width;
     std::vector<Item> item;
+    short height,width;
     inline auto opCursor(const char mod){
         CONSOLE_CURSOR_INFO infoCursor;
         GetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&infoCursor);
