@@ -7,9 +7,9 @@ auto main()->int{
     puts("=> 检测运行权限.");
     if(!Mod::isRunAsAdmin()){
         puts("=> 申请管理员权限.");
-        std::string path(MAX_PATH,0);
-        GetModuleFileName(nullptr,path.data(),MAX_PATH);
-        ShellExecute(nullptr,"runAs",path.c_str(),nullptr,nullptr,SW_SHOWNORMAL);
+        const std::unique_ptr<char[]> path{new char[MAX_PATH]{}};
+        GetModuleFileName(nullptr,path.get(),MAX_PATH);
+        ShellExecute(nullptr,"runAs",path.get(),nullptr,nullptr,SW_SHOWNORMAL);
         return 0;
     }
     Mod::OpConfig{'r'}(Data{});
