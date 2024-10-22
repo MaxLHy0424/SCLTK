@@ -251,8 +251,8 @@ namespace Mod{
 #ifdef _THE_NEXT_MAJOR_UPDATE_
             if((rule.exe.empty())&&(rule.svc.empty())){
                 puts(" (!) 规则为空.\n");
-                for(short i{3};i>0;--i){
-                    printf("%d 秒后自动退出.\r",i);
+                for(unsigned short i{3};i>0;--i){
+                    printf("%hu 秒后自动退出.\r",i);
                     Sleep(1000);
                 }
                 return false;
@@ -260,8 +260,8 @@ namespace Mod{
 #else
             if(!isRunAsAdmin()){
                 puts(" (!) 需要提权.\n");
-                for(short i{3};i>0;--i){
-                    printf("%d 秒后自动退出.\r",i);
+                for(unsigned short i{3};i>0;--i){
+                    printf("%hu 秒后自动退出.\r",i);
                     Sleep(1000);
                 }
                 return false;
