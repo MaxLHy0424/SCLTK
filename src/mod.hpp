@@ -189,7 +189,7 @@ namespace Mod{
                         text.append(item).push_back('\n');
                     }
                 }
-                std::ofstream configFile("config.ini",std::ios::out|std::ios::trunc);
+                std::ofstream configFile{"config.ini",std::ios::out|std::ios::trunc};
                 configFile.write(text.c_str(),text.size());
                 configFile.close();
                 return true;
