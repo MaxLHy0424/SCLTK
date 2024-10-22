@@ -252,7 +252,7 @@ namespace Mod{
             if((rule.exe.empty())&&(rule.svc.empty())){
                 puts(" (!) 规则为空.\n");
                 for(unsigned short i{3};i>0;--i){
-                    printf("%hu 秒后自动退出.\r",i);
+                    printf("%hu 秒后返回.\r",i);
                     Sleep(1000);
                 }
                 return false;
@@ -261,7 +261,7 @@ namespace Mod{
             if(!isRunAsAdmin()){
                 puts(" (!) 需要提权.\n");
                 for(unsigned short i{3};i>0;--i){
-                    printf("%hu 秒后自动退出.\r",i);
+                    printf("%hu 秒后返回.\r",i);
                     Sleep(1000);
                 }
                 return false;
