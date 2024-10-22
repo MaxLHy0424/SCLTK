@@ -165,7 +165,7 @@ private:
                     line.setColor('d');
                     opAttrs('+');
                     opCursor('s');
-                    isExit=line.function(Data(mouseEvent,this));
+                    isExit=line.function(Data{mouseEvent,this});
                     opAttrs('-');
                     opCursor('h');
                     initPos();
@@ -190,7 +190,7 @@ public:
         const short colorHighlight=COLOR_BLUE,
         const short colorDef=COLOR_WHITE
     ){
-        item.emplace_back(Item(text,colorDef,(function==nullptr)?(colorDef):(colorHighlight),function));
+        item.emplace_back(Item{text,colorDef,(function==nullptr)?(colorDef):(colorHighlight),function});
         return *this;
     }
     inline auto &insert(
@@ -200,7 +200,7 @@ public:
         const short colorHighlight=COLOR_BLUE,
         const short colorDef=COLOR_WHITE
     ){
-        item.emplace(item.begin()+index,Item(text,colorDef,(function==nullptr)?(colorDef):(colorHighlight),function));
+        item.emplace(item.begin()+index,Item{text,colorDef,(function==nullptr)?(colorDef):(colorHighlight),function});
         return *this;
     }
     inline auto &edit(
@@ -210,7 +210,7 @@ public:
         const short colorHighlight=COLOR_BLUE,
         const short colorDef=COLOR_WHITE
     ){
-        item.at(index)=Item(text,colorDef,(function==nullptr)?(colorDef):(colorHighlight),function);
+        item.at(index)=Item{text,colorDef,(function==nullptr)?(colorDef):(colorHighlight),function};
         return *this;
     }
     inline auto &remove(){
