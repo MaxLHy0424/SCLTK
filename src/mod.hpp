@@ -177,10 +177,10 @@ namespace Mod{
                             }
                             break;
                         }case RuleExe:{
-                            rule.custom.exe.emplace_back(line);
+                            rule.custom.exe.emplace_back(std::move(line));
                             break;
                         }case RuleSvc:{
-                            rule.custom.svc.emplace_back(line);
+                            rule.custom.svc.emplace_back(std::move(line));
                             break;
                         }
                     }
