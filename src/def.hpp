@@ -5,7 +5,6 @@
 #include<shlobj.h>
 #ifdef _THE_NEXT_MAJOR_UPDATE_
 #include<fstream>
-#include<memory>
 #endif
 #include<vector>
 #include<string>
