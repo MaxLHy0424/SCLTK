@@ -4,10 +4,18 @@
 
 # 📦 获取
 
-**最新发行版: v5.10.0.**\
-**[更新日志](https://github.com/MaxLHy0424/CRCSN/releases/tag/v5.10.0) | [直链下载](https://github.com/MaxLHy0424/CRCSN/releases/download/v5.10.0/CRCSN.7z)**
 
-或者:
+| 项目 | 最新版本 | 状态 | 发行版 |
+| - | - | - | - |
+| CRCSN 1 | v1.0_Stable | ❌ 停止维护 | [更新日志](https://github.com/MaxLHy0424/CRCSN/releases/tag/v1.0_Stable) |
+| CRCSN 2 | v2.5_Stable | ❌ 停止维护 | [更新日志](https://github.com/MaxLHy0424/CRCSN/releases/tag/v2.5_Stable) |
+| CRCSN 3 | v3.0.1 (Build 30174) | ❌ 停止维护 | [更新日志](https://github.com/MaxLHy0424/CRCSN/releases/tag/30174) |
+| CRCSN 4 | v4.10.7 | ❌ 停止维护 | [更新日志](https://github.com/MaxLHy0424/CRCSN/releases/tag/v4.10.7) |
+| CRCSN 5 | v5.10.0 | 🛠️ 更新中 | [更新日志](https://github.com/MaxLHy0424/CRCSN/releases/tag/v5.10.0) |
+| CRCSN NEXT | 无 | ✨ 开发中 | 无 |
+| CRCSN LTS | 无 | ✨ 开发中 | 无 |
+
+相关链接:
 
 - [GitHub Repository Release](https://github.com/MaxLHy0424/CRCSN/releases);
 - [中国大陆云盘镜像站点 (不含预发行版)](https://pan.huang1111.cn/s/y548jt6).
@@ -108,7 +116,7 @@ set item.args=-Waf
 
 使用鼠标在 `[破解]` 下点击需要破解的控制软件, 以禁用破解. 如需恢复, 可以在 `[恢复]` 下点击需要恢复的控制软件, 即可恢复控制. 如果 `[破解]` 和 `[恢复]` 下的控件点击后输出 ` (!) 需要提权.`, 则请以管理员权限重新启动软件.
 
-# 🧪 下一个主要更新
+# ✨ 下一个主要更新
 
 > [!NOTE]
 > 正在准备 CRCSN 的下一个主要更新! 如果有什么建议, 欢迎在 GitHub Repository Issues 中提出.
@@ -117,35 +125,21 @@ set item.args=-Waf
 
 - 弃用命令行参数, 使用配置文件;
 - 自定义破解/恢复规则;
+- 重绘软件图标;
 - 自动申请管理员权限.
 
 ### 计划执行
 
-- 重绘软件图标;
 - 移除 `launcher.cmd`.
 
 ### 正在讨论
 
-- 添加命令行模式.
+- 添加命令行模式;
 - 使用 Windows API 代替 Windows 命令调用.
 
 # 📃 许可证
 
 CRCSN 使用 [MIT License](LICENSE), 详细内容请自行阅读.
-
-# 🛠️ 二次开发
-
-> [!NOTE]
-> 适用于 v5.10.0.
-
-非常欢迎大家二次开发 CRCSN!
-
-二次开发时, 请务必修改 `def.hpp` 和 `launcher.cmd` 中的宏定义, 以做区分.
-
-版权声明部分, 请在遵守许可证的情况下修改. 推荐将二次开发版本开源至 GitHub, 在许可证允许的情况下, 可能会被采纳.
-
-> [!IMPORTANT]
-> 不在 GitHub 上开源的二次开发版本的修改不会被采纳.
 
 # ❓ 常见问题
 
