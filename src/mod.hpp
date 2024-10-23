@@ -126,7 +126,7 @@ namespace Mod{
                 std::string line;
                 enum{Settings=0,RuleExe=1,RuleSvc=2} configItem{Settings};
                 while(std::getline(configFile,line)){
-                    if(line==""||line.at(0)=='#'){
+                    if(line.empty()||line.at(0)=='#'){
                         continue;
                     }
                     if(line=="<Settings>"){
