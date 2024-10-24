@@ -12,7 +12,7 @@
 | CRCSN 3 | v3.0.1 (Build 30174) | ❌ 停止维护 | [📋 更新日志](https://github.com/MaxLHy0424/CRCSN/releases/tag/30174) |
 | CRCSN 4 | v4.10.7 | ❌ 停止维护 | [📋 更新日志](https://github.com/MaxLHy0424/CRCSN/releases/tag/v4.10.7) |
 | CRCSN 5 | v5.10.0 | 🛠️ 正常更新 | [📋 更新日志](https://github.com/MaxLHy0424/CRCSN/releases/tag/v5.10.0) |
-| CRCSN NEXT | 无 | ✨ 正在开发 | 🔒 将于 2025 年春季发布 |
+| CRCSN 6 | 无 | ✨ 正在开发 | 🔒 将于 2025 年春季发布 |
 | CRCSN LTS | 无 | ✨ 正在开发 | 🔒 将于 2024 年冬季发布 |
 
 相关链接:
@@ -134,8 +134,8 @@ set item.args=-Waf
 
 ### 正在讨论
 
-- 添加命令行模式;
-- 使用 Windows API 代替 Windows 命令调用.
+- **[废弃]** 添加命令行模式;
+- **[废弃]** 使用 Windows API 代替 Windows 命令调用.
 
 # 📃 许可证
 
