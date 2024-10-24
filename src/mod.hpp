@@ -120,7 +120,7 @@ namespace Mod{
                 goto END;
             }
             {
-                puts("=> 读取配置文件.");
+                puts("==> 读取配置文件.");
                 config={};
                 rule.custom.exe.clear(),rule.custom.svc.clear();
                 std::string line;
@@ -167,7 +167,7 @@ namespace Mod{
         }
         inline auto edit(){
             auto save{[](Data){
-                puts("=> 格式化保存配置文件.");
+                puts("==> 格式化保存配置文件.");
                 std::string text;
                 text.append("<Settings>\n");
                 if(config.wndAlpha){
@@ -199,7 +199,7 @@ namespace Mod{
                 return false;
             }};
             auto openConfigFile{[](Data){
-                puts("=> 打开配置文件.");
+                puts("==> 打开配置文件.");
                 ShellExecute(nullptr,"","config.ini",nullptr,nullptr,SW_SHOWNORMAL);
                 return false;
             }};
@@ -267,7 +267,7 @@ namespace Mod{
                 return false;
             }
 #endif
-            puts("=> 生成命令.");
+            puts("==> 生成命令.");
             std::string cmd;
             switch(mod){
                 case 'c':{
@@ -298,11 +298,11 @@ namespace Mod{
                     break;
                 }
             }
-            puts("=> 执行命令.");
+            puts("==> 执行命令.");
             puts(std::string(50,'-').c_str());
             system(cmd.c_str());
             puts(std::string(50,'-').c_str());
-            puts("=> 释放内存.");
+            puts("==> 释放内存.");
             return false;
         }
     };
