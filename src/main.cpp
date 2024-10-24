@@ -4,7 +4,7 @@
 #include"mod.hpp"
 #ifdef _THE_NEXT_MAJOR_UPDATE_
 auto main()->int{
-    Mod::init('0');
+    Mod::init();
     puts("=> 检测运行权限.");
     if(!Mod::isRunAsAdmin()){
         puts("=> 申请管理员权限.");
@@ -50,11 +50,7 @@ auto main(const int argc,const char *const args[])->int{
         }
     }
 #endif
-#ifdef _THE_NEXT_MAJOR_UPDATE_
-    Mod::init('1');
-#else
     Mod::init();
-#endif
     if(config.wndFrontShow){
         std::thread{Mod::frontShow}.detach();
     }

@@ -58,26 +58,6 @@ namespace Mod{
         }
         return isAdmin;
     }
-#ifdef _THE_NEXT_MAJOR_UPDATE_
-    inline auto init(const char step){
-        switch(step){
-            case '0':{
-                system("chcp 936 > nul");
-                SetConsoleTitle(WINDOW_TITLE);
-                system("mode con cols=50 lines=25");
-                break;
-            }case '1':{
-                SetWindowLongPtr(
-                    GetConsoleWindow(),GWL_STYLE,(config.wndCtrls)
-                    ?(GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)|WS_SIZEBOX|WS_MAXIMIZEBOX|WS_MINIMIZEBOX)
-                    :(GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)&~WS_SIZEBOX&~WS_MAXIMIZEBOX&~WS_MINIMIZEBOX)
-                );
-                SetLayeredWindowAttributes(GetConsoleWindow(),0,(config.wndAlpha)?(230):(255),LWA_ALPHA);
-                break;
-            }
-        }
-    }
-#else
     inline auto init(){
         system("chcp 936 > nul");
         SetConsoleTitle(WINDOW_TITLE);
@@ -89,7 +69,6 @@ namespace Mod{
         system("mode con cols=50 lines=25");
         SetLayeredWindowAttributes(GetConsoleWindow(),0,(config.wndAlpha)?(230):(255),LWA_ALPHA);
     }
-#endif
     inline auto frontShow(){
         const HWND wndThis{GetConsoleWindow()};
         const DWORD idForeground{GetWindowThreadProcessId(wndThis,nullptr)},
@@ -127,11 +106,7 @@ namespace Mod{
     inline auto cmd(Data){
         system("cmd");
         if(!config.wndCtrls){
-#ifdef _THE_NEXT_MAJOR_UPDATE_
-            init('0'),init('1');
-#else
             init();
-#endif
         }
         return false;
     }
