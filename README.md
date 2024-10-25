@@ -5,15 +5,15 @@
 # 📦 获取
 
 
-| 项目 | 最新版本 | 状态 | 发行版 |
+| 分支 | 最新版本 | 状态 | 最新发行版 |
 | - | - | - | - |
 | CRCSN 1 | v1.0_Stable | ❌ 停止维护 | [📋 更新日志](https://github.com/MaxLHy0424/CRCSN/releases/tag/v1.0_Stable) |
 | CRCSN 2 | v2.5_Stable | ❌ 停止维护 | [📋 更新日志](https://github.com/MaxLHy0424/CRCSN/releases/tag/v2.5_Stable) |
 | CRCSN 3 | v3.0.1 (Build 30174) | ❌ 停止维护 | [📋 更新日志](https://github.com/MaxLHy0424/CRCSN/releases/tag/30174) |
 | CRCSN 4 | v4.10.7 | ❌ 停止维护 | [📋 更新日志](https://github.com/MaxLHy0424/CRCSN/releases/tag/v4.10.7) |
 | CRCSN 5 | v5.10.0 | 🛠️ 正常更新 | [📋 更新日志](https://github.com/MaxLHy0424/CRCSN/releases/tag/v5.10.0) |
-| CRCSN 6 | 无 | ✨ 正在开发 | 🔒 将于 2025 年春季发布 |
-| CRCSN LTS | 无 | ✨ 正在开发 | 🔒 将于 2024 年冬季发布 |
+| CRCSN 6 | 无 | ✨ 正在开发 | 🔒 2025 年春季发布 |
+| CRCSN LTS | 无 | ✨ 正在开发 | 🔒 2024 年冬季发布 |
 
 相关链接:
 
@@ -124,6 +124,7 @@ set item.args=-Waf
 ### 基本完成 / 正在开发
 
 - 弃用命令行参数, 使用配置文件;
+- 新的配置选项;
 - 自定义破解/恢复规则;
 - 重绘软件图标;
 - 自动申请管理员权限.
@@ -137,7 +138,7 @@ set item.args=-Waf
 - **[废弃]** 添加命令行模式;
 - **[废弃]** 使用 Windows API 代替 Windows 命令调用.
 
-# 📃 许可证
+# 📜 许可证
 
 CRCSN 使用 [MIT License](LICENSE), 详细内容请自行阅读.
 
