@@ -7,9 +7,9 @@
 #define MOUSE_CLICK_DOUBLE DOUBLE_CLICK
 #define MOUSE_MOVE MOUSE_MOVED
 #define MOUSE_WHEEL MOUSE_WHEELED
-#define COLOR_WHITE 0x07
-#define COLOR_BLUE 0x09
-#define COLOR_RED 0x0c
+#define WCC_WHITE 0x07
+#define WCC_BLUE 0x09
+#define WCC_RED 0x0c
 class UI;
 struct Data final{
     const DWORD stateButton,stateCtrlKey,flagEvent;
@@ -30,15 +30,15 @@ private:
         COORD position;
         callback function;
         inline explicit Item():
-            text{},colorDef{COLOR_WHITE},colorHighlight{COLOR_BLUE},
-            colorLast{COLOR_WHITE},position{},function{}{}
+            text{},colorDef{WCC_WHITE},colorHighlight{WCC_BLUE},
+            colorLast{WCC_WHITE},position{},function{}{}
         inline explicit Item(
             const char *const text,
             const short colorDef,
             const short colorHighlight,
             const callback function
         ):text{text},colorDef{colorDef},colorHighlight{colorHighlight},
-          colorLast{COLOR_WHITE},position{},function{function}{}
+          colorLast{WCC_WHITE},position{},function{function}{}
         inline ~Item(){}
         inline auto setColor(const char mod){
             switch(mod){
@@ -188,8 +188,8 @@ public:
     inline auto &add(
         const char *const text,
         const callback function=nullptr,
-        const short colorHighlight=COLOR_BLUE,
-        const short colorDef=COLOR_WHITE
+        const short colorHighlight=WCC_BLUE,
+        const short colorDef=WCC_WHITE
     ){
         item.emplace_back(Item{text,colorDef,(function==nullptr)?(colorDef):(colorHighlight),function});
         return *this;
@@ -198,8 +198,8 @@ public:
         const size_t index,
         const char *const text,
         const callback function=nullptr,
-        const short colorHighlight=COLOR_BLUE,
-        const short colorDef=COLOR_WHITE
+        const short colorHighlight=WCC_BLUE,
+        const short colorDef=WCC_WHITE
     ){
         item.emplace(item.begin()+index,Item{text,colorDef,(function==nullptr)?(colorDef):(colorHighlight),function});
         return *this;
@@ -208,8 +208,8 @@ public:
         const size_t index,
         const char *const text,
         const callback function=nullptr,
-        const short colorHighlight=COLOR_BLUE,
-        const short colorDef=COLOR_WHITE
+        const short colorHighlight=WCC_BLUE,
+        const short colorDef=WCC_WHITE
     ){
         item.at(index)=Item{text,colorDef,(function==nullptr)?(colorDef):(colorHighlight),function};
         return *this;
