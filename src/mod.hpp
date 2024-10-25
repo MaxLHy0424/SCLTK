@@ -2,7 +2,11 @@
 #include"def.hpp"
 #include"ui.hpp"
 struct{
+#ifdef _THE_NEXT_MAJOR_UPDATE_
+    bool wndFrontShow,wndAlpha,wndHideCloseCtrl;
+#else
     bool wndFrontShow,wndAlpha,wndCtrls;
+#endif
 }config{};
 bool configError{};
 namespace Mod{
@@ -61,11 +65,24 @@ namespace Mod{
     inline auto init(){
         system("chcp 936 > nul");
         SetConsoleTitle(WINDOW_TITLE);
+#ifdef _THE_NEXT_MAJOR_UPDATE_
+        SetWindowLongPtr(
+            GetConsoleWindow(),GWL_STYLE,
+            GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)&~WS_SIZEBOX&~WS_MAXIMIZEBOX&~WS_MINIMIZEBOX
+        );
+        if(config.wndHideCloseCtrl){
+            EnableMenuItem(
+                GetSystemMenu(GetConsoleWindow(),FALSE),
+                SC_CLOSE,MF_BYCOMMAND|MF_DISABLED|MF_GRAYED
+            );
+        }
+#else
         SetWindowLongPtr(
             GetConsoleWindow(),GWL_STYLE,(config.wndCtrls)
             ?(GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)|WS_SIZEBOX|WS_MAXIMIZEBOX|WS_MINIMIZEBOX)
             :(GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)&~WS_SIZEBOX&~WS_MAXIMIZEBOX&~WS_MINIMIZEBOX)
         );
+#endif
         system("mode con cols=50 lines=25");
         SetLayeredWindowAttributes(GetConsoleWindow(),0,(config.wndAlpha)?(230):(255),LWA_ALPHA);
     }
@@ -105,9 +122,13 @@ namespace Mod{
     }
     inline auto cmd(Data){
         system("cmd");
+#ifdef _THE_NEXT_MAJOR_UPDATE_
+        init();
+#else
         if(!config.wndCtrls){
             init();
         }
+#endif
         return false;
     }
 #ifdef _THE_NEXT_MAJOR_UPDATE_
@@ -143,8 +164,8 @@ namespace Mod{
                         case Settings:{
                             if(line=="wndAlpha"){
                                 config.wndAlpha=true;
-                            }else if(line=="wndCtrls"){
-                                config.wndCtrls=true;
+                            }else if(line=="wndHideCloseCtrl"){
+                                config.wndHideCloseCtrl=true;
                             }else if(line=="wndFrontShow"){
                                 config.wndFrontShow=true;
                             }else{
@@ -172,8 +193,8 @@ namespace Mod{
                 text.append("<Settings>\n");
                 if(config.wndAlpha){
                     text.append("wndAlpha\n");
-                }if(config.wndCtrls){
-                    text.append("wndCtrls\n");
+                }if(config.wndHideCloseCtrl){
+                    text.append("wndHideCloseCtrl\n");
                 }if(config.wndFrontShow){
                     text.append("wndFrontShow\n");
                 }
@@ -205,7 +226,7 @@ namespace Mod{
             }};
             UI ui;
             ui.add("                    [ 配  置 ]\n\n")
-              .add(" (i) 部分更改将在下次启动时生效.\n     可通过 <RuleExe> 与 <RuleSvc> 自定义规则.\n")
+              .add(" (i) 此处设置将在下次启动时生效.\n     可通过 <RuleExe> 与 <RuleSvc> 自定义规则.\n")
               .add(" < 格式化保存并返回 ",std::move(save),COLOR_RED)
               .add(" > 重新读取配置文件 ",std::move(reload))
               .add(" > 打开配置文件 ",std::move(openConfigFile))
@@ -215,9 +236,9 @@ namespace Mod{
               .add("\n[置顶窗口]\n")
               .add(" > 启用 ",[](Data){config.wndFrontShow=true;return false;})
               .add(" > 禁用 ",[](Data){config.wndFrontShow=false;return false;})
-              .add("\n[窗口控件]\n")
-              .add(" > 启用 ",[](Data){config.wndCtrls=true;return false;})
-              .add(" > 禁用 ",[](Data){config.wndCtrls=false;return false;})
+              .add("\n[隐藏窗口关闭控件]\n")
+              .add(" > 启用 ",[](Data){config.wndHideCloseCtrl=true;return false;})
+              .add(" > 禁用 ",[](Data){config.wndHideCloseCtrl=false;return false;})
               .show();
             return false;
         }
