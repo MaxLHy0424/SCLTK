@@ -134,8 +134,8 @@ namespace Mod{
 #ifdef _THE_NEXT_MAJOR_UPDATE_
     class OpConfig final{
     private:
-        char mod;
-        inline auto read(){
+        const char mod;
+        inline auto read()const{
             std::ifstream configFile{"config.ini",std::ios::in};
             if(!configFile.is_open()){
                 goto END;
@@ -186,7 +186,7 @@ namespace Mod{
             configFile.close();
             return;
         }
-        inline auto edit(){
+        inline auto edit()const{
             auto save{[](Data){
                 puts("==> 格式化保存配置文件.");
                 std::string text;
@@ -246,7 +246,7 @@ namespace Mod{
         inline explicit OpConfig(const char mod):
             mod{mod}{}
         inline ~OpConfig(){}
-        inline auto operator()(Data){
+        inline auto operator()(Data)const{
             switch(mod){
                 case 'r':{
                     read();
@@ -268,7 +268,7 @@ namespace Mod{
         inline explicit OpSys(const char mod,const Rule &rule):
             mod{mod},rule{rule}{}
         inline ~OpSys(){}
-        inline auto operator()(Data){
+        inline auto operator()(Data)const{
 #ifdef _THE_NEXT_MAJOR_UPDATE_
             if((rule.exe.empty())&&(rule.svc.empty())){
                 puts(" (!) 规则为空.\n");
