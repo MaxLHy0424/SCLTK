@@ -10,6 +10,7 @@ struct{
 }config{};
 bool configError{};
 namespace Mod{
+#ifdef _THE_NEXT_MAJOR_UPDATE_
     class StringForOpRule{
     private:
         char *str;
@@ -27,6 +28,7 @@ namespace Mod{
             return str;
         }
     };
+#endif
     struct Rule final{
 #ifdef _THE_NEXT_MAJOR_UPDATE_
         std::vector<StringForOpRule> exe,svc;
