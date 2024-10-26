@@ -18,7 +18,7 @@ auto main()->int{
 #else
 auto main(const int argc,const char *const args[])->int{
     if(argc>1){
-        std::string tmp;
+        std::string_view tmp;
         for(int i{1};i<argc;++i){
             tmp=args[i];
             if((tmp.size()>2)&&(tmp.substr(0,2)=="-W")){
