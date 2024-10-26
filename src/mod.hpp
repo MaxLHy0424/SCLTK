@@ -316,26 +316,46 @@ namespace Mod{
                 case 'c':{
                     for(const auto &item:rule.exe){
                         cmd.append("reg add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\")
+#ifdef _THE_NEXT_MAJOR_UPDATE_
                            .append(item.get())
+#else
+                           .append(item)
+#endif
                            .append(".exe\" /f /t reg_sz /v debugger /d ? & taskKill /f /im \"")
+#ifdef _THE_NEXT_MAJOR_UPDATE_
                            .append(item.get())
+#else
+                           .append(item)
+#endif
                            .append(".exe\" & ");
                     }
                     for(const auto &item:rule.svc){
                         cmd.append("net stop \"")
+#ifdef _THE_NEXT_MAJOR_UPDATE_
                            .append(item.get())
+#else
+                           .append(item)
+#endif
                            .append("\" /y & ");
                     }
                     break;
                 }case 'r':{
                     for(const auto &item:rule.exe){
                         cmd.append("reg delete \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\")
+#ifdef _THE_NEXT_MAJOR_UPDATE_
                            .append(item.get())
+#else
+                           .append(item)
+#endif
                            .append(".exe\" /f & ");
                     }
                     for(const auto &item:rule.svc){
                         cmd.append("net start \"")
+#ifdef _THE_NEXT_MAJOR_UPDATE_
                            .append(item.get())
+#else
+                           .append(item)
+#endif
                            .append("\" & ");
                     }
                     break;
