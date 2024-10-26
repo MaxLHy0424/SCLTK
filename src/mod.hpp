@@ -10,9 +10,26 @@ struct{
 }config{};
 bool configError{};
 namespace Mod{
+    class StringForOpRule{
+    private:
+        char *str;
+    public:
+        inline StringForOpRule(const char *str){
+            this->str=new char[strlen(str)+1];
+            strcpy(this->str,str);
+        }
+        inline ~StringForOpRule(){
+            if(str!=nullptr){
+                delete[] str;
+            }
+        }
+        inline const auto get()const{
+            return str;
+        }
+    };
     struct Rule final{
 #ifdef _THE_NEXT_MAJOR_UPDATE_
-        std::vector<std::string> exe,svc;
+        std::vector<StringForOpRule> exe,svc;
 #else
         std::vector<const char*> exe,svc;
 #endif
@@ -177,10 +194,10 @@ namespace Mod{
                             }
                             break;
                         }case RuleExe:{
-                            rule.custom.exe.emplace_back(std::move(line));
+                            rule.custom.exe.emplace_back(line.c_str());
                             break;
                         }case RuleSvc:{
-                            rule.custom.svc.emplace_back(std::move(line));
+                            rule.custom.svc.emplace_back(line.c_str());
                             break;
                         }
                     }
@@ -209,13 +226,13 @@ namespace Mod{
                 text.append("<RuleExe>\n");
                 if(!rule.custom.exe.empty()){
                     for(const auto &item:rule.custom.exe){
-                        text.append(item).push_back('\n');
+                        text.append(item.get()).push_back('\n');
                     }
                 }
                 text.append("<RuleSvc>\n");
                 if(!rule.custom.exe.empty()){
                     for(const auto &item:rule.custom.svc){
-                        text.append(item).push_back('\n');
+                        text.append(item.get()).push_back('\n');
                     }
                 }
                 std::ofstream configFile{"config.ini",std::ios::out|std::ios::trunc};
@@ -297,26 +314,26 @@ namespace Mod{
                 case 'c':{
                     for(const auto &item:rule.exe){
                         cmd.append("reg add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\")
-                           .append(item)
+                           .append(item.get())
                            .append(".exe\" /f /t reg_sz /v debugger /d ? & taskKill /f /im \"")
-                           .append(item)
+                           .append(item.get())
                            .append(".exe\" & ");
                     }
                     for(const auto &item:rule.svc){
                         cmd.append("net stop \"")
-                           .append(item)
+                           .append(item.get())
                            .append("\" /y & ");
                     }
                     break;
                 }case 'r':{
                     for(const auto &item:rule.exe){
                         cmd.append("reg delete \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\")
-                           .append(item)
+                           .append(item.get())
                            .append(".exe\" /f & ");
                     }
                     for(const auto &item:rule.svc){
                         cmd.append("net start \"")
-                           .append(item)
+                           .append(item.get())
                            .append("\" & ");
                     }
                     break;
