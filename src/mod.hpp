@@ -70,12 +70,10 @@ namespace Mod{
             GetConsoleWindow(),GWL_STYLE,
             GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)&~WS_SIZEBOX&~WS_MAXIMIZEBOX&~WS_MINIMIZEBOX
         );
-        if(config.wndHideCloseCtrl){
-            EnableMenuItem(
-                GetSystemMenu(GetConsoleWindow(),FALSE),
-                SC_CLOSE,MF_BYCOMMAND|MF_DISABLED|MF_GRAYED
-            );
-        }
+        EnableMenuItem(
+            GetSystemMenu(GetConsoleWindow(),(config.wndHideCloseCtrl)?(FALSE):(TRUE)),
+            SC_CLOSE,MF_BYCOMMAND|MF_DISABLED|MF_GRAYED
+        );
 #else
         SetWindowLongPtr(
             GetConsoleWindow(),GWL_STYLE,(config.wndCtrls)
