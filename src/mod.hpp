@@ -12,7 +12,7 @@ bool configError{};
 namespace Mod{
     struct Rule final{
 #ifdef _THE_NEXT_MAJOR_UPDATE_
-        std::vector<std::string_view> exe,svc;
+        std::vector<std::string> exe,svc;
 #else
         std::vector<const char*> exe,svc;
 #endif
