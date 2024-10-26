@@ -5,9 +5,9 @@
 #ifdef _THE_NEXT_MAJOR_UPDATE_
 auto main()->int{
     Mod::init();
-    puts("==> 检测运行权限.");
+    puts("=> 检测运行权限.");
     if(!Mod::isRunAsAdmin()){
-        puts("==> 申请管理员权限.");
+        puts("=> 申请管理员权限.");
         char *const path{new char[MAX_PATH]{}};
         GetModuleFileName(nullptr,path,MAX_PATH);
         ShellExecute(nullptr,"runAs",path,nullptr,nullptr,SW_SHOWNORMAL);
