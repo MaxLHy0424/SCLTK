@@ -133,14 +133,17 @@ namespace Mod{
     class OpConfig final{
     private:
         const char mod;
-        inline auto read()const{
+        bool isOnlyLoadCustomRule;
+        inline auto read(){
             std::ifstream configFile{"config.ini",std::ios::in};
             if(!configFile.is_open()){
                 goto END;
             }
             {
                 puts("=> 读取配置文件.");
-                config={};
+                if(!isOnlyLoadCustomRule){
+                    config={};
+                }
                 rule.custom.exe.clear(),rule.custom.svc.clear();
                 std::string line;
                 enum{Settings=0,RuleExe=1,RuleSvc=2} configItem{Settings};
@@ -160,6 +163,9 @@ namespace Mod{
                     }
                     switch(configItem){
                         case Settings:{
+                            if(isOnlyLoadCustomRule){
+                                continue;
+                            }
                             if(line=="wndFrontShow"){
                                 config.wndFrontShow=true;
                             }else if(line=="wndAlpha"){
@@ -184,8 +190,9 @@ namespace Mod{
             configFile.close();
             return;
         }
-        inline auto edit()const{
+        inline auto edit(){
             auto save{[&](Data){
+                isOnlyLoadCustomRule=true;
                 read();
                 puts("=> 格式化保存配置文件.");
                 std::string text;
@@ -240,9 +247,9 @@ namespace Mod{
         }
     public:
         inline explicit OpConfig(const char mod):
-            mod{mod}{}
+            mod{mod},isOnlyLoadCustomRule{false}{}
         inline ~OpConfig(){}
-        inline auto operator()(Data)const{
+        inline auto operator()(Data){
             switch(mod){
                 case 'r':{
                     read();
