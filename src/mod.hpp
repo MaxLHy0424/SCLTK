@@ -191,12 +191,14 @@ namespace Mod{
                 puts("==> 格式化保存配置文件.");
                 std::string text;
                 text.append("<Settings>\n");
+                if(config.wndFrontShow){
+                    text.append("wndFrontShow\n");
+                }
                 if(config.wndAlpha){
                     text.append("wndAlpha\n");
-                }if(config.wndHideCloseCtrl){
+                }
+                if(config.wndHideCloseCtrl){
                     text.append("wndHideCloseCtrl\n");
-                }if(config.wndFrontShow){
-                    text.append("wndFrontShow\n");
                 }
                 text.append("<RuleExe>\n");
                 if(!rule.custom.exe.empty()){
