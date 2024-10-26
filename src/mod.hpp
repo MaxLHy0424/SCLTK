@@ -162,12 +162,12 @@ namespace Mod{
                     }
                     switch(configItem){
                         case Settings:{
-                            if(line=="wndAlpha"){
+                            if(line=="wndFrontShow"){
+                                config.wndFrontShow=true;
+                            }else if(line=="wndAlpha"){
                                 config.wndAlpha=true;
                             }else if(line=="wndHideCloseCtrl"){
                                 config.wndHideCloseCtrl=true;
-                            }else if(line=="wndFrontShow"){
-                                config.wndFrontShow=true;
                             }else{
                                 configError=true;
                             }
