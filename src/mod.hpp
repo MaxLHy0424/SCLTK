@@ -10,13 +10,13 @@ struct{
 }config{};
 bool configError{};
 namespace Mod{
-#ifdef _THE_NEXT_MAJOR_UPDATE_
+#if true
     class StringForOpRule{
     private:
         char *str;
     public:
         inline StringForOpRule(const char *str){
-            this->str=new char[strlen(str)+1];
+            this->str=new char[strlen(str)];
             strcpy(this->str,str);
         }
         inline ~StringForOpRule(){
