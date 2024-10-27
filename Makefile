@@ -1,6 +1,6 @@
 msys2=C:\\Software\\MSYS2
 CC=g++.exe
-def=-D_CRT_SECURE_NO_WARNINGS -DANSI -D_ANSI -D_THE_NEXT_MAJOR_UPDATE_
+def=-D_CRT_SECURE_NO_WARNINGS -DANSI -D_ANSI
 argsBase=-fexec-charset=GBK -std=gnu++23 -Wall -Wextra -pipe -m64
 argsRelease=-DNDEBUG $(argsBase) -static -Os -flto -o
 argsDebug=$(argsBase) -O0 -g3 -o
