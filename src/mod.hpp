@@ -292,18 +292,18 @@ namespace Mod{
         inline auto operator()(Data)const{
 #ifdef _THE_NEXT_MAJOR_UPDATE_
             if((rule.exe.empty())&&(rule.svc.empty())){
-                puts(" (!) 规则为空.\n");
+                puts("\n (!) 规则为空.\n");
                 for(unsigned short i{3};i>0;--i){
-                    printf("%hu 秒后返回.\r",i);
+                    printf(" %hu 秒后返回.\r",i);
                     Sleep(1000);
                 }
                 return false;
             }
 #else
             if(!isRunAsAdmin()){
-                puts(" (!) 需要提权.\n");
+                puts("\n (!) 需要提权.\n");
                 for(unsigned short i{3};i>0;--i){
-                    printf("%hu 秒后返回.\r",i);
+                    printf(" %hu 秒后返回.\r",i);
                     Sleep(1000);
                 }
                 return false;
