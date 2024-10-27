@@ -13,7 +13,7 @@
 #endif
 #define INFO_NAME "Computer Room Control Software Nemesis"
 #ifdef _THE_NEXT_MAJOR_UPDATE_
-#define INFO_VERSION "v6.0.0-dev.241026"
+#define INFO_VERSION "v6.0.0-dev.241027"
 #else
 #define INFO_VERSION "v5.10.0"
 #endif
