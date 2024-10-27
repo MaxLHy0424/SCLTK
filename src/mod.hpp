@@ -13,16 +13,14 @@ namespace Mod{
 #ifdef _THE_NEXT_MAJOR_UPDATE_
     class StringForOpRule{
     private:
-        char *str;
+        char *const str;
     public:
-        inline StringForOpRule(const char *str){
-            this->str=new char[strlen(str)];
-            strcpy(this->str,str);
+        inline StringForOpRule()=delete;
+        inline StringForOpRule(const char *s):str{new char[strlen(s)+1]}{
+            strcpy(this->str,s);
         }
         inline ~StringForOpRule(){
-            if(str!=nullptr){
-                delete[] str;
-            }
+            delete[] str;
         }
         inline const auto get()const{
             return str;
