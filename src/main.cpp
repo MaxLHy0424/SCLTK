@@ -52,7 +52,25 @@ auto main(const int argc,const char *const args[])->int{
 #endif
     Mod::init();
     if(config.wndFrontShow){
+#ifdef _THE_NEXT_MAJOR_UPDATE_
+        std::thread{[](){
+            const HWND wndThis{GetConsoleWindow()};
+            const DWORD idForeground{GetWindowThreadProcessId(wndThis,nullptr)},
+                        idCurrent{GetCurrentThreadId()};
+            while(true){
+                AttachThreadInput(idCurrent,idForeground,TRUE);
+                ShowWindow(wndThis,SW_SHOWNORMAL);
+                SetWindowPos(wndThis,HWND_TOPMOST,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE);
+                SetWindowPos(wndThis,HWND_NOTOPMOST,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE);
+                SetForegroundWindow(wndThis);
+                AttachThreadInput(idCurrent,idForeground,FALSE);
+                SetWindowPos(wndThis,HWND_TOPMOST,0,0,100,100,SWP_NOMOVE|SWP_NOSIZE);
+                Sleep(100);
+            }
+        }}.detach();
+#else
         std::thread{Mod::frontShow}.detach();
+#endif
     }
     UI ui;
     ui.add("                    [ 主  页 ]\n\n");

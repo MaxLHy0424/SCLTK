@@ -102,6 +102,7 @@ namespace Mod{
         system("mode con cols=50 lines=25");
         SetLayeredWindowAttributes(GetConsoleWindow(),0,(config.wndAlpha)?(230):(255),LWA_ALPHA);
     }
+#ifndef _THE_NEXT_MAJOR_UPDATE_
     inline auto frontShow(){
         const HWND wndThis{GetConsoleWindow()};
         const DWORD idForeground{GetWindowThreadProcessId(wndThis,nullptr)},
@@ -117,6 +118,7 @@ namespace Mod{
             Sleep(100);
         }
     }
+#endif
     inline auto exit(Data){
         return true;
     }
