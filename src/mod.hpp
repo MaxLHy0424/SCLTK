@@ -16,7 +16,8 @@ namespace Mod{
         char *const str;
     public:
         inline StringForOpRule()=delete;
-        inline StringForOpRule(const char *s):str{new char[strlen(s)+1]}{
+        inline StringForOpRule(const char *s):
+            str{new char[strlen(s)+1]}{
             strcpy(this->str,s);
         }
         inline ~StringForOpRule(){
