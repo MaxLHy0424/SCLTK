@@ -11,7 +11,7 @@ struct{
 bool configError{};
 namespace Mod{
 #ifdef _THE_NEXT_MAJOR_UPDATE_
-    class StringForOpRule{
+    class StringForOpRule final{
     private:
         char *const str;
     public:
