@@ -123,6 +123,12 @@ namespace Mod{
         return true;
     }
     inline auto info(Data){
+#ifdef _THE_NEXT_MAJOR_UPDATE_
+        auto visitRepoWebPage{[](Data){
+            ShellExecute(nullptr,"",INFO_REPO_URL,nullptr,nullptr,SW_SHOWNORMAL);
+            return false;
+        }};
+#endif
         UI ui;
         ui.add("                    [ 关  于 ]\n\n")
           .add(" < 返回 ",Mod::exit,WCC_RED)
@@ -131,7 +137,12 @@ namespace Mod{
           .add("\n[版本]\n")
           .add(" " INFO_VERSION)
           .add("\n[仓库]\n")
+#ifdef _THE_NEXT_MAJOR_UPDATE_
+          .add(" (i) 点击访问 URL.\n")
+          .add(" " INFO_REPO_URL,std::move(visitRepoWebPage))
+#else
           .add(" " INFO_REPO_URL)
+#endif
           .add("\n[许可证]\n")
           .add(" " INFO_LICENSE)
           .add(" (C) 2023 " INFO_DEVELOPER ". All Rights Reserved.")
