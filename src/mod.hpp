@@ -152,13 +152,13 @@ namespace Mod{
     private:
         const char mod;
         bool isOnlyLoadCustomRule;
-        inline auto read(){
+        inline auto load(){
             std::ifstream configFile{"config.ini",std::ios::in};
             if(!configFile.is_open()){
                 goto END;
             }
             {
-                puts("=> 读取配置文件.");
+                puts("=> 加载配置文件.");
                 if(!isOnlyLoadCustomRule){
                     config={};
                 }
@@ -211,7 +211,7 @@ namespace Mod{
         inline auto edit(){
             auto save{[&](Data){
                 isOnlyLoadCustomRule=true;
-                read();
+                load();
                 puts("=> 格式化保存配置文件.");
                 std::string text;
                 text.append("<Settings>\n");
@@ -270,7 +270,7 @@ namespace Mod{
         inline auto operator()(Data){
             switch(mod){
                 case 'r':{
-                    read();
+                    load();
                     break;
                 }case 'e':{
                     edit();
