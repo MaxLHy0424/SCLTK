@@ -10,7 +10,7 @@ struct{
 }config{};
 bool configError{};
 namespace Mod{
-#if true
+#ifdef _THE_NEXT_MAJOR_UPDATE_
     class StringForOpRule{
     private:
         char *str;
