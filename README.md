@@ -119,6 +119,17 @@ set item.args=-Waf
 
 > [!NOTE]
 > 正在准备 CRCSN 的下一个主要更新! 如果有什么建议, 欢迎在 GitHub Repository Issues 中提出.
+>
+> 如果想尝试实验性更新, 您可以在 `Makefile` 中的:
+> ```makefile
+> def=-D_CRT_SECURE_NO_WARNINGS -DANSI -D_ANSI
+> ```
+> 修改为:
+> ```makefile
+> def=-D_CRT_SECURE_NO_WARNINGS -DANSI -D_ANSI -D_NEXT_
+> ```
+>
+> 重新编译后即可启用. 暂时不会有文档说明.
 
 ### 基本完成 / 正在开发
 
