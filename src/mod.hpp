@@ -2,7 +2,7 @@
 #include"def.hpp"
 #include"ui.hpp"
 struct{
-#ifdef _THE_NEXT_MAJOR_UPDATE_
+#ifdef _NEXT_
     bool wndFrontShow,wndAlpha,wndHideCloseCtrl;
 #else
     bool wndFrontShow,wndAlpha,wndCtrls;
@@ -10,14 +10,15 @@ struct{
 }config{};
 bool configError{};
 namespace Mod{
-#ifdef _THE_NEXT_MAJOR_UPDATE_
+#ifdef _NEXT_
     class StringForOpRule final{
     private:
         char *const str;
     public:
         inline StringForOpRule()=delete;
         inline StringForOpRule(const char *s):
-            str{new char[strlen(s)+1]}{
+            str{new char[strlen(s)+1]}
+        {
             strcpy(this->str,s);
         }
         inline ~StringForOpRule(){
@@ -29,7 +30,7 @@ namespace Mod{
     };
 #endif
     struct Rule final{
-#ifdef _THE_NEXT_MAJOR_UPDATE_
+#ifdef _NEXT_
         std::vector<StringForOpRule> exe,svc;
 #else
         std::vector<const char*> exe,svc;
@@ -37,7 +38,7 @@ namespace Mod{
     };
     struct{
         const Rule mythware,lenovo;
-#ifdef _THE_NEXT_MAJOR_UPDATE_
+#ifdef _NEXT_
         Rule custom;
 #endif
     }rule{
@@ -61,7 +62,7 @@ namespace Mod{
                 "BSAgentSvr","tvnserver","WFBSMlogon"
             }
         }
-#ifdef _THE_NEXT_MAJOR_UPDATE_
+#ifdef _NEXT_
         ,{}
 #endif
     };
@@ -83,7 +84,7 @@ namespace Mod{
     inline auto init(){
         system("chcp 936 > nul");
         SetConsoleTitle(WINDOW_TITLE);
-#ifdef _THE_NEXT_MAJOR_UPDATE_
+#ifdef _NEXT_
         SetWindowLongPtr(
             GetConsoleWindow(),GWL_STYLE,
             GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)&~WS_SIZEBOX&~WS_MAXIMIZEBOX&~WS_MINIMIZEBOX
@@ -102,7 +103,7 @@ namespace Mod{
         system("mode con cols=50 lines=25");
         SetLayeredWindowAttributes(GetConsoleWindow(),0,(config.wndAlpha)?(230):(255),LWA_ALPHA);
     }
-#ifndef _THE_NEXT_MAJOR_UPDATE_
+#ifndef _NEXT_
     inline auto frontShow(){
         const HWND wndThis{GetConsoleWindow()};
         const DWORD idForeground{GetWindowThreadProcessId(wndThis,nullptr)},
@@ -123,21 +124,21 @@ namespace Mod{
         return true;
     }
     inline auto info(Data){
-#ifdef _THE_NEXT_MAJOR_UPDATE_
+#ifdef _NEXT_
         auto visitRepoWebPage{[](Data){
             ShellExecute(nullptr,"",INFO_REPO_URL,nullptr,nullptr,SW_SHOWNORMAL);
             return false;
         }};
 #endif
-        UI ui;
+        Ui ui;
         ui.add("                    [ 关  于 ]\n\n")
-          .add(" < 返回 ",Mod::exit,WCC_RED)
+          .add(" < 返回 ",Mod::exit,CONSOLE_RED)
           .add("\n[名称]\n")
           .add(" " INFO_NAME)
           .add("\n[版本]\n")
           .add(" " INFO_VERSION)
           .add("\n[仓库]\n")
-#ifdef _THE_NEXT_MAJOR_UPDATE_
+#ifdef _NEXT_
           .add(" (i) 点击访问 URL.\n")
           .add(" " INFO_REPO_URL,std::move(visitRepoWebPage))
 #else
@@ -151,7 +152,7 @@ namespace Mod{
     }
     inline auto cmd(Data){
         system("cmd");
-#ifdef _THE_NEXT_MAJOR_UPDATE_
+#ifdef _NEXT_
         init();
 #else
         if(!config.wndCtrls){
@@ -160,7 +161,7 @@ namespace Mod{
 #endif
         return false;
     }
-#ifdef _THE_NEXT_MAJOR_UPDATE_
+#ifdef _NEXT_
     class OpConfig final{
     private:
         const char mod;
@@ -259,10 +260,10 @@ namespace Mod{
                 ShellExecute(nullptr,"","config.ini",nullptr,nullptr,SW_SHOWNORMAL);
                 return false;
             }};
-            UI ui;
+            Ui ui;
             ui.add("                    [ 配  置 ]\n\n")
               .add(" (i) 此处设置将在下次启动时生效.\n     可通过 <RuleExe> 与 <RuleSvc> 自定义规则.\n")
-              .add(" < 格式化保存并返回 ",std::move(save),WCC_RED)
+              .add(" < 格式化保存并返回 ",std::move(save),CONSOLE_RED)
               .add(" > 打开配置文件 ",std::move(openConfigFile))
               .add("\n[半透明窗口]\n")
               .add(" > 启用 ",[](Data){config.wndAlpha=true;return false;})
@@ -278,7 +279,8 @@ namespace Mod{
         }
     public:
         inline explicit OpConfig(const char mod):
-            mod{mod},isOnlyLoadCustomRule{false}{}
+            mod{mod},isOnlyLoadCustomRule{false}
+        {}
         inline ~OpConfig(){}
         inline auto operator()(Data){
             switch(mod){
@@ -300,10 +302,11 @@ namespace Mod{
         const Rule &rule;
     public:
         inline explicit OpSys(const char mod,const Rule &rule):
-            mod{mod},rule{rule}{}
+            mod{mod},rule{rule}
+        {}
         inline ~OpSys(){}
         inline auto operator()(Data)const{
-#ifdef _THE_NEXT_MAJOR_UPDATE_
+#ifdef _NEXT_
             if((rule.exe.empty())&&(rule.svc.empty())){
                 puts("\n (!) 规则为空.\n");
                 for(unsigned short i{3};i>0;--i){
@@ -328,13 +331,13 @@ namespace Mod{
                 case 'c':{
                     for(const auto &item:rule.exe){
                         cmd.append("reg add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\")
-#ifdef _THE_NEXT_MAJOR_UPDATE_
+#ifdef _NEXT_
                            .append(item.get())
 #else
                            .append(item)
 #endif
                            .append(".exe\" /f /t reg_sz /v debugger /d ? & taskKill /f /im \"")
-#ifdef _THE_NEXT_MAJOR_UPDATE_
+#ifdef _NEXT_
                            .append(item.get())
 #else
                            .append(item)
@@ -343,7 +346,7 @@ namespace Mod{
                     }
                     for(const auto &item:rule.svc){
                         cmd.append("net stop \"")
-#ifdef _THE_NEXT_MAJOR_UPDATE_
+#ifdef _NEXT_
                            .append(item.get())
 #else
                            .append(item)
@@ -354,7 +357,7 @@ namespace Mod{
                 }case 'r':{
                     for(const auto &item:rule.exe){
                         cmd.append("reg delete \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\")
-#ifdef _THE_NEXT_MAJOR_UPDATE_
+#ifdef _NEXT_
                            .append(item.get())
 #else
                            .append(item)
@@ -363,7 +366,7 @@ namespace Mod{
                     }
                     for(const auto &item:rule.svc){
                         cmd.append("net start \"")
-#ifdef _THE_NEXT_MAJOR_UPDATE_
+#ifdef _NEXT_
                            .append(item.get())
 #else
                            .append(item)

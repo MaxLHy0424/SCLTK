@@ -1,6 +1,6 @@
 #define _BUILD_INFO_
 #include"src/def.hpp"
-#ifdef _THE_NEXT_MAJOR_UPDATE_
+#ifdef _NEXT_
 1 ICON "img/favicon.new.ico"
 #else
 1 ICON "img/favicon.ico"

@@ -2,7 +2,7 @@
 #include"def.hpp"
 #include"ui.hpp"
 #include"mod.hpp"
-#ifdef _THE_NEXT_MAJOR_UPDATE_
+#ifdef _NEXT_
 auto main()->int{
     Mod::init();
     puts("==> 检测运行权限.");
@@ -52,7 +52,7 @@ auto main(const int argc,const char *const args[])->int{
 #endif
     Mod::init();
     if(config.wndFrontShow){
-#ifdef _THE_NEXT_MAJOR_UPDATE_
+#ifdef _NEXT_
         std::thread{[](){
             const HWND wndThis{GetConsoleWindow()};
             const DWORD idForeground{GetWindowThreadProcessId(wndThis,nullptr)},
@@ -72,31 +72,31 @@ auto main(const int argc,const char *const args[])->int{
         std::thread{Mod::frontShow}.detach();
 #endif
     }
-    UI ui;
+    Ui ui;
     ui.add("                    [ 主  页 ]\n\n");
     if(configError){
-#ifdef _THE_NEXT_MAJOR_UPDATE_
+#ifdef _NEXT_
         ui.add(" (!) 配置存在错误.\n");
 #else
         ui.add(" (!) 参数错误.\n");
 #endif
     }
-    ui.add(" < 退出 ",Mod::exit,WCC_RED)
+    ui.add(" < 退出 ",Mod::exit,CONSOLE_RED)
       .add(" > 关于 ",Mod::info)
-#ifdef _THE_NEXT_MAJOR_UPDATE_
+#ifdef _NEXT_
       .add(" > 配置 ",Mod::OpConfig{'e'})
 #endif
       .add(" > 命令提示符 ",Mod::cmd)
       .add("\n[破解]\n")
       .add(" > 极域电子教室 ",Mod::OpSys{'c',Mod::rule.mythware})
       .add(" > 联想云教室 ",Mod::OpSys{'c',Mod::rule.lenovo})
-#ifdef _THE_NEXT_MAJOR_UPDATE_
+#ifdef _NEXT_
       .add(" > 自定义 ",Mod::OpSys{'c',Mod::rule.custom})
 #endif
       .add("\n[恢复]\n")
       .add(" > 极域电子教室 ",Mod::OpSys{'r',Mod::rule.mythware})
       .add(" > 联想云教室 ",Mod::OpSys{'r',Mod::rule.lenovo})
-#ifdef _THE_NEXT_MAJOR_UPDATE_
+#ifdef _NEXT_
       .add(" > 自定义 ",Mod::OpSys{'r',Mod::rule.custom})
 #endif
       .show();
