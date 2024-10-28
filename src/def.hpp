@@ -3,7 +3,7 @@
 #define WINDOW_TITLE "CRCSN"
 #include<stdio.h>
 #include<shlobj.h>
-#ifdef _THE_NEXT_MAJOR_UPDATE_
+#ifdef _NEXT_
 #include<fstream>
 #endif
 #include<vector>
@@ -12,7 +12,7 @@
 #include<thread>
 #endif
 #define INFO_NAME "Computer Room Control Software Nemesis"
-#ifdef _THE_NEXT_MAJOR_UPDATE_
+#ifdef _NEXT_
 #define INFO_VERSION "v6.0.0-dev.241027"
 #else
 #define INFO_VERSION "v5.10.0"

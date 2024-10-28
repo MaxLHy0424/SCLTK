@@ -7,21 +7,23 @@
 #define MOUSE_CLICK_DOUBLE DOUBLE_CLICK
 #define MOUSE_MOVE MOUSE_MOVED
 #define MOUSE_WHEEL MOUSE_WHEELED
-#define WCC_WHITE 0x07
-#define WCC_BLUE 0x09
-#define WCC_RED 0x0c
-class UI;
+#define CONSOLE_WHITE 0x07
+#define CONSOLE_BLUE 0x09
+#define CONSOLE_RED 0x0c
+class Ui;
 struct Data final{
     const DWORD stateButton,stateCtrlKey,flagEvent;
-    UI *const ui;
+    Ui *const ui;
     inline explicit Data():
-        stateButton{MOUSE_BUTTON_LEFT},stateCtrlKey{},flagEvent{},ui{}{}
-    inline explicit Data(const MOUSE_EVENT_RECORD mouseEvent,UI *const ui):
+        stateButton{MOUSE_BUTTON_LEFT},stateCtrlKey{},flagEvent{},ui{}
+    {}
+    inline explicit Data(const MOUSE_EVENT_RECORD mouseEvent,Ui *const ui):
         stateButton{mouseEvent.dwButtonState},stateCtrlKey{mouseEvent.dwControlKeyState},
-        flagEvent{mouseEvent.dwEventFlags},ui{ui}{}
+        flagEvent{mouseEvent.dwEventFlags},ui{ui}
+    {}
     inline ~Data(){}
 };
-class UI final{
+class Ui final{
 private:
     using callback=std::function<bool(Data)>;
     struct Item final{
@@ -30,15 +32,17 @@ private:
         COORD position;
         callback function;
         inline explicit Item():
-            text{},colorDef{WCC_WHITE},colorHighlight{WCC_BLUE},
-            colorLast{WCC_WHITE},position{},function{}{}
+            text{},colorDef{CONSOLE_WHITE},colorHighlight{CONSOLE_BLUE},
+            colorLast{CONSOLE_WHITE},position{},function{}
+        {}
         inline explicit Item(
             const char *const text,
             const short colorDef,
             const short colorHighlight,
             const callback function
         ):text{text},colorDef{colorDef},colorHighlight{colorHighlight},
-          colorLast{WCC_WHITE},position{},function{function}{}
+          colorLast{CONSOLE_WHITE},position{},function{function}
+        {}
         inline ~Item(){}
         inline auto setColor(const char mod){
             switch(mod){
@@ -176,20 +180,22 @@ private:
         return isExit;
     }
 public:
-    inline explicit UI():
-        item{},height{},width{}{}
-    inline explicit UI(const UI &obj):
-        item{obj.item},height{},width{}{}
-    inline explicit UI(const UI &&obj)=delete;
-    inline ~UI(){}
+    inline explicit Ui():
+        item{},height{},width{}
+    {}
+    inline explicit Ui(const Ui &obj):
+        item{obj.item},height{},width{}
+    {}
+    inline explicit Ui(const Ui &&obj)=delete;
+    inline ~Ui(){}
     inline auto size(){
         return item.size();
     }
     inline auto &add(
         const char *const text,
         const callback function=nullptr,
-        const short colorHighlight=WCC_BLUE,
-        const short colorDef=WCC_WHITE
+        const short colorHighlight=CONSOLE_BLUE,
+        const short colorDef=CONSOLE_WHITE
     ){
         item.emplace_back(Item{text,colorDef,(function==nullptr)?(colorDef):(colorHighlight),function});
         return *this;
@@ -198,8 +204,8 @@ public:
         const size_t index,
         const char *const text,
         const callback function=nullptr,
-        const short colorHighlight=WCC_BLUE,
-        const short colorDef=WCC_WHITE
+        const short colorHighlight=CONSOLE_BLUE,
+        const short colorDef=CONSOLE_WHITE
     ){
         item.emplace(item.begin()+index,Item{text,colorDef,(function==nullptr)?(colorDef):(colorHighlight),function});
         return *this;
@@ -208,8 +214,8 @@ public:
         const size_t index,
         const char *const text,
         const callback function=nullptr,
-        const short colorHighlight=WCC_BLUE,
-        const short colorDef=WCC_WHITE
+        const short colorHighlight=CONSOLE_BLUE,
+        const short colorDef=CONSOLE_WHITE
     ){
         item.at(index)=Item{text,colorDef,(function==nullptr)?(colorDef):(colorHighlight),function};
         return *this;

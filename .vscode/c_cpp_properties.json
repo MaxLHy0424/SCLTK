@@ -7,7 +7,7 @@
                 "${workspaceFolder}\\*"
             ],
             "defines":[
-                //"_THE_NEXT_MAJOR_UPDATE_",
+                //"_NEXT_",
                 "NDEBUG",
                 "_CRT_SECURE_NO_WARNINGS",
                 "ANSI",
