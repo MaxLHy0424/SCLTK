@@ -8,7 +8,7 @@
             ],
             "defines":[
                 //"_NEXT_",
-                "NDEBUG",
+                //"NDEBUG",
                 "_CRT_SECURE_NO_WARNINGS",
                 "ANSI",
                 "_ANSI"
