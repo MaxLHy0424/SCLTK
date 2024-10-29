@@ -25,12 +25,12 @@ struct Data final{
 };
 class Ui final{
 private:
-    using callback=std::function<bool(Data)>;
+    using Callback=std::function<bool(Data)>;
     struct Item final{
         const char *text;
         short colorDef,colorHighlight,colorLast;
         COORD position;
-        callback function;
+        Callback function;
         inline explicit Item():
             text{},colorDef{CONSOLE_WHITE},colorHighlight{CONSOLE_BLUE},
             colorLast{CONSOLE_WHITE},position{},function{}
@@ -39,23 +39,14 @@ private:
             const char *const text,
             const short colorDef,
             const short colorHighlight,
-            const callback function
+            const Callback function
         ):text{text},colorDef{colorDef},colorHighlight{colorHighlight},
           colorLast{CONSOLE_WHITE},position{},function{function}
         {}
         inline ~Item(){}
-        inline auto setColor(const char mod){
-            switch(mod){
-                case 'd':{
-                    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),colorDef);
-                    colorLast=colorDef;
-                    break;
-                }case 'h':{
-                    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),colorHighlight);
-                    colorLast=colorHighlight;
-                    break;
-                }
-            }
+        inline auto setColor(short color){
+            SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),color);
+            colorLast=color;
         }
         inline auto operator==(const COORD &mousePosition)const{
             return (position.Y==mousePosition.Y)&&
@@ -68,28 +59,21 @@ private:
     };
     std::vector<Item> item;
     short height,width;
-    inline auto opCursor(const char mod){
+    enum AttrsOp{Add='+',Remove='-'};
+    inline auto showCursor(const bool mod){
         CONSOLE_CURSOR_INFO infoCursor;
         GetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&infoCursor);
-        switch(mod){
-            case 'h':{
-                infoCursor.bVisible=false;
-                break;
-            }case 's':{
-                infoCursor.bVisible=true;
-                break;
-            }
-        }
+        infoCursor.bVisible=mod;
         SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&infoCursor);
     }
-    inline auto opAttrs(const char mod){
+    inline auto editAttrs(const AttrsOp mod){
         DWORD mode;
         GetConsoleMode(GetStdHandle(STD_INPUT_HANDLE),&mode);
         switch(mod){
-            case '+':{
+            case Add:{
                 mode|=ENABLE_QUICK_EDIT_MODE,mode|=ENABLE_INSERT_MODE,mode|=ENABLE_MOUSE_INPUT;
                 break;
-            }case '-':{
+            }case Remove:{
                 mode&=~ENABLE_QUICK_EDIT_MODE,mode&=~ENABLE_INSERT_MODE,mode|=ENABLE_MOUSE_INPUT;
                 break;
             }
@@ -144,18 +128,18 @@ private:
         cls();
         for(auto &line:item){
             line.position=getCursor();
-            line.setColor('d');
+            line.setColor(line.colorDef);
             write(line.text,true);
         }
     }
     inline auto refresh(const COORD &hangPosition){
         for(auto &line:item){
             if((line==hangPosition)&&(line.colorLast!=line.colorHighlight)){
-                line.setColor('h');
+                line.setColor(line.colorHighlight);
                 rewrite(line.position,line.text);
             }
             if((line!=hangPosition)&&(line.colorLast!=line.colorDef)){
-                line.setColor('d');
+                line.setColor(line.colorDef);
                 rewrite(line.position,line.text);
             }
         }
@@ -166,12 +150,12 @@ private:
             if(line==mouseEvent.dwMousePosition){
                 if(line.function!=nullptr){
                     cls();
-                    line.setColor('d');
-                    opAttrs('+');
-                    opCursor('s');
+                    line.setColor(line.colorDef);
+                    editAttrs(Add);
+                    showCursor(true);
                     isExit=line.function(Data{mouseEvent,this});
-                    opAttrs('-');
-                    opCursor('h');
+                    editAttrs(Remove);
+                    showCursor(false);
                     initPos();
                 }
                 break;
@@ -193,7 +177,7 @@ public:
     }
     inline auto &add(
         const char *const text,
-        const callback function=nullptr,
+        const Callback function=nullptr,
         const short colorHighlight=CONSOLE_BLUE,
         const short colorDef=CONSOLE_WHITE
     ){
@@ -203,7 +187,7 @@ public:
     inline auto &insert(
         const size_t index,
         const char *const text,
-        const callback function=nullptr,
+        const Callback function=nullptr,
         const short colorHighlight=CONSOLE_BLUE,
         const short colorDef=CONSOLE_WHITE
     ){
@@ -213,7 +197,7 @@ public:
     inline auto &edit(
         const size_t index,
         const char *const text,
-        const callback function=nullptr,
+        const Callback function=nullptr,
         const short colorHighlight=CONSOLE_BLUE,
         const short colorDef=CONSOLE_WHITE
     ){
@@ -233,8 +217,8 @@ public:
         return *this;
     }
     inline auto show(){
-        opAttrs('-');
-        opCursor('h');
+        editAttrs(Remove);
+        showCursor(false);
         MOUSE_EVENT_RECORD mouseEvent;
         initPos();
         bool isExit{};
