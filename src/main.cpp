@@ -25,13 +25,13 @@ auto main(const int argc,const char *const args[])->int{
                 for(const auto &sub:tmp.substr(2)){
                     switch(sub){
                         case 'f':{
-                            config.wndFrontShow=true;
+                            attrsWnd.wndFrontShow=true;
                             break;
                         }case 'a':{
-                            config.wndAlpha=true;
+                            attrsWnd.wndAlpha=true;
                             break;
                         }case 'c':{
-                            config.wndCtrls=true;
+                            attrsWnd.wndCtrls=true;
                             break;
                         }default:{
                             configError=true;
@@ -46,12 +46,12 @@ auto main(const int argc,const char *const args[])->int{
         }
     END:
         if(configError){
-            config={};
+            attrsWnd={};
         }
     }
 #endif
     Mod::init();
-    if(config.wndFrontShow){
+    if(attrsWnd.wndFrontShow){
 #ifdef _NEXT_
         std::thread{[](){
             const HWND wndThis{GetConsoleWindow()};
@@ -74,13 +74,11 @@ auto main(const int argc,const char *const args[])->int{
     }
     Ui ui;
     ui.add("                    [ 主  页 ]\n\n");
+#ifndef _NEXT_
     if(configError){
-#ifdef _NEXT_
-        ui.add(" (!) 配置存在错误.\n");
-#else
         ui.add(" (!) 参数错误.\n");
-#endif
     }
+#endif
     ui.add(" < 退出 ",Mod::exit,CONSOLE_RED)
       .add(" > 关于 ",Mod::info)
 #ifdef _NEXT_
