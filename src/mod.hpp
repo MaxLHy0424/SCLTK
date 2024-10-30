@@ -3,9 +3,9 @@
 #include"ui.hpp"
 struct{
 #ifdef _NEXT_
-    bool wndFrontShow,wndAlpha,wndHideCloseCtrl;
+    bool frontShow,alpha,hideCloseCtrl;
 #else
-    bool wndFrontShow,wndAlpha,wndCtrls;
+    bool frontShow,alpha,wndCtrls;
 #endif
 }attrsWnd{};
 #ifndef _NEXT_
@@ -92,7 +92,7 @@ namespace Mod{
             GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)&~WS_SIZEBOX&~WS_MAXIMIZEBOX&~WS_MINIMIZEBOX
         );
         EnableMenuItem(
-            GetSystemMenu(GetConsoleWindow(),(attrsWnd.wndHideCloseCtrl)?(FALSE):(TRUE)),
+            GetSystemMenu(GetConsoleWindow(),(attrsWnd.hideCloseCtrl)?(FALSE):(TRUE)),
             SC_CLOSE,MF_BYCOMMAND|MF_DISABLED|MF_GRAYED
         );
 #else
@@ -103,7 +103,7 @@ namespace Mod{
         );
 #endif
         system("mode con cols=50 lines=25");
-        SetLayeredWindowAttributes(GetConsoleWindow(),0,(attrsWnd.wndAlpha)?(230):(255),LWA_ALPHA);
+        SetLayeredWindowAttributes(GetConsoleWindow(),0,(attrsWnd.alpha)?(230):(255),LWA_ALPHA);
     }
 #ifndef _NEXT_
     inline auto frontShow(){
@@ -200,12 +200,12 @@ namespace Mod{
                             if(isOnlyLoadCustomRule){
                                 continue;
                             }
-                            if(line=="wndFrontShow"){
-                                attrsWnd.wndFrontShow=true;
-                            }else if(line=="wndAlpha"){
-                                attrsWnd.wndAlpha=true;
-                            }else if(line=="wndHideCloseCtrl"){
-                                attrsWnd.wndHideCloseCtrl=true;
+                            if(line=="frontShow"){
+                                attrsWnd.frontShow=true;
+                            }else if(line=="alpha"){
+                                attrsWnd.alpha=true;
+                            }else if(line=="hideCloseCtrl"){
+                                attrsWnd.hideCloseCtrl=true;
                             }
                             break;
                         }case RuleExe:{
@@ -229,14 +229,14 @@ namespace Mod{
                 puts("==> 格式化保存配置文件.");
                 std::string text;
                 text.append("<Settings>\n");
-                if(attrsWnd.wndFrontShow){
-                    text.append("wndFrontShow\n");
+                if(attrsWnd.frontShow){
+                    text.append("frontShow\n");
                 }
-                if(attrsWnd.wndAlpha){
-                    text.append("wndAlpha\n");
+                if(attrsWnd.alpha){
+                    text.append("alpha\n");
                 }
-                if(attrsWnd.wndHideCloseCtrl){
-                    text.append("wndHideCloseCtrl\n");
+                if(attrsWnd.hideCloseCtrl){
+                    text.append("hideCloseCtrl\n");
                 }
                 text.append("<RuleExe>\n");
                 if(!rule.custom.exe.empty()){
@@ -266,14 +266,14 @@ namespace Mod{
               .add(" < 格式化保存并返回 ",std::move(save),CONSOLE_RED)
               .add(" > 打开配置文件 ",std::move(openConfigFile))
               .add("\n[半透明窗口]\n")
-              .add(" > 启用 ",[](Data){attrsWnd.wndAlpha=true;return false;})
-              .add(" > 禁用 ",[](Data){attrsWnd.wndAlpha=false;return false;})
+              .add(" > 启用 ",[](Data){attrsWnd.alpha=true;return false;})
+              .add(" > 禁用 ",[](Data){attrsWnd.alpha=false;return false;})
               .add("\n[置顶窗口]\n")
-              .add(" > 启用 ",[](Data){attrsWnd.wndFrontShow=true;return false;})
-              .add(" > 禁用 ",[](Data){attrsWnd.wndFrontShow=false;return false;})
+              .add(" > 启用 ",[](Data){attrsWnd.frontShow=true;return false;})
+              .add(" > 禁用 ",[](Data){attrsWnd.frontShow=false;return false;})
               .add("\n[隐藏窗口关闭控件]\n")
-              .add(" > 启用 ",[](Data){attrsWnd.wndHideCloseCtrl=true;return false;})
-              .add(" > 禁用 ",[](Data){attrsWnd.wndHideCloseCtrl=false;return false;})
+              .add(" > 启用 ",[](Data){attrsWnd.hideCloseCtrl=true;return false;})
+              .add(" > 禁用 ",[](Data){attrsWnd.hideCloseCtrl=false;return false;})
               .show();
             return false;
         }
