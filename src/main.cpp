@@ -25,10 +25,10 @@ auto main(const int argc,const char *const args[])->int{
                 for(const auto &sub:tmp.substr(2)){
                     switch(sub){
                         case 'f':{
-                            attrsWnd.wndFrontShow=true;
+                            attrsWnd.frontShow=true;
                             break;
                         }case 'a':{
-                            attrsWnd.wndAlpha=true;
+                            attrsWnd.alpha=true;
                             break;
                         }case 'c':{
                             attrsWnd.wndCtrls=true;
@@ -51,7 +51,7 @@ auto main(const int argc,const char *const args[])->int{
     }
 #endif
     Mod::init();
-    if(attrsWnd.wndFrontShow){
+    if(attrsWnd.frontShow){
 #ifdef _NEXT_
         std::thread{[](){
             const HWND wndThis{GetConsoleWindow()};
