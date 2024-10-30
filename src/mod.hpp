@@ -5,7 +5,7 @@ struct{
 #ifdef _NEXT_
     bool frontShow,alpha,hideCloseCtrl;
 #else
-    bool frontShow,alpha,wndCtrls;
+    bool frontShow,alpha,ctrls;
 #endif
 }attrsWnd{};
 #ifndef _NEXT_
@@ -13,17 +13,17 @@ bool configError{};
 #endif
 namespace Mod{
 #ifdef _NEXT_
-    class StringForOpRule final{
+    class StringReadOnly final{
     private:
         char *const str;
     public:
-        inline StringForOpRule()=delete;
-        inline StringForOpRule(const char *s):
+        inline StringReadOnly()=delete;
+        inline StringReadOnly(const char *s):
             str{new char[strlen(s)+1]}
         {
             strcpy(this->str,s);
         }
-        inline ~StringForOpRule(){
+        inline ~StringReadOnly(){
             delete[] str;
         }
         inline const auto get()const{
@@ -33,7 +33,7 @@ namespace Mod{
 #endif
     struct Rule final{
 #ifdef _NEXT_
-        std::vector<StringForOpRule> exe,svc;
+        std::vector<StringReadOnly> exe,svc;
 #else
         std::vector<const char*> exe,svc;
 #endif
@@ -97,7 +97,7 @@ namespace Mod{
         );
 #else
         SetWindowLongPtr(
-            GetConsoleWindow(),GWL_STYLE,(attrsWnd.wndCtrls)
+            GetConsoleWindow(),GWL_STYLE,(attrsWnd.ctrls)
             ?(GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)|WS_SIZEBOX|WS_MAXIMIZEBOX|WS_MINIMIZEBOX)
             :(GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)&~WS_SIZEBOX&~WS_MAXIMIZEBOX&~WS_MINIMIZEBOX)
         );
@@ -157,7 +157,7 @@ namespace Mod{
 #ifdef _NEXT_
         init();
 #else
-        if(!attrsWnd.wndCtrls){
+        if(!attrsWnd.ctrls){
             init();
         }
 #endif
