@@ -31,7 +31,7 @@ auto main(const int argc,const char *const args[])->int{
                             attrsWnd.alpha=true;
                             break;
                         }case 'c':{
-                            attrsWnd.wndCtrls=true;
+                            attrsWnd.ctrls=true;
                             break;
                         }default:{
                             configError=true;
