@@ -71,10 +71,14 @@ private:
         GetConsoleMode(GetStdHandle(STD_INPUT_HANDLE),&mode);
         switch(mod){
             case Add:{
-                mode|=ENABLE_QUICK_EDIT_MODE,mode|=ENABLE_INSERT_MODE,mode|=ENABLE_MOUSE_INPUT;
+                mode|=ENABLE_QUICK_EDIT_MODE,
+                mode|=ENABLE_INSERT_MODE,
+                mode|=ENABLE_MOUSE_INPUT;
                 break;
             }case Remove:{
-                mode&=~ENABLE_QUICK_EDIT_MODE,mode&=~ENABLE_INSERT_MODE,mode|=ENABLE_MOUSE_INPUT;
+                mode&=~ENABLE_QUICK_EDIT_MODE,
+                mode&=~ENABLE_INSERT_MODE,
+                mode|=ENABLE_MOUSE_INPUT;
                 break;
             }
         }
