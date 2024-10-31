@@ -95,7 +95,7 @@ private:
                 break;
             }
         }
-        SetConsoleMode(GetStdHandle(STD_INPUT_HANDLE),_mode);
+        SetConsoleMode(GetStdHandle(STD_INPUT_HANDLE),attrs);
     }
     auto m_get_cursor(){
         CONSOLE_SCREEN_BUFFER_INFO console_info;
