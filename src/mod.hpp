@@ -176,7 +176,7 @@ namespace mod{
         const char m_mode;
         bool m_is_only_load_custom_rule;
         inline auto load(){
-            std::ifstream config_file{"config_data.ini",std::ios::in};
+            std::ifstream config_file{"config.ini",std::ios::in};
             if(!config_file.is_open()){
                 goto END;
             }
@@ -257,14 +257,14 @@ namespace mod{
                         text.append(item.get()).push_back('\n');
                     }
                 }
-                std::ofstream config_file{"config_data.ini",std::ios::out|std::ios::trunc};
+                std::ofstream config_file{"config.ini",std::ios::out|std::ios::trunc};
                 config_file.write(text.c_str(),text.size());
                 config_file.close();
                 return true;
             }};
             auto open_config_file{[](ui_data){
                 puts("==> 打开配置文件.");
-                ShellExecute(nullptr,"","config_data.ini",nullptr,nullptr,SW_SHOWNORMAL);
+                ShellExecute(nullptr,"","config.ini",nullptr,nullptr,SW_SHOWNORMAL);
                 return false;
             }};
             console_ui ui;
