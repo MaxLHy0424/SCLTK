@@ -111,7 +111,10 @@ private:
         while(true){
             Sleep(10);
             ReadConsoleInput(GetStdHandle(STD_INPUT_HANDLE),&record,1,&reg);
-            if((record.EventType==MOUSE_EVENT)&&(_move|(record.Event.MouseEvent.dwEventFlags!=MOUSE_MOVED))){
+            if(
+                (record.EventType==MOUSE_EVENT)&&
+                (_move|(record.Event.MouseEvent.dwEventFlags!=MOUSE_MOVED))
+            ){
                 return record.Event.MouseEvent;
             }
         }
