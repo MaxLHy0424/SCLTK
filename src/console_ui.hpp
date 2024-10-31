@@ -194,7 +194,11 @@ public:
         console_height{},
         console_width{}
     {}
-    explicit console_ui(const console_ui &&_obj)=delete;
+    explicit console_ui(const console_ui &&_obj):
+        item_{std::move(_obj.item_)},
+        console_height{},
+        console_width{}
+    {}
     ~console_ui(){}
     auto size(){
         return item_.size();
