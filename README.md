@@ -141,6 +141,7 @@ set item.args=-Waf
 
 ### 计划执行
 
+- 拆分 `src` 下的 `*.hpp` 文件为 `*.cpp` 和 `*.hpp` 文件;
 - 移除 `launcher.cmd`.
 
 ### 正在讨论
