@@ -71,13 +71,13 @@ private:
         }
     };
     std::vector<ui_item> m_item;
-    short m_wnd_height,m_wnd_width;
+    short m_console_height,m_console_width;
     enum m_ui_item_attrs_op{t_add='+',t_remove='-'};
     auto m_show_cursor(const bool _mode){
-        CONSOLE_CURSOR_INFO cursor_info;
-        GetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&cursor_info);
-        cursor_info.bVisible=_mode;
-        SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&cursor_info);
+        CONSOLE_CURSOR_INFO cursor;
+        GetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&cursor);
+        cursor.bVisible=_mode;
+        SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&cursor);
     }
     auto m_edit_attrs(const m_ui_item_attrs_op _mode){
         DWORD attrs;
@@ -98,9 +98,9 @@ private:
         SetConsoleMode(GetStdHandle(STD_INPUT_HANDLE),attrs);
     }
     auto m_get_cursor(){
-        CONSOLE_SCREEN_BUFFER_INFO console_info;
-        GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE),&console_info);
-        return console_info.dwCursorPosition;
+        CONSOLE_SCREEN_BUFFER_INFO console;
+        GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE),&console);
+        return console.dwCursorPosition;
     }
     auto m_set_cursor(const COORD &_position){
         SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE),_position);
@@ -120,15 +120,15 @@ private:
         }
     }
     auto m_get_console_size(){
-        CONSOLE_SCREEN_BUFFER_INFO console_info;
-        GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE),&console_info);
-        m_wnd_height=console_info.dwSize.Y;
-        m_wnd_width=console_info.dwSize.X;
+        CONSOLE_SCREEN_BUFFER_INFO console;
+        GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE),&console);
+        m_console_height=console.dwSize.Y;
+        m_console_width=console.dwSize.X;
     }
     auto m_cls(){
         m_get_console_size();
         m_set_cursor({0,0});
-        printf("%s",std::string(m_wnd_width*m_wnd_height,' ').c_str());
+        printf("%s",std::string(m_console_width*m_console_height,' ').c_str());
         m_set_cursor({0,0});
     }
     auto m_write(const char *const _text,const bool _isEndl=false){
@@ -186,13 +186,13 @@ private:
 public:
     explicit console_ui():
         m_item{},
-        m_wnd_height{},
-        m_wnd_width{}
+        m_console_height{},
+        m_console_width{}
     {}
     explicit console_ui(const console_ui &_obj):
         m_item{_obj.m_item},
-        m_wnd_height{},
-        m_wnd_width{}
+        m_console_height{},
+        m_console_width{}
     {}
     explicit console_ui(const console_ui &&_obj)=delete;
     ~console_ui(){}
