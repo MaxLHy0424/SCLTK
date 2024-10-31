@@ -17,16 +17,16 @@ namespace mod{
     private:
         char *const m_str;
     public:
-        inline simple_string()=delete;
-        inline simple_string(const char *_s):
+        simple_string()=delete;
+        simple_string(const char *_s):
             m_str{new char[strlen(_s)+1]}
         {
             strcpy(this->m_str,_s);
         }
-        inline ~simple_string(){
+        ~simple_string(){
             delete[] m_str;
         }
-        inline const auto get()const{
+        const auto get()const{
             return m_str;
         }
     };
@@ -68,7 +68,7 @@ namespace mod{
         ,{}
 #endif
     };
-    inline auto is_run_as_admin(){
+    auto is_run_as_admin(){
         BOOL is_admin{};
         PSID admins_group{};
         SID_IDENTIFIER_AUTHORITY nt_authority{SECURITY_NT_AUTHORITY};
@@ -83,7 +83,7 @@ namespace mod{
         }
         return is_admin;
     }
-    inline auto init(){
+    auto init(){
         system("chcp 936 > nul");
         SetConsoleTitle(WINDOW_TITLE);
 #ifdef _NEXT_
@@ -113,7 +113,7 @@ namespace mod{
         );
     }
 #ifndef _NEXT_
-    inline auto front_show_wnd(){
+    auto front_show_wnd(){
         const HWND this_wnd{GetConsoleWindow()};
         const DWORD foreground_id{GetWindowThreadProcessId(this_wnd,nullptr)},
                     current_id{GetCurrentThreadId()};
@@ -129,10 +129,10 @@ namespace mod{
         }
     }
 #endif
-    inline auto exit(ui_data){
+    auto exit(ui_data){
         return true;
     }
-    inline auto info(ui_data){
+    auto info(ui_data){
 #ifdef _NEXT_
         auto visit_repo_webpage{[](ui_data){
             ShellExecute(nullptr,"",INFO_REPO_URL,nullptr,nullptr,SW_SHOWNORMAL);
@@ -159,7 +159,7 @@ namespace mod{
           .show();
         return false;
     }
-    inline auto cmd(ui_data){
+    auto cmd(ui_data){
         system("cmd");
 #ifdef _NEXT_
         init();
@@ -175,7 +175,7 @@ namespace mod{
     private:
         const char m_mode;
         bool m_is_only_load_custom_rule;
-        inline auto load(){
+        auto load(){
             std::ifstream config_file{"config.ini",std::ios::in};
             if(!config_file.is_open()){
                 goto END;
@@ -229,7 +229,7 @@ namespace mod{
             config_file.close();
             return;
         }
-        inline auto edit(){
+        auto edit(){
             auto save{[&](ui_data){
                 m_is_only_load_custom_rule=true;
                 load();
@@ -285,12 +285,12 @@ namespace mod{
             return false;
         }
     public:
-        inline explicit config_op(const char _mode):
+        explicit config_op(const char _mode):
             m_mode{_mode},
             m_is_only_load_custom_rule{}
         {}
-        inline ~config_op(){}
-        inline auto operator()(ui_data){
+        ~config_op(){}
+        auto operator()(ui_data){
             switch(m_mode){
                 case 'r':{
                     load();
@@ -309,12 +309,12 @@ namespace mod{
         const char m_mode;
         const sys_rule &m_rule;
     public:
-        inline explicit sys_op(const char _mode,const sys_rule &_rule):
+        explicit sys_op(const char _mode,const sys_rule &_rule):
             m_mode{_mode},
             m_rule{_rule}
         {}
-        inline ~sys_op(){}
-        inline auto operator()(ui_data)const{
+        ~sys_op(){}
+        auto operator()(ui_data)const{
 #ifdef _NEXT_
             if((m_rule.exe.empty())&&(m_rule.svc.empty())){
                 puts("\n (!) 规则为空.\n");
