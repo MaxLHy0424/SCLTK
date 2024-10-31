@@ -1,47 +1,47 @@
 #pragma once
 #include"def.hpp"
-#include"ui.hpp"
+#include"console_ui.hpp"
 struct{
 #ifdef _NEXT_
-    bool wndFrontShow,wndAlpha,wndHideCloseCtrl;
+    bool front_show_wnd,alpha_wnd,hide_wnd_close_ctrl;
 #else
-    bool wndFrontShow,wndAlpha,wndCtrls;
+    bool front_show_wnd,alpha_wnd,wnd_ctrls;
 #endif
-}config{};
+}config_data{};
 #ifndef _NEXT_
-bool configError{};
+bool config_error{};
 #endif
-namespace Mod{
+namespace mod{
 #ifdef _NEXT_
-    class StringReadOnly final{
+    class simple_string final{
     private:
-        char *const str;
+        char *const m_str;
     public:
-        inline StringReadOnly()=delete;
-        inline StringReadOnly(const char *s):
-            str{new char[strlen(s)+1]}
+        inline simple_string()=delete;
+        inline simple_string(const char *_s):
+            m_str{new char[strlen(_s)+1]}
         {
-            strcpy(this->str,s);
+            strcpy(this->m_str,_s);
         }
-        inline ~StringReadOnly(){
-            delete[] str;
+        inline ~simple_string(){
+            delete[] m_str;
         }
         inline const auto get()const{
-            return str;
+            return m_str;
         }
     };
 #endif
-    struct Rule final{
+    struct sys_rule final{
 #ifdef _NEXT_
-        std::vector<StringReadOnly> exe,svc;
+        std::vector<simple_string> exe,svc;
 #else
         std::vector<const char*> exe,svc;
 #endif
     };
     struct{
-        const Rule mythware,lenovo;
+        const sys_rule mythware,lenovo;
 #ifdef _NEXT_
-        Rule custom;
+        sys_rule custom;
 #endif
     }rule{
         {
@@ -68,20 +68,20 @@ namespace Mod{
         ,{}
 #endif
     };
-    inline auto isRunAsAdmin(){
-        BOOL isAdmin{};
-        PSID adminsGroup{};
-        SID_IDENTIFIER_AUTHORITY ntAuthority{SECURITY_NT_AUTHORITY};
+    inline auto is_run_as_admin(){
+        BOOL is_admin{};
+        PSID admins_group{};
+        SID_IDENTIFIER_AUTHORITY nt_authority{SECURITY_NT_AUTHORITY};
         if(
             AllocateAndInitializeSid(
-                &ntAuthority,2,SECURITY_BUILTIN_DOMAIN_RID,
-                DOMAIN_ALIAS_RID_ADMINS,0,0,0,0,0,0,&adminsGroup
+                &nt_authority,2,SECURITY_BUILTIN_DOMAIN_RID,
+                DOMAIN_ALIAS_RID_ADMINS,0,0,0,0,0,0,&admins_group
             )
         ){
-            CheckTokenMembership(nullptr,adminsGroup,&isAdmin);
-            FreeSid(adminsGroup);
+            CheckTokenMembership(nullptr,admins_group,&is_admin);
+            FreeSid(admins_group);
         }
-        return isAdmin;
+        return is_admin;
     }
     inline auto init(){
         system("chcp 936 > nul");
@@ -92,49 +92,56 @@ namespace Mod{
             GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)&~WS_SIZEBOX&~WS_MAXIMIZEBOX&~WS_MINIMIZEBOX
         );
         EnableMenuItem(
-            GetSystemMenu(GetConsoleWindow(),(config.wndHideCloseCtrl)?(FALSE):(TRUE)),
+            GetSystemMenu(
+                GetConsoleWindow(),
+                (config_data.hide_wnd_close_ctrl)?(FALSE):(TRUE)
+            ),
             SC_CLOSE,MF_BYCOMMAND|MF_DISABLED|MF_GRAYED
         );
 #else
         SetWindowLongPtr(
-            GetConsoleWindow(),GWL_STYLE,(config.wndCtrls)
+            GetConsoleWindow(),GWL_STYLE,(config_data.wnd_ctrls)
             ?(GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)|WS_SIZEBOX|WS_MAXIMIZEBOX|WS_MINIMIZEBOX)
             :(GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)&~WS_SIZEBOX&~WS_MAXIMIZEBOX&~WS_MINIMIZEBOX)
         );
 #endif
         system("mode con cols=50 lines=25");
-        SetLayeredWindowAttributes(GetConsoleWindow(),0,(config.wndAlpha)?(230):(255),LWA_ALPHA);
+        SetLayeredWindowAttributes(
+            GetConsoleWindow(),0,
+            (config_data.alpha_wnd)?(230):(255),
+            LWA_ALPHA
+        );
     }
 #ifndef _NEXT_
-    inline auto wndFrontShow(){
-        const HWND wndThis{GetConsoleWindow()};
-        const DWORD idForeground{GetWindowThreadProcessId(wndThis,nullptr)},
-                    idCurrent{GetCurrentThreadId()};
+    inline auto front_show_wnd(){
+        const HWND this_wnd{GetConsoleWindow()};
+        const DWORD foreground_id{GetWindowThreadProcessId(this_wnd,nullptr)},
+                    current_id{GetCurrentThreadId()};
         while(true){
-            AttachThreadInput(idCurrent,idForeground,TRUE);
-            ShowWindow(wndThis,SW_SHOWNORMAL);
-            SetWindowPos(wndThis,HWND_TOPMOST,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE);
-            SetWindowPos(wndThis,HWND_NOTOPMOST,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE);
-            SetForegroundWindow(wndThis);
-            AttachThreadInput(idCurrent,idForeground,FALSE);
-            SetWindowPos(wndThis,HWND_TOPMOST,0,0,100,100,SWP_NOMOVE|SWP_NOSIZE);
+            AttachThreadInput(current_id,foreground_id,TRUE);
+            ShowWindow(this_wnd,SW_SHOWNORMAL);
+            SetWindowPos(this_wnd,HWND_TOPMOST,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE);
+            SetWindowPos(this_wnd,HWND_NOTOPMOST,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE);
+            SetForegroundWindow(this_wnd);
+            AttachThreadInput(current_id,foreground_id,FALSE);
+            SetWindowPos(this_wnd,HWND_TOPMOST,0,0,100,100,SWP_NOMOVE|SWP_NOSIZE);
             Sleep(100);
         }
     }
 #endif
-    inline auto exit(Data){
+    inline auto exit(ui_data){
         return true;
     }
-    inline auto info(Data){
+    inline auto info(ui_data){
 #ifdef _NEXT_
-        auto visitRepoWebPage{[](Data){
+        auto visit_repo_webpage{[](ui_data){
             ShellExecute(nullptr,"",INFO_REPO_URL,nullptr,nullptr,SW_SHOWNORMAL);
             return false;
         }};
 #endif
-        Ui ui;
+        console_ui ui;
         ui.add("                    [ 关  于 ]\n\n")
-          .add(" < 返回 ",Mod::exit,CONSOLE_RED)
+          .add(" < 返回 ",mod::exit,CONSOLE_RED)
           .add("\n[名称]\n")
           .add(" " INFO_NAME)
           .add("\n[版本]\n")
@@ -142,7 +149,7 @@ namespace Mod{
           .add("\n[仓库]\n")
 #ifdef _NEXT_
           .add(" (i) 点击访问 URL.\n")
-          .add(" " INFO_REPO_URL,std::move(visitRepoWebPage))
+          .add(" " INFO_REPO_URL,std::move(visit_repo_webpage))
 #else
           .add(" " INFO_REPO_URL)
 #endif
@@ -152,66 +159,66 @@ namespace Mod{
           .show();
         return false;
     }
-    inline auto cmd(Data){
+    inline auto cmd(ui_data){
         system("cmd");
 #ifdef _NEXT_
         init();
 #else
-        if(!config.wndCtrls){
+        if(!config_data.wnd_ctrls){
             init();
         }
 #endif
         return false;
     }
 #ifdef _NEXT_
-    class Config final{
+    class config_op final{
     private:
-        const char mode;
-        bool isOnlyLoadCustomRule;
+        const char m_mode;
+        bool m_is_only_load_custom_rule;
         inline auto load(){
-            std::ifstream configFile{"config.ini",std::ios::in};
-            if(!configFile.is_open()){
+            std::ifstream config_file{"config_data.ini",std::ios::in};
+            if(!config_file.is_open()){
                 goto END;
             }
             {
                 puts("==> 加载配置文件.");
-                if(!isOnlyLoadCustomRule){
-                    config={};
+                if(!m_is_only_load_custom_rule){
+                    config_data={};
                 }
                 rule.custom.exe.clear(),rule.custom.svc.clear();
                 std::string line;
-                enum{Settings=0,RuleExe=1,RuleSvc=2} configItem{Settings};
-                while(std::getline(configFile,line)){
+                enum{t_settings=0,t_rule_exe=1,t_rule_svc=2} config_item{t_settings};
+                while(std::getline(config_file,line)){
                     if(line.empty()||line.at(0)=='#'){
                         continue;
                     }
-                    if(line=="<Settings>"){
-                        configItem=Settings;
+                    if(line=="<settings>"){
+                        config_item=t_settings;
                         continue;
-                    }else if(line=="<RuleExe>"){
-                        configItem=RuleExe;
+                    }else if(line=="<rule_exe>"){
+                        config_item=t_rule_exe;
                         continue;
-                    }else if(line=="<RuleSvc>"){
-                        configItem=RuleSvc;
+                    }else if(line=="<rule_svc>"){
+                        config_item=t_rule_svc;
                         continue;
                     }
-                    switch(configItem){
-                        case Settings:{
-                            if(isOnlyLoadCustomRule){
+                    switch(config_item){
+                        case t_settings:{
+                            if(m_is_only_load_custom_rule){
                                 continue;
                             }
-                            if(line=="wndFrontShow"){
-                                config.wndFrontShow=true;
-                            }else if(line=="wndAlpha"){
-                                config.wndAlpha=true;
-                            }else if(line=="wndHideCloseCtrl"){
-                                config.wndHideCloseCtrl=true;
+                            if(line=="front_show_wnd"){
+                                config_data.front_show_wnd=true;
+                            }else if(line=="alpha_wnd"){
+                                config_data.alpha_wnd=true;
+                            }else if(line=="hide_wnd_close_ctrl"){
+                                config_data.hide_wnd_close_ctrl=true;
                             }
                             break;
-                        }case RuleExe:{
+                        }case t_rule_exe:{
                             rule.custom.exe.emplace_back(line.c_str());
                             break;
-                        }case RuleSvc:{
+                        }case t_rule_svc:{
                             rule.custom.svc.emplace_back(line.c_str());
                             break;
                         }
@@ -219,71 +226,72 @@ namespace Mod{
                 }
             }
         END:
-            configFile.close();
+            config_file.close();
             return;
         }
         inline auto edit(){
-            auto save{[&](Data){
-                isOnlyLoadCustomRule=true;
+            auto save{[&](ui_data){
+                m_is_only_load_custom_rule=true;
                 load();
                 puts("==> 格式化保存配置文件.");
                 std::string text;
-                text.append("<Settings>\n");
-                if(config.wndFrontShow){
-                    text.append("wndFrontShow\n");
+                text.append("<settings>\n");
+                if(config_data.front_show_wnd){
+                    text.append("front_show_wnd\n");
                 }
-                if(config.wndAlpha){
-                    text.append("wndAlpha\n");
+                if(config_data.alpha_wnd){
+                    text.append("alpha_wnd\n");
                 }
-                if(config.wndHideCloseCtrl){
-                    text.append("wndHideCloseCtrl\n");
+                if(config_data.hide_wnd_close_ctrl){
+                    text.append("hide_wnd_close_ctrl\n");
                 }
-                text.append("<RuleExe>\n");
+                text.append("<rule_exe>\n");
                 if(!rule.custom.exe.empty()){
                     for(const auto &item:rule.custom.exe){
                         text.append(item.get()).push_back('\n');
                     }
                 }
-                text.append("<RuleSvc>\n");
+                text.append("<rule_svc>\n");
                 if(!rule.custom.exe.empty()){
                     for(const auto &item:rule.custom.svc){
                         text.append(item.get()).push_back('\n');
                     }
                 }
-                std::ofstream configFile{"config.ini",std::ios::out|std::ios::trunc};
-                configFile.write(text.c_str(),text.size());
-                configFile.close();
+                std::ofstream config_file{"config_data.ini",std::ios::out|std::ios::trunc};
+                config_file.write(text.c_str(),text.size());
+                config_file.close();
                 return true;
             }};
-            auto openConfigFile{[](Data){
+            auto open_config_file{[](ui_data){
                 puts("==> 打开配置文件.");
-                ShellExecute(nullptr,"","config.ini",nullptr,nullptr,SW_SHOWNORMAL);
+                ShellExecute(nullptr,"","config_data.ini",nullptr,nullptr,SW_SHOWNORMAL);
                 return false;
             }};
-            Ui ui;
+            console_ui ui;
             ui.add("                    [ 配  置 ]\n\n")
-              .add(" (i) 此处设置将在下次启动时生效.\n     可通过 <RuleExe> 与 <RuleSvc> 自定义规则.\n")
+              .add(" (i) 此处设置将在下次启动时生效.\n     可通过 <rule_exe> 与 <rule_svc> 自定义规则.\n")
               .add(" < 格式化保存并返回 ",std::move(save),CONSOLE_RED)
-              .add(" > 打开配置文件 ",std::move(openConfigFile))
+              .add(" > 打开配置文件 ",std::move(open_config_file))
               .add("\n[半透明窗口]\n")
-              .add(" > 启用 ",[](Data){config.wndAlpha=true;return false;})
-              .add(" > 禁用 ",[](Data){config.wndAlpha=false;return false;})
+              .add(" > 启用 ",[](ui_data){config_data.alpha_wnd=true;return false;})
+              .add(" > 禁用 ",[](ui_data){config_data.alpha_wnd=false;return false;})
               .add("\n[置顶窗口]\n")
-              .add(" > 启用 ",[](Data){config.wndFrontShow=true;return false;})
-              .add(" > 禁用 ",[](Data){config.wndFrontShow=false;return false;})
+              .add(" > 启用 ",[](ui_data){config_data.front_show_wnd=true;return false;})
+              .add(" > 禁用 ",[](ui_data){config_data.front_show_wnd=false;return false;})
               .add("\n[隐藏窗口关闭控件]\n")
-              .add(" > 启用 ",[](Data){config.wndHideCloseCtrl=true;return false;})
-              .add(" > 禁用 ",[](Data){config.wndHideCloseCtrl=false;return false;})
+              .add(" > 启用 ",[](ui_data){config_data.hide_wnd_close_ctrl=true;return false;})
+              .add(" > 禁用 ",[](ui_data){config_data.hide_wnd_close_ctrl=false;return false;})
               .show();
             return false;
         }
     public:
-        inline explicit Config(const char mode):
-            mode{mode},isOnlyLoadCustomRule{}
+        inline explicit config_op(const char _mode):
+            m_mode{_mode},
+            m_is_only_load_custom_rule{}
         {}
-        inline ~Config(){}
-        inline auto operator()(Data){
-            switch(mode){
+        inline ~config_op(){}
+        inline auto operator()(ui_data){
+            switch(m_mode){
                 case 'r':{
                     load();
                     break;
@@ -296,18 +304,19 @@ namespace Mod{
         }
     };
 #endif
-    class Sys final{
+    class sys_op final{
     private:
-        const char mode;
-        const Rule &rule;
+        const char m_mode;
+        const sys_rule &m_rule;
     public:
-        inline explicit Sys(const char mode,const Rule &rule):
-            mode{mode},rule{rule}
+        inline explicit sys_op(const char _mode,const sys_rule &_rule):
+            m_mode{_mode},
+            m_rule{_rule}
         {}
-        inline ~Sys(){}
-        inline auto operator()(Data)const{
+        inline ~sys_op(){}
+        inline auto operator()(ui_data)const{
 #ifdef _NEXT_
-            if((rule.exe.empty())&&(rule.svc.empty())){
+            if((m_rule.exe.empty())&&(m_rule.svc.empty())){
                 puts("\n (!) 规则为空.\n");
                 for(unsigned short i{3};i>0;--i){
                     printf(" %hu 秒后返回.\r",i);
@@ -316,7 +325,7 @@ namespace Mod{
                 return false;
             }
 #else
-            if(!isRunAsAdmin()){
+            if(!is_run_as_admin()){
                 puts("\n (!) 需要提权.\n");
                 for(unsigned short i{3};i>0;--i){
                     printf(" %hu 秒后返回.\r",i);
@@ -327,9 +336,9 @@ namespace Mod{
 #endif
             puts("==> 生成命令.");
             std::string cmd;
-            switch(mode){
+            switch(m_mode){
                 case 'c':{
-                    for(const auto &item:rule.exe){
+                    for(const auto &item:m_rule.exe){
                         cmd.append("reg add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\")
 #ifdef _NEXT_
                            .append(item.get())
@@ -344,7 +353,7 @@ namespace Mod{
 #endif
                            .append(".exe\" & ");
                     }
-                    for(const auto &item:rule.svc){
+                    for(const auto &item:m_rule.svc){
                         cmd.append("net stop \"")
 #ifdef _NEXT_
                            .append(item.get())
@@ -355,7 +364,7 @@ namespace Mod{
                     }
                     break;
                 }case 'r':{
-                    for(const auto &item:rule.exe){
+                    for(const auto &item:m_rule.exe){
                         cmd.append("reg delete \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\")
 #ifdef _NEXT_
                            .append(item.get())
@@ -364,7 +373,7 @@ namespace Mod{
 #endif
                            .append(".exe\" /f & ");
                     }
-                    for(const auto &item:rule.svc){
+                    for(const auto &item:m_rule.svc){
                         cmd.append("net start \"")
 #ifdef _NEXT_
                            .append(item.get())
