@@ -58,7 +58,7 @@ set item.runtime=ucrt
 
 找到:
 ```dos
-set config.autoLaunch=0
+set config.auto_launch=0
 ```
 
 将等号后面的数字改为 `0` 之外的其他数字, 即可启用. 禁用只需改回去即可.
@@ -69,7 +69,7 @@ set config.autoLaunch=0
 
 找到:
 ```dos
-set config.showVerboseInfo=0
+set config.show_verbose_info=0
 ```
 
 将等号后面的数字改为 `0` 之外的其他数字, 即可启用. 禁用只需改回去即可.
