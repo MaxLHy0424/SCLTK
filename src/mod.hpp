@@ -164,7 +164,7 @@ namespace Mod{
         return false;
     }
 #ifdef _NEXT_
-    class OpConfig final{
+    class Config final{
     private:
         const char mod;
         bool isOnlyLoadCustomRule;
@@ -278,10 +278,10 @@ namespace Mod{
             return false;
         }
     public:
-        inline explicit OpConfig(const char mod):
+        inline explicit Config(const char mod):
             mod{mod},isOnlyLoadCustomRule{}
         {}
-        inline ~OpConfig(){}
+        inline ~Config(){}
         inline auto operator()(Data){
             switch(mod){
                 case 'r':{
@@ -296,15 +296,15 @@ namespace Mod{
         }
     };
 #endif
-    class OpSys final{
+    class Sys final{
     private:
         const char mod;
         const Rule &rule;
     public:
-        inline explicit OpSys(const char mod,const Rule &rule):
+        inline explicit Sys(const char mod,const Rule &rule):
             mod{mod},rule{rule}
         {}
-        inline ~OpSys(){}
+        inline ~Sys(){}
         inline auto operator()(Data)const{
 #ifdef _NEXT_
             if((rule.exe.empty())&&(rule.svc.empty())){
