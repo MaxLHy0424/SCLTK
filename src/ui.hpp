@@ -60,25 +60,25 @@ private:
     std::vector<Item> item;
     short height,width;
     enum AttrsOp{Add='+',Remove='-'};
-    inline auto showCursor(const bool mod){
+    inline auto showCursor(const bool mode){
         CONSOLE_CURSOR_INFO infoCursor;
         GetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&infoCursor);
-        infoCursor.bVisible=mod;
+        infoCursor.bVisible=mode;
         SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&infoCursor);
     }
-    inline auto editAttrs(const AttrsOp mod){
-        DWORD mode;
-        GetConsoleMode(GetStdHandle(STD_INPUT_HANDLE),&mode);
-        switch(mod){
+    inline auto editAttrs(const AttrsOp mode){
+        DWORD attrs;
+        GetConsoleMode(GetStdHandle(STD_INPUT_HANDLE),&attrs);
+        switch(mode){
             case Add:{
-                mode|=ENABLE_QUICK_EDIT_MODE,
-                mode|=ENABLE_INSERT_MODE,
-                mode|=ENABLE_MOUSE_INPUT;
+                attrs|=ENABLE_QUICK_EDIT_MODE,
+                attrs|=ENABLE_INSERT_MODE,
+                attrs|=ENABLE_MOUSE_INPUT;
                 break;
             }case Remove:{
-                mode&=~ENABLE_QUICK_EDIT_MODE,
-                mode&=~ENABLE_INSERT_MODE,
-                mode|=ENABLE_MOUSE_INPUT;
+                attrs&=~ENABLE_QUICK_EDIT_MODE,
+                attrs&=~ENABLE_INSERT_MODE,
+                attrs|=ENABLE_MOUSE_INPUT;
                 break;
             }
         }

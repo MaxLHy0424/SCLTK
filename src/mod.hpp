@@ -166,7 +166,7 @@ namespace Mod{
 #ifdef _NEXT_
     class Config final{
     private:
-        const char mod;
+        const char mode;
         bool isOnlyLoadCustomRule;
         inline auto load(){
             std::ifstream configFile{"config.ini",std::ios::in};
@@ -278,12 +278,12 @@ namespace Mod{
             return false;
         }
     public:
-        inline explicit Config(const char mod):
-            mod{mod},isOnlyLoadCustomRule{}
+        inline explicit Config(const char mode):
+            mode{mode},isOnlyLoadCustomRule{}
         {}
         inline ~Config(){}
         inline auto operator()(Data){
-            switch(mod){
+            switch(mode){
                 case 'r':{
                     load();
                     break;
@@ -298,11 +298,11 @@ namespace Mod{
 #endif
     class Sys final{
     private:
-        const char mod;
+        const char mode;
         const Rule &rule;
     public:
-        inline explicit Sys(const char mod,const Rule &rule):
-            mod{mod},rule{rule}
+        inline explicit Sys(const char mode,const Rule &rule):
+            mode{mode},rule{rule}
         {}
         inline ~Sys(){}
         inline auto operator()(Data)const{
@@ -327,7 +327,7 @@ namespace Mod{
 #endif
             puts("==> 生成命令.");
             std::string cmd;
-            switch(mod){
+            switch(mode){
                 case 'c':{
                     for(const auto &item:rule.exe){
                         cmd.append("reg add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\")
