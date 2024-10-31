@@ -3,11 +3,11 @@
 #include"ui.hpp"
 struct{
 #ifdef _NEXT_
-    bool frontShow,alpha,hideCloseCtrl;
+    bool wndFrontShow,wndAlpha,wndHideCloseCtrl;
 #else
-    bool frontShow,alpha,ctrls;
+    bool wndFrontShow,wndAlpha,wndCtrls;
 #endif
-}attrsWnd{};
+}config{};
 #ifndef _NEXT_
 bool configError{};
 #endif
@@ -92,21 +92,21 @@ namespace Mod{
             GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)&~WS_SIZEBOX&~WS_MAXIMIZEBOX&~WS_MINIMIZEBOX
         );
         EnableMenuItem(
-            GetSystemMenu(GetConsoleWindow(),(attrsWnd.hideCloseCtrl)?(FALSE):(TRUE)),
+            GetSystemMenu(GetConsoleWindow(),(config.wndHideCloseCtrl)?(FALSE):(TRUE)),
             SC_CLOSE,MF_BYCOMMAND|MF_DISABLED|MF_GRAYED
         );
 #else
         SetWindowLongPtr(
-            GetConsoleWindow(),GWL_STYLE,(attrsWnd.ctrls)
+            GetConsoleWindow(),GWL_STYLE,(config.wndCtrls)
             ?(GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)|WS_SIZEBOX|WS_MAXIMIZEBOX|WS_MINIMIZEBOX)
             :(GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)&~WS_SIZEBOX&~WS_MAXIMIZEBOX&~WS_MINIMIZEBOX)
         );
 #endif
         system("mode con cols=50 lines=25");
-        SetLayeredWindowAttributes(GetConsoleWindow(),0,(attrsWnd.alpha)?(230):(255),LWA_ALPHA);
+        SetLayeredWindowAttributes(GetConsoleWindow(),0,(config.wndAlpha)?(230):(255),LWA_ALPHA);
     }
 #ifndef _NEXT_
-    inline auto frontShow(){
+    inline auto wndFrontShow(){
         const HWND wndThis{GetConsoleWindow()};
         const DWORD idForeground{GetWindowThreadProcessId(wndThis,nullptr)},
                     idCurrent{GetCurrentThreadId()};
@@ -157,7 +157,7 @@ namespace Mod{
 #ifdef _NEXT_
         init();
 #else
-        if(!attrsWnd.ctrls){
+        if(!config.wndCtrls){
             init();
         }
 #endif
@@ -176,7 +176,7 @@ namespace Mod{
             {
                 puts("==> 加载配置文件.");
                 if(!isOnlyLoadCustomRule){
-                    attrsWnd={};
+                    config={};
                 }
                 rule.custom.exe.clear(),rule.custom.svc.clear();
                 std::string line;
@@ -200,12 +200,12 @@ namespace Mod{
                             if(isOnlyLoadCustomRule){
                                 continue;
                             }
-                            if(line=="frontShow"){
-                                attrsWnd.frontShow=true;
-                            }else if(line=="alpha"){
-                                attrsWnd.alpha=true;
-                            }else if(line=="hideCloseCtrl"){
-                                attrsWnd.hideCloseCtrl=true;
+                            if(line=="wndFrontShow"){
+                                config.wndFrontShow=true;
+                            }else if(line=="wndAlpha"){
+                                config.wndAlpha=true;
+                            }else if(line=="wndHideCloseCtrl"){
+                                config.wndHideCloseCtrl=true;
                             }
                             break;
                         }case RuleExe:{
@@ -229,14 +229,14 @@ namespace Mod{
                 puts("==> 格式化保存配置文件.");
                 std::string text;
                 text.append("<Settings>\n");
-                if(attrsWnd.frontShow){
-                    text.append("frontShow\n");
+                if(config.wndFrontShow){
+                    text.append("wndFrontShow\n");
                 }
-                if(attrsWnd.alpha){
-                    text.append("alpha\n");
+                if(config.wndAlpha){
+                    text.append("wndAlpha\n");
                 }
-                if(attrsWnd.hideCloseCtrl){
-                    text.append("hideCloseCtrl\n");
+                if(config.wndHideCloseCtrl){
+                    text.append("wndHideCloseCtrl\n");
                 }
                 text.append("<RuleExe>\n");
                 if(!rule.custom.exe.empty()){
@@ -266,14 +266,14 @@ namespace Mod{
               .add(" < 格式化保存并返回 ",std::move(save),CONSOLE_RED)
               .add(" > 打开配置文件 ",std::move(openConfigFile))
               .add("\n[半透明窗口]\n")
-              .add(" > 启用 ",[](Data){attrsWnd.alpha=true;return false;})
-              .add(" > 禁用 ",[](Data){attrsWnd.alpha=false;return false;})
+              .add(" > 启用 ",[](Data){config.wndAlpha=true;return false;})
+              .add(" > 禁用 ",[](Data){config.wndAlpha=false;return false;})
               .add("\n[置顶窗口]\n")
-              .add(" > 启用 ",[](Data){attrsWnd.frontShow=true;return false;})
-              .add(" > 禁用 ",[](Data){attrsWnd.frontShow=false;return false;})
+              .add(" > 启用 ",[](Data){config.wndFrontShow=true;return false;})
+              .add(" > 禁用 ",[](Data){config.wndFrontShow=false;return false;})
               .add("\n[隐藏窗口关闭控件]\n")
-              .add(" > 启用 ",[](Data){attrsWnd.hideCloseCtrl=true;return false;})
-              .add(" > 禁用 ",[](Data){attrsWnd.hideCloseCtrl=false;return false;})
+              .add(" > 启用 ",[](Data){config.wndHideCloseCtrl=true;return false;})
+              .add(" > 禁用 ",[](Data){config.wndHideCloseCtrl=false;return false;})
               .show();
             return false;
         }
