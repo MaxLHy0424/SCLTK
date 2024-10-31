@@ -1,12 +1,12 @@
 #ifdef _WIN32
 #include"def.hpp"
-#include"ui.hpp"
+#include"console_ui.hpp"
 #include"mod.hpp"
 #ifdef _NEXT_
 auto main()->int{
-    Mod::init();
+    mod::init();
     puts("==> 检测运行权限.");
-    if(!Mod::isRunAsAdmin()){
+    if(!mod::is_run_as_admin()){
         puts("==> 申请管理员权限.");
         char *const path{new char[MAX_PATH]{}};
         GetModuleFileName(nullptr,path,MAX_PATH);
@@ -14,7 +14,7 @@ auto main()->int{
         delete[] path;
         return 0;
     }
-    Mod::Config{'r'}(Data{});
+    mod::config_op{'r'}(ui_data{});
 #else
 auto main(const int argc,const char *const args[])->int{
     if(argc>1){
@@ -25,77 +25,77 @@ auto main(const int argc,const char *const args[])->int{
                 for(const auto &sub:tmp.substr(2)){
                     switch(sub){
                         case 'f':{
-                            config.wndFrontShow=true;
+                            config_data.front_show_wnd=true;
                             break;
                         }case 'a':{
-                            config.wndAlpha=true;
+                            config_data.alpha_wnd=true;
                             break;
                         }case 'c':{
-                            config.wndCtrls=true;
+                            config_data.wnd_ctrls=true;
                             break;
                         }default:{
-                            configError=true;
+                            config_error=true;
                             goto END;
                         }
                     }
                 }
             }else{
-                configError=true;
+                config_error=true;
                 break;
             }
         }
     END:
-        if(configError){
-            config={};
+        if(config_error){
+            config_data={};
         }
     }
 #endif
-    Mod::init();
-    if(config.wndFrontShow){
+    mod::init();
+    if(config_data.front_show_wnd){
 #ifdef _NEXT_
         std::thread{[](){
-            const HWND wndThis{GetConsoleWindow()};
-            const DWORD idForeground{GetWindowThreadProcessId(wndThis,nullptr)},
-                        idCurrent{GetCurrentThreadId()};
+            const HWND this_wnd{GetConsoleWindow()};
+            const DWORD foreground_id{GetWindowThreadProcessId(this_wnd,nullptr)},
+                        current_id{GetCurrentThreadId()};
             while(true){
-                AttachThreadInput(idCurrent,idForeground,TRUE);
-                ShowWindow(wndThis,SW_SHOWNORMAL);
-                SetWindowPos(wndThis,HWND_TOPMOST,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE);
-                SetWindowPos(wndThis,HWND_NOTOPMOST,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE);
-                SetForegroundWindow(wndThis);
-                AttachThreadInput(idCurrent,idForeground,FALSE);
-                SetWindowPos(wndThis,HWND_TOPMOST,0,0,100,100,SWP_NOMOVE|SWP_NOSIZE);
+                AttachThreadInput(current_id,foreground_id,TRUE);
+                ShowWindow(this_wnd,SW_SHOWNORMAL);
+                SetWindowPos(this_wnd,HWND_TOPMOST,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE);
+                SetWindowPos(this_wnd,HWND_NOTOPMOST,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE);
+                SetForegroundWindow(this_wnd);
+                AttachThreadInput(current_id,foreground_id,FALSE);
+                SetWindowPos(this_wnd,HWND_TOPMOST,0,0,100,100,SWP_NOMOVE|SWP_NOSIZE);
                 Sleep(100);
             }
         }}.detach();
 #else
-        std::thread{Mod::wndFrontShow}.detach();
+        std::thread{mod::front_show_wnd}.detach();
 #endif
     }
-    Ui ui;
+    console_ui ui;
     ui.add("                    [ 主  页 ]\n\n");
 #ifndef _NEXT_
-    if(configError){
+    if(config_error){
         ui.add(" (!) 参数错误.\n");
     }
 #endif
-    ui.add(" < 退出 ",Mod::exit,CONSOLE_RED)
-      .add(" > 关于 ",Mod::info)
+    ui.add(" < 退出 ",mod::exit,CONSOLE_RED)
+      .add(" > 关于 ",mod::info)
 #ifdef _NEXT_
-      .add(" > 配置 ",Mod::Config{'e'})
+      .add(" > 配置 ",mod::config_op{'e'})
 #endif
-      .add(" > 命令提示符 ",Mod::cmd)
+      .add(" > 命令提示符 ",mod::cmd)
       .add("\n[破解]\n")
-      .add(" > 极域电子教室 ",Mod::Sys{'c',Mod::rule.mythware})
-      .add(" > 联想云教室 ",Mod::Sys{'c',Mod::rule.lenovo})
+      .add(" > 极域电子教室 ",mod::sys_op{'c',mod::rule.mythware})
+      .add(" > 联想云教室 ",mod::sys_op{'c',mod::rule.lenovo})
 #ifdef _NEXT_
-      .add(" > 自定义 ",Mod::Sys{'c',Mod::rule.custom})
+      .add(" > 自定义 ",mod::sys_op{'c',mod::rule.custom})
 #endif
       .add("\n[恢复]\n")
-      .add(" > 极域电子教室 ",Mod::Sys{'r',Mod::rule.mythware})
-      .add(" > 联想云教室 ",Mod::Sys{'r',Mod::rule.lenovo})
+      .add(" > 极域电子教室 ",mod::sys_op{'r',mod::rule.mythware})
+      .add(" > 联想云教室 ",mod::sys_op{'r',mod::rule.lenovo})
 #ifdef _NEXT_
-      .add(" > 自定义 ",Mod::Sys{'r',Mod::rule.custom})
+      .add(" > 自定义 ",mod::sys_op{'r',mod::rule.custom})
 #endif
       .show();
     return 0;
