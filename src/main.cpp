@@ -25,13 +25,13 @@ auto main(const int argc,const char *const args[])->int{
                 for(const auto &sub:tmp.substr(2)){
                     switch(sub){
                         case 'f':{
-                            attrsWnd.frontShow=true;
+                            config.wndFrontShow=true;
                             break;
                         }case 'a':{
-                            attrsWnd.alpha=true;
+                            config.wndAlpha=true;
                             break;
                         }case 'c':{
-                            attrsWnd.ctrls=true;
+                            config.wndCtrls=true;
                             break;
                         }default:{
                             configError=true;
@@ -46,12 +46,12 @@ auto main(const int argc,const char *const args[])->int{
         }
     END:
         if(configError){
-            attrsWnd={};
+            config={};
         }
     }
 #endif
     Mod::init();
-    if(attrsWnd.frontShow){
+    if(config.wndFrontShow){
 #ifdef _NEXT_
         std::thread{[](){
             const HWND wndThis{GetConsoleWindow()};
@@ -69,7 +69,7 @@ auto main(const int argc,const char *const args[])->int{
             }
         }}.detach();
 #else
-        std::thread{Mod::frontShow}.detach();
+        std::thread{Mod::wndFrontShow}.detach();
 #endif
     }
     Ui ui;
