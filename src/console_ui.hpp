@@ -20,10 +20,10 @@ struct ui_data final{
         event_flag{},
         ui{}
     {}
-    explicit ui_data(const MOUSE_EVENT_RECORD _mouseEvent,console_ui *const _ui):
-        button_state{_mouseEvent.dwButtonState},
-        ctrl_key_state{_mouseEvent.dwControlKeyState},
-        event_flag{_mouseEvent.dwEventFlags},
+    explicit ui_data(const MOUSE_EVENT_RECORD _mouse_event,console_ui *const _ui):
+        button_state{_mouse_event.dwButtonState},
+        ctrl_key_state{_mouse_event.dwControlKeyState},
+        event_flag{_mouse_event.dwEventFlags},
         ui{_ui}
     {}
     ~ui_data(){}
@@ -70,16 +70,16 @@ private:
             return !operator==(_mouse_position);
         }
     };
-    std::vector<ui_item> m_item;
-    short m_console_height,m_console_width;
-    enum m_ui_item_attrs_op{t_add='+',t_remove='-'};
-    auto m_show_cursor(const bool _mode){
+    std::vector<ui_item> item_;
+    short console_height,console_width;
+    enum ui_item_attrs_op_{t_add='+',t_remove='-'};
+    auto show_cursor_(const bool _mode){
         CONSOLE_CURSOR_INFO cursor;
         GetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&cursor);
         cursor.bVisible=_mode;
         SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&cursor);
     }
-    auto m_edit_attrs(const m_ui_item_attrs_op _mode){
+    auto edit_attrs_(const ui_item_attrs_op_ _mode){
         DWORD attrs;
         GetConsoleMode(GetStdHandle(STD_INPUT_HANDLE),&attrs);
         switch(_mode){
@@ -97,15 +97,15 @@ private:
         }
         SetConsoleMode(GetStdHandle(STD_INPUT_HANDLE),attrs);
     }
-    auto m_get_cursor(){
+    auto get_cursor_(){
         CONSOLE_SCREEN_BUFFER_INFO console;
         GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE),&console);
         return console.dwCursorPosition;
     }
-    auto m_set_cursor(const COORD &_position){
+    auto set_cursor_(const COORD &_position){
         SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE),_position);
     }
-    auto m_wait_mouse_event(const bool _move=true){
+    auto wait_mouse_event_(const bool _move=true){
         INPUT_RECORD record;
         DWORD reg;
         while(true){
@@ -119,64 +119,64 @@ private:
             }
         }
     }
-    auto m_get_console_size(){
+    auto get_console_size_(){
         CONSOLE_SCREEN_BUFFER_INFO console;
         GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE),&console);
-        m_console_height=console.dwSize.Y;
-        m_console_width=console.dwSize.X;
+        console_height=console.dwSize.Y;
+        console_width=console.dwSize.X;
     }
-    auto m_cls(){
-        m_get_console_size();
-        m_set_cursor({0,0});
-        printf("%s",std::string(m_console_width*m_console_height,' ').c_str());
-        m_set_cursor({0,0});
+    auto cls_(){
+        get_console_size_();
+        set_cursor_({0,0});
+        printf("%s",std::string(console_width*console_height,' ').c_str());
+        set_cursor_({0,0});
     }
-    auto m_write(const char *const _text,const bool _isEndl=false){
+    auto write_(const char *const _text,const bool _isEndl=false){
         printf("%s",_text);
         if(_isEndl){
             printf("\n");
         }
     }
-    auto m_rewrite(const COORD &_position,const char *const &_text){
-        m_set_cursor({0,_position.Y});
-        m_write(std::string(_position.X,' ').c_str());
-        m_set_cursor({0,_position.Y});
-        m_write(_text);
-        m_set_cursor({0,_position.Y});
+    auto rewrite_(const COORD &_position,const char *const &_text){
+        set_cursor_({0,_position.Y});
+        write_(std::string(_position.X,' ').c_str());
+        set_cursor_({0,_position.Y});
+        write_(_text);
+        set_cursor_({0,_position.Y});
     }
-    auto m_init_pos(){
-        m_cls();
-        for(auto &line:m_item){
-            line.position=m_get_cursor();
+    auto init_pos_(){
+        cls_();
+        for(auto &line:item_){
+            line.position=get_cursor_();
             line.set_color(line.default_color);
-            m_write(line.text,true);
+            write_(line.text,true);
         }
     }
-    auto m_refresh(const COORD &_hang_position){
-        for(auto &line:m_item){
+    auto refresh_(const COORD &_hang_position){
+        for(auto &line:item_){
             if((line==_hang_position)&&(line.last_color!=line.highlight_color)){
                 line.set_color(line.highlight_color);
-                m_rewrite(line.position,line.text);
+                rewrite_(line.position,line.text);
             }
             if((line!=_hang_position)&&(line.last_color!=line.default_color)){
                 line.set_color(line.default_color);
-                m_rewrite(line.position,line.text);
+                rewrite_(line.position,line.text);
             }
         }
     }
-    auto m_impl(const MOUSE_EVENT_RECORD &_mouseEvent){
+    auto run_fn_(const MOUSE_EVENT_RECORD &_mouse_event){
         bool isExit{};
-        for(auto &line:m_item){
-            if(line==_mouseEvent.dwMousePosition){
+        for(auto &line:item_){
+            if(line==_mouse_event.dwMousePosition){
                 if(line.function!=nullptr){
-                    m_cls();
+                    cls_();
                     line.set_color(line.default_color);
-                    m_edit_attrs(t_add);
-                    m_show_cursor(true);
-                    isExit=line.function(ui_data{_mouseEvent,this});
-                    m_edit_attrs(t_remove);
-                    m_show_cursor(false);
-                    m_init_pos();
+                    edit_attrs_(t_add);
+                    show_cursor_(true);
+                    isExit=line.function(ui_data{_mouse_event,this});
+                    edit_attrs_(t_remove);
+                    show_cursor_(false);
+                    init_pos_();
                 }
                 break;
             }
@@ -185,19 +185,19 @@ private:
     }
 public:
     explicit console_ui():
-        m_item{},
-        m_console_height{},
-        m_console_width{}
+        item_{},
+        console_height{},
+        console_width{}
     {}
     explicit console_ui(const console_ui &_obj):
-        m_item{_obj.m_item},
-        m_console_height{},
-        m_console_width{}
+        item_{_obj.item_},
+        console_height{},
+        console_width{}
     {}
     explicit console_ui(const console_ui &&_obj)=delete;
     ~console_ui(){}
     auto size(){
-        return m_item.size();
+        return item_.size();
     }
     auto &add(
         const char *const _text,
@@ -205,7 +205,7 @@ public:
         const short _highlight_color=CONSOLE_BLUE,
         const short _default_color=CONSOLE_WHITE
     ){
-        m_item.emplace_back(
+        item_.emplace_back(
             ui_item{
                 _text,
                 _default_color,
@@ -222,8 +222,8 @@ public:
         const short _highlight_color=CONSOLE_BLUE,
         const short _default_color=CONSOLE_WHITE
     ){
-        m_item.emplace(
-            m_item.begin()+_index,
+        item_.emplace(
+            item_.begin()+_index,
             ui_item{
                 _text,
                 _default_color,
@@ -240,7 +240,7 @@ public:
         const short _highlight_color=CONSOLE_BLUE,
         const short _default_color=CONSOLE_WHITE
     ){
-        m_item.at(_index)=ui_item{
+        item_.at(_index)=ui_item{
             _text,
             _default_color,
             (_function==nullptr)?(_default_color):(_highlight_color),
@@ -249,38 +249,38 @@ public:
         return *this;
     }
     auto &remove(){
-        m_item.pop_back();
+        item_.pop_back();
         return *this;
     }
     auto &remove(const size_t _begin,const size_t _end){
-        m_item.erase(m_item.begin()+_begin,m_item.begin()+_end);
+        item_.erase(item_.begin()+_begin,item_.begin()+_end);
         return *this;
     }
     auto &clear(){
-        m_item.clear();
+        item_.clear();
         return *this;
     }
     auto show(){
-        m_edit_attrs(t_remove);
-        m_show_cursor(false);
+        edit_attrs_(t_remove);
+        show_cursor_(false);
         MOUSE_EVENT_RECORD mouse_event;
-        m_init_pos();
+        init_pos_();
         bool is_exit{};
         while(!is_exit){
-            mouse_event=m_wait_mouse_event();
+            mouse_event=wait_mouse_event_();
             switch(mouse_event.dwEventFlags){
                 case MOUSE_MOVE:{
-                    m_refresh(mouse_event.dwMousePosition);
+                    refresh_(mouse_event.dwMousePosition);
                     break;
                 }case MOUSE_CLICK:{
                     if((mouse_event.dwButtonState)&&(mouse_event.dwButtonState!=MOUSE_WHEEL)){
-                        is_exit=m_impl(mouse_event);
+                        is_exit=run_fn_(mouse_event);
                     }
                     break;
                 }
             }
             Sleep(10);
         }
-        m_cls();
+        cls_();
     }
 };
