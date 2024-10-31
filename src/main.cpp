@@ -14,7 +14,7 @@ auto main()->int{
         delete[] path;
         return 0;
     }
-    Mod::OpConfig{'r'}(Data{});
+    Mod::Config{'r'}(Data{});
 #else
 auto main(const int argc,const char *const args[])->int{
     if(argc>1){
@@ -82,20 +82,20 @@ auto main(const int argc,const char *const args[])->int{
     ui.add(" < 退出 ",Mod::exit,CONSOLE_RED)
       .add(" > 关于 ",Mod::info)
 #ifdef _NEXT_
-      .add(" > 配置 ",Mod::OpConfig{'e'})
+      .add(" > 配置 ",Mod::Config{'e'})
 #endif
       .add(" > 命令提示符 ",Mod::cmd)
       .add("\n[破解]\n")
-      .add(" > 极域电子教室 ",Mod::OpSys{'c',Mod::rule.mythware})
-      .add(" > 联想云教室 ",Mod::OpSys{'c',Mod::rule.lenovo})
+      .add(" > 极域电子教室 ",Mod::Sys{'c',Mod::rule.mythware})
+      .add(" > 联想云教室 ",Mod::Sys{'c',Mod::rule.lenovo})
 #ifdef _NEXT_
-      .add(" > 自定义 ",Mod::OpSys{'c',Mod::rule.custom})
+      .add(" > 自定义 ",Mod::Sys{'c',Mod::rule.custom})
 #endif
       .add("\n[恢复]\n")
-      .add(" > 极域电子教室 ",Mod::OpSys{'r',Mod::rule.mythware})
-      .add(" > 联想云教室 ",Mod::OpSys{'r',Mod::rule.lenovo})
+      .add(" > 极域电子教室 ",Mod::Sys{'r',Mod::rule.mythware})
+      .add(" > 联想云教室 ",Mod::Sys{'r',Mod::rule.lenovo})
 #ifdef _NEXT_
-      .add(" > 自定义 ",Mod::OpSys{'r',Mod::rule.custom})
+      .add(" > 自定义 ",Mod::Sys{'r',Mod::rule.custom})
 #endif
       .show();
     return 0;
