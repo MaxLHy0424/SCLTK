@@ -15,19 +15,19 @@ namespace mod{
 #ifdef _NEXT_
     class simple_string final{
     private:
-        char *const m_str;
+        char *const str_;
     public:
         simple_string()=delete;
         simple_string(const char *_s):
-            m_str{new char[strlen(_s)+1]}
+            str_{new char[strlen(_s)+1]}
         {
-            strcpy(this->m_str,_s);
+            strcpy(this->str_,_s);
         }
         ~simple_string(){
-            delete[] m_str;
+            delete[] str_;
         }
         const auto get()const{
-            return m_str;
+            return str_;
         }
     };
 #endif
@@ -173,16 +173,16 @@ namespace mod{
 #ifdef _NEXT_
     class config_op final{
     private:
-        const char m_mode;
-        bool m_is_only_load_custom_rule;
-        auto load(){
+        const char mode_;
+        bool is_only_load_custom_rule_;
+        auto load_(){
             std::ifstream config_file{"config.ini",std::ios::in};
             if(!config_file.is_open()){
                 goto END;
             }
             {
                 puts("==> 加载配置文件.");
-                if(!m_is_only_load_custom_rule){
+                if(!is_only_load_custom_rule_){
                     config_data={};
                 }
                 rule.custom.exe.clear(),rule.custom.svc.clear();
@@ -204,7 +204,7 @@ namespace mod{
                     }
                     switch(config_item){
                         case t_settings:{
-                            if(m_is_only_load_custom_rule){
+                            if(is_only_load_custom_rule_){
                                 continue;
                             }
                             if(line=="front_show_wnd"){
@@ -229,10 +229,10 @@ namespace mod{
             config_file.close();
             return;
         }
-        auto edit(){
+        auto edit_(){
             auto save{[&](ui_data){
-                m_is_only_load_custom_rule=true;
-                load();
+                is_only_load_custom_rule_=true;
+                load_();
                 puts("==> 格式化保存配置文件.");
                 std::string text;
                 text.append("<settings>\n");
@@ -286,17 +286,17 @@ namespace mod{
         }
     public:
         explicit config_op(const char _mode):
-            m_mode{_mode},
-            m_is_only_load_custom_rule{}
+            mode_{_mode},
+            is_only_load_custom_rule_{}
         {}
         ~config_op(){}
         auto operator()(ui_data){
-            switch(m_mode){
+            switch(mode_){
                 case 'r':{
-                    load();
+                    load_();
                     break;
                 }case 'e':{
-                    edit();
+                    edit_();
                     break;
                 }
             }
@@ -306,17 +306,17 @@ namespace mod{
 #endif
     class sys_op final{
     private:
-        const char m_mode;
-        const sys_rule &m_rule;
+        const char mode_;
+        const sys_rule &rule_;
     public:
         explicit sys_op(const char _mode,const sys_rule &_rule):
-            m_mode{_mode},
-            m_rule{_rule}
+            mode_{_mode},
+            rule_{_rule}
         {}
         ~sys_op(){}
         auto operator()(ui_data)const{
 #ifdef _NEXT_
-            if((m_rule.exe.empty())&&(m_rule.svc.empty())){
+            if((rule_.exe.empty())&&(rule_.svc.empty())){
                 puts("\n (!) 规则为空.\n");
                 for(unsigned short i{3};i>0;--i){
                     printf(" %hu 秒后返回.\r",i);
@@ -336,9 +336,9 @@ namespace mod{
 #endif
             puts("==> 生成命令.");
             std::string cmd;
-            switch(m_mode){
+            switch(mode_){
                 case 'c':{
-                    for(const auto &item:m_rule.exe){
+                    for(const auto &item:rule_.exe){
                         cmd.append("reg add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\")
 #ifdef _NEXT_
                            .append(item.get())
@@ -353,7 +353,7 @@ namespace mod{
 #endif
                            .append(".exe\" & ");
                     }
-                    for(const auto &item:m_rule.svc){
+                    for(const auto &item:rule_.svc){
                         cmd.append("net stop \"")
 #ifdef _NEXT_
                            .append(item.get())
@@ -364,7 +364,7 @@ namespace mod{
                     }
                     break;
                 }case 'r':{
-                    for(const auto &item:m_rule.exe){
+                    for(const auto &item:rule_.exe){
                         cmd.append("reg delete \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\")
 #ifdef _NEXT_
                            .append(item.get())
@@ -373,7 +373,7 @@ namespace mod{
 #endif
                            .append(".exe\" /f & ");
                     }
-                    for(const auto &item:m_rule.svc){
+                    for(const auto &item:rule_.svc){
                         cmd.append("net start \"")
 #ifdef _NEXT_
                            .append(item.get())
