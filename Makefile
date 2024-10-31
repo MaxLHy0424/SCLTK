@@ -1,9 +1,9 @@
 msys2=C:\\Software\\MSYS2
-CC=g++.exe
+cc=g++.exe
 def=-D_CRT_SECURE_NO_WARNINGS -DANSI -D_ANSI
-argsBase=-fexec-charset=GBK -std=gnu++23 -Wall -Wextra -pipe -m64
-argsRelease=-DNDEBUG $(argsBase) -static -Os -flto -o
-argsDebug=$(argsBase) -O0 -g3 -o
+args_base=-fexec-charset=GBK -std=gnu++23 -Wall -Wextra -pipe -m64
+args_release=-DNDEBUG $(args_base) -static -Os -flto -o
+args_debug=$(args_base) -O0 -g3 -o
 tag=std
 arch=x86_64
 version=v5.10.1
@@ -15,16 +15,16 @@ init:
 build:bin/$(version)/$(tag)-$(arch)-msvcrt.exe\
       bin/$(version)/$(tag)-$(arch)-ucrt.exe
 debug:
-	$(msys2)\\ucrt64\\bin\\$(CC) $(obj) $(def) $(argsDebug) ./bin/__debug__.exe
+	$(msys2)\\ucrt64\\bin\\$(cc) $(obj) $(def) $(args_debug) ./bin/__debug__.exe
 clean:
 	$(msys2)\\usr\\bin\\rm.exe -rf bin
 	$(msys2)\\usr\\bin\\mkdir.exe bin
 	$(msys2)\\usr\\bin\\touch.exe bin/.gitkeep
 obj=src/*.cpp bin/info.obj
 bin/$(version)/$(tag)-$(arch)-msvcrt.exe:$(obj) src/*.hpp bin
-	$(msys2)\\mingw64\\bin\\$(CC) $(obj) $(def) $(argsRelease) $@
+	$(msys2)\\mingw64\\bin\\$(cc) $(obj) $(def) $(args_release) $@
 bin/$(version)/$(tag)-$(arch)-ucrt.exe:$(obj) src/*.hpp bin
-	$(msys2)\\ucrt64\\bin\\$(CC) $(obj) $(def) $(argsRelease) $@
+	$(msys2)\\ucrt64\\bin\\$(cc) $(obj) $(def) $(args_release) $@
 bin/info.obj:info.rc img/favicon.ico bin
 	$(msys2)\\usr\\bin\\windres.exe -i $< $(def) -o $@ -F pe-x86-64
 bin:bin/$(version)
