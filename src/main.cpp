@@ -26,13 +26,13 @@ auto main(const int _argc,const char *const _args[])->int{
                 for(const auto &sub:tmp.substr(2)){
                     switch(sub){
                         case 'f':{
-                            config_data.front_show_wnd=true;
+                            config_data.front_show_window=true;
                             break;
                         }case 'a':{
-                            config_data.alpha_wnd=true;
+                            config_data.alpha_window=true;
                             break;
                         }case 'c':{
-                            config_data.wnd_ctrls=true;
+                            config_data.window_ctrls=true;
                             break;
                         }default:{
                             config_error=true;
@@ -52,25 +52,25 @@ auto main(const int _argc,const char *const _args[])->int{
     }
 #endif
     mod::init();
-    if(config_data.front_show_wnd){
+    if(config_data.front_show_window){
 #ifdef _NEXT
         std::thread{[](){
-            const HWND this_wnd{GetConsoleWindow()};
-            const DWORD foreground_id{GetWindowThreadProcessId(this_wnd,nullptr)},
+            const HWND this_window{GetConsoleWindow()};
+            const DWORD foreground_id{GetWindowThreadProcessId(this_window,nullptr)},
                         current_id{GetCurrentThreadId()};
             while(true){
                 AttachThreadInput(current_id,foreground_id,TRUE);
-                ShowWindow(this_wnd,SW_SHOWNORMAL);
-                SetWindowPos(this_wnd,HWND_TOPMOST,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE);
-                SetWindowPos(this_wnd,HWND_NOTOPMOST,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE);
-                SetForegroundWindow(this_wnd);
+                ShowWindow(this_window,SW_SHOWNORMAL);
+                SetWindowPos(this_window,HWND_TOPMOST,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE);
+                SetWindowPos(this_window,HWND_NOTOPMOST,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE);
+                SetForegroundWindow(this_window);
                 AttachThreadInput(current_id,foreground_id,FALSE);
-                SetWindowPos(this_wnd,HWND_TOPMOST,0,0,100,100,SWP_NOMOVE|SWP_NOSIZE);
+                SetWindowPos(this_window,HWND_TOPMOST,0,0,100,100,SWP_NOMOVE|SWP_NOSIZE);
                 Sleep(100);
             }
         }}.detach();
 #else
-        std::thread{mod::front_show_wnd}.detach();
+        std::thread{mod::front_show_window}.detach();
 #endif
     }
     console_ui ui;
