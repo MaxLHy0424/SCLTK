@@ -16,11 +16,11 @@ auto main()->int{
     }
     mod::config_op{'r'}(console_ui::fn_args{});
 #else
-auto main(const int argc,const char *const args[])->int{
-    if(argc>1){
+auto main(const int _argc,const char *const _args[])->int{
+    if(_argc>1){
         std::string_view tmp;
-        for(int i{1};i<argc;++i){
-            tmp=args[i];
+        for(int i{1};i<_argc;++i){
+            tmp=_args[i];
             if((tmp.size()>2)&&(tmp.substr(0,2)=="-W")){
                 for(const auto &sub:tmp.substr(2)){
                     switch(sub){
