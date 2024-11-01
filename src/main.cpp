@@ -80,7 +80,7 @@ auto main(const int _argc,const char *const _args[])->int{
         ui.add(" (!) 参数错误.\n");
     }
 #endif
-    ui.add(" < 退出 ",mod::exit,CONSOLE_RED)
+    ui.add(" < 退出 ",mod::exit,CUI_TEXT_RED)
       .add(" > 关于 ",mod::info)
 #ifdef _NEXT
       .add(" > 配置 ",mod::config_op{'e'})
