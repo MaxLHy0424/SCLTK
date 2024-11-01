@@ -11,8 +11,8 @@
 | CRCSN 3 | v3.0.1 (Build 30174) | ❌ 停止维护 | [📋 更新日志](https://github.com/MaxLHy0424/CRCSN/releases/tag/30174) |
 | CRCSN 4 | v4.10.7 | ❌ 停止维护 | [📋 更新日志](https://github.com/MaxLHy0424/CRCSN/releases/tag/v4.10.7) |
 | CRCSN 5 | v5.10.1 | 🛠️ 正常更新 | [📋 更新日志](https://github.com/MaxLHy0424/CRCSN/releases/tag/v5.10.1) |
-| CRCSN 6 | 无 | ✨ 正在开发 | 🔒 2025 年发布 |
-| CRCSN LTS | 无 | ✨ 正在开发 | 🔒 2024 年发布 |
+| CRCSN 6 | 无 | ✨ 正在开发 | 🔒 尚未发布 |
+| CRCSN LTS | 无 | ✨ 正在开发 | 🔒 尚未发布 |
 
 相关链接:
 
