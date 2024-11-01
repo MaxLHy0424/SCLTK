@@ -13,9 +13,9 @@
 class console_ui;
 class console_ui final{
 public:
-    struct data;
+    struct fn_args;
 private:
-    using callback=std::function<bool(data)>;
+    using callback=std::function<bool(fn_args)>;
     struct ui_item final{
         const char *text;
         short default_color,highlight_color,last_color;
@@ -158,7 +158,7 @@ private:
                     line.set_color(line.default_color);
                     edit_attrs_(t_add);
                     show_cursor_(true);
-                    isExit=line.function(data{_mouse_event,this});
+                    isExit=line.function(fn_args{_mouse_event,this});
                     edit_attrs_(t_remove);
                     show_cursor_(false);
                     init_pos_();
@@ -169,22 +169,22 @@ private:
         return isExit;
     }
 public:
-    struct data final{
+    struct fn_args final{
         const DWORD button_state,ctrl_key_state,event_flag;
         console_ui *const ui;
-        inline explicit data():
+        inline explicit fn_args():
             button_state{MOUSE_BUTTON_LEFT},
             ctrl_key_state{},
             event_flag{},
             ui{}
         {}
-        inline explicit data(const MOUSE_EVENT_RECORD _mouse_event,console_ui *const _ui):
+        inline explicit fn_args(const MOUSE_EVENT_RECORD _mouse_event,console_ui *const _ui):
             button_state{_mouse_event.dwButtonState},
             ctrl_key_state{_mouse_event.dwControlKeyState},
             event_flag{_mouse_event.dwEventFlags},
             ui{_ui}
         {}
-        inline ~data(){}
+        inline ~fn_args(){}
     };
     inline explicit console_ui():
         item_{},
