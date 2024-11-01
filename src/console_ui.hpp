@@ -17,7 +17,23 @@
 class console_ui;
 class console_ui final{
 public:
-    struct fn_args;
+    struct fn_args final{
+        const DWORD button_state,ctrl_key_state,event_flag;
+        console_ui *const ui;
+        inline explicit fn_args():
+            button_state{MOUSE_BUTTON_LEFT},
+            ctrl_key_state{},
+            event_flag{},
+            ui{}
+        {}
+        inline explicit fn_args(const MOUSE_EVENT_RECORD _mouse_event,console_ui *const _ui):
+            button_state{_mouse_event.dwButtonState},
+            ctrl_key_state{_mouse_event.dwControlKeyState},
+            event_flag{_mouse_event.dwEventFlags},
+            ui{_ui}
+        {}
+        inline ~fn_args(){}
+    };
 private:
     using size_type=std::size_t;
     using callback=std::function<bool(fn_args)>;
@@ -174,23 +190,6 @@ private:
         return isExit;
     }
 public:
-    struct fn_args final{
-        const DWORD button_state,ctrl_key_state,event_flag;
-        console_ui *const ui;
-        inline explicit fn_args():
-            button_state{MOUSE_BUTTON_LEFT},
-            ctrl_key_state{},
-            event_flag{},
-            ui{}
-        {}
-        inline explicit fn_args(const MOUSE_EVENT_RECORD _mouse_event,console_ui *const _ui):
-            button_state{_mouse_event.dwButtonState},
-            ctrl_key_state{_mouse_event.dwControlKeyState},
-            event_flag{_mouse_event.dwEventFlags},
-            ui{_ui}
-        {}
-        inline ~fn_args(){}
-    };
     inline constexpr auto size(){
         return item_.size();
     }
