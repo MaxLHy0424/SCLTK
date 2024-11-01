@@ -3,7 +3,7 @@
 #include<thread>
 #include"console_ui.hpp"
 #include"mod.hpp"
-#ifdef _NEXT_
+#ifdef _NEXT
 auto main()->int{
     mod::init();
     puts("==> 检测运行权限.");
@@ -53,7 +53,7 @@ auto main(const int _argc,const char *const _args[])->int{
 #endif
     mod::init();
     if(config_data.front_show_wnd){
-#ifdef _NEXT_
+#ifdef _NEXT
         std::thread{[](){
             const HWND this_wnd{GetConsoleWindow()};
             const DWORD foreground_id{GetWindowThreadProcessId(this_wnd,nullptr)},
@@ -75,27 +75,27 @@ auto main(const int _argc,const char *const _args[])->int{
     }
     console_ui ui;
     ui.add("                    [ 主  页 ]\n\n");
-#ifndef _NEXT_
+#ifndef _NEXT
     if(config_error){
         ui.add(" (!) 参数错误.\n");
     }
 #endif
     ui.add(" < 退出 ",mod::exit,CONSOLE_RED)
       .add(" > 关于 ",mod::info)
-#ifdef _NEXT_
+#ifdef _NEXT
       .add(" > 配置 ",mod::config_op{'e'})
 #endif
       .add(" > 命令提示符 ",mod::cmd)
       .add("\n[破解]\n")
       .add(" > 极域电子教室 ",mod::sys_op{'c',mod::rule.mythware})
       .add(" > 联想云教室 ",mod::sys_op{'c',mod::rule.lenovo})
-#ifdef _NEXT_
+#ifdef _NEXT
       .add(" > 自定义 ",mod::sys_op{'c',mod::rule.custom})
 #endif
       .add("\n[恢复]\n")
       .add(" > 极域电子教室 ",mod::sys_op{'r',mod::rule.mythware})
       .add(" > 联想云教室 ",mod::sys_op{'r',mod::rule.lenovo})
-#ifdef _NEXT_
+#ifdef _NEXT
       .add(" > 自定义 ",mod::sys_op{'r',mod::rule.custom})
 #endif
       .show();

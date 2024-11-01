@@ -7,7 +7,7 @@
                 "${workspaceFolder}\\*"
             ],
             "defines":[
-                //"_NEXT_",
+                //"_NEXT",
                 //"NDEBUG",
                 "_CRT_SECURE_NO_WARNINGS",
                 "ANSI",

@@ -1,6 +1,6 @@
 #pragma once
 #define INFO_NAME "Computer Room Control Software Nemesis"
-#ifdef _NEXT_
+#ifdef _NEXT
 #define INFO_VERSION "v6.0.0-preview.1"
 #else
 #define INFO_VERSION "v5.10.1"
