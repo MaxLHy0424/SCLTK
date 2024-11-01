@@ -2,7 +2,7 @@
 #ifndef _BUILD_INFO_
 #define WINDOW_TITLE "CRCSN"
 #include<stdio.h>
-#include<shlobj.h>
+#include<windows.h>
 #ifdef _NEXT_
 #include<fstream>
 #endif
