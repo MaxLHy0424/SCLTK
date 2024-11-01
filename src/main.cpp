@@ -1,8 +1,8 @@
 #ifdef _WIN32
-#include<string>
-#include<thread>
 #include"console_ui.hpp"
 #include"mod.hpp"
+#include<string>
+#include<thread>
 #ifdef _NEXT
 auto main()->int{
     mod::init();
