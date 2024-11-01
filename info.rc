@@ -1,5 +1,4 @@
-#define _BUILD_INFO_
-#include"src/def.hpp"
+#include"src/info.hpp"
 #ifdef _NEXT_
 1 ICON "img/favicon.new.ico"
 #else
