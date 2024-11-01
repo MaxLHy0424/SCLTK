@@ -19,6 +19,7 @@ class console_ui final{
 public:
     struct fn_args;
 private:
+    using size_type=std::size_t;
     using callback=std::function<bool(fn_args)>;
     struct ui_item final{
         const char *text;
@@ -190,10 +191,10 @@ public:
         {}
         inline ~fn_args(){}
     };
-    inline auto size(){
+    inline constexpr auto size(){
         return item_.size();
     }
-    inline auto &reset_console(){
+    inline auto &quit(){
         edit_attrs_(t_add);
         show_cursor_(true);
         return *this;
@@ -215,7 +216,7 @@ public:
         return *this;
     }
     inline auto &insert(
-        const size_t _index,
+        const size_type _index,
         const char *const _text,
         const callback _function=nullptr,
         const short _highlight_color=CONSOLE_BLUE,
@@ -233,7 +234,7 @@ public:
         return *this;
     }
     inline auto &edit(
-        const size_t _index,
+        const size_type _index,
         const char *const _text,
         const callback _function=nullptr,
         const short _highlight_color=CONSOLE_BLUE,
@@ -251,7 +252,7 @@ public:
         item_.pop_back();
         return *this;
     }
-    inline auto &remove(const size_t _begin,const size_t _end){
+    inline auto &remove(const size_type _begin,const size_type _end){
         item_.erase(item_.begin()+_begin,item_.begin()+_end);
         return *this;
     }
@@ -299,6 +300,6 @@ public:
         console_width{}
     {}
     inline ~console_ui(){
-        reset_console();
+        quit();
     }
 };
