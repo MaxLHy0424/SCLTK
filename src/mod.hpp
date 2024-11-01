@@ -187,7 +187,7 @@ namespace mod{
                 goto END;
             }
             {
-                puts("==> 加载配置文件.");
+                puts("-> 加载配置文件.");
                 if(!is_only_load_custom_rule_){
                     config_data={};
                 }
@@ -239,7 +239,7 @@ namespace mod{
             auto save{[&](console_ui::fn_args){
                 is_only_load_custom_rule_=true;
                 load_();
-                puts("==> 格式化保存配置文件.");
+                puts("-> 格式化保存配置文件.");
                 std::string text;
                 text.append("<settings>\n");
                 if(config_data.front_show_window){
@@ -269,7 +269,7 @@ namespace mod{
                 return true;
             }};
             auto open_config_file{[](console_ui::fn_args){
-                puts("==> 打开配置文件.");
+                puts("-> 打开配置文件.");
                 ShellExecute(nullptr,"","config.ini",nullptr,nullptr,SW_SHOWNORMAL);
                 return false;
             }};
@@ -335,7 +335,7 @@ namespace mod{
                 return false;
             }
 #endif
-            puts("==> 生成命令.");
+            puts("-> 生成命令.");
             std::string cmd;
             switch(mode_){
                 case 'c':{
@@ -386,11 +386,11 @@ namespace mod{
                     break;
                 }
             }
-            puts("==> 执行命令.");
+            puts("-> 执行命令.");
             puts(std::string(50,'-').c_str());
             system(cmd.c_str());
             puts(std::string(50,'-').c_str());
-            puts("==> 释放内存.");
+            puts("-> 释放内存.");
             return false;
         }
         inline explicit sys_op(const char _mode,const sys_rule &_rule):
