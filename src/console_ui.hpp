@@ -11,26 +11,11 @@
 #define CONSOLE_BLUE 0x09
 #define CONSOLE_RED 0x0c
 class console_ui;
-struct ui_data final{
-    const DWORD button_state,ctrl_key_state,event_flag;
-    console_ui *const ui;
-    inline explicit ui_data():
-        button_state{MOUSE_BUTTON_LEFT},
-        ctrl_key_state{},
-        event_flag{},
-        ui{}
-    {}
-    inline explicit ui_data(const MOUSE_EVENT_RECORD _mouse_event,console_ui *const _ui):
-        button_state{_mouse_event.dwButtonState},
-        ctrl_key_state{_mouse_event.dwControlKeyState},
-        event_flag{_mouse_event.dwEventFlags},
-        ui{_ui}
-    {}
-    inline ~ui_data(){}
-};
 class console_ui final{
+public:
+    struct data;
 private:
-    using callback=std::function<bool(ui_data)>;
+    using callback=std::function<bool(data)>;
     struct ui_item final{
         const char *text;
         short default_color,highlight_color,last_color;
@@ -173,7 +158,7 @@ private:
                     line.set_color(line.default_color);
                     edit_attrs_(t_add);
                     show_cursor_(true);
-                    isExit=line.function(ui_data{_mouse_event,this});
+                    isExit=line.function(data{_mouse_event,this});
                     edit_attrs_(t_remove);
                     show_cursor_(false);
                     init_pos_();
@@ -184,6 +169,23 @@ private:
         return isExit;
     }
 public:
+    struct data final{
+        const DWORD button_state,ctrl_key_state,event_flag;
+        console_ui *const ui;
+        inline explicit data():
+            button_state{MOUSE_BUTTON_LEFT},
+            ctrl_key_state{},
+            event_flag{},
+            ui{}
+        {}
+        inline explicit data(const MOUSE_EVENT_RECORD _mouse_event,console_ui *const _ui):
+            button_state{_mouse_event.dwButtonState},
+            ctrl_key_state{_mouse_event.dwControlKeyState},
+            event_flag{_mouse_event.dwEventFlags},
+            ui{_ui}
+        {}
+        inline ~data(){}
+    };
     inline explicit console_ui():
         item_{},
         console_height{},

@@ -129,12 +129,12 @@ namespace mod{
         }
     }
 #endif
-    inline auto exit(ui_data){
+    inline auto exit(console_ui::data){
         return true;
     }
-    inline auto info(ui_data){
+    inline auto info(console_ui::data){
 #ifdef _NEXT_
-        auto visit_repo_webpage{[](ui_data){
+        auto visit_repo_webpage{[](console_ui::data){
             ShellExecute(nullptr,"",INFO_REPO_URL,nullptr,nullptr,SW_SHOWNORMAL);
             return false;
         }};
@@ -159,7 +159,7 @@ namespace mod{
           .show();
         return false;
     }
-    inline auto cmd(ui_data){
+    inline auto cmd(console_ui::data){
         system("cmd");
 #ifdef _NEXT_
         init();
@@ -230,7 +230,7 @@ namespace mod{
             return;
         }
         inline auto edit_(){
-            auto save{[&](ui_data){
+            auto save{[&](console_ui::data){
                 is_only_load_custom_rule_=true;
                 load_();
                 puts("==> 格式化保存配置文件.");
@@ -262,7 +262,7 @@ namespace mod{
                 config_file.close();
                 return true;
             }};
-            auto open_config_file{[](ui_data){
+            auto open_config_file{[](console_ui::data){
                 puts("==> 打开配置文件.");
                 ShellExecute(nullptr,"","config.ini",nullptr,nullptr,SW_SHOWNORMAL);
                 return false;
@@ -273,14 +273,14 @@ namespace mod{
               .add(" < 格式化保存并返回 ",std::move(save),CONSOLE_RED)
               .add(" > 打开配置文件 ",std::move(open_config_file))
               .add("\n[半透明窗口]\n")
-              .add(" > 启用 ",[](ui_data){config_data.alpha_wnd=true;return false;})
-              .add(" > 禁用 ",[](ui_data){config_data.alpha_wnd=false;return false;})
+              .add(" > 启用 ",[](console_ui::data){config_data.alpha_wnd=true;return false;})
+              .add(" > 禁用 ",[](console_ui::data){config_data.alpha_wnd=false;return false;})
               .add("\n[置顶窗口]\n")
-              .add(" > 启用 ",[](ui_data){config_data.front_show_wnd=true;return false;})
-              .add(" > 禁用 ",[](ui_data){config_data.front_show_wnd=false;return false;})
+              .add(" > 启用 ",[](console_ui::data){config_data.front_show_wnd=true;return false;})
+              .add(" > 禁用 ",[](console_ui::data){config_data.front_show_wnd=false;return false;})
               .add("\n[隐藏窗口关闭控件]\n")
-              .add(" > 启用 ",[](ui_data){config_data.hide_wnd_close_ctrl=true;return false;})
-              .add(" > 禁用 ",[](ui_data){config_data.hide_wnd_close_ctrl=false;return false;})
+              .add(" > 启用 ",[](console_ui::data){config_data.hide_wnd_close_ctrl=true;return false;})
+              .add(" > 禁用 ",[](console_ui::data){config_data.hide_wnd_close_ctrl=false;return false;})
               .show();
             return false;
         }
@@ -290,7 +290,7 @@ namespace mod{
             is_only_load_custom_rule_{}
         {}
         inline ~config_op(){}
-        inline auto operator()(ui_data){
+        inline auto operator()(console_ui::data){
             switch(mode_){
                 case 'r':{
                     load_();
@@ -314,7 +314,7 @@ namespace mod{
             rule_{_rule}
         {}
         inline ~sys_op(){}
-        inline auto operator()(ui_data)const{
+        inline auto operator()(console_ui::data)const{
 #ifdef _NEXT_
             if((rule_.exe.empty())&&(rule_.svc.empty())){
                 puts("\n (!) 规则为空.\n");
