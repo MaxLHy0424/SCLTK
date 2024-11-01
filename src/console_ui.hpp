@@ -14,19 +14,19 @@ class console_ui;
 struct ui_data final{
     const DWORD button_state,ctrl_key_state,event_flag;
     console_ui *const ui;
-    explicit ui_data():
+    inline explicit ui_data():
         button_state{MOUSE_BUTTON_LEFT},
         ctrl_key_state{},
         event_flag{},
         ui{}
     {}
-    explicit ui_data(const MOUSE_EVENT_RECORD _mouse_event,console_ui *const _ui):
+    inline explicit ui_data(const MOUSE_EVENT_RECORD _mouse_event,console_ui *const _ui):
         button_state{_mouse_event.dwButtonState},
         ctrl_key_state{_mouse_event.dwControlKeyState},
         event_flag{_mouse_event.dwEventFlags},
         ui{_ui}
     {}
-    ~ui_data(){}
+    inline ~ui_data(){}
 };
 class console_ui final{
 private:
@@ -36,7 +36,7 @@ private:
         short default_color,highlight_color,last_color;
         COORD position;
         callback function;
-        explicit ui_item():
+        inline explicit ui_item():
             text{},
             default_color{CONSOLE_WHITE},
             highlight_color{CONSOLE_BLUE},
@@ -44,7 +44,7 @@ private:
             position{},
             function{}
         {}
-        explicit ui_item(
+        inline explicit ui_item(
             const char *const _text,
             const short _default_color,
             const short _highlight_color,
@@ -56,30 +56,30 @@ private:
           position{},
           function{_function}
         {}
-        ~ui_item(){}
-        auto set_color(short _color){
+        inline ~ui_item(){}
+        inline auto set_color(short _color){
             SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),_color);
             last_color=_color;
         }
-        auto operator==(const COORD &_mouse_position)const{
+        inline auto operator==(const COORD &_mouse_position)const{
             return (position.Y==_mouse_position.Y)&&
                    (position.X<=_mouse_position.X)&&
                    (_mouse_position.X<(position.X+(short)strlen(text)));
         }
-        auto operator!=(const COORD &_mouse_position)const{
+        inline auto operator!=(const COORD &_mouse_position)const{
             return !operator==(_mouse_position);
         }
     };
     std::vector<ui_item> item_;
     short console_height,console_width;
     enum ui_item_attrs_op_{t_add='+',t_remove='-'};
-    auto show_cursor_(const bool _mode){
+    inline auto show_cursor_(const bool _mode){
         CONSOLE_CURSOR_INFO cursor;
         GetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&cursor);
         cursor.bVisible=_mode;
         SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&cursor);
     }
-    auto edit_attrs_(const ui_item_attrs_op_ _mode){
+    inline auto edit_attrs_(const ui_item_attrs_op_ _mode){
         DWORD attrs;
         GetConsoleMode(GetStdHandle(STD_INPUT_HANDLE),&attrs);
         switch(_mode){
@@ -97,15 +97,15 @@ private:
         }
         SetConsoleMode(GetStdHandle(STD_INPUT_HANDLE),attrs);
     }
-    auto get_cursor_(){
+    inline auto get_cursor_(){
         CONSOLE_SCREEN_BUFFER_INFO console;
         GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE),&console);
         return console.dwCursorPosition;
     }
-    auto set_cursor_(const COORD &_position){
+    inline auto set_cursor_(const COORD &_position){
         SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE),_position);
     }
-    auto wait_mouse_event_(const bool _move=true){
+    inline auto wait_mouse_event_(const bool _move=true){
         INPUT_RECORD record;
         DWORD reg;
         while(true){
@@ -119,32 +119,32 @@ private:
             }
         }
     }
-    auto get_console_size_(){
+    inline auto get_console_size_(){
         CONSOLE_SCREEN_BUFFER_INFO console;
         GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE),&console);
         console_height=console.dwSize.Y;
         console_width=console.dwSize.X;
     }
-    auto cls_(){
+    inline auto cls_(){
         get_console_size_();
         set_cursor_({0,0});
         printf("%s",std::string(console_width*console_height,' ').c_str());
         set_cursor_({0,0});
     }
-    auto write_(const char *const _text,const bool _isEndl=false){
+    inline auto write_(const char *const _text,const bool _isEndl=false){
         printf("%s",_text);
         if(_isEndl){
             printf("\n");
         }
     }
-    auto rewrite_(const COORD &_position,const char *const &_text){
+    inline auto rewrite_(const COORD &_position,const char *const &_text){
         set_cursor_({0,_position.Y});
         write_(std::string(_position.X,' ').c_str());
         set_cursor_({0,_position.Y});
         write_(_text);
         set_cursor_({0,_position.Y});
     }
-    auto init_pos_(){
+    inline auto init_pos_(){
         cls_();
         for(auto &line:item_){
             line.position=get_cursor_();
@@ -152,7 +152,7 @@ private:
             write_(line.text,true);
         }
     }
-    auto refresh_(const COORD &_hang_position){
+    inline auto refresh_(const COORD &_hang_position){
         for(auto &line:item_){
             if((line==_hang_position)&&(line.last_color!=line.highlight_color)){
                 line.set_color(line.highlight_color);
@@ -164,7 +164,7 @@ private:
             }
         }
     }
-    auto run_fn_(const MOUSE_EVENT_RECORD &_mouse_event){
+    inline auto run_fn_(const MOUSE_EVENT_RECORD &_mouse_event){
         bool isExit{};
         for(auto &line:item_){
             if(line==_mouse_event.dwMousePosition){
@@ -184,26 +184,26 @@ private:
         return isExit;
     }
 public:
-    explicit console_ui():
+    inline explicit console_ui():
         item_{},
         console_height{},
         console_width{}
     {}
-    explicit console_ui(const console_ui &_obj):
+    inline explicit console_ui(const console_ui &_obj):
         item_{_obj.item_},
         console_height{},
         console_width{}
     {}
-    explicit console_ui(const console_ui &&_obj):
+    inline explicit console_ui(const console_ui &&_obj):
         item_{std::move(_obj.item_)},
         console_height{},
         console_width{}
     {}
-    ~console_ui(){}
-    auto size(){
+    inline ~console_ui(){}
+    inline auto size(){
         return item_.size();
     }
-    auto &add(
+    inline auto &add(
         const char *const _text,
         const callback _function=nullptr,
         const short _highlight_color=CONSOLE_BLUE,
@@ -219,7 +219,7 @@ public:
         );
         return *this;
     }
-    auto &insert(
+    inline auto &insert(
         const size_t _index,
         const char *const _text,
         const callback _function=nullptr,
@@ -237,7 +237,7 @@ public:
         );
         return *this;
     }
-    auto &edit(
+    inline auto &edit(
         const size_t _index,
         const char *const _text,
         const callback _function=nullptr,
@@ -252,19 +252,19 @@ public:
         };
         return *this;
     }
-    auto &remove(){
+    inline auto &remove(){
         item_.pop_back();
         return *this;
     }
-    auto &remove(const size_t _begin,const size_t _end){
+    inline auto &remove(const size_t _begin,const size_t _end){
         item_.erase(item_.begin()+_begin,item_.begin()+_end);
         return *this;
     }
-    auto &clear(){
+    inline auto &clear(){
         item_.clear();
         return *this;
     }
-    auto show(){
+    inline auto show(){
         edit_attrs_(t_remove);
         show_cursor_(false);
         MOUSE_EVENT_RECORD mouse_event;
