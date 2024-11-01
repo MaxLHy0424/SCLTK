@@ -1,7 +1,7 @@
 #pragma once
 #include"def.hpp"
 #include"console_ui.hpp"
-struct{
+inline struct{
 #ifdef _NEXT_
     bool front_show_wnd,alpha_wnd,hide_wnd_close_ctrl;
 #else
@@ -9,7 +9,7 @@ struct{
 #endif
 }config_data{};
 #ifndef _NEXT_
-bool config_error{};
+inline bool config_error{};
 #endif
 namespace mod{
 #ifdef _NEXT_
@@ -38,7 +38,7 @@ namespace mod{
         std::vector<const char*> exe,svc;
 #endif
     };
-    struct{
+    inline struct{
         const sys_rule mythware,lenovo;
 #ifdef _NEXT_
         sys_rule custom;
