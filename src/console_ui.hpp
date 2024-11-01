@@ -194,11 +194,6 @@ public:
     inline constexpr auto size(){
         return item_.size();
     }
-    inline auto &quit(){
-        edit_attrs_(t_add);
-        show_cursor_(true);
-        return *this;
-    }
     inline auto &add(
         const char *const _text,
         const callback _function=nullptr,
@@ -284,6 +279,11 @@ public:
         cls_();
         return *this;
     }
+    inline auto &exit(){
+        edit_attrs_(t_add);
+        show_cursor_(true);
+        return *this;
+    }
     inline explicit console_ui():
         item_{},
         console_height{},
@@ -300,6 +300,6 @@ public:
         console_width{}
     {}
     inline ~console_ui(){
-        quit();
+        exit();
     }
 };

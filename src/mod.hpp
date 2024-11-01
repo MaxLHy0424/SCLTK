@@ -17,6 +17,9 @@ namespace mod{
     private:
         char *const str_;
     public:
+        inline const auto get()const{
+            return str_;
+        }
         inline simple_string()=delete;
         inline simple_string(const char *_s):
             str_{new char[strlen(_s)+1]}
@@ -25,9 +28,6 @@ namespace mod{
         }
         inline ~simple_string(){
             delete[] str_;
-        }
-        inline const auto get()const{
-            return str_;
         }
     };
 #endif
@@ -285,11 +285,6 @@ namespace mod{
             return false;
         }
     public:
-        inline explicit config_op(const char _mode):
-            mode_{_mode},
-            is_only_load_custom_rule_{}
-        {}
-        inline ~config_op(){}
         inline auto operator()(console_ui::fn_args){
             switch(mode_){
                 case 'r':{
@@ -302,6 +297,11 @@ namespace mod{
             }
             return false;
         }
+        inline explicit config_op(const char _mode):
+            mode_{_mode},
+            is_only_load_custom_rule_{}
+        {}
+        inline ~config_op(){}
     };
 #endif
     class sys_op final{
@@ -309,11 +309,6 @@ namespace mod{
         const char mode_;
         const sys_rule &rule_;
     public:
-        inline explicit sys_op(const char _mode,const sys_rule &_rule):
-            mode_{_mode},
-            rule_{_rule}
-        {}
-        inline ~sys_op(){}
         inline auto operator()(console_ui::fn_args)const{
 #ifdef _NEXT_
             if((rule_.exe.empty())&&(rule_.svc.empty())){
@@ -392,5 +387,10 @@ namespace mod{
             puts("==> 释放内存.");
             return false;
         }
+        inline explicit sys_op(const char _mode,const sys_rule &_rule):
+            mode_{_mode},
+            rule_{_rule}
+        {}
+        inline ~sys_op(){}
     };
 }
