@@ -1,5 +1,9 @@
 #pragma once
-#include"def.hpp"
+#include<stdio.h>
+#include<windows.h>
+#include<vector>
+#include<string>
+#include<functional>
 #define MOUSE_BUTTON_LEFT FROM_LEFT_1ST_BUTTON_PRESSED
 #define MOUSE_BUTTON_MIDDLE FROM_LEFT_2ND_BUTTON_PRESSED
 #define MOUSE_BUTTON_RIGHT RIGHTMOST_BUTTON_PRESSED
@@ -186,24 +190,13 @@ public:
         {}
         inline ~fn_args(){}
     };
-    inline explicit console_ui():
-        item_{},
-        console_height{},
-        console_width{}
-    {}
-    inline explicit console_ui(const console_ui &_obj):
-        item_{_obj.item_},
-        console_height{},
-        console_width{}
-    {}
-    inline explicit console_ui(const console_ui &&_obj):
-        item_{std::move(_obj.item_)},
-        console_height{},
-        console_width{}
-    {}
-    inline ~console_ui(){}
     inline auto size(){
         return item_.size();
+    }
+    inline auto &reset_console(){
+        edit_attrs_(t_add);
+        show_cursor_(true);
+        return *this;
     }
     inline auto &add(
         const char *const _text,
@@ -266,9 +259,9 @@ public:
         item_.clear();
         return *this;
     }
-    inline auto show(){
-        edit_attrs_(t_remove);
+    inline auto &show(){
         show_cursor_(false);
+        edit_attrs_(t_remove);
         MOUSE_EVENT_RECORD mouse_event;
         init_pos_();
         bool is_exit{};
@@ -288,5 +281,24 @@ public:
             Sleep(10);
         }
         cls_();
+        return *this;
+    }
+    inline explicit console_ui():
+        item_{},
+        console_height{},
+        console_width{}
+    {}
+    inline explicit console_ui(const console_ui &_obj):
+        item_{_obj.item_},
+        console_height{},
+        console_width{}
+    {}
+    inline explicit console_ui(const console_ui &&_obj):
+        item_{std::move(_obj.item_)},
+        console_height{},
+        console_width{}
+    {}
+    inline ~console_ui(){
+        reset_console();
     }
 };
