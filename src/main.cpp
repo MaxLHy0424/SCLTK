@@ -1,5 +1,6 @@
 #ifdef _WIN32
-#include"def.hpp"
+#include<string>
+#include<thread>
 #include"console_ui.hpp"
 #include"mod.hpp"
 #ifdef _NEXT_

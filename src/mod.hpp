@@ -1,5 +1,11 @@
 #pragma once
-#include"def.hpp"
+#include<windows.h>
+#include<vector>
+#include<string>
+#ifdef _NEXT_
+#include<fstream>
+#endif
+#include"info.hpp"
 #include"console_ui.hpp"
 inline struct{
 #ifdef _NEXT_
@@ -85,7 +91,7 @@ namespace mod{
     }
     inline auto init(){
         system("chcp 936 > nul");
-        SetConsoleTitle(WINDOW_TITLE);
+        SetConsoleTitle("CRCSN");
 #ifdef _NEXT_
         SetWindowLongPtr(
             GetConsoleWindow(),GWL_STYLE,
