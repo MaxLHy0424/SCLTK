@@ -14,7 +14,7 @@ auto main()->int{
         delete[] path;
         return 0;
     }
-    mod::config_op{'r'}(console_ui::data{});
+    mod::config_op{'r'}(console_ui::fn_args{});
 #else
 auto main(const int argc,const char *const args[])->int{
     if(argc>1){
