@@ -1,12 +1,12 @@
 #pragma once
+#include"info.hpp"
+#include"console_ui.hpp"
 #include<windows.h>
 #include<vector>
 #include<string>
 #ifdef _NEXT
 #include<fstream>
 #endif
-#include"info.hpp"
-#include"console_ui.hpp"
 inline struct{
 #ifdef _NEXT
     bool front_show_window,alpha_window,hide_window_close_ctrl;
