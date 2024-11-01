@@ -126,7 +126,7 @@ set item.args=-Waf
 > ```
 > 修改为:
 > ```makefile
-> def=-D_CRT_SECURE_NO_WARNINGS -DANSI -D_ANSI -D_NEXT
+> def=-D_CRT_SECURE_NO_WARNINGS -DANSI -D_ANSI -D_NEXT_
 > ```
 >
 > 重新编译后即可启用. 暂时不会有文档说明.

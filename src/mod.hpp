@@ -4,21 +4,21 @@
 #include<windows.h>
 #include<vector>
 #include<string>
-#ifdef _NEXT
+#ifdef _NEXT_
 #include<fstream>
 #endif
 inline struct{
-#ifdef _NEXT
+#ifdef _NEXT_
     bool front_show_window,alpha_window,hide_window_close_ctrl;
 #else
     bool front_show_window,alpha_window,window_ctrls;
 #endif
 }config_data{};
-#ifndef _NEXT
+#ifndef _NEXT_
 inline bool config_error{};
 #endif
 namespace mod{
-#ifdef _NEXT
+#ifdef _NEXT_
     class simple_string final{
     private:
         char *const str_;
@@ -38,7 +38,7 @@ namespace mod{
     };
 #endif
     struct sys_rule final{
-#ifdef _NEXT
+#ifdef _NEXT_
         std::vector<simple_string> exe,svc;
 #else
         std::vector<const char*> exe,svc;
@@ -46,7 +46,7 @@ namespace mod{
     };
     inline struct{
         const sys_rule mythware,lenovo;
-#ifdef _NEXT
+#ifdef _NEXT_
         sys_rule custom;
 #endif
     }rule{
@@ -70,7 +70,7 @@ namespace mod{
                 "BSAgentSvr","tvnserver","WFBSMlogon"
             }
         }
-#ifdef _NEXT
+#ifdef _NEXT_
         ,{}
 #endif
     };
@@ -92,7 +92,7 @@ namespace mod{
     inline auto init(){
         system("chcp 936 > nul");
         SetConsoleTitle("CRCSN");
-#ifdef _NEXT
+#ifdef _NEXT_
         SetWindowLongPtr(
             GetConsoleWindow(),GWL_STYLE,
             GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)&~WS_SIZEBOX&~WS_MAXIMIZEBOX&~WS_MINIMIZEBOX
@@ -118,7 +118,7 @@ namespace mod{
             LWA_ALPHA
         );
     }
-#ifndef _NEXT
+#ifndef _NEXT_
     inline auto front_show_window(){
         const HWND this_window{GetConsoleWindow()};
         const DWORD foreground_id{GetWindowThreadProcessId(this_window,nullptr)},
@@ -139,7 +139,7 @@ namespace mod{
         return true;
     }
     inline auto info(console_ui::fn_args){
-#ifdef _NEXT
+#ifdef _NEXT_
         auto visit_repo_webpage{[](console_ui::fn_args){
             ShellExecute(nullptr,"",INFO_REPO_URL,nullptr,nullptr,SW_SHOWNORMAL);
             return false;
@@ -153,7 +153,7 @@ namespace mod{
           .add("\n[版本]\n")
           .add(" " INFO_VERSION)
           .add("\n[仓库]\n")
-#ifdef _NEXT
+#ifdef _NEXT_
           .add(" (i) 点击访问 URL.\n")
           .add(" " INFO_REPO_URL,std::move(visit_repo_webpage))
 #else
@@ -167,7 +167,7 @@ namespace mod{
     }
     inline auto cmd(console_ui::fn_args){
         system("cmd");
-#ifdef _NEXT
+#ifdef _NEXT_
         init();
 #else
         if(!config_data.window_ctrls){
@@ -176,7 +176,7 @@ namespace mod{
 #endif
         return false;
     }
-#ifdef _NEXT
+#ifdef _NEXT_
     class config_op final{
     private:
         const char mode_;
@@ -316,7 +316,7 @@ namespace mod{
         const sys_rule &rule_;
     public:
         inline auto operator()(console_ui::fn_args)const{
-#ifdef _NEXT
+#ifdef _NEXT_
             if((rule_.exe.empty())&&(rule_.svc.empty())){
                 puts("\n (!) 规则为空.\n");
                 for(unsigned short i{3};i>0;--i){
@@ -341,13 +341,13 @@ namespace mod{
                 case 'c':{
                     for(const auto &item:rule_.exe){
                         cmd.append("reg add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\")
-#ifdef _NEXT
+#ifdef _NEXT_
                            .append(item.get())
 #else
                            .append(item)
 #endif
                            .append(".exe\" /f /t reg_sz /v debugger /d ? & taskKill /f /im \"")
-#ifdef _NEXT
+#ifdef _NEXT_
                            .append(item.get())
 #else
                            .append(item)
@@ -356,7 +356,7 @@ namespace mod{
                     }
                     for(const auto &item:rule_.svc){
                         cmd.append("net stop \"")
-#ifdef _NEXT
+#ifdef _NEXT_
                            .append(item.get())
 #else
                            .append(item)
@@ -367,7 +367,7 @@ namespace mod{
                 }case 'r':{
                     for(const auto &item:rule_.exe){
                         cmd.append("reg delete \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\")
-#ifdef _NEXT
+#ifdef _NEXT_
                            .append(item.get())
 #else
                            .append(item)
@@ -376,7 +376,7 @@ namespace mod{
                     }
                     for(const auto &item:rule_.svc){
                         cmd.append("net start \"")
-#ifdef _NEXT
+#ifdef _NEXT_
                            .append(item.get())
 #else
                            .append(item)
