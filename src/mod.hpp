@@ -9,9 +9,9 @@
 #include"console_ui.hpp"
 inline struct{
 #ifdef _NEXT
-    bool front_show_wnd,alpha_wnd,hide_wnd_close_ctrl;
+    bool front_show_window,alpha_window,hide_window_close_ctrl;
 #else
-    bool front_show_wnd,alpha_wnd,wnd_ctrls;
+    bool front_show_window,alpha_window,window_ctrls;
 #endif
 }config_data{};
 #ifndef _NEXT
@@ -100,13 +100,13 @@ namespace mod{
         EnableMenuItem(
             GetSystemMenu(
                 GetConsoleWindow(),
-                (config_data.hide_wnd_close_ctrl)?(FALSE):(TRUE)
+                (config_data.hide_window_close_ctrl)?(FALSE):(TRUE)
             ),
             SC_CLOSE,MF_BYCOMMAND|MF_DISABLED|MF_GRAYED
         );
 #else
         SetWindowLongPtr(
-            GetConsoleWindow(),GWL_STYLE,(config_data.wnd_ctrls)
+            GetConsoleWindow(),GWL_STYLE,(config_data.window_ctrls)
             ?(GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)|WS_SIZEBOX|WS_MAXIMIZEBOX|WS_MINIMIZEBOX)
             :(GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)&~WS_SIZEBOX&~WS_MAXIMIZEBOX&~WS_MINIMIZEBOX)
         );
@@ -114,23 +114,23 @@ namespace mod{
         system("mode con cols=50 lines=25");
         SetLayeredWindowAttributes(
             GetConsoleWindow(),0,
-            (config_data.alpha_wnd)?(230):(255),
+            (config_data.alpha_window)?(230):(255),
             LWA_ALPHA
         );
     }
 #ifndef _NEXT
-    inline auto front_show_wnd(){
-        const HWND this_wnd{GetConsoleWindow()};
-        const DWORD foreground_id{GetWindowThreadProcessId(this_wnd,nullptr)},
+    inline auto front_show_window(){
+        const HWND this_window{GetConsoleWindow()};
+        const DWORD foreground_id{GetWindowThreadProcessId(this_window,nullptr)},
                     current_id{GetCurrentThreadId()};
         while(true){
             AttachThreadInput(current_id,foreground_id,TRUE);
-            ShowWindow(this_wnd,SW_SHOWNORMAL);
-            SetWindowPos(this_wnd,HWND_TOPMOST,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE);
-            SetWindowPos(this_wnd,HWND_NOTOPMOST,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE);
-            SetForegroundWindow(this_wnd);
+            ShowWindow(this_window,SW_SHOWNORMAL);
+            SetWindowPos(this_window,HWND_TOPMOST,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE);
+            SetWindowPos(this_window,HWND_NOTOPMOST,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE);
+            SetForegroundWindow(this_window);
             AttachThreadInput(current_id,foreground_id,FALSE);
-            SetWindowPos(this_wnd,HWND_TOPMOST,0,0,100,100,SWP_NOMOVE|SWP_NOSIZE);
+            SetWindowPos(this_window,HWND_TOPMOST,0,0,100,100,SWP_NOMOVE|SWP_NOSIZE);
             Sleep(100);
         }
     }
@@ -170,7 +170,7 @@ namespace mod{
 #ifdef _NEXT
         init();
 #else
-        if(!config_data.wnd_ctrls){
+        if(!config_data.window_ctrls){
             init();
         }
 #endif
@@ -213,12 +213,12 @@ namespace mod{
                             if(is_only_load_custom_rule_){
                                 continue;
                             }
-                            if(line=="front_show_wnd"){
-                                config_data.front_show_wnd=true;
-                            }else if(line=="alpha_wnd"){
-                                config_data.alpha_wnd=true;
-                            }else if(line=="hide_wnd_close_ctrl"){
-                                config_data.hide_wnd_close_ctrl=true;
+                            if(line=="front_show_window"){
+                                config_data.front_show_window=true;
+                            }else if(line=="alpha_window"){
+                                config_data.alpha_window=true;
+                            }else if(line=="hide_window_close_ctrl"){
+                                config_data.hide_window_close_ctrl=true;
                             }
                             break;
                         }case t_rule_exe:{
@@ -242,14 +242,14 @@ namespace mod{
                 puts("==> 格式化保存配置文件.");
                 std::string text;
                 text.append("<settings>\n");
-                if(config_data.front_show_wnd){
-                    text.append("front_show_wnd\n");
+                if(config_data.front_show_window){
+                    text.append("front_show_window\n");
                 }
-                if(config_data.alpha_wnd){
-                    text.append("alpha_wnd\n");
+                if(config_data.alpha_window){
+                    text.append("alpha_window\n");
                 }
-                if(config_data.hide_wnd_close_ctrl){
-                    text.append("hide_wnd_close_ctrl\n");
+                if(config_data.hide_window_close_ctrl){
+                    text.append("hide_window_close_ctrl\n");
                 }
                 text.append("<rule_exe>\n");
                 if(!rule.custom.exe.empty()){
@@ -279,14 +279,14 @@ namespace mod{
               .add(" < 格式化保存并返回 ",std::move(save),CONSOLE_RED)
               .add(" > 打开配置文件 ",std::move(open_config_file))
               .add("\n[半透明窗口]\n")
-              .add(" > 启用 ",[](console_ui::fn_args){config_data.alpha_wnd=true;return false;})
-              .add(" > 禁用 ",[](console_ui::fn_args){config_data.alpha_wnd=false;return false;})
+              .add(" > 启用 ",[](console_ui::fn_args){config_data.alpha_window=true;return false;})
+              .add(" > 禁用 ",[](console_ui::fn_args){config_data.alpha_window=false;return false;})
               .add("\n[置顶窗口]\n")
-              .add(" > 启用 ",[](console_ui::fn_args){config_data.front_show_wnd=true;return false;})
-              .add(" > 禁用 ",[](console_ui::fn_args){config_data.front_show_wnd=false;return false;})
+              .add(" > 启用 ",[](console_ui::fn_args){config_data.front_show_window=true;return false;})
+              .add(" > 禁用 ",[](console_ui::fn_args){config_data.front_show_window=false;return false;})
               .add("\n[隐藏窗口关闭控件]\n")
-              .add(" > 启用 ",[](console_ui::fn_args){config_data.hide_wnd_close_ctrl=true;return false;})
-              .add(" > 禁用 ",[](console_ui::fn_args){config_data.hide_wnd_close_ctrl=false;return false;})
+              .add(" > 启用 ",[](console_ui::fn_args){config_data.hide_window_close_ctrl=true;return false;})
+              .add(" > 禁用 ",[](console_ui::fn_args){config_data.hide_window_close_ctrl=false;return false;})
               .show();
             return false;
         }
