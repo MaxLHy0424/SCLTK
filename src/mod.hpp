@@ -340,48 +340,48 @@ namespace mod{
             switch(mode_){
                 case 'c':{
                     for(const auto &item:rule_.exe){
-                        cmd.append("reg add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\")
+                        cmd.append(R"(reg add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\)")
 #ifdef _NEXT_
                            .append(item.get())
 #else
                            .append(item)
 #endif
-                           .append(".exe\" /f /t reg_sz /v debugger /d ? & taskKill /f /im \"")
+                           .append(R"(.exe" /f /t reg_sz /v debugger /d ? & taskKill /f /im ")")
 #ifdef _NEXT_
                            .append(item.get())
 #else
                            .append(item)
 #endif
-                           .append(".exe\" & ");
+                           .append(R"(.exe" & )");
                     }
                     for(const auto &item:rule_.svc){
-                        cmd.append("net stop \"")
+                        cmd.append(R"(net stop ")")
 #ifdef _NEXT_
                            .append(item.get())
 #else
                            .append(item)
 #endif
-                           .append("\" /y & ");
+                           .append(R"(" /y & )");
                     }
                     break;
                 }case 'r':{
                     for(const auto &item:rule_.exe){
-                        cmd.append("reg delete \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution options\\")
+                        cmd.append(R"(reg delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\)")
 #ifdef _NEXT_
                            .append(item.get())
 #else
                            .append(item)
 #endif
-                           .append(".exe\" /f & ");
+                           .append(R"(.exe" /f & )");
                     }
                     for(const auto &item:rule_.svc){
-                        cmd.append("net start \"")
+                        cmd.append(R"(net start ")")
 #ifdef _NEXT_
                            .append(item.get())
 #else
                            .append(item)
 #endif
-                           .append("\" & ");
+                           .append(R"(" & )");
                     }
                     break;
                 }
