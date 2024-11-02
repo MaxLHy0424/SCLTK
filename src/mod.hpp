@@ -9,9 +9,9 @@
 #endif
 inline struct{
 #ifdef _NEXT_
-    bool front_show_window,alpha_window,hide_window_close_ctrl;
+    bool front_show_window,translucent_window,hide_window_close_ctrl;
 #else
-    bool front_show_window,alpha_window,window_ctrls;
+    bool front_show_window,translucent_window,window_ctrls;
 #endif
 }config_data{};
 #ifndef _NEXT_
@@ -114,7 +114,7 @@ namespace mod{
         system("mode con cols=50 lines=25");
         SetLayeredWindowAttributes(
             GetConsoleWindow(),0,
-            (config_data.alpha_window)?(230):(255),
+            (config_data.translucent_window)?(230):(255),
             LWA_ALPHA
         );
     }
@@ -215,8 +215,8 @@ namespace mod{
                             }
                             if(line=="front_show_window"){
                                 config_data.front_show_window=true;
-                            }else if(line=="alpha_window"){
-                                config_data.alpha_window=true;
+                            }else if(line=="translucent_window"){
+                                config_data.translucent_window=true;
                             }else if(line=="hide_window_close_ctrl"){
                                 config_data.hide_window_close_ctrl=true;
                             }
@@ -245,8 +245,8 @@ namespace mod{
                 if(config_data.front_show_window){
                     text.append("front_show_window\n");
                 }
-                if(config_data.alpha_window){
-                    text.append("alpha_window\n");
+                if(config_data.translucent_window){
+                    text.append("translucent_window\n");
                 }
                 if(config_data.hide_window_close_ctrl){
                     text.append("hide_window_close_ctrl\n");
@@ -279,8 +279,8 @@ namespace mod{
               .add(" < 格式化保存并返回 ",std::move(save),CUI_TEXT_RED)
               .add(" > 打开配置文件 ",std::move(open_config_file))
               .add("\n[半透明窗口]\n")
-              .add(" > 启用 ",[](console_ui::fn_args){config_data.alpha_window=true;return false;})
-              .add(" > 禁用 ",[](console_ui::fn_args){config_data.alpha_window=false;return false;})
+              .add(" > 启用 ",[](console_ui::fn_args){config_data.translucent_window=true;return false;})
+              .add(" > 禁用 ",[](console_ui::fn_args){config_data.translucent_window=false;return false;})
               .add("\n[置顶窗口]\n")
               .add(" > 启用 ",[](console_ui::fn_args){config_data.front_show_window=true;return false;})
               .add(" > 禁用 ",[](console_ui::fn_args){config_data.front_show_window=false;return false;})
