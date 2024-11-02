@@ -34,14 +34,14 @@ public:
         inline ~fn_args(){}
     };
 private:
-    using size_type=std::size_t;
-    using callback=std::function<bool(fn_args)>;
-    struct ui_item final{
+    using size_type_=std::size_t;
+    using callback_=std::function<bool(fn_args)>;
+    struct ui_item_ final{
         const char *text;
         short default_color,highlight_color,last_color;
         COORD position;
-        callback function;
-        inline explicit ui_item():
+        callback_ function;
+        inline explicit ui_item_():
             text{},
             default_color{CUI_TEXT_WHITE},
             highlight_color{CUI_TEXT_BLUE},
@@ -49,11 +49,11 @@ private:
             position{},
             function{}
         {}
-        inline explicit ui_item(
+        inline explicit ui_item_(
             const char *const _text,
             const short _default_color,
             const short _highlight_color,
-            const callback _function
+            const callback_ _function
         ):text{_text},
           default_color{_default_color},
           highlight_color{_highlight_color},
@@ -61,7 +61,7 @@ private:
           position{},
           function{_function}
         {}
-        inline ~ui_item(){}
+        inline ~ui_item_(){}
         inline auto set_color(short _color){
             SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),_color);
             last_color=_color;
@@ -75,7 +75,7 @@ private:
             return !operator==(_mouse_position);
         }
     };
-    std::vector<ui_item> item_;
+    std::vector<ui_item_> item_;
     short console_height,console_width;
     enum ui_item_attrs_op_{t_add='+',t_remove='-'};
     inline auto show_cursor_(const bool _mode){
@@ -194,12 +194,12 @@ public:
     }
     inline auto &add(
         const char *const _text,
-        const callback _function=nullptr,
+        const callback_ _function=nullptr,
         const short _highlight_color=CUI_TEXT_BLUE,
         const short _default_color=CUI_TEXT_WHITE
     ){
         item_.emplace_back(
-            ui_item{
+            ui_item_{
                 _text,
                 _default_color,
                 (_function==nullptr)?(_default_color):(_highlight_color),
@@ -209,15 +209,15 @@ public:
         return *this;
     }
     inline auto &insert(
-        const size_type _index,
+        const size_type_ _index,
         const char *const _text,
-        const callback _function=nullptr,
+        const callback_ _function=nullptr,
         const short _highlight_color=CUI_TEXT_BLUE,
         const short _default_color=CUI_TEXT_WHITE
     ){
         item_.emplace(
             item_.begin()+_index,
-            ui_item{
+            ui_item_{
                 _text,
                 _default_color,
                 (_function==nullptr)?(_default_color):(_highlight_color),
@@ -227,13 +227,13 @@ public:
         return *this;
     }
     inline auto &edit(
-        const size_type _index,
+        const size_type_ _index,
         const char *const _text,
-        const callback _function=nullptr,
+        const callback_ _function=nullptr,
         const short _highlight_color=CUI_TEXT_BLUE,
         const short _default_color=CUI_TEXT_WHITE
     ){
-        item_.at(_index)=ui_item{
+        item_.at(_index)=ui_item_{
             _text,
             _default_color,
             (_function==nullptr)?(_default_color):(_highlight_color),
@@ -245,7 +245,7 @@ public:
         item_.pop_back();
         return *this;
     }
-    inline auto &remove(const size_type _begin,const size_type _end){
+    inline auto &remove(const size_type_ _begin,const size_type_ _end){
         item_.erase(item_.begin()+_begin,item_.begin()+_end);
         return *this;
     }
