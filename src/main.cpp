@@ -28,8 +28,8 @@ auto main(const int _argc,const char *const _args[])->int{
                         case 'f':{
                             config_data.front_show_window=true;
                             break;
-                        }case 'a':{
-                            config_data.alpha_window=true;
+                        }case 't':{
+                            config_data.translucent_window=true;
                             break;
                         }case 'c':{
                             config_data.window_ctrls=true;
