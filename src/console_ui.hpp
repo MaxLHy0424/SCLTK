@@ -189,7 +189,7 @@ private:
         return isExit;
     }
 public:
-    inline constexpr auto size(){
+    inline auto size(){
         return item_.size();
     }
     inline auto &add(
