@@ -3,14 +3,14 @@ chcp 65001 > nul
 set config.auto_launch=0
 set config.show_verbose_info=0
 set config.window_title=CRCSN Launcher
-title %config.window_title%
-mode con cols=50 lines=25
-cd /d "%~dp0"
 set item.tag=std
 set item.version=v5.10.1
 set item.arch=x86_64
 set item.runtime=ucrt
 set item.args=
+title %config.window_title%
+mode con cols=50 lines=25
+cd /d "%~dp0"
 %1
 if %config.auto_launch%==0 (
   echo                 [ CRCSN Launcher ]
