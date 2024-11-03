@@ -74,6 +74,9 @@ namespace mod{
         ,{}
 #endif
     };
+    inline auto exit(console_ui::fn_args){
+        return true;
+    }
     inline auto is_run_as_admin(){
         BOOL is_admin{};
         PSID admins_group{};
@@ -89,6 +92,15 @@ namespace mod{
         }
         return is_admin;
     }
+#ifdef _NEXT_
+    inline auto relaunch_as_admin(console_ui::fn_args){
+        char *const path{new char[MAX_PATH]{}};
+        GetModuleFileName(nullptr,path,MAX_PATH);
+        ShellExecute(nullptr,"runAs",path,nullptr,nullptr,SW_SHOWNORMAL);
+        delete[] path;
+        return true;
+    }
+#endif
 #ifndef _NEXT_
     inline auto init(){
         system("chcp 936 > nul");
@@ -121,9 +133,6 @@ namespace mod{
         }
     }
 #endif
-    inline auto exit(console_ui::fn_args){
-        return true;
-    }
     inline auto info(console_ui::fn_args){
 #ifdef _NEXT_
         auto visit_repo_webpage{[](console_ui::fn_args){

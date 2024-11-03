@@ -10,10 +10,7 @@ auto main()->int{
     puts("-> 检测运行权限.");
     if(!mod::is_run_as_admin()){
         puts("-> 申请管理员权限.");
-        char *const path{new char[MAX_PATH]{}};
-        GetModuleFileName(nullptr,path,MAX_PATH);
-        ShellExecute(nullptr,"runAs",path,nullptr,nullptr,SW_SHOWNORMAL);
-        delete[] path;
+        mod::relaunch_as_admin(console_ui::fn_args{});
         return 0;
     }
     mod::config_op{'r'}(console_ui::fn_args{});
@@ -82,6 +79,9 @@ auto main(const int _argc,const char *const _args[])->int{
     }
 #endif
     ui.add(" < 退出 ",mod::exit,CUI_TEXT_RED)
+#ifdef _NEXT_
+      .add(" < 重启 ",mod::relaunch_as_admin,CUI_TEXT_RED)
+#endif
       .add(" > 关于 ",mod::info)
 #ifdef _NEXT_
       .add(" > 配置 ",mod::config_op{'e'})
