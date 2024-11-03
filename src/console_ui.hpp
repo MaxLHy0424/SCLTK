@@ -194,7 +194,7 @@ public:
     }
     inline auto &set_window(
         UINT _code_page,
-#ifdef _UNICODE
+#if defined(_UNICODE)||defined(UNICODE)
         LPCWSTR _title,
 #else
         LPCSTR _title,
