@@ -163,7 +163,16 @@ namespace mod{
     inline auto cmd(console_ui::fn_args){
         system("cmd");
 #ifdef _NEXT_
-        console_ui{}.set_window(936,"CRCSN",50,25,true,false,true,255);
+        console_ui{}.set_window(
+            936,
+            "CRCSN",
+            50,
+            25,
+            true,
+            false,
+            !config_data.hide_window_close_ctrl,
+            (config_data.translucent_window)?(230):(255)
+        );
 #else
         if(!config_data.window_ctrls){
             init();
