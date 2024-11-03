@@ -175,7 +175,7 @@ namespace mod{
     class config_op final{
     private:
         const char mode_;
-        bool is_only_load_custom_rule_;
+        bool is_reload_;
         inline auto load_(){
             std::ifstream config_file{"config.ini",std::ios::in};
             if(!config_file.is_open()){
@@ -183,7 +183,7 @@ namespace mod{
             }
             {
                 puts("-> 加载配置文件.");
-                if(!is_only_load_custom_rule_){
+                if(!is_reload_){
                     config_data={};
                 }
                 rule.custom.exe.clear(),rule.custom.svc.clear();
@@ -205,7 +205,7 @@ namespace mod{
                     }
                     switch(config_item){
                         case t_settings:{
-                            if(is_only_load_custom_rule_){
+                            if(is_reload_){
                                 continue;
                             }
                             if(line=="front_show_window"){
@@ -232,7 +232,7 @@ namespace mod{
         }
         inline auto edit_(){
             auto save{[&](console_ui::fn_args){
-                is_only_load_custom_rule_=true;
+                is_reload_=true;
                 load_();
                 puts("-> 格式化保存配置文件.");
                 std::string text;
@@ -300,7 +300,7 @@ namespace mod{
         }
         inline explicit config_op(const char _mode):
             mode_{_mode},
-            is_only_load_custom_rule_{}
+            is_reload_{}
         {}
         inline ~config_op(){}
     };
