@@ -5,7 +5,8 @@
 #include<thread>
 #ifdef _NEXT_
 auto main()->int{
-    mod::init();
+    console_ui ui;
+    ui.set_window(936,"CRCSN",50,25,true,false,true,255);
     puts("-> 检测运行权限.");
     if(!mod::is_run_as_admin()){
         puts("-> 申请管理员权限.");
@@ -18,6 +19,7 @@ auto main()->int{
     mod::config_op{'r'}(console_ui::fn_args{});
 #else
 auto main(const int _argc,const char *const _args[])->int{
+    console_ui ui;
     if(_argc>1){
         std::string_view tmp;
         for(int i{1};i<_argc;++i){
@@ -50,8 +52,8 @@ auto main(const int _argc,const char *const _args[])->int{
             config_data={};
         }
     }
-#endif
     mod::init();
+#endif
     if(config_data.front_show_window){
 #ifdef _NEXT_
         std::thread{[](){
@@ -73,7 +75,6 @@ auto main(const int _argc,const char *const _args[])->int{
         std::thread{mod::front_show_window}.detach();
 #endif
     }
-    console_ui ui;
     ui.add("                    [ 主  页 ]\n\n");
 #ifndef _NEXT_
     if(config_error){
@@ -97,6 +98,18 @@ auto main(const int _argc,const char *const _args[])->int{
       .add(" > 联想云教室 ",mod::sys_op{'r',mod::rule.lenovo})
 #ifdef _NEXT_
       .add(" > 自定义 ",mod::sys_op{'r',mod::rule.custom})
+#endif
+#ifdef _NEXT_
+      .set_window(
+        936,
+        "CRCSN",
+        50,
+        25,
+        true,
+        false,
+        !config_data.hide_window_close_ctrl,
+        (config_data.translucent_window)?(230):(255)
+      )
 #endif
       .show();
     return 0;

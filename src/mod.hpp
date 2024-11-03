@@ -89,28 +89,15 @@ namespace mod{
         }
         return is_admin;
     }
+#ifndef _NEXT_
     inline auto init(){
         system("chcp 936 > nul");
         SetConsoleTitle("CRCSN");
-#ifdef _NEXT_
-        SetWindowLongPtr(
-            GetConsoleWindow(),GWL_STYLE,
-            GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)&~WS_SIZEBOX&~WS_MAXIMIZEBOX&~WS_MINIMIZEBOX
-        );
-        EnableMenuItem(
-            GetSystemMenu(
-                GetConsoleWindow(),
-                (config_data.hide_window_close_ctrl)?(FALSE):(TRUE)
-            ),
-            SC_CLOSE,MF_BYCOMMAND|MF_DISABLED|MF_GRAYED
-        );
-#else
         SetWindowLongPtr(
             GetConsoleWindow(),GWL_STYLE,(config_data.window_ctrls)
             ?(GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)|WS_SIZEBOX|WS_MAXIMIZEBOX|WS_MINIMIZEBOX)
             :(GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)&~WS_SIZEBOX&~WS_MAXIMIZEBOX&~WS_MINIMIZEBOX)
         );
-#endif
         system("mode con cols=50 lines=25");
         SetLayeredWindowAttributes(
             GetConsoleWindow(),0,
@@ -118,7 +105,6 @@ namespace mod{
             LWA_ALPHA
         );
     }
-#ifndef _NEXT_
     inline auto front_show_window(){
         const HWND this_window{GetConsoleWindow()};
         const DWORD foreground_id{GetWindowThreadProcessId(this_window,nullptr)},
@@ -168,7 +154,7 @@ namespace mod{
     inline auto cmd(console_ui::fn_args){
         system("cmd");
 #ifdef _NEXT_
-        init();
+        console_ui{}.set_window(936,"CRCSN",50,25,true,false,true,255);
 #else
         if(!config_data.window_ctrls){
             init();
