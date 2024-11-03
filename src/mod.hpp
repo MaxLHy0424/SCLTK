@@ -188,11 +188,17 @@ namespace mod{
                 if(!is_reload_){
                     config_data={};
                 }
-                sys_rule::custom.exe.clear(),sys_rule::custom.svc.clear();
+                sys_rule::custom.exe.clear();
+                sys_rule::custom.svc.clear();
                 std::string line;
-                enum{t_settings=0,t_rule_exe=1,t_rule_svc=2} config_item{t_settings};
+                enum{
+                    t_unknown=-1,
+                    t_settings=0,
+                    t_rule_exe=1,
+                    t_rule_svc=2,
+                }config_item{t_unknown};
                 while(std::getline(config_file,line)){
-                    if(line.empty()||line.at(0)=='#'){
+                    if(line.empty()||line.front()=='#'){
                         continue;
                     }
                     if(line=="<settings>"){
@@ -204,9 +210,13 @@ namespace mod{
                     }else if(line=="<rule_svc>"){
                         config_item=t_rule_svc;
                         continue;
+                    }else if(line.front()=='<'||line.back()=='>'){
+                        continue;
                     }
                     switch(config_item){
-                        case t_settings:{
+                        case t_unknown:{
+                            break;
+                        }case t_settings:{
                             if(is_reload_){
                                 continue;
                             }
