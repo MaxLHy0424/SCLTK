@@ -88,16 +88,16 @@ auto main(const int _argc,const char *const _args[])->int{
 #endif
       .add(" > 命令提示符 ",mod::cmd)
       .add("\n[破解]\n")
-      .add(" > 极域电子教室 ",mod::sys_op{'c',mod::rule.mythware})
-      .add(" > 联想云教室 ",mod::sys_op{'c',mod::rule.lenovo})
+      .add(" > 极域电子教室 ",mod::sys_op{'c',mod::sys_rule::mythware})
+      .add(" > 联想云教室 ",mod::sys_op{'c',mod::sys_rule::lenovo})
 #ifdef _NEXT_
-      .add(" > 自定义 ",mod::sys_op{'c',mod::rule.custom})
+      .add(" > 自定义 ",mod::sys_op{'c',mod::sys_rule::custom})
 #endif
       .add("\n[恢复]\n")
-      .add(" > 极域电子教室 ",mod::sys_op{'r',mod::rule.mythware})
-      .add(" > 联想云教室 ",mod::sys_op{'r',mod::rule.lenovo})
+      .add(" > 极域电子教室 ",mod::sys_op{'r',mod::sys_rule::mythware})
+      .add(" > 联想云教室 ",mod::sys_op{'r',mod::sys_rule::lenovo})
 #ifdef _NEXT_
-      .add(" > 自定义 ",mod::sys_op{'r',mod::rule.custom})
+      .add(" > 自定义 ",mod::sys_op{'r',mod::sys_rule::custom})
 #endif
 #ifdef _NEXT_
       .set_window(
