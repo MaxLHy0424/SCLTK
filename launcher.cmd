@@ -13,7 +13,7 @@ set item.runtime=ucrt
 set item.args=
 %1
 if %config.auto_launch%==0 (
-  echo                 ^< CRCSN Launcher ^>
+  echo                 [ CRCSN Launcher ]
   echo.
   echo     ^(C^) 2023 MaxLHy0424. All Rights Reserved.
   echo.
