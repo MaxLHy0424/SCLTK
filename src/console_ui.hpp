@@ -69,7 +69,7 @@ private:
         inline auto operator==(const COORD &_mouse_position)const{
             return (position.Y==_mouse_position.Y)&&
                    (position.X<=_mouse_position.X)&&
-                   (_mouse_position.X<(position.X+(short)strlen(text)));
+                   (_mouse_position.X<(position.X+static_cast<short>(strlen(text))));
         }
         inline auto operator!=(const COORD &_mouse_position)const{
             return !operator==(_mouse_position);
