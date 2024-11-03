@@ -320,9 +320,10 @@ namespace mod{
         const sys_rule &rule_;
     public:
         inline auto operator()(console_ui::fn_args)const{
+            puts("                 [ 破 解 / 恢 复 ]\n\n");
 #ifdef _NEXT_
             if((rule_.exe.empty())&&(rule_.svc.empty())){
-                puts("\n (!) 规则为空.\n");
+                puts(" (!) 规则为空.\n");
                 for(unsigned short i{3};i>0;--i){
                     printf(" %hu 秒后返回.\r",i);
                     Sleep(1000);
