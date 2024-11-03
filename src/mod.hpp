@@ -37,20 +37,15 @@ namespace mod{
         }
     };
 #endif
-    struct sys_rule final{
+    namespace sys_rule{
+        struct base final{
 #ifdef _NEXT_
-        std::vector<simple_string> exe,svc;
+            std::vector<simple_string> exe,svc;
 #else
-        std::vector<const char*> exe,svc;
+            std::vector<const char*> exe,svc;
 #endif
-    };
-    inline struct{
-        const sys_rule mythware,lenovo;
-#ifdef _NEXT_
-        sys_rule custom;
-#endif
-    }rule{
-        {
+        };
+        inline const base mythware{
             {
                 "StudentMain","DispcapHelper","VRCwPlayer",
                 "InstHelpApp","InstHelpApp64","TDOvrSet",
@@ -58,7 +53,7 @@ namespace mod{
             },{
                 "STUDSRV","TDNetFilter","TDFileFilter"
             }
-        },{
+        },lenovo{
             {
                 "vncviewer","tvnserver32","WfbsPnpInstall",
                 "WFBSMon","WFBSMlogon","WFBSSvrLogShow",
@@ -69,11 +64,9 @@ namespace mod{
             },{
                 "BSAgentSvr","tvnserver","WFBSMlogon"
             }
-        }
-#ifdef _NEXT_
-        ,{}
-#endif
-    };
+        };
+        inline base custom{};
+    }
     inline auto exit(console_ui::fn_args){
         return true;
     }
@@ -195,7 +188,7 @@ namespace mod{
                 if(!is_reload_){
                     config_data={};
                 }
-                rule.custom.exe.clear(),rule.custom.svc.clear();
+                sys_rule::custom.exe.clear(),sys_rule::custom.svc.clear();
                 std::string line;
                 enum{t_settings=0,t_rule_exe=1,t_rule_svc=2} config_item{t_settings};
                 while(std::getline(config_file,line)){
@@ -226,10 +219,10 @@ namespace mod{
                             }
                             break;
                         }case t_rule_exe:{
-                            rule.custom.exe.emplace_back(line.c_str());
+                            sys_rule::custom.exe.emplace_back(line.c_str());
                             break;
                         }case t_rule_svc:{
-                            rule.custom.svc.emplace_back(line.c_str());
+                            sys_rule::custom.svc.emplace_back(line.c_str());
                             break;
                         }
                     }
@@ -256,14 +249,14 @@ namespace mod{
                     text.append("hide_window_close_ctrl\n");
                 }
                 text.append("<rule_exe>\n");
-                if(!rule.custom.exe.empty()){
-                    for(const auto &item:rule.custom.exe){
+                if(!sys_rule::custom.exe.empty()){
+                    for(const auto &item:sys_rule::custom.exe){
                         text.append(item.get()).push_back('\n');
                     }
                 }
                 text.append("<rule_svc>\n");
-                if(!rule.custom.exe.empty()){
-                    for(const auto &item:rule.custom.svc){
+                if(!sys_rule::custom.exe.empty()){
+                    for(const auto &item:sys_rule::custom.svc){
                         text.append(item.get()).push_back('\n');
                     }
                 }
@@ -317,7 +310,7 @@ namespace mod{
     class sys_op final{
     private:
         const char mode_;
-        const sys_rule &rule_;
+        const sys_rule::base &rule_;
     public:
         inline auto operator()(console_ui::fn_args)const{
             puts("                 [ 破 解 / 恢 复 ]\n\n");
@@ -398,7 +391,7 @@ namespace mod{
             puts("-> 释放内存.");
             return false;
         }
-        inline explicit sys_op(const char _mode,const sys_rule &_rule):
+        inline explicit sys_op(const char _mode,const sys_rule::base &_rule):
             mode_{_mode},
             rule_{_rule}
         {}
