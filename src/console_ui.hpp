@@ -192,6 +192,53 @@ public:
     inline auto size(){
         return item_.size();
     }
+    inline auto &set_window(
+        UINT _code_page,
+#ifdef _UNICODE
+        LPCWSTR _title,
+#else
+        LPCSTR _title,
+#endif
+        SHORT _width,
+        SHORT _height,
+        bool _fix_size,
+        bool _minimize_ctrl,
+        bool _close_window_ctrl,
+        BYTE _alpha
+    ){
+        SetConsoleOutputCP(_code_page);
+        SetConsoleCP(_code_page);
+        SetConsoleTitle(_title);
+        using namespace std::string_literals;
+        system(
+            "mode con cols="s
+              .append(std::to_string(_width))
+              .append(" lines=")
+              .append(std::to_string(_height))
+              .c_str()
+        );
+        if(_fix_size){
+            SetWindowLongPtr(
+                GetConsoleWindow(),GWL_STYLE,
+                GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)&~WS_SIZEBOX&~WS_MAXIMIZEBOX
+            );
+        }
+        if(!_minimize_ctrl){
+            SetWindowLongPtr(
+                GetConsoleWindow(),GWL_STYLE,
+                GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)&~WS_MINIMIZEBOX
+            );
+        }
+        if(!_close_window_ctrl){
+            EnableMenuItem(
+                GetSystemMenu(GetConsoleWindow(),FALSE),
+                SC_CLOSE,
+                MF_BYCOMMAND|MF_DISABLED|MF_GRAYED
+            );
+        }
+        SetLayeredWindowAttributes(GetConsoleWindow(),0,_alpha,LWA_ALPHA);
+        return *this;
+    }
     inline auto &add(
         const char *const _text,
         const callback_ _function=nullptr,
