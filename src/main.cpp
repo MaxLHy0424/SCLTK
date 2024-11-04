@@ -1,7 +1,6 @@
 #ifdef _WIN32
 #include"console_ui.hpp"
 #include"mod.hpp"
-#include<string>
 #include<thread>
 #ifdef _NEXT_
 auto main()->int{
@@ -78,9 +77,9 @@ auto main(const int _argc,const char *const _args[])->int{
         ui.add(" (!) 参数错误.\n");
     }
 #endif
-    ui.add(" < 退出 ",mod::exit,CONSOLE_UI_TEXT_RED)
+    ui.add(" < 退出 ",mod::exit,CUI_TEXT_RED)
 #ifdef _NEXT_
-      .add(" < 重启 ",mod::relaunch_as_admin,CONSOLE_UI_TEXT_RED)
+      .add(" < 重启 ",mod::relaunch_as_admin,CUI_TEXT_RED)
 #endif
       .add(" > 关于 ",mod::info)
 #ifdef _NEXT_
