@@ -1,9 +1,6 @@
 #pragma once
 #include"info.hpp"
 #include"console_ui.hpp"
-#include<windows.h>
-#include<vector>
-#include<string>
 #ifdef _NEXT_
 #include<fstream>
 #endif
@@ -135,7 +132,7 @@ namespace mod{
 #endif
         console_ui ui;
         ui.add("                    [ 关  于 ]\n\n")
-          .add(" < 返回 ",mod::exit,CONSOLE_UI_TEXT_RED)
+          .add(" < 返回 ",mod::exit,CUI_TEXT_RED)
           .add("\n[名称]\n")
           .add(" " INFO_NAME)
           .add("\n[版本]\n")
@@ -283,7 +280,7 @@ namespace mod{
             console_ui ui;
             ui.add("                    [ 配  置 ]\n\n")
               .add(" (i) 此处设置将在下次启动时生效.\n     可通过 <rule_exe> 与 <rule_svc> 自定义规则.\n")
-              .add(" < 格式化保存并返回 ",std::move(save),CONSOLE_UI_TEXT_RED)
+              .add(" < 格式化保存并返回 ",std::move(save),CUI_TEXT_RED)
               .add(" > 打开配置文件 ",std::move(open_config_file))
               .add("\n[半透明窗口]\n")
               .add(" > 启用 ",[](console_ui::fn_args){config_data.translucent_window=true;return false;})
