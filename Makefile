@@ -6,7 +6,7 @@ args_release=-DNDEBUG $(args_base) -static -Oz -flto=auto -fno-rtti -o
 args_debug=$(args_base) -Og -g3 -o
 tag=std
 arch=x86_64
-version=v5.10.1
+version=v5.10.2
 .PHONY:init build debug clean
 init:
 	$(msys2)\\usr\\bin\\pacman.exe -Syyu --noconfirm --needed\
