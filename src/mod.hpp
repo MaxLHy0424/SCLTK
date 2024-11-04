@@ -327,7 +327,7 @@ namespace mod{
             puts("                 [ 破 解 / 恢 复 ]\n\n");
 #ifdef _NEXT_
             if((rule_.exe.empty())&&(rule_.svc.empty())){
-                puts(" (!) 规则为空.\n");
+                puts(" (i) 规则为空.\n");
                 for(unsigned short i{3};i>0;--i){
                     printf(" %hu 秒后返回.\r",i);
                     Sleep(1000);
@@ -336,7 +336,7 @@ namespace mod{
             }
 #else
             if(!is_run_as_admin()){
-                puts("\n (!) 需要提权.\n");
+                puts("\n (i) 需要管理员权限.\n");
                 for(unsigned short i{3};i>0;--i){
                     printf(" %hu 秒后返回.\r",i);
                     Sleep(1000);
