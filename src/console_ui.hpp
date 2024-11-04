@@ -77,26 +77,31 @@ private:
     };
     std::vector<ui_item_> item_;
     short console_height,console_width;
-    enum ui_item_attrs_op_{t_add='+',t_remove='-'};
+    enum console_attrs_op_{t_normal=0,t_lock_text=1,t_lock_all=2};
     inline auto show_cursor_(const bool _mode){
         CONSOLE_CURSOR_INFO cursor;
         GetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&cursor);
         cursor.bVisible=_mode;
         SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&cursor);
     }
-    inline auto edit_attrs_(const ui_item_attrs_op_ _mode){
+    inline auto edit_attrs_(const console_attrs_op_ _mode){
         DWORD attrs;
         GetConsoleMode(GetStdHandle(STD_INPUT_HANDLE),&attrs);
         switch(_mode){
-            case t_add:{
+            case t_normal:{
                 attrs|=ENABLE_QUICK_EDIT_MODE,
                 attrs|=ENABLE_INSERT_MODE,
                 attrs|=ENABLE_MOUSE_INPUT;
                 break;
-            }case t_remove:{
+            }case t_lock_text:{
                 attrs&=~ENABLE_QUICK_EDIT_MODE,
                 attrs&=~ENABLE_INSERT_MODE,
                 attrs|=ENABLE_MOUSE_INPUT;
+                break;
+            }case t_lock_all:{
+                attrs&=~ENABLE_QUICK_EDIT_MODE,
+                attrs&=~ENABLE_INSERT_MODE,
+                attrs&=~ENABLE_MOUSE_INPUT;
                 break;
             }
         }
@@ -169,19 +174,6 @@ private:
             }
         }
     }
-    inline auto lock_(const bool _is_lock){
-        switch(_is_lock){
-            case true:{
-                show_cursor_(false);
-                edit_attrs_(t_remove);
-                break;
-            }case false:{
-                show_cursor_(true);
-                edit_attrs_(t_add);
-                break;
-            }
-        }
-    }
     inline auto run_fn_(const MOUSE_EVENT_RECORD &_mouse_event){
         bool isExit{};
         for(auto &line:item_){
@@ -189,9 +181,11 @@ private:
                 if(line.function!=nullptr){
                     cls_();
                     line.set_color(line.default_color);
-                    lock_(false);
+                    show_cursor_(true);
+                    edit_attrs_(t_normal);
                     isExit=line.function(fn_args{_mouse_event,this});
-                    lock_(true);
+                    show_cursor_(false);
+                    edit_attrs_(t_lock_text);
                     init_pos_();
                 }
                 break;
@@ -251,7 +245,8 @@ public:
         return *this;
     }
     inline auto &lock(const bool _is_lock){
-        lock_(_is_lock);
+        show_cursor_(!_is_lock);
+        edit_attrs_((_is_lock)?(t_lock_all):(t_normal));
         return *this;
     }
     inline auto &add(
@@ -316,7 +311,8 @@ public:
         return *this;
     }
     inline auto &show(){
-        lock_(true);
+        show_cursor_(false);
+        edit_attrs_(t_lock_text);
         MOUSE_EVENT_RECORD mouse_event;
         init_pos_();
         bool is_exit{};
