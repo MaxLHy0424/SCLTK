@@ -111,7 +111,8 @@ auto main(const int _argc,const char *const _args[])->int{
         (config_data.translucent_window)?(230):(255)
       )
 #endif
-      .show();
+      .show()
+      .lock(false);
     return 0;
 }
 #endif

@@ -169,6 +169,19 @@ private:
             }
         }
     }
+    inline auto lock_(const bool _is_lock){
+        switch(_is_lock){
+            case true:{
+                show_cursor_(false);
+                edit_attrs_(t_remove);
+                break;
+            }case false:{
+                show_cursor_(true);
+                edit_attrs_(t_add);
+                break;
+            }
+        }
+    }
     inline auto run_fn_(const MOUSE_EVENT_RECORD &_mouse_event){
         bool isExit{};
         for(auto &line:item_){
@@ -176,11 +189,9 @@ private:
                 if(line.function!=nullptr){
                     cls_();
                     line.set_color(line.default_color);
-                    edit_attrs_(t_add);
-                    show_cursor_(true);
+                    lock_(false);
                     isExit=line.function(fn_args{_mouse_event,this});
-                    edit_attrs_(t_remove);
-                    show_cursor_(false);
+                    lock_(true);
                     init_pos_();
                 }
                 break;
@@ -237,6 +248,10 @@ public:
             );
         }
         SetLayeredWindowAttributes(GetConsoleWindow(),0,_alpha,LWA_ALPHA);
+        return *this;
+    }
+    inline auto &lock(const bool _is_lock){
+        lock_(_is_lock);
         return *this;
     }
     inline auto &add(
@@ -301,8 +316,7 @@ public:
         return *this;
     }
     inline auto &show(){
-        show_cursor_(false);
-        edit_attrs_(t_remove);
+        lock_(true);
         MOUSE_EVENT_RECORD mouse_event;
         init_pos_();
         bool is_exit{};
@@ -324,11 +338,6 @@ public:
         cls_();
         return *this;
     }
-    inline auto &exit(){
-        edit_attrs_(t_add);
-        show_cursor_(true);
-        return *this;
-    }
     inline explicit console_ui():
         item_{},
         console_height{},
@@ -344,7 +353,5 @@ public:
         console_height{},
         console_width{}
     {}
-    inline ~console_ui(){
-        exit();
-    }
+    inline ~console_ui(){}
 };
