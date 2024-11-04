@@ -323,6 +323,7 @@ namespace mod{
         const sys_rule::base &rule_;
     public:
         inline auto operator()(console_ui::fn_args)const{
+            console_ui{}.lock(true);
             puts("                 [ 破 解 / 恢 复 ]\n\n");
 #ifdef _NEXT_
             if((rule_.exe.empty())&&(rule_.svc.empty())){
