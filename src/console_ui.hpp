@@ -204,18 +204,18 @@ public:
         return item_.size();
     }
     inline auto &set_window(
-        UINT _code_page,
+        const UINT _code_page,
 #if defined(_UNICODE)||defined(UNICODE)
-        LPCWSTR _title,
+        const WCHAR *const _title,
 #else
-        LPCSTR _title,
+        const CHAR *const _title,
 #endif
-        SHORT _width,
-        SHORT _height,
-        bool _fix_size,
-        bool _minimize_ctrl,
-        bool _close_window_ctrl,
-        BYTE _alpha
+        const SHORT _width,
+        const SHORT _height,
+        const bool _fix_size,
+        const bool _minimize_ctrl,
+        const bool _close_window_ctrl,
+        const BYTE _alpha
     ){
         SetConsoleOutputCP(_code_page);
         SetConsoleCP(_code_page);
