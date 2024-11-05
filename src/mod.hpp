@@ -151,7 +151,7 @@ namespace mod{
         return false;
     }
     inline auto cmd(console_ui::args args){
-        args.ui->lock(false);
+        args.ui->lock(false,false);
         system("cmd");
 #ifdef _NEXT_
         console_ui{}.set_console(
@@ -182,7 +182,7 @@ namespace mod{
                 goto END;
             }
             {
-                console_ui{}.lock(true);
+                console_ui{}.lock(true,true);
                 puts("-> 加载配置文件.");
                 if(!is_reload_){
                     config_data={};

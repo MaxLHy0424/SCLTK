@@ -244,9 +244,9 @@ public:
         SetLayeredWindowAttributes(GetConsoleWindow(),0,_alpha,LWA_ALPHA);
         return *this;
     }
-    inline auto &lock(const bool _is_lock){
-        show_cursor_(!_is_lock);
-        edit_attrs_((_is_lock)?(t_lock_all):(t_normal));
+    inline auto &lock(const bool _is_hide_cursor,const bool _is_lock_text){
+        show_cursor_(!_is_hide_cursor);
+        edit_attrs_((_is_lock_text)?(t_lock_all):(t_normal));
         return *this;
     }
     inline auto &add(
