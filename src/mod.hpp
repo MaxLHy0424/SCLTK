@@ -181,7 +181,7 @@ namespace mod{
                 goto END;
             }
             {
-                console_ui{}.lock_console(true);
+                console_ui{}.lock(true);
                 puts("-> 加载配置文件.");
                 if(!is_reload_){
                     config_data={};
@@ -244,7 +244,7 @@ namespace mod{
             auto sync{[&](console_ui::args){
                 is_reload_=true;
                 load_();
-                console_ui{}.lock_console(true);
+                console_ui{}.lock(true);
                 puts("-> 同步更改.");
                 std::string text;
                 text.append("<settings>\n");
@@ -275,7 +275,7 @@ namespace mod{
                 return true;
             }};
             auto open_config_file{[](console_ui::args){
-                console_ui{}.lock_console(true);
+                console_ui{}.lock(true);
                 puts("-> 打开配置文件.");
                 ShellExecute(nullptr,"","config.ini",nullptr,nullptr,SW_SHOWNORMAL);
                 return false;
@@ -323,7 +323,7 @@ namespace mod{
         const sys_rule::base &rule_;
     public:
         inline auto operator()(console_ui::args)const{
-            console_ui{}.lock_console(true);
+            console_ui{}.lock(true);
             puts("                 [ 破 解 / 恢 复 ]\n\n");
 #ifdef _NEXT_
             if((rule_.exe.empty())&&(rule_.svc.empty())){
