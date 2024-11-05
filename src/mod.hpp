@@ -181,8 +181,7 @@ namespace mod{
                 goto END;
             }
             {
-                console_ui ui;
-                ui.lock_console(true);
+                console_ui{}.lock_console(true);
                 puts("-> 加载配置文件.");
                 if(!is_reload_){
                     config_data={};
@@ -245,8 +244,7 @@ namespace mod{
             auto sync{[&](console_ui::args){
                 is_reload_=true;
                 load_();
-                console_ui ui;
-                ui.lock_console(true);
+                console_ui{}.lock_console(true);
                 puts("-> 同步更改.");
                 std::string text;
                 text.append("<settings>\n");
@@ -277,8 +275,7 @@ namespace mod{
                 return true;
             }};
             auto open_config_file{[](console_ui::args){
-                console_ui ui;
-                ui.lock_console(true);
+                console_ui{}.lock_console(true);
                 puts("-> 打开配置文件.");
                 ShellExecute(nullptr,"","config.ini",nullptr,nullptr,SW_SHOWNORMAL);
                 return false;
