@@ -6,7 +6,7 @@
 auto main()->int{
     console_ui ui;
     ui.set_console(936,"CRCSN",50,25,true,false,true,255)
-      .lock(true);
+      .lock(true,true);
     puts("-> 检测运行权限.");
     if(!mod::is_run_as_admin()){
         puts("-> 申请管理员权限.");
@@ -112,7 +112,7 @@ auto main(const int _argc,const char *const _args[])->int{
       )
 #endif
       .show()
-      .lock(false);
+      .lock(false,false);
     return 0;
 }
 #endif
