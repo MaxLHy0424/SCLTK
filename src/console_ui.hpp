@@ -181,8 +181,8 @@ private:
                 if(line.function!=nullptr){
                     cls_();
                     line.set_color(line.default_color);
-                    show_cursor_(true);
-                    edit_attrs_(t_normal);
+                    show_cursor_(false);
+                    edit_attrs_(t_lock_all);
                     isExit=line.function(args{_mouse_event,this});
                     show_cursor_(false);
                     edit_attrs_(t_lock_text);
