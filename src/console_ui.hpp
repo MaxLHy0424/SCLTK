@@ -76,7 +76,7 @@ private:
         }
     };
     std::vector<ui_item_> item_;
-    short console_height,console_width;
+    short height_,width_;
     enum console_attrs_op_{t_normal=0,t_lock_text=1,t_lock_all=2};
     inline auto show_cursor_(const bool _mode){
         CONSOLE_CURSOR_INFO cursor;
@@ -132,18 +132,18 @@ private:
     inline auto get_console_size_(){
         CONSOLE_SCREEN_BUFFER_INFO console;
         GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE),&console);
-        console_height=console.dwSize.Y;
-        console_width=console.dwSize.X;
+        height_=console.dwSize.Y;
+        width_=console.dwSize.X;
     }
     inline auto cls_(){
         get_console_size_();
         set_cursor_({0,0});
-        printf("%s",std::string(console_width*console_height,' ').c_str());
+        printf("%s",std::string(width_*height_,' ').c_str());
         set_cursor_({0,0});
     }
-    inline auto write_(const char *const _text,const bool _isEndl=false){
+    inline auto write_(const char *const _text,const bool _is_endl=false){
         printf("%s",_text);
-        if(_isEndl){
+        if(_is_endl){
             printf("\n");
         }
     }
@@ -174,7 +174,7 @@ private:
             }
         }
     }
-    inline auto execute_function_(const MOUSE_EVENT_RECORD &_mouse_event){
+    inline auto exec_fn_(const MOUSE_EVENT_RECORD &_mouse_event){
         bool isExit{};
         for(auto &line:item_){
             if(line==_mouse_event.dwMousePosition){
@@ -324,7 +324,7 @@ public:
                     break;
                 }case CUI_MOUSE_CLICK:{
                     if((mouse_event.dwButtonState)&&(mouse_event.dwButtonState!=CUI_MOUSE_WHEEL)){
-                        is_exit=execute_function_(mouse_event);
+                        is_exit=exec_fn_(mouse_event);
                     }
                     break;
                 }
@@ -336,18 +336,18 @@ public:
     }
     inline explicit console_ui():
         item_{},
-        console_height{},
-        console_width{}
+        height_{},
+        width_{}
     {}
     inline explicit console_ui(const console_ui &_obj):
         item_{_obj.item_},
-        console_height{},
-        console_width{}
+        height_{},
+        width_{}
     {}
     inline explicit console_ui(const console_ui &&_obj):
         item_{std::move(_obj.item_)},
-        console_height{},
-        console_width{}
+        height_{},
+        width_{}
     {}
     inline ~console_ui(){}
 };
