@@ -77,7 +77,7 @@ private:
     };
     std::vector<ui_item_> item_;
     short console_height,console_width;
-    enum console_attrs_op_{t_normal=0,t_lock_text=1,t_lock_all=2};
+    enum console_attrs_op_{t_normal=0,t_lock_console_text=1,t_lock_console_all=2};
     inline auto show_cursor_(const bool _mode){
         CONSOLE_CURSOR_INFO cursor;
         GetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&cursor);
@@ -93,12 +93,12 @@ private:
                 attrs|=ENABLE_INSERT_MODE,
                 attrs|=ENABLE_MOUSE_INPUT;
                 break;
-            }case t_lock_text:{
+            }case t_lock_console_text:{
                 attrs&=~ENABLE_QUICK_EDIT_MODE,
                 attrs&=~ENABLE_INSERT_MODE,
                 attrs|=ENABLE_MOUSE_INPUT;
                 break;
-            }case t_lock_all:{
+            }case t_lock_console_all:{
                 attrs&=~ENABLE_QUICK_EDIT_MODE,
                 attrs&=~ENABLE_INSERT_MODE,
                 attrs&=~ENABLE_MOUSE_INPUT;
@@ -185,7 +185,7 @@ private:
                     edit_attrs_(t_normal);
                     isExit=line.function(args{_mouse_event,this});
                     show_cursor_(false);
-                    edit_attrs_(t_lock_text);
+                    edit_attrs_(t_lock_console_text);
                     init_pos_();
                 }
                 break;
@@ -244,9 +244,9 @@ public:
         SetLayeredWindowAttributes(GetConsoleWindow(),0,_alpha,LWA_ALPHA);
         return *this;
     }
-    inline auto &lock(const bool _is_lock){
-        show_cursor_(!_is_lock);
-        edit_attrs_((_is_lock)?(t_lock_all):(t_normal));
+    inline auto &lock_console(const bool _is_lock_console){
+        show_cursor_(!_is_lock_console);
+        edit_attrs_((_is_lock_console)?(t_lock_console_all):(t_normal));
         return *this;
     }
     inline auto &add(
@@ -312,7 +312,7 @@ public:
     }
     inline auto &show(){
         show_cursor_(false);
-        edit_attrs_(t_lock_text);
+        edit_attrs_(t_lock_console_text);
         MOUSE_EVENT_RECORD mouse_event;
         init_pos_();
         bool is_exit{};
