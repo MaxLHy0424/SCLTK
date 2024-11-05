@@ -83,7 +83,7 @@ namespace mod{
         return is_admin;
     }
 #ifdef _NEXT_
-    inline auto relaunch_as_admin(console_ui::args){
+    inline auto reboot_as_admin(console_ui::args){
         char *const path{new char[MAX_PATH]{}};
         GetModuleFileName(nullptr,path,MAX_PATH);
         ShellExecute(nullptr,"runAs",path,nullptr,nullptr,SW_SHOWNORMAL);
@@ -153,7 +153,7 @@ namespace mod{
     inline auto cmd(console_ui::args){
         system("cmd");
 #ifdef _NEXT_
-        console_ui{}.set_window(
+        console_ui{}.set_console(
             936,
             "CRCSN",
             50,

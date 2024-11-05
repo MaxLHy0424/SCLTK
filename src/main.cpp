@@ -5,12 +5,12 @@
 #ifdef _NEXT_
 auto main()->int{
     console_ui ui;
-    ui.set_window(936,"CRCSN",50,25,true,false,true,255)
+    ui.set_console(936,"CRCSN",50,25,true,false,true,255)
       .lock_console(true);
     puts("-> 检测运行权限.");
     if(!mod::is_run_as_admin()){
         puts("-> 申请管理员权限.");
-        mod::relaunch_as_admin(console_ui::args{});
+        mod::reboot_as_admin(console_ui::args{});
         return 0;
     }
     mod::config_op{'r'}(console_ui::args{});
@@ -80,7 +80,7 @@ auto main(const int _argc,const char *const _args[])->int{
 #endif
     ui.add(" < 退出 ",mod::exit,CUI_TEXT_RED)
 #ifdef _NEXT_
-      .add(" < 重启 ",mod::relaunch_as_admin,CUI_TEXT_RED)
+      .add(" < 重启 ",mod::reboot_as_admin,CUI_TEXT_RED)
 #endif
       .add(" > 关于 ",mod::info)
 #ifdef _NEXT_
@@ -100,7 +100,7 @@ auto main(const int _argc,const char *const _args[])->int{
       .add(" > 自定义 ",mod::sys_op{'r',mod::sys_rule::custom})
 #endif
 #ifdef _NEXT_
-      .set_window(
+      .set_console(
         936,
         "CRCSN",
         50,
