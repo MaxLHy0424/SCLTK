@@ -197,7 +197,7 @@ public:
     inline auto size(){
         return item_.size();
     }
-    inline auto &set_window(
+    inline auto &set_console(
         const UINT _code_page,
 #if defined(_UNICODE)||defined(UNICODE)
         const WCHAR *const _title,
