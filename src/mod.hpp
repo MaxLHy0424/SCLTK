@@ -64,7 +64,7 @@ namespace mod{
         };
         inline base custom{};
     }
-    inline auto exit(console_ui::fn_args){
+    inline auto exit(console_ui::args){
         return true;
     }
     inline auto is_run_as_admin(){
@@ -83,7 +83,7 @@ namespace mod{
         return is_admin;
     }
 #ifdef _NEXT_
-    inline auto relaunch_as_admin(console_ui::fn_args){
+    inline auto relaunch_as_admin(console_ui::args){
         char *const path{new char[MAX_PATH]{}};
         GetModuleFileName(nullptr,path,MAX_PATH);
         ShellExecute(nullptr,"runAs",path,nullptr,nullptr,SW_SHOWNORMAL);
@@ -123,9 +123,9 @@ namespace mod{
         }
     }
 #endif
-    inline auto info(console_ui::fn_args){
+    inline auto info(console_ui::args){
 #ifdef _NEXT_
-        auto visit_repo_webpage{[](console_ui::fn_args){
+        auto visit_repo_webpage{[](console_ui::args){
             ShellExecute(nullptr,"",INFO_REPO_URL,nullptr,nullptr,SW_SHOWNORMAL);
             return false;
         }};
@@ -150,7 +150,7 @@ namespace mod{
           .show();
         return false;
     }
-    inline auto cmd(console_ui::fn_args){
+    inline auto cmd(console_ui::args){
         system("cmd");
 #ifdef _NEXT_
         console_ui{}.set_window(
@@ -240,10 +240,10 @@ namespace mod{
             return;
         }
         inline auto edit_(){
-            auto save{[&](console_ui::fn_args){
+            auto sync{[&](console_ui::args){
                 is_reload_=true;
                 load_();
-                puts("-> 格式化保存配置文件.");
+                puts("-> 同步配置文件.");
                 std::string text;
                 text.append("<settings>\n");
                 if(config_data.front_show_window){
@@ -272,7 +272,7 @@ namespace mod{
                 config_file.close();
                 return true;
             }};
-            auto open_config_file{[](console_ui::fn_args){
+            auto open_config_file{[](console_ui::args){
                 puts("-> 打开配置文件.");
                 ShellExecute(nullptr,"","config.ini",nullptr,nullptr,SW_SHOWNORMAL);
                 return false;
@@ -280,22 +280,22 @@ namespace mod{
             console_ui ui;
             ui.add("                    [ 配  置 ]\n\n")
               .add(" (i) 此处设置将在下次启动时生效.\n     可通过 <rule_exe> 与 <rule_svc> 自定义规则.\n")
-              .add(" < 格式化保存并返回 ",std::move(save),CUI_TEXT_RED)
+              .add(" < 同步配置并返回 ",std::move(sync),CUI_TEXT_RED)
               .add(" > 打开配置文件 ",std::move(open_config_file))
               .add("\n[半透明窗口]\n")
-              .add(" > 启用 ",[](console_ui::fn_args){config_data.translucent_window=true;return false;})
-              .add(" > 禁用 ",[](console_ui::fn_args){config_data.translucent_window=false;return false;})
+              .add(" > 启用 ",[](console_ui::args){config_data.translucent_window=true;return false;})
+              .add(" > 禁用 ",[](console_ui::args){config_data.translucent_window=false;return false;})
               .add("\n[置顶窗口]\n")
-              .add(" > 启用 ",[](console_ui::fn_args){config_data.front_show_window=true;return false;})
-              .add(" > 禁用 ",[](console_ui::fn_args){config_data.front_show_window=false;return false;})
+              .add(" > 启用 ",[](console_ui::args){config_data.front_show_window=true;return false;})
+              .add(" > 禁用 ",[](console_ui::args){config_data.front_show_window=false;return false;})
               .add("\n[隐藏窗口关闭控件]\n")
-              .add(" > 启用 ",[](console_ui::fn_args){config_data.hide_window_close_ctrl=true;return false;})
-              .add(" > 禁用 ",[](console_ui::fn_args){config_data.hide_window_close_ctrl=false;return false;})
+              .add(" > 启用 ",[](console_ui::args){config_data.hide_window_close_ctrl=true;return false;})
+              .add(" > 禁用 ",[](console_ui::args){config_data.hide_window_close_ctrl=false;return false;})
               .show();
             return false;
         }
     public:
-        inline auto operator()(console_ui::fn_args){
+        inline auto operator()(console_ui::args){
             switch(mode_){
                 case 'r':{
                     load_();
@@ -319,7 +319,7 @@ namespace mod{
         const char mode_;
         const sys_rule::base &rule_;
     public:
-        inline auto operator()(console_ui::fn_args)const{
+        inline auto operator()(console_ui::args)const{
             console_ui{}.lock(true);
             puts("                 [ 破 解 / 恢 复 ]\n\n");
 #ifdef _NEXT_

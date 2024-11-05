@@ -9,10 +9,10 @@ auto main()->int{
     puts("-> 检测运行权限.");
     if(!mod::is_run_as_admin()){
         puts("-> 申请管理员权限.");
-        mod::relaunch_as_admin(console_ui::fn_args{});
+        mod::relaunch_as_admin(console_ui::args{});
         return 0;
     }
-    mod::config_op{'r'}(console_ui::fn_args{});
+    mod::config_op{'r'}(console_ui::args{});
 #else
 auto main(const int _argc,const char *const _args[])->int{
     console_ui ui;
