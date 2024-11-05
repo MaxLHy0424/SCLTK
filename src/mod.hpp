@@ -150,7 +150,8 @@ namespace mod{
           .show();
         return false;
     }
-    inline auto cmd(console_ui::args){
+    inline auto cmd(console_ui::args args){
+        args.ui->lock(false);
         system("cmd");
 #ifdef _NEXT_
         console_ui{}.set_console(
