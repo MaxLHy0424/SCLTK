@@ -16,26 +16,26 @@
 #define CUI_TEXT_RED 0x0c
 class console_ui final{
 public:
-    struct fn_args final{
+    struct args final{
         const DWORD button_state,ctrl_key_state,event_flag;
         console_ui *const ui;
-        inline explicit fn_args():
+        inline explicit args():
             button_state{CUI_MOUSE_BUTTON_LEFT},
             ctrl_key_state{},
             event_flag{},
             ui{}
         {}
-        inline explicit fn_args(const MOUSE_EVENT_RECORD _mouse_event,console_ui *const _ui):
+        inline explicit args(const MOUSE_EVENT_RECORD _mouse_event,console_ui *const _ui):
             button_state{_mouse_event.dwButtonState},
             ctrl_key_state{_mouse_event.dwControlKeyState},
             event_flag{_mouse_event.dwEventFlags},
             ui{_ui}
         {}
-        inline ~fn_args(){}
+        inline ~args(){}
     };
 private:
     using size_type_=std::size_t;
-    using callback_=std::function<bool(fn_args)>;
+    using callback_=std::function<bool(args)>;
     struct ui_item_ final{
         const char *text;
         short default_color,highlight_color,last_color;
@@ -183,7 +183,7 @@ private:
                     line.set_color(line.default_color);
                     show_cursor_(true);
                     edit_attrs_(t_normal);
-                    isExit=line.function(fn_args{_mouse_event,this});
+                    isExit=line.function(args{_mouse_event,this});
                     show_cursor_(false);
                     edit_attrs_(t_lock_text);
                     init_pos_();
