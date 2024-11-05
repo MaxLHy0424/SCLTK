@@ -98,8 +98,6 @@ auto main(const int _argc,const char *const _args[])->int{
       .add(" > 联想云教室 ",mod::sys_op{'r',mod::sys_rule::lenovo})
 #ifdef _NEXT_
       .add(" > 自定义 ",mod::sys_op{'r',mod::sys_rule::custom})
-#endif
-#ifdef _NEXT_
       .set_console(
         936,
         "CRCSN",
