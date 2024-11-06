@@ -184,6 +184,9 @@ namespace mod{
             {
                 console_ui{}.lock(true,true);
                 puts("-> 加载配置文件.");
+                if(is_reload_){
+                    puts("-> 合并更改.");
+                }
                 if(!is_reload_){
                     config_data={};
                 }
@@ -245,7 +248,7 @@ namespace mod{
             auto sync{[&](console_ui::args){
                 is_reload_=true;
                 load_();
-                puts("-> 同步更改.");
+                puts("-> 保存更改.");
                 std::string text;
                 text.append("<settings>\n");
                 if(config_data.hide_window_close_ctrl){
@@ -378,11 +381,9 @@ namespace mod{
                     break;
                 }
             }
-            puts("-> 执行命令.");
-            puts(std::string(50,'-').c_str());
+            printf("-> 执行命令.\n%s\n",std::string(50,'-').c_str());
             system(cmd.c_str());
-            puts(std::string(50,'-').c_str());
-            puts("-> 释放内存.");
+            printf("%s\n-> 释放内存.",std::string(50,'-').c_str());
             return false;
         }
         inline explicit sys_op(const char _mode,const sys_rule::base &_rule):
