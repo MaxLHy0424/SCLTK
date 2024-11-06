@@ -6,7 +6,7 @@
 #endif
 inline struct{
 #ifdef _NEXT_
-    bool front_show_window,translucent_window,hide_window_close_ctrl;
+    bool enhanced_window,hide_window_close_ctrl;
 #else
     bool front_show_window,translucent_window,window_ctrls;
 #endif
@@ -162,7 +162,7 @@ namespace mod{
             true,
             false,
             !config_data.hide_window_close_ctrl,
-            (config_data.translucent_window)?(230):(255)
+            (config_data.enhanced_window)?(230):(255)
         );
 #else
         if(!config_data.window_ctrls){
@@ -219,10 +219,8 @@ namespace mod{
                             if(is_reload_){
                                 continue;
                             }
-                            if(line=="front_show_window"){
-                                config_data.front_show_window=true;
-                            }else if(line=="translucent_window"){
-                                config_data.translucent_window=true;
+                            if(line=="enhanced_window"){
+                                config_data.enhanced_window=true;
                             }else if(line=="hide_window_close_ctrl"){
                                 config_data.hide_window_close_ctrl=true;
                             }
@@ -248,11 +246,8 @@ namespace mod{
                 puts("-> 同步更改.");
                 std::string text;
                 text.append("<settings>\n");
-                if(config_data.front_show_window){
-                    text.append("front_show_window\n");
-                }
-                if(config_data.translucent_window){
-                    text.append("translucent_window\n");
+                if(config_data.enhanced_window){
+                    text.append("enhanced_window\n");
                 }
                 if(config_data.hide_window_close_ctrl){
                     text.append("hide_window_close_ctrl\n");
@@ -284,12 +279,9 @@ namespace mod{
               .add(" (i) 此处设置将在下次启动时生效.\n     可通过 <rule_exe> 与 <rule_svc> 自定义规则.\n")
               .add(" < 同步配置并返回 ",std::move(sync),CUI_TEXT_RED)
               .add(" > 打开配置文件 ",std::move(open_config_file))
-              .add("\n[半透明窗口]\n")
-              .add(" > 启用 ",[](console_ui::args){config_data.translucent_window=true;return false;})
-              .add(" > 禁用 ",[](console_ui::args){config_data.translucent_window=false;return false;})
-              .add("\n[置顶窗口]\n")
-              .add(" > 启用 ",[](console_ui::args){config_data.front_show_window=true;return false;})
-              .add(" > 禁用 ",[](console_ui::args){config_data.front_show_window=false;return false;})
+              .add("\n[增强窗口]\n")
+              .add(" > 启用 ",[](console_ui::args){config_data.enhanced_window=true;return false;})
+              .add(" > 禁用 ",[](console_ui::args){config_data.enhanced_window=false;return false;})
               .add("\n[隐藏窗口关闭控件]\n")
               .add(" > 启用 ",[](console_ui::args){config_data.hide_window_close_ctrl=true;return false;})
               .add(" > 禁用 ",[](console_ui::args){config_data.hide_window_close_ctrl=false;return false;})
