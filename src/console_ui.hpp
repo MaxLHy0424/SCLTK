@@ -222,25 +222,23 @@ public:
               .append(std::to_string(_height))
               .c_str()
         );
-        if(_fix_size){
-            SetWindowLongPtr(
-                GetConsoleWindow(),GWL_STYLE,
-                GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)&~WS_SIZEBOX&~WS_MAXIMIZEBOX
-            );
-        }
-        if(!_minimize_ctrl){
-            SetWindowLongPtr(
-                GetConsoleWindow(),GWL_STYLE,
-                GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)&~WS_MINIMIZEBOX
-            );
-        }
-        if(!_close_window_ctrl){
-            EnableMenuItem(
-                GetSystemMenu(GetConsoleWindow(),FALSE),
-                SC_CLOSE,
-                MF_BYCOMMAND|MF_DISABLED|MF_GRAYED
-            );
-        }
+        SetWindowLongPtr(
+            GetConsoleWindow(),GWL_STYLE,
+            (_fix_size)
+              ?(GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)&~WS_SIZEBOX&~WS_MAXIMIZEBOX)
+              :(GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)|WS_SIZEBOX|WS_MAXIMIZEBOX)
+        );
+        SetWindowLongPtr(
+            GetConsoleWindow(),GWL_STYLE,
+            (_minimize_ctrl)
+              ?(GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)|WS_MINIMIZEBOX)
+              :(GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)&~WS_MINIMIZEBOX)
+        );
+        EnableMenuItem(
+            GetSystemMenu(GetConsoleWindow(),FALSE),
+            SC_CLOSE,
+            MF_BYCOMMAND|(_close_window_ctrl)?(MF_ENABLED):(MF_DISABLED)|MF_GRAYED
+        );
         SetLayeredWindowAttributes(GetConsoleWindow(),0,_alpha,LWA_ALPHA);
         return *this;
     }
