@@ -6,7 +6,7 @@
 #endif
 inline struct{
 #ifdef _NEXT_
-    bool enhanced_window,hide_window_close_ctrl;
+    bool hide_window_close_ctrl,enhanced_window;
 #else
     bool front_show_window,translucent_window,window_ctrls;
 #endif
@@ -279,12 +279,12 @@ namespace mod{
               .add(" (i) 此处设置将在下次启动时生效.\n     可通过 <rule_exe> 与 <rule_svc> 自定义规则.\n")
               .add(" < 同步配置并返回 ",std::move(sync),CUI_TEXT_RED)
               .add(" > 打开配置文件 ",std::move(open_config_file))
-              .add("\n[增强窗口]\n")
-              .add(" > 启用 ",[](console_ui::args){config_data.enhanced_window=true;return false;})
-              .add(" > 禁用 ",[](console_ui::args){config_data.enhanced_window=false;return false;})
               .add("\n[隐藏窗口关闭控件]\n")
               .add(" > 启用 ",[](console_ui::args){config_data.hide_window_close_ctrl=true;return false;})
               .add(" > 禁用 ",[](console_ui::args){config_data.hide_window_close_ctrl=false;return false;})
+              .add("\n[增强窗口]\n")
+              .add(" > 启用 ",[](console_ui::args){config_data.enhanced_window=true;return false;})
+              .add(" > 禁用 ",[](console_ui::args){config_data.enhanced_window=false;return false;})
               .show();
             return false;
         }
