@@ -307,7 +307,6 @@ namespace mod{
         {}
         inline ~config_op(){}
     };
-#endif
     class sys_op final{
     private:
         const char mode_;
@@ -315,7 +314,6 @@ namespace mod{
     public:
         inline auto operator()(console_ui::args)const{
             puts("                 [ 破 解 / 恢 复 ]\n\n");
-#ifdef _NEXT_
             if((rule_.exe.empty())&&(rule_.svc.empty())){
                 puts(" (i) 规则为空.\n");
                 for(unsigned short i{3};i>0;--i){
@@ -324,62 +322,32 @@ namespace mod{
                 }
                 return false;
             }
-#else
-            if(!is_run_as_admin()){
-                puts("\n (i) 需要管理员权限.\n");
-                for(unsigned short i{3};i>0;--i){
-                    printf(" %hu 秒后返回.\r",i);
-                    Sleep(1000);
-                }
-                return false;
-            }
-#endif
             puts("-> 生成命令.");
             std::string cmd;
             switch(mode_){
                 case 'c':{
                     for(const auto &item:rule_.exe){
                         cmd.append(R"(reg add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\)")
-#ifdef _NEXT_
                            .append(item.get())
-#else
-                           .append(item)
-#endif
                            .append(R"(.exe" /f /t reg_sz /v debugger /d ? & taskKill /f /im ")")
-#ifdef _NEXT_
                            .append(item.get())
-#else
-                           .append(item)
-#endif
                            .append(R"(.exe" & )");
                     }
                     for(const auto &item:rule_.svc){
                         cmd.append(R"(net stop ")")
-#ifdef _NEXT_
                            .append(item.get())
-#else
-                           .append(item)
-#endif
                            .append(R"(" /y & )");
                     }
                     break;
                 }case 'r':{
                     for(const auto &item:rule_.exe){
                         cmd.append(R"(reg delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\)")
-#ifdef _NEXT_
                            .append(item.get())
-#else
-                           .append(item)
-#endif
                            .append(R"(.exe" /f & )");
                     }
                     for(const auto &item:rule_.svc){
                         cmd.append(R"(net start ")")
-#ifdef _NEXT_
                            .append(item.get())
-#else
-                           .append(item)
-#endif
                            .append(R"(" & )");
                     }
                     break;
@@ -398,4 +366,65 @@ namespace mod{
         {}
         inline ~sys_op(){}
     };
+#else
+    class sys_op final{
+    private:
+        const char mode_;
+        const sys_rule::base &rule_;
+    public:
+        inline auto operator()(console_ui::args)const{
+            puts("                 [ 破 解 / 恢 复 ]\n\n");
+            if(!is_run_as_admin()){
+                puts("\n (i) 需要管理员权限.\n");
+                for(unsigned short i{3};i>0;--i){
+                    printf(" %hu 秒后返回.\r",i);
+                    Sleep(1000);
+                }
+                return false;
+            }
+            puts("-> 生成命令.");
+            std::string cmd;
+            switch(mode_){
+                case 'c':{
+                    for(const auto &item:rule_.exe){
+                        cmd.append(R"(reg add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\)")
+                           .append(item)
+                           .append(R"(.exe" /f /t reg_sz /v debugger /d ? & taskKill /f /im ")")
+                           .append(item)
+                           .append(R"(.exe" & )");
+                    }
+                    for(const auto &item:rule_.svc){
+                        cmd.append(R"(net stop ")")
+                           .append(item)
+                           .append(R"(" /y & )");
+                    }
+                    break;
+                }case 'r':{
+                    for(const auto &item:rule_.exe){
+                        cmd.append(R"(reg delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\)")
+                           .append(item)
+                           .append(R"(.exe" /f & )");
+                    }
+                    for(const auto &item:rule_.svc){
+                        cmd.append(R"(net start ")")
+                           .append(item)
+                           .append(R"(" & )");
+                    }
+                    break;
+                }
+            }
+            puts("-> 执行命令.");
+            puts(std::string(50,'-').c_str());
+            system(cmd.c_str());
+            puts(std::string(50,'-').c_str());
+            puts("-> 释放内存.");
+            return false;
+        }
+        inline explicit sys_op(const char _mode,const sys_rule::base &_rule):
+            mode_{_mode},
+            rule_{_rule}
+        {}
+        inline ~sys_op(){}
+    };
+#endif
 }
