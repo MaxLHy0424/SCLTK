@@ -6,7 +6,7 @@
 #endif
 inline struct{
 #ifdef _NEXT_
-    bool hide_window_close_ctrl,enhanced_window;
+    bool hide_window_close_ctrl,enhanced_window,enhanced_op;
 #else
     bool front_show_window,translucent_window,window_ctrls;
 #endif
@@ -219,10 +219,12 @@ namespace mod{
                             if(is_reload_){
                                 continue;
                             }
-                            if(line=="enhanced_window"){
-                                config_data.enhanced_window=true;
-                            }else if(line=="hide_window_close_ctrl"){
+                            if(line=="hide_window_close_ctrl"){
                                 config_data.hide_window_close_ctrl=true;
+                            }else if(line=="enhanced_window"){
+                                config_data.enhanced_window=true;
+                            }else if(line=="enhanced_op"){
+                                config_data.enhanced_op=true;
                             }
                             break;
                         }case t_rule_exe:{
@@ -246,11 +248,14 @@ namespace mod{
                 puts("-> 同步更改.");
                 std::string text;
                 text.append("<settings>\n");
+                if(config_data.hide_window_close_ctrl){
+                    text.append("hide_window_close_ctrl\n");
+                }
                 if(config_data.enhanced_window){
                     text.append("enhanced_window\n");
                 }
-                if(config_data.hide_window_close_ctrl){
-                    text.append("hide_window_close_ctrl\n");
+                if(config_data.enhanced_op){
+                    text.append("enhanced_op\n");
                 }
                 text.append("<rule_exe>\n");
                 if(!sys_rule::custom.exe.empty()){
@@ -285,6 +290,9 @@ namespace mod{
               .add("\n[增强窗口]\n")
               .add(" > 启用 ",[](console_ui::args){config_data.enhanced_window=true;return false;})
               .add(" > 禁用 ",[](console_ui::args){config_data.enhanced_window=false;return false;})
+              .add("\n[增强操作]\n")
+              .add(" > 启用 ",[](console_ui::args){config_data.enhanced_op=true;return false;})
+              .add(" > 禁用 ",[](console_ui::args){config_data.enhanced_op=false;return false;})
               .show();
             return false;
         }
@@ -326,10 +334,20 @@ namespace mod{
             std::string cmd;
             switch(mode_){
                 case 'c':{
+                    if(config_data.enhanced_op){
+                        for(const auto &item:rule_.exe){
+                            cmd.append(R"(reg add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\)")
+                               .append(item.get())
+                               .append(R"(.exe" /f /t reg_sz /v debugger /d _ & )");
+                        }
+                        for(const auto &item:rule_.svc){
+                            cmd.append("sc config ")
+                               .append(item.get())
+                               .append(" start= disabled & ");
+                        }
+                    }
                     for(const auto &item:rule_.exe){
-                        cmd.append(R"(reg add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\)")
-                           .append(item.get())
-                           .append(R"(.exe" /f /t reg_sz /v debugger /d ? & taskKill /f /im ")")
+                        cmd.append(R"(taskKill /f /im ")")
                            .append(item.get())
                            .append(R"(.exe" & )");
                     }
@@ -340,10 +358,17 @@ namespace mod{
                     }
                     break;
                 }case 'r':{
-                    for(const auto &item:rule_.exe){
-                        cmd.append(R"(reg delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\)")
-                           .append(item.get())
-                           .append(R"(.exe" /f & )");
+                    if(config_data.enhanced_op){
+                        for(const auto &item:rule_.exe){
+                            cmd.append(R"(reg delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\)")
+                               .append(item.get())
+                               .append(R"(.exe" /f & )");
+                        }
+                        for(const auto &item:rule_.svc){
+                            cmd.append("sc config ")
+                               .append(item.get())
+                               .append(" start= auto & ");
+                        }
                     }
                     for(const auto &item:rule_.svc){
                         cmd.append(R"(net start ")")
