@@ -51,7 +51,7 @@ auto main(const int _argc,const char *const _args[])->int{
     }
     mod::init();
 #endif
-    if(config_data.front_show_window){
+    if(config_data.enhanced_window){
 #ifdef _NEXT_
         std::thread{[](){
             const HWND this_window{GetConsoleWindow()};
@@ -106,7 +106,7 @@ auto main(const int _argc,const char *const _args[])->int{
         true,
         false,
         !config_data.hide_window_close_ctrl,
-        (config_data.translucent_window)?(230):(255)
+        (config_data.enhanced_window)?(230):(255)
       )
 #endif
       .show()
