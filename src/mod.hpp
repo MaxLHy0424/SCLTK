@@ -439,11 +439,9 @@ namespace mod{
                     break;
                 }
             }
-            puts("-> 执行命令.");
-            puts(std::string(50,'-').c_str());
+            printf("-> 执行命令.\n%s\n",std::string(50,'-').c_str());
             system(cmd.c_str());
-            puts(std::string(50,'-').c_str());
-            puts("-> 释放内存.");
+            printf("%s\n-> 释放内存.",std::string(50,'-').c_str());
             return false;
         }
         inline explicit sys_op(const char _mode,const sys_rule::base &_rule):
