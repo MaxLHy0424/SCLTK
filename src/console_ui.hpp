@@ -175,7 +175,7 @@ private:
         }
     }
     inline auto exec_fn_(const MOUSE_EVENT_RECORD &_mouse_event){
-        bool isExit{};
+        bool is_exit{};
         for(auto &line:item_){
             if(line==_mouse_event.dwMousePosition){
                 if(line.function!=nullptr){
@@ -183,7 +183,7 @@ private:
                     line.set_color(line.default_color);
                     show_cursor_(false);
                     edit_attrs_(t_lock_all);
-                    isExit=line.function(args{_mouse_event,this});
+                    is_exit=line.function(args{_mouse_event,this});
                     show_cursor_(false);
                     edit_attrs_(t_lock_text);
                     init_pos_();
@@ -191,7 +191,7 @@ private:
                 break;
             }
         }
-        return isExit;
+        return is_exit;
     }
 public:
     inline auto size(){
