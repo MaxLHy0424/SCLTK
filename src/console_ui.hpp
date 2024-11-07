@@ -4,23 +4,23 @@
 #include<vector>
 #include<string>
 #include<functional>
-#define CUI_MOUSE_BUTTON_LEFT FROM_LEFT_1ST_BUTTON_PRESSED
-#define CUI_MOUSE_BUTTON_MIDDLE FROM_LEFT_2ND_BUTTON_PRESSED
-#define CUI_MOUSE_BUTTON_RIGHT RIGHTMOST_BUTTON_PRESSED
-#define CUI_MOUSE_CLICK 0x0
-#define CUI_MOUSE_CLICK_DOUBLE DOUBLE_CLICK
-#define CUI_MOUSE_MOVE MOUSE_MOVED
-#define CUI_MOUSE_WHEEL MOUSE_WHEELED
-#define CUI_TEXT_WHITE 0x07
-#define CUI_TEXT_BLUE 0x09
-#define CUI_TEXT_RED 0x0c
+#define CONSOLE_MOUSE_BUTTON_LEFT FROM_LEFT_1ST_BUTTON_PRESSED
+#define CONSOLE_MOUSE_BUTTON_MIDDLE FROM_LEFT_2ND_BUTTON_PRESSED
+#define CONSOLE_MOUSE_BUTTON_RIGHT RIGHTMOST_BUTTON_PRESSED
+#define CONSOLE_MOUSE_CLICK 0x0
+#define CONSOLE_MOUSE_CLICK_DOUBLE DOUBLE_CLICK
+#define CONSOLE_MOUSE_MOVE MOUSE_MOVED
+#define CONSOLE_MOUSE_WHEEL MOUSE_WHEELED
+#define CONSOLE_TEXT_WHITE 0x07
+#define CONSOLE_TEXT_BLUE 0x09
+#define CONSOLE_TEXT_RED 0x0c
 class console_ui final{
 public:
     struct args final{
         const DWORD button_state,ctrl_key_state,event_flag;
         console_ui *const ui;
         inline explicit args():
-            button_state{CUI_MOUSE_BUTTON_LEFT},
+            button_state{CONSOLE_MOUSE_BUTTON_LEFT},
             ctrl_key_state{},
             event_flag{},
             ui{}
@@ -43,9 +43,9 @@ private:
         callback_ function;
         inline explicit ui_item_():
             text{},
-            default_color{CUI_TEXT_WHITE},
-            highlight_color{CUI_TEXT_BLUE},
-            last_color{CUI_TEXT_WHITE},
+            default_color{CONSOLE_TEXT_WHITE},
+            highlight_color{CONSOLE_TEXT_BLUE},
+            last_color{CONSOLE_TEXT_WHITE},
             position{},
             function{}
         {}
@@ -57,7 +57,7 @@ private:
         ):text{_text},
           default_color{_default_color},
           highlight_color{_highlight_color},
-          last_color{CUI_TEXT_WHITE},
+          last_color{CONSOLE_TEXT_WHITE},
           position{},
           function{_function}
         {}
@@ -77,14 +77,14 @@ private:
     };
     std::vector<ui_item_> item_;
     short height_,width_;
-    enum console_attrs_op_{t_normal=0,t_lock_text=1,t_lock_all=2};
+    enum console_attrs_action_{t_normal=0,t_lock_text=1,t_lock_all=2};
     inline auto show_cursor_(const bool _mode){
         CONSOLE_CURSOR_INFO cursor;
         GetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&cursor);
         cursor.bVisible=_mode;
         SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&cursor);
     }
-    inline auto edit_attrs_(const console_attrs_op_ _mode){
+    inline auto edit_attrs_(const console_attrs_action_ _mode){
         DWORD attrs;
         GetConsoleMode(GetStdHandle(STD_INPUT_HANDLE),&attrs);
         switch(_mode){
@@ -250,8 +250,8 @@ public:
     inline auto &add(
         const char *const _text,
         const callback_ _function=nullptr,
-        const short _highlight_color=CUI_TEXT_BLUE,
-        const short _default_color=CUI_TEXT_WHITE
+        const short _highlight_color=CONSOLE_TEXT_BLUE,
+        const short _default_color=CONSOLE_TEXT_WHITE
     ){
         item_.emplace_back(
             ui_item_{
@@ -267,8 +267,8 @@ public:
         const size_type_ _index,
         const char *const _text,
         const callback_ _function=nullptr,
-        const short _highlight_color=CUI_TEXT_BLUE,
-        const short _default_color=CUI_TEXT_WHITE
+        const short _highlight_color=CONSOLE_TEXT_BLUE,
+        const short _default_color=CONSOLE_TEXT_WHITE
     ){
         item_.emplace(
             item_.begin()+_index,
@@ -285,8 +285,8 @@ public:
         const size_type_ _index,
         const char *const _text,
         const callback_ _function=nullptr,
-        const short _highlight_color=CUI_TEXT_BLUE,
-        const short _default_color=CUI_TEXT_WHITE
+        const short _highlight_color=CONSOLE_TEXT_BLUE,
+        const short _default_color=CONSOLE_TEXT_WHITE
     ){
         item_.at(_index)=ui_item_{
             _text,
@@ -317,11 +317,11 @@ public:
         while(!is_exit){
             mouse_event=wait_mouse_event_();
             switch(mouse_event.dwEventFlags){
-                case CUI_MOUSE_MOVE:{
+                case CONSOLE_MOUSE_MOVE:{
                     refresh_(mouse_event.dwMousePosition);
                     break;
-                }case CUI_MOUSE_CLICK:{
-                    if((mouse_event.dwButtonState)&&(mouse_event.dwButtonState!=CUI_MOUSE_WHEEL)){
+                }case CONSOLE_MOUSE_CLICK:{
+                    if((mouse_event.dwButtonState)&&(mouse_event.dwButtonState!=CONSOLE_MOUSE_WHEEL)){
                         is_exit=exec_fn_(mouse_event);
                     }
                     break;
