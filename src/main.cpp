@@ -51,8 +51,8 @@ auto main(const int _argc,const char *const _args[])->int{
     }
     mod::init();
 #endif
-    if(config_data.enhanced_window){
 #ifdef _NEXT_
+    if(config_data.enhanced_window){
         std::thread{[](){
             const HWND this_window{GetConsoleWindow()};
             const DWORD foreground_id{GetWindowThreadProcessId(this_window,nullptr)},
@@ -68,10 +68,12 @@ auto main(const int _argc,const char *const _args[])->int{
                 Sleep(100);
             }
         }}.detach();
-#else
-        std::thread{mod::front_show_window}.detach();
-#endif
     }
+#else
+    if(config_data.front_show_window){
+        std::thread{mod::front_show_window}.detach();
+    }
+#endif
     ui.add("                    [ 主  页 ]\n\n");
 #ifndef _NEXT_
     if(config_error){
