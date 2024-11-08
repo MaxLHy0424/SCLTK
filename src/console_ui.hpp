@@ -209,7 +209,7 @@ public:
         const bool _fix_size,
         const bool _minimize_ctrl,
         const bool _close_window_ctrl,
-        const BYTE _alpha
+        const BYTE _transparency
     ){
         SetConsoleOutputCP(_code_page);
         SetConsoleCP(_code_page);
@@ -239,7 +239,7 @@ public:
             SC_CLOSE,
             MF_BYCOMMAND|(_close_window_ctrl)?(MF_ENABLED):(MF_DISABLED)|MF_GRAYED
         );
-        SetLayeredWindowAttributes(GetConsoleWindow(),0,_alpha,LWA_ALPHA);
+        SetLayeredWindowAttributes(GetConsoleWindow(),0,_transparency,LWA_ALPHA);
         return *this;
     }
     inline auto &lock(const bool _is_hide_cursor,const bool _is_lock_text){
