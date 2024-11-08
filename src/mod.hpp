@@ -182,7 +182,6 @@ namespace mod{
                 goto END;
             }
             {
-                console_ui{}.lock(true,true);
                 puts("-> 加载配置文件.");
                 if(is_reload_){
                     puts("-> 合并更改.");
