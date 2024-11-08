@@ -77,7 +77,7 @@ private:
     };
     std::vector<ui_item_> item_;
     short height_,width_;
-    enum console_attrs_action_{t_normal=0,t_lock_text=1,t_lock_all=2};
+    enum console_attrs_action_{v_normal=0,v_lock_text=1,v_lock_all=2};
     inline auto show_cursor_(const bool _mode){
         CONSOLE_CURSOR_INFO cursor;
         GetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&cursor);
@@ -88,17 +88,17 @@ private:
         DWORD attrs;
         GetConsoleMode(GetStdHandle(STD_INPUT_HANDLE),&attrs);
         switch(_mode){
-            case t_normal:{
+            case v_normal:{
                 attrs|=ENABLE_QUICK_EDIT_MODE,
                 attrs|=ENABLE_INSERT_MODE,
                 attrs|=ENABLE_MOUSE_INPUT;
                 break;
-            }case t_lock_text:{
+            }case v_lock_text:{
                 attrs&=~ENABLE_QUICK_EDIT_MODE,
                 attrs&=~ENABLE_INSERT_MODE,
                 attrs|=ENABLE_MOUSE_INPUT;
                 break;
-            }case t_lock_all:{
+            }case v_lock_all:{
                 attrs&=~ENABLE_QUICK_EDIT_MODE,
                 attrs&=~ENABLE_INSERT_MODE,
                 attrs&=~ENABLE_MOUSE_INPUT;
@@ -182,10 +182,10 @@ private:
                     cls_();
                     line.set_color(line.default_color);
                     show_cursor_(false);
-                    edit_attrs_(t_lock_all);
+                    edit_attrs_(v_lock_all);
                     is_exit=line.function(args{_mouse_event,this});
                     show_cursor_(false);
-                    edit_attrs_(t_lock_text);
+                    edit_attrs_(v_lock_text);
                     init_pos_();
                 }
                 break;
@@ -240,7 +240,7 @@ public:
     }
     inline auto &lock(const bool _is_hide_cursor,const bool _is_lock_text){
         show_cursor_(!_is_hide_cursor);
-        edit_attrs_((_is_lock_text)?(t_lock_all):(t_normal));
+        edit_attrs_((_is_lock_text)?(v_lock_all):(v_normal));
         return *this;
     }
     inline auto &add(
@@ -306,7 +306,7 @@ public:
     }
     inline auto &show(){
         show_cursor_(false);
-        edit_attrs_(t_lock_text);
+        edit_attrs_(v_lock_text);
         MOUSE_EVENT_RECORD mouse_event;
         init_pos_();
         bool is_exit{};

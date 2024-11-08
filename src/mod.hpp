@@ -194,31 +194,31 @@ namespace mod{
                 sys_rule::custom.svc.clear();
                 std::string line;
                 enum{
-                    t_unknown=-1,
-                    t_settings=0,
-                    t_rule_exe=1,
-                    t_rule_svc=2,
-                }config_item{t_unknown};
+                    v_unknown=-1,
+                    v_settings=0,
+                    v_rule_exe=1,
+                    v_rule_svc=2,
+                }config_item{v_unknown};
                 while(std::getline(config_file,line)){
                     if(line.empty()||line.front()=='#'){
                         continue;
                     }
                     if(line=="<settings>"){
-                        config_item=t_settings;
+                        config_item=v_settings;
                         continue;
                     }else if(line=="<rule_exe>"){
-                        config_item=t_rule_exe;
+                        config_item=v_rule_exe;
                         continue;
                     }else if(line=="<rule_svc>"){
-                        config_item=t_rule_svc;
+                        config_item=v_rule_svc;
                         continue;
                     }else if(line.front()=='<'||line.back()=='>'){
                         continue;
                     }
                     switch(config_item){
-                        case t_unknown:{
+                        case v_unknown:{
                             break;
-                        }case t_settings:{
+                        }case v_settings:{
                             if(is_reload_){
                                 continue;
                             }
@@ -230,10 +230,10 @@ namespace mod{
                                 config_data.enhanced_action=true;
                             }
                             break;
-                        }case t_rule_exe:{
+                        }case v_rule_exe:{
                             sys_rule::custom.exe.emplace_back(line.c_str());
                             break;
-                        }case t_rule_svc:{
+                        }case v_rule_svc:{
                             sys_rule::custom.svc.emplace_back(line.c_str());
                             break;
                         }
