@@ -175,8 +175,8 @@ namespace mod{
     class config_action final{
     private:
         const char mode_;
-        bool is_reload_;
-        inline auto load_(){
+        mutable bool is_reload_;
+        inline auto load_()const{
             std::ifstream config_file{"config.ini",std::ios::in};
             if(!config_file.is_open()){
                 goto END;
@@ -245,7 +245,7 @@ namespace mod{
             config_file.close();
             return;
         }
-        inline auto edit_(){
+        inline auto edit_()const{
             auto sync{[&](console_ui::args){
                 is_reload_=true;
                 load_();
@@ -301,7 +301,7 @@ namespace mod{
             return false;
         }
     public:
-        inline auto operator()(console_ui::args){
+        inline auto operator()(console_ui::args)const{
             switch(mode_){
                 case 'r':{
                     load_();
