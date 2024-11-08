@@ -120,7 +120,7 @@ private:
         DWORD reg;
         while(true){
             Sleep(10);
-            ReadConsoleInput(GetStdHandle(STD_INPUT_HANDLE),&record,1,&reg);
+            ReadConsoleInputA(GetStdHandle(STD_INPUT_HANDLE),&record,1,&reg);
             if(
                 (record.EventType==MOUSE_EVENT)&&
                 (_move|(record.Event.MouseEvent.dwEventFlags!=MOUSE_MOVED))
@@ -199,11 +199,7 @@ public:
     }
     inline auto &set_console(
         const UINT _code_page,
-#if defined(_UNICODE)||defined(UNICODE)
-        const WCHAR *const _title,
-#else
-        const CHAR *const _title,
-#endif
+        const char *const _title,
         const SHORT _width,
         const SHORT _height,
         const bool _fix_size,
@@ -213,7 +209,7 @@ public:
     ){
         SetConsoleOutputCP(_code_page);
         SetConsoleCP(_code_page);
-        SetConsoleTitle(_title);
+        SetConsoleTitleA(_title);
         using namespace std::string_literals;
         system(
             "mode con cols="s
@@ -222,17 +218,17 @@ public:
               .append(std::to_string(_height))
               .c_str()
         );
-        SetWindowLongPtr(
+        SetWindowLongPtrA(
             GetConsoleWindow(),GWL_STYLE,
             (_fix_size)
-              ?(GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)&~WS_SIZEBOX&~WS_MAXIMIZEBOX)
-              :(GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)|WS_SIZEBOX|WS_MAXIMIZEBOX)
+              ?(GetWindowLongPtrA(GetConsoleWindow(),GWL_STYLE)&~WS_SIZEBOX&~WS_MAXIMIZEBOX)
+              :(GetWindowLongPtrA(GetConsoleWindow(),GWL_STYLE)|WS_SIZEBOX|WS_MAXIMIZEBOX)
         );
-        SetWindowLongPtr(
+        SetWindowLongPtrA(
             GetConsoleWindow(),GWL_STYLE,
             (_minimize_ctrl)
-              ?(GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)|WS_MINIMIZEBOX)
-              :(GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)&~WS_MINIMIZEBOX)
+              ?(GetWindowLongPtrA(GetConsoleWindow(),GWL_STYLE)|WS_MINIMIZEBOX)
+              :(GetWindowLongPtrA(GetConsoleWindow(),GWL_STYLE)&~WS_MINIMIZEBOX)
         );
         EnableMenuItem(
             GetSystemMenu(GetConsoleWindow(),FALSE),

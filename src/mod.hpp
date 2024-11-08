@@ -85,8 +85,8 @@ namespace mod{
 #ifdef _NEXT_
     inline auto reboot_as_admin(console_ui::args){
         char *const path{new char[MAX_PATH]{}};
-        GetModuleFileName(nullptr,path,MAX_PATH);
-        ShellExecute(nullptr,"runAs",path,nullptr,nullptr,SW_SHOWNORMAL);
+        GetModuleFileNameA(nullptr,path,MAX_PATH);
+        ShellExecuteA(nullptr,"runAs",path,nullptr,nullptr,SW_SHOWNORMAL);
         delete[] path;
         return true;
     }
@@ -94,11 +94,11 @@ namespace mod{
 #ifndef _NEXT_
     inline auto init(){
         system("chcp 936 > nul");
-        SetConsoleTitle("CRCSN");
-        SetWindowLongPtr(
+        SetConsoleTitleA("CRCSN");
+        SetWindowLongPtrA(
             GetConsoleWindow(),GWL_STYLE,(config_data.window_ctrls)
-            ?(GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)|WS_SIZEBOX|WS_MAXIMIZEBOX|WS_MINIMIZEBOX)
-            :(GetWindowLongPtr(GetConsoleWindow(),GWL_STYLE)&~WS_SIZEBOX&~WS_MAXIMIZEBOX&~WS_MINIMIZEBOX)
+            ?(GetWindowLongPtrA(GetConsoleWindow(),GWL_STYLE)|WS_SIZEBOX|WS_MAXIMIZEBOX|WS_MINIMIZEBOX)
+            :(GetWindowLongPtrA(GetConsoleWindow(),GWL_STYLE)&~WS_SIZEBOX&~WS_MAXIMIZEBOX&~WS_MINIMIZEBOX)
         );
         system("mode con cols=50 lines=25");
         SetLayeredWindowAttributes(
@@ -126,7 +126,7 @@ namespace mod{
     inline auto info(console_ui::args){
 #ifdef _NEXT_
         auto visit_repo_webpage{[](console_ui::args){
-            ShellExecute(nullptr,"",INFO_REPO_URL,nullptr,nullptr,SW_SHOWNORMAL);
+            ShellExecuteA(nullptr,"",INFO_REPO_URL,nullptr,nullptr,SW_SHOWNORMAL);
             return false;
         }};
 #endif
@@ -279,7 +279,7 @@ namespace mod{
             }};
             auto open_config_file{[](console_ui::args){
                 puts("-> 打开配置文件.");
-                ShellExecute(nullptr,"","config.ini",nullptr,nullptr,SW_SHOWNORMAL);
+                ShellExecuteA(nullptr,"","config.ini",nullptr,nullptr,SW_SHOWNORMAL);
                 return false;
             }};
             console_ui ui;
