@@ -200,7 +200,7 @@ namespace mod{
                     v_rule_svc=2,
                 }config_item{v_unknown};
                 while(std::getline(config_file,line)){
-                    if(line.empty()||line.front()=='#'){
+                    if((line.empty())||(line.front()=='#')){
                         continue;
                     }
                     if(line=="<settings>"){
@@ -212,7 +212,8 @@ namespace mod{
                     }else if(line=="<rule_svc>"){
                         config_item=v_rule_svc;
                         continue;
-                    }else if(line.front()=='<'||line.back()=='>'){
+                    }else if((line.front()=='<')&&(line.back()=='>')){
+                        config_item=v_unknown;
                         continue;
                     }
                     switch(config_item){
