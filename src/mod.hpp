@@ -182,9 +182,10 @@ namespace mod{
                 goto END;
             }
             {
-                puts("-> 加载配置文件.");
                 if(is_reload_){
                     puts("-> 合并更改.");
+                }else{
+                    puts("-> 加载配置文件.");
                 }
                 if(!is_reload_){
                     config_data={};
@@ -285,7 +286,7 @@ namespace mod{
             console_ui ui;
             ui.add("                    [ 配  置 ]\n\n")
               .add(" (i) 可通过 <rule_exe> 与 <rule_svc> 自定义规则.\n")
-              .add(" < 同步配置并返回 ",std::move(sync),CONSOLE_TEXT_RED)
+              .add(" < 合并配置并返回 ",std::move(sync),CONSOLE_TEXT_RED)
               .add(" > 打开配置文件 ",std::move(open_config_file))
               .add("\n[隐藏窗口关闭控件 (下次启动时生效)]\n")
               .add(" > 启用 ",[](console_ui::args){config_data.hide_window_close_ctrl=true;return false;})
