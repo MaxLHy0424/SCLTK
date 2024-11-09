@@ -20,16 +20,16 @@ public:
         const DWORD button_state,ctrl_key_state,event_flag;
         console_ui *const ui;
         inline explicit args():
-            button_state{CONSOLE_MOUSE_BUTTON_LEFT},
-            ctrl_key_state{},
-            event_flag{},
-            ui{}
+          button_state{CONSOLE_MOUSE_BUTTON_LEFT},
+          ctrl_key_state{},
+          event_flag{},
+          ui{}
         {}
         inline explicit args(const MOUSE_EVENT_RECORD _mouse_event,console_ui *const _ui):
-            button_state{_mouse_event.dwButtonState},
-            ctrl_key_state{_mouse_event.dwControlKeyState},
-            event_flag{_mouse_event.dwEventFlags},
-            ui{_ui}
+          button_state{_mouse_event.dwButtonState},
+          ctrl_key_state{_mouse_event.dwControlKeyState},
+          event_flag{_mouse_event.dwEventFlags},
+          ui{_ui}
         {}
         inline ~args(){}
     };
@@ -42,12 +42,12 @@ private:
         COORD position;
         callback_ function;
         inline explicit ui_item_():
-            text{},
-            default_color{CONSOLE_TEXT_WHITE},
-            highlight_color{CONSOLE_TEXT_BLUE},
-            last_color{CONSOLE_TEXT_WHITE},
-            position{},
-            function{}
+          text{},
+          default_color{CONSOLE_TEXT_WHITE},
+          highlight_color{CONSOLE_TEXT_BLUE},
+          last_color{CONSOLE_TEXT_WHITE},
+          position{},
+          function{}
         {}
         inline explicit ui_item_(
             const char *const _text,
@@ -329,19 +329,19 @@ public:
         return *this;
     }
     inline explicit console_ui():
-        item_{},
-        height_{},
-        width_{}
+      item_{},
+      height_{},
+      width_{}
     {}
     inline explicit console_ui(const console_ui &_obj):
-        item_{_obj.item_},
-        height_{},
-        width_{}
+      item_{_obj.item_},
+      height_{},
+      width_{}
     {}
     inline explicit console_ui(const console_ui &&_obj):
-        item_{std::move(_obj.item_)},
-        height_{},
-        width_{}
+      item_{std::move(_obj.item_)},
+      height_{},
+      width_{}
     {}
     inline ~console_ui(){}
 };

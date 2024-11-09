@@ -25,7 +25,7 @@ namespace mod{
         }
         inline simple_string()=delete;
         inline simple_string(const char *_s):
-            str_{new char[strlen(_s)+1]}
+          str_{new char[strlen(_s)+1]}
         {
             strcpy(this->str_,_s);
         }
@@ -325,8 +325,8 @@ namespace mod{
             return false;
         }
         inline explicit config_op(const char _mode):
-            mode_{_mode},
-            is_reload_{}
+          mode_{_mode},
+          is_reload_{}
         {}
         inline ~config_op(){}
     };
@@ -399,8 +399,8 @@ namespace mod{
             return false;
         }
         inline explicit sys_op(const char _mode,const sys_rule::base &_rule):
-            mode_{_mode},
-            rule_{_rule}
+          mode_{_mode},
+          rule_{_rule}
         {}
         inline ~sys_op(){}
     };
@@ -457,8 +457,8 @@ namespace mod{
             return false;
         }
         inline explicit sys_op(const char _mode,const sys_rule::base &_rule):
-            mode_{_mode},
-            rule_{_rule}
+          mode_{_mode},
+          rule_{_rule}
         {}
         inline ~sys_op(){}
     };
