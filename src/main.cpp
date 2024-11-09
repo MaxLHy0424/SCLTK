@@ -7,9 +7,9 @@ auto main()->int{
     console_ui ui;
     ui.set_console(936,"CRCSN",50,25,true,false,true,255)
       .lock(true,true);
-    puts("-> 检测运行权限.");
+    puts("::检测运行权限.");
     if(!mod::is_run_as_admin()){
-        puts("-> 申请管理员权限.");
+        puts("::申请管理员权限.");
         mod::reboot_as_admin(console_ui::args{});
         return 0;
     }
