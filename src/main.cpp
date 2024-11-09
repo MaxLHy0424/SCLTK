@@ -13,7 +13,7 @@ auto main()->int{
         mod::reboot_as_admin(console_ui::args{});
         return 0;
     }
-    mod::config_action{'r'}(console_ui::args{});
+    mod::config_op{'r'}(console_ui::args{});
 #else
 auto main(const int _argc,const char *const _args[])->int{
     console_ui ui;
@@ -86,20 +86,20 @@ auto main(const int _argc,const char *const _args[])->int{
 #endif
       .add(" > 关于 ",mod::info)
 #ifdef _NEXT_
-      .add(" > 配置 ",mod::config_action{'e'})
+      .add(" > 配置 ",mod::config_op{'e'})
 #endif
       .add(" > 命令提示符 ",mod::cmd)
       .add("\n[破解]\n")
-      .add(" > 极域电子教室 ",mod::sys_action{'c',mod::sys_rule::mythware})
-      .add(" > 联想云教室 ",mod::sys_action{'c',mod::sys_rule::lenovo})
+      .add(" > 极域电子教室 ",mod::sys_op{'c',mod::sys_rule::mythware})
+      .add(" > 联想云教室 ",mod::sys_op{'c',mod::sys_rule::lenovo})
 #ifdef _NEXT_
-      .add(" > 自定义 ",mod::sys_action{'c',mod::sys_rule::custom})
+      .add(" > 自定义 ",mod::sys_op{'c',mod::sys_rule::custom})
 #endif
       .add("\n[恢复]\n")
-      .add(" > 极域电子教室 ",mod::sys_action{'r',mod::sys_rule::mythware})
-      .add(" > 联想云教室 ",mod::sys_action{'r',mod::sys_rule::lenovo})
+      .add(" > 极域电子教室 ",mod::sys_op{'r',mod::sys_rule::mythware})
+      .add(" > 联想云教室 ",mod::sys_op{'r',mod::sys_rule::lenovo})
 #ifdef _NEXT_
-      .add(" > 自定义 ",mod::sys_action{'r',mod::sys_rule::custom})
+      .add(" > 自定义 ",mod::sys_op{'r',mod::sys_rule::custom})
       .set_console(
         936,
         "CRCSN",
