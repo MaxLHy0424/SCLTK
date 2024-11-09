@@ -6,7 +6,7 @@
 #endif
 inline struct{
 #ifdef _NEXT_
-    bool hide_window_close_ctrl,enhanced_window,enhanced_action;
+    bool hide_window_close_ctrl,enhanced_window,enhanced_op;
 #else
     bool front_show_window,translucent_window,window_ctrls;
 #endif
@@ -172,7 +172,7 @@ namespace mod{
         return false;
     }
 #ifdef _NEXT_
-    class config_action final{
+    class config_op final{
     private:
         const char mode_;
         mutable bool is_reload_;
@@ -227,8 +227,8 @@ namespace mod{
                                 config_data.hide_window_close_ctrl=true;
                             }else if(line=="enhanced_window"){
                                 config_data.enhanced_window=true;
-                            }else if(line=="enhanced_action"){
-                                config_data.enhanced_action=true;
+                            }else if(line=="enhanced_op"){
+                                config_data.enhanced_op=true;
                             }
                             break;
                         }case v_rule_exe:{
@@ -258,8 +258,8 @@ namespace mod{
                 if(config_data.enhanced_window){
                     text.append("enhanced_window\n");
                 }
-                if(config_data.enhanced_action){
-                    text.append("enhanced_action\n");
+                if(config_data.enhanced_op){
+                    text.append("enhanced_op\n");
                 }
                 text.append("<rule_exe>\n");
                 if(!sys_rule::custom.exe.empty()){
@@ -295,8 +295,8 @@ namespace mod{
               .add(" > 启用 ",[](console_ui::args){config_data.enhanced_window=true;return false;})
               .add(" > 禁用 (默认) ",[](console_ui::args){config_data.enhanced_window=false;return false;})
               .add("\n[增强操作]\n")
-              .add(" > 启用 ",[](console_ui::args){config_data.enhanced_action=true;return false;})
-              .add(" > 禁用 (默认) ",[](console_ui::args){config_data.enhanced_action=false;return false;})
+              .add(" > 启用 ",[](console_ui::args){config_data.enhanced_op=true;return false;})
+              .add(" > 禁用 (默认) ",[](console_ui::args){config_data.enhanced_op=false;return false;})
               .show();
             return false;
         }
@@ -313,13 +313,13 @@ namespace mod{
             }
             return false;
         }
-        inline explicit config_action(const char _mode):
+        inline explicit config_op(const char _mode):
             mode_{_mode},
             is_reload_{}
         {}
-        inline ~config_action(){}
+        inline ~config_op(){}
     };
-    class sys_action final{
+    class sys_op final{
     private:
         const char mode_;
         const sys_rule::base &rule_;
@@ -338,7 +338,7 @@ namespace mod{
             std::string cmd;
             switch(mode_){
                 case 'c':{
-                    if(config_data.enhanced_action){
+                    if(config_data.enhanced_op){
                         for(const auto &item:rule_.exe){
                             cmd.append(R"(reg add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\)")
                                .append(item.get())
@@ -362,7 +362,7 @@ namespace mod{
                     }
                     break;
                 }case 'r':{
-                    if(config_data.enhanced_action){
+                    if(config_data.enhanced_op){
                         for(const auto &item:rule_.exe){
                             cmd.append(R"(reg delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\)")
                                .append(item.get())
@@ -387,14 +387,14 @@ namespace mod{
             printf("%s\n-> 释放内存.",std::string(50,'-').c_str());
             return false;
         }
-        inline explicit sys_action(const char _mode,const sys_rule::base &_rule):
+        inline explicit sys_op(const char _mode,const sys_rule::base &_rule):
             mode_{_mode},
             rule_{_rule}
         {}
-        inline ~sys_action(){}
+        inline ~sys_op(){}
     };
 #else
-    class sys_action final{
+    class sys_op final{
     private:
         const char mode_;
         const sys_rule::base &rule_;
@@ -445,11 +445,11 @@ namespace mod{
             printf("%s\n-> 释放内存.",std::string(50,'-').c_str());
             return false;
         }
-        inline explicit sys_action(const char _mode,const sys_rule::base &_rule):
+        inline explicit sys_op(const char _mode,const sys_rule::base &_rule):
             mode_{_mode},
             rule_{_rule}
         {}
-        inline ~sys_action(){}
+        inline ~sys_op(){}
     };
 #endif
 }

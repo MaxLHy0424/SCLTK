@@ -77,14 +77,14 @@ private:
     };
     std::vector<ui_item_> item_;
     short height_,width_;
-    enum console_attrs_action_{v_normal=0,v_lock_text=1,v_lock_all=2};
+    enum console_attrs_op_{v_normal=0,v_lock_text=1,v_lock_all=2};
     inline auto show_cursor_(const bool _mode){
         CONSOLE_CURSOR_INFO cursor;
         GetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&cursor);
         cursor.bVisible=_mode;
         SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&cursor);
     }
-    inline auto edit_attrs_(const console_attrs_action_ _mode){
+    inline auto edit_attrs_(const console_attrs_op_ _mode){
         DWORD attrs;
         GetConsoleMode(GetStdHandle(STD_INPUT_HANDLE),&attrs);
         switch(_mode){
