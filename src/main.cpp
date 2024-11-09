@@ -115,4 +115,6 @@ auto main(const int _argc,const char *const _args[])->int{
       .lock(false,false);
     return 0;
 }
+#else
+#error "must be compiled on the Windows OS platform."
 #endif
