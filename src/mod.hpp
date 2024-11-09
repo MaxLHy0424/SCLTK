@@ -279,8 +279,19 @@ namespace mod{
                 return true;
             }};
             auto open_config_file{[](console_ui::args){
-                puts("-> 打开配置文件.");
-                ShellExecuteA(nullptr,"","config.ini",nullptr,nullptr,SW_SHOWNORMAL);
+                if(std::ifstream{"config.ini",std::ios::in}.is_open()){
+                    puts("-> 打开配置文件.");
+                    ShellExecuteA(nullptr,"","config.ini",nullptr,nullptr,SW_SHOWNORMAL);
+                    return false;
+                }
+                puts(
+                    "                    [ 配  置 ]\n\n\n"
+                    " (i) 无法读取配置文件.\n"
+                );
+                for(unsigned short i{3};i>0;--i){
+                    printf(" %hu 秒后返回.\r",i);
+                    Sleep(1000);
+                }
                 return false;
             }};
             console_ui ui;
