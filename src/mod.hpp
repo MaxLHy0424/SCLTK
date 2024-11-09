@@ -1,21 +1,21 @@
 #pragma once
 #include"info.hpp"
 #include"console_ui.hpp"
-#ifdef _NEXT_
+#ifdef _PREVIEW_
 #include<fstream>
 #endif
 inline struct{
-#ifdef _NEXT_
+#ifdef _PREVIEW_
     bool hide_window_close_ctrl,enhanced_window,enhanced_op;
 #else
     bool front_show_window,translucent_window,window_ctrls;
 #endif
 }config_data{};
-#ifndef _NEXT_
+#ifndef _PREVIEW_
 inline bool config_error{};
 #endif
 namespace mod{
-#ifdef _NEXT_
+#ifdef _PREVIEW_
     class simple_string final{
     private:
         char *const str_;
@@ -36,7 +36,7 @@ namespace mod{
 #endif
     namespace sys_rule{
         struct base final{
-#ifdef _NEXT_
+#ifdef _PREVIEW_
             std::vector<simple_string> exe,svc;
 #else
             std::vector<const char*> exe,svc;
@@ -82,7 +82,7 @@ namespace mod{
         }
         return is_admin;
     }
-#ifdef _NEXT_
+#ifdef _PREVIEW_
     inline auto reboot_as_admin(console_ui::args){
         char *const path{new char[MAX_PATH]{}};
         GetModuleFileNameA(nullptr,path,MAX_PATH);
@@ -91,7 +91,7 @@ namespace mod{
         return true;
     }
 #endif
-#ifndef _NEXT_
+#ifndef _PREVIEW_
     inline auto init(){
         system("chcp 936 > nul");
         SetConsoleTitleA("CRCSN");
@@ -124,7 +124,7 @@ namespace mod{
     }
 #endif
     inline auto info(console_ui::args){
-#ifdef _NEXT_
+#ifdef _PREVIEW_
         auto visit_repo_webpage{[](console_ui::args){
             ShellExecuteA(nullptr,"",INFO_REPO_URL,nullptr,nullptr,SW_SHOWNORMAL);
             return false;
@@ -138,7 +138,7 @@ namespace mod{
           .add("\n[版本]\n")
           .add(" " INFO_VERSION)
           .add("\n[仓库]\n")
-#ifdef _NEXT_
+#ifdef _PREVIEW_
           .add(" (i) 点击访问 URL.\n")
           .add(" " INFO_REPO_URL,std::move(visit_repo_webpage))
 #else
@@ -153,7 +153,7 @@ namespace mod{
     inline auto cmd(console_ui::args args){
         args.ui->lock(false,false);
         system("cmd");
-#ifdef _NEXT_
+#ifdef _PREVIEW_
         console_ui{}.set_console(
             936,
             "CRCSN",
@@ -171,7 +171,7 @@ namespace mod{
 #endif
         return false;
     }
-#ifdef _NEXT_
+#ifdef _PREVIEW_
     class config_op final{
     private:
         const char mode_;
