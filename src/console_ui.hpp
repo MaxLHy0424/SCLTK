@@ -40,26 +40,26 @@ private:
         const char *text;
         short default_color,highlight_color,last_color;
         COORD position;
-        callback_ function;
+        callback_ func;
         inline explicit ui_item_():
           text{},
           default_color{CONSOLE_TEXT_WHITE},
           highlight_color{CONSOLE_TEXT_BLUE},
           last_color{CONSOLE_TEXT_WHITE},
           position{},
-          function{}
+          func{}
         {}
         inline explicit ui_item_(
             const char *const _text,
             const short _default_color,
             const short _highlight_color,
-            const callback_ _function
+            const callback_ _func
         ):text{_text},
           default_color{_default_color},
           highlight_color{_highlight_color},
           last_color{CONSOLE_TEXT_WHITE},
           position{},
-          function{_function}
+          func{_func}
         {}
         inline ~ui_item_(){}
         inline auto set_color(short _color){
@@ -178,12 +178,12 @@ private:
         bool is_exit{};
         for(auto &line:item_){
             if(line==_mouse_event.dwMousePosition){
-                if(line.function!=nullptr){
+                if(line.func!=nullptr){
                     cls_();
                     line.set_color(line.default_color);
                     show_cursor_(false);
                     edit_attrs_(v_lock_all);
-                    is_exit=line.function(args{_mouse_event,this});
+                    is_exit=line.func(args{_mouse_event,this});
                     show_cursor_(false);
                     edit_attrs_(v_lock_text);
                     init_pos_();
@@ -245,7 +245,7 @@ public:
     }
     inline auto &add(
         const char *const _text,
-        const callback_ _function=nullptr,
+        const callback_ _func=nullptr,
         const short _highlight_color=CONSOLE_TEXT_BLUE,
         const short _default_color=CONSOLE_TEXT_WHITE
     ){
@@ -253,8 +253,8 @@ public:
             ui_item_{
                 _text,
                 _default_color,
-                (_function==nullptr)?(_default_color):(_highlight_color),
-                _function
+                (_func==nullptr)?(_default_color):(_highlight_color),
+                _func
             }
         );
         return *this;
@@ -262,7 +262,7 @@ public:
     inline auto &insert(
         const size_type_ _index,
         const char *const _text,
-        const callback_ _function=nullptr,
+        const callback_ _func=nullptr,
         const short _highlight_color=CONSOLE_TEXT_BLUE,
         const short _default_color=CONSOLE_TEXT_WHITE
     ){
@@ -271,8 +271,8 @@ public:
             ui_item_{
                 _text,
                 _default_color,
-                (_function==nullptr)?(_default_color):(_highlight_color),
-                _function
+                (_func==nullptr)?(_default_color):(_highlight_color),
+                _func
             }
         );
         return *this;
@@ -280,15 +280,15 @@ public:
     inline auto &edit(
         const size_type_ _index,
         const char *const _text,
-        const callback_ _function=nullptr,
+        const callback_ _func=nullptr,
         const short _highlight_color=CONSOLE_TEXT_BLUE,
         const short _default_color=CONSOLE_TEXT_WHITE
     ){
         item_.at(_index)=ui_item_{
             _text,
             _default_color,
-            (_function==nullptr)?(_default_color):(_highlight_color),
-            _function
+            (_func==nullptr)?(_default_color):(_highlight_color),
+            _func
         };
         return *this;
     }
