@@ -199,7 +199,7 @@ public:
     }
     inline auto &set_console(
         const UINT _code_page,
-        const char *const _title,
+        const CHAR *const _title,
         const SHORT _width,
         const SHORT _height,
         const bool _fix_size,
