@@ -183,9 +183,9 @@ namespace mod{
             }
             {
                 if(is_reload_){
-                    puts("-> 同步更改.");
+                    puts("::同步更改.");
                 }else{
-                    puts("-> 加载配置文件.");
+                    puts("::加载配置文件.");
                 }
                 if(!is_reload_){
                     config_data={};
@@ -249,7 +249,7 @@ namespace mod{
             auto sync{[&](console_ui::args){
                 is_reload_=true;
                 load_();
-                puts("-> 保存更改.");
+                puts("::保存更改.");
                 std::string text;
                 text.append("<settings>\n");
                 if(config_data.hide_window_close_ctrl){
@@ -280,7 +280,7 @@ namespace mod{
             }};
             auto open_config_file{[](console_ui::args){
                 if(std::ifstream{"config.ini",std::ios::in}.is_open()){
-                    puts("-> 打开配置文件.");
+                    puts("::打开配置文件.");
                     ShellExecuteA(nullptr,"","config.ini",nullptr,nullptr,SW_SHOWNORMAL);
                     return false;
                 }
@@ -345,7 +345,7 @@ namespace mod{
                 }
                 return false;
             }
-            puts("-> 生成命令.");
+            puts("::生成命令.");
             std::string cmd;
             switch(mode_){
                 case 'c':{
@@ -393,9 +393,9 @@ namespace mod{
                     break;
                 }
             }
-            printf("-> 执行命令.\n%s\n",std::string(50,'-').c_str());
+            printf("::执行命令.\n%s\n",std::string(50,'-').c_str());
             system(cmd.c_str());
-            printf("%s\n-> 释放内存.",std::string(50,'-').c_str());
+            printf("%s\n::释放内存.",std::string(50,'-').c_str());
             return false;
         }
         inline explicit sys_op(const char _mode,const sys_rule::base &_rule):
@@ -420,7 +420,7 @@ namespace mod{
                 }
                 return false;
             }
-            puts("-> 生成命令.");
+            puts("::生成命令.");
             std::string cmd;
             switch(mode_){
                 case 'c':{
@@ -451,9 +451,9 @@ namespace mod{
                     break;
                 }
             }
-            printf("-> 执行命令.\n%s\n",std::string(50,'-').c_str());
+            printf("::执行命令.\n%s\n",std::string(50,'-').c_str());
             system(cmd.c_str());
-            printf("%s\n-> 释放内存.",std::string(50,'-').c_str());
+            printf("%s\n::释放内存.",std::string(50,'-').c_str());
             return false;
         }
         inline explicit sys_op(const char _mode,const sys_rule::base &_rule):
