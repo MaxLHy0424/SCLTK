@@ -1,4 +1,4 @@
-![logo](img/title.png)\
+![logo](./img/title.png)\
 **Computer Room Control Software Nemesis: 轻松破解机房控制.**\
 ©️ 2023 MaxLHy0424. All Rights Reserved.
 
@@ -141,7 +141,7 @@ set item.args=-Wtf
 
 # 📜 许可证
 
-CRCSN 使用 [MIT License](LICENSE), 详细内容请自行阅读.
+CRCSN 使用 [MIT License](./LICENSE), 详细内容请自行阅读.
 
 # ❓ 常见问题
 
