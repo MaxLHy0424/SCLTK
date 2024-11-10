@@ -86,20 +86,20 @@ auto main(const int _argc,const char *const _args[])->int{
 #endif
       .add(" > 关于 ",mod::info)
 #ifdef _PREVIEW_
-      .add(" > 配置 ",mod::config_op{'e'})
+      .add(" > 配置 ",mod::config_op{'w'})
 #endif
       .add(" > 命令提示符 ",mod::cmd)
       .add("\n[破解]\n")
       .add(" > 极域电子教室 ",mod::sys_op{'c',mod::sys_rule::mythware})
       .add(" > 联想云教室 ",mod::sys_op{'c',mod::sys_rule::lenovo})
 #ifdef _PREVIEW_
-      .add(" > 自定义 ",mod::sys_op{'c',mod::sys_rule::custom})
+      .add(" > 自定义 ",mod::sys_op{'c',mod::sys_rule::customize})
 #endif
       .add("\n[恢复]\n")
       .add(" > 极域电子教室 ",mod::sys_op{'r',mod::sys_rule::mythware})
       .add(" > 联想云教室 ",mod::sys_op{'r',mod::sys_rule::lenovo})
 #ifdef _PREVIEW_
-      .add(" > 自定义 ",mod::sys_op{'r',mod::sys_rule::custom})
+      .add(" > 自定义 ",mod::sys_op{'r',mod::sys_rule::customize})
       .set_console(
         936,
         "CRCSN",
