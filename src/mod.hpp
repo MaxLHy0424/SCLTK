@@ -62,7 +62,7 @@ namespace mod{
                 "BSAgentSvr","tvnserver","WFBSMlogon"
             }
         };
-        inline base custom{};
+        inline base customize{};
     }
     inline auto exit(console_ui::args){
         return true;
@@ -190,8 +190,8 @@ namespace mod{
                 if(!is_reload_){
                     config_data={};
                 }
-                sys_rule::custom.exe.clear();
-                sys_rule::custom.svc.clear();
+                sys_rule::customize.exe.clear();
+                sys_rule::customize.svc.clear();
                 std::string line;
                 enum{
                     v_unknown=-1,
@@ -232,10 +232,10 @@ namespace mod{
                             }
                             break;
                         }case v_rule_exe:{
-                            sys_rule::custom.exe.emplace_back(line.c_str());
+                            sys_rule::customize.exe.emplace_back(line.c_str());
                             break;
                         }case v_rule_svc:{
-                            sys_rule::custom.svc.emplace_back(line.c_str());
+                            sys_rule::customize.svc.emplace_back(line.c_str());
                             break;
                         }
                     }
@@ -262,14 +262,14 @@ namespace mod{
                     text.append("enhanced_op\n");
                 }
                 text.append("<rule_exe>\n");
-                if(!sys_rule::custom.exe.empty()){
-                    for(const auto &item:sys_rule::custom.exe){
+                if(!sys_rule::customize.exe.empty()){
+                    for(const auto &item:sys_rule::customize.exe){
                         text.append(item.get()).push_back('\n');
                     }
                 }
                 text.append("<rule_svc>\n");
-                if(!sys_rule::custom.exe.empty()){
-                    for(const auto &item:sys_rule::custom.svc){
+                if(!sys_rule::customize.exe.empty()){
+                    for(const auto &item:sys_rule::customize.svc){
                         text.append(item.get()).push_back('\n');
                     }
                 }
@@ -317,7 +317,7 @@ namespace mod{
                 case 'r':{
                     load_();
                     break;
-                }case 'e':{
+                }case 'w':{
                     edit_();
                     break;
                 }
