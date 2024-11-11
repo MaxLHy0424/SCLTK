@@ -8,6 +8,7 @@ tag=std
 arch=x86_64
 version=v5.10.2
 .PHONY:init build debug clean
+all:init clean build
 init:
 	$(msys2)\\usr\\bin\\pacman.exe -Syyu --noconfirm --needed\
 	 mingw-w64-ucrt-x86_64-toolchain\
