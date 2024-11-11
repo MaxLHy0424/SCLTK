@@ -10,7 +10,7 @@
 | CRCSN 2 | v2.5_Stable | ❌ 停止维护 | [📋 更新日志](https://github.com/MaxLHy0424/CRCSN/releases/tag/v2.5_Stable) |
 | CRCSN 3 | v3.0.1 (Build 30174) | ❌ 停止维护 | [📋 更新日志](https://github.com/MaxLHy0424/CRCSN/releases/tag/30174) |
 | CRCSN 4 | v4.10.7 | ❌ 停止维护 | [📋 更新日志](https://github.com/MaxLHy0424/CRCSN/releases/tag/v4.10.7) |
-| CRCSN 5 | v5.10.2 | 🛠️ 正常更新 | [📋 更新日志](https://github.com/MaxLHy0424/CRCSN/releases/tag/v5.10.2) |
+| CRCSN 5 | v5.10.3 | 🛠️ 正常更新 | [📋 更新日志](https://github.com/MaxLHy0424/CRCSN/releases/tag/v5.10.3) |
 | CRCSN 6 | 无 | ✨ 正在开发 | 🔒 即将退出 |
 | CRCSN Core | 无 | ✨ 正在开发 | 🔒 即将退出 |
 
@@ -24,7 +24,7 @@
 **使用 CRCSN 时建议关闭防病毒软件. 若 CRCSN 被报为恶意软件, 请添加排除项.**
 
 > [!NOTE]
-> 适用于 v5.10.2.
+> 适用于 v5.10.3.
 
 ## 0 开始之前
 
