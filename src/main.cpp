@@ -5,7 +5,7 @@
 #ifdef _PREVIEW_
 auto main()->int{
     console_ui ui;
-    ui.set_console(936,"CRCSN",50,25,true,false,true,255)
+    ui.set_console(936,"CRCSN",WINDOW_WIDTH,WINDOW_HEIGHT,true,false,true,255)
       .lock(true,true);
     puts(":: 检测运行权限.");
     if(!mod::is_run_as_admin()){
@@ -103,12 +103,14 @@ auto main(const int _argc,const char *const _args[])->int{
       .set_console(
         936,
         "CRCSN",
-        50,
-        25,
+        WINDOW_WIDTH,
+        WINDOW_HEIGHT,
         true,
         false,
         !config_data.hide_window_close_ctrl,
-        (config_data.enhanced_window)?(230):(255)
+        (config_data.enhanced_window)
+          ?(230)
+          :(255)
       )
 #endif
       .show()

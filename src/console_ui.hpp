@@ -76,29 +76,29 @@ private:
         }
     };
     std::vector<ui_item_> item_;
-    short height_,width_;
-    enum console_attrs_op_{v_normal=0,v_lock_text=1,v_lock_all=2};
+    short width_,height_;
+    enum console_attrs_op_{val_normal=0,val_lock_text=1,val_lock_all=2};
     inline auto show_cursor_(const bool _mode){
         CONSOLE_CURSOR_INFO cursor;
         GetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&cursor);
         cursor.bVisible=_mode;
         SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&cursor);
     }
-    inline auto edit_attrs_(const console_attrs_op_ _mode){
+    inline auto edit_console_attrs_(const console_attrs_op_ _mode){
         DWORD attrs;
         GetConsoleMode(GetStdHandle(STD_INPUT_HANDLE),&attrs);
         switch(_mode){
-            case v_normal:{
+            case val_normal:{
                 attrs|=ENABLE_QUICK_EDIT_MODE,
                 attrs|=ENABLE_INSERT_MODE,
                 attrs|=ENABLE_MOUSE_INPUT;
                 break;
-            }case v_lock_text:{
+            }case val_lock_text:{
                 attrs&=~ENABLE_QUICK_EDIT_MODE,
                 attrs&=~ENABLE_INSERT_MODE,
                 attrs|=ENABLE_MOUSE_INPUT;
                 break;
-            }case v_lock_all:{
+            }case val_lock_all:{
                 attrs&=~ENABLE_QUICK_EDIT_MODE,
                 attrs&=~ENABLE_INSERT_MODE,
                 attrs&=~ENABLE_MOUSE_INPUT;
@@ -174,7 +174,7 @@ private:
             }
         }
     }
-    inline auto exec_fn_(const MOUSE_EVENT_RECORD &_mouse_event){
+    inline auto call_func_(const MOUSE_EVENT_RECORD &_mouse_event){
         bool is_exit{};
         for(auto &line:item_){
             if(line==_mouse_event.dwMousePosition){
@@ -182,10 +182,10 @@ private:
                     cls_();
                     line.set_color(line.default_color);
                     show_cursor_(false);
-                    edit_attrs_(v_lock_all);
+                    edit_console_attrs_(val_lock_all);
                     is_exit=line.func(args{_mouse_event,this});
                     show_cursor_(false);
-                    edit_attrs_(v_lock_text);
+                    edit_console_attrs_(val_lock_text);
                     init_pos_();
                 }
                 break;
@@ -233,14 +233,22 @@ public:
         EnableMenuItem(
             GetSystemMenu(GetConsoleWindow(),FALSE),
             SC_CLOSE,
-            MF_BYCOMMAND|(_close_window_ctrl)?(MF_ENABLED):(MF_DISABLED)|MF_GRAYED
+            MF_BYCOMMAND|(
+                (_close_window_ctrl)
+                  ?(MF_ENABLED)
+                  :(MF_DISABLED)
+            )|MF_GRAYED
         );
         SetLayeredWindowAttributes(GetConsoleWindow(),0,_transparency,LWA_ALPHA);
         return *this;
     }
     inline auto &lock(const bool _is_hide_cursor,const bool _is_lock_text){
         show_cursor_(!_is_hide_cursor);
-        edit_attrs_((_is_lock_text)?(v_lock_all):(v_normal));
+        edit_console_attrs_(
+            (_is_lock_text)
+              ?(val_lock_all)
+              :(val_normal)
+        );
         return *this;
     }
     inline auto &add(
@@ -253,7 +261,9 @@ public:
             ui_item_{
                 _text,
                 _default_color,
-                (_func==nullptr)?(_default_color):(_highlight_color),
+                (_func==nullptr)
+                  ?(_default_color)
+                  :(_highlight_color),
                 _func
             }
         );
@@ -271,7 +281,9 @@ public:
             ui_item_{
                 _text,
                 _default_color,
-                (_func==nullptr)?(_default_color):(_highlight_color),
+                (_func==nullptr)
+                  ?(_default_color)
+                  :(_highlight_color),
                 _func
             }
         );
@@ -287,7 +299,9 @@ public:
         item_.at(_index)=ui_item_{
             _text,
             _default_color,
-            (_func==nullptr)?(_default_color):(_highlight_color),
+            (_func==nullptr)
+              ?(_default_color)
+              :(_highlight_color),
             _func
         };
         return *this;
@@ -306,7 +320,7 @@ public:
     }
     inline auto &show(){
         show_cursor_(false);
-        edit_attrs_(v_lock_text);
+        edit_console_attrs_(val_lock_text);
         MOUSE_EVENT_RECORD mouse_event;
         init_pos_();
         bool is_exit{};
@@ -318,7 +332,7 @@ public:
                     break;
                 }case CONSOLE_MOUSE_CLICK:{
                     if((mouse_event.dwButtonState)&&(mouse_event.dwButtonState!=CONSOLE_MOUSE_WHEEL)){
-                        is_exit=exec_fn_(mouse_event);
+                        is_exit=call_func_(mouse_event);
                     }
                     break;
                 }
@@ -330,18 +344,18 @@ public:
     }
     inline explicit console_ui():
       item_{},
-      height_{},
-      width_{}
+      width_{},
+      height_{}
     {}
     inline explicit console_ui(const console_ui &_obj):
       item_{_obj.item_},
-      height_{},
-      width_{}
+      width_{},
+      height_{}
     {}
     inline explicit console_ui(const console_ui &&_obj):
       item_{std::move(_obj.item_)},
-      height_{},
-      width_{}
+      width_{},
+      height_{}
     {}
     inline ~console_ui(){}
 };

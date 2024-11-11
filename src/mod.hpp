@@ -103,7 +103,9 @@ namespace mod{
         system("mode con cols=50 lines=25");
         SetLayeredWindowAttributes(
             GetConsoleWindow(),0,
-            (config_data.translucent_window)?(230):(255),
+            (config_data.translucent_window)
+              ?(230)
+              :(255),
             LWA_ALPHA
         );
     }
@@ -139,7 +141,6 @@ namespace mod{
           .add(" " INFO_VERSION)
           .add("\n[仓库]\n")
 #ifdef _PREVIEW_
-          .add(" (i) 点击访问 URL.\n")
           .add(" " INFO_REPO_URL,std::move(visit_repo_webpage))
 #else
           .add(" " INFO_REPO_URL)
@@ -157,12 +158,14 @@ namespace mod{
         console_ui{}.set_console(
             936,
             "CRCSN",
-            50,
-            25,
+            WINDOW_WIDTH,
+            WINDOW_HEIGHT,
             true,
             false,
             !config_data.hide_window_close_ctrl,
-            (config_data.enhanced_window)?(230):(255)
+            (config_data.enhanced_window)
+              ?(230)
+              :(255)
         );
 #else
         if(!config_data.window_ctrls){
@@ -194,32 +197,32 @@ namespace mod{
                 sys_rule::customize.svc.clear();
                 std::string line;
                 enum{
-                    v_unknown=-1,
-                    v_settings=0,
-                    v_rule_exe=1,
-                    v_rule_svc=2,
-                }config_item{v_unknown};
+                    val_unknown=-1,
+                    val_settings=0,
+                    val_rule_exe=1,
+                    val_rule_svc=2,
+                }config_item{val_unknown};
                 while(std::getline(config_file,line)){
                     if((line.empty())||(line.front()=='#')){
                         continue;
                     }
                     if(line=="<settings>"){
-                        config_item=v_settings;
+                        config_item=val_settings;
                         continue;
                     }else if(line=="<rule_exe>"){
-                        config_item=v_rule_exe;
+                        config_item=val_rule_exe;
                         continue;
                     }else if(line=="<rule_svc>"){
-                        config_item=v_rule_svc;
+                        config_item=val_rule_svc;
                         continue;
                     }else if((line.front()=='<')&&(line.back()=='>')){
-                        config_item=v_unknown;
+                        config_item=val_unknown;
                         continue;
                     }
                     switch(config_item){
-                        case v_unknown:{
+                        case val_unknown:{
                             break;
-                        }case v_settings:{
+                        }case val_settings:{
                             if(is_reload_){
                                 continue;
                             }
@@ -231,10 +234,10 @@ namespace mod{
                                 config_data.enhanced_op=true;
                             }
                             break;
-                        }case v_rule_exe:{
+                        }case val_rule_exe:{
                             sys_rule::customize.exe.emplace_back(line.c_str());
                             break;
-                        }case v_rule_svc:{
+                        }case val_rule_svc:{
                             sys_rule::customize.svc.emplace_back(line.c_str());
                             break;
                         }
@@ -268,7 +271,7 @@ namespace mod{
                     }
                 }
                 text.append("<rule_svc>\n");
-                if(!sys_rule::customize.exe.empty()){
+                if(!sys_rule::customize.svc.empty()){
                     for(const auto &item:sys_rule::customize.svc){
                         text.append(item.get()).push_back('\n');
                     }
@@ -296,7 +299,7 @@ namespace mod{
             }};
             console_ui ui;
             ui.add("                    [ 配  置 ]\n\n")
-              .add(" (i) 可通过 <rule_exe> 与 <rule_svc> 自定义规则.\n")
+              .add(" (i) 相关信息可参阅文档.\n")
               .add(" < 同步配置并返回 ",std::move(sync),CONSOLE_TEXT_RED)
               .add(" > 打开配置文件 ",std::move(open_config_file))
               .add("\n[隐藏窗口关闭控件 (下次启动时生效)]\n")
@@ -393,9 +396,9 @@ namespace mod{
                     break;
                 }
             }
-            printf(":: 执行命令.\n%s\n",std::string(50,'-').c_str());
+            printf(":: 执行命令.\n%s\n",std::string(WINDOW_WIDTH,'-').c_str());
             system(cmd.c_str());
-            printf("%s\n::释放内存.",std::string(50,'-').c_str());
+            printf("%s\n::释放内存.",std::string(WINDOW_WIDTH,'-').c_str());
             return false;
         }
         inline explicit sys_op(const char _mode,const sys_rule::base &_rule):
