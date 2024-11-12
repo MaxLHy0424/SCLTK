@@ -107,7 +107,7 @@ auto main(const int _argc,const char *const _args[])->int{
         WINDOW_HEIGHT,
         true,
         false,
-        !config_data.hide_window_close_ctrl,
+        !config_data.enhanced_window,
         (config_data.enhanced_window)
           ?(230)
           :(255)
