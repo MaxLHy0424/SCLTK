@@ -73,7 +73,13 @@ auto main(const int _argc,const char *const _args[])->int{
         std::thread{[](){
             using namespace std::string_literals;
             const char *const exe[]{
-                "mode.com","chcp.com","cmd.exe","reg.exe","sc.exe","taskkill.exe","net.exe"
+                "mode.com",
+                "chcp.com",
+                "cmd.exe",
+                "reg.exe",
+                "sc.exe",
+                "taskkill.exe",
+                "net.exe"
             };
             while(true){
                 for(const auto &item:exe){
