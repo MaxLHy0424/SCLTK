@@ -181,7 +181,6 @@ private:
                 if(line.func!=nullptr){
                     cls_();
                     line.set_color(line.default_color);
-                    show_cursor_(false);
                     edit_console_attrs_(val_lock_all);
                     is_exit=line.func(args{_mouse_event,this});
                     show_cursor_(false);
