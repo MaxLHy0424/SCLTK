@@ -232,11 +232,9 @@ public:
         EnableMenuItem(
             GetSystemMenu(GetConsoleWindow(),FALSE),
             SC_CLOSE,
-            MF_BYCOMMAND|(
-                (_close_window_ctrl)
-                  ?(MF_ENABLED)
-                  :(MF_DISABLED)
-            )|MF_GRAYED
+            (_close_window_ctrl)
+              ?(MF_BYCOMMAND|MF_ENABLED)
+              :(MF_BYCOMMAND|MF_DISABLED|MF_GRAYED)
         );
         SetLayeredWindowAttributes(GetConsoleWindow(),0,_transparency,LWA_ALPHA);
         return *this;
