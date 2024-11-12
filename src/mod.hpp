@@ -6,7 +6,7 @@
 #endif
 inline struct{
 #ifdef _PREVIEW_
-    bool hide_window_close_ctrl,enhanced_window,enhanced_op;
+    bool enhanced_window,enhanced_op;
 #else
     bool front_show_window,translucent_window,window_ctrls;
 #endif
@@ -90,8 +90,7 @@ namespace mod{
         delete[] path;
         return true;
     }
-#endif
-#ifndef _PREVIEW_
+#else
     inline auto init(){
         system("chcp 936 > nul");
         SetConsoleTitleA("CRCSN");
@@ -162,7 +161,7 @@ namespace mod{
             WINDOW_HEIGHT,
             true,
             false,
-            !config_data.hide_window_close_ctrl,
+            !config_data.enhanced_window,
             (config_data.enhanced_window)
               ?(230)
               :(255)
@@ -226,9 +225,7 @@ namespace mod{
                             if(is_reload_){
                                 continue;
                             }
-                            if(line=="hide_window_close_ctrl"){
-                                config_data.hide_window_close_ctrl=true;
-                            }else if(line=="enhanced_window"){
+                            if(line=="enhanced_window"){
                                 config_data.enhanced_window=true;
                             }else if(line=="enhanced_op"){
                                 config_data.enhanced_op=true;
@@ -255,9 +252,6 @@ namespace mod{
                 puts(":: 保存更改.");
                 std::string text;
                 text.append("<settings>\n");
-                if(config_data.hide_window_close_ctrl){
-                    text.append("hide_window_close_ctrl\n");
-                }
                 if(config_data.enhanced_window){
                     text.append("enhanced_window\n");
                 }
@@ -302,9 +296,6 @@ namespace mod{
               .add(" (i) 相关信息可参阅文档.\n")
               .add(" < 同步配置并返回 ",std::move(sync),CONSOLE_TEXT_RED)
               .add(" > 打开配置文件 ",std::move(open_config_file))
-              .add("\n[隐藏窗口关闭控件 (下次启动时生效)]\n")
-              .add(" > 启用 ",[](console_ui::args){config_data.hide_window_close_ctrl=true;return false;})
-              .add(" > 禁用 (默认) ",[](console_ui::args){config_data.hide_window_close_ctrl=false;return false;})
               .add("\n[增强窗口 (下次启动时生效)]\n")
               .add(" > 启用 ",[](console_ui::args){config_data.enhanced_window=true;return false;})
               .add(" > 禁用 (默认) ",[](console_ui::args){config_data.enhanced_window=false;return false;})
