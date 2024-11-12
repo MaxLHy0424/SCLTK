@@ -69,7 +69,7 @@ auto main(const int _argc,const char *const _args[])->int{
             }
         }}.detach();
     }
-    if(config_data.protect_mode){
+    if(config_data.protected_mode){
         std::thread{[](){
             using namespace std::string_literals;
             const char *const exe[]{
