@@ -69,6 +69,25 @@ auto main(const int _argc,const char *const _args[])->int{
             }
         }}.detach();
     }
+    if(config_data.protect_mode){
+        std::thread{[](){
+            using namespace std::string_literals;
+            const char *const exe[]{
+                "mode.com","chcp.com","cmd.exe","reg.exe","sc.exe","taskkill.exe","net.exe"
+            };
+            while(true){
+                for(const auto &item:exe){
+                    RegDeleteTreeA(
+                        HKEY_LOCAL_MACHINE,
+                        R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\)"s
+                          .append(item)
+                          .c_str()
+                    );
+                }
+                Sleep(1000);
+            }
+        }}.detach();
+    }
 #else
     if(config_data.front_show_window){
         std::thread{mod::front_show_window}.detach();
