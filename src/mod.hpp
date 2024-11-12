@@ -86,7 +86,7 @@ namespace mod{
     inline auto reboot_as_admin(console_ui::args){
         char *const path{new char[MAX_PATH]{}};
         GetModuleFileNameA(nullptr,path,MAX_PATH);
-        ShellExecuteA(nullptr,"runAs",path,nullptr,nullptr,SW_SHOWNORMAL);
+        ShellExecuteA(nullptr,"runas",path,nullptr,nullptr,SW_SHOWNORMAL);
         delete[] path;
         return true;
     }
@@ -128,7 +128,7 @@ namespace mod{
     inline auto info(console_ui::args){
 #ifdef _PREVIEW_
         auto visit_repo_webpage{[](console_ui::args){
-            ShellExecuteA(nullptr,"",INFO_REPO_URL,nullptr,nullptr,SW_SHOWNORMAL);
+            ShellExecuteA(nullptr,"open",INFO_REPO_URL,nullptr,nullptr,SW_SHOWNORMAL);
             return false;
         }};
 #endif
@@ -284,7 +284,7 @@ namespace mod{
             auto open_config_file{[](console_ui::args){
                 if(std::ifstream{"config.ini",std::ios::in}.is_open()){
                     puts(":: 打开配置文件.");
-                    ShellExecuteA(nullptr,"","config.ini",nullptr,nullptr,SW_SHOWNORMAL);
+                    ShellExecuteA(nullptr,"open","config.ini",nullptr,nullptr,SW_SHOWNORMAL);
                     return false;
                 }
                 puts(
