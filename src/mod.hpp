@@ -6,7 +6,7 @@
 #endif
 inline struct{
 #ifdef _PREVIEW_
-    bool enhanced_window,enhanced_op;
+    bool enhanced_op,enhanced_window,protect_mode;
 #else
     bool front_show_window,translucent_window,window_ctrls;
 #endif
@@ -225,10 +225,12 @@ namespace mod{
                             if(is_reload_){
                                 continue;
                             }
-                            if(line=="enhanced_window"){
-                                config_data.enhanced_window=true;
-                            }else if(line=="enhanced_op"){
+                            if(line=="enhanced_op"){
                                 config_data.enhanced_op=true;
+                            }else if(line=="enhanced_window"){
+                                config_data.enhanced_window=true;
+                            }else if(line=="protect_mode"){
+                                config_data.protect_mode=true;
                             }
                             break;
                         }case val_rule_exe:{
@@ -252,11 +254,14 @@ namespace mod{
                 puts(":: 保存更改.");
                 std::string text;
                 text.append("<settings>\n");
+                if(config_data.enhanced_op){
+                    text.append("enhanced_op\n");
+                }
                 if(config_data.enhanced_window){
                     text.append("enhanced_window\n");
                 }
-                if(config_data.enhanced_op){
-                    text.append("enhanced_op\n");
+                if(config_data.protect_mode){
+                    text.append("protect_mode\n");
                 }
                 text.append("<rule_exe>\n");
                 if(!sys_rule::customize.exe.empty()){
@@ -296,12 +301,15 @@ namespace mod{
               .add(" (i) 相关信息可参阅文档.\n")
               .add(" < 同步配置并返回 ",std::move(sync),CONSOLE_TEXT_RED)
               .add(" > 打开配置文件 ",std::move(open_config_file))
-              .add("\n[增强窗口 (下次启动时生效)]\n")
-              .add(" > 启用 ",[](console_ui::args){config_data.enhanced_window=true;return false;})
-              .add(" > 禁用 (默认) ",[](console_ui::args){config_data.enhanced_window=false;return false;})
               .add("\n[增强操作]\n")
               .add(" > 启用 ",[](console_ui::args){config_data.enhanced_op=true;return false;})
               .add(" > 禁用 (默认) ",[](console_ui::args){config_data.enhanced_op=false;return false;})
+              .add("\n[增强窗口 (下次启动时生效)]\n")
+              .add(" > 启用 ",[](console_ui::args){config_data.enhanced_window=true;return false;})
+              .add(" > 禁用 (默认) ",[](console_ui::args){config_data.enhanced_window=false;return false;})
+              .add("\n[保护模式 (下次启动时生效)]\n")
+              .add(" > 启用 ",[](console_ui::args){config_data.protect_mode=true;return false;})
+              .add(" > 禁用 (默认) ",[](console_ui::args){config_data.protect_mode=false;return false;})
               .show();
             return false;
         }
@@ -356,7 +364,7 @@ namespace mod{
                         }
                     }
                     for(const auto &item:rule_.exe){
-                        cmd.append(R"(taskKill /f /im ")")
+                        cmd.append(R"(taskkill /f /im ")")
                            .append(item.get())
                            .append(R"(.exe" & )");
                     }
@@ -421,7 +429,7 @@ namespace mod{
                     for(const auto &item:rule_.exe){
                         cmd.append(R"(reg add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\)")
                            .append(item)
-                           .append(R"(.exe" /f /t reg_sz /v debugger /d ? & taskKill /f /im ")")
+                           .append(R"(.exe" /f /t reg_sz /v debugger /d ? & taskkill /f /im ")")
                            .append(item)
                            .append(R"(.exe" & )");
                     }
