@@ -92,16 +92,14 @@ CRCSN 发行版文件名规则为 `[tag]-[arch]-[runtime].exe`, 其中 `[tag]` �
 
 #### 4.3.1 可执行文件
 
-配置文件中标签 `<rule_exe>` 到下一个标签的部分.
-
-可执行文件后面没有 `.exe` 扩展名.
+配置文件中标签 `<rule_exe>` 到下一个标签的部分, 每个项目保留文件扩展名.
 
 示例:
 ```ini
 <rule_exe>
-abc_client_gui
-abc_client_server
-abc_protect_server
+abc_client_gui.exe
+abc_client_server.exe
+abc_protect_server.com
 ```
 
 #### 4.3.2 服务
