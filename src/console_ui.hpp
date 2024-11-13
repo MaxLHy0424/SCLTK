@@ -328,7 +328,10 @@ public:
                     refresh_(mouse_event.dwMousePosition);
                     break;
                 }case CONSOLE_MOUSE_CLICK:{
-                    if((mouse_event.dwButtonState)&&(mouse_event.dwButtonState!=CONSOLE_MOUSE_WHEEL)){
+                    if(
+                        (mouse_event.dwButtonState)&&
+                        (mouse_event.dwButtonState!=CONSOLE_MOUSE_WHEEL)
+                    ){
                         is_exit=call_fn_(mouse_event);
                     }
                     break;
