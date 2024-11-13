@@ -248,7 +248,7 @@ namespace mod{
             return;
         }
         inline auto edit_()const{
-            auto sync{[&](console_ui::args){
+            auto sync{[this](console_ui::args){
                 is_reload_=true;
                 load_();
                 puts(":: 保存更改.");
