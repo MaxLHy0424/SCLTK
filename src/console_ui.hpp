@@ -147,7 +147,7 @@ private:
             printf("\n");
         }
     }
-    inline auto rewrite_(const COORD &_position,const char *const &_text){
+    inline auto rewrite_(const COORD &_position,const char *const _text){
         set_cursor_({0,_position.Y});
         write_(std::string(_position.X,' ').c_str());
         set_cursor_({0,_position.Y});
