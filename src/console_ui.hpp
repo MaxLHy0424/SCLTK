@@ -40,26 +40,26 @@ private:
         const char *text;
         short default_color,highlight_color,last_color;
         COORD position;
-        callback_ func;
+        callback_ fn;
         inline explicit ui_item_():
           text{},
           default_color{CONSOLE_TEXT_WHITE},
           highlight_color{CONSOLE_TEXT_BLUE},
           last_color{CONSOLE_TEXT_WHITE},
           position{},
-          func{}
+          fn{}
         {}
         inline explicit ui_item_(
             const char *const _text,
             const short _default_color,
             const short _highlight_color,
-            const callback_ _func
+            const callback_ _fn
         ):text{_text},
           default_color{_default_color},
           highlight_color{_highlight_color},
           last_color{CONSOLE_TEXT_WHITE},
           position{},
-          func{_func}
+          fn{_fn}
         {}
         inline ~ui_item_(){}
         inline auto set_color(short _color){
@@ -174,15 +174,15 @@ private:
             }
         }
     }
-    inline auto call_func_(const MOUSE_EVENT_RECORD &_mouse_event){
+    inline auto call_fn_(const MOUSE_EVENT_RECORD &_mouse_event){
         bool is_exit{};
         for(auto &line:item_){
             if(line==_mouse_event.dwMousePosition){
-                if(line.func!=nullptr){
+                if(line.fn!=nullptr){
                     cls_();
                     line.set_color(line.default_color);
                     edit_console_attrs_(v_lock_all);
-                    is_exit=line.func(fn_args{_mouse_event,this});
+                    is_exit=line.fn(fn_args{_mouse_event,this});
                     show_cursor_(false);
                     edit_console_attrs_(v_lock_text);
                     init_pos_();
@@ -250,7 +250,7 @@ public:
     }
     inline auto &add(
         const char *const _text,
-        const callback_ _func=nullptr,
+        const callback_ _fn=nullptr,
         const short _highlight_color=CONSOLE_TEXT_BLUE,
         const short _default_color=CONSOLE_TEXT_WHITE
     ){
@@ -258,10 +258,10 @@ public:
             ui_item_{
                 _text,
                 _default_color,
-                (_func==nullptr)
+                (_fn==nullptr)
                   ?(_default_color)
                   :(_highlight_color),
-                _func
+                _fn
             }
         );
         return *this;
@@ -269,7 +269,7 @@ public:
     inline auto &insert(
         const size_type_ _index,
         const char *const _text,
-        const callback_ _func=nullptr,
+        const callback_ _fn=nullptr,
         const short _highlight_color=CONSOLE_TEXT_BLUE,
         const short _default_color=CONSOLE_TEXT_WHITE
     ){
@@ -278,10 +278,10 @@ public:
             ui_item_{
                 _text,
                 _default_color,
-                (_func==nullptr)
+                (_fn==nullptr)
                   ?(_default_color)
                   :(_highlight_color),
-                _func
+                _fn
             }
         );
         return *this;
@@ -289,17 +289,17 @@ public:
     inline auto &edit(
         const size_type_ _index,
         const char *const _text,
-        const callback_ _func=nullptr,
+        const callback_ _fn=nullptr,
         const short _highlight_color=CONSOLE_TEXT_BLUE,
         const short _default_color=CONSOLE_TEXT_WHITE
     ){
         item_.at(_index)=ui_item_{
             _text,
             _default_color,
-            (_func==nullptr)
+            (_fn==nullptr)
               ?(_default_color)
               :(_highlight_color),
-            _func
+            _fn
         };
         return *this;
     }
@@ -329,7 +329,7 @@ public:
                     break;
                 }case CONSOLE_MOUSE_CLICK:{
                     if((mouse_event.dwButtonState)&&(mouse_event.dwButtonState!=CONSOLE_MOUSE_WHEEL)){
-                        is_exit=call_func_(mouse_event);
+                        is_exit=call_fn_(mouse_event);
                     }
                     break;
                 }
