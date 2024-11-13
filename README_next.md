@@ -84,7 +84,7 @@ CRCSN 发行版文件名规则为 `[tag]-[arch]-[runtime].exe`, 其中 `[tag]` �
 - **增强窗口 (下次启动时生效)**\
   将窗口不透明度设为 90%, 禁止关闭窗口, 每 100ms 强制置顶显示窗口.
 - **保护模式 (下次启动时生效)**\
-  每隔 1s 尝试移除导致 `mode.com`, `chcp.com`, `cmd.exe`, `reg.exe`, `sc.exe`, `taskkill.exe`, `net.exe` 被映像劫持的注册表项.
+  每隔 1s 尝试移除 `mode.com`, `chcp.com`, `cmd.exe`, `reg.exe`, `sc.exe`, `taskkill.exe`, `net.exe` 的映像劫持注册表项.
 
 ### 4.3 自定义规则
 
