@@ -191,7 +191,7 @@ namespace mod{
             GetStdHandle(STD_OUTPUT_HANDLE),
             {
                 WINDOW_WIDTH*2,
-                10'000
+                32766
             }
         );
 #endif
