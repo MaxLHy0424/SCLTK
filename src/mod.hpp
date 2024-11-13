@@ -64,7 +64,7 @@ namespace mod{
         };
         inline base customize{};
     }
-    inline auto exit(console_ui::args){
+    inline auto exit(console_ui::fn_args){
         return true;
     }
     inline auto is_run_as_admin(){
@@ -83,7 +83,7 @@ namespace mod{
         return is_admin;
     }
 #ifdef _PREVIEW_
-    inline auto reboot_as_admin(console_ui::args){
+    inline auto reboot_as_admin(console_ui::fn_args){
         char *const path{new char[MAX_PATH]{}};
         GetModuleFileNameA(nullptr,path,MAX_PATH);
         ShellExecuteA(nullptr,"runas",path,nullptr,nullptr,SW_SHOWNORMAL);
@@ -124,9 +124,9 @@ namespace mod{
         }
     }
 #endif
-    inline auto info(console_ui::args){
+    inline auto info(console_ui::fn_args){
 #ifdef _PREVIEW_
-        auto visit_repo_webpage{[](console_ui::args){
+        auto visit_repo_webpage{[](console_ui::fn_args){
             ShellExecuteA(nullptr,"open",INFO_REPO_URL,nullptr,nullptr,SW_SHOWNORMAL);
             return false;
         }};
@@ -150,7 +150,7 @@ namespace mod{
           .show();
         return false;
     }
-    inline auto cmd(console_ui::args args){
+    inline auto cmd(console_ui::fn_args args){
         args.ui->lock(false,false);
 #ifdef _PREVIEW_
         args.ui->set_console(
@@ -269,7 +269,7 @@ namespace mod{
             return;
         }
         inline auto edit_()const{
-            auto sync{[this](console_ui::args){
+            auto sync{[this](console_ui::fn_args){
                 is_reload_=true;
                 load_();
                 puts(":: 保存更改.");
@@ -301,7 +301,7 @@ namespace mod{
                 config_file.close();
                 return true;
             }};
-            auto open_config_file{[](console_ui::args){
+            auto open_config_file{[](console_ui::fn_args){
                 if(std::ifstream{"config.ini",std::ios::in}.is_open()){
                     puts(":: 打开配置文件.");
                     ShellExecuteA(nullptr,"open","config.ini",nullptr,nullptr,SW_SHOWNORMAL);
@@ -323,19 +323,19 @@ namespace mod{
               .add(" < 同步配置并返回 ",std::move(sync),CONSOLE_TEXT_RED)
               .add(" > 打开配置文件 ",std::move(open_config_file))
               .add("\n[增强操作]\n")
-              .add(" > 启用 ",[](console_ui::args){config_data.enhanced_op=true;return false;})
-              .add(" > 禁用 (默认) ",[](console_ui::args){config_data.enhanced_op=false;return false;})
+              .add(" > 启用 ",[](console_ui::fn_args){config_data.enhanced_op=true;return false;})
+              .add(" > 禁用 (默认) ",[](console_ui::fn_args){config_data.enhanced_op=false;return false;})
               .add("\n[增强窗口 (下次启动时生效)]\n")
-              .add(" > 启用 ",[](console_ui::args){config_data.enhanced_window=true;return false;})
-              .add(" > 禁用 (默认) ",[](console_ui::args){config_data.enhanced_window=false;return false;})
+              .add(" > 启用 ",[](console_ui::fn_args){config_data.enhanced_window=true;return false;})
+              .add(" > 禁用 (默认) ",[](console_ui::fn_args){config_data.enhanced_window=false;return false;})
               .add("\n[保护模式 (下次启动时生效)]\n")
-              .add(" > 启用 ",[](console_ui::args){config_data.protected_mode=true;return false;})
-              .add(" > 禁用 (默认) ",[](console_ui::args){config_data.protected_mode=false;return false;})
+              .add(" > 启用 ",[](console_ui::fn_args){config_data.protected_mode=true;return false;})
+              .add(" > 禁用 (默认) ",[](console_ui::fn_args){config_data.protected_mode=false;return false;})
               .show();
             return false;
         }
     public:
-        inline auto operator()(console_ui::args)const{
+        inline auto operator()(console_ui::fn_args)const{
             switch(mode_){
                 case 'r':{
                     load_();
@@ -358,7 +358,7 @@ namespace mod{
         const char mode_;
         const sys_rule::base &rule_;
     public:
-        inline auto operator()(console_ui::args)const{
+        inline auto operator()(console_ui::fn_args)const{
             puts("                 [ 破 解 / 恢 复 ]\n\n");
             if((rule_.exe.empty())&&(rule_.svc.empty())){
                 puts(" (i) 规则为空.\n");
