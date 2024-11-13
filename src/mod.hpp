@@ -347,7 +347,10 @@ namespace mod{
                 }
                 return false;
             }
-            puts(":: 生成命令.");
+            printf(
+                ":: 生成并执行命令.\n%s\n",
+                std::string(WINDOW_WIDTH,'-').c_str()
+            );
             std::string cmd;
             switch(mode_){
                 case 'c':{
@@ -355,23 +358,31 @@ namespace mod{
                         for(const auto &item:rule_.exe){
                             cmd.append(R"(reg add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\)")
                                .append(item.get())
-                               .append(R"(.exe" /f /t reg_sz /v debugger /d _ & )");
+                               .append(R"(.exe" /f /t reg_sz /v debugger /d _)");
+                            system(cmd.c_str());
+                            cmd.clear();
                         }
                         for(const auto &item:rule_.svc){
                             cmd.append("sc config ")
                                .append(item.get())
-                               .append(" start= disabled & ");
+                               .append(" start= disabled");
+                            system(cmd.c_str());
+                            cmd.clear();
                         }
                     }
                     for(const auto &item:rule_.exe){
                         cmd.append(R"(taskkill /f /im ")")
                            .append(item.get())
-                           .append(R"(.exe" & )");
+                           .append(R"(.exe")");
+                        system(cmd.c_str());
+                        cmd.clear();
                     }
                     for(const auto &item:rule_.svc){
                         cmd.append(R"(net stop ")")
                            .append(item.get())
-                           .append(R"(" /y & )");
+                           .append(R"(" /y)");
+                        system(cmd.c_str());
+                        cmd.clear();
                     }
                     break;
                 }case 'r':{
@@ -379,25 +390,28 @@ namespace mod{
                         for(const auto &item:rule_.exe){
                             cmd.append(R"(reg delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\)")
                                .append(item.get())
-                               .append(R"(.exe" /f & )");
+                               .append(R"(.exe" /f)");
+                            system(cmd.c_str());
+                            cmd.clear();
                         }
                         for(const auto &item:rule_.svc){
                             cmd.append("sc config ")
                                .append(item.get())
-                               .append(" start= auto & ");
+                               .append(" start= auto");
+                            system(cmd.c_str());
+                            cmd.clear();
                         }
                     }
                     for(const auto &item:rule_.svc){
                         cmd.append(R"(net start ")")
                            .append(item.get())
-                           .append(R"(" & )");
+                           .append(R"(")");
+                        system(cmd.c_str());
+                        cmd.clear();
                     }
                     break;
                 }
             }
-            printf(":: 执行命令.\n%s\n",std::string(WINDOW_WIDTH,'-').c_str());
-            system(cmd.c_str());
-            printf("%s\n::释放内存.",std::string(WINDOW_WIDTH,'-').c_str());
             return false;
         }
         inline explicit sys_op(const char _mode,const sys_rule::base &_rule):
