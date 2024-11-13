@@ -44,22 +44,44 @@ namespace mod{
         };
         inline const base mythware{
             {
-                "StudentMain","DispcapHelper","VRCwPlayer",
-                "InstHelpApp","InstHelpApp64","TDOvrSet",
-                "GATESRV","ProcHelper64","MasterHelper"
+                "StudentMain.exe",
+                "DispcapHelper.exe",
+                "VRCwPlayer.exe",
+                "InstHelpApp.exe",
+                "InstHelpApp64.exe",
+                "TDOvrSet.exe",
+                "GATESRV.exe",
+                "ProcHelper64.exe",
+                "MasterHelper.exe"
             },{
-                "STUDSRV","TDNetFilter","TDFileFilter"
+                "STUDSRV",
+                "TDNetFilter",
+                "TDFileFilter"
             }
         },lenovo{
             {
-                "vncviewer","tvnserver32","WfbsPnpInstall",
-                "WFBSMon","WFBSMlogon","WFBSSvrLogShow",
-                "ResetIp","FuncForWIN64","CertMgr",
-                "Fireware","BCDBootCopy","refreship",
-                "lenovoLockScreen","PortControl64","DesktopCheck",
-                "DeploymentManager","DeploymentAgent","XYNTService"
+                "vncviewer.exe",
+                "tvnserver32.exe",
+                "WfbsPnpInstall.exe",
+                "WFBSMon.exe",
+                "WFBSMlogon.exe",
+                "WFBSSvrLogShow.exe",
+                "ResetIp.exe",
+                "FuncForWIN64.exe",
+                "CertMgr.exe",
+                "Fireware.exe",
+                "BCDBootCopy.exe",
+                "refreship.exe",
+                "lenovoLockScreen.exe",
+                "PortControl64.exe",
+                "DesktopCheck.exe",
+                "DeploymentManager.exe",
+                "DeploymentAgent.exe",
+                "XYNTService.exe"
             },{
-                "BSAgentSvr","tvnserver","WFBSMlogon"
+                "BSAgentSvr",
+                "tvnserver",
+                "WFBSMlogon"
             }
         };
         inline base customize{};
@@ -379,7 +401,7 @@ namespace mod{
                         for(const auto &item:rule_.exe){
                             cmd.append(R"(reg add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\)")
                                .append(item.get())
-                               .append(R"(.exe" /f /t reg_sz /v debugger /d _)");
+                               .append(R"(" /f /t reg_sz /v debugger /d _)");
                             system(cmd.c_str());
                             cmd.clear();
                         }
@@ -394,7 +416,7 @@ namespace mod{
                     for(const auto &item:rule_.exe){
                         cmd.append(R"(taskkill /f /im ")")
                            .append(item.get())
-                           .append(R"(.exe")");
+                           .append(R"(")");
                         system(cmd.c_str());
                         cmd.clear();
                     }
@@ -411,7 +433,7 @@ namespace mod{
                         for(const auto &item:rule_.exe){
                             cmd.append(R"(reg delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\)")
                                .append(item.get())
-                               .append(R"(.exe" /f)");
+                               .append(R"(" /f)");
                             system(cmd.c_str());
                             cmd.clear();
                         }
@@ -464,9 +486,9 @@ namespace mod{
                     for(const auto &item:rule_.exe){
                         cmd.append(R"(reg add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\)")
                            .append(item)
-                           .append(R"(.exe" /f /t reg_sz /v debugger /d ? & taskkill /f /im ")")
+                           .append(R"(" /f /t reg_sz /v debugger /d ? & taskkill /f /im ")")
                            .append(item)
-                           .append(R"(.exe" & )");
+                           .append(R"(" & )");
                     }
                     for(const auto &item:rule_.svc){
                         cmd.append(R"(net stop ")")
@@ -478,7 +500,7 @@ namespace mod{
                     for(const auto &item:rule_.exe){
                         cmd.append(R"(reg delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\)")
                            .append(item)
-                           .append(R"(.exe" /f & )");
+                           .append(R"(" /f & )");
                     }
                     for(const auto &item:rule_.svc){
                         cmd.append(R"(net start ")")
