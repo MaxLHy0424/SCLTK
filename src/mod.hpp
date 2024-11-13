@@ -152,9 +152,30 @@ namespace mod{
     }
     inline auto cmd(console_ui::args args){
         args.ui->lock(false,false);
+#ifdef _PREVIEW_
+        args.ui->set_console(
+            936,
+            "CRCSN",
+            WINDOW_WIDTH*2,
+            WINDOW_HEIGHT,
+            true,
+            false,
+            !config_data.enhanced_window,
+            (config_data.enhanced_window)
+              ?(230)
+              :(255)
+        );
+        SetConsoleScreenBufferSize(
+            GetStdHandle(STD_OUTPUT_HANDLE),
+            {
+                WINDOW_WIDTH*2,
+                10'000
+            }
+        );
+#endif
         system("cmd");
 #ifdef _PREVIEW_
-        console_ui{}.set_console(
+        args.ui->set_console(
             936,
             "CRCSN",
             WINDOW_WIDTH,
