@@ -71,7 +71,6 @@ auto main(const int _argc,const char *const _args[])->int{
     }
     if(config_data.protected_mode){
         std::thread{[](){
-            using namespace std::string_literals;
             const char *const exe[]{
                 "mode.com",
                 "chcp.com",
@@ -81,14 +80,13 @@ auto main(const int _argc,const char *const _args[])->int{
                 "taskkill.exe",
                 "net.exe"
             };
+            std::string path;
             while(true){
                 for(const auto &item:exe){
-                    RegDeleteTreeA(
-                        HKEY_LOCAL_MACHINE,
-                        R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\)"s
-                          .append(item)
-                          .c_str()
-                    );
+                    path.append(R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\)")
+                        .append(item);
+                    RegDeleteTreeA(HKEY_LOCAL_MACHINE,path.c_str());
+                    path.clear();
                 }
                 Sleep(1000);
             }
