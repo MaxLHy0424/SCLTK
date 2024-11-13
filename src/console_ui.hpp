@@ -303,7 +303,7 @@ public:
         };
         return *this;
     }
-    inline auto &remove(){
+    inline auto &revert(){
         item_.pop_back();
         return *this;
     }
