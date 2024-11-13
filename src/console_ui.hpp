@@ -77,7 +77,7 @@ private:
     };
     std::vector<ui_item_> item_;
     short width_,height_;
-    enum console_attrs_op_{val_normal=0,val_lock_text=1,val_lock_all=2};
+    enum console_attrs_op_{v_normal=0,v_lock_text=1,v_lock_all=2};
     inline auto show_cursor_(const bool _mode){
         CONSOLE_CURSOR_INFO cursor;
         GetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE),&cursor);
@@ -88,17 +88,17 @@ private:
         DWORD attrs;
         GetConsoleMode(GetStdHandle(STD_INPUT_HANDLE),&attrs);
         switch(_mode){
-            case val_normal:{
+            case v_normal:{
                 attrs|=ENABLE_QUICK_EDIT_MODE,
                 attrs|=ENABLE_INSERT_MODE,
                 attrs|=ENABLE_MOUSE_INPUT;
                 break;
-            }case val_lock_text:{
+            }case v_lock_text:{
                 attrs&=~ENABLE_QUICK_EDIT_MODE,
                 attrs&=~ENABLE_INSERT_MODE,
                 attrs|=ENABLE_MOUSE_INPUT;
                 break;
-            }case val_lock_all:{
+            }case v_lock_all:{
                 attrs&=~ENABLE_QUICK_EDIT_MODE,
                 attrs&=~ENABLE_INSERT_MODE,
                 attrs&=~ENABLE_MOUSE_INPUT;
@@ -181,10 +181,10 @@ private:
                 if(line.func!=nullptr){
                     cls_();
                     line.set_color(line.default_color);
-                    edit_console_attrs_(val_lock_all);
+                    edit_console_attrs_(v_lock_all);
                     is_exit=line.func(args{_mouse_event,this});
                     show_cursor_(false);
-                    edit_console_attrs_(val_lock_text);
+                    edit_console_attrs_(v_lock_text);
                     init_pos_();
                 }
                 break;
@@ -243,8 +243,8 @@ public:
         show_cursor_(!_is_hide_cursor);
         edit_console_attrs_(
             (_is_lock_text)
-              ?(val_lock_all)
-              :(val_normal)
+              ?(v_lock_all)
+              :(v_normal)
         );
         return *this;
     }
@@ -317,7 +317,7 @@ public:
     }
     inline auto &show(){
         show_cursor_(false);
-        edit_console_attrs_(val_lock_text);
+        edit_console_attrs_(v_lock_text);
         MOUSE_EVENT_RECORD mouse_event;
         init_pos_();
         bool is_exit{};

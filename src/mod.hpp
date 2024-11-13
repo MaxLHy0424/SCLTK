@@ -217,32 +217,32 @@ namespace mod{
                 sys_rule::customize.svc.clear();
                 std::string line;
                 enum{
-                    val_unknown=-1,
-                    val_settings=0,
-                    val_rule_exe=1,
-                    val_rule_svc=2,
-                }config_item{val_unknown};
+                    v_unknown=-1,
+                    v_settings=0,
+                    v_rule_exe=1,
+                    v_rule_svc=2,
+                }config_item{v_unknown};
                 while(std::getline(config_file,line)){
                     if((line.empty())||(line.front()=='#')){
                         continue;
                     }
                     if(line=="<settings>"){
-                        config_item=val_settings;
+                        config_item=v_settings;
                         continue;
                     }else if(line=="<rule_exe>"){
-                        config_item=val_rule_exe;
+                        config_item=v_rule_exe;
                         continue;
                     }else if(line=="<rule_svc>"){
-                        config_item=val_rule_svc;
+                        config_item=v_rule_svc;
                         continue;
                     }else if((line.front()=='<')&&(line.back()=='>')){
-                        config_item=val_unknown;
+                        config_item=v_unknown;
                         continue;
                     }
                     switch(config_item){
-                        case val_unknown:{
+                        case v_unknown:{
                             break;
-                        }case val_settings:{
+                        }case v_settings:{
                             if(is_reload_){
                                 continue;
                             }
@@ -254,10 +254,10 @@ namespace mod{
                                 config_data.protected_mode=true;
                             }
                             break;
-                        }case val_rule_exe:{
+                        }case v_rule_exe:{
                             sys_rule::customize.exe.emplace_back(line.c_str());
                             break;
-                        }case val_rule_svc:{
+                        }case v_rule_svc:{
                             sys_rule::customize.svc.emplace_back(line.c_str());
                             break;
                         }
