@@ -2,7 +2,7 @@
 #include"console_ui.hpp"
 #include"mod.hpp"
 #include<thread>
-#ifdef _PREVIEW_
+#ifdef _PREVIEW
 auto main()->int{
     console_ui ui;
     ui.set_console(936,"CRCSN",WINDOW_WIDTH,WINDOW_HEIGHT,true,false,true,255)
@@ -51,7 +51,7 @@ auto main(const int _argc,const char *const _args[])->int{
     }
     mod::init();
 #endif
-#ifdef _PREVIEW_
+#ifdef _PREVIEW
     if(config_data.enhanced_window){
         std::thread{[](){
             const HWND this_window{GetConsoleWindow()};
@@ -98,30 +98,30 @@ auto main(const int _argc,const char *const _args[])->int{
     }
 #endif
     ui.add("                    [ 主  页 ]\n\n");
-#ifndef _PREVIEW_
+#ifndef _PREVIEW
     if(config_error){
         ui.add(" (!) 参数错误.\n");
     }
 #endif
     ui.add(" < 退出 ",mod::exit,CONSOLE_TEXT_RED_DEFAULT)
-#ifdef _PREVIEW_
+#ifdef _PREVIEW
       .add(" < 重启 ",mod::reboot_as_admin,CONSOLE_TEXT_RED_DEFAULT)
 #endif
       .add(" > 关于 ",mod::info)
-#ifdef _PREVIEW_
+#ifdef _PREVIEW
       .add(" > 配置 ",mod::config_op{'w'})
 #endif
       .add(" > 命令提示符 ",mod::cmd)
       .add("\n[破解]\n")
       .add(" > 极域电子教室 ",mod::rule_op{'c',mod::rule_data::mythware})
       .add(" > 联想云教室 ",mod::rule_op{'c',mod::rule_data::lenovo})
-#ifdef _PREVIEW_
+#ifdef _PREVIEW
       .add(" > 自定义 ",mod::rule_op{'c',mod::rule_data::customize})
 #endif
       .add("\n[恢复]\n")
       .add(" > 极域电子教室 ",mod::rule_op{'r',mod::rule_data::mythware})
       .add(" > 联想云教室 ",mod::rule_op{'r',mod::rule_data::lenovo})
-#ifdef _PREVIEW_
+#ifdef _PREVIEW
       .add(" > 自定义 ",mod::rule_op{'r',mod::rule_data::customize})
       .set_console(
         936,

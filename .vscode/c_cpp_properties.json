@@ -7,7 +7,7 @@
                 "${workspaceFolder}\\*"
             ],
             "defines":[
-                //"_PREVIEW_",
+                //"_PREVIEW",
                 //"NDEBUG",
                 "_CRT_SECURE_NO_WARNINGS",
                 "ANSI",
