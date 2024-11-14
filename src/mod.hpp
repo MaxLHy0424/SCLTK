@@ -457,8 +457,10 @@ namespace mod{
             }
             return false;
         }
-        inline explicit rule_op(const char _mode,const rule_data::base &_rule_data):
-          mode_{_mode},
+        inline explicit rule_op(
+            const char _mode,
+            const rule_data::base &_rule_data
+        ):mode_{_mode},
           rule_data_{_rule_data}
         {}
         inline ~rule_op(){}
