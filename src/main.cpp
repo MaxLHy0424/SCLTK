@@ -103,9 +103,9 @@ auto main(const int _argc,const char *const _args[])->int{
         ui.add(" (!) 参数错误.\n");
     }
 #endif
-    ui.add(" < 退出 ",mod::exit,CONSOLE_TEXT_RED)
+    ui.add(" < 退出 ",mod::exit,CONSOLE_TEXT_RED_DEFAULT)
 #ifdef _PREVIEW_
-      .add(" < 重启 ",mod::reboot_as_admin,CONSOLE_TEXT_RED)
+      .add(" < 重启 ",mod::reboot_as_admin,CONSOLE_TEXT_RED_DEFAULT)
 #endif
       .add(" > 关于 ",mod::info)
 #ifdef _PREVIEW_

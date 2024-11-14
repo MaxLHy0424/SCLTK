@@ -11,9 +11,9 @@
 #define CONSOLE_MOUSE_CLICK_DOUBLE DOUBLE_CLICK
 #define CONSOLE_MOUSE_MOVE MOUSE_MOVED
 #define CONSOLE_MOUSE_WHEEL MOUSE_WHEELED
-#define CONSOLE_TEXT_WHITE 0x07
-#define CONSOLE_TEXT_BLUE 0x09
-#define CONSOLE_TEXT_RED 0x0c
+#define CONSOLE_TEXT_DEFAULT_DEFAULT 0x07
+#define CONSOLE_TEXT_BLUE_DEFAULT 0x09
+#define CONSOLE_TEXT_RED_DEFAULT 0x0c
 class console_ui final{
 public:
     struct fn_args final{
@@ -43,9 +43,9 @@ private:
         callback_ fn;
         inline explicit ui_item_():
           text{},
-          default_color{CONSOLE_TEXT_WHITE},
-          highlight_color{CONSOLE_TEXT_BLUE},
-          last_color{CONSOLE_TEXT_WHITE},
+          default_color{CONSOLE_TEXT_DEFAULT_DEFAULT},
+          highlight_color{CONSOLE_TEXT_BLUE_DEFAULT},
+          last_color{CONSOLE_TEXT_DEFAULT_DEFAULT},
           position{},
           fn{}
         {}
@@ -57,7 +57,7 @@ private:
         ):text{_text},
           default_color{_default_color},
           highlight_color{_highlight_color},
-          last_color{CONSOLE_TEXT_WHITE},
+          last_color{CONSOLE_TEXT_DEFAULT_DEFAULT},
           position{},
           fn{_fn}
         {}
@@ -233,8 +233,8 @@ public:
     inline auto &add(
         const char *const _text,
         const callback_ _fn=nullptr,
-        const short _highlight_color=CONSOLE_TEXT_BLUE,
-        const short _default_color=CONSOLE_TEXT_WHITE
+        const short _highlight_color=CONSOLE_TEXT_BLUE_DEFAULT,
+        const short _default_color=CONSOLE_TEXT_DEFAULT_DEFAULT
     ){
         item_.emplace_back(
             ui_item_{
@@ -252,8 +252,8 @@ public:
         const size_type_ _index,
         const char *const _text,
         const callback_ _fn=nullptr,
-        const short _highlight_color=CONSOLE_TEXT_BLUE,
-        const short _default_color=CONSOLE_TEXT_WHITE
+        const short _highlight_color=CONSOLE_TEXT_BLUE_DEFAULT,
+        const short _default_color=CONSOLE_TEXT_DEFAULT_DEFAULT
     ){
         item_.emplace(
             item_.begin()+_index,
@@ -272,8 +272,8 @@ public:
         const size_type_ _index,
         const char *const _text,
         const callback_ _fn=nullptr,
-        const short _highlight_color=CONSOLE_TEXT_BLUE,
-        const short _default_color=CONSOLE_TEXT_WHITE
+        const short _highlight_color=CONSOLE_TEXT_BLUE_DEFAULT,
+        const short _default_color=CONSOLE_TEXT_DEFAULT_DEFAULT
     ){
         item_.at(_index)=ui_item_{
             _text,

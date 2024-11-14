@@ -155,7 +155,7 @@ namespace mod{
 #endif
         console_ui ui;
         ui.add("                    [ 关  于 ]\n\n")
-          .add(" < 返回 ",mod::exit,CONSOLE_TEXT_RED)
+          .add(" < 返回 ",mod::exit,CONSOLE_TEXT_RED_DEFAULT)
           .add("\n[名称]\n")
           .add(" " INFO_NAME)
           .add("\n[版本]\n")
@@ -342,7 +342,7 @@ namespace mod{
             console_ui ui;
             ui.add("                    [ 配  置 ]\n\n")
               .add(" (i) 相关信息可参阅文档.\n")
-              .add(" < 同步配置并返回 ",std::move(sync),CONSOLE_TEXT_RED)
+              .add(" < 同步配置并返回 ",std::move(sync),CONSOLE_TEXT_RED_DEFAULT)
               .add(" > 打开配置文件 ",std::move(open_config_file))
               .add("\n[增强操作]\n")
               .add(" > 启用 ",[](console_ui::fn_args){config_data.enhanced_op=true;return false;})
