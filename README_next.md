@@ -9,15 +9,15 @@
 
 # 📦 获取
 
-| 分支 | 最新版本 | 状态 | 最新发行版 |
-| - | - | - | - |
-| CRCSN 1 | v1.0_Stable | ❌ 停止维护 | [📋 更新日志](https://github.com/MaxLHy0424/CRCSN/releases/tag/v1.0_Stable) |
-| CRCSN 2 | v2.5_Stable | ❌ 停止维护 | [📋 更新日志](https://github.com/MaxLHy0424/CRCSN/releases/tag/v2.5_Stable) |
-| CRCSN 3 | v3.0.1 (Build 30174) | ❌ 停止维护 | [📋 更新日志](https://github.com/MaxLHy0424/CRCSN/releases/tag/30174) |
-| CRCSN 4 | v4.10.7 | ❌ 停止维护 | [📋 更新日志](https://github.com/MaxLHy0424/CRCSN/releases/tag/v4.10.7) |
-| CRCSN 5 | v5.10.3 | 🛠️ 正常更新 | [📋 更新日志](https://github.com/MaxLHy0424/CRCSN/releases/tag/v5.10.3) |
-| CRCSN 6 | 无 | ✨ 正在开发 | 🔒 即将退出 |
-| CRCSN Core | 无 | ✨ 正在开发 | 🔒 即将退出 |
+| 分支 | 最新版本 | 状态 | 生命周期 | 最新发行版 |
+| - | - | - | - | - |
+| CRCSN 1 | v1.0_Stable | ❌ 停止维护 | 2023/12/17 ~ 2023/12/18 | [📋 更新日志](https://github.com/MaxLHy0424/CRCSN/releases/tag/v1.0_Stable) |
+| CRCSN 2 | v2.5_Stable | ❌ 停止维护 | 2024/01/01 ~ 2024/01/07 | [📋 更新日志](https://github.com/MaxLHy0424/CRCSN/releases/tag/v2.5_Stable) |
+| CRCSN 3 | v3.0.1 (Build 30174) | ❌ 停止维护 | 2024/02/09 ~ 2024/02/10 | [📋 更新日志](https://github.com/MaxLHy0424/CRCSN/releases/tag/30174) |
+| CRCSN 4 | v4.10.7 | ❌ 停止维护 | 2024/03/26 ~ 2024/06/19 | [📋 更新日志](https://github.com/MaxLHy0424/CRCSN/releases/tag/v4.10.7) |
+| CRCSN 5 | v5.10.3 | 🛠️ 正常更新 | 2024/08/25 ~ 2024/12/31 (暂定) | [📋 更新日志](https://github.com/MaxLHy0424/CRCSN/releases/tag/v5.10.3) |
+| CRCSN 6 | 无 | ✨ 正在开发 | 暂未确定 | 🔒 即将推出 |
+| CRCSN Core | 无 | ✨ 正在开发 | 暂未确定 | 🔒 即将推出 |
 
 相关链接:
 
