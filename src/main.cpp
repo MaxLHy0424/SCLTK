@@ -113,16 +113,16 @@ auto main(const int _argc,const char *const _args[])->int{
 #endif
       .add(" > 命令提示符 ",mod::cmd)
       .add("\n[破解]\n")
-      .add(" > 极域电子教室 ",mod::sys_op{'c',mod::sys_rule::mythware})
-      .add(" > 联想云教室 ",mod::sys_op{'c',mod::sys_rule::lenovo})
+      .add(" > 极域电子教室 ",mod::rule_op{'c',mod::rule_data::mythware})
+      .add(" > 联想云教室 ",mod::rule_op{'c',mod::rule_data::lenovo})
 #ifdef _PREVIEW_
-      .add(" > 自定义 ",mod::sys_op{'c',mod::sys_rule::customize})
+      .add(" > 自定义 ",mod::rule_op{'c',mod::rule_data::customize})
 #endif
       .add("\n[恢复]\n")
-      .add(" > 极域电子教室 ",mod::sys_op{'r',mod::sys_rule::mythware})
-      .add(" > 联想云教室 ",mod::sys_op{'r',mod::sys_rule::lenovo})
+      .add(" > 极域电子教室 ",mod::rule_op{'r',mod::rule_data::mythware})
+      .add(" > 联想云教室 ",mod::rule_op{'r',mod::rule_data::lenovo})
 #ifdef _PREVIEW_
-      .add(" > 自定义 ",mod::sys_op{'r',mod::sys_rule::customize})
+      .add(" > 自定义 ",mod::rule_op{'r',mod::rule_data::customize})
       .set_console(
         936,
         "CRCSN",
