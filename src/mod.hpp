@@ -469,7 +469,7 @@ namespace mod{
         const char mode_;
         const rule_data::base &rule_;
     public:
-        inline auto operator()(console_ui::args)const{
+        inline auto operator()(console_ui::fn_args)const{
             puts("                 [ 破 解 / 恢 复 ]\n\n");
             if(!is_run_as_admin()){
                 puts("\n (i) 需要管理员权限.\n");
