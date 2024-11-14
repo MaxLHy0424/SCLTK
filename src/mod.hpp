@@ -248,16 +248,16 @@ namespace mod{
                     if((line.empty())||(line.front()=='#')){
                         continue;
                     }
-                    if(line=="<settings>"){
+                    if(line=="[settings]"){
                         config_item=v_settings;
                         continue;
-                    }else if(line=="<rule_exe>"){
+                    }else if(line=="[rule_exe]"){
                         config_item=v_rule_exe;
                         continue;
-                    }else if(line=="<rule_svc>"){
+                    }else if(line=="[rule_svc]"){
                         config_item=v_rule_svc;
                         continue;
-                    }else if((line.front()=='<')&&(line.back()=='>')){
+                    }else if((line.front()=='[')&&(line.back()==']')){
                         config_item=v_unknown;
                         continue;
                     }
