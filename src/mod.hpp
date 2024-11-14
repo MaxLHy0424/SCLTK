@@ -34,7 +34,7 @@ namespace mod{
         }
     };
 #endif
-    namespace sys_rule{
+    namespace rule_data{
         struct base final{
 #ifdef _PREVIEW_
             std::vector<simple_string> exe,svc;
@@ -148,7 +148,7 @@ namespace mod{
 #endif
     inline auto info(console_ui::fn_args){
 #ifdef _PREVIEW_
-        auto visit_repo_webpage{[](console_ui::fn_args){
+        auto view_repo_webpage{[](console_ui::fn_args){
             ShellExecuteA(nullptr,"open",INFO_REPO_URL,nullptr,nullptr,SW_SHOWNORMAL);
             return false;
         }};
@@ -162,7 +162,7 @@ namespace mod{
           .add(" " INFO_VERSION)
           .add("\n[仓库]\n")
 #ifdef _PREVIEW_
-          .add(" " INFO_REPO_URL,std::move(visit_repo_webpage))
+          .add(" " INFO_REPO_URL,std::move(view_repo_webpage))
 #else
           .add(" " INFO_REPO_URL)
 #endif
@@ -235,8 +235,8 @@ namespace mod{
                 if(!is_reload_){
                     config_data={};
                 }
-                sys_rule::customize.exe.clear();
-                sys_rule::customize.svc.clear();
+                rule_data::customize.exe.clear();
+                rule_data::customize.svc.clear();
                 std::string line;
                 enum{
                     v_unknown=-1,
@@ -277,10 +277,10 @@ namespace mod{
                             }
                             break;
                         }case v_rule_exe:{
-                            sys_rule::customize.exe.emplace_back(line.c_str());
+                            rule_data::customize.exe.emplace_back(line.c_str());
                             break;
                         }case v_rule_svc:{
-                            sys_rule::customize.svc.emplace_back(line.c_str());
+                            rule_data::customize.svc.emplace_back(line.c_str());
                             break;
                         }
                     }
@@ -307,14 +307,14 @@ namespace mod{
                     text.append("protected_mode\n");
                 }
                 text.append("<rule_exe>\n");
-                if(!sys_rule::customize.exe.empty()){
-                    for(const auto &item:sys_rule::customize.exe){
+                if(!rule_data::customize.exe.empty()){
+                    for(const auto &item:rule_data::customize.exe){
                         text.append(item.get()).push_back('\n');
                     }
                 }
                 text.append("<rule_svc>\n");
-                if(!sys_rule::customize.svc.empty()){
-                    for(const auto &item:sys_rule::customize.svc){
+                if(!rule_data::customize.svc.empty()){
+                    for(const auto &item:rule_data::customize.svc){
                         text.append(item.get()).push_back('\n');
                     }
                 }
@@ -375,14 +375,14 @@ namespace mod{
         {}
         inline ~config_op(){}
     };
-    class sys_op final{
+    class rule_op final{
     private:
         const char mode_;
-        const sys_rule::base &rule_;
+        const rule_data::base &rule_data_;
     public:
         inline auto operator()(console_ui::fn_args)const{
             puts("                 [ 破 解 / 恢 复 ]\n\n");
-            if((rule_.exe.empty())&&(rule_.svc.empty())){
+            if((rule_data_.exe.empty())&&(rule_data_.svc.empty())){
                 puts(" (i) 规则为空.\n");
                 for(unsigned short i{3};i>0;--i){
                     printf(" %hu 秒后返回.\r",i);
@@ -398,14 +398,14 @@ namespace mod{
             switch(mode_){
                 case 'c':{
                     if(config_data.enhanced_op){
-                        for(const auto &item:rule_.exe){
+                        for(const auto &item:rule_data_.exe){
                             cmd.append(R"(reg add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\)")
                                .append(item.get())
                                .append(R"(" /f /t reg_sz /v debugger /d _)");
                             system(cmd.c_str());
                             cmd.clear();
                         }
-                        for(const auto &item:rule_.svc){
+                        for(const auto &item:rule_data_.svc){
                             cmd.append("sc config ")
                                .append(item.get())
                                .append(" start= disabled");
@@ -413,14 +413,14 @@ namespace mod{
                             cmd.clear();
                         }
                     }
-                    for(const auto &item:rule_.exe){
+                    for(const auto &item:rule_data_.exe){
                         cmd.append(R"(taskkill /f /im ")")
                            .append(item.get())
                            .append(R"(")");
                         system(cmd.c_str());
                         cmd.clear();
                     }
-                    for(const auto &item:rule_.svc){
+                    for(const auto &item:rule_data_.svc){
                         cmd.append(R"(net stop ")")
                            .append(item.get())
                            .append(R"(" /y)");
@@ -430,14 +430,14 @@ namespace mod{
                     break;
                 }case 'r':{
                     if(config_data.enhanced_op){
-                        for(const auto &item:rule_.exe){
+                        for(const auto &item:rule_data_.exe){
                             cmd.append(R"(reg delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\)")
                                .append(item.get())
                                .append(R"(" /f)");
                             system(cmd.c_str());
                             cmd.clear();
                         }
-                        for(const auto &item:rule_.svc){
+                        for(const auto &item:rule_data_.svc){
                             cmd.append("sc config ")
                                .append(item.get())
                                .append(" start= auto");
@@ -445,7 +445,7 @@ namespace mod{
                             cmd.clear();
                         }
                     }
-                    for(const auto &item:rule_.svc){
+                    for(const auto &item:rule_data_.svc){
                         cmd.append(R"(net start ")")
                            .append(item.get())
                            .append(R"(")");
@@ -457,17 +457,17 @@ namespace mod{
             }
             return false;
         }
-        inline explicit sys_op(const char _mode,const sys_rule::base &_rule):
+        inline explicit rule_op(const char _mode,const rule_data::base &_rule_data):
           mode_{_mode},
-          rule_{_rule}
+          rule_data_{_rule_data}
         {}
-        inline ~sys_op(){}
+        inline ~rule_op(){}
     };
 #else
-    class sys_op final{
+    class rule_op final{
     private:
         const char mode_;
-        const sys_rule::base &rule_;
+        const rule_data::base &rule_;
     public:
         inline auto operator()(console_ui::args)const{
             puts("                 [ 破 解 / 恢 复 ]\n\n");
@@ -515,11 +515,11 @@ namespace mod{
             printf("%s\n::释放内存.",std::string(50,'-').c_str());
             return false;
         }
-        inline explicit sys_op(const char _mode,const sys_rule::base &_rule):
+        inline explicit rule_op(const char _mode,const rule_data::base &_rule):
           mode_{_mode},
           rule_{_rule}
         {}
-        inline ~sys_op(){}
+        inline ~rule_op(){}
     };
 #endif
 }
