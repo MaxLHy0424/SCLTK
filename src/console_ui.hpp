@@ -25,8 +25,10 @@ public:
           event_flag{},
           ui{}
         {}
-        inline explicit fn_args(const MOUSE_EVENT_RECORD _mouse_event,console_ui *const _ui):
-          button_state{_mouse_event.dwButtonState},
+        inline explicit fn_args(
+            const MOUSE_EVENT_RECORD _mouse_event,
+            console_ui *const _ui
+        ):button_state{_mouse_event.dwButtonState},
           ctrl_key_state{_mouse_event.dwControlKeyState},
           event_flag{_mouse_event.dwEventFlags},
           ui{_ui}
