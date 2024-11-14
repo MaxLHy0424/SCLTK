@@ -174,24 +174,6 @@ private:
             }
         }
     }
-    inline auto call_fn_(const MOUSE_EVENT_RECORD &_mouse_event){
-        bool is_exit{};
-        for(auto &line:item_){
-            if(line==_mouse_event.dwMousePosition){
-                if(line.fn!=nullptr){
-                    cls_();
-                    line.set_color(line.default_color);
-                    edit_console_attrs_(v_lock_all);
-                    is_exit=line.fn(fn_args{_mouse_event,this});
-                    show_cursor_(false);
-                    edit_console_attrs_(v_lock_text);
-                    init_pos_();
-                }
-                break;
-            }
-        }
-        return is_exit;
-    }
 public:
     inline auto size(){
         return item_.size();
