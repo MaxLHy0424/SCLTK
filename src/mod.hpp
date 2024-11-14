@@ -1,21 +1,21 @@
 #pragma once
 #include"info.hpp"
 #include"console_ui.hpp"
-#ifdef _PREVIEW_
+#ifdef _PREVIEW
 #include<fstream>
 #endif
 inline struct{
-#ifdef _PREVIEW_
+#ifdef _PREVIEW
     bool enhanced_op,enhanced_window,protected_mode;
 #else
     bool front_show_window,translucent_window,window_ctrls;
 #endif
 }config_data{};
-#ifndef _PREVIEW_
+#ifndef _PREVIEW
 inline bool config_error{};
 #endif
 namespace mod{
-#ifdef _PREVIEW_
+#ifdef _PREVIEW
     class simple_string final{
     private:
         char *const str_;
@@ -36,7 +36,7 @@ namespace mod{
 #endif
     namespace rule_data{
         struct base final{
-#ifdef _PREVIEW_
+#ifdef _PREVIEW
             std::vector<simple_string> exe,svc;
 #else
             std::vector<const char*> exe,svc;
@@ -104,7 +104,7 @@ namespace mod{
         }
         return is_admin;
     }
-#ifdef _PREVIEW_
+#ifdef _PREVIEW
     inline auto reboot_as_admin(console_ui::fn_args){
         char *const path{new char[MAX_PATH]{}};
         GetModuleFileNameA(nullptr,path,MAX_PATH);
@@ -147,7 +147,7 @@ namespace mod{
     }
 #endif
     inline auto info(console_ui::fn_args){
-#ifdef _PREVIEW_
+#ifdef _PREVIEW
         auto view_repo_webpage{[](console_ui::fn_args){
             ShellExecuteA(nullptr,"open",INFO_REPO_URL,nullptr,nullptr,SW_SHOWNORMAL);
             return false;
@@ -161,7 +161,7 @@ namespace mod{
           .add("\n[版本]\n")
           .add(" " INFO_VERSION)
           .add("\n[仓库]\n")
-#ifdef _PREVIEW_
+#ifdef _PREVIEW
           .add(" " INFO_REPO_URL,std::move(view_repo_webpage))
 #else
           .add(" " INFO_REPO_URL)
@@ -174,7 +174,7 @@ namespace mod{
     }
     inline auto cmd(console_ui::fn_args args){
         args.ui->lock(false,false);
-#ifdef _PREVIEW_
+#ifdef _PREVIEW
         args.ui->set_console(
             936,
             "CRCSN",
@@ -196,7 +196,7 @@ namespace mod{
         );
 #endif
         system("cmd");
-#ifdef _PREVIEW_
+#ifdef _PREVIEW
         args.ui->set_console(
             936,
             "CRCSN",
@@ -216,7 +216,7 @@ namespace mod{
 #endif
         return false;
     }
-#ifdef _PREVIEW_
+#ifdef _PREVIEW
     class config_op final{
     private:
         const char mode_;
