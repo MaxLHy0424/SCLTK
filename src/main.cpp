@@ -113,8 +113,10 @@ auto main(const int _argc,const char *const _args[])->int{
       .add(" > 关于 ",mod::info)
 #ifdef _PREVIEW
       .add(" > 配置 ",mod::config_op{'w'})
-#endif
+      .add(" > 工具 ",mod::toolkit)
+#else
       .add(" > 命令提示符 ",mod::cmd)
+#endif
       .add("\n[破解]\n")
       .add(" > 极域电子教室 ",mod::rule_op{'c',mod::rule_data::mythware})
       .add(" > 联想云教室 ",mod::rule_op{'c',mod::rule_data::lenovo})
