@@ -172,51 +172,77 @@ namespace mod{
           .show();
         return false;
     }
-    inline auto cmd(console_ui::fn_args args){
-        args.ui->lock(false,false);
 #ifdef _PREVIEW
-        args.ui->set_console(
-            936,
-            "CRCSN",
-            WINDOW_WIDTH*2,
-            WINDOW_HEIGHT,
-            true,
-            false,
-            !config_data.enhanced_window,
-            (config_data.enhanced_window)
-              ?(230)
-              :(255)
-        );
-        SetConsoleScreenBufferSize(
-            GetStdHandle(STD_OUTPUT_HANDLE),
-            {
-                WINDOW_WIDTH*2,
-                32766
+    inline auto toolkit(console_ui::fn_args){
+        const char *const cmds[]{
+            R"(reg delete "HKLM\SOFTWARE\Policies\Google\Chrome\AllowDinosaurEasterEgg" /f)",
+            R"(reg delete "HKLM\SOFTWARE\Policies\Microsoft\Edge\AllowSurfGame" /f)",
+            R"(reg add "HKLM\SYSTEM\CurrentControlSet\Services\USBSTOR" /f /t reg_dword /v Start /d 3)"
+        };
+        class exec_cmd{
+        private:
+            const char *const cmd_;
+        public:
+            inline auto operator()(console_ui::fn_args){
+                printf(
+                    ":: 执行命令.\n%s\n",
+                    std::string(WINDOW_WIDTH,'-').c_str()
+                );
+                system(cmd_);
+                return false;
             }
-        );
-#endif
-        system("cmd");
-#ifdef _PREVIEW
-        args.ui->set_console(
-            936,
-            "CRCSN",
-            WINDOW_WIDTH,
-            WINDOW_HEIGHT,
-            true,
-            false,
-            !config_data.enhanced_window,
-            (config_data.enhanced_window)
-              ?(230)
-              :(255)
-        );
-#else
-        if(!config_data.window_ctrls){
-            init();
-        }
-#endif
+            inline exec_cmd(const char *const _cmd):
+              cmd_{_cmd}
+            {}
+            inline ~exec_cmd(){}
+        };
+        auto open_cmd_prompt{[](console_ui::fn_args _args){
+            _args.ui->lock(false,false);
+            _args.ui->set_console(
+                936,
+                "CRCSN",
+                WINDOW_WIDTH*2,
+                WINDOW_HEIGHT,
+                true,
+                false,
+                !config_data.enhanced_window,
+                (config_data.enhanced_window)
+                  ?(230)
+                  :(255)
+            );
+            SetConsoleScreenBufferSize(
+                GetStdHandle(STD_OUTPUT_HANDLE),
+                {
+                    WINDOW_WIDTH*2,
+                    32766
+                }
+            );
+            system("cmd");
+            _args.ui->set_console(
+                936,
+                "CRCSN",
+                WINDOW_WIDTH,
+                WINDOW_HEIGHT,
+                true,
+                false,
+                !config_data.enhanced_window,
+                (config_data.enhanced_window)
+                  ?(230)
+                  :(255)
+            );
+            return false;
+        }};
+        console_ui ui;
+        ui.add("                    [ 工 具 ]\n\n")
+          .add(" < 返回 ",mod::exit,CONSOLE_TEXT_RED_DEFAULT)
+          .add(" > 命令提示符 ",std::move(open_cmd_prompt))
+          .add("\n[快捷操作]\n")
+          .add(" > 恢复 Google Chrome 离线游戏 ",exec_cmd{cmds[0]})
+          .add(" > 恢复 Microsoft Edge 离线游戏 ",exec_cmd{cmds[1]})
+          .add(" > 移除 USB 设备访问限制 ",exec_cmd{cmds[2]})
+          .show();
         return false;
     }
-#ifdef _PREVIEW
     class config_op final{
     private:
         const char mode_;
@@ -466,6 +492,11 @@ namespace mod{
         inline ~rule_op(){}
     };
 #else
+    inline auto cmd(console_ui::fn_args _args){
+        _args.ui->lock(false,false);
+        system("cmd");
+        return false;
+    }
     class rule_op final{
     private:
         const char mode_;
