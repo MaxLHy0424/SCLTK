@@ -9,7 +9,7 @@
 
 # 📦 获取
 
-| 分支 | 最新版本 | 状态 | 生命周期 |
+| 分支 | 最新发行版 | 状态 | 生命周期 |
 | - | - | - | - |
 | CRCSN 1 | [v1.0_Stable](https://github.com/MaxLHy0424/CRCSN/releases/tag/v1.0_Stable) | ❌ 停止更新 | 2023/12/17 ~ 2023/12/18 |
 | CRCSN 2 | [v2.5_Stable](https://github.com/MaxLHy0424/CRCSN/releases/tag/v2.5_Stable) | ❌ 停止更新 | 2024/01/01 ~ 2024/01/07 |
