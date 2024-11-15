@@ -174,11 +174,6 @@ namespace mod{
     }
 #ifdef _PREVIEW
     inline auto toolkit(console_ui::fn_args){
-        const char *const cmds[]{
-            R"(reg delete "HKLM\SOFTWARE\Policies\Google\Chrome\AllowDinosaurEasterEgg" /f)",
-            R"(reg delete "HKLM\SOFTWARE\Policies\Microsoft\Edge\AllowSurfGame" /f)",
-            R"(reg add "HKLM\SYSTEM\CurrentControlSet\Services\USBSTOR" /f /t reg_dword /v Start /d 3)"
-        };
         class exec_cmd{
         private:
             const char *const cmd_;
@@ -232,14 +227,21 @@ namespace mod{
             );
             return false;
         }};
+        const char *const cmds[]{
+            "taskkill /f /im explorer.exe && timeout /t 3 /nobreak && explorer",
+            R"(reg delete "HKLM\SOFTWARE\Policies\Google\Chrome\AllowDinosaurEasterEgg" /f)",
+            R"(reg delete "HKLM\SOFTWARE\Policies\Microsoft\Edge\AllowSurfGame" /f)",
+            R"(reg add "HKLM\SYSTEM\CurrentControlSet\Services\USBSTOR" /f /t reg_dword /v Start /d 3)"
+        };
         console_ui ui;
-        ui.add("                    [ 工 具 ]\n\n")
+        ui.add("                   [ 工 具 箱 ]\n\n")
           .add(" < 返回 ",mod::exit,CONSOLE_TEXT_RED_DEFAULT)
           .add(" > 命令提示符 ",std::move(open_cmd_prompt))
           .add("\n[快捷操作]\n")
-          .add(" > 恢复 Google Chrome 离线游戏 ",exec_cmd{cmds[0]})
-          .add(" > 恢复 Microsoft Edge 离线游戏 ",exec_cmd{cmds[1]})
-          .add(" > 移除 USB 设备访问限制 ",exec_cmd{cmds[2]})
+          .add(" > 重启资源管理器 ",exec_cmd{cmds[0]})
+          .add(" > 恢复 Google Chrome 离线游戏 ",exec_cmd{cmds[1]})
+          .add(" > 恢复 Microsoft Edge 离线游戏 ",exec_cmd{cmds[2]})
+          .add(" > 移除 USB 设备访问限制 ",exec_cmd{cmds[3]})
           .show();
         return false;
     }

@@ -113,7 +113,7 @@ auto main(const int _argc,const char *const _args[])->int{
       .add(" > 关于 ",mod::info)
 #ifdef _PREVIEW
       .add(" > 配置 ",mod::config_op{'w'})
-      .add(" > 工具 ",mod::toolkit)
+      .add(" > 工具箱 ",mod::toolkit)
 #else
       .add(" > 命令提示符 ",mod::cmd)
 #endif
