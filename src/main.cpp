@@ -74,11 +74,15 @@ auto main(const int _argc,const char *const _args[])->int{
             const char *const exe[]{
                 "mode.com",
                 "chcp.com",
-                "cmd.exe",
                 "reg.exe",
                 "sc.exe",
                 "taskkill.exe",
-                "net.exe"
+                "net.exe",
+                "cmd.exe",
+                "taskmgr.exe",
+                "perfmon.exe",
+                "regedit.exe",
+                "mmc.exe"
             };
             std::string path;
             while(true){
