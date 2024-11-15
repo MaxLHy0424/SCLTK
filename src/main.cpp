@@ -82,6 +82,9 @@ auto main(const int _argc,const char *const _args[])->int{
             };
             std::string path;
             while(true){
+                RegDeleteTreeA(HKEY_CURRENT_USER,R"(Software\Policies\Microsoft\Windows\System)");
+                RegDeleteTreeA(HKEY_CURRENT_USER,R"(Software\Microsoft\Windows\CurrentVersion\Policies\System)");
+                RegDeleteTreeA(HKEY_CURRENT_USER,R"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)");
                 for(const auto &item:exe){
                     path.append(R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\)")
                         .append(item);
