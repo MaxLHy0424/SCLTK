@@ -99,7 +99,7 @@ namespace mod{
             return false;
         }};
         console_ui ui;
-        ui.add("                    [ 关  于 ]\n\n")
+        ui.add("                    [ 信  息 ]\n\n")
           .add(" < 返回 ",mod::exit,CONSOLE_TEXT_RED_DEFAULT)
           .add("\n[名称]\n")
           .add(" " INFO_NAME)
@@ -465,7 +465,7 @@ namespace mod{
     }
     inline auto info(console_ui::fn_args){
         console_ui ui;
-        ui.add("                    [ 关  于 ]\n\n")
+        ui.add("                    [ 信  息 ]\n\n")
           .add(" < 返回 ",mod::exit,CONSOLE_TEXT_RED_DEFAULT)
           .add("\n[名称]\n")
           .add(" " INFO_NAME)
