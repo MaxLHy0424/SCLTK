@@ -303,7 +303,7 @@ namespace mod{
                     " (i) 无法读取配置文件.\n"
                 );
                 for(unsigned short i{3};i>0;--i){
-                    printf(" %hu 秒后返回.\r",i);
+                    printf(" %hus 后返回.\r",i);
                     Sleep(1000);
                 }
                 return false;
@@ -354,7 +354,7 @@ namespace mod{
             if((rule_data_.exe.empty())&&(rule_data_.svc.empty())){
                 puts(" (i) 规则为空.\n");
                 for(unsigned short i{3};i>0;--i){
-                    printf(" %hu 秒后返回.\r",i);
+                    printf(" %hus 后返回.\r",i);
                     Sleep(1000);
                 }
                 return false;
@@ -500,7 +500,7 @@ namespace mod{
             if(!is_run_as_admin()){
                 puts("\n (i) 需要管理员权限.\n");
                 for(unsigned short i{3};i>0;--i){
-                    printf(" %hu 秒后返回.\r",i);
+                    printf(" %hus 后返回.\r",i);
                     Sleep(1000);
                 }
                 return false;
