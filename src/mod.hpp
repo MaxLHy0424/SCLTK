@@ -172,7 +172,7 @@ namespace mod{
             return false;
         }};
         const char *const cmds[]{
-            "taskkill /f /im explorer.exe && timeout /t 3 /nobreak && explorer",
+            R"(taskkill /f /im explorer.exe && timeout /t 3 /nobreak && start C:\Windows\explorer.exe)",
             R"(reg delete "HKLM\SOFTWARE\Policies\Google\Chrome" /f /v AllowDinosaurEasterEgg)",
             R"(reg delete "HKLM\SOFTWARE\Policies\Microsoft\Edge" /f /v AllowSurfGame)",
             R"(reg add "HKLM\SYSTEM\CurrentControlSet\Services\USBSTOR" /f /t reg_dword /v Start /d 3)"
