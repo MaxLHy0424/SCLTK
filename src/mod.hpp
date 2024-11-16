@@ -67,9 +67,6 @@ namespace mod{
         };
         inline base customized{};
     }
-    inline auto exit(console_ui::fn_args){
-        return true;
-    }
     inline auto is_run_as_admin(){
         BOOL is_admin{};
         PSID admins_group{};
@@ -84,6 +81,9 @@ namespace mod{
             FreeSid(admins_group);
         }
         return is_admin;
+    }
+    inline auto exit(console_ui::fn_args){
+        return true;
     }
 #ifdef _PREVIEW
     inline auto relaunch_as_admin(console_ui::fn_args){
