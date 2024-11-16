@@ -59,7 +59,7 @@ CRCSN 发行版文件名规则为 `[tag]-[arch]-[runtime].exe`, 其中 `[tag]` �
 ## 3 CRCSN 信息
 
 - **查看 CRCSN 发行版信息**\
-  `> 关于`
+  `> 信息`
 
 查看运行的 CRCSN 发行版的相关信息.
 

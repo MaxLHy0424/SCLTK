@@ -114,7 +114,7 @@ auto main(const int _argc,const char *const _argv[])->int{
 #ifdef _PREVIEW
       .add(" < 重启 ",mod::relaunch_as_admin,CONSOLE_TEXT_RED_DEFAULT)
 #endif
-      .add(" > 关于 ",mod::info)
+      .add(" > 信息 ",mod::info)
 #ifdef _PREVIEW
       .add(" > 配置 ",mod::config_op{'w'})
       .add(" > 工具箱 ",mod::toolkit)
