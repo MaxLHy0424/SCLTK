@@ -65,7 +65,7 @@ namespace mod{
                 "WFBSMlogon"
             }
         };
-        inline base customize{};
+        inline base customized{};
     }
     inline auto exit(console_ui::fn_args){
         return true;
@@ -204,8 +204,8 @@ namespace mod{
                 }else{
                     puts(":: 加载配置文件.");
                 }
-                rule_data::customize.exe.clear();
-                rule_data::customize.svc.clear();
+                rule_data::customized.exe.clear();
+                rule_data::customized.svc.clear();
                 std::string line;
                 enum{
                     v_unknown=-1,
@@ -246,10 +246,10 @@ namespace mod{
                             }
                             break;
                         }case v_rule_exe:{
-                            rule_data::customize.exe.emplace_back(std::move(line));
+                            rule_data::customized.exe.emplace_back(std::move(line));
                             break;
                         }case v_rule_svc:{
-                            rule_data::customize.svc.emplace_back(std::move(line));
+                            rule_data::customized.svc.emplace_back(std::move(line));
                             break;
                         }
                     }
@@ -276,14 +276,14 @@ namespace mod{
                     text.append("protected_mode\n");
                 }
                 text.append("[rule_exe]\n");
-                if(!rule_data::customize.exe.empty()){
-                    for(const auto &item:rule_data::customize.exe){
+                if(!rule_data::customized.exe.empty()){
+                    for(const auto &item:rule_data::customized.exe){
                         text.append(item).push_back('\n');
                     }
                 }
                 text.append("[rule_svc]\n");
-                if(!rule_data::customize.svc.empty()){
-                    for(const auto &item:rule_data::customize.svc){
+                if(!rule_data::customized.svc.empty()){
+                    for(const auto &item:rule_data::customized.svc){
                         text.append(item).push_back('\n');
                     }
                 }
