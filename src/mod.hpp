@@ -86,7 +86,7 @@ namespace mod{
         return is_admin;
     }
 #ifdef _PREVIEW
-    inline auto reboot_as_admin(console_ui::fn_args){
+    inline auto relaunch_as_admin(console_ui::fn_args){
         char *const path{new char[MAX_PATH]{}};
         GetModuleFileNameA(nullptr,path,MAX_PATH);
         ShellExecuteA(nullptr,"runas",path,nullptr,nullptr,SW_SHOWNORMAL);
