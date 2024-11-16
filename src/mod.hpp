@@ -260,9 +260,6 @@ namespace mod{
                 }else{
                     puts(":: 加载配置文件.");
                 }
-                if(!is_reload_){
-                    config_data={};
-                }
                 rule_data::customize.exe.clear();
                 rule_data::customize.svc.clear();
                 std::string line;
