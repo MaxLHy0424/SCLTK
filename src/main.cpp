@@ -125,13 +125,13 @@ auto main(const int _argc,const char *const _argv[])->int{
       .add(" > 极域电子教室 ",mod::rule_op{'c',mod::rule_data::mythware})
       .add(" > 联想云教室 ",mod::rule_op{'c',mod::rule_data::lenovo})
 #ifdef _PREVIEW
-      .add(" > 自定义 ",mod::rule_op{'c',mod::rule_data::customize})
+      .add(" > 自定义 ",mod::rule_op{'c',mod::rule_data::customized})
 #endif
       .add("\n[恢复]\n")
       .add(" > 极域电子教室 ",mod::rule_op{'r',mod::rule_data::mythware})
       .add(" > 联想云教室 ",mod::rule_op{'r',mod::rule_data::lenovo})
 #ifdef _PREVIEW
-      .add(" > 自定义 ",mod::rule_op{'r',mod::rule_data::customize})
+      .add(" > 自定义 ",mod::rule_op{'r',mod::rule_data::customized})
       .set_console(
         936,
         "CRCSN",
