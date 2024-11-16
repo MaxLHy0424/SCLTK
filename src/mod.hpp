@@ -15,29 +15,10 @@ inline struct{
 inline bool config_error{};
 #endif
 namespace mod{
-#ifdef _PREVIEW
-    class simple_string final{
-    private:
-        char *const str_;
-    public:
-        inline const auto get()const{
-            return str_;
-        }
-        inline simple_string()=delete;
-        inline simple_string(const char *_s):
-          str_{new char[strlen(_s)+1]}
-        {
-            strcpy(this->str_,_s);
-        }
-        inline ~simple_string(){
-            delete[] str_;
-        }
-    };
-#endif
     namespace rule_data{
         struct base final{
 #ifdef _PREVIEW
-            std::vector<simple_string> exe,svc;
+            std::vector<std::string> exe,svc;
 #else
             std::vector<const char*> exe,svc;
 #endif
@@ -302,10 +283,10 @@ namespace mod{
                             }
                             break;
                         }case v_rule_exe:{
-                            rule_data::customize.exe.emplace_back(line.c_str());
+                            rule_data::customize.exe.emplace_back(std::move(line));
                             break;
                         }case v_rule_svc:{
-                            rule_data::customize.svc.emplace_back(line.c_str());
+                            rule_data::customize.svc.emplace_back(std::move(line));
                             break;
                         }
                     }
@@ -334,13 +315,13 @@ namespace mod{
                 text.append("[rule_exe]\n");
                 if(!rule_data::customize.exe.empty()){
                     for(const auto &item:rule_data::customize.exe){
-                        text.append(item.get()).push_back('\n');
+                        text.append(item).push_back('\n');
                     }
                 }
                 text.append("[rule_svc]\n");
                 if(!rule_data::customize.svc.empty()){
                     for(const auto &item:rule_data::customize.svc){
-                        text.append(item.get()).push_back('\n');
+                        text.append(item).push_back('\n');
                     }
                 }
                 std::ofstream config_file{"config.ini",std::ios::out|std::ios::trunc};
@@ -425,14 +406,14 @@ namespace mod{
                     if(config_data.enhanced_op){
                         for(const auto &item:rule_data_.exe){
                             cmd.append(R"(reg add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\)")
-                               .append(item.get())
+                               .append(item)
                                .append(R"(" /f /t reg_sz /v debugger /d _)");
                             system(cmd.c_str());
                             cmd.clear();
                         }
                         for(const auto &item:rule_data_.svc){
                             cmd.append("sc config ")
-                               .append(item.get())
+                               .append(item)
                                .append(" start= disabled");
                             system(cmd.c_str());
                             cmd.clear();
@@ -440,14 +421,14 @@ namespace mod{
                     }
                     for(const auto &item:rule_data_.exe){
                         cmd.append(R"(taskkill /f /im ")")
-                           .append(item.get())
+                           .append(item)
                            .append(R"(")");
                         system(cmd.c_str());
                         cmd.clear();
                     }
                     for(const auto &item:rule_data_.svc){
                         cmd.append(R"(net stop ")")
-                           .append(item.get())
+                           .append(item)
                            .append(R"(" /y)");
                         system(cmd.c_str());
                         cmd.clear();
@@ -457,14 +438,14 @@ namespace mod{
                     if(config_data.enhanced_op){
                         for(const auto &item:rule_data_.exe){
                             cmd.append(R"(reg delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\)")
-                               .append(item.get())
+                               .append(item)
                                .append(R"(" /f)");
                             system(cmd.c_str());
                             cmd.clear();
                         }
                         for(const auto &item:rule_data_.svc){
                             cmd.append("sc config ")
-                               .append(item.get())
+                               .append(item)
                                .append(" start= auto");
                             system(cmd.c_str());
                             cmd.clear();
@@ -472,7 +453,7 @@ namespace mod{
                     }
                     for(const auto &item:rule_data_.svc){
                         cmd.append(R"(net start ")")
-                           .append(item.get())
+                           .append(item)
                            .append(R"(")");
                         system(cmd.c_str());
                         cmd.clear();
