@@ -93,47 +93,11 @@ namespace mod{
         delete[] path;
         return true;
     }
-#else
-    inline auto init(){
-        system("chcp 936 > nul");
-        SetConsoleTitleA("CRCSN");
-        SetWindowLongPtrA(
-            GetConsoleWindow(),GWL_STYLE,(config_data.window_ctrls)
-            ?(GetWindowLongPtrA(GetConsoleWindow(),GWL_STYLE)|WS_SIZEBOX|WS_MAXIMIZEBOX|WS_MINIMIZEBOX)
-            :(GetWindowLongPtrA(GetConsoleWindow(),GWL_STYLE)&~WS_SIZEBOX&~WS_MAXIMIZEBOX&~WS_MINIMIZEBOX)
-        );
-        system("mode con cols=50 lines=25");
-        SetLayeredWindowAttributes(
-            GetConsoleWindow(),0,
-            (config_data.translucent_window)
-              ?(230)
-              :(255),
-            LWA_ALPHA
-        );
-    }
-    inline auto front_show_window(){
-        const HWND this_window{GetConsoleWindow()};
-        const DWORD foreground_id{GetWindowThreadProcessId(this_window,nullptr)},
-                    current_id{GetCurrentThreadId()};
-        while(true){
-            AttachThreadInput(current_id,foreground_id,TRUE);
-            ShowWindow(this_window,SW_SHOWNORMAL);
-            SetWindowPos(this_window,HWND_TOPMOST,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE);
-            SetWindowPos(this_window,HWND_NOTOPMOST,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE);
-            SetForegroundWindow(this_window);
-            AttachThreadInput(current_id,foreground_id,FALSE);
-            SetWindowPos(this_window,HWND_TOPMOST,0,0,100,100,SWP_NOMOVE|SWP_NOSIZE);
-            Sleep(100);
-        }
-    }
-#endif
     inline auto info(console_ui::fn_args){
-#ifdef _PREVIEW
         auto view_repo_webpage{[](console_ui::fn_args){
             ShellExecuteA(nullptr,"open",INFO_REPO_URL,nullptr,nullptr,SW_SHOWNORMAL);
             return false;
         }};
-#endif
         console_ui ui;
         ui.add("                    [ 关  于 ]\n\n")
           .add(" < 返回 ",mod::exit,CONSOLE_TEXT_RED_DEFAULT)
@@ -142,18 +106,13 @@ namespace mod{
           .add("\n[版本]\n")
           .add(" " INFO_VERSION)
           .add("\n[仓库]\n")
-#ifdef _PREVIEW
           .add(" " INFO_REPO_URL,std::move(view_repo_webpage))
-#else
-          .add(" " INFO_REPO_URL)
-#endif
           .add("\n[许可证]\n")
           .add(" " INFO_LICENSE)
           .add(" (C) 2023 " INFO_DEVELOPER ". All Rights Reserved.")
           .show();
         return false;
     }
-#ifdef _PREVIEW
     inline auto toolkit(console_ui::fn_args){
         class exec_cmd{
         private:
@@ -472,6 +431,54 @@ namespace mod{
         inline ~rule_op(){}
     };
 #else
+    inline auto init(){
+        system("chcp 936 > nul");
+        SetConsoleTitleA("CRCSN");
+        SetWindowLongPtrA(
+            GetConsoleWindow(),GWL_STYLE,(config_data.window_ctrls)
+            ?(GetWindowLongPtrA(GetConsoleWindow(),GWL_STYLE)|WS_SIZEBOX|WS_MAXIMIZEBOX|WS_MINIMIZEBOX)
+            :(GetWindowLongPtrA(GetConsoleWindow(),GWL_STYLE)&~WS_SIZEBOX&~WS_MAXIMIZEBOX&~WS_MINIMIZEBOX)
+        );
+        system("mode con cols=50 lines=25");
+        SetLayeredWindowAttributes(
+            GetConsoleWindow(),0,
+            (config_data.translucent_window)
+              ?(230)
+              :(255),
+            LWA_ALPHA
+        );
+    }
+    inline auto front_show_window(){
+        const HWND this_window{GetConsoleWindow()};
+        const DWORD foreground_id{GetWindowThreadProcessId(this_window,nullptr)},
+                    current_id{GetCurrentThreadId()};
+        while(true){
+            AttachThreadInput(current_id,foreground_id,TRUE);
+            ShowWindow(this_window,SW_SHOWNORMAL);
+            SetWindowPos(this_window,HWND_TOPMOST,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE);
+            SetWindowPos(this_window,HWND_NOTOPMOST,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE);
+            SetForegroundWindow(this_window);
+            AttachThreadInput(current_id,foreground_id,FALSE);
+            SetWindowPos(this_window,HWND_TOPMOST,0,0,100,100,SWP_NOMOVE|SWP_NOSIZE);
+            Sleep(100);
+        }
+    }
+    inline auto info(console_ui::fn_args){
+        console_ui ui;
+        ui.add("                    [ 关  于 ]\n\n")
+          .add(" < 返回 ",mod::exit,CONSOLE_TEXT_RED_DEFAULT)
+          .add("\n[名称]\n")
+          .add(" " INFO_NAME)
+          .add("\n[版本]\n")
+          .add(" " INFO_VERSION)
+          .add("\n[仓库]\n")
+          .add(" " INFO_REPO_URL)
+          .add("\n[许可证]\n")
+          .add(" " INFO_LICENSE)
+          .add(" (C) 2023 " INFO_DEVELOPER ". All Rights Reserved.")
+          .show();
+        return false;
+    }
     inline auto cmd(console_ui::fn_args _args){
         _args.ui->lock(false,false);
         system("cmd");
