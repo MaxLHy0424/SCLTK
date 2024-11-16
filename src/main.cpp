@@ -10,7 +10,7 @@ auto main()->int{
     puts(":: 检测运行权限.");
     if(!mod::is_run_as_admin()){
         puts(":: 申请管理员权限.");
-        mod::reboot_as_admin(console_ui::fn_args{});
+        mod::relaunch_as_admin(console_ui::fn_args{});
         return 0;
     }
     mod::config_op{'r'}(console_ui::fn_args{});
@@ -112,7 +112,7 @@ auto main(const int _argc,const char *const _argv[])->int{
 #endif
     ui.add(" < 退出 ",mod::exit,CONSOLE_TEXT_RED_DEFAULT)
 #ifdef _PREVIEW
-      .add(" < 重启 ",mod::reboot_as_admin,CONSOLE_TEXT_RED_DEFAULT)
+      .add(" < 重启 ",mod::relaunch_as_admin,CONSOLE_TEXT_RED_DEFAULT)
 #endif
       .add(" > 关于 ",mod::info)
 #ifdef _PREVIEW
