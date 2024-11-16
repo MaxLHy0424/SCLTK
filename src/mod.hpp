@@ -101,15 +101,19 @@ namespace mod{
         console_ui ui;
         ui.add("                    [ 信  息 ]\n\n")
           .add(" < 返回 ",mod::exit,CONSOLE_TEXT_RED_DEFAULT)
-          .add("\n[名称]\n")
-          .add(" " INFO_NAME)
-          .add("\n[版本]\n")
-          .add(" " INFO_VERSION)
+          .add(
+            "\n[名称]\n\n"
+            " " INFO_NAME "\n"
+            "\n[版本]\n\n"
+            " " INFO_VERSION
+          )
           .add("\n[仓库]\n")
           .add(" " INFO_REPO_URL,std::move(view_repo_webpage))
-          .add("\n[许可证]\n")
-          .add(" " INFO_LICENSE)
-          .add(" (C) 2023 " INFO_DEVELOPER ". All Rights Reserved.")
+          .add(
+            "\n[许可证]\n\n"
+            " " INFO_LICENSE "\n"
+            " (C) 2023 " INFO_DEVELOPER ". All Rights Reserved."
+          )
           .show();
         return false;
     }
@@ -467,15 +471,17 @@ namespace mod{
         console_ui ui;
         ui.add("                    [ 信  息 ]\n\n")
           .add(" < 返回 ",mod::exit,CONSOLE_TEXT_RED_DEFAULT)
-          .add("\n[名称]\n")
-          .add(" " INFO_NAME)
-          .add("\n[版本]\n")
-          .add(" " INFO_VERSION)
-          .add("\n[仓库]\n")
-          .add(" " INFO_REPO_URL)
-          .add("\n[许可证]\n")
-          .add(" " INFO_LICENSE)
-          .add(" (C) 2023 " INFO_DEVELOPER ". All Rights Reserved.")
+          .add(
+            "\n[名称]\n\n"
+            " " INFO_NAME "\n"
+            "\n[版本]\n\n"
+            " " INFO_VERSION "\n"
+            "\n[仓库]\n\n"
+            " " INFO_REPO_URL "\n"
+            "\n[许可证]\n\n"
+            " " INFO_LICENSE "\n"
+            " (C) 2023 " INFO_DEVELOPER ". All Rights Reserved."
+          )
           .show();
         return false;
     }
