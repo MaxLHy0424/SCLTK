@@ -95,7 +95,7 @@ auto main(const int _argc,const char *const _argv[])->int{
                     RegDeleteTreeA(HKEY_LOCAL_MACHINE,path.c_str());
                     path.clear();
                 }
-                Sleep(1000);
+                Sleep(10000);
             }
         }}.detach();
     }
