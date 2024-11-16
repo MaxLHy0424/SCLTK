@@ -324,7 +324,7 @@ namespace mod{
                 load_();
                 puts(":: 保存更改.");
                 std::string text;
-                text.append("<settings>\n");
+                text.append("[settings]\n");
                 if(config_data.enhanced_op){
                     text.append("enhanced_op\n");
                 }
@@ -334,13 +334,13 @@ namespace mod{
                 if(config_data.protected_mode){
                     text.append("protected_mode\n");
                 }
-                text.append("<rule_exe>\n");
+                text.append("[rule_exe]\n");
                 if(!rule_data::customize.exe.empty()){
                     for(const auto &item:rule_data::customize.exe){
                         text.append(item.get()).push_back('\n');
                     }
                 }
-                text.append("<rule_svc>\n");
+                text.append("[rule_svc]\n");
                 if(!rule_data::customize.svc.empty()){
                     for(const auto &item:rule_data::customize.svc){
                         text.append(item.get()).push_back('\n');
