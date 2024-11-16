@@ -122,7 +122,7 @@ namespace mod{
         private:
             const char *const cmd_;
         public:
-            inline auto operator()(console_ui::fn_args){
+            auto operator()(console_ui::fn_args){
                 printf(
                     ":: 执行命令.\n%s\n",
                     std::string(WINDOW_WIDTH,'-').c_str()
@@ -130,10 +130,10 @@ namespace mod{
                 system(cmd_);
                 return false;
             }
-            inline exec_cmd(const char *const _cmd):
+            explicit exec_cmd(const char *const _cmd):
               cmd_{_cmd}
             {}
-            inline ~exec_cmd(){}
+            ~exec_cmd(){}
         };
         auto open_cmd_prompt{[](console_ui::fn_args _args){
             _args.ui->lock(false,false);
@@ -193,7 +193,7 @@ namespace mod{
     private:
         const char mode_;
         mutable bool is_reload_;
-        inline auto load_()const{
+        auto load_()const{
             std::ifstream config_file{"config.ini",std::ios::in};
             if(!config_file.is_open()){
                 goto END;
@@ -259,7 +259,7 @@ namespace mod{
             config_file.close();
             return;
         }
-        inline auto edit_()const{
+        auto edit_()const{
             auto sync{[this](console_ui::fn_args){
                 is_reload_=true;
                 load_();
@@ -326,7 +326,7 @@ namespace mod{
             return false;
         }
     public:
-        inline auto operator()(console_ui::fn_args)const{
+        auto operator()(console_ui::fn_args)const{
             switch(mode_){
                 case 'r':{
                     load_();
@@ -338,18 +338,18 @@ namespace mod{
             }
             return false;
         }
-        inline explicit config_op(const char _mode):
+        explicit config_op(const char _mode):
           mode_{_mode},
           is_reload_{}
         {}
-        inline ~config_op(){}
+        ~config_op(){}
     };
     class rule_op final{
     private:
         const char mode_;
         const rule_data::base &rule_data_;
     public:
-        inline auto operator()(console_ui::fn_args)const{
+        auto operator()(console_ui::fn_args)const{
             puts("                 [ 破 解 / 恢 复 ]\n\n");
             if((rule_data_.exe.empty())&&(rule_data_.svc.empty())){
                 puts(" (i) 规则为空.\n");
@@ -426,13 +426,13 @@ namespace mod{
             }
             return false;
         }
-        inline explicit rule_op(
+        explicit rule_op(
             const char _mode,
             const rule_data::base &_rule_data
         ):mode_{_mode},
           rule_data_{_rule_data}
         {}
-        inline ~rule_op(){}
+        ~rule_op(){}
     };
 #else
     inline auto init(){
@@ -495,7 +495,7 @@ namespace mod{
         const char mode_;
         const rule_data::base &rule_;
     public:
-        inline auto operator()(console_ui::fn_args)const{
+        auto operator()(console_ui::fn_args)const{
             puts("                 [ 破 解 / 恢 复 ]\n\n");
             if(!is_run_as_admin()){
                 puts("\n (i) 需要管理员权限.\n");
@@ -541,11 +541,11 @@ namespace mod{
             printf("%s\n::释放内存.",std::string(50,'-').c_str());
             return false;
         }
-        inline explicit rule_op(const char _mode,const rule_data::base &_rule):
+        explicit rule_op(const char _mode,const rule_data::base &_rule):
           mode_{_mode},
           rule_{_rule}
         {}
-        inline ~rule_op(){}
+        ~rule_op(){}
     };
 #endif
 }
