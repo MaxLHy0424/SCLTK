@@ -43,7 +43,7 @@
 
 找到:
 ```dos
-set item.runtime=ucrt
+set launch.runtime=ucrt
 ```
 
 软件支持的 Runtime 如下:
@@ -81,7 +81,7 @@ set config.show_verbose_info=0
 
 找到:
 ```dos
-set item.args=
+set launch.args=
 ```
 
 窗口操作的主参数为 `-W`, 附加参数如下:
@@ -93,7 +93,7 @@ set item.args=
 
 使用示例:
 ```dos
-set item.args=-Wtf
+set launch.args=-Wtf
 ```
 
 ### 1.5 深度自定义
