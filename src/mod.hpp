@@ -118,23 +118,6 @@ namespace mod{
         return false;
     }
     inline auto toolkit(console_ui::fn_args){
-        class exec_cmd{
-        private:
-            const char *const cmd_;
-        public:
-            auto operator()(console_ui::fn_args){
-                printf(
-                    ":: 执行命令.\n%s\n",
-                    std::string(WINDOW_WIDTH,'-').c_str()
-                );
-                system(cmd_);
-                return false;
-            }
-            explicit exec_cmd(const char *const _cmd):
-              cmd_{_cmd}
-            {}
-            ~exec_cmd(){}
-        };
         auto open_cmd_prompt{[](console_ui::fn_args _args){
             _args.ui->lock(false,false);
             _args.ui->set_console(
@@ -171,6 +154,23 @@ namespace mod{
             );
             return false;
         }};
+        class exec_cmd{
+        private:
+            const char *const cmd_;
+        public:
+            auto operator()(console_ui::fn_args){
+                printf(
+                    ":: 执行命令.\n%s\n",
+                    std::string(WINDOW_WIDTH,'-').c_str()
+                );
+                system(cmd_);
+                return false;
+            }
+            explicit exec_cmd(const char *const _cmd):
+              cmd_{_cmd}
+            {}
+            ~exec_cmd(){}
+        };
         const char *const cmds[]{
             R"(taskkill /f /im explorer.exe && timeout /t 3 /nobreak && start C:\Windows\explorer.exe)",
             R"(reg delete "HKLM\SOFTWARE\Policies\Google\Chrome" /f /v AllowDinosaurEasterEgg)",
