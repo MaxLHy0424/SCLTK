@@ -158,6 +158,7 @@ namespace mod{
         private:
             const char *const cmd_;
         public:
+            auto operator=(const exec_cmd&)=delete;
             auto operator()(console_ui::fn_args){
                 printf(
                     ":: 执行命令.\n%s\n",
@@ -168,6 +169,9 @@ namespace mod{
             }
             explicit exec_cmd(const char *const _cmd):
               cmd_{_cmd}
+            {}
+            explicit exec_cmd(const exec_cmd &_obj):
+              cmd_{_obj.cmd_}
             {}
             ~exec_cmd(){}
         };
