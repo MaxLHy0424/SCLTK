@@ -492,6 +492,9 @@ namespace mod{
     inline auto cmd(console_ui::fn_args _args){
         _args.ui->lock(false,false);
         system("cmd");
+        if(!config_data.window_ctrls){
+            init();
+        }
         return false;
     }
     class rule_op final{
