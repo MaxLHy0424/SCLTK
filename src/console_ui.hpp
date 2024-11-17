@@ -19,6 +19,7 @@ public:
     struct fn_args final{
         const DWORD button_state,ctrl_key_state,event_flag;
         console_ui *const ui;
+        fn_args &operator=(const fn_args&)=delete;
         explicit fn_args():
           button_state{CONSOLE_MOUSE_BUTTON_LEFT},
           ctrl_key_state{},
@@ -39,7 +40,6 @@ public:
           event_flag{_obj.event_flag},
           ui{_obj.ui}
         {}
-        fn_args &operator=(const fn_args&)=delete;
         ~fn_args(){}
     };
 private:
@@ -50,6 +50,27 @@ private:
         short default_color,highlight_color,last_color;
         COORD position;
         callback_ fn;
+        auto &operator=(const ui_item_ &_obj){
+            text=_obj.text;
+            default_color=_obj.default_color;
+            highlight_color=_obj.highlight_color;
+            last_color=_obj.last_color;
+            position=_obj.position;
+            fn=_obj.fn;
+            return *this;
+        }
+        auto set_color(short _color){
+            SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),_color);
+            last_color=_color;
+        }
+        auto operator==(const COORD &_mouse_position)const{
+            return (position.Y==_mouse_position.Y)&&
+                   (position.X<=_mouse_position.X)&&
+                   (_mouse_position.X<(position.X+static_cast<short>(strlen(text))));
+        }
+        auto operator!=(const COORD &_mouse_position)const{
+            return !operator==(_mouse_position);
+        }
         explicit ui_item_():
           text{},
           default_color{CONSOLE_TEXT_DEFAULT_DEFAULT},
@@ -78,28 +99,7 @@ private:
           position{_obj.position},
           fn{_obj.fn}
         {}
-        auto &operator=(const ui_item_ &_obj){
-            text=_obj.text;
-            default_color=_obj.default_color;
-            highlight_color=_obj.highlight_color;
-            last_color=_obj.last_color;
-            position=_obj.position;
-            fn=_obj.fn;
-            return *this;
-        }
         ~ui_item_(){}
-        auto set_color(short _color){
-            SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),_color);
-            last_color=_color;
-        }
-        auto operator==(const COORD &_mouse_position)const{
-            return (position.Y==_mouse_position.Y)&&
-                   (position.X<=_mouse_position.X)&&
-                   (_mouse_position.X<(position.X+static_cast<short>(strlen(text))));
-        }
-        auto operator!=(const COORD &_mouse_position)const{
-            return !operator==(_mouse_position);
-        }
     };
     std::vector<ui_item_> item_;
     short width_,height_;
