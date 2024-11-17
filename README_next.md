@@ -15,9 +15,9 @@
 | CRCSN 2 | [v2.5_Stable](https://github.com/MaxLHy0424/CRCSN/releases/tag/v2.5_Stable) | ❌ 停止更新 | 2024/01/01 ~ 2024/01/07 |
 | CRCSN 3 | [v3.0.1 (Build 30174)](https://github.com/MaxLHy0424/CRCSN/releases/tag/30174) | ❌ 停止更新 | 2024/02/09 ~ 2024/02/10 |
 | CRCSN 4 | [v4.10.7](https://github.com/MaxLHy0424/CRCSN/releases/tag/v4.10.7) | ❌ 停止更新 | 2024/03/26 ~ 2024/06/19 |
-| CRCSN 5 | [v5.10.3](https://github.com/MaxLHy0424/CRCSN/releases/tag/v5.10.3) | ♻️ 仅修补更新 | 2024/08/25 ~ 2024/12/31 (暂定) |
-| CRCSN 6 | 🔒 即将推出 | ✨ 正在开发 | 暂未确定 |
-| CRCSN Core | 🔒 即将推出 | ✨ 正在开发 | 暂未确定 |
+| CRCSN 5 | [v5.10.3](https://github.com/MaxLHy0424/CRCSN/releases/tag/v5.10.3) | ♻️ 仅常规更新 | 2024/08/25 ~ 2024/12/31 (暂定) |
+| CRCSN 6 | 🔒 即将推出 | 🛠️ 正在开发 | 暂未确定 |
+| CRCSN Core | 🔒 即将推出 | 🛠️ 正在开发 | 暂未确定 |
 
 相关链接:
 
@@ -26,14 +26,14 @@
 
 # 📖 使用指南
 
-**使用 CRCSN 时建议关闭防病毒软件. 若 CRCSN 被报为恶意软件, 请添加排除项.**
-
 > [!NOTE]
 > 适用于 v6.0.0-preview.3.
 
 ## 0 开始之前
 
-**CRCSN 仅供学习交流用途, 请勿扰乱课堂纪律, 造成的后果与开发者无关.**
+**使用 CRCSN 时建议关闭防病毒软件. 若 CRCSN 被报为恶意软件, 请在防病毒软件中添加排除项.**
+
+**请勿使用 CRCSN 扰乱课堂纪律, 造成的后果与开发者无关.**
 
 ## 1 启动
 
