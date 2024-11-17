@@ -34,7 +34,7 @@ public:
           event_flag{_mouse_event.dwEventFlags},
           ui{_ui}
         {}
-        explicit fn_args(const fn_args &_obj):
+        fn_args(const fn_args &_obj):
           button_state{_obj.button_state},
           ctrl_key_state{_obj.ctrl_key_state},
           event_flag{_obj.event_flag},
