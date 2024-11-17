@@ -33,6 +33,13 @@ public:
           event_flag{_mouse_event.dwEventFlags},
           ui{_ui}
         {}
+        explicit fn_args(const fn_args &_obj):
+          button_state{_obj.button_state},
+          ctrl_key_state{_obj.ctrl_key_state},
+          event_flag{_obj.event_flag},
+          ui{_obj.ui}
+        {}
+        fn_args &operator=(const fn_args&)=delete;
         ~fn_args(){}
     };
 private:
@@ -63,6 +70,23 @@ private:
           position{},
           fn{_fn}
         {}
+        explicit ui_item_(const ui_item_ &_obj):
+          text{_obj.text},
+          default_color{_obj.default_color},
+          highlight_color{_obj.highlight_color},
+          last_color{_obj.last_color},
+          position{_obj.position},
+          fn{_obj.fn}
+        {}
+        auto &operator=(const ui_item_ &_obj){
+            text=_obj.text;
+            default_color=_obj.default_color;
+            highlight_color=_obj.highlight_color;
+            last_color=_obj.last_color;
+            position=_obj.position;
+            fn=_obj.fn;
+            return *this;
+        }
         ~ui_item_(){}
         auto set_color(short _color){
             SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),_color);
