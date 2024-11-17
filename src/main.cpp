@@ -147,6 +147,41 @@ auto main(const int _argc,const char *const _argv[])->int{
 #endif
       .show()
       .lock(false,false);
+#ifdef _PREVIEW
+    if(config_data.enhanced_window){
+        SetWindowLongPtrA(
+            GetConsoleWindow(),GWL_STYLE,
+            GetWindowLongPtrA(
+                GetConsoleWindow(),
+                GWL_STYLE
+            )|WS_SIZEBOX|WS_MAXIMIZEBOX|WS_MINIMIZEBOX
+        );
+        EnableMenuItem(
+            GetSystemMenu(GetConsoleWindow(),FALSE),
+            SC_CLOSE,
+            MF_BYCOMMAND|MF_ENABLED
+        );
+        SetLayeredWindowAttributes(GetConsoleWindow(),0,255,LWA_ALPHA);
+        SetWindowPos(GetConsoleWindow(),HWND_NOTOPMOST,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE);
+    }
+#else
+    if(config_data.translucent_window){
+        SetLayeredWindowAttributes(GetConsoleWindow(),0,255,LWA_ALPHA);
+    }
+    if(config_data.front_show_window){
+        SetWindowPos(GetConsoleWindow(),HWND_NOTOPMOST,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE);
+    }
+    if(!config_data.window_ctrls){
+        SetWindowLongPtrA(
+            GetConsoleWindow(),
+            GWL_STYLE,
+            GetWindowLongPtrA(
+                GetConsoleWindow(),
+                GWL_STYLE
+            )|WS_SIZEBOX|WS_MAXIMIZEBOX|WS_MINIMIZEBOX
+        );
+    }
+#endif
     return 0;
 }
 #else
