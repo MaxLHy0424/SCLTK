@@ -20,15 +20,9 @@ public:
         const DWORD button_state,ctrl_key_state,event_flag;
         console_ui *const ui;
         fn_args &operator=(const fn_args&)=delete;
-        explicit fn_args():
-          button_state{CONSOLE_MOUSE_BUTTON_LEFT},
-          ctrl_key_state{},
-          event_flag{},
-          ui{}
-        {}
         explicit fn_args(
-            const MOUSE_EVENT_RECORD _mouse_event,
-            console_ui *const _ui
+            console_ui *const _ui=nullptr,
+            const MOUSE_EVENT_RECORD _mouse_event={{},CONSOLE_MOUSE_BUTTON_LEFT,{},{}}
         ):button_state{_mouse_event.dwButtonState},
           ctrl_key_state{_mouse_event.dwControlKeyState},
           event_flag{_mouse_event.dwEventFlags},
@@ -346,7 +340,7 @@ public:
                                     cls_();
                                     line.set_color(line.default_color);
                                     edit_console_attrs_(v_lock_all);
-                                    is_exit=line.fn(fn_args{mouse_event,this});
+                                    is_exit=line.fn(fn_args{this,mouse_event});
                                     show_cursor_(false);
                                     edit_console_attrs_(v_lock_text);
                                     init_pos_();
