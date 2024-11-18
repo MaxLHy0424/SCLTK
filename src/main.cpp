@@ -2,7 +2,7 @@
 #include"console_ui.hpp"
 #include"mod.hpp"
 #include<thread>
-#ifdef _PREVIEW
+#ifdef _PREVIEW_
 auto main()->int{
     console_ui ui;
     ui.set_console(936,"CRCSN",WINDOW_WIDTH,WINDOW_HEIGHT,true,false,true,255)
@@ -51,7 +51,7 @@ auto main(const int _argc,const char *const _argv[])->int{
     }
     mod::init();
 #endif
-#ifdef _PREVIEW
+#ifdef _PREVIEW_
     if(config_data.enhanced_window){
         std::thread{[](){
             const HWND this_window{GetConsoleWindow()};
@@ -105,17 +105,17 @@ auto main(const int _argc,const char *const _argv[])->int{
     }
 #endif
     ui.add("                    [ 主  页 ]\n\n");
-#ifndef _PREVIEW
+#ifndef _PREVIEW_
     if(config_error){
         ui.add(" (!) 参数错误.\n");
     }
 #endif
-    ui.add(" < 退出 ",mod::exit,CONSOLE_TEXT_RED_DEFAULT)
-#ifdef _PREVIEW
-      .add(" < 重启 ",mod::relaunch_as_admin,CONSOLE_TEXT_RED_DEFAULT)
+    ui.add(" < 退出 ",mod::quit,CONSOLE_TEXT_RED_WHITE)
+#ifdef _PREVIEW_
+      .add(" < 重启 ",mod::relaunch_as_admin,CONSOLE_TEXT_RED_WHITE)
 #endif
       .add(" > 信息 ",mod::info)
-#ifdef _PREVIEW
+#ifdef _PREVIEW_
       .add(" > 配置 ",mod::config_op{'w'})
       .add(" > 工具箱 ",mod::toolkit)
 #else
@@ -124,13 +124,13 @@ auto main(const int _argc,const char *const _argv[])->int{
       .add("\n[破解]\n")
       .add(" > 极域电子教室 ",mod::rule_op{'c',mod::rule_data::mythware})
       .add(" > 联想云教室 ",mod::rule_op{'c',mod::rule_data::lenovo})
-#ifdef _PREVIEW
+#ifdef _PREVIEW_
       .add(" > 自定义 ",mod::rule_op{'c',mod::rule_data::customized})
 #endif
       .add("\n[恢复]\n")
       .add(" > 极域电子教室 ",mod::rule_op{'r',mod::rule_data::mythware})
       .add(" > 联想云教室 ",mod::rule_op{'r',mod::rule_data::lenovo})
-#ifdef _PREVIEW
+#ifdef _PREVIEW_
       .add(" > 自定义 ",mod::rule_op{'r',mod::rule_data::customized})
       .set_console(
         936,
@@ -147,7 +147,7 @@ auto main(const int _argc,const char *const _argv[])->int{
 #endif
       .show()
       .lock(false,false);
-#ifdef _PREVIEW
+#ifdef _PREVIEW_
     if(config_data.enhanced_window){
         SetWindowLongPtrA(
             GetConsoleWindow(),GWL_STYLE,

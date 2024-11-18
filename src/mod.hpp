@@ -1,23 +1,23 @@
 #pragma once
 #include"info.hpp"
 #include"console_ui.hpp"
-#ifdef _PREVIEW
+#ifdef _PREVIEW_
 #include<fstream>
 #endif
 inline struct{
-#ifdef _PREVIEW
+#ifdef _PREVIEW_
     bool enhanced_op,enhanced_window,protected_mode;
 #else
     bool front_show_window,translucent_window,window_ctrls;
 #endif
 }config_data{};
-#ifndef _PREVIEW
+#ifndef _PREVIEW_
 inline bool config_error{};
 #endif
 namespace mod{
     namespace rule_data{
         struct base final{
-#ifdef _PREVIEW
+#ifdef _PREVIEW_
             std::vector<std::string> exe,svc;
 #else
             std::vector<const char*> exe,svc;
@@ -82,10 +82,10 @@ namespace mod{
         }
         return is_admin;
     }
-    inline auto exit(console_ui::fn_args){
+    inline auto quit(console_ui::fn_args){
         return true;
     }
-#ifdef _PREVIEW
+#ifdef _PREVIEW_
     inline auto relaunch_as_admin(console_ui::fn_args){
         char *const path{new char[MAX_PATH]{}};
         GetModuleFileNameA(nullptr,path,MAX_PATH);
@@ -100,7 +100,7 @@ namespace mod{
         }};
         console_ui ui;
         ui.add("                    [ 信  息 ]\n\n")
-          .add(" < 返回 ",mod::exit,CONSOLE_TEXT_RED_DEFAULT)
+          .add(" < 返回 ",quit,CONSOLE_TEXT_RED_WHITE)
           .add(
             "\n[名称]\n\n"
             " " INFO_NAME "\n"
@@ -183,7 +183,7 @@ namespace mod{
         };
         console_ui ui;
         ui.add("                   [ 工 具 箱 ]\n\n")
-          .add(" < 返回 ",mod::exit,CONSOLE_TEXT_RED_DEFAULT)
+          .add(" < 返回 ",quit,CONSOLE_TEXT_RED_WHITE)
           .add(" > 命令提示符 ",std::move(open_cmd_prompt))
           .add("\n[快捷操作]\n")
           .add(" > 重启资源管理器 ",exec_cmd{cmds[0]})
@@ -315,7 +315,7 @@ namespace mod{
             console_ui ui;
             ui.add("                    [ 配  置 ]\n\n")
               .add(" (i) 相关信息可参阅文档.\n")
-              .add(" < 同步配置并返回 ",std::move(sync),CONSOLE_TEXT_RED_DEFAULT)
+              .add(" < 同步配置并返回 ",std::move(sync),CONSOLE_TEXT_RED_WHITE)
               .add(" > 打开配置文件 ",std::move(open_config_file))
               .add("\n[增强操作]\n")
               .add(" > 启用 ",[](console_ui::fn_args){config_data.enhanced_op=true;return false;})
@@ -474,7 +474,7 @@ namespace mod{
     inline auto info(console_ui::fn_args){
         console_ui ui;
         ui.add("                    [ 信  息 ]\n\n")
-          .add(" < 返回 ",mod::exit,CONSOLE_TEXT_RED_DEFAULT)
+          .add(" < 返回 ",quit,CONSOLE_TEXT_RED_WHITE)
           .add(
             "\n[名称]\n\n"
             " " INFO_NAME "\n"
