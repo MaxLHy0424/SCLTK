@@ -1,6 +1,6 @@
 #include"src/info.hpp"
 #ifdef _PREVIEW
-1 ICON "img/favicon_next.ico"
+1 ICON "img/favicon_preview.ico"
 #else
 1 ICON "img/favicon.ico"
 #endif
