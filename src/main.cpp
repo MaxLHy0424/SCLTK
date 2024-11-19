@@ -60,11 +60,9 @@ auto main(const int _argc,const char *const _argv[])->int{
             while(true){
                 AttachThreadInput(current_id,foreground_id,TRUE);
                 ShowWindow(this_window,SW_SHOWNORMAL);
-                SetWindowPos(this_window,HWND_TOPMOST,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE);
-                SetWindowPos(this_window,HWND_NOTOPMOST,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE);
                 SetForegroundWindow(this_window);
                 AttachThreadInput(current_id,foreground_id,FALSE);
-                SetWindowPos(this_window,HWND_TOPMOST,0,0,100,100,SWP_NOMOVE|SWP_NOSIZE);
+                SetWindowPos(this_window,HWND_TOPMOST,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE);
                 Sleep(100);
             }
         }}.detach();
