@@ -160,7 +160,7 @@ namespace mod{
         private:
             const char *const cmd_;
         public:
-            auto operator=(const exec_cmd&)=delete;
+            auto operator=(const exec_cmd &)=delete;
             auto operator()(console_ui::fn_args){
                 printf(
                     ":: 执行命令.\n%s\n",

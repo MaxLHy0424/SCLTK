@@ -19,7 +19,7 @@ public:
     struct fn_args final{
         const DWORD button_state,ctrl_key_state,event_flag;
         console_ui *const ui;
-        fn_args &operator=(const fn_args&)=delete;
+        fn_args &operator=(const fn_args &)=delete;
         explicit fn_args(
             console_ui *const _ui=nullptr,
             const MOUSE_EVENT_RECORD _mouse_event={{},CONSOLE_MOUSE_BUTTON_LEFT,{},{}}
