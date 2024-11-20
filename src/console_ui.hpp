@@ -194,6 +194,25 @@ private:
             }
         }
     }
+    auto call_fn_(const MOUSE_EVENT_RECORD &_mouse_event){
+        bool is_exit{};
+        for(auto &line:item_){
+            if(line==_mouse_event.dwMousePosition){
+                if(line.fn!=nullptr){
+                    cls_();
+                    line.set_color(line.default_color);
+                    show_cursor_(false);
+                    edit_console_attrs_(v_lock_all);
+                    is_exit=line.fn(fn_args{this,_mouse_event});
+                    show_cursor_(false);
+                    edit_console_attrs_(v_lock_text);
+                    init_pos_();
+                }
+                break;
+            }
+        }
+        return is_exit;
+    }
 public:
     auto size(){
         return item_.size();
@@ -334,20 +353,7 @@ public:
                         (mouse_event.dwButtonState)&&
                         (mouse_event.dwButtonState!=CONSOLE_MOUSE_WHEEL)
                     ){
-                        for(auto &line:item_){
-                            if(line==mouse_event.dwMousePosition){
-                                if(line.fn!=nullptr){
-                                    cls_();
-                                    line.set_color(line.default_color);
-                                    edit_console_attrs_(v_lock_all);
-                                    is_exit=line.fn(fn_args{this,mouse_event});
-                                    show_cursor_(false);
-                                    edit_console_attrs_(v_lock_text);
-                                    init_pos_();
-                                }
-                                break;
-                            }
-                        }
+                        is_exit=call_fn_(mouse_event);
                     }
                     break;
                 }
