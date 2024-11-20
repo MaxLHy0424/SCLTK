@@ -65,7 +65,9 @@ namespace mod{
                 "WFBSMlogon"
             }
         };
+#ifdef _PREVIEW_
         inline base customized{};
+#endif
     }
     inline auto is_run_as_admin(){
         BOOL is_admin{};
