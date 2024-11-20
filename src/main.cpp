@@ -35,7 +35,6 @@ auto main(const int _argc,const char *const _argv[])->int{
                             break;
                         }default:{
                             config_error=true;
-                            goto END;
                         }
                     }
                 }
@@ -43,10 +42,6 @@ auto main(const int _argc,const char *const _argv[])->int{
                 config_error=true;
                 break;
             }
-        }
-    END:
-        if(config_error){
-            config_data={};
         }
     }
     mod::init();
