@@ -6,7 +6,7 @@
 #endif
 inline struct{
 #ifdef _PREVIEW_
-    bool enhanced_op,enhanced_window,repair_mode;
+    bool enhanced_op,enhanced_window,repaired_mode;
 #else
     bool front_show_window,translucent_window,window_ctrls;
 #endif
@@ -120,7 +120,7 @@ namespace mod{
         return false;
     }
     inline auto toolkit(console_ui::fn_args){
-        auto open_cmd_prompt{[](console_ui::fn_args _args){
+        auto launch_cmd_prompt{[](console_ui::fn_args _args){
             _args.ui->lock(false,false);
             _args.ui->set_console(
                 936,
@@ -186,7 +186,7 @@ namespace mod{
         console_ui ui;
         ui.add("                   [ 工 具 箱 ]\n\n")
           .add(" < 返回 ",quit,CONSOLE_TEXT_RED_WHITE)
-          .add(" > 命令提示符 ",open_cmd_prompt)
+          .add(" > 命令提示符 ",launch_cmd_prompt)
           .add("\n[快捷操作]\n")
           .add(" > 重启资源管理器 ",exec_cmd{cmds[0]})
           .add(" > 恢复 Google Chrome 离线游戏 ",exec_cmd{cmds[1]})
@@ -247,8 +247,8 @@ namespace mod{
                                 config_data.enhanced_op=true;
                             }else if(line=="enhanced_window"){
                                 config_data.enhanced_window=true;
-                            }else if(line=="repair_mode"){
-                                config_data.repair_mode=true;
+                            }else if(line=="repaired_mode"){
+                                config_data.repaired_mode=true;
                             }
                             break;
                         }case v_rule_exe:{
@@ -278,8 +278,8 @@ namespace mod{
                 if(config_data.enhanced_window){
                     text.append("enhanced_window\n");
                 }
-                if(config_data.repair_mode){
-                    text.append("repair_mode\n");
+                if(config_data.repaired_mode){
+                    text.append("repaired_mode\n");
                 }
                 text.append("[rule_exe]\n");
                 if(!rule_data::customized.exe.empty()){
@@ -326,8 +326,8 @@ namespace mod{
               .add(" > 启用 ",[](console_ui::fn_args){config_data.enhanced_window=true;return false;})
               .add(" > 禁用 (默认) ",[](console_ui::fn_args){config_data.enhanced_window=false;return false;})
               .add("\n[修复模式 (下次启动时生效)]\n")
-              .add(" > 启用 ",[](console_ui::fn_args){config_data.repair_mode=true;return false;})
-              .add(" > 禁用 (默认) ",[](console_ui::fn_args){config_data.repair_mode=false;return false;})
+              .add(" > 启用 ",[](console_ui::fn_args){config_data.repaired_mode=true;return false;})
+              .add(" > 禁用 (默认) ",[](console_ui::fn_args){config_data.repaired_mode=false;return false;})
               .show();
             return false;
         }
