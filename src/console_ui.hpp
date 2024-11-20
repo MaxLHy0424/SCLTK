@@ -162,10 +162,7 @@ private:
         set_cursor_({0,0});
     }
     auto write_(const char *const _text,const bool _is_endl=false){
-        printf("%s",_text);
-        if(_is_endl){
-            printf("\n");
-        }
+        printf("%s%c",_text,"\0\n"[_is_endl]);
     }
     auto rewrite_(const COORD &_position,const char *const _text){
         set_cursor_({0,_position.Y});
@@ -184,11 +181,17 @@ private:
     }
     auto refresh_(const COORD &_hang_position){
         for(auto &line:item_){
-            if((line==_hang_position)&&(line.last_color!=line.highlight_color)){
+            if(
+                (line==_hang_position)&&
+                (line.last_color!=line.highlight_color)
+            ){
                 line.set_color(line.highlight_color);
                 rewrite_(line.position,line.text);
             }
-            if((line!=_hang_position)&&(line.last_color!=line.default_color)){
+            if(
+                (line!=_hang_position)&&
+                (line.last_color!=line.default_color)
+            ){
                 line.set_color(line.default_color);
                 rewrite_(line.position,line.text);
             }
@@ -197,19 +200,21 @@ private:
     auto call_fn_(const MOUSE_EVENT_RECORD &_mouse_event){
         bool is_exit{};
         for(auto &line:item_){
-            if(line==_mouse_event.dwMousePosition){
-                if(line.fn!=nullptr){
-                    cls_();
-                    line.set_color(line.default_color);
-                    show_cursor_(false);
-                    edit_console_attrs_(v_lock_all);
-                    is_exit=line.fn(fn_args{this,_mouse_event});
-                    show_cursor_(false);
-                    edit_console_attrs_(v_lock_text);
-                    init_pos_();
-                }
+            if(line!=_mouse_event.dwMousePosition){
+                continue;
+            }
+            if(line.fn==nullptr){
                 break;
             }
+            cls_();
+            line.set_color(line.default_color);
+            show_cursor_(false);
+            edit_console_attrs_(v_lock_all);
+            is_exit=line.fn(fn_args{this,_mouse_event});
+            show_cursor_(false);
+            edit_console_attrs_(v_lock_text);
+            init_pos_();
+            break;
         }
         return is_exit;
     }
