@@ -120,7 +120,7 @@ namespace mod{
         return false;
     }
     inline auto toolkit(console_ui::fn_args){
-        auto launch_cmd_prompt{[](console_ui::fn_args _args){
+        auto launch_cmd{[](console_ui::fn_args _args){
             _args.ui->lock(false,false);
             _args.ui->set_console(
                 936,
@@ -186,12 +186,12 @@ namespace mod{
         console_ui ui;
         ui.add("                   [ 工 具 箱 ]\n\n")
           .add(" < 返回 ",quit,CONSOLE_TEXT_RED_WHITE)
-          .add(" > 命令提示符 ",launch_cmd_prompt)
+          .add(" > 命令提示符 ",launch_cmd)
           .add("\n[快捷操作]\n")
           .add(" > 重启资源管理器 ",exec_cmd{cmds[0]})
           .add(" > 恢复 Google Chrome 离线游戏 ",exec_cmd{cmds[1]})
           .add(" > 恢复 Microsoft Edge 离线游戏 ",exec_cmd{cmds[2]})
-          .add(" > 移除 USB 设备访问限制 ",exec_cmd{cmds[3]})
+          .add(" > 恢复 USB 设备访问 ",exec_cmd{cmds[3]})
           .show();
         return false;
     }
