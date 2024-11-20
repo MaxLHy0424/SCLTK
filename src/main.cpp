@@ -17,33 +17,34 @@ auto main()->int{
 #else
 auto main(const int _argc,const char *const _argv[])->int{
     console_ui ui;
-    if(_argc>1){
-        std::string_view tmp;
-        for(int i{1};i<_argc;++i){
-            tmp=_argv[i];
-            if((tmp.size()>2)&&(tmp.substr(0,2)=="-W")){
-                for(const auto &sub:tmp.substr(2)){
-                    switch(sub){
-                        case 'f':{
-                            config_data.front_show_window=true;
-                            break;
-                        }case 't':{
-                            config_data.translucent_window=true;
-                            break;
-                        }case 'c':{
-                            config_data.window_ctrls=true;
-                            break;
-                        }default:{
-                            config_error=true;
-                        }
+    if(_argc==1){
+        goto INIT;
+    }
+    for(int i{1};i<_argc;++i){
+        std::string_view tmp{_argv[i]};
+        if((tmp.size()>2)&&(tmp.substr(0,2)=="-W")){
+            for(const auto &sub:tmp.substr(2)){
+                switch(sub){
+                    case 'f':{
+                        config_data.front_show_window=true;
+                        break;
+                    }case 't':{
+                        config_data.translucent_window=true;
+                        break;
+                    }case 'c':{
+                        config_data.window_ctrls=true;
+                        break;
+                    }default:{
+                        config_error=true;
                     }
                 }
-            }else{
-                config_error=true;
-                break;
             }
+        }else{
+            config_error=true;
+            break;
         }
     }
+INIT:
     mod::init();
 #endif
 #ifdef _PREVIEW_

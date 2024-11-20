@@ -202,66 +202,64 @@ namespace mod{
         auto load_()const{
             std::ifstream config_file{"config.ini",std::ios::in};
             if(!config_file.is_open()){
-                goto END;
+                config_file.close();
+                return;
             }
-            {
-                if(is_reload_){
-                    puts(":: 同步更改.");
-                }else{
-                    puts(":: 加载配置文件.");
+            if(is_reload_){
+                puts(":: 同步更改.");
+            }else{
+                puts(":: 加载配置文件.");
+            }
+            rule_data::customized.exe.clear();
+            rule_data::customized.svc.clear();
+            std::string line;
+            enum{
+                v_unknown=-1,
+                v_settings=0,
+                v_rule_exe=1,
+                v_rule_svc=2,
+            }config_item{v_unknown};
+            while(std::getline(config_file,line)){
+                if((line.empty())||(line.front()=='#')){
+                    continue;
                 }
-                rule_data::customized.exe.clear();
-                rule_data::customized.svc.clear();
-                std::string line;
-                enum{
-                    v_unknown=-1,
-                    v_settings=0,
-                    v_rule_exe=1,
-                    v_rule_svc=2,
-                }config_item{v_unknown};
-                while(std::getline(config_file,line)){
-                    if((line.empty())||(line.front()=='#')){
-                        continue;
-                    }
-                    if(line=="[settings]"){
-                        config_item=v_settings;
-                        continue;
-                    }else if(line=="[rule_exe]"){
-                        config_item=v_rule_exe;
-                        continue;
-                    }else if(line=="[rule_svc]"){
-                        config_item=v_rule_svc;
-                        continue;
-                    }else if((line.front()=='[')&&(line.back()==']')){
-                        config_item=v_unknown;
-                        continue;
-                    }
-                    switch(config_item){
-                        case v_unknown:{
-                            break;
-                        }case v_settings:{
-                            if(is_reload_){
-                                continue;
-                            }
-                            if(line=="enhanced_op"){
-                                config_data.enhanced_op=true;
-                            }else if(line=="enhanced_window"){
-                                config_data.enhanced_window=true;
-                            }else if(line=="repaired_mode"){
-                                config_data.repaired_mode=true;
-                            }
-                            break;
-                        }case v_rule_exe:{
-                            rule_data::customized.exe.emplace_back(std::move(line));
-                            break;
-                        }case v_rule_svc:{
-                            rule_data::customized.svc.emplace_back(std::move(line));
-                            break;
+                if(line=="[settings]"){
+                    config_item=v_settings;
+                    continue;
+                }else if(line=="[rule_exe]"){
+                    config_item=v_rule_exe;
+                    continue;
+                }else if(line=="[rule_svc]"){
+                    config_item=v_rule_svc;
+                    continue;
+                }else if((line.front()=='[')&&(line.back()==']')){
+                    config_item=v_unknown;
+                    continue;
+                }
+                switch(config_item){
+                    case v_unknown:{
+                        break;
+                    }case v_settings:{
+                        if(is_reload_){
+                            continue;
                         }
+                        if(line=="enhanced_op"){
+                            config_data.enhanced_op=true;
+                        }else if(line=="enhanced_window"){
+                            config_data.enhanced_window=true;
+                        }else if(line=="repaired_mode"){
+                            config_data.repaired_mode=true;
+                        }
+                        break;
+                    }case v_rule_exe:{
+                        rule_data::customized.exe.emplace_back(std::move(line));
+                        break;
+                    }case v_rule_svc:{
+                        rule_data::customized.svc.emplace_back(std::move(line));
+                        break;
                     }
                 }
             }
-        END:
             config_file.close();
             return;
         }
