@@ -110,7 +110,7 @@ namespace mod{
             " " INFO_VERSION
           )
           .add("\n[仓库]\n")
-          .add(" " INFO_REPO_URL,std::move(view_repo_webpage))
+          .add(" " INFO_REPO_URL,view_repo_webpage)
           .add(
             "\n[许可证]\n\n"
             " " INFO_LICENSE "\n"
@@ -186,7 +186,7 @@ namespace mod{
         console_ui ui;
         ui.add("                   [ 工 具 箱 ]\n\n")
           .add(" < 返回 ",quit,CONSOLE_TEXT_RED_WHITE)
-          .add(" > 命令提示符 ",std::move(open_cmd_prompt))
+          .add(" > 命令提示符 ",open_cmd_prompt)
           .add("\n[快捷操作]\n")
           .add(" > 重启资源管理器 ",exec_cmd{cmds[0]})
           .add(" > 恢复 Google Chrome 离线游戏 ",exec_cmd{cmds[1]})
@@ -318,7 +318,7 @@ namespace mod{
             ui.add("                    [ 配  置 ]\n\n")
               .add(" (i) 相关信息可参阅文档.\n")
               .add(" < 同步配置并返回 ",std::move(sync),CONSOLE_TEXT_RED_WHITE)
-              .add(" > 打开配置文件 ",std::move(open_config_file))
+              .add(" > 打开配置文件 ",open_config_file)
               .add("\n[增强操作]\n")
               .add(" > 启用 ",[](console_ui::fn_args){config_data.enhanced_op=true;return false;})
               .add(" > 禁用 (默认) ",[](console_ui::fn_args){config_data.enhanced_op=false;return false;})
