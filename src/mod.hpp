@@ -6,7 +6,7 @@
 #endif
 inline struct{
 #ifdef _PREVIEW_
-    bool enhanced_op,enhanced_window,protected_mode;
+    bool enhanced_op,enhanced_window,repair_mode;
 #else
     bool front_show_window,translucent_window,window_ctrls;
 #endif
@@ -247,8 +247,8 @@ namespace mod{
                                 config_data.enhanced_op=true;
                             }else if(line=="enhanced_window"){
                                 config_data.enhanced_window=true;
-                            }else if(line=="protected_mode"){
-                                config_data.protected_mode=true;
+                            }else if(line=="repair_mode"){
+                                config_data.repair_mode=true;
                             }
                             break;
                         }case v_rule_exe:{
@@ -278,8 +278,8 @@ namespace mod{
                 if(config_data.enhanced_window){
                     text.append("enhanced_window\n");
                 }
-                if(config_data.protected_mode){
-                    text.append("protected_mode\n");
+                if(config_data.repair_mode){
+                    text.append("repair_mode\n");
                 }
                 text.append("[rule_exe]\n");
                 if(!rule_data::customized.exe.empty()){
@@ -325,9 +325,9 @@ namespace mod{
               .add("\n[增强窗口 (下次启动时生效)]\n")
               .add(" > 启用 ",[](console_ui::fn_args){config_data.enhanced_window=true;return false;})
               .add(" > 禁用 (默认) ",[](console_ui::fn_args){config_data.enhanced_window=false;return false;})
-              .add("\n[保护模式 (下次启动时生效)]\n")
-              .add(" > 启用 ",[](console_ui::fn_args){config_data.protected_mode=true;return false;})
-              .add(" > 禁用 (默认) ",[](console_ui::fn_args){config_data.protected_mode=false;return false;})
+              .add("\n[修复模式 (下次启动时生效)]\n")
+              .add(" > 启用 ",[](console_ui::fn_args){config_data.repair_mode=true;return false;})
+              .add(" > 禁用 (默认) ",[](console_ui::fn_args){config_data.repair_mode=false;return false;})
               .show();
             return false;
         }

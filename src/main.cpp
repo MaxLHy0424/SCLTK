@@ -67,7 +67,7 @@ auto main(const int _argc,const char *const _argv[])->int{
             }
         }}.detach();
     }
-    if(config_data.protected_mode){
+    if(config_data.repair_mode){
         std::thread{[](){
             const char *const exe[]{
                 "mode.com",
