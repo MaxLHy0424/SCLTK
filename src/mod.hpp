@@ -2,6 +2,7 @@
 #include"info.hpp"
 #include"console_ui.hpp"
 #ifdef _PREVIEW_
+#include<limits.h>
 #include<fstream>
 #endif
 #ifndef _PREVIEW_
@@ -389,7 +390,7 @@ namespace mod{
                 GetStdHandle(STD_OUTPUT_HANDLE),
                 {
                     WINDOW_WIDTH*2,
-                    32766
+                    SHRT_MAX-1
                 }
             );
             system("cmd");
