@@ -175,5 +175,5 @@ INIT:
 }
 #endif
 #else
-#error "must be compiled on the Windows OS platform."
+#error "The source code must be compiled on the Windows OS platform."
 #endif
