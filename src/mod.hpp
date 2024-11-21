@@ -38,6 +38,7 @@ namespace mod{
             "enhanced_window",
             "repaired_mode"
         };
+        inline const char *const config_file_name{"config.ini"};
     }
     namespace rule{
         struct data_base final{
@@ -189,7 +190,7 @@ namespace mod{
             const char mode_;
             mutable bool is_reload_;
             auto load_()const{
-                std::ifstream config_file{"config.ini",std::ios::in};
+                std::ifstream config_file{config_file_name,std::ios::in};
                 if(!config_file.is_open()){
                     config_file.close();
                     return;
@@ -282,15 +283,15 @@ namespace mod{
                             text.append(item).push_back('\n');
                         }
                     }
-                    std::ofstream config_file{"config.ini",std::ios::out|std::ios::trunc};
+                    std::ofstream config_file{config_file_name,std::ios::out|std::ios::trunc};
                     config_file.write(text.c_str(),text.size());
                     config_file.close();
                     return true;
                 }};
                 auto open_config_file{[](console_ui::fn_args){
-                    if(std::ifstream{"config.ini",std::ios::in}.is_open()){
+                    if(std::ifstream{config_file_name,std::ios::in}.is_open()){
                         puts(":: 打开配置文件.");
-                        ShellExecuteA(nullptr,"open","config.ini",nullptr,nullptr,SW_SHOWNORMAL);
+                        ShellExecuteA(nullptr,"open",config_file_name,nullptr,nullptr,SW_SHOWNORMAL);
                         return false;
                     }
                     puts(
