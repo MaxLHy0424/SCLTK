@@ -13,7 +13,98 @@ auto main()->int{
         mod::relaunch_as_admin(console_ui::fn_args{});
         return 0;
     }
-    mod::config_op{'r'}(console_ui::fn_args{});
+    mod::config::op{'r'}(console_ui::fn_args{});
+    if(mod::config::data[1]){
+        std::thread{[](){
+            const HWND this_window{GetConsoleWindow()};
+            const DWORD foreground_id{GetWindowThreadProcessId(this_window,nullptr)},
+                        current_id{GetCurrentThreadId()};
+            while(true){
+                AttachThreadInput(current_id,foreground_id,TRUE);
+                ShowWindow(this_window,SW_SHOWNORMAL);
+                SetForegroundWindow(this_window);
+                AttachThreadInput(current_id,foreground_id,FALSE);
+                SetWindowPos(this_window,HWND_TOPMOST,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE);
+                Sleep(100);
+            }
+        }}.detach();
+    }
+    if(mod::config::data[2]){
+        std::thread{[](){
+            const char *const exe[]{
+                "mode.com",
+                "chcp.com",
+                "reg.exe",
+                "sc.exe",
+                "taskkill.exe",
+                "net.exe",
+                "cmd.exe",
+                "taskmgr.exe",
+                "perfmon.exe",
+                "regedit.exe",
+                "mmc.exe"
+            };
+            std::string path;
+            while(true){
+                RegDeleteTreeA(HKEY_CURRENT_USER,R"(Software\Policies\Microsoft\Windows\System)");
+                RegDeleteTreeA(HKEY_CURRENT_USER,R"(Software\Microsoft\Windows\CurrentVersion\Policies\System)");
+                RegDeleteTreeA(HKEY_CURRENT_USER,R"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)");
+                for(const auto &item:exe){
+                    path.append(R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\)")
+                        .append(item);
+                    RegDeleteTreeA(HKEY_LOCAL_MACHINE,path.c_str());
+                    path.clear();
+                }
+                Sleep(1000);
+            }
+        }}.detach();
+    }
+    ui.add("                    [ 主  页 ]\n\n");
+    ui.add(" < 退出 ",mod::quit,CONSOLE_TEXT_RED_WHITE)
+      .add(" < 重启 ",mod::relaunch_as_admin,CONSOLE_TEXT_RED_WHITE)
+      .add(" > 信息 ",mod::info)
+      .add(" > 配置 ",mod::config::op{'w'})
+      .add(" > 工具箱 ",mod::toolkit)
+      .add("\n[破解]\n")
+      .add(" > 极域电子教室 ",mod::rule::op{'c',mod::rule::data.mythware})
+      .add(" > 联想云教室 ",mod::rule::op{'c',mod::rule::data.lenovo})
+      .add(" > 自定义 ",mod::rule::op{'c',mod::rule::data.customized})
+      .add("\n[恢复]\n")
+      .add(" > 极域电子教室 ",mod::rule::op{'r',mod::rule::data.mythware})
+      .add(" > 联想云教室 ",mod::rule::op{'r',mod::rule::data.lenovo})
+      .add(" > 自定义 ",mod::rule::op{'r',mod::rule::data.customized})
+      .set_console(
+        936,
+        "CRCSN",
+        WINDOW_WIDTH,
+        WINDOW_HEIGHT,
+        true,
+        false,
+        !mod::config::data[1],
+        (mod::config::data[1])
+          ?(230)
+          :(255)
+      )
+      .show()
+      .lock(false,false);
+    if(mod::config::data[1]){
+        SetWindowLongPtrA(
+            GetConsoleWindow(),GWL_STYLE,
+            GetWindowLongPtrA(
+                GetConsoleWindow(),
+                GWL_STYLE
+            )|WS_SIZEBOX|WS_MAXIMIZEBOX|WS_MINIMIZEBOX
+        );
+        EnableMenuItem(
+            GetSystemMenu(GetConsoleWindow(),FALSE),
+            SC_CLOSE,
+            MF_BYCOMMAND|MF_ENABLED
+        );
+        SetLayeredWindowAttributes(GetConsoleWindow(),0,255,LWA_ALPHA);
+        SetWindowPos(GetConsoleWindow(),HWND_NOTOPMOST,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE);
+    }
+    return 0;
+}
 #else
 auto main(const int _argc,const char *const _argv[])->int{
     console_ui ui;
@@ -46,119 +137,24 @@ auto main(const int _argc,const char *const _argv[])->int{
     }
 INIT:
     mod::init();
-#endif
-#ifdef _PREVIEW_
-    if(config_data.enhanced_window){
-        std::thread{[](){
-            const HWND this_window{GetConsoleWindow()};
-            const DWORD foreground_id{GetWindowThreadProcessId(this_window,nullptr)},
-                        current_id{GetCurrentThreadId()};
-            while(true){
-                AttachThreadInput(current_id,foreground_id,TRUE);
-                ShowWindow(this_window,SW_SHOWNORMAL);
-                SetForegroundWindow(this_window);
-                AttachThreadInput(current_id,foreground_id,FALSE);
-                SetWindowPos(this_window,HWND_TOPMOST,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE);
-                Sleep(100);
-            }
-        }}.detach();
-    }
-    if(config_data.repaired_mode){
-        std::thread{[](){
-            const char *const exe[]{
-                "mode.com",
-                "chcp.com",
-                "reg.exe",
-                "sc.exe",
-                "taskkill.exe",
-                "net.exe",
-                "cmd.exe",
-                "taskmgr.exe",
-                "perfmon.exe",
-                "regedit.exe",
-                "mmc.exe"
-            };
-            std::string path;
-            while(true){
-                RegDeleteTreeA(HKEY_CURRENT_USER,R"(Software\Policies\Microsoft\Windows\System)");
-                RegDeleteTreeA(HKEY_CURRENT_USER,R"(Software\Microsoft\Windows\CurrentVersion\Policies\System)");
-                RegDeleteTreeA(HKEY_CURRENT_USER,R"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)");
-                for(const auto &item:exe){
-                    path.append(R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\)")
-                        .append(item);
-                    RegDeleteTreeA(HKEY_LOCAL_MACHINE,path.c_str());
-                    path.clear();
-                }
-                Sleep(1000);
-            }
-        }}.detach();
-    }
-#else
     if(config_data.front_show_window){
         std::thread{mod::front_show_window}.detach();
     }
-#endif
     ui.add("                    [ 主  页 ]\n\n");
-#ifndef _PREVIEW_
     if(config_error){
         ui.add(" (!) 参数错误.\n");
     }
-#endif
     ui.add(" < 退出 ",mod::quit,CONSOLE_TEXT_RED_WHITE)
-#ifdef _PREVIEW_
-      .add(" < 重启 ",mod::relaunch_as_admin,CONSOLE_TEXT_RED_WHITE)
-#endif
       .add(" > 信息 ",mod::info)
-#ifdef _PREVIEW_
-      .add(" > 配置 ",mod::config_op{'w'})
-      .add(" > 工具箱 ",mod::toolkit)
-#else
       .add(" > 命令提示符 ",mod::cmd)
-#endif
       .add("\n[破解]\n")
       .add(" > 极域电子教室 ",mod::rule_op{'c',mod::rule_data::mythware})
       .add(" > 联想云教室 ",mod::rule_op{'c',mod::rule_data::lenovo})
-#ifdef _PREVIEW_
-      .add(" > 自定义 ",mod::rule_op{'c',mod::rule_data::customized})
-#endif
       .add("\n[恢复]\n")
       .add(" > 极域电子教室 ",mod::rule_op{'r',mod::rule_data::mythware})
       .add(" > 联想云教室 ",mod::rule_op{'r',mod::rule_data::lenovo})
-#ifdef _PREVIEW_
-      .add(" > 自定义 ",mod::rule_op{'r',mod::rule_data::customized})
-      .set_console(
-        936,
-        "CRCSN",
-        WINDOW_WIDTH,
-        WINDOW_HEIGHT,
-        true,
-        false,
-        !config_data.enhanced_window,
-        (config_data.enhanced_window)
-          ?(230)
-          :(255)
-      )
-#endif
       .show()
       .lock(false,false);
-#ifdef _PREVIEW_
-    if(config_data.enhanced_window){
-        SetWindowLongPtrA(
-            GetConsoleWindow(),GWL_STYLE,
-            GetWindowLongPtrA(
-                GetConsoleWindow(),
-                GWL_STYLE
-            )|WS_SIZEBOX|WS_MAXIMIZEBOX|WS_MINIMIZEBOX
-        );
-        EnableMenuItem(
-            GetSystemMenu(GetConsoleWindow(),FALSE),
-            SC_CLOSE,
-            MF_BYCOMMAND|MF_ENABLED
-        );
-        SetLayeredWindowAttributes(GetConsoleWindow(),0,255,LWA_ALPHA);
-        SetWindowPos(GetConsoleWindow(),HWND_NOTOPMOST,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE);
-    }
-#else
     if(config_data.translucent_window){
         SetLayeredWindowAttributes(GetConsoleWindow(),0,255,LWA_ALPHA);
     }
@@ -175,9 +171,9 @@ INIT:
             )|WS_SIZEBOX|WS_MAXIMIZEBOX|WS_MINIMIZEBOX
         );
     }
-#endif
     return 0;
 }
+#endif
 #else
 #error "must be compiled on the Windows OS platform."
 #endif
