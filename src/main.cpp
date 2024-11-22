@@ -13,8 +13,8 @@ auto main()->int{
         mod::relaunch_as_admin(console_ui::fn_args{});
         return 0;
     }
-    mod::config::op{'r'}(console_ui::fn_args{});
-    if(mod::config::data[1]){
+    mod::config_op{'r'}(console_ui::fn_args{});
+    if(mod::data::config[1].state){
         std::thread{[](){
             const HWND this_window{GetConsoleWindow()};
             const DWORD foreground_id{GetWindowThreadProcessId(this_window,nullptr)},
@@ -29,7 +29,7 @@ auto main()->int{
             }
         }}.detach();
     }
-    if(mod::config::data[2]){
+    if(mod::data::config[2].state){
         std::thread{[](){
             const char *const exe[]{
                 "mode.com",
@@ -63,16 +63,16 @@ auto main()->int{
     ui.add(" < 退出 ",mod::quit,CONSOLE_TEXT_RED_WHITE)
       .add(" < 重启 ",mod::relaunch_as_admin,CONSOLE_TEXT_RED_WHITE)
       .add(" > 信息 ",mod::info)
-      .add(" > 配置 ",mod::config::op{'w'})
+      .add(" > 配置 ",mod::config_op{'w'})
       .add(" > 工具箱 ",mod::toolkit)
       .add("\n[破解]\n")
-      .add(" > 极域电子教室 ",mod::rule::op{'c',mod::rule::data.mythware})
-      .add(" > 联想云教室 ",mod::rule::op{'c',mod::rule::data.lenovo})
-      .add(" > 自定义 ",mod::rule::op{'c',mod::rule::data.customized})
+      .add(" > 极域电子教室 ",mod::rule_op{'c',mod::data::rule.mythware})
+      .add(" > 联想云教室 ",mod::rule_op{'c',mod::data::rule.lenovo})
+      .add(" > 自定义 ",mod::rule_op{'c',mod::data::rule.customized})
       .add("\n[恢复]\n")
-      .add(" > 极域电子教室 ",mod::rule::op{'r',mod::rule::data.mythware})
-      .add(" > 联想云教室 ",mod::rule::op{'r',mod::rule::data.lenovo})
-      .add(" > 自定义 ",mod::rule::op{'r',mod::rule::data.customized})
+      .add(" > 极域电子教室 ",mod::rule_op{'r',mod::data::rule.mythware})
+      .add(" > 联想云教室 ",mod::rule_op{'r',mod::data::rule.lenovo})
+      .add(" > 自定义 ",mod::rule_op{'r',mod::data::rule.customized})
       .set_console(
         936,
         "CRCSN",
@@ -80,14 +80,14 @@ auto main()->int{
         WINDOW_HEIGHT,
         true,
         false,
-        !mod::config::data[1],
-        (mod::config::data[1])
+        !mod::data::config[1].state,
+        (mod::data::config[1].state)
           ?(230)
           :(255)
       )
       .show()
       .lock(false,false);
-    if(mod::config::data[1]){
+    if(mod::data::config[1].state){
         SetWindowLongPtrA(
             GetConsoleWindow(),GWL_STYLE,
             GetWindowLongPtrA(
