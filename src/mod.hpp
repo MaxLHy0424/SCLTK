@@ -31,24 +31,25 @@ namespace mod{
         return true;
     }
 #ifdef _PREVIEW_
-    namespace config{
-        inline bool data[3]{};
-        inline const char *const comments[3]{
-            "enhanced_op",
-            "enhanced_window",
-            "repaired_mode"
+    struct config_data final{
+        const char *const name;
+        bool state;
+    };
+    struct rule_data final{
+        std::vector<std::string> exe,svc;
+    };
+    namespace data{
+        inline config_data config[]{
+            {"enhanced_op",false},
+            {"enhanced_window",false},
+            {"repaired_mode",false}
         };
         inline const char *const config_file_name{"config.ini"};
-    }
-    namespace rule{
-        struct data_base final{
-            std::vector<std::string> exe,svc;
-        };
         inline struct{
-            const data_base mythware,
+            const rule_data mythware,
                             lenovo;
-            data_base customized;
-        }data{
+            rule_data customized;
+        }rule{
             {
                 {
                     "StudentMain.exe",
@@ -92,255 +93,253 @@ namespace mod{
             },{}
         };
     }
-    namespace rule{
-        class op final{
-        private:
-            const char mode_;
-            const data_base &rule_data_;
-        public:
-            auto operator()(console_ui::fn_args)const{
-                puts("                 [ 破 解 / 恢 复 ]\n\n");
-                if((rule_data_.exe.empty())&&(rule_data_.svc.empty())){
-                    puts(" (i) 规则为空.\n");
-                    for(unsigned short i{3};i>0;--i){
-                        printf(" %hus 后返回.\r",i);
-                        Sleep(1000);
-                    }
-                    return false;
-                }
-                printf(
-                    ":: 生成并执行命令.\n%s\n",
-                    std::string(WINDOW_WIDTH,'-').c_str()
-                );
-                std::string cmd;
-                switch(mode_){
-                    case 'c':{
-                        if(config::data[0]){
-                            for(const auto &item:rule_data_.exe){
-                                cmd.append(R"(reg add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\)")
-                                   .append(item)
-                                   .append(R"(" /f /t reg_sz /v debugger /d _)");
-                                system(cmd.c_str());
-                                cmd.clear();
-                            }
-                            for(const auto &item:rule_data_.svc){
-                                cmd.append("sc config ")
-                                   .append(item)
-                                   .append(" start= disabled");
-                                system(cmd.c_str());
-                                cmd.clear();
-                            }
-                        }
-                        for(const auto &item:rule_data_.exe){
-                            cmd.append(R"(taskkill /f /im ")")
-                               .append(item)
-                               .append(R"(")");
-                            system(cmd.c_str());
-                            cmd.clear();
-                        }
-                        for(const auto &item:rule_data_.svc){
-                            cmd.append(R"(net stop ")")
-                               .append(item)
-                               .append(R"(" /y)");
-                            system(cmd.c_str());
-                            cmd.clear();
-                        }
-                        break;
-                    }case 'r':{
-                        if(config::data[0]){
-                            for(const auto &item:rule_data_.exe){
-                                cmd.append(R"(reg delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\)")
-                                   .append(item)
-                                   .append(R"(" /f)");
-                                system(cmd.c_str());
-                                cmd.clear();
-                            }
-                            for(const auto &item:rule_data_.svc){
-                                cmd.append("sc config ")
-                                   .append(item)
-                                   .append(" start= auto");
-                                system(cmd.c_str());
-                                cmd.clear();
-                            }
-                        }
-                        for(const auto &item:rule_data_.svc){
-                            cmd.append(R"(net start ")")
-                               .append(item)
-                               .append(R"(")");
-                            system(cmd.c_str());
-                            cmd.clear();
-                        }
-                        break;
-                    }
-                }
-                return false;
-            }
-            explicit op(
-                const char _mode,
-                const data_base &_rule_data
-            ):mode_{_mode},
-              rule_data_{_rule_data}
-            {}
-            ~op(){}
-        };
-    }
-    namespace config{
-        class op final{
-        private:
-            const char mode_;
-            mutable bool is_reload_;
-            auto load_()const{
-                std::ifstream config_file{config_file_name,std::ios::in};
-                if(!config_file.is_open()){
-                    config_file.close();
-                    return;
-                }
-                if(is_reload_){
-                    puts(":: 同步更改.");
-                }else{
-                    puts(":: 加载配置文件.");
-                }
-                rule::data.customized.exe.clear();
-                rule::data.customized.svc.clear();
-                std::string line;
-                enum{
-                    v_unknown=-1,
-                    v_settings=0,
-                    v_rule_exe=1,
-                    v_rule_svc=2,
-                }config_item{v_unknown};
-                while(std::getline(config_file,line)){
-                    if((line.empty())||(line.front()=='#')){
-                        continue;
-                    }
-                    if(line=="[settings]"){
-                        config_item=v_settings;
-                        continue;
-                    }else if(line=="[rule_exe]"){
-                        config_item=v_rule_exe;
-                        continue;
-                    }else if(line=="[rule_svc]"){
-                        config_item=v_rule_svc;
-                        continue;
-                    }else if((line.front()=='[')&&(line.back()==']')){
-                        config_item=v_unknown;
-                        continue;
-                    }
-                    switch(config_item){
-                        case v_unknown:{
-                            break;
-                        }case v_settings:{
-                            if(is_reload_){
-                                continue;
-                            }
-                            static_assert(
-                                (sizeof(data)/sizeof(bool))==(sizeof(comments)/sizeof(const char*)),
-                                "The array '::mod::config::data' and '::mod::config::comments' are of varying length."
-                            );
-                            for(std::size_t i{};i<(sizeof(comments)/sizeof(const char*));++i){
-                                if(line==comments[i]){
-                                    data[i]=true;
-                                }
-                            }
-                            break;
-                        }case v_rule_exe:{
-                            rule::data.customized.exe.emplace_back(std::move(line));
-                            break;
-                        }case v_rule_svc:{
-                            rule::data.customized.svc.emplace_back(std::move(line));
-                            break;
-                        }
-                    }
-                }
+    class config_op final{
+    private:
+        const char mode_;
+        mutable bool is_reload_;
+        auto load_()const{
+            std::ifstream config_file{data::config_file_name,std::ios::in};
+            if(!config_file.is_open()){
                 config_file.close();
                 return;
             }
-            auto edit_()const{
-                auto sync{[this](console_ui::fn_args){
-                    is_reload_=true;
-                    load_();
-                    puts(":: 保存更改.");
-                    std::string text;
-                    text.append("[settings]\n");
-                    static_assert(
-                        (sizeof(data)/sizeof(bool))==(sizeof(comments)/sizeof(const char*)),
-                        "The array '::mod::config::data' and '::mod::config::comments' are of varying length."
-                    );
-                    for(std::size_t i{};i<(sizeof(data)/sizeof(bool));++i){
-                        if(data[i]){
-                            text.append(comments[i]).push_back('\n');
-                        }
-                    }
-                    text.append("[rule_exe]\n");
-                    if(!rule::data.customized.exe.empty()){
-                        for(const auto &item:rule::data.customized.exe){
-                            text.append(item).push_back('\n');
-                        }
-                    }
-                    text.append("[rule_svc]\n");
-                    if(!rule::data.customized.svc.empty()){
-                        for(const auto &item:rule::data.customized.svc){
-                            text.append(item).push_back('\n');
-                        }
-                    }
-                    std::ofstream config_file{config_file_name,std::ios::out|std::ios::trunc};
-                    config_file.write(text.c_str(),text.size());
-                    config_file.close();
-                    return true;
-                }};
-                auto open_config_file{[](console_ui::fn_args){
-                    if(std::ifstream{config_file_name,std::ios::in}.is_open()){
-                        puts(":: 打开配置文件.");
-                        ShellExecuteA(nullptr,"open",config_file_name,nullptr,nullptr,SW_SHOWNORMAL);
-                        return false;
-                    }
-                    puts(
-                        "                    [ 配  置 ]\n\n\n"
-                        " (i) 无法读取配置文件.\n"
-                    );
-                    for(unsigned short i{3};i>0;--i){
-                        printf(" %hus 后返回.\r",i);
-                        Sleep(1000);
-                    }
-                    return false;
-                }};
-                console_ui ui;
-                ui.add("                    [ 配  置 ]\n\n")
-                  .add(" (i) 相关信息可参阅文档.\n")
-                  .add(" < 同步配置并返回 ",std::move(sync),CONSOLE_TEXT_RED_WHITE)
-                  .add(" > 打开配置文件 ",open_config_file)
-                  .add("\n[增强操作]\n")
-                  .add(" > 启用 ",[](console_ui::fn_args){data[0]=true;return false;})
-                  .add(" > 禁用 (默认) ",[](console_ui::fn_args){data[0]=false;return false;})
-                  .add("\n[增强窗口 (下次启动时生效)]\n")
-                  .add(" > 启用 ",[](console_ui::fn_args){data[1]=true;return false;})
-                  .add(" > 禁用 (默认) ",[](console_ui::fn_args){data[1]=false;return false;})
-                  .add("\n[修复模式 (下次启动时生效)]\n")
-                  .add(" > 启用 ",[](console_ui::fn_args){data[2]=true;return false;})
-                  .add(" > 禁用 (默认) ",[](console_ui::fn_args){data[2]=false;return false;})
-                  .show();
-                return false;
+            if(is_reload_){
+                puts(":: 同步更改.");
+            }else{
+                puts(":: 加载配置文件.");
             }
-        public:
-            auto operator()(console_ui::fn_args)const{
-                switch(mode_){
-                    case 'r':{
-                        load_();
+            data::rule.customized.exe.clear();
+            data::rule.customized.svc.clear();
+            std::string line;
+            enum{
+                v_unknown=-1,
+                v_settings=0,
+                v_rule_exe=1,
+                v_rule_svc=2,
+            }config_item{v_unknown};
+            while(std::getline(config_file,line)){
+                if((line.empty())||(line.front()=='#')){
+                    continue;
+                }
+                if(line=="[settings]"){
+                    config_item=v_settings;
+                    continue;
+                }else if(line=="[rule_exe]"){
+                    config_item=v_rule_exe;
+                    continue;
+                }else if(line=="[rule_svc]"){
+                    config_item=v_rule_svc;
+                    continue;
+                }else if((line.front()=='[')&&(line.back()==']')){
+                    config_item=v_unknown;
+                    continue;
+                }
+                switch(config_item){
+                    case v_unknown:{
                         break;
-                    }case 'w':{
-                        edit_();
+                    }case v_settings:{
+                        if(is_reload_){
+                            continue;
+                        }
+                        for(std::size_t i{};i<(sizeof(data::config)/sizeof(config_data));++i){
+                            if(line==data::config[i].name){
+                                data::config[i].state=true;
+                            }
+                        }
+                        break;
+                    }case v_rule_exe:{
+                        data::rule.customized.exe.emplace_back(std::move(line));
+                        break;
+                    }case v_rule_svc:{
+                        data::rule.customized.svc.emplace_back(std::move(line));
                         break;
                     }
                 }
+            }
+            config_file.close();
+            return;
+        }
+        auto edit_()const{
+            auto sync{[this](console_ui::fn_args){
+                is_reload_=true;
+                load_();
+                puts(":: 保存更改.");
+                std::string text;
+                text.append("[settings]\n");
+                for(std::size_t i{};i<(sizeof(data::config)/sizeof(config_data));++i){
+                    if(data::config[i].state){
+                        text.append(data::config[i].name).push_back('\n');
+                    }
+                }
+                text.append("[rule_exe]\n");
+                if(!data::rule.customized.exe.empty()){
+                    for(const auto &item:data::rule.customized.exe){
+                        text.append(item).push_back('\n');
+                    }
+                }
+                text.append("[rule_svc]\n");
+                if(!data::rule.customized.svc.empty()){
+                    for(const auto &item:data::rule.customized.svc){
+                        text.append(item).push_back('\n');
+                    }
+                }
+                std::ofstream config_file{
+                    data::config_file_name,
+                    std::ios::out|std::ios::trunc
+                };
+                config_file.write(text.c_str(),text.size());
+                config_file.close();
+                return true;
+            }};
+            auto open_config_file{[](console_ui::fn_args){
+                if(std::ifstream{data::config_file_name,std::ios::in}.is_open()){
+                    puts(":: 打开配置文件.");
+                    ShellExecuteA(
+                        nullptr,
+                        "open",
+                        data::config_file_name,
+                        nullptr,
+                        nullptr,
+                        SW_SHOWNORMAL
+                    );
+                    return false;
+                }
+                puts(
+                    "                    [ 配  置 ]\n\n\n"
+                    " (i) 无法读取配置文件.\n"
+                );
+                for(unsigned short i{3};i>0;--i){
+                    printf(" %hus 后返回.\r",i);
+                    Sleep(1000);
+                }
+                return false;
+            }};
+            console_ui ui;
+            ui.add("                    [ 配  置 ]\n\n")
+              .add(" (i) 相关信息可参阅文档.\n")
+              .add(" < 同步配置并返回 ",std::move(sync),CONSOLE_TEXT_RED_WHITE)
+              .add(" > 打开配置文件 ",open_config_file)
+              .add("\n[增强操作]\n")
+              .add(" > 启用 ",[](console_ui::fn_args){data::config[0].state=true;return false;})
+              .add(" > 禁用 (默认) ",[](console_ui::fn_args){data::config[0].state=false;return false;})
+              .add("\n[增强窗口 (下次启动时生效)]\n")
+              .add(" > 启用 ",[](console_ui::fn_args){data::config[1].state=true;return false;})
+              .add(" > 禁用 (默认) ",[](console_ui::fn_args){data::config[1].state=false;return false;})
+              .add("\n[修复模式 (下次启动时生效)]\n")
+              .add(" > 启用 ",[](console_ui::fn_args){data::config[2].state=true;return false;})
+              .add(" > 禁用 (默认) ",[](console_ui::fn_args){data::config[2].state=false;return false;})
+              .show();
+            return false;
+        }
+    public:
+        auto operator()(console_ui::fn_args)const{
+            switch(mode_){
+                case 'r':{
+                    load_();
+                    break;
+                }case 'w':{
+                    edit_();
+                    break;
+                }
+            }
+            return false;
+        }
+        explicit config_op(const char _mode):
+          mode_{_mode},
+          is_reload_{}
+        {}
+        ~config_op(){}
+    };
+    class rule_op final{
+    private:
+        const char mode_;
+        const rule_data &rule_data_;
+    public:
+        auto operator()(console_ui::fn_args)const{
+            puts("                 [ 破 解 / 恢 复 ]\n\n");
+            if((rule_data_.exe.empty())&&(rule_data_.svc.empty())){
+                puts(" (i) 规则为空.\n");
+                for(unsigned short i{3};i>0;--i){
+                    printf(" %hus 后返回.\r",i);
+                    Sleep(1000);
+                }
                 return false;
             }
-            explicit op(const char _mode):
-              mode_{_mode},
-              is_reload_{}
-            {}
-            ~op(){}
-        };
-    }
+            printf(
+                ":: 生成并执行命令.\n%s\n",
+                std::string(WINDOW_WIDTH,'-').c_str()
+            );
+            std::string cmd;
+            switch(mode_){
+                case 'c':{
+                    if(data::config[0].state){
+                        for(const auto &item:rule_data_.exe){
+                            cmd.append(R"(reg add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\)")
+                               .append(item)
+                               .append(R"(" /f /t reg_sz /v debugger /d _)");
+                            system(cmd.c_str());
+                            cmd.clear();
+                        }
+                        for(const auto &item:rule_data_.svc){
+                            cmd.append("sc config ")
+                               .append(item)
+                               .append(" start= disabled");
+                            system(cmd.c_str());
+                            cmd.clear();
+                        }
+                    }
+                    for(const auto &item:rule_data_.exe){
+                        cmd.append(R"(taskkill /f /im ")")
+                           .append(item)
+                           .append(R"(")");
+                        system(cmd.c_str());
+                        cmd.clear();
+                    }
+                    for(const auto &item:rule_data_.svc){
+                        cmd.append(R"(net stop ")")
+                           .append(item)
+                           .append(R"(" /y)");
+                        system(cmd.c_str());
+                        cmd.clear();
+                    }
+                    break;
+                }case 'r':{
+                    if(data::config[0].state){
+                        for(const auto &item:rule_data_.exe){
+                            cmd.append(R"(reg delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\)")
+                               .append(item)
+                               .append(R"(" /f)");
+                            system(cmd.c_str());
+                            cmd.clear();
+                        }
+                        for(const auto &item:rule_data_.svc){
+                            cmd.append("sc config ")
+                               .append(item)
+                               .append(" start= auto");
+                            system(cmd.c_str());
+                            cmd.clear();
+                        }
+                    }
+                    for(const auto &item:rule_data_.svc){
+                        cmd.append(R"(net start ")")
+                           .append(item)
+                           .append(R"(")");
+                        system(cmd.c_str());
+                        cmd.clear();
+                    }
+                    break;
+                }
+            }
+            return false;
+        }
+        explicit rule_op(
+            const char _mode,
+            const rule_data &_rule_data
+        ):mode_{_mode},
+          rule_data_{_rule_data}
+        {}
+        ~rule_op(){}
+    };
     inline auto relaunch_as_admin(console_ui::fn_args){
         char *const path{new char[MAX_PATH]{}};
         GetModuleFileNameA(nullptr,path,MAX_PATH);
@@ -382,8 +381,8 @@ namespace mod{
                 WINDOW_HEIGHT,
                 true,
                 false,
-                !config::data[1],
-                (config::data[1])
+                !data::config[1].state,
+                (data::config[1].state)
                   ?(230)
                   :(255)
             );
@@ -402,8 +401,8 @@ namespace mod{
                 WINDOW_HEIGHT,
                 true,
                 false,
-                !config::data[1],
-                (config::data[1])
+                !data::config[1].state,
+                (data::config[1].state)
                   ?(230)
                   :(255)
             );
