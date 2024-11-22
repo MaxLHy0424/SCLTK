@@ -17,7 +17,7 @@ init:
 build:bin/$(version)/$(tag)-$(arch)-msvcrt.exe\
       bin/$(version)/$(tag)-$(arch)-ucrt.exe
 debug:$(obj) src/*.hpp bin
-	$(msys2)\\ucrt64\\bin\\$(cc) $(obj) $(def) $(args_debug) -o ./bin/__debug__.exe
+	$(msys2)\\ucrt64\\bin\\$(cc) $(obj) $(def) $(args_debug) -o ./bin/debug/__debug__.exe
 clean:
 	$(msys2)\\usr\\bin\\rm.exe -rf bin
 	$(msys2)\\usr\\bin\\mkdir.exe bin
@@ -28,6 +28,8 @@ bin/$(version)/$(tag)-$(arch)-ucrt.exe:$(obj) src/*.hpp bin
 	$(msys2)\\ucrt64\\bin\\$(cc) $(obj) $(def) $(args_release) -o $@
 bin/info.obj:info.rc img/favicon.ico bin
 	$(msys2)\\usr\\bin\\windres.exe -i $< $(def) -o $@ -F pe-x86-64
-bin:bin/$(version)
+bin:bin/$(version) bin/debug
 bin/$(version):
-	$(msys2)\\usr\\bin\\mkdir.exe bin/$(version) -p
+	$(msys2)\\usr\\bin\\mkdir.exe $@ -p
+bin/debug:
+	$(msys2)\\usr\\bin\\mkdir.exe $@ -p
