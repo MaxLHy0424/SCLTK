@@ -118,7 +118,7 @@ namespace mod{
           .add(" " INFO_REPO_URL,view_repo_webpage)
           .add(
             "\n[许可证]\n\n"
-            " " INFO_LICENSE "\n"
+            " " INFO_LICENSE "\n\n"
             " (C) 2023 " INFO_DEVELOPER "."
           )
           .show();
@@ -560,7 +560,7 @@ namespace mod{
             "\n[仓库]\n\n"
             " " INFO_REPO_URL "\n"
             "\n[许可证]\n\n"
-            " " INFO_LICENSE "\n"
+            " " INFO_LICENSE "\n\n"
             " (C) 2023 " INFO_DEVELOPER "."
           )
           .show();
