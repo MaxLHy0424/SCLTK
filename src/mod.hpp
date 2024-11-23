@@ -12,24 +12,6 @@ inline struct{
 inline bool config_error{};
 #endif
 namespace mod{
-    inline auto is_run_as_admin(){
-        BOOL is_admin{};
-        PSID admins_group{};
-        SID_IDENTIFIER_AUTHORITY nt_authority{SECURITY_NT_AUTHORITY};
-        if(
-            AllocateAndInitializeSid(
-                &nt_authority,2,SECURITY_BUILTIN_DOMAIN_RID,
-                DOMAIN_ALIAS_RID_ADMINS,0,0,0,0,0,0,&admins_group
-            )
-        ){
-            CheckTokenMembership(nullptr,admins_group,&is_admin);
-            FreeSid(admins_group);
-        }
-        return is_admin;
-    }
-    inline auto quit(console_ui::fn_args){
-        return true;
-    }
 #ifdef _PREVIEW_
     struct config_data_base final{
         const char *const name;
@@ -92,6 +74,131 @@ namespace mod{
                 }
             },{}
         };
+    }
+    inline auto is_run_as_admin(){
+        BOOL is_admin{};
+        PSID admins_group{};
+        SID_IDENTIFIER_AUTHORITY nt_authority{SECURITY_NT_AUTHORITY};
+        if(
+            AllocateAndInitializeSid(
+                &nt_authority,2,SECURITY_BUILTIN_DOMAIN_RID,
+                DOMAIN_ALIAS_RID_ADMINS,0,0,0,0,0,0,&admins_group
+            )
+        ){
+            CheckTokenMembership(nullptr,admins_group,&is_admin);
+            FreeSid(admins_group);
+        }
+        return is_admin;
+    }
+    inline auto quit(console_ui::fn_args){
+        return true;
+    }
+    inline auto relaunch_as_admin(console_ui::fn_args){
+        char *const path{new char[MAX_PATH]{}};
+        GetModuleFileNameA(nullptr,path,MAX_PATH);
+        ShellExecuteA(nullptr,"runas",path,nullptr,nullptr,SW_SHOWNORMAL);
+        delete[] path;
+        return true;
+    }
+    inline auto info(console_ui::fn_args){
+        auto view_repo_webpage{[](console_ui::fn_args){
+            ShellExecuteA(nullptr,"open",INFO_REPO_URL,nullptr,nullptr,SW_SHOWNORMAL);
+            return false;
+        }};
+        console_ui ui;
+        ui.add("                    [ 信  息 ]\n\n")
+          .add(" < 返回 ",quit,CONSOLE_TEXT_RED_WHITE)
+          .add(
+            "\n[名称]\n\n"
+            " " INFO_NAME "\n"
+            "\n[版本]\n\n"
+            " " INFO_VERSION
+          )
+          .add("\n[仓库]\n")
+          .add(" " INFO_REPO_URL,view_repo_webpage)
+          .add(
+            "\n[许可证]\n\n"
+            " " INFO_LICENSE "\n"
+            " (C) 2023 " INFO_DEVELOPER ". All Rights Reserved."
+          )
+          .show();
+        return false;
+    }
+    inline auto toolkit(console_ui::fn_args){
+        auto launch_cmd{[](console_ui::fn_args _args){
+            _args.ui->lock(false,false);
+            _args.ui->set_console(
+                936,
+                "CRCSN",
+                WINDOW_WIDTH*2,
+                WINDOW_HEIGHT,
+                true,
+                false,
+                !data::config[1].state,
+                (data::config[1].state)
+                  ?(230)
+                  :(255)
+            );
+            SetConsoleScreenBufferSize(
+                GetStdHandle(STD_OUTPUT_HANDLE),
+                {
+                    WINDOW_WIDTH*2,
+                    SHRT_MAX-1
+                }
+            );
+            system("cmd");
+            _args.ui->set_console(
+                936,
+                "CRCSN",
+                WINDOW_WIDTH,
+                WINDOW_HEIGHT,
+                true,
+                false,
+                !data::config[1].state,
+                (data::config[1].state)
+                  ?(230)
+                  :(255)
+            );
+            return false;
+        }};
+        class exec_cmd{
+        private:
+            const char *const cmd_;
+        public:
+            auto operator=(const exec_cmd &)=delete;
+            auto operator()(console_ui::fn_args){
+                printf(
+                    ":: 执行命令.\n%s\n",
+                    std::string(WINDOW_WIDTH,'-').c_str()
+                );
+                system(cmd_);
+                return false;
+            }
+            explicit exec_cmd(const char *const _cmd):
+              cmd_{_cmd}
+            {}
+            explicit exec_cmd(const exec_cmd &_obj):
+              cmd_{_obj.cmd_}
+            {}
+            ~exec_cmd(){}
+        };
+        const char *const cmds[]{
+            R"(taskkill /f /im explorer.exe && timeout /t 3 /nobreak && start C:\Windows\explorer.exe)",
+            R"(reg delete "HKLM\SOFTWARE\Policies\Google\Chrome" /f /v AllowDinosaurEasterEgg)",
+            R"(reg delete "HKLM\SOFTWARE\Policies\Microsoft\Edge" /f /v AllowSurfGame)",
+            R"(reg add "HKLM\SYSTEM\CurrentControlSet\Services\USBSTOR" /f /t reg_dword /v Start /d 3)"
+        };
+        console_ui ui;
+        ui.add("                   [ 工 具 箱 ]\n\n")
+          .add(" < 返回 ",quit,CONSOLE_TEXT_RED_WHITE)
+          .add(" > 命令提示符 ",launch_cmd)
+          .add("\n[快捷操作]\n")
+          .add(" > 重启资源管理器 ",exec_cmd{cmds[0]})
+          .add(" > 恢复 Google Chrome 离线游戏 ",exec_cmd{cmds[1]})
+          .add(" > 恢复 Microsoft Edge 离线游戏 ",exec_cmd{cmds[2]})
+          .add(" > 恢复 USB 设备访问 ",exec_cmd{cmds[3]})
+          .show();
+        return false;
     }
     class config_op final{
     private:
@@ -345,113 +452,6 @@ namespace mod{
         {}
         ~rule_op(){}
     };
-    inline auto relaunch_as_admin(console_ui::fn_args){
-        char *const path{new char[MAX_PATH]{}};
-        GetModuleFileNameA(nullptr,path,MAX_PATH);
-        ShellExecuteA(nullptr,"runas",path,nullptr,nullptr,SW_SHOWNORMAL);
-        delete[] path;
-        return true;
-    }
-    inline auto info(console_ui::fn_args){
-        auto view_repo_webpage{[](console_ui::fn_args){
-            ShellExecuteA(nullptr,"open",INFO_REPO_URL,nullptr,nullptr,SW_SHOWNORMAL);
-            return false;
-        }};
-        console_ui ui;
-        ui.add("                    [ 信  息 ]\n\n")
-          .add(" < 返回 ",quit,CONSOLE_TEXT_RED_WHITE)
-          .add(
-            "\n[名称]\n\n"
-            " " INFO_NAME "\n"
-            "\n[版本]\n\n"
-            " " INFO_VERSION
-          )
-          .add("\n[仓库]\n")
-          .add(" " INFO_REPO_URL,view_repo_webpage)
-          .add(
-            "\n[许可证]\n\n"
-            " " INFO_LICENSE "\n"
-            " (C) 2023 " INFO_DEVELOPER ". All Rights Reserved."
-          )
-          .show();
-        return false;
-    }
-    inline auto toolkit(console_ui::fn_args){
-        auto launch_cmd{[](console_ui::fn_args _args){
-            _args.ui->lock(false,false);
-            _args.ui->set_console(
-                936,
-                "CRCSN",
-                WINDOW_WIDTH*2,
-                WINDOW_HEIGHT,
-                true,
-                false,
-                !data::config[1].state,
-                (data::config[1].state)
-                  ?(230)
-                  :(255)
-            );
-            SetConsoleScreenBufferSize(
-                GetStdHandle(STD_OUTPUT_HANDLE),
-                {
-                    WINDOW_WIDTH*2,
-                    SHRT_MAX-1
-                }
-            );
-            system("cmd");
-            _args.ui->set_console(
-                936,
-                "CRCSN",
-                WINDOW_WIDTH,
-                WINDOW_HEIGHT,
-                true,
-                false,
-                !data::config[1].state,
-                (data::config[1].state)
-                  ?(230)
-                  :(255)
-            );
-            return false;
-        }};
-        class exec_cmd{
-        private:
-            const char *const cmd_;
-        public:
-            auto operator=(const exec_cmd &)=delete;
-            auto operator()(console_ui::fn_args){
-                printf(
-                    ":: 执行命令.\n%s\n",
-                    std::string(WINDOW_WIDTH,'-').c_str()
-                );
-                system(cmd_);
-                return false;
-            }
-            explicit exec_cmd(const char *const _cmd):
-              cmd_{_cmd}
-            {}
-            explicit exec_cmd(const exec_cmd &_obj):
-              cmd_{_obj.cmd_}
-            {}
-            ~exec_cmd(){}
-        };
-        const char *const cmds[]{
-            R"(taskkill /f /im explorer.exe && timeout /t 3 /nobreak && start C:\Windows\explorer.exe)",
-            R"(reg delete "HKLM\SOFTWARE\Policies\Google\Chrome" /f /v AllowDinosaurEasterEgg)",
-            R"(reg delete "HKLM\SOFTWARE\Policies\Microsoft\Edge" /f /v AllowSurfGame)",
-            R"(reg add "HKLM\SYSTEM\CurrentControlSet\Services\USBSTOR" /f /t reg_dword /v Start /d 3)"
-        };
-        console_ui ui;
-        ui.add("                   [ 工 具 箱 ]\n\n")
-          .add(" < 返回 ",quit,CONSOLE_TEXT_RED_WHITE)
-          .add(" > 命令提示符 ",launch_cmd)
-          .add("\n[快捷操作]\n")
-          .add(" > 重启资源管理器 ",exec_cmd{cmds[0]})
-          .add(" > 恢复 Google Chrome 离线游戏 ",exec_cmd{cmds[1]})
-          .add(" > 恢复 Microsoft Edge 离线游戏 ",exec_cmd{cmds[2]})
-          .add(" > 恢复 USB 设备访问 ",exec_cmd{cmds[3]})
-          .show();
-        return false;
-    }
 #else
     namespace rule_data{
         struct base final{
@@ -499,6 +499,24 @@ namespace mod{
                 "WFBSMlogon"
             }
         };
+    }
+    inline auto is_run_as_admin(){
+        BOOL is_admin{};
+        PSID admins_group{};
+        SID_IDENTIFIER_AUTHORITY nt_authority{SECURITY_NT_AUTHORITY};
+        if(
+            AllocateAndInitializeSid(
+                &nt_authority,2,SECURITY_BUILTIN_DOMAIN_RID,
+                DOMAIN_ALIAS_RID_ADMINS,0,0,0,0,0,0,&admins_group
+            )
+        ){
+            CheckTokenMembership(nullptr,admins_group,&is_admin);
+            FreeSid(admins_group);
+        }
+        return is_admin;
+    }
+    inline auto quit(console_ui::fn_args){
+        return true;
     }
     inline auto init(){
         system("chcp 936 > nul");
