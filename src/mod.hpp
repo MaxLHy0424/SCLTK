@@ -1,18 +1,18 @@
 #pragma once
 #include"info.hpp"
 #include"console_ui.hpp"
-#ifdef _PREVIEW_
+#ifdef _NEXT_
 #include<limits.h>
 #include<fstream>
 #endif
-#ifndef _PREVIEW_
+#ifndef _NEXT_
 inline struct{
     bool front_show_window,translucent_window,window_ctrls;
 }config_data{};
 inline bool config_error{};
 #endif
 namespace mod{
-#ifdef _PREVIEW_
+#ifdef _NEXT_
     struct config_data_base final{
         const char *const name;
         bool state;

@@ -2,7 +2,7 @@
 #include"console_ui.hpp"
 #include"mod.hpp"
 #include<thread>
-#ifdef _PREVIEW_
+#ifdef _NEXT_
 auto main()->int{
     console_ui ui;
     ui.set_console(936,"CRCSN",WINDOW_WIDTH,WINDOW_HEIGHT,true,false,true,255)
