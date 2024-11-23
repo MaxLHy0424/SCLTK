@@ -96,7 +96,7 @@ CRCSN 发行版文件名规则为 `[tag]-[arch]-[runtime].exe`, 其中 `[tag]` �
 
 示例:
 ```ini
-<rule_exe>
+[rule_exe]
 abc_client_gui.exe
 abc_client_server.exe
 abc_protect_server.com
@@ -110,7 +110,7 @@ abc_protect_server.com
 
 示例:
 ```ini
-<rule_svc>
+[rule_svc]
 abc_network
 abc_diag_track
 ```
