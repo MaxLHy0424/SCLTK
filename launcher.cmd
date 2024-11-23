@@ -15,7 +15,7 @@ cd /d "%~dp0"
 if %config.auto_launch%==0 (
   echo                 [ CRCSN Launcher ]
   echo.
-  echo     ^(C^) 2023 MaxLHy0424. All Rights Reserved.
+  echo                ^(C^) 2023 MaxLHy0424.
   echo.
   if %config.show_verbose_info%==0 (
     echo 按任意键启动 CRCSN.
