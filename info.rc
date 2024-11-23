@@ -1,5 +1,5 @@
 #include"src/info.hpp"
-#ifdef _PREVIEW_
+#ifdef _NEXT_
 1 ICON "img/favicon_next.ico"
 #else
 1 ICON "img/favicon.ico"
