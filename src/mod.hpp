@@ -119,7 +119,7 @@ namespace mod{
           .add(
             "\n[许可证]\n\n"
             " " INFO_LICENSE "\n"
-            " (C) 2023 " INFO_DEVELOPER ". All Rights Reserved."
+            " (C) 2023 " INFO_DEVELOPER "."
           )
           .show();
         return false;
@@ -561,7 +561,7 @@ namespace mod{
             " " INFO_REPO_URL "\n"
             "\n[许可证]\n\n"
             " " INFO_LICENSE "\n"
-            " (C) 2023 " INFO_DEVELOPER ". All Rights Reserved."
+            " (C) 2023 " INFO_DEVELOPER "."
           )
           .show();
         return false;
