@@ -31,24 +31,24 @@ namespace mod{
         return true;
     }
 #ifdef _PREVIEW_
-    struct config_data final{
+    struct config_data_base final{
         const char *const name;
         bool state;
     };
-    struct rule_data final{
+    struct rule_data_base final{
         std::vector<std::string> exe,svc;
     };
     namespace data{
-        inline config_data config[]{
+        inline config_data_base config[]{
             {"enhanced_op",false},
             {"enhanced_window",false},
             {"repaired_mode",false}
         };
         inline const char *const config_file_name{"config.ini"};
         inline struct{
-            const rule_data mythware,
+            const rule_data_base mythware,
                             lenovo;
-            rule_data customized;
+            rule_data_base customized;
         }rule{
             {
                 {
@@ -142,7 +142,7 @@ namespace mod{
                         if(is_reload_){
                             continue;
                         }
-                        for(std::size_t i{};i<(sizeof(data::config)/sizeof(config_data));++i){
+                        for(std::size_t i{};i<(sizeof(data::config)/sizeof(config_data_base));++i){
                             if(line==data::config[i].name){
                                 data::config[i].state=true;
                             }
@@ -169,7 +169,7 @@ namespace mod{
                 puts(":: 保存更改.");
                 std::string text;
                 text.append("[settings]\n");
-                for(std::size_t i{};i<(sizeof(data::config)/sizeof(config_data));++i){
+                for(std::size_t i{};i<(sizeof(data::config)/sizeof(config_data_base));++i){
                     if(data::config[i].state){
                         text.append(data::config[i].name).push_back('\n');
                     }
@@ -257,7 +257,7 @@ namespace mod{
     class rule_op final{
     private:
         const char mode_;
-        const rule_data &rule_data_;
+        const rule_data_base &rule_data_;
     public:
         auto operator()(console_ui::fn_args)const{
             puts("                 [ 破 解 / 恢 复 ]\n\n");
@@ -339,7 +339,7 @@ namespace mod{
         }
         explicit rule_op(
             const char _mode,
-            const rule_data &_rule_data
+            const rule_data_base &_rule_data
         ):mode_{_mode},
           rule_data_{_rule_data}
         {}
