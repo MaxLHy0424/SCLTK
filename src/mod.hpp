@@ -137,7 +137,8 @@ namespace mod{
                 switch(config_item){
                     case v_unknown:{
                         break;
-                    }case v_settings:{
+                    }
+                    case v_settings:{
                         if(is_reload_){
                             continue;
                         }
@@ -147,10 +148,12 @@ namespace mod{
                             }
                         }
                         break;
-                    }case v_rule_exe:{
+                    }
+                    case v_rule_exe:{
                         data::rule.customized.exe.emplace_back(std::move(line));
                         break;
-                    }case v_rule_svc:{
+                    }
+                    case v_rule_svc:{
                         data::rule.customized.svc.emplace_back(std::move(line));
                         break;
                     }
@@ -237,7 +240,8 @@ namespace mod{
                 case 'r':{
                     load_();
                     break;
-                }case 'w':{
+                }
+                case 'w':{
                     edit_();
                     break;
                 }
@@ -303,7 +307,8 @@ namespace mod{
                         cmd.clear();
                     }
                     break;
-                }case 'r':{
+                }
+                case 'r':{
                     if(data::config[0].state){
                         for(const auto &item:rule_data_.exe){
                             cmd.append(R"(reg delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\)")
@@ -583,7 +588,8 @@ namespace mod{
                            .append(R"(" /y & )");
                     }
                     break;
-                }case 'r':{
+                }
+                case 'r':{
                     for(const auto &item:rule_.exe){
                         cmd.append(R"(reg delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\)")
                            .append(item)

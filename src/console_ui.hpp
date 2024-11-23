@@ -113,12 +113,14 @@ private:
                 attrs|=ENABLE_INSERT_MODE,
                 attrs|=ENABLE_MOUSE_INPUT;
                 break;
-            }case v_lock_text:{
+            }
+            case v_lock_text:{
                 attrs&=~ENABLE_QUICK_EDIT_MODE,
                 attrs&=~ENABLE_INSERT_MODE,
                 attrs|=ENABLE_MOUSE_INPUT;
                 break;
-            }case v_lock_all:{
+            }
+            case v_lock_all:{
                 attrs&=~ENABLE_QUICK_EDIT_MODE,
                 attrs&=~ENABLE_INSERT_MODE,
                 attrs&=~ENABLE_MOUSE_INPUT;
@@ -353,7 +355,8 @@ public:
                 case CONSOLE_MOUSE_MOVE:{
                     refresh_(mouse_event.dwMousePosition);
                     break;
-                }case CONSOLE_MOUSE_CLICK:{
+                }
+                case CONSOLE_MOUSE_CLICK:{
                     if(
                         (mouse_event.dwButtonState)&&
                         (mouse_event.dwButtonState!=CONSOLE_MOUSE_WHEEL)
