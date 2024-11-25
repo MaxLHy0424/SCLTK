@@ -44,6 +44,11 @@ class console_ui final {
         short default_color, highlight_color, last_color;
         COORD position;
         callback_ fn;
+        auto set_color( short _color )
+        {
+            SetConsoleTextAttribute( GetStdHandle( STD_OUTPUT_HANDLE ), _color );
+            last_color = _color;
+        }
         auto &operator=( const ui_item_ &_obj )
         {
             text            = _obj.text;
@@ -53,11 +58,6 @@ class console_ui final {
             position        = _obj.position;
             fn              = _obj.fn;
             return *this;
-        }
-        auto set_color( short _color )
-        {
-            SetConsoleTextAttribute( GetStdHandle( STD_OUTPUT_HANDLE ), _color );
-            last_color = _color;
         }
         auto operator==( const COORD &_mouse_position ) const
         {
@@ -114,18 +114,21 @@ class console_ui final {
         GetConsoleMode( GetStdHandle( STD_INPUT_HANDLE ), &attrs );
         switch ( _mode ) {
             case v_normal: {
-                attrs |= ENABLE_QUICK_EDIT_MODE, attrs |= ENABLE_INSERT_MODE,
-                  attrs |= ENABLE_MOUSE_INPUT;
+                attrs |= ENABLE_QUICK_EDIT_MODE;
+                attrs |= ENABLE_INSERT_MODE;
+                attrs |= ENABLE_MOUSE_INPUT;
                 break;
             }
             case v_lock_text: {
-                attrs &= ~ENABLE_QUICK_EDIT_MODE, attrs &= ~ENABLE_INSERT_MODE,
-                  attrs |= ENABLE_MOUSE_INPUT;
+                attrs &= ~ENABLE_QUICK_EDIT_MODE;
+                attrs &= ~ENABLE_INSERT_MODE;
+                attrs |= ENABLE_MOUSE_INPUT;
                 break;
             }
             case v_lock_all: {
-                attrs &= ~ENABLE_QUICK_EDIT_MODE, attrs &= ~ENABLE_INSERT_MODE,
-                  attrs &= ~ENABLE_MOUSE_INPUT;
+                attrs &= ~ENABLE_QUICK_EDIT_MODE;
+                attrs &= ~ENABLE_INSERT_MODE;
+                attrs &= ~ENABLE_MOUSE_INPUT;
                 break;
             }
         }
