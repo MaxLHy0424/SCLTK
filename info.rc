@@ -1,25 +1,25 @@
-#include"src/info.hpp"
+#include "src/info.hpp"
 #ifdef _NEXT_
 1 ICON "img/favicon_next.ico"
 #else
 1 ICON "img/favicon.ico"
 #endif
 1 VERSIONINFO
-FILEVERSION 1,0,0,0
+FILEVERSION 1, 0, 0, 0
 BEGIN
     BLOCK "StringFileInfo"
     BEGIN
         BLOCK "040904B0"
         BEGIN
-            VALUE "ProductName",INFO_NAME
-            VALUE "FileDescription",INFO_NAME
-            VALUE "ProductVersion",INFO_VERSION
-			VALUE "CompanyName",INFO_DEVELOPER
-			VALUE "LegalCopyright","(C) 2023 " INFO_DEVELOPER "."
+            VALUE "ProductName", INFO_NAME
+            VALUE "FileDescription", INFO_NAME
+            VALUE "ProductVersion", INFO_VERSION
+            VALUE "CompanyName", INFO_DEVELOPER
+            VALUE "LegalCopyright", "(C) 2023 " INFO_DEVELOPER "."
         END
     END
     BLOCK "VarFileInfo"
     BEGIN
-        VALUE "Translation",0x804,0x4B0
+        VALUE "Translation", 0x804, 0x4B0
     END
 END
