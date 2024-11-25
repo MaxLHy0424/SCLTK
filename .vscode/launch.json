@@ -1,20 +1,20 @@
 {
-    "version":"0.2.0",
-    "configurations":[
+    "version": "0.2.0",
+    "configurations": [
         {
-            "name":"Debug",
-            "type":"cppdbg",
-            "request":"launch",
-            "program":"${workspaceFolder}\\bin\\debug\\__debug__.exe",
-            "args":[],
-            "stopAtEntry":false,
-            "cwd":"${workspaceFolder}\\bin\\debug",
-            "environment":[],
-            "externalConsole":true,
-            "internalConsoleOptions":"openOnSessionStart",
-            "MIMode":"gdb",
-            "miDebuggerPath":"C:\\Software\\MSYS2\\ucrt64\\bin\\gdb.exe",
-            "preLaunchTask":"debug"
+            "name": "Debug",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}\\bin\\debug\\__debug__.exe",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}\\bin\\debug",
+            "environment": [],
+            "externalConsole": true,
+            "internalConsoleOptions": "openOnSessionStart",
+            "MIMode": "gdb",
+            "miDebuggerPath": "C:\\Software\\MSYS2\\ucrt64\\bin\\gdb.exe",
+            "preLaunchTask": "debug"
         }
     ]
 }
