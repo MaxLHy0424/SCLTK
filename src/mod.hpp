@@ -205,9 +205,7 @@ namespace mod {
                     continue;
                 }
                 switch ( config_item ) {
-                    case v_unknown : {
-                        break;
-                    }
+                    case v_unknown : break;
                     case v_settings : {
                         if ( is_reload_ ) {
                             continue;
@@ -222,14 +220,12 @@ namespace mod {
                         }
                         break;
                     }
-                    case v_rule_exe : {
+                    case v_rule_exe :
                         data::rule.customized.exe.emplace_back( std::move( line ) );
                         break;
-                    }
-                    case v_rule_svc : {
+                    case v_rule_svc :
                         data::rule.customized.svc.emplace_back( std::move( line ) );
                         break;
-                    }
                 }
             }
             config_file.close();
@@ -335,14 +331,8 @@ namespace mod {
         auto operator()( console_ui::fn_args ) const
         {
             switch ( mode_ ) {
-                case 'r' : {
-                    load_();
-                    break;
-                }
-                case 'w' : {
-                    edit_();
-                    break;
-                }
+                case 'r' : load_(); break;
+                case 'w' : edit_(); break;
             }
             return false;
         }
