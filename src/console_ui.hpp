@@ -23,16 +23,16 @@ class console_ui final {
         explicit fn_args(
           console_ui *const _ui                 = nullptr,
           const MOUSE_EVENT_RECORD _mouse_event = { {}, CONSOLE_MOUSE_BUTTON_LEFT, {}, {} } )
-            : button_state { _mouse_event.dwButtonState }
-            , ctrl_key_state { _mouse_event.dwControlKeyState }
-            , event_flag { _mouse_event.dwEventFlags }
-            , ui { _ui }
+          : button_state{ _mouse_event.dwButtonState }
+          , ctrl_key_state{ _mouse_event.dwControlKeyState }
+          , event_flag{ _mouse_event.dwEventFlags }
+          , ui{ _ui }
         { }
         fn_args( const fn_args &_obj )
-            : button_state { _obj.button_state }
-            , ctrl_key_state { _obj.ctrl_key_state }
-            , event_flag { _obj.event_flag }
-            , ui { _obj.ui }
+          : button_state{ _obj.button_state }
+          , ctrl_key_state{ _obj.ctrl_key_state }
+          , event_flag{ _obj.event_flag }
+          , ui{ _obj.ui }
         { }
         ~fn_args() { }
     };
@@ -69,32 +69,32 @@ class console_ui final {
             return !operator==( _mouse_position );
         }
         explicit ui_item_()
-            : text {}
-            , default_color { CONSOLE_TEXT_WHITE_WHITE }
-            , highlight_color { CONSOLE_TEXT_BLUE_WHITE }
-            , last_color { CONSOLE_TEXT_WHITE_WHITE }
-            , position {}
-            , fn {}
+          : text{}
+          , default_color{ CONSOLE_TEXT_WHITE_WHITE }
+          , highlight_color{ CONSOLE_TEXT_BLUE_WHITE }
+          , last_color{ CONSOLE_TEXT_WHITE_WHITE }
+          , position{}
+          , fn{}
         { }
         explicit ui_item_(
           const char *const _text,
           const short _default_color,
           const short _highlight_color,
           const callback_ _fn )
-            : text { _text }
-            , default_color { _default_color }
-            , highlight_color { _highlight_color }
-            , last_color { CONSOLE_TEXT_WHITE_WHITE }
-            , position {}
-            , fn { _fn }
+          : text{ _text }
+          , default_color{ _default_color }
+          , highlight_color{ _highlight_color }
+          , last_color{ CONSOLE_TEXT_WHITE_WHITE }
+          , position{}
+          , fn{ _fn }
         { }
         explicit ui_item_( const ui_item_ &_obj )
-            : text { _obj.text }
-            , default_color { _obj.default_color }
-            , highlight_color { _obj.highlight_color }
-            , last_color { _obj.last_color }
-            , position { _obj.position }
-            , fn { _obj.fn }
+          : text{ _obj.text }
+          , default_color{ _obj.default_color }
+          , highlight_color{ _obj.highlight_color }
+          , last_color{ _obj.last_color }
+          , position{ _obj.position }
+          , fn{ _obj.fn }
         { }
         ~ui_item_() { }
     };
@@ -113,19 +113,19 @@ class console_ui final {
         DWORD attrs;
         GetConsoleMode( GetStdHandle( STD_INPUT_HANDLE ), &attrs );
         switch ( _mode ) {
-            case v_normal: {
+            case v_normal : {
                 attrs |= ENABLE_QUICK_EDIT_MODE;
                 attrs |= ENABLE_INSERT_MODE;
                 attrs |= ENABLE_MOUSE_INPUT;
                 break;
             }
-            case v_lock_text: {
+            case v_lock_text : {
                 attrs &= ~ENABLE_QUICK_EDIT_MODE;
                 attrs &= ~ENABLE_INSERT_MODE;
                 attrs |= ENABLE_MOUSE_INPUT;
                 break;
             }
-            case v_lock_all: {
+            case v_lock_all : {
                 attrs &= ~ENABLE_QUICK_EDIT_MODE;
                 attrs &= ~ENABLE_INSERT_MODE;
                 attrs &= ~ENABLE_MOUSE_INPUT;
@@ -174,7 +174,7 @@ class console_ui final {
     }
     auto write_( const char *const _text, const bool _is_endl = false )
     {
-        printf( "%s%c", _text, "\0\n" [ _is_endl ] );
+        printf( "%s%c", _text, "\0\n"[ _is_endl ] );
     }
     auto rewrite_( const COORD &_position, const char *const _text )
     {
@@ -208,7 +208,7 @@ class console_ui final {
     }
     auto call_fn_( const MOUSE_EVENT_RECORD &_mouse_event )
     {
-        bool is_exit {};
+        bool is_exit{};
         for ( auto &line : item_ ) {
             if ( line != _mouse_event.dwMousePosition ) {
                 continue;
@@ -220,7 +220,7 @@ class console_ui final {
             line.set_color( line.default_color );
             show_cursor_( false );
             edit_console_attrs_( v_lock_all );
-            is_exit = line.fn( fn_args { this, _mouse_event } );
+            is_exit = line.fn( fn_args{ this, _mouse_event } );
             show_cursor_( false );
             edit_console_attrs_( v_lock_text );
             init_pos_();
@@ -285,10 +285,8 @@ class console_ui final {
       const short _highlight_color = CONSOLE_TEXT_BLUE_WHITE,
       const short _default_color   = CONSOLE_TEXT_WHITE_WHITE )
     {
-        item_.emplace_back( ui_item_ {
-          _text,
-          _default_color,
-          ( _fn == nullptr ) ? ( _default_color ) : ( _highlight_color ),
+        item_.emplace_back( ui_item_{
+          _text, _default_color, ( _fn == nullptr ) ? ( _default_color ) : ( _highlight_color ),
           _fn } );
         return *this;
     }
@@ -301,10 +299,8 @@ class console_ui final {
     {
         item_.emplace(
           item_.begin() + _index,
-          ui_item_ {
-            _text,
-            _default_color,
-            ( _fn == nullptr ) ? ( _default_color ) : ( _highlight_color ),
+          ui_item_{
+            _text, _default_color, ( _fn == nullptr ) ? ( _default_color ) : ( _highlight_color ),
             _fn } );
         return *this;
     }
@@ -315,11 +311,8 @@ class console_ui final {
       const short _highlight_color = CONSOLE_TEXT_BLUE_WHITE,
       const short _default_color   = CONSOLE_TEXT_WHITE_WHITE )
     {
-        item_.at( _index ) = ui_item_ {
-          _text,
-          _default_color,
-          ( _fn == nullptr ) ? ( _default_color ) : ( _highlight_color ),
-          _fn };
+        item_.at( _index ) = ui_item_{
+          _text, _default_color, ( _fn == nullptr ) ? ( _default_color ) : ( _highlight_color ), _fn };
         return *this;
     }
     auto &revert()
@@ -343,15 +336,15 @@ class console_ui final {
         edit_console_attrs_( v_lock_text );
         MOUSE_EVENT_RECORD mouse_event;
         init_pos_();
-        bool is_exit {};
+        bool is_exit{};
         while ( !is_exit ) {
             mouse_event = wait_mouse_event_();
             switch ( mouse_event.dwEventFlags ) {
-                case CONSOLE_MOUSE_MOVE: {
+                case CONSOLE_MOUSE_MOVE : {
                     refresh_( mouse_event.dwMousePosition );
                     break;
                 }
-                case CONSOLE_MOUSE_CLICK: {
+                case CONSOLE_MOUSE_CLICK : {
                     if ( ( mouse_event.dwButtonState )
                          && ( mouse_event.dwButtonState != CONSOLE_MOUSE_WHEEL ) )
                     {
@@ -366,19 +359,19 @@ class console_ui final {
         return *this;
     }
     explicit console_ui()
-        : item_ {}
-        , width_ {}
-        , height_ {}
+      : item_{}
+      , width_{}
+      , height_{}
     { }
     explicit console_ui( const console_ui &_obj )
-        : item_ { _obj.item_ }
-        , width_ {}
-        , height_ {}
+      : item_{ _obj.item_ }
+      , width_{}
+      , height_{}
     { }
     explicit console_ui( const console_ui &&_obj )
-        : item_ { std::move( _obj.item_ ) }
-        , width_ {}
-        , height_ {}
+      : item_{ std::move( _obj.item_ ) }
+      , width_{}
+      , height_{}
     { }
     ~console_ui() { }
 };

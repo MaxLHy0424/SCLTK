@@ -8,8 +8,8 @@
 #ifndef _NEXT_
 inline struct {
     bool front_show_window, translucent_window, window_ctrls;
-} config_data {};
-inline bool config_error {};
+} config_data{};
+inline bool config_error{};
 #endif
 namespace mod {
 #ifdef _NEXT_
@@ -21,68 +21,39 @@ namespace mod {
         std::vector< std::string > exe, svc;
     };
     namespace data {
-        inline config_data_base config [] {
+        inline config_data_base config[]{
           {"enhanced_op",     false},
           {"enhanced_window", false},
           {"repaired_mode",   false}
         };
-        inline const char *const config_file_name { "config.ini" };
+        inline const char *const config_file_name{ "config.ini" };
         inline struct {
             const rule_data_base mythware, lenovo;
             rule_data_base customized;
-        } rule {
-          { { "StudentMain.exe",
-              "DispcapHelper.exe",
-              "VRCwPlayer.exe",
-              "InstHelpApp.exe",
-              "InstHelpApp64.exe",
-              "TDOvrSet.exe",
-              "GATESRV.exe",
-              "ProcHelper64.exe",
+        } rule{
+          { { "StudentMain.exe", "DispcapHelper.exe", "VRCwPlayer.exe", "InstHelpApp.exe",
+              "InstHelpApp64.exe", "TDOvrSet.exe", "GATESRV.exe", "ProcHelper64.exe",
               "MasterHelper.exe" },
            {
               "STUDSRV",
               "TDNetFilter",
             } },
-          { { "vncviewer.exe",
-              "tvnserver32.exe",
-              "WfbsPnpInstall.exe",
-              "WFBSMon.exe",
-              "WFBSMlogon.exe",
-              "WFBSSvrLogShow.exe",
-              "ResetIp.exe",
-              "FuncForWIN64.exe",
-              "CertMgr.exe",
-              "Fireware.exe",
-              "BCDBootCopy.exe",
-              "refreship.exe",
-              "lenovoLockScreen.exe",
-              "PortControl64.exe",
-              "DesktopCheck.exe",
-              "DeploymentManager.exe",
-              "DeploymentAgent.exe",
-              "XYNTService.exe" },
+          { { "vncviewer.exe", "tvnserver32.exe", "WfbsPnpInstall.exe", "WFBSMon.exe",
+              "WFBSMlogon.exe", "WFBSSvrLogShow.exe", "ResetIp.exe", "FuncForWIN64.exe",
+              "CertMgr.exe", "Fireware.exe", "BCDBootCopy.exe", "refreship.exe",
+              "lenovoLockScreen.exe", "PortControl64.exe", "DesktopCheck.exe",
+              "DeploymentManager.exe", "DeploymentAgent.exe", "XYNTService.exe" },
            { "BSAgentSvr", "tvnserver", "WFBSMlogon" } },
           {}
         };
     }
     inline auto is_run_as_admin()
     {
-        BOOL is_admin {};
-        PSID admins_group {};
-        SID_IDENTIFIER_AUTHORITY nt_authority { SECURITY_NT_AUTHORITY };
+        BOOL is_admin{};
+        PSID admins_group{};
+        SID_IDENTIFIER_AUTHORITY nt_authority{ SECURITY_NT_AUTHORITY };
         if ( AllocateAndInitializeSid(
-               &nt_authority,
-               2,
-               SECURITY_BUILTIN_DOMAIN_RID,
-               DOMAIN_ALIAS_RID_ADMINS,
-               0,
-               0,
-               0,
-               0,
-               0,
-               0,
-               &admins_group ) )
+               &nt_authority, 2, SECURITY_BUILTIN_DOMAIN_RID, DOMAIN_ALIAS_RID_ADMINS, 0, 0, 0, 0, 0, 0, &admins_group ) )
         {
             CheckTokenMembership( nullptr, admins_group, &is_admin );
             FreeSid( admins_group );
@@ -95,15 +66,15 @@ namespace mod {
     }
     inline auto relaunch_as_admin( console_ui::fn_args )
     {
-        char *const path { new char [ MAX_PATH ] {} };
+        char *const path{ new char[ MAX_PATH ]{} };
         GetModuleFileNameA( nullptr, path, MAX_PATH );
         ShellExecuteA( nullptr, "runas", path, nullptr, nullptr, SW_SHOWNORMAL );
-        delete [] path;
+        delete[] path;
         return true;
     }
     inline auto info( console_ui::fn_args )
     {
-        auto view_repo_webpage { []( console_ui::fn_args )
+        auto view_repo_webpage{ []( console_ui::fn_args )
         {
             ShellExecuteA( nullptr, "open", INFO_REPO_URL, nullptr, nullptr, SW_SHOWNORMAL );
             return false;
@@ -129,7 +100,7 @@ namespace mod {
     }
     inline auto toolkit( console_ui::fn_args )
     {
-        auto launch_cmd { []( console_ui::fn_args _args )
+        auto launch_cmd{ []( console_ui::fn_args _args )
         {
             _args.ui->lock( false, false );
             _args.ui->set_console(
@@ -139,11 +110,10 @@ namespace mod {
               WINDOW_HEIGHT,
               true,
               false,
-              !data::config [ 1 ].state,
-              ( data::config [ 1 ].state ) ? ( 230 ) : ( 255 ) );
+              !data::config[ 1 ].state,
+              ( data::config[ 1 ].state ) ? ( 230 ) : ( 255 ) );
             SetConsoleScreenBufferSize(
-              GetStdHandle( STD_OUTPUT_HANDLE ),
-              { WINDOW_WIDTH * 2, SHRT_MAX - 1 } );
+              GetStdHandle( STD_OUTPUT_HANDLE ), { WINDOW_WIDTH * 2, SHRT_MAX - 1 } );
             system( "cmd" );
             _args.ui->set_console(
               936,
@@ -152,8 +122,8 @@ namespace mod {
               WINDOW_HEIGHT,
               true,
               false,
-              !data::config [ 1 ].state,
-              ( data::config [ 1 ].state ) ? ( 230 ) : ( 255 ) );
+              !data::config[ 1 ].state,
+              ( data::config[ 1 ].state ) ? ( 230 ) : ( 255 ) );
             return false;
         } };
         class exec_cmd {
@@ -168,14 +138,14 @@ namespace mod {
                 return false;
             }
             explicit exec_cmd( const char *const _cmd )
-                : cmd_ { _cmd }
+              : cmd_{ _cmd }
             { }
             explicit exec_cmd( const exec_cmd &_obj )
-                : cmd_ { _obj.cmd_ }
+              : cmd_{ _obj.cmd_ }
             { }
             ~exec_cmd() { }
         };
-        const char *const cmds [] {
+        const char *const cmds[]{
           R"(taskkill /f /im explorer.exe && timeout /t 3 /nobreak && start C:\Windows\explorer.exe)",
           R"(reg delete "HKLM\SOFTWARE\Policies\Google\Chrome" /f /v AllowDinosaurEasterEgg)",
           R"(reg delete "HKLM\SOFTWARE\Policies\Microsoft\Edge" /f /v AllowSurfGame)",
@@ -185,10 +155,10 @@ namespace mod {
           .add( " < 返回 ", quit, CONSOLE_TEXT_RED_WHITE )
           .add( " > 命令提示符 ", launch_cmd )
           .add( "\n[快捷操作]\n" )
-          .add( " > 重启资源管理器 ", exec_cmd { cmds [ 0 ] } )
-          .add( " > 恢复 Google Chrome 离线游戏 ", exec_cmd { cmds [ 1 ] } )
-          .add( " > 恢复 Microsoft Edge 离线游戏 ", exec_cmd { cmds [ 2 ] } )
-          .add( " > 恢复 USB 设备访问 ", exec_cmd { cmds [ 3 ] } )
+          .add( " > 重启资源管理器 ", exec_cmd{ cmds[ 0 ] } )
+          .add( " > 恢复 Google Chrome 离线游戏 ", exec_cmd{ cmds[ 1 ] } )
+          .add( " > 恢复 Microsoft Edge 离线游戏 ", exec_cmd{ cmds[ 2 ] } )
+          .add( " > 恢复 USB 设备访问 ", exec_cmd{ cmds[ 3 ] } )
           .show();
         return false;
     }
@@ -198,7 +168,7 @@ namespace mod {
         mutable bool is_reload_;
         auto load_() const
         {
-            std::ifstream config_file { data::config_file_name, std::ios::in };
+            std::ifstream config_file{ data::config_file_name, std::ios::in };
             if ( !config_file.is_open() ) {
                 config_file.close();
                 return;
@@ -216,7 +186,7 @@ namespace mod {
                 v_settings = 0,
                 v_rule_exe = 1,
                 v_rule_svc = 2,
-            } config_item { v_unknown };
+            } config_item{ v_unknown };
             while ( std::getline( config_file, line ) ) {
                 if ( ( line.empty() ) || ( line.front() == '#' ) ) {
                     continue;
@@ -235,28 +205,28 @@ namespace mod {
                     continue;
                 }
                 switch ( config_item ) {
-                    case v_unknown: {
+                    case v_unknown : {
                         break;
                     }
-                    case v_settings: {
+                    case v_settings : {
                         if ( is_reload_ ) {
                             continue;
                         }
-                        for ( std::size_t i {};
+                        for ( std::size_t i{};
                               i < ( sizeof( data::config ) / sizeof( config_data_base ) );
                               ++i )
                         {
-                            if ( line == data::config [ i ].name ) {
-                                data::config [ i ].state = true;
+                            if ( line == data::config[ i ].name ) {
+                                data::config[ i ].state = true;
                             }
                         }
                         break;
                     }
-                    case v_rule_exe: {
+                    case v_rule_exe : {
                         data::rule.customized.exe.emplace_back( std::move( line ) );
                         break;
                     }
-                    case v_rule_svc: {
+                    case v_rule_svc : {
                         data::rule.customized.svc.emplace_back( std::move( line ) );
                         break;
                     }
@@ -267,18 +237,17 @@ namespace mod {
         }
         auto edit_() const
         {
-            auto sync { [ this ]( console_ui::fn_args )
+            auto sync{ [ this ]( console_ui::fn_args )
             {
                 is_reload_ = true;
                 load_();
                 puts( ":: 保存更改." );
                 std::string text;
                 text.append( "[settings]\n" );
-                for ( std::size_t i {}; i < ( sizeof( data::config ) / sizeof( config_data_base ) );
-                      ++i )
+                for ( std::size_t i{}; i < ( sizeof( data::config ) / sizeof( config_data_base ) ); ++i )
                 {
-                    if ( data::config [ i ].state ) {
-                        text.append( data::config [ i ].name ).push_back( '\n' );
+                    if ( data::config[ i ].state ) {
+                        text.append( data::config[ i ].name ).push_back( '\n' );
                     }
                 }
                 text.append( "[rule_exe]\n" );
@@ -293,28 +262,23 @@ namespace mod {
                         text.append( item ).push_back( '\n' );
                     }
                 }
-                std::ofstream config_file { data::config_file_name, std::ios::out | std::ios::trunc };
+                std::ofstream config_file{ data::config_file_name, std::ios::out | std::ios::trunc };
                 config_file.write( text.c_str(), text.size() );
                 config_file.close();
                 return true;
             } };
-            auto open_config_file { []( console_ui::fn_args )
+            auto open_config_file{ []( console_ui::fn_args )
             {
-                if ( std::ifstream { data::config_file_name, std::ios::in }.is_open() ) {
+                if ( std::ifstream{ data::config_file_name, std::ios::in }.is_open() ) {
                     puts( ":: 打开配置文件." );
                     ShellExecuteA(
-                      nullptr,
-                      "open",
-                      data::config_file_name,
-                      nullptr,
-                      nullptr,
-                      SW_SHOWNORMAL );
+                      nullptr, "open", data::config_file_name, nullptr, nullptr, SW_SHOWNORMAL );
                     return false;
                 }
                 puts(
                   "                    [ 配  置 ]\n\n\n"
                   " (i) 无法读取配置文件.\n" );
-                for ( unsigned short i { 3 }; i > 0; --i ) {
+                for ( unsigned short i{ 3 }; i > 0; --i ) {
                     printf( " %hus 后返回.\r", i );
                     Sleep( 1000 );
                 }
@@ -329,39 +293,39 @@ namespace mod {
               .add( " > 启用 ",
                     []( console_ui::fn_args )
             {
-                data::config [ 0 ].state = true;
+                data::config[ 0 ].state = true;
                 return false;
             } )
               .add( " > 禁用 (默认) ",
                     []( console_ui::fn_args )
             {
-                data::config [ 0 ].state = false;
+                data::config[ 0 ].state = false;
                 return false;
             } )
               .add( "\n[增强窗口 (下次启动时生效)]\n" )
               .add( " > 启用 ",
                     []( console_ui::fn_args )
             {
-                data::config [ 1 ].state = true;
+                data::config[ 1 ].state = true;
                 return false;
             } )
               .add( " > 禁用 (默认) ",
                     []( console_ui::fn_args )
             {
-                data::config [ 1 ].state = false;
+                data::config[ 1 ].state = false;
                 return false;
             } )
               .add( "\n[修复模式 (下次启动时生效)]\n" )
               .add( " > 启用 ",
                     []( console_ui::fn_args )
             {
-                data::config [ 2 ].state = true;
+                data::config[ 2 ].state = true;
                 return false;
             } )
               .add( " > 禁用 (默认) ",
                     []( console_ui::fn_args )
             {
-                data::config [ 2 ].state = false;
+                data::config[ 2 ].state = false;
                 return false;
             } )
               .show();
@@ -371,11 +335,11 @@ namespace mod {
         auto operator()( console_ui::fn_args ) const
         {
             switch ( mode_ ) {
-                case 'r': {
+                case 'r' : {
                     load_();
                     break;
                 }
-                case 'w': {
+                case 'w' : {
                     edit_();
                     break;
                 }
@@ -383,8 +347,8 @@ namespace mod {
             return false;
         }
         explicit config_op( const char _mode )
-            : mode_ { _mode }
-            , is_reload_ {}
+          : mode_{ _mode }
+          , is_reload_{}
         { }
         ~config_op() { }
     };
@@ -398,7 +362,7 @@ namespace mod {
             puts( "                 [ 破 解 / 恢 复 ]\n\n" );
             if ( ( rule_data_.exe.empty() ) && ( rule_data_.svc.empty() ) ) {
                 puts( " (i) 规则为空.\n" );
-                for ( unsigned short i { 3 }; i > 0; --i ) {
+                for ( unsigned short i{ 3 }; i > 0; --i ) {
                     printf( " %hus 后返回.\r", i );
                     Sleep( 1000 );
                 }
@@ -407,8 +371,8 @@ namespace mod {
             printf( ":: 生成并执行命令.\n%s\n", std::string( WINDOW_WIDTH, '-' ).c_str() );
             std::string cmd;
             switch ( mode_ ) {
-                case 'c': {
-                    if ( data::config [ 0 ].state ) {
+                case 'c' : {
+                    if ( data::config[ 0 ].state ) {
                         for ( const auto &item : rule_data_.exe ) {
                             cmd
                               .append(
@@ -436,8 +400,8 @@ namespace mod {
                     }
                     break;
                 }
-                case 'r': {
-                    if ( data::config [ 0 ].state ) {
+                case 'r' : {
+                    if ( data::config[ 0 ].state ) {
                         for ( const auto &item : rule_data_.exe ) {
                             cmd
                               .append(
@@ -464,8 +428,8 @@ namespace mod {
             return false;
         }
         explicit rule_op( const char _mode, const rule_data_base &_rule_data )
-            : mode_ { _mode }
-            , rule_data_ { _rule_data }
+          : mode_{ _mode }
+          , rule_data_{ _rule_data }
         { }
         ~rule_op() { }
     };
@@ -474,52 +438,27 @@ namespace mod {
         struct base final {
             std::vector< const char * > exe, svc;
         };
-        inline const base mythware {
-          { "StudentMain.exe",
-           "DispcapHelper.exe", "VRCwPlayer.exe",
-           "InstHelpApp.exe", "InstHelpApp64.exe",
-           "TDOvrSet.exe", "GATESRV.exe",
-           "ProcHelper64.exe", "MasterHelper.exe" },
+        inline const base mythware{
+          { "StudentMain.exe", "DispcapHelper.exe", "VRCwPlayer.exe", "InstHelpApp.exe",
+           "InstHelpApp64.exe", "TDOvrSet.exe", "GATESRV.exe", "ProcHelper64.exe",
+           "MasterHelper.exe" },
           { "STUDSRV", "TDNetFilter", "TDFileFilter" }
         },
-          lenovo {
-            { "vncviewer.exe",
-              "tvnserver32.exe",
-              "WfbsPnpInstall.exe",
-              "WFBSMon.exe",
-              "WFBSMlogon.exe",
-              "WFBSSvrLogShow.exe",
-              "ResetIp.exe",
-              "FuncForWIN64.exe",
-              "CertMgr.exe",
-              "Fireware.exe",
-              "BCDBootCopy.exe",
-              "refreship.exe",
-              "lenovoLockScreen.exe",
-              "PortControl64.exe",
-              "DesktopCheck.exe",
-              "DeploymentManager.exe",
-              "DeploymentAgent.exe",
-              "XYNTService.exe" },
+          lenovo{
+            { "vncviewer.exe", "tvnserver32.exe", "WfbsPnpInstall.exe", "WFBSMon.exe",
+              "WFBSMlogon.exe", "WFBSSvrLogShow.exe", "ResetIp.exe", "FuncForWIN64.exe",
+              "CertMgr.exe", "Fireware.exe", "BCDBootCopy.exe", "refreship.exe",
+              "lenovoLockScreen.exe", "PortControl64.exe", "DesktopCheck.exe",
+              "DeploymentManager.exe", "DeploymentAgent.exe", "XYNTService.exe" },
             { "BSAgentSvr", "tvnserver", "WFBSMlogon" } };
     }
     inline auto is_run_as_admin()
     {
-        BOOL is_admin {};
-        PSID admins_group {};
-        SID_IDENTIFIER_AUTHORITY nt_authority { SECURITY_NT_AUTHORITY };
+        BOOL is_admin{};
+        PSID admins_group{};
+        SID_IDENTIFIER_AUTHORITY nt_authority{ SECURITY_NT_AUTHORITY };
         if ( AllocateAndInitializeSid(
-               &nt_authority,
-               2,
-               SECURITY_BUILTIN_DOMAIN_RID,
-               DOMAIN_ALIAS_RID_ADMINS,
-               0,
-               0,
-               0,
-               0,
-               0,
-               0,
-               &admins_group ) )
+               &nt_authority, 2, SECURITY_BUILTIN_DOMAIN_RID, DOMAIN_ALIAS_RID_ADMINS, 0, 0, 0, 0, 0, 0, &admins_group ) )
         {
             CheckTokenMembership( nullptr, admins_group, &is_admin );
             FreeSid( admins_group );
@@ -544,16 +483,13 @@ namespace mod {
                 & ~WS_MINIMIZEBOX ) );
         system( "mode con cols=50 lines=25" );
         SetLayeredWindowAttributes(
-          GetConsoleWindow(),
-          0,
-          ( config_data.translucent_window ) ? ( 230 ) : ( 255 ),
-          LWA_ALPHA );
+          GetConsoleWindow(), 0, ( config_data.translucent_window ) ? ( 230 ) : ( 255 ), LWA_ALPHA );
     }
     inline auto front_show_window()
     {
-        const HWND this_window { GetConsoleWindow() };
-        const DWORD foreground_id { GetWindowThreadProcessId( this_window, nullptr ) },
-          current_id { GetCurrentThreadId() };
+        const HWND this_window{ GetConsoleWindow() };
+        const DWORD foreground_id{ GetWindowThreadProcessId( this_window, nullptr ) },
+          current_id{ GetCurrentThreadId() };
         while ( true ) {
             AttachThreadInput( current_id, foreground_id, TRUE );
             ShowWindow( this_window, SW_SHOWNORMAL );
@@ -604,7 +540,7 @@ namespace mod {
             puts( "                 [ 破 解 / 恢 复 ]\n\n" );
             if ( !is_run_as_admin() ) {
                 puts( "\n (i) 需要管理员权限.\n" );
-                for ( unsigned short i { 3 }; i > 0; --i ) {
+                for ( unsigned short i{ 3 }; i > 0; --i ) {
                     printf( " %hus 后返回.\r", i );
                     Sleep( 1000 );
                 }
@@ -613,7 +549,7 @@ namespace mod {
             puts( ":: 生成命令." );
             std::string cmd;
             switch ( mode_ ) {
-                case 'c': {
+                case 'c' : {
                     for ( const auto &item : rule_.exe ) {
                         cmd
                           .append(
@@ -628,7 +564,7 @@ namespace mod {
                     }
                     break;
                 }
-                case 'r': {
+                case 'r' : {
                     for ( const auto &item : rule_.exe ) {
                         cmd
                           .append(
@@ -648,8 +584,8 @@ namespace mod {
             return false;
         }
         explicit rule_op( const char _mode, const rule_data::base &_rule )
-            : mode_ { _mode }
-            , rule_ { _rule }
+          : mode_{ _mode }
+          , rule_{ _rule }
         { }
         ~rule_op() { }
     };

@@ -3,14 +3,13 @@ AccessModifierOffset: -2
 AlignAfterOpenBracket: Align
 AlignArrayOfStructures: Left
 AlignConsecutiveAssignments: AcrossEmptyLinesAndComments
-AlignConsecutiveBitFields: AcrossEmptyLinesAndComments
 AlignConsecutiveDeclarations: None
 AlignConsecutiveMacros: AcrossEmptyLinesAndComments
 AlignEscapedNewlines: Left
 AlignOperands: AlignAfterOperator
 AlignTrailingComments: true
-AllowAllArgumentsOnNextLine: false
-AllowAllParametersOfDeclarationOnNextLine: false
+AllowAllArgumentsOnNextLine: true
+AllowAllParametersOfDeclarationOnNextLine: true
 AllowShortBlocksOnASingleLine: Empty
 AllowShortCaseLabelsOnASingleLine: true
 AllowShortEnumsOnASingleLine: true
@@ -21,8 +20,8 @@ AllowShortLoopsOnASingleLine: true
 AlwaysBreakAfterReturnType: None
 AlwaysBreakBeforeMultilineStrings: true
 AlwaysBreakTemplateDeclarations: Yes
-BinPackArguments: false
-BinPackParameters: false
+BinPackArguments: true
+BinPackParameters: true
 BraceWrapping:
   BeforeCatch: false
   BeforeElse: false
@@ -49,16 +48,16 @@ BreakConstructorInitializers: BeforeComma
 BreakInheritanceList: BeforeComma
 BreakStringLiterals: true
 ColumnLimit: 100
-CommentPragmas: "[INLINE]*"
+CommentPragmas: '[INLINE]*'
 CompactNamespaces: false
-ConstructorInitializerIndentWidth: 4
+ConstructorInitializerIndentWidth: 2
 ContinuationIndentWidth: 2
 Cpp11BracedListStyle: true
 DeriveLineEnding: true
 DerivePointerAlignment: true
 DisableFormat: false
-EmptyLineAfterAccessModifier: Never
-EmptyLineBeforeAccessModifier: Never
+EmptyLineAfterAccessModifier: Leave
+EmptyLineBeforeAccessModifier: Leave
 ExperimentalAutoDetectBinPacking: true
 FixNamespaceComments: false
 IncludeBlocks: Regroup
@@ -75,19 +74,19 @@ IncludeCategories:
   - Regex: '<[[:alnum:].]+>'
     Priority: 4
 IncludeIsMainRegex: '.*.h$'
-IncludeIsMainSourceRegex: '.*\.c$,.*\.cc$,.*\.cpp$,.*\.c++$, .*\.cxx$'
+IncludeIsMainSourceRegex: '.*\.c$,.*\.cc$,.*\.cpp$,.*\.c++$,.*\.cxx$'
 IndentAccessModifiers: false
 IndentCaseBlocks: false
 IndentCaseLabels: true
 IndentExternBlock: Indent
-IndentGotoLabels: false
+IndentGotoLabels: true
 IndentPPDirectives: AfterHash
 IndentRequires: true
 IndentWidth: 4
 IndentWrappedFunctionNames: true
-KeepEmptyLinesAtTheStartOfBlocks: true
+KeepEmptyLinesAtTheStartOfBlocks: false
 LambdaBodyIndentation: OuterScope
-MacroBlockBegin: With
+MacroBlockBegin: '\#(?:ifn?def|if|else|elif)'
 MacroBlockEnd: '#endif'
 MaxEmptyLinesToKeep: 1
 NamespaceIndentation: All
@@ -95,19 +94,19 @@ PPIndentWidth: 1
 PackConstructorInitializers: Never
 PenaltyBreakAssignment: 50
 PenaltyBreakBeforeFirstCallParameter: 50
-PenaltyBreakComment: 50
-PenaltyBreakFirstLessLess: 75
-PenaltyBreakString: 75
+PenaltyBreakComment: 60
+PenaltyBreakFirstLessLess: 60
+PenaltyBreakString: 60
 PenaltyBreakTemplateDeclaration: 50
 PenaltyExcessCharacter: 30
-PenaltyIndentedWhitespace: 10
-PenaltyReturnTypeOnItsOwnLine: 70
+PenaltyIndentedWhitespace: 65
+PenaltyReturnTypeOnItsOwnLine: 50
 PointerAlignment: Right
-QualifierAlignment: Leave
-QualifierOrder: ['inline', 'static', 'const', 'volatile', 'mutable', 'type' ]
+QualifierAlignment: Custom
+QualifierOrder: [ 'static', 'inline', 'constexpr', 'const', 'restrict', 'volatile', 'type' ]
 ReferenceAlignment: Right
 ReflowComments: true
-ShortNamespaceLines: 50
+ShortNamespaceLines: 10
 SortIncludes: CaseSensitive
 SortUsingDeclarations: true
 SpaceAfterCStyleCast: true
@@ -115,11 +114,10 @@ SpaceAfterLogicalNot: false
 SpaceAfterTemplateKeyword: true
 SpaceAroundPointerQualifiers: Default
 SpaceBeforeAssignmentOperators: true
-SpaceBeforeCaseColon: false
-SpaceBeforeCpp11BracedList: true
-SpaceBeforeCtorInitializerColon: false
-SpaceBeforeInheritanceColon: false
-SpaceBeforeParens: Custom
+SpaceBeforeCaseColon: true
+SpaceBeforeCpp11BracedList: false
+SpaceBeforeCtorInitializerColon: true
+SpaceBeforeInheritanceColon: true
 SpaceBeforeParensOptions:
   AfterControlStatements: true
   AfterForeachMacros: true
@@ -127,8 +125,9 @@ SpaceBeforeParensOptions:
   AfterFunctionDefinitionName: false
   AfterIfMacros: true
   BeforeNonEmptyParentheses: false
+SpaceBeforeParens: Custom
 SpaceBeforeRangeBasedForLoopColon: true
-SpaceBeforeSquareBrackets: true
+SpaceBeforeSquareBrackets: false
 SpaceInEmptyBlock: true
 SpaceInEmptyParentheses: false
 SpacesBeforeTrailingComments: 2
