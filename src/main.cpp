@@ -109,21 +109,10 @@ auto main( const int _argc, const char *const _argv[] ) -> int
         if ( ( tmp.size() > 2 ) && ( tmp.substr( 0, 2 ) == "-W" ) ) {
             for ( const auto &sub : tmp.substr( 2 ) ) {
                 switch ( sub ) {
-                    case 'f' : {
-                        config_data.front_show_window = true;
-                        break;
-                    }
-                    case 't' : {
-                        config_data.translucent_window = true;
-                        break;
-                    }
-                    case 'c' : {
-                        config_data.window_ctrls = true;
-                        break;
-                    }
-                    default : {
-                        config_error = true;
-                    }
+                    case 'f' : config_data.front_show_window = true; break;
+                    case 't' : config_data.translucent_window = true; break;
+                    case 'c' : config_data.window_ctrls = true; break;
+                    default : config_error = true;
                 }
             }
         } else {
