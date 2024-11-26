@@ -98,9 +98,9 @@ class console_ui final {
         { }
         ~ui_item_() { }
     };
+    enum console_attrs_op_ { v_normal = 0, v_lock_text = 1, v_lock_all = 2 };
     std::vector< ui_item_ > item_;
     short width_, height_;
-    enum console_attrs_op_ { v_normal = 0, v_lock_text = 1, v_lock_all = 2 };
     auto show_cursor_( const bool _mode )
     {
         CONSOLE_CURSOR_INFO cursor;
