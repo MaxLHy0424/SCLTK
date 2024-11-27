@@ -14,6 +14,8 @@
 #define CONSOLE_TEXT_WHITE_WHITE    0x07
 #define CONSOLE_TEXT_BLUE_WHITE     0x09
 #define CONSOLE_TEXT_RED_WHITE      0x0c
+#define FUNC_BACK                   false
+#define FUNC_EXIT                   true
 class console_ui final {
   public:
     struct fn_args final {
@@ -43,7 +45,7 @@ class console_ui final {
         const char *text;
         short default_color, highlight_color, last_color;
         COORD position;
-        callback_ fn;
+        callback_ func;
         auto set_color( short _color )
         {
             SetConsoleTextAttribute( GetStdHandle( STD_OUTPUT_HANDLE ), _color );
@@ -56,7 +58,7 @@ class console_ui final {
             highlight_color = _obj.highlight_color;
             last_color      = _obj.last_color;
             position        = _obj.position;
-            fn              = _obj.fn;
+            func            = _obj.func;
             return *this;
         }
         auto operator==( const COORD &_mouse_position ) const
@@ -74,7 +76,7 @@ class console_ui final {
           , highlight_color{ CONSOLE_TEXT_BLUE_WHITE }
           , last_color{ CONSOLE_TEXT_WHITE_WHITE }
           , position{}
-          , fn{}
+          , func{}
         { }
         explicit ui_item_(
           const char *const _text,
@@ -86,7 +88,7 @@ class console_ui final {
           , highlight_color{ _highlight_color }
           , last_color{ CONSOLE_TEXT_WHITE_WHITE }
           , position{}
-          , fn{ _fn }
+          , func{ _fn }
         { }
         explicit ui_item_( const ui_item_ &_obj )
           : text{ _obj.text }
@@ -94,7 +96,7 @@ class console_ui final {
           , highlight_color{ _obj.highlight_color }
           , last_color{ _obj.last_color }
           , position{ _obj.position }
-          , fn{ _obj.fn }
+          , func{ _obj.func }
         { }
         ~ui_item_() { }
     };
@@ -210,14 +212,14 @@ class console_ui final {
             if ( line != _mouse_event.dwMousePosition ) {
                 continue;
             }
-            if ( line.fn == nullptr ) {
+            if ( line.func == nullptr ) {
                 break;
             }
             cls_();
             line.set_color( line.default_color );
             show_cursor_( false );
             edit_console_attrs_( v_lock_all );
-            is_exit = line.fn( fn_args{ this, _mouse_event } );
+            is_exit = line.func( fn_args{ this, _mouse_event } );
             show_cursor_( false );
             edit_console_attrs_( v_lock_text );
             init_pos_();
@@ -226,7 +228,7 @@ class console_ui final {
         return is_exit;
     }
   public:
-    auto size()
+    auto item_number()
     {
         return item_.size();
     }
