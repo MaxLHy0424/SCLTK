@@ -1,7 +1,7 @@
 #ifdef _WIN32
+# include <thread>
 # include "console_ui.hpp"
 # include "mod.hpp"
-# include <thread>
 # ifdef _NEXT_
 auto main() -> int
 {

@@ -1,9 +1,9 @@
 #pragma once
-#include <functional>
 #include <stdio.h>
+#include <windows.h>
+#include <functional>
 #include <string>
 #include <vector>
-#include <windows.h>
 #define CONSOLE_MOUSE_BUTTON_LEFT   FROM_LEFT_1ST_BUTTON_PRESSED
 #define CONSOLE_MOUSE_BUTTON_MIDDLE FROM_LEFT_2ND_BUTTON_PRESSED
 #define CONSOLE_MOUSE_BUTTON_RIGHT  RIGHTMOST_BUTTON_PRESSED

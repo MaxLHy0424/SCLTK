@@ -1,10 +1,10 @@
 #pragma once
+#ifdef _NEXT_
+# include <limits.h>
+# include <fstream>
+#endif
 #include "console_ui.hpp"
 #include "info.hpp"
-#ifdef _NEXT_
-# include <fstream>
-# include <limits.h>
-#endif
 #ifndef _NEXT_
 inline struct {
     bool front_show_window, translucent_window, window_ctrls;
