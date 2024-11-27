@@ -82,19 +82,10 @@ namespace mod {
         console_ui ui;
         ui.add( "                    [ 信  息 ]\n\n" )
           .add( " < 返回 ", quit, CONSOLE_TEXT_RED_WHITE )
-          .add(
-            "\n[名称]\n\n"
-            " " INFO_NAME
-            "\n"
-            "\n[版本]\n\n"
-            " " INFO_VERSION )
+          .add( "\n[名称]\n\n " INFO_NAME "\n\n[版本]\n\n " INFO_VERSION )
           .add( "\n[仓库]\n" )
           .add( " " INFO_REPO_URL, view_repo_webpage )
-          .add(
-            "\n[许可证]\n\n"
-            " " INFO_LICENSE
-            "\n\n"
-            " (C) 2023 " INFO_DEVELOPER "." )
+          .add( "\n[许可证]\n\n " INFO_LICENSE "\n\n (C) 2023 " INFO_DEVELOPER "." )
           .show();
         return FUNC_BACK;
     }
@@ -495,19 +486,8 @@ namespace mod {
         ui.add( "                    [ 信  息 ]\n\n" )
           .add( " < 返回 ", quit, CONSOLE_TEXT_RED_WHITE )
           .add(
-            "\n[名称]\n\n"
-            " " INFO_NAME
-            "\n"
-            "\n[版本]\n\n"
-            " " INFO_VERSION
-            "\n"
-            "\n[仓库]\n\n"
-            " " INFO_REPO_URL
-            "\n"
-            "\n[许可证]\n\n"
-            " " INFO_LICENSE
-            "\n\n"
-            " (C) 2023 " INFO_DEVELOPER "." )
+            "\n[名称]\n\n " INFO_NAME "\n\n[版本]\n\n " INFO_VERSION "\n\n[仓库]\n\n " INFO_REPO_URL
+            "\n\n[许可证]\n\n " INFO_LICENSE "\n\n (C) 2023 " INFO_DEVELOPER "." )
           .show();
         return FUNC_BACK;
     }
