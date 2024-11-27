@@ -64,14 +64,19 @@ IncludeBlocks: Merge
 IncludeCategories:
   - Regex: '^".*\.inc"'
     Priority: 5
+    CaseSensitive: false
   - Regex: '^".*\.h"'
     Priority: 4
+    CaseSensitive: false
   - Regex: '^".*\.(hpp|h\+\+|hxx)"'
     Priority: 3
+    CaseSensitive: false
   - Regex: '^<[a-z_]+>'
     Priority: 2
+    CaseSensitive: false
   - Regex: '^<.*>'
     Priority: 1
+    CaseSensitive: false
 IncludeIsMainRegex: '.*.h$'
 IncludeIsMainSourceRegex: '.*\.c$,.*\.cc$,.*\.cpp$,.*\.c++$,.*\.cxx$'
 IndentAccessModifiers: false
