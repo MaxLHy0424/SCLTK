@@ -60,19 +60,18 @@ EmptyLineAfterAccessModifier: Leave
 EmptyLineBeforeAccessModifier: Leave
 ExperimentalAutoDetectBinPacking: true
 FixNamespaceComments: false
-IncludeBlocks: Regroup
+IncludeBlocks: Merge
 IncludeCategories:
-  - Regex: '.*'
-    Priority: 1
-    SortPriority: 0
-  - Regex: '^"(GNU|gcc|C++)/'
-    Priority: 2
-    SortPriority: 2
-    CaseSensitive: true
-  - Regex: '^(<|"(gtest|gmock|isl|json|boost)/)'
-    Priority: 3
-  - Regex: '<[[:alnum:].]+>'
+  - Regex: '^".*\.inc"'
+    Priority: 5
+  - Regex: '^".*\.h"'
     Priority: 4
+  - Regex: '^".*\.(hpp|h\+\+|hxx)"'
+    Priority: 3
+  - Regex: '^<[a-z_]+>'
+    Priority: 2
+  - Regex: '^<.*>'
+    Priority: 1
 IncludeIsMainRegex: '.*.h$'
 IncludeIsMainSourceRegex: '.*\.c$,.*\.cc$,.*\.cpp$,.*\.c++$,.*\.cxx$'
 IndentAccessModifiers: false
