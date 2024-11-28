@@ -24,7 +24,7 @@ namespace mod {
         inline config_data_base config[]{
           {"enhanced_op",     false},
           {"enhanced_window", false},
-          {"repaired_mode",   false}
+          {"repair_mode",     false}
         };
         inline const char *const config_file_name{ "config.ini" };
         inline struct {
