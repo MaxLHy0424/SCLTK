@@ -97,8 +97,8 @@ namespace mod {
             _args.ui->set_console(
               936,
               "CRCSN",
-              WINDOW_WIDTH * 2,
-              WINDOW_HEIGHT,
+              125,
+              30,
               true,
               false,
               !data::config[ 1 ].state,
