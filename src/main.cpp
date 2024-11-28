@@ -35,17 +35,18 @@ auto main() -> int
     if ( mod::data::config[ 2 ].state ) {
         std::thread{ []()
         {
+            const char *const hkcu_reg_dir[]{
+              R"(Software\Policies\Microsoft\Windows\System)",
+              R"(Software\Microsoft\Windows\CurrentVersion\Policies\System)",
+              R"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)" };
             const char *const exe[]{
               "mode.com", "chcp.com",    "reg.exe",     "sc.exe",      "taskkill.exe", "net.exe",
               "cmd.exe",  "taskmgr.exe", "perfmon.exe", "regedit.exe", "mmc.exe" };
             std::string path;
             while ( true ) {
-                RegDeleteTreeA( HKEY_CURRENT_USER, R"(Software\Policies\Microsoft\Windows\System)" );
-                RegDeleteTreeA(
-                  HKEY_CURRENT_USER, R"(Software\Microsoft\Windows\CurrentVersion\Policies\System)" );
-                RegDeleteTreeA(
-                  HKEY_CURRENT_USER,
-                  R"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)" );
+                for ( const auto &item : hkcu_reg_dir ) {
+                    RegDeleteTreeA( HKEY_CURRENT_USER, item );
+                }
                 for ( const auto &item : exe ) {
                     path
                       .append(
