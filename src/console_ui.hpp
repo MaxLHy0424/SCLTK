@@ -228,9 +228,9 @@ class console_ui final {
         return is_exit;
     }
   public:
-    auto item_number()
+    auto max_index()
     {
-        return item_.size();
+        return item_.size() - 1;
     }
     auto &set_console(
       const UINT _code_page,
@@ -340,13 +340,14 @@ class console_ui final {
             mouse_event = wait_mouse_event_();
             switch ( mouse_event.dwEventFlags ) {
                 case CONSOLE_MOUSE_MOVE : refresh_( mouse_event.dwMousePosition ); break;
-                case CONSOLE_MOUSE_CLICK :
+                case CONSOLE_MOUSE_CLICK : {
                     if ( ( mouse_event.dwButtonState )
                          && ( mouse_event.dwButtonState != CONSOLE_MOUSE_WHEEL ) )
                     {
                         is_exit = call_fn_( mouse_event );
                     }
                     break;
+                }
             }
             Sleep( 10 );
         }
