@@ -8,9 +8,9 @@ auto main() -> int
     console_ui ui;
     ui.set_console( 936, "CRCSN", WINDOW_WIDTH, WINDOW_HEIGHT, true, false, true, 255 )
       .lock( true, true );
-    puts( ":: 检测运行权限." );
+    std::print( ":: 检测运行权限.\n" );
     if ( !mod::is_run_as_admin() ) {
-        puts( ":: 申请管理员权限." );
+        std::print( ":: 检测管理员权限.\n" );
         mod::relaunch_as_admin( console_ui::fn_args{} );
         return 0;
     }
