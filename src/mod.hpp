@@ -200,8 +200,7 @@ namespace mod {
                         if ( is_reload_ ) {
                             continue;
                         }
-                        for ( std::size_t i{};
-                              i < ( sizeof( data::config ) / sizeof( config_data_node ) );
+                        for ( std::size_t i{}; i < sizeof( data::config ) / sizeof( config_data_node );
                               ++i )
                         {
                             if ( line == data::config[ i ].name ) {
@@ -230,7 +229,7 @@ namespace mod {
                 std::print( ":: 保存更改.\n" );
                 std::string text;
                 text.append( "[settings]\n" );
-                for ( std::size_t i{}; i < ( sizeof( data::config ) / sizeof( config_data_node ) ); ++i )
+                for ( std::size_t i{}; i < sizeof( data::config ) / sizeof( config_data_node ); ++i )
                 {
                     if ( data::config[ i ].state ) {
                         text.append( data::config[ i ].name ).push_back( '\n' );
