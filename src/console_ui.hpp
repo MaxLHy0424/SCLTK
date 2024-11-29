@@ -240,9 +240,9 @@ class console_ui final {
         return is_exit;
     }
   public:
-    auto max_index()
+    auto item_counter()
     {
-        return item_.size() - 1;
+        return item_.size();
     }
     auto &set_console(
       const UINT _code_page,
