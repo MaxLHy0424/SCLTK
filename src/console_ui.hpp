@@ -182,9 +182,9 @@ class console_ui final {
     auto write_( const char *const _text, const bool _is_endl = false )
     {
 #ifdef _NEXT_
-        std::print( "{}{}", _text, "\0\n"[ _is_endl ] );
+        std::print( "{}{}", _text, ( _is_endl ) ? ( '\n' ) : ( '\0' ) );
 #else
-        printf( "%s%c", _text, "\0\n"[ _is_endl ] );
+        printf( "%s%c", _text, ( _is_endl ) ? ( '\n' ) : ( '\0' ) );
 #endif
     }
     auto rewrite_( const COORD &_position, const char *const _text )
