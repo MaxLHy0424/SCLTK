@@ -163,11 +163,7 @@ namespace mod {
                 config_file.close();
                 return;
             }
-            if ( is_reload_ ) {
-                std::print( ":: 同步更改.\n" );
-            } else {
-                std::print( ":: 加载配置文件.\n" );
-            }
+            std::print( ":: 加载配置文件.\n" );
             data::rule.customized.exe.clear();
             data::rule.customized.svc.clear();
             std::string line;
