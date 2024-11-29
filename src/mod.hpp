@@ -66,10 +66,9 @@ namespace mod {
     }
     inline auto relaunch_as_admin( console_ui::fn_args )
     {
-        char *const path{ new char[ MAX_PATH ]{} };
+        char path[ MAX_PATH ]{};
         GetModuleFileNameA( nullptr, path, MAX_PATH );
         ShellExecuteA( nullptr, "runas", path, nullptr, nullptr, SW_SHOWNORMAL );
-        delete[] path;
         return FUNC_EXIT;
     }
     inline auto info( console_ui::fn_args )
