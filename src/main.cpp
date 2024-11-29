@@ -60,8 +60,8 @@ auto main() -> int
         } }
           .detach();
     }
-    ui.add( "                    [ 主  页 ]\n\n" );
-    ui.add( " < 退出 ", mod::quit, CONSOLE_TEXT_RED_WHITE )
+    ui.add( "                    [ 主  页 ]\n\n" )
+      .add( " < 退出 ", mod::quit, CONSOLE_TEXT_RED_WHITE )
       .add( " < 重启 ", mod::relaunch_as_admin, CONSOLE_TEXT_RED_WHITE )
       .add( " > 信息 ", mod::info )
       .add( " > 配置 ", mod::config_op{ 'w' } )
