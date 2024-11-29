@@ -124,7 +124,7 @@ namespace mod {
             auto operator=( const exec_cmd & ) = delete;
             auto operator()( console_ui::fn_args )
             {
-                printf( ":: 执行命令.\n%s\n", std::string( WINDOW_WIDTH, '-' ).c_str() );
+                std::print( ":: 执行命令.\n{}\n", std::string( WINDOW_WIDTH, '-' ) );
                 system( cmd_ );
                 return FUNC_BACK;
             }
@@ -165,9 +165,9 @@ namespace mod {
                 return;
             }
             if ( is_reload_ ) {
-                puts( ":: 同步更改." );
+                std::print( ":: 同步更改.\n" );
             } else {
-                puts( ":: 加载配置文件." );
+                std::print( ":: 加载配置文件.\n" );
             }
             data::rule.customized.exe.clear();
             data::rule.customized.svc.clear();
@@ -228,7 +228,7 @@ namespace mod {
             {
                 is_reload_ = true;
                 load_();
-                puts( ":: 保存更改." );
+                std::print( ":: 保存更改.\n" );
                 std::string text;
                 text.append( "[settings]\n" );
                 for ( std::size_t i{}; i < ( sizeof( data::config ) / sizeof( config_data_base ) ); ++i )
@@ -257,16 +257,16 @@ namespace mod {
             auto open_config_file{ []( console_ui::fn_args )
             {
                 if ( std::ifstream{ data::config_file_name, std::ios::in }.is_open() ) {
-                    puts( ":: 打开配置文件." );
+                    std::print( ":: 打开配置文件.\n" );
                     ShellExecuteA(
                       nullptr, "open", data::config_file_name, nullptr, nullptr, SW_SHOWNORMAL );
                     return FUNC_BACK;
                 }
-                puts(
+                std::print(
                   "                    [ 配  置 ]\n\n\n"
-                  " (i) 无法读取配置文件.\n" );
+                  " (i) 无法读取配置文件.\n\n" );
                 for ( unsigned short i{ 3 }; i > 0; --i ) {
-                    printf( " %hus 后返回.\r", i );
+                    std::print( " {}s 后返回.\r", i );
                     Sleep( 1000 );
                 }
                 return FUNC_BACK;
@@ -340,16 +340,16 @@ namespace mod {
       public:
         auto operator()( console_ui::fn_args ) const
         {
-            puts( "                 [ 破 解 / 恢 复 ]\n\n" );
+            std::print( "                 [ 破 解 / 恢 复 ]\n\n\n" );
             if ( ( rule_data_.exe.empty() ) && ( rule_data_.svc.empty() ) ) {
-                puts( " (i) 规则为空.\n" );
+                std::print( " (i) 规则为空.\n\n" );
                 for ( unsigned short i{ 3 }; i > 0; --i ) {
-                    printf( " %hus 后返回.\r", i );
+                    std::print( " {}s 后返回.\r", i );
                     Sleep( 1000 );
                 }
                 return FUNC_BACK;
             }
-            printf( ":: 生成并执行命令.\n%s\n", std::string( WINDOW_WIDTH, '-' ).c_str() );
+            std::print( ":: 生成并执行命令.\n{}\n", std::string( WINDOW_WIDTH, '-' ) );
             std::string cmd;
             switch ( mode_ ) {
                 case 'c' : {

@@ -1,6 +1,10 @@
 #pragma once
-#include <stdio.h>
 #include <windows.h>
+#ifdef _NEXT_
+# include <print>
+#else
+# include <stdio.h>
+#endif
 #include <functional>
 #include <string>
 #include <vector>
@@ -168,12 +172,20 @@ class console_ui final {
     {
         get_console_size_();
         set_cursor_( { 0, 0 } );
+#ifdef _NEXT_
+        std::print( "{}", std::string( width_ * height_, ' ' ) );
+#else
         printf( "%s", std::string( width_ * height_, ' ' ).c_str() );
+#endif
         set_cursor_( { 0, 0 } );
     }
     auto write_( const char *const _text, const bool _is_endl = false )
     {
+#ifdef _NEXT_
+        std::print( "{}{}", _text, "\0\n"[ _is_endl ] );
+#else
         printf( "%s%c", _text, "\0\n"[ _is_endl ] );
+#endif
     }
     auto rewrite_( const COORD &_position, const char *const _text )
     {
