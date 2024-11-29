@@ -104,7 +104,7 @@ class console_ui final {
         { }
         ~ui_item_() { }
     };
-    enum console_attrs_op_ { v_normal = 0, v_lock_text = 1, v_lock_all = 2 };
+    enum console_attrs_ { v_normal = 0, v_lock_text = 1, v_lock_all = 2 };
     std::vector< ui_item_ > item_;
     short width_, height_;
     auto show_cursor_( const bool _mode )
@@ -114,7 +114,7 @@ class console_ui final {
         cursor.bVisible = _mode;
         SetConsoleCursorInfo( GetStdHandle( STD_OUTPUT_HANDLE ), &cursor );
     }
-    auto edit_console_attrs_( const console_attrs_op_ _mode )
+    auto edit_console_attrs_( const console_attrs_ _mode )
     {
         DWORD attrs;
         GetConsoleMode( GetStdHandle( STD_INPUT_HANDLE ), &attrs );
