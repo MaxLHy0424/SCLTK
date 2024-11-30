@@ -106,7 +106,7 @@ namespace mod {
               GetStdHandle( STD_OUTPUT_HANDLE ), { WINDOW_WIDTH * 2, SHRT_MAX - 1 } );
             system( "cmd" );
             _args.ui->set_console(
-              CODE_PAGEE_PAGE,
+              CODE_PAGE,
               WINDOW_TITLE,
               WINDOW_WIDTH,
               WINDOW_HEIGHT,
