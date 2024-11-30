@@ -100,8 +100,8 @@ namespace mod {
               30,
               true,
               false,
-              !data::config[ 1 ].state,
-              ( data::config[ 1 ].state ) ? ( 230 ) : ( 255 ) );
+              ( mod::data::config[ 1 ].state == true ) ? ( true ) : ( false ),
+              ( mod::data::config[ 1 ].state == true ) ? ( 230 ) : ( 255 ) );
             SetConsoleScreenBufferSize(
               GetStdHandle( STD_OUTPUT_HANDLE ), { WINDOW_WIDTH * 2, SHRT_MAX - 1 } );
             system( "cmd" );
@@ -112,8 +112,8 @@ namespace mod {
               WINDOW_HEIGHT,
               true,
               false,
-              !data::config[ 1 ].state,
-              ( data::config[ 1 ].state ) ? ( 230 ) : ( 255 ) );
+              ( mod::data::config[ 1 ].state == true ) ? ( true ) : ( false ),
+              ( mod::data::config[ 1 ].state == true ) ? ( 230 ) : ( 255 ) );
             return FUNC_BACK;
         } };
         class exec_cmd final {
@@ -344,7 +344,7 @@ namespace mod {
             std::string cmd;
             switch ( mode_ ) {
                 case 'c' : {
-                    if ( data::config[ 0 ].state ) {
+                    if ( data::config[ 0 ].state == true ) {
                         for ( const auto &item : rule_data_.exe ) {
                             cmd
                               .append(
@@ -373,7 +373,7 @@ namespace mod {
                     break;
                 }
                 case 'r' : {
-                    if ( data::config[ 0 ].state ) {
+                    if ( data::config[ 0 ].state == true ) {
                         for ( const auto &item : rule_data_.exe ) {
                             cmd
                               .append(
