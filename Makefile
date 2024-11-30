@@ -7,7 +7,7 @@ args_debug   = $(args_base) -Og -g3
 tag          = std
 arch         = x86_64
 version      = v5.10.5
-obj          = src/*.cpp bin/info.obj
+main_src     = src/*.cpp bin/info.obj
 .PHONY: init build debug clean
 all: init clean build
 init:
@@ -16,16 +16,16 @@ init:
 	 mingw-w64-x86_64-toolchain
 build: bin/$(version)/$(tag)-$(arch)-msvcrt.exe\
        bin/$(version)/$(tag)-$(arch)-ucrt.exe
-debug: $(obj) src/*.hpp bin
-	$(msys2)\\ucrt64\\bin\\$(cc) $(obj) $(def) $(args_debug) -o ./bin/debug/__debug__.exe
+debug: $(main_src) src/*.hpp bin
+	$(msys2)\\ucrt64\\bin\\$(cc) $(main_src) $(def) $(args_debug) -o ./bin/debug/__debug__.exe
 clean:
 	$(msys2)\\usr\\bin\\rm.exe -rf bin
 	$(msys2)\\usr\\bin\\mkdir.exe bin
 	$(msys2)\\usr\\bin\\touch.exe bin/.gitkeep
-bin/$(version)/$(tag)-$(arch)-msvcrt.exe: $(obj) src/*.hpp bin
-	$(msys2)\\mingw64\\bin\\$(cc) $(obj) $(def) $(args_release) -o $@
-bin/$(version)/$(tag)-$(arch)-ucrt.exe: $(obj) src/*.hpp bin
-	$(msys2)\\ucrt64\\bin\\$(cc) $(obj) $(def) $(args_release) -o $@
+bin/$(version)/$(tag)-$(arch)-msvcrt.exe: $(main_src) src/*.hpp bin
+	$(msys2)\\mingw64\\bin\\$(cc) $(main_src) $(def) $(args_release) -o $@
+bin/$(version)/$(tag)-$(arch)-ucrt.exe: $(main_src) src/*.hpp bin
+	$(msys2)\\ucrt64\\bin\\$(cc) $(main_src) $(def) $(args_release) -o $@
 bin/info.obj: info.rc img/favicon.ico bin
 	$(msys2)\\usr\\bin\\windres.exe -i $< $(def) -o $@ -F pe-x86-64
 bin: bin/$(version) bin/debug
