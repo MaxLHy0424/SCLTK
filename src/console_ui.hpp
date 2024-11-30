@@ -175,7 +175,7 @@ class console_ui final {
 #ifdef _NEXT
         std::print( "{}", std::string( width_ * height_, ' ' ) );
 #else
-        std::printf( "%s", std::string( width_ * height_, ' ' ).c_str() );
+        std::printf( std::string( width_ * height_, ' ' ).c_str() );
 #endif
         set_cursor_( { 0, 0 } );
     }
