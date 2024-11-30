@@ -1,6 +1,6 @@
 #pragma once
 #include <windows.h>
-#ifdef _NEXT_
+#ifdef _THE_NEXT_MAJOR_UPDATE_
 # include <print>
 #else
 # include <cstdio>
@@ -172,7 +172,7 @@ class console_ui final {
     {
         get_console_size_();
         set_cursor_( { 0, 0 } );
-#ifdef _NEXT_
+#ifdef _THE_NEXT_MAJOR_UPDATE_
         std::print( "{}", std::string( width_ * height_, ' ' ) );
 #else
         std::printf( "%s", std::string( width_ * height_, ' ' ).c_str() );
@@ -181,7 +181,7 @@ class console_ui final {
     }
     auto write_( const char *const _text, const bool _is_endl = false )
     {
-#ifdef _NEXT_
+#ifdef _THE_NEXT_MAJOR_UPDATE_
         std::print( "{}{}", _text, ( _is_endl ) ? ( '\n' ) : ( '\0' ) );
 #else
         std::printf( "%s%c", _text, ( _is_endl ) ? ( '\n' ) : ( '\0' ) );
