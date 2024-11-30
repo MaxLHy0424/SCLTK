@@ -6,8 +6,8 @@
 # include <cstdio>
 #endif
 #include <functional>
-#include <queue>
 #include <string>
+#include <vector>
 #define CONSOLE_MOUSE_BUTTON_LEFT   FROM_LEFT_1ST_BUTTON_PRESSED
 #define CONSOLE_MOUSE_BUTTON_MIDDLE FROM_LEFT_2ND_BUTTON_PRESSED
 #define CONSOLE_MOUSE_BUTTON_RIGHT  RIGHTMOST_BUTTON_PRESSED
@@ -105,7 +105,7 @@ class console_ui final {
         ~ui_item_() { }
     };
     enum console_attrs_ { v_normal = 0, v_lock_text = 1, v_lock_all = 2 };
-    std::deque< ui_item_ > item_;
+    std::vector< ui_item_ > item_;
     short width_, height_;
     auto show_cursor_( const bool _mode )
     {
@@ -290,18 +290,7 @@ class console_ui final {
         edit_console_attrs_( ( _is_lock_text ) ? ( v_lock_all ) : ( v_normal ) );
         return *this;
     }
-    auto &add_front(
-      const char *const _text,
-      const callback_ _fn          = nullptr,
-      const short _highlight_color = CONSOLE_TEXT_BLUE_WHITE,
-      const short _default_color   = CONSOLE_TEXT_WHITE_WHITE )
-    {
-        item_.emplace_front( ui_item_{
-          _text, _default_color, ( _fn == nullptr ) ? ( _default_color ) : ( _highlight_color ),
-          _fn } );
-        return *this;
-    }
-    auto &add_back(
+    auto &add(
       const char *const _text,
       const callback_ _fn          = nullptr,
       const short _highlight_color = CONSOLE_TEXT_BLUE_WHITE,
@@ -312,7 +301,7 @@ class console_ui final {
           _fn } );
         return *this;
     }
-    auto &add(
+    auto &insert(
       const size_type_ _index,
       const char *const _text,
       const callback_ _fn          = nullptr,
@@ -337,12 +326,7 @@ class console_ui final {
           _text, _default_color, ( _fn == nullptr ) ? ( _default_color ) : ( _highlight_color ), _fn };
         return *this;
     }
-    auto &remove_front()
-    {
-        item_.pop_front();
-        return *this;
-    }
-    auto &remove_back()
+    auto &revert()
     {
         item_.pop_back();
         return *this;
