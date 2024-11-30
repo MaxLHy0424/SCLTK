@@ -1,18 +1,18 @@
 #pragma once
-#ifdef _NEXT_
+#ifdef _THE_NEXT_MAJOR_UPDATE_
 # include <limits.h>
 # include <fstream>
 #endif
 #include "console_ui.hpp"
 #include "info.hpp"
-#ifndef _NEXT_
+#ifndef _THE_NEXT_MAJOR_UPDATE_
 inline struct {
     bool front_show_window, translucent_window, window_ctrls;
 } config_data{};
 inline bool config_error{};
 #endif
 namespace mod {
-#ifdef _NEXT_
+#ifdef _THE_NEXT_MAJOR_UPDATE_
     struct config_data_node final {
         const char *const name;
         bool state;

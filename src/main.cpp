@@ -2,7 +2,7 @@
 # include <thread>
 # include "console_ui.hpp"
 # include "mod.hpp"
-# ifdef _NEXT_
+# ifdef _THE_NEXT_MAJOR_UPDATE_
 auto main() -> int
 {
     console_ui ui;
