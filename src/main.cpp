@@ -12,7 +12,7 @@ auto main() -> int
     if ( !mod::is_run_as_admin() ) {
         std::print( ":: 检测管理员权限.\n" );
         mod::relaunch_as_admin( console_ui::fn_args{} );
-        return 0;
+        return 1;
     }
     mod::config_op{ 'r' }( console_ui::fn_args{} );
     if ( mod::data::config[ 1 ].state ) {
