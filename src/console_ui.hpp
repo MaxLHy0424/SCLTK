@@ -3,7 +3,7 @@
 #ifdef _NEXT_
 # include <print>
 #else
-# include <stdio.h>
+# include <cstdio>
 #endif
 #include <functional>
 #include <string>
@@ -175,7 +175,7 @@ class console_ui final {
 #ifdef _NEXT_
         std::print( "{}", std::string( width_ * height_, ' ' ) );
 #else
-        printf( "%s", std::string( width_ * height_, ' ' ).c_str() );
+        std::printf( "%s", std::string( width_ * height_, ' ' ).c_str() );
 #endif
         set_cursor_( { 0, 0 } );
     }
@@ -184,7 +184,7 @@ class console_ui final {
 #ifdef _NEXT_
         std::print( "{}{}", _text, ( _is_endl ) ? ( '\n' ) : ( '\0' ) );
 #else
-        printf( "%s%c", _text, ( _is_endl ) ? ( '\n' ) : ( '\0' ) );
+        std::printf( "%s%c", _text, ( _is_endl ) ? ( '\n' ) : ( '\0' ) );
 #endif
     }
     auto rewrite_( const COORD &_position, const char *const _text )

@@ -504,16 +504,16 @@ namespace mod {
       public:
         auto operator()( console_ui::fn_args ) const
         {
-            puts( "                 [ 破 解 / 恢 复 ]\n\n" );
+            std::puts( "                 [ 破 解 / 恢 复 ]\n\n" );
             if ( !is_run_as_admin() ) {
-                puts( "\n (i) 需要管理员权限.\n" );
+                std::puts( "\n (i) 需要管理员权限.\n" );
                 for ( unsigned short i{ 3 }; i > 0; --i ) {
-                    printf( " %hus 后返回.\r", i );
+                    std::printf( " %hus 后返回.\r", i );
                     Sleep( 1000 );
                 }
                 return FUNC_BACK;
             }
-            puts( ":: 生成命令." );
+            std::puts( ":: 生成命令." );
             std::string cmd;
             switch ( mode_ ) {
                 case 'c' : {
@@ -545,9 +545,9 @@ namespace mod {
                     break;
                 }
             }
-            printf( ":: 执行命令.\n%s\n", std::string( 50, '-' ).c_str() );
+            std::printf( ":: 执行命令.\n%s\n", std::string( 50, '-' ).c_str() );
             system( cmd.c_str() );
-            printf( "%s\n::释放内存.", std::string( 50, '-' ).c_str() );
+            std::printf( "%s\n::释放内存.", std::string( 50, '-' ).c_str() );
             return FUNC_BACK;
         }
         explicit rule_op( const char _mode, const rule_data_node &_rule )
