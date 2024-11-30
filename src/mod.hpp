@@ -95,7 +95,7 @@ namespace mod {
             _args.ui->lock( false, false );
             _args.ui->set_console(
               CODE_PAGE,
-              "CRCSN",
+              WINDOW_TITLE,
               125,
               30,
               true,
@@ -107,7 +107,7 @@ namespace mod {
             system( "cmd" );
             _args.ui->set_console(
               CODE_PAGEE_PAGE,
-              "CRCSN",
+              WINDOW_TITLE,
               WINDOW_WIDTH,
               WINDOW_HEIGHT,
               true,
