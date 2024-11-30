@@ -18,7 +18,7 @@ namespace mod {
         bool state;
     };
     struct rule_data_node final {
-        std::deque< std::string > exe, svc;
+        std::vector< std::string > exe, svc;
     };
     namespace data {
         inline config_data_node config[]{
@@ -79,12 +79,12 @@ namespace mod {
             return FUNC_BACK;
         } };
         console_ui ui;
-        ui.add_back( "                    [ 信  息 ]\n\n" )
-          .add_back( " < 返回 ", quit, CONSOLE_TEXT_RED_WHITE )
-          .add_back( "\n[名称]\n\n " INFO_NAME "\n\n[版本]\n\n " INFO_VERSION )
-          .add_back( "\n[仓库]\n" )
-          .add_back( " " INFO_REPO_URL, std::move( view_repo_webpage ) )
-          .add_back( "\n[许可证]\n\n " INFO_LICENSE "\n\n (C) 2023 " INFO_DEVELOPER "." )
+        ui.add( "                    [ 信  息 ]\n\n" )
+          .add( " < 返回 ", quit, CONSOLE_TEXT_RED_WHITE )
+          .add( "\n[名称]\n\n " INFO_NAME "\n\n[版本]\n\n " INFO_VERSION )
+          .add( "\n[仓库]\n" )
+          .add( " " INFO_REPO_URL, std::move( view_repo_webpage ) )
+          .add( "\n[许可证]\n\n " INFO_LICENSE "\n\n (C) 2023 " INFO_DEVELOPER "." )
           .show();
         return FUNC_BACK;
     }
@@ -141,14 +141,14 @@ namespace mod {
           R"(reg delete "HKLM\SOFTWARE\Policies\Microsoft\Edge" /f /v AllowSurfGame)",
           R"(reg add "HKLM\SYSTEM\CurrentControlSet\Services\USBSTOR" /f /t reg_dword /v Start /d 3)" };
         console_ui ui;
-        ui.add_back( "                   [ 工 具 箱 ]\n\n" )
-          .add_back( " < 返回 ", quit, CONSOLE_TEXT_RED_WHITE )
-          .add_back( " > 命令提示符 ", std::move( launch_cmd ) )
-          .add_back( "\n[快捷操作]\n" )
-          .add_back( " > 重启资源管理器 ", exec_cmd{ std::move( cmds[ 0 ] ) } )
-          .add_back( " > 恢复 Google Chrome 离线游戏 ", exec_cmd{ std::move( cmds[ 1 ] ) } )
-          .add_back( " > 恢复 Microsoft Edge 离线游戏 ", exec_cmd{ std::move( cmds[ 2 ] ) } )
-          .add_back( " > 恢复 USB 设备访问 ", exec_cmd{ std::move( cmds[ 3 ] ) } )
+        ui.add( "                   [ 工 具 箱 ]\n\n" )
+          .add( " < 返回 ", quit, CONSOLE_TEXT_RED_WHITE )
+          .add( " > 命令提示符 ", std::move( launch_cmd ) )
+          .add( "\n[快捷操作]\n" )
+          .add( " > 重启资源管理器 ", exec_cmd{ std::move( cmds[ 0 ] ) } )
+          .add( " > 恢复 Google Chrome 离线游戏 ", exec_cmd{ std::move( cmds[ 1 ] ) } )
+          .add( " > 恢复 Microsoft Edge 离线游戏 ", exec_cmd{ std::move( cmds[ 2 ] ) } )
+          .add( " > 恢复 USB 设备访问 ", exec_cmd{ std::move( cmds[ 3 ] ) } )
           .show();
         return FUNC_BACK;
     }
@@ -266,51 +266,45 @@ namespace mod {
                 return FUNC_BACK;
             } };
             console_ui ui;
-            ui.add_back( "                    [ 配  置 ]\n\n" )
-              .add_back( " (i) 相关信息可参阅文档.\n" )
-              .add_back( " < 同步配置并返回 ", std::move( sync ), CONSOLE_TEXT_RED_WHITE )
-              .add_back( " > 打开配置文件 ", std::move( open_config_file ) )
-              .add_back( "\n[增强操作]\n" )
-              .add_back(
-                " > 启用 ",
-                []( console_ui::fn_args )
+            ui.add( "                    [ 配  置 ]\n\n" )
+              .add( " (i) 相关信息可参阅文档.\n" )
+              .add( " < 同步配置并返回 ", std::move( sync ), CONSOLE_TEXT_RED_WHITE )
+              .add( " > 打开配置文件 ", std::move( open_config_file ) )
+              .add( "\n[增强操作]\n" )
+              .add( " > 启用 ",
+                    []( console_ui::fn_args )
             {
                 data::config[ 0 ].state = true;
                 return FUNC_BACK;
             } )
-              .add_back(
-                " > 禁用 (默认) ",
-                []( console_ui::fn_args )
+              .add( " > 禁用 (默认) ",
+                    []( console_ui::fn_args )
             {
                 data::config[ 0 ].state = false;
                 return FUNC_BACK;
             } )
-              .add_back( "\n[增强窗口 (下次启动时生效)]\n" )
-              .add_back(
-                " > 启用 ",
-                []( console_ui::fn_args )
+              .add( "\n[增强窗口 (下次启动时生效)]\n" )
+              .add( " > 启用 ",
+                    []( console_ui::fn_args )
             {
                 data::config[ 1 ].state = true;
                 return FUNC_BACK;
             } )
-              .add_back(
-                " > 禁用 (默认) ",
-                []( console_ui::fn_args )
+              .add( " > 禁用 (默认) ",
+                    []( console_ui::fn_args )
             {
                 data::config[ 1 ].state = false;
                 return FUNC_BACK;
             } )
-              .add_back( "\n[修复模式 (下次启动时生效)]\n" )
-              .add_back(
-                " > 启用 ",
-                []( console_ui::fn_args )
+              .add( "\n[修复模式 (下次启动时生效)]\n" )
+              .add( " > 启用 ",
+                    []( console_ui::fn_args )
             {
                 data::config[ 2 ].state = true;
                 return FUNC_BACK;
             } )
-              .add_back(
-                " > 禁用 (默认) ",
-                []( console_ui::fn_args )
+              .add( " > 禁用 (默认) ",
+                    []( console_ui::fn_args )
             {
                 data::config[ 2 ].state = false;
                 return FUNC_BACK;
@@ -416,7 +410,7 @@ namespace mod {
     };
 #else
     struct rule_data_node final {
-        std::deque< const char * > exe, svc;
+        std::vector< const char * > exe, svc;
     };
     inline struct {
         const rule_data_node mythware, lenovo;
@@ -486,9 +480,9 @@ namespace mod {
     inline auto info( console_ui::fn_args )
     {
         console_ui ui;
-        ui.add_back( "                    [ 信  息 ]\n\n" )
-          .add_back( " < 返回 ", quit, CONSOLE_TEXT_RED_WHITE )
-          .add_back(
+        ui.add( "                    [ 信  息 ]\n\n" )
+          .add( " < 返回 ", quit, CONSOLE_TEXT_RED_WHITE )
+          .add(
             "\n[名称]\n\n " INFO_NAME "\n\n[版本]\n\n " INFO_VERSION "\n\n[仓库]\n\n " INFO_REPO_URL
             "\n\n[许可证]\n\n " INFO_LICENSE "\n\n (C) 2023 " INFO_DEVELOPER "." )
           .show();
