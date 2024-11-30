@@ -6,7 +6,7 @@
 auto main() -> int
 {
     console_ui ui;
-    ui.set_console( 936, "CRCSN", WINDOW_WIDTH, WINDOW_HEIGHT, true, false, true, 255 )
+    ui.set_console( CODE_PAGE, "CRCSN", WINDOW_WIDTH, WINDOW_HEIGHT, true, false, true, 255 )
       .lock( true, true );
     std::print( ":: 检测运行权限.\n" );
     if ( !mod::is_run_as_admin() ) {
@@ -75,7 +75,7 @@ auto main() -> int
       .add( " > 联想云教室 ", mod::rule_op{ 'r', mod::data::rule.lenovo } )
       .add( " > 自定义 ", mod::rule_op{ 'r', mod::data::rule.customized } )
       .set_console(
-        936,
+        CODE_PAGE,
         "CRCSN",
         WINDOW_WIDTH,
         WINDOW_HEIGHT,

@@ -94,7 +94,7 @@ namespace mod {
         {
             _args.ui->lock( false, false );
             _args.ui->set_console(
-              936,
+              CODE_PAGE,
               "CRCSN",
               125,
               30,
@@ -106,7 +106,7 @@ namespace mod {
               GetStdHandle( STD_OUTPUT_HANDLE ), { WINDOW_WIDTH * 2, SHRT_MAX - 1 } );
             system( "cmd" );
             _args.ui->set_console(
-              936,
+              CODE_PAGEE_PAGE,
               "CRCSN",
               WINDOW_WIDTH,
               WINDOW_HEIGHT,
@@ -449,7 +449,7 @@ namespace mod {
     }
     inline auto init()
     {
-        system( "chcp 936 > nul" );
+        system( "chcp CODE_PAGEE_PAGE > nul" );
         SetConsoleTitleA( "CRCSN" );
         SetWindowLongPtrA(
           GetConsoleWindow(),
