@@ -18,7 +18,7 @@ namespace mod {
         bool state;
     };
     struct rule_data_node final {
-        std::vector< std::string > exe, svc;
+        std::deque< std::string > exe, svc;
     };
     namespace data {
         inline config_data_node config[]{
@@ -410,7 +410,7 @@ namespace mod {
     };
 #else
     struct rule_data_node final {
-        std::vector< const char * > exe, svc;
+        std::deque< const char * > exe, svc;
     };
     inline struct {
         const rule_data_node mythware, lenovo;
