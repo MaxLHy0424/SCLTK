@@ -134,11 +134,11 @@ INIT:
       .add( " > 信息 ", mod::info )
       .add( " > 命令提示符 ", mod::cmd )
       .add( "\n[破解]\n" )
-      .add( " > 极域电子教室 ", mod::rule_op{ 'c', mod::rule_data::mythware } )
-      .add( " > 联想云教室 ", mod::rule_op{ 'c', mod::rule_data::lenovo } )
+      .add( " > 极域电子教室 ", mod::rule_op{ 'c', mod::rule.mythware } )
+      .add( " > 联想云教室 ", mod::rule_op{ 'c', mod::rule.lenovo } )
       .add( "\n[恢复]\n" )
-      .add( " > 极域电子教室 ", mod::rule_op{ 'r', mod::rule_data::mythware } )
-      .add( " > 联想云教室 ", mod::rule_op{ 'r', mod::rule_data::lenovo } )
+      .add( " > 极域电子教室 ", mod::rule_op{ 'r', mod::rule.mythware } )
+      .add( " > 联想云教室 ", mod::rule_op{ 'r', mod::rule.lenovo } )
       .show()
       .lock( false, false );
     if ( config_data.translucent_window ) {

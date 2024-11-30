@@ -409,24 +409,27 @@ namespace mod {
         ~rule_op() { }
     };
 #else
-    namespace rule_data {
-        struct base final {
-            std::vector< const char * > exe, svc;
-        };
-        inline const base mythware{
-          { "StudentMain.exe", "DispcapHelper.exe", "VRCwPlayer.exe", "InstHelpApp.exe",
-           "InstHelpApp64.exe", "TDOvrSet.exe", "GATESRV.exe", "ProcHelper64.exe",
-           "MasterHelper.exe" },
-          { "STUDSRV", "TDNetFilter", "TDFileFilter" }
-        },
-          lenovo{
-            { "vncviewer.exe", "tvnserver32.exe", "WfbsPnpInstall.exe", "WFBSMon.exe",
-              "WFBSMlogon.exe", "WFBSSvrLogShow.exe", "ResetIp.exe", "FuncForWIN64.exe",
-              "CertMgr.exe", "Fireware.exe", "BCDBootCopy.exe", "refreship.exe",
-              "lenovoLockScreen.exe", "PortControl64.exe", "DesktopCheck.exe",
-              "DeploymentManager.exe", "DeploymentAgent.exe", "XYNTService.exe" },
-            { "BSAgentSvr", "tvnserver", "WFBSMlogon" } };
-    }
+    struct rule_data_node final {
+        std::vector< const char * > exe, svc;
+    };
+    inline struct {
+        const rule_data_node mythware, lenovo;
+        rule_data_node customized;
+    } rule{
+      { { "StudentMain.exe", "DispcapHelper.exe", "VRCwPlayer.exe", "InstHelpApp.exe",
+          "InstHelpApp64.exe", "TDOvrSet.exe", "GATESRV.exe", "ProcHelper64.exe",
+          "MasterHelper.exe" },
+       {
+          "STUDSRV",
+          "TDNetFilter",
+        } },
+      { { "vncviewer.exe", "tvnserver32.exe", "WfbsPnpInstall.exe", "WFBSMon.exe", "WFBSMlogon.exe",
+          "WFBSSvrLogShow.exe", "ResetIp.exe", "FuncForWIN64.exe", "CertMgr.exe", "Fireware.exe",
+          "BCDBootCopy.exe", "refreship.exe", "lenovoLockScreen.exe", "PortControl64.exe",
+          "DesktopCheck.exe", "DeploymentManager.exe", "DeploymentAgent.exe", "XYNTService.exe" },
+       { "BSAgentSvr", "tvnserver", "WFBSMlogon" } },
+      {}
+    };
     inline auto is_run_as_admin()
     {
         BOOL is_admin{};
@@ -497,7 +500,7 @@ namespace mod {
     class rule_op final {
       private:
         const char mode_;
-        const rule_data::base &rule_;
+        const rule_data_node &rule_;
       public:
         auto operator()( console_ui::fn_args ) const
         {
@@ -547,7 +550,7 @@ namespace mod {
             printf( "%s\n::释放内存.", std::string( 50, '-' ).c_str() );
             return FUNC_BACK;
         }
-        explicit rule_op( const char _mode, const rule_data::base &_rule )
+        explicit rule_op( const char _mode, const rule_data_node &_rule )
           : mode_{ _mode }
           , rule_{ _rule }
         { }
