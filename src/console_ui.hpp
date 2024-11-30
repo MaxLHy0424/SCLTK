@@ -312,7 +312,7 @@ class console_ui final {
           _fn } );
         return *this;
     }
-    auto &insert(
+    auto &add(
       const size_type_ _index,
       const char *const _text,
       const callback_ _fn          = nullptr,
@@ -342,7 +342,7 @@ class console_ui final {
         item_.pop_front();
         return *this;
     }
-    auto &remove_front()
+    auto &remove_back()
     {
         item_.pop_back();
         return *this;
