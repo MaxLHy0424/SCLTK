@@ -60,20 +60,20 @@ auto main() -> int
         } }
           .detach();
     }
-    ui.add( "                    [ 主  页 ]\n\n" )
-      .add( " < 退出 ", mod::quit, CONSOLE_TEXT_RED_WHITE )
-      .add( " < 重启 ", mod::relaunch_as_admin, CONSOLE_TEXT_RED_WHITE )
-      .add( " > 信息 ", mod::info )
-      .add( " > 配置 ", mod::config_op{ 'w' } )
-      .add( " > 工具箱 ", mod::toolkit )
-      .add( "\n[破解]\n" )
-      .add( " > 极域电子教室 ", mod::rule_op{ 'c', mod::data::rule.mythware } )
-      .add( " > 联想云教室 ", mod::rule_op{ 'c', mod::data::rule.lenovo } )
-      .add( " > 自定义 ", mod::rule_op{ 'c', mod::data::rule.customized } )
-      .add( "\n[恢复]\n" )
-      .add( " > 极域电子教室 ", mod::rule_op{ 'r', mod::data::rule.mythware } )
-      .add( " > 联想云教室 ", mod::rule_op{ 'r', mod::data::rule.lenovo } )
-      .add( " > 自定义 ", mod::rule_op{ 'r', mod::data::rule.customized } )
+    ui.add_back( "                    [ 主  页 ]\n\n" )
+      .add_back( " < 退出 ", mod::quit, CONSOLE_TEXT_RED_WHITE )
+      .add_back( " < 重启 ", mod::relaunch_as_admin, CONSOLE_TEXT_RED_WHITE )
+      .add_back( " > 信息 ", mod::info )
+      .add_back( " > 配置 ", mod::config_op{ 'w' } )
+      .add_back( " > 工具箱 ", mod::toolkit )
+      .add_back( "\n[破解]\n" )
+      .add_back( " > 极域电子教室 ", mod::rule_op{ 'c', mod::data::rule.mythware } )
+      .add_back( " > 联想云教室 ", mod::rule_op{ 'c', mod::data::rule.lenovo } )
+      .add_back( " > 自定义 ", mod::rule_op{ 'c', mod::data::rule.customized } )
+      .add_back( "\n[恢复]\n" )
+      .add_back( " > 极域电子教室 ", mod::rule_op{ 'r', mod::data::rule.mythware } )
+      .add_back( " > 联想云教室 ", mod::rule_op{ 'r', mod::data::rule.lenovo } )
+      .add_back( " > 自定义 ", mod::rule_op{ 'r', mod::data::rule.customized } )
       .set_console(
         CODE_PAGE,
         WINDOW_TITLE,
@@ -126,19 +126,19 @@ INIT:
     if ( config_data.front_show_window ) {
         std::thread{ mod::front_show_window }.detach();
     }
-    ui.add( "                    [ 主  页 ]\n\n" );
+    ui.add_back( "                    [ 主  页 ]\n\n" );
     if ( config_error ) {
-        ui.add( " (!) 参数错误.\n" );
+        ui.add_back( " (!) 参数错误.\n" );
     }
-    ui.add( " < 退出 ", mod::quit, CONSOLE_TEXT_RED_WHITE )
-      .add( " > 信息 ", mod::info )
-      .add( " > 命令提示符 ", mod::cmd )
-      .add( "\n[破解]\n" )
-      .add( " > 极域电子教室 ", mod::rule_op{ 'c', mod::rule.mythware } )
-      .add( " > 联想云教室 ", mod::rule_op{ 'c', mod::rule.lenovo } )
-      .add( "\n[恢复]\n" )
-      .add( " > 极域电子教室 ", mod::rule_op{ 'r', mod::rule.mythware } )
-      .add( " > 联想云教室 ", mod::rule_op{ 'r', mod::rule.lenovo } )
+    ui.add_back( " < 退出 ", mod::quit, CONSOLE_TEXT_RED_WHITE )
+      .add_back( " > 信息 ", mod::info )
+      .add_back( " > 命令提示符 ", mod::cmd )
+      .add_back( "\n[破解]\n" )
+      .add_back( " > 极域电子教室 ", mod::rule_op{ 'c', mod::rule.mythware } )
+      .add_back( " > 联想云教室 ", mod::rule_op{ 'c', mod::rule.lenovo } )
+      .add_back( "\n[恢复]\n" )
+      .add_back( " > 极域电子教室 ", mod::rule_op{ 'r', mod::rule.mythware } )
+      .add_back( " > 联想云教室 ", mod::rule_op{ 'r', mod::rule.lenovo } )
       .show()
       .lock( false, false );
     if ( config_data.translucent_window ) {
