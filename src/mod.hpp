@@ -60,15 +60,15 @@ namespace mod {
         }
         return is_admin;
     }
-    inline auto quit( console_ui::fn_args )
-    {
-        return FUNC_EXIT;
-    }
     inline auto relaunch_as_admin( console_ui::fn_args )
     {
         char path[ MAX_PATH ]{};
         GetModuleFileNameA( nullptr, path, MAX_PATH );
         ShellExecuteA( nullptr, "runas", path, nullptr, nullptr, SW_SHOWNORMAL );
+        return FUNC_EXIT;
+    }
+    inline auto quit( console_ui::fn_args )
+    {
         return FUNC_EXIT;
     }
     inline auto info( console_ui::fn_args )
@@ -116,7 +116,7 @@ namespace mod {
               ( data::config[ 1 ].state ) ? ( 230 ) : ( 255 ) );
             return FUNC_BACK;
         } };
-        class exec_cmd {
+        class exec_cmd final {
           private:
             const char *const cmd_;
           public:
