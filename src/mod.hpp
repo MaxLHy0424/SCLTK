@@ -15,7 +15,7 @@ namespace mod {
 #ifdef _NEXT
     struct config_data_node final {
         const char *const name;
-        bool state;
+        bool setting;
     };
     struct rule_data_node final {
         std::vector< std::string > exe, svc;
@@ -100,8 +100,8 @@ namespace mod {
               30,
               true,
               false,
-              ( mod::data::config[ 1 ].state == true ) ? ( true ) : ( false ),
-              ( mod::data::config[ 1 ].state == true ) ? ( 230 ) : ( 255 ) );
+              ( mod::data::config[ 1 ].setting == true ) ? ( true ) : ( false ),
+              ( mod::data::config[ 1 ].setting == true ) ? ( 230 ) : ( 255 ) );
             SetConsoleScreenBufferSize(
               GetStdHandle( STD_OUTPUT_HANDLE ), { WINDOW_WIDTH * 2, SHRT_MAX - 1 } );
             system( "cmd" );
@@ -112,8 +112,8 @@ namespace mod {
               WINDOW_HEIGHT,
               true,
               false,
-              ( mod::data::config[ 1 ].state == true ) ? ( true ) : ( false ),
-              ( mod::data::config[ 1 ].state == true ) ? ( 230 ) : ( 255 ) );
+              ( mod::data::config[ 1 ].setting == true ) ? ( true ) : ( false ),
+              ( mod::data::config[ 1 ].setting == true ) ? ( 230 ) : ( 255 ) );
             return FUNC_BACK;
         } };
         class exec_cmd final {
@@ -198,7 +198,7 @@ namespace mod {
                         }
                         for ( auto &item : data::config ) {
                             if ( line == item.name ) {
-                                item.state = true;
+                                item.setting = true;
                             }
                         }
                         break;
@@ -224,7 +224,7 @@ namespace mod {
                 std::string text;
                 text.append( "[settings]\n" );
                 for ( const auto &item : data::config ) {
-                    if ( item.state == true ) {
+                    if ( item.setting == true ) {
                         text.append( item.name ).push_back( '\n' );
                     }
                 }
@@ -271,39 +271,39 @@ namespace mod {
               .add( " > 启用 ",
                     []( console_ui::fn_args )
             {
-                data::config[ 0 ].state = true;
+                data::config[ 0 ].setting = true;
                 return FUNC_BACK;
             } )
               .add( " > 禁用 (默认) ",
                     []( console_ui::fn_args )
             {
-                data::config[ 0 ].state = false;
+                data::config[ 0 ].setting = false;
                 return FUNC_BACK;
             } )
               .add( "\n[增强窗口 (下次启动时生效)]\n" )
               .add( " > 启用 ",
                     []( console_ui::fn_args )
             {
-                data::config[ 1 ].state = true;
+                data::config[ 1 ].setting = true;
                 return FUNC_BACK;
             } )
               .add( " > 禁用 (默认) ",
                     []( console_ui::fn_args )
             {
-                data::config[ 1 ].state = false;
+                data::config[ 1 ].setting = false;
                 return FUNC_BACK;
             } )
               .add( "\n[修复模式 (下次启动时生效)]\n" )
               .add( " > 启用 ",
                     []( console_ui::fn_args )
             {
-                data::config[ 2 ].state = true;
+                data::config[ 2 ].setting = true;
                 return FUNC_BACK;
             } )
               .add( " > 禁用 (默认) ",
                     []( console_ui::fn_args )
             {
-                data::config[ 2 ].state = false;
+                data::config[ 2 ].setting = false;
                 return FUNC_BACK;
             } )
               .show();
@@ -344,7 +344,7 @@ namespace mod {
             std::string cmd;
             switch ( mode_ ) {
                 case 'c' : {
-                    if ( data::config[ 0 ].state == true ) {
+                    if ( data::config[ 0 ].setting == true ) {
                         for ( const auto &item : rule_data_.exe ) {
                             cmd
                               .append(
@@ -373,7 +373,7 @@ namespace mod {
                     break;
                 }
                 case 'r' : {
-                    if ( data::config[ 0 ].state == true ) {
+                    if ( data::config[ 0 ].setting == true ) {
                         for ( const auto &item : rule_data_.exe ) {
                             cmd
                               .append(
