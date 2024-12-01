@@ -86,13 +86,13 @@ class console_ui final {
           const char *const _text,
           const short _default_color,
           const short _highlight_color,
-          const callback_ _fn )
+          const callback_ _func )
           : text{ _text }
           , default_color{ _default_color }
           , highlight_color{ _highlight_color }
           , last_color{ CONSOLE_TEXT_WHITE_WHITE }
           , position{}
-          , func{ _fn }
+          , func{ _func }
         { }
         explicit ui_item_( const ui_item_ &_obj )
           : text{ _obj.text }
@@ -292,38 +292,39 @@ class console_ui final {
     }
     auto &add(
       const char *const _text,
-      const callback_ _fn          = nullptr,
+      const callback_ _func        = nullptr,
       const short _highlight_color = CONSOLE_TEXT_BLUE_WHITE,
       const short _default_color   = CONSOLE_TEXT_WHITE_WHITE )
     {
         item_.emplace_back( ui_item_{
-          _text, _default_color, ( _fn == nullptr ) ? ( _default_color ) : ( _highlight_color ),
-          _fn } );
+          _text, _default_color, ( _func == nullptr ) ? ( _default_color ) : ( _highlight_color ),
+          _func } );
         return *this;
     }
     auto &insert(
       const size_type_ _index,
       const char *const _text,
-      const callback_ _fn          = nullptr,
+      const callback_ _func        = nullptr,
       const short _highlight_color = CONSOLE_TEXT_BLUE_WHITE,
       const short _default_color   = CONSOLE_TEXT_WHITE_WHITE )
     {
         item_.emplace(
           item_.begin() + _index,
           ui_item_{
-            _text, _default_color, ( _fn == nullptr ) ? ( _default_color ) : ( _highlight_color ),
-            _fn } );
+            _text, _default_color, ( _func == nullptr ) ? ( _default_color ) : ( _highlight_color ),
+            _func } );
         return *this;
     }
     auto &edit(
       const size_type_ _index,
       const char *const _text,
-      const callback_ _fn          = nullptr,
+      const callback_ _func        = nullptr,
       const short _highlight_color = CONSOLE_TEXT_BLUE_WHITE,
       const short _default_color   = CONSOLE_TEXT_WHITE_WHITE )
     {
         item_.at( _index ) = ui_item_{
-          _text, _default_color, ( _fn == nullptr ) ? ( _default_color ) : ( _highlight_color ), _fn };
+          _text, _default_color, ( _func == nullptr ) ? ( _default_color ) : ( _highlight_color ),
+          _func };
         return *this;
     }
     auto &revert()
