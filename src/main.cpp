@@ -10,7 +10,7 @@ auto main() -> int
       .lock( true, true );
     std::print( ":: 检测运行权限.\n" );
     if ( !mod::is_run_as_admin() ) {
-        std::print( ":: 检测管理员权限.\n" );
+        std::print( ":: 申请管理员权限.\n" );
         mod::relaunch_as_admin( console_ui::fn_args{} );
         return 1;
     }
