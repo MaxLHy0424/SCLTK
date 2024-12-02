@@ -65,18 +65,18 @@ namespace mod {
         char path[ MAX_PATH ]{};
         GetModuleFileNameA( nullptr, path, MAX_PATH );
         ShellExecuteA( nullptr, "runas", path, nullptr, nullptr, SW_SHOWNORMAL );
-        return FUNC_EXIT;
+        return FN_EXIT;
     }
     inline auto quit( console_ui::fn_args )
     {
-        return FUNC_EXIT;
+        return FN_EXIT;
     }
     inline auto info( console_ui::fn_args )
     {
         auto view_repo_webpage{ []( console_ui::fn_args )
         {
             ShellExecuteA( nullptr, "open", INFO_REPO_URL, nullptr, nullptr, SW_SHOWNORMAL );
-            return FUNC_BACK;
+            return FN_BACK;
         } };
         console_ui ui;
         ui.add( "                    [ 信  息 ]\n\n" )
@@ -86,7 +86,7 @@ namespace mod {
           .add( " " INFO_REPO_URL, std::move( view_repo_webpage ) )
           .add( "\n[许可证]\n\n " INFO_LICENSE "\n\n (C) 2023 " INFO_DEVELOPER "." )
           .show();
-        return FUNC_BACK;
+        return FN_BACK;
     }
     inline auto toolkit( console_ui::fn_args )
     {
@@ -114,7 +114,7 @@ namespace mod {
               false,
               ( mod::data::config[ 1 ].setting == true ) ? ( true ) : ( false ),
               ( mod::data::config[ 1 ].setting == true ) ? ( 230 ) : ( 255 ) );
-            return FUNC_BACK;
+            return FN_BACK;
         } };
         class exec_cmd final {
           private:
@@ -125,7 +125,7 @@ namespace mod {
             {
                 std::print( ":: 执行命令.\n{}\n", std::string( WINDOW_WIDTH, '-' ) );
                 system( cmd_ );
-                return FUNC_BACK;
+                return FN_BACK;
             }
             explicit exec_cmd( const char *const _cmd )
               : cmd_{ _cmd }
@@ -150,7 +150,7 @@ namespace mod {
           .add( " > 恢复 Microsoft Edge 离线游戏 ", exec_cmd{ std::move( cmds[ 2 ] ) } )
           .add( " > 恢复 USB 设备访问 ", exec_cmd{ std::move( cmds[ 3 ] ) } )
           .show();
-        return FUNC_BACK;
+        return FN_BACK;
     }
     class config_op final {
       private:
@@ -243,7 +243,7 @@ namespace mod {
                 std::ofstream config_file{ data::config_file_name, std::ios::out | std::ios::trunc };
                 config_file.write( text.c_str(), text.size() );
                 config_file.close();
-                return FUNC_EXIT;
+                return FN_EXIT;
             } };
             auto open_config_file{ []( console_ui::fn_args )
             {
@@ -251,7 +251,7 @@ namespace mod {
                     std::print( ":: 打开配置文件.\n" );
                     ShellExecuteA(
                       nullptr, "open", data::config_file_name, nullptr, nullptr, SW_SHOWNORMAL );
-                    return FUNC_BACK;
+                    return FN_BACK;
                 }
                 std::print(
                   "                    [ 配  置 ]\n\n\n"
@@ -260,7 +260,7 @@ namespace mod {
                     std::print( " {}s 后返回.\r", i );
                     Sleep( 1000 );
                 }
-                return FUNC_BACK;
+                return FN_BACK;
             } };
             console_ui ui;
             ui.add( "                    [ 配  置 ]\n\n" )
@@ -272,42 +272,42 @@ namespace mod {
                     []( console_ui::fn_args )
             {
                 data::config[ 0 ].setting = true;
-                return FUNC_BACK;
+                return FN_BACK;
             } )
               .add( " > 禁用 (默认) ",
                     []( console_ui::fn_args )
             {
                 data::config[ 0 ].setting = false;
-                return FUNC_BACK;
+                return FN_BACK;
             } )
               .add( "\n[增强窗口 (下次启动时生效)]\n" )
               .add( " > 启用 ",
                     []( console_ui::fn_args )
             {
                 data::config[ 1 ].setting = true;
-                return FUNC_BACK;
+                return FN_BACK;
             } )
               .add( " > 禁用 (默认) ",
                     []( console_ui::fn_args )
             {
                 data::config[ 1 ].setting = false;
-                return FUNC_BACK;
+                return FN_BACK;
             } )
               .add( "\n[修复模式 (下次启动时生效)]\n" )
               .add( " > 启用 ",
                     []( console_ui::fn_args )
             {
                 data::config[ 2 ].setting = true;
-                return FUNC_BACK;
+                return FN_BACK;
             } )
               .add( " > 禁用 (默认) ",
                     []( console_ui::fn_args )
             {
                 data::config[ 2 ].setting = false;
-                return FUNC_BACK;
+                return FN_BACK;
             } )
               .show();
-            return FUNC_BACK;
+            return FN_BACK;
         }
       public:
         auto operator()( console_ui::fn_args ) const
@@ -316,7 +316,7 @@ namespace mod {
                 case 'r' : load_(); break;
                 case 'w' : edit_(); break;
             }
-            return FUNC_BACK;
+            return FN_BACK;
         }
         explicit config_op( const char _mode )
           : mode_{ _mode }
@@ -338,7 +338,7 @@ namespace mod {
                     std::print( " {}s 后返回.\r", i );
                     Sleep( 1000 );
                 }
-                return FUNC_BACK;
+                return FN_BACK;
             }
             std::print( ":: 生成并执行命令.\n{}\n", std::string( WINDOW_WIDTH, '-' ) );
             std::string cmd;
@@ -397,7 +397,7 @@ namespace mod {
                     break;
                 }
             }
-            return FUNC_BACK;
+            return FN_BACK;
         }
         explicit rule_op( const char _mode, const rule_data_node &_rule_data )
           : mode_{ _mode }
@@ -440,7 +440,7 @@ namespace mod {
     }
     inline auto quit( console_ui::fn_args )
     {
-        return FUNC_EXIT;
+        return FN_EXIT;
     }
     inline auto init()
     {
@@ -481,7 +481,7 @@ namespace mod {
             "\n[名称]\n\n " INFO_NAME "\n\n[版本]\n\n " INFO_VERSION "\n\n[仓库]\n\n " INFO_REPO_URL
             "\n\n[许可证]\n\n " INFO_LICENSE "\n\n (C) 2023 " INFO_DEVELOPER "." )
           .show();
-        return FUNC_BACK;
+        return FN_BACK;
     }
     inline auto cmd( console_ui::fn_args _args )
     {
@@ -490,7 +490,7 @@ namespace mod {
         if ( !config_data.window_ctrls ) {
             init();
         }
-        return FUNC_BACK;
+        return FN_BACK;
     }
     class rule_op final {
       private:
@@ -506,7 +506,7 @@ namespace mod {
                     std::printf( " %hus 后返回.\r", i );
                     Sleep( 1000 );
                 }
-                return FUNC_BACK;
+                return FN_BACK;
             }
             std::puts( ":: 生成命令." );
             std::string cmd;
@@ -543,7 +543,7 @@ namespace mod {
             std::printf( ":: 执行命令.\n%s\n", std::string( 50, '-' ).c_str() );
             system( cmd.c_str() );
             std::printf( "%s\n::释放内存.", std::string( 50, '-' ).c_str() );
-            return FUNC_BACK;
+            return FN_BACK;
         }
         explicit rule_op( const char _mode, const rule_data_node &_rule )
           : mode_{ _mode }
