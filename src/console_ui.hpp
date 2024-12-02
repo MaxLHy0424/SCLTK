@@ -50,7 +50,7 @@ class console_ui final {
         short default_color, highlight_color, last_color;
         COORD position;
         fn_callback fn;
-        auto set_color( short _color )
+        auto set_color( const short _color )
         {
             SetConsoleTextAttribute( GetStdHandle( STD_OUTPUT_HANDLE ), _color );
             last_color = _color;
