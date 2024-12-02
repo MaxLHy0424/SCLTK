@@ -92,7 +92,7 @@ class console_ui final {
           , highlight_color{ _highlight_color }
           , last_color{ CONSOLE_TEXT_WHITE_WHITE }
           , position{}
-          , func{ _func }
+          , func{ std::move( _func ) }
         { }
         explicit ui_item_( const ui_item_ &_obj )
           : text{ _obj.text }
@@ -298,7 +298,7 @@ class console_ui final {
     {
         item_.emplace_back( ui_item_{
           _text, _default_color, ( _func == nullptr ) ? ( _default_color ) : ( _highlight_color ),
-          _func } );
+          std::move( _func ) } );
         return *this;
     }
     auto &insert(
@@ -312,7 +312,7 @@ class console_ui final {
           item_.begin() + _index,
           ui_item_{
             _text, _default_color, ( _func == nullptr ) ? ( _default_color ) : ( _highlight_color ),
-            _func } );
+            std::move( _func ) } );
         return *this;
     }
     auto &edit(
@@ -324,7 +324,7 @@ class console_ui final {
     {
         item_.at( _index ) = ui_item_{
           _text, _default_color, ( _func == nullptr ) ? ( _default_color ) : ( _highlight_color ),
-          _func };
+          std::move( _func ) };
         return *this;
     }
     auto &revert()
