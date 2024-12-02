@@ -26,7 +26,7 @@ namespace mod {
           {"enhanced_window", false},
           {"repair_mode",     false}
         };
-        inline constexpr char *const config_file_name{ "config.ini" };
+        inline constexpr const char *const config_file_name{ "config.ini" };
         inline struct {
             const rule_data_node mythware, lenovo;
             rule_data_node customized;
@@ -135,7 +135,7 @@ namespace mod {
             { }
             ~exec_cmd() { }
         };
-        constexpr char *const cmds[]{
+        constexpr const char *const cmds[]{
           R"(taskkill /f /im explorer.exe && timeout /t 3 /nobreak && start C:\Windows\explorer.exe)",
           R"(reg delete "HKLM\SOFTWARE\Policies\Google\Chrome" /f /v AllowDinosaurEasterEgg)",
           R"(reg delete "HKLM\SOFTWARE\Policies\Microsoft\Edge" /f /v AllowSurfGame)",
