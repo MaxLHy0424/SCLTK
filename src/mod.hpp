@@ -96,14 +96,13 @@ namespace mod {
             _args.ui->set_console(
               CODE_PAGE,
               WINDOW_TITLE,
-              125,
+              120,
               30,
               true,
               false,
               ( mod::data::config[ 1 ].setting == true ) ? ( true ) : ( false ),
               ( mod::data::config[ 1 ].setting == true ) ? ( 230 ) : ( 255 ) );
-            SetConsoleScreenBufferSize(
-              GetStdHandle( STD_OUTPUT_HANDLE ), { WINDOW_WIDTH * 2, SHRT_MAX - 1 } );
+            SetConsoleScreenBufferSize( GetStdHandle( STD_OUTPUT_HANDLE ), { 120, SHRT_MAX - 1 } );
             system( "cmd" );
             _args.ui->set_console(
               CODE_PAGE,
