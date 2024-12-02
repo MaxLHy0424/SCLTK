@@ -348,8 +348,8 @@ class console_ui final {
         edit_console_attrs_( v_lock_text );
         MOUSE_EVENT_RECORD mouse_event;
         init_pos_();
-        bool is_exit{};
-        while ( !is_exit ) {
+        auto fn_returned_value{ FN_BACK };
+        while ( fn_returned_value == FN_BACK ) {
             mouse_event = wait_mouse_event_();
             switch ( mouse_event.dwEventFlags ) {
                 case CONSOLE_MOUSE_MOVE : refresh_( mouse_event.dwMousePosition ); break;
@@ -357,7 +357,7 @@ class console_ui final {
                     if ( ( mouse_event.dwButtonState )
                          && ( mouse_event.dwButtonState != CONSOLE_MOUSE_WHEEL ) )
                     {
-                        is_exit = call_fn_( mouse_event );
+                        fn_returned_value = call_fn_( mouse_event );
                     }
                     break;
                 }
