@@ -407,7 +407,7 @@ namespace mod {
     };
 #else
     struct rule_data_node final {
-        std::vector< const char *const > exe, svc;
+        std::vector< const char * > exe, svc;
     };
     inline struct {
         const rule_data_node mythware, lenovo;
