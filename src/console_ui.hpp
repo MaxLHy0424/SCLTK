@@ -377,7 +377,7 @@ class console_ui final {
       , width_{}
       , height_{}
     { }
-    explicit console_ui( const console_ui &&_obj )
+    explicit console_ui( console_ui &&_obj )
       : item_{ std::move( _obj.item_ ) }
       , width_{}
       , height_{}
