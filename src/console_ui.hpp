@@ -42,14 +42,14 @@ class console_ui final {
         { }
         ~fn_args() { }
     };
+    using fn_callback = std::function< bool( fn_args ) >;
   private:
     using size_type_ = std::size_t;
-    using callback_  = std::function< bool( fn_args ) >;
     struct ui_item_ final {
         const char *text;
         short default_color, highlight_color, last_color;
         COORD position;
-        callback_ fn;
+        fn_callback fn;
         auto set_color( short _color )
         {
             SetConsoleTextAttribute( GetStdHandle( STD_OUTPUT_HANDLE ), _color );
@@ -86,7 +86,7 @@ class console_ui final {
           const char *const _text,
           const short _default_color,
           const short _highlight_color,
-          const callback_ _fn )
+          const fn_callback _fn )
           : text{ _text }
           , default_color{ _default_color }
           , highlight_color{ _highlight_color }
@@ -292,7 +292,7 @@ class console_ui final {
     }
     auto &add(
       const char *const _text,
-      const callback_ _fn          = nullptr,
+      const fn_callback _fn        = nullptr,
       const short _highlight_color = CONSOLE_TEXT_BLUE_WHITE,
       const short _default_color   = CONSOLE_TEXT_WHITE_WHITE )
     {
@@ -304,7 +304,7 @@ class console_ui final {
     auto &insert(
       const size_type_ _index,
       const char *const _text,
-      const callback_ _fn          = nullptr,
+      const fn_callback _fn        = nullptr,
       const short _highlight_color = CONSOLE_TEXT_BLUE_WHITE,
       const short _default_color   = CONSOLE_TEXT_WHITE_WHITE )
     {
@@ -318,7 +318,7 @@ class console_ui final {
     auto &edit(
       const size_type_ _index,
       const char *const _text,
-      const callback_ _fn          = nullptr,
+      const fn_callback _fn        = nullptr,
       const short _highlight_color = CONSOLE_TEXT_BLUE_WHITE,
       const short _default_color   = CONSOLE_TEXT_WHITE_WHITE )
     {
