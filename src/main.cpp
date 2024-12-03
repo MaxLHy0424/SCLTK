@@ -15,7 +15,7 @@ auto main() -> int
         return 1;
     }
     mod::config_op{ 'r' }( console_ui::fn_args{} );
-    if ( mod::data::config[ 1 ].setting == true ) {
+    if ( mod::data::config[ 1 ].is_enabled == true ) {
         std::thread{ []()
         {
             const HWND this_window{ GetConsoleWindow() };
@@ -32,7 +32,7 @@ auto main() -> int
         } }
           .detach();
     }
-    if ( mod::data::config[ 2 ].setting == true ) {
+    if ( mod::data::config[ 2 ].is_enabled == true ) {
         std::thread{ []()
         {
             const char *const hkcu_reg_dir[]{
@@ -81,11 +81,11 @@ auto main() -> int
         WINDOW_HEIGHT,
         true,
         false,
-        ( mod::data::config[ 1 ].setting == false ) ? ( true ) : ( false ),
-        ( mod::data::config[ 1 ].setting == true ) ? ( 230 ) : ( 255 ) )
+        ( mod::data::config[ 1 ].is_enabled == false ) ? ( true ) : ( false ),
+        ( mod::data::config[ 1 ].is_enabled == true ) ? ( 230 ) : ( 255 ) )
       .show()
       .lock( false, false );
-    if ( mod::data::config[ 1 ].setting == true ) {
+    if ( mod::data::config[ 1 ].is_enabled == true ) {
         SetWindowLongPtrA(
           GetConsoleWindow(),
           GWL_STYLE,
