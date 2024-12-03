@@ -40,6 +40,12 @@ class console_ui final {
           , event_flag{ _obj.event_flag }
           , ui{ _obj.ui }
         { }
+        explicit fn_args( fn_args &&_obj )
+          : button_state{ std::move( _obj.button_state ) }
+          , ctrl_key_state{ std::move( _obj.ctrl_key_state ) }
+          , event_flag{ std::move( _obj.event_flag ) }
+          , ui{ std::move( _obj.ui ) }
+        { }
         ~fn_args() { }
     };
     using fn_callback = std::function< bool( fn_args ) >;
@@ -101,6 +107,14 @@ class console_ui final {
           , last_color{ _obj.last_color }
           , position{ _obj.position }
           , fn{ _obj.fn }
+        { }
+        explicit ui_item_( ui_item_ &&_obj )
+          : text{ std::move( _obj.text ) }
+          , default_color{ std::move( _obj.default_color ) }
+          , highlight_color{ std::move( _obj.highlight_color ) }
+          , last_color{ std::move( _obj.last_color ) }
+          , position{ std::move( _obj.position ) }
+          , fn{ std::move( _obj.fn ) }
         { }
         ~ui_item_() { }
     };
