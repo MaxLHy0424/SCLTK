@@ -81,7 +81,7 @@ auto main() -> int
         WINDOW_HEIGHT,
         true,
         false,
-        ( mod::data::config[ 1 ].setting == true ) ? ( true ) : ( false ),
+        ( mod::data::config[ 1 ].setting == false ) ? ( true ) : ( false ),
         ( mod::data::config[ 1 ].setting == true ) ? ( 230 ) : ( 255 ) )
       .show()
       .lock( false, false );

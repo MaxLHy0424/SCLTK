@@ -100,7 +100,7 @@ namespace mod {
               30,
               true,
               false,
-              ( mod::data::config[ 1 ].setting == true ) ? ( true ) : ( false ),
+              ( mod::data::config[ 1 ].setting == false ) ? ( true ) : ( false ),
               ( mod::data::config[ 1 ].setting == true ) ? ( 230 ) : ( 255 ) );
             SetConsoleScreenBufferSize( GetStdHandle( STD_OUTPUT_HANDLE ), { 120, SHRT_MAX - 1 } );
             system( "cmd" );
@@ -111,7 +111,7 @@ namespace mod {
               WINDOW_HEIGHT,
               true,
               false,
-              ( mod::data::config[ 1 ].setting == true ) ? ( true ) : ( false ),
+              ( mod::data::config[ 1 ].setting == false ) ? ( true ) : ( false ),
               ( mod::data::config[ 1 ].setting == true ) ? ( 230 ) : ( 255 ) );
             return FN_BACK;
         } };
