@@ -132,6 +132,9 @@ namespace mod {
             explicit exec_cmd( const exec_cmd &_obj )
               : cmd_{ _obj.cmd_ }
             { }
+            explicit exec_cmd( exec_cmd &&_obj )
+              : cmd_{ std::move( _obj.cmd_ ) }
+            { }
             ~exec_cmd() { }
         };
         constexpr const char *const cmds[]{
@@ -321,6 +324,14 @@ namespace mod {
           : mode_{ _mode }
           , is_reload_{}
         { }
+        explicit config_op( const config_op &_obj )
+          : mode_{ _obj.mode_ }
+          , is_reload_{ _obj.is_reload_ }
+        { }
+        explicit config_op( config_op &&_obj )
+          : mode_{ std::move( _obj.mode_ ) }
+          , is_reload_{ std::move( _obj.is_reload_ ) }
+        { }
         ~config_op() { }
     };
     class rule_op final {
@@ -401,6 +412,14 @@ namespace mod {
         explicit rule_op( const char _mode, const rule_data_node &_rule_data )
           : mode_{ _mode }
           , rule_data_{ _rule_data }
+        { }
+        explicit rule_op( const rule_op &_obj )
+          : mode_{ _obj.mode_ }
+          , rule_data_{ _obj.rule_data_ }
+        { }
+        explicit rule_op( rule_op &&_obj )
+          : mode_{ std::move( _obj.mode_ ) }
+          , rule_data_{ std::move( _obj.rule_data_ ) }
         { }
         ~rule_op() { }
     };
