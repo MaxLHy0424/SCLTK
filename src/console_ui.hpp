@@ -121,11 +121,11 @@ class console_ui final {
     enum console_attrs_ { v_normal = 0, v_lock_text = 1, v_lock_all = 2 };
     std::vector< ui_item_ > item_;
     short width_, height_;
-    auto show_cursor_( const bool _mode )
+    auto show_cursor_( const bool _is_show )
     {
         CONSOLE_CURSOR_INFO cursor;
         GetConsoleCursorInfo( GetStdHandle( STD_OUTPUT_HANDLE ), &cursor );
-        cursor.bVisible = _mode;
+        cursor.bVisible = _is_show;
         SetConsoleCursorInfo( GetStdHandle( STD_OUTPUT_HANDLE ), &cursor );
     }
     auto edit_console_attrs_( const console_attrs_ _mode )
