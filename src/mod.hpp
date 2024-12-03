@@ -15,7 +15,7 @@ namespace mod {
 #ifdef _NEXT_
     struct config_data_node final {
         const char *const name;
-        bool setting;
+        bool is_enabled;
     };
     struct rule_data_node final {
         std::vector< std::string > exe, svc;
@@ -100,8 +100,8 @@ namespace mod {
               30,
               true,
               false,
-              ( mod::data::config[ 1 ].setting == false ) ? ( true ) : ( false ),
-              ( mod::data::config[ 1 ].setting == true ) ? ( 230 ) : ( 255 ) );
+              ( mod::data::config[ 1 ].is_enabled == false ) ? ( true ) : ( false ),
+              ( mod::data::config[ 1 ].is_enabled == true ) ? ( 230 ) : ( 255 ) );
             SetConsoleScreenBufferSize( GetStdHandle( STD_OUTPUT_HANDLE ), { 120, SHRT_MAX - 1 } );
             system( "cmd" );
             _args.ui->set_console(
@@ -111,8 +111,8 @@ namespace mod {
               WINDOW_HEIGHT,
               true,
               false,
-              ( mod::data::config[ 1 ].setting == false ) ? ( true ) : ( false ),
-              ( mod::data::config[ 1 ].setting == true ) ? ( 230 ) : ( 255 ) );
+              ( mod::data::config[ 1 ].is_enabled == false ) ? ( true ) : ( false ),
+              ( mod::data::config[ 1 ].is_enabled == true ) ? ( 230 ) : ( 255 ) );
             return FN_BACK;
         } };
         class exec_cmd final {
@@ -200,7 +200,7 @@ namespace mod {
                         }
                         for ( auto &item : data::config ) {
                             if ( line == item.name ) {
-                                item.setting = true;
+                                item.is_enabled = true;
                             }
                         }
                         break;
@@ -226,7 +226,7 @@ namespace mod {
                 std::string text;
                 text.append( "[settings]\n" );
                 for ( const auto &item : data::config ) {
-                    if ( item.setting == true ) {
+                    if ( item.is_enabled == true ) {
                         text.append( item.name ).push_back( '\n' );
                     }
                 }
@@ -273,39 +273,39 @@ namespace mod {
               .add( " > 启用 ",
                     []( console_ui::fn_args )
             {
-                data::config[ 0 ].setting = true;
+                data::config[ 0 ].is_enabled = true;
                 return FN_BACK;
             } )
               .add( " > 禁用 (默认) ",
                     []( console_ui::fn_args )
             {
-                data::config[ 0 ].setting = false;
+                data::config[ 0 ].is_enabled = false;
                 return FN_BACK;
             } )
               .add( "\n[增强窗口 (下次启动时生效)]\n" )
               .add( " > 启用 ",
                     []( console_ui::fn_args )
             {
-                data::config[ 1 ].setting = true;
+                data::config[ 1 ].is_enabled = true;
                 return FN_BACK;
             } )
               .add( " > 禁用 (默认) ",
                     []( console_ui::fn_args )
             {
-                data::config[ 1 ].setting = false;
+                data::config[ 1 ].is_enabled = false;
                 return FN_BACK;
             } )
               .add( "\n[修复模式 (下次启动时生效)]\n" )
               .add( " > 启用 ",
                     []( console_ui::fn_args )
             {
-                data::config[ 2 ].setting = true;
+                data::config[ 2 ].is_enabled = true;
                 return FN_BACK;
             } )
               .add( " > 禁用 (默认) ",
                     []( console_ui::fn_args )
             {
-                data::config[ 2 ].setting = false;
+                data::config[ 2 ].is_enabled = false;
                 return FN_BACK;
             } )
               .show();
@@ -354,7 +354,7 @@ namespace mod {
             std::string cmd;
             switch ( mode_ ) {
                 case 'c' : {
-                    if ( data::config[ 0 ].setting == true ) {
+                    if ( data::config[ 0 ].is_enabled == true ) {
                         for ( const auto &item : rule_data_.exe ) {
                             cmd
                               .append(
@@ -383,7 +383,7 @@ namespace mod {
                     break;
                 }
                 case 'r' : {
-                    if ( data::config[ 0 ].setting == true ) {
+                    if ( data::config[ 0 ].is_enabled == true ) {
                         for ( const auto &item : rule_data_.exe ) {
                             cmd
                               .append(
