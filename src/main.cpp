@@ -35,11 +35,11 @@ auto main() -> int
     if ( mod::data::config[ 2 ].setting == true ) {
         std::thread{ []()
         {
-            constexpr const char *const hkcu_reg_dir[]{
+            const char *const hkcu_reg_dir[]{
               R"(Software\Policies\Microsoft\Windows\System)",
               R"(Software\Microsoft\Windows\CurrentVersion\Policies\System)",
               R"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)" };
-            constexpr const char *const exe[]{
+            const char *const exe[]{
               "mode.com", "chcp.com",    "reg.exe",     "sc.exe",      "taskkill.exe", "net.exe",
               "cmd.exe",  "taskmgr.exe", "perfmon.exe", "regedit.exe", "mmc.exe" };
             std::string path;
