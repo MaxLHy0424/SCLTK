@@ -49,8 +49,8 @@ class console_ui final {
         ~fn_args() { }
     };
     using fn_callback = std::function< bool( fn_args ) >;
+    using size_type   = std::size_t;
   private:
-    using size_type_ = std::size_t;
     struct ui_item_ final {
         const char *text;
         short default_color, highlight_color, last_color;
@@ -316,7 +316,7 @@ class console_ui final {
         return *this;
     }
     auto &insert(
-      const size_type_ _index,
+      const size_type _index,
       const char *const _text,
       const fn_callback _fn        = nullptr,
       const short _highlight_color = CONSOLE_TEXT_BLUE_WHITE,
@@ -330,7 +330,7 @@ class console_ui final {
         return *this;
     }
     auto &edit(
-      const size_type_ _index,
+      const size_type _index,
       const char *const _text,
       const fn_callback _fn        = nullptr,
       const short _highlight_color = CONSOLE_TEXT_BLUE_WHITE,
@@ -346,7 +346,7 @@ class console_ui final {
         item_.pop_back();
         return *this;
     }
-    auto &remove( const size_type_ _begin, const size_type_ _end )
+    auto &remove( const size_type _begin, const size_type _end )
     {
         item_.erase( item_.begin() + _begin, item_.begin() + _end );
         return *this;
