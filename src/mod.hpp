@@ -137,7 +137,7 @@ namespace mod {
             { }
             ~exec_cmd() { }
         };
-        const char *const cmds[]{
+        const char *const cmd[]{
           R"(taskkill /f /im explorer.exe && timeout /t 3 /nobreak && start C:\Windows\explorer.exe)",
           R"(reg delete "HKLM\SOFTWARE\Policies\Google\Chrome" /f /v AllowDinosaurEasterEgg)",
           R"(reg delete "HKLM\SOFTWARE\Policies\Microsoft\Edge" /f /v AllowSurfGame)",
@@ -147,10 +147,10 @@ namespace mod {
           .add( " < 返回 ", quit, CONSOLE_TEXT_RED_WHITE )
           .add( " > 命令提示符 ", std::move( launch_cmd ) )
           .add( "\n[快捷操作]\n" )
-          .add( " > 重启资源管理器 ", exec_cmd{ std::move( cmds[ 0 ] ) } )
-          .add( " > 恢复 Google Chrome 离线游戏 ", exec_cmd{ std::move( cmds[ 1 ] ) } )
-          .add( " > 恢复 Microsoft Edge 离线游戏 ", exec_cmd{ std::move( cmds[ 2 ] ) } )
-          .add( " > 恢复 USB 设备访问 ", exec_cmd{ std::move( cmds[ 3 ] ) } )
+          .add( " > 重启资源管理器 ", exec_cmd{ std::move( cmd[ 0 ] ) } )
+          .add( " > 恢复 Google Chrome 离线游戏 ", exec_cmd{ std::move( cmd[ 1 ] ) } )
+          .add( " > 恢复 Microsoft Edge 离线游戏 ", exec_cmd{ std::move( cmd[ 2 ] ) } )
+          .add( " > 恢复 USB 设备访问 ", exec_cmd{ std::move( cmd[ 3 ] ) } )
           .show();
         return FN_BACK;
     }
