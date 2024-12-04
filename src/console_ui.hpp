@@ -323,7 +323,7 @@ class console_ui final {
       const short _default_color   = CONSOLE_TEXT_WHITE_WHITE )
     {
         item_.emplace(
-          item_.begin() + _index,
+          item_.cbegin() + _index,
           ui_item_{
             _text, _default_color, ( _fn == nullptr ) ? ( _default_color ) : ( _highlight_color ),
             std::move( _fn ) } );
@@ -348,7 +348,7 @@ class console_ui final {
     }
     auto &remove( const size_type _begin, const size_type _end )
     {
-        item_.erase( item_.begin() + _begin, item_.begin() + _end );
+        item_.erase( item_.cbegin() + _begin, item_.cbegin() + _end );
         return *this;
     }
     auto &clear()
