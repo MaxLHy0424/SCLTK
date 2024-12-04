@@ -265,8 +265,9 @@ namespace core {
                 return FN_BACK;
             } };
             console_ui ui;
-            ui.add( "                    [ 配  置 ]\n\n" )
-              .add( " (i) 相关信息可参阅文档.\n" )
+            ui.add(
+                "                    [ 配  置 ]\n\n\n"
+                " (i) 相关信息可参阅文档.\n" )
               .add( " < 同步配置并返回 ", std::move( sync ), CONSOLE_TEXT_RED_WHITE )
               .add( " > 打开配置文件 ", std::move( open_config_file ) )
               .add( "\n[增强操作]\n" )
