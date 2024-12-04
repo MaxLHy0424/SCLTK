@@ -360,7 +360,7 @@ namespace mod {
                               .append(
                                 R"(reg.exe add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\)" )
                               .append( item )
-                              .append( R"(" /f /t reg_sz /v debugger /d _)" );
+                              .append( "\" /f /t reg_sz /v debugger /d _" );
                             system( cmd.c_str() );
                             cmd.clear();
                         }
@@ -373,12 +373,12 @@ namespace mod {
                         }
                     }
                     for ( const auto &item : rule_data_.exe ) {
-                        cmd.append( R"(taskkill.exe /f /im ")" ).append( item ).append( R"(")" );
+                        cmd.append( "taskkill.exe /f /im \"" ).append( item ).append( "\"" );
                         system( cmd.c_str() );
                         cmd.clear();
                     }
                     for ( const auto &item : rule_data_.svc ) {
-                        cmd.append( R"(net.exe stop ")" ).append( item ).append( R"(" /y)" );
+                        cmd.append( "net.exe stop \"" ).append( item ).append( "\" /y" );
                         system( cmd.c_str() );
                         cmd.clear();
                     }
@@ -391,7 +391,7 @@ namespace mod {
                               .append(
                                 R"(reg.exe delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\)" )
                               .append( item )
-                              .append( R"(" /f)" );
+                              .append( "\" /f" );
                             system( cmd.c_str() );
                             cmd.clear();
                         }
@@ -402,7 +402,7 @@ namespace mod {
                         }
                     }
                     for ( const auto &item : rule_data_.svc ) {
-                        cmd.append( R"(net.exe start ")" ).append( item ).append( R"(")" );
+                        cmd.append( "net.exe start \"" ).append( item ).append( "\"" );
                         system( cmd.c_str() );
                         cmd.clear();
                     }
@@ -537,12 +537,12 @@ namespace mod {
                           .append(
                             R"(reg.exe add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\)" )
                           .append( item )
-                          .append( R"(" /f /t reg_sz /v debugger /d ? & taskkill.exe /f /im ")" )
+                          .append( "\" /f /t reg_sz /v debugger /d ? & taskkill.exe /f /im \"" )
                           .append( item )
-                          .append( R"(" & )" );
+                          .append( "\" & " );
                     }
                     for ( const auto &item : rule_.svc ) {
-                        cmd.append( R"(net.exe stop ")" ).append( item ).append( R"(" /y & )" );
+                        cmd.append( "net.exe stop \"" ).append( item ).append( "\" /y & " );
                     }
                     break;
                 }
@@ -552,10 +552,10 @@ namespace mod {
                           .append(
                             R"(reg.exe delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\)" )
                           .append( item )
-                          .append( R"(" /f & )" );
+                          .append( "\" /f & " );
                     }
                     for ( const auto &item : rule_.svc ) {
-                        cmd.append( R"(net.exe start ")" ).append( item ).append( R"(" & )" );
+                        cmd.append( "net.exe start \"" ).append( item ).append( "\" & " );
                     }
                     break;
                 }
