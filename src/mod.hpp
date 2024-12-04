@@ -103,7 +103,7 @@ namespace mod {
               ( mod::data::config[ 1 ].is_enabled == false ) ? ( true ) : ( false ),
               ( mod::data::config[ 1 ].is_enabled == true ) ? ( 230 ) : ( 255 ) );
             SetConsoleScreenBufferSize( GetStdHandle( STD_OUTPUT_HANDLE ), { 120, SHRT_MAX - 1 } );
-            system( "cmd" );
+            system( "cmd.exe" );
             _args.ui->set_console(
               CODE_PAGE,
               WINDOW_TITLE,
@@ -138,10 +138,10 @@ namespace mod {
             ~exec_cmd() { }
         };
         const char *const cmd[]{
-          R"(taskkill /f /im explorer.exe && timeout /t 3 /nobreak && start C:\Windows\explorer.exe)",
-          R"(reg delete "HKLM\SOFTWARE\Policies\Google\Chrome" /f /v AllowDinosaurEasterEgg)",
-          R"(reg delete "HKLM\SOFTWARE\Policies\Microsoft\Edge" /f /v AllowSurfGame)",
-          R"(reg add "HKLM\SYSTEM\CurrentControlSet\Services\USBSTOR" /f /t reg_dword /v Start /d 3)" };
+          R"(taskkill.exe /f /im explorer.exe && timeout /t 3 /nobreak && start C:\Windows\explorer.exe)",
+          R"(reg.exe delete "HKLM\SOFTWARE\Policies\Google\Chrome" /f /v AllowDinosaurEasterEgg)",
+          R"(reg.exe delete "HKLM\SOFTWARE\Policies\Microsoft\Edge" /f /v AllowSurfGame)",
+          R"(reg.exe add "HKLM\SYSTEM\CurrentControlSet\Services\USBSTOR" /f /t reg_dword /v Start /d 3)" };
         console_ui ui;
         ui.add( "                   [ 工 具 箱 ]\n\n" )
           .add( " < 返回 ", quit, CONSOLE_TEXT_RED_WHITE )
@@ -358,25 +358,27 @@ namespace mod {
                         for ( const auto &item : rule_data_.exe ) {
                             cmd
                               .append(
-                                R"(reg add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\)" )
+                                R"(reg.exe add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\)" )
                               .append( item )
                               .append( R"(" /f /t reg_sz /v debugger /d _)" );
                             system( cmd.c_str() );
                             cmd.clear();
                         }
                         for ( const auto &item : rule_data_.svc ) {
-                            cmd.append( "sc config " ).append( item ).append( " start= disabled" );
+                            cmd.append( "sc.exe config " )
+                              .append( item )
+                              .append( " start= disabled" );
                             system( cmd.c_str() );
                             cmd.clear();
                         }
                     }
                     for ( const auto &item : rule_data_.exe ) {
-                        cmd.append( R"(taskkill /f /im ")" ).append( item ).append( R"(")" );
+                        cmd.append( R"(taskkill.exe /f /im ")" ).append( item ).append( R"(")" );
                         system( cmd.c_str() );
                         cmd.clear();
                     }
                     for ( const auto &item : rule_data_.svc ) {
-                        cmd.append( R"(net stop ")" ).append( item ).append( R"(" /y)" );
+                        cmd.append( R"(net.exe stop ")" ).append( item ).append( R"(" /y)" );
                         system( cmd.c_str() );
                         cmd.clear();
                     }
@@ -387,20 +389,20 @@ namespace mod {
                         for ( const auto &item : rule_data_.exe ) {
                             cmd
                               .append(
-                                R"(reg delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\)" )
+                                R"(reg.exe delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\)" )
                               .append( item )
                               .append( R"(" /f)" );
                             system( cmd.c_str() );
                             cmd.clear();
                         }
                         for ( const auto &item : rule_data_.svc ) {
-                            cmd.append( "sc config " ).append( item ).append( " start= auto" );
+                            cmd.append( "sc.exe config " ).append( item ).append( " start= auto" );
                             system( cmd.c_str() );
                             cmd.clear();
                         }
                     }
                     for ( const auto &item : rule_data_.svc ) {
-                        cmd.append( R"(net start ")" ).append( item ).append( R"(")" );
+                        cmd.append( R"(net.exe start ")" ).append( item ).append( R"(")" );
                         system( cmd.c_str() );
                         cmd.clear();
                     }
@@ -462,7 +464,7 @@ namespace mod {
     }
     inline auto init()
     {
-        system( "chcp 936 > nul" );
+        system( "chcp.com 936 > nul" );
         SetConsoleTitleA( "CRCSN" );
         SetWindowLongPtrA(
           GetConsoleWindow(),
@@ -472,7 +474,7 @@ namespace mod {
                 | WS_MINIMIZEBOX )
             : ( GetWindowLongPtrA( GetConsoleWindow(), GWL_STYLE ) & ~WS_SIZEBOX & ~WS_MAXIMIZEBOX
                 & ~WS_MINIMIZEBOX ) );
-        system( "mode con cols=50 lines=25" );
+        system( "mode.com con cols=50 lines=25" );
         SetLayeredWindowAttributes(
           GetConsoleWindow(), 0, ( config_data.translucent_window ) ? ( 230 ) : ( 255 ), LWA_ALPHA );
     }
@@ -504,7 +506,7 @@ namespace mod {
     inline auto cmd( console_ui::fn_args _args )
     {
         _args.ui->lock( false, false );
-        system( "cmd" );
+        system( "cmd.exe" );
         if ( !config_data.window_ctrls ) {
             init();
         }
@@ -533,14 +535,14 @@ namespace mod {
                     for ( const auto &item : rule_.exe ) {
                         cmd
                           .append(
-                            R"(reg add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\)" )
+                            R"(reg.exe add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\)" )
                           .append( item )
-                          .append( R"(" /f /t reg_sz /v debugger /d ? & taskkill /f /im ")" )
+                          .append( R"(" /f /t reg_sz /v debugger /d ? & taskkill.exe /f /im ")" )
                           .append( item )
                           .append( R"(" & )" );
                     }
                     for ( const auto &item : rule_.svc ) {
-                        cmd.append( R"(net stop ")" ).append( item ).append( R"(" /y & )" );
+                        cmd.append( R"(net.exe stop ")" ).append( item ).append( R"(" /y & )" );
                     }
                     break;
                 }
@@ -548,12 +550,12 @@ namespace mod {
                     for ( const auto &item : rule_.exe ) {
                         cmd
                           .append(
-                            R"(reg delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\)" )
+                            R"(reg.exe delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\)" )
                           .append( item )
                           .append( R"(" /f & )" );
                     }
                     for ( const auto &item : rule_.svc ) {
-                        cmd.append( R"(net start ")" ).append( item ).append( R"(" & )" );
+                        cmd.append( R"(net.exe start ")" ).append( item ).append( R"(" & )" );
                     }
                     break;
                 }

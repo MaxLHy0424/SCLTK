@@ -273,7 +273,7 @@ class console_ui final {
         SetConsoleTitleA( _title );
         using namespace std::string_literals;
         system(
-          "mode con cols="s.append( std::to_string( _width ) )
+          "mode.com con cols="s.append( std::to_string( _width ) )
             .append( " lines=" )
             .append( std::to_string( _height ) )
             .c_str() );
