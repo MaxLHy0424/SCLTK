@@ -462,7 +462,7 @@ namespace mod {
     }
     inline auto init()
     {
-        system( "chcp CODE_PAGEE_PAGE > nul" );
+        system( "chcp 936 > nul" );
         SetConsoleTitleA( "CRCSN" );
         SetWindowLongPtrA(
           GetConsoleWindow(),
