@@ -1,7 +1,7 @@
 #ifdef _WIN32
 # include <thread>
 # include "console_ui.hpp"
-# include "mod.hpp"
+# include "core.hpp"
 # ifdef _NEXT_
 auto main() -> int
 {
@@ -9,13 +9,13 @@ auto main() -> int
     ui.set_console( CODE_PAGE, WINDOW_TITLE, WINDOW_WIDTH, WINDOW_HEIGHT, true, false, true, 255 )
       .lock( true, true );
     std::print( ":: 检测运行权限.\n" );
-    if ( !mod::is_run_as_admin() ) {
+    if ( !core::is_run_as_admin() ) {
         std::print( ":: 申请管理员权限.\n" );
-        mod::relaunch_as_admin( console_ui::fn_args{} );
+        core::relaunch_as_admin( console_ui::fn_args{} );
         return 1;
     }
-    mod::config_op{ 'r' }( console_ui::fn_args{} );
-    if ( mod::data::config[ 1 ].is_enabled == true ) {
+    core::config_op{ 'r' }( console_ui::fn_args{} );
+    if ( core::data::config[ 1 ].is_enabled == true ) {
         std::thread{ []()
         {
             const HWND this_window{ GetConsoleWindow() };
@@ -32,7 +32,7 @@ auto main() -> int
         } }
           .detach();
     }
-    if ( mod::data::config[ 2 ].is_enabled == true ) {
+    if ( core::data::config[ 2 ].is_enabled == true ) {
         std::thread{ []()
         {
             const char *const hkcu_reg_dir[]{
@@ -61,19 +61,19 @@ auto main() -> int
           .detach();
     }
     ui.add( "                    [ 主  页 ]\n\n" )
-      .add( " < 退出 ", mod::quit, CONSOLE_TEXT_RED_WHITE )
-      .add( " < 重启 ", mod::relaunch_as_admin, CONSOLE_TEXT_RED_WHITE )
-      .add( " > 信息 ", mod::info )
-      .add( " > 配置 ", mod::config_op{ 'w' } )
-      .add( " > 工具箱 ", mod::toolkit )
+      .add( " < 退出 ", core::quit, CONSOLE_TEXT_RED_WHITE )
+      .add( " < 重启 ", core::relaunch_as_admin, CONSOLE_TEXT_RED_WHITE )
+      .add( " > 信息 ", core::info )
+      .add( " > 配置 ", core::config_op{ 'w' } )
+      .add( " > 工具箱 ", core::toolkit )
       .add( "\n[破解]\n" )
-      .add( " > 极域电子教室 ", mod::rule_op{ 'c', mod::data::rule.mythware } )
-      .add( " > 联想云教室 ", mod::rule_op{ 'c', mod::data::rule.lenovo } )
-      .add( " > 自定义 ", mod::rule_op{ 'c', mod::data::rule.customized } )
+      .add( " > 极域电子教室 ", core::rule_op{ 'c', core::data::rule.mythware } )
+      .add( " > 联想云教室 ", core::rule_op{ 'c', core::data::rule.lenovo } )
+      .add( " > 自定义 ", core::rule_op{ 'c', core::data::rule.customized } )
       .add( "\n[恢复]\n" )
-      .add( " > 极域电子教室 ", mod::rule_op{ 'r', mod::data::rule.mythware } )
-      .add( " > 联想云教室 ", mod::rule_op{ 'r', mod::data::rule.lenovo } )
-      .add( " > 自定义 ", mod::rule_op{ 'r', mod::data::rule.customized } )
+      .add( " > 极域电子教室 ", core::rule_op{ 'r', core::data::rule.mythware } )
+      .add( " > 联想云教室 ", core::rule_op{ 'r', core::data::rule.lenovo } )
+      .add( " > 自定义 ", core::rule_op{ 'r', core::data::rule.customized } )
       .set_console(
         CODE_PAGE,
         WINDOW_TITLE,
@@ -81,11 +81,11 @@ auto main() -> int
         WINDOW_HEIGHT,
         true,
         false,
-        ( mod::data::config[ 1 ].is_enabled == false ) ? ( true ) : ( false ),
-        ( mod::data::config[ 1 ].is_enabled == true ) ? ( 230 ) : ( 255 ) )
+        ( core::data::config[ 1 ].is_enabled == false ) ? ( true ) : ( false ),
+        ( core::data::config[ 1 ].is_enabled == true ) ? ( 230 ) : ( 255 ) )
       .show()
       .lock( false, false );
-    if ( mod::data::config[ 1 ].is_enabled == true ) {
+    if ( core::data::config[ 1 ].is_enabled == true ) {
         SetWindowLongPtrA(
           GetConsoleWindow(),
           GWL_STYLE,
@@ -122,23 +122,23 @@ auto main( const int _argc, const char *const _argv[] ) -> int
         }
     }
 INIT:
-    mod::init();
+    core::init();
     if ( config_data.front_show_window ) {
-        std::thread{ mod::front_show_window }.detach();
+        std::thread{ core::front_show_window }.detach();
     }
     ui.add( "                    [ 主  页 ]\n\n" );
     if ( config_error ) {
         ui.add( " (!) 参数错误.\n" );
     }
-    ui.add( " < 退出 ", mod::quit, CONSOLE_TEXT_RED_WHITE )
-      .add( " > 信息 ", mod::info )
-      .add( " > 命令提示符 ", mod::cmd )
+    ui.add( " < 退出 ", core::quit, CONSOLE_TEXT_RED_WHITE )
+      .add( " > 信息 ", core::info )
+      .add( " > 命令提示符 ", core::cmd )
       .add( "\n[破解]\n" )
-      .add( " > 极域电子教室 ", mod::rule_op{ 'c', mod::rule.mythware } )
-      .add( " > 联想云教室 ", mod::rule_op{ 'c', mod::rule.lenovo } )
+      .add( " > 极域电子教室 ", core::rule_op{ 'c', core::rule.mythware } )
+      .add( " > 联想云教室 ", core::rule_op{ 'c', core::rule.lenovo } )
       .add( "\n[恢复]\n" )
-      .add( " > 极域电子教室 ", mod::rule_op{ 'r', mod::rule.mythware } )
-      .add( " > 联想云教室 ", mod::rule_op{ 'r', mod::rule.lenovo } )
+      .add( " > 极域电子教室 ", core::rule_op{ 'r', core::rule.mythware } )
+      .add( " > 联想云教室 ", core::rule_op{ 'r', core::rule.lenovo } )
       .show()
       .lock( false, false );
     if ( config_data.translucent_window ) {
