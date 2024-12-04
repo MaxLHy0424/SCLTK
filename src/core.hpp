@@ -11,7 +11,7 @@ inline struct {
 } config_data{};
 inline bool config_error{};
 #endif
-namespace mod {
+namespace core {
 #ifdef _NEXT_
     struct config_data_node final {
         const char *const name;
@@ -100,8 +100,8 @@ namespace mod {
               30,
               true,
               false,
-              ( mod::data::config[ 1 ].is_enabled == false ) ? ( true ) : ( false ),
-              ( mod::data::config[ 1 ].is_enabled == true ) ? ( 230 ) : ( 255 ) );
+              ( core::data::config[ 1 ].is_enabled == false ) ? ( true ) : ( false ),
+              ( core::data::config[ 1 ].is_enabled == true ) ? ( 230 ) : ( 255 ) );
             SetConsoleScreenBufferSize( GetStdHandle( STD_OUTPUT_HANDLE ), { 120, SHRT_MAX - 1 } );
             system( "cmd.exe" );
             _args.ui->set_console(
@@ -111,8 +111,8 @@ namespace mod {
               WINDOW_HEIGHT,
               true,
               false,
-              ( mod::data::config[ 1 ].is_enabled == false ) ? ( true ) : ( false ),
-              ( mod::data::config[ 1 ].is_enabled == true ) ? ( 230 ) : ( 255 ) );
+              ( core::data::config[ 1 ].is_enabled == false ) ? ( true ) : ( false ),
+              ( core::data::config[ 1 ].is_enabled == true ) ? ( 230 ) : ( 255 ) );
             return FN_BACK;
         } };
         class exec_cmd final {
