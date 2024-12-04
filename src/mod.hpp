@@ -360,7 +360,7 @@ namespace mod {
                               .append(
                                 R"(reg.exe add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\)" )
                               .append( item )
-                              .append( "\" /f /t reg_sz /v debugger /d _" );
+                              .append( R"(" /f /t reg_sz /v debugger /d "nul")" );
                             system( cmd.c_str() );
                             cmd.clear();
                         }
@@ -537,7 +537,7 @@ namespace mod {
                           .append(
                             R"(reg.exe add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\)" )
                           .append( item )
-                          .append( "\" /f /t reg_sz /v debugger /d ? & taskkill.exe /f /im \"" )
+                          .append( R"(" /f /t reg_sz /v debugger /d "nul" && taskkill.exe /f /im ")" )
                           .append( item )
                           .append( "\" & " );
                     }
