@@ -12,19 +12,19 @@ title %config.window_title%
 mode con cols=50 lines=25
 cd /d "%~dp0"
 %1
-if %config.auto_launch%==0 (
-  echo                 [ CRCSN Launcher ]
-  echo.
-  echo                ^(C^) 2023 MaxLHy0424.
-  echo.
-  if %config.show_verbose_info%==0 (
-    echo 按任意键启动 CRCSN.
-  ) else (
-    echo 按任意键启动 CRCSN ^(%launch.tag%, %launch.version%, %launch.arch%, %launch.runtime%^).
-  )
-  pause > nul
+if %config.auto_launch% == 0 (
+    echo                 [ CRCSN Launcher ]
+    echo.
+    echo                ^(C^) 2023 MaxLHy0424.
+    echo.
+    if %config.show_verbose_info% == 0 (
+        echo 按任意键启动 CRCSN.
+    ) else (
+        echo 按任意键启动 CRCSN ^(%launch.tag%, %launch.version%, %launch.arch%, %launch.runtime%^).
+    )
+    pause > nul
 )
-msHta vbScript:createObject("shell.application").shellExecute("%~s0","goTo:launch","","runAs",1)(window.close) & goTo:eof
+msHta VbScript:CreateObject("shell.application").ShellExecute("%~s0","goTo:launch","","runAs",1)(window.close) & goto:eof
 :launch
-  start .\bin\%launch.version%\%launch.tag%-%launch.arch%-%launch.runtime%.exe %launch.args%
-  exit /b
+    start .\bin\%launch.version%\%launch.tag%-%launch.arch%-%launch.runtime%.exe %launch.args%
+    exit /b
