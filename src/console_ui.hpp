@@ -18,15 +18,15 @@
 #define CONSOLE_TEXT_WHITE_WHITE    0x07
 #define CONSOLE_TEXT_BLUE_WHITE     0x09
 #define CONSOLE_TEXT_RED_WHITE      0x0c
-#define FN_BACK                     false
-#define FN_EXIT                     true
+#define FUNC_BACK                   false
+#define FUNC_EXIT                   true
 class console_ui final {
   public:
-    struct fn_args final {
+    struct func_args final {
         const DWORD button_state, ctrl_key_state, event_flag;
         console_ui *const ui;
-        fn_args &operator=( const fn_args & ) = delete;
-        explicit fn_args(
+        func_args &operator=( const func_args & ) = delete;
+        explicit func_args(
           console_ui *const _ui                 = nullptr,
           const MOUSE_EVENT_RECORD _mouse_event = { {}, CONSOLE_MOUSE_BUTTON_LEFT, {}, {} } )
           : button_state{ _mouse_event.dwButtonState }
@@ -34,28 +34,28 @@ class console_ui final {
           , event_flag{ _mouse_event.dwEventFlags }
           , ui{ _ui }
         { }
-        fn_args( const fn_args &_obj )
+        func_args( const func_args &_obj )
           : button_state{ _obj.button_state }
           , ctrl_key_state{ _obj.ctrl_key_state }
           , event_flag{ _obj.event_flag }
           , ui{ _obj.ui }
         { }
-        explicit fn_args( fn_args &&_obj )
+        explicit func_args( func_args &&_obj )
           : button_state{ std::move( _obj.button_state ) }
           , ctrl_key_state{ std::move( _obj.ctrl_key_state ) }
           , event_flag{ std::move( _obj.event_flag ) }
           , ui{ std::move( _obj.ui ) }
         { }
-        ~fn_args() { }
+        ~func_args() { }
     };
-    using fn_callback = std::function< bool( fn_args ) >;
-    using size_type   = std::size_t;
+    using func_callback = std::function< bool( func_args ) >;
+    using size_type     = std::size_t;
   private:
     struct ui_item_ final {
         const char *text;
         short default_color, highlight_color, last_color;
         COORD position;
-        fn_callback fn;
+        func_callback func;
         auto set_color( const short _color )
         {
             SetConsoleTextAttribute( GetStdHandle( STD_OUTPUT_HANDLE ), _color );
@@ -68,7 +68,7 @@ class console_ui final {
             highlight_color = _obj.highlight_color;
             last_color      = _obj.last_color;
             position        = _obj.position;
-            fn              = _obj.fn;
+            func            = _obj.func;
             return *this;
         }
         auto operator==( const COORD &_mouse_position ) const
@@ -86,19 +86,19 @@ class console_ui final {
           , highlight_color{ CONSOLE_TEXT_BLUE_WHITE }
           , last_color{ CONSOLE_TEXT_WHITE_WHITE }
           , position{}
-          , fn{}
+          , func{}
         { }
         explicit ui_item_(
           const char *const _text,
           const short _default_color,
           const short _highlight_color,
-          const fn_callback _fn )
+          const func_callback _func )
           : text{ _text }
           , default_color{ _default_color }
           , highlight_color{ _highlight_color }
           , last_color{ CONSOLE_TEXT_WHITE_WHITE }
           , position{}
-          , fn{ std::move( _fn ) }
+          , func{ std::move( _func ) }
         { }
         explicit ui_item_( const ui_item_ &_obj )
           : text{ _obj.text }
@@ -106,7 +106,7 @@ class console_ui final {
           , highlight_color{ _obj.highlight_color }
           , last_color{ _obj.last_color }
           , position{ _obj.position }
-          , fn{ _obj.fn }
+          , func{ _obj.func }
         { }
         explicit ui_item_( ui_item_ &&_obj )
           : text{ std::move( _obj.text ) }
@@ -114,7 +114,7 @@ class console_ui final {
           , highlight_color{ std::move( _obj.highlight_color ) }
           , last_color{ std::move( _obj.last_color ) }
           , position{ std::move( _obj.position ) }
-          , fn{ std::move( _obj.fn ) }
+          , func{ std::move( _obj.func ) }
         { }
         ~ui_item_() { }
     };
@@ -231,21 +231,21 @@ class console_ui final {
             }
         }
     }
-    auto call_fn_( const MOUSE_EVENT_RECORD &_mouse_event )
+    auto call_func_( const MOUSE_EVENT_RECORD &_mouse_event )
     {
         bool is_exit{};
         for ( auto &line : item_ ) {
             if ( line != _mouse_event.dwMousePosition ) {
                 continue;
             }
-            if ( line.fn == nullptr ) {
+            if ( line.func == nullptr ) {
                 break;
             }
             cls_();
             line.set_color( line.default_color );
             show_cursor_( false );
             edit_console_attrs_( v_lock_all );
-            is_exit = line.fn( fn_args{ this, _mouse_event } );
+            is_exit = line.func( func_args{ this, _mouse_event } );
             show_cursor_( false );
             edit_console_attrs_( v_lock_text );
             init_pos_();
@@ -306,39 +306,39 @@ class console_ui final {
     }
     auto &add(
       const char *const _text,
-      const fn_callback _fn        = nullptr,
+      const func_callback _func    = nullptr,
       const short _highlight_color = CONSOLE_TEXT_BLUE_WHITE,
       const short _default_color   = CONSOLE_TEXT_WHITE_WHITE )
     {
         item_.emplace_back( ui_item_{
-          _text, _default_color, ( _fn == nullptr ) ? ( _default_color ) : ( _highlight_color ),
-          std::move( _fn ) } );
+          _text, _default_color, ( _func == nullptr ) ? ( _default_color ) : ( _highlight_color ),
+          std::move( _func ) } );
         return *this;
     }
     auto &insert(
       const size_type _index,
       const char *const _text,
-      const fn_callback _fn        = nullptr,
+      const func_callback _func    = nullptr,
       const short _highlight_color = CONSOLE_TEXT_BLUE_WHITE,
       const short _default_color   = CONSOLE_TEXT_WHITE_WHITE )
     {
         item_.emplace(
           item_.cbegin() + _index,
           ui_item_{
-            _text, _default_color, ( _fn == nullptr ) ? ( _default_color ) : ( _highlight_color ),
-            std::move( _fn ) } );
+            _text, _default_color, ( _func == nullptr ) ? ( _default_color ) : ( _highlight_color ),
+            std::move( _func ) } );
         return *this;
     }
     auto &edit(
       const size_type _index,
       const char *const _text,
-      const fn_callback _fn        = nullptr,
+      const func_callback _func    = nullptr,
       const short _highlight_color = CONSOLE_TEXT_BLUE_WHITE,
       const short _default_color   = CONSOLE_TEXT_WHITE_WHITE )
     {
         item_.at( _index ) = ui_item_{
-          _text, _default_color, ( _fn == nullptr ) ? ( _default_color ) : ( _highlight_color ),
-          std::move( _fn ) };
+          _text, _default_color, ( _func == nullptr ) ? ( _default_color ) : ( _highlight_color ),
+          std::move( _func ) };
         return *this;
     }
     auto &revert()
@@ -362,8 +362,8 @@ class console_ui final {
         edit_console_attrs_( v_lock_text );
         MOUSE_EVENT_RECORD mouse_event;
         init_pos_();
-        auto fn_returned_value{ FN_BACK };
-        while ( fn_returned_value == FN_BACK ) {
+        auto func_returned_value{ FUNC_BACK };
+        while ( func_returned_value == FUNC_BACK ) {
             mouse_event = wait_mouse_event_();
             switch ( mouse_event.dwEventFlags ) {
                 case CONSOLE_MOUSE_MOVE : refresh_( mouse_event.dwMousePosition ); break;
@@ -371,7 +371,7 @@ class console_ui final {
                     if ( ( mouse_event.dwButtonState )
                          && ( mouse_event.dwButtonState != CONSOLE_MOUSE_WHEEL ) )
                     {
-                        fn_returned_value = call_fn_( mouse_event );
+                        func_returned_value = call_func_( mouse_event );
                     }
                     break;
                 }
