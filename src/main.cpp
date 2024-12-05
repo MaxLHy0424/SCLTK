@@ -11,10 +11,10 @@ auto main() -> int
     std::print( ":: 检测运行权限.\n" );
     if ( !core::is_run_as_admin() ) {
         std::print( ":: 申请管理员权限.\n" );
-        core::relaunch_as_admin( console_ui::fn_args{} );
+        core::relaunch_as_admin( console_ui::func_args{} );
         return 1;
     }
-    core::config_op{ 'r' }( console_ui::fn_args{} );
+    core::config_op{ 'r' }( console_ui::func_args{} );
     if ( core::data::config[ 1 ].is_enabled == true ) {
         std::thread{ []()
         {
