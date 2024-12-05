@@ -143,6 +143,7 @@ SpacesInLineCommentPrefix:
   Maximum: -1
 SpacesInParentheses: true
 SpacesInSquareBrackets: true
+BitFieldColonSpacing: Both
 Standard: Auto
 TabWidth: 4
 UseCRLF: true
