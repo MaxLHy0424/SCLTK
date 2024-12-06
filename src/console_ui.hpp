@@ -1,25 +1,26 @@
 #pragma once
-#include <windows.h>
-#ifdef _NEXT_
-# include <print>
-#else
-# include <cstdio>
-#endif
-#include <functional>
-#include <string>
-#include <vector>
-#define CONSOLE_MOUSE_BUTTON_LEFT   FROM_LEFT_1ST_BUTTON_PRESSED
-#define CONSOLE_MOUSE_BUTTON_MIDDLE FROM_LEFT_2ND_BUTTON_PRESSED
-#define CONSOLE_MOUSE_BUTTON_RIGHT  RIGHTMOST_BUTTON_PRESSED
-#define CONSOLE_MOUSE_CLICK         0x0
-#define CONSOLE_MOUSE_CLICK_DOUBLE  DOUBLE_CLICK
-#define CONSOLE_MOUSE_MOVE          MOUSE_MOVED
-#define CONSOLE_MOUSE_WHEEL         MOUSE_WHEELED
-#define CONSOLE_TEXT_WHITE_WHITE    0x07
-#define CONSOLE_TEXT_BLUE_WHITE     0x09
-#define CONSOLE_TEXT_RED_WHITE      0x0c
-#define FUNC_BACK                   false
-#define FUNC_EXIT                   true
+#if __cplusplus >= 202302L
+# include <windows.h>
+# ifdef _NEXT_
+#  include <print>
+# else
+#  include <cstdio>
+# endif
+# include <functional>
+# include <string>
+# include <vector>
+# define CONSOLE_MOUSE_BUTTON_LEFT   FROM_LEFT_1ST_BUTTON_PRESSED
+# define CONSOLE_MOUSE_BUTTON_MIDDLE FROM_LEFT_2ND_BUTTON_PRESSED
+# define CONSOLE_MOUSE_BUTTON_RIGHT  RIGHTMOST_BUTTON_PRESSED
+# define CONSOLE_MOUSE_CLICK         0x0
+# define CONSOLE_MOUSE_CLICK_DOUBLE  DOUBLE_CLICK
+# define CONSOLE_MOUSE_MOVE          MOUSE_MOVED
+# define CONSOLE_MOUSE_WHEEL         MOUSE_WHEELED
+# define CONSOLE_TEXT_WHITE_WHITE    0x07
+# define CONSOLE_TEXT_BLUE_WHITE     0x09
+# define CONSOLE_TEXT_RED_WHITE      0x0c
+# define FUNC_BACK                   false
+# define FUNC_EXIT                   true
 class console_ui final {
   public:
     struct func_args final {
@@ -186,20 +187,20 @@ class console_ui final {
     {
         get_console_size_();
         set_cursor_( { 0, 0 } );
-#ifdef _NEXT_
+# ifdef _NEXT_
         std::print( "{}", std::string( width_ * height_, ' ' ) );
-#else
+# else
         std::printf( std::string( width_ * height_, ' ' ).c_str() );
-#endif
+# endif
         set_cursor_( { 0, 0 } );
     }
     auto write_( const char *const _text, const bool _is_endl = false )
     {
-#ifdef _NEXT_
+# ifdef _NEXT_
         std::print( "{}{}", _text, ( _is_endl ) ? ( '\n' ) : ( '\0' ) );
-#else
+# else
         std::printf( "%s%c", _text, ( _is_endl ) ? ( '\n' ) : ( '\0' ) );
-#endif
+# endif
     }
     auto rewrite_( const COORD &_position, const char *const _text )
     {
@@ -398,3 +399,6 @@ class console_ui final {
     { }
     ~console_ui() { }
 };
+#else
+# error "must be compiled on c++23 / gnu++23 or later C++ standards."
+#endif
