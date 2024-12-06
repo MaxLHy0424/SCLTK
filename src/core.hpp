@@ -127,7 +127,7 @@ namespace core {
                 return FUNC_BACK;
             }
             explicit exec_cmd( const char *const _cmd )
-              : cmd_{ _cmd }
+              : cmd_{ std::move( _cmd ) }
             { }
             explicit exec_cmd( const exec_cmd &_obj )
               : cmd_{ _obj.cmd_ }
@@ -322,7 +322,7 @@ namespace core {
             return FUNC_BACK;
         }
         explicit config_op( const char _mode )
-          : mode_{ _mode }
+          : mode_{ std::move( _mode ) }
           , is_reload_{}
         { }
         explicit config_op( const config_op &_obj )
@@ -413,8 +413,8 @@ namespace core {
             return FUNC_BACK;
         }
         explicit rule_op( const char _mode, const rule_data_node &_rule_data )
-          : mode_{ _mode }
-          , rule_data_{ _rule_data }
+          : mode_{ std::move( _mode ) }
+          , rule_data_{ std::move( _rule_data ) }
         { }
         explicit rule_op( const rule_op &_obj )
           : mode_{ _obj.mode_ }

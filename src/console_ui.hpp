@@ -29,10 +29,10 @@ class console_ui final {
         explicit func_args(
           console_ui *const _ui                 = nullptr,
           const MOUSE_EVENT_RECORD _mouse_event = { {}, CONSOLE_MOUSE_BUTTON_LEFT, {}, {} } )
-          : button_state{ _mouse_event.dwButtonState }
-          , ctrl_key_state{ _mouse_event.dwControlKeyState }
-          , event_flag{ _mouse_event.dwEventFlags }
-          , ui{ _ui }
+          : button_state{ std::move( _mouse_event.dwButtonState ) }
+          , ctrl_key_state{ std::move( _mouse_event.dwControlKeyState ) }
+          , event_flag{ std::move( _mouse_event.dwEventFlags ) }
+          , ui{ std::move( _ui ) }
         { }
         func_args( const func_args &_obj )
           : button_state{ _obj.button_state }
