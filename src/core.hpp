@@ -130,11 +130,11 @@ namespace core {
             explicit exec_cmd( const char *const _cmd )
               : cmd_{ std::move( _cmd ) }
             { }
-            explicit exec_cmd( const exec_cmd &_obj )
-              : cmd_{ _obj.cmd_ }
+            explicit exec_cmd( const exec_cmd &_src )
+              : cmd_{ _src.cmd_ }
             { }
-            explicit exec_cmd( exec_cmd &&_obj )
-              : cmd_{ std::move( _obj.cmd_ ) }
+            explicit exec_cmd( exec_cmd &&_src )
+              : cmd_{ std::move( _src.cmd_ ) }
             { }
             ~exec_cmd() { }
         };
@@ -322,13 +322,13 @@ namespace core {
           : mode_{ std::move( _mode ) }
           , is_reload_{}
         { }
-        explicit config_op( const config_op &_obj )
-          : mode_{ _obj.mode_ }
-          , is_reload_{ _obj.is_reload_ }
+        explicit config_op( const config_op &_src )
+          : mode_{ _src.mode_ }
+          , is_reload_{ _src.is_reload_ }
         { }
-        explicit config_op( config_op &&_obj )
-          : mode_{ std::move( _obj.mode_ ) }
-          , is_reload_{ std::move( _obj.is_reload_ ) }
+        explicit config_op( config_op &&_src )
+          : mode_{ std::move( _src.mode_ ) }
+          , is_reload_{ std::move( _src.is_reload_ ) }
         { }
         ~config_op() { }
     };
@@ -413,13 +413,13 @@ namespace core {
           : mode_{ std::move( _mode ) }
           , rule_data_{ std::move( _rule_data ) }
         { }
-        explicit rule_op( const rule_op &_obj )
-          : mode_{ _obj.mode_ }
-          , rule_data_{ _obj.rule_data_ }
+        explicit rule_op( const rule_op &_src )
+          : mode_{ _src.mode_ }
+          , rule_data_{ _src.rule_data_ }
         { }
-        explicit rule_op( rule_op &&_obj )
-          : mode_{ std::move( _obj.mode_ ) }
-          , rule_data_{ std::move( _obj.rule_data_ ) }
+        explicit rule_op( rule_op &&_src )
+          : mode_{ std::move( _src.mode_ ) }
+          , rule_data_{ std::move( _src.rule_data_ ) }
         { }
         ~rule_op() { }
     };
