@@ -169,32 +169,28 @@ namespace core {
             data::rule.customized.exe.clear();
             data::rule.customized.svc.clear();
             std::string line;
-            enum {
-                v_unknown  = -1,
-                v_settings = 0,
-                v_rule_exe = 1,
-                v_rule_svc = 2,
-            } config_item{ v_unknown };
+            enum class config_tag { unknown, settings, rule_exe, rule_svc };
+            config_tag tag{ config_tag::unknown };
             while ( std::getline( config_file, line ) ) {
                 if ( ( line.empty() ) || ( line.front() == '#' ) ) {
                     continue;
                 }
                 if ( line == "[settings]" ) {
-                    config_item = v_settings;
+                    tag = config_tag::settings;
                     continue;
                 } else if ( line == "[rule_exe]" ) {
-                    config_item = v_rule_exe;
+                    tag = config_tag::rule_exe;
                     continue;
                 } else if ( line == "[rule_svc]" ) {
-                    config_item = v_rule_svc;
+                    tag = config_tag::rule_svc;
                     continue;
                 } else if ( ( line.front() == '[' ) && ( line.back() == ']' ) ) {
-                    config_item = v_unknown;
+                    tag = config_tag::unknown;
                     continue;
                 }
-                switch ( config_item ) {
-                    case v_unknown : break;
-                    case v_settings : {
+                switch ( tag ) {
+                    case config_tag::unknown : break;
+                    case config_tag::settings : {
                         if ( is_reload_ ) {
                             continue;
                         }
@@ -205,10 +201,10 @@ namespace core {
                         }
                         break;
                     }
-                    case v_rule_exe :
+                    case config_tag::rule_exe :
                         data::rule.customized.exe.emplace_back( std::move( line ) );
                         break;
-                    case v_rule_svc :
+                    case config_tag::rule_svc :
                         data::rule.customized.svc.emplace_back( std::move( line ) );
                         break;
                 }
