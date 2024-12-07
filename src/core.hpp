@@ -231,16 +231,12 @@ namespace core {
                     }
                 }
                 text.append( "[rule_exe]\n" );
-                if ( !data::rule.customized.exe.empty() ) {
-                    for ( const auto &item : data::rule.customized.exe ) {
-                        text.append( item ).push_back( '\n' );
-                    }
+                for ( const auto &item : data::rule.customized.exe ) {
+                    text.append( item ).push_back( '\n' );
                 }
                 text.append( "[rule_svc]\n" );
-                if ( !data::rule.customized.svc.empty() ) {
-                    for ( const auto &item : data::rule.customized.svc ) {
-                        text.append( item ).push_back( '\n' );
-                    }
+                for ( const auto &item : data::rule.customized.svc ) {
+                    text.append( item ).push_back( '\n' );
                 }
                 std::ofstream config_file{ data::config_file_name, std::ios::out | std::ios::trunc };
                 config_file.write( text.c_str(), text.size() );
