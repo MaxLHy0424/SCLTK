@@ -361,14 +361,14 @@ class console_ui final {
         edit_console_attrs_( console_attrs_::lock_text );
         MOUSE_EVENT_RECORD mouse_event;
         init_pos_();
-        auto func_returned_value{ FUNC_REVERT };
-        while ( func_returned_value == FUNC_REVERT ) {
+        auto func_return_value{ FUNC_REVERT };
+        while ( func_return_value == FUNC_REVERT ) {
             mouse_event = wait_mouse_event_();
             switch ( mouse_event.dwEventFlags ) {
                 case CONSOLE_MOUSE_MOVE : refresh_( mouse_event.dwMousePosition ); break;
                 case CONSOLE_MOUSE_CLICK : {
                     if ( mouse_event.dwButtonState != false ) {
-                        func_returned_value = call_func_( mouse_event );
+                        func_return_value = call_func_( mouse_event );
                     }
                     break;
                 }
