@@ -19,8 +19,8 @@
 # define CONSOLE_TEXT_WHITE_WHITE    0x0007
 # define CONSOLE_TEXT_BLUE_WHITE     0x0009
 # define CONSOLE_TEXT_RED_WHITE      0x000c
-# define FUNC_REVERT                 false
-# define FUNC_TERMINATE              true
+# define UI_REVERT                   false
+# define UI_QUIT                     true
 class console_ui final {
   public:
     struct func_args final {
@@ -361,8 +361,8 @@ class console_ui final {
         edit_console_attrs_( console_attrs_::lock_text );
         MOUSE_EVENT_RECORD mouse_event;
         init_pos_();
-        auto func_return_value{ FUNC_REVERT };
-        while ( func_return_value == FUNC_REVERT ) {
+        auto func_return_value{ UI_REVERT };
+        while ( func_return_value == UI_REVERT ) {
             mouse_event = wait_mouse_event_();
             switch ( mouse_event.dwEventFlags ) {
                 case CONSOLE_MOUSE_MOVE : refresh_( mouse_event.dwMousePosition ); break;
