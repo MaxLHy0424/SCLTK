@@ -85,7 +85,7 @@ namespace core {
           .add( "\n[名称]\n\n " INFO_NAME "\n\n[版本]\n\n " INFO_VERSION )
           .add( "\n[仓库]\n" )
           .add( " " INFO_REPO_URL, std::move( view_repo_webpage ) )
-          .add( "\n[许可证]\n\n " INFO_LICENSE "\n\n (C) 2023 " INFO_DEVELOPER "." )
+          .add( "\n[许可证]\n\n " INFO_LICENSE "\n\n (C) 2023 - present " INFO_DEVELOPER "." )
           .show();
         return FUNC_REVERT;
     }
@@ -496,7 +496,7 @@ namespace core {
           .add( " < 返回 ", quit, CONSOLE_TEXT_RED_WHITE )
           .add(
             "\n[名称]\n\n " INFO_NAME "\n\n[版本]\n\n " INFO_VERSION "\n\n[仓库]\n\n " INFO_REPO_URL
-            "\n\n[许可证]\n\n " INFO_LICENSE "\n\n (C) 2023 " INFO_DEVELOPER "." )
+            "\n\n[许可证]\n\n " INFO_LICENSE "\n\n (C) 2023 - present " INFO_DEVELOPER "." )
           .show();
         return FUNC_REVERT;
     }
