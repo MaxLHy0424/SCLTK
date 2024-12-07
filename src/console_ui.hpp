@@ -35,17 +35,17 @@ class console_ui final {
           , event_flag{ std::move( _mouse_event.dwEventFlags ) }
           , ui{ std::move( _ui ) }
         { }
-        func_args( const func_args &_obj )
-          : button_state{ _obj.button_state }
-          , ctrl_key_state{ _obj.ctrl_key_state }
-          , event_flag{ _obj.event_flag }
-          , ui{ _obj.ui }
+        func_args( const func_args &_src )
+          : button_state{ _src.button_state }
+          , ctrl_key_state{ _src.ctrl_key_state }
+          , event_flag{ _src.event_flag }
+          , ui{ _src.ui }
         { }
-        explicit func_args( func_args &&_obj )
-          : button_state{ std::move( _obj.button_state ) }
-          , ctrl_key_state{ std::move( _obj.ctrl_key_state ) }
-          , event_flag{ std::move( _obj.event_flag ) }
-          , ui{ std::move( _obj.ui ) }
+        explicit func_args( func_args &&_src )
+          : button_state{ std::move( _src.button_state ) }
+          , ctrl_key_state{ std::move( _src.ctrl_key_state ) }
+          , event_flag{ std::move( _src.event_flag ) }
+          , ui{ std::move( _src.ui ) }
         { }
         ~func_args() { }
     };
@@ -62,14 +62,14 @@ class console_ui final {
             SetConsoleTextAttribute( GetStdHandle( STD_OUTPUT_HANDLE ), _color );
             last_color = _color;
         }
-        auto &operator=( const ui_item_ &_obj )
+        auto &operator=( const ui_item_ &_src )
         {
-            text            = _obj.text;
-            default_color   = _obj.default_color;
-            highlight_color = _obj.highlight_color;
-            last_color      = _obj.last_color;
-            position        = _obj.position;
-            func            = _obj.func;
+            text            = _src.text;
+            default_color   = _src.default_color;
+            highlight_color = _src.highlight_color;
+            last_color      = _src.last_color;
+            position        = _src.position;
+            func            = _src.func;
             return *this;
         }
         auto operator==( const COORD &_mouse_position ) const
@@ -101,21 +101,21 @@ class console_ui final {
           , position{}
           , func{ std::move( _func ) }
         { }
-        explicit ui_item_( const ui_item_ &_obj )
-          : text{ _obj.text }
-          , default_color{ _obj.default_color }
-          , highlight_color{ _obj.highlight_color }
-          , last_color{ _obj.last_color }
-          , position{ _obj.position }
-          , func{ _obj.func }
+        explicit ui_item_( const ui_item_ &_src )
+          : text{ _src.text }
+          , default_color{ _src.default_color }
+          , highlight_color{ _src.highlight_color }
+          , last_color{ _src.last_color }
+          , position{ _src.position }
+          , func{ _src.func }
         { }
-        explicit ui_item_( ui_item_ &&_obj )
-          : text{ std::move( _obj.text ) }
-          , default_color{ std::move( _obj.default_color ) }
-          , highlight_color{ std::move( _obj.highlight_color ) }
-          , last_color{ std::move( _obj.last_color ) }
-          , position{ std::move( _obj.position ) }
-          , func{ std::move( _obj.func ) }
+        explicit ui_item_( ui_item_ &&_src )
+          : text{ std::move( _src.text ) }
+          , default_color{ std::move( _src.default_color ) }
+          , highlight_color{ std::move( _src.highlight_color ) }
+          , last_color{ std::move( _src.last_color ) }
+          , position{ std::move( _src.position ) }
+          , func{ std::move( _src.func ) }
         { }
         ~ui_item_() { }
     };
@@ -383,13 +383,13 @@ class console_ui final {
       , width_{}
       , height_{}
     { }
-    explicit console_ui( const console_ui &_obj )
-      : item_{ _obj.item_ }
+    explicit console_ui( const console_ui &_src )
+      : item_{ _src.item_ }
       , width_{}
       , height_{}
     { }
-    explicit console_ui( console_ui &&_obj )
-      : item_{ std::move( _obj.item_ ) }
+    explicit console_ui( console_ui &&_src )
+      : item_{ std::move( _src.item_ ) }
       , width_{}
       , height_{}
     { }
