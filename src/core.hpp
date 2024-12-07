@@ -21,12 +21,12 @@ namespace core {
         std::vector< std::string > exe, svc;
     };
     namespace data {
+        inline const char *const config_file_name{ "config.ini" };
         inline config_data_node config[]{
           {"enhanced_op",     false},
           {"enhanced_window", false},
           {"repair_mode",     false}
         };
-        inline const char *const config_file_name{ "config.ini" };
         inline struct {
             const rule_data_node mythware, lenovo;
             rule_data_node customized;
