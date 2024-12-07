@@ -368,7 +368,7 @@ class console_ui final {
                 case CONSOLE_MOUSE_MOVE : refresh_( mouse_event.dwMousePosition ); break;
                 case CONSOLE_MOUSE_CLICK : {
                     if ( mouse_event.dwButtonState != false
-                         && mouse_event.dwButtonState != CONSOLE_MOUSE_WHEEL )
+                         && mouse_event.dwEventFlags != CONSOLE_MOUSE_WHEEL )
                     {
                         func_returned_value = call_func_( mouse_event );
                     }
