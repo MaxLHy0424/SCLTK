@@ -66,11 +66,11 @@ namespace core {
         char path[ MAX_PATH ]{};
         GetModuleFileNameA( nullptr, path, MAX_PATH );
         ShellExecuteA( nullptr, "runas", path, nullptr, nullptr, SW_SHOWNORMAL );
-        return UI_QUIT;
+        return UI_TERMINATE;
     }
     inline auto quit( console_ui::func_args )
     {
-        return UI_QUIT;
+        return UI_TERMINATE;
     }
     inline auto info( console_ui::func_args )
     {
@@ -242,7 +242,7 @@ namespace core {
                 std::ofstream config_file{ data::config_file_name, std::ios::out | std::ios::trunc };
                 config_file.write( text.c_str(), text.size() );
                 config_file.close();
-                return UI_QUIT;
+                return UI_TERMINATE;
             } };
             auto open_config_file{ []( console_ui::func_args )
             {
@@ -458,7 +458,7 @@ namespace core {
     }
     inline auto quit( console_ui::func_args )
     {
-        return UI_QUIT;
+        return UI_TERMINATE;
     }
     inline auto init()
     {

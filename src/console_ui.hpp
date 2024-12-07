@@ -20,7 +20,7 @@
 # define CONSOLE_TEXT_BLUE_WHITE     0x0009
 # define CONSOLE_TEXT_RED_WHITE      0x000c
 # define UI_REVERT                   false
-# define UI_QUIT                     true
+# define UI_TERMINATE                true
 class console_ui final {
   public:
     struct func_args final {
