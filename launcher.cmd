@@ -24,7 +24,7 @@ if %config.auto_launch% == 0 (
     )
     pause > nul
 )
-msHta VbScript:CreateObject("shell.application").ShellExecute("%~s0","goTo:launch","","runAs",1)(window.close) & goto:eof
+mshta vbscript:createobject("shell.application").shellexecute("%~s0","goto:launch","","runas",1)(window.close) & goto:eof
 :launch
     start .\bin\%launch.version%\%launch.tag%-%launch.arch%-%launch.runtime%.exe %launch.args%
     exit /b
