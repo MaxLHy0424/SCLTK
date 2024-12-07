@@ -169,14 +169,14 @@ namespace core {
             data::rule.customized.exe.clear();
             data::rule.customized.svc.clear();
             std::string line;
-            enum class config_tag { unknown, settings, rule_exe, rule_svc };
+            enum class config_tag { unknown, option, rule_exe, rule_svc };
             config_tag tag{ config_tag::unknown };
             while ( std::getline( config_file, line ) ) {
                 if ( ( line.empty() ) || ( line.front() == '#' ) ) {
                     continue;
                 }
-                if ( line == "[settings]" ) {
-                    tag = config_tag::settings;
+                if ( line == "[option]" ) {
+                    tag = config_tag::option;
                     continue;
                 } else if ( line == "[rule_exe]" ) {
                     tag = config_tag::rule_exe;
@@ -190,7 +190,7 @@ namespace core {
                 }
                 switch ( tag ) {
                     case config_tag::unknown : break;
-                    case config_tag::settings : {
+                    case config_tag::option : {
                         if ( is_reload_ ) {
                             continue;
                         }
@@ -220,7 +220,7 @@ namespace core {
                 load_();
                 std::print( ":: 保存更改.\n" );
                 std::string text;
-                text.append( "[settings]\n" );
+                text.append( "[option]\n" );
                 for ( const auto &item : data::config ) {
                     if ( item.is_enabled == true ) {
                         text.append( item.name ).push_back( '\n' );
