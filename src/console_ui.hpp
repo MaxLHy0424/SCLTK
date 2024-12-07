@@ -119,7 +119,7 @@ class console_ui final {
         { }
         ~ui_item_() { }
     };
-    enum console_attrs_ { v_normal = 0, v_lock_text = 1, v_lock_all = 2 };
+    enum class console_attrs_ { normal, lock_text, lock_all };
     std::vector< ui_item_ > item_;
     short width_, height_;
     auto show_cursor_( const bool _is_show )
@@ -134,17 +134,17 @@ class console_ui final {
         DWORD attrs;
         GetConsoleMode( GetStdHandle( STD_INPUT_HANDLE ), &attrs );
         switch ( _mode ) {
-            case v_normal :
+            case console_attrs_::normal :
                 attrs |= ENABLE_QUICK_EDIT_MODE;
                 attrs |= ENABLE_INSERT_MODE;
                 attrs |= ENABLE_MOUSE_INPUT;
                 break;
-            case v_lock_text :
+            case console_attrs_::lock_text :
                 attrs &= ~ENABLE_QUICK_EDIT_MODE;
                 attrs &= ~ENABLE_INSERT_MODE;
                 attrs |= ENABLE_MOUSE_INPUT;
                 break;
-            case v_lock_all :
+            case console_attrs_::lock_all :
                 attrs &= ~ENABLE_QUICK_EDIT_MODE;
                 attrs &= ~ENABLE_INSERT_MODE;
                 attrs &= ~ENABLE_MOUSE_INPUT;
@@ -245,10 +245,10 @@ class console_ui final {
             cls_();
             line.set_color( line.default_color );
             show_cursor_( false );
-            edit_console_attrs_( v_lock_all );
+            edit_console_attrs_( console_attrs_::lock_all );
             is_exit = line.func( func_args{ this, _mouse_event } );
             show_cursor_( false );
-            edit_console_attrs_( v_lock_text );
+            edit_console_attrs_( console_attrs_::lock_text );
             init_pos_();
             break;
         }
@@ -302,7 +302,8 @@ class console_ui final {
     auto &lock( const bool _is_hide_cursor, const bool _is_lock_text )
     {
         show_cursor_( !_is_hide_cursor );
-        edit_console_attrs_( ( _is_lock_text ) ? ( v_lock_all ) : ( v_normal ) );
+        edit_console_attrs_(
+          ( _is_lock_text ) ? ( console_attrs_::lock_all ) : ( console_attrs_::normal ) );
         return *this;
     }
     auto &add(
@@ -360,7 +361,7 @@ class console_ui final {
     auto &show()
     {
         show_cursor_( false );
-        edit_console_attrs_( v_lock_text );
+        edit_console_attrs_( console_attrs_::lock_text );
         MOUSE_EVENT_RECORD mouse_event;
         init_pos_();
         auto func_returned_value{ FUNC_REVERT };
