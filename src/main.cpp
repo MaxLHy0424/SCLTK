@@ -81,8 +81,8 @@ auto main() -> int
         WINDOW_HEIGHT,
         true,
         false,
-        ( core::data::config[ 1 ].is_enabled == false ) ? ( true ) : ( false ),
-        ( core::data::config[ 1 ].is_enabled == true ) ? ( 230 ) : ( 255 ) )
+        core::data::config[ 1 ].is_enabled == false ? true : false,
+        core::data::config[ 1 ].is_enabled == true ? 230 : 255 )
       .show()
       .lock( false, false );
     if ( core::data::config[ 1 ].is_enabled == true ) {
@@ -107,7 +107,7 @@ auto main( const int _argc, const char *const _argv[] ) -> int
     }
     for ( int i{ 1 }; i < _argc; ++i ) {
         std::string_view tmp{ _argv[ i ] };
-        if ( ( tmp.size() > 2 ) && ( tmp.substr( 0, 2 ) == "-W" ) ) {
+        if ( tmp.size() > 2 && tmp.substr( 0, 2 ) == "-W" ) {
             for ( const auto &sub : tmp.substr( 2 ) ) {
                 switch ( sub ) {
                     case 'f' : config_data.front_show_window = true; break;

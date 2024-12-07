@@ -74,8 +74,8 @@ class console_ui final {
         }
         auto operator==( const COORD &_mouse_position ) const
         {
-            return ( position.Y == _mouse_position.Y ) && ( position.X <= _mouse_position.X )
-                && ( _mouse_position.X < ( position.X + static_cast< short >( strlen( text ) ) ) );
+            return position.Y == _mouse_position.Y && position.X <= _mouse_position.X
+                && _mouse_position.X < ( position.X + static_cast< short >( strlen( text ) ) );
         }
         auto operator!=( const COORD &_mouse_position ) const
         {
@@ -169,8 +169,8 @@ class console_ui final {
         while ( true ) {
             Sleep( 10 );
             ReadConsoleInputA( GetStdHandle( STD_INPUT_HANDLE ), &record, 1, &reg );
-            if ( ( record.EventType == MOUSE_EVENT )
-                 && ( _move | ( record.Event.MouseEvent.dwEventFlags != MOUSE_MOVED ) ) )
+            if ( record.EventType == MOUSE_EVENT
+                 && _move | ( record.Event.MouseEvent.dwEventFlags != MOUSE_MOVED ) )
             {
                 return record.Event.MouseEvent;
             }
@@ -197,9 +197,9 @@ class console_ui final {
     auto write_( const char *const _text, const bool _is_endl = false )
     {
 # ifdef _NEXT_
-        std::print( "{}{}", _text, ( _is_endl ) ? ( '\n' ) : ( '\0' ) );
+        std::print( "{}{}", _text, _is_endl ? '\n' : '\0' );
 # else
-        std::printf( "%s%c", _text, ( _is_endl ) ? ( '\n' ) : ( '\0' ) );
+        std::printf( "%s%c", _text, _is_endl ? '\n' : '\0' );
 # endif
     }
     auto rewrite_( const COORD &_position, const char *const _text )
@@ -222,11 +222,11 @@ class console_ui final {
     auto refresh_( const COORD &_hang_position )
     {
         for ( auto &line : item_ ) {
-            if ( ( line == _hang_position ) && ( line.last_color != line.highlight_color ) ) {
+            if ( line == _hang_position && line.last_color != line.highlight_color ) {
                 line.set_color( line.highlight_color );
                 rewrite_( line.position, line.text );
             }
-            if ( ( line != _hang_position ) && ( line.last_color != line.default_color ) ) {
+            if ( line != _hang_position && line.last_color != line.default_color ) {
                 line.set_color( line.default_color );
                 rewrite_( line.position, line.text );
             }
@@ -281,29 +281,26 @@ class console_ui final {
         SetWindowLongPtrA(
           GetConsoleWindow(),
           GWL_STYLE,
-          ( _fix_size )
-            ? ( GetWindowLongPtrA( GetConsoleWindow(), GWL_STYLE ) & ~WS_SIZEBOX & ~WS_MAXIMIZEBOX )
-            : ( GetWindowLongPtrA( GetConsoleWindow(), GWL_STYLE ) | WS_SIZEBOX | WS_MAXIMIZEBOX ) );
+          _fix_size
+            ? GetWindowLongPtrA( GetConsoleWindow(), GWL_STYLE ) & ~WS_SIZEBOX & ~WS_MAXIMIZEBOX
+            : GetWindowLongPtrA( GetConsoleWindow(), GWL_STYLE ) | WS_SIZEBOX | WS_MAXIMIZEBOX );
         SetWindowLongPtrA(
           GetConsoleWindow(),
           GWL_STYLE,
-          ( _minimize_ctrl )
-            ? ( GetWindowLongPtrA( GetConsoleWindow(), GWL_STYLE ) | WS_MINIMIZEBOX )
-            : ( GetWindowLongPtrA( GetConsoleWindow(), GWL_STYLE ) & ~WS_MINIMIZEBOX ) );
+          _minimize_ctrl
+            ? GetWindowLongPtrA( GetConsoleWindow(), GWL_STYLE ) | WS_MINIMIZEBOX
+            : GetWindowLongPtrA( GetConsoleWindow(), GWL_STYLE ) & ~WS_MINIMIZEBOX );
         EnableMenuItem(
           GetSystemMenu( GetConsoleWindow(), FALSE ),
           SC_CLOSE,
-          ( _close_window_ctrl )
-            ? ( MF_BYCOMMAND | MF_ENABLED )
-            : ( MF_BYCOMMAND | MF_DISABLED | MF_GRAYED ) );
+          _close_window_ctrl ? MF_BYCOMMAND | MF_ENABLED : MF_BYCOMMAND | MF_DISABLED | MF_GRAYED );
         SetLayeredWindowAttributes( GetConsoleWindow(), 0, _transparency, LWA_ALPHA );
         return *this;
     }
     auto &lock( const bool _is_hide_cursor, const bool _is_lock_text )
     {
         show_cursor_( !_is_hide_cursor );
-        edit_console_attrs_(
-          ( _is_lock_text ) ? ( console_attrs_::lock_all ) : ( console_attrs_::normal ) );
+        edit_console_attrs_( _is_lock_text ? console_attrs_::lock_all : console_attrs_::normal );
         return *this;
     }
     auto &add(
@@ -313,7 +310,7 @@ class console_ui final {
       const short _default_color   = CONSOLE_TEXT_WHITE_WHITE )
     {
         item_.emplace_back( ui_item_{
-          _text, _default_color, ( _func == nullptr ) ? ( _default_color ) : ( _highlight_color ),
+          _text, _default_color, _func == nullptr ? _default_color : _highlight_color,
           std::move( _func ) } );
         return *this;
     }
@@ -327,7 +324,7 @@ class console_ui final {
         item_.emplace(
           item_.cbegin() + _index,
           ui_item_{
-            _text, _default_color, ( _func == nullptr ) ? ( _default_color ) : ( _highlight_color ),
+            _text, _default_color, _func == nullptr ? _default_color : _highlight_color,
             std::move( _func ) } );
         return *this;
     }
@@ -339,7 +336,7 @@ class console_ui final {
       const short _default_color   = CONSOLE_TEXT_WHITE_WHITE )
     {
         item_.at( _index ) = ui_item_{
-          _text, _default_color, ( _func == nullptr ) ? ( _default_color ) : ( _highlight_color ),
+          _text, _default_color, _func == nullptr ? _default_color : _highlight_color,
           std::move( _func ) };
         return *this;
     }
@@ -370,8 +367,8 @@ class console_ui final {
             switch ( mouse_event.dwEventFlags ) {
                 case CONSOLE_MOUSE_MOVE : refresh_( mouse_event.dwMousePosition ); break;
                 case CONSOLE_MOUSE_CLICK : {
-                    if ( ( mouse_event.dwButtonState )
-                         && ( mouse_event.dwButtonState != CONSOLE_MOUSE_WHEEL ) )
+                    if ( mouse_event.dwButtonState != false
+                         && mouse_event.dwButtonState != CONSOLE_MOUSE_WHEEL )
                     {
                         func_returned_value = call_func_( mouse_event );
                     }
