@@ -169,8 +169,12 @@ namespace core {
             data::rule.customized.exe.clear();
             data::rule.customized.svc.clear();
             std::string line;
-            enum class config_tag { unknown, option, rule_exe, rule_svc };
-            config_tag tag{ config_tag::unknown };
+            enum class config_tag {
+                unknown,
+                option,
+                rule_exe,
+                rule_svc
+            } tag{ config_tag::unknown };
             while ( std::getline( config_file, line ) ) {
                 if ( ( line.empty() ) || ( line.front() == '#' ) ) {
                     continue;
