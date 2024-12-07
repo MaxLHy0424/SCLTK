@@ -53,7 +53,8 @@ namespace core {
         PSID admins_group{};
         SID_IDENTIFIER_AUTHORITY nt_authority{ SECURITY_NT_AUTHORITY };
         if ( AllocateAndInitializeSid(
-               &nt_authority, 2, SECURITY_BUILTIN_DOMAIN_RID, DOMAIN_ALIAS_RID_ADMINS, 0, 0, 0, 0, 0, 0, &admins_group ) )
+               &nt_authority, 2, SECURITY_BUILTIN_DOMAIN_RID, DOMAIN_ALIAS_RID_ADMINS, 0, 0, 0, 0, 0, 0, &admins_group )
+             == true )
         {
             CheckTokenMembership( nullptr, admins_group, &is_admin );
             FreeSid( admins_group );
@@ -100,8 +101,8 @@ namespace core {
               30,
               true,
               false,
-              ( core::data::config[ 1 ].is_enabled == false ) ? ( true ) : ( false ),
-              ( core::data::config[ 1 ].is_enabled == true ) ? ( 230 ) : ( 255 ) );
+              core::data::config[ 1 ].is_enabled == false ? true : false,
+              core::data::config[ 1 ].is_enabled == true ? 230 : 255 );
             SetConsoleScreenBufferSize( GetStdHandle( STD_OUTPUT_HANDLE ), { 120, SHRT_MAX - 1 } );
             system( "cmd.exe" );
             _args.ui->set_console(
@@ -111,8 +112,8 @@ namespace core {
               WINDOW_HEIGHT,
               true,
               false,
-              ( core::data::config[ 1 ].is_enabled == false ) ? ( true ) : ( false ),
-              ( core::data::config[ 1 ].is_enabled == true ) ? ( 230 ) : ( 255 ) );
+              core::data::config[ 1 ].is_enabled == false ? true : false,
+              core::data::config[ 1 ].is_enabled == true ? 230 : 255 );
             return FUNC_REVERT;
         } };
         class exec_cmd final {
@@ -176,7 +177,7 @@ namespace core {
                 rule_svc
             } tag{ config_tag::unknown };
             while ( std::getline( config_file, line ) ) {
-                if ( ( line.empty() ) || ( line.front() == '#' ) ) {
+                if ( line.empty() || line.front() == '#' ) {
                     continue;
                 }
                 if ( line == "[option]" ) {
@@ -188,7 +189,7 @@ namespace core {
                 } else if ( line == "[rule_svc]" ) {
                     tag = config_tag::rule_svc;
                     continue;
-                } else if ( ( line.front() == '[' ) && ( line.back() == ']' ) ) {
+                } else if ( line.front() == '[' && line.back() == ']' ) {
                     tag = config_tag::unknown;
                     continue;
                 }
@@ -339,7 +340,7 @@ namespace core {
         auto operator()( console_ui::func_args ) const
         {
             std::print( "                 [ 破 解 / 恢 复 ]\n\n\n" );
-            if ( ( rule_data_.exe.empty() ) && ( rule_data_.svc.empty() ) ) {
+            if ( rule_data_.exe.empty() && rule_data_.svc.empty() ) {
                 std::print( " (i) 规则为空.\n\n" );
                 for ( unsigned short i{ 3 }; i > 0; --i ) {
                     std::print( " {}s 后返回.\r", i );
@@ -466,14 +467,13 @@ namespace core {
         SetWindowLongPtrA(
           GetConsoleWindow(),
           GWL_STYLE,
-          ( config_data.window_ctrls )
-            ? ( GetWindowLongPtrA( GetConsoleWindow(), GWL_STYLE ) | WS_SIZEBOX | WS_MAXIMIZEBOX
-                | WS_MINIMIZEBOX )
-            : ( GetWindowLongPtrA( GetConsoleWindow(), GWL_STYLE ) & ~WS_SIZEBOX & ~WS_MAXIMIZEBOX
-                & ~WS_MINIMIZEBOX ) );
+          config_data.window_ctrls
+            ? GetWindowLongPtrA( GetConsoleWindow(), GWL_STYLE ) | WS_SIZEBOX | WS_MAXIMIZEBOX | WS_MINIMIZEBOX
+            : GetWindowLongPtrA( GetConsoleWindow(), GWL_STYLE ) & ~WS_SIZEBOX & ~WS_MAXIMIZEBOX
+                & ~WS_MINIMIZEBOX );
         system( "mode.com con cols=50 lines=25" );
         SetLayeredWindowAttributes(
-          GetConsoleWindow(), 0, ( config_data.translucent_window ) ? ( 230 ) : ( 255 ), LWA_ALPHA );
+          GetConsoleWindow(), 0, config_data.translucent_window ? 230 : 255, LWA_ALPHA );
     }
     inline auto front_show_window()
     {
