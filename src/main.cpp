@@ -22,7 +22,7 @@ auto main() -> int
     }
     ui.add_back( "                    [ 主  页 ]\n\n" )
       .add_back( " < 退出 ", core::quit, CONSOLE_TEXT_RED_WHITE )
-      .add_back( " < 重启 ", core::relaunch_as_admin, CONSOLE_TEXT_RED_WHITE )
+      .add_back( " < 重启 ", core::relaunch_as_admin, CONSOLE_TEXT_GREEN_WHITE )
       .add_back( " > 信息 ", core::info )
       .add_back( " > 配置 ", core::config_op{ 'w' } )
       .add_back( " > 工具箱 ", core::toolkit )
