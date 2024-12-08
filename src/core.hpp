@@ -122,7 +122,7 @@ namespace core {
         } };
         console_ui ui;
         ui.add_back( "                    [ 信  息 ]\n\n" )
-          .add_back( " < 返回 ", quit, CONSOLE_TEXT_GREEN_WHITE )
+          .add_back( " < 返回 ", quit, TEXT_FOREGROUND_GREEN | TEXT_FOREGROUND_INTENSITY )
           .add_back( "\n[名称]\n\n " INFO_NAME "\n\n[版本]\n\n " INFO_VERSION )
           .add_back( "\n[仓库]\n" )
           .add_back( " " INFO_REPO_URL, std::move( view_repo_webpage ) )
@@ -186,7 +186,7 @@ namespace core {
           R"(reg.exe add "HKLM\SYSTEM\CurrentControlSet\Services\USBSTOR" /f /t reg_dword /v Start /d 3)" };
         console_ui ui;
         ui.add_back( "                   [ 工 具 箱 ]\n\n" )
-          .add_back( " < 返回 ", quit, CONSOLE_TEXT_GREEN_WHITE )
+          .add_back( " < 返回 ", quit, TEXT_FOREGROUND_GREEN | TEXT_FOREGROUND_INTENSITY )
           .add_back( " > 命令提示符 ", std::move( launch_cmd ) )
           .add_back( "\n[快捷操作]\n" )
           .add_back( " > 重启资源管理器 ", exec_cmd{ std::move( cmd[ 0 ] ) } )
@@ -307,7 +307,8 @@ namespace core {
             ui.add_back(
                 "                    [ 配  置 ]\n\n\n"
                 " (i) 相关信息可参阅文档.\n" )
-              .add_back( " < 同步配置并返回 ", std::move( sync ), CONSOLE_TEXT_GREEN_WHITE )
+              .add_back(
+                " < 同步配置并返回 ", std::move( sync ), TEXT_FOREGROUND_GREEN | TEXT_FOREGROUND_INTENSITY )
               .add_back( " > 打开配置文件 ", std::move( open_config_file ) )
               .add_back( "\n[增强操作]\n" )
               .add_back(
@@ -543,7 +544,7 @@ namespace core {
     {
         console_ui ui;
         ui.add_back( "                    [ 信  息 ]\n\n" )
-          .add_back( " < 返回 ", quit, CONSOLE_TEXT_GREEN_WHITE )
+          .add_back( " < 返回 ", quit, TEXT_GREEN_WHITE )
           .add_back(
             "\n[名称]\n\n " INFO_NAME "\n\n[版本]\n\n " INFO_VERSION "\n\n[仓库]\n\n " INFO_REPO_URL
             "\n\n[许可证]\n\n " INFO_LICENSE "\n\n (C) 2023 - present " INFO_DEVELOPER "." )
