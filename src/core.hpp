@@ -431,7 +431,7 @@ namespace core {
     };
 #else
     struct rule_data_node final {
-        std::deque< const char * > exe, svc;
+        std::vector< const char * > exe, svc;
     };
     inline struct {
         const rule_data_node mythware, lenovo;
