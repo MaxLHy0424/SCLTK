@@ -506,15 +506,6 @@ namespace core {
           .show();
         return UI_REVERT;
     }
-    inline auto cmd( console_ui::func_args _args )
-    {
-        _args.ui->lock( false, false );
-        system( "cmd.exe" );
-        if ( !config_data.window_ctrls ) {
-            init();
-        }
-        return UI_REVERT;
-    }
     class rule_op final {
       private:
         const char mode_;

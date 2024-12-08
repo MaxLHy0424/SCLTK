@@ -132,7 +132,6 @@ INIT:
     }
     ui.add_back( " < 退出 ", core::quit, CONSOLE_TEXT_RED_WHITE )
       .add_back( " > 信息 ", core::info )
-      .add_back( " > 命令提示符 ", core::cmd )
       .add_back( "\n[破解]\n" )
       .add_back( " > 极域电子教室 ", core::rule_op{ 'c', core::rule.mythware } )
       .add_back( " > 联想云教室 ", core::rule_op{ 'c', core::rule.lenovo } )
