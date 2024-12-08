@@ -11,19 +11,32 @@
 # include <queue>
 # include <string>
 # include <thread>
-# define CONSOLE_MOUSE_BUTTON_LEFT   FROM_LEFT_1ST_BUTTON_PRESSED
-# define CONSOLE_MOUSE_BUTTON_MIDDLE FROM_LEFT_2ND_BUTTON_PRESSED
-# define CONSOLE_MOUSE_BUTTON_RIGHT  RIGHTMOST_BUTTON_PRESSED
-# define CONSOLE_MOUSE_CLICK         0x0000
-# define CONSOLE_MOUSE_CLICK_DOUBLE  DOUBLE_CLICK
-# define CONSOLE_MOUSE_MOVE          MOUSE_MOVED
-# define CONSOLE_MOUSE_WHEEL         MOUSE_WHEELED
-# define CONSOLE_TEXT_WHITE_WHITE    0x0007
-# define CONSOLE_TEXT_RED_WHITE      0x000c
-# define CONSOLE_TEXT_GREEN_WHITE    0x000a
-# define CONSOLE_TEXT_BLUE_WHITE     0x0009
-# define UI_REVERT                   false
-# define UI_TERMINATE                true
+# define MOUSE_BUTTON_LEFT               FROM_LEFT_1ST_BUTTON_PRESSED
+# define MOUSE_BUTTON_MIDDLE             FROM_LEFT_2ND_BUTTON_PRESSED
+# define MOUSE_BUTTON_RIGHT              RIGHTMOST_BUTTON_PRESSED
+# define MOUSE_CLICK                     0x0000
+# define MOUSE_CLICK_DOUBLE              DOUBLE_CLICK
+# define MOUSE_MOVE                      MOUSE_MOVED
+# define MOUSE_WHEEL                     MOUSE_WHEELED
+# define TEXT_DEFAULT                    0x0007
+# define TEXT_FOREGROUND_RED             FOREGROUND_RED
+# define TEXT_FOREGROUND_GREEN           FOREGROUND_GREEN
+# define TEXT_FOREGROUND_BLUE            FOREGROUND_BLUE
+# define TEXT_FOREGROUND_INTENSITY       FOREGROUND_INTENSITY
+# define TEXT_BACKGROUND_RED             BACKGROUND_RED
+# define TEXT_BACKGROUND_GREEN           BACKGROUND_GREEN
+# define TEXT_BACKGROUND_BLUE            BACKGROUND_BLUE
+# define TEXT_BACKGROUND_INTENSITY       BACKGROUND_INTENSITY
+# define TEXT_COMMON_LVB_LEADING_BYTE    COMMON_LVB_LEADING_BYTE
+# define TEXT_COMMON_LVB_TRAILING_BYTE   COMMON_LVB_TRAILING_BYTE
+# define TEXT_COMMON_LVB_GRID_HORIZONTAL COMMON_LVB_GRID_HORIZONTAL
+# define TEXT_COMMON_LVB_GRID_LVERTICAL  COMMON_LVB_GRID_LVERTICAL
+# define TEXT_COMMON_LVB_GRID_RVERTICAL  COMMON_LVB_GRID_RVERTICAL
+# define TEXT_COMMON_LVB_REVERSE_VIDEO   COMMON_LVB_REVERSE_VIDEO
+# define TEXT_COMMON_LVB_UNDERSCORE      COMMON_LVB_UNDERSCORE
+# define TEXT_COMMON_LVB_SBCSDBCS        COMMON_LVB_SBCSDBCS
+# define UI_REVERT                       false
+# define UI_TERMINATE                    true
 class console_ui final {
   public:
     struct func_args final {
@@ -32,7 +45,7 @@ class console_ui final {
         func_args &operator=( const func_args & ) = delete;
         explicit func_args(
           console_ui *const _ui                 = nullptr,
-          const MOUSE_EVENT_RECORD _mouse_event = { {}, CONSOLE_MOUSE_BUTTON_LEFT, {}, {} } )
+          const MOUSE_EVENT_RECORD _mouse_event = { {}, MOUSE_BUTTON_LEFT, {}, {} } )
           : button_state{ std::move( _mouse_event.dwButtonState ) }
           , ctrl_key_state{ std::move( _mouse_event.dwControlKeyState ) }
           , event_flag{ std::move( _mouse_event.dwEventFlags ) }
@@ -57,20 +70,20 @@ class console_ui final {
   private:
     struct ui_item_ final {
         const char *text;
-        short default_color, highlight_color, last_color;
+        short default_attrs, highlight_attrs, last_attrs;
         COORD position;
         func_callback func;
-        auto set_color( const short _color )
+        auto set_attrs( const short _attrs )
         {
-            SetConsoleTextAttribute( GetStdHandle( STD_OUTPUT_HANDLE ), _color );
-            last_color = _color;
+            SetConsoleTextAttribute( GetStdHandle( STD_OUTPUT_HANDLE ), _attrs );
+            last_attrs = _attrs;
         }
         auto &operator=( const ui_item_ &_src )
         {
             text            = _src.text;
-            default_color   = _src.default_color;
-            highlight_color = _src.highlight_color;
-            last_color      = _src.last_color;
+            default_attrs   = _src.default_attrs;
+            highlight_attrs = _src.highlight_attrs;
+            last_attrs      = _src.last_attrs;
             position        = _src.position;
             func            = _src.func;
             return *this;
@@ -86,37 +99,37 @@ class console_ui final {
         }
         explicit ui_item_()
           : text{}
-          , default_color{ CONSOLE_TEXT_WHITE_WHITE }
-          , highlight_color{ CONSOLE_TEXT_BLUE_WHITE }
-          , last_color{ CONSOLE_TEXT_WHITE_WHITE }
+          , default_attrs{ TEXT_DEFAULT }
+          , highlight_attrs{ TEXT_FOREGROUND_GREEN | TEXT_FOREGROUND_BLUE }
+          , last_attrs{ TEXT_DEFAULT }
           , position{}
           , func{}
         { }
         explicit ui_item_(
           const char *const _text,
-          const short _default_color,
-          const short _highlight_color,
+          const short _default_attrs,
+          const short _highlight_attrs,
           const func_callback _func )
           : text{ _text }
-          , default_color{ _default_color }
-          , highlight_color{ _highlight_color }
-          , last_color{ CONSOLE_TEXT_WHITE_WHITE }
+          , default_attrs{ _default_attrs }
+          , highlight_attrs{ _highlight_attrs }
+          , last_attrs{ TEXT_DEFAULT }
           , position{}
           , func{ std::move( _func ) }
         { }
         explicit ui_item_( const ui_item_ &_src )
           : text{ _src.text }
-          , default_color{ _src.default_color }
-          , highlight_color{ _src.highlight_color }
-          , last_color{ _src.last_color }
+          , default_attrs{ _src.default_attrs }
+          , highlight_attrs{ _src.highlight_attrs }
+          , last_attrs{ _src.last_attrs }
           , position{ _src.position }
           , func{ _src.func }
         { }
         explicit ui_item_( ui_item_ &&_src )
           : text{ std::move( _src.text ) }
-          , default_color{ std::move( _src.default_color ) }
-          , highlight_color{ std::move( _src.highlight_color ) }
-          , last_color{ std::move( _src.last_color ) }
+          , default_attrs{ std::move( _src.default_attrs ) }
+          , highlight_attrs{ std::move( _src.highlight_attrs ) }
+          , last_attrs{ std::move( _src.last_attrs ) }
           , position{ std::move( _src.position ) }
           , func{ std::move( _src.func ) }
         { }
@@ -219,19 +232,19 @@ class console_ui final {
         cls_();
         for ( auto &line : item_ ) {
             line.position = get_cursor_();
-            line.set_color( line.default_color );
+            line.set_attrs( line.default_attrs );
             write_( line.text, true );
         }
     }
     auto refresh_( const COORD &_hang_position )
     {
         for ( auto &line : item_ ) {
-            if ( line == _hang_position && line.last_color != line.highlight_color ) {
-                line.set_color( line.highlight_color );
+            if ( line == _hang_position && line.last_attrs != line.highlight_attrs ) {
+                line.set_attrs( line.highlight_attrs );
                 rewrite_( line.position, line.text );
             }
-            if ( line != _hang_position && line.last_color != line.default_color ) {
-                line.set_color( line.default_color );
+            if ( line != _hang_position && line.last_attrs != line.default_attrs ) {
+                line.set_attrs( line.default_attrs );
                 rewrite_( line.position, line.text );
             }
         }
@@ -247,7 +260,7 @@ class console_ui final {
                 break;
             }
             cls_();
-            line.set_color( line.default_color );
+            line.set_attrs( line.default_attrs );
             show_cursor_( false );
             edit_console_attrs_( console_attrs_::lock_all );
             is_exit = line.func( func_args{ this, _mouse_event } );
@@ -310,22 +323,21 @@ class console_ui final {
     auto &add_front(
       const char *const _text,
       const func_callback _func    = nullptr,
-      const short _highlight_color = CONSOLE_TEXT_BLUE_WHITE,
-      const short _default_color   = CONSOLE_TEXT_WHITE_WHITE )
+      const short _highlight_attrs = TEXT_FOREGROUND_GREEN | TEXT_FOREGROUND_BLUE,
+      const short _default_attrs   = TEXT_DEFAULT )
     {
         item_.emplace_front( ui_item_{
-          _text, _default_color, _func == nullptr ? _default_color : _highlight_color,
+          _text, _default_attrs, _func == nullptr ? _default_attrs : _highlight_attrs,
           std::move( _func ) } );
         return *this;
     }
     auto &add_back(
-      const char *const _text,
-      const func_callback _func    = nullptr,
-      const short _highlight_color = CONSOLE_TEXT_BLUE_WHITE,
-      const short _default_color   = CONSOLE_TEXT_WHITE_WHITE )
+      const char *const _text, const func_callback _func = nullptr,
+      const short _highlight_attrs = TEXT_FOREGROUND_BLUE | TEXT_FOREGROUND_GREEN,
+      const short _default_attrs   = TEXT_DEFAULT )
     {
         item_.emplace_back( ui_item_{
-          _text, _default_color, _func == nullptr ? _default_color : _highlight_color,
+          _text, _default_attrs, _func == nullptr ? _default_attrs : _highlight_attrs,
           std::move( _func ) } );
         return *this;
     }
@@ -333,13 +345,13 @@ class console_ui final {
       const size_type _index,
       const char *const _text,
       const func_callback _func    = nullptr,
-      const short _highlight_color = CONSOLE_TEXT_BLUE_WHITE,
-      const short _default_color   = CONSOLE_TEXT_WHITE_WHITE )
+      const short _highlight_attrs = TEXT_FOREGROUND_GREEN | TEXT_FOREGROUND_BLUE,
+      const short _default_attrs   = TEXT_DEFAULT )
     {
         item_.emplace(
           item_.cbegin() + _index,
           ui_item_{
-            _text, _default_color, _func == nullptr ? _default_color : _highlight_color,
+            _text, _default_attrs, _func == nullptr ? _default_attrs : _highlight_attrs,
             std::move( _func ) } );
         return *this;
     }
@@ -347,11 +359,11 @@ class console_ui final {
       const size_type _index,
       const char *const _text,
       const func_callback _func    = nullptr,
-      const short _highlight_color = CONSOLE_TEXT_BLUE_WHITE,
-      const short _default_color   = CONSOLE_TEXT_WHITE_WHITE )
+      const short _highlight_attrs = TEXT_FOREGROUND_GREEN | TEXT_FOREGROUND_BLUE,
+      const short _default_attrs   = TEXT_DEFAULT )
     {
         item_.at( _index ) = ui_item_{
-          _text, _default_color, _func == nullptr ? _default_color : _highlight_color,
+          _text, _default_attrs, _func == nullptr ? _default_attrs : _highlight_attrs,
           std::move( _func ) };
         return *this;
     }
@@ -386,8 +398,8 @@ class console_ui final {
         while ( func_return_value == UI_REVERT ) {
             mouse_event = wait_mouse_event_();
             switch ( mouse_event.dwEventFlags ) {
-                case CONSOLE_MOUSE_MOVE : refresh_( mouse_event.dwMousePosition ); break;
-                case CONSOLE_MOUSE_CLICK : {
+                case MOUSE_MOVE : refresh_( mouse_event.dwMousePosition ); break;
+                case MOUSE_CLICK : {
                     if ( mouse_event.dwButtonState != false ) {
                         func_return_value = call_func_( mouse_event );
                     }
