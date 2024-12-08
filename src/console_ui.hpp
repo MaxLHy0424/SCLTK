@@ -6,9 +6,11 @@
 # else
 #  include <cstdio>
 # endif
+# include <chrono>
 # include <functional>
 # include <queue>
 # include <string>
+# include <thread>
 # define CONSOLE_MOUSE_BUTTON_LEFT   FROM_LEFT_1ST_BUTTON_PRESSED
 # define CONSOLE_MOUSE_BUTTON_MIDDLE FROM_LEFT_2ND_BUTTON_PRESSED
 # define CONSOLE_MOUSE_BUTTON_RIGHT  RIGHTMOST_BUTTON_PRESSED
@@ -164,10 +166,11 @@ class console_ui final {
     }
     auto wait_mouse_event_( const bool _move = true )
     {
+        using namespace std::chrono_literals;
         INPUT_RECORD record;
         DWORD reg;
         while ( true ) {
-            Sleep( 10 );
+            std::this_thread::sleep_for( 10ms );
             ReadConsoleInputA( GetStdHandle( STD_INPUT_HANDLE ), &record, 1, &reg );
             if ( record.EventType == MOUSE_EVENT
                  && _move | ( record.Event.MouseEvent.dwEventFlags != MOUSE_MOVED ) )
@@ -373,6 +376,7 @@ class console_ui final {
     }
     auto &show()
     {
+        using namespace std::chrono_literals;
         show_cursor_( false );
         edit_console_attrs_( console_attrs_::lock_text );
         MOUSE_EVENT_RECORD mouse_event;
@@ -389,7 +393,7 @@ class console_ui final {
                     break;
                 }
             }
-            Sleep( 10 );
+            std::this_thread::sleep_for( 10ms );
         }
         cls_();
         return *this;

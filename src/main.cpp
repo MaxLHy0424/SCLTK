@@ -1,5 +1,4 @@
 #ifdef _WIN32
-# include <thread>
 # include "console_ui.hpp"
 # include "core.hpp"
 # ifdef _NEXT_
