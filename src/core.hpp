@@ -63,6 +63,7 @@ namespace core {
     }
     inline auto force_show_window()
     {
+        using namespace std::chrono_literals;
         const HWND this_window{ GetConsoleWindow() };
         const DWORD foreground_id{ GetWindowThreadProcessId( this_window, nullptr ) },
           current_id{ GetCurrentThreadId() };
@@ -72,11 +73,12 @@ namespace core {
             SetForegroundWindow( this_window );
             AttachThreadInput( current_id, foreground_id, FALSE );
             SetWindowPos( this_window, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
-            Sleep( 100 );
+            std::this_thread::sleep_for( 100ms );
         }
     }
     inline auto repair_env()
     {
+        using namespace std::chrono_literals;
         const char *const hkcu_reg_dir[]{
           R"(Software\Policies\Microsoft\Windows\System)",
           R"(Software\Microsoft\Windows\CurrentVersion\Policies\System)",
@@ -97,7 +99,7 @@ namespace core {
                 RegDeleteTreeA( HKEY_LOCAL_MACHINE, path.c_str() );
                 path.clear();
             }
-            Sleep( 1000 );
+            std::this_thread::sleep_for( 1000ms );
         }
     }
     inline auto relaunch_as_admin( console_ui::func_args )
@@ -291,12 +293,13 @@ namespace core {
                       nullptr, "open", data::config_file_name, nullptr, nullptr, SW_SHOWNORMAL );
                     return UI_REVERT;
                 }
+                using namespace std::chrono_literals;
                 std::print(
                   "                    [ 配  置 ]\n\n\n"
                   " (i) 无法读取配置文件.\n\n" );
                 for ( unsigned short i{ 3 }; i > 0; --i ) {
                     std::print( " {}s 后返回.\r", i );
-                    Sleep( 1000 );
+                    std::this_thread::sleep_for( 1000ms );
                 }
                 return UI_REVERT;
             } };
@@ -386,10 +389,11 @@ namespace core {
         {
             std::print( "                 [ 破 解 / 恢 复 ]\n\n\n" );
             if ( rule_data_.exe.empty() && rule_data_.svc.empty() ) {
+                using namespace std::chrono_literals;
                 std::print( " (i) 规则为空.\n\n" );
                 for ( unsigned short i{ 3 }; i > 0; --i ) {
                     std::print( " {}s 后返回.\r", i );
-                    Sleep( 1000 );
+                    std::this_thread::sleep_for( 1000ms );
                 }
                 return UI_REVERT;
             }
@@ -522,6 +526,7 @@ namespace core {
     }
     inline auto front_show_window()
     {
+        using namespace std::chrono_literals;
         const HWND this_window{ GetConsoleWindow() };
         const DWORD foreground_id{ GetWindowThreadProcessId( this_window, nullptr ) },
           current_id{ GetCurrentThreadId() };
@@ -531,7 +536,7 @@ namespace core {
             SetForegroundWindow( this_window );
             AttachThreadInput( current_id, foreground_id, FALSE );
             SetWindowPos( this_window, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
-            Sleep( 100 );
+            std::this_thread::sleep_for( 100ms );
         }
     }
     inline auto info( console_ui::func_args )
@@ -554,10 +559,11 @@ namespace core {
         {
             std::puts( "                 [ 破 解 / 恢 复 ]\n\n" );
             if ( !is_run_as_admin() ) {
+                using namespace std::chrono_literals;
                 std::puts( "\n (i) 需要管理员权限.\n" );
                 for ( unsigned short i{ 3 }; i > 0; --i ) {
                     std::printf( " %hus 后返回.\r", i );
-                    Sleep( 1000 );
+                    std::this_thread::sleep_for( 1000ms );
                 }
                 return UI_REVERT;
             }
