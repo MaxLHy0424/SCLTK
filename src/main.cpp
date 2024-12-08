@@ -16,49 +16,10 @@ auto main() -> int
     }
     core::config_op{ 'r' }( console_ui::func_args{} );
     if ( core::data::config[ 1 ].is_enabled == true ) {
-        std::thread{ []()
-        {
-            const HWND this_window{ GetConsoleWindow() };
-            const DWORD foreground_id{ GetWindowThreadProcessId( this_window, nullptr ) },
-              current_id{ GetCurrentThreadId() };
-            while ( true ) {
-                AttachThreadInput( current_id, foreground_id, TRUE );
-                ShowWindow( this_window, SW_SHOWNORMAL );
-                SetForegroundWindow( this_window );
-                AttachThreadInput( current_id, foreground_id, FALSE );
-                SetWindowPos( this_window, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
-                Sleep( 100 );
-            }
-        } }
-          .detach();
+        std::thread{ core::force_show_window }.detach();
     }
     if ( core::data::config[ 2 ].is_enabled == true ) {
-        std::thread{ []()
-        {
-            const char *const hkcu_reg_dir[]{
-              R"(Software\Policies\Microsoft\Windows\System)",
-              R"(Software\Microsoft\Windows\CurrentVersion\Policies\System)",
-              R"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)" };
-            const char *const exe[]{
-              "mode.com", "chcp.com",    "reg.exe",     "sc.exe",      "taskkill.exe", "net.exe",
-              "cmd.exe",  "taskmgr.exe", "perfmon.exe", "regedit.exe", "mmc.exe" };
-            std::string path;
-            while ( true ) {
-                for ( const auto &item : hkcu_reg_dir ) {
-                    RegDeleteTreeA( HKEY_CURRENT_USER, item );
-                }
-                for ( const auto &item : exe ) {
-                    path
-                      .append(
-                        R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\)" )
-                      .append( item );
-                    RegDeleteTreeA( HKEY_LOCAL_MACHINE, path.c_str() );
-                    path.clear();
-                }
-                Sleep( 1000 );
-            }
-        } }
-          .detach();
+        std::thread{ core::repair_env }.detach();
     }
     ui.add_back( "                    [ 主  页 ]\n\n" )
       .add_back( " < 退出 ", core::quit, CONSOLE_TEXT_RED_WHITE )
