@@ -7,8 +7,8 @@
 #  include <cstdio>
 # endif
 # include <functional>
+# include <queue>
 # include <string>
-# include <vector>
 # define CONSOLE_MOUSE_BUTTON_LEFT   FROM_LEFT_1ST_BUTTON_PRESSED
 # define CONSOLE_MOUSE_BUTTON_MIDDLE FROM_LEFT_2ND_BUTTON_PRESSED
 # define CONSOLE_MOUSE_BUTTON_RIGHT  RIGHTMOST_BUTTON_PRESSED
@@ -120,7 +120,7 @@ class console_ui final {
         ~ui_item_() { }
     };
     enum class console_attrs_ { normal, lock_text, lock_all };
-    std::vector< ui_item_ > item_;
+    std::deque< ui_item_ > item_;
     short width_, height_;
     auto show_cursor_( const bool _is_show )
     {
