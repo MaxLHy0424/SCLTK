@@ -303,7 +303,18 @@ class console_ui final {
         edit_console_attrs_( _is_lock_text ? console_attrs_::lock_all : console_attrs_::normal );
         return *this;
     }
-    auto &add(
+    auto &add_front(
+      const char *const _text,
+      const func_callback _func    = nullptr,
+      const short _highlight_color = CONSOLE_TEXT_BLUE_WHITE,
+      const short _default_color   = CONSOLE_TEXT_WHITE_WHITE )
+    {
+        item_.emplace_front( ui_item_{
+          _text, _default_color, _func == nullptr ? _default_color : _highlight_color,
+          std::move( _func ) } );
+        return *this;
+    }
+    auto &add_back(
       const char *const _text,
       const func_callback _func    = nullptr,
       const short _highlight_color = CONSOLE_TEXT_BLUE_WHITE,
@@ -340,7 +351,12 @@ class console_ui final {
           std::move( _func ) };
         return *this;
     }
-    auto &revert()
+    auto &remove_front()
+    {
+        item_.pop_front();
+        return *this;
+    }
+    auto &remove_back()
     {
         item_.pop_back();
         return *this;
