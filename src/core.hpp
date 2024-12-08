@@ -107,28 +107,28 @@ namespace core {
         char path[ MAX_PATH ]{};
         GetModuleFileNameA( nullptr, path, MAX_PATH );
         ShellExecuteA( nullptr, "runas", path, nullptr, nullptr, SW_SHOWNORMAL );
-        return UI_TERMINATE;
+        return CONSOLE_UI_TERMINATE;
     }
     inline auto quit( console_ui::func_args )
     {
-        return UI_TERMINATE;
+        return CONSOLE_UI_TERMINATE;
     }
     inline auto info( console_ui::func_args )
     {
         auto view_repo_webpage{ []( console_ui::func_args )
         {
             ShellExecuteA( nullptr, "open", INFO_REPO_URL, nullptr, nullptr, SW_SHOWNORMAL );
-            return UI_REVERT;
+            return CONSOLE_UI_REVERT;
         } };
         console_ui ui;
         ui.add_back( "                    [ 信  息 ]\n\n" )
-          .add_back( " < 返回 ", quit, TEXT_FOREGROUND_GREEN | TEXT_FOREGROUND_INTENSITY )
+          .add_back( " < 返回 ", quit, CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_INTENSITY )
           .add_back( "\n[名称]\n\n " INFO_NAME "\n\n[版本]\n\n " INFO_VERSION )
           .add_back( "\n[仓库]\n" )
           .add_back( " " INFO_REPO_URL, std::move( view_repo_webpage ) )
           .add_back( "\n[许可证]\n\n " INFO_LICENSE "\n\n (C) 2023 - present " INFO_DEVELOPER "." )
           .show();
-        return UI_REVERT;
+        return CONSOLE_UI_REVERT;
     }
     inline auto toolkit( console_ui::func_args )
     {
@@ -155,7 +155,7 @@ namespace core {
               false,
               core::data::config[ 1 ].is_enabled == false ? true : false,
               core::data::config[ 1 ].is_enabled == true ? 230 : 255 );
-            return UI_REVERT;
+            return CONSOLE_UI_REVERT;
         } };
         class exec_cmd final {
           private:
@@ -166,7 +166,7 @@ namespace core {
             {
                 std::print( ":: 执行命令.\n{}\n", std::string( WINDOW_WIDTH, '-' ) );
                 system( cmd_ );
-                return UI_REVERT;
+                return CONSOLE_UI_REVERT;
             }
             explicit exec_cmd( const char *const _cmd )
               : cmd_{ std::move( _cmd ) }
@@ -186,7 +186,7 @@ namespace core {
           R"(reg.exe add "HKLM\SYSTEM\CurrentControlSet\Services\USBSTOR" /f /t reg_dword /v Start /d 3)" };
         console_ui ui;
         ui.add_back( "                   [ 工 具 箱 ]\n\n" )
-          .add_back( " < 返回 ", quit, TEXT_FOREGROUND_GREEN | TEXT_FOREGROUND_INTENSITY )
+          .add_back( " < 返回 ", quit, CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_INTENSITY )
           .add_back( " > 命令提示符 ", std::move( launch_cmd ) )
           .add_back( "\n[快捷操作]\n" )
           .add_back( " > 重启资源管理器 ", exec_cmd{ std::move( cmd[ 0 ] ) } )
@@ -194,7 +194,7 @@ namespace core {
           .add_back( " > 恢复 Microsoft Edge 离线游戏 ", exec_cmd{ std::move( cmd[ 2 ] ) } )
           .add_back( " > 恢复 USB 设备访问 ", exec_cmd{ std::move( cmd[ 3 ] ) } )
           .show();
-        return UI_REVERT;
+        return CONSOLE_UI_REVERT;
     }
     class config_op final {
       private:
@@ -283,7 +283,7 @@ namespace core {
                 std::ofstream config_file{ data::config_file_name, std::ios::out | std::ios::trunc };
                 config_file.write( text.c_str(), text.size() );
                 config_file.close();
-                return UI_TERMINATE;
+                return CONSOLE_UI_TERMINATE;
             } };
             auto open_config_file{ []( console_ui::func_args )
             {
@@ -291,7 +291,7 @@ namespace core {
                     std::print( ":: 打开配置文件.\n" );
                     ShellExecuteA(
                       nullptr, "open", data::config_file_name, nullptr, nullptr, SW_SHOWNORMAL );
-                    return UI_REVERT;
+                    return CONSOLE_UI_REVERT;
                 }
                 using namespace std::chrono_literals;
                 std::print(
@@ -301,14 +301,16 @@ namespace core {
                     std::print( " {}s 后返回.\r", i );
                     std::this_thread::sleep_for( 1000ms );
                 }
-                return UI_REVERT;
+                return CONSOLE_UI_REVERT;
             } };
             console_ui ui;
             ui.add_back(
                 "                    [ 配  置 ]\n\n\n"
                 " (i) 相关信息可参阅文档.\n" )
               .add_back(
-                " < 同步配置并返回 ", std::move( sync ), TEXT_FOREGROUND_GREEN | TEXT_FOREGROUND_INTENSITY )
+                " < 同步配置并返回 ",
+                std::move( sync ),
+                CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_INTENSITY )
               .add_back( " > 打开配置文件 ", std::move( open_config_file ) )
               .add_back( "\n[增强操作]\n" )
               .add_back(
@@ -316,14 +318,14 @@ namespace core {
                 []( console_ui::func_args )
             {
                 data::config[ 0 ].is_enabled = true;
-                return UI_REVERT;
+                return CONSOLE_UI_REVERT;
             } )
               .add_back(
                 " > 禁用 (默认) ",
                 []( console_ui::func_args )
             {
                 data::config[ 0 ].is_enabled = false;
-                return UI_REVERT;
+                return CONSOLE_UI_REVERT;
             } )
               .add_back( "\n[增强窗口 (下次启动时生效)]\n" )
               .add_back(
@@ -331,14 +333,14 @@ namespace core {
                 []( console_ui::func_args )
             {
                 data::config[ 1 ].is_enabled = true;
-                return UI_REVERT;
+                return CONSOLE_UI_REVERT;
             } )
               .add_back(
                 " > 禁用 (默认) ",
                 []( console_ui::func_args )
             {
                 data::config[ 1 ].is_enabled = false;
-                return UI_REVERT;
+                return CONSOLE_UI_REVERT;
             } )
               .add_back( "\n[修复模式 (下次启动时生效)]\n" )
               .add_back(
@@ -346,17 +348,17 @@ namespace core {
                 []( console_ui::func_args )
             {
                 data::config[ 2 ].is_enabled = true;
-                return UI_REVERT;
+                return CONSOLE_UI_REVERT;
             } )
               .add_back(
                 " > 禁用 (默认) ",
                 []( console_ui::func_args )
             {
                 data::config[ 2 ].is_enabled = false;
-                return UI_REVERT;
+                return CONSOLE_UI_REVERT;
             } )
               .show();
-            return UI_REVERT;
+            return CONSOLE_UI_REVERT;
         }
       public:
         auto operator()( console_ui::func_args ) const
@@ -365,7 +367,7 @@ namespace core {
                 case 'r' : load_(); break;
                 case 'w' : edit_(); break;
             }
-            return UI_REVERT;
+            return CONSOLE_UI_REVERT;
         }
         explicit config_op( const char _mode )
           : mode_{ std::move( _mode ) }
@@ -396,7 +398,7 @@ namespace core {
                     std::print( " {}s 后返回.\r", i );
                     std::this_thread::sleep_for( 1000ms );
                 }
-                return UI_REVERT;
+                return CONSOLE_UI_REVERT;
             }
             std::print( ":: 生成并执行命令.\n{}\n", std::string( WINDOW_WIDTH, '-' ) );
             std::string cmd;
@@ -457,7 +459,7 @@ namespace core {
                     break;
                 }
             }
-            return UI_REVERT;
+            return CONSOLE_UI_REVERT;
         }
         explicit rule_op( const char _mode, const rule_data_node &_rule_data )
           : mode_{ std::move( _mode ) }
@@ -508,7 +510,7 @@ namespace core {
     }
     inline auto quit( console_ui::func_args )
     {
-        return UI_TERMINATE;
+        return CONSOLE_UI_TERMINATE;
     }
     inline auto init()
     {
@@ -549,7 +551,7 @@ namespace core {
             "\n[名称]\n\n " INFO_NAME "\n\n[版本]\n\n " INFO_VERSION "\n\n[仓库]\n\n " INFO_REPO_URL
             "\n\n[许可证]\n\n " INFO_LICENSE "\n\n (C) 2023 - present " INFO_DEVELOPER "." )
           .show();
-        return UI_REVERT;
+        return CONSOLE_UI_REVERT;
     }
     class rule_op final {
       private:
@@ -566,7 +568,7 @@ namespace core {
                     std::printf( " %hus 后返回.\r", i );
                     std::this_thread::sleep_for( 1000ms );
                 }
-                return UI_REVERT;
+                return CONSOLE_UI_REVERT;
             }
             std::puts( ":: 生成命令." );
             std::string cmd;
@@ -603,7 +605,7 @@ namespace core {
             std::printf( ":: 执行命令.\n%s\n", std::string( 50, '-' ).c_str() );
             system( cmd.c_str() );
             std::printf( "%s\n::释放内存.", std::string( 50, '-' ).c_str() );
-            return UI_REVERT;
+            return CONSOLE_UI_REVERT;
         }
         explicit rule_op( const char _mode, const rule_data_node &_rule )
           : mode_{ _mode }

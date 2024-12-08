@@ -11,32 +11,32 @@
 # include <queue>
 # include <string>
 # include <thread>
-# define MOUSE_BUTTON_LEFT               FROM_LEFT_1ST_BUTTON_PRESSED
-# define MOUSE_BUTTON_MIDDLE             FROM_LEFT_2ND_BUTTON_PRESSED
-# define MOUSE_BUTTON_RIGHT              RIGHTMOST_BUTTON_PRESSED
-# define MOUSE_CLICK                     0x0000
-# define MOUSE_CLICK_DOUBLE              DOUBLE_CLICK
-# define MOUSE_MOVE                      MOUSE_MOVED
-# define MOUSE_WHEEL                     MOUSE_WHEELED
-# define TEXT_DEFAULT                    0x0007
-# define TEXT_FOREGROUND_RED             FOREGROUND_RED
-# define TEXT_FOREGROUND_GREEN           FOREGROUND_GREEN
-# define TEXT_FOREGROUND_BLUE            FOREGROUND_BLUE
-# define TEXT_FOREGROUND_INTENSITY       FOREGROUND_INTENSITY
-# define TEXT_BACKGROUND_RED             BACKGROUND_RED
-# define TEXT_BACKGROUND_GREEN           BACKGROUND_GREEN
-# define TEXT_BACKGROUND_BLUE            BACKGROUND_BLUE
-# define TEXT_BACKGROUND_INTENSITY       BACKGROUND_INTENSITY
-# define TEXT_COMMON_LVB_LEADING_BYTE    COMMON_LVB_LEADING_BYTE
-# define TEXT_COMMON_LVB_TRAILING_BYTE   COMMON_LVB_TRAILING_BYTE
-# define TEXT_COMMON_LVB_GRID_HORIZONTAL COMMON_LVB_GRID_HORIZONTAL
-# define TEXT_COMMON_LVB_GRID_LVERTICAL  COMMON_LVB_GRID_LVERTICAL
-# define TEXT_COMMON_LVB_GRID_RVERTICAL  COMMON_LVB_GRID_RVERTICAL
-# define TEXT_COMMON_LVB_REVERSE_VIDEO   COMMON_LVB_REVERSE_VIDEO
-# define TEXT_COMMON_LVB_UNDERSCORE      COMMON_LVB_UNDERSCORE
-# define TEXT_COMMON_LVB_SBCSDBCS        COMMON_LVB_SBCSDBCS
-# define UI_REVERT                       false
-# define UI_TERMINATE                    true
+# define CONSOLE_MOUSE_BUTTON_LEFT               FROM_LEFT_1ST_BUTTON_PRESSED
+# define CONSOLE_MOUSE_BUTTON_MIDDLE             FROM_LEFT_2ND_BUTTON_PRESSED
+# define CONSOLE_MOUSE_BUTTON_RIGHT              RIGHTMOST_BUTTON_PRESSED
+# define CONSOLE_MOUSE_CLICK                     0x0000
+# define CONSOLE_MOUSE_CLICK_DOUBLE              DOUBLE_CLICK
+# define CONSOLE_MOUSE_MOVE                      MOUSE_MOVED
+# define CONSOLE_MOUSE_WHEEL                     MOUSE_WHEELED
+# define CONSOLE_TEXT_DEFAULT                    0x0007
+# define CONSOLE_TEXT_FOREGROUND_RED             FOREGROUND_RED
+# define CONSOLE_TEXT_FOREGROUND_GREEN           FOREGROUND_GREEN
+# define CONSOLE_TEXT_FOREGROUND_BLUE            FOREGROUND_BLUE
+# define CONSOLE_TEXT_FOREGROUND_INTENSITY       FOREGROUND_INTENSITY
+# define CONSOLE_TEXT_BACKGROUND_RED             BACKGROUND_RED
+# define CONSOLE_TEXT_BACKGROUND_GREEN           BACKGROUND_GREEN
+# define CONSOLE_TEXT_BACKGROUND_BLUE            BACKGROUND_BLUE
+# define CONSOLE_TEXT_BACKGROUND_INTENSITY       BACKGROUND_INTENSITY
+# define CONSOLE_TEXT_COMMON_LVB_LEADING_BYTE    COMMON_LVB_LEADING_BYTE
+# define CONSOLE_TEXT_COMMON_LVB_TRAILING_BYTE   COMMON_LVB_TRAILING_BYTE
+# define CONSOLE_TEXT_COMMON_LVB_GRID_HORIZONTAL COMMON_LVB_GRID_HORIZONTAL
+# define CONSOLE_TEXT_COMMON_LVB_GRID_LVERTICAL  COMMON_LVB_GRID_LVERTICAL
+# define CONSOLE_TEXT_COMMON_LVB_GRID_RVERTICAL  COMMON_LVB_GRID_RVERTICAL
+# define CONSOLE_TEXT_COMMON_LVB_REVERSE_VIDEO   COMMON_LVB_REVERSE_VIDEO
+# define CONSOLE_TEXT_COMMON_LVB_UNDERSCORE      COMMON_LVB_UNDERSCORE
+# define CONSOLE_TEXT_COMMON_LVB_SBCSDBCS        COMMON_LVB_SBCSDBCS
+# define CONSOLE_UI_REVERT                       false
+# define CONSOLE_UI_TERMINATE                    true
 class console_ui final {
   public:
     struct func_args final {
@@ -45,7 +45,7 @@ class console_ui final {
         func_args &operator=( const func_args & ) = delete;
         explicit func_args(
           console_ui *const _ui                 = nullptr,
-          const MOUSE_EVENT_RECORD _mouse_event = { {}, MOUSE_BUTTON_LEFT, {}, {} } )
+          const MOUSE_EVENT_RECORD _mouse_event = { {}, CONSOLE_MOUSE_BUTTON_LEFT, {}, {} } )
           : button_state{ std::move( _mouse_event.dwButtonState ) }
           , ctrl_key_state{ std::move( _mouse_event.dwControlKeyState ) }
           , event_flag{ std::move( _mouse_event.dwEventFlags ) }
@@ -99,9 +99,9 @@ class console_ui final {
         }
         explicit ui_item_()
           : text{}
-          , default_attrs{ TEXT_DEFAULT }
-          , highlight_attrs{ TEXT_FOREGROUND_GREEN | TEXT_FOREGROUND_BLUE }
-          , last_attrs{ TEXT_DEFAULT }
+          , default_attrs{ CONSOLE_TEXT_DEFAULT }
+          , highlight_attrs{ CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE }
+          , last_attrs{ CONSOLE_TEXT_DEFAULT }
           , position{}
           , func{}
         { }
@@ -113,7 +113,7 @@ class console_ui final {
           : text{ _text }
           , default_attrs{ _default_attrs }
           , highlight_attrs{ _highlight_attrs }
-          , last_attrs{ TEXT_DEFAULT }
+          , last_attrs{ CONSOLE_TEXT_DEFAULT }
           , position{}
           , func{ std::move( _func ) }
         { }
@@ -187,7 +187,7 @@ class console_ui final {
             std::this_thread::sleep_for( 10ms );
             ReadConsoleInputA( GetStdHandle( STD_INPUT_HANDLE ), &record, 1, &reg );
             if ( record.EventType == MOUSE_EVENT
-                 && _move | ( record.Event.MouseEvent.dwEventFlags != MOUSE_MOVED ) )
+                 && _move | ( record.Event.MouseEvent.dwEventFlags != CONSOLE_MOUSE_MOVE ) )
             {
                 return record.Event.MouseEvent;
             }
@@ -323,8 +323,8 @@ class console_ui final {
     auto &add_front(
       const char *const _text,
       const func_callback _func    = nullptr,
-      const short _highlight_attrs = TEXT_FOREGROUND_GREEN | TEXT_FOREGROUND_BLUE,
-      const short _default_attrs   = TEXT_DEFAULT )
+      const short _highlight_attrs = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
+      const short _default_attrs   = CONSOLE_TEXT_DEFAULT )
     {
         item_.emplace_front( ui_item_{
           _text, _default_attrs, _func == nullptr ? _default_attrs : _highlight_attrs,
@@ -333,8 +333,8 @@ class console_ui final {
     }
     auto &add_back(
       const char *const _text, const func_callback _func = nullptr,
-      const short _highlight_attrs = TEXT_FOREGROUND_BLUE | TEXT_FOREGROUND_GREEN,
-      const short _default_attrs   = TEXT_DEFAULT )
+      const short _highlight_attrs = CONSOLE_TEXT_FOREGROUND_BLUE | CONSOLE_TEXT_FOREGROUND_GREEN,
+      const short _default_attrs   = CONSOLE_TEXT_DEFAULT )
     {
         item_.emplace_back( ui_item_{
           _text, _default_attrs, _func == nullptr ? _default_attrs : _highlight_attrs,
@@ -345,8 +345,8 @@ class console_ui final {
       const size_type _index,
       const char *const _text,
       const func_callback _func    = nullptr,
-      const short _highlight_attrs = TEXT_FOREGROUND_GREEN | TEXT_FOREGROUND_BLUE,
-      const short _default_attrs   = TEXT_DEFAULT )
+      const short _highlight_attrs = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
+      const short _default_attrs   = CONSOLE_TEXT_DEFAULT )
     {
         item_.emplace(
           item_.cbegin() + _index,
@@ -359,8 +359,8 @@ class console_ui final {
       const size_type _index,
       const char *const _text,
       const func_callback _func    = nullptr,
-      const short _highlight_attrs = TEXT_FOREGROUND_GREEN | TEXT_FOREGROUND_BLUE,
-      const short _default_attrs   = TEXT_DEFAULT )
+      const short _highlight_attrs = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
+      const short _default_attrs   = CONSOLE_TEXT_DEFAULT )
     {
         item_.at( _index ) = ui_item_{
           _text, _default_attrs, _func == nullptr ? _default_attrs : _highlight_attrs,
@@ -394,12 +394,12 @@ class console_ui final {
         edit_console_attrs_( console_attrs_::lock_text );
         MOUSE_EVENT_RECORD mouse_event;
         init_pos_();
-        auto func_return_value{ UI_REVERT };
-        while ( func_return_value == UI_REVERT ) {
+        auto func_return_value{ CONSOLE_UI_REVERT };
+        while ( func_return_value == CONSOLE_UI_REVERT ) {
             mouse_event = wait_mouse_event_();
             switch ( mouse_event.dwEventFlags ) {
-                case MOUSE_MOVE : refresh_( mouse_event.dwMousePosition ); break;
-                case MOUSE_CLICK : {
+                case CONSOLE_MOUSE_MOVE : refresh_( mouse_event.dwMousePosition ); break;
+                case CONSOLE_MOUSE_CLICK : {
                     if ( mouse_event.dwButtonState != false ) {
                         func_return_value = call_func_( mouse_event );
                     }
