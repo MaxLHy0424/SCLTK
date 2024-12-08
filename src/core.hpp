@@ -474,7 +474,7 @@ namespace core {
     };
 #else
     struct rule_data_node final {
-        std::vector< const char * > exe, svc;
+        const std::vector< const char * > exe, svc;
     };
     inline struct {
         const rule_data_node mythware, lenovo;
