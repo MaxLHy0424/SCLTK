@@ -78,6 +78,7 @@ class console_ui final {
     using func_callback = std::function< bool( func_args ) >;
     using size_type     = std::size_t;
   private:
+    using nullptr_type_ = std::nullptr_t;
     struct ui_item_ final {
         const char *text;
         short default_attrs, highlight_attrs, last_attrs;
@@ -241,6 +242,9 @@ class console_ui final {
     {
         cls_();
         for ( auto &line : item_ ) {
+            if ( line.text == nullptr ) {
+                continue;
+            }
             line.position = get_cursor_();
             line.set_attrs( line.default_attrs );
             write_( line.text, true );
@@ -310,6 +314,12 @@ class console_ui final {
         return *this;
     }
     auto &add_front(
+      const nullptr_type_,
+      const func_callback = nullptr,
+      const short         = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
+      const short         = CONSOLE_TEXT_DEFAULT )
+      = delete;
+    auto &add_front(
       const char *const _text,
       const func_callback _func    = nullptr,
       const short _highlight_attrs = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
@@ -321,6 +331,12 @@ class console_ui final {
         return *this;
     }
     auto &add_back(
+      const nullptr_type_,
+      const func_callback = nullptr,
+      const short         = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
+      const short         = CONSOLE_TEXT_DEFAULT )
+      = delete;
+    auto &add_back(
       const char *const _text, const func_callback _func = nullptr,
       const short _highlight_attrs = CONSOLE_TEXT_FOREGROUND_BLUE | CONSOLE_TEXT_FOREGROUND_GREEN,
       const short _default_attrs   = CONSOLE_TEXT_DEFAULT )
@@ -330,6 +346,13 @@ class console_ui final {
           std::move( _func ) } );
         return *this;
     }
+    auto &insert(
+      const size_type,
+      const nullptr_type_,
+      const func_callback = nullptr,
+      const short         = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
+      const short         = CONSOLE_TEXT_DEFAULT )
+      = delete;
     auto &insert(
       const size_type _index,
       const char *const _text,
@@ -344,6 +367,13 @@ class console_ui final {
             std::move( _func ) } );
         return *this;
     }
+    auto &edit(
+      const size_type,
+      const nullptr_type_,
+      const func_callback = nullptr,
+      const short         = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
+      const short         = CONSOLE_TEXT_DEFAULT )
+      = delete;
     auto &edit(
       const size_type _index,
       const char *const _text,
@@ -400,6 +430,10 @@ class console_ui final {
         cls_();
         return *this;
     }
+    auto &set_console(
+      const UINT, const nullptr_type_, const SHORT, const SHORT, const bool, const bool, const bool,
+      const BYTE )
+      = delete;
     auto &set_console(
       const UINT _code_page,
       const CHAR *const _title,
