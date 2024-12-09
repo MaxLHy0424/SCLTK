@@ -558,7 +558,7 @@ namespace core {
     {
         console_ui ui;
         ui.add_back( "                    [ 信  息 ]\n\n" )
-          .add_back( " < 返回 ", quit, TEXT_GREEN_WHITE )
+          .add_back( " < 返回 ", quit, CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_INTENSITY )
           .add_back(
             "\n[名称]\n\n " INFO_NAME "\n\n[版本]\n\n " INFO_VERSION "\n\n[仓库]\n\n " INFO_REPO_URL
             "\n\n[许可证]\n\n " INFO_LICENSE "\n\n (C) 2023 - present " INFO_DEVELOPER "." )
