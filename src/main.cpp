@@ -20,6 +20,7 @@ auto main() -> int
     if ( core::data::config[ 2 ].is_enabled == true ) {
         std::thread{ core::repair_env }.detach();
     }
+    std::print( ":: 初始化用户界面.\n" );
     ui.add_back( "                    [ 主  页 ]\n\n" )
       .add_back( " < 退出 ", core::quit, CONSOLE_TEXT_FOREGROUND_RED | CONSOLE_TEXT_FOREGROUND_INTENSITY )
       .add_back(
