@@ -53,7 +53,8 @@ namespace core {
         PSID admins_group{};
         SID_IDENTIFIER_AUTHORITY nt_authority{ SECURITY_NT_AUTHORITY };
         if ( AllocateAndInitializeSid(
-               &nt_authority, 2, SECURITY_BUILTIN_DOMAIN_RID, DOMAIN_ALIAS_RID_ADMINS, 0, 0, 0, 0, 0, 0, &admins_group )
+               &nt_authority, 2, SECURITY_BUILTIN_DOMAIN_RID, DOMAIN_ALIAS_RID_ADMINS, 0, 0, 0, 0,
+               0, 0, &admins_group )
              == true )
         {
             CheckTokenMembership( nullptr, admins_group, &is_admin );
@@ -306,6 +307,8 @@ namespace core {
                 }
                 return CONSOLE_UI_REVERT;
             } };
+            constexpr auto option_button_color{
+              CONSOLE_TEXT_FOREGROUND_RED | CONSOLE_TEXT_FOREGROUND_GREEN };
             console_ui ui;
             ui.add_back(
                 "                    [ 配  置 ]\n\n\n"
@@ -322,14 +325,16 @@ namespace core {
             {
                 data::config[ 0 ].is_enabled = true;
                 return CONSOLE_UI_REVERT;
-            } )
+            },
+                option_button_color )
               .add_back(
                 " > 禁用 (默认) ",
                 []( console_ui::func_args )
             {
                 data::config[ 0 ].is_enabled = false;
                 return CONSOLE_UI_REVERT;
-            } )
+            },
+                option_button_color )
               .add_back( "\n[增强窗口 (下次启动时生效)]\n" )
               .add_back(
                 " > 启用 ",
@@ -337,14 +342,16 @@ namespace core {
             {
                 data::config[ 1 ].is_enabled = true;
                 return CONSOLE_UI_REVERT;
-            } )
+            },
+                option_button_color )
               .add_back(
                 " > 禁用 (默认) ",
                 []( console_ui::func_args )
             {
                 data::config[ 1 ].is_enabled = false;
                 return CONSOLE_UI_REVERT;
-            } )
+            },
+                option_button_color )
               .add_back( "\n[环境修复 (下次启动时生效)]\n" )
               .add_back(
                 " > 启用 ",
@@ -352,14 +359,16 @@ namespace core {
             {
                 data::config[ 2 ].is_enabled = true;
                 return CONSOLE_UI_REVERT;
-            } )
+            },
+                option_button_color )
               .add_back(
                 " > 禁用 (默认) ",
                 []( console_ui::func_args )
             {
                 data::config[ 2 ].is_enabled = false;
                 return CONSOLE_UI_REVERT;
-            } )
+            },
+                option_button_color )
               .show();
             return CONSOLE_UI_REVERT;
         }
