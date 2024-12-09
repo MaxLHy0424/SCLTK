@@ -25,7 +25,7 @@ namespace core {
         inline config_data_node config[]{
           {"enhanced_op",     false},
           {"enhanced_window", false},
-          {"repair_mode",     false}
+          {"repair_env",      false}
         };
         inline struct {
             const rule_data_node mythware, lenovo;
@@ -345,7 +345,7 @@ namespace core {
                 data::config[ 1 ].is_enabled = false;
                 return CONSOLE_UI_REVERT;
             } )
-              .add_back( "\n[修复模式 (下次启动时生效)]\n" )
+              .add_back( "\n[环境修复 (下次启动时生效)]\n" )
               .add_back(
                 " > 启用 ",
                 []( console_ui::func_args )
