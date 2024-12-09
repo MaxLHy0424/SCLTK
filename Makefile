@@ -6,7 +6,7 @@ args_release = -DNDEBUG $(args_base) -static -Oz -flto=auto -fno-rtti
 args_debug   = $(args_base) -Og -g3
 tag          = std
 arch         = x86_64
-version      = v5.10.6
+version      = v5.11.0
 main_src     = src/*.cpp bin/info.obj
 .PHONY: init build debug clean
 all: init clean build
