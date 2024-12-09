@@ -282,52 +282,31 @@ class console_ui final {
         return is_exit;
     }
   public:
-    auto item_counter()
+    auto empty()
+    {
+        return item_.empty();
+    }
+    auto size()
     {
         return item_.size();
     }
-    auto &set_console(
-      const UINT _code_page,
-      const CHAR *const _title,
-      const SHORT _width,
-      const SHORT _height,
-      const bool _fix_size,
-      const bool _minimize_ctrl,
-      const bool _close_window_ctrl,
-      const BYTE _transparency )
+    auto max_size()
     {
-        SetConsoleOutputCP( _code_page );
-        SetConsoleCP( _code_page );
-        SetConsoleTitleA( _title );
-        using namespace std::string_literals;
-        system(
-          "mode.com con cols="s.append( std::to_string( _width ) )
-            .append( " lines=" )
-            .append( std::to_string( _height ) )
-            .c_str() );
-        SetWindowLongPtrA(
-          GetConsoleWindow(),
-          GWL_STYLE,
-          _fix_size
-            ? GetWindowLongPtrA( GetConsoleWindow(), GWL_STYLE ) & ~WS_SIZEBOX & ~WS_MAXIMIZEBOX
-            : GetWindowLongPtrA( GetConsoleWindow(), GWL_STYLE ) | WS_SIZEBOX | WS_MAXIMIZEBOX );
-        SetWindowLongPtrA(
-          GetConsoleWindow(),
-          GWL_STYLE,
-          _minimize_ctrl
-            ? GetWindowLongPtrA( GetConsoleWindow(), GWL_STYLE ) | WS_MINIMIZEBOX
-            : GetWindowLongPtrA( GetConsoleWindow(), GWL_STYLE ) & ~WS_MINIMIZEBOX );
-        EnableMenuItem(
-          GetSystemMenu( GetConsoleWindow(), FALSE ),
-          SC_CLOSE,
-          _close_window_ctrl ? MF_BYCOMMAND | MF_ENABLED : MF_BYCOMMAND | MF_DISABLED | MF_GRAYED );
-        SetLayeredWindowAttributes( GetConsoleWindow(), 0, _transparency, LWA_ALPHA );
+        return item_.max_size();
+    }
+    auto &resize( const size_type _size )
+    {
+        item_.resize( _size );
         return *this;
     }
-    auto &lock( const bool _is_hide_cursor, const bool _is_lock_text )
+    auto &shrink_to_fit()
     {
-        show_cursor_( !_is_hide_cursor );
-        edit_console_attrs_( _is_lock_text ? console_attrs_::lock_all : console_attrs_::normal );
+        item_.shrink_to_fit();
+        return *this;
+    }
+    auto &swap( console_ui &_src )
+    {
+        item_.swap( _src.item_ );
         return *this;
     }
     auto &add_front(
@@ -419,6 +398,50 @@ class console_ui final {
             std::this_thread::sleep_for( 10ms );
         }
         cls_();
+        return *this;
+    }
+    auto &set_console(
+      const UINT _code_page,
+      const CHAR *const _title,
+      const SHORT _width,
+      const SHORT _height,
+      const bool _fix_size,
+      const bool _minimize_ctrl,
+      const bool _close_window_ctrl,
+      const BYTE _transparency )
+    {
+        SetConsoleOutputCP( _code_page );
+        SetConsoleCP( _code_page );
+        SetConsoleTitleA( _title );
+        using namespace std::string_literals;
+        system(
+          "mode.com con cols="s.append( std::to_string( _width ) )
+            .append( " lines=" )
+            .append( std::to_string( _height ) )
+            .c_str() );
+        SetWindowLongPtrA(
+          GetConsoleWindow(),
+          GWL_STYLE,
+          _fix_size
+            ? GetWindowLongPtrA( GetConsoleWindow(), GWL_STYLE ) & ~WS_SIZEBOX & ~WS_MAXIMIZEBOX
+            : GetWindowLongPtrA( GetConsoleWindow(), GWL_STYLE ) | WS_SIZEBOX | WS_MAXIMIZEBOX );
+        SetWindowLongPtrA(
+          GetConsoleWindow(),
+          GWL_STYLE,
+          _minimize_ctrl
+            ? GetWindowLongPtrA( GetConsoleWindow(), GWL_STYLE ) | WS_MINIMIZEBOX
+            : GetWindowLongPtrA( GetConsoleWindow(), GWL_STYLE ) & ~WS_MINIMIZEBOX );
+        EnableMenuItem(
+          GetSystemMenu( GetConsoleWindow(), FALSE ),
+          SC_CLOSE,
+          _close_window_ctrl ? MF_BYCOMMAND | MF_ENABLED : MF_BYCOMMAND | MF_DISABLED | MF_GRAYED );
+        SetLayeredWindowAttributes( GetConsoleWindow(), 0, _transparency, LWA_ALPHA );
+        return *this;
+    }
+    auto &lock( const bool _is_hide_cursor, const bool _is_lock_text )
+    {
+        show_cursor_( !_is_hide_cursor );
+        edit_console_attrs_( _is_lock_text ? console_attrs_::lock_all : console_attrs_::normal );
         return *this;
     }
     explicit console_ui()
