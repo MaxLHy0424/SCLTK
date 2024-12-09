@@ -1,7 +1,7 @@
 #ifdef _WIN32
 # include "console_ui.hpp"
 # include "core.hpp"
-# ifdef _NEXT_
+# ifdef _THE_NEXT_MAJOR_UPDATE_
 auto main() -> int
 {
     console_ui ui;
