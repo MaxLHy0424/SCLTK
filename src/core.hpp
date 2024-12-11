@@ -17,14 +17,42 @@ namespace core {
     struct config_data_node final {
         const char *const name;
         bool is_enabled;
-        config_data_node( nullptr_type, bool ) = delete;
+        auto &operator=( const config_data_node & ) = delete;
+        auto &operator=( config_data_node && )      = delete;
+        config_data_node( nullptr_type, bool )      = delete;
         config_data_node( const char *const _name, bool _is_enabled )
           : name{ _name }
           , is_enabled{ _is_enabled }
         { }
+        config_data_node( const config_data_node & ) = delete;
+        config_data_node( config_data_node && )      = delete;
+        ~config_data_node()                          = default;
     };
     struct rule_data_node final {
         std::deque< std::string > exe, svc;
+        auto &operator=( const rule_data_node &_src )
+        {
+            exe = _src.exe;
+            svc = _src.svc;
+            return *this;
+        }
+        auto &operator=( rule_data_node &&_src )
+        {
+            exe = std::move( _src.exe );
+            svc = std::move( _src.svc );
+            return *this;
+        }
+        rule_data_node()
+          : exe{}
+          , svc{}
+        { }
+        rule_data_node( std::deque< std::string > _exe, std::deque< std::string > _svc )
+          : exe{ std::move( _exe ) }
+          , svc{ std::move( _svc ) }
+        { }
+        rule_data_node( const rule_data_node & ) = delete;
+        rule_data_node( rule_data_node && )      = delete;
+        ~rule_data_node()                        = default;
     };
     namespace data {
         inline const char *const config_file_name{ "config.ini" };
@@ -172,24 +200,21 @@ namespace core {
           private:
             const char *const cmd_;
           public:
-            auto operator=( const exec_cmd & ) = delete;
             auto operator()( console_ui::func_args )
             {
                 std::print( ":: 执行命令.\n{}\n", std::string( WINDOW_WIDTH, '-' ) );
                 system( cmd_ );
                 return CONSOLE_UI_REVERT;
             }
-            exec_cmd( nullptr_type ) = delete;
+            auto &operator=( const exec_cmd & ) = delete;
+            auto &operator=( exec_cmd && )      = delete;
+            exec_cmd( nullptr_type )            = delete;
             exec_cmd( const char *const _cmd )
               : cmd_{ std::move( _cmd ) }
             { }
-            exec_cmd( const exec_cmd &_src )
-              : cmd_{ _src.cmd_ }
-            { }
-            exec_cmd( exec_cmd &&_src )
-              : cmd_{ std::move( _src.cmd_ ) }
-            { }
-            ~exec_cmd() { }
+            exec_cmd( const exec_cmd & ) = default;
+            exec_cmd( exec_cmd && )      = default;
+            ~exec_cmd()                  = default;
         };
         const char *const cmd[]{
           R"(taskkill.exe /f /im explorer.exe && timeout /t 3 /nobreak && start C:\Windows\explorer.exe)",
@@ -390,19 +415,15 @@ namespace core {
             }
             return CONSOLE_UI_REVERT;
         }
+        auto &operator=( const config_op & ) = delete;
+        auto &operator=( config_op && )      = delete;
         config_op( const char _mode )
           : mode_{ std::move( _mode ) }
           , is_reload_{}
         { }
-        config_op( const config_op &_src )
-          : mode_{ _src.mode_ }
-          , is_reload_{ _src.is_reload_ }
-        { }
-        config_op( config_op &&_src )
-          : mode_{ std::move( _src.mode_ ) }
-          , is_reload_{ std::move( _src.is_reload_ ) }
-        { }
-        ~config_op() { }
+        config_op( const config_op & ) = default;
+        config_op( config_op && )      = default;
+        ~config_op()                   = default;
     };
     class rule_op final {
       private:
@@ -465,19 +486,15 @@ namespace core {
             }
             return CONSOLE_UI_REVERT;
         }
+        auto &operator=( const rule_op & ) = delete;
+        auto &operator=( rule_op && )      = delete;
         rule_op( const char _mode, const rule_data_node &_rule_data )
           : mode_{ std::move( _mode ) }
           , rule_data_{ std::move( _rule_data ) }
         { }
-        rule_op( const rule_op &_src )
-          : mode_{ _src.mode_ }
-          , rule_data_{ _src.rule_data_ }
-        { }
-        rule_op( rule_op &&_src )
-          : mode_{ std::move( _src.mode_ ) }
-          , rule_data_{ std::move( _src.rule_data_ ) }
-        { }
-        ~rule_op() { }
+        rule_op( const rule_op & ) = default;
+        rule_op( rule_op && )      = default;
+        ~rule_op()                 = default;
     };
 #else
     struct rule_data_node final {
