@@ -173,13 +173,13 @@ namespace core {
                 system( cmd_ );
                 return CONSOLE_UI_REVERT;
             }
-            explicit exec_cmd( const char *const _cmd )
+            exec_cmd( const char *const _cmd )
               : cmd_{ std::move( _cmd ) }
             { }
-            explicit exec_cmd( const exec_cmd &_src )
+            exec_cmd( const exec_cmd &_src )
               : cmd_{ _src.cmd_ }
             { }
-            explicit exec_cmd( exec_cmd &&_src )
+            exec_cmd( exec_cmd &&_src )
               : cmd_{ std::move( _src.cmd_ ) }
             { }
             ~exec_cmd() { }
@@ -383,15 +383,15 @@ namespace core {
             }
             return CONSOLE_UI_REVERT;
         }
-        explicit config_op( const char _mode )
+        config_op( const char _mode )
           : mode_{ std::move( _mode ) }
           , is_reload_{}
         { }
-        explicit config_op( const config_op &_src )
+        config_op( const config_op &_src )
           : mode_{ _src.mode_ }
           , is_reload_{ _src.is_reload_ }
         { }
-        explicit config_op( config_op &&_src )
+        config_op( config_op &&_src )
           : mode_{ std::move( _src.mode_ ) }
           , is_reload_{ std::move( _src.is_reload_ ) }
         { }
@@ -458,15 +458,15 @@ namespace core {
             }
             return CONSOLE_UI_REVERT;
         }
-        explicit rule_op( const char _mode, const rule_data_node &_rule_data )
+        rule_op( const char _mode, const rule_data_node &_rule_data )
           : mode_{ std::move( _mode ) }
           , rule_data_{ std::move( _rule_data ) }
         { }
-        explicit rule_op( const rule_op &_src )
+        rule_op( const rule_op &_src )
           : mode_{ _src.mode_ }
           , rule_data_{ _src.rule_data_ }
         { }
-        explicit rule_op( rule_op &&_src )
+        rule_op( rule_op &&_src )
           : mode_{ std::move( _src.mode_ ) }
           , rule_data_{ std::move( _src.rule_data_ ) }
         { }
@@ -604,7 +604,7 @@ namespace core {
             std::printf( "%s\n::释放内存.", std::string( 50, '-' ).c_str() );
             return CONSOLE_UI_REVERT;
         }
-        explicit rule_op( const char _mode, const rule_data_node &_rule )
+        rule_op( const char _mode, const rule_data_node &_rule )
           : mode_{ _mode }
           , rule_{ _rule }
         { }

@@ -53,7 +53,7 @@ class console_ui final {
         const DWORD button_state, ctrl_key_state, event_flag;
         console_ui *const ui;
         func_args &operator=( const func_args & ) = delete;
-        explicit func_args(
+        func_args(
           console_ui *const _ui                 = nullptr,
           const MOUSE_EVENT_RECORD _mouse_event = { {}, CONSOLE_MOUSE_BUTTON_LEFT, {}, {} } )
           : button_state{ std::move( _mouse_event.dwButtonState ) }
@@ -67,7 +67,7 @@ class console_ui final {
           , event_flag{ _src.event_flag }
           , ui{ _src.ui }
         { }
-        explicit func_args( func_args &&_src )
+        func_args( func_args &&_src )
           : button_state{ std::move( _src.button_state ) }
           , ctrl_key_state{ std::move( _src.ctrl_key_state ) }
           , event_flag{ std::move( _src.event_flag ) }
@@ -108,7 +108,7 @@ class console_ui final {
         {
             return !operator==( _mouse_position );
         }
-        explicit ui_item_()
+        ui_item_()
           : text{}
           , default_attrs{ CONSOLE_TEXT_DEFAULT }
           , highlight_attrs{ CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE }
@@ -116,7 +116,7 @@ class console_ui final {
           , position{}
           , func{}
         { }
-        explicit ui_item_(
+        ui_item_(
           const char *const _text,
           const short _default_attrs,
           const short _highlight_attrs,
@@ -128,7 +128,7 @@ class console_ui final {
           , position{}
           , func{ std::move( _func ) }
         { }
-        explicit ui_item_( const ui_item_ &_src )
+        ui_item_( const ui_item_ &_src )
           : text{ _src.text }
           , default_attrs{ _src.default_attrs }
           , highlight_attrs{ _src.highlight_attrs }
@@ -136,7 +136,7 @@ class console_ui final {
           , position{ _src.position }
           , func{ _src.func }
         { }
-        explicit ui_item_( ui_item_ &&_src )
+        ui_item_( ui_item_ &&_src )
           : text{ std::move( _src.text ) }
           , default_attrs{ std::move( _src.default_attrs ) }
           , highlight_attrs{ std::move( _src.highlight_attrs ) }
@@ -482,17 +482,17 @@ class console_ui final {
         edit_console_attrs_( _is_lock_text ? console_attrs_::lock_all : console_attrs_::normal );
         return *this;
     }
-    explicit console_ui()
+    console_ui()
       : item_{}
       , width_{}
       , height_{}
     { }
-    explicit console_ui( const console_ui &_src )
+    console_ui( const console_ui &_src )
       : item_{ _src.item_ }
       , width_{}
       , height_{}
     { }
-    explicit console_ui( console_ui &&_src )
+    console_ui( console_ui &&_src )
       : item_{ std::move( _src.item_ ) }
       , width_{}
       , height_{}
