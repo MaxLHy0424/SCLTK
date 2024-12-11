@@ -51,16 +51,16 @@ class console_ui final {
   public:
     struct func_args final {
         const DWORD button_state, ctrl_key_state, event_flag;
-        console_ui *const ui;
+        console_ui &parent_ui;
         auto &operator=( const func_args & ) = delete;
         auto &operator=( func_args && )      = delete;
         func_args(
-          console_ui *const _ui                 = nullptr,
+          console_ui &_parent_ui,
           const MOUSE_EVENT_RECORD _mouse_event = { {}, CONSOLE_MOUSE_BUTTON_LEFT, {}, {} } )
           : button_state{ std::move( _mouse_event.dwButtonState ) }
           , ctrl_key_state{ std::move( _mouse_event.dwControlKeyState ) }
           , event_flag{ std::move( _mouse_event.dwEventFlags ) }
-          , ui{ std::move( _ui ) }
+          , parent_ui{ _parent_ui }
         { }
         func_args( const func_args & ) = default;
         func_args( func_args && )      = default;
@@ -267,7 +267,7 @@ class console_ui final {
             line.set_attrs( line.default_attrs );
             show_cursor_( false );
             edit_console_attrs_( console_attrs_::lock_all );
-            is_exit = line.func( func_args{ this, _mouse_event } );
+            is_exit = line.func( func_args{ *this, _mouse_event } );
             show_cursor_( false );
             edit_console_attrs_( console_attrs_::lock_text );
             init_pos_();
