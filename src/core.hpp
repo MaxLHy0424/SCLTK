@@ -145,7 +145,7 @@ namespace core {
               WINDOW_TITLE,
               120,
               30,
-              true,
+              false,
               false,
               core::data::config[ 1 ].is_enabled == false ? true : false,
               core::data::config[ 1 ].is_enabled == true ? 230 : 255 );
