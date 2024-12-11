@@ -78,7 +78,7 @@ class console_ui final {
     using func_callback = std::function< bool( func_args ) >;
     using size_type     = std::size_t;
   private:
-    using nullptr_type_ = std::nullptr_t;
+    using nullptr_type_ = decltype( nullptr );
     struct ui_item_ final {
         const char *text;
         short default_attrs, highlight_attrs, last_attrs;
@@ -116,6 +116,7 @@ class console_ui final {
           , position{}
           , func{}
         { }
+        ui_item_( nullptr_type_, const short, const short, const func_callback ) = delete;
         ui_item_(
           const char *const _text,
           const short _default_attrs,
@@ -222,6 +223,7 @@ class console_ui final {
 # endif
         set_cursor_( { 0, 0 } );
     }
+    auto write_( nullptr_type_, const bool = false ) = delete;
     auto write_( const char *const _text, const bool _is_endl = false )
     {
 # ifdef _THE_NEXT_MAJOR_UPDATE_
@@ -230,6 +232,7 @@ class console_ui final {
         std::printf( "%s%c", _text, _is_endl ? '\n' : '\0' );
 # endif
     }
+    auto rewrite_( const COORD &_position, nullptr_type_ ) = delete;
     auto rewrite_( const COORD &_position, const char *const _text )
     {
         set_cursor_( { 0, _position.Y } );
