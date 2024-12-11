@@ -52,7 +52,8 @@ class console_ui final {
     struct func_args final {
         const DWORD button_state, ctrl_key_state, event_flag;
         console_ui *const ui;
-        func_args &operator=( const func_args & ) = delete;
+        auto &operator=( const func_args & ) = delete;
+        auto &operator=( func_args && )      = delete;
         func_args(
           console_ui *const _ui                 = nullptr,
           const MOUSE_EVENT_RECORD _mouse_event = { {}, CONSOLE_MOUSE_BUTTON_LEFT, {}, {} } )
@@ -61,19 +62,9 @@ class console_ui final {
           , event_flag{ std::move( _mouse_event.dwEventFlags ) }
           , ui{ std::move( _ui ) }
         { }
-        func_args( const func_args &_src )
-          : button_state{ _src.button_state }
-          , ctrl_key_state{ _src.ctrl_key_state }
-          , event_flag{ _src.event_flag }
-          , ui{ _src.ui }
-        { }
-        func_args( func_args &&_src )
-          : button_state{ std::move( _src.button_state ) }
-          , ctrl_key_state{ std::move( _src.ctrl_key_state ) }
-          , event_flag{ std::move( _src.event_flag ) }
-          , ui{ std::move( _src.ui ) }
-        { }
-        ~func_args() { }
+        func_args( const func_args & ) = default;
+        func_args( func_args && )      = default;
+        ~func_args()                   = default;
     };
     using func_callback = std::function< bool( func_args ) >;
     using size_type     = std::size_t;
@@ -89,6 +80,15 @@ class console_ui final {
             SetConsoleTextAttribute( GetStdHandle( STD_OUTPUT_HANDLE ), _attrs );
             last_attrs = _attrs;
         }
+        auto operator==( const COORD &_mouse_position ) const
+        {
+            return position.Y == _mouse_position.Y && position.X <= _mouse_position.X
+                && _mouse_position.X < ( position.X + static_cast< short >( strlen( text ) ) );
+        }
+        auto operator!=( const COORD &_mouse_position ) const
+        {
+            return !operator==( _mouse_position );
+        }
         auto &operator=( const ui_item_ &_src )
         {
             text            = _src.text;
@@ -99,14 +99,15 @@ class console_ui final {
             func            = _src.func;
             return *this;
         }
-        auto operator==( const COORD &_mouse_position ) const
+        auto &operator=( ui_item_ &&_src )
         {
-            return position.Y == _mouse_position.Y && position.X <= _mouse_position.X
-                && _mouse_position.X < ( position.X + static_cast< short >( strlen( text ) ) );
-        }
-        auto operator!=( const COORD &_mouse_position ) const
-        {
-            return !operator==( _mouse_position );
+            text            = std::move( _src.text );
+            default_attrs   = std::move( _src.default_attrs );
+            highlight_attrs = std::move( _src.highlight_attrs );
+            last_attrs      = std::move( _src.last_attrs );
+            position        = std::move( _src.position );
+            func            = std::move( _src.func );
+            return *this;
         }
         ui_item_()
           : text{}
@@ -129,23 +130,9 @@ class console_ui final {
           , position{}
           , func{ std::move( _func ) }
         { }
-        ui_item_( const ui_item_ &_src )
-          : text{ _src.text }
-          , default_attrs{ _src.default_attrs }
-          , highlight_attrs{ _src.highlight_attrs }
-          , last_attrs{ _src.last_attrs }
-          , position{ _src.position }
-          , func{ _src.func }
-        { }
-        ui_item_( ui_item_ &&_src )
-          : text{ std::move( _src.text ) }
-          , default_attrs{ std::move( _src.default_attrs ) }
-          , highlight_attrs{ std::move( _src.highlight_attrs ) }
-          , last_attrs{ std::move( _src.last_attrs ) }
-          , position{ std::move( _src.position ) }
-          , func{ std::move( _src.func ) }
-        { }
-        ~ui_item_() { }
+        ui_item_( const ui_item_ & ) = default;
+        ui_item_( ui_item_ && )      = default;
+        ~ui_item_()                  = default;
     };
     enum class console_attrs_ { normal, lock_text, lock_all };
     std::deque< ui_item_ > item_;
@@ -485,22 +472,24 @@ class console_ui final {
         edit_console_attrs_( _is_lock_text ? console_attrs_::lock_all : console_attrs_::normal );
         return *this;
     }
+    auto &operator=( const console_ui &_src )
+    {
+        item_ = _src.item_;
+        return *this;
+    }
+    auto &operator=( console_ui &&_src )
+    {
+        item_ = std::move( _src.item_ );
+        return *this;
+    }
     console_ui()
       : item_{}
       , width_{}
       , height_{}
     { }
-    console_ui( const console_ui &_src )
-      : item_{ _src.item_ }
-      , width_{}
-      , height_{}
-    { }
-    console_ui( console_ui &&_src )
-      : item_{ std::move( _src.item_ ) }
-      , width_{}
-      , height_{}
-    { }
-    ~console_ui() { }
+    console_ui( const console_ui & ) = default;
+    console_ui( console_ui && )      = default;
+    ~console_ui()                    = default;
 };
 #else
 # error "must be compiled on c++23 / gnu++23 or later C++ standards."
