@@ -173,8 +173,8 @@ namespace core {
         std::print( ":: 初始化用户界面.\n" );
         auto launch_cmd{ []( console_ui::func_args _args )
         {
-            _args.ui->lock( false, false );
-            _args.ui->set_console(
+            _args.parent_ui.lock( false, false );
+            _args.parent_ui.set_console(
               CODE_PAGE,
               WINDOW_TITLE,
               120,
@@ -185,7 +185,7 @@ namespace core {
               core::data::config[ 1 ].is_enabled == true ? 230 : 255 );
             SetConsoleScreenBufferSize( GetStdHandle( STD_OUTPUT_HANDLE ), { 120, SHRT_MAX - 1 } );
             system( "cmd.exe" );
-            _args.ui->set_console(
+            _args.parent_ui.set_console(
               CODE_PAGE,
               WINDOW_TITLE,
               WINDOW_WIDTH,
