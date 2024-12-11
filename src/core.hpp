@@ -13,9 +13,15 @@ inline bool config_error{};
 #endif
 namespace core {
 #ifdef _THE_NEXT_MAJOR_UPDATE_
+    using nullptr_type = decltype( nullptr );
     struct config_data_node final {
         const char *const name;
         bool is_enabled;
+        config_data_node( nullptr_type, bool ) = delete;
+        config_data_node( const char *const _name, bool _is_enabled )
+          : name{ _name }
+          , is_enabled{ _is_enabled }
+        { }
     };
     struct rule_data_node final {
         std::deque< std::string > exe, svc;
@@ -173,6 +179,7 @@ namespace core {
                 system( cmd_ );
                 return CONSOLE_UI_REVERT;
             }
+            exec_cmd( nullptr_type ) = delete;
             exec_cmd( const char *const _cmd )
               : cmd_{ std::move( _cmd ) }
             { }
