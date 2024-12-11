@@ -447,12 +447,16 @@ class console_ui final {
         SetConsoleOutputCP( _code_page );
         SetConsoleCP( _code_page );
         SetConsoleTitleA( _title );
+# ifdef _THE_NEXT_MAJOR_UPDATE_
+        system( std::format( "mode.com con cols={} lines={}", _width, _height ).c_str() );
+# else
         using namespace std::string_literals;
         system(
           "mode.com con cols="s.append( std::to_string( _width ) )
             .append( " lines=" )
             .append( std::to_string( _height ) )
             .c_str() );
+# endif
         SetWindowLongPtrA(
           GetConsoleWindow(),
           GWL_STYLE,

@@ -87,18 +87,17 @@ namespace core {
         const char *const exe[]{
           "mode.com", "chcp.com",    "reg.exe",     "sc.exe",      "taskkill.exe", "net.exe",
           "cmd.exe",  "taskmgr.exe", "perfmon.exe", "regedit.exe", "mmc.exe" };
-        std::string path;
         while ( true ) {
             for ( const auto &item : hkcu_reg_dir ) {
                 RegDeleteTreeA( HKEY_CURRENT_USER, item );
             }
             for ( const auto &item : exe ) {
-                path
-                  .append(
-                    R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\)" )
-                  .append( item );
-                RegDeleteTreeA( HKEY_LOCAL_MACHINE, path.c_str() );
-                path.clear();
+                RegDeleteTreeA(
+                  HKEY_LOCAL_MACHINE,
+                  std::format(
+                    R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{})",
+                    item )
+                    .c_str() );
             }
             std::this_thread::sleep_for( 1000ms );
         }
@@ -416,60 +415,43 @@ namespace core {
                 return CONSOLE_UI_REVERT;
             }
             std::print( ":: 生成并执行命令.\n{}\n", std::string( WINDOW_WIDTH, '-' ) );
-            std::string cmd;
             switch ( mode_ ) {
                 case 'c' : {
                     if ( data::config[ 0 ].is_enabled == true ) {
                         for ( const auto &item : rule_data_.exe ) {
-                            cmd
-                              .append(
-                                R"(reg.exe add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\)" )
-                              .append( item )
-                              .append( R"(" /f /t reg_sz /v debugger /d "nul")" );
-                            system( cmd.c_str() );
-                            cmd.clear();
+                            system(
+                              std::format(
+                                R"(reg.exe add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\{}" /f /t reg_sz /v debugger /d "nul")",
+                                item )
+                                .c_str() );
                         }
                         for ( const auto &item : rule_data_.svc ) {
-                            cmd.append( "sc.exe config " )
-                              .append( item )
-                              .append( " start= disabled" );
-                            system( cmd.c_str() );
-                            cmd.clear();
+                            system( std::format( "sc.exe config {} start= disabled", item ).c_str() );
                         }
                     }
                     for ( const auto &item : rule_data_.exe ) {
-                        cmd.append( "taskkill.exe /f /im \"" ).append( item ).append( "\"" );
-                        system( cmd.c_str() );
-                        cmd.clear();
+                        system( std::format( R"(taskkill.exe /f /im "{}")", item ).c_str() );
                     }
                     for ( const auto &item : rule_data_.svc ) {
-                        cmd.append( "net.exe stop \"" ).append( item ).append( "\" /y" );
-                        system( cmd.c_str() );
-                        cmd.clear();
+                        system( std::format( R"(net.exe stop "{}" /y)", item ).c_str() );
                     }
                     break;
                 }
                 case 'r' : {
                     if ( data::config[ 0 ].is_enabled == true ) {
                         for ( const auto &item : rule_data_.exe ) {
-                            cmd
-                              .append(
-                                R"(reg.exe delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\)" )
-                              .append( item )
-                              .append( "\" /f" );
-                            system( cmd.c_str() );
-                            cmd.clear();
+                            system(
+                              std::format(
+                                R"(reg.exe delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\{}" /f)",
+                                item )
+                                .c_str() );
                         }
                         for ( const auto &item : rule_data_.svc ) {
-                            cmd.append( "sc.exe config " ).append( item ).append( " start= auto" );
-                            system( cmd.c_str() );
-                            cmd.clear();
+                            system( std::format( "sc.exe config {} start= auto", item ).c_str() );
                         }
                     }
                     for ( const auto &item : rule_data_.svc ) {
-                        cmd.append( "net.exe start \"" ).append( item ).append( "\"" );
-                        system( cmd.c_str() );
-                        cmd.clear();
+                        system( std::format( R"(net.exe start "{}")", item ).c_str() );
                     }
                     break;
                 }
