@@ -161,7 +161,7 @@ namespace core {
           .add_back( "\n[名称]\n\n " INFO_NAME "\n\n[版本]\n\n " INFO_VERSION )
           .add_back( "\n[仓库]\n" )
           .add_back(
-            " " INFO_REPO_URL " ", std::move( view_repo_webpage ),
+            " " INFO_REPO_URL " ", view_repo_webpage,
             CONSOLE_TEXT_FOREGROUND_BLUE | CONSOLE_TEXT_FOREGROUND_GREEN
               | CONSOLE_TEXT_COMMON_LVB_UNDERSCORE )
           .add_back( "\n[许可证]\n\n " INFO_LICENSE "\n\n (C) 2023 - present " INFO_DEVELOPER "." )
@@ -210,7 +210,7 @@ namespace core {
             auto &operator=( exec_cmd && )      = delete;
             exec_cmd( nullptr_type )            = delete;
             exec_cmd( const char *const _cmd )
-              : cmd_{ std::move( _cmd ) }
+              : cmd_{ _cmd }
             { }
             exec_cmd( const exec_cmd & ) = default;
             exec_cmd( exec_cmd && )      = default;
@@ -224,12 +224,12 @@ namespace core {
         console_ui ui;
         ui.add_back( "                   [ 工 具 箱 ]\n\n" )
           .add_back( " < 返回 ", quit, CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_INTENSITY )
-          .add_back( " > 命令提示符 ", std::move( launch_cmd ) )
+          .add_back( " > 命令提示符 ", launch_cmd )
           .add_back( "\n[快捷操作]\n" )
-          .add_back( " > 重启资源管理器 ", exec_cmd{ std::move( cmd[ 0 ] ) } )
-          .add_back( " > 恢复 Google Chrome 离线游戏 ", exec_cmd{ std::move( cmd[ 1 ] ) } )
-          .add_back( " > 恢复 Microsoft Edge 离线游戏 ", exec_cmd{ std::move( cmd[ 2 ] ) } )
-          .add_back( " > 恢复 USB 设备访问 ", exec_cmd{ std::move( cmd[ 3 ] ) } )
+          .add_back( " > 重启资源管理器 ", exec_cmd{ cmd[ 0 ] } )
+          .add_back( " > 恢复 Google Chrome 离线游戏 ", exec_cmd{ cmd[ 1 ] } )
+          .add_back( " > 恢复 Microsoft Edge 离线游戏 ", exec_cmd{ cmd[ 2 ] } )
+          .add_back( " > 恢复 USB 设备访问 ", exec_cmd{ cmd[ 3 ] } )
           .show();
         return CONSOLE_UI_REVERT;
     }
@@ -348,10 +348,9 @@ namespace core {
                 "                    [ 配  置 ]\n\n\n"
                 " (i) 相关信息可参阅文档.\n" )
               .add_back(
-                " < 同步配置并返回 ",
-                std::move( sync ),
+                " < 同步配置并返回 ", sync,
                 CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_INTENSITY )
-              .add_back( " > 打开配置文件 ", std::move( open_config_file ) )
+              .add_back( " > 打开配置文件 ", open_config_file )
               .add_back( "\n[增强操作]\n" )
               .add_back(
                 " > 启用 ",
@@ -418,7 +417,7 @@ namespace core {
         auto &operator=( const config_op & ) = delete;
         auto &operator=( config_op && )      = delete;
         config_op( const char _mode )
-          : mode_{ std::move( _mode ) }
+          : mode_{ _mode }
           , is_reload_{}
         { }
         config_op( const config_op & ) = default;
@@ -489,8 +488,8 @@ namespace core {
         auto &operator=( const rule_op & ) = delete;
         auto &operator=( rule_op && )      = delete;
         rule_op( const char _mode, const rule_data_node &_rule_data )
-          : mode_{ std::move( _mode ) }
-          , rule_data_{ std::move( _rule_data ) }
+          : mode_{ _mode }
+          , rule_data_{ _rule_data }
         { }
         rule_op( const rule_op & ) = default;
         rule_op( rule_op && )      = default;

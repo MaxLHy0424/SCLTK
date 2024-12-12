@@ -57,9 +57,9 @@ class console_ui final {
         func_args(
           console_ui &_parent_ui,
           const MOUSE_EVENT_RECORD _mouse_event = { {}, CONSOLE_MOUSE_BUTTON_LEFT, {}, {} } )
-          : button_state{ std::move( _mouse_event.dwButtonState ) }
-          , ctrl_key_state{ std::move( _mouse_event.dwControlKeyState ) }
-          , event_flag{ std::move( _mouse_event.dwEventFlags ) }
+          : button_state{ _mouse_event.dwButtonState }
+          , ctrl_key_state{ _mouse_event.dwControlKeyState }
+          , event_flag{ _mouse_event.dwEventFlags }
           , parent_ui{ _parent_ui }
         { }
         func_args( const func_args & ) = default;
@@ -276,15 +276,15 @@ class console_ui final {
         return is_exit;
     }
   public:
-    auto empty()
+    auto empty() const
     {
         return item_.empty();
     }
-    auto size()
+    auto size() const
     {
         return item_.size();
     }
-    auto max_size()
+    auto max_size() const
     {
         return item_.max_size();
     }
