@@ -73,6 +73,7 @@ class console_ui final {
     using size_type     = type_wrapper< std::size_t >;
   private:
     using nullptr_type_ = type_wrapper< decltype( nullptr ) >;
+    enum class console_attrs_ { normal, lock_text, lock_all };
     struct ui_item_ final {
         type_wrapper< const char * > text;
         type_wrapper< short > default_attrs, highlight_attrs, last_attrs;
@@ -146,7 +147,6 @@ class console_ui final {
         ui_item_( type_wrapper< ui_item_ && > )      = default;
         ~ui_item_()                                  = default;
     };
-    enum class console_attrs_ { normal, lock_text, lock_all };
     type_wrapper< std::deque< ui_item_ > > item_;
     type_wrapper< short > width_, height_;
     auto show_cursor_( type_wrapper< const bool > _is_show )
