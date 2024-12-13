@@ -69,10 +69,10 @@ class console_ui final {
         func_args( object_type< func_args && > )      = default;
         ~func_args()                                  = default;
     };
-    using func_callback = object_type< std::function< bool( func_args ) > >;
-    using size_type     = object_type< std::size_t >;
+    using func_callback = std::function< bool( func_args ) >;
+    using size_type     = decltype( sizeof( object_type< void * > ) );
   private:
-    using nullptr_type_ = object_type< decltype( nullptr ) >;
+    using nullptr_type_ = decltype( nullptr );
     enum class console_attrs_ { normal, lock_text, lock_all };
     struct ui_item_ final {
         object_type< const char * > text;
