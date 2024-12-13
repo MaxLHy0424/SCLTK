@@ -11,6 +11,7 @@
 # include <queue>
 # include <string>
 # include <thread>
+# include <type_traits>
 # define CONSOLE_MOUSE_BUTTON_LEFT               FROM_LEFT_1ST_BUTTON_PRESSED
 # define CONSOLE_MOUSE_BUTTON_MIDDLE             FROM_LEFT_2ND_BUTTON_PRESSED
 # define CONSOLE_MOUSE_BUTTON_RIGHT              RIGHTMOST_BUTTON_PRESSED
