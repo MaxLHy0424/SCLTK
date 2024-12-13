@@ -47,6 +47,8 @@
 # define CONSOLE_TEXT_COMMON_LVB_SBCSDBCS        COMMON_LVB_SBCSDBCS
 # define CONSOLE_UI_REVERT                       false
 # define CONSOLE_UI_TERMINATE                    true
+template < typename _type_ >
+using type_wrapper = _type_;
 class console_ui final {
   public:
     struct func_args final {
