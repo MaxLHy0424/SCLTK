@@ -327,7 +327,8 @@ class console_ui final {
       const short         = CONSOLE_TEXT_DEFAULT )
       = delete;
     auto &add_back(
-      const char *const _text, const func_callback _func = nullptr,
+      const char *const _text,
+      const func_callback _func    = nullptr,
       const short _highlight_attrs = CONSOLE_TEXT_FOREGROUND_BLUE | CONSOLE_TEXT_FOREGROUND_GREEN,
       const short _default_attrs   = CONSOLE_TEXT_DEFAULT )
     {
@@ -421,8 +422,7 @@ class console_ui final {
         return *this;
     }
     auto &set_console(
-      const UINT, const nullptr_type_, const SHORT, const SHORT, const bool, const bool, const bool,
-      const BYTE )
+      const UINT, const nullptr_type_, const SHORT, const SHORT, const bool, const bool, const bool, const BYTE )
       = delete;
     auto &set_console(
       const UINT _code_page,
