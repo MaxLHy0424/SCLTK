@@ -74,24 +74,24 @@ auto main( const int _argc, const char *const _argv[] ) -> int
         if ( tmp.size() > 2 && tmp.substr( 0, 2 ) == "-W" ) {
             for ( const auto &sub : tmp.substr( 2 ) ) {
                 switch ( sub ) {
-                    case 'f' : config_data.front_show_window = true; break;
-                    case 't' : config_data.translucent_window = true; break;
-                    case 'c' : config_data.window_ctrls = true; break;
-                    default : config_error = true; break;
+                    case 'f' : args_data.front_show_window = true; break;
+                    case 't' : args_data.translucent_window = true; break;
+                    case 'c' : args_data.window_ctrls = true; break;
+                    default : args_error = true; break;
                 }
             }
         } else {
-            config_error = true;
+            args_error = true;
             break;
         }
     }
 INIT:
     core::init();
-    if ( config_data.front_show_window ) {
+    if ( args_data.front_show_window ) {
         std::thread{ core::front_show_window }.detach();
     }
     ui.add_back( "                    [ 主  页 ]\n\n" );
-    if ( config_error ) {
+    if ( args_error ) {
         ui.add_back( " (!) 参数错误.\n" );
     }
     ui.add_back( " < 退出 ", core::quit, CONSOLE_TEXT_FOREGROUND_RED | CONSOLE_TEXT_FOREGROUND_INTENSITY )
@@ -104,13 +104,13 @@ INIT:
       .add_back( " > 联想云教室 ", core::rule_op{ 'r', core::rule.lenovo } )
       .show()
       .lock( false, false );
-    if ( config_data.translucent_window ) {
+    if ( args_data.translucent_window ) {
         SetLayeredWindowAttributes( GetConsoleWindow(), 0, 255, LWA_ALPHA );
     }
-    if ( config_data.front_show_window ) {
+    if ( args_data.front_show_window ) {
         SetWindowPos( GetConsoleWindow(), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
     }
-    if ( !config_data.window_ctrls ) {
+    if ( !args_data.window_ctrls ) {
         SetWindowLongPtrA(
           GetConsoleWindow(),
           GWL_STYLE,

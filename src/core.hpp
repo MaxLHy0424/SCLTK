@@ -8,8 +8,8 @@
 #ifndef _THE_NEXT_MAJOR_UPDATE_
 inline struct {
     bool front_show_window, translucent_window, window_ctrls;
-} config_data{};
-inline bool config_error{};
+} args_data{};
+inline bool args_error{};
 #endif
 namespace core {
 #ifdef _THE_NEXT_MAJOR_UPDATE_
@@ -537,13 +537,13 @@ namespace core {
         SetWindowLongPtrA(
           GetConsoleWindow(),
           GWL_STYLE,
-          config_data.window_ctrls
+          args_data.window_ctrls
             ? GetWindowLongPtrA( GetConsoleWindow(), GWL_STYLE ) | WS_SIZEBOX | WS_MAXIMIZEBOX | WS_MINIMIZEBOX
             : GetWindowLongPtrA( GetConsoleWindow(), GWL_STYLE ) & ~WS_SIZEBOX & ~WS_MAXIMIZEBOX
                 & ~WS_MINIMIZEBOX );
         system( "mode.com con cols=50 lines=25" );
         SetLayeredWindowAttributes(
-          GetConsoleWindow(), 0, config_data.translucent_window ? 230 : 255, LWA_ALPHA );
+          GetConsoleWindow(), 0, args_data.translucent_window ? 230 : 255, LWA_ALPHA );
     }
     inline auto front_show_window()
     {
