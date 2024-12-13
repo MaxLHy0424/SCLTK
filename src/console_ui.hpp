@@ -52,46 +52,48 @@ using type_wrapper = _type_;
 class console_ui final {
   public:
     struct func_args final {
-        const DWORD button_state, ctrl_key_state, event_flag;
-        console_ui &parent_ui;
-        auto &operator=( const func_args & ) = delete;
-        auto &operator=( func_args && )      = delete;
+        type_wrapper< const DWORD > button_state, ctrl_key_state, event_flag;
+        type_wrapper< console_ui & > parent_ui;
+        auto &operator=( type_wrapper< const func_args & > ) = delete;
+        auto &operator=( type_wrapper< func_args && > )      = delete;
         func_args(
-          console_ui &_parent_ui,
-          const MOUSE_EVENT_RECORD _mouse_event = { {}, CONSOLE_MOUSE_BUTTON_LEFT, {}, {} } )
+          type_wrapper< console_ui & > _parent_ui,
+          type_wrapper< const MOUSE_EVENT_RECORD > _mouse_event
+          = { {}, CONSOLE_MOUSE_BUTTON_LEFT, {}, {} } )
           : button_state{ _mouse_event.dwButtonState }
           , ctrl_key_state{ _mouse_event.dwControlKeyState }
           , event_flag{ _mouse_event.dwEventFlags }
           , parent_ui{ _parent_ui }
         { }
-        func_args( const func_args & ) = default;
-        func_args( func_args && )      = default;
-        ~func_args()                   = default;
+        func_args( type_wrapper< const func_args & > ) = default;
+        func_args( type_wrapper< func_args && > )      = default;
+        ~func_args()                                   = default;
     };
-    using func_callback = std::function< bool( func_args ) >;
-    using size_type     = std::size_t;
+    using func_callback = type_wrapper< std::function< bool( func_args ) > >;
+    using size_type     = type_wrapper< std::size_t >;
   private:
-    using nullptr_type_ = decltype( nullptr );
+    using nullptr_type_ = type_wrapper< decltype( nullptr ) >;
     struct ui_item_ final {
-        const char *text;
-        short default_attrs, highlight_attrs, last_attrs;
-        COORD position;
-        func_callback func;
-        auto set_attrs( const short _attrs )
+        type_wrapper< const char * > text;
+        type_wrapper< short > default_attrs, highlight_attrs, last_attrs;
+        type_wrapper< COORD > position;
+        type_wrapper< func_callback > func;
+        auto set_attrs( type_wrapper< const short > _attrs )
         {
             SetConsoleTextAttribute( GetStdHandle( STD_OUTPUT_HANDLE ), _attrs );
             last_attrs = _attrs;
         }
-        auto operator==( const COORD &_mouse_position ) const
+        auto operator==( type_wrapper< const COORD & > _mouse_position ) const
         {
             return position.Y == _mouse_position.Y && position.X <= _mouse_position.X
-                && _mouse_position.X < ( position.X + static_cast< short >( strlen( text ) ) );
+                && _mouse_position.X
+                     < ( position.X + static_cast< type_wrapper< short > >( strlen( text ) ) );
         }
-        auto operator!=( const COORD &_mouse_position ) const
+        auto operator!=( type_wrapper< const COORD & > _mouse_position ) const
         {
             return !operator==( _mouse_position );
         }
-        auto &operator=( const ui_item_ &_src )
+        auto &operator=( type_wrapper< const ui_item_ & > _src )
         {
             text            = _src.text;
             default_attrs   = _src.default_attrs;
@@ -101,7 +103,7 @@ class console_ui final {
             func            = _src.func;
             return *this;
         }
-        auto &operator=( ui_item_ &&_src )
+        auto &operator=( type_wrapper< ui_item_ && > _src )
         {
             text            = std::move( _src.text );
             default_attrs   = std::move( _src.default_attrs );
@@ -119,12 +121,20 @@ class console_ui final {
           , position{}
           , func{}
         { }
-        ui_item_( nullptr_type_, const short, const short, const func_callback ) = delete;
         ui_item_(
-          const char *const _text,
-          const short _default_attrs,
-          const short _highlight_attrs,
-          const func_callback _func )
+          type_wrapper< nullptr_type_ >,
+          type_wrapper< const short >,
+          type_wrapper< const short >,
+          type_wrapper< const func_callback > )
+          = delete;
+        ui_item_(
+          type_wrapper< const char *const > _text,
+          type_wrapper< const short >
+            _default_attrs,
+          type_wrapper< const short >
+            _highlight_attrs,
+          type_wrapper< const func_callback >
+            _func )
           : text{ _text }
           , default_attrs{ _default_attrs }
           , highlight_attrs{ _highlight_attrs }
@@ -132,36 +142,36 @@ class console_ui final {
           , position{}
           , func{ std::move( _func ) }
         { }
-        ui_item_( const ui_item_ & ) = default;
-        ui_item_( ui_item_ && )      = default;
-        ~ui_item_()                  = default;
+        ui_item_( type_wrapper< const ui_item_ & > ) = default;
+        ui_item_( type_wrapper< ui_item_ && > )      = default;
+        ~ui_item_()                                  = default;
     };
     enum class console_attrs_ { normal, lock_text, lock_all };
-    std::deque< ui_item_ > item_;
-    short width_, height_;
-    auto show_cursor_( const bool _is_show )
+    type_wrapper< std::deque< ui_item_ > > item_;
+    type_wrapper< short > width_, height_;
+    auto show_cursor_( type_wrapper< const bool > _is_show )
     {
-        CONSOLE_CURSOR_INFO cursor;
+        type_wrapper< CONSOLE_CURSOR_INFO > cursor;
         GetConsoleCursorInfo( GetStdHandle( STD_OUTPUT_HANDLE ), &cursor );
         cursor.bVisible = _is_show;
         SetConsoleCursorInfo( GetStdHandle( STD_OUTPUT_HANDLE ), &cursor );
     }
-    auto edit_console_attrs_( const console_attrs_ _mode )
+    auto edit_console_attrs_( type_wrapper< const console_attrs_ > _mode )
     {
-        DWORD attrs;
+        type_wrapper< DWORD > attrs;
         GetConsoleMode( GetStdHandle( STD_INPUT_HANDLE ), &attrs );
         switch ( _mode ) {
-            case console_attrs_::normal :
+            case type_wrapper< console_attrs_ >::normal :
                 attrs |= ENABLE_QUICK_EDIT_MODE;
                 attrs |= ENABLE_INSERT_MODE;
                 attrs |= ENABLE_MOUSE_INPUT;
                 break;
-            case console_attrs_::lock_text :
+            case type_wrapper< console_attrs_ >::lock_text :
                 attrs &= ~ENABLE_QUICK_EDIT_MODE;
                 attrs &= ~ENABLE_INSERT_MODE;
                 attrs |= ENABLE_MOUSE_INPUT;
                 break;
-            case console_attrs_::lock_all :
+            case type_wrapper< console_attrs_ >::lock_all :
                 attrs &= ~ENABLE_QUICK_EDIT_MODE;
                 attrs &= ~ENABLE_INSERT_MODE;
                 attrs &= ~ENABLE_MOUSE_INPUT;
@@ -171,19 +181,19 @@ class console_ui final {
     }
     auto get_cursor_()
     {
-        CONSOLE_SCREEN_BUFFER_INFO console;
+        type_wrapper< CONSOLE_SCREEN_BUFFER_INFO > console;
         GetConsoleScreenBufferInfo( GetStdHandle( STD_OUTPUT_HANDLE ), &console );
         return console.dwCursorPosition;
     }
-    auto set_cursor_( const COORD &_position )
+    auto set_cursor_( type_wrapper< const COORD & > _position )
     {
         SetConsoleCursorPosition( GetStdHandle( STD_OUTPUT_HANDLE ), _position );
     }
-    auto wait_mouse_event_( const bool _move = true )
+    auto wait_mouse_event_( type_wrapper< const bool > _move = true )
     {
         using namespace std::chrono_literals;
-        INPUT_RECORD record;
-        DWORD reg;
+        type_wrapper< INPUT_RECORD > record;
+        type_wrapper< DWORD > reg;
         while ( true ) {
             std::this_thread::sleep_for( 10ms );
             ReadConsoleInputA( GetStdHandle( STD_INPUT_HANDLE ), &record, 1, &reg );
@@ -196,7 +206,7 @@ class console_ui final {
     }
     auto get_console_size_()
     {
-        CONSOLE_SCREEN_BUFFER_INFO console;
+        type_wrapper< CONSOLE_SCREEN_BUFFER_INFO > console;
         GetConsoleScreenBufferInfo( GetStdHandle( STD_OUTPUT_HANDLE ), &console );
         height_ = console.dwSize.Y;
         width_  = console.dwSize.X;
@@ -206,14 +216,14 @@ class console_ui final {
         get_console_size_();
         set_cursor_( { 0, 0 } );
 # ifdef _THE_NEXT_MAJOR_UPDATE_
-        std::print( "{}", std::string( width_ * height_, ' ' ) );
+        std::print( "{}", type_wrapper< std::string >( width_ * height_, ' ' ) );
 # else
-        std::printf( std::string( width_ * height_, ' ' ).c_str() );
+        std::printf( type_wrapper< std::string >( width_ * height_, ' ' ).c_str() );
 # endif
         set_cursor_( { 0, 0 } );
     }
-    auto write_( nullptr_type_, const bool = false ) = delete;
-    auto write_( const char *const _text, const bool _is_endl = false )
+    auto write_( type_wrapper< nullptr_type_ >, type_wrapper< const bool > = false ) = delete;
+    auto write_( type_wrapper< const char *const > _text, type_wrapper< const bool > _is_endl = false )
     {
 # ifdef _THE_NEXT_MAJOR_UPDATE_
         std::print( "{}{}", _text, _is_endl ? '\n' : '\0' );
@@ -221,11 +231,11 @@ class console_ui final {
         std::printf( "%s%c", _text, _is_endl ? '\n' : '\0' );
 # endif
     }
-    auto rewrite_( const COORD &_position, nullptr_type_ ) = delete;
-    auto rewrite_( const COORD &_position, const char *const _text )
+    auto rewrite_( type_wrapper< const COORD & > _position, type_wrapper< nullptr_type_ > ) = delete;
+    auto rewrite_( type_wrapper< const COORD & > _position, type_wrapper< const char *const > _text )
     {
         set_cursor_( { 0, _position.Y } );
-        write_( std::string( _position.X, ' ' ).c_str() );
+        write_( type_wrapper< std::string >( _position.X, ' ' ).c_str() );
         set_cursor_( { 0, _position.Y } );
         write_( _text );
         set_cursor_( { 0, _position.Y } );
@@ -242,7 +252,7 @@ class console_ui final {
             write_( line.text, true );
         }
     }
-    auto refresh_( const COORD &_hang_position )
+    auto refresh_( type_wrapper< const COORD & > _hang_position )
     {
         for ( auto &line : item_ ) {
             if ( line == _hang_position && line.last_attrs != line.highlight_attrs ) {
@@ -255,9 +265,9 @@ class console_ui final {
             }
         }
     }
-    auto call_func_( const MOUSE_EVENT_RECORD &_mouse_event )
+    auto call_func_( type_wrapper< const MOUSE_EVENT_RECORD & > _mouse_event )
     {
-        bool is_exit{};
+        type_wrapper< bool > is_exit{};
         for ( auto &line : item_ ) {
             if ( line != _mouse_event.dwMousePosition ) {
                 continue;
@@ -268,10 +278,10 @@ class console_ui final {
             cls_();
             line.set_attrs( line.default_attrs );
             show_cursor_( false );
-            edit_console_attrs_( console_attrs_::lock_all );
+            edit_console_attrs_( type_wrapper< console_attrs_ >::lock_all );
             is_exit = line.func( func_args{ *this, _mouse_event } );
             show_cursor_( false );
-            edit_console_attrs_( console_attrs_::lock_text );
+            edit_console_attrs_( type_wrapper< console_attrs_ >::lock_text );
             init_pos_();
             break;
         }
@@ -290,7 +300,7 @@ class console_ui final {
     {
         return item_.max_size();
     }
-    auto &resize( const size_type _size )
+    auto &resize( type_wrapper< const size_type > _size )
     {
         item_.resize( _size );
         return *this;
@@ -300,22 +310,23 @@ class console_ui final {
         item_.shrink_to_fit();
         return *this;
     }
-    auto &swap( console_ui &_src )
+    auto &swap( type_wrapper< console_ui & > _src )
     {
         item_.swap( _src.item_ );
         return *this;
     }
     auto &add_front(
-      const nullptr_type_,
-      const func_callback = nullptr,
-      const short         = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
-      const short         = CONSOLE_TEXT_DEFAULT )
+      type_wrapper< const nullptr_type_ >,
+      type_wrapper< const func_callback > = nullptr,
+      type_wrapper< const short > = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
+      type_wrapper< const short > = CONSOLE_TEXT_DEFAULT )
       = delete;
     auto &add_front(
-      const char *const _text,
-      const func_callback _func    = nullptr,
-      const short _highlight_attrs = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
-      const short _default_attrs   = CONSOLE_TEXT_DEFAULT )
+      type_wrapper< const char *const > _text,
+      type_wrapper< const func_callback > _func = nullptr,
+      type_wrapper< const short > _highlight_attrs
+      = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
+      type_wrapper< const short > _default_attrs = CONSOLE_TEXT_DEFAULT )
     {
         item_.emplace_front( ui_item_{
           _text, _default_attrs, _func == nullptr ? _default_attrs : _highlight_attrs,
@@ -323,16 +334,17 @@ class console_ui final {
         return *this;
     }
     auto &add_back(
-      const nullptr_type_,
-      const func_callback = nullptr,
-      const short         = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
-      const short         = CONSOLE_TEXT_DEFAULT )
+      type_wrapper< const nullptr_type_ >,
+      type_wrapper< const func_callback > = nullptr,
+      type_wrapper< const short > = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
+      type_wrapper< const short > = CONSOLE_TEXT_DEFAULT )
       = delete;
     auto &add_back(
-      const char *const _text,
-      const func_callback _func    = nullptr,
-      const short _highlight_attrs = CONSOLE_TEXT_FOREGROUND_BLUE | CONSOLE_TEXT_FOREGROUND_GREEN,
-      const short _default_attrs   = CONSOLE_TEXT_DEFAULT )
+      type_wrapper< const char *const > _text,
+      type_wrapper< const func_callback > _func = nullptr,
+      type_wrapper< const short > _highlight_attrs
+      = CONSOLE_TEXT_FOREGROUND_BLUE | CONSOLE_TEXT_FOREGROUND_GREEN,
+      type_wrapper< const short > _default_attrs = CONSOLE_TEXT_DEFAULT )
     {
         item_.emplace_back( ui_item_{
           _text, _default_attrs, _func == nullptr ? _default_attrs : _highlight_attrs,
@@ -340,18 +352,20 @@ class console_ui final {
         return *this;
     }
     auto &insert(
-      const size_type,
-      const nullptr_type_,
-      const func_callback = nullptr,
-      const short         = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
-      const short         = CONSOLE_TEXT_DEFAULT )
+      type_wrapper< const size_type >,
+      type_wrapper< const nullptr_type_ >,
+      type_wrapper< const func_callback > = nullptr,
+      type_wrapper< const short > = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
+      type_wrapper< const short > = CONSOLE_TEXT_DEFAULT )
       = delete;
     auto &insert(
-      const size_type _index,
-      const char *const _text,
-      const func_callback _func    = nullptr,
-      const short _highlight_attrs = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
-      const short _default_attrs   = CONSOLE_TEXT_DEFAULT )
+      type_wrapper< const size_type > _index,
+      type_wrapper< const char *const >
+        _text,
+      type_wrapper< const func_callback > _func = nullptr,
+      type_wrapper< const short > _highlight_attrs
+      = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
+      type_wrapper< const short > _default_attrs = CONSOLE_TEXT_DEFAULT )
     {
         item_.emplace(
           item_.cbegin() + _index,
@@ -361,18 +375,20 @@ class console_ui final {
         return *this;
     }
     auto &edit(
-      const size_type,
-      const nullptr_type_,
-      const func_callback = nullptr,
-      const short         = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
-      const short         = CONSOLE_TEXT_DEFAULT )
+      type_wrapper< const size_type >,
+      type_wrapper< const nullptr_type_ >,
+      type_wrapper< const func_callback > = nullptr,
+      type_wrapper< const short > = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
+      type_wrapper< const short > = CONSOLE_TEXT_DEFAULT )
       = delete;
     auto &edit(
-      const size_type _index,
-      const char *const _text,
-      const func_callback _func    = nullptr,
-      const short _highlight_attrs = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
-      const short _default_attrs   = CONSOLE_TEXT_DEFAULT )
+      type_wrapper< const size_type > _index,
+      type_wrapper< const char *const >
+        _text,
+      type_wrapper< const func_callback > _func = nullptr,
+      type_wrapper< const short > _highlight_attrs
+      = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
+      type_wrapper< const short > _default_attrs = CONSOLE_TEXT_DEFAULT )
     {
         item_.at( _index ) = ui_item_{
           _text, _default_attrs, _func == nullptr ? _default_attrs : _highlight_attrs,
@@ -389,7 +405,7 @@ class console_ui final {
         item_.pop_back();
         return *this;
     }
-    auto &remove( const size_type _begin, const size_type _end )
+    auto &remove( type_wrapper< const size_type > _begin, type_wrapper< const size_type > _end )
     {
         item_.erase( item_.cbegin() + _begin, item_.cbegin() + _end );
         return *this;
@@ -403,7 +419,7 @@ class console_ui final {
     {
         using namespace std::chrono_literals;
         show_cursor_( false );
-        edit_console_attrs_( console_attrs_::lock_text );
+        edit_console_attrs_( type_wrapper< console_attrs_ >::lock_text );
         MOUSE_EVENT_RECORD mouse_event;
         init_pos_();
         auto func_return_value{ CONSOLE_UI_REVERT };
@@ -424,17 +440,31 @@ class console_ui final {
         return *this;
     }
     auto &set_console(
-      const UINT, const nullptr_type_, const SHORT, const SHORT, const bool, const bool, const bool, const BYTE )
+      type_wrapper< const UINT >,
+      type_wrapper< const nullptr_type_ >,
+      type_wrapper< const SHORT >,
+      type_wrapper< const SHORT >,
+      type_wrapper< const bool >,
+      type_wrapper< const bool >,
+      type_wrapper< const bool >,
+      type_wrapper< const BYTE > )
       = delete;
     auto &set_console(
-      const UINT _code_page,
-      const CHAR *const _title,
-      const SHORT _width,
-      const SHORT _height,
-      const bool _fix_size,
-      const bool _minimize_ctrl,
-      const bool _close_window_ctrl,
-      const BYTE _transparency )
+      type_wrapper< const UINT > _code_page,
+      type_wrapper< const CHAR *const >
+        _title,
+      type_wrapper< const SHORT >
+        _width,
+      type_wrapper< const SHORT >
+        _height,
+      type_wrapper< const bool >
+        _fix_size,
+      type_wrapper< const bool >
+        _minimize_ctrl,
+      type_wrapper< const bool >
+        _close_window_ctrl,
+      type_wrapper< const BYTE >
+        _transparency )
     {
         SetConsoleOutputCP( _code_page );
         SetConsoleCP( _code_page );
@@ -468,18 +498,21 @@ class console_ui final {
         SetLayeredWindowAttributes( GetConsoleWindow(), 0, _transparency, LWA_ALPHA );
         return *this;
     }
-    auto &lock( const bool _is_hide_cursor, const bool _is_lock_text )
+    auto &lock( type_wrapper< const bool > _is_hide_cursor, type_wrapper< const bool > _is_lock_text )
     {
         show_cursor_( !_is_hide_cursor );
-        edit_console_attrs_( _is_lock_text ? console_attrs_::lock_all : console_attrs_::normal );
+        edit_console_attrs_(
+          _is_lock_text
+            ? type_wrapper< console_attrs_ >::lock_all
+            : type_wrapper< console_attrs_ >::normal );
         return *this;
     }
-    auto &operator=( const console_ui &_src )
+    auto &operator=( type_wrapper< const console_ui & > _src )
     {
         item_ = _src.item_;
         return *this;
     }
-    auto &operator=( console_ui &&_src )
+    auto &operator=( type_wrapper< console_ui && > _src )
     {
         item_ = std::move( _src.item_ );
         return *this;
@@ -489,9 +522,9 @@ class console_ui final {
       , width_{}
       , height_{}
     { }
-    console_ui( const console_ui & ) = default;
-    console_ui( console_ui && )      = default;
-    ~console_ui()                    = default;
+    console_ui( type_wrapper< const console_ui & > ) = default;
+    console_ui( type_wrapper< console_ui && > )      = default;
+    ~console_ui()                                    = default;
 };
 #else
 # error "must be compiled on c++23 / gnu++23 or later C++ standards."
