@@ -130,12 +130,9 @@ class console_ui final {
           = delete;
         ui_item_(
           object_type< const char *const > _text,
-          object_type< const short >
-            _default_attrs,
-          object_type< const short >
-            _highlight_attrs,
-          object_type< const func_callback >
-            _func )
+          object_type< const short > _default_attrs,
+          object_type< const short > _highlight_attrs,
+          object_type< const func_callback > _func )
           : text{ _text }
           , default_attrs{ _default_attrs }
           , highlight_attrs{ _highlight_attrs }
@@ -329,7 +326,9 @@ class console_ui final {
       object_type< const short > _default_attrs = CONSOLE_TEXT_DEFAULT )
     {
         item_.emplace_front( ui_item_{
-          _text, _default_attrs, _func == nullptr ? _default_attrs : _highlight_attrs,
+          _text,
+          _default_attrs,
+          _func == nullptr ? _default_attrs : _highlight_attrs,
           std::move( _func ) } );
         return *this;
     }
@@ -347,7 +346,9 @@ class console_ui final {
       object_type< const short > _default_attrs = CONSOLE_TEXT_DEFAULT )
     {
         item_.emplace_back( ui_item_{
-          _text, _default_attrs, _func == nullptr ? _default_attrs : _highlight_attrs,
+          _text,
+          _default_attrs,
+          _func == nullptr ? _default_attrs : _highlight_attrs,
           std::move( _func ) } );
         return *this;
     }
@@ -360,8 +361,7 @@ class console_ui final {
       = delete;
     auto &insert(
       object_type< const size_type > _index,
-      object_type< const char *const >
-        _text,
+      object_type< const char *const > _text,
       object_type< const func_callback > _func = nullptr,
       object_type< const short > _highlight_attrs
       = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
@@ -370,7 +370,9 @@ class console_ui final {
         item_.emplace(
           item_.cbegin() + _index,
           ui_item_{
-            _text, _default_attrs, _func == nullptr ? _default_attrs : _highlight_attrs,
+            _text,
+            _default_attrs,
+            _func == nullptr ? _default_attrs : _highlight_attrs,
             std::move( _func ) } );
         return *this;
     }
@@ -383,15 +385,16 @@ class console_ui final {
       = delete;
     auto &edit(
       object_type< const size_type > _index,
-      object_type< const char *const >
-        _text,
+      object_type< const char *const > _text,
       object_type< const func_callback > _func = nullptr,
       object_type< const short > _highlight_attrs
       = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
       object_type< const short > _default_attrs = CONSOLE_TEXT_DEFAULT )
     {
         item_.at( _index ) = ui_item_{
-          _text, _default_attrs, _func == nullptr ? _default_attrs : _highlight_attrs,
+          _text,
+          _default_attrs,
+          _func == nullptr ? _default_attrs : _highlight_attrs,
           std::move( _func ) };
         return *this;
     }
@@ -451,20 +454,13 @@ class console_ui final {
       = delete;
     auto &set_console(
       object_type< const UINT > _code_page,
-      object_type< const CHAR *const >
-        _title,
-      object_type< const SHORT >
-        _width,
-      object_type< const SHORT >
-        _height,
-      object_type< const bool >
-        _fix_size,
-      object_type< const bool >
-        _minimize_ctrl,
-      object_type< const bool >
-        _close_window_ctrl,
-      object_type< const BYTE >
-        _transparency )
+      object_type< const CHAR *const > _title,
+      object_type< const SHORT > _width,
+      object_type< const SHORT > _height,
+      object_type< const bool > _fix_size,
+      object_type< const bool > _minimize_ctrl,
+      object_type< const bool > _close_window_ctrl,
+      object_type< const BYTE > _transparency )
     {
         SetConsoleOutputCP( _code_page );
         SetConsoleCP( _code_page );

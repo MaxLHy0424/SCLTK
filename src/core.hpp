@@ -66,18 +66,37 @@ namespace core {
             object_type< const rule_data_node > mythware, lenovo;
             object_type< rule_data_node > customized;
         } rule{
-          { { "StudentMain.exe", "DispcapHelper.exe", "VRCwPlayer.exe", "InstHelpApp.exe",
-              "InstHelpApp64.exe", "TDOvrSet.exe", "GATESRV.exe", "ProcHelper64.exe",
+          { { "StudentMain.exe",
+              "DispcapHelper.exe",
+              "VRCwPlayer.exe",
+              "InstHelpApp.exe",
+              "InstHelpApp64.exe",
+              "TDOvrSet.exe",
+              "GATESRV.exe",
+              "ProcHelper64.exe",
               "MasterHelper.exe" },
            {
               "STUDSRV",
               "TDNetFilter",
             } },
-          { { "vncviewer.exe", "tvnserver32.exe", "WfbsPnpInstall.exe", "WFBSMon.exe",
-              "WFBSMlogon.exe", "WFBSSvrLogShow.exe", "ResetIp.exe", "FuncForWIN64.exe",
-              "CertMgr.exe", "Fireware.exe", "BCDBootCopy.exe", "refreship.exe",
-              "lenovoLockScreen.exe", "PortControl64.exe", "DesktopCheck.exe",
-              "DeploymentManager.exe", "DeploymentAgent.exe", "XYNTService.exe" },
+          { { "vncviewer.exe",
+              "tvnserver32.exe",
+              "WfbsPnpInstall.exe",
+              "WFBSMon.exe",
+              "WFBSMlogon.exe",
+              "WFBSSvrLogShow.exe",
+              "ResetIp.exe",
+              "FuncForWIN64.exe",
+              "CertMgr.exe",
+              "Fireware.exe",
+              "BCDBootCopy.exe",
+              "refreship.exe",
+              "lenovoLockScreen.exe",
+              "PortControl64.exe",
+              "DesktopCheck.exe",
+              "DeploymentManager.exe",
+              "DeploymentAgent.exe",
+              "XYNTService.exe" },
            { "BSAgentSvr", "tvnserver", "WFBSMlogon" } },
           {}
         };
@@ -88,8 +107,7 @@ namespace core {
         object_type< PSID > admins_group{};
         object_type< SID_IDENTIFIER_AUTHORITY > nt_authority{ SECURITY_NT_AUTHORITY };
         if ( AllocateAndInitializeSid(
-               &nt_authority, 2, SECURITY_BUILTIN_DOMAIN_RID, DOMAIN_ALIAS_RID_ADMINS, 0, 0, 0, 0,
-               0, 0, &admins_group )
+               &nt_authority, 2, SECURITY_BUILTIN_DOMAIN_RID, DOMAIN_ALIAS_RID_ADMINS, 0, 0, 0, 0, 0, 0, &admins_group )
              == true )
         {
             CheckTokenMembership( nullptr, admins_group, &is_admin );
@@ -119,8 +137,18 @@ namespace core {
           R"(Software\Policies\Microsoft\Windows\System)",
           R"(Software\Microsoft\Windows\CurrentVersion\Policies\System)",
           R"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)" },
-          exe{ "mode.com", "chcp.com",    "reg.exe",     "sc.exe",      "taskkill.exe", "net.exe",
-               "cmd.exe",  "taskmgr.exe", "perfmon.exe", "regedit.exe", "mmc.exe" };
+          exe{
+            "mode.com",
+            "chcp.com",
+            "reg.exe",
+            "sc.exe",
+            "taskkill.exe",
+            "net.exe",
+            "cmd.exe",
+            "taskmgr.exe",
+            "perfmon.exe",
+            "regedit.exe",
+            "mmc.exe" };
         while ( true ) {
             for ( const auto &item : hkcu_reg_dir ) {
                 RegDeleteTreeA( HKEY_CURRENT_USER, item );
@@ -161,7 +189,8 @@ namespace core {
           .add_back( "\n[名称]\n\n " INFO_NAME "\n\n[版本]\n\n " INFO_VERSION )
           .add_back( "\n[仓库]\n" )
           .add_back(
-            " " INFO_REPO_URL " ", view_repo_webpage,
+            " " INFO_REPO_URL " ",
+            view_repo_webpage,
             CONSOLE_TEXT_FOREGROUND_BLUE | CONSOLE_TEXT_FOREGROUND_GREEN
               | CONSOLE_TEXT_COMMON_LVB_UNDERSCORE )
           .add_back( "\n[许可证]\n\n " INFO_LICENSE "\n\n (C) 2023 - present " INFO_DEVELOPER "." )
@@ -346,8 +375,7 @@ namespace core {
                 "                    [ 配  置 ]\n\n\n"
                 " (i) 相关信息可参阅文档.\n" )
               .add_back(
-                " < 同步配置并返回 ", sync,
-                CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_INTENSITY )
+                " < 同步配置并返回 ", sync, CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_INTENSITY )
               .add_back( " > 打开配置文件 ", open_config_file )
               .add_back( "\n[增强操作]\n" )
               .add_back(
@@ -500,17 +528,37 @@ namespace core {
     inline struct {
         const rule_data_node mythware, lenovo;
     } rule{
-      {{ "StudentMain.exe", "DispcapHelper.exe", "VRCwPlayer.exe", "InstHelpApp.exe",
-          "InstHelpApp64.exe", "TDOvrSet.exe", "GATESRV.exe", "ProcHelper64.exe",
+      {{ "StudentMain.exe",
+          "DispcapHelper.exe",
+          "VRCwPlayer.exe",
+          "InstHelpApp.exe",
+          "InstHelpApp64.exe",
+          "TDOvrSet.exe",
+          "GATESRV.exe",
+          "ProcHelper64.exe",
           "MasterHelper.exe" },
        {
           "STUDSRV",
           "TDNetFilter",
         }                                         },
-      {{ "vncviewer.exe", "tvnserver32.exe", "WfbsPnpInstall.exe", "WFBSMon.exe", "WFBSMlogon.exe",
-          "WFBSSvrLogShow.exe", "ResetIp.exe", "FuncForWIN64.exe", "CertMgr.exe", "Fireware.exe",
-          "BCDBootCopy.exe", "refreship.exe", "lenovoLockScreen.exe", "PortControl64.exe",
-          "DesktopCheck.exe", "DeploymentManager.exe", "DeploymentAgent.exe", "XYNTService.exe" },
+      {{ "vncviewer.exe",
+          "tvnserver32.exe",
+          "WfbsPnpInstall.exe",
+          "WFBSMon.exe",
+          "WFBSMlogon.exe",
+          "WFBSSvrLogShow.exe",
+          "ResetIp.exe",
+          "FuncForWIN64.exe",
+          "CertMgr.exe",
+          "Fireware.exe",
+          "BCDBootCopy.exe",
+          "refreship.exe",
+          "lenovoLockScreen.exe",
+          "PortControl64.exe",
+          "DesktopCheck.exe",
+          "DeploymentManager.exe",
+          "DeploymentAgent.exe",
+          "XYNTService.exe" },
        { "BSAgentSvr", "tvnserver", "WFBSMlogon" }}
     };
     inline auto is_run_as_admin()
