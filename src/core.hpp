@@ -228,7 +228,7 @@ namespace core {
               core::data::option[ 1 ].is_enabled ? 230 : 255 );
             return CONSOLE_UI_REVERT;
         } };
-        class exec_cmd final {
+        class cmd_executor final {
           private:
             const c_str_type cmd_;
           public:
@@ -238,15 +238,15 @@ namespace core {
                 system( cmd_ );
                 return CONSOLE_UI_REVERT;
             }
-            auto &operator=( const exec_cmd & ) = delete;
-            auto &operator=( exec_cmd && )      = delete;
-            exec_cmd( nullptr_type )            = delete;
-            exec_cmd( const c_str_type _cmd )
+            auto &operator=( const cmd_executor & ) = delete;
+            auto &operator=( cmd_executor && )      = delete;
+            cmd_executor( nullptr_type )            = delete;
+            cmd_executor( const c_str_type _cmd )
               : cmd_{ _cmd }
             { }
-            exec_cmd( const exec_cmd & ) = default;
-            exec_cmd( exec_cmd && )      = default;
-            ~exec_cmd()                  = default;
+            cmd_executor( const cmd_executor & ) = default;
+            cmd_executor( cmd_executor && )      = default;
+            ~cmd_executor()                      = default;
         };
         type_wrapper< const c_str_type[][ 2 ] > quick_op{
           {" > 重启资源管理器 ",
@@ -264,7 +264,7 @@ namespace core {
           .add_back( " > 命令提示符 ", launch_cmd )
           .add_back( "\n[快捷操作]\n" );
         for ( const auto &item : quick_op ) {
-            ui.add_back( item[ 0 ], exec_cmd{ item[ 1 ] } );
+            ui.add_back( item[ 0 ], cmd_executor{ item[ 1 ] } );
         }
         ui.show();
         return CONSOLE_UI_REVERT;
@@ -371,7 +371,7 @@ namespace core {
                 }
                 return CONSOLE_UI_REVERT;
             } };
-            class set_option {
+            class option_setter {
               private:
                 option_data_node &node_;
                 bool value_;
@@ -381,15 +381,15 @@ namespace core {
                     node_.is_enabled = value_;
                     return CONSOLE_UI_REVERT;
                 }
-                auto &operator=( const set_option & ) = delete;
-                auto &operator=( set_option && )      = delete;
-                set_option( option_data_node &_node, bool _value )
+                auto &operator=( const option_setter & ) = delete;
+                auto &operator=( option_setter && )      = delete;
+                option_setter( option_data_node &_node, bool _value )
                   : node_{ _node }
                   , value_{ _value }
                 { }
-                set_option( const set_option & ) = default;
-                set_option( set_option && )      = default;
-                ~set_option()                    = default;
+                option_setter( const option_setter & ) = default;
+                option_setter( option_setter && )      = default;
+                ~option_setter()                       = default;
             };
             constexpr auto option_button_color{
               CONSOLE_TEXT_FOREGROUND_RED | CONSOLE_TEXT_FOREGROUND_GREEN };
@@ -403,8 +403,8 @@ namespace core {
               .add_back( " > 打开配置文件 ", open_config_file );
             for ( auto &item : data::option ) {
                 ui.add_back( item.showed_name )
-                  .add_back( " > 启用 ", set_option{ item, true }, option_button_color )
-                  .add_back( " > 禁用 ", set_option{ item, false }, option_button_color );
+                  .add_back( " > 启用 ", option_setter{ item, true }, option_button_color )
+                  .add_back( " > 禁用 ", option_setter{ item, false }, option_button_color );
             }
             ui.show();
             return CONSOLE_UI_REVERT;
