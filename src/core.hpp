@@ -248,21 +248,25 @@ namespace core {
             exec_cmd( exec_cmd && )      = default;
             ~exec_cmd()                  = default;
         };
-        type_wrapper< const c_str_type[] > cmd{
-          R"(taskkill.exe /f /im explorer.exe && timeout /t 3 /nobreak && start C:\Windows\explorer.exe)",
-          R"(reg.exe delete "HKLM\SOFTWARE\Policies\Google\Chrome" /f /v AllowDinosaurEasterEgg)",
-          R"(reg.exe delete "HKLM\SOFTWARE\Policies\Microsoft\Edge" /f /v AllowSurfGame)",
-          R"(reg.exe add "HKLM\SYSTEM\CurrentControlSet\Services\USBSTOR" /f /t reg_dword /v Start /d 3)" };
+        type_wrapper< const c_str_type[][ 2 ] > quick_op{
+          {" > 重启资源管理器 ",
+           R"(taskkill.exe /f /im explorer.exe && timeout /t 3 /nobreak && start C:\Windows\explorer.exe)"},
+          {" > 恢复 Google Chrome 离线游戏 ",
+           R"(reg.exe delete "HKLM\SOFTWARE\Policies\Google\Chrome" /f /v AllowDinosaurEasterEgg)"        },
+          {" > 恢复 Microsoft Edge 离线游戏 ",
+           R"(reg.exe delete "HKLM\SOFTWARE\Policies\Microsoft\Edge" /f /v AllowSurfGame)"                },
+          {" > 恢复 USB 设备访问 ",
+           R"(reg.exe add "HKLM\SYSTEM\CurrentControlSet\Services\USBSTOR" /f /t reg_dword /v Start /d 3)"}
+        };
         console_ui ui;
         ui.add_back( "                   [ 工 具 箱 ]\n\n" )
           .add_back( " < 返回 ", quit, CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_INTENSITY )
           .add_back( " > 命令提示符 ", launch_cmd )
-          .add_back( "\n[快捷操作]\n" )
-          .add_back( " > 重启资源管理器 ", exec_cmd{ cmd[ 0 ] } )
-          .add_back( " > 恢复 Google Chrome 离线游戏 ", exec_cmd{ cmd[ 1 ] } )
-          .add_back( " > 恢复 Microsoft Edge 离线游戏 ", exec_cmd{ cmd[ 2 ] } )
-          .add_back( " > 恢复 USB 设备访问 ", exec_cmd{ cmd[ 3 ] } )
-          .show();
+          .add_back( "\n[快捷操作]\n" );
+        for ( const auto &item : quick_op ) {
+            ui.add_back( item[ 0 ], exec_cmd{ item[ 1 ] } );
+        }
+        ui.show();
         return CONSOLE_UI_REVERT;
     }
     class config_op final {
