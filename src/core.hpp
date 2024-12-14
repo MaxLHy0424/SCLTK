@@ -213,8 +213,8 @@ namespace core {
               30,
               false,
               false,
-              core::data::option[ 1 ].is_enabled == false ? true : false,
-              core::data::option[ 1 ].is_enabled == true ? 230 : 255 );
+              core::data::option[ 1 ].is_enabled ? false : true,
+              core::data::option[ 1 ].is_enabled ? 230 : 255 );
             SetConsoleScreenBufferSize( GetStdHandle( STD_OUTPUT_HANDLE ), { 120, SHRT_MAX - 1 } );
             system( "cmd.exe" );
             _args.parent_ui.set_console(
@@ -224,8 +224,8 @@ namespace core {
               WINDOW_HEIGHT,
               true,
               false,
-              core::data::option[ 1 ].is_enabled == false ? true : false,
-              core::data::option[ 1 ].is_enabled == true ? 230 : 255 );
+              core::data::option[ 1 ].is_enabled ? false : true,
+              core::data::option[ 1 ].is_enabled ? 230 : 255 );
             return CONSOLE_UI_REVERT;
         } };
         class exec_cmd final {
@@ -336,7 +336,7 @@ namespace core {
                 std::string text;
                 text.append( "[option]\n" );
                 for ( const auto &item : data::option ) {
-                    if ( item.is_enabled == true ) {
+                    if ( item.is_enabled ) {
                         text.append( item.tag_name ).push_back( '\n' );
                     }
                 }
@@ -447,7 +447,7 @@ namespace core {
             std::print( ":: 生成并执行命令.\n{}\n", std::string( WINDOW_WIDTH, '-' ) );
             switch ( mode_ ) {
                 case 'c' : {
-                    if ( data::option[ 0 ].is_enabled == true ) {
+                    if ( data::option[ 0 ].is_enabled ) {
                         for ( const auto &item : rule_data_.exe ) {
                             system(
                               std::format(
@@ -468,7 +468,7 @@ namespace core {
                     break;
                 }
                 case 'r' : {
-                    if ( data::option[ 0 ].is_enabled == true ) {
+                    if ( data::option[ 0 ].is_enabled ) {
                         for ( const auto &item : rule_data_.exe ) {
                             system(
                               std::format(

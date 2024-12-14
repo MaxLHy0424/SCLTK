@@ -14,10 +14,10 @@ auto main() -> int
         return 1;
     }
     core::config_op{ 'r' }( console_ui::func_args{ ui } );
-    if ( core::data::option[ 1 ].is_enabled == true ) {
+    if ( core::data::option[ 1 ].is_enabled ) {
         std::thread{ core::force_show_window }.detach();
     }
-    if ( core::data::option[ 2 ].is_enabled == true ) {
+    if ( core::data::option[ 2 ].is_enabled ) {
         std::thread{ core::repair_env }.detach();
     }
     std::print( ":: 初始化用户界面.\n" );
@@ -45,11 +45,11 @@ auto main() -> int
         WINDOW_HEIGHT,
         true,
         false,
-        core::data::option[ 1 ].is_enabled == false ? true : false,
-        core::data::option[ 1 ].is_enabled == true ? 230 : 255 )
+        core::data::option[ 1 ].is_enabled ? false : true,
+        core::data::option[ 1 ].is_enabled ? 230 : 255 )
       .show()
       .lock( false, false );
-    if ( core::data::option[ 1 ].is_enabled == true ) {
+    if ( core::data::option[ 1 ].is_enabled ) {
         SetWindowLongPtrA(
           GetConsoleWindow(),
           GWL_STYLE,
