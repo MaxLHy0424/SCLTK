@@ -374,18 +374,18 @@ namespace core {
             class set_option {
               private:
                 option_data_node &node_;
-                bool value;
+                bool value_;
               public:
                 auto operator()( console_ui::func_args )
                 {
-                    node_.is_enabled = value;
+                    node_.is_enabled = value_;
                     return CONSOLE_UI_REVERT;
                 }
                 auto &operator=( const set_option & ) = delete;
                 auto &operator=( set_option && )      = delete;
                 set_option( option_data_node &_node, bool _value )
                   : node_{ _node }
-                  , value{ _value }
+                  , value_{ _value }
                 { }
                 set_option( const set_option & ) = default;
                 set_option( set_option && )      = default;
