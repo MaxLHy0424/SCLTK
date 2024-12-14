@@ -194,8 +194,7 @@ namespace core {
           .add_back(
             " " INFO_REPO_URL " ",
             view_repo_webpage,
-            CONSOLE_TEXT_FOREGROUND_BLUE | CONSOLE_TEXT_FOREGROUND_GREEN
-              | CONSOLE_TEXT_COMMON_LVB_UNDERSCORE )
+            CONSOLE_TEXT_DEFAULT | CONSOLE_TEXT_COMMON_LVB_UNDERSCORE )
           .add_back( "\n[许可证]\n\n " INFO_LICENSE "\n\n (C) 2023 - present " INFO_DEVELOPER "." )
           .show();
         return CONSOLE_UI_REVERT;
