@@ -285,7 +285,7 @@ namespace core {
                 if ( line.empty() || line.front() == '#' ) {
                     continue;
                 }
-                if ( line == "[option[]" ) {
+                if ( line == "[option]" ) {
                     tag = config_tag::option;
                     continue;
                 } else if ( line == "[rule_exe]" ) {
@@ -330,7 +330,7 @@ namespace core {
                 load_( true );
                 std::print( ":: 保存更改.\n" );
                 std::string text;
-                text.append( "[option[]\n" );
+                text.append( "[option]\n" );
                 for ( const auto &item : data::option ) {
                     if ( item.is_enabled == true ) {
                         text.append( item.tag_name ).push_back( '\n' );
