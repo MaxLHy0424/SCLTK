@@ -13,30 +13,30 @@ inline bool args_error{};
 #endif
 namespace core {
 #ifdef _THE_NEXT_MAJOR_UPDATE_
-    using nullptr_type = object_type< decltype( nullptr ) >;
+    using nullptr_type = decltype( nullptr );
     struct config_data_node final {
-        object_type< const char *const > name;
-        object_type< bool > is_enabled;
-        auto &operator=( object_type< const config_data_node & > )           = delete;
-        auto &operator=( object_type< config_data_node && > )                = delete;
-        config_data_node( object_type< nullptr_type >, object_type< bool > ) = delete;
-        config_data_node( object_type< const char *const > _name, object_type< bool > _is_enabled )
+        const char *const name;
+        bool is_enabled;
+        auto &operator=( const config_data_node & ) = delete;
+        auto &operator=( config_data_node && )      = delete;
+        config_data_node( nullptr_type, bool )      = delete;
+        config_data_node( const char *const _name, bool _is_enabled )
           : name{ _name }
           , is_enabled{ _is_enabled }
         { }
-        config_data_node( object_type< const config_data_node & > ) = delete;
-        config_data_node( object_type< config_data_node && > )      = delete;
-        ~config_data_node()                                         = default;
+        config_data_node( const config_data_node & ) = delete;
+        config_data_node( config_data_node && )      = delete;
+        ~config_data_node()                          = default;
     };
     struct rule_data_node final {
-        object_type< std::deque< std::string > > exe, svc;
-        auto &operator=( object_type< const rule_data_node & > _src )
+        std::deque< std::string > exe, svc;
+        auto &operator=( const rule_data_node _src )
         {
             exe = _src.exe;
             svc = _src.svc;
             return *this;
         }
-        auto &operator=( object_type< rule_data_node && > _src )
+        auto &operator=( rule_data_node &_src )
         {
             exe = std::move( _src.exe );
             svc = std::move( _src.svc );
@@ -46,25 +46,24 @@ namespace core {
           : exe{}
           , svc{}
         { }
-        rule_data_node(
-          object_type< std::deque< std::string > > _exe, object_type< std::deque< std::string > > _svc )
+        rule_data_node( std::deque< std::string > _exe, std::deque< std::string > _svc )
           : exe{ std::move( _exe ) }
           , svc{ std::move( _svc ) }
         { }
-        rule_data_node( object_type< const rule_data_node & > ) = delete;
-        rule_data_node( object_type< rule_data_node && > )      = delete;
-        ~rule_data_node()                                       = default;
+        rule_data_node( const rule_data_node & ) = delete;
+        rule_data_node( rule_data_node && )      = delete;
+        ~rule_data_node()                        = default;
     };
     namespace data {
-        inline object_type< const char *const > config_file_name{ "config.ini" };
+        inline const char *const config_file_name{ "config.ini" };
         inline object_type< config_data_node[] > config{
           {"enhanced_op",     false},
           {"enhanced_window", false},
           {"repair_env",      false}
         };
         inline struct {
-            object_type< const rule_data_node > mythware, lenovo;
-            object_type< rule_data_node > customized;
+            const rule_data_node mythware, lenovo;
+            rule_data_node customized;
         } rule{
           { { "StudentMain.exe",
               "DispcapHelper.exe",
@@ -103,9 +102,9 @@ namespace core {
     }
     inline auto is_run_as_admin()
     {
-        object_type< BOOL > is_admin{};
-        object_type< PSID > admins_group{};
-        object_type< SID_IDENTIFIER_AUTHORITY > nt_authority{ SECURITY_NT_AUTHORITY };
+        BOOL is_admin{};
+        PSID admins_group{};
+        SID_IDENTIFIER_AUTHORITY nt_authority{ SECURITY_NT_AUTHORITY };
         if ( AllocateAndInitializeSid(
                &nt_authority, 2, SECURITY_BUILTIN_DOMAIN_RID, DOMAIN_ALIAS_RID_ADMINS, 0, 0, 0, 0, 0, 0, &admins_group )
              == true )
@@ -118,8 +117,8 @@ namespace core {
     inline auto force_show_window()
     {
         using namespace std::chrono_literals;
-        object_type< const HWND > this_window{ GetConsoleWindow() };
-        object_type< const DWORD > foreground_id{ GetWindowThreadProcessId( this_window, nullptr ) },
+        const HWND this_window{ GetConsoleWindow() };
+        const DWORD foreground_id{ GetWindowThreadProcessId( this_window, nullptr ) },
           current_id{ GetCurrentThreadId() };
         while ( true ) {
             AttachThreadInput( current_id, foreground_id, TRUE );
@@ -164,26 +163,26 @@ namespace core {
             std::this_thread::sleep_for( 1000ms );
         }
     }
-    inline auto relaunch_as_admin( object_type< console_ui >::func_args )
+    inline auto relaunch_as_admin( console_ui::func_args )
     {
         object_type< char[ MAX_PATH ] > path{};
         GetModuleFileNameA( nullptr, path, MAX_PATH );
         ShellExecuteA( nullptr, "runas", path, nullptr, nullptr, SW_SHOWNORMAL );
         return CONSOLE_UI_TERMINATE;
     }
-    inline auto quit( object_type< console_ui >::func_args )
+    inline auto quit( console_ui::func_args )
     {
         return CONSOLE_UI_TERMINATE;
     }
-    inline auto info( object_type< console_ui >::func_args )
+    inline auto info( console_ui::func_args )
     {
         std::print( ":: 初始化用户界面.\n" );
-        auto view_repo_webpage{ []( object_type< console_ui >::func_args )
+        auto view_repo_webpage{ []( console_ui::func_args )
         {
             ShellExecuteA( nullptr, "open", INFO_REPO_URL, nullptr, nullptr, SW_SHOWNORMAL );
             return CONSOLE_UI_REVERT;
         } };
-        object_type< console_ui > ui;
+        console_ui ui;
         ui.add_back( "                    [ 信  息 ]\n\n" )
           .add_back( " < 返回 ", quit, CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_INTENSITY )
           .add_back( "\n[名称]\n\n " INFO_NAME "\n\n[版本]\n\n " INFO_VERSION )
@@ -197,10 +196,10 @@ namespace core {
           .show();
         return CONSOLE_UI_REVERT;
     }
-    inline auto toolkit( object_type< console_ui >::func_args )
+    inline auto toolkit( console_ui::func_args )
     {
         std::print( ":: 初始化用户界面.\n" );
-        auto launch_cmd{ []( object_type< console_ui >::func_args _args )
+        auto launch_cmd{ []( console_ui::func_args _args )
         {
             _args.parent_ui.lock( false, false );
             _args.parent_ui.set_console(
@@ -227,30 +226,30 @@ namespace core {
         } };
         class exec_cmd final {
           private:
-            object_type< const char *const > cmd_;
+            const char *const cmd_;
           public:
-            auto operator()( object_type< console_ui >::func_args )
+            auto operator()( console_ui::func_args )
             {
-                std::print( ":: 执行命令.\n{}\n", object_type< std::string >( WINDOW_WIDTH, '-' ) );
+                std::print( ":: 执行命令.\n{}\n", std::string( WINDOW_WIDTH, '-' ) );
                 system( cmd_ );
                 return CONSOLE_UI_REVERT;
             }
-            auto &operator=( object_type< const exec_cmd & > ) = delete;
-            auto &operator=( object_type< exec_cmd && > )      = delete;
-            exec_cmd( object_type< nullptr_type > )            = delete;
-            exec_cmd( object_type< const char *const > _cmd )
+            auto &operator=( const exec_cmd & ) = delete;
+            auto &operator=( exec_cmd && )      = delete;
+            exec_cmd( nullptr_type )            = delete;
+            exec_cmd( const char *const _cmd )
               : cmd_{ _cmd }
             { }
-            exec_cmd( object_type< const exec_cmd & > ) = default;
-            exec_cmd( object_type< exec_cmd && > )      = default;
-            ~exec_cmd()                                 = default;
+            exec_cmd( const exec_cmd & ) = default;
+            exec_cmd( exec_cmd && )      = default;
+            ~exec_cmd()                  = default;
         };
         object_type< const char *const[] > cmd{
           R"(taskkill.exe /f /im explorer.exe && timeout /t 3 /nobreak && start C:\Windows\explorer.exe)",
           R"(reg.exe delete "HKLM\SOFTWARE\Policies\Google\Chrome" /f /v AllowDinosaurEasterEgg)",
           R"(reg.exe delete "HKLM\SOFTWARE\Policies\Microsoft\Edge" /f /v AllowSurfGame)",
           R"(reg.exe add "HKLM\SYSTEM\CurrentControlSet\Services\USBSTOR" /f /t reg_dword /v Start /d 3)" };
-        object_type< console_ui > ui;
+        console_ui ui;
         ui.add_back( "                   [ 工 具 箱 ]\n\n" )
           .add_back( " < 返回 ", quit, CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_INTENSITY )
           .add_back( " > 命令提示符 ", launch_cmd )
@@ -264,10 +263,10 @@ namespace core {
     }
     class config_op final {
       private:
-        object_type< const char > mode_;
-        auto load_( object_type< bool > _is_reload ) const
+        const char mode_;
+        auto load_( bool _is_reload ) const
         {
-            object_type< std::ifstream > config_file{ data::config_file_name, std::ios::in };
+            std::ifstream config_file{ data::config_file_name, std::ios::in };
             if ( !config_file.is_open() ) {
                 config_file.close();
                 return;
@@ -277,27 +276,27 @@ namespace core {
             data::rule.customized.svc.clear();
             std::string line;
             enum class config_tag { unknown, option, rule_exe, rule_svc };
-            object_type< config_tag > tag{ object_type< config_tag >::unknown };
+            config_tag tag{ config_tag::unknown };
             while ( std::getline( config_file, line ) ) {
                 if ( line.empty() || line.front() == '#' ) {
                     continue;
                 }
                 if ( line == "[option]" ) {
-                    tag = object_type< config_tag >::option;
+                    tag = config_tag::option;
                     continue;
                 } else if ( line == "[rule_exe]" ) {
-                    tag = object_type< config_tag >::rule_exe;
+                    tag = config_tag::rule_exe;
                     continue;
                 } else if ( line == "[rule_svc]" ) {
-                    tag = object_type< config_tag >::rule_svc;
+                    tag = config_tag::rule_svc;
                     continue;
                 } else if ( line.front() == '[' && line.back() == ']' ) {
-                    tag = object_type< config_tag >::unknown;
+                    tag = config_tag::unknown;
                     continue;
                 }
                 switch ( tag ) {
-                    case object_type< config_tag >::unknown : break;
-                    case object_type< config_tag >::option : {
+                    case config_tag::unknown : break;
+                    case config_tag::option : {
                         if ( _is_reload ) {
                             continue;
                         }
@@ -308,10 +307,10 @@ namespace core {
                         }
                         break;
                     }
-                    case object_type< config_tag >::rule_exe :
+                    case config_tag::rule_exe :
                         data::rule.customized.exe.emplace_back( std::move( line ) );
                         break;
-                    case object_type< config_tag >::rule_svc :
+                    case config_tag::rule_svc :
                         data::rule.customized.svc.emplace_back( std::move( line ) );
                         break;
                 }
@@ -322,11 +321,11 @@ namespace core {
         auto edit_() const
         {
             std::print( ":: 初始化用户界面.\n" );
-            auto sync{ [ this ]( object_type< console_ui >::func_args )
+            auto sync{ [ this ]( console_ui::func_args )
             {
                 load_( true );
                 std::print( ":: 保存更改.\n" );
-                object_type< std::string > text;
+                std::string text;
                 text.append( "[option]\n" );
                 for ( const auto &item : data::config ) {
                     if ( item.is_enabled == true ) {
@@ -341,16 +340,14 @@ namespace core {
                 for ( const auto &item : data::rule.customized.svc ) {
                     text.append( item ).push_back( '\n' );
                 }
-                object_type< std::ofstream > config_file{
-                  data::config_file_name, std::ios::out | std::ios::trunc };
+                std::ofstream config_file{ data::config_file_name, std::ios::out | std::ios::trunc };
                 config_file.write( text.c_str(), text.size() );
                 config_file.close();
                 return CONSOLE_UI_TERMINATE;
             } };
-            auto open_config_file{ []( object_type< console_ui >::func_args )
+            auto open_config_file{ []( console_ui::func_args )
             {
-                if ( object_type< std::ifstream >{ data::config_file_name, std::ios::in }.is_open() )
-                {
+                if ( std::ifstream{ data::config_file_name, std::ios::in }.is_open() ) {
                     std::print( ":: 打开配置文件.\n" );
                     ShellExecuteA(
                       nullptr, "open", data::config_file_name, nullptr, nullptr, SW_SHOWNORMAL );
@@ -360,7 +357,7 @@ namespace core {
                 std::print(
                   "                    [ 配  置 ]\n\n\n"
                   " (i) 无法读取配置文件.\n\n" );
-                for ( object_type< unsigned short > i{ 3 }; i > 0; --i ) {
+                for ( unsigned short i{ 3 }; i > 0; --i ) {
                     std::print( " {}s 后返回.\r", i );
                     std::this_thread::sleep_for( 1000ms );
                 }
@@ -368,7 +365,7 @@ namespace core {
             } };
             constexpr auto option_button_color{
               CONSOLE_TEXT_FOREGROUND_RED | CONSOLE_TEXT_FOREGROUND_GREEN };
-            object_type< console_ui > ui;
+            console_ui ui;
             ui.add_back(
                 "                    [ 配  置 ]\n\n\n"
                 " (i) 相关信息可参阅文档.\n" )
@@ -378,7 +375,7 @@ namespace core {
               .add_back( "\n[增强操作]\n" )
               .add_back(
                 " > 启用 ",
-                []( object_type< console_ui >::func_args )
+                []( console_ui::func_args )
             {
                 data::config[ 0 ].is_enabled = true;
                 return CONSOLE_UI_REVERT;
@@ -386,7 +383,7 @@ namespace core {
                 option_button_color )
               .add_back(
                 " > 禁用 (默认) ",
-                []( object_type< console_ui >::func_args )
+                []( console_ui::func_args )
             {
                 data::config[ 0 ].is_enabled = false;
                 return CONSOLE_UI_REVERT;
@@ -395,7 +392,7 @@ namespace core {
               .add_back( "\n[增强窗口 (下次启动时生效)]\n" )
               .add_back(
                 " > 启用 ",
-                []( object_type< console_ui >::func_args )
+                []( console_ui::func_args )
             {
                 data::config[ 1 ].is_enabled = true;
                 return CONSOLE_UI_REVERT;
@@ -403,7 +400,7 @@ namespace core {
                 option_button_color )
               .add_back(
                 " > 禁用 (默认) ",
-                []( object_type< console_ui >::func_args )
+                []( console_ui::func_args )
             {
                 data::config[ 1 ].is_enabled = false;
                 return CONSOLE_UI_REVERT;
@@ -412,7 +409,7 @@ namespace core {
               .add_back( "\n[环境修复 (下次启动时生效)]\n" )
               .add_back(
                 " > 启用 ",
-                []( object_type< console_ui >::func_args )
+                []( console_ui::func_args )
             {
                 data::config[ 2 ].is_enabled = true;
                 return CONSOLE_UI_REVERT;
@@ -420,7 +417,7 @@ namespace core {
                 option_button_color )
               .add_back(
                 " > 禁用 (默认) ",
-                []( object_type< console_ui >::func_args )
+                []( console_ui::func_args )
             {
                 data::config[ 2 ].is_enabled = false;
                 return CONSOLE_UI_REVERT;
@@ -430,7 +427,7 @@ namespace core {
             return CONSOLE_UI_REVERT;
         }
       public:
-        auto operator()( object_type< console_ui >::func_args ) const
+        auto operator()( console_ui::func_args ) const
         {
             switch ( mode_ ) {
                 case 'r' : load_( false ); break;
@@ -438,33 +435,33 @@ namespace core {
             }
             return CONSOLE_UI_REVERT;
         }
-        auto &operator=( object_type< const config_op & > ) = delete;
-        auto &operator=( object_type< config_op && > )      = delete;
-        config_op( object_type< const char > _mode )
+        auto &operator=( const config_op & ) = delete;
+        auto &operator=( config_op && )      = delete;
+        config_op( const char _mode )
           : mode_{ _mode }
         { }
-        config_op( object_type< const config_op & > ) = default;
-        config_op( object_type< config_op && > )      = default;
-        ~config_op()                                  = default;
+        config_op( const config_op & ) = default;
+        config_op( config_op && )      = default;
+        ~config_op()                   = default;
     };
     class rule_op final {
       private:
-        object_type< const char > mode_;
-        object_type< const rule_data_node & > rule_data_;
+        const char mode_;
+        const rule_data_node &rule_data_;
       public:
-        auto operator()( object_type< console_ui >::func_args ) const
+        auto operator()( console_ui::func_args ) const
         {
             std::print( "                 [ 破 解 / 恢 复 ]\n\n\n" );
             if ( rule_data_.exe.empty() && rule_data_.svc.empty() ) {
                 using namespace std::chrono_literals;
                 std::print( " (i) 规则为空.\n\n" );
-                for ( object_type< unsigned short > i{ 3 }; i > 0; --i ) {
+                for ( unsigned short i{ 3 }; i > 0; --i ) {
                     std::print( " {}s 后返回.\r", i );
                     std::this_thread::sleep_for( 1000ms );
                 }
                 return CONSOLE_UI_REVERT;
             }
-            std::print( ":: 生成并执行命令.\n{}\n", object_type< std::string >( WINDOW_WIDTH, '-' ) );
+            std::print( ":: 生成并执行命令.\n{}\n", std::string( WINDOW_WIDTH, '-' ) );
             switch ( mode_ ) {
                 case 'c' : {
                     if ( data::config[ 0 ].is_enabled == true ) {
@@ -508,15 +505,15 @@ namespace core {
             }
             return CONSOLE_UI_REVERT;
         }
-        auto &operator=( object_type< const rule_op & > ) = delete;
-        auto &operator=( object_type< rule_op && > )      = delete;
-        rule_op( object_type< const char > _mode, object_type< const rule_data_node & > _rule_data )
+        auto &operator=( const rule_op & ) = delete;
+        auto &operator=( rule_op && )      = delete;
+        rule_op( const char _mode, const rule_data_node &_rule_data )
           : mode_{ _mode }
           , rule_data_{ _rule_data }
         { }
-        rule_op( object_type< const rule_op & > ) = default;
-        rule_op( object_type< rule_op && > )      = default;
-        ~rule_op()                                = default;
+        rule_op( const rule_op & ) = default;
+        rule_op( rule_op && )      = default;
+        ~rule_op()                 = default;
     };
 #else
     struct rule_data_node final {
@@ -571,7 +568,7 @@ namespace core {
         }
         return is_admin;
     }
-    inline auto quit( object_type< console_ui >::func_args )
+    inline auto quit( console_ui::func_args )
     {
         return CONSOLE_UI_TERMINATE;
     }
@@ -605,9 +602,9 @@ namespace core {
             std::this_thread::sleep_for( 100ms );
         }
     }
-    inline auto info( object_type< console_ui >::func_args )
+    inline auto info( console_ui::func_args )
     {
-        object_type< console_ui > ui;
+        console_ui ui;
         ui.add_back( "                    [ 信  息 ]\n\n" )
           .add_back( " < 返回 ", quit, CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_INTENSITY )
           .add_back(
@@ -621,7 +618,7 @@ namespace core {
         const char mode_;
         const rule_data_node &rule_;
       public:
-        auto operator()( object_type< console_ui >::func_args ) const
+        auto operator()( console_ui::func_args ) const
         {
             std::puts( "                 [ 破 解 / 恢 复 ]\n\n" );
             if ( !is_run_as_admin() ) {

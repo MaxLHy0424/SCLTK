@@ -2,18 +2,18 @@
 # include "console_ui.hpp"
 # include "core.hpp"
 # ifdef _THE_NEXT_MAJOR_UPDATE_
-auto main() -> object_type< int >
+auto main() -> int
 {
-    object_type< console_ui > ui;
+    console_ui ui;
     ui.set_console( CODE_PAGE, WINDOW_TITLE, WINDOW_WIDTH, WINDOW_HEIGHT, true, false, true, 255 )
       .lock( true, true );
     std::print( ":: 检测运行权限.\n" );
     if ( !core::is_run_as_admin() ) {
         std::print( ":: 申请管理员权限.\n" );
-        core::relaunch_as_admin( object_type< console_ui >::func_args{ ui } );
+        core::relaunch_as_admin( console_ui::func_args{ ui } );
         return 1;
     }
-    core::config_op{ 'r' }( object_type< console_ui >::func_args{ ui } );
+    core::config_op{ 'r' }( console_ui::func_args{ ui } );
     if ( core::data::config[ 1 ].is_enabled == true ) {
         std::thread{ core::force_show_window }.detach();
     }
@@ -65,7 +65,7 @@ auto main() -> object_type< int >
 # else
 auto main( const int _argc, const char *const _argv[] ) -> int
 {
-    object_type< console_ui > ui;
+    console_ui ui;
     if ( _argc == 1 ) {
         goto INIT;
     }
