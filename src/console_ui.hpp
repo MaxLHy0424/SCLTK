@@ -71,13 +71,14 @@ class console_ui final {
     };
     template < typename _char_type_ >
     using c_str_type         = const _char_type_ *;
+    using default_char_type  = char;
     using size_type          = decltype( sizeof( void * ) );
     using nullptr_type       = decltype( nullptr );
     using func_callback_type = std::function< bool( func_args ) >;
   private:
     enum class console_attrs_ { normal, lock_text, lock_all };
     struct ui_item_ final {
-        c_str_type< char > text;
+        c_str_type< default_char_type > text;
         short default_attrs, highlight_attrs, last_attrs;
         COORD position;
         func_callback_type func;
@@ -125,7 +126,7 @@ class console_ui final {
         { }
         ui_item_( nullptr_type, const short, const short, const func_callback_type ) = delete;
         ui_item_(
-          const c_str_type< char > _text,
+          const c_str_type< default_char_type > _text,
           const short _default_attrs,
           const short _highlight_attrs,
           const func_callback_type _func )
@@ -216,7 +217,7 @@ class console_ui final {
         set_cursor_( { 0, 0 } );
     }
     auto write_( nullptr_type, const bool = false ) = delete;
-    auto write_( const c_str_type< char > _text, const bool _is_endl = false )
+    auto write_( const c_str_type< default_char_type > _text, const bool _is_endl = false )
     {
 # ifdef _THE_NEXT_MAJOR_UPDATE_
         std::print( "{}{}", _text, _is_endl ? '\n' : '\0' );
@@ -225,7 +226,7 @@ class console_ui final {
 # endif
     }
     auto rewrite_( const COORD &_position, nullptr_type ) = delete;
-    auto rewrite_( const COORD &_position, const c_str_type< char > _text )
+    auto rewrite_( const COORD &_position, const c_str_type< default_char_type > _text )
     {
         set_cursor_( { 0, _position.Y } );
         write_( std::string( _position.X, ' ' ).c_str() );
@@ -315,7 +316,7 @@ class console_ui final {
       const short              = CONSOLE_TEXT_DEFAULT )
       = delete;
     auto &add_front(
-      const c_str_type< char > _text,
+      const c_str_type< default_char_type > _text,
       const func_callback_type _func = nullptr,
       const short _highlight_attrs   = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
       const short _default_attrs     = CONSOLE_TEXT_DEFAULT )
@@ -334,7 +335,7 @@ class console_ui final {
       const short              = CONSOLE_TEXT_DEFAULT )
       = delete;
     auto &add_back(
-      const c_str_type< char > _text,
+      const c_str_type< default_char_type > _text,
       const func_callback_type _func = nullptr,
       const short _highlight_attrs   = CONSOLE_TEXT_FOREGROUND_BLUE | CONSOLE_TEXT_FOREGROUND_GREEN,
       const short _default_attrs     = CONSOLE_TEXT_DEFAULT )
@@ -355,7 +356,7 @@ class console_ui final {
       = delete;
     auto &insert(
       const size_type _index,
-      const c_str_type< char > _text,
+      const c_str_type< default_char_type > _text,
       const func_callback_type _func = nullptr,
       const short _highlight_attrs   = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
       const short _default_attrs     = CONSOLE_TEXT_DEFAULT )
@@ -378,7 +379,7 @@ class console_ui final {
       = delete;
     auto &edit(
       const size_type _index,
-      const c_str_type< char > _text,
+      const c_str_type< default_char_type > _text,
       const func_callback_type _func = nullptr,
       const short _highlight_attrs   = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
       const short _default_attrs     = CONSOLE_TEXT_DEFAULT )
