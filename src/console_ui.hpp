@@ -72,9 +72,9 @@ class console_ui final {
     template < typename _char_type_ >
     using c_str_type         = const _char_type_ *;
     using size_type          = decltype( sizeof( void * ) );
+    using nullptr_type       = decltype( nullptr );
     using func_callback_type = std::function< bool( func_args ) >;
   private:
-    using nullptr_type_ = decltype( nullptr );
     enum class console_attrs_ { normal, lock_text, lock_all };
     struct ui_item_ final {
         c_str_type< char > text;
@@ -123,7 +123,7 @@ class console_ui final {
           , position{}
           , func{}
         { }
-        ui_item_( nullptr_type_, const short, const short, const func_callback_type ) = delete;
+        ui_item_( nullptr_type, const short, const short, const func_callback_type ) = delete;
         ui_item_(
           const c_str_type< char > _text,
           const short _default_attrs,
@@ -215,7 +215,7 @@ class console_ui final {
 # endif
         set_cursor_( { 0, 0 } );
     }
-    auto write_( nullptr_type_, const bool = false ) = delete;
+    auto write_( nullptr_type, const bool = false ) = delete;
     auto write_( const c_str_type< char > _text, const bool _is_endl = false )
     {
 # ifdef _THE_NEXT_MAJOR_UPDATE_
@@ -224,7 +224,7 @@ class console_ui final {
         std::printf( "%s%c", _text, _is_endl ? '\n' : '\0' );
 # endif
     }
-    auto rewrite_( const COORD &_position, nullptr_type_ ) = delete;
+    auto rewrite_( const COORD &_position, nullptr_type ) = delete;
     auto rewrite_( const COORD &_position, const c_str_type< char > _text )
     {
         set_cursor_( { 0, _position.Y } );
@@ -309,7 +309,7 @@ class console_ui final {
         return *this;
     }
     auto &add_front(
-      const nullptr_type_,
+      const nullptr_type,
       const func_callback_type = nullptr,
       const short              = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
       const short              = CONSOLE_TEXT_DEFAULT )
@@ -328,7 +328,7 @@ class console_ui final {
         return *this;
     }
     auto &add_back(
-      const nullptr_type_,
+      const nullptr_type,
       const func_callback_type = nullptr,
       const short              = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
       const short              = CONSOLE_TEXT_DEFAULT )
@@ -348,7 +348,7 @@ class console_ui final {
     }
     auto &insert(
       const size_type,
-      const nullptr_type_,
+      const nullptr_type,
       const func_callback_type = nullptr,
       const short              = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
       const short              = CONSOLE_TEXT_DEFAULT )
@@ -371,7 +371,7 @@ class console_ui final {
     }
     auto &edit(
       const size_type,
-      const nullptr_type_,
+      const nullptr_type,
       const func_callback_type = nullptr,
       const short              = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
       const short              = CONSOLE_TEXT_DEFAULT )
@@ -435,7 +435,7 @@ class console_ui final {
         return *this;
     }
     auto &set_console(
-      const UINT, const nullptr_type_, const SHORT, const SHORT, const bool, const bool, const bool, const BYTE )
+      const UINT, const nullptr_type, const SHORT, const SHORT, const bool, const bool, const bool, const BYTE )
       = delete;
     auto &set_console(
       const UINT _code_page,

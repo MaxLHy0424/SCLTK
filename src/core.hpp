@@ -13,8 +13,8 @@ inline bool args_error{};
 #endif
 namespace core {
 #ifdef _THE_NEXT_MAJOR_UPDATE_
-    using nullptr_type = decltype( nullptr );
     using c_str_type   = console_ui::c_str_type< char >;
+    using nullptr_type = console_ui::nullptr_type;
     struct config_data_node final {
         const c_str_type name;
         bool is_enabled;
