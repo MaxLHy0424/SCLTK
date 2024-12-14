@@ -169,8 +169,8 @@ namespace core {
     }
     inline auto relaunch_as_admin( console_ui::func_args )
     {
-        type_wrapper< char[ MAX_PATH ] > path{};
-        GetModuleFileNameA( nullptr, path, MAX_PATH );
+        type_wrapper< char[ MAX_PATH * 2 ] > path{};
+        GetModuleFileNameA( nullptr, path, MAX_PATH * 2 );
         ShellExecuteA( nullptr, "runas", path, nullptr, nullptr, SW_SHOWNORMAL );
         return CONSOLE_UI_TERMINATE;
     }
