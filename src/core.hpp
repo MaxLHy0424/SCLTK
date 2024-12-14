@@ -265,8 +265,7 @@ namespace core {
     class config_op final {
       private:
         object_type< const char > mode_;
-        mutable object_type< bool > is_reload_;
-        auto load_() const
+        auto load_( object_type< bool > _is_reload ) const
         {
             object_type< std::ifstream > config_file{ data::config_file_name, std::ios::in };
             if ( !config_file.is_open() ) {
@@ -299,7 +298,7 @@ namespace core {
                 switch ( tag ) {
                     case object_type< config_tag >::unknown : break;
                     case object_type< config_tag >::option : {
-                        if ( is_reload_ ) {
+                        if ( _is_reload ) {
                             continue;
                         }
                         for ( auto &item : data::config ) {
@@ -325,8 +324,7 @@ namespace core {
             std::print( ":: 初始化用户界面.\n" );
             auto sync{ [ this ]( object_type< console_ui >::func_args )
             {
-                is_reload_ = true;
-                load_();
+                load_( true );
                 std::print( ":: 保存更改.\n" );
                 object_type< std::string > text;
                 text.append( "[option]\n" );
@@ -435,7 +433,7 @@ namespace core {
         auto operator()( object_type< console_ui >::func_args ) const
         {
             switch ( mode_ ) {
-                case 'r' : load_(); break;
+                case 'r' : load_( false ); break;
                 case 'w' : edit_(); break;
             }
             return CONSOLE_UI_REVERT;
@@ -444,7 +442,6 @@ namespace core {
         auto &operator=( object_type< config_op && > )      = delete;
         config_op( object_type< const char > _mode )
           : mode_{ _mode }
-          , is_reload_{}
         { }
         config_op( object_type< const config_op & > ) = default;
         config_op( object_type< config_op && > )      = default;
