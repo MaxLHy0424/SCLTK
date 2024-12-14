@@ -1,7 +1,7 @@
 msys2        = C:\\Software\\MSYS2
 cc           = g++.exe
 def          = -D_CRT_SECURE_NO_WARNINGS -DANSI -D_ANSI
-args_base    = -fexec-charset=GBK -std=gnu++23 -Wall -Wextra -Weffc++ -pipe -m64
+args_base    = -fexec-charset=GBK -std=gnu++26 -Wall -Wextra -Weffc++ -pipe -m64
 args_release = -DNDEBUG $(args_base) -static -Oz -flto=auto -fno-rtti
 args_debug   = $(args_base) -Og -g3
 tag          = std
