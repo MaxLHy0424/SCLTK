@@ -70,9 +70,9 @@ class console_ui final {
         ~func_args()                   = default;
     };
     template < typename _char_type_ >
-    using c_str_type    = const _char_type_ *;
-    using func_callback = std::function< bool( func_args ) >;
-    using size_type     = decltype( sizeof( void * ) );
+    using c_str_type         = const _char_type_ *;
+    using size_type          = decltype( sizeof( void * ) );
+    using func_callback_type = std::function< bool( func_args ) >;
   private:
     using nullptr_type_ = decltype( nullptr );
     enum class console_attrs_ { normal, lock_text, lock_all };
@@ -80,7 +80,7 @@ class console_ui final {
         c_str_type< char > text;
         short default_attrs, highlight_attrs, last_attrs;
         COORD position;
-        func_callback func;
+        func_callback_type func;
         auto set_attrs( const short _attrs )
         {
             SetConsoleTextAttribute( GetStdHandle( STD_OUTPUT_HANDLE ), _attrs );
@@ -123,12 +123,12 @@ class console_ui final {
           , position{}
           , func{}
         { }
-        ui_item_( nullptr_type_, const short, const short, const func_callback ) = delete;
+        ui_item_( nullptr_type_, const short, const short, const func_callback_type ) = delete;
         ui_item_(
           const c_str_type< char > _text,
           const short _default_attrs,
           const short _highlight_attrs,
-          const func_callback _func )
+          const func_callback_type _func )
           : text{ _text }
           , default_attrs{ _default_attrs }
           , highlight_attrs{ _highlight_attrs }
@@ -310,15 +310,15 @@ class console_ui final {
     }
     auto &add_front(
       const nullptr_type_,
-      const func_callback = nullptr,
-      const short         = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
-      const short         = CONSOLE_TEXT_DEFAULT )
+      const func_callback_type = nullptr,
+      const short              = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
+      const short              = CONSOLE_TEXT_DEFAULT )
       = delete;
     auto &add_front(
       const c_str_type< char > _text,
-      const func_callback _func    = nullptr,
-      const short _highlight_attrs = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
-      const short _default_attrs   = CONSOLE_TEXT_DEFAULT )
+      const func_callback_type _func = nullptr,
+      const short _highlight_attrs   = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
+      const short _default_attrs     = CONSOLE_TEXT_DEFAULT )
     {
         item_.emplace_front( ui_item_{
           _text,
@@ -329,15 +329,15 @@ class console_ui final {
     }
     auto &add_back(
       const nullptr_type_,
-      const func_callback = nullptr,
-      const short         = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
-      const short         = CONSOLE_TEXT_DEFAULT )
+      const func_callback_type = nullptr,
+      const short              = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
+      const short              = CONSOLE_TEXT_DEFAULT )
       = delete;
     auto &add_back(
       const c_str_type< char > _text,
-      const func_callback _func    = nullptr,
-      const short _highlight_attrs = CONSOLE_TEXT_FOREGROUND_BLUE | CONSOLE_TEXT_FOREGROUND_GREEN,
-      const short _default_attrs   = CONSOLE_TEXT_DEFAULT )
+      const func_callback_type _func = nullptr,
+      const short _highlight_attrs   = CONSOLE_TEXT_FOREGROUND_BLUE | CONSOLE_TEXT_FOREGROUND_GREEN,
+      const short _default_attrs     = CONSOLE_TEXT_DEFAULT )
     {
         item_.emplace_back( ui_item_{
           _text,
@@ -349,16 +349,16 @@ class console_ui final {
     auto &insert(
       const size_type,
       const nullptr_type_,
-      const func_callback = nullptr,
-      const short         = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
-      const short         = CONSOLE_TEXT_DEFAULT )
+      const func_callback_type = nullptr,
+      const short              = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
+      const short              = CONSOLE_TEXT_DEFAULT )
       = delete;
     auto &insert(
       const size_type _index,
       const c_str_type< char > _text,
-      const func_callback _func    = nullptr,
-      const short _highlight_attrs = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
-      const short _default_attrs   = CONSOLE_TEXT_DEFAULT )
+      const func_callback_type _func = nullptr,
+      const short _highlight_attrs   = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
+      const short _default_attrs     = CONSOLE_TEXT_DEFAULT )
     {
         item_.emplace(
           item_.cbegin() + _index,
@@ -372,16 +372,16 @@ class console_ui final {
     auto &edit(
       const size_type,
       const nullptr_type_,
-      const func_callback = nullptr,
-      const short         = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
-      const short         = CONSOLE_TEXT_DEFAULT )
+      const func_callback_type = nullptr,
+      const short              = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
+      const short              = CONSOLE_TEXT_DEFAULT )
       = delete;
     auto &edit(
       const size_type _index,
       const c_str_type< char > _text,
-      const func_callback _func    = nullptr,
-      const short _highlight_attrs = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
-      const short _default_attrs   = CONSOLE_TEXT_DEFAULT )
+      const func_callback_type _func = nullptr,
+      const short _highlight_attrs   = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
+      const short _default_attrs     = CONSOLE_TEXT_DEFAULT )
     {
         item_.at( _index ) = ui_item_{
           _text,
