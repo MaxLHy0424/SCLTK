@@ -14,8 +14,8 @@ inline bool args_error{};
 namespace core {
 #ifdef _THE_NEXT_MAJOR_UPDATE_
     template < typename _type_ >
-    using object_type  = console_ui::object_type< _type_ >;
-    using c_str_type   = console_ui::c_str_type< console_ui::default_char_type >;
+    using type_wrapper = console_ui::type_wrapper< _type_ >;
+    using c_str_type   = console_ui::c_str_type< console_ui::char_type >;
     using nullptr_type = console_ui::nullptr_type;
     struct config_data_node final {
         const c_str_type name;
@@ -59,7 +59,7 @@ namespace core {
     };
     namespace data {
         inline const c_str_type config_file_name{ "config.ini" };
-        inline object_type< config_data_node[] > config{
+        inline type_wrapper< config_data_node[] > config{
           {"enhanced_op",     false},
           {"enhanced_window", false},
           {"repair_env",      false}
@@ -135,7 +135,7 @@ namespace core {
     inline auto repair_env()
     {
         using namespace std::chrono_literals;
-        object_type< const c_str_type[] > hkcu_reg_dir{
+        type_wrapper< const c_str_type[] > hkcu_reg_dir{
           R"(Software\Policies\Microsoft\Windows\System)",
           R"(Software\Microsoft\Windows\CurrentVersion\Policies\System)",
           R"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)" },
@@ -168,7 +168,7 @@ namespace core {
     }
     inline auto relaunch_as_admin( console_ui::func_args )
     {
-        object_type< char[ MAX_PATH ] > path{};
+        type_wrapper< char[ MAX_PATH ] > path{};
         GetModuleFileNameA( nullptr, path, MAX_PATH );
         ShellExecuteA( nullptr, "runas", path, nullptr, nullptr, SW_SHOWNORMAL );
         return CONSOLE_UI_TERMINATE;
@@ -247,7 +247,7 @@ namespace core {
             exec_cmd( exec_cmd && )      = default;
             ~exec_cmd()                  = default;
         };
-        object_type< const c_str_type[] > cmd{
+        type_wrapper< const c_str_type[] > cmd{
           R"(taskkill.exe /f /im explorer.exe && timeout /t 3 /nobreak && start C:\Windows\explorer.exe)",
           R"(reg.exe delete "HKLM\SOFTWARE\Policies\Google\Chrome" /f /v AllowDinosaurEasterEgg)",
           R"(reg.exe delete "HKLM\SOFTWARE\Policies\Microsoft\Edge" /f /v AllowSurfGame)",
