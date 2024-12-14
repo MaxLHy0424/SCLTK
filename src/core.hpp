@@ -17,19 +17,20 @@ namespace core {
     using type_wrapper = console_ui::type_wrapper< _type_ >;
     using nullptr_type = console_ui::nullptr_type;
     using c_str_type   = console_ui::c_str_type< console_ui::default_char_type >;
-    struct config_data_node final {
-        const c_str_type name;
+    struct option_data_node final {
+        const c_str_type tag_name, showed_name;
         bool is_enabled;
-        auto &operator=( const config_data_node & ) = delete;
-        auto &operator=( config_data_node && )      = delete;
-        config_data_node( nullptr_type, bool )      = delete;
-        config_data_node( const c_str_type _name, bool _is_enabled )
-          : name{ _name }
+        auto &operator=( const option_data_node & ) = delete;
+        auto &operator=( option_data_node && )      = delete;
+        option_data_node( nullptr_type, bool )      = delete;
+        option_data_node( const c_str_type _tag_name, const c_str_type _showed_name, bool _is_enabled )
+          : tag_name{ _tag_name }
+          , showed_name{ _showed_name }
           , is_enabled{ _is_enabled }
         { }
-        config_data_node( const config_data_node & ) = delete;
-        config_data_node( config_data_node && )      = delete;
-        ~config_data_node()                          = default;
+        option_data_node( const option_data_node & ) = delete;
+        option_data_node( option_data_node && )      = delete;
+        ~option_data_node()                          = default;
     };
     struct rule_data_node final {
         std::deque< std::string > exe, svc;
@@ -59,10 +60,10 @@ namespace core {
     };
     namespace data {
         inline const c_str_type config_file_name{ "config.ini" };
-        inline type_wrapper< config_data_node[] > config{
-          {"enhanced_op",     false},
-          {"enhanced_window", false},
-          {"repair_env",      false}
+        inline type_wrapper< option_data_node[] > option{
+          {"enhanced_op",     "\n[增强操作]\n",                  false},
+          {"enhanced_window", "\n[增强窗口 (下次启动时生效)]\n", false},
+          {"repair_env",      "\n[环境修复 (下次启动时生效)]\n", false}
         };
         inline struct {
             const rule_data_node mythware, lenovo;
@@ -212,8 +213,8 @@ namespace core {
               30,
               false,
               false,
-              core::data::config[ 1 ].is_enabled == false ? true : false,
-              core::data::config[ 1 ].is_enabled == true ? 230 : 255 );
+              core::data::option[ 1 ].is_enabled == false ? true : false,
+              core::data::option[ 1 ].is_enabled == true ? 230 : 255 );
             SetConsoleScreenBufferSize( GetStdHandle( STD_OUTPUT_HANDLE ), { 120, SHRT_MAX - 1 } );
             system( "cmd.exe" );
             _args.parent_ui.set_console(
@@ -223,8 +224,8 @@ namespace core {
               WINDOW_HEIGHT,
               true,
               false,
-              core::data::config[ 1 ].is_enabled == false ? true : false,
-              core::data::config[ 1 ].is_enabled == true ? 230 : 255 );
+              core::data::option[ 1 ].is_enabled == false ? true : false,
+              core::data::option[ 1 ].is_enabled == true ? 230 : 255 );
             return CONSOLE_UI_REVERT;
         } };
         class exec_cmd final {
@@ -284,7 +285,7 @@ namespace core {
                 if ( line.empty() || line.front() == '#' ) {
                     continue;
                 }
-                if ( line == "[option]" ) {
+                if ( line == "[option[]" ) {
                     tag = config_tag::option;
                     continue;
                 } else if ( line == "[rule_exe]" ) {
@@ -303,8 +304,8 @@ namespace core {
                         if ( _is_reload ) {
                             continue;
                         }
-                        for ( auto &item : data::config ) {
-                            if ( line == item.name ) {
+                        for ( auto &item : data::option ) {
+                            if ( line == item.tag_name ) {
                                 item.is_enabled = true;
                             }
                         }
@@ -329,10 +330,10 @@ namespace core {
                 load_( true );
                 std::print( ":: 保存更改.\n" );
                 std::string text;
-                text.append( "[option]\n" );
-                for ( const auto &item : data::config ) {
+                text.append( "[option[]\n" );
+                for ( const auto &item : data::option ) {
                     if ( item.is_enabled == true ) {
-                        text.append( item.name ).push_back( '\n' );
+                        text.append( item.tag_name ).push_back( '\n' );
                     }
                 }
                 text.append( "[rule_exe]\n" );
@@ -366,67 +367,42 @@ namespace core {
                 }
                 return CONSOLE_UI_REVERT;
             } };
+            class set_option {
+              private:
+                option_data_node &node_;
+                bool value;
+              public:
+                auto operator()( console_ui::func_args )
+                {
+                    node_.is_enabled = value;
+                    return CONSOLE_UI_REVERT;
+                }
+                auto &operator=( const set_option & ) = delete;
+                auto &operator=( set_option && )      = delete;
+                set_option( option_data_node &_node, bool _value )
+                  : node_{ _node }
+                  , value{ _value }
+                { }
+                set_option( const set_option & ) = default;
+                set_option( set_option && )      = default;
+                ~set_option()                    = default;
+            };
             constexpr auto option_button_color{
               CONSOLE_TEXT_FOREGROUND_RED | CONSOLE_TEXT_FOREGROUND_GREEN };
             console_ui ui;
             ui.add_back(
                 "                    [ 配  置 ]\n\n\n"
-                " (i) 相关信息可参阅文档.\n" )
+                " (i) 所有选项默认禁用.\n"
+                "     相关信息可参阅文档.\n" )
               .add_back(
                 " < 同步配置并返回 ", sync, CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_INTENSITY )
-              .add_back( " > 打开配置文件 ", open_config_file )
-              .add_back( "\n[增强操作]\n" )
-              .add_back(
-                " > 启用 ",
-                []( console_ui::func_args )
-            {
-                data::config[ 0 ].is_enabled = true;
-                return CONSOLE_UI_REVERT;
-            },
-                option_button_color )
-              .add_back(
-                " > 禁用 (默认) ",
-                []( console_ui::func_args )
-            {
-                data::config[ 0 ].is_enabled = false;
-                return CONSOLE_UI_REVERT;
-            },
-                option_button_color )
-              .add_back( "\n[增强窗口 (下次启动时生效)]\n" )
-              .add_back(
-                " > 启用 ",
-                []( console_ui::func_args )
-            {
-                data::config[ 1 ].is_enabled = true;
-                return CONSOLE_UI_REVERT;
-            },
-                option_button_color )
-              .add_back(
-                " > 禁用 (默认) ",
-                []( console_ui::func_args )
-            {
-                data::config[ 1 ].is_enabled = false;
-                return CONSOLE_UI_REVERT;
-            },
-                option_button_color )
-              .add_back( "\n[环境修复 (下次启动时生效)]\n" )
-              .add_back(
-                " > 启用 ",
-                []( console_ui::func_args )
-            {
-                data::config[ 2 ].is_enabled = true;
-                return CONSOLE_UI_REVERT;
-            },
-                option_button_color )
-              .add_back(
-                " > 禁用 (默认) ",
-                []( console_ui::func_args )
-            {
-                data::config[ 2 ].is_enabled = false;
-                return CONSOLE_UI_REVERT;
-            },
-                option_button_color )
-              .show();
+              .add_back( " > 打开配置文件 ", open_config_file );
+            for ( auto &item : data::option ) {
+                ui.add_back( item.showed_name )
+                  .add_back( " > 启用 ", set_option{ item, true }, option_button_color )
+                  .add_back( " > 禁用 ", set_option{ item, false }, option_button_color );
+            }
+            ui.show();
             return CONSOLE_UI_REVERT;
         }
       public:
@@ -467,7 +443,7 @@ namespace core {
             std::print( ":: 生成并执行命令.\n{}\n", std::string( WINDOW_WIDTH, '-' ) );
             switch ( mode_ ) {
                 case 'c' : {
-                    if ( data::config[ 0 ].is_enabled == true ) {
+                    if ( data::option[ 0 ].is_enabled == true ) {
                         for ( const auto &item : rule_data_.exe ) {
                             system(
                               std::format(
@@ -488,7 +464,7 @@ namespace core {
                     break;
                 }
                 case 'r' : {
-                    if ( data::config[ 0 ].is_enabled == true ) {
+                    if ( data::option[ 0 ].is_enabled == true ) {
                         for ( const auto &item : rule_data_.exe ) {
                             system(
                               std::format(
