@@ -45,7 +45,7 @@
 set launch.runtime=ucrt
 ```
 
-软件支持的 Runtime 如下:
+CRCSN 支持的 Runtime 如下:
 - `ucrt` (默认, 推荐): 开发工具链为 *MSYS2* `mingw-w64-ucrt-x86_64-toolchain`, Runtime 为新式的 *Universal C Runtime*, 支持 Windows 10 以上的 Windows OS (部分 Windows OS 在安装最新补丁后可以运行).
 - `msvcrt`: 开发工具链为 *MSYS2* `mingw-w64-x86_64-toolchain`, Runtime 为老旧的 *Microsoft Visual C Runtime*, 支持大部分 Windows OS.
 
@@ -103,13 +103,13 @@ set launch.args=-Wtf
 
 ### 2.1 快捷操作
 
-位于软件标题下方. 通过鼠标点击按钮 `< 退出` 可以直接退出软件, 点击 `> 信息` 查看软件信息.
+位于 CRCSN 标题下方. 通过鼠标点击按钮 `< 退出` 可以直接退出 CRCSN , 点击 `> 信息` 查看软件信息.
 
 ### 2.2 破解 & 恢复
 
 位于 "快捷操作" 区域下方.
 
-使用鼠标在 `[破解]` 下点击需要破解的控制软件, 以禁用破解. 如需恢复, 可以在 `[恢复]` 下点击需要恢复的控制软件, 即可恢复控制. 如果 `[破解]` 和 `[恢复]` 下的控件点击后输出 `(i) 需要管理员权限.`, 则请以管理员权限重新启动软件.
+使用鼠标在 `[破解]` 下点击需要破解的控制软件, 以禁用破解. 如需恢复, 可以在 `[恢复]` 下点击需要恢复的控制软件, 即可恢复控制. 如果 `[破解]` 和 `[恢复]` 下的控件点击后输出 `(i) 需要管理员权限.`, 则请以管理员权限重新启动 CRCSN .
 
 # 🛠️ 下一个主要更新
 
@@ -124,7 +124,7 @@ set launch.args=-Wtf
 - 保护 CRCSN 运行环境;
 - 重新添加工具箱;
 - 自定义破解/恢复规则;
-- 重绘软件图标;
+- 重绘图标;
 - 自动申请管理员权限;
 - 优化操作体验.
 
@@ -144,11 +144,11 @@ CRCSN 使用 [MIT License](./LICENSE), 详细内容请自行阅读.
 
 # ❓ 常见问题
 
-## 1 软件无法非 x86_64 架构的 Windows OS 中使用.
+## 1 CRCSN 无法非 x86_64 架构的 Windows OS 中使用.
 
 受限于开发工具链, 构建出的二进制文件架构仅支持 x86_64 架构.
 
-## 2 运行软件时控制台总是输出 "命令提示符已被管理员禁用", 无法正常使用.
+## 2 运行 CRCSN 时控制台总是输出 "命令提示符已被管理员禁用", 无法正常使用.
 
 可以运行注册表编辑器, 定位到 `HKEY_CURRENT_USER\Software\Policies\Microsoft\Windows\System` 下, 看看有没有一个叫 `DisableCMD` 的值, 有的话就删掉, 再试试.
 
@@ -158,6 +158,6 @@ CRCSN 使用 [MIT License](./LICENSE), 详细内容请自行阅读.
 
 # ❤️ 鸣谢
 
-- Bilibili 用户 [lateworker_晚工](https://space.bilibili.com/454920362) 提供界面代码 (详见[此处](https://www.bilibili.com/video/BV1X14y1n7S4), 软件有修改);
-- Bilibili 用户 [痕继痕迹](https://space.bilibili.com/39337803) 指导软件界面设计;
-- GitHub 用户 [Zhu-Xinrong (Kendall)](https://github.com/Zhu-Xinrong) 指导软件图标设计.
+- Bilibili 用户 [lateworker_晚工](https://space.bilibili.com/454920362) 提供界面代码 (详见[此处](https://www.bilibili.com/video/BV1X14y1n7S4), 有修改);
+- Bilibili 用户 [痕继痕迹](https://space.bilibili.com/39337803) 指导界面设计;
+- GitHub 用户 [Zhu-Xinrong (Kendall)](https://github.com/Zhu-Xinrong) 指导图标设计.
