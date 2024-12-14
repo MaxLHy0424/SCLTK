@@ -48,8 +48,6 @@
 # define CONSOLE_TEXT_COMMON_LVB_SBCSDBCS        COMMON_LVB_SBCSDBCS
 # define CONSOLE_UI_REVERT                       false
 # define CONSOLE_UI_TERMINATE                    true
-template < typename _type_ >
-using object_type = _type_;
 class console_ui final {
   public:
     struct func_args final {
@@ -69,6 +67,8 @@ class console_ui final {
         func_args( func_args && )      = default;
         ~func_args()                   = default;
     };
+    template < typename _type_ >
+    using object_type = _type_;
     template < typename _char_type_ >
     using c_str_type         = const _char_type_ *;
     using default_char_type  = char;
