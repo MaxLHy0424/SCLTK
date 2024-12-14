@@ -14,13 +14,14 @@ inline bool args_error{};
 namespace core {
 #ifdef _THE_NEXT_MAJOR_UPDATE_
     using nullptr_type = decltype( nullptr );
+    using c_str_type   = console_ui::c_str_type< char >;
     struct config_data_node final {
-        const char *const name;
+        const c_str_type name;
         bool is_enabled;
         auto &operator=( const config_data_node & ) = delete;
         auto &operator=( config_data_node && )      = delete;
         config_data_node( nullptr_type, bool )      = delete;
-        config_data_node( const char *const _name, bool _is_enabled )
+        config_data_node( const c_str_type _name, bool _is_enabled )
           : name{ _name }
           , is_enabled{ _is_enabled }
         { }
@@ -55,7 +56,7 @@ namespace core {
         ~rule_data_node()                        = default;
     };
     namespace data {
-        inline const char *const config_file_name{ "config.ini" };
+        inline const c_str_type config_file_name{ "config.ini" };
         inline object_type< config_data_node[] > config{
           {"enhanced_op",     false},
           {"enhanced_window", false},
@@ -132,7 +133,7 @@ namespace core {
     inline auto repair_env()
     {
         using namespace std::chrono_literals;
-        object_type< const char *const[] > hkcu_reg_dir{
+        object_type< const c_str_type[] > hkcu_reg_dir{
           R"(Software\Policies\Microsoft\Windows\System)",
           R"(Software\Microsoft\Windows\CurrentVersion\Policies\System)",
           R"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)" },
@@ -226,7 +227,7 @@ namespace core {
         } };
         class exec_cmd final {
           private:
-            const char *const cmd_;
+            const c_str_type cmd_;
           public:
             auto operator()( console_ui::func_args )
             {
@@ -237,14 +238,14 @@ namespace core {
             auto &operator=( const exec_cmd & ) = delete;
             auto &operator=( exec_cmd && )      = delete;
             exec_cmd( nullptr_type )            = delete;
-            exec_cmd( const char *const _cmd )
+            exec_cmd( const c_str_type _cmd )
               : cmd_{ _cmd }
             { }
             exec_cmd( const exec_cmd & ) = default;
             exec_cmd( exec_cmd && )      = default;
             ~exec_cmd()                  = default;
         };
-        object_type< const char *const[] > cmd{
+        object_type< const c_str_type[] > cmd{
           R"(taskkill.exe /f /im explorer.exe && timeout /t 3 /nobreak && start C:\Windows\explorer.exe)",
           R"(reg.exe delete "HKLM\SOFTWARE\Policies\Google\Chrome" /f /v AllowDinosaurEasterEgg)",
           R"(reg.exe delete "HKLM\SOFTWARE\Policies\Microsoft\Edge" /f /v AllowSurfGame)",
