@@ -16,7 +16,7 @@ namespace core {
     template < typename _type_ >
     using type_wrapper = console_ui::type_wrapper< _type_ >;
     using nullptr_type = console_ui::nullptr_type;
-    using c_str_type   = console_ui::c_str_type< console_ui::char_type >;
+    using c_str_type   = console_ui::c_str_type< console_ui::default_char_type >;
     struct config_data_node final {
         const c_str_type name;
         bool is_enabled;
