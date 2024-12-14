@@ -39,38 +39,33 @@
 CRCSN 发行版文件名规则为 `[tag]-[arch]-[runtime].exe`, 其中 `[tag]` 一般为 `std`, `[arch]` 一般为 `x86_64`, `[runtime]` 一般为 `ucrt` 或 `msvcrt`.
 
 两个 `[runtime]` 的具体信息如下:
-- **`ucrt` (默认, 推荐)**\
-  开发工具链为 *MSYS2* `mingw-w64-ucrt-x86_64-toolchain`, Runtime 为新式的 *Universal C Runtime*, 支持 Windows 10 以上的 Windows OS (部分 Windows OS 在安装最新补丁后可以运行).
+- **`ucrt` (推荐)**\
+  开发工具链为 *MSYS2* `mingw-w64-ucrt-x86_64-toolchain`, Runtime 为新式的 *Universal C Runtime*, 支持 Windows 10 以上的 Windows OS (部分 Windows OS 在安装特定更新后可以运行).
 - **`msvcrt`**\
   开发工具链为 *MSYS2* `mingw-w64-x86_64-toolchain`, Runtime 为老旧的 *Microsoft Visual C Runtime*, 支持大部分 Windows OS.
 
-## 2 退出 & 重新启动 & 命令提示符
+## 2 常规操作
 
 - **退出 CRCSN**\
   `< 退出`
 - **重新启动 CRCSN**\
   `< 重启`
-- **启动命令提示符**\
-  `> 命令提示符`
-
-## 3 CRCSN 信息
-
 - **查看 CRCSN 发行版信息**\
   `> 信息`
 
-## 4 配置 CRCSN
+## 3 配置 CRCSN
 
 - **进入配置编辑页面**\
   `> 配置`
 
-### 4.1 配置操作
+### 3.1 配置操作
 
 - **同步已保存的配置和暂存区配置**\
   `< 同步配置并返回`
 - **使用默认软件打开配置文件**\
   `> 打开配置文件`
 
-### 4.2 常规设置
+### 3.2 常规设置
 
 所有常规设置可在配置页面中修改.
 
@@ -81,11 +76,11 @@ CRCSN 发行版文件名规则为 `[tag]-[arch]-[runtime].exe`, 其中 `[tag]` �
 - **环境修复 (下次启动时生效)**\
   每隔 1s 修复部分被映像劫持的系统组件, 重新启用被禁用的部分系统组件.
 
-### 4.3 自定义规则
+### 3.3 自定义规则
 
 在执行从自定义规则破解/恢复时使用自定义规则.
 
-#### 4.3.1 可执行文件
+#### 3.3.1 可执行文件
 
 配置文件中标签 `[rule_exe]` 到下一个标签的部分, 每个项目保留文件扩展名.
 
@@ -97,7 +92,7 @@ abc_client_server.exe
 abc_protect_server.com
 ```
 
-#### 4.3.2 服务
+#### 3.3.2 服务
 
 配置文件中标签 `[rule_svc]` 到下一个标签的部分.
 
@@ -110,6 +105,15 @@ abc_network
 abc_diag_track
 ```
 
+## 4 工具箱
+
+- **返回上一级页面**\
+`< 返回`
+- **启动命令提示符**\
+`> 命令提示符`
+
+点击 `[快捷操作]` 下的文本控件以执行相应操作.
+
 ## 5 破解/恢复
 
 - **破解控制**\
@@ -119,9 +123,9 @@ abc_diag_track
 
 每个控制软件有独立的破解/恢复选项, 可根据需求执行.
 
-`[破解]`/`[恢复]` 下的 `> 自定义` 将执行自定义规则, 可参阅 [4.3 自定义规则](#43-自定义规则).
+`[破解]`/`[恢复]` 下的 `> 自定义` 将执行自定义规则, 可参阅 [3.3 自定义规则](#33-自定义规则).
 
-当启用 "增强操作" (详见 [4.2 常规设置](#42-常规设置)) 时, 破解/恢复时将映像劫持可执行文件, 并禁用相关服务.
+当启用 "增强操作" (详见 [3.2 常规设置](#32-常规设置)) 时, 破解/恢复时将映像劫持可执行文件, 并禁用相关服务.
 
 # 📜 许可证
 
@@ -129,13 +133,16 @@ CRCSN 使用 [MIT License](./LICENSE), 详细内容请自行阅读.
 
 # ❓ 常见问题
 
-## 1 软件无法非 x86_64 架构的 Windows OS 中使用.
+## 1 无法执行包含非 ASCII 字符的自定义规则.
 
-受限于开发工具链, 构建出的二进制文件架构仅支持 x86_64 架构.
+请尝试将配置文件 `config.ini` 使用 GBK 编码重新保存后重新启动 CRCSN.
 
-## 2 软件执行命令时总是提示 "xxx 已被管理员禁用" 或 "找不到 xxx"
+> [!NOTE]
+> 由于 Microsoft Windows 历史遗留问题, GBK 为语言设置为简体中文时的默认文本编码. 此方法仅能支持自定义规则中的中文字符.
 
-可尝试启用 "环境修复", 详见 [4.2 常规设置](#42-常规设置).
+## 2 CRCSN 执行命令时总是提示 "xxx 已被管理员禁用" 或 "找不到 xxx"
+
+可尝试启用 "环境修复", 详见 [3.2 常规设置](#32-常规设置).
 
 ## 3 破解后一些软件运行时报错 "找不到文件".
 
@@ -143,6 +150,6 @@ CRCSN 使用 [MIT License](./LICENSE), 详细内容请自行阅读.
 
 # ❤️ 鸣谢
 
-- Bilibili 用户 [lateworker_晚工](https://space.bilibili.com/454920362) 提供界面代码 (详见[此处](https://www.bilibili.com/video/BV1X14y1n7S4), 软件有修改);
-- Bilibili 用户 [痕继痕迹](https://space.bilibili.com/39337803) 指导软件界面设计;
-- GitHub 用户 [Zhu-Xinrong (Kendall)](https://github.com/Zhu-Xinrong) 指导软件图标设计.
+- Bilibili 用户 [lateworker_晚工](https://space.bilibili.com/454920362) 提供界面代码 (详见[此处](https://www.bilibili.com/video/BV1X14y1n7S4), 有修改);
+- Bilibili 用户 [痕继痕迹](https://space.bilibili.com/39337803) 指导界面设计;
+- GitHub 用户 [Zhu-Xinrong (Kendall)](https://github.com/Zhu-Xinrong) 指导图标设计.
