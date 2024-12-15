@@ -290,9 +290,13 @@ class console_ui final {
         item_.resize( _size );
         return *this;
     }
-    auto &optimize()
+    auto &optimize_storage()
     {
         item_.shrink_to_fit();
+        return *this;
+    }
+    auto &optimize_text()
+    {
         for ( auto &line : item_ ) {
             line.text.shrink_to_fit();
         }
