@@ -644,7 +644,7 @@ namespace core {
             }
             std::printf( ":: 执行命令.\n%s\n", std::string( 50, '-' ).c_str() );
             system( cmd.c_str() );
-            std::printf( "%s\n::释放内存.", std::string( 50, '-' ).c_str() );
+            std::printf( "%s\n:: 释放内存.", std::string( 50, '-' ).c_str() );
             return CONSOLE_UI_REVERT;
         }
         rule_op( const char _mode, const rule_data_node &_rule )
