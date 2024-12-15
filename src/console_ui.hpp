@@ -290,9 +290,12 @@ class console_ui final {
         item_.resize( _size );
         return *this;
     }
-    auto &shrink_to_fit()
+    auto &optimize()
     {
         item_.shrink_to_fit();
+        for ( auto &line : item_ ) {
+            line.text.shrink_to_fit();
+        }
         return *this;
     }
     auto &swap( console_ui &_src )
