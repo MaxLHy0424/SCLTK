@@ -68,11 +68,9 @@ class console_ui final {
         func_args( func_args && )      = default;
         ~func_args()                   = default;
     };
-    using size_type         = decltype( sizeof( void * ) );
-    using nullptr_type      = decltype( nullptr );
-    using string_type       = std::string;
-    using callback_type     = std::function< bool( func_args ) >;
-    using default_char_type = char;
+    using size_type     = decltype( sizeof( void * ) );
+    using string_type   = std::string;
+    using callback_type = std::function< bool( func_args ) >;
     template < typename _type_ >
     using type_wrapper = _type_;
   private:

@@ -15,7 +15,6 @@ namespace core {
 #ifdef _THE_NEXT_MAJOR_UPDATE_
     using string_type  = console_ui::string_type;
     using wstring_type = std::wstring;
-    using nullptr_type = console_ui::nullptr_type;
     template < typename _type_ >
     using type_wrapper = console_ui::type_wrapper< _type_ >;
     struct option_data_node final {
@@ -23,7 +22,6 @@ namespace core {
         bool is_enabled;
         auto &operator=( const option_data_node & ) = delete;
         auto &operator=( option_data_node && )      = delete;
-        option_data_node( nullptr_type, bool )      = delete;
         option_data_node( string_type _tag_name, string_type _showed_name, bool _is_enabled )
           : tag_name{ std::move( _tag_name ) }
           , showed_name{ std::move( _showed_name ) }
@@ -240,7 +238,6 @@ namespace core {
             }
             auto &operator=( const cmd_executor & ) = delete;
             auto &operator=( cmd_executor && )      = delete;
-            cmd_executor( nullptr_type )            = delete;
             cmd_executor( string_type _cmd )
               : cmd_{ std::move( _cmd ) }
             { }
