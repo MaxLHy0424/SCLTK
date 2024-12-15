@@ -421,7 +421,7 @@ class console_ui final {
 # ifdef _THE_NEXT_MAJOR_UPDATE_
         system( std::format( "mode.com con cols={} lines={}", _width, _height ).c_str() );
 # else
-        using namespace string_literals;
+        using namespace std::string_literals;
         system(
           "mode.com con cols="s.append( std::to_string( _width ) )
             .append( " lines=" )

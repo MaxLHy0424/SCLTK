@@ -611,7 +611,7 @@ namespace core {
                 return CONSOLE_UI_REVERT;
             }
             std::puts( ":: 生成命令." );
-            string_type cmd;
+            std::string cmd;
             switch ( mode_ ) {
                 case 'c' : {
                     for ( const auto &item : rule_.exe ) {
@@ -642,9 +642,9 @@ namespace core {
                     break;
                 }
             }
-            std::printf( ":: 执行命令.\n%s\n", string_type( 50, '-' ).c_str() );
+            std::printf( ":: 执行命令.\n%s\n", std::string( 50, '-' ).c_str() );
             system( cmd.c_str() );
-            std::printf( "%s\n::释放内存.", string_type( 50, '-' ).c_str() );
+            std::printf( "%s\n::释放内存.", std::string( 50, '-' ).c_str() );
             return CONSOLE_UI_REVERT;
         }
         rule_op( const char _mode, const rule_data_node &_rule )
