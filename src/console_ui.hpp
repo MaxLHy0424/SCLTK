@@ -409,7 +409,7 @@ class console_ui final {
     }
     auto &set_console(
       const UINT _code_page,
-      const CHAR *const _title,
+      const c_str_type< CHAR > _title,
       const SHORT _width,
       const SHORT _height,
       const bool _fix_size,
