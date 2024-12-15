@@ -62,9 +62,9 @@ namespace core {
     namespace data {
         inline const string_type config_file_name{ "config.ini" };
         inline type_wrapper< option_data_node[] > option{
-          {"enhanced_op",     "\n[增强操作]\n",                  false},
-          {"enhanced_window", "\n[增强窗口 (下次启动时生效)]\n", false},
-          {"repair_env",      "\n[环境修复 (下次启动时生效)]\n", false}
+          {"enhanced_op",     "增强操作",                  false},
+          {"enhanced_window", "增强窗口 (下次启动时生效)", false},
+          {"repair_env",      "环境修复 (下次启动时生效)", false}
         };
         inline struct {
             const rule_data_node mythware, lenovo;
@@ -249,13 +249,13 @@ namespace core {
             ~cmd_executor()                      = default;
         };
         type_wrapper< const string_type[][ 2 ] > quick_op{
-          {" > 重启资源管理器 ",
+          {"重启资源管理器",
            R"(taskkill.exe /f /im explorer.exe && timeout /t 3 /nobreak && start C:\Windows\explorer.exe)"},
-          {" > 恢复 Google Chrome 离线游戏 ",
+          {"恢复 Google Chrome 离线游戏",
            R"(reg.exe delete "HKLM\SOFTWARE\Policies\Google\Chrome" /f /v AllowDinosaurEasterEgg)"        },
-          {" > 恢复 Microsoft Edge 离线游戏 ",
+          {"恢复 Microsoft Edge 离线游戏",
            R"(reg.exe delete "HKLM\SOFTWARE\Policies\Microsoft\Edge" /f /v AllowSurfGame)"                },
-          {" > 恢复 USB 设备访问 ",
+          {"恢复 USB 设备访问",
            R"(reg.exe add "HKLM\SYSTEM\CurrentControlSet\Services\USBSTOR" /f /t reg_dword /v Start /d 3)"}
         };
         console_ui ui;
@@ -264,7 +264,7 @@ namespace core {
           .add_back( " > 命令提示符 ", launch_cmd )
           .add_back( "\n[快捷操作]\n" );
         for ( const auto &item : quick_op ) {
-            ui.add_back( item[ 0 ], cmd_executor{ item[ 1 ] } );
+            ui.add_back( std::format( " > {} ", item[ 0 ] ), cmd_executor{ item[ 1 ] } );
         }
         ui.show();
         return CONSOLE_UI_REVERT;
@@ -402,7 +402,7 @@ namespace core {
                 " < 同步配置并返回 ", sync, CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_INTENSITY )
               .add_back( " > 打开配置文件 ", open_config_file );
             for ( auto &item : data::option ) {
-                ui.add_back( item.showed_name )
+                ui.add_back( std::format( "\n[{}]\n", item.showed_name ) )
                   .add_back( " > 启用 ", option_setter{ item, true }, option_button_color )
                   .add_back( " > 禁用 ", option_setter{ item, false }, option_button_color );
             }
