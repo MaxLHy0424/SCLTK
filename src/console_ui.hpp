@@ -70,16 +70,15 @@ class console_ui final {
     };
     using size_type         = decltype( sizeof( void * ) );
     using nullptr_type      = decltype( nullptr );
+    using string_type       = std::string;
     using callback_type     = std::function< bool( func_args ) >;
     using default_char_type = char;
     template < typename _type_ >
     using type_wrapper = _type_;
-    template < typename _char_type_ >
-    using c_str_type = const _char_type_ *;
   private:
     enum class console_attrs_ { normal, lock_text, lock_all };
     struct ui_item_ final {
-        c_str_type< default_char_type > text;
+        string_type text;
         short default_attrs, highlight_attrs, last_attrs;
         COORD position;
         callback_type func;
@@ -91,7 +90,7 @@ class console_ui final {
         auto operator==( const COORD &_mouse_position ) const
         {
             return position.Y == _mouse_position.Y && position.X <= _mouse_position.X
-                && _mouse_position.X < ( position.X + static_cast< short >( strlen( text ) ) );
+                && _mouse_position.X < ( position.X + static_cast< short >( text.size() ) );
         }
         auto operator!=( const COORD &_mouse_position ) const
         {
@@ -126,11 +125,8 @@ class console_ui final {
           , func{}
         { }
         ui_item_(
-          const c_str_type< default_char_type > _text,
-          const short _default_attrs,
-          const short _highlight_attrs,
-          callback_type _func )
-          : text{ _text }
+          string_type _text, const short _default_attrs, const short _highlight_attrs, callback_type _func )
+          : text{ std::move( _text ) }
           , default_attrs{ _default_attrs }
           , highlight_attrs{ _highlight_attrs }
           , last_attrs{ CONSOLE_TEXT_DEFAULT }
@@ -210,24 +206,24 @@ class console_ui final {
         get_console_size_();
         set_cursor_( { 0, 0 } );
 # ifdef _THE_NEXT_MAJOR_UPDATE_
-        std::print( "{}", std::string( width_ * height_, ' ' ) );
+        std::print( "{}", string_type( width_ * height_, ' ' ) );
 # else
-        std::printf( std::string( width_ * height_, ' ' ).c_str() );
+        std::printf( string_type( width_ * height_, ' ' ).c_str() );
 # endif
         set_cursor_( { 0, 0 } );
     }
-    auto write_( const c_str_type< default_char_type > _text, const bool _is_endl = false )
+    auto write_( const string_type &_text, const bool _is_endl = false )
     {
 # ifdef _THE_NEXT_MAJOR_UPDATE_
         std::print( "{}{}", _text, _is_endl ? '\n' : '\0' );
 # else
-        std::printf( "%s%c", _text, _is_endl ? '\n' : '\0' );
+        std::printf( "%s%c", _text.c_str(), _is_endl ? '\n' : '\0' );
 # endif
     }
-    auto rewrite_( const COORD &_position, const c_str_type< default_char_type > _text )
+    auto rewrite_( const COORD &_position, const string_type &_text )
     {
         set_cursor_( { 0, _position.Y } );
-        write_( std::string( _position.X, ' ' ).c_str() );
+        write_( string_type( _position.X, ' ' ) );
         set_cursor_( { 0, _position.Y } );
         write_( _text );
         set_cursor_( { 0, _position.Y } );
@@ -236,9 +232,6 @@ class console_ui final {
     {
         cls_();
         for ( auto &line : item_ ) {
-            if ( line.text == nullptr ) {
-                continue;
-            }
             line.position = get_cursor_();
             line.set_attrs( line.default_attrs );
             write_( line.text, true );
@@ -308,26 +301,26 @@ class console_ui final {
         return *this;
     }
     auto &add_front(
-      const c_str_type< default_char_type > _text,
+      string_type _text,
       callback_type _func          = nullptr,
       const short _highlight_attrs = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
       const short _default_attrs   = CONSOLE_TEXT_DEFAULT )
     {
         item_.emplace_front( ui_item_{
-          _text,
+          std::move( _text ),
           _default_attrs,
           _func == nullptr ? _default_attrs : _highlight_attrs,
           std::move( _func ) } );
         return *this;
     }
     auto &add_back(
-      const c_str_type< default_char_type > _text,
+      string_type _text,
       callback_type _func          = nullptr,
       const short _highlight_attrs = CONSOLE_TEXT_FOREGROUND_BLUE | CONSOLE_TEXT_FOREGROUND_GREEN,
       const short _default_attrs   = CONSOLE_TEXT_DEFAULT )
     {
         item_.emplace_back( ui_item_{
-          _text,
+          std::move( _text ),
           _default_attrs,
           _func == nullptr ? _default_attrs : _highlight_attrs,
           std::move( _func ) } );
@@ -335,7 +328,7 @@ class console_ui final {
     }
     auto &insert(
       const size_type _index,
-      const c_str_type< default_char_type > _text,
+      string_type _text,
       callback_type _func          = nullptr,
       const short _highlight_attrs = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
       const short _default_attrs   = CONSOLE_TEXT_DEFAULT )
@@ -343,7 +336,7 @@ class console_ui final {
         item_.emplace(
           item_.cbegin() + _index,
           ui_item_{
-            _text,
+            std::move( _text ),
             _default_attrs,
             _func == nullptr ? _default_attrs : _highlight_attrs,
             std::move( _func ) } );
@@ -351,13 +344,13 @@ class console_ui final {
     }
     auto &edit(
       const size_type _index,
-      const c_str_type< default_char_type > _text,
+      string_type _text,
       callback_type _func          = nullptr,
       const short _highlight_attrs = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
       const short _default_attrs   = CONSOLE_TEXT_DEFAULT )
     {
         item_.at( _index ) = ui_item_{
-          _text,
+          std::move( _text ),
           _default_attrs,
           _func == nullptr ? _default_attrs : _highlight_attrs,
           std::move( _func ) };
@@ -409,7 +402,7 @@ class console_ui final {
     }
     auto &set_console(
       const UINT _code_page,
-      const c_str_type< CHAR > _title,
+      const string_type &_title,
       const SHORT _width,
       const SHORT _height,
       const bool _fix_size,
@@ -419,11 +412,11 @@ class console_ui final {
     {
         SetConsoleOutputCP( _code_page );
         SetConsoleCP( _code_page );
-        SetConsoleTitleA( _title );
+        SetConsoleTitleA( _title.c_str() );
 # ifdef _THE_NEXT_MAJOR_UPDATE_
         system( std::format( "mode.com con cols={} lines={}", _width, _height ).c_str() );
 # else
-        using namespace std::string_literals;
+        using namespace string_literals;
         system(
           "mode.com con cols="s.append( std::to_string( _width ) )
             .append( " lines=" )

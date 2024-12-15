@@ -13,19 +13,20 @@ inline bool args_error{};
 #endif
 namespace core {
 #ifdef _THE_NEXT_MAJOR_UPDATE_
+    using string_type  = console_ui::string_type;
+    using wstring_type = std::wstring;
+    using nullptr_type = console_ui::nullptr_type;
     template < typename _type_ >
     using type_wrapper = console_ui::type_wrapper< _type_ >;
-    using nullptr_type = console_ui::nullptr_type;
-    using c_str_type   = console_ui::c_str_type< console_ui::default_char_type >;
     struct option_data_node final {
-        const c_str_type tag_name, showed_name;
+        const string_type tag_name, showed_name;
         bool is_enabled;
         auto &operator=( const option_data_node & ) = delete;
         auto &operator=( option_data_node && )      = delete;
         option_data_node( nullptr_type, bool )      = delete;
-        option_data_node( const c_str_type _tag_name, const c_str_type _showed_name, bool _is_enabled )
-          : tag_name{ _tag_name }
-          , showed_name{ _showed_name }
+        option_data_node( string_type _tag_name, string_type _showed_name, bool _is_enabled )
+          : tag_name{ std::move( _tag_name ) }
+          , showed_name{ std::move( _showed_name ) }
           , is_enabled{ _is_enabled }
         { }
         option_data_node( const option_data_node & ) = delete;
@@ -33,7 +34,7 @@ namespace core {
         ~option_data_node()                          = default;
     };
     struct rule_data_node final {
-        std::deque< std::string > exe, svc;
+        std::deque< string_type > exe, svc;
         auto &operator=( const rule_data_node _src )
         {
             exe = _src.exe;
@@ -50,7 +51,7 @@ namespace core {
           : exe{}
           , svc{}
         { }
-        rule_data_node( std::deque< std::string > _exe, std::deque< std::string > _svc )
+        rule_data_node( std::deque< string_type > _exe, std::deque< string_type > _svc )
           : exe{ std::move( _exe ) }
           , svc{ std::move( _svc ) }
         { }
@@ -59,7 +60,7 @@ namespace core {
         ~rule_data_node()                        = default;
     };
     namespace data {
-        inline const c_str_type config_file_name{ "config.ini" };
+        inline const string_type config_file_name{ "config.ini" };
         inline type_wrapper< option_data_node[] > option{
           {"enhanced_op",     "\n[增强操作]\n",                  false},
           {"enhanced_window", "\n[增强窗口 (下次启动时生效)]\n", false},
@@ -136,7 +137,7 @@ namespace core {
     inline auto repair_env()
     {
         using namespace std::chrono_literals;
-        type_wrapper< const c_str_type[] > hkcu_reg_dir{
+        type_wrapper< const string_type[] > hkcu_reg_dir{
           R"(Software\Policies\Microsoft\Windows\System)",
           R"(Software\Microsoft\Windows\CurrentVersion\Policies\System)",
           R"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)" },
@@ -154,7 +155,7 @@ namespace core {
             "mmc.exe" };
         while ( true ) {
             for ( const auto &item : hkcu_reg_dir ) {
-                RegDeleteTreeA( HKEY_CURRENT_USER, item );
+                RegDeleteTreeA( HKEY_CURRENT_USER, item.c_str() );
             }
             for ( const auto &item : exe ) {
                 RegDeleteTreeA(
@@ -169,9 +170,9 @@ namespace core {
     }
     inline auto relaunch_as_admin( console_ui::func_args )
     {
-        type_wrapper< wchar_t[ MAX_PATH ] > path{};
-        GetModuleFileNameW( nullptr, path, MAX_PATH );
-        ShellExecuteW( nullptr, L"runas", path, nullptr, nullptr, SW_SHOWNORMAL );
+        wstring_type path( MAX_PATH, L'\0' );
+        GetModuleFileNameW( nullptr, path.data(), MAX_PATH );
+        ShellExecuteW( nullptr, L"runas", path.data(), nullptr, nullptr, SW_SHOWNORMAL );
         return CONSOLE_UI_TERMINATE;
     }
     inline auto quit( console_ui::func_args )
@@ -229,25 +230,25 @@ namespace core {
         } };
         class cmd_executor final {
           private:
-            const c_str_type cmd_;
+            const string_type cmd_;
           public:
             auto operator()( console_ui::func_args )
             {
-                std::print( ":: 执行命令.\n{}\n", std::string( WINDOW_WIDTH, '-' ) );
-                system( cmd_ );
+                std::print( ":: 执行命令.\n{}\n", string_type( WINDOW_WIDTH, '-' ) );
+                system( cmd_.c_str() );
                 return CONSOLE_UI_REVERT;
             }
             auto &operator=( const cmd_executor & ) = delete;
             auto &operator=( cmd_executor && )      = delete;
             cmd_executor( nullptr_type )            = delete;
-            cmd_executor( const c_str_type _cmd )
-              : cmd_{ _cmd }
+            cmd_executor( string_type _cmd )
+              : cmd_{ std::move( _cmd ) }
             { }
             cmd_executor( const cmd_executor & ) = default;
             cmd_executor( cmd_executor && )      = default;
             ~cmd_executor()                      = default;
         };
-        type_wrapper< const c_str_type[][ 2 ] > quick_op{
+        type_wrapper< const string_type[][ 2 ] > quick_op{
           {" > 重启资源管理器 ",
            R"(taskkill.exe /f /im explorer.exe && timeout /t 3 /nobreak && start C:\Windows\explorer.exe)"},
           {" > 恢复 Google Chrome 离线游戏 ",
@@ -281,7 +282,7 @@ namespace core {
             std::print( ":: 加载配置文件.\n" );
             data::rule.customized.exe.clear();
             data::rule.customized.svc.clear();
-            std::string line;
+            string_type line;
             enum class config_tag { unknown, option, rule_exe, rule_svc };
             config_tag tag{ config_tag::unknown };
             while ( std::getline( config_file, line ) ) {
@@ -332,7 +333,7 @@ namespace core {
             {
                 load_( true );
                 std::print( ":: 保存更改.\n" );
-                std::string text;
+                string_type text;
                 text.append( "[option]\n" );
                 for ( const auto &item : data::option ) {
                     if ( item.is_enabled ) {
@@ -357,7 +358,7 @@ namespace core {
                 if ( std::ifstream{ data::config_file_name, std::ios::in }.is_open() ) {
                     std::print( ":: 打开配置文件.\n" );
                     ShellExecuteA(
-                      nullptr, "open", data::config_file_name, nullptr, nullptr, SW_SHOWNORMAL );
+                      nullptr, "open", data::config_file_name.c_str(), nullptr, nullptr, SW_SHOWNORMAL );
                     return CONSOLE_UI_REVERT;
                 }
                 using namespace std::chrono_literals;
@@ -443,7 +444,7 @@ namespace core {
                 }
                 return CONSOLE_UI_REVERT;
             }
-            std::print( ":: 生成并执行命令.\n{}\n", std::string( WINDOW_WIDTH, '-' ) );
+            std::print( ":: 生成并执行命令.\n{}\n", string_type( WINDOW_WIDTH, '-' ) );
             switch ( mode_ ) {
                 case 'c' : {
                     if ( data::option[ 0 ].is_enabled ) {
@@ -613,7 +614,7 @@ namespace core {
                 return CONSOLE_UI_REVERT;
             }
             std::puts( ":: 生成命令." );
-            std::string cmd;
+            string_type cmd;
             switch ( mode_ ) {
                 case 'c' : {
                     for ( const auto &item : rule_.exe ) {
@@ -644,9 +645,9 @@ namespace core {
                     break;
                 }
             }
-            std::printf( ":: 执行命令.\n%s\n", std::string( 50, '-' ).c_str() );
+            std::printf( ":: 执行命令.\n%s\n", string_type( 50, '-' ).c_str() );
             system( cmd.c_str() );
-            std::printf( "%s\n::释放内存.", std::string( 50, '-' ).c_str() );
+            std::printf( "%s\n::释放内存.", string_type( 50, '-' ).c_str() );
             return CONSOLE_UI_REVERT;
         }
         rule_op( const char _mode, const rule_data_node &_rule )
