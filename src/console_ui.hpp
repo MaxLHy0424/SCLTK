@@ -129,7 +129,7 @@ class console_ui final {
           const c_str_type< default_char_type > _text,
           const short _default_attrs,
           const short _highlight_attrs,
-          const callback_type _func )
+          callback_type _func )
           : text{ _text }
           , default_attrs{ _default_attrs }
           , highlight_attrs{ _highlight_attrs }
@@ -309,7 +309,7 @@ class console_ui final {
     }
     auto &add_front(
       const c_str_type< default_char_type > _text,
-      const callback_type _func    = nullptr,
+      callback_type _func          = nullptr,
       const short _highlight_attrs = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
       const short _default_attrs   = CONSOLE_TEXT_DEFAULT )
     {
@@ -322,7 +322,7 @@ class console_ui final {
     }
     auto &add_back(
       const c_str_type< default_char_type > _text,
-      const callback_type _func    = nullptr,
+      callback_type _func          = nullptr,
       const short _highlight_attrs = CONSOLE_TEXT_FOREGROUND_BLUE | CONSOLE_TEXT_FOREGROUND_GREEN,
       const short _default_attrs   = CONSOLE_TEXT_DEFAULT )
     {
@@ -336,7 +336,7 @@ class console_ui final {
     auto &insert(
       const size_type _index,
       const c_str_type< default_char_type > _text,
-      const callback_type _func    = nullptr,
+      callback_type _func          = nullptr,
       const short _highlight_attrs = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
       const short _default_attrs   = CONSOLE_TEXT_DEFAULT )
     {
@@ -352,7 +352,7 @@ class console_ui final {
     auto &edit(
       const size_type _index,
       const c_str_type< default_char_type > _text,
-      const callback_type _func    = nullptr,
+      callback_type _func          = nullptr,
       const short _highlight_attrs = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
       const short _default_attrs   = CONSOLE_TEXT_DEFAULT )
     {
