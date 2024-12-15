@@ -79,7 +79,7 @@ class console_ui final {
     enum class console_attrs_ { normal, lock_text, lock_all };
     struct ui_item_ final {
         string_type text;
-        short default_attrs, highlight_attrs, last_attrs;
+        short default_attrs, intensity_attrs, last_attrs;
         COORD position;
         callback_type func;
         auto set_attrs( const short _attrs )
@@ -100,7 +100,7 @@ class console_ui final {
         {
             text            = _src.text;
             default_attrs   = _src.default_attrs;
-            highlight_attrs = _src.highlight_attrs;
+            intensity_attrs = _src.intensity_attrs;
             last_attrs      = _src.last_attrs;
             position        = _src.position;
             func            = _src.func;
@@ -110,7 +110,7 @@ class console_ui final {
         {
             text            = std::move( _src.text );
             default_attrs   = std::move( _src.default_attrs );
-            highlight_attrs = std::move( _src.highlight_attrs );
+            intensity_attrs = std::move( _src.intensity_attrs );
             last_attrs      = std::move( _src.last_attrs );
             position        = std::move( _src.position );
             func            = std::move( _src.func );
@@ -119,16 +119,16 @@ class console_ui final {
         ui_item_()
           : text{}
           , default_attrs{ CONSOLE_TEXT_DEFAULT }
-          , highlight_attrs{ CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE }
+          , intensity_attrs{ CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE }
           , last_attrs{ CONSOLE_TEXT_DEFAULT }
           , position{}
           , func{}
         { }
         ui_item_(
-          string_type _text, const short _default_attrs, const short _highlight_attrs, callback_type _func )
+          string_type _text, const short _default_attrs, const short _intensity_attrs, callback_type _func )
           : text{ std::move( _text ) }
           , default_attrs{ _default_attrs }
-          , highlight_attrs{ _highlight_attrs }
+          , intensity_attrs{ _intensity_attrs }
           , last_attrs{ CONSOLE_TEXT_DEFAULT }
           , position{}
           , func{ std::move( _func ) }
@@ -240,8 +240,8 @@ class console_ui final {
     auto refresh_( const COORD &_hang_position )
     {
         for ( auto &line : item_ ) {
-            if ( line == _hang_position && line.last_attrs != line.highlight_attrs ) {
-                line.set_attrs( line.highlight_attrs );
+            if ( line == _hang_position && line.last_attrs != line.intensity_attrs ) {
+                line.set_attrs( line.intensity_attrs );
                 rewrite_( line.position, line.text );
             }
             if ( line != _hang_position && line.last_attrs != line.default_attrs ) {
@@ -310,26 +310,26 @@ class console_ui final {
     auto &add_front(
       string_type _text,
       callback_type _func          = nullptr,
-      const short _highlight_attrs = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
+      const short _intensity_attrs = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
       const short _default_attrs   = CONSOLE_TEXT_DEFAULT )
     {
         item_.emplace_front( ui_item_{
           std::move( _text ),
           _default_attrs,
-          _func == nullptr ? _default_attrs : _highlight_attrs,
+          _func == nullptr ? _default_attrs : _intensity_attrs,
           std::move( _func ) } );
         return *this;
     }
     auto &add_back(
       string_type _text,
       callback_type _func          = nullptr,
-      const short _highlight_attrs = CONSOLE_TEXT_FOREGROUND_BLUE | CONSOLE_TEXT_FOREGROUND_GREEN,
+      const short _intensity_attrs = CONSOLE_TEXT_FOREGROUND_BLUE | CONSOLE_TEXT_FOREGROUND_GREEN,
       const short _default_attrs   = CONSOLE_TEXT_DEFAULT )
     {
         item_.emplace_back( ui_item_{
           std::move( _text ),
           _default_attrs,
-          _func == nullptr ? _default_attrs : _highlight_attrs,
+          _func == nullptr ? _default_attrs : _intensity_attrs,
           std::move( _func ) } );
         return *this;
     }
@@ -337,7 +337,7 @@ class console_ui final {
       const size_type _index,
       string_type _text,
       callback_type _func          = nullptr,
-      const short _highlight_attrs = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
+      const short _intensity_attrs = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
       const short _default_attrs   = CONSOLE_TEXT_DEFAULT )
     {
         item_.emplace(
@@ -345,7 +345,7 @@ class console_ui final {
           ui_item_{
             std::move( _text ),
             _default_attrs,
-            _func == nullptr ? _default_attrs : _highlight_attrs,
+            _func == nullptr ? _default_attrs : _intensity_attrs,
             std::move( _func ) } );
         return *this;
     }
@@ -353,13 +353,13 @@ class console_ui final {
       const size_type _index,
       string_type _text,
       callback_type _func          = nullptr,
-      const short _highlight_attrs = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
+      const short _intensity_attrs = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
       const short _default_attrs   = CONSOLE_TEXT_DEFAULT )
     {
         item_.at( _index ) = ui_item_{
           std::move( _text ),
           _default_attrs,
-          _func == nullptr ? _default_attrs : _highlight_attrs,
+          _func == nullptr ? _default_attrs : _intensity_attrs,
           std::move( _func ) };
         return *this;
     }
