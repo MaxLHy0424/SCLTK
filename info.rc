@@ -1,5 +1,5 @@
 #include "src/info.hpp"
-#ifdef _THE_NEXT_MAJOR_UPDATE_
+#ifdef _NEXT_
 1 ICON "img/favicon_next.ico"
 #else
 1 ICON "img/favicon.ico"

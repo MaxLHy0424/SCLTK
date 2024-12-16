@@ -1,7 +1,7 @@
 #pragma once
 #if __cplusplus >= 202302L
 # include <windows.h>
-# ifdef _THE_NEXT_MAJOR_UPDATE_
+# ifdef _NEXT_
 #  include <print>
 # else
 #  include <cstdio>
@@ -203,7 +203,7 @@ class console_ui final {
     {
         get_console_size_();
         set_cursor_( { 0, 0 } );
-# ifdef _THE_NEXT_MAJOR_UPDATE_
+# ifdef _NEXT_
         std::print( "{}", string_type( width_ * height_, ' ' ) );
 # else
         std::printf( string_type( width_ * height_, ' ' ).c_str() );
@@ -212,7 +212,7 @@ class console_ui final {
     }
     auto write_( const string_type &_text, const bool _is_endl = false )
     {
-# ifdef _THE_NEXT_MAJOR_UPDATE_
+# ifdef _NEXT_
         std::print( "{}{}", _text, _is_endl ? '\n' : '\0' );
 # else
         std::printf( "%s%c", _text.c_str(), _is_endl ? '\n' : '\0' );
@@ -418,7 +418,7 @@ class console_ui final {
         SetConsoleOutputCP( _code_page );
         SetConsoleCP( _code_page );
         SetConsoleTitleA( _title.c_str() );
-# ifdef _THE_NEXT_MAJOR_UPDATE_
+# ifdef _NEXT_
         system( std::format( "mode.com con cols={} lines={}", _width, _height ).c_str() );
 # else
         using namespace std::string_literals;
