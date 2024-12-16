@@ -1,18 +1,18 @@
 #pragma once
-#ifdef _THE_NEXT_MAJOR_UPDATE_
+#ifdef _NEXT_
 # include <limits.h>
 # include <fstream>
 #endif
 #include "console_ui.hpp"
 #include "info.hpp"
-#ifndef _THE_NEXT_MAJOR_UPDATE_
+#ifndef _NEXT_
 inline struct {
     bool front_show_window, translucent_window, window_ctrls;
 } args_data{};
 inline bool args_error{};
 #endif
 namespace core {
-#ifdef _THE_NEXT_MAJOR_UPDATE_
+#ifdef _NEXT_
     using string_type  = console_ui::string_type;
     using wstring_type = std::wstring;
     template < typename _type_ >
