@@ -1,9 +1,9 @@
 #pragma once
 #define INFO_NAME "Computer Room Control Software Nemesis"
 #ifdef _NEXT_
-# define INFO_VERSION "v6.0.0-preview.7"
+# define INFO_VERSION "v6.0.0-rc.1"
 #else
-# define INFO_VERSION "v5.11.0"
+# define INFO_VERSION "v5.11.1"
 #endif
 #define INFO_REPO_URL  "https://github.com/MaxLHy0424/CRCSN"
 #define INFO_DEVELOPER "MaxLHy0424"
