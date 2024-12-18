@@ -20,17 +20,24 @@ namespace core {
     using type_wrapper = console_ui::type_wrapper< _type_ >;
     struct option_node final {
         const string_type tag_name, showed_name;
+        const bool is_relaunch_to_apply;
         bool is_enabled;
         auto &operator=( const option_node & ) = delete;
         auto &operator=( option_node && )      = delete;
-        option_node( string_type _tag_name, string_type _showed_name )
+        option_node( string_type _tag_name, string_type _showed_name, const bool _is_relaunch_to_apply )
           : tag_name{ std::move( _tag_name ) }
           , showed_name{ std::move( _showed_name ) }
+          , is_relaunch_to_apply{ _is_relaunch_to_apply }
           , is_enabled{ false }
         { }
-        option_node( string_type _tag_name, string_type _showed_name, const bool _default_value )
+        option_node(
+          string_type _tag_name,
+          string_type _showed_name,
+          const bool _is_relaunch_to_apply,
+          const bool _default_value )
           : tag_name{ std::move( _tag_name ) }
           , showed_name{ std::move( _showed_name ) }
+          , is_relaunch_to_apply{ _is_relaunch_to_apply }
           , is_enabled{ _default_value }
         { }
         option_node( const option_node & ) = default;
@@ -86,12 +93,13 @@ namespace core {
         inline const string_type config_file_name{ "config.ini" };
         inline type_wrapper< option_class_node[] > option_class{
           {"operation",
-           "破解/恢复",         { { "hijack_reg", "注册表劫持" }, { "set_svc_startup_type", "设置服务启动类型" } }},
+           "破解/恢复",         { { "hijack_reg", "注册表劫持", false },
+              { "set_svc_startup_type", "设置服务启动类型", false } }},
           {"window",
-           "窗口显示",          { { "force_show", "置顶显示" },
-              { "disable_close_ctrl", "禁用关闭控件" },
-              { "translucency", "半透明化" } }                                              },
-          {"other",     "其他", { { "repair_env", "环境修复" } }                                                  }
+           "窗口显示",          { { "force_show", "置顶显示", true },
+              { "disable_close_ctrl", "禁用关闭控件", true },
+              { "translucency", "半透明化", true } }                  },
+          {"other",     "其他", { { "repair_env", "环境修复", true } }                      }
         };
         inline struct {
             const rule_node mythware, lenovo;
@@ -410,7 +418,11 @@ namespace core {
                         quit,
                         CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_INTENSITY );
                     for ( auto &item : node_.sub ) {
-                        ui.add_back( std::format( "\n[{}]\n", item.showed_name ) )
+                        ui
+                          .add_back( std::format(
+                            "\n[({}生效) {}]\n",
+                            item.is_relaunch_to_apply ? "下次启动时" : "立即",
+                            item.showed_name ) )
                           .add_back( " > 启用 ", option_setter{ item, true }, option_button_color )
                           .add_back( " > 禁用 ", option_setter{ item, false }, option_button_color );
                     }
