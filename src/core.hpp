@@ -17,56 +17,56 @@ namespace core {
     using wstring_type = std::wstring;
     template < typename _type_ >
     using type_wrapper = console_ui::type_wrapper< _type_ >;
-    struct option_data_node final {
+    struct option_node final {
         const string_type tag_name, showed_name;
         bool is_enabled;
-        auto &operator=( const option_data_node & ) = delete;
-        auto &operator=( option_data_node && )      = delete;
-        option_data_node( string_type _tag_name, string_type _showed_name, const bool _default_value )
+        auto &operator=( const option_node & ) = delete;
+        auto &operator=( option_node && )      = delete;
+        option_node( string_type _tag_name, string_type _showed_name, const bool _default_value )
           : tag_name{ std::move( _tag_name ) }
           , showed_name{ std::move( _showed_name ) }
           , is_enabled{ _default_value }
         { }
-        option_data_node( const option_data_node & ) = delete;
-        option_data_node( option_data_node && )      = delete;
-        ~option_data_node()                          = default;
+        option_node( const option_node & ) = delete;
+        option_node( option_node && )      = delete;
+        ~option_node()                     = default;
     };
-    struct rule_data_node final {
+    struct rule_node final {
         std::deque< string_type > exe, svc;
-        auto &operator=( const rule_data_node &_src )
+        auto &operator=( const rule_node &_src )
         {
             exe = _src.exe;
             svc = _src.svc;
             return *this;
         }
-        auto &operator=( rule_data_node &&_src )
+        auto &operator=( rule_node &&_src )
         {
             exe = std::move( _src.exe );
             svc = std::move( _src.svc );
             return *this;
         }
-        rule_data_node()
+        rule_node()
           : exe{}
           , svc{}
         { }
-        rule_data_node( std::deque< string_type > _exe, std::deque< string_type > _svc )
+        rule_node( std::deque< string_type > _exe, std::deque< string_type > _svc )
           : exe{ std::move( _exe ) }
           , svc{ std::move( _svc ) }
         { }
-        rule_data_node( const rule_data_node & ) = delete;
-        rule_data_node( rule_data_node && )      = delete;
-        ~rule_data_node()                        = default;
+        rule_node( const rule_node & ) = delete;
+        rule_node( rule_node && )      = delete;
+        ~rule_node()                   = default;
     };
     namespace data {
         inline const string_type config_file_name{ "config.ini" };
-        inline type_wrapper< option_data_node[] > option{
+        inline type_wrapper< option_node[] > option{
           {"enhanced_op",     "增强操作",                  false},
           {"enhanced_window", "增强窗口 (下次启动时生效)", false},
           {"repair_env",      "环境修复 (下次启动时生效)", false}
         };
         inline struct {
-            const rule_data_node mythware, lenovo;
-            rule_data_node customized;
+            const rule_node mythware, lenovo;
+            rule_node customized;
         } rule{
           { { "StudentMain.exe",
               "DispcapHelper.exe",
@@ -370,7 +370,7 @@ namespace core {
             } };
             class option_setter {
               private:
-                option_data_node &node_;
+                option_node &node_;
                 bool value_;
               public:
                 auto operator()( console_ui::func_args )
@@ -380,7 +380,7 @@ namespace core {
                 }
                 auto &operator=( const option_setter & ) = delete;
                 auto &operator=( option_setter && )      = delete;
-                option_setter( option_data_node &_node, bool _value )
+                option_setter( option_node &_node, bool _value )
                   : node_{ _node }
                   , value_{ _value }
                 { }
@@ -427,7 +427,7 @@ namespace core {
     class rule_op final {
       private:
         const char mode_;
-        const rule_data_node &rule_data_;
+        const rule_node &rule_data_;
       public:
         auto operator()( console_ui::func_args ) const
         {
@@ -487,7 +487,7 @@ namespace core {
         }
         auto &operator=( const rule_op & ) = delete;
         auto &operator=( rule_op && )      = delete;
-        rule_op( const char _mode, const rule_data_node &_rule_data )
+        rule_op( const char _mode, const rule_node &_rule_data )
           : mode_{ _mode }
           , rule_data_{ _rule_data }
         { }
@@ -496,11 +496,11 @@ namespace core {
         ~rule_op()                 = default;
     };
 #else
-    struct rule_data_node final {
+    struct rule_node final {
         const std::vector< const char * > exe, svc;
     };
     inline struct {
-        const rule_data_node mythware, lenovo;
+        const rule_node mythware, lenovo;
     } rule{
       {{ "StudentMain.exe",
           "DispcapHelper.exe",
@@ -596,7 +596,7 @@ namespace core {
     class rule_op final {
       private:
         const char mode_;
-        const rule_data_node &rule_;
+        const rule_node &rule_;
       public:
         auto operator()( console_ui::func_args ) const
         {
@@ -647,7 +647,7 @@ namespace core {
             std::printf( "%s\n:: 释放内存.", std::string( 50, '-' ).c_str() );
             return CONSOLE_UI_REVERT;
         }
-        rule_op( const char _mode, const rule_data_node &_rule )
+        rule_op( const char _mode, const rule_node &_rule )
           : mode_{ _mode }
           , rule_{ _rule }
         { }
