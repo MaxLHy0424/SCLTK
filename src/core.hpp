@@ -22,10 +22,10 @@ namespace core {
         bool is_enabled;
         auto &operator=( const option_data_node & ) = delete;
         auto &operator=( option_data_node && )      = delete;
-        option_data_node( string_type _tag_name, string_type _showed_name, bool _is_enabled )
+        option_data_node( string_type _tag_name, string_type _showed_name, const bool _default_value )
           : tag_name{ std::move( _tag_name ) }
           , showed_name{ std::move( _showed_name ) }
-          , is_enabled{ _is_enabled }
+          , is_enabled{ _default_value }
         { }
         option_data_node( const option_data_node & ) = delete;
         option_data_node( option_data_node && )      = delete;
@@ -33,13 +33,13 @@ namespace core {
     };
     struct rule_data_node final {
         std::deque< string_type > exe, svc;
-        auto &operator=( const rule_data_node _src )
+        auto &operator=( const rule_data_node &_src )
         {
             exe = _src.exe;
             svc = _src.svc;
             return *this;
         }
-        auto &operator=( rule_data_node &_src )
+        auto &operator=( rule_data_node &&_src )
         {
             exe = std::move( _src.exe );
             svc = std::move( _src.svc );
