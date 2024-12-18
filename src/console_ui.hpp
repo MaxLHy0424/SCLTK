@@ -312,9 +312,7 @@ class console_ui final {
       const short _default_attrs   = CONSOLE_TEXT_DEFAULT )
     {
         item_.emplace_front( ui_item_{
-          std::move( _text ),
-          _default_attrs,
-          _func == nullptr ? _default_attrs : _intensity_attrs,
+          std::move( _text ), _default_attrs, _func == nullptr ? _default_attrs : _intensity_attrs,
           std::move( _func ) } );
         return *this;
     }
@@ -325,9 +323,7 @@ class console_ui final {
       const short _default_attrs   = CONSOLE_TEXT_DEFAULT )
     {
         item_.emplace_back( ui_item_{
-          std::move( _text ),
-          _default_attrs,
-          _func == nullptr ? _default_attrs : _intensity_attrs,
+          std::move( _text ), _default_attrs, _func == nullptr ? _default_attrs : _intensity_attrs,
           std::move( _func ) } );
         return *this;
     }
@@ -341,10 +337,8 @@ class console_ui final {
         item_.emplace(
           item_.cbegin() + _index,
           ui_item_{
-            std::move( _text ),
-            _default_attrs,
-            _func == nullptr ? _default_attrs : _intensity_attrs,
-            std::move( _func ) } );
+            std::move( _text ), _default_attrs,
+            _func == nullptr ? _default_attrs : _intensity_attrs, std::move( _func ) } );
         return *this;
     }
     auto &edit(
@@ -355,9 +349,7 @@ class console_ui final {
       const short _default_attrs   = CONSOLE_TEXT_DEFAULT )
     {
         item_.at( _index ) = ui_item_{
-          std::move( _text ),
-          _default_attrs,
-          _func == nullptr ? _default_attrs : _intensity_attrs,
+          std::move( _text ), _default_attrs, _func == nullptr ? _default_attrs : _intensity_attrs,
           std::move( _func ) };
         return *this;
     }
