@@ -13,6 +13,7 @@ inline bool args_error{};
 #endif
 namespace core {
 #ifdef _NEXT_
+    using size_type    = console_ui::size_type;
     using string_type  = console_ui::string_type;
     using wstring_type = std::wstring;
     template < typename _type_ >
@@ -34,7 +35,7 @@ namespace core {
     struct option_class_node final {
         const string_type tag_name, showed_name;
         std::vector< option_node > sub;
-        auto &operator[]( std::size_t _index )
+        auto &operator[]( size_type _index )
         {
             return sub.at( _index );
         }
