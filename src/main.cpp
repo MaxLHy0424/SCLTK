@@ -15,9 +15,11 @@ auto main() -> int
     }
     core::config_op{ 'r' }( console_ui::func_args{ ui } );
     if ( core::data::option_class[ 1 ][ 0 ].is_enabled ) {
+        std::print( ":: 启动置顶窗口线程.\n" );
         std::thread{ core::force_show_window }.detach();
     }
     if ( core::data::option_class[ 2 ][ 0 ].is_enabled ) {
+        std::print( ":: 启动环境修复线程.\n" );
         std::thread{ core::repair_env }.detach();
     }
     std::print( ":: 初始化用户界面.\n" );
