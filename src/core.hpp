@@ -88,9 +88,9 @@ namespace core {
           {"operation",
            "破解/恢复",         { { "hijack_reg", "注册表劫持" }, { "set_svc_startup_type", "设置服务启动类型" } }},
           {"window",
-           "窗口",              { { "force_show", "置顶显示" },
+           "窗口显示",          { { "force_show", "置顶显示" },
               { "disable_close_ctrl", "禁用关闭控件" },
-              { "translucency", "半透明化" } }                                                  },
+              { "translucency", "半透明化" } }                                              },
           {"other",     "其他", { { "repair_env", "环境修复" } }                                                  }
         };
         inline struct {
