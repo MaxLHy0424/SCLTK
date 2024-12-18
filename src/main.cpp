@@ -14,10 +14,10 @@ auto main() -> int
         return 1;
     }
     core::config_op{ 'r' }( console_ui::func_args{ ui } );
-    if ( core::data::option[ 1 ].is_enabled ) {
+    if ( core::data::option_class[ 1 ].options.at( 0 ).is_enabled ) {
         std::thread{ core::force_show_window }.detach();
     }
-    if ( core::data::option[ 2 ].is_enabled ) {
+    if ( core::data::option_class[ 2 ].options.at( 0 ).is_enabled ) {
         std::thread{ core::repair_env }.detach();
     }
     std::print( ":: 初始化用户界面.\n" );
@@ -45,21 +45,25 @@ auto main() -> int
         WINDOW_HEIGHT,
         true,
         false,
-        core::data::option[ 1 ].is_enabled ? false : true,
-        core::data::option[ 1 ].is_enabled ? 230 : 255 )
+        core::data::option_class[ 1 ].options.at( 1 ).is_enabled ? false : true,
+        core::data::option_class[ 1 ].options.at( 2 ).is_enabled ? 230 : 255 )
       .show()
       .lock( false, false );
-    if ( core::data::option[ 1 ].is_enabled ) {
-        SetWindowLongPtrA(
-          GetConsoleWindow(),
-          GWL_STYLE,
-          GetWindowLongPtrA( GetConsoleWindow(), GWL_STYLE ) | WS_SIZEBOX | WS_MAXIMIZEBOX
-            | WS_MINIMIZEBOX );
-        EnableMenuItem(
-          GetSystemMenu( GetConsoleWindow(), FALSE ), SC_CLOSE, MF_BYCOMMAND | MF_ENABLED );
-        SetLayeredWindowAttributes( GetConsoleWindow(), 0, 255, LWA_ALPHA );
+    if ( core::data::option_class[ 1 ].options.at( 0 ).is_enabled ) {
         SetWindowPos( GetConsoleWindow(), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
     }
+    if ( core::data::option_class[ 1 ].options.at( 1 ).is_enabled ) {
+        EnableMenuItem(
+          GetSystemMenu( GetConsoleWindow(), FALSE ), SC_CLOSE, MF_BYCOMMAND | MF_ENABLED );
+    }
+    if ( core::data::option_class[ 1 ].options.at( 2 ).is_enabled ) {
+        SetLayeredWindowAttributes( GetConsoleWindow(), 0, 255, LWA_ALPHA );
+    }
+    SetWindowLongPtrA(
+      GetConsoleWindow(),
+      GWL_STYLE,
+      GetWindowLongPtrA( GetConsoleWindow(), GWL_STYLE ) | WS_SIZEBOX | WS_MAXIMIZEBOX
+        | WS_MINIMIZEBOX );
     return 0;
 }
 # else

@@ -27,9 +27,24 @@ namespace core {
           , showed_name{ std::move( _showed_name ) }
           , is_enabled{ _default_value }
         { }
-        option_node( const option_node & ) = delete;
-        option_node( option_node && )      = delete;
+        option_node( const option_node & ) = default;
+        option_node( option_node && )      = default;
         ~option_node()                     = default;
+    };
+    struct option_class_node final {
+        const string_type tag_name, showed_name;
+        std::vector< option_node > options;
+        auto &operator=( const option_class_node & ) = delete;
+        auto &operator=( option_class_node && )      = delete;
+        option_class_node(
+          string_type _tag_name, string_type _showed_name, std::vector< option_node > _options )
+          : tag_name{ std::move( _tag_name ) }
+          , showed_name{ std::move( _showed_name ) }
+          , options{ std::move( _options ) }
+        { }
+        option_class_node( const option_class_node & ) = default;
+        option_class_node( option_class_node && )      = default;
+        ~option_class_node()                           = default;
     };
     struct rule_node final {
         std::deque< string_type > exe, svc;
@@ -59,10 +74,15 @@ namespace core {
     };
     namespace data {
         inline const string_type config_file_name{ "config.ini" };
-        inline type_wrapper< option_node[] > option{
-          {"enhanced_op",     "增强操作",                  false},
-          {"enhanced_window", "增强窗口 (下次启动时生效)", false},
-          {"repair_env",      "环境修复 (下次启动时生效)", false}
+        inline type_wrapper< option_class_node[] > option_class{
+          {"operation",
+           "破解/恢复",         { { "hijack_reg", "注册表劫持", false },
+              { "set_svc_startup_type", "设置服务启动类型", false } }},
+          {"window",
+           "窗口",              { { "force_show", "置顶显示", false },
+              { "disable_close_ctrl", "禁用关闭控件", false },
+              { "translucency", "半透明化", false } }                     },
+          {"other",     "其他", { { "repair_env", "环境修复", false } }                     }
         };
         inline struct {
             const rule_node mythware, lenovo;
@@ -211,8 +231,8 @@ namespace core {
               30,
               false,
               false,
-              core::data::option[ 1 ].is_enabled ? false : true,
-              core::data::option[ 1 ].is_enabled ? 230 : 255 );
+              core::data::option_class[ 1 ].options.at( 1 ).is_enabled ? false : true,
+              core::data::option_class[ 1 ].options.at( 2 ).is_enabled ? 230 : 255 );
             SetConsoleScreenBufferSize( GetStdHandle( STD_OUTPUT_HANDLE ), { 120, SHRT_MAX - 1 } );
             system( "cmd.exe" );
             _args.parent_ui.set_console(
@@ -222,8 +242,8 @@ namespace core {
               WINDOW_HEIGHT,
               true,
               false,
-              core::data::option[ 1 ].is_enabled ? false : true,
-              core::data::option[ 1 ].is_enabled ? 230 : 255 );
+              core::data::option_class[ 1 ].options.at( 1 ).is_enabled ? false : true,
+              core::data::option_class[ 1 ].options.at( 2 ).is_enabled ? 230 : 255 );
             return CONSOLE_UI_REVERT;
         } };
         class cmd_executor final {
@@ -305,9 +325,13 @@ namespace core {
                         if ( _is_reload ) {
                             continue;
                         }
-                        for ( auto &item : data::option ) {
-                            if ( line == item.tag_name ) {
-                                item.is_enabled = true;
+                        for ( auto &item_class : data::option_class ) {
+                            for ( auto &item_option : item_class.options ) {
+                                if ( line
+                                     == std::format( "{}::{}", item_class.tag_name, item_option.tag_name ) )
+                                {
+                                    item_option.is_enabled = true;
+                                }
                             }
                         }
                         break;
@@ -326,15 +350,20 @@ namespace core {
         auto edit_() const
         {
             std::print( ":: 初始化用户界面.\n" );
+            constexpr auto option_button_color{
+              CONSOLE_TEXT_FOREGROUND_RED | CONSOLE_TEXT_FOREGROUND_GREEN };
             auto sync{ [ this ]( console_ui::func_args )
             {
                 load_( true );
                 std::print( ":: 保存更改.\n" );
                 string_type text;
                 text.append( "[option]\n" );
-                for ( const auto &item : data::option ) {
-                    if ( item.is_enabled ) {
-                        text.append( item.tag_name ).push_back( '\n' );
+                for ( const auto &item_class : data::option_class ) {
+                    for ( const auto &item_option : item_class.options ) {
+                        if ( item_option.is_enabled ) {
+                            text.append(
+                              std::format( "{}::{}\n", item_class.tag_name, item_option.tag_name ) );
+                        }
                     }
                 }
                 text.append( "[rule_exe]\n" );
@@ -388,8 +417,35 @@ namespace core {
                 option_setter( option_setter && )      = default;
                 ~option_setter()                       = default;
             };
-            constexpr auto option_button_color{
-              CONSOLE_TEXT_FOREGROUND_RED | CONSOLE_TEXT_FOREGROUND_GREEN };
+            class option_class_shower final {
+              private:
+                option_class_node &node_;
+              public:
+                auto operator()( console_ui::func_args )
+                {
+                    console_ui ui;
+                    ui.add_back( "                    [ 配  置 ]\n\n" )
+                      .add_back(
+                        std::format( " < 折叠 {}", node_.showed_name ),
+                        quit,
+                        CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_INTENSITY );
+                    for ( auto &item : node_.options ) {
+                        ui.add_back( std::format( "\n[{}]\n", item.showed_name ) )
+                          .add_back( " > 启用 ", option_setter{ item, true }, option_button_color )
+                          .add_back( " > 禁用 ", option_setter{ item, false }, option_button_color );
+                    }
+                    ui.show();
+                    return CONSOLE_UI_REVERT;
+                }
+                auto &operator=( const option_class_shower & ) = delete;
+                auto &operator=( option_class_shower && )      = delete;
+                option_class_shower( option_class_node &_node )
+                  : node_{ _node }
+                { }
+                option_class_shower( const option_class_shower & ) = default;
+                option_class_shower( option_class_shower && )      = default;
+                ~option_class_shower()                             = default;
+            };
             console_ui ui;
             ui.add_back(
                 "                    [ 配  置 ]\n\n\n"
@@ -397,11 +453,13 @@ namespace core {
                 "     相关信息可参阅文档.\n" )
               .add_back(
                 " < 同步配置并返回 ", sync, CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_INTENSITY )
-              .add_back( " > 打开配置文件 ", open_config_file );
-            for ( auto &item : data::option ) {
-                ui.add_back( std::format( "\n[{}]\n", item.showed_name ) )
-                  .add_back( " > 启用 ", option_setter{ item, true }, option_button_color )
-                  .add_back( " > 禁用 ", option_setter{ item, false }, option_button_color );
+              .add_back( " > 打开配置文件 ", open_config_file )
+              .add_back( "\n[选项分类]\n" );
+            for ( auto &item : data::option_class ) {
+                ui.add_back(
+                  std::format( " > {}", item.showed_name ),
+                  option_class_shower{ item },
+                  option_button_color );
             }
             ui.show();
             return CONSOLE_UI_REVERT;
@@ -444,7 +502,7 @@ namespace core {
             std::print( ":: 生成并执行命令.\n{}\n", string_type( WINDOW_WIDTH, '-' ) );
             switch ( mode_ ) {
                 case 'c' : {
-                    if ( data::option[ 0 ].is_enabled ) {
+                    if ( data::option_class[ 0 ].options.at( 0 ).is_enabled ) {
                         for ( const auto &item : rule_data_.exe ) {
                             system(
                               std::format(
@@ -452,6 +510,8 @@ namespace core {
                                 item )
                                 .c_str() );
                         }
+                    }
+                    if ( data::option_class[ 0 ].options.at( 1 ).is_enabled ) {
                         for ( const auto &item : rule_data_.svc ) {
                             system( std::format( "sc.exe config {} start= disabled", item ).c_str() );
                         }
@@ -465,7 +525,7 @@ namespace core {
                     break;
                 }
                 case 'r' : {
-                    if ( data::option[ 0 ].is_enabled ) {
+                    if ( data::option_class[ 0 ].options.at( 0 ).is_enabled ) {
                         for ( const auto &item : rule_data_.exe ) {
                             system(
                               std::format(
@@ -473,6 +533,8 @@ namespace core {
                                 item )
                                 .c_str() );
                         }
+                    }
+                    if ( data::option_class[ 0 ].options.at( 1 ).is_enabled ) {
                         for ( const auto &item : rule_data_.svc ) {
                             system( std::format( "sc.exe config {} start= auto", item ).c_str() );
                         }
