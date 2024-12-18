@@ -92,37 +92,18 @@ namespace core {
             const rule_node mythware, lenovo;
             rule_node customized;
         } rule{
-          { { "StudentMain.exe",
-              "DispcapHelper.exe",
-              "VRCwPlayer.exe",
-              "InstHelpApp.exe",
-              "InstHelpApp64.exe",
-              "TDOvrSet.exe",
-              "GATESRV.exe",
-              "ProcHelper64.exe",
+          { { "StudentMain.exe", "DispcapHelper.exe", "VRCwPlayer.exe", "InstHelpApp.exe",
+              "InstHelpApp64.exe", "TDOvrSet.exe", "GATESRV.exe", "ProcHelper64.exe",
               "MasterHelper.exe" },
            {
               "STUDSRV",
               "TDNetFilter",
             } },
-          { { "vncviewer.exe",
-              "tvnserver32.exe",
-              "WfbsPnpInstall.exe",
-              "WFBSMon.exe",
-              "WFBSMlogon.exe",
-              "WFBSSvrLogShow.exe",
-              "ResetIp.exe",
-              "FuncForWIN64.exe",
-              "CertMgr.exe",
-              "Fireware.exe",
-              "BCDBootCopy.exe",
-              "refreship.exe",
-              "lenovoLockScreen.exe",
-              "PortControl64.exe",
-              "DesktopCheck.exe",
-              "DeploymentManager.exe",
-              "DeploymentAgent.exe",
-              "XYNTService.exe" },
+          { { "vncviewer.exe", "tvnserver32.exe", "WfbsPnpInstall.exe", "WFBSMon.exe",
+              "WFBSMlogon.exe", "WFBSSvrLogShow.exe", "ResetIp.exe", "FuncForWIN64.exe",
+              "CertMgr.exe", "Fireware.exe", "BCDBootCopy.exe", "refreship.exe",
+              "lenovoLockScreen.exe", "PortControl64.exe", "DesktopCheck.exe",
+              "DeploymentManager.exe", "DeploymentAgent.exe", "XYNTService.exe" },
            { "BSAgentSvr", "tvnserver", "WFBSMlogon" } },
           {}
         };
@@ -163,18 +144,8 @@ namespace core {
           R"(Software\Policies\Microsoft\Windows\System)",
           R"(Software\Microsoft\Windows\CurrentVersion\Policies\System)",
           R"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)" },
-          exe{
-            "mode.com",
-            "chcp.com",
-            "reg.exe",
-            "sc.exe",
-            "taskkill.exe",
-            "net.exe",
-            "cmd.exe",
-            "taskmgr.exe",
-            "perfmon.exe",
-            "regedit.exe",
-            "mmc.exe" };
+          exe{ "mode.com", "chcp.com",    "reg.exe",     "sc.exe",      "taskkill.exe", "net.exe",
+               "cmd.exe",  "taskmgr.exe", "perfmon.exe", "regedit.exe", "mmc.exe" };
         while ( true ) {
             for ( const auto &item : hkcu_reg_dir ) {
                 RegDeleteTreeA( HKEY_CURRENT_USER, item.c_str() );
@@ -568,37 +539,17 @@ namespace core {
     inline struct {
         const rule_node mythware, lenovo;
     } rule{
-      {{ "StudentMain.exe",
-          "DispcapHelper.exe",
-          "VRCwPlayer.exe",
-          "InstHelpApp.exe",
-          "InstHelpApp64.exe",
-          "TDOvrSet.exe",
-          "GATESRV.exe",
-          "ProcHelper64.exe",
+      {{ "StudentMain.exe", "DispcapHelper.exe", "VRCwPlayer.exe", "InstHelpApp.exe",
+          "InstHelpApp64.exe", "TDOvrSet.exe", "GATESRV.exe", "ProcHelper64.exe",
           "MasterHelper.exe" },
        {
           "STUDSRV",
           "TDNetFilter",
         }                                         },
-      {{ "vncviewer.exe",
-          "tvnserver32.exe",
-          "WfbsPnpInstall.exe",
-          "WFBSMon.exe",
-          "WFBSMlogon.exe",
-          "WFBSSvrLogShow.exe",
-          "ResetIp.exe",
-          "FuncForWIN64.exe",
-          "CertMgr.exe",
-          "Fireware.exe",
-          "BCDBootCopy.exe",
-          "refreship.exe",
-          "lenovoLockScreen.exe",
-          "PortControl64.exe",
-          "DesktopCheck.exe",
-          "DeploymentManager.exe",
-          "DeploymentAgent.exe",
-          "XYNTService.exe" },
+      {{ "vncviewer.exe", "tvnserver32.exe", "WfbsPnpInstall.exe", "WFBSMon.exe", "WFBSMlogon.exe",
+          "WFBSSvrLogShow.exe", "ResetIp.exe", "FuncForWIN64.exe", "CertMgr.exe", "Fireware.exe",
+          "BCDBootCopy.exe", "refreship.exe", "lenovoLockScreen.exe", "PortControl64.exe",
+          "DesktopCheck.exe", "DeploymentManager.exe", "DeploymentAgent.exe", "XYNTService.exe" },
        { "BSAgentSvr", "tvnserver", "WFBSMlogon" }}
     };
     inline auto is_run_as_admin()
