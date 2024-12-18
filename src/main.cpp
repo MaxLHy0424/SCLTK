@@ -7,22 +7,22 @@ auto main() -> int
     console_ui ui;
     ui.set_console( CODE_PAGE, WINDOW_TITLE, WINDOW_WIDTH, WINDOW_HEIGHT, true, false, true, 255 )
       .lock( true, true );
-    std::print( ":: 检测运行权限.\n" );
+    std::print( "-> 检测运行权限.\n" );
     if ( !core::is_run_as_admin() ) {
-        std::print( ":: 申请管理员权限.\n" );
+        std::print( "-> 申请管理员权限.\n" );
         core::relaunch_as_admin( console_ui::func_args{ ui } );
         return 1;
     }
     core::config_op{ 'r' }( console_ui::func_args{ ui } );
     if ( core::data::option_class[ 1 ][ 0 ].is_enabled ) {
-        std::print( ":: 启动置顶窗口线程.\n" );
+        std::print( "-> 启动置顶窗口线程.\n" );
         std::thread{ core::force_show_window }.detach();
     }
     if ( core::data::option_class[ 2 ][ 0 ].is_enabled ) {
-        std::print( ":: 启动运行环境修复线程.\n" );
+        std::print( "-> 启动运行环境修复线程.\n" );
         std::thread{ core::repair_runtime_env }.detach();
     }
-    std::print( ":: 初始化用户界面.\n" );
+    std::print( "-> 初始化用户界面.\n" );
     ui.add_back( "                    [ 主  页 ]\n\n" )
       .add_back( " < 退出 ", core::quit, CONSOLE_TEXT_FOREGROUND_RED | CONSOLE_TEXT_FOREGROUND_INTENSITY )
       .add_back(
