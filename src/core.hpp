@@ -23,7 +23,7 @@ namespace core {
         bool is_enabled;
         auto &operator=( const option_node & ) = delete;
         auto &operator=( option_node && )      = delete;
-        option_node( string_type _tag_name, string_type _showed_name, const bool _default_value )
+        option_node( string_type _tag_name, string_type _showed_name, const bool _default_value = false )
           : tag_name{ std::move( _tag_name ) }
           , showed_name{ std::move( _showed_name ) }
           , is_enabled{ _default_value }
@@ -81,13 +81,12 @@ namespace core {
         inline const string_type config_file_name{ "config.ini" };
         inline type_wrapper< option_class_node[] > option_class{
           {"operation",
-           "破解/恢复",         { { "hijack_reg", "注册表劫持", false },
-              { "set_svc_startup_type", "设置服务启动类型", false } }},
+           "破解/恢复",         { { "hijack_reg", "注册表劫持" }, { "set_svc_startup_type", "设置服务启动类型" } }},
           {"window",
-           "窗口",              { { "force_show", "置顶显示", false },
-              { "disable_close_ctrl", "禁用关闭控件", false },
-              { "translucency", "半透明化", false } }                     },
-          {"other",     "其他", { { "repair_env", "环境修复", false } }                     }
+           "窗口",              { { "force_show", "置顶显示" },
+              { "disable_close_ctrl", "禁用关闭控件" },
+              { "translucency", "半透明化" } }                                                  },
+          {"other",     "其他", { { "repair_env", "环境修复" } }                                                  }
         };
         inline struct {
             const rule_node mythware, lenovo;
