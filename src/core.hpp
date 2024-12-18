@@ -85,8 +85,8 @@ namespace core {
           : exe{ std::move( _exe ) }
           , svc{ std::move( _svc ) }
         { }
-        rule_node( const rule_node & ) = delete;
-        rule_node( rule_node && )      = delete;
+        rule_node( const rule_node & ) = default;
+        rule_node( rule_node && )      = default;
         ~rule_node()                   = default;
     };
     namespace data {
