@@ -187,7 +187,7 @@ namespace core {
     }
     inline auto info( console_ui::func_args )
     {
-        std::print( ":: 初始化用户界面.\n" );
+        std::print( "-> 初始化用户界面.\n" );
         auto view_repo_webpage{ []( console_ui::func_args )
         {
             ShellExecuteA( nullptr, "open", INFO_REPO_URL, nullptr, nullptr, SW_SHOWNORMAL );
@@ -208,7 +208,7 @@ namespace core {
     }
     inline auto toolkit( console_ui::func_args )
     {
-        std::print( ":: 初始化用户界面.\n" );
+        std::print( "-> 初始化用户界面.\n" );
         auto launch_cmd{ []( console_ui::func_args _args )
         {
             _args.parent_ui.lock( false, false );
@@ -240,7 +240,7 @@ namespace core {
           public:
             auto operator()( console_ui::func_args )
             {
-                std::print( ":: 执行命令.\n{}\n", string_type( WINDOW_WIDTH, '-' ) );
+                std::print( "-> 执行 Windows 命令.\n{}\n", string_type( WINDOW_WIDTH, '-' ) );
                 system( cmd_.c_str() );
                 return CONSOLE_UI_REVERT;
             }
@@ -284,7 +284,7 @@ namespace core {
                 config_file.close();
                 return;
             }
-            std::print( ":: 加载配置文件.\n" );
+            std::print( "-> 加载配置文件.\n" );
             data::rule.customized.exe.clear();
             data::rule.customized.svc.clear();
             string_type line;
@@ -337,13 +337,13 @@ namespace core {
         }
         auto edit_() const
         {
-            std::print( ":: 初始化用户界面.\n" );
+            std::print( "-> 初始化用户界面.\n" );
             constexpr auto option_button_color{
               CONSOLE_TEXT_FOREGROUND_RED | CONSOLE_TEXT_FOREGROUND_GREEN };
             auto sync{ [ this ]( console_ui::func_args )
             {
                 load_( true );
-                std::print( ":: 保存更改.\n" );
+                std::print( "-> 保存更改.\n" );
                 string_type text;
                 text.append( "[option]\n" );
                 for ( const auto &item_class : data::option_class ) {
@@ -370,7 +370,7 @@ namespace core {
             auto open_config_file{ []( console_ui::func_args )
             {
                 if ( std::ifstream{ data::config_file_name, std::ios::in }.is_open() ) {
-                    std::print( ":: 打开配置文件.\n" );
+                    std::print( "-> 打开配置文件.\n" );
                     ShellExecuteA(
                       nullptr, "open", data::config_file_name.c_str(), nullptr, nullptr, SW_SHOWNORMAL );
                     return CONSOLE_UI_REVERT;
@@ -491,7 +491,7 @@ namespace core {
                 }
                 return CONSOLE_UI_REVERT;
             }
-            std::print( ":: 生成并执行命令.\n{}\n", string_type( WINDOW_WIDTH, '-' ) );
+            std::print( "-> 生成并执行 Windows 命令.\n{}\n", string_type( WINDOW_WIDTH, '-' ) );
             switch ( mode_ ) {
                 case 'c' : {
                     if ( data::option_class[ 0 ][ 0 ].is_enabled ) {
@@ -644,7 +644,7 @@ namespace core {
                 }
                 return CONSOLE_UI_REVERT;
             }
-            std::puts( ":: 生成命令." );
+            std::puts( "-> 生成命令." );
             std::string cmd;
             switch ( mode_ ) {
                 case 'c' : {
@@ -676,9 +676,9 @@ namespace core {
                     break;
                 }
             }
-            std::printf( ":: 执行命令.\n%s\n", std::string( 50, '-' ).c_str() );
+            std::printf( "-> 执行 Windows 命令.\n%s\n", std::string( 50, '-' ).c_str() );
             system( cmd.c_str() );
-            std::printf( "%s\n:: 释放内存.", std::string( 50, '-' ).c_str() );
+            std::printf( "%s\n-> 释放内存.", std::string( 50, '-' ).c_str() );
             return CONSOLE_UI_REVERT;
         }
         rule_op( const char _mode, const rule_node &_rule )
