@@ -34,6 +34,10 @@ namespace core {
     struct option_class_node final {
         const string_type tag_name, showed_name;
         std::vector< option_node > sub;
+        auto &operator[]( std::size_t _index )
+        {
+            return sub.at( _index );
+        }
         auto &operator=( const option_class_node & ) = delete;
         auto &operator=( option_class_node && )      = delete;
         option_class_node(
@@ -231,8 +235,8 @@ namespace core {
               30,
               false,
               false,
-              core::data::option_class[ 1 ].sub.at( 1 ).is_enabled ? false : true,
-              core::data::option_class[ 1 ].sub.at( 2 ).is_enabled ? 230 : 255 );
+              core::data::option_class[ 1 ][ 1 ].is_enabled ? false : true,
+              core::data::option_class[ 1 ][ 2 ].is_enabled ? 230 : 255 );
             SetConsoleScreenBufferSize( GetStdHandle( STD_OUTPUT_HANDLE ), { 120, SHRT_MAX - 1 } );
             system( "cmd.exe" );
             _args.parent_ui.set_console(
@@ -242,8 +246,8 @@ namespace core {
               WINDOW_HEIGHT,
               true,
               false,
-              core::data::option_class[ 1 ].sub.at( 1 ).is_enabled ? false : true,
-              core::data::option_class[ 1 ].sub.at( 2 ).is_enabled ? 230 : 255 );
+              core::data::option_class[ 1 ][ 1 ].is_enabled ? false : true,
+              core::data::option_class[ 1 ][ 2 ].is_enabled ? 230 : 255 );
             return CONSOLE_UI_REVERT;
         } };
         class cmd_executor final {
@@ -502,7 +506,7 @@ namespace core {
             std::print( ":: 生成并执行命令.\n{}\n", string_type( WINDOW_WIDTH, '-' ) );
             switch ( mode_ ) {
                 case 'c' : {
-                    if ( data::option_class[ 0 ].sub.at( 0 ).is_enabled ) {
+                    if ( data::option_class[ 0 ][ 0 ].is_enabled ) {
                         for ( const auto &item : rule_data_.exe ) {
                             system(
                               std::format(
@@ -511,7 +515,7 @@ namespace core {
                                 .c_str() );
                         }
                     }
-                    if ( data::option_class[ 0 ].sub.at( 1 ).is_enabled ) {
+                    if ( data::option_class[ 0 ][ 1 ].is_enabled ) {
                         for ( const auto &item : rule_data_.svc ) {
                             system( std::format( "sc.exe config {} start= disabled", item ).c_str() );
                         }
@@ -525,7 +529,7 @@ namespace core {
                     break;
                 }
                 case 'r' : {
-                    if ( data::option_class[ 0 ].sub.at( 0 ).is_enabled ) {
+                    if ( data::option_class[ 0 ][ 0 ].is_enabled ) {
                         for ( const auto &item : rule_data_.exe ) {
                             system(
                               std::format(
@@ -534,7 +538,7 @@ namespace core {
                                 .c_str() );
                         }
                     }
-                    if ( data::option_class[ 0 ].sub.at( 1 ).is_enabled ) {
+                    if ( data::option_class[ 0 ][ 1 ].is_enabled ) {
                         for ( const auto &item : rule_data_.svc ) {
                             system( std::format( "sc.exe config {} start= auto", item ).c_str() );
                         }
