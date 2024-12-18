@@ -23,7 +23,12 @@ namespace core {
         bool is_enabled;
         auto &operator=( const option_node & ) = delete;
         auto &operator=( option_node && )      = delete;
-        option_node( string_type _tag_name, string_type _showed_name, const bool _default_value = false )
+        option_node( string_type _tag_name, string_type _showed_name )
+          : tag_name{ std::move( _tag_name ) }
+          , showed_name{ std::move( _showed_name ) }
+          , is_enabled{ false }
+        { }
+        option_node( string_type _tag_name, string_type _showed_name, const bool _default_value )
           : tag_name{ std::move( _tag_name ) }
           , showed_name{ std::move( _showed_name ) }
           , is_enabled{ _default_value }
