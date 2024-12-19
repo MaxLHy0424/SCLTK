@@ -33,14 +33,20 @@ auto main() -> int
       .add_back( " > 配置 ", core::config_op{ 'w' } )
       .add_back( " > 工具箱 ", core::toolkit )
       .add_back( "\n[破解]\n" )
-      .add_back( " > 自定义 ", core::rule_op{ 'c', core::data::rule.custom } )
-      .add_back( " > 极域电子教室 ", core::rule_op{ 'c', core::data::rule.mythware } )
-      .add_back( " > 联想云教室 ", core::rule_op{ 'c', core::data::rule.lenovo } )
-      .add_back( "\n[恢复]\n" )
-      .add_back( " > 自定义 ", core::rule_op{ 'r', core::data::rule.custom } )
-      .add_back( " > 极域电子教室 ", core::rule_op{ 'r', core::data::rule.mythware } )
-      .add_back( " > 联想云教室 ", core::rule_op{ 'r', core::data::rule.lenovo } )
-      .set_console(
+      .add_back(
+        std::format( " > {} ", core::data::custom_rule.showed_name ),
+        core::rule_op{ 'c', core::data::custom_rule } );
+    for ( const auto &item : core::data::builtin_rule ) {
+        ui.add_back( std::format( " > {} ", item.showed_name ), core::rule_op{ 'c', item } );
+    }
+    ui.add_back( "\n[恢复]\n" )
+      .add_back(
+        std::format( " > {} ", core::data::custom_rule.showed_name ),
+        core::rule_op{ 'r', core::data::custom_rule } );
+    for ( const auto &item : core::data::builtin_rule ) {
+        ui.add_back( std::format( " > {} ", item.showed_name ), core::rule_op{ 'r', item } );
+    }
+    ui.set_console(
         CODE_PAGE,
         WINDOW_TITLE,
         WINDOW_WIDTH,
