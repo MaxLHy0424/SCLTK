@@ -221,7 +221,7 @@ namespace core {
               false,
               core::data::option_class[ 1 ][ 1 ].is_enabled ? false : true,
               core::data::option_class[ 1 ][ 2 ].is_enabled ? 230 : 255 );
-            SetConsoleScreenBufferSize( GetStdHandle( STD_OUTPUT_HANDLE ), { 120, SHRT_MAX - 1 } );
+            SetConsoleScreenBufferSize( GetStdHandle( STD_OUTPUT_HANDLE ), { 125, SHRT_MAX - 1 } );
             system( "cmd.exe" );
             _args.parent_ui.set_console(
               CODE_PAGE,
