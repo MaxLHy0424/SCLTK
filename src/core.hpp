@@ -105,7 +105,11 @@ namespace core {
               "CertMgr.exe", "Fireware.exe", "BCDBootCopy.exe", "refreship.exe",
               "lenovoLockScreen.exe", "PortControl64.exe", "DesktopCheck.exe",
               "DeploymentManager.exe", "DeploymentAgent.exe", "XYNTService.exe" },
-           { "BSAgentSvr", "tvnserver", "WFBSMlogon" }}
+           { "BSAgentSvr", "tvnserver", "WFBSMlogon" }},
+          {"红蜘蛛多媒体网络教室",
+           { "rscheck.exe", "checkrs.exe", "REDAgent.exe", "PerformanceCheck.exe", "edpaper.exe",
+              "Adapter.exe", "repview.exe", "FormatPaper.exe" },
+           { "appcheck2", "checkapp2" }               }
         };
     }
     inline auto is_run_as_admin()
