@@ -101,7 +101,7 @@ namespace core {
           {"other",     "其他", { { "repair_runtime_env", "运行环境修复", true } }          }
         };
         inline struct {
-            rule_node customized;
+            rule_node custom;
             const rule_node mythware, lenovo;
         } rule{
           {},
@@ -284,8 +284,8 @@ namespace core {
                 return;
             }
             std::print( "-> 加载配置文件.\n" );
-            data::rule.customized.exe.clear();
-            data::rule.customized.svc.clear();
+            data::rule.custom.exe.clear();
+            data::rule.custom.svc.clear();
             string_type line;
             enum class config_tag { unknown, option, rule_exe, rule_svc };
             config_tag tag{ config_tag::unknown };
@@ -324,10 +324,10 @@ namespace core {
                         break;
                     }
                     case config_tag::rule_exe :
-                        data::rule.customized.exe.emplace_back( std::move( line ) );
+                        data::rule.custom.exe.emplace_back( std::move( line ) );
                         break;
                     case config_tag::rule_svc :
-                        data::rule.customized.svc.emplace_back( std::move( line ) );
+                        data::rule.custom.svc.emplace_back( std::move( line ) );
                         break;
                 }
             }
@@ -354,11 +354,11 @@ namespace core {
                     }
                 }
                 text.append( "[rule_exe]\n" );
-                for ( const auto &item : data::rule.customized.exe ) {
+                for ( const auto &item : data::rule.custom.exe ) {
                     text.append( item ).push_back( '\n' );
                 }
                 text.append( "[rule_svc]\n" );
-                for ( const auto &item : data::rule.customized.svc ) {
+                for ( const auto &item : data::rule.custom.svc ) {
                     text.append( item ).push_back( '\n' );
                 }
                 std::ofstream config_file{ data::config_file_name, std::ios::out | std::ios::trunc };
