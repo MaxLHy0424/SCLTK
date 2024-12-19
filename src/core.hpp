@@ -99,7 +99,7 @@ namespace core {
               "STUDSRV",
               "TDNetFilter",
             }                                         },
-          {"联想云教室",
+          {"联想智能云教室",
            { "vncviewer.exe", "tvnserver32.exe", "WfbsPnpInstall.exe", "WFBSMon.exe",
               "WFBSMlogon.exe", "WFBSSvrLogShow.exe", "ResetIp.exe", "FuncForWIN64.exe",
               "CertMgr.exe", "Fireware.exe", "BCDBootCopy.exe", "refreship.exe",
