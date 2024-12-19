@@ -63,25 +63,14 @@ namespace core {
         ~option_node()                     = default;
     };
     struct rule_node final {
+        const string_type showed_name;
         std::deque< string_type > exe, svc;
-        auto &operator=( const rule_node &_src )
-        {
-            exe = _src.exe;
-            svc = _src.svc;
-            return *this;
-        }
-        auto &operator=( rule_node &&_src )
-        {
-            exe = std::move( _src.exe );
-            svc = std::move( _src.svc );
-            return *this;
-        }
-        rule_node()
-          : exe{}
-          , svc{}
-        { }
-        rule_node( std::deque< string_type > _exe, std::deque< string_type > _svc )
-          : exe{ std::move( _exe ) }
+        auto &operator=( const rule_node & ) = delete;
+        auto &operator=( rule_node && )      = delete;
+        rule_node(
+          string_type _showed_name, std::deque< string_type > _exe, std::deque< string_type > _svc )
+          : showed_name{ std::move( _showed_name ) }
+          , exe{ std::move( _exe ) }
           , svc{ std::move( _svc ) }
         { }
         rule_node( const rule_node & ) = default;
@@ -100,24 +89,23 @@ namespace core {
               { "translucency", "半透明化", true } }                  },
           {"other",     "其他", { { "repair_runtime_env", "运行环境修复", true } }          }
         };
-        inline struct {
-            rule_node custom;
-            const rule_node mythware, lenovo;
-        } rule{
-          {},
-          { { "StudentMain.exe", "DispcapHelper.exe", "VRCwPlayer.exe", "InstHelpApp.exe",
+        rule_node custom_rule{ "自定义", {}, {} };
+        type_wrapper< const rule_node[] > builtin_rule{
+          {"极域电子教室",
+           { "StudentMain.exe", "DispcapHelper.exe", "VRCwPlayer.exe", "InstHelpApp.exe",
               "InstHelpApp64.exe", "TDOvrSet.exe", "GATESRV.exe", "ProcHelper64.exe",
               "MasterHelper.exe" },
            {
               "STUDSRV",
               "TDNetFilter",
-            } },
-          { { "vncviewer.exe", "tvnserver32.exe", "WfbsPnpInstall.exe", "WFBSMon.exe",
+            }                                         },
+          {"联想云教室",
+           { "vncviewer.exe", "tvnserver32.exe", "WfbsPnpInstall.exe", "WFBSMon.exe",
               "WFBSMlogon.exe", "WFBSSvrLogShow.exe", "ResetIp.exe", "FuncForWIN64.exe",
               "CertMgr.exe", "Fireware.exe", "BCDBootCopy.exe", "refreship.exe",
               "lenovoLockScreen.exe", "PortControl64.exe", "DesktopCheck.exe",
               "DeploymentManager.exe", "DeploymentAgent.exe", "XYNTService.exe" },
-           { "BSAgentSvr", "tvnserver", "WFBSMlogon" } }
+           { "BSAgentSvr", "tvnserver", "WFBSMlogon" }}
         };
     }
     inline auto is_run_as_admin()
@@ -286,8 +274,8 @@ namespace core {
                 return;
             }
             std::print( "-> 加载配置文件.\n" );
-            data::rule.custom.exe.clear();
-            data::rule.custom.svc.clear();
+            data::custom_rule.exe.clear();
+            data::custom_rule.svc.clear();
             string_type line;
             enum class config_tag { unknown, option, rule_exe, rule_svc };
             config_tag tag{ config_tag::unknown };
@@ -326,10 +314,10 @@ namespace core {
                         break;
                     }
                     case config_tag::rule_exe :
-                        data::rule.custom.exe.emplace_back( std::move( line ) );
+                        data::custom_rule.exe.emplace_back( std::move( line ) );
                         break;
                     case config_tag::rule_svc :
-                        data::rule.custom.svc.emplace_back( std::move( line ) );
+                        data::custom_rule.svc.emplace_back( std::move( line ) );
                         break;
                 }
             }
@@ -356,11 +344,11 @@ namespace core {
                     }
                 }
                 text.append( "[rule_exe]\n" );
-                for ( const auto &item : data::rule.custom.exe ) {
+                for ( const auto &item : data::custom_rule.exe ) {
                     text.append( item ).push_back( '\n' );
                 }
                 text.append( "[rule_svc]\n" );
-                for ( const auto &item : data::rule.custom.svc ) {
+                for ( const auto &item : data::custom_rule.svc ) {
                     text.append( item ).push_back( '\n' );
                 }
                 std::ofstream config_file{ data::config_file_name, std::ios::out | std::ios::trunc };
