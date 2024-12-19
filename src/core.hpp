@@ -246,13 +246,19 @@ namespace core {
         };
         type_wrapper< string_type[][ 2 ] > quick_op{
           {"重启资源管理器",
-           R"(taskkill.exe /f /im explorer.exe && timeout /t 3 /nobreak && start C:\Windows\explorer.exe)"},
+           R"(taskkill.exe /f /im explorer.exe && timeout /t 3 /nobreak && start C:\Windows\explorer.exe)"           },
           {"恢复 Google Chrome 离线游戏",
-           R"(reg.exe delete "HKLM\SOFTWARE\Policies\Google\Chrome" /f /v AllowDinosaurEasterEgg)"        },
+           R"(reg.exe delete "HKLM\SOFTWARE\Policies\Google\Chrome" /f /v AllowDinosaurEasterEgg)"                   },
           {"恢复 Microsoft Edge 离线游戏",
-           R"(reg.exe delete "HKLM\SOFTWARE\Policies\Microsoft\Edge" /f /v AllowSurfGame)"                },
+           R"(reg.exe delete "HKLM\SOFTWARE\Policies\Microsoft\Edge" /f /v AllowSurfGame)"                           },
           {"恢复 USB 设备访问",
-           R"(reg.exe add "HKLM\SYSTEM\CurrentControlSet\Services\USBSTOR" /f /t reg_dword /v Start /d 3)"}
+           R"(reg.exe add "HKLM\SYSTEM\CurrentControlSet\Services\USBSTOR" /f /t reg_dword /v Start /d 3)"           },
+          {"重置 Ctrl + Alt + Del 菜单",
+           R"(reg.exe delete "HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\System" /f /v DisableChangePassword)"
+            R"( && reg.exe delete "HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\System" /f /v DisableLockWorkstation)"
+            R"( && reg.exe delete "HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\System" /f /v DisableTaskMgr)"
+            R"( && reg.exe delete "HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\System" /f /v DisableSwitchUserOption)"
+            R"( && reg.exe delete "HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" /f /v NoLogoff)"},
         };
         console_ui ui;
         ui.add_back( "                   [ 工 具 箱 ]\n\n" )
