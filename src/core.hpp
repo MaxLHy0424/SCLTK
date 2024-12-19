@@ -219,8 +219,8 @@ namespace core {
               30,
               false,
               false,
-              core::data::option_class[ 1 ][ 1 ].is_enabled ? false : true,
-              core::data::option_class[ 1 ][ 2 ].is_enabled ? 230 : 255 );
+              data::option_class[ 1 ][ 1 ].is_enabled ? false : true,
+              data::option_class[ 1 ][ 2 ].is_enabled ? 230 : 255 );
             SetConsoleScreenBufferSize( GetStdHandle( STD_OUTPUT_HANDLE ), { 125, SHRT_MAX - 1 } );
             system( "cmd.exe" );
             _args.parent_ui.set_console(
@@ -230,8 +230,8 @@ namespace core {
               WINDOW_HEIGHT,
               true,
               false,
-              core::data::option_class[ 1 ][ 1 ].is_enabled ? false : true,
-              core::data::option_class[ 1 ][ 2 ].is_enabled ? 230 : 255 );
+              data::option_class[ 1 ][ 1 ].is_enabled ? false : true,
+              data::option_class[ 1 ][ 2 ].is_enabled ? 230 : 255 );
             return CONSOLE_UI_REVERT;
         } };
         class cmd_executor final {
