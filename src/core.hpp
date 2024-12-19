@@ -19,49 +19,48 @@ namespace core {
     template < typename _type_ >
     using type_wrapper = console_ui::type_wrapper< _type_ >;
     struct option_node final {
+        struct item final {
+            const string_type tag_name, showed_name;
+            const bool is_relaunch_to_apply;
+            bool is_enabled;
+            auto &operator=( const item & ) = delete;
+            auto &operator=( item && )      = delete;
+            item( string_type _tag_name, string_type _showed_name, const bool _is_relaunch_to_apply )
+              : tag_name{ std::move( _tag_name ) }
+              , showed_name{ std::move( _showed_name ) }
+              , is_relaunch_to_apply{ _is_relaunch_to_apply }
+              , is_enabled{ false }
+            { }
+            item(
+              string_type _tag_name,
+              string_type _showed_name,
+              const bool _is_relaunch_to_apply,
+              const bool _default_value )
+              : tag_name{ std::move( _tag_name ) }
+              , showed_name{ std::move( _showed_name ) }
+              , is_relaunch_to_apply{ _is_relaunch_to_apply }
+              , is_enabled{ _default_value }
+            { }
+            item( const item & ) = default;
+            item( item && )      = default;
+            ~item()              = default;
+        };
         const string_type tag_name, showed_name;
-        const bool is_relaunch_to_apply;
-        bool is_enabled;
-        auto &operator=( const option_node & ) = delete;
-        auto &operator=( option_node && )      = delete;
-        option_node( string_type _tag_name, string_type _showed_name, const bool _is_relaunch_to_apply )
-          : tag_name{ std::move( _tag_name ) }
-          , showed_name{ std::move( _showed_name ) }
-          , is_relaunch_to_apply{ _is_relaunch_to_apply }
-          , is_enabled{ false }
-        { }
-        option_node(
-          string_type _tag_name,
-          string_type _showed_name,
-          const bool _is_relaunch_to_apply,
-          const bool _default_value )
-          : tag_name{ std::move( _tag_name ) }
-          , showed_name{ std::move( _showed_name ) }
-          , is_relaunch_to_apply{ _is_relaunch_to_apply }
-          , is_enabled{ _default_value }
-        { }
-        option_node( const option_node & ) = default;
-        option_node( option_node && )      = default;
-        ~option_node()                     = default;
-    };
-    struct option_class_node final {
-        const string_type tag_name, showed_name;
-        std::vector< option_node > sub;
+        std::vector< item > sub;
         auto &operator[]( size_type _index )
         {
             return sub.at( _index );
         }
-        auto &operator=( const option_class_node & ) = delete;
-        auto &operator=( option_class_node && )      = delete;
-        option_class_node(
-          string_type _tag_name, string_type _showed_name, std::vector< option_node > _options )
+        auto &operator=( const option_node & ) = delete;
+        auto &operator=( option_node && )      = delete;
+        option_node( string_type _tag_name, string_type _showed_name, std::vector< item > _options )
           : tag_name{ std::move( _tag_name ) }
           , showed_name{ std::move( _showed_name ) }
           , sub{ std::move( _options ) }
         { }
-        option_class_node( const option_class_node & ) = default;
-        option_class_node( option_class_node && )      = default;
-        ~option_class_node()                           = default;
+        option_node( const option_node & ) = default;
+        option_node( option_node && )      = default;
+        ~option_node()                     = default;
     };
     struct rule_node final {
         std::deque< string_type > exe, svc;
@@ -91,7 +90,7 @@ namespace core {
     };
     namespace data {
         inline const string_type config_file_name{ "config.ini" };
-        inline type_wrapper< option_class_node[] > option_class{
+        inline type_wrapper< option_node[] > option_class{
           {"operation",
            "破解/恢复",         { { "hijack_reg", "注册表劫持", false },
               { "set_svc_startup_type", "设置服务启动类型", false } }},
@@ -387,7 +386,7 @@ namespace core {
             } };
             class option_setter {
               private:
-                option_node &node_;
+                option_node::item &node_;
                 bool value_;
               public:
                 auto operator()( console_ui::func_args )
@@ -397,7 +396,7 @@ namespace core {
                 }
                 auto &operator=( const option_setter & ) = delete;
                 auto &operator=( option_setter && )      = delete;
-                option_setter( option_node &_node, bool _value )
+                option_setter( option_node::item &_node, bool _value )
                   : node_{ _node }
                   , value_{ _value }
                 { }
@@ -407,7 +406,7 @@ namespace core {
             };
             class option_class_shower final {
               private:
-                option_class_node &node_;
+                option_node &node_;
               public:
                 auto operator()( console_ui::func_args )
                 {
@@ -431,7 +430,7 @@ namespace core {
                 }
                 auto &operator=( const option_class_shower & ) = delete;
                 auto &operator=( option_class_shower && )      = delete;
-                option_class_shower( option_class_node &_node )
+                option_class_shower( option_node &_node )
                   : node_{ _node }
                 { }
                 option_class_shower( const option_class_shower & ) = default;
