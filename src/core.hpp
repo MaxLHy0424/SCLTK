@@ -46,17 +46,17 @@ namespace core {
             ~item()              = default;
         };
         const string_type tag_name, showed_name;
-        std::vector< item > sub;
+        std::vector< item > sub_item;
         auto &operator[]( size_type _index )
         {
-            return sub.at( _index );
+            return sub_item.at( _index );
         }
         auto &operator=( const option_node & ) = delete;
         auto &operator=( option_node && )      = delete;
         option_node( string_type _tag_name, string_type _showed_name, std::vector< item > _options )
           : tag_name{ std::move( _tag_name ) }
           , showed_name{ std::move( _showed_name ) }
-          , sub{ std::move( _options ) }
+          , sub_item{ std::move( _options ) }
         { }
         option_node( const option_node & ) = default;
         option_node( option_node && )      = default;
@@ -315,7 +315,7 @@ namespace core {
                             continue;
                         }
                         for ( auto &item_class : data::option_class ) {
-                            for ( auto &item_option : item_class.sub ) {
+                            for ( auto &item_option : item_class.sub_item ) {
                                 if ( line
                                      == std::format( "{}::{}", item_class.tag_name, item_option.tag_name ) )
                                 {
@@ -348,7 +348,7 @@ namespace core {
                 string_type text;
                 text.append( "[option]\n" );
                 for ( const auto &item_class : data::option_class ) {
-                    for ( const auto &item_option : item_class.sub ) {
+                    for ( const auto &item_option : item_class.sub_item ) {
                         if ( item_option.is_enabled ) {
                             text.append(
                               std::format( "{}::{}\n", item_class.tag_name, item_option.tag_name ) );
@@ -418,7 +418,7 @@ namespace core {
                         std::format( " < 折叠 {}", node_.showed_name ),
                         quit,
                         CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_INTENSITY );
-                    for ( auto &item : node_.sub ) {
+                    for ( auto &item : node_.sub_item ) {
                         ui
                           .add_back( std::format(
                             "\n[({}生效) {}]\n",
