@@ -33,13 +33,13 @@ auto main() -> int
       .add_back( " > 配置 ", core::config_op{ 'w' } )
       .add_back( " > 工具箱 ", core::toolkit )
       .add_back( "\n[破解]\n" )
+      .add_back( " > 自定义 ", core::rule_op{ 'c', core::data::rule.customized } )
       .add_back( " > 极域电子教室 ", core::rule_op{ 'c', core::data::rule.mythware } )
       .add_back( " > 联想云教室 ", core::rule_op{ 'c', core::data::rule.lenovo } )
-      .add_back( " > 自定义 ", core::rule_op{ 'c', core::data::rule.customized } )
       .add_back( "\n[恢复]\n" )
+      .add_back( " > 自定义 ", core::rule_op{ 'r', core::data::rule.customized } )
       .add_back( " > 极域电子教室 ", core::rule_op{ 'r', core::data::rule.mythware } )
       .add_back( " > 联想云教室 ", core::rule_op{ 'r', core::data::rule.lenovo } )
-      .add_back( " > 自定义 ", core::rule_op{ 'r', core::data::rule.customized } )
       .set_console(
         CODE_PAGE,
         WINDOW_TITLE,

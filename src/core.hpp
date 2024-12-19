@@ -101,9 +101,10 @@ namespace core {
           {"other",     "其他", { { "repair_runtime_env", "运行环境修复", true } }          }
         };
         inline struct {
-            const rule_node mythware, lenovo;
             rule_node customized;
+            const rule_node mythware, lenovo;
         } rule{
+          {},
           { { "StudentMain.exe", "DispcapHelper.exe", "VRCwPlayer.exe", "InstHelpApp.exe",
               "InstHelpApp64.exe", "TDOvrSet.exe", "GATESRV.exe", "ProcHelper64.exe",
               "MasterHelper.exe" },
@@ -116,8 +117,7 @@ namespace core {
               "CertMgr.exe", "Fireware.exe", "BCDBootCopy.exe", "refreship.exe",
               "lenovoLockScreen.exe", "PortControl64.exe", "DesktopCheck.exe",
               "DeploymentManager.exe", "DeploymentAgent.exe", "XYNTService.exe" },
-           { "BSAgentSvr", "tvnserver", "WFBSMlogon" } },
-          {}
+           { "BSAgentSvr", "tvnserver", "WFBSMlogon" } }
         };
     }
     inline auto is_run_as_admin()
