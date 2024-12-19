@@ -252,7 +252,7 @@ namespace core {
             cmd_executor( cmd_executor && )      = default;
             ~cmd_executor()                      = default;
         };
-        type_wrapper< const string_type[][ 2 ] > quick_op{
+        type_wrapper< string_type[][ 2 ] > quick_op{
           {"重启资源管理器",
            R"(taskkill.exe /f /im explorer.exe && timeout /t 3 /nobreak && start C:\Windows\explorer.exe)"},
           {"恢复 Google Chrome 离线游戏",
@@ -268,7 +268,9 @@ namespace core {
           .add_back( " > 命令提示符 ", launch_cmd )
           .add_back( "\n[快捷操作]\n" );
         for ( const auto &item : quick_op ) {
-            ui.add_back( std::format( " > {} ", item[ 0 ] ), cmd_executor{ item[ 1 ] } );
+            ui.add_back(
+              std::format( " > {} ", std::move( item[ 0 ] ) ),
+              cmd_executor{ std::move( item[ 1 ] ) } );
         }
         ui.show();
         return CONSOLE_UI_REVERT;
