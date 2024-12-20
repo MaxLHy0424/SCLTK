@@ -319,13 +319,13 @@ namespace core {
                         if ( _is_reload ) {
                             continue;
                         }
-                        for ( auto &item_class : data::options ) {
-                            for ( auto &item_option : item_class.sub_options ) {
+                        for ( auto &option : data::options ) {
+                            for ( auto &sub_option : option.sub_options ) {
                                 if ( line
                                      == std::format(
-                                       "{} :: {}", item_class.label_name, item_option.label_name ) )
+                                       "{} :: {}", option.label_name, sub_option.label_name ) )
                                 {
-                                    item_option.is_enabled = true;
+                                    sub_option.is_enabled = true;
                                 }
                             }
                         }
@@ -506,11 +506,11 @@ namespace core {
             switch ( mode_ ) {
                 case 'c' : {
                     if ( data::options[ 0 ][ 0 ].is_enabled ) {
-                        for ( const auto &item : rules_.pe_files ) {
+                        for ( const auto &pe : rules_.pe_files ) {
                             system(
                               std::format(
                                 R"(reg.exe add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\{}" /f /t reg_sz /v debugger /d "nul")",
-                                item )
+                                pe )
                                 .c_str() );
                         }
                     }
