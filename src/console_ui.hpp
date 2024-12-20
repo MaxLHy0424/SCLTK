@@ -395,6 +395,7 @@ class console_ui final {
         cls_();
         return *this;
     }
+# ifdef _NEXT_
     auto &set_console(
       const UINT _code_page,
       const string_type &_title,
@@ -408,16 +409,7 @@ class console_ui final {
         SetConsoleOutputCP( _code_page );
         SetConsoleCP( _code_page );
         SetConsoleTitleA( _title.c_str() );
-# ifdef _NEXT_
         system( std::format( "mode.com con cols={} lines={}", _width, _height ).c_str() );
-# else
-        using namespace std::string_literals;
-        system(
-          "mode.com con cols="s.append( std::to_string( _width ) )
-            .append( " lines=" )
-            .append( std::to_string( _height ) )
-            .c_str() );
-# endif
         SetWindowLongPtrA(
           GetConsoleWindow(),
           GWL_STYLE,
@@ -437,6 +429,7 @@ class console_ui final {
         SetLayeredWindowAttributes( GetConsoleWindow(), 0, _transparency, LWA_ALPHA );
         return *this;
     }
+# endif
     auto &lock( const bool _is_hide_cursor, const bool _is_lock_text )
     {
         show_cursor_( !_is_hide_cursor );
