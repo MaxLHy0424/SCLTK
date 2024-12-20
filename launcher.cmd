@@ -3,7 +3,7 @@ chcp 65001 > nul
 set config.auto_launch=0
 set config.show_verbose_info=0
 set config.window_title=CRCSN Launcher
-set launch.tag=std
+set launch.label=std
 set launch.version=v5.11.1
 set launch.arch=x86_64
 set launch.runtime=ucrt
@@ -20,11 +20,11 @@ if %config.auto_launch% == 0 (
     if %config.show_verbose_info% == 0 (
         echo 按任意键启动 CRCSN.
     ) else (
-        echo 按任意键启动 CRCSN ^(%launch.tag%, %launch.version%, %launch.arch%, %launch.runtime%^).
+        echo 按任意键启动 CRCSN ^(%launch.label%, %launch.version%, %launch.arch%, %launch.runtime%^).
     )
     pause > nul
 )
 mshta vbscript:createobject("shell.application").shellexecute("%~s0","goto:launch","","runas",1)(window.close) & goto:eof
 :launch
-    start .\bin\%launch.version%\%launch.tag%-%launch.arch%-%launch.runtime%.exe %launch.args%
+    start .\bin\%launch.version%\%launch.label%-%launch.arch%-%launch.runtime%.exe %launch.args%
     exit /b

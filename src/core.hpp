@@ -46,17 +46,17 @@ namespace core {
             ~item()              = default;
         };
         const string_type tag_name, showed_name;
-        std::vector< item > sub_item;
+        std::vector< item > sub_items;
         auto &operator[]( size_type _index )
         {
-            return sub_item.at( _index );
+            return sub_items.at( _index );
         }
         auto &operator=( const option_node & ) = delete;
         auto &operator=( option_node && )      = delete;
         option_node( string_type _tag_name, string_type _showed_name, std::vector< item > _options )
           : tag_name{ std::move( _tag_name ) }
           , showed_name{ std::move( _showed_name ) }
-          , sub_item{ std::move( _options ) }
+          , sub_items{ std::move( _options ) }
         { }
         option_node( const option_node & ) = default;
         option_node( option_node && )      = default;
@@ -64,14 +64,14 @@ namespace core {
     };
     struct rule_node final {
         const string_type showed_name;
-        std::deque< string_type > exe, svc;
+        std::deque< string_type > pe_files, svc_items;
         auto &operator=( const rule_node & ) = delete;
         auto &operator=( rule_node && )      = delete;
         rule_node(
-          string_type _showed_name, std::deque< string_type > _exe, std::deque< string_type > _svc )
+          string_type _showed_name, std::deque< string_type > _pe_files, std::deque< string_type > _svc_items )
           : showed_name{ std::move( _showed_name ) }
-          , exe{ std::move( _exe ) }
-          , svc{ std::move( _svc ) }
+          , pe_files{ std::move( _pe_files ) }
+          , svc_items{ std::move( _svc_items ) }
         { }
         rule_node( const rule_node & ) = default;
         rule_node( rule_node && )      = default;
@@ -79,7 +79,7 @@ namespace core {
     };
     namespace data {
         inline const string_type config_file_name{ "config.ini" };
-        inline type_wrapper< option_node[] > option_class{
+        inline type_wrapper< option_node[] > option_lists{
           {"operation",
            "破解/恢复",         { { "hijack_reg", "注册表劫持", false },
               { "set_svc_startup_type", "设置服务启动类型", false } }},
@@ -89,8 +89,8 @@ namespace core {
               { "translucency", "半透明化", true } }                  },
           {"other",     "其他", { { "fix_runtime_env", "修复运行环境", true } }             }
         };
-        inline rule_node custom_rule{ "自定义", {}, {} };
-        inline type_wrapper< const rule_node[] > builtin_rule{
+        inline rule_node custom_rules{ "自定义", {}, {} };
+        inline type_wrapper< const rule_node[] > builtin_rules{
           {"极域电子教室",
            { "StudentMain.exe", "DispcapHelper.exe", "VRCwPlayer.exe", "InstHelpApp.exe",
               "InstHelpApp64.exe", "TDOvrSet.exe", "GATESRV.exe", "ProcHelper64.exe",
@@ -144,22 +144,23 @@ namespace core {
     inline auto fix_runtime_env()
     {
         using namespace std::chrono_literals;
-        type_wrapper< const string_type[] > hkcu_reg_dir{
+        type_wrapper< const string_type[] > hkcu_reg_dirs{
           R"(Software\Policies\Microsoft\Windows\System)",
           R"(Software\Microsoft\Windows\CurrentVersion\Policies\System)",
           R"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)" },
-          exe{ "mode.com", "chcp.com", "ntsd.exe",    "taskkill.exe", "sc.exe",      "net.exe",
-               "reg.exe",  "cmd.exe",  "taskmgr.exe", "perfmon.exe",  "regedit.exe", "mmc.exe" };
+          pe_files{
+            "mode.com", "chcp.com", "ntsd.exe",    "taskkill.exe", "sc.exe",      "net.exe",
+            "reg.exe",  "cmd.exe",  "taskmgr.exe", "perfmon.exe",  "regedit.exe", "mmc.exe" };
         while ( true ) {
-            for ( const auto &item : hkcu_reg_dir ) {
-                RegDeleteTreeA( HKEY_CURRENT_USER, item.c_str() );
+            for ( const auto &reg_dir : hkcu_reg_dirs ) {
+                RegDeleteTreeA( HKEY_CURRENT_USER, reg_dir.c_str() );
             }
-            for ( const auto &item : exe ) {
+            for ( const auto &pe : pe_files ) {
                 RegDeleteTreeA(
                   HKEY_LOCAL_MACHINE,
                   std::format(
                     R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{})",
-                    item )
+                    pe )
                     .c_str() );
             }
             std::this_thread::sleep_for( 1000ms );
@@ -167,9 +168,9 @@ namespace core {
     }
     inline auto relaunch_as_admin( console_ui::func_args )
     {
-        wstring_type path( MAX_PATH, L'\0' );
-        GetModuleFileNameW( nullptr, path.data(), MAX_PATH );
-        ShellExecuteW( nullptr, L"runas", path.data(), nullptr, nullptr, SW_SHOWNORMAL );
+        wstring_type file_path( MAX_PATH, L'\0' );
+        GetModuleFileNameW( nullptr, file_path.data(), MAX_PATH );
+        ShellExecuteW( nullptr, L"runas", file_path.data(), nullptr, nullptr, SW_SHOWNORMAL );
         return CONSOLE_UI_TERMINATE;
     }
     inline auto quit( console_ui::func_args )
@@ -179,7 +180,7 @@ namespace core {
     inline auto info( console_ui::func_args )
     {
         std::print( "-> 初始化用户界面.\n" );
-        auto view_repo_webpage{ []( console_ui::func_args )
+        auto visit_repo_webpage{ []( console_ui::func_args )
         {
             ShellExecuteA( nullptr, "open", INFO_REPO_URL, nullptr, nullptr, SW_SHOWNORMAL );
             return CONSOLE_UI_REVERT;
@@ -191,7 +192,7 @@ namespace core {
           .add_back( "\n[仓库]\n" )
           .add_back(
             " " INFO_REPO_URL " ",
-            view_repo_webpage,
+            visit_repo_webpage,
             CONSOLE_TEXT_DEFAULT | CONSOLE_TEXT_COMMON_LVB_UNDERSCORE )
           .add_back( "\n[许可证]\n\n " INFO_LICENSE "\n\n (C) 2023 - present " INFO_DEVELOPER "." )
           .show();
@@ -210,8 +211,8 @@ namespace core {
               30,
               false,
               false,
-              data::option_class[ 1 ][ 1 ].is_enabled ? false : true,
-              data::option_class[ 1 ][ 2 ].is_enabled ? 230 : 255 );
+              data::option_lists[ 1 ][ 1 ].is_enabled ? false : true,
+              data::option_lists[ 1 ][ 2 ].is_enabled ? 230 : 255 );
             SetConsoleScreenBufferSize( GetStdHandle( STD_OUTPUT_HANDLE ), { 125, SHRT_MAX - 1 } );
             system( "cmd.exe" );
             _args.parent_ui.set_console(
@@ -221,8 +222,8 @@ namespace core {
               WINDOW_HEIGHT,
               true,
               false,
-              data::option_class[ 1 ][ 1 ].is_enabled ? false : true,
-              data::option_class[ 1 ][ 2 ].is_enabled ? 230 : 255 );
+              data::option_lists[ 1 ][ 1 ].is_enabled ? false : true,
+              data::option_lists[ 1 ][ 2 ].is_enabled ? 230 : 255 );
             return CONSOLE_UI_REVERT;
         } };
         class cmd_executor final {
@@ -244,7 +245,7 @@ namespace core {
             cmd_executor( cmd_executor && )      = default;
             ~cmd_executor()                      = default;
         };
-        type_wrapper< string_type[][ 2 ] > quick_op{
+        type_wrapper< string_type[][ 2 ] > common_operations{
           {"重启资源管理器",
            R"(taskkill.exe /f /im explorer.exe && timeout /t 3 /nobreak && start C:\Windows\explorer.exe)"           },
           {"恢复 Google Chrome 离线游戏",
@@ -264,9 +265,10 @@ namespace core {
         ui.add_back( "                   [ 工 具 箱 ]\n\n" )
           .add_back( " < 返回 ", quit, CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_INTENSITY )
           .add_back( " > 命令提示符 ", launch_cmd )
-          .add_back( "\n[快捷操作]\n" );
-        for ( const auto &item : quick_op ) {
-            ui.add_back( std::format( " > {} ", std::move( item[ 0 ] ) ), cmd_executor{ item[ 1 ] } );
+          .add_back( "\n[常用操作]\n" );
+        for ( const auto &operation : common_operations ) {
+            ui.add_back(
+              std::format( " > {} ", std::move( operation[ 0 ] ) ), cmd_executor{ operation[ 1 ] } );
         }
         ui.show();
         return CONSOLE_UI_REVERT;
@@ -282,36 +284,41 @@ namespace core {
                 return;
             }
             std::print( "-> 加载配置文件.\n" );
-            data::custom_rule.exe.clear();
-            data::custom_rule.svc.clear();
+            data::custom_rules.pe_files.clear();
+            data::custom_rules.svc_items.clear();
             string_type line;
-            enum class config_tag { unknown, option, rule_exe, rule_svc };
-            config_tag tag{ config_tag::unknown };
+            enum class config_tag {
+                unknown,
+                options,
+                customized_rules_pe_files,
+                customized_rules_svc_items
+            };
+            config_tag label{ config_tag::unknown };
             while ( std::getline( config_file, line ) ) {
                 if ( line.empty() || line.front() == '#' ) {
                     continue;
                 }
-                if ( line == "[ option ]" ) {
-                    tag = config_tag::option;
+                if ( line == "[ options ]" ) {
+                    label = config_tag::options;
                     continue;
-                } else if ( line == "[ rule_exe ]" ) {
-                    tag = config_tag::rule_exe;
+                } else if ( line == "[ customized_rules_pe_files ]" ) {
+                    label = config_tag::customized_rules_pe_files;
                     continue;
-                } else if ( line == "[ rule_svc ]" ) {
-                    tag = config_tag::rule_svc;
+                } else if ( line == "[ customized_rules_svc_items ]" ) {
+                    label = config_tag::customized_rules_svc_items;
                     continue;
                 } else if ( line.front() == '[' && line.back() == ']' ) {
-                    tag = config_tag::unknown;
+                    label = config_tag::unknown;
                     continue;
                 }
-                switch ( tag ) {
+                switch ( label ) {
                     case config_tag::unknown : break;
-                    case config_tag::option : {
+                    case config_tag::options : {
                         if ( _is_reload ) {
                             continue;
                         }
-                        for ( auto &item_class : data::option_class ) {
-                            for ( auto &item_option : item_class.sub_item ) {
+                        for ( auto &item_class : data::option_lists ) {
+                            for ( auto &item_option : item_class.sub_items ) {
                                 if ( line
                                      == std::format(
                                        "{} :: {}", item_class.tag_name, item_option.tag_name ) )
@@ -322,11 +329,11 @@ namespace core {
                         }
                         break;
                     }
-                    case config_tag::rule_exe :
-                        data::custom_rule.exe.emplace_back( std::move( line ) );
+                    case config_tag::customized_rules_pe_files :
+                        data::custom_rules.pe_files.emplace_back( std::move( line ) );
                         break;
-                    case config_tag::rule_svc :
-                        data::custom_rule.svc.emplace_back( std::move( line ) );
+                    case config_tag::customized_rules_svc_items :
+                        data::custom_rules.svc_items.emplace_back( std::move( line ) );
                         break;
                 }
             }
@@ -336,32 +343,32 @@ namespace core {
         auto edit_() const
         {
             std::print( "-> 初始化用户界面.\n" );
-            constexpr auto option_button_color{
+            constexpr auto color_of_option_buttons{
               CONSOLE_TEXT_FOREGROUND_RED | CONSOLE_TEXT_FOREGROUND_GREEN };
-            auto sync{ [ this ]( console_ui::func_args )
+            auto sync_config{ [ this ]( console_ui::func_args )
             {
                 load_( true );
                 std::print( "-> 保存更改.\n" );
-                string_type text;
-                text.append( "[ option ]\n" );
-                for ( const auto &item_class : data::option_class ) {
-                    for ( const auto &item_option : item_class.sub_item ) {
-                        if ( item_option.is_enabled ) {
-                            text.append( std::format(
-                              "{} :: {}\n", item_class.tag_name, item_option.tag_name ) );
+                string_type config_text;
+                config_text.append( "[ option ]\n" );
+                for ( const auto &option : data::option_lists ) {
+                    for ( const auto &sub_option : option.sub_items ) {
+                        if ( sub_option.is_enabled ) {
+                            config_text.append(
+                              std::format( "{} :: {}\n", option.tag_name, sub_option.tag_name ) );
                         }
                     }
                 }
-                text.append( "[ rule_exe ]\n" );
-                for ( const auto &item : data::custom_rule.exe ) {
-                    text.append( item ).push_back( '\n' );
+                config_text.append( "[ rule_exe ]\n" );
+                for ( const auto &pe : data::custom_rules.pe_files ) {
+                    config_text.append( pe ).push_back( '\n' );
                 }
-                text.append( "[ rule_svc ]\n" );
-                for ( const auto &item : data::custom_rule.svc ) {
-                    text.append( item ).push_back( '\n' );
+                config_text.append( "[ rule_svc ]\n" );
+                for ( const auto &svc : data::custom_rules.svc_items ) {
+                    config_text.append( svc ).push_back( '\n' );
                 }
                 std::ofstream config_file{ data::config_file_name, std::ios::out | std::ios::trunc };
-                config_file.write( text.c_str(), text.size() );
+                config_file.write( config_text.c_str(), config_text.size() );
                 config_file.close();
                 return CONSOLE_UI_TERMINATE;
             } };
@@ -385,19 +392,19 @@ namespace core {
             } };
             class option_setter {
               private:
-                option_node::item &node_;
-                bool value_;
+                option_node::item &sub_option_node_;
+                bool sub_option_value_;
               public:
                 auto operator()( console_ui::func_args )
                 {
-                    node_.is_enabled = value_;
+                    sub_option_node_.is_enabled = sub_option_value_;
                     return CONSOLE_UI_REVERT;
                 }
                 auto &operator=( const option_setter & ) = delete;
                 auto &operator=( option_setter && )      = delete;
-                option_setter( option_node::item &_node, bool _value )
-                  : node_{ _node }
-                  , value_{ _value }
+                option_setter( option_node::item &_sub_option_node, bool _sub_option_value )
+                  : sub_option_node_{ _sub_option_node }
+                  , sub_option_value_{ _sub_option_value }
                 { }
                 option_setter( const option_setter & ) = default;
                 option_setter( option_setter && )      = default;
@@ -405,32 +412,32 @@ namespace core {
             };
             class option_class_shower final {
               private:
-                option_node &node_;
+                option_node &option_node_;
               public:
                 auto operator()( console_ui::func_args )
                 {
                     console_ui ui;
                     ui.add_back( "                    [ 配  置 ]\n\n" )
                       .add_back(
-                        std::format( " < 折叠 {}", node_.showed_name ),
+                        std::format( " < 折叠 {}", option_node_.showed_name ),
                         quit,
                         CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_INTENSITY );
-                    for ( auto &item : node_.sub_item ) {
+                    for ( auto &item : option_node_.sub_items ) {
                         ui
                           .add_back( std::format(
                             "\n[({}生效) {}]\n",
                             item.is_relaunch_to_apply ? "下次启动时" : "立即",
                             item.showed_name ) )
-                          .add_back( " > 启用 ", option_setter{ item, true }, option_button_color )
-                          .add_back( " > 禁用 ", option_setter{ item, false }, option_button_color );
+                          .add_back( " > 启用 ", option_setter{ item, true }, color_of_option_buttons )
+                          .add_back( " > 禁用 ", option_setter{ item, false }, color_of_option_buttons );
                     }
                     ui.show();
                     return CONSOLE_UI_REVERT;
                 }
                 auto &operator=( const option_class_shower & ) = delete;
                 auto &operator=( option_class_shower && )      = delete;
-                option_class_shower( option_node &_node )
-                  : node_{ _node }
+                option_class_shower( option_node &_option_node )
+                  : option_node_{ _option_node }
                 { }
                 option_class_shower( const option_class_shower & ) = default;
                 option_class_shower( option_class_shower && )      = default;
@@ -442,14 +449,16 @@ namespace core {
                 " (i) 所有选项默认禁用.\n"
                 "     相关信息可参阅文档.\n" )
               .add_back(
-                " < 同步配置并返回 ", sync, CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_INTENSITY )
+                " < 同步配置并返回 ",
+                sync_config,
+                CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_INTENSITY )
               .add_back( " > 打开配置文件 ", open_config_file )
               .add_back( "\n[选项分类]\n" );
-            for ( auto &item : data::option_class ) {
+            for ( auto &option : data::option_lists ) {
                 ui.add_back(
-                  std::format( " > {}", item.showed_name ),
-                  option_class_shower{ item },
-                  option_button_color );
+                  std::format( " > {}", option.showed_name ),
+                  option_class_shower{ option },
+                  color_of_option_buttons );
             }
             ui.show();
             return CONSOLE_UI_REVERT;
@@ -475,12 +484,12 @@ namespace core {
     class rule_op final {
       private:
         const char mode_;
-        const rule_node &rule_data_;
+        const rule_node &rules_;
       public:
         auto operator()( console_ui::func_args ) const
         {
             std::print( "                 [ 破 解 / 恢 复 ]\n\n\n" );
-            if ( rule_data_.exe.empty() && rule_data_.svc.empty() ) {
+            if ( rules_.pe_files.empty() && rules_.svc_items.empty() ) {
                 using namespace std::chrono_literals;
                 std::print( " (i) 规则为空.\n\n" );
                 for ( unsigned short i{ 3 }; i > 0; --i ) {
@@ -492,8 +501,8 @@ namespace core {
             std::print( "-> 生成并执行 Windows 命令.\n{}\n", string_type( WINDOW_WIDTH, '-' ) );
             switch ( mode_ ) {
                 case 'c' : {
-                    if ( data::option_class[ 0 ][ 0 ].is_enabled ) {
-                        for ( const auto &item : rule_data_.exe ) {
+                    if ( data::option_lists[ 0 ][ 0 ].is_enabled ) {
+                        for ( const auto &item : rules_.pe_files ) {
                             system(
                               std::format(
                                 R"(reg.exe add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\{}" /f /t reg_sz /v debugger /d "nul")",
@@ -501,36 +510,36 @@ namespace core {
                                 .c_str() );
                         }
                     }
-                    if ( data::option_class[ 0 ][ 1 ].is_enabled ) {
-                        for ( const auto &item : rule_data_.svc ) {
-                            system( std::format( "sc.exe config {} start= disabled", item ).c_str() );
+                    if ( data::option_lists[ 0 ][ 1 ].is_enabled ) {
+                        for ( const auto &svc : rules_.svc_items ) {
+                            system( std::format( "sc.exe config {} start= disabled", svc ).c_str() );
                         }
                     }
-                    for ( const auto &item : rule_data_.exe ) {
-                        system( std::format( R"(taskkill.exe /f /im "{}")", item ).c_str() );
+                    for ( const auto &pe : rules_.pe_files ) {
+                        system( std::format( R"(taskkill.exe /f /im "{}")", pe ).c_str() );
                     }
-                    for ( const auto &item : rule_data_.svc ) {
-                        system( std::format( R"(net.exe stop "{}" /y)", item ).c_str() );
+                    for ( const auto &svc : rules_.svc_items ) {
+                        system( std::format( R"(net.exe stop "{}" /y)", svc ).c_str() );
                     }
                     break;
                 }
                 case 'r' : {
-                    if ( data::option_class[ 0 ][ 0 ].is_enabled ) {
-                        for ( const auto &item : rule_data_.exe ) {
+                    if ( data::option_lists[ 0 ][ 0 ].is_enabled ) {
+                        for ( const auto &pe : rules_.pe_files ) {
                             system(
                               std::format(
                                 R"(reg.exe delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\{}" /f)",
-                                item )
+                                pe )
                                 .c_str() );
                         }
                     }
-                    if ( data::option_class[ 0 ][ 1 ].is_enabled ) {
-                        for ( const auto &item : rule_data_.svc ) {
-                            system( std::format( "sc.exe config {} start= auto", item ).c_str() );
+                    if ( data::option_lists[ 0 ][ 1 ].is_enabled ) {
+                        for ( const auto &svc : rules_.svc_items ) {
+                            system( std::format( "sc.exe config {} start= auto", svc ).c_str() );
                         }
                     }
-                    for ( const auto &item : rule_data_.svc ) {
-                        system( std::format( R"(net.exe start "{}")", item ).c_str() );
+                    for ( const auto &svc : rules_.svc_items ) {
+                        system( std::format( R"(net.exe start "{}")", svc ).c_str() );
                     }
                     break;
                 }
@@ -541,7 +550,7 @@ namespace core {
         auto &operator=( rule_op && )      = delete;
         rule_op( const char _mode, const rule_node &_rule_data )
           : mode_{ _mode }
-          , rule_data_{ _rule_data }
+          , rules_{ _rule_data }
         { }
         rule_op( const rule_op & ) = default;
         rule_op( rule_op && )      = default;
