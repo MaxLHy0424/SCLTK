@@ -79,7 +79,7 @@ namespace core {
     };
     namespace data {
         inline const string_type config_file_name{ "config.ini" };
-        inline type_wrapper< option_node[] > option_lists{
+        inline type_wrapper< option_node[] > option_nodes{
           {"operation",
            "破解/恢复",         { { "hijack_reg", "注册表劫持", false },
               { "set_svc_startup_type", "设置服务启动类型", false } }},
@@ -211,8 +211,8 @@ namespace core {
               30,
               false,
               false,
-              data::option_lists[ 1 ][ 1 ].is_enabled ? false : true,
-              data::option_lists[ 1 ][ 2 ].is_enabled ? 230 : 255 );
+              data::option_nodes[ 1 ][ 1 ].is_enabled ? false : true,
+              data::option_nodes[ 1 ][ 2 ].is_enabled ? 230 : 255 );
             SetConsoleScreenBufferSize( GetStdHandle( STD_OUTPUT_HANDLE ), { 125, SHRT_MAX - 1 } );
             system( "cmd.exe" );
             _args.parent_ui.set_console(
@@ -222,8 +222,8 @@ namespace core {
               WINDOW_HEIGHT,
               true,
               false,
-              data::option_lists[ 1 ][ 1 ].is_enabled ? false : true,
-              data::option_lists[ 1 ][ 2 ].is_enabled ? 230 : 255 );
+              data::option_nodes[ 1 ][ 1 ].is_enabled ? false : true,
+              data::option_nodes[ 1 ][ 2 ].is_enabled ? 230 : 255 );
             return CONSOLE_UI_REVERT;
         } };
         class cmd_executor final {
@@ -317,7 +317,7 @@ namespace core {
                         if ( _is_reload ) {
                             continue;
                         }
-                        for ( auto &item_class : data::option_lists ) {
+                        for ( auto &item_class : data::option_nodes ) {
                             for ( auto &item_option : item_class.sub_items ) {
                                 if ( line
                                      == std::format(
@@ -351,7 +351,7 @@ namespace core {
                 std::print( "-> 保存更改.\n" );
                 string_type config_text;
                 config_text.append( "[ option ]\n" );
-                for ( const auto &option : data::option_lists ) {
+                for ( const auto &option : data::option_nodes ) {
                     for ( const auto &sub_option : option.sub_items ) {
                         if ( sub_option.is_enabled ) {
                             config_text.append(
@@ -454,7 +454,7 @@ namespace core {
                 CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_INTENSITY )
               .add_back( " > 打开配置文件 ", open_config_file )
               .add_back( "\n[选项分类]\n" );
-            for ( auto &option : data::option_lists ) {
+            for ( auto &option : data::option_nodes ) {
                 ui.add_back(
                   std::format( " > {}", option.showed_name ),
                   option_class_shower{ option },
@@ -501,7 +501,7 @@ namespace core {
             std::print( "-> 生成并执行 Windows 命令.\n{}\n", string_type( WINDOW_WIDTH, '-' ) );
             switch ( mode_ ) {
                 case 'c' : {
-                    if ( data::option_lists[ 0 ][ 0 ].is_enabled ) {
+                    if ( data::option_nodes[ 0 ][ 0 ].is_enabled ) {
                         for ( const auto &item : rules_.pe_files ) {
                             system(
                               std::format(
@@ -510,7 +510,7 @@ namespace core {
                                 .c_str() );
                         }
                     }
-                    if ( data::option_lists[ 0 ][ 1 ].is_enabled ) {
+                    if ( data::option_nodes[ 0 ][ 1 ].is_enabled ) {
                         for ( const auto &svc : rules_.svc_items ) {
                             system( std::format( "sc.exe config {} start= disabled", svc ).c_str() );
                         }
@@ -524,7 +524,7 @@ namespace core {
                     break;
                 }
                 case 'r' : {
-                    if ( data::option_lists[ 0 ][ 0 ].is_enabled ) {
+                    if ( data::option_nodes[ 0 ][ 0 ].is_enabled ) {
                         for ( const auto &pe : rules_.pe_files ) {
                             system(
                               std::format(
@@ -533,7 +533,7 @@ namespace core {
                                 .c_str() );
                         }
                     }
-                    if ( data::option_lists[ 0 ][ 1 ].is_enabled ) {
+                    if ( data::option_nodes[ 0 ][ 1 ].is_enabled ) {
                         for ( const auto &svc : rules_.svc_items ) {
                             system( std::format( "sc.exe config {} start= auto", svc ).c_str() );
                         }
