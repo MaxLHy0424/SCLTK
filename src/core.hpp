@@ -689,7 +689,7 @@ namespace core {
             std::printf( "%s\n-> 释放内存.", std::string( 50, '-' ).c_str() );
             return CONSOLE_UI_REVERT;
         }
-        rule_op( const char _mode, const rule_node &_rule )
+        rule_op( const char _mode, const rule_item &_rule )
           : mode_{ _mode }
           , rule_{ _rule }
         { }
