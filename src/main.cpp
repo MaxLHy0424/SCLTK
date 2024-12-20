@@ -19,7 +19,7 @@ auto main() -> int
         std::thread{ core::force_show_window }.detach();
     }
     if ( core::data::option_class[ 2 ][ 0 ].is_enabled ) {
-        std::print( "-> 启动运行环境修复线程.\n" );
+        std::print( "-> 启动修复运行环境线程.\n" );
         std::thread{ core::repair_runtime_env }.detach();
     }
     std::print( "-> 初始化用户界面.\n" );

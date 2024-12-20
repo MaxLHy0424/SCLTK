@@ -87,7 +87,7 @@ namespace core {
            "窗口显示",          { { "force_show", "置顶显示", true },
               { "disable_close_ctrl", "禁用关闭控件", true },
               { "translucency", "半透明化", true } }                  },
-          {"other",     "其他", { { "repair_runtime_env", "运行环境修复", true } }          }
+          {"other",     "其他", { { "repair_runtime_env", "修复运行环境", true } }          }
         };
         rule_node custom_rule{ "自定义", {}, {} };
         type_wrapper< const rule_node[] > builtin_rule{
