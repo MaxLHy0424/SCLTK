@@ -91,7 +91,7 @@ namespace core {
               { "translucency", "半透明化", true } }                  },
           {"other",     "其他", { { "fix_runtime_env", "修复运行环境", true } }             }
         };
-        inline rule_item custom_rules{ "自定义", {}, {} };
+        inline rule_item customized_rules{ "自定义", {}, {} };
         inline type_wrapper< const rule_item[] > builtin_rules{
           {"极域电子教室",
            { "StudentMain.exe", "DispcapHelper.exe", "VRCwPlayer.exe", "InstHelpApp.exe",
@@ -286,8 +286,8 @@ namespace core {
                 return;
             }
             std::print( "-> 加载配置文件.\n" );
-            data::custom_rules.pe_files.clear();
-            data::custom_rules.svc_items.clear();
+            data::customized_rules.pe_files.clear();
+            data::customized_rules.svc_items.clear();
             string_type line;
             enum class config_label {
                 unknown,
@@ -331,10 +331,10 @@ namespace core {
                         break;
                     }
                     case config_label::customized_rules_pe_files :
-                        data::custom_rules.pe_files.emplace_back( std::move( line ) );
+                        data::customized_rules.pe_files.emplace_back( std::move( line ) );
                         break;
                     case config_label::customized_rules_svc_items :
-                        data::custom_rules.svc_items.emplace_back( std::move( line ) );
+                        data::customized_rules.svc_items.emplace_back( std::move( line ) );
                         break;
                 }
             }
@@ -361,11 +361,11 @@ namespace core {
                     }
                 }
                 config_text.append( "[ customized_rules_pe_files ]\n" );
-                for ( const auto &pe : data::custom_rules.pe_files ) {
+                for ( const auto &pe : data::customized_rules.pe_files ) {
                     config_text.append( pe ).push_back( '\n' );
                 }
                 config_text.append( "[ customized_rules_svc_items ]\n" );
-                for ( const auto &svc : data::custom_rules.svc_items ) {
+                for ( const auto &svc : data::customized_rules.svc_items ) {
                     config_text.append( svc ).push_back( '\n' );
                 }
                 std::ofstream config_file{ data::config_file_name, std::ios::out | std::ios::trunc };
