@@ -52,8 +52,8 @@ class console_ui final {
     struct func_args final {
         const DWORD button_state, ctrl_key_state, event_flag;
         console_ui &parent_ui;
-        auto &operator=( const func_args & ) = delete;
-        auto &operator=( func_args && )      = delete;
+        auto operator=( const func_args & ) -> func_args & = default;
+        auto operator=( func_args && ) -> func_args &      = default;
         func_args(
           console_ui &_parent_ui,
           const MOUSE_EVENT_RECORD _mouse_event = { {}, CONSOLE_MOUSE_BUTTON_LEFT, {}, {} } )
@@ -92,26 +92,8 @@ class console_ui final {
         {
             return !operator==( _mouse_position );
         }
-        auto &operator=( const console_ui_line_ &_src )
-        {
-            text            = _src.text;
-            default_attrs   = _src.default_attrs;
-            intensity_attrs = _src.intensity_attrs;
-            last_attrs      = _src.last_attrs;
-            position        = _src.position;
-            func            = _src.func;
-            return *this;
-        }
-        auto &operator=( console_ui_line_ &&_src )
-        {
-            text            = std::move( _src.text );
-            default_attrs   = std::move( _src.default_attrs );
-            intensity_attrs = std::move( _src.intensity_attrs );
-            last_attrs      = std::move( _src.last_attrs );
-            position        = std::move( _src.position );
-            func            = std::move( _src.func );
-            return *this;
-        }
+        auto operator=( const console_ui_line_ & ) -> console_ui_line_ & = default;
+        auto operator=( console_ui_line_ && ) -> console_ui_line_ &      = default;
         console_ui_line_()
           : text{}
           , default_attrs{ CONSOLE_TEXT_DEFAULT }
@@ -436,16 +418,8 @@ class console_ui final {
         edit_console_attrs_( _is_lock_text ? console_attrs_::lock_all : console_attrs_::normal );
         return *this;
     }
-    auto &operator=( const console_ui &_src )
-    {
-        line_items_ = _src.line_items_;
-        return *this;
-    }
-    auto &operator=( console_ui &&_src )
-    {
-        line_items_ = std::move( _src.line_items_ );
-        return *this;
-    }
+    auto operator=( const console_ui & ) -> console_ui & = default;
+    auto operator=( console_ui && ) -> console_ui &      = default;
     console_ui()
       : line_items_{}
       , width_{}

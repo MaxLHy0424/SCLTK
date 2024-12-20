@@ -23,8 +23,8 @@ namespace core {
             const string_type label_name, showed_name;
             const bool is_relaunch_to_apply;
             bool is_enabled;
-            auto &operator=( const sub_item & ) = delete;
-            auto &operator=( sub_item && )      = delete;
+            auto operator=( const sub_item & ) -> sub_item & = default;
+            auto operator=( sub_item && ) -> sub_item &      = default;
             sub_item(
               string_type _label_name, string_type _showed_name, const bool _is_relaunch_to_apply )
               : label_name{ std::move( _label_name ) }
@@ -52,8 +52,8 @@ namespace core {
         {
             return sub_items.at( _index );
         }
-        auto &operator=( const option_item & ) = delete;
-        auto &operator=( option_item && )      = delete;
+        auto operator=( const option_item & ) -> option_item & = default;
+        auto operator=( option_item && ) -> option_item &      = default;
         option_item(
           string_type _label_name, string_type _showed_name, std::vector< sub_item > _options )
           : label_name{ std::move( _label_name ) }
@@ -67,8 +67,8 @@ namespace core {
     struct rule_item final {
         const string_type showed_name;
         std::deque< string_type > pe_files, svc_items;
-        auto &operator=( const rule_item & ) = delete;
-        auto &operator=( rule_item && )      = delete;
+        auto operator=( const rule_item & ) -> rule_item & = default;
+        auto operator=( rule_item && ) -> rule_item &      = default;
         rule_item(
           string_type _showed_name, std::deque< string_type > _pe_files, std::deque< string_type > _svc_items )
           : showed_name{ std::move( _showed_name ) }
@@ -238,8 +238,8 @@ namespace core {
                 system( cmd_.c_str() );
                 return CONSOLE_UI_REVERT;
             }
-            auto &operator=( const cmd_executor & ) = delete;
-            auto &operator=( cmd_executor && )      = delete;
+            auto operator=( const cmd_executor & ) -> cmd_executor & = default;
+            auto operator=( cmd_executor && ) -> cmd_executor &      = default;
             cmd_executor( const string_type &_cmd )
               : cmd_{ _cmd }
             { }
@@ -401,8 +401,8 @@ namespace core {
                     sub_option_.is_enabled = sub_option_value_;
                     return CONSOLE_UI_REVERT;
                 }
-                auto &operator=( const option_setter & ) = delete;
-                auto &operator=( option_setter && )      = delete;
+                auto operator=( const option_setter & ) -> option_setter & = delete;
+                auto operator=( option_setter && ) -> option_setter &      = delete;
                 option_setter( option_item::sub_item &_sub_option, const bool _sub_option_value )
                   : sub_option_{ _sub_option }
                   , sub_option_value_{ _sub_option_value }
@@ -429,14 +429,16 @@ namespace core {
                             "\n[({}生效) {}]\n",
                             sub_option.is_relaunch_to_apply ? "下次启动时" : "立即",
                             sub_option.showed_name ) )
-                          .add_back( " > 启用 ", option_setter{ sub_option, true }, color_of_option_buttons )
-                          .add_back( " > 禁用 ", option_setter{ sub_option, false }, color_of_option_buttons );
+                          .add_back(
+                            " > 启用 ", option_setter{ sub_option, true }, color_of_option_buttons )
+                          .add_back(
+                            " > 禁用 ", option_setter{ sub_option, false }, color_of_option_buttons );
                     }
                     ui.show();
                     return CONSOLE_UI_REVERT;
                 }
-                auto &operator=( const option_class_shower & ) = delete;
-                auto &operator=( option_class_shower && )      = delete;
+                auto operator=( const option_class_shower & ) -> option_class_shower & = delete;
+                auto operator=( option_class_shower && ) -> option_class_shower &      = delete;
                 option_class_shower( option_item &_option )
                   : option_{ _option }
                 { }
@@ -473,8 +475,8 @@ namespace core {
             }
             return CONSOLE_UI_REVERT;
         }
-        auto &operator=( const config_op & ) = delete;
-        auto &operator=( config_op && )      = delete;
+        auto operator=( const config_op & ) -> config_op & = default;
+        auto operator=( config_op && ) -> config_op &      = default;
         config_op( const char _mode )
           : mode_{ _mode }
         { }
@@ -547,8 +549,8 @@ namespace core {
             }
             return CONSOLE_UI_REVERT;
         }
-        auto &operator=( const rule_op & ) = delete;
-        auto &operator=( rule_op && )      = delete;
+        auto operator=( const rule_op & ) -> rule_op & = default;
+        auto operator=( rule_op && ) -> rule_op &      = default;
         rule_op( const char _mode, const rule_item &_rule )
           : mode_{ _mode }
           , rules_{ _rule }
