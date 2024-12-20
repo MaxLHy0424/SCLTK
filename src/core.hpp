@@ -89,8 +89,8 @@ namespace core {
               { "translucency", "半透明化", true } }                  },
           {"other",     "其他", { { "repair_runtime_env", "修复运行环境", true } }          }
         };
-        rule_node custom_rule{ "自定义", {}, {} };
-        type_wrapper< const rule_node[] > builtin_rule{
+        inline rule_node custom_rule{ "自定义", {}, {} };
+        inline type_wrapper< const rule_node[] > builtin_rule{
           {"极域电子教室",
            { "StudentMain.exe", "DispcapHelper.exe", "VRCwPlayer.exe", "InstHelpApp.exe",
               "InstHelpApp64.exe", "TDOvrSet.exe", "GATESRV.exe", "ProcHelper64.exe",
