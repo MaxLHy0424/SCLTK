@@ -21,7 +21,7 @@
 相关链接:
 
 - [GitHub Repository Release](https://github.com/MaxLHy0424/CRCSN/releases);
-- [中国大陆云盘镜像站点 (不含预发行版)](https://pan.astpan.com/s/bo2H4).
+- [中国大陆云盘镜像站点 (不含预发行版)](https://pan.astpan.com/s/DDOCq).
 
 # 📖 使用指南
 
