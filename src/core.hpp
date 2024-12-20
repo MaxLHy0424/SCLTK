@@ -208,7 +208,7 @@ namespace core {
             _args.parent_ui.lock( false, false );
             _args.parent_ui.set_console(
               CODE_PAGE,
-              WINDOW_TITLE,
+              WINDOW_TITLE " - 命令提示符",
               120,
               30,
               false,
