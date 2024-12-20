@@ -87,7 +87,7 @@ namespace core {
            "窗口显示",          { { "force_show", "置顶显示", true },
               { "disable_close_ctrl", "禁用关闭控件", true },
               { "translucency", "半透明化", true } }                  },
-          {"other",     "其他", { { "repair_runtime_env", "修复运行环境", true } }          }
+          {"other",     "其他", { { "fix_runtime_env", "修复运行环境", true } }             }
         };
         inline rule_node custom_rule{ "自定义", {}, {} };
         inline type_wrapper< const rule_node[] > builtin_rule{
@@ -141,7 +141,7 @@ namespace core {
             std::this_thread::sleep_for( 100ms );
         }
     }
-    inline auto repair_runtime_env()
+    inline auto fix_runtime_env()
     {
         using namespace std::chrono_literals;
         type_wrapper< const string_type[] > hkcu_reg_dir{
