@@ -322,8 +322,7 @@ namespace core {
                         for ( auto &option : data::options ) {
                             for ( auto &sub_option : option.sub_options ) {
                                 if ( line
-                                     == std::format(
-                                       "{} :: {}", option.label_name, sub_option.label_name ) )
+                                     == std::format( "{}::{}", option.label_name, sub_option.label_name ) )
                                 {
                                     sub_option.is_enabled = true;
                                 }
@@ -356,8 +355,8 @@ namespace core {
                 for ( const auto &option : data::options ) {
                     for ( const auto &sub_option : option.sub_options ) {
                         if ( sub_option.is_enabled ) {
-                            config_text.append( std::format(
-                              "{} :: {}\n", option.label_name, sub_option.label_name ) );
+                            config_text.append(
+                              std::format( "{}::{}\n", option.label_name, sub_option.label_name ) );
                         }
                     }
                 }
