@@ -20,7 +20,7 @@ auto main() -> int
     }
     if ( core::data::option_class[ 2 ][ 0 ].is_enabled ) {
         std::print( "-> 启动修复运行环境线程.\n" );
-        std::thread{ core::repair_runtime_env }.detach();
+        std::thread{ core::fix_runtime_env }.detach();
     }
     std::print( "-> 初始化用户界面.\n" );
     ui.add_back( "                    [ 主  页 ]\n\n" )
