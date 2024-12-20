@@ -1,5 +1,5 @@
 #pragma once
-#if __cplusplus >= 202302L
+#if __cplusplus >= 202302L && ( defined( _WIN32 ) || defined( _WIN64 ) )
 # include <windows.h>
 # ifdef _NEXT_
 #  include <print>
@@ -430,5 +430,5 @@ class console_ui final {
     ~console_ui()                    = default;
 };
 #else
-# error "must be compiled on c++23 / gnu++23 or later C++ standards."
+# error "must be compiled on c++23 / gnu++23 or later C++ standards on the Windows OS platform"
 #endif

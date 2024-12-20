@@ -1,4 +1,4 @@
-#ifdef _WIN32
+#if defined( _WIN32 ) || defined( _WIN64 )
 # include "console_ui.hpp"
 # include "core.hpp"
 # ifdef _NEXT_
@@ -133,5 +133,5 @@ INIT:
 }
 # endif
 #else
-# error "must be compiled on the Windows OS platform."
+# error "must be compiled on the Windows OS platform"
 #endif
