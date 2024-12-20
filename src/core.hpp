@@ -47,18 +47,18 @@ namespace core {
             ~sub_item()                  = default;
         };
         const string_type label_name, showed_name;
-        std::vector< sub_item > sub_items;
+        std::vector< sub_item > sub_options;
         auto &operator[]( size_type _index )
         {
-            return sub_items.at( _index );
+            return sub_options.at( _index );
         }
         auto operator=( const option_item & ) -> option_item & = default;
         auto operator=( option_item && ) -> option_item &      = default;
         option_item(
-          string_type _label_name, string_type _showed_name, std::vector< sub_item > _options )
+          string_type _label_name, string_type _showed_name, std::vector< sub_item > _sub_options )
           : label_name{ std::move( _label_name ) }
           , showed_name{ std::move( _showed_name ) }
-          , sub_items{ std::move( _options ) }
+          , sub_options{ std::move( _sub_options ) }
         { }
         option_item( const option_item & ) = default;
         option_item( option_item && )      = default;
@@ -319,7 +319,7 @@ namespace core {
                             continue;
                         }
                         for ( auto &item_class : data::option_items ) {
-                            for ( auto &item_option : item_class.sub_items ) {
+                            for ( auto &item_option : item_class.sub_options ) {
                                 if ( line
                                      == std::format(
                                        "{} :: {}", item_class.label_name, item_option.label_name ) )
@@ -353,7 +353,7 @@ namespace core {
                 string_type config_text;
                 config_text.append( "[ option ]\n" );
                 for ( const auto &option : data::option_items ) {
-                    for ( const auto &sub_option : option.sub_items ) {
+                    for ( const auto &sub_option : option.sub_options ) {
                         if ( sub_option.is_enabled ) {
                             config_text.append( std::format(
                               "{} :: {}\n", option.label_name, sub_option.label_name ) );
@@ -411,7 +411,7 @@ namespace core {
                 option_setter( option_setter && )      = default;
                 ~option_setter()                       = default;
             };
-            class option_class_shower final {
+            class option_shower final {
               private:
                 option_item &option_;
               public:
@@ -423,7 +423,7 @@ namespace core {
                         std::format( " < 折叠 {}", option_.showed_name ),
                         quit,
                         CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_INTENSITY );
-                    for ( auto &sub_option : option_.sub_items ) {
+                    for ( auto &sub_option : option_.sub_options ) {
                         ui
                           .add_back( std::format(
                             "\n[({}生效) {}]\n",
@@ -437,14 +437,14 @@ namespace core {
                     ui.show();
                     return CONSOLE_UI_REVERT;
                 }
-                auto operator=( const option_class_shower & ) -> option_class_shower & = delete;
-                auto operator=( option_class_shower && ) -> option_class_shower &      = delete;
-                option_class_shower( option_item &_option )
+                auto operator=( const option_shower & ) -> option_shower & = delete;
+                auto operator=( option_shower && ) -> option_shower &      = delete;
+                option_shower( option_item &_option )
                   : option_{ _option }
                 { }
-                option_class_shower( const option_class_shower & ) = default;
-                option_class_shower( option_class_shower && )      = default;
-                ~option_class_shower()                             = default;
+                option_shower( const option_shower & ) = default;
+                option_shower( option_shower && )      = default;
+                ~option_shower()                             = default;
             };
             console_ui ui;
             ui.add_back(
@@ -460,7 +460,7 @@ namespace core {
             for ( auto &option : data::option_items ) {
                 ui.add_back(
                   std::format( " > {}", option.showed_name ),
-                  option_class_shower{ option },
+                  option_shower{ option },
                   color_of_option_buttons );
             }
             ui.show();
