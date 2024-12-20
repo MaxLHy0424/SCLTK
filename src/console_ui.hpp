@@ -73,7 +73,7 @@ class console_ui final {
     using type_wrapper = _type_;
   private:
     enum class console_attrs_ { normal, lock_text, lock_all };
-    struct ui_item_ final {
+    struct console_ui_line_ final {
         string_type text;
         short default_attrs, intensity_attrs, last_attrs;
         COORD position;
@@ -92,7 +92,7 @@ class console_ui final {
         {
             return !operator==( _mouse_position );
         }
-        auto &operator=( const ui_item_ &_src )
+        auto &operator=( const console_ui_line_ &_src )
         {
             text            = _src.text;
             default_attrs   = _src.default_attrs;
@@ -102,7 +102,7 @@ class console_ui final {
             func            = _src.func;
             return *this;
         }
-        auto &operator=( ui_item_ &&_src )
+        auto &operator=( console_ui_line_ &&_src )
         {
             text            = std::move( _src.text );
             default_attrs   = std::move( _src.default_attrs );
@@ -112,7 +112,7 @@ class console_ui final {
             func            = std::move( _src.func );
             return *this;
         }
-        ui_item_()
+        console_ui_line_()
           : text{}
           , default_attrs{ CONSOLE_TEXT_DEFAULT }
           , intensity_attrs{ CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE }
@@ -120,7 +120,7 @@ class console_ui final {
           , position{}
           , func{}
         { }
-        ui_item_(
+        console_ui_line_(
           string_type _text, const short _default_attrs, const short _intensity_attrs, callback_type _func )
           : text{ std::move( _text ) }
           , default_attrs{ _default_attrs }
@@ -129,18 +129,18 @@ class console_ui final {
           , position{}
           , func{ std::move( _func ) }
         { }
-        ui_item_( const ui_item_ & ) = default;
-        ui_item_( ui_item_ && )      = default;
-        ~ui_item_()                  = default;
+        console_ui_line_( const console_ui_line_ & ) = default;
+        console_ui_line_( console_ui_line_ && )      = default;
+        ~console_ui_line_()                          = default;
     };
-    std::deque< ui_item_ > item_;
+    std::deque< console_ui_line_ > line_items_;
     short width_, height_;
     auto show_cursor_( const bool _is_show )
     {
-        CONSOLE_CURSOR_INFO cursor;
-        GetConsoleCursorInfo( GetStdHandle( STD_OUTPUT_HANDLE ), &cursor );
-        cursor.bVisible = _is_show;
-        SetConsoleCursorInfo( GetStdHandle( STD_OUTPUT_HANDLE ), &cursor );
+        CONSOLE_CURSOR_INFO cursor_data;
+        GetConsoleCursorInfo( GetStdHandle( STD_OUTPUT_HANDLE ), &cursor_data );
+        cursor_data.bVisible = _is_show;
+        SetConsoleCursorInfo( GetStdHandle( STD_OUTPUT_HANDLE ), &cursor_data );
     }
     auto edit_console_attrs_( const console_attrs_ _mode )
     {
@@ -167,15 +167,15 @@ class console_ui final {
     }
     auto get_cursor_()
     {
-        CONSOLE_SCREEN_BUFFER_INFO console;
-        GetConsoleScreenBufferInfo( GetStdHandle( STD_OUTPUT_HANDLE ), &console );
-        return console.dwCursorPosition;
+        CONSOLE_SCREEN_BUFFER_INFO console_data;
+        GetConsoleScreenBufferInfo( GetStdHandle( STD_OUTPUT_HANDLE ), &console_data );
+        return console_data.dwCursorPosition;
     }
-    auto set_cursor_( const COORD &_position )
+    auto set_cursor_( const COORD &_cursor_position )
     {
-        SetConsoleCursorPosition( GetStdHandle( STD_OUTPUT_HANDLE ), _position );
+        SetConsoleCursorPosition( GetStdHandle( STD_OUTPUT_HANDLE ), _cursor_position );
     }
-    auto wait_mouse_event_( const bool _move = true )
+    auto wait_mouse_event_( const bool _is_mouse_move = true )
     {
         using namespace std::chrono_literals;
         INPUT_RECORD record;
@@ -184,7 +184,7 @@ class console_ui final {
             std::this_thread::sleep_for( 10ms );
             ReadConsoleInputA( GetStdHandle( STD_INPUT_HANDLE ), &record, 1, &reg );
             if ( record.EventType == MOUSE_EVENT
-                 && _move | ( record.Event.MouseEvent.dwEventFlags != CONSOLE_MOUSE_MOVE ) )
+                 && _is_mouse_move | ( record.Event.MouseEvent.dwEventFlags != CONSOLE_MOUSE_MOVE ) )
             {
                 return record.Event.MouseEvent;
             }
@@ -192,10 +192,10 @@ class console_ui final {
     }
     auto get_console_size_()
     {
-        CONSOLE_SCREEN_BUFFER_INFO console;
-        GetConsoleScreenBufferInfo( GetStdHandle( STD_OUTPUT_HANDLE ), &console );
-        height_ = console.dwSize.Y;
-        width_  = console.dwSize.X;
+        CONSOLE_SCREEN_BUFFER_INFO console_data;
+        GetConsoleScreenBufferInfo( GetStdHandle( STD_OUTPUT_HANDLE ), &console_data );
+        height_ = console_data.dwSize.Y;
+        width_  = console_data.dwSize.X;
     }
     auto cls_()
     {
@@ -216,18 +216,18 @@ class console_ui final {
         std::printf( "%s%c", _text.c_str(), _is_endl ? '\n' : '\0' );
 # endif
     }
-    auto rewrite_( const COORD &_position, const string_type &_text )
+    auto rewrite_( const COORD &_cursor_position, const string_type &_text )
     {
-        set_cursor_( { 0, _position.Y } );
-        write_( string_type( _position.X, ' ' ) );
-        set_cursor_( { 0, _position.Y } );
+        set_cursor_( { 0, _cursor_position.Y } );
+        write_( string_type( _cursor_position.X, ' ' ) );
+        set_cursor_( { 0, _cursor_position.Y } );
         write_( _text );
-        set_cursor_( { 0, _position.Y } );
+        set_cursor_( { 0, _cursor_position.Y } );
     }
     auto init_pos_()
     {
         cls_();
-        for ( auto &line : item_ ) {
+        for ( auto &line : line_items_ ) {
             line.position = get_cursor_();
             line.set_attrs( line.default_attrs );
             write_( line.text, true );
@@ -235,7 +235,7 @@ class console_ui final {
     }
     auto refresh_( const COORD &_hang_position )
     {
-        for ( auto &line : item_ ) {
+        for ( auto &line : line_items_ ) {
             if ( line == _hang_position && line.last_attrs != line.intensity_attrs ) {
                 line.set_attrs( line.intensity_attrs );
                 rewrite_( line.position, line.text );
@@ -249,7 +249,7 @@ class console_ui final {
     auto call_func_( const MOUSE_EVENT_RECORD &_mouse_event )
     {
         bool is_exit{};
-        for ( auto &line : item_ ) {
+        for ( auto &line : line_items_ ) {
             if ( line != _mouse_event.dwMousePosition ) {
                 continue;
             }
@@ -271,36 +271,36 @@ class console_ui final {
   public:
     auto empty() const
     {
-        return item_.empty();
+        return line_items_.empty();
     }
     auto size() const
     {
-        return item_.size();
+        return line_items_.size();
     }
     auto max_size() const
     {
-        return item_.max_size();
+        return line_items_.max_size();
     }
     auto &resize( const size_type _size )
     {
-        item_.resize( _size );
+        line_items_.resize( _size );
         return *this;
     }
     auto &optimize_storage()
     {
-        item_.shrink_to_fit();
+        line_items_.shrink_to_fit();
         return *this;
     }
     auto &optimize_text()
     {
-        for ( auto &line : item_ ) {
+        for ( auto &line : line_items_ ) {
             line.text.shrink_to_fit();
         }
         return *this;
     }
     auto &swap( console_ui &_src )
     {
-        item_.swap( _src.item_ );
+        line_items_.swap( _src.line_items_ );
         return *this;
     }
     auto &add_front(
@@ -309,7 +309,7 @@ class console_ui final {
       const short _intensity_attrs = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
       const short _default_attrs   = CONSOLE_TEXT_DEFAULT )
     {
-        item_.emplace_front( ui_item_{
+        line_items_.emplace_front( console_ui_line_{
           std::move( _text ), _default_attrs, _func == nullptr ? _default_attrs : _intensity_attrs,
           std::move( _func ) } );
         return *this;
@@ -320,7 +320,7 @@ class console_ui final {
       const short _intensity_attrs = CONSOLE_TEXT_FOREGROUND_BLUE | CONSOLE_TEXT_FOREGROUND_GREEN,
       const short _default_attrs   = CONSOLE_TEXT_DEFAULT )
     {
-        item_.emplace_back( ui_item_{
+        line_items_.emplace_back( console_ui_line_{
           std::move( _text ), _default_attrs, _func == nullptr ? _default_attrs : _intensity_attrs,
           std::move( _func ) } );
         return *this;
@@ -332,9 +332,9 @@ class console_ui final {
       const short _intensity_attrs = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
       const short _default_attrs   = CONSOLE_TEXT_DEFAULT )
     {
-        item_.emplace(
-          item_.cbegin() + _index,
-          ui_item_{
+        line_items_.emplace(
+          line_items_.cbegin() + _index,
+          console_ui_line_{
             std::move( _text ), _default_attrs,
             _func == nullptr ? _default_attrs : _intensity_attrs, std::move( _func ) } );
         return *this;
@@ -346,29 +346,29 @@ class console_ui final {
       const short _intensity_attrs = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
       const short _default_attrs   = CONSOLE_TEXT_DEFAULT )
     {
-        item_.at( _index ) = ui_item_{
+        line_items_.at( _index ) = console_ui_line_{
           std::move( _text ), _default_attrs, _func == nullptr ? _default_attrs : _intensity_attrs,
           std::move( _func ) };
         return *this;
     }
     auto &remove_front()
     {
-        item_.pop_front();
+        line_items_.pop_front();
         return *this;
     }
     auto &remove_back()
     {
-        item_.pop_back();
+        line_items_.pop_back();
         return *this;
     }
     auto &remove( const size_type _begin, const size_type _end )
     {
-        item_.erase( item_.cbegin() + _begin, item_.cbegin() + _end );
+        line_items_.erase( line_items_.cbegin() + _begin, line_items_.cbegin() + _end );
         return *this;
     }
     auto &clear()
     {
-        item_.clear();
+        line_items_.clear();
         return *this;
     }
     auto &show()
@@ -445,16 +445,16 @@ class console_ui final {
     }
     auto &operator=( const console_ui &_src )
     {
-        item_ = _src.item_;
+        line_items_ = _src.line_items_;
         return *this;
     }
     auto &operator=( console_ui &&_src )
     {
-        item_ = std::move( _src.item_ );
+        line_items_ = std::move( _src.line_items_ );
         return *this;
     }
     console_ui()
-      : item_{}
+      : line_items_{}
       , width_{}
       , height_{}
     { }
