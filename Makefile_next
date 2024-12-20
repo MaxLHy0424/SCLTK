@@ -24,9 +24,9 @@ bin/release/$(name)-i686-msvcrt.exe: src/*.cpp bin/info-i686.obj src/*.hpp bin
 bin/release/$(name)-x86_64-ucrt.exe: src/*.cpp bin/info-x86_64.obj src/*.hpp bin
 	$(msys2)\\ucrt64\\bin\\$(cc) src/*.cpp bin/info-x86_64.obj $(def) $(args_release) -o $@
 bin/info-i686.obj: info.rc img/favicon.ico bin
-	$(msys2)\\usr\\bin\\windres.exe -i $< -o $@ -F pe-i386
+	$(msys2)\\usr\\bin\\windres.exe -i $< $(def) -o $@ -F pe-i386
 bin/info-x86_64.obj: info.rc img/favicon.ico bin
-	$(msys2)\\usr\\bin\\windres.exe -i $< -o $@ -F pe-x86-64
+	$(msys2)\\usr\\bin\\windres.exe -i $< $(def) -o $@ -F pe-x86-64
 bin: bin/release bin/debug
 bin/release:
 	$(msys2)\\usr\\bin\\mkdir.exe $@ -p
