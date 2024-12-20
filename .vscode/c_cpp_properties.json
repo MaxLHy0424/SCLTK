@@ -14,8 +14,7 @@
             "compilerPath": "C:\\Software\\MSYS2\\ucrt64\\bin\\g++.exe",
             "compilerArgs": [
                 "src/*.cpp",
-                "-fexec-charset=GBK",
-                "-m64"
+                "-fexec-charset=GBK"
             ],
             "intelliSenseMode": "windows-gcc-x64",
             "cStandard": "gnu23",
