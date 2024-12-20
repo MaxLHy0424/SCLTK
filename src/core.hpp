@@ -314,7 +314,7 @@ namespace core {
                             for ( auto &item_option : item_class.sub_item ) {
                                 if ( line
                                      == std::format(
-                                       " - {} :: {}", item_class.tag_name, item_option.tag_name ) )
+                                       "{} :: {}", item_class.tag_name, item_option.tag_name ) )
                                 {
                                     item_option.is_enabled = true;
                                 }
@@ -348,7 +348,7 @@ namespace core {
                     for ( const auto &item_option : item_class.sub_item ) {
                         if ( item_option.is_enabled ) {
                             text.append( std::format(
-                              " - {} :: {}\n", item_class.tag_name, item_option.tag_name ) );
+                              "{} :: {}\n", item_class.tag_name, item_option.tag_name ) );
                         }
                     }
                 }
