@@ -14,11 +14,11 @@ auto main() -> int
         return 1;
     }
     core::config_op{ 'r' }( console_ui::func_args{ ui } );
-    if ( core::data::option_lists[ 1 ][ 0 ].is_enabled ) {
+    if ( core::data::option_nodes[ 1 ][ 0 ].is_enabled ) {
         std::print( "-> 启动置顶窗口线程.\n" );
         std::thread{ core::force_show_window }.detach();
     }
-    if ( core::data::option_lists[ 2 ][ 0 ].is_enabled ) {
+    if ( core::data::option_nodes[ 2 ][ 0 ].is_enabled ) {
         std::print( "-> 启动修复运行环境线程.\n" );
         std::thread{ core::fix_runtime_env }.detach();
     }
@@ -53,18 +53,18 @@ auto main() -> int
         WINDOW_HEIGHT,
         true,
         false,
-        core::data::option_lists[ 1 ][ 1 ].is_enabled ? false : true,
-        core::data::option_lists[ 1 ][ 2 ].is_enabled ? 230 : 255 )
+        core::data::option_nodes[ 1 ][ 1 ].is_enabled ? false : true,
+        core::data::option_nodes[ 1 ][ 2 ].is_enabled ? 230 : 255 )
       .show()
       .lock( false, false );
-    if ( core::data::option_lists[ 1 ][ 0 ].is_enabled ) {
+    if ( core::data::option_nodes[ 1 ][ 0 ].is_enabled ) {
         SetWindowPos( GetConsoleWindow(), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
     }
-    if ( core::data::option_lists[ 1 ][ 1 ].is_enabled ) {
+    if ( core::data::option_nodes[ 1 ][ 1 ].is_enabled ) {
         EnableMenuItem(
           GetSystemMenu( GetConsoleWindow(), FALSE ), SC_CLOSE, MF_BYCOMMAND | MF_ENABLED );
     }
-    if ( core::data::option_lists[ 1 ][ 2 ].is_enabled ) {
+    if ( core::data::option_nodes[ 1 ][ 2 ].is_enabled ) {
         SetLayeredWindowAttributes( GetConsoleWindow(), 0, 255, LWA_ALPHA );
     }
     SetWindowLongPtrA(
