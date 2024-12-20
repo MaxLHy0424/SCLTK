@@ -232,7 +232,7 @@ namespace core {
           private:
             const string_type cmd_;
           public:
-            auto operator()( console_ui::func_args )
+            auto operator()( console_ui::func_args ) const
             {
                 std::print( "-> 执行 Windows 命令.\n{}\n", string_type( WINDOW_WIDTH, '-' ) );
                 system( cmd_.c_str() );
@@ -397,7 +397,7 @@ namespace core {
                 option_item::sub_item &sub_option_;
                 const bool sub_option_value_;
               public:
-                auto operator()( console_ui::func_args )
+                auto operator()( console_ui::func_args ) const
                 {
                     sub_option_.is_enabled = sub_option_value_;
                     return CONSOLE_UI_REVERT;
@@ -416,7 +416,7 @@ namespace core {
               private:
                 option_item &option_;
               public:
-                auto operator()( console_ui::func_args )
+                auto operator()( console_ui::func_args ) const
                 {
                     console_ui ui;
                     ui.add_back( "                    [ 配  置 ]\n\n" )
