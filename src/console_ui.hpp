@@ -73,7 +73,7 @@ class console_ui final {
     using type_wrapper = _type_;
   private:
     enum class console_attrs_ { normal, lock_text, lock_all };
-    struct console_ui_line_ final {
+    struct line_item_ final {
         string_type text;
         short default_attrs, intensity_attrs, last_attrs;
         COORD position;
@@ -92,9 +92,9 @@ class console_ui final {
         {
             return !operator==( _mouse_position );
         }
-        auto operator=( const console_ui_line_ & ) -> console_ui_line_ & = default;
-        auto operator=( console_ui_line_ && ) -> console_ui_line_ &      = default;
-        console_ui_line_()
+        auto operator=( const line_item_ & ) -> line_item_ & = default;
+        auto operator=( line_item_ && ) -> line_item_ &      = default;
+        line_item_()
           : text{}
           , default_attrs{ CONSOLE_TEXT_DEFAULT }
           , intensity_attrs{ CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE }
@@ -102,7 +102,7 @@ class console_ui final {
           , position{}
           , func{}
         { }
-        console_ui_line_(
+        line_item_(
           string_type _text, const short _default_attrs, const short _intensity_attrs, callback_type _func )
           : text{ std::move( _text ) }
           , default_attrs{ _default_attrs }
@@ -111,11 +111,11 @@ class console_ui final {
           , position{}
           , func{ std::move( _func ) }
         { }
-        console_ui_line_( const console_ui_line_ & ) = default;
-        console_ui_line_( console_ui_line_ && )      = default;
-        ~console_ui_line_()                          = default;
+        line_item_( const line_item_ & ) = default;
+        line_item_( line_item_ && )      = default;
+        ~line_item_()                    = default;
     };
-    std::deque< console_ui_line_ > line_items_;
+    std::deque< line_item_ > lines_;
     short width_, height_;
     auto show_cursor_( const bool _is_show )
     {
@@ -209,7 +209,7 @@ class console_ui final {
     auto init_pos_()
     {
         cls_();
-        for ( auto &line : line_items_ ) {
+        for ( auto &line : lines_ ) {
             line.position = get_cursor_();
             line.set_attrs( line.default_attrs );
             write_( line.text, true );
@@ -217,7 +217,7 @@ class console_ui final {
     }
     auto refresh_( const COORD &_hang_position )
     {
-        for ( auto &line : line_items_ ) {
+        for ( auto &line : lines_ ) {
             if ( line == _hang_position && line.last_attrs != line.intensity_attrs ) {
                 line.set_attrs( line.intensity_attrs );
                 rewrite_( line.position, line.text );
@@ -231,7 +231,7 @@ class console_ui final {
     auto call_func_( const MOUSE_EVENT_RECORD &_mouse_event )
     {
         bool is_exit{};
-        for ( auto &line : line_items_ ) {
+        for ( auto &line : lines_ ) {
             if ( line != _mouse_event.dwMousePosition ) {
                 continue;
             }
@@ -253,36 +253,36 @@ class console_ui final {
   public:
     auto empty() const
     {
-        return line_items_.empty();
+        return lines_.empty();
     }
     auto size() const
     {
-        return line_items_.size();
+        return lines_.size();
     }
     auto max_size() const
     {
-        return line_items_.max_size();
+        return lines_.max_size();
     }
     auto &resize( const size_type _size )
     {
-        line_items_.resize( _size );
+        lines_.resize( _size );
         return *this;
     }
     auto &optimize_storage()
     {
-        line_items_.shrink_to_fit();
+        lines_.shrink_to_fit();
         return *this;
     }
     auto &optimize_text()
     {
-        for ( auto &line : line_items_ ) {
+        for ( auto &line : lines_ ) {
             line.text.shrink_to_fit();
         }
         return *this;
     }
     auto &swap( console_ui &_src )
     {
-        line_items_.swap( _src.line_items_ );
+        lines_.swap( _src.lines_ );
         return *this;
     }
     auto &add_front(
@@ -291,7 +291,7 @@ class console_ui final {
       const short _intensity_attrs = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
       const short _default_attrs   = CONSOLE_TEXT_DEFAULT )
     {
-        line_items_.emplace_front( console_ui_line_{
+        lines_.emplace_front( line_item_{
           std::move( _text ), _default_attrs, _func == nullptr ? _default_attrs : _intensity_attrs,
           std::move( _func ) } );
         return *this;
@@ -302,7 +302,7 @@ class console_ui final {
       const short _intensity_attrs = CONSOLE_TEXT_FOREGROUND_BLUE | CONSOLE_TEXT_FOREGROUND_GREEN,
       const short _default_attrs   = CONSOLE_TEXT_DEFAULT )
     {
-        line_items_.emplace_back( console_ui_line_{
+        lines_.emplace_back( line_item_{
           std::move( _text ), _default_attrs, _func == nullptr ? _default_attrs : _intensity_attrs,
           std::move( _func ) } );
         return *this;
@@ -314,9 +314,9 @@ class console_ui final {
       const short _intensity_attrs = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
       const short _default_attrs   = CONSOLE_TEXT_DEFAULT )
     {
-        line_items_.emplace(
-          line_items_.cbegin() + _index,
-          console_ui_line_{
+        lines_.emplace(
+          lines_.cbegin() + _index,
+          line_item_{
             std::move( _text ), _default_attrs,
             _func == nullptr ? _default_attrs : _intensity_attrs, std::move( _func ) } );
         return *this;
@@ -328,29 +328,29 @@ class console_ui final {
       const short _intensity_attrs = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
       const short _default_attrs   = CONSOLE_TEXT_DEFAULT )
     {
-        line_items_.at( _index ) = console_ui_line_{
+        lines_.at( _index ) = line_item_{
           std::move( _text ), _default_attrs, _func == nullptr ? _default_attrs : _intensity_attrs,
           std::move( _func ) };
         return *this;
     }
     auto &remove_front()
     {
-        line_items_.pop_front();
+        lines_.pop_front();
         return *this;
     }
     auto &remove_back()
     {
-        line_items_.pop_back();
+        lines_.pop_back();
         return *this;
     }
     auto &remove( const size_type _begin, const size_type _end )
     {
-        line_items_.erase( line_items_.cbegin() + _begin, line_items_.cbegin() + _end );
+        lines_.erase( lines_.cbegin() + _begin, lines_.cbegin() + _end );
         return *this;
     }
     auto &clear()
     {
-        line_items_.clear();
+        lines_.clear();
         return *this;
     }
     auto &show()
@@ -421,7 +421,7 @@ class console_ui final {
     auto operator=( const console_ui & ) -> console_ui & = default;
     auto operator=( console_ui && ) -> console_ui &      = default;
     console_ui()
-      : line_items_{}
+      : lines_{}
       , width_{}
       , height_{}
     { }
