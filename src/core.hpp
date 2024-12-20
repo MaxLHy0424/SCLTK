@@ -277,7 +277,7 @@ namespace core {
     class config_op final {
       private:
         const char mode_;
-        auto load_( bool _is_reload ) const
+        auto load_( const bool _is_reload ) const
         {
             std::ifstream config_file{ data::config_file_name, std::ios::in };
             if ( !config_file.is_open() ) {
@@ -394,7 +394,7 @@ namespace core {
             class option_setter {
               private:
                 option_item::sub_item &sub_option_;
-                bool sub_option_value_;
+                const bool sub_option_value_;
               public:
                 auto operator()( console_ui::func_args )
                 {
@@ -403,7 +403,7 @@ namespace core {
                 }
                 auto &operator=( const option_setter & ) = delete;
                 auto &operator=( option_setter && )      = delete;
-                option_setter( option_item::sub_item &_sub_option, bool _sub_option_value )
+                option_setter( option_item::sub_item &_sub_option, const bool _sub_option_value )
                   : sub_option_{ _sub_option }
                   , sub_option_value_{ _sub_option_value }
                 { }
