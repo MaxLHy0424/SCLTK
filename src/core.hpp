@@ -458,10 +458,7 @@ namespace core {
               .add_back( " > 打开配置文件 ", open_config_file )
               .add_back( "\n[选项分类]\n" );
             for ( auto &option : data::options ) {
-                ui.add_back(
-                  std::format( " > {}", option.showed_name ),
-                  option_shower{ option },
-                  color_of_option_buttons );
+                ui.add_back( std::format( " > {}", option.showed_name ), option_shower{ option } );
             }
             ui.show();
             return CONSOLE_UI_REVERT;
