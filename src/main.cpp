@@ -1,7 +1,6 @@
-#if defined( _WIN32 ) || defined( _WIN64 )
-# include "console_ui.hpp"
-# include "core.hpp"
-# ifdef _NEXT_
+#include "console_ui.hpp"
+#include "core.hpp"
+#ifdef _NEXT_
 auto main() -> int
 {
     console_ui ui;
@@ -74,7 +73,7 @@ auto main() -> int
         | WS_MINIMIZEBOX );
     return 0;
 }
-# else
+#else
 auto main( const int _argc, const char *const _argv[] ) -> int
 {
     console_ui ui;
@@ -131,7 +130,4 @@ INIT:
     }
     return 0;
 }
-# endif
-#else
-# error "must be compiled on the Windows OS platform"
 #endif

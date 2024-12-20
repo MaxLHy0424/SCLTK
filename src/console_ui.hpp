@@ -1,52 +1,51 @@
 #pragma once
-#if __cplusplus >= 202302L && ( defined( _WIN32 ) || defined( _WIN64 ) )
-# include <windows.h>
-# ifdef _NEXT_
-#  include <print>
-# else
-#  include <cstdio>
-# endif
-# include <chrono>
-# include <functional>
-# include <queue>
-# include <string>
-# include <thread>
-# define CONSOLE_MOUSE_BUTTON_LEFT               FROM_LEFT_1ST_BUTTON_PRESSED
-# define CONSOLE_MOUSE_BUTTON_MIDDLE             FROM_LEFT_2ND_BUTTON_PRESSED
-# define CONSOLE_MOUSE_BUTTON_RIGHT              RIGHTMOST_BUTTON_PRESSED
-# define CONSOLE_MOUSE_CLICK                     0x0000
-# define CONSOLE_MOUSE_CLICK_DOUBLE              DOUBLE_CLICK
-# define CONSOLE_MOUSE_MOVE                      MOUSE_MOVED
-# define CONSOLE_MOUSE_WHEEL_HEIGHT              MOUSE_HWHEELED
-# define CONSOLE_MOUSE_WHEEL                     MOUSE_WHEELED
-# define CONSOLE_KEY_RIGHT_ALT_PRESS             RIGHT_ALT_PRESSED
-# define CONSOLE_KEY_LEFT_ALT_PRESS              LEFT_ALT_PRESSED
-# define CONSOLE_KEY_RIGHT_CTRL_PRESS            RIGHT_CTRL_PRESSED
-# define CONSOLE_KEY_LEFT_CTRL_PRESS             LEFT_CTRL_PRESSED
-# define CONSOLE_KEY_SHIFT_PRESS                 SHIFT_PRESSED
-# define CONSOLE_KEY_NUM_LOCK_ON                 NUMLOCK_ON
-# define CONSOLE_KEY_SCROLL_LOCK_ON              SCROLLLOCK_ON
-# define CONSOLE_KEY_CAPS_LOCK_ON                CAPSLOCK_ON
-# define CONSOLE_KEY_ENHANCED_KEY                ENHANCED_KEY
-# define CONSOLE_TEXT_DEFAULT                    FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE
-# define CONSOLE_TEXT_FOREGROUND_RED             FOREGROUND_RED
-# define CONSOLE_TEXT_FOREGROUND_GREEN           FOREGROUND_GREEN
-# define CONSOLE_TEXT_FOREGROUND_BLUE            FOREGROUND_BLUE
-# define CONSOLE_TEXT_FOREGROUND_INTENSITY       FOREGROUND_INTENSITY
-# define CONSOLE_TEXT_BACKGROUND_RED             BACKGROUND_RED
-# define CONSOLE_TEXT_BACKGROUND_GREEN           BACKGROUND_GREEN
-# define CONSOLE_TEXT_BACKGROUND_BLUE            BACKGROUND_BLUE
-# define CONSOLE_TEXT_BACKGROUND_INTENSITY       BACKGROUND_INTENSITY
-# define CONSOLE_TEXT_COMMON_LVB_LEADING_BYTE    COMMON_LVB_LEADING_BYTE
-# define CONSOLE_TEXT_COMMON_LVB_TRAILING_BYTE   COMMON_LVB_TRAILING_BYTE
-# define CONSOLE_TEXT_COMMON_LVB_GRID_HORIZONTAL COMMON_LVB_GRID_HORIZONTAL
-# define CONSOLE_TEXT_COMMON_LVB_GRID_LVERTICAL  COMMON_LVB_GRID_LVERTICAL
-# define CONSOLE_TEXT_COMMON_LVB_GRID_RVERTICAL  COMMON_LVB_GRID_RVERTICAL
-# define CONSOLE_TEXT_COMMON_LVB_REVERSE_VIDEO   COMMON_LVB_REVERSE_VIDEO
-# define CONSOLE_TEXT_COMMON_LVB_UNDERSCORE      COMMON_LVB_UNDERSCORE
-# define CONSOLE_TEXT_COMMON_LVB_SBCSDBCS        COMMON_LVB_SBCSDBCS
-# define CONSOLE_UI_REVERT                       false
-# define CONSOLE_UI_TERMINATE                    true
+#include <windows.h>
+#ifdef _NEXT_
+# include <print>
+#else
+# include <cstdio>
+#endif
+#include <chrono>
+#include <functional>
+#include <queue>
+#include <string>
+#include <thread>
+#define CONSOLE_MOUSE_BUTTON_LEFT               FROM_LEFT_1ST_BUTTON_PRESSED
+#define CONSOLE_MOUSE_BUTTON_MIDDLE             FROM_LEFT_2ND_BUTTON_PRESSED
+#define CONSOLE_MOUSE_BUTTON_RIGHT              RIGHTMOST_BUTTON_PRESSED
+#define CONSOLE_MOUSE_CLICK                     0x0000
+#define CONSOLE_MOUSE_CLICK_DOUBLE              DOUBLE_CLICK
+#define CONSOLE_MOUSE_MOVE                      MOUSE_MOVED
+#define CONSOLE_MOUSE_WHEEL_HEIGHT              MOUSE_HWHEELED
+#define CONSOLE_MOUSE_WHEEL                     MOUSE_WHEELED
+#define CONSOLE_KEY_RIGHT_ALT_PRESS             RIGHT_ALT_PRESSED
+#define CONSOLE_KEY_LEFT_ALT_PRESS              LEFT_ALT_PRESSED
+#define CONSOLE_KEY_RIGHT_CTRL_PRESS            RIGHT_CTRL_PRESSED
+#define CONSOLE_KEY_LEFT_CTRL_PRESS             LEFT_CTRL_PRESSED
+#define CONSOLE_KEY_SHIFT_PRESS                 SHIFT_PRESSED
+#define CONSOLE_KEY_NUM_LOCK_ON                 NUMLOCK_ON
+#define CONSOLE_KEY_SCROLL_LOCK_ON              SCROLLLOCK_ON
+#define CONSOLE_KEY_CAPS_LOCK_ON                CAPSLOCK_ON
+#define CONSOLE_KEY_ENHANCED_KEY                ENHANCED_KEY
+#define CONSOLE_TEXT_DEFAULT                    FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE
+#define CONSOLE_TEXT_FOREGROUND_RED             FOREGROUND_RED
+#define CONSOLE_TEXT_FOREGROUND_GREEN           FOREGROUND_GREEN
+#define CONSOLE_TEXT_FOREGROUND_BLUE            FOREGROUND_BLUE
+#define CONSOLE_TEXT_FOREGROUND_INTENSITY       FOREGROUND_INTENSITY
+#define CONSOLE_TEXT_BACKGROUND_RED             BACKGROUND_RED
+#define CONSOLE_TEXT_BACKGROUND_GREEN           BACKGROUND_GREEN
+#define CONSOLE_TEXT_BACKGROUND_BLUE            BACKGROUND_BLUE
+#define CONSOLE_TEXT_BACKGROUND_INTENSITY       BACKGROUND_INTENSITY
+#define CONSOLE_TEXT_COMMON_LVB_LEADING_BYTE    COMMON_LVB_LEADING_BYTE
+#define CONSOLE_TEXT_COMMON_LVB_TRAILING_BYTE   COMMON_LVB_TRAILING_BYTE
+#define CONSOLE_TEXT_COMMON_LVB_GRID_HORIZONTAL COMMON_LVB_GRID_HORIZONTAL
+#define CONSOLE_TEXT_COMMON_LVB_GRID_LVERTICAL  COMMON_LVB_GRID_LVERTICAL
+#define CONSOLE_TEXT_COMMON_LVB_GRID_RVERTICAL  COMMON_LVB_GRID_RVERTICAL
+#define CONSOLE_TEXT_COMMON_LVB_REVERSE_VIDEO   COMMON_LVB_REVERSE_VIDEO
+#define CONSOLE_TEXT_COMMON_LVB_UNDERSCORE      COMMON_LVB_UNDERSCORE
+#define CONSOLE_TEXT_COMMON_LVB_SBCSDBCS        COMMON_LVB_SBCSDBCS
+#define CONSOLE_UI_REVERT                       false
+#define CONSOLE_UI_TERMINATE                    true
 class console_ui final {
   public:
     struct func_args final {
@@ -183,20 +182,20 @@ class console_ui final {
     {
         get_console_size_();
         set_cursor_( { 0, 0 } );
-# ifdef _NEXT_
+#ifdef _NEXT_
         std::print( "{}", string_type( width_ * height_, ' ' ) );
-# else
+#else
         std::printf( string_type( width_ * height_, ' ' ).c_str() );
-# endif
+#endif
         set_cursor_( { 0, 0 } );
     }
     auto write_( const string_type &_text, const bool _is_endl = false )
     {
-# ifdef _NEXT_
+#ifdef _NEXT_
         std::print( "{}{}", _text, _is_endl ? '\n' : '\0' );
-# else
+#else
         std::printf( "%s%c", _text.c_str(), _is_endl ? '\n' : '\0' );
-# endif
+#endif
     }
     auto rewrite_( const COORD &_cursor_position, const string_type &_text )
     {
@@ -377,7 +376,7 @@ class console_ui final {
         cls_();
         return *this;
     }
-# ifdef _NEXT_
+#ifdef _NEXT_
     auto &set_console(
       const UINT _code_page,
       const string_type &_title,
@@ -411,7 +410,7 @@ class console_ui final {
         SetLayeredWindowAttributes( GetConsoleWindow(), 0, _transparency, LWA_ALPHA );
         return *this;
     }
-# endif
+#endif
     auto &lock( const bool _is_hide_cursor, const bool _is_lock_text )
     {
         show_cursor_( !_is_hide_cursor );
@@ -429,6 +428,3 @@ class console_ui final {
     console_ui( console_ui && )      = default;
     ~console_ui()                    = default;
 };
-#else
-# error "must be compiled on c++23 / gnu++23 or later C++ standards on the Windows OS platform"
-#endif
