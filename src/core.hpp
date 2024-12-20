@@ -291,13 +291,13 @@ namespace core {
                 if ( line.empty() || line.front() == '#' ) {
                     continue;
                 }
-                if ( line == "[option]" ) {
+                if ( line == "[ option ]" ) {
                     tag = config_tag::option;
                     continue;
-                } else if ( line == "[rule_exe]" ) {
+                } else if ( line == "[ rule_exe ]" ) {
                     tag = config_tag::rule_exe;
                     continue;
-                } else if ( line == "[rule_svc]" ) {
+                } else if ( line == "[ rule_svc ]" ) {
                     tag = config_tag::rule_svc;
                     continue;
                 } else if ( line.front() == '[' && line.back() == ']' ) {
@@ -313,7 +313,8 @@ namespace core {
                         for ( auto &item_class : data::option_class ) {
                             for ( auto &item_option : item_class.sub_item ) {
                                 if ( line
-                                     == std::format( "{}::{}", item_class.tag_name, item_option.tag_name ) )
+                                     == std::format(
+                                       " - {} :: {}", item_class.tag_name, item_option.tag_name ) )
                                 {
                                     item_option.is_enabled = true;
                                 }
@@ -342,20 +343,20 @@ namespace core {
                 load_( true );
                 std::print( "-> 保存更改.\n" );
                 string_type text;
-                text.append( "[option]\n" );
+                text.append( "[ option ]\n" );
                 for ( const auto &item_class : data::option_class ) {
                     for ( const auto &item_option : item_class.sub_item ) {
                         if ( item_option.is_enabled ) {
-                            text.append(
-                              std::format( "{}::{}\n", item_class.tag_name, item_option.tag_name ) );
+                            text.append( std::format(
+                              " - {} :: {}\n", item_class.tag_name, item_option.tag_name ) );
                         }
                     }
                 }
-                text.append( "[rule_exe]\n" );
+                text.append( "[ rule_exe ]\n" );
                 for ( const auto &item : data::custom_rule.exe ) {
                     text.append( item ).push_back( '\n' );
                 }
-                text.append( "[rule_svc]\n" );
+                text.append( "[ rule_svc ]\n" );
                 for ( const auto &item : data::custom_rule.svc ) {
                     text.append( item ).push_back( '\n' );
                 }
