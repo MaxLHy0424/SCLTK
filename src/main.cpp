@@ -36,15 +36,15 @@ auto main() -> int
       .add_back(
         std::format( " > {} ", core::data::custom_rules.showed_name ),
         core::rule_op{ 'c', core::data::custom_rules } );
-    for ( const auto &item : core::data::builtin_rules ) {
-        ui.add_back( std::format( " > {} ", item.showed_name ), core::rule_op{ 'c', item } );
+    for ( const auto &rule : core::data::builtin_rules ) {
+        ui.add_back( std::format( " > {} ", rule.showed_name ), core::rule_op{ 'c', rule } );
     }
     ui.add_back( "\n[恢复]\n" )
       .add_back(
         std::format( " > {} ", core::data::custom_rules.showed_name ),
         core::rule_op{ 'r', core::data::custom_rules } );
-    for ( const auto &item : core::data::builtin_rules ) {
-        ui.add_back( std::format( " > {} ", item.showed_name ), core::rule_op{ 'r', item } );
+    for ( const auto &rule : core::data::builtin_rules ) {
+        ui.add_back( std::format( " > {} ", rule.showed_name ), core::rule_op{ 'r', rule } );
     }
     ui.set_console(
         CODE_PAGE,
