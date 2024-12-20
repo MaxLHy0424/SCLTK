@@ -230,7 +230,7 @@ namespace core {
         } };
         class cmd_executor final {
           private:
-            const string_type &cmd_;
+            const string_type cmd_;
           public:
             auto operator()( console_ui::func_args )
             {
@@ -240,8 +240,8 @@ namespace core {
             }
             auto operator=( const cmd_executor & ) -> cmd_executor & = default;
             auto operator=( cmd_executor && ) -> cmd_executor &      = default;
-            cmd_executor( const string_type &_cmd )
-              : cmd_{ _cmd }
+            cmd_executor( string_type _cmd )
+              : cmd_{ std::move( _cmd ) }
             { }
             cmd_executor( const cmd_executor & ) = default;
             cmd_executor( cmd_executor && )      = default;
@@ -269,7 +269,8 @@ namespace core {
           .add_back( " > 命令提示符 ", launch_cmd )
           .add_back( "\n[常用操作]\n" );
         for ( const auto &op : common_ops ) {
-            ui.add_back( std::format( " > {} ", std::move( op[ 0 ] ) ), cmd_executor{ op[ 1 ] } );
+            ui.add_back(
+              std::format( " > {} ", std::move( op[ 0 ] ) ), cmd_executor{ std::move( op[ 1 ] ) } );
         }
         ui.show();
         return CONSOLE_UI_REVERT;
