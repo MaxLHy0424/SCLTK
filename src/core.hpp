@@ -19,20 +19,20 @@ namespace core {
     template < typename _type_ >
     using type_wrapper = console_ui::type_wrapper< _type_ >;
     struct option_item final {
-        struct sub_item final {
+        struct sub_option_item final {
             const string_type label_name, showed_name;
             const bool is_relaunch_to_apply;
             bool is_enabled;
-            auto operator=( const sub_item & ) -> sub_item & = default;
-            auto operator=( sub_item && ) -> sub_item &      = default;
-            sub_item(
+            auto operator=( const sub_option_item & ) -> sub_option_item & = default;
+            auto operator=( sub_option_item && ) -> sub_option_item &      = default;
+            sub_option_item(
               string_type _label_name, string_type _showed_name, const bool _is_relaunch_to_apply )
               : label_name{ std::move( _label_name ) }
               , showed_name{ std::move( _showed_name ) }
               , is_relaunch_to_apply{ _is_relaunch_to_apply }
               , is_enabled{ false }
             { }
-            sub_item(
+            sub_option_item(
               string_type _label_name,
               string_type _showed_name,
               const bool _is_relaunch_to_apply,
@@ -42,12 +42,12 @@ namespace core {
               , is_relaunch_to_apply{ _is_relaunch_to_apply }
               , is_enabled{ _default_value }
             { }
-            sub_item( const sub_item & ) = default;
-            sub_item( sub_item && )      = default;
-            ~sub_item()                  = default;
+            sub_option_item( const sub_option_item & ) = default;
+            sub_option_item( sub_option_item && )      = default;
+            ~sub_option_item()                         = default;
         };
         const string_type label_name, showed_name;
-        std::vector< sub_item > sub_options;
+        std::vector< sub_option_item > sub_options;
         auto &operator[]( size_type _index )
         {
             return sub_options.at( _index );
@@ -55,7 +55,7 @@ namespace core {
         auto operator=( const option_item & ) -> option_item & = default;
         auto operator=( option_item && ) -> option_item &      = default;
         option_item(
-          string_type _label_name, string_type _showed_name, std::vector< sub_item > _sub_options )
+          string_type _label_name, string_type _showed_name, std::vector< sub_option_item > _sub_options )
           : label_name{ std::move( _label_name ) }
           , showed_name{ std::move( _showed_name ) }
           , sub_options{ std::move( _sub_options ) }
@@ -393,7 +393,7 @@ namespace core {
             } };
             class option_setter {
               private:
-                option_item::sub_item &sub_option_;
+                option_item::sub_option_item &sub_option_;
                 const bool sub_option_value_;
               public:
                 auto operator()( console_ui::func_args ) const
@@ -403,7 +403,7 @@ namespace core {
                 }
                 auto operator=( const option_setter & ) -> option_setter & = delete;
                 auto operator=( option_setter && ) -> option_setter &      = delete;
-                option_setter( option_item::sub_item &_sub_option, const bool _sub_option_value )
+                option_setter( option_item::sub_option_item &_sub_option, const bool _sub_option_value )
                   : sub_option_{ _sub_option }
                   , sub_option_value_{ _sub_option_value }
                 { }
