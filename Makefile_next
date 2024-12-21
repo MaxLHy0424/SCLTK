@@ -12,7 +12,7 @@ init:
 	 mingw-w64-i686-toolchain\
 	 mingw-w64-ucrt-x86_64-toolchain
 release: bin/release/CRCSN-i686-msvcrt.exe\
-       bin/release/CRCSN-x86_64-ucrt.exe
+         bin/release/CRCSN-x86_64-ucrt.exe
 debug: src/*.cpp src/*.hpp bin
 	$(msys2)\\ucrt64\\bin\\$(cc) src/*.cpp $(def) $(args_debug) -o ./bin/debug/__debug__.exe
 clean:
