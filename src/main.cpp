@@ -18,8 +18,8 @@ auto main() -> int
         std::thread{ core::force_show_window }.detach();
     }
     if ( core::data::options[ 2 ][ 0 ].is_enabled ) {
-        std::print( "-> 启动修复运行环境线程.\n" );
-        std::thread{ core::fix_runtime_env }.detach();
+        std::print( "-> 启动修复操作系统环境线程.\n" );
+        std::thread{ core::fix_os_env }.detach();
     }
     std::print( "-> 初始化用户界面.\n" );
     ui.add_back( "                    [ 主  页 ]\n\n" )
