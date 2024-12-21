@@ -130,6 +130,7 @@ set launch.args=-Wtf
 
 ### 计划执行
 
+- 迁移至 LLVM 工具链;
 - 支持 i686 架构;
 - 移除 `launcher.cmd`.
 
