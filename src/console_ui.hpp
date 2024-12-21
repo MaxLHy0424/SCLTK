@@ -1,12 +1,8 @@
 #pragma once
 #include <windows.h>
-#ifdef _NEXT_
-# include <print>
-#else
-# include <cstdio>
-#endif
 #include <chrono>
 #include <functional>
+#include <print>
 #include <queue>
 #include <string>
 #include <thread>
@@ -183,20 +179,12 @@ class console_ui final {
     {
         get_console_size_();
         set_cursor_( { 0, 0 } );
-#ifdef _NEXT_
         std::print( "{}", string_type( width_ * height_, ' ' ) );
-#else
-        std::printf( string_type( width_ * height_, ' ' ).c_str() );
-#endif
         set_cursor_( { 0, 0 } );
     }
     auto write_( const string_type &_text, const bool _is_endl = false )
     {
-#ifdef _NEXT_
         std::print( "{}{}", _text, _is_endl ? '\n' : '\0' );
-#else
-        std::printf( "%s%c", _text.c_str(), _is_endl ? '\n' : '\0' );
-#endif
     }
     auto rewrite_( const COORD &_cursor_position, const string_type &_text )
     {
@@ -381,7 +369,6 @@ class console_ui final {
         cls_();
         return *this;
     }
-#ifdef _NEXT_
     auto &set_console(
       const string_type &_title, const UINT _code_page, const SHORT _width, const SHORT _height,
       const bool _fix_size, const bool _minimize_ctrl, const bool _close_window_ctrl,
@@ -407,7 +394,6 @@ class console_ui final {
         SetLayeredWindowAttributes( GetConsoleWindow(), 0, _transparency, LWA_ALPHA );
         return *this;
     }
-#endif
     auto &lock( const bool _is_hide_cursor, const bool _is_lock_text )
     {
         show_cursor_( !_is_hide_cursor );
