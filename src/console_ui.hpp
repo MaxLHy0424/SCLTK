@@ -102,7 +102,8 @@ class console_ui final {
           , func{}
         { }
         line_item_(
-          string_type _text, const short _default_attrs, const short _intensity_attrs, callback_type _func )
+          string_type _text, const short _default_attrs, const short _intensity_attrs,
+          callback_type _func )
           : text{ std::move( _text ) }
           , default_attrs{ _default_attrs }
           , intensity_attrs{ _intensity_attrs }
@@ -378,13 +379,8 @@ class console_ui final {
     }
 #ifdef _NEXT_
     auto &set_console(
-      const UINT _code_page,
-      const string_type &_title,
-      const SHORT _width,
-      const SHORT _height,
-      const bool _fix_size,
-      const bool _minimize_ctrl,
-      const bool _close_window_ctrl,
+      const string_type &_title, const UINT _code_page, const SHORT _width, const SHORT _height,
+      const bool _fix_size, const bool _minimize_ctrl, const bool _close_window_ctrl,
       const BYTE _transparency )
     {
         SetConsoleOutputCP( _code_page );

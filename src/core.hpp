@@ -203,8 +203,8 @@ namespace core {
         {
             _args.parent_ui.lock( false, false );
             _args.parent_ui.set_console(
-              CODE_PAGE,
               WINDOW_TITLE " - 命令提示符",
+              CODE_PAGE,
               120,
               30,
               false,
@@ -214,8 +214,8 @@ namespace core {
             SetConsoleScreenBufferSize( GetStdHandle( STD_OUTPUT_HANDLE ), { 125, SHRT_MAX - 1 } );
             system( "cmd.exe" );
             _args.parent_ui.set_console(
-              CODE_PAGE,
               WINDOW_TITLE,
+              CODE_PAGE,
               WINDOW_WIDTH,
               WINDOW_HEIGHT,
               true,
