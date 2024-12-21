@@ -82,14 +82,14 @@ namespace core {
     namespace data {
         inline const string_type config_file_name{ "config.ini" };
         inline type_wrapper< option_item[] > options{
-          {"operation",
-           "破解/恢复",         { { "hijack_reg", "注册表劫持", false },
-              { "set_svc_startup_type", "设置服务启动类型", false } }},
-          {"window",
-           "窗口显示",          { { "force_show", "置顶显示", true },
+          {"operations",
+           "破解/恢复",              { { "hijack_execs", "劫持可执行文件", false },
+              { "set_serv_startup_types", "设置服务启动类型", false } }},
+          {"window_display",
+           "窗口显示",               { { "force_show", "置顶显示", true },
               { "disable_close_ctrl", "禁用关闭控件", true },
-              { "translucency", "半透明化", true } }                  },
-          {"other",     "其他", { { "fix_runtime_env", "修复运行环境", true } }             }
+              { "translucency", "半透明化", true } }                    },
+          {"other",          "其他", { { "fix_runtime_env", "修复运行环境", true } }          }
         };
         inline rule_item customized_rules{ "自定义", {}, {} };
         inline type_wrapper< const rule_item[] > builtin_rules{
