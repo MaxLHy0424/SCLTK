@@ -10,7 +10,7 @@ auto main() -> int
     if ( !core::is_run_as_admin() ) {
         std::print( "-> 申请管理员权限.\n" );
         core::relaunch_as_admin( console_ui::func_args{ ui } );
-        return 1;
+        return EXIT_FAILURE;
     }
     core::config_op{ 'r' }( console_ui::func_args{ ui } );
     if ( core::data::options[ 1 ][ 0 ].is_enabled ) {
@@ -71,7 +71,7 @@ auto main() -> int
       GWL_STYLE,
       GetWindowLongPtrA( GetConsoleWindow(), GWL_STYLE ) | WS_SIZEBOX | WS_MAXIMIZEBOX
         | WS_MINIMIZEBOX );
-    return 0;
+    return EXIT_SUCCESS;
 }
 #else
 auto main( const int _argc, const char *const _argv[] ) -> int
