@@ -286,8 +286,7 @@ class console_ui final {
         return *this;
     }
     auto &add_front(
-      string_type _text,
-      callback_type _func          = nullptr,
+      string_type _text, callback_type _func = nullptr,
       const short _intensity_attrs = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
       const short _default_attrs   = CONSOLE_TEXT_DEFAULT )
     {
@@ -297,8 +296,7 @@ class console_ui final {
         return *this;
     }
     auto &add_back(
-      string_type _text,
-      callback_type _func          = nullptr,
+      string_type _text, callback_type _func = nullptr,
       const short _intensity_attrs = CONSOLE_TEXT_FOREGROUND_BLUE | CONSOLE_TEXT_FOREGROUND_GREEN,
       const short _default_attrs   = CONSOLE_TEXT_DEFAULT )
     {
@@ -308,9 +306,7 @@ class console_ui final {
         return *this;
     }
     auto &insert(
-      const size_type _index,
-      string_type _text,
-      callback_type _func          = nullptr,
+      const size_type _index, string_type _text, callback_type _func = nullptr,
       const short _intensity_attrs = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
       const short _default_attrs   = CONSOLE_TEXT_DEFAULT )
     {
@@ -322,9 +318,7 @@ class console_ui final {
         return *this;
     }
     auto &edit(
-      const size_type _index,
-      string_type _text,
-      callback_type _func          = nullptr,
+      const size_type _index, string_type _text, callback_type _func = nullptr,
       const short _intensity_attrs = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
       const short _default_attrs   = CONSOLE_TEXT_DEFAULT )
     {
@@ -388,20 +382,17 @@ class console_ui final {
         SetConsoleTitleA( _title.c_str() );
         system( std::format( "mode.com con cols={} lines={}", _width, _height ).c_str() );
         SetWindowLongPtrA(
-          GetConsoleWindow(),
-          GWL_STYLE,
+          GetConsoleWindow(), GWL_STYLE,
           _fix_size
             ? GetWindowLongPtrA( GetConsoleWindow(), GWL_STYLE ) & ~WS_SIZEBOX & ~WS_MAXIMIZEBOX
             : GetWindowLongPtrA( GetConsoleWindow(), GWL_STYLE ) | WS_SIZEBOX | WS_MAXIMIZEBOX );
         SetWindowLongPtrA(
-          GetConsoleWindow(),
-          GWL_STYLE,
+          GetConsoleWindow(), GWL_STYLE,
           _minimize_ctrl
             ? GetWindowLongPtrA( GetConsoleWindow(), GWL_STYLE ) | WS_MINIMIZEBOX
             : GetWindowLongPtrA( GetConsoleWindow(), GWL_STYLE ) & ~WS_MINIMIZEBOX );
         EnableMenuItem(
-          GetSystemMenu( GetConsoleWindow(), FALSE ),
-          SC_CLOSE,
+          GetSystemMenu( GetConsoleWindow(), FALSE ), SC_CLOSE,
           _close_window_ctrl ? MF_BYCOMMAND | MF_ENABLED : MF_BYCOMMAND | MF_DISABLED | MF_GRAYED );
         SetLayeredWindowAttributes( GetConsoleWindow(), 0, _transparency, LWA_ALPHA );
         return *this;
