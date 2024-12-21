@@ -391,14 +391,12 @@ namespace core {
                     console_ui ui;
                     ui.add_back( "                    [ 配  置 ]\n\n" )
                       .add_back(
-                        std::format( " < 折叠 {}", option_.showed_name ),
-                        quit,
+                        std::format( " < 折叠 {}", option_.showed_name ), quit,
                         CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_INTENSITY );
                     for ( auto &sub_opt : option_.sub_options ) {
                         ui
                           .add_back( std::format(
-                            "\n[({}生效) {}]\n",
-                            sub_opt.is_relaunch_to_apply ? "下次启动时" : "立即",
+                            "\n[({}生效) {}]\n", sub_opt.is_relaunch_to_apply ? "下次启动时" : "立即",
                             sub_opt.showed_name ) )
                           .add_back( " > 启用 ", option_setter{ sub_opt, true }, color_of_option_buttons )
                           .add_back(
@@ -430,7 +428,6 @@ namespace core {
                 ui.add_back( std::format( " > {}", opt.showed_name ), option_shower{ opt } );
             }
             ui.show();
-            return CONSOLE_UI_REVERT;
         }
       public:
         auto operator()( console_ui::func_args ) const
