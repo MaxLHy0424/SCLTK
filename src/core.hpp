@@ -97,21 +97,18 @@ namespace core {
            { "StudentMain.exe", "DispcapHelper.exe", "VRCwPlayer.exe", "InstHelpApp.exe",
               "InstHelpApp64.exe", "TDOvrSet.exe", "GATESRV.exe", "ProcHelper64.exe",
               "MasterHelper.exe" },
-           {
-              "STUDSRV",
-              "TDNetFilter",
-            }                                         },
+           { "TDNetFilter", "TDFileFilter", "STUDSRV" }},
           {"联想智能云教室",
            { "vncviewer.exe", "tvnserver32.exe", "WfbsPnpInstall.exe", "WFBSMon.exe",
               "WFBSMlogon.exe", "WFBSSvrLogShow.exe", "ResetIp.exe", "FuncForWIN64.exe",
               "CertMgr.exe", "Fireware.exe", "BCDBootCopy.exe", "refreship.exe",
               "lenovoLockScreen.exe", "PortControl64.exe", "DesktopCheck.exe",
               "DeploymentManager.exe", "DeploymentAgent.exe", "XYNTService.exe" },
-           { "BSAgentSvr", "tvnserver", "WFBSMlogon" }},
+           { "BSAgentSvr", "tvnserver", "WFBSMlogon" } },
           {"红蜘蛛多媒体网络教室",
            { "rscheck.exe", "checkrs.exe", "REDAgent.exe", "PerformanceCheck.exe", "edpaper.exe",
               "Adapter.exe", "repview.exe", "FormatPaper.exe" },
-           { "appcheck2", "checkapp2" }               }
+           { "appcheck2", "checkapp2" }                }
         };
     }
     inline auto is_run_as_admin()
@@ -557,15 +554,12 @@ namespace core {
       {{ "StudentMain.exe", "DispcapHelper.exe", "VRCwPlayer.exe", "InstHelpApp.exe",
           "InstHelpApp64.exe", "TDOvrSet.exe", "GATESRV.exe", "ProcHelper64.exe",
           "MasterHelper.exe" },
-       {
-          "STUDSRV",
-          "TDNetFilter",
-        }                                         },
+       { "STUDSRV", "TDNetFilter", "TDFileFilter" }},
       {{ "vncviewer.exe", "tvnserver32.exe", "WfbsPnpInstall.exe", "WFBSMon.exe", "WFBSMlogon.exe",
           "WFBSSvrLogShow.exe", "ResetIp.exe", "FuncForWIN64.exe", "CertMgr.exe", "Fireware.exe",
           "BCDBootCopy.exe", "refreship.exe", "lenovoLockScreen.exe", "PortControl64.exe",
           "DesktopCheck.exe", "DeploymentManager.exe", "DeploymentAgent.exe", "XYNTService.exe" },
-       { "BSAgentSvr", "tvnserver", "WFBSMlogon" }}
+       { "BSAgentSvr", "tvnserver", "WFBSMlogon" } }
     };
     inline auto is_run_as_admin()
     {
