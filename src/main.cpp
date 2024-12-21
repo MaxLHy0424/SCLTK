@@ -25,8 +25,7 @@ auto main() -> int
     ui.add_back( "                    [ 主  页 ]\n\n" )
       .add_back( " < 退出 ", core::quit, CONSOLE_TEXT_FOREGROUND_RED | CONSOLE_TEXT_FOREGROUND_INTENSITY )
       .add_back(
-        " < 重启 ",
-        core::relaunch_as_admin,
+        " < 重启 ", core::relaunch_as_admin,
         CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_INTENSITY )
       .add_back( " > 信息 ", core::info )
       .add_back( " > 配置 ", core::config_op{ 'w' } )
@@ -46,12 +45,7 @@ auto main() -> int
         ui.add_back( std::format( " > {} ", rule.showed_name ), core::rule_op{ 'r', rule } );
     }
     ui.set_console(
-        WINDOW_TITLE,
-        CODE_PAGE,
-        WINDOW_WIDTH,
-        WINDOW_HEIGHT,
-        true,
-        false,
+        WINDOW_TITLE, CODE_PAGE, WINDOW_WIDTH, WINDOW_HEIGHT, true, false,
         core::data::options[ 1 ][ 1 ].is_enabled ? false : true,
         core::data::options[ 1 ][ 2 ].is_enabled ? 230 : 255 )
       .show()
@@ -67,8 +61,7 @@ auto main() -> int
         SetLayeredWindowAttributes( GetConsoleWindow(), 0, 255, LWA_ALPHA );
     }
     SetWindowLongPtrA(
-      GetConsoleWindow(),
-      GWL_STYLE,
+      GetConsoleWindow(), GWL_STYLE,
       GetWindowLongPtrA( GetConsoleWindow(), GWL_STYLE ) | WS_SIZEBOX | WS_MAXIMIZEBOX
         | WS_MINIMIZEBOX );
     return EXIT_SUCCESS;

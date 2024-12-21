@@ -32,16 +32,6 @@ namespace core {
               , is_relaunch_to_apply{ _is_relaunch_to_apply }
               , is_enabled{ false }
             { }
-            sub_option_item(
-              string_type _label_name,
-              string_type _showed_name,
-              const bool _is_relaunch_to_apply,
-              const bool _default_value )
-              : label_name{ std::move( _label_name ) }
-              , showed_name{ std::move( _showed_name ) }
-              , is_relaunch_to_apply{ _is_relaunch_to_apply }
-              , is_enabled{ _default_value }
-            { }
             sub_option_item( const sub_option_item & ) = default;
             sub_option_item( sub_option_item && )      = default;
             ~sub_option_item()                         = default;
@@ -55,7 +45,8 @@ namespace core {
         auto operator=( const option_item & ) -> option_item & = default;
         auto operator=( option_item && ) -> option_item &      = default;
         option_item(
-          string_type _label_name, string_type _showed_name, std::vector< sub_option_item > _sub_options )
+          string_type _label_name, string_type _showed_name,
+          std::vector< sub_option_item > _sub_options )
           : label_name{ std::move( _label_name ) }
           , showed_name{ std::move( _showed_name ) }
           , sub_options{ std::move( _sub_options ) }
@@ -117,7 +108,8 @@ namespace core {
         PSID admins_group{};
         SID_IDENTIFIER_AUTHORITY nt_authority{ SECURITY_NT_AUTHORITY };
         if ( AllocateAndInitializeSid(
-               &nt_authority, 2, SECURITY_BUILTIN_DOMAIN_RID, DOMAIN_ALIAS_RID_ADMINS, 0, 0, 0, 0, 0, 0, &admins_group )
+               &nt_authority, 2, SECURITY_BUILTIN_DOMAIN_RID, DOMAIN_ALIAS_RID_ADMINS, 0, 0, 0, 0,
+               0, 0, &admins_group )
              == true )
         {
             CheckTokenMembership( nullptr, admins_group, &is_admin );
@@ -189,8 +181,7 @@ namespace core {
           .add_back( "\n[名称]\n\n " INFO_NAME "\n\n[版本]\n\n " INFO_VERSION )
           .add_back( "\n[仓库]\n" )
           .add_back(
-            " " INFO_REPO_URL " ",
-            visit_repo_webpage,
+            " " INFO_REPO_URL " ", visit_repo_webpage,
             CONSOLE_TEXT_DEFAULT | CONSOLE_TEXT_COMMON_LVB_UNDERSCORE )
           .add_back( "\n[许可证]\n\n " INFO_LICENSE "\n\n (C) 2023 - present " INFO_DEVELOPER "." )
           .show();
@@ -203,23 +194,13 @@ namespace core {
         {
             _args.parent_ui.lock( false, false );
             _args.parent_ui.set_console(
-              WINDOW_TITLE " - 命令提示符",
-              CODE_PAGE,
-              120,
-              30,
-              false,
-              false,
+              WINDOW_TITLE " - 命令提示符", CODE_PAGE, 120, 30, false, false,
               data::options[ 1 ][ 1 ].is_enabled ? false : true,
               data::options[ 1 ][ 2 ].is_enabled ? 230 : 255 );
             SetConsoleScreenBufferSize( GetStdHandle( STD_OUTPUT_HANDLE ), { 125, SHRT_MAX - 1 } );
             system( "cmd.exe" );
             _args.parent_ui.set_console(
-              WINDOW_TITLE,
-              CODE_PAGE,
-              WINDOW_WIDTH,
-              WINDOW_HEIGHT,
-              true,
-              false,
+              WINDOW_TITLE, CODE_PAGE, WINDOW_WIDTH, WINDOW_HEIGHT, true, false,
               data::options[ 1 ][ 1 ].is_enabled ? false : true,
               data::options[ 1 ][ 2 ].is_enabled ? 230 : 255 );
             return CONSOLE_UI_REVERT;
@@ -367,7 +348,8 @@ namespace core {
                 if ( std::ifstream{ data::config_file_name, std::ios::in }.is_open() ) {
                     std::print( "-> 打开配置文件.\n" );
                     ShellExecuteA(
-                      nullptr, "open", data::config_file_name.c_str(), nullptr, nullptr, SW_SHOWNORMAL );
+                      nullptr, "open", data::config_file_name.c_str(), nullptr, nullptr,
+                      SW_SHOWNORMAL );
                     return CONSOLE_UI_REVERT;
                 }
                 using namespace std::chrono_literals;
@@ -440,8 +422,7 @@ namespace core {
                 " (i) 所有选项默认禁用.\n"
                 "     相关信息可参阅文档.\n" )
               .add_back(
-                " < 同步配置并返回 ",
-                sync_config,
+                " < 同步配置并返回 ", sync_config,
                 CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_INTENSITY )
               .add_back( " > 打开配置文件 ", open_config_file )
               .add_back( "\n[选项分类]\n" );
