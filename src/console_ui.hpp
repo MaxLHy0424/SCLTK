@@ -74,9 +74,9 @@ class console_ui final {
     enum class console_attrs_ { normal, lock_text, lock_all };
     struct line_item_ final {
         string_type text;
+        callback_type func;
         short default_attrs, intensity_attrs, last_attrs;
         COORD position;
-        callback_type func;
         auto set_attrs( const short _attrs )
         {
             SetConsoleTextAttribute( GetStdHandle( STD_OUTPUT_HANDLE ), _attrs );
@@ -95,21 +95,21 @@ class console_ui final {
         auto operator=( line_item_ && ) -> line_item_ &      = default;
         line_item_()
           : text{}
+          , func{}
           , default_attrs{ CONSOLE_TEXT_DEFAULT }
           , intensity_attrs{ CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE }
           , last_attrs{ CONSOLE_TEXT_DEFAULT }
           , position{}
-          , func{}
         { }
         line_item_(
-          string_type _text, const short _default_attrs, const short _intensity_attrs,
-          callback_type _func )
+          string_type _text, callback_type _func, const short _default_attrs,
+          const short _intensity_attrs )
           : text{ std::move( _text ) }
+          , func{ std::move( _func ) }
           , default_attrs{ _default_attrs }
           , intensity_attrs{ _intensity_attrs }
           , last_attrs{ CONSOLE_TEXT_DEFAULT }
           , position{}
-          , func{ std::move( _func ) }
         { }
         line_item_( const line_item_ & ) = default;
         line_item_( line_item_ && )      = default;
@@ -290,9 +290,13 @@ class console_ui final {
       const short _intensity_attrs = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
       const short _default_attrs   = CONSOLE_TEXT_DEFAULT )
     {
+        auto is_func{ _func == nullptr ? false : true };
         lines_.emplace_front( line_item_{
-          std::move( _text ), _default_attrs, _func == nullptr ? _default_attrs : _intensity_attrs,
-          std::move( _func ) } );
+          std::move( _text ),
+          std::move( _func ),
+          _default_attrs,
+          is_func ? _intensity_attrs : _default_attrs,
+        } );
         return *this;
     }
     auto &add_back(
@@ -300,9 +304,13 @@ class console_ui final {
       const short _intensity_attrs = CONSOLE_TEXT_FOREGROUND_BLUE | CONSOLE_TEXT_FOREGROUND_GREEN,
       const short _default_attrs   = CONSOLE_TEXT_DEFAULT )
     {
+        auto is_func{ _func == nullptr ? false : true };
         lines_.emplace_back( line_item_{
-          std::move( _text ), _default_attrs, _func == nullptr ? _default_attrs : _intensity_attrs,
-          std::move( _func ) } );
+          std::move( _text ),
+          std::move( _func ),
+          _default_attrs,
+          is_func ? _intensity_attrs : _default_attrs,
+        } );
         return *this;
     }
     auto &insert(
@@ -310,11 +318,12 @@ class console_ui final {
       const short _intensity_attrs = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
       const short _default_attrs   = CONSOLE_TEXT_DEFAULT )
     {
+        auto is_func{ _func == nullptr ? false : true };
         lines_.emplace(
           lines_.cbegin() + _index,
           line_item_{
-            std::move( _text ), _default_attrs,
-            _func == nullptr ? _default_attrs : _intensity_attrs, std::move( _func ) } );
+            std::move( _text ), std::move( _func ), _default_attrs,
+            is_func ? _intensity_attrs : _default_attrs } );
         return *this;
     }
     auto &edit(
@@ -322,9 +331,10 @@ class console_ui final {
       const short _intensity_attrs = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
       const short _default_attrs   = CONSOLE_TEXT_DEFAULT )
     {
+        auto is_func{ _func == nullptr ? false : true };
         lines_.at( _index ) = line_item_{
-          std::move( _text ), _default_attrs, _func == nullptr ? _default_attrs : _intensity_attrs,
-          std::move( _func ) };
+          std::move( _text ), std::move( _func ), _default_attrs,
+          is_func ? _intensity_attrs : _default_attrs };
         return *this;
     }
     auto &remove_front()
