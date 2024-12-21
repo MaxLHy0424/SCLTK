@@ -1,9 +1,5 @@
 #include "src/info.hpp"
-#ifdef _NEXT_
-1 ICON "img/favicon_next.ico"
-#else
 1 ICON "img/favicon.ico"
-#endif
 1 VERSIONINFO
 FILEVERSION 1, 0, 0, 0
 BEGIN
