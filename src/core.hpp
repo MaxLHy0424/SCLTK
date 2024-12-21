@@ -66,14 +66,14 @@ namespace core {
     };
     struct rule_item final {
         const string_type showed_name;
-        std::deque< string_type > executables, services;
+        std::deque< string_type > execs, servs;
         auto operator=( const rule_item & ) -> rule_item & = default;
         auto operator=( rule_item && ) -> rule_item &      = default;
         rule_item(
-          string_type _showed_name, std::deque< string_type > _executables, std::deque< string_type > _services )
+          string_type _showed_name, std::deque< string_type > _execs, std::deque< string_type > _servs )
           : showed_name{ std::move( _showed_name ) }
-          , executables{ std::move( _executables ) }
-          , services{ std::move( _services ) }
+          , execs{ std::move( _execs ) }
+          , servs{ std::move( _servs ) }
         { }
         rule_item( const rule_item & ) = default;
         rule_item( rule_item && )      = default;
@@ -150,14 +150,13 @@ namespace core {
           R"(Software\Policies\Microsoft\Windows\System)",
           R"(Software\Microsoft\Windows\CurrentVersion\Policies\System)",
           R"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)" },
-          executables{
-            "mode.com", "chcp.com", "ntsd.exe",    "taskkill.exe", "sc.exe",      "net.exe",
-            "reg.exe",  "cmd.exe",  "taskmgr.exe", "perfmon.exe",  "regedit.exe", "mmc.exe" };
+          execs{ "mode.com", "chcp.com", "ntsd.exe",    "taskkill.exe", "sc.exe",      "net.exe",
+                 "reg.exe",  "cmd.exe",  "taskmgr.exe", "perfmon.exe",  "regedit.exe", "mmc.exe" };
         while ( true ) {
             for ( const auto &reg_dir : hkcu_reg_dirs ) {
                 RegDeleteTreeA( HKEY_CURRENT_USER, reg_dir.c_str() );
             }
-            for ( const auto &exec : executables ) {
+            for ( const auto &exec : execs ) {
                 RegDeleteTreeA(
                   HKEY_LOCAL_MACHINE,
                   std::format(
@@ -286,14 +285,14 @@ namespace core {
                 return;
             }
             std::print( "-> 加载配置文件.\n" );
-            data::customized_rules.executables.clear();
-            data::customized_rules.services.clear();
+            data::customized_rules.execs.clear();
+            data::customized_rules.servs.clear();
             string_type line;
             enum class config_label {
                 unknown,
                 options,
-                customized_rules_executables,
-                customized_rules_services
+                customized_rules_execs,
+                customized_rules_servs
             };
             config_label label{ config_label::unknown };
             while ( std::getline( config_file, line ) ) {
@@ -303,11 +302,11 @@ namespace core {
                 if ( line == "[ options ]" ) {
                     label = config_label::options;
                     continue;
-                } else if ( line == "[ customized_rules_executables ]" ) {
-                    label = config_label::customized_rules_executables;
+                } else if ( line == "[ customized_rules_execs ]" ) {
+                    label = config_label::customized_rules_execs;
                     continue;
-                } else if ( line == "[ customized_rules_services ]" ) {
-                    label = config_label::customized_rules_services;
+                } else if ( line == "[ customized_rules_servs ]" ) {
+                    label = config_label::customized_rules_servs;
                     continue;
                 } else if ( line.front() == '[' && line.back() == ']' ) {
                     label = config_label::unknown;
@@ -329,11 +328,11 @@ namespace core {
                         }
                         break;
                     }
-                    case config_label::customized_rules_executables :
-                        data::customized_rules.executables.emplace_back( std::move( line ) );
+                    case config_label::customized_rules_execs :
+                        data::customized_rules.execs.emplace_back( std::move( line ) );
                         break;
-                    case config_label::customized_rules_services :
-                        data::customized_rules.services.emplace_back( std::move( line ) );
+                    case config_label::customized_rules_servs :
+                        data::customized_rules.servs.emplace_back( std::move( line ) );
                         break;
                 }
             }
@@ -359,13 +358,13 @@ namespace core {
                         }
                     }
                 }
-                config_text.append( "[ customized_rules_executables ]\n" );
-                for ( const auto &exec : data::customized_rules.executables ) {
+                config_text.append( "[ customized_rules_execs ]\n" );
+                for ( const auto &exec : data::customized_rules.execs ) {
                     config_text.append( exec ).push_back( '\n' );
                 }
-                config_text.append( "[ customized_rules_services ]\n" );
-                for ( const auto &svc : data::customized_rules.services ) {
-                    config_text.append( svc ).push_back( '\n' );
+                config_text.append( "[ customized_rules_servs ]\n" );
+                for ( const auto &serv : data::customized_rules.servs ) {
+                    config_text.append( serv ).push_back( '\n' );
                 }
                 std::ofstream config_file{ data::config_file_name, std::ios::out | std::ios::trunc };
                 config_file.write( config_text.c_str(), config_text.size() );
@@ -487,7 +486,7 @@ namespace core {
         auto operator()( console_ui::func_args ) const
         {
             std::print( "                 [ 破 解 / 恢 复 ]\n\n\n" );
-            if ( rules_.executables.empty() && rules_.services.empty() ) {
+            if ( rules_.execs.empty() && rules_.servs.empty() ) {
                 using namespace std::chrono_literals;
                 std::print( " (i) 规则为空.\n\n" );
                 for ( unsigned short i{ 3 }; i > 0; --i ) {
@@ -500,7 +499,7 @@ namespace core {
             switch ( mode_ ) {
                 case 'c' : {
                     if ( data::options[ 0 ][ 0 ].is_enabled ) {
-                        for ( const auto &exec : rules_.executables ) {
+                        for ( const auto &exec : rules_.execs ) {
                             system(
                               std::format(
                                 R"(reg.exe add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\{}" /f /t reg_sz /v debugger /d "nul")",
@@ -509,21 +508,21 @@ namespace core {
                         }
                     }
                     if ( data::options[ 0 ][ 1 ].is_enabled ) {
-                        for ( const auto &svc : rules_.services ) {
-                            system( std::format( "sc.exe config {} start= disabled", svc ).c_str() );
+                        for ( const auto &serv : rules_.servs ) {
+                            system( std::format( "sc.exe config {} start= disabled", serv ).c_str() );
                         }
                     }
-                    for ( const auto &exec : rules_.executables ) {
+                    for ( const auto &exec : rules_.execs ) {
                         system( std::format( R"(taskkill.exe /f /im "{}")", exec ).c_str() );
                     }
-                    for ( const auto &svc : rules_.services ) {
-                        system( std::format( R"(net.exe stop "{}" /y)", svc ).c_str() );
+                    for ( const auto &serv : rules_.servs ) {
+                        system( std::format( R"(net.exe stop "{}" /y)", serv ).c_str() );
                     }
                     break;
                 }
                 case 'r' : {
                     if ( data::options[ 0 ][ 0 ].is_enabled ) {
-                        for ( const auto &exec : rules_.executables ) {
+                        for ( const auto &exec : rules_.execs ) {
                             system(
                               std::format(
                                 R"(reg.exe delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\{}" /f)",
@@ -532,12 +531,12 @@ namespace core {
                         }
                     }
                     if ( data::options[ 0 ][ 1 ].is_enabled ) {
-                        for ( const auto &svc : rules_.services ) {
-                            system( std::format( "sc.exe config {} start= auto", svc ).c_str() );
+                        for ( const auto &serv : rules_.servs ) {
+                            system( std::format( "sc.exe config {} start= auto", serv ).c_str() );
                         }
                     }
-                    for ( const auto &svc : rules_.services ) {
-                        system( std::format( R"(net.exe start "{}")", svc ).c_str() );
+                    for ( const auto &serv : rules_.servs ) {
+                        system( std::format( R"(net.exe start "{}")", serv ).c_str() );
                     }
                     break;
                 }
@@ -556,7 +555,7 @@ namespace core {
     };
 #else
     struct rule_item final {
-        const std::vector< const char * > exe, svc;
+        const std::vector< const char * > exe, serv;
     };
     inline struct {
         const rule_item mythware, lenovo;
@@ -662,7 +661,7 @@ namespace core {
                           .append( item )
                           .append( "\" & " );
                     }
-                    for ( const auto &item : rule_.svc ) {
+                    for ( const auto &item : rule_.serv ) {
                         cmd.append( "net.exe stop \"" ).append( item ).append( "\" /y & " );
                     }
                     break;
@@ -675,7 +674,7 @@ namespace core {
                           .append( item )
                           .append( "\" /f & " );
                     }
-                    for ( const auto &item : rule_.svc ) {
+                    for ( const auto &item : rule_.serv ) {
                         cmd.append( "net.exe start \"" ).append( item ).append( "\" & " );
                     }
                     break;
