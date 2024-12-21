@@ -1,6 +1,5 @@
 #include "console_ui.hpp"
 #include "core.hpp"
-#ifdef _NEXT_
 auto main() -> int
 {
     console_ui ui;
@@ -66,61 +65,3 @@ auto main() -> int
         | WS_MINIMIZEBOX );
     return EXIT_SUCCESS;
 }
-#else
-auto main( const int _argc, const char *const _argv[] ) -> int
-{
-    console_ui ui;
-    if ( _argc == 1 ) {
-        goto INIT;
-    }
-    for ( int i{ 1 }; i < _argc; ++i ) {
-        std::string_view tmp{ _argv[ i ] };
-        if ( tmp.size() > 2 && tmp.substr( 0, 2 ) == "-W" ) {
-            for ( const auto &sub_item : tmp.substr( 2 ) ) {
-                switch ( sub_item ) {
-                    case 'f' : args_data.front_show_window = true; break;
-                    case 't' : args_data.translucent_window = true; break;
-                    case 'c' : args_data.window_ctrls = true; break;
-                    default : args_error = true; break;
-                }
-            }
-        } else {
-            args_error = true;
-            break;
-        }
-    }
-INIT:
-    core::init();
-    if ( args_data.front_show_window ) {
-        std::thread{ core::front_show_window }.detach();
-    }
-    ui.add_back( "                    [ 主  页 ]\n\n" );
-    if ( args_error ) {
-        ui.add_back( " (!) 参数错误.\n" );
-    }
-    ui.add_back( " < 退出 ", core::quit, CONSOLE_TEXT_FOREGROUND_RED | CONSOLE_TEXT_FOREGROUND_INTENSITY )
-      .add_back( " > 信息 ", core::info )
-      .add_back( "\n[破解]\n" )
-      .add_back( " > 极域电子教室 ", core::rule_op{ 'c', core::rule.mythware } )
-      .add_back( " > 联想云教室 ", core::rule_op{ 'c', core::rule.lenovo } )
-      .add_back( "\n[恢复]\n" )
-      .add_back( " > 极域电子教室 ", core::rule_op{ 'r', core::rule.mythware } )
-      .add_back( " > 联想云教室 ", core::rule_op{ 'r', core::rule.lenovo } )
-      .show()
-      .lock( false, false );
-    if ( args_data.translucent_window ) {
-        SetLayeredWindowAttributes( GetConsoleWindow(), 0, 255, LWA_ALPHA );
-    }
-    if ( args_data.front_show_window ) {
-        SetWindowPos( GetConsoleWindow(), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
-    }
-    if ( !args_data.window_ctrls ) {
-        SetWindowLongPtrA(
-          GetConsoleWindow(),
-          GWL_STYLE,
-          GetWindowLongPtrA( GetConsoleWindow(), GWL_STYLE ) | WS_SIZEBOX | WS_MAXIMIZEBOX
-            | WS_MINIMIZEBOX );
-    }
-    return 0;
-}
-#endif
