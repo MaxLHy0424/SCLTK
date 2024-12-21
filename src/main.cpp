@@ -4,7 +4,7 @@
 auto main() -> int
 {
     console_ui ui;
-    ui.set_console( CODE_PAGE, WINDOW_TITLE, WINDOW_WIDTH, WINDOW_HEIGHT, true, false, true, 255 )
+    ui.set_console( WINDOW_TITLE, CODE_PAGE, WINDOW_WIDTH, WINDOW_HEIGHT, true, false, true, 255 )
       .lock( true, true );
     std::print( "-> 检测运行权限.\n" );
     if ( !core::is_run_as_admin() ) {
@@ -46,8 +46,8 @@ auto main() -> int
         ui.add_back( std::format( " > {} ", rule.showed_name ), core::rule_op{ 'r', rule } );
     }
     ui.set_console(
-        CODE_PAGE,
         WINDOW_TITLE,
+        CODE_PAGE,
         WINDOW_WIDTH,
         WINDOW_HEIGHT,
         true,
