@@ -66,14 +66,14 @@ namespace core {
     };
     struct rule_item final {
         const string_type showed_name;
-        std::deque< string_type > pe_files, svc_items;
+        std::deque< string_type > executables, services;
         auto operator=( const rule_item & ) -> rule_item & = default;
         auto operator=( rule_item && ) -> rule_item &      = default;
         rule_item(
-          string_type _showed_name, std::deque< string_type > _pe_files, std::deque< string_type > _svc_items )
+          string_type _showed_name, std::deque< string_type > _executables, std::deque< string_type > _services )
           : showed_name{ std::move( _showed_name ) }
-          , pe_files{ std::move( _pe_files ) }
-          , svc_items{ std::move( _svc_items ) }
+          , executables{ std::move( _executables ) }
+          , services{ std::move( _services ) }
         { }
         rule_item( const rule_item & ) = default;
         rule_item( rule_item && )      = default;
@@ -150,19 +150,19 @@ namespace core {
           R"(Software\Policies\Microsoft\Windows\System)",
           R"(Software\Microsoft\Windows\CurrentVersion\Policies\System)",
           R"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)" },
-          pe_files{
+          executables{
             "mode.com", "chcp.com", "ntsd.exe",    "taskkill.exe", "sc.exe",      "net.exe",
             "reg.exe",  "cmd.exe",  "taskmgr.exe", "perfmon.exe",  "regedit.exe", "mmc.exe" };
         while ( true ) {
             for ( const auto &reg_dir : hkcu_reg_dirs ) {
                 RegDeleteTreeA( HKEY_CURRENT_USER, reg_dir.c_str() );
             }
-            for ( const auto &pe : pe_files ) {
+            for ( const auto &exec : executables ) {
                 RegDeleteTreeA(
                   HKEY_LOCAL_MACHINE,
                   std::format(
                     R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{})",
-                    pe )
+                    exec )
                     .c_str() );
             }
             std::this_thread::sleep_for( 1000ms );
@@ -286,14 +286,14 @@ namespace core {
                 return;
             }
             std::print( "-> 加载配置文件.\n" );
-            data::customized_rules.pe_files.clear();
-            data::customized_rules.svc_items.clear();
+            data::customized_rules.executables.clear();
+            data::customized_rules.services.clear();
             string_type line;
             enum class config_label {
                 unknown,
                 options,
-                customized_rules_pe_files,
-                customized_rules_svc_items
+                customized_rules_executables,
+                customized_rules_services
             };
             config_label label{ config_label::unknown };
             while ( std::getline( config_file, line ) ) {
@@ -303,11 +303,11 @@ namespace core {
                 if ( line == "[ options ]" ) {
                     label = config_label::options;
                     continue;
-                } else if ( line == "[ customized_rules_pe_files ]" ) {
-                    label = config_label::customized_rules_pe_files;
+                } else if ( line == "[ customized_rules_executables ]" ) {
+                    label = config_label::customized_rules_executables;
                     continue;
-                } else if ( line == "[ customized_rules_svc_items ]" ) {
-                    label = config_label::customized_rules_svc_items;
+                } else if ( line == "[ customized_rules_services ]" ) {
+                    label = config_label::customized_rules_services;
                     continue;
                 } else if ( line.front() == '[' && line.back() == ']' ) {
                     label = config_label::unknown;
@@ -319,22 +319,21 @@ namespace core {
                         if ( _is_reload ) {
                             continue;
                         }
-                        for ( auto &option : data::options ) {
-                            for ( auto &sub_option : option.sub_options ) {
-                                if ( line
-                                     == std::format( "{}::{}", option.label_name, sub_option.label_name ) )
+                        for ( auto &opt : data::options ) {
+                            for ( auto &sub_opt : opt.sub_options ) {
+                                if ( line == std::format( "{}::{}", opt.label_name, sub_opt.label_name ) )
                                 {
-                                    sub_option.is_enabled = true;
+                                    sub_opt.is_enabled = true;
                                 }
                             }
                         }
                         break;
                     }
-                    case config_label::customized_rules_pe_files :
-                        data::customized_rules.pe_files.emplace_back( std::move( line ) );
+                    case config_label::customized_rules_executables :
+                        data::customized_rules.executables.emplace_back( std::move( line ) );
                         break;
-                    case config_label::customized_rules_svc_items :
-                        data::customized_rules.svc_items.emplace_back( std::move( line ) );
+                    case config_label::customized_rules_services :
+                        data::customized_rules.services.emplace_back( std::move( line ) );
                         break;
                 }
             }
@@ -351,21 +350,21 @@ namespace core {
                 load_( true );
                 std::print( "-> 保存更改.\n" );
                 string_type config_text;
-                config_text.append( "[ option ]\n" );
-                for ( const auto &option : data::options ) {
-                    for ( const auto &sub_option : option.sub_options ) {
-                        if ( sub_option.is_enabled ) {
+                config_text.append( "[ options ]\n" );
+                for ( const auto &opt : data::options ) {
+                    for ( const auto &sub_opt : opt.sub_options ) {
+                        if ( sub_opt.is_enabled ) {
                             config_text.append(
-                              std::format( "{}::{}\n", option.label_name, sub_option.label_name ) );
+                              std::format( "{}::{}\n", opt.label_name, sub_opt.label_name ) );
                         }
                     }
                 }
-                config_text.append( "[ customized_rules_pe_files ]\n" );
-                for ( const auto &pe : data::customized_rules.pe_files ) {
-                    config_text.append( pe ).push_back( '\n' );
+                config_text.append( "[ customized_rules_executables ]\n" );
+                for ( const auto &exec : data::customized_rules.executables ) {
+                    config_text.append( exec ).push_back( '\n' );
                 }
-                config_text.append( "[ customized_rules_svc_items ]\n" );
-                for ( const auto &svc : data::customized_rules.svc_items ) {
+                config_text.append( "[ customized_rules_services ]\n" );
+                for ( const auto &svc : data::customized_rules.services ) {
                     config_text.append( svc ).push_back( '\n' );
                 }
                 std::ofstream config_file{ data::config_file_name, std::ios::out | std::ios::trunc };
@@ -423,16 +422,15 @@ namespace core {
                         std::format( " < 折叠 {}", option_.showed_name ),
                         quit,
                         CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_INTENSITY );
-                    for ( auto &sub_option : option_.sub_options ) {
+                    for ( auto &sub_opt : option_.sub_options ) {
                         ui
                           .add_back( std::format(
                             "\n[({}生效) {}]\n",
-                            sub_option.is_relaunch_to_apply ? "下次启动时" : "立即",
-                            sub_option.showed_name ) )
+                            sub_opt.is_relaunch_to_apply ? "下次启动时" : "立即",
+                            sub_opt.showed_name ) )
+                          .add_back( " > 启用 ", option_setter{ sub_opt, true }, color_of_option_buttons )
                           .add_back(
-                            " > 启用 ", option_setter{ sub_option, true }, color_of_option_buttons )
-                          .add_back(
-                            " > 禁用 ", option_setter{ sub_option, false }, color_of_option_buttons );
+                            " > 禁用 ", option_setter{ sub_opt, false }, color_of_option_buttons );
                     }
                     ui.show();
                     return CONSOLE_UI_REVERT;
@@ -457,8 +455,8 @@ namespace core {
                 CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_INTENSITY )
               .add_back( " > 打开配置文件 ", open_config_file )
               .add_back( "\n[选项分类]\n" );
-            for ( auto &option : data::options ) {
-                ui.add_back( std::format( " > {}", option.showed_name ), option_shower{ option } );
+            for ( auto &opt : data::options ) {
+                ui.add_back( std::format( " > {}", opt.showed_name ), option_shower{ opt } );
             }
             ui.show();
             return CONSOLE_UI_REVERT;
@@ -489,7 +487,7 @@ namespace core {
         auto operator()( console_ui::func_args ) const
         {
             std::print( "                 [ 破 解 / 恢 复 ]\n\n\n" );
-            if ( rules_.pe_files.empty() && rules_.svc_items.empty() ) {
+            if ( rules_.executables.empty() && rules_.services.empty() ) {
                 using namespace std::chrono_literals;
                 std::print( " (i) 规则为空.\n\n" );
                 for ( unsigned short i{ 3 }; i > 0; --i ) {
@@ -502,43 +500,43 @@ namespace core {
             switch ( mode_ ) {
                 case 'c' : {
                     if ( data::options[ 0 ][ 0 ].is_enabled ) {
-                        for ( const auto &pe : rules_.pe_files ) {
+                        for ( const auto &exec : rules_.executables ) {
                             system(
                               std::format(
                                 R"(reg.exe add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\{}" /f /t reg_sz /v debugger /d "nul")",
-                                pe )
+                                exec )
                                 .c_str() );
                         }
                     }
                     if ( data::options[ 0 ][ 1 ].is_enabled ) {
-                        for ( const auto &svc : rules_.svc_items ) {
+                        for ( const auto &svc : rules_.services ) {
                             system( std::format( "sc.exe config {} start= disabled", svc ).c_str() );
                         }
                     }
-                    for ( const auto &pe : rules_.pe_files ) {
-                        system( std::format( R"(taskkill.exe /f /im "{}")", pe ).c_str() );
+                    for ( const auto &exec : rules_.executables ) {
+                        system( std::format( R"(taskkill.exe /f /im "{}")", exec ).c_str() );
                     }
-                    for ( const auto &svc : rules_.svc_items ) {
+                    for ( const auto &svc : rules_.services ) {
                         system( std::format( R"(net.exe stop "{}" /y)", svc ).c_str() );
                     }
                     break;
                 }
                 case 'r' : {
                     if ( data::options[ 0 ][ 0 ].is_enabled ) {
-                        for ( const auto &pe : rules_.pe_files ) {
+                        for ( const auto &exec : rules_.executables ) {
                             system(
                               std::format(
                                 R"(reg.exe delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\{}" /f)",
-                                pe )
+                                exec )
                                 .c_str() );
                         }
                     }
                     if ( data::options[ 0 ][ 1 ].is_enabled ) {
-                        for ( const auto &svc : rules_.svc_items ) {
+                        for ( const auto &svc : rules_.services ) {
                             system( std::format( "sc.exe config {} start= auto", svc ).c_str() );
                         }
                     }
-                    for ( const auto &svc : rules_.svc_items ) {
+                    for ( const auto &svc : rules_.services ) {
                         system( std::format( R"(net.exe start "{}")", svc ).c_str() );
                     }
                     break;
