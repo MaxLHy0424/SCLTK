@@ -13,7 +13,7 @@ namespace core {
         struct sub_option_item final {
             const string_type label_name, showed_name;
             const bool is_relaunch_to_apply;
-            bool is_enabled;
+            bool is_enabled{ false };
             auto operator=( const sub_option_item & ) -> sub_option_item & = default;
             auto operator=( sub_option_item && ) -> sub_option_item &      = default;
             sub_option_item(
@@ -21,7 +21,6 @@ namespace core {
               : label_name{ std::move( _label_name ) }
               , showed_name{ std::move( _showed_name ) }
               , is_relaunch_to_apply{ _is_relaunch_to_apply }
-              , is_enabled{ false }
             { }
             sub_option_item( const sub_option_item & ) = default;
             sub_option_item( sub_option_item && )      = default;
