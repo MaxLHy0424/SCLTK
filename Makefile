@@ -27,6 +27,9 @@ bin/info-x86_64.obj: info.rc img/favicon.ico bin/.gitkeep
 	$(msys2)\\usr\\bin\\windres.exe -i $< $(def) -o $@ -F pe-x86-64
 	$(msys2)\\usr\\bin\\mkdir.exe bin -p
 	$(msys2)\\usr\\bin\\touch.exe $@
+bin/.gitkeep:
+	$(msys2)\\usr\\bin\\mkdir.exe bin -p
+	$(msys2)\\usr\\bin\\touch.exe $@
 bin/release/.gitkeep: bin/.gitkeep
 	$(msys2)\\usr\\bin\\mkdir.exe bin/release -p
 	$(msys2)\\usr\\bin\\touch.exe $@
