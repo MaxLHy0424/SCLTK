@@ -4,7 +4,6 @@ def          = -D_CRT_SECURE_NO_WARNINGS -DANSI -D_ANSI
 args_base    = -fexec-charset=GBK -std=gnu++26 -Wall -Wextra -Weffc++ -pipe
 args_release = -DNDEBUG $(args_base) -static -Oz -flto=auto -fno-rtti
 args_debug   = $(args_base) -Og -g3
-arch         = x86_64
 .PHONY: init release debug clean
 all: init clean release
 init:
