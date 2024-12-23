@@ -69,10 +69,10 @@ class console_ui final {
   private:
     enum class console_attrs_ { normal, lock_text, lock_all };
     struct line_item_ final {
-        string_type text;
-        callback_type func;
+        string_type text{};
+        callback_type func{};
         WORD default_attrs, intensity_attrs, last_attrs;
-        COORD position;
+        COORD position{};
         auto set_attrs( const WORD _attrs )
         {
             SetConsoleTextAttribute( GetStdHandle( STD_OUTPUT_HANDLE ), _attrs );
@@ -90,12 +90,9 @@ class console_ui final {
         auto operator=( const line_item_ & ) -> line_item_ & = default;
         auto operator=( line_item_ && ) -> line_item_ &      = default;
         line_item_()
-          : text{}
-          , func{}
-          , default_attrs{ CONSOLE_TEXT_DEFAULT }
+          : default_attrs{ CONSOLE_TEXT_DEFAULT }
           , intensity_attrs{ CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE }
           , last_attrs{ CONSOLE_TEXT_DEFAULT }
-          , position{}
         { }
         line_item_(
           string_type _text, callback_type _func, const WORD _default_attrs,
@@ -105,7 +102,6 @@ class console_ui final {
           , default_attrs{ _default_attrs }
           , intensity_attrs{ _intensity_attrs }
           , last_attrs{ CONSOLE_TEXT_DEFAULT }
-          , position{}
         { }
         line_item_( const line_item_ & ) = default;
         line_item_( line_item_ && )      = default;
