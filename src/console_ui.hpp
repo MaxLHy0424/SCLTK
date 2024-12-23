@@ -40,8 +40,8 @@
 #define CONSOLE_TEXT_COMMON_LVB_REVERSE_VIDEO   COMMON_LVB_REVERSE_VIDEO
 #define CONSOLE_TEXT_COMMON_LVB_UNDERSCORE      COMMON_LVB_UNDERSCORE
 #define CONSOLE_TEXT_COMMON_LVB_SBCSDBCS        COMMON_LVB_SBCSDBCS
-#define CONSOLE_UI_REVERT                       false
-#define CONSOLE_UI_TERMINATE                    true
+#define CONSOLE_UI_RETURN                       false
+#define CONSOLE_UI_EXIT                         true
 class console_ui final {
   public:
     struct func_args final {
@@ -348,8 +348,8 @@ class console_ui final {
         edit_console_attrs_( console_attrs_::lock_text );
         MOUSE_EVENT_RECORD mouse_event;
         init_pos_();
-        auto func_return_value{ CONSOLE_UI_REVERT };
-        while ( func_return_value == CONSOLE_UI_REVERT ) {
+        auto func_return_value{ CONSOLE_UI_RETURN };
+        while ( func_return_value == CONSOLE_UI_RETURN ) {
             mouse_event = wait_mouse_event_();
             switch ( mouse_event.dwEventFlags ) {
                 case CONSOLE_MOUSE_MOVE : refresh_( mouse_event.dwMousePosition ); break;
