@@ -1,5 +1,5 @@
 #pragma once
-#include <limits.h>
+#include <climits>
 #include <fstream>
 #include "console_ui.hpp"
 #include "info.hpp"
