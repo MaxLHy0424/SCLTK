@@ -13,11 +13,11 @@ auto main() -> int
     }
     core::config_op{ 'r' }( console_ui::func_args{ ui } );
     if ( core::data::options[ 1 ][ 0 ].is_enabled ) {
-        std::print( "-> 启动置顶窗口线程.\n" );
+        std::print( "-> 创建线程以置顶窗口.\n" );
         std::thread{ core::force_show_window }.detach();
     }
     if ( core::data::options[ 2 ][ 0 ].is_enabled ) {
-        std::print( "-> 启动修复操作系统环境线程.\n" );
+        std::print( "-> 创建线程以修复操作系统环境.\n" );
         std::thread{ core::fix_os_env }.detach();
     }
     std::print( "-> 初始化用户界面.\n" );
