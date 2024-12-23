@@ -413,7 +413,7 @@ namespace core {
                 " < 同步配置并返回 ", sync_config,
                 CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_INTENSITY )
               .add_back( " > 打开配置文件 ", open_config_file )
-              .add_back( "\n[选项分类]\n" );
+              .add_back( "\n[选项]\n" );
             for ( auto &opt : data::options ) {
                 ui.add_back( std::format( " > {}", opt.showed_name ), option_shower{ opt } );
             }
