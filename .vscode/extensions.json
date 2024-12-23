@@ -1,0 +1,10 @@
+{
+    "recommendations": [
+        "ms-vscode.cpptools",
+        "streetsidesoftware.code-spell-checker",
+        "ms-vscode.makefile-tools",
+        "yzhang.markdown-all-in-one",
+        "ionutvmi.path-autocomplete",
+        "ms-vscode.hexeditor"
+    ]
+}
