@@ -304,7 +304,7 @@ namespace core {
         auto edit_() const
         {
             std::print( "-> 初始化用户界面.\n" );
-            constexpr auto color_of_option_buttons{
+            constexpr WORD color_of_option_buttons{
               CONSOLE_TEXT_FOREGROUND_RED | CONSOLE_TEXT_FOREGROUND_GREEN };
             auto sync_config{ [ this ]( console_ui::func_args )
             {
