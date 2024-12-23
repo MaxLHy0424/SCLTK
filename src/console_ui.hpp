@@ -45,17 +45,17 @@
 class console_ui final {
   public:
     struct func_args final {
-        const DWORD button_state, ctrl_key_state, event_flag;
         console_ui &parent_ui;
+        const DWORD button_state, ctrl_key_state, event_flag;
         auto operator=( const func_args & ) -> func_args & = default;
         auto operator=( func_args && ) -> func_args &      = default;
         func_args(
           console_ui &_parent_ui,
           const MOUSE_EVENT_RECORD _mouse_event = { {}, CONSOLE_MOUSE_BUTTON_LEFT, {}, {} } )
-          : button_state{ _mouse_event.dwButtonState }
+          : parent_ui{ _parent_ui }
+          , button_state{ _mouse_event.dwButtonState }
           , ctrl_key_state{ _mouse_event.dwControlKeyState }
           , event_flag{ _mouse_event.dwEventFlags }
-          , parent_ui{ _parent_ui }
         { }
         func_args( const func_args & ) = default;
         func_args( func_args && )      = default;
@@ -71,9 +71,9 @@ class console_ui final {
     struct line_item_ final {
         string_type text;
         callback_type func;
-        short default_attrs, intensity_attrs, last_attrs;
+        WORD default_attrs, intensity_attrs, last_attrs;
         COORD position;
-        auto set_attrs( const short _attrs )
+        auto set_attrs( const WORD _attrs )
         {
             SetConsoleTextAttribute( GetStdHandle( STD_OUTPUT_HANDLE ), _attrs );
             last_attrs = _attrs;
@@ -81,7 +81,7 @@ class console_ui final {
         auto operator==( const COORD &_mouse_position ) const
         {
             return position.Y == _mouse_position.Y && position.X <= _mouse_position.X
-                && _mouse_position.X < ( position.X + static_cast< short >( text.size() ) );
+                && _mouse_position.X < ( position.X + static_cast< SHORT >( text.size() ) );
         }
         auto operator!=( const COORD &_mouse_position ) const
         {
@@ -98,8 +98,8 @@ class console_ui final {
           , position{}
         { }
         line_item_(
-          string_type _text, callback_type _func, const short _default_attrs,
-          const short _intensity_attrs )
+          string_type _text, callback_type _func, const WORD _default_attrs,
+          const WORD _intensity_attrs )
           : text{ std::move( _text ) }
           , func{ std::move( _func ) }
           , default_attrs{ _default_attrs }
@@ -111,8 +111,8 @@ class console_ui final {
         line_item_( line_item_ && )      = default;
         ~line_item_()                    = default;
     };
-    std::deque< line_item_ > lines_;
-    short width_, height_;
+    std::deque< line_item_ > lines_{};
+    SHORT width_{}, height_{};
     auto show_cursor_( const bool _is_show )
     {
         CONSOLE_CURSOR_INFO cursor_data;
@@ -275,8 +275,8 @@ class console_ui final {
     }
     auto &add_front(
       string_type _text, callback_type _func = nullptr,
-      const short _intensity_attrs = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
-      const short _default_attrs   = CONSOLE_TEXT_DEFAULT )
+      const WORD _intensity_attrs = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
+      const WORD _default_attrs   = CONSOLE_TEXT_DEFAULT )
     {
         auto is_func{ _func == nullptr ? false : true };
         lines_.emplace_front( line_item_{
@@ -289,8 +289,8 @@ class console_ui final {
     }
     auto &add_back(
       string_type _text, callback_type _func = nullptr,
-      const short _intensity_attrs = CONSOLE_TEXT_FOREGROUND_BLUE | CONSOLE_TEXT_FOREGROUND_GREEN,
-      const short _default_attrs   = CONSOLE_TEXT_DEFAULT )
+      const WORD _intensity_attrs = CONSOLE_TEXT_FOREGROUND_BLUE | CONSOLE_TEXT_FOREGROUND_GREEN,
+      const WORD _default_attrs   = CONSOLE_TEXT_DEFAULT )
     {
         auto is_func{ _func == nullptr ? false : true };
         lines_.emplace_back( line_item_{
@@ -303,8 +303,8 @@ class console_ui final {
     }
     auto &insert(
       const size_type _index, string_type _text, callback_type _func = nullptr,
-      const short _intensity_attrs = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
-      const short _default_attrs   = CONSOLE_TEXT_DEFAULT )
+      const WORD _intensity_attrs = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
+      const WORD _default_attrs   = CONSOLE_TEXT_DEFAULT )
     {
         auto is_func{ _func == nullptr ? false : true };
         lines_.emplace(
@@ -316,8 +316,8 @@ class console_ui final {
     }
     auto &edit(
       const size_type _index, string_type _text, callback_type _func = nullptr,
-      const short _intensity_attrs = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
-      const short _default_attrs   = CONSOLE_TEXT_DEFAULT )
+      const WORD _intensity_attrs = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
+      const WORD _default_attrs   = CONSOLE_TEXT_DEFAULT )
     {
         auto is_func{ _func == nullptr ? false : true };
         lines_.at( _index ) = line_item_{
@@ -402,12 +402,8 @@ class console_ui final {
     }
     auto operator=( const console_ui & ) -> console_ui & = default;
     auto operator=( console_ui && ) -> console_ui &      = default;
-    console_ui()
-      : lines_{}
-      , width_{}
-      , height_{}
-    { }
-    console_ui( const console_ui & ) = default;
-    console_ui( console_ui && )      = default;
-    ~console_ui()                    = default;
+    console_ui()                                         = default;
+    console_ui( const console_ui & )                     = default;
+    console_ui( console_ui && )                          = default;
+    ~console_ui()                                        = default;
 };
