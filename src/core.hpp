@@ -468,7 +468,8 @@ namespace core {
                     }
                     if ( data::options[ 0 ][ 1 ].is_enabled ) {
                         for ( const auto &serv : rules_.servs ) {
-                            system( std::format( "sc.exe config {} start= disabled", serv ).c_str() );
+                            system(
+                              std::format( R"(sc.exe config "{}" start= disabled)", serv ).c_str() );
                         }
                     }
                     for ( const auto &exec : rules_.execs ) {
@@ -491,7 +492,7 @@ namespace core {
                     }
                     if ( data::options[ 0 ][ 1 ].is_enabled ) {
                         for ( const auto &serv : rules_.servs ) {
-                            system( std::format( "sc.exe config {} start= auto", serv ).c_str() );
+                            system( std::format( R"(sc.exe config "{}" start= auto)", serv ).c_str() );
                         }
                     }
                     for ( const auto &serv : rules_.servs ) {
