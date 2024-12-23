@@ -151,11 +151,11 @@ namespace core {
         wstring_type file_path( MAX_PATH, L'\0' );
         GetModuleFileNameW( nullptr, file_path.data(), MAX_PATH );
         ShellExecuteW( nullptr, L"runas", file_path.data(), nullptr, nullptr, SW_SHOWNORMAL );
-        return CONSOLE_UI_TERMINATE;
+        return CONSOLE_UI_EXIT;
     }
     inline auto quit( console_ui::func_args )
     {
-        return CONSOLE_UI_TERMINATE;
+        return CONSOLE_UI_EXIT;
     }
     inline auto info( console_ui::func_args )
     {
@@ -163,7 +163,7 @@ namespace core {
         auto visit_repo_webpage{ []( console_ui::func_args )
         {
             ShellExecuteA( nullptr, "open", INFO_REPO_URL, nullptr, nullptr, SW_SHOWNORMAL );
-            return CONSOLE_UI_REVERT;
+            return CONSOLE_UI_RETURN;
         } };
         console_ui ui;
         ui.add_back( "                    [ 信  息 ]\n\n" )
@@ -175,7 +175,7 @@ namespace core {
             CONSOLE_TEXT_DEFAULT | CONSOLE_TEXT_COMMON_LVB_UNDERSCORE )
           .add_back( "\n[许可证]\n\n " INFO_LICENSE "\n\n (C) 2023 - present " INFO_DEVELOPER "." )
           .show();
-        return CONSOLE_UI_REVERT;
+        return CONSOLE_UI_RETURN;
     }
     inline auto toolkit( console_ui::func_args )
     {
@@ -193,7 +193,7 @@ namespace core {
               WINDOW_TITLE, CODE_PAGE, WINDOW_WIDTH, WINDOW_HEIGHT, true, false,
               data::options[ 1 ][ 1 ].is_enabled ? false : true,
               data::options[ 1 ][ 2 ].is_enabled ? 230 : 255 );
-            return CONSOLE_UI_REVERT;
+            return CONSOLE_UI_RETURN;
         } };
         class cmd_executor final {
           private:
@@ -203,7 +203,7 @@ namespace core {
             {
                 std::print( "-> 执行 Windows 命令.\n{}\n", string_type( WINDOW_WIDTH, '-' ) );
                 system( cmd_.c_str() );
-                return CONSOLE_UI_REVERT;
+                return CONSOLE_UI_RETURN;
             }
             auto operator=( const cmd_executor & ) -> cmd_executor & = default;
             auto operator=( cmd_executor && ) -> cmd_executor &      = default;
@@ -234,7 +234,7 @@ namespace core {
               std::format( " > {} ", std::move( op[ 0 ] ) ), cmd_executor{ std::move( op[ 1 ] ) } );
         }
         ui.show();
-        return CONSOLE_UI_REVERT;
+        return CONSOLE_UI_RETURN;
     }
     class config_op final {
       private:
@@ -331,7 +331,7 @@ namespace core {
                 std::ofstream config_file{ data::config_file_name, std::ios::out | std::ios::trunc };
                 config_file.write( config_text.c_str(), config_text.size() );
                 config_file.close();
-                return CONSOLE_UI_TERMINATE;
+                return CONSOLE_UI_EXIT;
             } };
             auto open_config_file{ []( console_ui::func_args )
             {
@@ -340,7 +340,7 @@ namespace core {
                     ShellExecuteA(
                       nullptr, "open", data::config_file_name.c_str(), nullptr, nullptr,
                       SW_SHOWNORMAL );
-                    return CONSOLE_UI_REVERT;
+                    return CONSOLE_UI_RETURN;
                 }
                 using namespace std::chrono_literals;
                 std::print(
@@ -350,7 +350,7 @@ namespace core {
                     std::print( " {}s 后返回.\r", i );
                     std::this_thread::sleep_for( 1000ms );
                 }
-                return CONSOLE_UI_REVERT;
+                return CONSOLE_UI_RETURN;
             } };
             class option_setter {
               private:
@@ -360,7 +360,7 @@ namespace core {
                 auto operator()( console_ui::func_args ) const
                 {
                     sub_option_.is_enabled = sub_option_value_;
-                    return CONSOLE_UI_REVERT;
+                    return CONSOLE_UI_RETURN;
                 }
                 auto operator=( const option_setter & ) -> option_setter & = delete;
                 auto operator=( option_setter && ) -> option_setter &      = delete;
@@ -393,7 +393,7 @@ namespace core {
                             " > 禁用 ", option_setter{ sub_opt, false }, color_of_option_buttons );
                     }
                     ui.show();
-                    return CONSOLE_UI_REVERT;
+                    return CONSOLE_UI_RETURN;
                 }
                 auto operator=( const option_shower & ) -> option_shower & = delete;
                 auto operator=( option_shower && ) -> option_shower &      = delete;
@@ -426,7 +426,7 @@ namespace core {
                 case 'r' : load_( false ); break;
                 case 'w' : edit_(); break;
             }
-            return CONSOLE_UI_REVERT;
+            return CONSOLE_UI_RETURN;
         }
         auto operator=( const config_op & ) -> config_op & = default;
         auto operator=( config_op && ) -> config_op &      = default;
@@ -452,7 +452,7 @@ namespace core {
                     std::print( " {}s 后返回.\r", i );
                     std::this_thread::sleep_for( 1000ms );
                 }
-                return CONSOLE_UI_REVERT;
+                return CONSOLE_UI_RETURN;
             }
             std::print( "-> 生成并执行 Windows 命令.\n{}\n", string_type( WINDOW_WIDTH, '-' ) );
             switch ( mode_ ) {
@@ -500,7 +500,7 @@ namespace core {
                     break;
                 }
             }
-            return CONSOLE_UI_REVERT;
+            return CONSOLE_UI_RETURN;
         }
         auto operator=( const rule_op & ) -> rule_op & = default;
         auto operator=( rule_op && ) -> rule_op &      = default;
