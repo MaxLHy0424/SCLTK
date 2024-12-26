@@ -308,6 +308,7 @@ namespace core {
               CONSOLE_TEXT_FOREGROUND_RED | CONSOLE_TEXT_FOREGROUND_GREEN };
             auto sync_config{ [ this ]( console_ui::func_args )
             {
+                std::print( "-> 处理配置.\n" );
                 load_( true );
                 std::print( "-> 保存更改.\n" );
                 string_type config_text;
@@ -331,7 +332,7 @@ namespace core {
                 std::ofstream config_file{ data::config_file_name, std::ios::out | std::ios::trunc };
                 config_file.write( config_text.c_str(), config_text.size() );
                 config_file.close();
-                return CONSOLE_UI_EXIT;
+                return CONSOLE_UI_RETURN;
             } };
             auto open_config_file{ []( console_ui::func_args )
             {
@@ -410,7 +411,9 @@ namespace core {
                 " (i) 所有选项默认禁用.\n"
                 "     相关信息可参阅文档.\n" )
               .add_back(
-                " < 同步配置并返回 ", sync_config,
+                " < 返回 ", quit, CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_INTENSITY )
+              .add_back(
+                " > 同步配置 ", sync_config,
                 CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_INTENSITY )
               .add_back( " > 打开配置文件 ", open_config_file )
               .add_back( "\n[选项]\n" );
