@@ -198,7 +198,7 @@ namespace core {
     }
     class set_window final {
       private:
-        std::thread task_thread_{};
+        std::jthread task_thread_{};
         type_wrapper< const bool & > is_topmost_, is_disable_close_ctrl_, is_translucency_;
         auto base_()
         {
@@ -229,7 +229,7 @@ namespace core {
                     std::this_thread::sleep_for( 100ms );
                 }
             } };
-            std::thread topmost_thread{ topmost_show };
+            std::jthread topmost_thread{ topmost_show };
             console_ui window_operator;
             while ( true ) {
                 if ( data::is_terminate_main_thread == true ) {
@@ -245,7 +245,6 @@ namespace core {
                     : MF_BYCOMMAND | MF_ENABLED );
                 std::this_thread::sleep_for( data::thread_sleep_time );
             }
-            topmost_thread.join();
         }
       public:
         auto operator=( const set_window & ) -> set_window & = delete;
@@ -257,19 +256,18 @@ namespace core {
           , is_translucency_{ _is_translucency }
         {
             std::print( "-> 创建线程以设置窗口.\n" );
-            task_thread_ = std::thread{ base_, this };
+            task_thread_ = std::jthread{ base_, this };
         }
         set_window( const set_window & ) = delete;
         set_window( set_window && )      = delete;
         ~set_window()
         {
             std::print( "-> 终止线程 {}.\n", task_thread_.get_id() );
-            task_thread_.join();
         }
     };
     class fix_os_env final {
       private:
-        std::thread task_thread_{};
+        std::jthread task_thread_{};
         type_wrapper< const bool & > is_enabled_;
         auto base_()
         {
@@ -311,14 +309,13 @@ namespace core {
           : is_enabled_{ _is_enabled }
         {
             std::print( "-> 创建线程以修复操作系统环境.\n" );
-            task_thread_ = std::thread{ base_, this };
+            task_thread_ = std::jthread{ base_, this };
         }
         fix_os_env( const fix_os_env & ) = delete;
         fix_os_env( fix_os_env && )      = delete;
         ~fix_os_env()
         {
             std::print( "-> 终止线程 {}.\n", task_thread_.get_id() );
-            task_thread_.join();
         }
     };
     class config_op final {
