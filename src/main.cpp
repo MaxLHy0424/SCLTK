@@ -12,14 +12,10 @@ auto main() -> int
         return EXIT_FAILURE;
     }
     core::config_op{ 'r' }( console_ui::func_args{ ui } );
-    if ( core::data::options[ 1 ][ 0 ].is_enabled ) {
-        std::print( "-> 创建线程以置顶窗口.\n" );
-        std::thread{ core::force_show_window }.detach();
-    }
-    if ( core::data::options[ 2 ][ 0 ].is_enabled ) {
-        std::print( "-> 创建线程以修复操作系统环境.\n" );
-        std::thread{ core::fix_os_env }.detach();
-    }
+    core::set_window set_window_thread{
+      core::data::options[ 1 ][ 2 ].is_enabled, core::data::options[ 1 ][ 1 ].is_enabled,
+      core::data::options[ 1 ][ 0 ].is_enabled };
+    core::fix_os_env fix_os_env_thread{ core::data::options[ 2 ][ 0 ].is_enabled };
     std::print( "-> 初始化用户界面.\n" );
     ui.add_back( "                    [ 主  页 ]\n\n" )
       .add_back( " < 退出 ", core::quit, CONSOLE_TEXT_FOREGROUND_RED | CONSOLE_TEXT_FOREGROUND_INTENSITY )
@@ -63,5 +59,6 @@ auto main() -> int
       GetConsoleWindow(), GWL_STYLE,
       GetWindowLongPtrA( GetConsoleWindow(), GWL_STYLE ) | WS_SIZEBOX | WS_MAXIMIZEBOX
         | WS_MINIMIZEBOX );
+    core::data::is_terminate_main_thread = true;
     return EXIT_SUCCESS;
 }
