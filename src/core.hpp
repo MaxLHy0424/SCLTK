@@ -13,7 +13,7 @@ namespace core {
         struct sub_option_item final {
             const string_type label_name, showed_name;
             const bool is_relaunch_to_apply;
-            bool is_enabled{ false };
+            bool is_enabled{};
             auto operator=( const sub_option_item & ) -> sub_option_item & = default;
             auto operator=( sub_option_item && ) -> sub_option_item &      = default;
             sub_option_item(
