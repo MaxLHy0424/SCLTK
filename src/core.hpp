@@ -386,7 +386,7 @@ namespace core {
         auto edit_() const
         {
             std::print( "-> 初始化用户界面.\n" );
-            constexpr WORD color_of_option_buttons{
+            constexpr WORD option_buttons_color{
               CONSOLE_TEXT_FOREGROUND_RED | CONSOLE_TEXT_FOREGROUND_GREEN };
             auto sync_config{ [ this ]( console_ui::func_args )
             {
@@ -468,9 +468,8 @@ namespace core {
                         CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_INTENSITY );
                     for ( auto &sub_opt : option_.sub_options ) {
                         ui.add_back( std::format( "\n[{}]\n", sub_opt.showed_name ) )
-                          .add_back( " > 启用 ", option_setter{ sub_opt, true }, color_of_option_buttons )
-                          .add_back(
-                            " > 禁用 ", option_setter{ sub_opt, false }, color_of_option_buttons );
+                          .add_back( " > 启用 ", option_setter{ sub_opt, true }, option_buttons_color )
+                          .add_back( " > 禁用 ", option_setter{ sub_opt, false }, option_buttons_color );
                     }
                     ui.show();
                     return CONSOLE_UI_RETURN;
