@@ -91,6 +91,7 @@ namespace core {
               "Adapter.exe", "repview.exe", "FormatPaper.exe" },
            { "appcheck2", "checkapp2" }                }
         };
+        std::atomic< bool > is_terminate_main_thread{};
     }
     inline auto is_run_as_admin()
     {
@@ -107,45 +108,127 @@ namespace core {
         }
         return is_admin;
     }
-    inline auto force_show_window()
-    {
-        using namespace std::chrono_literals;
-        const HWND this_window{ GetConsoleWindow() };
-        const DWORD foreground_id{ GetWindowThreadProcessId( this_window, nullptr ) },
-          current_id{ GetCurrentThreadId() };
-        while ( true ) {
-            AttachThreadInput( current_id, foreground_id, TRUE );
-            ShowWindow( this_window, SW_SHOWNORMAL );
-            SetForegroundWindow( this_window );
-            AttachThreadInput( current_id, foreground_id, FALSE );
-            SetWindowPos( this_window, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
-            std::this_thread::sleep_for( 100ms );
-        }
-    }
-    inline auto fix_os_env()
-    {
-        using namespace std::chrono_literals;
-        type_wrapper< const string_type[] > hkcu_reg_dirs{
-          R"(Software\Policies\Microsoft\Windows\System)",
-          R"(Software\Microsoft\Windows\CurrentVersion\Policies\System)",
-          R"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)" },
-          execs{ "mode.com", "chcp.com", "ntsd.exe",    "taskkill.exe", "sc.exe",      "net.exe",
-                 "reg.exe",  "cmd.exe",  "taskmgr.exe", "perfmon.exe",  "regedit.exe", "mmc.exe" };
-        while ( true ) {
-            for ( const auto &reg_dir : hkcu_reg_dirs ) {
-                RegDeleteTreeA( HKEY_CURRENT_USER, reg_dir.c_str() );
+    class set_window final {
+      private:
+        std::thread task_thread_{};
+        type_wrapper< const bool & > is_translucency_, is_disable_close_ctrl_, is_topmost_;
+        auto base_()
+        {
+            auto topmost_show{ [ & ]()
+            {
+                using namespace std::chrono_literals;
+                const HWND this_window{ GetConsoleWindow() };
+                const DWORD foreground_id{ GetWindowThreadProcessId( this_window, nullptr ) },
+                  current_id{ GetCurrentThreadId() };
+                while ( true ) {
+                    if ( data::is_terminate_main_thread == true ) {
+                        SetWindowPos(
+                          GetConsoleWindow(), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
+                        return;
+                    }
+                    if ( !is_topmost_ ) {
+                        SetWindowPos(
+                          GetConsoleWindow(), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
+                        continue;
+                    }
+                    AttachThreadInput( current_id, foreground_id, TRUE );
+                    ShowWindow( this_window, SW_SHOWNORMAL );
+                    SetForegroundWindow( this_window );
+                    AttachThreadInput( current_id, foreground_id, FALSE );
+                    SetWindowPos( this_window, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
+                    std::this_thread::sleep_for( 100ms );
+                }
+            } };
+            std::thread topmost_thread{ topmost_show };
+            console_ui window_operator;
+            while ( true ) {
+                if ( data::is_terminate_main_thread == true ) {
+                    break;
+                }
+                SetLayeredWindowAttributes(
+                  GetConsoleWindow(), RGB( 0, 0, 0 ), is_translucency_ ? 230 : 255, LWA_ALPHA );
+                EnableMenuItem(
+                  GetSystemMenu( GetConsoleWindow(), FALSE ), SC_CLOSE,
+                  is_disable_close_ctrl_
+                    ? MF_BYCOMMAND | MF_DISABLED | MF_GRAYED
+                    : MF_BYCOMMAND | MF_ENABLED );
             }
-            for ( const auto &exec : execs ) {
-                RegDeleteTreeA(
-                  HKEY_LOCAL_MACHINE,
-                  std::format(
-                    R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{})",
-                    exec )
-                    .c_str() );
-            }
-            std::this_thread::sleep_for( 1000ms );
+            topmost_thread.join();
         }
-    }
+      public:
+        auto operator=( const set_window & ) -> set_window & = delete;
+        auto operator=( set_window && ) -> set_window &      = delete;
+        set_window(
+          const bool &_is_translucency, const bool &_is_disable_close_ctrl, const bool &_is_topmost )
+          : is_translucency_{ _is_translucency }
+          , is_disable_close_ctrl_{ _is_disable_close_ctrl }
+          , is_topmost_{ _is_topmost }
+        {
+            std::print( "-> 创建线程以设置窗口.\n" );
+            task_thread_ = std::thread{ base_, this };
+        }
+        set_window( const set_window & ) = delete;
+        set_window( set_window && )      = delete;
+        ~set_window()
+        {
+            if ( task_thread_.joinable() ) {
+                task_thread_.join();
+            }
+        }
+    };
+    class fix_os_env final {
+      private:
+        std::thread task_thread_{};
+        type_wrapper< const bool & > is_enabled_;
+        auto base_()
+        {
+            using namespace std::chrono_literals;
+            type_wrapper< const string_type[] > hkcu_reg_dirs{
+              R"(Software\Policies\Microsoft\Windows\System)",
+              R"(Software\Microsoft\Windows\CurrentVersion\Policies\System)",
+              R"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)" },
+              execs{
+                "mode.com", "chcp.com", "ntsd.exe",    "taskkill.exe", "sc.exe",      "net.exe",
+                "reg.exe",  "cmd.exe",  "taskmgr.exe", "perfmon.exe",  "regedit.exe", "mmc.exe" };
+            while ( true ) {
+                if ( data::is_terminate_main_thread == true ) {
+                    return;
+                }
+                if ( !is_enabled_ ) {
+                    continue;
+                }
+                for ( const auto &reg_dir : hkcu_reg_dirs ) {
+                    RegDeleteTreeA( HKEY_CURRENT_USER, reg_dir.c_str() );
+                }
+                for ( const auto &exec : execs ) {
+                    RegDeleteTreeA(
+                      HKEY_LOCAL_MACHINE,
+                      std::format(
+                        R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{})",
+                        exec )
+                        .c_str() );
+                }
+                std::this_thread::sleep_for( 1000ms );
+            }
+        }
+      public:
+        auto operator=( const fix_os_env & ) -> fix_os_env & = delete;
+        auto operator=( fix_os_env && ) -> fix_os_env &      = delete;
+        fix_os_env( const bool &_is_enabled )
+          : is_enabled_{ _is_enabled }
+        {
+            std::print( "-> 创建线程以修复操作系统环境.\n" );
+            task_thread_ = std::thread{ base_, this };
+        }
+        fix_os_env( const fix_os_env & ) = delete;
+        fix_os_env( fix_os_env && )      = delete;
+        ~fix_os_env()
+        {
+            if ( task_thread_.joinable() ) {
+                task_thread_.join();
+            }
+        }
+    };
     inline auto relaunch_as_admin( console_ui::func_args )
     {
         wstring_type file_path( MAX_PATH, L'\0' );
