@@ -483,7 +483,7 @@ namespace core {
             console_ui ui;
             ui.add_back(
                 "                    [ 配  置 ]\n\n\n"
-                " (i) 所有选项默认禁用.\n"
+                " (i) 所有选项默认禁用且立即生效.\n"
                 "     相关信息可参阅文档.\n" )
               .add_back(
                 " < 返回 ", quit, CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_INTENSITY )
