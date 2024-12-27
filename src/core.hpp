@@ -108,7 +108,7 @@ namespace core {
     class set_window final {
       private:
         std::thread task_thread_{};
-        type_wrapper< const bool & > is_translucency_, is_disable_close_ctrl_, is_topmost_;
+        type_wrapper< const bool & > is_topmost_, is_disable_close_ctrl_, is_translucency_;
         auto base_()
         {
             auto topmost_show{ [ & ]()
@@ -156,10 +156,10 @@ namespace core {
         auto operator=( const set_window & ) -> set_window & = delete;
         auto operator=( set_window && ) -> set_window &      = delete;
         set_window(
-          const bool &_is_translucency, const bool &_is_disable_close_ctrl, const bool &_is_topmost )
-          : is_translucency_{ _is_translucency }
+          const bool &_is_topmost, const bool &_is_disable_close_ctrl, const bool &_is_translucency )
+          : is_topmost_{ _is_topmost }
           , is_disable_close_ctrl_{ _is_disable_close_ctrl }
-          , is_topmost_{ _is_topmost }
+          , is_translucency_{ _is_translucency }
         {
             std::print( "-> 创建线程以设置窗口.\n" );
             task_thread_ = std::thread{ base_, this };

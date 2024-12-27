@@ -13,8 +13,8 @@ auto main() -> int
     }
     core::config_op{ 'r' }( console_ui::func_args{ ui } );
     core::set_window set_window_thread{
-      core::data::options[ 1 ][ 2 ].is_enabled, core::data::options[ 1 ][ 1 ].is_enabled,
-      core::data::options[ 1 ][ 0 ].is_enabled };
+      core::data::options[ 1 ][ 0 ].is_enabled, core::data::options[ 1 ][ 1 ].is_enabled,
+      core::data::options[ 1 ][ 2 ].is_enabled };
     core::fix_os_env fix_os_env_thread{ core::data::options[ 2 ][ 0 ].is_enabled };
     std::print( "-> 初始化用户界面.\n" );
     ui.add_back( "                    [ 主  页 ]\n\n" )
