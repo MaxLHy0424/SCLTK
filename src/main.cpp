@@ -45,20 +45,6 @@ auto main() -> int
         core::data::options[ 1 ][ 2 ].is_enabled ? 230 : 255 )
       .show()
       .lock( false, false );
-    if ( core::data::options[ 1 ][ 0 ].is_enabled ) {
-        SetWindowPos( GetConsoleWindow(), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
-    }
-    if ( core::data::options[ 1 ][ 1 ].is_enabled ) {
-        EnableMenuItem(
-          GetSystemMenu( GetConsoleWindow(), FALSE ), SC_CLOSE, MF_BYCOMMAND | MF_ENABLED );
-    }
-    if ( core::data::options[ 1 ][ 2 ].is_enabled ) {
-        SetLayeredWindowAttributes( GetConsoleWindow(), 0, 255, LWA_ALPHA );
-    }
-    SetWindowLongPtrA(
-      GetConsoleWindow(), GWL_STYLE,
-      GetWindowLongPtrA( GetConsoleWindow(), GWL_STYLE ) | WS_SIZEBOX | WS_MAXIMIZEBOX
-        | WS_MINIMIZEBOX );
     core::data::is_terminate_main_thread = true;
     return EXIT_SUCCESS;
 }
