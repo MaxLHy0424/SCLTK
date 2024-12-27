@@ -367,8 +367,8 @@ class console_ui final {
     }
     auto &set_console(
       const string_type &_title, const UINT _code_page, const SHORT _width, const SHORT _height,
-      const bool _fix_size, const bool _minimize_ctrl, const bool _close_window_ctrl,
-      const BYTE _transparency )
+      const bool _is_fix_size, const bool _is_enable_minimize_ctrl,
+      const bool is_enable_close_window_ctrl, const BYTE _translucency )
     {
         SetConsoleOutputCP( _code_page );
         SetConsoleCP( _code_page );
@@ -376,18 +376,20 @@ class console_ui final {
         system( std::format( "mode.com con cols={} lines={}", _width, _height ).c_str() );
         SetWindowLongPtrA(
           GetConsoleWindow(), GWL_STYLE,
-          _fix_size
+          _is_fix_size
             ? GetWindowLongPtrA( GetConsoleWindow(), GWL_STYLE ) & ~WS_SIZEBOX & ~WS_MAXIMIZEBOX
             : GetWindowLongPtrA( GetConsoleWindow(), GWL_STYLE ) | WS_SIZEBOX | WS_MAXIMIZEBOX );
         SetWindowLongPtrA(
           GetConsoleWindow(), GWL_STYLE,
-          _minimize_ctrl
+          _is_enable_minimize_ctrl
             ? GetWindowLongPtrA( GetConsoleWindow(), GWL_STYLE ) | WS_MINIMIZEBOX
             : GetWindowLongPtrA( GetConsoleWindow(), GWL_STYLE ) & ~WS_MINIMIZEBOX );
         EnableMenuItem(
           GetSystemMenu( GetConsoleWindow(), FALSE ), SC_CLOSE,
-          _close_window_ctrl ? MF_BYCOMMAND | MF_ENABLED : MF_BYCOMMAND | MF_DISABLED | MF_GRAYED );
-        SetLayeredWindowAttributes( GetConsoleWindow(), 0, _transparency, LWA_ALPHA );
+          is_enable_close_window_ctrl
+            ? MF_BYCOMMAND | MF_ENABLED
+            : MF_BYCOMMAND | MF_DISABLED | MF_GRAYED );
+        SetLayeredWindowAttributes( GetConsoleWindow(), RGB( 0, 0, 0 ), _translucency, LWA_ALPHA );
         return *this;
     }
     auto &lock( const bool _is_hide_cursor, const bool _is_lock_text )
