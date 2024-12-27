@@ -168,9 +168,8 @@ namespace core {
         set_window( set_window && )      = delete;
         ~set_window()
         {
-            if ( task_thread_.joinable() ) {
-                task_thread_.join();
-            }
+            std::print( "-> 终止线程 {}.\n", task_thread_.get_id() );
+            task_thread_.join();
         }
     };
     class fix_os_env final {
@@ -221,9 +220,8 @@ namespace core {
         fix_os_env( fix_os_env && )      = delete;
         ~fix_os_env()
         {
-            if ( task_thread_.joinable() ) {
-                task_thread_.join();
-            }
+            std::print( "-> 终止线程 {}.\n", task_thread_.get_id() );
+            task_thread_.join();
         }
     };
     inline auto relaunch_as_admin( console_ui::func_args )
