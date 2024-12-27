@@ -58,8 +58,8 @@ namespace core {
         ~rule_item()                   = default;
     };
     namespace data {
-        inline const string_type config_file_name{ "config.ini" };
-        inline const std::chrono::milliseconds thread_sleep_time{ 100 };
+        inline constexpr string_type config_file_name{ "config.ini" };
+        inline constexpr std::chrono::milliseconds thread_sleep_time{ 100 };
         inline std::atomic< bool > is_terminate_main_thread{};
         inline type_wrapper< option_item[] > options{
           {"operations",
