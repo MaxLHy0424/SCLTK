@@ -105,6 +105,96 @@ namespace core {
         }
         return is_admin;
     }
+    inline auto relaunch_as_admin( console_ui::func_args )
+    {
+        wstring_type file_path( MAX_PATH, L'\0' );
+        GetModuleFileNameW( nullptr, file_path.data(), MAX_PATH );
+        ShellExecuteW( nullptr, L"runas", file_path.data(), nullptr, nullptr, SW_SHOWNORMAL );
+        return CONSOLE_UI_EXIT;
+    }
+    inline auto quit( console_ui::func_args )
+    {
+        return CONSOLE_UI_EXIT;
+    }
+    inline auto info( console_ui::func_args )
+    {
+        std::print( "-> 初始化用户界面.\n" );
+        auto visit_repo_webpage{ []( console_ui::func_args )
+        {
+            ShellExecuteA( nullptr, "open", INFO_REPO_URL, nullptr, nullptr, SW_SHOWNORMAL );
+            return CONSOLE_UI_RETURN;
+        } };
+        console_ui ui;
+        ui.add_back( "                    [ 信  息 ]\n\n" )
+          .add_back( " < 返回 ", quit, CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_INTENSITY )
+          .add_back( "\n[名称]\n\n " INFO_NAME "\n\n[版本]\n\n " INFO_VERSION )
+          .add_back( "\n[仓库]\n" )
+          .add_back(
+            " " INFO_REPO_URL " ", visit_repo_webpage,
+            CONSOLE_TEXT_DEFAULT | CONSOLE_TEXT_COMMON_LVB_UNDERSCORE )
+          .add_back( "\n[许可证]\n\n " INFO_LICENSE "\n\n (C) 2023 - present " INFO_DEVELOPER "." )
+          .show();
+        return CONSOLE_UI_RETURN;
+    }
+    inline auto toolkit( console_ui::func_args )
+    {
+        std::print( "-> 初始化用户界面.\n" );
+        auto launch_cmd{ []( console_ui::func_args _args )
+        {
+            _args.parent_ui.lock( false, false );
+            _args.parent_ui.set_console(
+              WINDOW_TITLE " - 命令提示符", CODE_PAGE, 120, 30, false, false,
+              data::options[ 1 ][ 1 ].is_enabled ? false : true,
+              data::options[ 1 ][ 2 ].is_enabled ? 230 : 255 );
+            SetConsoleScreenBufferSize( GetStdHandle( STD_OUTPUT_HANDLE ), { 125, SHRT_MAX - 1 } );
+            system( "cmd.exe" );
+            _args.parent_ui.set_console(
+              WINDOW_TITLE, CODE_PAGE, WINDOW_WIDTH, WINDOW_HEIGHT, true, false,
+              data::options[ 1 ][ 1 ].is_enabled ? false : true,
+              data::options[ 1 ][ 2 ].is_enabled ? 230 : 255 );
+            return CONSOLE_UI_RETURN;
+        } };
+        class cmd_executor final {
+          private:
+            const string_type cmd_;
+          public:
+            auto operator()( console_ui::func_args ) const
+            {
+                std::print( "-> 执行 Windows OS 命令.\n{}\n", string_type( WINDOW_WIDTH, '-' ) );
+                system( cmd_.c_str() );
+                return CONSOLE_UI_RETURN;
+            }
+            auto operator=( const cmd_executor & ) -> cmd_executor & = default;
+            auto operator=( cmd_executor && ) -> cmd_executor &      = default;
+            cmd_executor( string_type _cmd )
+              : cmd_{ std::move( _cmd ) }
+            { }
+            cmd_executor( const cmd_executor & ) = default;
+            cmd_executor( cmd_executor && )      = default;
+            ~cmd_executor()                      = default;
+        };
+        type_wrapper< string_type[][ 2 ] > common_ops{
+          {"重启资源管理器",
+           R"(taskkill.exe /f /im explorer.exe && timeout /t 3 /nobreak && start C:\Windows\explorer.exe)"},
+          {"恢复 USB 设备访问",
+           R"(reg.exe add "HKLM\SYSTEM\CurrentControlSet\Services\USBSTOR" /f /t reg_dword /v Start /d 3)"},
+          {"恢复 Google Chrome 离线游戏",
+           R"(reg.exe delete "HKLM\SOFTWARE\Policies\Google\Chrome" /f /v AllowDinosaurEasterEgg)"        },
+          {"恢复 Microsoft Edge 离线游戏",
+           R"(reg.exe delete "HKLM\SOFTWARE\Policies\Microsoft\Edge" /f /v AllowSurfGame)"                }
+        };
+        console_ui ui;
+        ui.add_back( "                   [ 工 具 箱 ]\n\n" )
+          .add_back( " < 返回 ", quit, CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_INTENSITY )
+          .add_back( " > 命令提示符 ", launch_cmd )
+          .add_back( "\n[常用操作]\n" );
+        for ( auto &op : common_ops ) {
+            ui.add_back(
+              std::format( " > {} ", std::move( op[ 0 ] ) ), cmd_executor{ std::move( op[ 1 ] ) } );
+        }
+        ui.show();
+        return CONSOLE_UI_RETURN;
+    }
     class set_window final {
       private:
         std::thread task_thread_{};
@@ -224,96 +314,6 @@ namespace core {
             task_thread_.join();
         }
     };
-    inline auto relaunch_as_admin( console_ui::func_args )
-    {
-        wstring_type file_path( MAX_PATH, L'\0' );
-        GetModuleFileNameW( nullptr, file_path.data(), MAX_PATH );
-        ShellExecuteW( nullptr, L"runas", file_path.data(), nullptr, nullptr, SW_SHOWNORMAL );
-        return CONSOLE_UI_EXIT;
-    }
-    inline auto quit( console_ui::func_args )
-    {
-        return CONSOLE_UI_EXIT;
-    }
-    inline auto info( console_ui::func_args )
-    {
-        std::print( "-> 初始化用户界面.\n" );
-        auto visit_repo_webpage{ []( console_ui::func_args )
-        {
-            ShellExecuteA( nullptr, "open", INFO_REPO_URL, nullptr, nullptr, SW_SHOWNORMAL );
-            return CONSOLE_UI_RETURN;
-        } };
-        console_ui ui;
-        ui.add_back( "                    [ 信  息 ]\n\n" )
-          .add_back( " < 返回 ", quit, CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_INTENSITY )
-          .add_back( "\n[名称]\n\n " INFO_NAME "\n\n[版本]\n\n " INFO_VERSION )
-          .add_back( "\n[仓库]\n" )
-          .add_back(
-            " " INFO_REPO_URL " ", visit_repo_webpage,
-            CONSOLE_TEXT_DEFAULT | CONSOLE_TEXT_COMMON_LVB_UNDERSCORE )
-          .add_back( "\n[许可证]\n\n " INFO_LICENSE "\n\n (C) 2023 - present " INFO_DEVELOPER "." )
-          .show();
-        return CONSOLE_UI_RETURN;
-    }
-    inline auto toolkit( console_ui::func_args )
-    {
-        std::print( "-> 初始化用户界面.\n" );
-        auto launch_cmd{ []( console_ui::func_args _args )
-        {
-            _args.parent_ui.lock( false, false );
-            _args.parent_ui.set_console(
-              WINDOW_TITLE " - 命令提示符", CODE_PAGE, 120, 30, false, false,
-              data::options[ 1 ][ 1 ].is_enabled ? false : true,
-              data::options[ 1 ][ 2 ].is_enabled ? 230 : 255 );
-            SetConsoleScreenBufferSize( GetStdHandle( STD_OUTPUT_HANDLE ), { 125, SHRT_MAX - 1 } );
-            system( "cmd.exe" );
-            _args.parent_ui.set_console(
-              WINDOW_TITLE, CODE_PAGE, WINDOW_WIDTH, WINDOW_HEIGHT, true, false,
-              data::options[ 1 ][ 1 ].is_enabled ? false : true,
-              data::options[ 1 ][ 2 ].is_enabled ? 230 : 255 );
-            return CONSOLE_UI_RETURN;
-        } };
-        class cmd_executor final {
-          private:
-            const string_type cmd_;
-          public:
-            auto operator()( console_ui::func_args ) const
-            {
-                std::print( "-> 执行 Windows OS 命令.\n{}\n", string_type( WINDOW_WIDTH, '-' ) );
-                system( cmd_.c_str() );
-                return CONSOLE_UI_RETURN;
-            }
-            auto operator=( const cmd_executor & ) -> cmd_executor & = default;
-            auto operator=( cmd_executor && ) -> cmd_executor &      = default;
-            cmd_executor( string_type _cmd )
-              : cmd_{ std::move( _cmd ) }
-            { }
-            cmd_executor( const cmd_executor & ) = default;
-            cmd_executor( cmd_executor && )      = default;
-            ~cmd_executor()                      = default;
-        };
-        type_wrapper< string_type[][ 2 ] > common_ops{
-          {"重启资源管理器",
-           R"(taskkill.exe /f /im explorer.exe && timeout /t 3 /nobreak && start C:\Windows\explorer.exe)"},
-          {"恢复 USB 设备访问",
-           R"(reg.exe add "HKLM\SYSTEM\CurrentControlSet\Services\USBSTOR" /f /t reg_dword /v Start /d 3)"},
-          {"恢复 Google Chrome 离线游戏",
-           R"(reg.exe delete "HKLM\SOFTWARE\Policies\Google\Chrome" /f /v AllowDinosaurEasterEgg)"        },
-          {"恢复 Microsoft Edge 离线游戏",
-           R"(reg.exe delete "HKLM\SOFTWARE\Policies\Microsoft\Edge" /f /v AllowSurfGame)"                }
-        };
-        console_ui ui;
-        ui.add_back( "                   [ 工 具 箱 ]\n\n" )
-          .add_back( " < 返回 ", quit, CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_INTENSITY )
-          .add_back( " > 命令提示符 ", launch_cmd )
-          .add_back( "\n[常用操作]\n" );
-        for ( auto &op : common_ops ) {
-            ui.add_back(
-              std::format( " > {} ", std::move( op[ 0 ] ) ), cmd_executor{ std::move( op[ 1 ] ) } );
-        }
-        ui.show();
-        return CONSOLE_UI_RETURN;
-    }
     class config_op final {
       private:
         const char mode_;
