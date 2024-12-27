@@ -12,15 +12,12 @@ namespace core {
     struct option_item final {
         struct sub_option_item final {
             const string_type label_name, showed_name;
-            const bool is_relaunch_to_apply;
             bool is_enabled{};
             auto operator=( const sub_option_item & ) -> sub_option_item & = default;
             auto operator=( sub_option_item && ) -> sub_option_item &      = default;
-            sub_option_item(
-              string_type _label_name, string_type _showed_name, const bool _is_relaunch_to_apply )
+            sub_option_item( string_type _label_name, string_type _showed_name )
               : label_name{ std::move( _label_name ) }
               , showed_name{ std::move( _showed_name ) }
-              , is_relaunch_to_apply{ _is_relaunch_to_apply }
             { }
             sub_option_item( const sub_option_item & ) = default;
             sub_option_item( sub_option_item && )      = default;
@@ -64,13 +61,13 @@ namespace core {
         inline const string_type config_file_name{ "config.ini" };
         inline type_wrapper< option_item[] > options{
           {"operations",
-           "破解/恢复",              { { "hijack_execs", "劫持可执行文件", false },
-              { "set_serv_startup_types", "设置服务启动类型", false } }},
+           "破解/恢复",              { { "hijack_execs", "劫持可执行文件" },
+              { "set_serv_startup_types", "设置服务启动类型" } }},
           {"window_display",
-           "窗口显示",               { { "force_show", "置顶显示", true },
-              { "disable_close_ctrl", "禁用关闭控件", true },
-              { "translucency", "半透明化", true } }                    },
-          {"other",          "其他", { { "fix_os_env", "修复操作系统环境", true } }           }
+           "窗口显示",               { { "force_show", "置顶显示" },
+              { "disable_close_ctrl", "禁用关闭控件" },
+              { "translucency", "半透明化" } }                   },
+          {"other",          "其他", { { "fix_os_env", "修复操作系统环境" } }          }
         };
         inline rule_item customized_rules{ "自定义", {}, {} };
         inline type_wrapper< const rule_item[] > builtin_rules{
@@ -468,10 +465,7 @@ namespace core {
                         std::format( " < 折叠 {}", option_.showed_name ), quit,
                         CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_INTENSITY );
                     for ( auto &sub_opt : option_.sub_options ) {
-                        ui
-                          .add_back( std::format(
-                            "\n[({}生效) {}]\n", sub_opt.is_relaunch_to_apply ? "下次启动时" : "立即",
-                            sub_opt.showed_name ) )
+                        ui.add_back( std::format( "\n[{}]\n", sub_opt.showed_name ) )
                           .add_back( " > 启用 ", option_setter{ sub_opt, true }, color_of_option_buttons )
                           .add_back(
                             " > 禁用 ", option_setter{ sub_opt, false }, color_of_option_buttons );
