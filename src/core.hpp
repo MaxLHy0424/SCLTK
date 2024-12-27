@@ -59,7 +59,7 @@ namespace core {
     };
     namespace data {
         inline constexpr string_type config_file_name{ "config.ini" };
-        inline constexpr std::chrono::milliseconds thread_sleep_time{ 100 };
+        inline constexpr std::chrono::milliseconds default_thread_sleep_time{ 100 };
         inline std::atomic< bool > is_terminate_main_thread{};
         inline type_wrapper< option_item[] > options{
           {"operations",
@@ -212,13 +212,13 @@ namespace core {
                     if ( data::is_terminate_main_thread == true ) {
                         SetWindowPos(
                           GetConsoleWindow(), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
-                        std::this_thread::sleep_for( data::thread_sleep_time );
+                        std::this_thread::sleep_for( data::default_thread_sleep_time );
                         return;
                     }
                     if ( !is_topmost_ ) {
                         SetWindowPos(
                           GetConsoleWindow(), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
-                        std::this_thread::sleep_for( data::thread_sleep_time );
+                        std::this_thread::sleep_for( data::default_thread_sleep_time );
                         continue;
                     }
                     AttachThreadInput( current_id, foreground_id, TRUE );
@@ -233,7 +233,7 @@ namespace core {
             console_ui window_operator;
             while ( true ) {
                 if ( data::is_terminate_main_thread == true ) {
-                    std::this_thread::sleep_for( data::thread_sleep_time );
+                    std::this_thread::sleep_for( data::default_thread_sleep_time );
                     break;
                 }
                 SetLayeredWindowAttributes(
@@ -243,7 +243,7 @@ namespace core {
                   is_disable_close_ctrl_
                     ? MF_BYCOMMAND | MF_DISABLED | MF_GRAYED
                     : MF_BYCOMMAND | MF_ENABLED );
-                std::this_thread::sleep_for( data::thread_sleep_time );
+                std::this_thread::sleep_for( data::default_thread_sleep_time );
             }
         }
       public:
@@ -281,11 +281,11 @@ namespace core {
                 "reg.exe",  "cmd.exe",  "taskmgr.exe", "perfmon.exe",  "regedit.exe", "mmc.exe" };
             while ( true ) {
                 if ( data::is_terminate_main_thread == true ) {
-                    std::this_thread::sleep_for( data::thread_sleep_time );
+                    std::this_thread::sleep_for( data::default_thread_sleep_time );
                     return;
                 }
                 if ( !is_enabled_ ) {
-                    std::this_thread::sleep_for( data::thread_sleep_time );
+                    std::this_thread::sleep_for( data::default_thread_sleep_time );
                     continue;
                 }
                 for ( const auto &reg_dir : hkcu_reg_dirs ) {
