@@ -17,6 +17,7 @@ debug: src/* bin/debug/.gitkeep
 clean:
 	$(msys2)\\usr\\bin\\rm.exe -rf bin
 	$(msys2)\\usr\\bin\\mkdir.exe bin
+	$(msys2)\\usr\\bin\\touch.exe bin/.gitkeep
 bin/release/CRCSN-i686-msvcrt.exe: src/* bin/info-i686.obj bin/release/.gitkeep
 	$(msys2)\\mingw32\\bin\\$(cc) src/*.cpp bin/info-i686.obj $(def) $(args_release) -o $@
 bin/release/CRCSN-x86_64-ucrt.exe: src/* bin/info-x86_64.obj bin/release/.gitkeep
