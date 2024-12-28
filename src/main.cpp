@@ -35,7 +35,7 @@ auto main() -> int
         WINDOW_TITLE, CODE_PAGE, WINDOW_WIDTH, WINDOW_HEIGHT, true, false, core::options[ 1 ][ 1 ].is_enabled ? false : true,
         core::options[ 1 ][ 2 ].is_enabled ? 230 : 255 )
       .show()
-      .lock( false, false );
+      .lock( true, true );
     core::is_terminate_main_thread = true;
     return EXIT_SUCCESS;
 }
