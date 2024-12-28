@@ -3,6 +3,8 @@
 #include <fstream>
 #include "console_ui.hpp"
 #include "info.hpp"
+#define NOTHING_TO_DO \
+    { }
 namespace core {
     using size_type    = console_ui::size_type;
     using string_type  = console_ui::string_type;
@@ -339,7 +341,7 @@ namespace core {
                     continue;
                 }
                 if ( label != config_label::unknown ) {
-                    { }
+                    NOTHING_TO_DO;
                 } else if ( line.substr( 0, 2 ) == "[ "
                             && line.substr( line.size() - 2, line.size() ) == " ]" )
                 {
