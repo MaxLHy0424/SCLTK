@@ -6,42 +6,42 @@
 #include <queue>
 #include <string>
 #include <thread>
-#define CONSOLE_MOUSE_BUTTON_LEFT               FROM_LEFT_1ST_BUTTON_PRESSED
-#define CONSOLE_MOUSE_BUTTON_MIDDLE             FROM_LEFT_2ND_BUTTON_PRESSED
-#define CONSOLE_MOUSE_BUTTON_RIGHT              RIGHTMOST_BUTTON_PRESSED
-#define CONSOLE_MOUSE_CLICK                     0x0000
-#define CONSOLE_MOUSE_CLICK_DOUBLE              DOUBLE_CLICK
-#define CONSOLE_MOUSE_MOVE                      MOUSE_MOVED
-#define CONSOLE_MOUSE_WHEEL_HEIGHT              MOUSE_HWHEELED
-#define CONSOLE_MOUSE_WHEEL                     MOUSE_WHEELED
-#define CONSOLE_KEY_RIGHT_ALT_PRESS             RIGHT_ALT_PRESSED
-#define CONSOLE_KEY_LEFT_ALT_PRESS              LEFT_ALT_PRESSED
-#define CONSOLE_KEY_RIGHT_CTRL_PRESS            RIGHT_CTRL_PRESSED
-#define CONSOLE_KEY_LEFT_CTRL_PRESS             LEFT_CTRL_PRESSED
-#define CONSOLE_KEY_SHIFT_PRESS                 SHIFT_PRESSED
-#define CONSOLE_KEY_NUM_LOCK_ON                 NUMLOCK_ON
-#define CONSOLE_KEY_SCROLL_LOCK_ON              SCROLLLOCK_ON
-#define CONSOLE_KEY_CAPS_LOCK_ON                CAPSLOCK_ON
-#define CONSOLE_KEY_ENHANCED_KEY                ENHANCED_KEY
-#define CONSOLE_TEXT_DEFAULT                    FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE
-#define CONSOLE_TEXT_FOREGROUND_RED             FOREGROUND_RED
-#define CONSOLE_TEXT_FOREGROUND_GREEN           FOREGROUND_GREEN
-#define CONSOLE_TEXT_FOREGROUND_BLUE            FOREGROUND_BLUE
-#define CONSOLE_TEXT_FOREGROUND_INTENSITY       FOREGROUND_INTENSITY
-#define CONSOLE_TEXT_BACKGROUND_RED             BACKGROUND_RED
-#define CONSOLE_TEXT_BACKGROUND_GREEN           BACKGROUND_GREEN
-#define CONSOLE_TEXT_BACKGROUND_BLUE            BACKGROUND_BLUE
-#define CONSOLE_TEXT_BACKGROUND_INTENSITY       BACKGROUND_INTENSITY
-#define CONSOLE_TEXT_COMMON_LVB_LEADING_BYTE    COMMON_LVB_LEADING_BYTE
-#define CONSOLE_TEXT_COMMON_LVB_TRAILING_BYTE   COMMON_LVB_TRAILING_BYTE
-#define CONSOLE_TEXT_COMMON_LVB_GRID_HORIZONTAL COMMON_LVB_GRID_HORIZONTAL
-#define CONSOLE_TEXT_COMMON_LVB_GRID_LVERTICAL  COMMON_LVB_GRID_LVERTICAL
-#define CONSOLE_TEXT_COMMON_LVB_GRID_RVERTICAL  COMMON_LVB_GRID_RVERTICAL
-#define CONSOLE_TEXT_COMMON_LVB_REVERSE_VIDEO   COMMON_LVB_REVERSE_VIDEO
-#define CONSOLE_TEXT_COMMON_LVB_UNDERSCORE      COMMON_LVB_UNDERSCORE
-#define CONSOLE_TEXT_COMMON_LVB_SBCSDBCS        COMMON_LVB_SBCSDBCS
-#define CONSOLE_UI_RETURN                       false
-#define CONSOLE_UI_EXIT                         true
+#define MOUSE_BUTTON_LEFT               FROM_LEFT_1ST_BUTTON_PRESSED
+#define MOUSE_BUTTON_MIDDLE             FROM_LEFT_2ND_BUTTON_PRESSED
+#define MOUSE_BUTTON_RIGHT              RIGHTMOST_BUTTON_PRESSED
+#define MOUSE_CLICK                     0x0000
+#define MOUSE_CLICK_DOUBLE              DOUBLE_CLICK
+#define MOUSE_MOVE                      MOUSE_MOVED
+#define MOUSE_WHEEL_HEIGHT              MOUSE_HWHEELED
+#define MOUSE_WHEEL                     MOUSE_WHEELED
+#define KEY_RIGHT_ALT_PRESS             RIGHT_ALT_PRESSED
+#define KEY_LEFT_ALT_PRESS              LEFT_ALT_PRESSED
+#define KEY_RIGHT_CTRL_PRESS            RIGHT_CTRL_PRESSED
+#define KEY_LEFT_CTRL_PRESS             LEFT_CTRL_PRESSED
+#define KEY_SHIFT_PRESS                 SHIFT_PRESSED
+#define KEY_NUM_LOCK_ON                 NUMLOCK_ON
+#define KEY_SCROLL_LOCK_ON              SCROLLLOCK_ON
+#define KEY_CAPS_LOCK_ON                CAPSLOCK_ON
+#define KEY_ENHANCED_KEY                ENHANCED_KEY
+#define TEXT_DEFAULT                    FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE
+#define TEXT_FOREGROUND_RED             FOREGROUND_RED
+#define TEXT_FOREGROUND_GREEN           FOREGROUND_GREEN
+#define TEXT_FOREGROUND_BLUE            FOREGROUND_BLUE
+#define TEXT_FOREGROUND_INTENSITY       FOREGROUND_INTENSITY
+#define TEXT_BACKGROUND_RED             BACKGROUND_RED
+#define TEXT_BACKGROUND_GREEN           BACKGROUND_GREEN
+#define TEXT_BACKGROUND_BLUE            BACKGROUND_BLUE
+#define TEXT_BACKGROUND_INTENSITY       BACKGROUND_INTENSITY
+#define TEXT_COMMON_LVB_LEADING_BYTE    COMMON_LVB_LEADING_BYTE
+#define TEXT_COMMON_LVB_TRAILING_BYTE   COMMON_LVB_TRAILING_BYTE
+#define TEXT_COMMON_LVB_GRID_HORIZONTAL COMMON_LVB_GRID_HORIZONTAL
+#define TEXT_COMMON_LVB_GRID_LVERTICAL  COMMON_LVB_GRID_LVERTICAL
+#define TEXT_COMMON_LVB_GRID_RVERTICAL  COMMON_LVB_GRID_RVERTICAL
+#define TEXT_COMMON_LVB_REVERSE_VIDEO   COMMON_LVB_REVERSE_VIDEO
+#define TEXT_COMMON_LVB_UNDERSCORE      COMMON_LVB_UNDERSCORE
+#define TEXT_COMMON_LVB_SBCSDBCS        COMMON_LVB_SBCSDBCS
+#define UI_RETURN                       false
+#define UI_EXIT                         true
 class console_ui final {
   public:
     struct func_args final {
@@ -50,8 +50,7 @@ class console_ui final {
         auto operator=( const func_args & ) -> func_args & = default;
         auto operator=( func_args && ) -> func_args &      = default;
         func_args(
-          console_ui &_parent_ui,
-          const MOUSE_EVENT_RECORD _mouse_event = { {}, CONSOLE_MOUSE_BUTTON_LEFT, {}, {} } )
+          console_ui &_parent_ui, const MOUSE_EVENT_RECORD _mouse_event = { {}, MOUSE_BUTTON_LEFT, {}, {} } )
           : parent_ui{ _parent_ui }
           , button_state{ _mouse_event.dwButtonState }
           , ctrl_key_state{ _mouse_event.dwControlKeyState }
@@ -90,9 +89,9 @@ class console_ui final {
         auto operator=( const line_item_ & ) -> line_item_ & = default;
         auto operator=( line_item_ && ) -> line_item_ &      = default;
         line_item_()
-          : default_attrs{ CONSOLE_TEXT_DEFAULT }
-          , intensity_attrs{ CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE }
-          , last_attrs{ CONSOLE_TEXT_DEFAULT }
+          : default_attrs{ TEXT_DEFAULT }
+          , intensity_attrs{ TEXT_FOREGROUND_GREEN | TEXT_FOREGROUND_BLUE }
+          , last_attrs{ TEXT_DEFAULT }
         { }
         line_item_(
           string_type _text, callback_type _func, const WORD _default_attrs, const WORD _intensity_attrs )
@@ -100,7 +99,7 @@ class console_ui final {
           , func{ std::move( _func ) }
           , default_attrs{ _default_attrs }
           , intensity_attrs{ _intensity_attrs }
-          , last_attrs{ CONSOLE_TEXT_DEFAULT }
+          , last_attrs{ TEXT_DEFAULT }
         { }
         line_item_( const line_item_ & ) = default;
         line_item_( line_item_ && )      = default;
@@ -157,7 +156,7 @@ class console_ui final {
             std::this_thread::sleep_for( 10ms );
             ReadConsoleInputA( GetStdHandle( STD_INPUT_HANDLE ), &record, 1, &reg );
             if ( record.EventType == MOUSE_EVENT
-                 && _is_mouse_move | ( record.Event.MouseEvent.dwEventFlags != CONSOLE_MOUSE_MOVE ) )
+                 && _is_mouse_move | ( record.Event.MouseEvent.dwEventFlags != MOUSE_MOVE ) )
             {
                 return record.Event.MouseEvent;
             }
@@ -270,8 +269,8 @@ class console_ui final {
     }
     auto &add_front(
       string_type _text, callback_type _func = nullptr,
-      const WORD _intensity_attrs = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
-      const WORD _default_attrs   = CONSOLE_TEXT_DEFAULT )
+      const WORD _intensity_attrs = TEXT_FOREGROUND_GREEN | TEXT_FOREGROUND_BLUE,
+      const WORD _default_attrs   = TEXT_DEFAULT )
     {
         auto is_func{ _func == nullptr ? false : true };
         lines_.emplace_front( line_item_{
@@ -284,8 +283,8 @@ class console_ui final {
     }
     auto &add_back(
       string_type _text, callback_type _func = nullptr,
-      const WORD _intensity_attrs = CONSOLE_TEXT_FOREGROUND_BLUE | CONSOLE_TEXT_FOREGROUND_GREEN,
-      const WORD _default_attrs   = CONSOLE_TEXT_DEFAULT )
+      const WORD _intensity_attrs = TEXT_FOREGROUND_BLUE | TEXT_FOREGROUND_GREEN,
+      const WORD _default_attrs   = TEXT_DEFAULT )
     {
         auto is_func{ _func == nullptr ? false : true };
         lines_.emplace_back( line_item_{
@@ -298,8 +297,8 @@ class console_ui final {
     }
     auto &insert(
       const size_type _index, string_type _text, callback_type _func = nullptr,
-      const WORD _intensity_attrs = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
-      const WORD _default_attrs   = CONSOLE_TEXT_DEFAULT )
+      const WORD _intensity_attrs = TEXT_FOREGROUND_GREEN | TEXT_FOREGROUND_BLUE,
+      const WORD _default_attrs   = TEXT_DEFAULT )
     {
         auto is_func{ _func == nullptr ? false : true };
         lines_.emplace(
@@ -311,8 +310,8 @@ class console_ui final {
     }
     auto &edit(
       const size_type _index, string_type _text, callback_type _func = nullptr,
-      const WORD _intensity_attrs = CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_BLUE,
-      const WORD _default_attrs   = CONSOLE_TEXT_DEFAULT )
+      const WORD _intensity_attrs = TEXT_FOREGROUND_GREEN | TEXT_FOREGROUND_BLUE,
+      const WORD _default_attrs   = TEXT_DEFAULT )
     {
         auto is_func{ _func == nullptr ? false : true };
         lines_.at( _index ) = line_item_{
@@ -346,12 +345,12 @@ class console_ui final {
         edit_console_attrs_( console_attrs_::lock_text );
         MOUSE_EVENT_RECORD mouse_event;
         init_pos_();
-        auto func_return_value{ CONSOLE_UI_RETURN };
-        while ( func_return_value == CONSOLE_UI_RETURN ) {
+        auto func_return_value{ UI_RETURN };
+        while ( func_return_value == UI_RETURN ) {
             mouse_event = wait_mouse_event_();
             switch ( mouse_event.dwEventFlags ) {
-                case CONSOLE_MOUSE_MOVE : refresh_( mouse_event.dwMousePosition ); break;
-                case CONSOLE_MOUSE_CLICK : {
+                case MOUSE_MOVE : refresh_( mouse_event.dwMousePosition ); break;
+                case MOUSE_CLICK : {
                     if ( mouse_event.dwButtonState != false ) {
                         func_return_value = call_func_( mouse_event );
                     }
