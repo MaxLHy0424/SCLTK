@@ -49,12 +49,12 @@ namespace core {
     };
     inline type_wrapper< option_item[] > options{
       {"operations",
-       "破解/恢复",              { { "hijack_execs", "劫持可执行文件" }, { "set_serv_startup_types", "设置服务启动类型" } }},
-      {"window_display",
-       "窗口显示",               { { "force_show", "置顶显示" },
+       "破解/恢复",          { { "hijack_execs", "劫持可执行文件" }, { "set_serv_startup_types", "设置服务启动类型" } }},
+      {"window",
+       "窗口显示",           { { "topmost_show", "置顶显示" },
           { "disable_close_ctrl", "禁用关闭控件" },
-          { "translucency", "半透明化" } }                                                               },
-      {"other",          "其他", { { "fix_os_env", "修复操作系统环境" } }                                                  }
+          { "translucency", "半透明化" } }                                                           },
+      {"other",      "其他", { { "fix_os_env", "修复操作系统环境" } }                                                  }
     };
     struct rule_item final {
         const string_type showed_name;
@@ -225,7 +225,7 @@ namespace core {
                     std::this_thread::sleep_for( 100ms );
                 }
             } };
-            std::jthread topmost_thread{ topmost_show };
+            std::jthread topmost_show_thread{ topmost_show };
             console_ui window_operator;
             while ( true ) {
                 if ( is_terminate_main_thread == true ) {
