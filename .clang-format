@@ -48,7 +48,7 @@ BreakBeforeTernaryOperators: true
 BreakConstructorInitializers: BeforeComma
 BreakInheritanceList: BeforeComma
 BreakStringLiterals: true
-ColumnLimit: 105
+ColumnLimit: 110
 CommentPragmas: '[INLINE]*'
 CompactNamespaces: false
 ConstructorInitializerIndentWidth: 2

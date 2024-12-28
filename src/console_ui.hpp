@@ -316,8 +316,7 @@ class console_ui final {
     {
         auto is_func{ _func == nullptr ? false : true };
         lines_.at( _index ) = line_item_{
-          std::move( _text ), std::move( _func ), _default_attrs,
-          is_func ? _intensity_attrs : _default_attrs };
+          std::move( _text ), std::move( _func ), _default_attrs, is_func ? _intensity_attrs : _default_attrs };
         return *this;
     }
     auto &remove_front()
@@ -366,8 +365,8 @@ class console_ui final {
     }
     auto &set_console(
       const string_type &_title, const UINT _code_page, const SHORT _width, const SHORT _height,
-      const bool _is_fix_size, const bool _is_enable_minimize_ctrl,
-      const bool is_enable_close_window_ctrl, const BYTE _translucency )
+      const bool _is_fix_size, const bool _is_enable_minimize_ctrl, const bool is_enable_close_window_ctrl,
+      const BYTE _translucency )
     {
         SetConsoleOutputCP( _code_page );
         SetConsoleCP( _code_page );

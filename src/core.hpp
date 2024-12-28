@@ -36,8 +36,7 @@ namespace core {
         }
         auto operator=( const option_item & ) -> option_item & = default;
         auto operator=( option_item && ) -> option_item &      = default;
-        option_item(
-          string_type _key_name, string_type _showed_name, std::vector< sub_option_item > _sub_options )
+        option_item( string_type _key_name, string_type _showed_name, std::vector< sub_option_item > _sub_options )
           : key_name{ std::move( _key_name ) }
           , showed_name{ std::move( _showed_name ) }
           , sub_options{ std::move( _sub_options ) }
@@ -60,8 +59,7 @@ namespace core {
         std::deque< string_type > execs, servs;
         auto operator=( const rule_item & ) -> rule_item & = default;
         auto operator=( rule_item && ) -> rule_item &      = default;
-        rule_item(
-          string_type _showed_name, std::deque< string_type > _execs, std::deque< string_type > _servs )
+        rule_item( string_type _showed_name, std::deque< string_type > _execs, std::deque< string_type > _servs )
           : showed_name{ std::move( _showed_name ) }
           , execs{ std::move( _execs ) }
           , servs{ std::move( _servs ) }
@@ -73,18 +71,18 @@ namespace core {
     inline rule_item custom_rules{ "自定义", {}, {} };
     inline type_wrapper< const rule_item[] > builtin_rules{
       {"极域电子教室",
-       { "StudentMain.exe", "DispcapHelper.exe", "VRCwPlayer.exe", "InstHelpApp.exe",
-          "InstHelpApp64.exe", "TDOvrSet.exe", "GATESRV.exe", "ProcHelper64.exe", "MasterHelper.exe" },
+       { "StudentMain.exe", "DispcapHelper.exe", "VRCwPlayer.exe", "InstHelpApp.exe", "InstHelpApp64.exe",
+          "TDOvrSet.exe", "GATESRV.exe", "ProcHelper64.exe", "MasterHelper.exe" },
        { "TDNetFilter", "TDFileFilter", "STUDSRV" }},
       {"联想智能云教室",
        { "vncviewer.exe", "tvnserver32.exe", "WfbsPnpInstall.exe", "WFBSMon.exe", "WFBSMlogon.exe",
           "WFBSSvrLogShow.exe", "ResetIp.exe", "FuncForWIN64.exe", "CertMgr.exe", "Fireware.exe",
-          "BCDBootCopy.exe", "refreship.exe", "lenovoLockScreen.exe", "PortControl64.exe",
-          "DesktopCheck.exe", "DeploymentManager.exe", "DeploymentAgent.exe", "XYNTService.exe" },
+          "BCDBootCopy.exe", "refreship.exe", "lenovoLockScreen.exe", "PortControl64.exe", "DesktopCheck.exe",
+          "DeploymentManager.exe", "DeploymentAgent.exe", "XYNTService.exe" },
        { "BSAgentSvr", "tvnserver", "WFBSMlogon" } },
       {"红蜘蛛多媒体网络教室",
-       { "rscheck.exe", "checkrs.exe", "REDAgent.exe", "PerformanceCheck.exe", "edpaper.exe",
-          "Adapter.exe", "repview.exe", "FormatPaper.exe" },
+       { "rscheck.exe", "checkrs.exe", "REDAgent.exe", "PerformanceCheck.exe", "edpaper.exe", "Adapter.exe",
+          "repview.exe", "FormatPaper.exe" },
        { "appcheck2", "checkapp2" }                }
     };
     inline auto is_run_as_admin()
@@ -127,8 +125,7 @@ namespace core {
           .add_back( "\n[名称]\n\n " INFO_NAME "\n\n[版本]\n\n " INFO_VERSION )
           .add_back( "\n[仓库]\n" )
           .add_back(
-            " " INFO_REPO_URL " ", visit_repo_webpage,
-            CONSOLE_TEXT_DEFAULT | CONSOLE_TEXT_COMMON_LVB_UNDERSCORE )
+            " " INFO_REPO_URL " ", visit_repo_webpage, CONSOLE_TEXT_DEFAULT | CONSOLE_TEXT_COMMON_LVB_UNDERSCORE )
           .add_back( "\n[许可证]\n\n " INFO_LICENSE "\n\n (C) 2023 - present " INFO_DEVELOPER "." )
           .show();
         return CONSOLE_UI_RETURN;
@@ -184,8 +181,7 @@ namespace core {
           .add_back( " > 命令提示符 ", launch_cmd )
           .add_back( "\n[常用操作]\n" );
         for ( auto &op : common_ops ) {
-            ui.add_back(
-              std::format( " > {} ", std::move( op[ 0 ] ) ), cmd_executor{ std::move( op[ 1 ] ) } );
+            ui.add_back( std::format( " > {} ", std::move( op[ 0 ] ) ), cmd_executor{ std::move( op[ 1 ] ) } );
         }
         ui.show();
         return CONSOLE_UI_RETURN;
@@ -204,14 +200,12 @@ namespace core {
                   current_id{ GetCurrentThreadId() };
                 while ( true ) {
                     if ( is_terminate_main_thread == true ) {
-                        SetWindowPos(
-                          GetConsoleWindow(), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
+                        SetWindowPos( GetConsoleWindow(), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
                         std::this_thread::sleep_for( default_thread_sleep_time );
                         return;
                     }
                     if ( !is_topmost_ ) {
-                        SetWindowPos(
-                          GetConsoleWindow(), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
+                        SetWindowPos( GetConsoleWindow(), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
                         std::this_thread::sleep_for( default_thread_sleep_time );
                         continue;
                     }
@@ -241,8 +235,7 @@ namespace core {
       public:
         auto operator=( const set_window & ) -> set_window & = delete;
         auto operator=( set_window && ) -> set_window &      = delete;
-        set_window(
-          const bool &_is_topmost, const bool &_is_disable_close_ctrl, const bool &_is_translucency )
+        set_window( const bool &_is_topmost, const bool &_is_disable_close_ctrl, const bool &_is_translucency )
           : is_topmost_{ _is_topmost }
           , is_disable_close_ctrl_{ _is_disable_close_ctrl }
           , is_translucency_{ _is_translucency }
@@ -286,8 +279,7 @@ namespace core {
                     RegDeleteTreeA(
                       HKEY_LOCAL_MACHINE,
                       std::format(
-                        R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{})",
-                        exec )
+                        R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{})", exec )
                         .c_str() );
                 }
                 std::this_thread::sleep_for( 1000ms );
@@ -383,8 +375,7 @@ namespace core {
         auto edit_() const
         {
             std::print( "-> 初始化用户界面.\n" );
-            constexpr WORD option_buttons_color{
-              CONSOLE_TEXT_FOREGROUND_RED | CONSOLE_TEXT_FOREGROUND_GREEN };
+            constexpr WORD option_buttons_color{ CONSOLE_TEXT_FOREGROUND_RED | CONSOLE_TEXT_FOREGROUND_GREEN };
             auto sync_config{ [ this ]( console_ui::func_args )
             {
                 std::print( "-> 处理配置.\n" );
@@ -416,8 +407,7 @@ namespace core {
             {
                 if ( std::ifstream{ config_file_name, std::ios::in }.is_open() ) {
                     std::print( "-> 打开配置文件.\n" );
-                    ShellExecuteA(
-                      nullptr, "open", config_file_name.c_str(), nullptr, nullptr, SW_SHOWNORMAL );
+                    ShellExecuteA( nullptr, "open", config_file_name.c_str(), nullptr, nullptr, SW_SHOWNORMAL );
                     return CONSOLE_UI_RETURN;
                 }
                 using namespace std::chrono_literals;
@@ -486,8 +476,7 @@ namespace core {
                 "     相关信息可参阅文档.\n" )
               .add_back( " < 返回 ", quit, CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_INTENSITY )
               .add_back(
-                " > 同步配置 ", sync_config,
-                CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_INTENSITY )
+                " > 同步配置 ", sync_config, CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_INTENSITY )
               .add_back( " > 打开配置文件 ", open_config_file )
               .add_back( "\n[选项]\n" );
             for ( auto &opt : options ) {
