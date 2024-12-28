@@ -18,9 +18,8 @@ auto main() -> int
     core::config_op{ 'r' }( console_ui::func_args{ ui } );
     std::print( "-> 初始化用户界面.\n" );
     ui.add_back( "                    [ 主  页 ]\n\n" )
-      .add_back( " < 退出 ", core::quit, CONSOLE_TEXT_FOREGROUND_RED | CONSOLE_TEXT_FOREGROUND_INTENSITY )
-      .add_back(
-        " < 重启 ", core::relaunch_as_admin, CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_INTENSITY )
+      .add_back( " < 退出 ", core::quit, TEXT_FOREGROUND_RED | TEXT_FOREGROUND_INTENSITY )
+      .add_back( " < 重启 ", core::relaunch_as_admin, TEXT_FOREGROUND_GREEN | TEXT_FOREGROUND_INTENSITY )
       .add_back( " > 信息 ", core::info )
       .add_back( " > 配置 ", core::config_op{ 'w' } )
       .add_back( " > 工具箱 ", core::toolkit )
