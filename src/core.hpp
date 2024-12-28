@@ -351,10 +351,10 @@ namespace core {
                         if ( _is_reload ) {
                             continue;
                         }
-                        for ( auto &opt : options ) {
-                            for ( auto &sub_opt : opt.sub_options ) {
-                                if ( line == std::format( "{}::{}", opt.key_name, sub_opt.key_name ) ) {
-                                    sub_opt.is_enabled = true;
+                        for ( auto &option : options ) {
+                            for ( auto &sub_option : option.sub_options ) {
+                                if ( line == std::format( "{}::{}", option.key_name, sub_option.key_name ) ) {
+                                    sub_option.is_enabled = true;
                                 }
                             }
                         }
@@ -382,10 +382,11 @@ namespace core {
                 std::print( "-> 保存更改.\n" );
                 string_type config_text;
                 config_text.append( "[ options ]\n" );
-                for ( const auto &opt : options ) {
-                    for ( const auto &sub_opt : opt.sub_options ) {
-                        if ( sub_opt.is_enabled ) {
-                            config_text.append( std::format( "{}::{}\n", opt.key_name, sub_opt.key_name ) );
+                for ( const auto &option : options ) {
+                    for ( const auto &sub_option : option.sub_options ) {
+                        if ( sub_option.is_enabled ) {
+                            config_text.append(
+                              std::format( "{}::{}\n", option.key_name, sub_option.key_name ) );
                         }
                     }
                 }
@@ -450,10 +451,10 @@ namespace core {
                       .add_back(
                         std::format( " < 折叠 {}", option_.showed_name ), quit,
                         TEXT_FOREGROUND_GREEN | TEXT_FOREGROUND_INTENSITY );
-                    for ( auto &sub_opt : option_.sub_options ) {
-                        ui.add_back( std::format( "\n[{}]\n", sub_opt.showed_name ) )
-                          .add_back( " > 启用 ", option_setter{ sub_opt, true }, option_buttons_color )
-                          .add_back( " > 禁用 ", option_setter{ sub_opt, false }, option_buttons_color );
+                    for ( auto &sub_option : option_.sub_options ) {
+                        ui.add_back( std::format( "\n[{}]\n", sub_option.showed_name ) )
+                          .add_back( " > 启用 ", option_setter{ sub_option, true }, option_buttons_color )
+                          .add_back( " > 禁用 ", option_setter{ sub_option, false }, option_buttons_color );
                     }
                     ui.show();
                     return UI_RETURN;
@@ -477,8 +478,8 @@ namespace core {
               .add_back( " > 同步配置 ", sync_config, TEXT_FOREGROUND_GREEN | TEXT_FOREGROUND_INTENSITY )
               .add_back( " > 打开配置文件 ", open_config_file )
               .add_back( "\n[选项]\n" );
-            for ( auto &opt : options ) {
-                ui.add_back( std::format( " > {}", opt.showed_name ), option_shower{ opt } );
+            for ( auto &option : options ) {
+                ui.add_back( std::format( " > {}", option.showed_name ), option_shower{ option } );
             }
             ui.show();
         }
