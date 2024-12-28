@@ -70,7 +70,7 @@ namespace core {
         rule_item( rule_item && )      = default;
         ~rule_item()                   = default;
     };
-    inline rule_item customized_rules{ "自定义", {}, {} };
+    inline rule_item custom_rules{ "自定义", {}, {} };
     inline type_wrapper< const rule_item[] > builtin_rules{
       {"极域电子教室",
        { "StudentMain.exe", "DispcapHelper.exe", "VRCwPlayer.exe", "InstHelpApp.exe",
@@ -325,15 +325,15 @@ namespace core {
             }
             std::print( "-> 加载配置文件.\n" );
             if ( _is_reload ) {
-                customized_rules.execs.clear();
-                customized_rules.servs.clear();
+                custom_rules.execs.clear();
+                custom_rules.servs.clear();
             }
             string_type line;
             enum class config_label {
                 unknown,
                 options,
-                customized_rules_execs,
-                customized_rules_servs
+                custom_rules_execs,
+                custom_rules_servs
             } label{ config_label::unknown };
             while ( std::getline( config_file, line ) ) {
                 if ( line.empty() || line.front() == '#' ) {
@@ -347,11 +347,11 @@ namespace core {
                     if ( line == "[ options ]" ) {
                         label = config_label::options;
                         continue;
-                    } else if ( line == "[ customized_rules_execs ]" ) {
-                        label = config_label::customized_rules_execs;
+                    } else if ( line == "[ custom_rules_execs ]" ) {
+                        label = config_label::custom_rules_execs;
                         continue;
-                    } else if ( line == "[ customized_rules_servs ]" ) {
-                        label = config_label::customized_rules_servs;
+                    } else if ( line == "[ custom_rules_servs ]" ) {
+                        label = config_label::custom_rules_servs;
                         continue;
                     }
                 } else {
@@ -374,11 +374,11 @@ namespace core {
                         }
                         break;
                     }
-                    case config_label::customized_rules_execs :
-                        customized_rules.execs.emplace_back( std::move( line ) );
+                    case config_label::custom_rules_execs :
+                        custom_rules.execs.emplace_back( std::move( line ) );
                         break;
-                    case config_label::customized_rules_servs :
-                        customized_rules.servs.emplace_back( std::move( line ) );
+                    case config_label::custom_rules_servs :
+                        custom_rules.servs.emplace_back( std::move( line ) );
                         break;
                 }
             }
@@ -405,12 +405,12 @@ namespace core {
                         }
                     }
                 }
-                config_text.append( "[ customized_rules_execs ]\n" );
-                for ( const auto &exec : customized_rules.execs ) {
+                config_text.append( "[ custom_rules_execs ]\n" );
+                for ( const auto &exec : custom_rules.execs ) {
                     config_text.append( exec ).push_back( '\n' );
                 }
-                config_text.append( "[ customized_rules_servs ]\n" );
-                for ( const auto &serv : customized_rules.servs ) {
+                config_text.append( "[ custom_rules_servs ]\n" );
+                for ( const auto &serv : custom_rules.servs ) {
                     config_text.append( serv ).push_back( '\n' );
                 }
                 std::ofstream config_file{ config_file_name, std::ios::out | std::ios::trunc };
