@@ -49,8 +49,7 @@ class console_ui final {
         const DWORD button_state, ctrl_key_state, event_flag;
         auto operator=( const func_args & ) -> func_args & = default;
         auto operator=( func_args && ) -> func_args &      = default;
-        func_args(
-          console_ui &_parent_ui, const MOUSE_EVENT_RECORD _mouse_event = { {}, MOUSE_BUTTON_LEFT, {}, {} } )
+        func_args( console_ui &_parent_ui, const MOUSE_EVENT_RECORD _mouse_event = { {}, MOUSE_BUTTON_LEFT, {}, {} } )
           : parent_ui{ _parent_ui }
           , button_state{ _mouse_event.dwButtonState }
           , ctrl_key_state{ _mouse_event.dwControlKeyState }
@@ -93,8 +92,7 @@ class console_ui final {
           , intensity_attrs{ TEXT_FOREGROUND_GREEN | TEXT_FOREGROUND_BLUE }
           , last_attrs{ TEXT_DEFAULT }
         { }
-        line_item_(
-          string_type _text, callback_type _func, const WORD _default_attrs, const WORD _intensity_attrs )
+        line_item_( string_type _text, callback_type _func, const WORD _default_attrs, const WORD _intensity_attrs )
           : text{ std::move( _text ) }
           , func{ std::move( _func ) }
           , default_attrs{ _default_attrs }
@@ -155,9 +153,7 @@ class console_ui final {
         while ( true ) {
             std::this_thread::sleep_for( 10ms );
             ReadConsoleInputA( GetStdHandle( STD_INPUT_HANDLE ), &record, 1, &reg );
-            if ( record.EventType == MOUSE_EVENT
-                 && _is_mouse_move | ( record.Event.MouseEvent.dwEventFlags != MOUSE_MOVE ) )
-            {
+            if ( record.EventType == MOUSE_EVENT && _is_mouse_move | ( record.Event.MouseEvent.dwEventFlags != MOUSE_MOVE ) ) {
                 return record.Event.MouseEvent;
             }
         }
@@ -269,8 +265,7 @@ class console_ui final {
     }
     auto &add_front(
       string_type _text, callback_type _func = nullptr,
-      const WORD _intensity_attrs = TEXT_FOREGROUND_GREEN | TEXT_FOREGROUND_BLUE,
-      const WORD _default_attrs   = TEXT_DEFAULT )
+      const WORD _intensity_attrs = TEXT_FOREGROUND_GREEN | TEXT_FOREGROUND_BLUE, const WORD _default_attrs = TEXT_DEFAULT )
     {
         auto is_func{ _func == nullptr ? false : true };
         lines_.emplace_front( line_item_{
@@ -283,8 +278,7 @@ class console_ui final {
     }
     auto &add_back(
       string_type _text, callback_type _func = nullptr,
-      const WORD _intensity_attrs = TEXT_FOREGROUND_BLUE | TEXT_FOREGROUND_GREEN,
-      const WORD _default_attrs   = TEXT_DEFAULT )
+      const WORD _intensity_attrs = TEXT_FOREGROUND_BLUE | TEXT_FOREGROUND_GREEN, const WORD _default_attrs = TEXT_DEFAULT )
     {
         auto is_func{ _func == nullptr ? false : true };
         lines_.emplace_back( line_item_{
@@ -297,25 +291,21 @@ class console_ui final {
     }
     auto &insert(
       const size_type _index, string_type _text, callback_type _func = nullptr,
-      const WORD _intensity_attrs = TEXT_FOREGROUND_GREEN | TEXT_FOREGROUND_BLUE,
-      const WORD _default_attrs   = TEXT_DEFAULT )
+      const WORD _intensity_attrs = TEXT_FOREGROUND_GREEN | TEXT_FOREGROUND_BLUE, const WORD _default_attrs = TEXT_DEFAULT )
     {
         auto is_func{ _func == nullptr ? false : true };
         lines_.emplace(
           lines_.cbegin() + _index,
-          line_item_{
-            std::move( _text ), std::move( _func ), _default_attrs,
-            is_func ? _intensity_attrs : _default_attrs } );
+          line_item_{ std::move( _text ), std::move( _func ), _default_attrs, is_func ? _intensity_attrs : _default_attrs } );
         return *this;
     }
     auto &edit(
       const size_type _index, string_type _text, callback_type _func = nullptr,
-      const WORD _intensity_attrs = TEXT_FOREGROUND_GREEN | TEXT_FOREGROUND_BLUE,
-      const WORD _default_attrs   = TEXT_DEFAULT )
+      const WORD _intensity_attrs = TEXT_FOREGROUND_GREEN | TEXT_FOREGROUND_BLUE, const WORD _default_attrs = TEXT_DEFAULT )
     {
         auto is_func{ _func == nullptr ? false : true };
-        lines_.at( _index ) = line_item_{
-          std::move( _text ), std::move( _func ), _default_attrs, is_func ? _intensity_attrs : _default_attrs };
+        lines_.at( _index )
+          = line_item_{ std::move( _text ), std::move( _func ), _default_attrs, is_func ? _intensity_attrs : _default_attrs };
         return *this;
     }
     auto &remove_front()
@@ -363,9 +353,8 @@ class console_ui final {
         return *this;
     }
     auto &set_console(
-      const string_type &_title, const UINT _code_page, const SHORT _width, const SHORT _height,
-      const bool _is_fix_size, const bool _is_enable_minimize_ctrl, const bool is_enable_close_window_ctrl,
-      const BYTE _translucency )
+      const string_type &_title, const UINT _code_page, const SHORT _width, const SHORT _height, const bool _is_fix_size,
+      const bool _is_enable_minimize_ctrl, const bool is_enable_close_window_ctrl, const BYTE _translucency )
     {
         SetConsoleOutputCP( _code_page );
         SetConsoleCP( _code_page );
