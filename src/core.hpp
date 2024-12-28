@@ -338,16 +338,22 @@ namespace core {
                 if ( line.empty() || line.front() == '#' ) {
                     continue;
                 }
-                if ( line == "[ options ]" ) {
-                    label = config_label::options;
-                    continue;
-                } else if ( line == "[ customized_rules_execs ]" ) {
-                    label = config_label::customized_rules_execs;
-                    continue;
-                } else if ( line == "[ customized_rules_servs ]" ) {
-                    label = config_label::customized_rules_servs;
-                    continue;
-                } else if ( line.front() == '[' && line.back() == ']' ) {
+                if ( label != config_label::unknown ) {
+                    { }
+                } else if ( line.substr( 0, 2 ) == "[ "
+                            && line.substr( line.size() - 2, line.size() ) == " ]" )
+                {
+                    if ( line == "[ options ]" ) {
+                        label = config_label::options;
+                        continue;
+                    } else if ( line == "[ customized_rules_execs ]" ) {
+                        label = config_label::customized_rules_execs;
+                        continue;
+                    } else if ( line == "[ customized_rules_servs ]" ) {
+                        label = config_label::customized_rules_servs;
+                        continue;
+                    }
+                } else {
                     label = config_label::unknown;
                     continue;
                 }
