@@ -323,16 +323,17 @@ namespace core {
                 return;
             }
             std::print( "-> 加载配置文件.\n" );
-            customized_rules.execs.clear();
-            customized_rules.servs.clear();
+            if ( _is_reload ) {
+                customized_rules.execs.clear();
+                customized_rules.servs.clear();
+            }
             string_type line;
             enum class config_label {
                 unknown,
                 options,
                 customized_rules_execs,
                 customized_rules_servs
-            };
-            config_label label{ config_label::unknown };
+            } label{ config_label::unknown };
             while ( std::getline( config_file, line ) ) {
                 if ( line.empty() || line.front() == '#' ) {
                     continue;
