@@ -46,13 +46,10 @@ namespace core {
         ~option_item()                     = default;
     };
     inline type_wrapper< option_item[] > options{
-      {"rule_op",
-       "破解/恢复",       { { "hijack_execs", "劫持可执行文件" }, { "set_serv_startup_types", "设置服务启动类型" } }},
+      {"rule_op", "破解/恢复", { { "hijack_execs", "劫持可执行文件" }, { "set_serv_startup_types", "设置服务启动类型" } }                  },
       {"window",
-       "窗口显示",        { { "topmost_show", "置顶显示" },
-          { "disable_close_ctrl", "禁用关闭控件" },
-          { "translucency", "半透明化" } }                                                        },
-      {"other",   "其他", { { "fix_os_env", "修复操作系统环境" } }                                                  }
+       "窗口显示",             { { "topmost_show", "置顶显示" }, { "disable_close_ctrl", "禁用关闭控件" }, { "translucency", "半透明化" } }},
+      {"other",   "其他",      { { "fix_os_env", "修复操作系统环境" } }                                                                    }
     };
     struct rule_item final {
         const string_type showed_name;
@@ -71,18 +68,18 @@ namespace core {
     inline rule_item custom_rules{ "自定义", {}, {} };
     inline type_wrapper< const rule_item[] > builtin_rules{
       {"极域电子教室",
-       { "StudentMain.exe", "DispcapHelper.exe", "VRCwPlayer.exe", "InstHelpApp.exe", "InstHelpApp64.exe",
-          "TDOvrSet.exe", "GATESRV.exe", "ProcHelper64.exe", "MasterHelper.exe" },
+       { "StudentMain.exe", "DispcapHelper.exe", "VRCwPlayer.exe", "InstHelpApp.exe", "InstHelpApp64.exe", "TDOvrSet.exe",
+          "GATESRV.exe", "ProcHelper64.exe", "MasterHelper.exe" },
        { "TDNetFilter", "TDFileFilter", "STUDSRV" }},
       {"联想智能云教室",
-       { "vncviewer.exe", "tvnserver32.exe", "WfbsPnpInstall.exe", "WFBSMon.exe", "WFBSMlogon.exe",
-          "WFBSSvrLogShow.exe", "ResetIp.exe", "FuncForWIN64.exe", "CertMgr.exe", "Fireware.exe",
-          "BCDBootCopy.exe", "refreship.exe", "lenovoLockScreen.exe", "PortControl64.exe", "DesktopCheck.exe",
-          "DeploymentManager.exe", "DeploymentAgent.exe", "XYNTService.exe" },
+       { "vncviewer.exe", "tvnserver32.exe", "WfbsPnpInstall.exe", "WFBSMon.exe", "WFBSMlogon.exe", "WFBSSvrLogShow.exe",
+          "ResetIp.exe", "FuncForWIN64.exe", "CertMgr.exe", "Fireware.exe", "BCDBootCopy.exe", "refreship.exe",
+          "lenovoLockScreen.exe", "PortControl64.exe", "DesktopCheck.exe", "DeploymentManager.exe", "DeploymentAgent.exe",
+          "XYNTService.exe" },
        { "BSAgentSvr", "tvnserver", "WFBSMlogon" } },
       {"红蜘蛛多媒体网络教室",
-       { "rscheck.exe", "checkrs.exe", "REDAgent.exe", "PerformanceCheck.exe", "edpaper.exe", "Adapter.exe",
-          "repview.exe", "FormatPaper.exe" },
+       { "rscheck.exe", "checkrs.exe", "REDAgent.exe", "PerformanceCheck.exe", "edpaper.exe", "Adapter.exe", "repview.exe",
+          "FormatPaper.exe" },
        { "appcheck2", "checkapp2" }                }
     };
     inline auto is_run_as_admin()
@@ -91,8 +88,7 @@ namespace core {
         PSID admins_group{};
         SID_IDENTIFIER_AUTHORITY nt_authority{ SECURITY_NT_AUTHORITY };
         if ( AllocateAndInitializeSid(
-               &nt_authority, 2, SECURITY_BUILTIN_DOMAIN_RID, DOMAIN_ALIAS_RID_ADMINS, 0, 0, 0, 0, 0, 0,
-               &admins_group )
+               &nt_authority, 2, SECURITY_BUILTIN_DOMAIN_RID, DOMAIN_ALIAS_RID_ADMINS, 0, 0, 0, 0, 0, 0, &admins_group )
              == true )
         {
             CheckTokenMembership( nullptr, admins_group, &is_admin );
@@ -136,13 +132,13 @@ namespace core {
         {
             _args.parent_ui.lock( false, false );
             _args.parent_ui.set_console(
-              WINDOW_TITLE " - 命令提示符", CODE_PAGE, 120, 30, false, false,
-              options[ 1 ][ 1 ].is_enabled ? false : true, options[ 1 ][ 2 ].is_enabled ? 230 : 255 );
+              WINDOW_TITLE " - 命令提示符", CODE_PAGE, 120, 30, false, false, options[ 1 ][ 1 ].is_enabled ? false : true,
+              options[ 1 ][ 2 ].is_enabled ? 230 : 255 );
             SetConsoleScreenBufferSize( GetStdHandle( STD_OUTPUT_HANDLE ), { 125, SHRT_MAX - 1 } );
             system( "cmd.exe" );
             _args.parent_ui.set_console(
-              WINDOW_TITLE, CODE_PAGE, WINDOW_WIDTH, WINDOW_HEIGHT, true, false,
-              options[ 1 ][ 1 ].is_enabled ? false : true, options[ 1 ][ 2 ].is_enabled ? 230 : 255 );
+              WINDOW_TITLE, CODE_PAGE, WINDOW_WIDTH, WINDOW_HEIGHT, true, false, options[ 1 ][ 1 ].is_enabled ? false : true,
+              options[ 1 ][ 2 ].is_enabled ? 230 : 255 );
             return UI_RETURN;
         } };
         class cmd_executor final {
@@ -165,14 +161,10 @@ namespace core {
             ~cmd_executor()                      = default;
         };
         type_wrapper< string_type[][ 2 ] > common_ops{
-          {"重启资源管理器",
-           R"(taskkill.exe /f /im explorer.exe && timeout /t 3 /nobreak && start C:\Windows\explorer.exe)"},
-          {"恢复 USB 设备访问",
-           R"(reg.exe add "HKLM\SYSTEM\CurrentControlSet\Services\USBSTOR" /f /t reg_dword /v Start /d 3)"},
-          {"恢复 Google Chrome 离线游戏",
-           R"(reg.exe delete "HKLM\SOFTWARE\Policies\Google\Chrome" /f /v AllowDinosaurEasterEgg)"        },
-          {"恢复 Microsoft Edge 离线游戏",
-           R"(reg.exe delete "HKLM\SOFTWARE\Policies\Microsoft\Edge" /f /v AllowSurfGame)"                }
+          {"重启资源管理器",               R"(taskkill.exe /f /im explorer.exe && timeout /t 3 /nobreak && start C:\Windows\explorer.exe)"},
+          {"恢复 USB 设备访问",            R"(reg.exe add "HKLM\SYSTEM\CurrentControlSet\Services\USBSTOR" /f /t reg_dword /v Start /d 3)"},
+          {"恢复 Google Chrome 离线游戏",  R"(reg.exe delete "HKLM\SOFTWARE\Policies\Google\Chrome" /f /v AllowDinosaurEasterEgg)"        },
+          {"恢复 Microsoft Edge 离线游戏", R"(reg.exe delete "HKLM\SOFTWARE\Policies\Microsoft\Edge" /f /v AllowSurfGame)"                }
         };
         console_ui ui;
         ui.add_back( "                   [ 工 具 箱 ]\n\n" )
@@ -195,8 +187,7 @@ namespace core {
             {
                 using namespace std::chrono_literals;
                 const HWND this_window{ GetConsoleWindow() };
-                const DWORD foreground_id{ GetWindowThreadProcessId( this_window, nullptr ) },
-                  current_id{ GetCurrentThreadId() };
+                const DWORD foreground_id{ GetWindowThreadProcessId( this_window, nullptr ) }, current_id{ GetCurrentThreadId() };
                 while ( true ) {
                     if ( is_terminate_main_thread == true ) {
                         SetWindowPos( GetConsoleWindow(), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
@@ -223,8 +214,7 @@ namespace core {
                     std::this_thread::sleep_for( default_thread_sleep_time );
                     break;
                 }
-                SetLayeredWindowAttributes(
-                  GetConsoleWindow(), RGB( 0, 0, 0 ), is_translucency_ ? 230 : 255, LWA_ALPHA );
+                SetLayeredWindowAttributes( GetConsoleWindow(), RGB( 0, 0, 0 ), is_translucency_ ? 230 : 255, LWA_ALPHA );
                 EnableMenuItem(
                   GetSystemMenu( GetConsoleWindow(), FALSE ), SC_CLOSE,
                   is_disable_close_ctrl_ ? MF_BYCOMMAND | MF_DISABLED | MF_GRAYED : MF_BYCOMMAND | MF_ENABLED );
@@ -257,8 +247,7 @@ namespace core {
         {
             using namespace std::chrono_literals;
             type_wrapper< const string_type[] > hkcu_reg_dirs{
-              R"(Software\Policies\Microsoft\Windows\System)",
-              R"(Software\Microsoft\Windows\CurrentVersion\Policies\System)",
+              R"(Software\Policies\Microsoft\Windows\System)", R"(Software\Microsoft\Windows\CurrentVersion\Policies\System)",
               R"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)" },
               execs{ "mode.com", "chcp.com", "ntsd.exe",    "taskkill.exe", "sc.exe",      "net.exe",
                      "reg.exe",  "cmd.exe",  "taskmgr.exe", "perfmon.exe",  "regedit.exe", "mmc.exe" };
@@ -277,8 +266,7 @@ namespace core {
                 for ( const auto &exec : execs ) {
                     RegDeleteTreeA(
                       HKEY_LOCAL_MACHINE,
-                      std::format(
-                        R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{})", exec )
+                      std::format( R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{})", exec )
                         .c_str() );
                 }
                 std::this_thread::sleep_for( 1000ms );
@@ -316,21 +304,14 @@ namespace core {
                 custom_rules.servs.clear();
             }
             string_type line;
-            enum class config_label {
-                unknown,
-                options,
-                custom_rules_execs,
-                custom_rules_servs
-            } label{ config_label::unknown };
+            enum class config_label { unknown, options, custom_rules_execs, custom_rules_servs } label{ config_label::unknown };
             while ( std::getline( config_file, line ) ) {
                 if ( line.empty() || line.front() == '#' ) {
                     continue;
                 }
                 if ( label != config_label::unknown ) {
                     NOTHING_TO_DO;
-                } else if ( line.substr( 0, 2 ) == "[ "
-                            && line.substr( line.size() - 2, line.size() ) == " ]" )
-                {
+                } else if ( line.substr( 0, 2 ) == "[ " && line.substr( line.size() - 2, line.size() ) == " ]" ) {
                     if ( line == "[ options ]" ) {
                         label = config_label::options;
                         continue;
@@ -360,12 +341,8 @@ namespace core {
                         }
                         break;
                     }
-                    case config_label::custom_rules_execs :
-                        custom_rules.execs.emplace_back( std::move( line ) );
-                        break;
-                    case config_label::custom_rules_servs :
-                        custom_rules.servs.emplace_back( std::move( line ) );
-                        break;
+                    case config_label::custom_rules_execs : custom_rules.execs.emplace_back( std::move( line ) ); break;
+                    case config_label::custom_rules_servs : custom_rules.servs.emplace_back( std::move( line ) ); break;
                 }
             }
             config_file.close();
@@ -385,8 +362,7 @@ namespace core {
                 for ( const auto &option : options ) {
                     for ( const auto &sub_option : option.sub_options ) {
                         if ( sub_option.is_enabled ) {
-                            config_text.append(
-                              std::format( "{}::{}\n", option.key_name, sub_option.key_name ) );
+                            config_text.append( std::format( "{}::{}\n", option.key_name, sub_option.key_name ) );
                         }
                     }
                 }
@@ -449,8 +425,7 @@ namespace core {
                     console_ui ui;
                     ui.add_back( "                    [ 配  置 ]\n\n" )
                       .add_back(
-                        std::format( " < 折叠 {}", option_.showed_name ), quit,
-                        TEXT_FOREGROUND_GREEN | TEXT_FOREGROUND_INTENSITY );
+                        std::format( " < 折叠 {}", option_.showed_name ), quit, TEXT_FOREGROUND_GREEN | TEXT_FOREGROUND_INTENSITY );
                     for ( auto &sub_option : option_.sub_options ) {
                         ui.add_back( std::format( "\n[{}]\n", sub_option.showed_name ) )
                           .add_back( " > 启用 ", option_setter{ sub_option, true }, option_buttons_color )
