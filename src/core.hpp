@@ -446,8 +446,7 @@ namespace core {
             console_ui ui;
             ui.add_back(
                 "                    [ 配  置 ]\n\n\n"
-                " (i) 所有选项默认禁用.\n"
-                "     所有选项每 500ms 自动应用.\n"
+                " (i) 所有选项默认禁用, 每 500ms 自动应用.\n"
                 "     相关信息可参阅文档.\n" )
               .add_back( " < 返回 ", quit, TEXT_FOREGROUND_GREEN | TEXT_FOREGROUND_INTENSITY )
               .add_back( " > 同步配置 ", sync_config, TEXT_FOREGROUND_GREEN | TEXT_FOREGROUND_INTENSITY )
