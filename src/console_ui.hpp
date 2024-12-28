@@ -95,8 +95,7 @@ class console_ui final {
           , last_attrs{ CONSOLE_TEXT_DEFAULT }
         { }
         line_item_(
-          string_type _text, callback_type _func, const WORD _default_attrs,
-          const WORD _intensity_attrs )
+          string_type _text, callback_type _func, const WORD _default_attrs, const WORD _intensity_attrs )
           : text{ std::move( _text ) }
           , func{ std::move( _func ) }
           , default_attrs{ _default_attrs }
@@ -386,9 +385,7 @@ class console_ui final {
             : GetWindowLongPtrA( GetConsoleWindow(), GWL_STYLE ) & ~WS_MINIMIZEBOX );
         EnableMenuItem(
           GetSystemMenu( GetConsoleWindow(), FALSE ), SC_CLOSE,
-          is_enable_close_window_ctrl
-            ? MF_BYCOMMAND | MF_ENABLED
-            : MF_BYCOMMAND | MF_DISABLED | MF_GRAYED );
+          is_enable_close_window_ctrl ? MF_BYCOMMAND | MF_ENABLED : MF_BYCOMMAND | MF_DISABLED | MF_GRAYED );
         SetLayeredWindowAttributes( GetConsoleWindow(), RGB( 0, 0, 0 ), _translucency, LWA_ALPHA );
         return *this;
     }
