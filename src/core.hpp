@@ -16,19 +16,19 @@ namespace core {
     inline std::atomic< bool > is_terminate_main_thread{};
     struct option_item final {
         struct sub_option_item final {
-            const string_type label_name, showed_name;
+            const string_type key_name, showed_name;
             bool is_enabled{};
             auto operator=( const sub_option_item & ) -> sub_option_item & = default;
             auto operator=( sub_option_item && ) -> sub_option_item &      = default;
-            sub_option_item( string_type _label_name, string_type _showed_name )
-              : label_name{ std::move( _label_name ) }
+            sub_option_item( string_type _key_name, string_type _showed_name )
+              : key_name{ std::move( _key_name ) }
               , showed_name{ std::move( _showed_name ) }
             { }
             sub_option_item( const sub_option_item & ) = default;
             sub_option_item( sub_option_item && )      = default;
             ~sub_option_item()                         = default;
         };
-        const string_type label_name, showed_name;
+        const string_type key_name, showed_name;
         std::vector< sub_option_item > sub_options;
         auto &operator[]( size_type _index )
         {
@@ -37,9 +37,8 @@ namespace core {
         auto operator=( const option_item & ) -> option_item & = default;
         auto operator=( option_item && ) -> option_item &      = default;
         option_item(
-          string_type _label_name, string_type _showed_name,
-          std::vector< sub_option_item > _sub_options )
-          : label_name{ std::move( _label_name ) }
+          string_type _key_name, string_type _showed_name, std::vector< sub_option_item > _sub_options )
+          : key_name{ std::move( _key_name ) }
           , showed_name{ std::move( _showed_name ) }
           , sub_options{ std::move( _sub_options ) }
         { }
@@ -367,7 +366,7 @@ namespace core {
                         }
                         for ( auto &opt : options ) {
                             for ( auto &sub_opt : opt.sub_options ) {
-                                if ( line == std::format( "{}::{}", opt.label_name, sub_opt.label_name ) )
+                                if ( line == std::format( "{}::{}", opt.key_name, sub_opt.key_name ) )
                                 {
                                     sub_opt.is_enabled = true;
                                 }
@@ -402,7 +401,7 @@ namespace core {
                     for ( const auto &sub_opt : opt.sub_options ) {
                         if ( sub_opt.is_enabled ) {
                             config_text.append(
-                              std::format( "{}::{}\n", opt.label_name, sub_opt.label_name ) );
+                              std::format( "{}::{}\n", opt.key_name, sub_opt.key_name ) );
                         }
                     }
                 }
