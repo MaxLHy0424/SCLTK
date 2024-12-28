@@ -27,22 +27,19 @@ auto main() -> int
       .add_back( " > 工具箱 ", core::toolkit )
       .add_back( "\n[破解]\n" )
       .add_back(
-        std::format( " > {} ", core::custom_rules.showed_name ),
-        core::rule_op{ 'c', core::custom_rules } );
+        std::format( " > {} ", core::custom_rules.showed_name ), core::rule_op{ 'c', core::custom_rules } );
     for ( const auto &rule : core::builtin_rules ) {
         ui.add_back( std::format( " > {} ", rule.showed_name ), core::rule_op{ 'c', rule } );
     }
     ui.add_back( "\n[恢复]\n" )
       .add_back(
-        std::format( " > {} ", core::custom_rules.showed_name ),
-        core::rule_op{ 'r', core::custom_rules } );
+        std::format( " > {} ", core::custom_rules.showed_name ), core::rule_op{ 'r', core::custom_rules } );
     for ( const auto &rule : core::builtin_rules ) {
         ui.add_back( std::format( " > {} ", rule.showed_name ), core::rule_op{ 'r', rule } );
     }
     ui.set_console(
         WINDOW_TITLE, CODE_PAGE, WINDOW_WIDTH, WINDOW_HEIGHT, true, false,
-        core::options[ 1 ][ 1 ].is_enabled ? false : true,
-        core::options[ 1 ][ 2 ].is_enabled ? 230 : 255 )
+        core::options[ 1 ][ 1 ].is_enabled ? false : true, core::options[ 1 ][ 2 ].is_enabled ? 230 : 255 )
       .show()
       .lock( false, false );
     core::is_terminate_main_thread = true;

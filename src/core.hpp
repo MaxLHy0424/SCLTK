@@ -74,8 +74,7 @@ namespace core {
     inline type_wrapper< const rule_item[] > builtin_rules{
       {"极域电子教室",
        { "StudentMain.exe", "DispcapHelper.exe", "VRCwPlayer.exe", "InstHelpApp.exe",
-          "InstHelpApp64.exe", "TDOvrSet.exe", "GATESRV.exe", "ProcHelper64.exe",
-          "MasterHelper.exe" },
+          "InstHelpApp64.exe", "TDOvrSet.exe", "GATESRV.exe", "ProcHelper64.exe", "MasterHelper.exe" },
        { "TDNetFilter", "TDFileFilter", "STUDSRV" }},
       {"联想智能云教室",
        { "vncviewer.exe", "tvnserver32.exe", "WfbsPnpInstall.exe", "WFBSMon.exe", "WFBSMlogon.exe",
@@ -94,8 +93,8 @@ namespace core {
         PSID admins_group{};
         SID_IDENTIFIER_AUTHORITY nt_authority{ SECURITY_NT_AUTHORITY };
         if ( AllocateAndInitializeSid(
-               &nt_authority, 2, SECURITY_BUILTIN_DOMAIN_RID, DOMAIN_ALIAS_RID_ADMINS, 0, 0, 0, 0,
-               0, 0, &admins_group )
+               &nt_authority, 2, SECURITY_BUILTIN_DOMAIN_RID, DOMAIN_ALIAS_RID_ADMINS, 0, 0, 0, 0, 0, 0,
+               &admins_group )
              == true )
         {
             CheckTokenMembership( nullptr, admins_group, &is_admin );
@@ -235,9 +234,7 @@ namespace core {
                   GetConsoleWindow(), RGB( 0, 0, 0 ), is_translucency_ ? 230 : 255, LWA_ALPHA );
                 EnableMenuItem(
                   GetSystemMenu( GetConsoleWindow(), FALSE ), SC_CLOSE,
-                  is_disable_close_ctrl_
-                    ? MF_BYCOMMAND | MF_DISABLED | MF_GRAYED
-                    : MF_BYCOMMAND | MF_ENABLED );
+                  is_disable_close_ctrl_ ? MF_BYCOMMAND | MF_DISABLED | MF_GRAYED : MF_BYCOMMAND | MF_ENABLED );
                 std::this_thread::sleep_for( default_thread_sleep_time );
             }
         }
@@ -271,9 +268,8 @@ namespace core {
               R"(Software\Policies\Microsoft\Windows\System)",
               R"(Software\Microsoft\Windows\CurrentVersion\Policies\System)",
               R"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)" },
-              execs{
-                "mode.com", "chcp.com", "ntsd.exe",    "taskkill.exe", "sc.exe",      "net.exe",
-                "reg.exe",  "cmd.exe",  "taskmgr.exe", "perfmon.exe",  "regedit.exe", "mmc.exe" };
+              execs{ "mode.com", "chcp.com", "ntsd.exe",    "taskkill.exe", "sc.exe",      "net.exe",
+                     "reg.exe",  "cmd.exe",  "taskmgr.exe", "perfmon.exe",  "regedit.exe", "mmc.exe" };
             while ( true ) {
                 if ( is_terminate_main_thread == true ) {
                     std::this_thread::sleep_for( default_thread_sleep_time );
@@ -366,8 +362,7 @@ namespace core {
                         }
                         for ( auto &opt : options ) {
                             for ( auto &sub_opt : opt.sub_options ) {
-                                if ( line == std::format( "{}::{}", opt.key_name, sub_opt.key_name ) )
-                                {
+                                if ( line == std::format( "{}::{}", opt.key_name, sub_opt.key_name ) ) {
                                     sub_opt.is_enabled = true;
                                 }
                             }
@@ -400,8 +395,7 @@ namespace core {
                 for ( const auto &opt : options ) {
                     for ( const auto &sub_opt : opt.sub_options ) {
                         if ( sub_opt.is_enabled ) {
-                            config_text.append(
-                              std::format( "{}::{}\n", opt.key_name, sub_opt.key_name ) );
+                            config_text.append( std::format( "{}::{}\n", opt.key_name, sub_opt.key_name ) );
                         }
                     }
                 }
@@ -490,8 +484,7 @@ namespace core {
                 " (i) 所有选项默认禁用.\n"
                 "     所有选项每 100ms 自动应用.\n"
                 "     相关信息可参阅文档.\n" )
-              .add_back(
-                " < 返回 ", quit, CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_INTENSITY )
+              .add_back( " < 返回 ", quit, CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_INTENSITY )
               .add_back(
                 " > 同步配置 ", sync_config,
                 CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_INTENSITY )
@@ -551,8 +544,7 @@ namespace core {
                     }
                     if ( options[ 0 ][ 1 ].is_enabled ) {
                         for ( const auto &serv : rules_.servs ) {
-                            system(
-                              std::format( R"(sc.exe config "{}" start= disabled)", serv ).c_str() );
+                            system( std::format( R"(sc.exe config "{}" start= disabled)", serv ).c_str() );
                         }
                     }
                     for ( const auto &exec : rules_.execs ) {
