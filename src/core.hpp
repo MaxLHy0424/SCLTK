@@ -101,6 +101,7 @@ namespace core {
         wstring_type file_path( MAX_PATH, L'\0' );
         GetModuleFileNameW( nullptr, file_path.data(), MAX_PATH );
         ShellExecuteW( nullptr, L"runas", file_path.data(), nullptr, nullptr, SW_SHOWNORMAL );
+        std::exit( 0 );
         return UI_EXIT;
     }
     inline auto quit( console_ui::func_args )
