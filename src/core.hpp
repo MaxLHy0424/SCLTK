@@ -9,6 +9,9 @@ namespace core {
     using wstring_type = std::wstring;
     template < typename _type_ >
     using type_wrapper = console_ui::type_wrapper< _type_ >;
+    inline constexpr string_type config_file_name{ "config.ini" };
+    inline constexpr std::chrono::milliseconds default_thread_sleep_time{ 100 };
+    inline std::atomic< bool > is_terminate_main_thread{};
     struct option_item final {
         struct sub_option_item final {
             const string_type label_name, showed_name;
@@ -42,6 +45,15 @@ namespace core {
         option_item( option_item && )      = default;
         ~option_item()                     = default;
     };
+    inline type_wrapper< option_item[] > options{
+      {"operations",
+       "破解/恢复",              { { "hijack_execs", "劫持可执行文件" }, { "set_serv_startup_types", "设置服务启动类型" } }},
+      {"window_display",
+       "窗口显示",               { { "force_show", "置顶显示" },
+          { "disable_close_ctrl", "禁用关闭控件" },
+          { "translucency", "半透明化" } }                                                               },
+      {"other",          "其他", { { "fix_os_env", "修复操作系统环境" } }                                                  }
+    };
     struct rule_item final {
         const string_type showed_name;
         std::deque< string_type > execs, servs;
@@ -57,40 +69,24 @@ namespace core {
         rule_item( rule_item && )      = default;
         ~rule_item()                   = default;
     };
-    namespace data {
-        inline constexpr string_type config_file_name{ "config.ini" };
-        inline constexpr std::chrono::milliseconds default_thread_sleep_time{ 100 };
-        inline std::atomic< bool > is_terminate_main_thread{};
-        inline type_wrapper< option_item[] > options{
-          {"operations",
-           "破解/恢复",              { { "hijack_execs", "劫持可执行文件" },
-              { "set_serv_startup_types", "设置服务启动类型" } }},
-          {"window_display",
-           "窗口显示",               { { "force_show", "置顶显示" },
-              { "disable_close_ctrl", "禁用关闭控件" },
-              { "translucency", "半透明化" } }                   },
-          {"other",          "其他", { { "fix_os_env", "修复操作系统环境" } }          }
-        };
-        inline rule_item customized_rules{ "自定义", {}, {} };
-        inline type_wrapper< const rule_item[] > builtin_rules{
-          {"极域电子教室",
-           { "StudentMain.exe", "DispcapHelper.exe", "VRCwPlayer.exe", "InstHelpApp.exe",
-              "InstHelpApp64.exe", "TDOvrSet.exe", "GATESRV.exe", "ProcHelper64.exe",
-              "MasterHelper.exe" },
-           { "TDNetFilter", "TDFileFilter", "STUDSRV" }},
-          {"联想智能云教室",
-           { "vncviewer.exe", "tvnserver32.exe", "WfbsPnpInstall.exe", "WFBSMon.exe",
-              "WFBSMlogon.exe", "WFBSSvrLogShow.exe", "ResetIp.exe", "FuncForWIN64.exe",
-              "CertMgr.exe", "Fireware.exe", "BCDBootCopy.exe", "refreship.exe",
-              "lenovoLockScreen.exe", "PortControl64.exe", "DesktopCheck.exe",
-              "DeploymentManager.exe", "DeploymentAgent.exe", "XYNTService.exe" },
-           { "BSAgentSvr", "tvnserver", "WFBSMlogon" } },
-          {"红蜘蛛多媒体网络教室",
-           { "rscheck.exe", "checkrs.exe", "REDAgent.exe", "PerformanceCheck.exe", "edpaper.exe",
-              "Adapter.exe", "repview.exe", "FormatPaper.exe" },
-           { "appcheck2", "checkapp2" }                }
-        };
-    }
+    inline rule_item customized_rules{ "自定义", {}, {} };
+    inline type_wrapper< const rule_item[] > builtin_rules{
+      {"极域电子教室",
+       { "StudentMain.exe", "DispcapHelper.exe", "VRCwPlayer.exe", "InstHelpApp.exe",
+          "InstHelpApp64.exe", "TDOvrSet.exe", "GATESRV.exe", "ProcHelper64.exe",
+          "MasterHelper.exe" },
+       { "TDNetFilter", "TDFileFilter", "STUDSRV" }},
+      {"联想智能云教室",
+       { "vncviewer.exe", "tvnserver32.exe", "WfbsPnpInstall.exe", "WFBSMon.exe", "WFBSMlogon.exe",
+          "WFBSSvrLogShow.exe", "ResetIp.exe", "FuncForWIN64.exe", "CertMgr.exe", "Fireware.exe",
+          "BCDBootCopy.exe", "refreship.exe", "lenovoLockScreen.exe", "PortControl64.exe",
+          "DesktopCheck.exe", "DeploymentManager.exe", "DeploymentAgent.exe", "XYNTService.exe" },
+       { "BSAgentSvr", "tvnserver", "WFBSMlogon" } },
+      {"红蜘蛛多媒体网络教室",
+       { "rscheck.exe", "checkrs.exe", "REDAgent.exe", "PerformanceCheck.exe", "edpaper.exe",
+          "Adapter.exe", "repview.exe", "FormatPaper.exe" },
+       { "appcheck2", "checkapp2" }                }
+    };
     inline auto is_run_as_admin()
     {
         BOOL is_admin{};
@@ -145,14 +141,12 @@ namespace core {
             _args.parent_ui.lock( false, false );
             _args.parent_ui.set_console(
               WINDOW_TITLE " - 命令提示符", CODE_PAGE, 120, 30, false, false,
-              data::options[ 1 ][ 1 ].is_enabled ? false : true,
-              data::options[ 1 ][ 2 ].is_enabled ? 230 : 255 );
+              options[ 1 ][ 1 ].is_enabled ? false : true, options[ 1 ][ 2 ].is_enabled ? 230 : 255 );
             SetConsoleScreenBufferSize( GetStdHandle( STD_OUTPUT_HANDLE ), { 125, SHRT_MAX - 1 } );
             system( "cmd.exe" );
             _args.parent_ui.set_console(
               WINDOW_TITLE, CODE_PAGE, WINDOW_WIDTH, WINDOW_HEIGHT, true, false,
-              data::options[ 1 ][ 1 ].is_enabled ? false : true,
-              data::options[ 1 ][ 2 ].is_enabled ? 230 : 255 );
+              options[ 1 ][ 1 ].is_enabled ? false : true, options[ 1 ][ 2 ].is_enabled ? 230 : 255 );
             return CONSOLE_UI_RETURN;
         } };
         class cmd_executor final {
@@ -209,16 +203,16 @@ namespace core {
                 const DWORD foreground_id{ GetWindowThreadProcessId( this_window, nullptr ) },
                   current_id{ GetCurrentThreadId() };
                 while ( true ) {
-                    if ( data::is_terminate_main_thread == true ) {
+                    if ( is_terminate_main_thread == true ) {
                         SetWindowPos(
                           GetConsoleWindow(), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
-                        std::this_thread::sleep_for( data::default_thread_sleep_time );
+                        std::this_thread::sleep_for( default_thread_sleep_time );
                         return;
                     }
                     if ( !is_topmost_ ) {
                         SetWindowPos(
                           GetConsoleWindow(), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
-                        std::this_thread::sleep_for( data::default_thread_sleep_time );
+                        std::this_thread::sleep_for( default_thread_sleep_time );
                         continue;
                     }
                     AttachThreadInput( current_id, foreground_id, TRUE );
@@ -232,8 +226,8 @@ namespace core {
             std::jthread topmost_thread{ topmost_show };
             console_ui window_operator;
             while ( true ) {
-                if ( data::is_terminate_main_thread == true ) {
-                    std::this_thread::sleep_for( data::default_thread_sleep_time );
+                if ( is_terminate_main_thread == true ) {
+                    std::this_thread::sleep_for( default_thread_sleep_time );
                     break;
                 }
                 SetLayeredWindowAttributes(
@@ -243,7 +237,7 @@ namespace core {
                   is_disable_close_ctrl_
                     ? MF_BYCOMMAND | MF_DISABLED | MF_GRAYED
                     : MF_BYCOMMAND | MF_ENABLED );
-                std::this_thread::sleep_for( data::default_thread_sleep_time );
+                std::this_thread::sleep_for( default_thread_sleep_time );
             }
         }
       public:
@@ -280,12 +274,12 @@ namespace core {
                 "mode.com", "chcp.com", "ntsd.exe",    "taskkill.exe", "sc.exe",      "net.exe",
                 "reg.exe",  "cmd.exe",  "taskmgr.exe", "perfmon.exe",  "regedit.exe", "mmc.exe" };
             while ( true ) {
-                if ( data::is_terminate_main_thread == true ) {
-                    std::this_thread::sleep_for( data::default_thread_sleep_time );
+                if ( is_terminate_main_thread == true ) {
+                    std::this_thread::sleep_for( default_thread_sleep_time );
                     return;
                 }
                 if ( !is_enabled_ ) {
-                    std::this_thread::sleep_for( data::default_thread_sleep_time );
+                    std::this_thread::sleep_for( default_thread_sleep_time );
                     continue;
                 }
                 for ( const auto &reg_dir : hkcu_reg_dirs ) {
@@ -323,14 +317,14 @@ namespace core {
         const char mode_;
         auto load_( const bool _is_reload ) const
         {
-            std::ifstream config_file{ data::config_file_name, std::ios::in };
+            std::ifstream config_file{ config_file_name, std::ios::in };
             if ( !config_file.is_open() ) {
                 config_file.close();
                 return;
             }
             std::print( "-> 加载配置文件.\n" );
-            data::customized_rules.execs.clear();
-            data::customized_rules.servs.clear();
+            customized_rules.execs.clear();
+            customized_rules.servs.clear();
             string_type line;
             enum class config_label {
                 unknown,
@@ -362,7 +356,7 @@ namespace core {
                         if ( _is_reload ) {
                             continue;
                         }
-                        for ( auto &opt : data::options ) {
+                        for ( auto &opt : options ) {
                             for ( auto &sub_opt : opt.sub_options ) {
                                 if ( line == std::format( "{}::{}", opt.label_name, sub_opt.label_name ) )
                                 {
@@ -373,10 +367,10 @@ namespace core {
                         break;
                     }
                     case config_label::customized_rules_execs :
-                        data::customized_rules.execs.emplace_back( std::move( line ) );
+                        customized_rules.execs.emplace_back( std::move( line ) );
                         break;
                     case config_label::customized_rules_servs :
-                        data::customized_rules.servs.emplace_back( std::move( line ) );
+                        customized_rules.servs.emplace_back( std::move( line ) );
                         break;
                 }
             }
@@ -395,7 +389,7 @@ namespace core {
                 std::print( "-> 保存更改.\n" );
                 string_type config_text;
                 config_text.append( "[ options ]\n" );
-                for ( const auto &opt : data::options ) {
+                for ( const auto &opt : options ) {
                     for ( const auto &sub_opt : opt.sub_options ) {
                         if ( sub_opt.is_enabled ) {
                             config_text.append(
@@ -404,25 +398,24 @@ namespace core {
                     }
                 }
                 config_text.append( "[ customized_rules_execs ]\n" );
-                for ( const auto &exec : data::customized_rules.execs ) {
+                for ( const auto &exec : customized_rules.execs ) {
                     config_text.append( exec ).push_back( '\n' );
                 }
                 config_text.append( "[ customized_rules_servs ]\n" );
-                for ( const auto &serv : data::customized_rules.servs ) {
+                for ( const auto &serv : customized_rules.servs ) {
                     config_text.append( serv ).push_back( '\n' );
                 }
-                std::ofstream config_file{ data::config_file_name, std::ios::out | std::ios::trunc };
+                std::ofstream config_file{ config_file_name, std::ios::out | std::ios::trunc };
                 config_file.write( config_text.c_str(), config_text.size() );
                 config_file.close();
                 return CONSOLE_UI_RETURN;
             } };
             auto open_config_file{ []( console_ui::func_args )
             {
-                if ( std::ifstream{ data::config_file_name, std::ios::in }.is_open() ) {
+                if ( std::ifstream{ config_file_name, std::ios::in }.is_open() ) {
                     std::print( "-> 打开配置文件.\n" );
                     ShellExecuteA(
-                      nullptr, "open", data::config_file_name.c_str(), nullptr, nullptr,
-                      SW_SHOWNORMAL );
+                      nullptr, "open", config_file_name.c_str(), nullptr, nullptr, SW_SHOWNORMAL );
                     return CONSOLE_UI_RETURN;
                 }
                 using namespace std::chrono_literals;
@@ -496,7 +489,7 @@ namespace core {
                 CONSOLE_TEXT_FOREGROUND_GREEN | CONSOLE_TEXT_FOREGROUND_INTENSITY )
               .add_back( " > 打开配置文件 ", open_config_file )
               .add_back( "\n[选项]\n" );
-            for ( auto &opt : data::options ) {
+            for ( auto &opt : options ) {
                 ui.add_back( std::format( " > {}", opt.showed_name ), option_shower{ opt } );
             }
             ui.show();
@@ -539,7 +532,7 @@ namespace core {
             std::print( "-> 生成并执行 Windows OS 命令.\n{}\n", string_type( WINDOW_WIDTH, '-' ) );
             switch ( mode_ ) {
                 case 'c' : {
-                    if ( data::options[ 0 ][ 0 ].is_enabled ) {
+                    if ( options[ 0 ][ 0 ].is_enabled ) {
                         for ( const auto &exec : rules_.execs ) {
                             system(
                               std::format(
@@ -548,7 +541,7 @@ namespace core {
                                 .c_str() );
                         }
                     }
-                    if ( data::options[ 0 ][ 1 ].is_enabled ) {
+                    if ( options[ 0 ][ 1 ].is_enabled ) {
                         for ( const auto &serv : rules_.servs ) {
                             system(
                               std::format( R"(sc.exe config "{}" start= disabled)", serv ).c_str() );
@@ -563,7 +556,7 @@ namespace core {
                     break;
                 }
                 case 'r' : {
-                    if ( data::options[ 0 ][ 0 ].is_enabled ) {
+                    if ( options[ 0 ][ 0 ].is_enabled ) {
                         for ( const auto &exec : rules_.execs ) {
                             system(
                               std::format(
@@ -572,7 +565,7 @@ namespace core {
                                 .c_str() );
                         }
                     }
-                    if ( data::options[ 0 ][ 1 ].is_enabled ) {
+                    if ( options[ 0 ][ 1 ].is_enabled ) {
                         for ( const auto &serv : rules_.servs ) {
                             system( std::format( R"(sc.exe config "{}" start= auto)", serv ).c_str() );
                         }
