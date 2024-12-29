@@ -335,8 +335,11 @@ namespace core {
                         }
                         for ( auto &option : options ) {
                             for ( auto &sub_option : option.sub_options ) {
-                                if ( line == std::format( "{}::{}", option.key_name, sub_option.key_name ) ) {
+                                if ( line == std::format( "{}::{} = true", option.key_name, sub_option.key_name ) ) {
                                     sub_option.is_enabled = true;
+                                }
+                                if ( line == std::format( "{}::{} = false", option.key_name, sub_option.key_name ) ) {
+                                    sub_option.is_enabled = false;
                                 }
                             }
                         }
@@ -362,9 +365,8 @@ namespace core {
                 config_text.append( "[ options ]\n" );
                 for ( const auto &option : options ) {
                     for ( const auto &sub_option : option.sub_options ) {
-                        if ( sub_option.is_enabled ) {
-                            config_text.append( std::format( "{}::{}\n", option.key_name, sub_option.key_name ) );
-                        }
+                        config_text.append( std::format(
+                          "{}::{} = {}\n", option.key_name, sub_option.key_name, sub_option.is_enabled ? "true" : "false" ) );
                     }
                 }
                 config_text.append( "[ custom_rules_execs ]\n" );
