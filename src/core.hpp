@@ -305,7 +305,7 @@ namespace core {
                 custom_rules.servs.clear();
             }
             string_type line;
-            enum class config_label { unknown, options, custom_rules_execs, custom_rules_servs } label{ config_label::unknown };
+            enum class config_label { unknown, options, custom_rule_execs, custom_rule_servs } label{ config_label::unknown };
             while ( std::getline( config_file, line ) ) {
                 if ( line.empty() || line.front() == '#' ) {
                     continue;
@@ -316,11 +316,11 @@ namespace core {
                     if ( line == "[ options ]" ) {
                         label = config_label::options;
                         continue;
-                    } else if ( line == "[ custom_rules_execs ]" ) {
-                        label = config_label::custom_rules_execs;
+                    } else if ( line == "[ custom_rule_execs ]" ) {
+                        label = config_label::custom_rule_execs;
                         continue;
-                    } else if ( line == "[ custom_rules_servs ]" ) {
-                        label = config_label::custom_rules_servs;
+                    } else if ( line == "[ custom_rule_servs ]" ) {
+                        label = config_label::custom_rule_servs;
                         continue;
                     }
                 } else {
@@ -345,8 +345,8 @@ namespace core {
                         }
                         break;
                     }
-                    case config_label::custom_rules_execs : custom_rules.execs.emplace_back( std::move( line ) ); break;
-                    case config_label::custom_rules_servs : custom_rules.servs.emplace_back( std::move( line ) ); break;
+                    case config_label::custom_rule_execs : custom_rules.execs.emplace_back( std::move( line ) ); break;
+                    case config_label::custom_rule_servs : custom_rules.servs.emplace_back( std::move( line ) ); break;
                 }
             }
             config_file.close();
@@ -369,11 +369,11 @@ namespace core {
                           "{}::{} = {}\n", option.key_name, sub_option.key_name, sub_option.is_enabled ? "true" : "false" ) );
                     }
                 }
-                config_text.append( "[ custom_rules_execs ]\n" );
+                config_text.append( "[ custom_rule_execs ]\n" );
                 for ( const auto &exec : custom_rules.execs ) {
                     config_text.append( exec ).push_back( '\n' );
                 }
-                config_text.append( "[ custom_rules_servs ]\n" );
+                config_text.append( "[ custom_rule_servs ]\n" );
                 for ( const auto &serv : custom_rules.servs ) {
                     config_text.append( serv ).push_back( '\n' );
                 }
