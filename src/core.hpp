@@ -428,7 +428,8 @@ namespace core {
                     console_ui ui;
                     ui.add_back( "                    [ 配  置 ]\n\n" )
                       .add_back(
-                        std::format( " < 折叠 {}", option_.showed_name ), quit, TEXT_FOREGROUND_GREEN | TEXT_FOREGROUND_INTENSITY );
+                        std::format( " < 折叠 {} ", option_.showed_name ), quit,
+                        TEXT_FOREGROUND_GREEN | TEXT_FOREGROUND_INTENSITY );
                     for ( auto &sub_option : option_.sub_options ) {
                         ui.add_back( std::format( "\n[{}]\n", sub_option.showed_name ) )
                           .add_back( " > 启用 ", option_setter{ sub_option, true }, option_buttons_color )
@@ -456,7 +457,7 @@ namespace core {
               .add_back( " > 打开配置文件 ", open_config_file )
               .add_back( "\n[选项]\n" );
             for ( auto &option : options ) {
-                ui.add_back( std::format( " > {}", option.showed_name ), option_shower{ option } );
+                ui.add_back( std::format( " > {} ", option.showed_name ), option_shower{ option } );
             }
             ui.show();
         }
