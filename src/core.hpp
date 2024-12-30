@@ -163,7 +163,7 @@ namespace core {
           public:
             auto operator()( console_ui::func_args ) const
             {
-                std::print( " -> 执行 Windows OS 命令.\n{}\n", string_type( WINDOW_WIDTH, '-' ) );
+                std::print( " -> 执行操作系统命令.\n{}\n", string_type( WINDOW_WIDTH, '-' ) );
                 system( cmd_.c_str() );
                 return UI_RETURN;
             }
@@ -574,7 +574,7 @@ namespace core {
                 wait( 3s );
                 return UI_RETURN;
             }
-            std::print( " -> 生成并执行 Windows OS 命令.\n{}\n", string_type( WINDOW_WIDTH, '-' ) );
+            std::print( " -> 生成并执行操作系统命令.\n{}\n", string_type( WINDOW_WIDTH, '-' ) );
             switch ( mode_ ) {
                 case 'c' : {
                     if ( options[ 0 ][ 0 ].is_enabled ) {
