@@ -431,7 +431,7 @@ namespace core {
         {
             using namespace std::chrono_literals;
             std::print( "                    [ 配  置 ]\n\n\n" );
-            std::print( " -> 处理配置.\n" );
+            std::print( " -> 合并差异.\n" );
             load_( true );
             std::print( " -> 保存更改.\n" );
             string_type config_text;
@@ -463,7 +463,7 @@ namespace core {
         auto open_config() const
         {
             if ( std::ifstream{ config_file_name, std::ios::in }.is_open() ) {
-                std::print( " -> 打开配置文件.\n" );
+                std::print( " -> 打开配置.\n" );
                 ShellExecuteA(
                   nullptr, "open", config_file_name.c_str(), nullptr, nullptr, SW_SHOWNORMAL );
                 return UI_RETURN;
