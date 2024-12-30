@@ -274,8 +274,8 @@ namespace core {
             }
         }
       public:
-        auto operator=( const set_window & ) -> set_window & = delete;
-        auto operator=( set_window && ) -> set_window &      = delete;
+        auto operator=( const set_window & ) -> set_window & = default;
+        auto operator=( set_window && ) -> set_window &      = default;
         set_window(
           const bool &_is_topmost, const bool &_is_disable_close_ctrl, const bool &_is_translucency )
           : is_topmost_{ _is_topmost }
@@ -292,8 +292,8 @@ namespace core {
               std::jthread{ topmost_show_, this }
             };
         }
-        set_window( const set_window & ) = delete;
-        set_window( set_window && )      = delete;
+        set_window( const set_window & ) = default;
+        set_window( set_window && )      = default;
         ~set_window()                    = default;
     };
     class fix_os_env final : private multithread_task {
@@ -332,8 +332,8 @@ namespace core {
             }
         }
       public:
-        auto operator=( const fix_os_env & ) -> fix_os_env & = delete;
-        auto operator=( fix_os_env && ) -> fix_os_env &      = delete;
+        auto operator=( const fix_os_env & ) -> fix_os_env & = default;
+        auto operator=( fix_os_env && ) -> fix_os_env &      = default;
         fix_os_env( const bool &_is_enabled )
           : is_enabled_{ _is_enabled }
         {
@@ -342,8 +342,8 @@ namespace core {
               std::jthread{ exec_op_, this }
             } );
         }
-        fix_os_env( const fix_os_env & ) = delete;
-        fix_os_env( fix_os_env && )      = delete;
+        fix_os_env( const fix_os_env & ) = default;
+        fix_os_env( fix_os_env && )      = default;
         ~fix_os_env()                    = default;
     };
     class config_op final {
@@ -488,8 +488,8 @@ namespace core {
                     sub_option_.is_enabled = sub_option_value_;
                     return UI_RETURN;
                 }
-                auto operator=( const option_setter & ) -> option_setter & = delete;
-                auto operator=( option_setter && ) -> option_setter &      = delete;
+                auto operator=( const option_setter & ) -> option_setter & = default;
+                auto operator=( option_setter && ) -> option_setter &      = default;
                 option_setter( option_item::sub_option_item &_sub_option, const bool _sub_option_value )
                   : sub_option_{ _sub_option }
                   , sub_option_value_{ _sub_option_value }
@@ -518,8 +518,8 @@ namespace core {
                     ui.show();
                     return UI_RETURN;
                 }
-                auto operator=( const option_shower & ) -> option_shower & = delete;
-                auto operator=( option_shower && ) -> option_shower &      = delete;
+                auto operator=( const option_shower & ) -> option_shower & = default;
+                auto operator=( option_shower && ) -> option_shower &      = default;
                 option_shower( option_item &_option )
                   : option_{ _option }
                 { }
