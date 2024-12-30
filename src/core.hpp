@@ -12,7 +12,7 @@ namespace core {
     template < typename _type_ >
     using type_wrapper = console_ui::type_wrapper< _type_ >;
     inline constexpr string_type config_file_name{ "config.ini" };
-    inline constexpr std::chrono::milliseconds default_thread_sleep_time{ 500 };
+    inline constexpr std::chrono::seconds default_thread_sleep_time{ 1 };
     inline std::atomic< bool > is_terminate_main_thread{};
     struct option_item final {
         struct sub_option_item final {
@@ -458,10 +458,12 @@ namespace core {
                 ~option_shower()                       = default;
             };
             console_ui ui;
-            ui.add_back(
+            ui
+              .add_back( std::format(
                 "                    [ 配  置 ]\n\n\n"
-                " (i) 所有选项默认禁用, 每 500ms 自动应用.\n"
-                "     相关信息可参阅文档.\n" )
+                " (i) 所有选项默认禁用, 每 {} 自动应用.\n"
+                "     相关信息可参阅文档.\n",
+                default_thread_sleep_time ) )
               .add_back( " < 返回 ", quit, TEXT_FOREGROUND_GREEN | TEXT_FOREGROUND_INTENSITY )
               .add_back( " > 同步配置 ", sync_config, TEXT_FOREGROUND_GREEN | TEXT_FOREGROUND_INTENSITY )
               .add_back( " > 打开配置文件 ", open_config_file )
