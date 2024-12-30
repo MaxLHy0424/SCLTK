@@ -201,7 +201,7 @@ namespace core {
     }
     class multithread_task {
       protected:
-        struct thread_item_ {
+        struct thread_item_ final {
             std::jthread task_thread{};
             auto operator=( const thread_item_ & ) -> thread_item_ & = default;
             auto operator=( thread_item_ && ) -> thread_item_ &      = default;
