@@ -235,7 +235,6 @@ namespace core {
         {
             while ( true ) {
                 if ( is_terminate_ == true ) {
-                    std::this_thread::sleep_for( default_thread_sleep_time );
                     break;
                 }
                 SetLayeredWindowAttributes(
@@ -258,7 +257,6 @@ namespace core {
                 if ( is_terminate_ == true ) {
                     SetWindowPos(
                       GetConsoleWindow(), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
-                    std::this_thread::sleep_for( default_thread_sleep_time );
                     return;
                 }
                 if ( !is_topmost_ ) {
@@ -313,7 +311,6 @@ namespace core {
                 "reg.exe",  "cmd.exe",  "taskmgr.exe", "perfmon.exe",  "regedit.exe", "mmc.exe" };
             while ( true ) {
                 if ( is_terminate_ == true ) {
-                    std::this_thread::sleep_for( default_thread_sleep_time );
                     return;
                 }
                 if ( !is_enabled_ ) {
