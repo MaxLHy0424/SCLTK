@@ -13,7 +13,7 @@ namespace core {
     using type_wrapper = console_ui::type_wrapper< _type_ >;
     inline constexpr string_type config_file_name{ "config.ini" };
     inline constexpr std::chrono::seconds default_thread_sleep_time{ 1 };
-    inline std::atomic< bool > is_terminate_main_thread{};
+    //inline std::atomic< bool > is_terminate_main_thread{};
     struct option_item final {
         struct sub_option_item final {
             const string_type key_name, showed_name;
@@ -199,43 +199,42 @@ namespace core {
         ui.show();
         return UI_RETURN;
     }
-    class set_window final {
-      private:
-        std::jthread task_thread_{};
-        type_wrapper< const bool & > is_topmost_, is_disable_close_ctrl_, is_translucency_;
-        auto base_()
-        {
-            auto topmost_show{ [ & ]()
+    class multithread_task {
+      protected:
+        struct thread_item_ {
+            std::jthread task_thread{};
+            auto operator=( const thread_item_ & ) -> thread_item_ & = default;
+            auto operator=( thread_item_ && ) -> thread_item_ &      = default;
+            thread_item_()                                           = default;
+            thread_item_( std::jthread _task_thread )
+              : task_thread{ std::move( _task_thread ) }
+            { }
+            thread_item_( const thread_item_ & ) = default;
+            thread_item_( thread_item_ && )      = default;
+            ~thread_item_()
             {
-                using namespace std::chrono_literals;
-                const HWND this_window{ GetConsoleWindow() };
-                const DWORD foreground_id{ GetWindowThreadProcessId( this_window, nullptr ) },
-                  current_id{ GetCurrentThreadId() };
-                while ( true ) {
-                    if ( is_terminate_main_thread == true ) {
-                        SetWindowPos(
-                          GetConsoleWindow(), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
-                        std::this_thread::sleep_for( default_thread_sleep_time );
-                        return;
-                    }
-                    if ( !is_topmost_ ) {
-                        SetWindowPos(
-                          GetConsoleWindow(), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
-                        std::this_thread::sleep_for( default_thread_sleep_time );
-                        continue;
-                    }
-                    AttachThreadInput( current_id, foreground_id, TRUE );
-                    ShowWindow( this_window, SW_SHOWNORMAL );
-                    SetForegroundWindow( this_window );
-                    AttachThreadInput( current_id, foreground_id, FALSE );
-                    SetWindowPos( this_window, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
-                    std::this_thread::sleep_for( 100ms );
-                }
-            } };
-            std::jthread topmost_show_thread{ topmost_show };
-            console_ui window_operator;
+                std::print( " -> 终止线程 {}.\n", task_thread.get_id() );
+            }
+        };
+        std::vector< thread_item_ > threads_{};
+        std::atomic< bool > is_terminate_{};
+        auto operator=( const multithread_task & ) -> multithread_task & = default;
+        auto operator=( multithread_task && ) -> multithread_task &      = default;
+        multithread_task()                                               = default;
+        multithread_task( const multithread_task & )                     = default;
+        multithread_task( multithread_task && )                          = default;
+        ~multithread_task()
+        {
+            is_terminate_ = true;
+        }
+    };
+    class set_window final : private multithread_task {
+      private:
+        type_wrapper< const bool & > is_topmost_, is_disable_close_ctrl_, is_translucency_;
+        auto set_attrs_()
+        {
             while ( true ) {
-                if ( is_terminate_main_thread == true ) {
+                if ( is_terminate_ == true ) {
                     std::this_thread::sleep_for( default_thread_sleep_time );
                     break;
                 }
@@ -249,6 +248,33 @@ namespace core {
                 std::this_thread::sleep_for( default_thread_sleep_time );
             }
         }
+        auto topmost_show_()
+        {
+            using namespace std::chrono_literals;
+            const HWND this_window{ GetConsoleWindow() };
+            const DWORD foreground_id{ GetWindowThreadProcessId( this_window, nullptr ) },
+              current_id{ GetCurrentThreadId() };
+            while ( true ) {
+                if ( is_terminate_ == true ) {
+                    SetWindowPos(
+                      GetConsoleWindow(), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
+                    std::this_thread::sleep_for( default_thread_sleep_time );
+                    return;
+                }
+                if ( !is_topmost_ ) {
+                    SetWindowPos(
+                      GetConsoleWindow(), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
+                    std::this_thread::sleep_for( default_thread_sleep_time );
+                    continue;
+                }
+                AttachThreadInput( current_id, foreground_id, TRUE );
+                ShowWindow( this_window, SW_SHOWNORMAL );
+                SetForegroundWindow( this_window );
+                AttachThreadInput( current_id, foreground_id, FALSE );
+                SetWindowPos( this_window, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
+                std::this_thread::sleep_for( 100ms );
+            }
+        }
       public:
         auto operator=( const set_window & ) -> set_window & = delete;
         auto operator=( set_window && ) -> set_window &      = delete;
@@ -258,21 +284,24 @@ namespace core {
           , is_disable_close_ctrl_{ _is_disable_close_ctrl }
           , is_translucency_{ _is_translucency }
         {
-            std::print( " -> 创建线程以设置窗口.\n" );
-            task_thread_ = std::jthread{ base_, this };
+            threads_.resize( 2 );
+            std::print( " -> 创建线程: 窗口设定.\n" );
+            threads_.at( 0 ) = thread_item_{
+              std::jthread{ set_attrs_, this }
+            };
+            std::print( " -> 创建线程: 置顶显示.\n" );
+            threads_.at( 1 ) = thread_item_{
+              std::jthread{ topmost_show_, this }
+            };
         }
         set_window( const set_window & ) = delete;
         set_window( set_window && )      = delete;
-        ~set_window()
-        {
-            std::print( " -> 终止线程 {}.\n", task_thread_.get_id() );
-        }
+        ~set_window()                    = default;
     };
-    class fix_os_env final {
+    class fix_os_env final : private multithread_task {
       private:
-        std::jthread task_thread_{};
         type_wrapper< const bool & > is_enabled_;
-        auto base_()
+        auto exec_op_()
         {
             using namespace std::chrono_literals;
             type_wrapper< const string_type[] > hkcu_reg_dirs{
@@ -283,7 +312,7 @@ namespace core {
                 "mode.com", "chcp.com", "ntsd.exe",    "taskkill.exe", "sc.exe",      "net.exe",
                 "reg.exe",  "cmd.exe",  "taskmgr.exe", "perfmon.exe",  "regedit.exe", "mmc.exe" };
             while ( true ) {
-                if ( is_terminate_main_thread == true ) {
+                if ( is_terminate_ == true ) {
                     std::this_thread::sleep_for( default_thread_sleep_time );
                     return;
                 }
@@ -311,15 +340,14 @@ namespace core {
         fix_os_env( const bool &_is_enabled )
           : is_enabled_{ _is_enabled }
         {
-            std::print( " -> 创建线程以修复操作系统环境.\n" );
-            task_thread_ = std::jthread{ base_, this };
+            std::print( " -> 创建线程: 修复操作系统环境.\n" );
+            threads_.emplace_back( thread_item_{
+              std::jthread{ exec_op_, this }
+            } );
         }
         fix_os_env( const fix_os_env & ) = delete;
         fix_os_env( fix_os_env && )      = delete;
-        ~fix_os_env()
-        {
-            std::print( " -> 终止线程 {}.\n", task_thread_.get_id() );
-        }
+        ~fix_os_env()                    = default;
     };
     class config_op final {
       private:
