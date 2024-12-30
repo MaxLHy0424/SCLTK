@@ -211,7 +211,9 @@ namespace core {
             thread_item_( thread_item_ && )      = default;
             ~thread_item_()
             {
-                std::print( " -> 终止线程 {}.\n", task_thread.get_id() );
+                if ( task_thread.joinable() ) {
+                    std::print( " -> 终止线程 {}.\n", task_thread.get_id() );
+                }
             }
         };
         std::vector< thread_item_ > threads_{};
