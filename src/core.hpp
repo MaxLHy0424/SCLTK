@@ -461,7 +461,7 @@ namespace core {
             config_file.close();
             return UI_RETURN;
         }
-        auto open_config_file() const
+        auto open_config() const
         {
             if ( std::ifstream{ config_file_name, std::ios::in }.is_open() ) {
                 std::print( " -> 打开配置文件.\n" );
@@ -535,10 +535,8 @@ namespace core {
                 "     相关信息可参阅文档.\n",
                 default_thread_sleep_time ) )
               .add_back( " < 返回 ", quit, TEXT_FOREGROUND_GREEN | TEXT_FOREGROUND_INTENSITY )
-              .add_back( " > 同步配置 ", [ & ]( console_ui::func_args )
-            { return sync_config(); }, TEXT_FOREGROUND_GREEN | TEXT_FOREGROUND_INTENSITY )
-              .add_back( " > 打开配置文件 ", [ & ]( console_ui::func_args )
-            { return open_config_file(); } )
+              .add_back( " > 同步配置 ", [ & ]( console_ui::func_args ) { return sync_config(); } )
+              .add_back( " > 打开文件 ", [ & ]( console_ui::func_args ) { return open_config(); } )
               .add_back( "\n[选项]\n" );
             for ( auto &option : options ) {
                 ui.add_back( std::format( " > {} ", option.showed_name ), option_shower{ option } );
