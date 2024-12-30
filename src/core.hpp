@@ -367,6 +367,7 @@ namespace core {
             constexpr WORD option_buttons_color{ TEXT_FOREGROUND_RED | TEXT_FOREGROUND_GREEN };
             auto sync_config{ [ this ]( console_ui::func_args )
             {
+                using namespace std::chrono_literals;
                 std::print( "                    [ 配  置 ]\n\n\n" );
                 std::print( "-> 处理配置.\n" );
                 load_( true );
@@ -389,6 +390,8 @@ namespace core {
                 }
                 std::ofstream config_file{ config_file_name, std::ios::out | std::ios::trunc };
                 config_file.write( config_text.c_str(), config_text.size() );
+                std::print( "\n ({}) 同步配置{}.\n\n", config_file.fail() ? '!' : 'i', config_file.fail() ? "失败" : "成功" );
+                wait( 3s );
                 config_file.close();
                 return UI_RETURN;
             } };
