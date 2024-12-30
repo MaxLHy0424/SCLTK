@@ -349,6 +349,8 @@ namespace core {
     class config_op final {
       private:
         const char mode_;
+        inline static constexpr WORD option_buttons_color{
+          TEXT_FOREGROUND_RED | TEXT_FOREGROUND_GREEN };
         auto load_( const bool _is_reload ) const
         {
             std::ifstream config_file{ config_file_name, std::ios::in };
@@ -426,8 +428,6 @@ namespace core {
             config_file.close();
             return;
         }
-        static inline constexpr WORD option_buttons_color{
-          TEXT_FOREGROUND_RED | TEXT_FOREGROUND_GREEN };
         auto sync_config() const
         {
             using namespace std::chrono_literals;
