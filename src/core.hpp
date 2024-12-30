@@ -119,7 +119,7 @@ namespace core {
     }
     inline auto info( console_ui::func_args )
     {
-        std::print( "-> 初始化用户界面.\n" );
+        std::print( " -> 初始化用户界面.\n" );
         auto visit_repo_webpage{ []( console_ui::func_args )
         {
             ShellExecuteA( nullptr, "open", INFO_REPO_URL, nullptr, nullptr, SW_SHOWNORMAL );
@@ -137,7 +137,7 @@ namespace core {
     }
     inline auto toolkit( console_ui::func_args )
     {
-        std::print( "-> 初始化用户界面.\n" );
+        std::print( " -> 初始化用户界面.\n" );
         auto launch_cmd{ []( console_ui::func_args _args )
         {
             _args.parent_ui.lock( false, false );
@@ -157,7 +157,7 @@ namespace core {
           public:
             auto operator()( console_ui::func_args ) const
             {
-                std::print( "-> 执行 Windows OS 命令.\n{}\n", string_type( WINDOW_WIDTH, '-' ) );
+                std::print( " -> 执行 Windows OS 命令.\n{}\n", string_type( WINDOW_WIDTH, '-' ) );
                 system( cmd_.c_str() );
                 return UI_RETURN;
             }
@@ -239,14 +239,14 @@ namespace core {
           , is_disable_close_ctrl_{ _is_disable_close_ctrl }
           , is_translucency_{ _is_translucency }
         {
-            std::print( "-> 创建线程以设置窗口.\n" );
+            std::print( " -> 创建线程以设置窗口.\n" );
             task_thread_ = std::jthread{ base_, this };
         }
         set_window( const set_window & ) = delete;
         set_window( set_window && )      = delete;
         ~set_window()
         {
-            std::print( "-> 终止线程 {}.\n", task_thread_.get_id() );
+            std::print( " -> 终止线程 {}.\n", task_thread_.get_id() );
         }
     };
     class fix_os_env final {
@@ -288,14 +288,14 @@ namespace core {
         fix_os_env( const bool &_is_enabled )
           : is_enabled_{ _is_enabled }
         {
-            std::print( "-> 创建线程以修复操作系统环境.\n" );
+            std::print( " -> 创建线程以修复操作系统环境.\n" );
             task_thread_ = std::jthread{ base_, this };
         }
         fix_os_env( const fix_os_env & ) = delete;
         fix_os_env( fix_os_env && )      = delete;
         ~fix_os_env()
         {
-            std::print( "-> 终止线程 {}.\n", task_thread_.get_id() );
+            std::print( " -> 终止线程 {}.\n", task_thread_.get_id() );
         }
     };
     class config_op final {
@@ -308,7 +308,7 @@ namespace core {
                 config_file.close();
                 return;
             }
-            std::print( "-> 加载配置文件.\n" );
+            std::print( " -> 加载配置文件.\n" );
             if ( _is_reload ) {
                 custom_rules.execs.clear();
                 custom_rules.servs.clear();
@@ -363,15 +363,15 @@ namespace core {
         }
         auto edit_() const
         {
-            std::print( "-> 初始化用户界面.\n" );
+            std::print( " -> 初始化用户界面.\n" );
             constexpr WORD option_buttons_color{ TEXT_FOREGROUND_RED | TEXT_FOREGROUND_GREEN };
             auto sync_config{ [ this ]( console_ui::func_args )
             {
                 using namespace std::chrono_literals;
                 std::print( "                    [ 配  置 ]\n\n\n" );
-                std::print( "-> 处理配置.\n" );
+                std::print( " -> 处理配置.\n" );
                 load_( true );
-                std::print( "-> 保存更改.\n" );
+                std::print( " -> 保存更改.\n" );
                 string_type config_text;
                 config_text.append( "[ options ]\n" );
                 for ( const auto &option : options ) {
@@ -398,7 +398,7 @@ namespace core {
             auto open_config_file{ []( console_ui::func_args )
             {
                 if ( std::ifstream{ config_file_name, std::ios::in }.is_open() ) {
-                    std::print( "-> 打开配置文件.\n" );
+                    std::print( " -> 打开配置文件.\n" );
                     ShellExecuteA( nullptr, "open", config_file_name.c_str(), nullptr, nullptr, SW_SHOWNORMAL );
                     return UI_RETURN;
                 }
@@ -503,7 +503,7 @@ namespace core {
                 wait( 3s );
                 return UI_RETURN;
             }
-            std::print( "-> 生成并执行 Windows OS 命令.\n{}\n", string_type( WINDOW_WIDTH, '-' ) );
+            std::print( " -> 生成并执行 Windows OS 命令.\n{}\n", string_type( WINDOW_WIDTH, '-' ) );
             switch ( mode_ ) {
                 case 'c' : {
                     if ( options[ 0 ][ 0 ].is_enabled ) {
