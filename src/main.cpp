@@ -43,6 +43,5 @@ auto main() -> int
         core::options[ 1 ][ 2 ].is_enabled ? 230 : 255 )
       .show()
       .lock( true, true );
-    //core::is_terminate_main_thread = true;
     return EXIT_SUCCESS;
 }
