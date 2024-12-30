@@ -13,7 +13,6 @@ namespace core {
     using type_wrapper = console_ui::type_wrapper< _type_ >;
     inline constexpr string_type config_file_name{ "config.ini" };
     inline constexpr std::chrono::seconds default_thread_sleep_time{ 1 };
-    //inline std::atomic< bool > is_terminate_main_thread{};
     struct option_item final {
         struct sub_option_item final {
             const string_type key_name, showed_name;
@@ -283,7 +282,7 @@ namespace core {
           , is_translucency_{ _is_translucency }
         {
             threads_.resize( 2 );
-            std::print( " -> 创建线程: 窗口设定.\n" );
+            std::print( " -> 创建线程: 窗口属性设定.\n" );
             threads_.at( 0 ) = thread_item_{
               std::jthread{ set_attrs_, this }
             };
