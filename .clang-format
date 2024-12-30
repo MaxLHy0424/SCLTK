@@ -108,7 +108,7 @@ PenaltyIndentedWhitespace: 65
 PenaltyReturnTypeOnItsOwnLine: 50
 PointerAlignment: Right
 QualifierAlignment: Custom
-QualifierOrder: [ 'static', 'inline', 'constexpr', 'const', 'restrict', 'volatile', 'type' ]
+QualifierOrder: [ 'inline', 'static', 'constexpr', 'const', 'restrict', 'volatile', 'type' ]
 ReferenceAlignment: Right
 ReflowComments: true
 ShortNamespaceLines: 10
