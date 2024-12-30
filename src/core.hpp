@@ -426,107 +426,107 @@ namespace core {
             config_file.close();
             return;
         }
+        static inline constexpr WORD option_buttons_color{
+          TEXT_FOREGROUND_RED | TEXT_FOREGROUND_GREEN };
+        auto sync_config() const
+        {
+            using namespace std::chrono_literals;
+            std::print( "                    [ 配  置 ]\n\n\n" );
+            std::print( " -> 处理配置.\n" );
+            load_( true );
+            std::print( " -> 保存更改.\n" );
+            string_type config_text;
+            config_text.append( "[ options ]\n" );
+            for ( const auto &option : options ) {
+                for ( const auto &sub_option : option.sub_options ) {
+                    config_text.append( std::format(
+                      "{}::{} = {}\n", option.key_name, sub_option.key_name,
+                      sub_option.is_enabled ? "true" : "false" ) );
+                }
+            }
+            config_text.append( "[ custom_rule_execs ]\n" );
+            for ( const auto &exec : custom_rules.execs ) {
+                config_text.append( exec ).push_back( '\n' );
+            }
+            config_text.append( "[ custom_rule_servs ]\n" );
+            for ( const auto &serv : custom_rules.servs ) {
+                config_text.append( serv ).push_back( '\n' );
+            }
+            std::ofstream config_file{ config_file_name, std::ios::out | std::ios::trunc };
+            config_file << config_text << std::flush;
+            std::print(
+              "\n ({}) 同步配置{}.\n\n", config_file.fail() ? '!' : 'i',
+              config_file.fail() ? "失败" : "成功" );
+            wait( 3s );
+            config_file.close();
+            return UI_RETURN;
+        }
+        auto open_config_file() const
+        {
+            if ( std::ifstream{ config_file_name, std::ios::in }.is_open() ) {
+                std::print( " -> 打开配置文件.\n" );
+                ShellExecuteA(
+                  nullptr, "open", config_file_name.c_str(), nullptr, nullptr, SW_SHOWNORMAL );
+                return UI_RETURN;
+            }
+            using namespace std::chrono_literals;
+            std::print(
+              "                    [ 配  置 ]\n\n\n"
+              " (i) 无法读取配置文件.\n\n" );
+            wait( 3s );
+            return UI_RETURN;
+        }
+        class option_setter {
+          private:
+            option_item::sub_option_item &sub_option_;
+            const bool sub_option_value_;
+          public:
+            auto operator()( console_ui::func_args ) const
+            {
+                sub_option_.is_enabled = sub_option_value_;
+                return UI_RETURN;
+            }
+            auto operator=( const option_setter & ) -> option_setter & = default;
+            auto operator=( option_setter && ) -> option_setter &      = default;
+            option_setter( option_item::sub_option_item &_sub_option, const bool _sub_option_value )
+              : sub_option_{ _sub_option }
+              , sub_option_value_{ _sub_option_value }
+            { }
+            option_setter( const option_setter & ) = default;
+            option_setter( option_setter && )      = default;
+            ~option_setter()                       = default;
+        };
+        class option_shower final {
+          private:
+            option_item &option_;
+          public:
+            auto operator()( console_ui::func_args ) const
+            {
+                console_ui ui;
+                ui.add_back( "                    [ 配  置 ]\n\n" )
+                  .add_back(
+                    std::format( " < 折叠 {} ", option_.showed_name ), quit,
+                    TEXT_FOREGROUND_GREEN | TEXT_FOREGROUND_INTENSITY );
+                for ( auto &sub_option : option_.sub_options ) {
+                    ui.add_back( std::format( "\n[{}]\n", sub_option.showed_name ) )
+                      .add_back( " > 启用 ", option_setter{ sub_option, true }, option_buttons_color )
+                      .add_back( " > 禁用 ", option_setter{ sub_option, false }, option_buttons_color );
+                }
+                ui.show();
+                return UI_RETURN;
+            }
+            auto operator=( const option_shower & ) -> option_shower & = default;
+            auto operator=( option_shower && ) -> option_shower &      = default;
+            option_shower( option_item &_option )
+              : option_{ _option }
+            { }
+            option_shower( const option_shower & ) = default;
+            option_shower( option_shower && )      = default;
+            ~option_shower()                       = default;
+        };
         auto edit_() const
         {
             std::print( " -> 初始化用户界面.\n" );
-            constexpr WORD option_buttons_color{ TEXT_FOREGROUND_RED | TEXT_FOREGROUND_GREEN };
-            auto sync_config{ [ this ]( console_ui::func_args )
-            {
-                using namespace std::chrono_literals;
-                std::print( "                    [ 配  置 ]\n\n\n" );
-                std::print( " -> 处理配置.\n" );
-                load_( true );
-                std::print( " -> 保存更改.\n" );
-                string_type config_text;
-                config_text.append( "[ options ]\n" );
-                for ( const auto &option : options ) {
-                    for ( const auto &sub_option : option.sub_options ) {
-                        config_text.append( std::format(
-                          "{}::{} = {}\n", option.key_name, sub_option.key_name,
-                          sub_option.is_enabled ? "true" : "false" ) );
-                    }
-                }
-                config_text.append( "[ custom_rule_execs ]\n" );
-                for ( const auto &exec : custom_rules.execs ) {
-                    config_text.append( exec ).push_back( '\n' );
-                }
-                config_text.append( "[ custom_rule_servs ]\n" );
-                for ( const auto &serv : custom_rules.servs ) {
-                    config_text.append( serv ).push_back( '\n' );
-                }
-                std::ofstream config_file{ config_file_name, std::ios::out | std::ios::trunc };
-                config_file << config_text << std::flush;
-                std::print(
-                  "\n ({}) 同步配置{}.\n\n", config_file.fail() ? '!' : 'i',
-                  config_file.fail() ? "失败" : "成功" );
-                wait( 3s );
-                config_file.close();
-                return UI_RETURN;
-            } };
-            auto open_config_file{ []( console_ui::func_args )
-            {
-                if ( std::ifstream{ config_file_name, std::ios::in }.is_open() ) {
-                    std::print( " -> 打开配置文件.\n" );
-                    ShellExecuteA(
-                      nullptr, "open", config_file_name.c_str(), nullptr, nullptr, SW_SHOWNORMAL );
-                    return UI_RETURN;
-                }
-                using namespace std::chrono_literals;
-                std::print(
-                  "                    [ 配  置 ]\n\n\n"
-                  " (i) 无法读取配置文件.\n\n" );
-                wait( 3s );
-                return UI_RETURN;
-            } };
-            class option_setter {
-              private:
-                option_item::sub_option_item &sub_option_;
-                const bool sub_option_value_;
-              public:
-                auto operator()( console_ui::func_args ) const
-                {
-                    sub_option_.is_enabled = sub_option_value_;
-                    return UI_RETURN;
-                }
-                auto operator=( const option_setter & ) -> option_setter & = default;
-                auto operator=( option_setter && ) -> option_setter &      = default;
-                option_setter( option_item::sub_option_item &_sub_option, const bool _sub_option_value )
-                  : sub_option_{ _sub_option }
-                  , sub_option_value_{ _sub_option_value }
-                { }
-                option_setter( const option_setter & ) = default;
-                option_setter( option_setter && )      = default;
-                ~option_setter()                       = default;
-            };
-            class option_shower final {
-              private:
-                option_item &option_;
-              public:
-                auto operator()( console_ui::func_args ) const
-                {
-                    console_ui ui;
-                    ui.add_back( "                    [ 配  置 ]\n\n" )
-                      .add_back(
-                        std::format( " < 折叠 {} ", option_.showed_name ), quit,
-                        TEXT_FOREGROUND_GREEN | TEXT_FOREGROUND_INTENSITY );
-                    for ( auto &sub_option : option_.sub_options ) {
-                        ui.add_back( std::format( "\n[{}]\n", sub_option.showed_name ) )
-                          .add_back( " > 启用 ", option_setter{ sub_option, true }, option_buttons_color )
-                          .add_back(
-                            " > 禁用 ", option_setter{ sub_option, false }, option_buttons_color );
-                    }
-                    ui.show();
-                    return UI_RETURN;
-                }
-                auto operator=( const option_shower & ) -> option_shower & = default;
-                auto operator=( option_shower && ) -> option_shower &      = default;
-                option_shower( option_item &_option )
-                  : option_{ _option }
-                { }
-                option_shower( const option_shower & ) = default;
-                option_shower( option_shower && )      = default;
-                ~option_shower()                       = default;
-            };
             console_ui ui;
             ui
               .add_back( std::format(
@@ -535,8 +535,10 @@ namespace core {
                 "     相关信息可参阅文档.\n",
                 default_thread_sleep_time ) )
               .add_back( " < 返回 ", quit, TEXT_FOREGROUND_GREEN | TEXT_FOREGROUND_INTENSITY )
-              .add_back( " > 同步配置 ", sync_config, TEXT_FOREGROUND_GREEN | TEXT_FOREGROUND_INTENSITY )
-              .add_back( " > 打开配置文件 ", open_config_file )
+              .add_back( " > 同步配置 ", [ & ]( console_ui::func_args )
+            { return sync_config(); }, TEXT_FOREGROUND_GREEN | TEXT_FOREGROUND_INTENSITY )
+              .add_back( " > 打开配置文件 ", [ & ]( console_ui::func_args )
+            { return open_config_file(); } )
               .add_back( "\n[选项]\n" );
             for ( auto &option : options ) {
                 ui.add_back( std::format( " > {} ", option.showed_name ), option_shower{ option } );
