@@ -389,7 +389,7 @@ namespace core {
                     config_text.append( serv ).push_back( '\n' );
                 }
                 std::ofstream config_file{ config_file_name, std::ios::out | std::ios::trunc };
-                config_file.write( config_text.c_str(), config_text.size() );
+                config_file << config_text << std::flush;
                 std::print( "\n ({}) 同步配置{}.\n\n", config_file.fail() ? '!' : 'i', config_file.fail() ? "失败" : "成功" );
                 wait( 3s );
                 config_file.close();
