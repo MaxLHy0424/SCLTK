@@ -110,13 +110,12 @@ namespace core {
         std::exit( 0 );
         return UI_EXIT;
     }
-    template < typename _chrono_sub_type_ >
-    inline auto wait( _chrono_sub_type_ _t )
+    template < typename _chrono_type_ >
+    inline auto wait( _chrono_type_ _t )
     {
-        using namespace std::chrono_literals;
-        for ( auto i{ _t }; i > _chrono_sub_type_{}; --i ) {
+        for ( auto i{ _t }; i > _chrono_type_{}; --i ) {
             std::print( " {} 后返回.\r", i );
-            std::this_thread::sleep_for( 1s );
+            std::this_thread::sleep_for( _chrono_type_{ 1 } );
         }
     }
     inline auto quit( console_ui::func_args )
@@ -535,7 +534,7 @@ namespace core {
                 default_thread_sleep_time ) )
               .add_back( " < 返回 ", quit, TEXT_FOREGROUND_GREEN | TEXT_FOREGROUND_INTENSITY )
               .add_back( " > 同步配置 ", [ & ]( console_ui::func_args ) { return sync_config(); } )
-              .add_back( " > 打开文件 ", [ & ]( console_ui::func_args ) { return open_config(); } )
+              .add_back( " > 打开配置 ", [ & ]( console_ui::func_args ) { return open_config(); } )
               .add_back( "\n[选项]\n" );
             for ( auto &option : options ) {
                 ui.add_back( std::format( " > {} ", option.showed_name ), option_shower{ option } );
