@@ -104,6 +104,15 @@ namespace core {
         std::exit( 0 );
         return UI_EXIT;
     }
+    template < typename _chrono_sub_type_ >
+    inline auto wait( _chrono_sub_type_ _t )
+    {
+        using namespace std::chrono_literals;
+        for ( auto i{ _t }; i > _chrono_sub_type_{}; --i ) {
+            std::print( " {} 后返回.\r", i );
+            std::this_thread::sleep_for( 1s );
+        }
+    }
     inline auto quit( console_ui::func_args )
     {
         return UI_EXIT;
@@ -358,6 +367,7 @@ namespace core {
             constexpr WORD option_buttons_color{ TEXT_FOREGROUND_RED | TEXT_FOREGROUND_GREEN };
             auto sync_config{ [ this ]( console_ui::func_args )
             {
+                std::print( "                    [ 配  置 ]\n\n\n" );
                 std::print( "-> 处理配置.\n" );
                 load_( true );
                 std::print( "-> 保存更改.\n" );
@@ -393,10 +403,7 @@ namespace core {
                 std::print(
                   "                    [ 配  置 ]\n\n\n"
                   " (i) 无法读取配置文件.\n\n" );
-                for ( unsigned short i{ 3 }; i > 0; --i ) {
-                    std::print( " {}s 后返回.\r", i );
-                    std::this_thread::sleep_for( 1000ms );
-                }
+                wait( 3s );
                 return UI_RETURN;
             } };
             class option_setter {
@@ -490,10 +497,7 @@ namespace core {
             if ( rules_.execs.empty() && rules_.servs.empty() ) {
                 using namespace std::chrono_literals;
                 std::print( " (i) 规则为空.\n\n" );
-                for ( unsigned short i{ 3 }; i > 0; --i ) {
-                    std::print( " {}s 后返回.\r", i );
-                    std::this_thread::sleep_for( 1000ms );
-                }
+                wait( 3s );
                 return UI_RETURN;
             }
             std::print( "-> 生成并执行 Windows OS 命令.\n{}\n", string_type( WINDOW_WIDTH, '-' ) );
