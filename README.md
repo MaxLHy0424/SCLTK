@@ -163,7 +163,7 @@ CRCSN 使用 [MIT License](./LICENSE), 详细内容请自行阅读.
 请尝试将配置文件 `config.ini` 使用 GBK 编码重新保存后重新启动 CRCSN.
 
 > [!NOTE]
-> 由于 Microsoft Windows OS 历史遗留问题, GBK 为语言设置为简体中文时的默认文本编码. 此方法仅能支持自定义规则中的中文字符.
+> 由于 Microsoft Windows OS 历史遗留问题, GBK 编码为语言设置为简体中文时的默认文本编码. 此方法仅能支持自定义规则中的中文字符.
 
 ## 2 CRCSN 窗口总是输出 "XXX 已被管理员禁用" 或 "找不到 XXX"
 
