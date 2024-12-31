@@ -117,7 +117,7 @@ namespace core {
     }
     inline auto info( console_ui::func_args )
     {
-        std::print( " -> 初始化用户界面.\n" );
+        std::print( " -> 准备用户界面.\n" );
         auto visit_repo_webpage{ []( console_ui::func_args )
         {
             ShellExecuteA( nullptr, "open", INFO_REPO_URL, nullptr, nullptr, SW_SHOWNORMAL );
@@ -135,7 +135,7 @@ namespace core {
     }
     inline auto toolkit( console_ui::func_args )
     {
-        std::print( " -> 初始化用户界面.\n" );
+        std::print( " -> 准备用户界面.\n" );
         auto launch_cmd{ []( console_ui::func_args _args )
         {
             _args.parent_ui
@@ -482,7 +482,7 @@ namespace core {
         };
         auto edit_()
         {
-            std::print( " -> 初始化用户界面.\n" );
+            std::print( " -> 准备用户界面.\n" );
             console_ui ui;
             ui
               .add_back( std::format(
