@@ -82,9 +82,13 @@ namespace core {
           "FormatPaper.exe" },
        { "appcheck2", "checkapp2" }                }
     };
-    inline auto convert_to_wstring( const std::string _str )
+    inline auto convert_to_string( const std::wstring _byte_str )
     {
-        return std::wstring_convert< std::codecvt_utf8< wchar_t > >{}.from_bytes( _str );
+        return std::wstring_convert< std::codecvt_utf8< wchar_t > >{}.to_bytes( _byte_str );
+    }
+    inline auto convert_to_wstring( const std::string _wide_str )
+    {
+        return std::wstring_convert< std::codecvt_utf8< wchar_t > >{}.from_bytes( _wide_str );
     }
     inline auto is_run_as_admin()
     {
