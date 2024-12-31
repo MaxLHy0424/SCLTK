@@ -117,13 +117,13 @@ namespace core {
     }
     inline auto info( console_ui::func_args )
     {
-        std::print( " -> 准备用户界面.\n" );
         auto visit_repo_webpage{ []( console_ui::func_args )
         {
             ShellExecuteA( nullptr, "open", INFO_REPO_URL, nullptr, nullptr, SW_SHOWNORMAL );
             return UI_RETURN;
         } };
         console_ui ui;
+        std::print( " -> 准备用户界面.\n" );
         ui.add_back( "                    [ 信  息 ]\n\n" )
           .add_back( " < 返回 ", quit, TEXT_FOREGROUND_GREEN | TEXT_FOREGROUND_INTENSITY )
           .add_back( "\n[名称]\n\n " INFO_NAME "\n\n[版本]\n\n " INFO_VERSION )
@@ -176,6 +176,7 @@ namespace core {
           {"恢复 Microsoft Edge 离线游戏", R"(reg.exe delete "HKLM\SOFTWARE\Policies\Microsoft\Edge" /f /v AllowSurfGame)"                }
         };
         console_ui ui;
+        std::print( " -> 准备用户界面.\n" );
         ui.add_back( "                   [ 工 具 箱 ]\n\n" )
           .add_back( " < 返回 ", quit, TEXT_FOREGROUND_GREEN | TEXT_FOREGROUND_INTENSITY )
           .add_back( " > 命令提示符 ", launch_cmd )
@@ -460,6 +461,7 @@ namespace core {
             auto operator()( console_ui::func_args )
             {
                 console_ui ui;
+                std::print( " -> 准备用户界面.\n" );
                 ui.add_back( "                    [ 配  置 ]\n\n" )
                   .add_back(
                     std::format( " < 折叠 {} ", option_.showed_name ), quit, TEXT_FOREGROUND_GREEN | TEXT_FOREGROUND_INTENSITY );
@@ -482,8 +484,8 @@ namespace core {
         };
         auto edit_()
         {
-            std::print( " -> 准备用户界面.\n" );
             console_ui ui;
+            std::print( " -> 准备用户界面.\n" );
             ui
               .add_back( std::format(
                 "                    [ 配  置 ]\n\n\n"
