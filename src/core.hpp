@@ -188,24 +188,24 @@ namespace core {
     }
     class multithread_task {
       protected:
-        struct thread_item_ final {
+        struct task_item_ final {
             std::jthread task_thread{};
-            auto operator=( const thread_item_ & ) -> thread_item_ & = default;
-            auto operator=( thread_item_ && ) -> thread_item_ &      = default;
-            thread_item_()                                           = default;
-            thread_item_( std::jthread _task_thread )
+            auto operator=( const task_item_ & ) -> task_item_ & = default;
+            auto operator=( task_item_ && ) -> task_item_ &      = default;
+            task_item_()                                         = default;
+            task_item_( std::jthread _task_thread )
               : task_thread{ std::move( _task_thread ) }
             { }
-            thread_item_( const thread_item_ & ) = default;
-            thread_item_( thread_item_ && )      = default;
-            ~thread_item_()
+            task_item_( const task_item_ & ) = default;
+            task_item_( task_item_ && )      = default;
+            ~task_item_()
             {
                 if ( task_thread.joinable() ) {
                     std::print( " -> 终止线程 {}.\n", task_thread.get_id() );
                 }
             }
         };
-        std::vector< thread_item_ > threads_{};
+        std::vector< task_item_ > threads_{};
         std::atomic< bool > is_terminate_{};
         auto operator=( const multithread_task & ) -> multithread_task & = default;
         auto operator=( multithread_task && ) -> multithread_task &      = default;
@@ -265,11 +265,11 @@ namespace core {
           , is_translucency_{ _is_translucency }
         {
             std::print( " -> 创建线程: 窗口属性设定.\n" );
-            threads_.emplace_back( thread_item_{
+            threads_.emplace_back( task_item_{
               std::jthread{ set_attrs_, this }
             } );
             std::print( " -> 创建线程: 置顶显示.\n" );
-            threads_.emplace_back( thread_item_{
+            threads_.emplace_back( task_item_{
               std::jthread{ topmost_show_, this }
             } );
         }
@@ -314,7 +314,7 @@ namespace core {
           : is_enabled_{ _is_enabled }
         {
             std::print( " -> 创建线程: 修复操作系统环境.\n" );
-            threads_.emplace_back( thread_item_{
+            threads_.emplace_back( task_item_{
               std::jthread{ exec_op_, this }
             } );
         }
