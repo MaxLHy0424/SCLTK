@@ -104,7 +104,7 @@ namespace core {
         return UI_EXIT;
     }
     template < typename _chrono_type_ >
-    inline auto wait( _chrono_type_ _t )
+    inline auto wait( _chrono_type_ &&_t )
     {
         for ( auto i{ _t }; i > _chrono_type_{}; --i ) {
             std::print( " {} 后返回.\r", i );
