@@ -63,7 +63,7 @@ class console_ui final {
     using string_type   = std::string;
     using callback_type = std::function< bool( func_args ) >;
     template < typename _type_ >
-    using type_wrapper = _type_;
+    using type_alloc = _type_;
   private:
     enum class console_attrs_ { normal, lock_text, lock_all };
     struct line_item_ final {
