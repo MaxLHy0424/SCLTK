@@ -116,11 +116,11 @@ class console_ui final {
         cursor_data.bVisible = _is_show;
         SetConsoleCursorInfo( GetStdHandle( STD_OUTPUT_HANDLE ), &cursor_data );
     }
-    auto edit_console_attrs_( const console_attrs_ _mode )
+    auto edit_console_attrs_( const console_attrs_ _mod )
     {
         DWORD attrs;
         GetConsoleMode( GetStdHandle( STD_INPUT_HANDLE ), &attrs );
-        switch ( _mode ) {
+        switch ( _mod ) {
             case console_attrs_::normal :
                 attrs |= ENABLE_QUICK_EDIT_MODE;
                 attrs |= ENABLE_INSERT_MODE;
