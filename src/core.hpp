@@ -390,8 +390,9 @@ namespace core {
         auto sync()
         {
             using namespace std::chrono_literals;
-            std::print( "                    [ 配  置 ]\n\n\n" );
-            std::print( " -> 合并差异.\n" );
+            std::print(
+              "                    [ 配  置 ]\n\n\n"
+              " -> 合并差异.\n" );
             load_( true );
             std::print( " -> 保存更改.\n" );
             string_type config_text;
