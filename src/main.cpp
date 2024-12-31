@@ -33,10 +33,6 @@ auto main() -> int
     for ( const auto &rule : core::builtin_rules ) {
         ui.add_back( std::format( " > {} ", rule.showed_name ), core::rule_op{ core::rule_op::mod::recovery, rule } );
     }
-    ui.set_console(
-        WINDOW_TITLE, CODE_PAGE, WINDOW_WIDTH, WINDOW_HEIGHT, true, false, core::options[ 1 ][ 1 ].is_enabled ? false : true,
-        core::options[ 1 ][ 2 ].is_enabled ? 230 : 255 )
-      .show()
-      .lock( true, true );
+    ui.show().lock( true, true );
     return EXIT_SUCCESS;
 }
