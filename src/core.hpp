@@ -128,7 +128,7 @@ namespace core {
     {
         auto visit_repo_webpage{ []( console_ui::func_args )
         {
-            ShellExecuteW( nullptr, L"open", convert_to_wstring( INFO_REPO_URL ).c_str(), nullptr, nullptr, SW_SHOWNORMAL );
+            ShellExecuteA( nullptr, "open", INFO_REPO_URL, nullptr, nullptr, SW_SHOWNORMAL );
             return console_ui::value::ui_return;
         } };
         console_ui ui;
@@ -149,14 +149,14 @@ namespace core {
         {
             _args.parent_ui
               .set_console(
-                convert_to_wstring( WINDOW_TITLE ).append( L" - 命令提示符" ), CODE_PAGE, 120, 30, false, false,
-                options[ 1 ][ 1 ].is_enabled ? false : true, options[ 1 ][ 2 ].is_enabled ? 230 : 255 )
+                WINDOW_TITLE L" - 命令提示符", CODE_PAGE, 120, 30, false, false, options[ 1 ][ 1 ].is_enabled ? false : true,
+                options[ 1 ][ 2 ].is_enabled ? 230 : 255 )
               .lock( false, false );
             SetConsoleScreenBufferSize( GetStdHandle( STD_OUTPUT_HANDLE ), { 128, SHRT_MAX - 1 } );
             system( "cmd.exe" );
             _args.parent_ui.set_console(
-              convert_to_wstring( WINDOW_TITLE ), CODE_PAGE, WINDOW_WIDTH, WINDOW_HEIGHT, true, false,
-              options[ 1 ][ 1 ].is_enabled ? false : true, options[ 1 ][ 2 ].is_enabled ? 230 : 255 );
+              WINDOW_TITLE, CODE_PAGE, WINDOW_WIDTH, WINDOW_HEIGHT, true, false, options[ 1 ][ 1 ].is_enabled ? false : true,
+              options[ 1 ][ 2 ].is_enabled ? 230 : 255 );
             return console_ui::value::ui_return;
         } };
         class cmd_executor final {
