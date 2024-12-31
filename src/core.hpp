@@ -160,7 +160,7 @@ namespace core {
           private:
             const string_type cmd_;
           public:
-            auto operator()( console_ui::func_args ) const
+            auto operator()( console_ui::func_args )
             {
                 std::print( " -> 执行操作系统命令.\n{}\n", string_type( WINDOW_WIDTH, '-' ) );
                 system( cmd_.c_str() );
@@ -351,7 +351,7 @@ namespace core {
         const char mode_;
         inline static constexpr WORD option_buttons_color{
           TEXT_FOREGROUND_RED | TEXT_FOREGROUND_GREEN };
-        auto load_( const bool _is_reload ) const
+        auto load_( const bool _is_reload )
         {
             std::ifstream config_file{ config_file_name, std::ios::in };
             if ( !config_file.is_open() ) {
@@ -428,7 +428,7 @@ namespace core {
             config_file.close();
             return;
         }
-        auto sync_config() const
+        auto sync_config()
         {
             using namespace std::chrono_literals;
             std::print( "                    [ 配  置 ]\n\n\n" );
@@ -461,7 +461,7 @@ namespace core {
             config_file.close();
             return UI_RETURN;
         }
-        auto open_config() const
+        auto open_config()
         {
             if ( std::ifstream{ config_file_name, std::ios::in }.is_open() ) {
                 std::print( " -> 打开配置.\n" );
@@ -481,7 +481,7 @@ namespace core {
             option_item::sub_option_item &sub_option_;
             const bool sub_option_value_;
           public:
-            auto operator()( console_ui::func_args ) const
+            auto operator()( console_ui::func_args )
             {
                 sub_option_.is_enabled = sub_option_value_;
                 return UI_RETURN;
@@ -500,7 +500,7 @@ namespace core {
           private:
             option_item &option_;
           public:
-            auto operator()( console_ui::func_args ) const
+            auto operator()( console_ui::func_args )
             {
                 console_ui ui;
                 ui.add_back( "                    [ 配  置 ]\n\n" )
@@ -524,7 +524,7 @@ namespace core {
             option_shower( option_shower && )      = default;
             ~option_shower()                       = default;
         };
-        auto edit_() const
+        auto edit_()
         {
             std::print( " -> 初始化用户界面.\n" );
             console_ui ui;
@@ -544,7 +544,7 @@ namespace core {
             ui.show();
         }
       public:
-        auto operator()( console_ui::func_args ) const
+        auto operator()( console_ui::func_args )
         {
             switch ( mode_ ) {
                 case 'r' : load_( false ); break;
@@ -566,7 +566,7 @@ namespace core {
         const char mode_;
         const rule_item &rules_;
       public:
-        auto operator()( console_ui::func_args ) const
+        auto operator()( console_ui::func_args )
         {
             std::print( "                 [ 破 解 / 恢 复 ]\n\n\n" );
             if ( rules_.execs.empty() && rules_.servs.empty() ) {
