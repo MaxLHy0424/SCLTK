@@ -263,15 +263,14 @@ namespace core {
           , is_disable_close_ctrl_{ _is_disable_close_ctrl }
           , is_translucency_{ _is_translucency }
         {
-            threads_.resize( 2 );
             std::print( " -> 创建线程: 窗口属性设定.\n" );
-            threads_.at( 0 ) = thread_item_{
+            threads_.emplace_back( thread_item_{
               std::jthread{ set_attrs_, this }
-            };
+            } );
             std::print( " -> 创建线程: 置顶显示.\n" );
-            threads_.at( 1 ) = thread_item_{
+            threads_.emplace_back( thread_item_{
               std::jthread{ topmost_show_, this }
-            };
+            } );
         }
         set_window( const set_window & ) = default;
         set_window( set_window && )      = default;
