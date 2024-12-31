@@ -10,7 +10,7 @@ namespace core {
     using string_type  = console_ui::string_type;
     using wstring_type = std::wstring;
     template < typename _type_ >
-    using type_wrapper = console_ui::type_wrapper< _type_ >;
+    using type_alloc = console_ui::type_alloc< _type_ >;
     inline constexpr string_type config_file_name{ "config.ini" };
     inline constexpr std::chrono::seconds default_thread_sleep_time{ 1 };
     struct option_item final {
@@ -44,7 +44,7 @@ namespace core {
         option_item( option_item && )      = default;
         ~option_item()                     = default;
     };
-    inline type_wrapper< option_item[] > options{
+    inline type_alloc< option_item[] > options{
       {"rule_op", "破解/恢复", { { "hijack_execs", "劫持可执行文件" }, { "set_serv_startup_types", "设置服务启动类型" } }                  },
       {"window",
        "窗口显示",             { { "topmost_show", "置顶显示" }, { "disable_close_ctrl", "禁用关闭控件" }, { "translucency", "半透明化" } }},
@@ -65,7 +65,7 @@ namespace core {
         ~rule_item()                   = default;
     };
     inline rule_item custom_rules{ "自定义", {}, {} };
-    inline type_wrapper< const rule_item[] > builtin_rules{
+    inline type_alloc< const rule_item[] > builtin_rules{
       {"极域电子教室",
        { "StudentMain.exe", "DispcapHelper.exe", "VRCwPlayer.exe", "InstHelpApp.exe", "InstHelpApp64.exe", "TDOvrSet.exe",
           "GATESRV.exe", "ProcHelper64.exe", "MasterHelper.exe" },
@@ -169,7 +169,7 @@ namespace core {
             cmd_executor( cmd_executor && )      = default;
             ~cmd_executor()                      = default;
         };
-        type_wrapper< string_type[][ 2 ] > common_ops{
+        type_alloc< string_type[][ 2 ] > common_ops{
           {"重启资源管理器",               R"(taskkill.exe /f /im explorer.exe && timeout /t 3 /nobreak && start C:\Windows\explorer.exe)"},
           {"恢复 USB 设备访问",            R"(reg.exe add "HKLM\SYSTEM\CurrentControlSet\Services\USBSTOR" /f /t reg_dword /v Start /d 3)"},
           {"恢复 Google Chrome 离线游戏",  R"(reg.exe delete "HKLM\SOFTWARE\Policies\Google\Chrome" /f /v AllowDinosaurEasterEgg)"        },
@@ -219,7 +219,7 @@ namespace core {
     };
     class set_window final : private multithread_task {
       private:
-        type_wrapper< const bool & > is_topmost_, is_disable_close_ctrl_, is_translucency_;
+        type_alloc< const bool & > is_topmost_, is_disable_close_ctrl_, is_translucency_;
         auto set_attrs_()
         {
             while ( true ) {
@@ -279,11 +279,11 @@ namespace core {
     };
     class fix_os_env final : private multithread_task {
       private:
-        type_wrapper< const bool & > is_enabled_;
+        type_alloc< const bool & > is_enabled_;
         auto exec_op_()
         {
             using namespace std::chrono_literals;
-            type_wrapper< const string_type[] > hkcu_reg_dirs{
+            type_alloc< const string_type[] > hkcu_reg_dirs{
               R"(Software\Policies\Microsoft\Windows\System)", R"(Software\Microsoft\Windows\CurrentVersion\Policies\System)",
               R"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)" },
               execs{ "mode.com", "chcp.com", "ntsd.exe",    "taskkill.exe", "sc.exe",      "net.exe",
@@ -327,7 +327,7 @@ namespace core {
         enum class mod { load, edit };
       private:
         const mod mod_data_;
-        inline static constexpr WORD option_buttons_color{ TEXT_FOREGROUND_RED | TEXT_FOREGROUND_GREEN };
+        inline static constexpr WORD option_button_color{ TEXT_FOREGROUND_RED | TEXT_FOREGROUND_GREEN };
         auto load_( const bool _is_reload )
         {
             std::ifstream config_file{ config_file_name, std::ios::in };
@@ -465,8 +465,8 @@ namespace core {
                     std::format( " < 折叠 {} ", option_.showed_name ), quit, TEXT_FOREGROUND_GREEN | TEXT_FOREGROUND_INTENSITY );
                 for ( auto &sub_option : option_.sub_options ) {
                     ui.add_back( std::format( "\n[{}]\n", sub_option.showed_name ) )
-                      .add_back( " > 启用 ", option_setter{ sub_option, true }, option_buttons_color )
-                      .add_back( " > 禁用 ", option_setter{ sub_option, false }, option_buttons_color );
+                      .add_back( " > 启用 ", option_setter{ sub_option, true }, option_button_color )
+                      .add_back( " > 禁用 ", option_setter{ sub_option, false }, option_button_color );
                 }
                 ui.show();
                 return UI_RETURN;
