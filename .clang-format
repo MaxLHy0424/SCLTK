@@ -48,7 +48,7 @@ BreakBeforeTernaryOperators: true
 BreakConstructorInitializers: BeforeComma
 BreakInheritanceList: BeforeComma
 BreakStringLiterals: true
-ColumnLimit: 100
+ColumnLimit: 128
 CommentPragmas: '[NOTICE]*'
 CompactNamespaces: false
 ConstructorInitializerIndentWidth: 2
@@ -97,15 +97,15 @@ MaxEmptyLinesToKeep: 1
 NamespaceIndentation: All
 PPIndentWidth: 1
 PackConstructorInitializers: Never
-PenaltyBreakAssignment: 50
-PenaltyBreakBeforeFirstCallParameter: 50
-PenaltyBreakComment: 60
-PenaltyBreakFirstLessLess: 60
-PenaltyBreakString: 60
-PenaltyBreakTemplateDeclaration: 50
-PenaltyExcessCharacter: 30
-PenaltyIndentedWhitespace: 65
-PenaltyReturnTypeOnItsOwnLine: 50
+PenaltyBreakAssignment: 25
+PenaltyBreakBeforeFirstCallParameter: 25
+PenaltyBreakComment: 30
+PenaltyBreakFirstLessLess: 30
+PenaltyBreakString: 30
+PenaltyBreakTemplateDeclaration: 25
+PenaltyExcessCharacter: 10
+PenaltyIndentedWhitespace: 30
+PenaltyReturnTypeOnItsOwnLine: 25
 PointerAlignment: Right
 QualifierAlignment: Custom
 QualifierOrder: [ 'inline', 'static', 'constexpr', 'const', 'restrict', 'volatile', 'type' ]
