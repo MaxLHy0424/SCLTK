@@ -138,10 +138,10 @@ namespace core {
         std::print( " -> 初始化用户界面.\n" );
         auto launch_cmd{ []( console_ui::func_args _args )
         {
-            _args.parent_ui.lock( false, false );
-            _args.parent_ui.set_console(
-              WINDOW_TITLE " - 命令提示符", CODE_PAGE, 120, 30, false, false, options[ 1 ][ 1 ].is_enabled ? false : true,
-              options[ 1 ][ 2 ].is_enabled ? 230 : 255 );
+            _args.parent_ui.lock( false, false )
+              .set_console(
+                WINDOW_TITLE " - 命令提示符", CODE_PAGE, 120, 30, false, false, options[ 1 ][ 1 ].is_enabled ? false : true,
+                options[ 1 ][ 2 ].is_enabled ? 230 : 255 );
             SetConsoleScreenBufferSize( GetStdHandle( STD_OUTPUT_HANDLE ), { 128, SHRT_MAX - 1 } );
             system( "cmd.exe" );
             _args.parent_ui.set_console(
