@@ -9,7 +9,7 @@ auto main() -> int
     if ( !core::is_run_as_admin() ) {
         std::print( " -> 申请管理员权限.\n" );
         core::relaunch_as_admin( console_ui::func_args{ ui } );
-        return EXIT_FAILURE;
+        return EXIT_SUCCESS;
     }
     core::set_window set_window_thread{
       core::options[ 1 ][ 0 ].is_enabled, core::options[ 1 ][ 1 ].is_enabled,
