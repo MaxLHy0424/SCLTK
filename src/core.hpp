@@ -110,7 +110,7 @@ namespace core {
         GetModuleFileNameW( nullptr, file_path.data(), MAX_PATH );
         ShellExecuteW( nullptr, L"runas", file_path.data(), nullptr, nullptr, SW_SHOWNORMAL );
         std::exit( 0 );
-        return UI_EXIT;
+        return console_ui::value::ui_exit;
     }
     template < typename _chrono_type_ >
     inline auto wait( _chrono_type_ &&_t )
@@ -122,25 +122,25 @@ namespace core {
     }
     inline auto quit( console_ui::func_args )
     {
-        return UI_EXIT;
+        return console_ui::value::ui_exit;
     }
     inline auto info( console_ui::func_args )
     {
         auto visit_repo_webpage{ []( console_ui::func_args )
         {
             ShellExecuteW( nullptr, L"open", convert_to_wstring( INFO_REPO_URL ).c_str(), nullptr, nullptr, SW_SHOWNORMAL );
-            return UI_RETURN;
+            return console_ui::value::ui_return;
         } };
         console_ui ui;
         std::print( " -> 准备用户界面.\n" );
         ui.add_back( "                    [ 信  息 ]\n\n" )
-          .add_back( " < 返回 ", quit, TEXT_FOREGROUND_GREEN | TEXT_FOREGROUND_INTENSITY )
+          .add_back( " < 返回 ", quit, console_ui::value::text_foreground_green | console_ui::value::text_foreground_intensity )
           .add_back( "\n[名称]\n\n " INFO_NAME "\n\n[版本]\n\n " INFO_VERSION )
           .add_back( "\n[仓库]\n" )
-          .add_back( " " INFO_REPO_URL " ", visit_repo_webpage, TEXT_DEFAULT | TEXT_COMMON_LVB_UNDERSCORE )
+          .add_back( " " INFO_REPO_URL " ", visit_repo_webpage, console_ui::value::text_default | console_ui::value::text_common_lvb_underscore )
           .add_back( "\n[许可证]\n\n " INFO_LICENSE "\n\n (C) 2023 - present " INFO_DEVELOPER "." )
           .show();
-        return UI_RETURN;
+        return console_ui::value::ui_return;
     }
     inline auto toolkit( console_ui::func_args )
     {
@@ -157,7 +157,7 @@ namespace core {
             _args.parent_ui.set_console(
               convert_to_wstring( WINDOW_TITLE ), CODE_PAGE, WINDOW_WIDTH, WINDOW_HEIGHT, true, false,
               options[ 1 ][ 1 ].is_enabled ? false : true, options[ 1 ][ 2 ].is_enabled ? 230 : 255 );
-            return UI_RETURN;
+            return console_ui::value::ui_return;
         } };
         class cmd_executor final {
           private:
@@ -167,7 +167,7 @@ namespace core {
             {
                 std::print( " -> 执行操作系统命令.\n{}\n", string_type( WINDOW_WIDTH, '-' ) );
                 system( cmd_.c_str() );
-                return UI_RETURN;
+                return console_ui::value::ui_return;
             }
             auto operator=( const cmd_executor & ) -> cmd_executor & = default;
             auto operator=( cmd_executor && ) -> cmd_executor &      = default;
@@ -187,14 +187,14 @@ namespace core {
         console_ui ui;
         std::print( " -> 准备用户界面.\n" );
         ui.add_back( "                   [ 工 具 箱 ]\n\n" )
-          .add_back( " < 返回 ", quit, TEXT_FOREGROUND_GREEN | TEXT_FOREGROUND_INTENSITY )
+          .add_back( " < 返回 ", quit, console_ui::value::text_foreground_green | console_ui::value::text_foreground_intensity )
           .add_back( " > 命令提示符 ", launch_cmd )
           .add_back( "\n[常用操作]\n" );
         for ( auto &op : common_ops ) {
             ui.add_back( std::format( " > {} ", std::move( op[ 0 ] ) ), cmd_executor{ std::move( op[ 1 ] ) } );
         }
         ui.show();
-        return UI_RETURN;
+        return console_ui::value::ui_return;
     }
     class multithread_task {
       protected:
@@ -337,7 +337,8 @@ namespace core {
         enum class mod { load, edit };
       private:
         const mod mod_data_;
-        inline static constexpr WORD option_button_color{ TEXT_FOREGROUND_RED | TEXT_FOREGROUND_GREEN };
+        inline static constexpr WORD option_button_color{
+          console_ui::value::text_foreground_red | console_ui::value::text_foreground_green };
         auto load_( const bool _is_reload )
         {
             std::ifstream config_file{ config_file_name, std::ios::in };
@@ -427,21 +428,21 @@ namespace core {
             std::print( "\n ({}) 同步配置{}.\n\n", config_file.fail() ? '!' : 'i', config_file.fail() ? "失败" : "成功" );
             wait( 3s );
             config_file.close();
-            return UI_RETURN;
+            return console_ui::value::ui_return;
         }
         auto open_file()
         {
             if ( std::ifstream{ config_file_name, std::ios::in }.is_open() ) {
                 std::print( " -> 打开配置.\n" );
                 ShellExecuteW( nullptr, L"open", convert_to_wstring( config_file_name ).c_str(), nullptr, nullptr, SW_SHOWNORMAL );
-                return UI_RETURN;
+                return console_ui::value::ui_return;
             }
             using namespace std::chrono_literals;
             std::print(
               "                    [ 配  置 ]\n\n\n"
               " (i) 无法读取配置文件.\n\n" );
             wait( 3s );
-            return UI_RETURN;
+            return console_ui::value::ui_return;
         }
         class option_setter {
           private:
@@ -451,7 +452,7 @@ namespace core {
             auto operator()( console_ui::func_args )
             {
                 sub_option_.is_enabled = sub_option_value_;
-                return UI_RETURN;
+                return console_ui::value::ui_return;
             }
             auto operator=( const option_setter & ) -> option_setter & = default;
             auto operator=( option_setter && ) -> option_setter &      = default;
@@ -473,14 +474,15 @@ namespace core {
                 std::print( " -> 准备用户界面.\n" );
                 ui.add_back( "                    [ 配  置 ]\n\n" )
                   .add_back(
-                    std::format( " < 折叠 {} ", option_.showed_name ), quit, TEXT_FOREGROUND_GREEN | TEXT_FOREGROUND_INTENSITY );
+                    std::format( " < 折叠 {} ", option_.showed_name ), quit,
+                    console_ui::value::text_foreground_green | console_ui::value::text_foreground_intensity );
                 for ( auto &sub_option : option_.sub_options ) {
                     ui.add_back( std::format( "\n[{}]\n", sub_option.showed_name ) )
                       .add_back( " > 启用 ", option_setter{ sub_option, true }, option_button_color )
                       .add_back( " > 禁用 ", option_setter{ sub_option, false }, option_button_color );
                 }
                 ui.show();
-                return UI_RETURN;
+                return console_ui::value::ui_return;
             }
             auto operator=( const option_shower & ) -> option_shower & = default;
             auto operator=( option_shower && ) -> option_shower &      = default;
@@ -501,7 +503,7 @@ namespace core {
                 " (i) 所有选项默认禁用, 每 {} 自动应用.\n"
                 "     相关信息可参阅文档.\n",
                 default_thread_sleep_time ) )
-              .add_back( " < 返回 ", quit, TEXT_FOREGROUND_GREEN | TEXT_FOREGROUND_INTENSITY )
+              .add_back( " < 返回 ", quit, console_ui::value::text_foreground_green | console_ui::value::text_foreground_intensity )
               .add_back( " > 同步配置 ", [ & ]( console_ui::func_args ) { return sync(); } )
               .add_back( " > 打开配置文件 ", [ & ]( console_ui::func_args ) { return open_file(); } )
               .add_back( "\n[选项]\n" );
@@ -517,7 +519,7 @@ namespace core {
                 case mod::load : load_( false ); break;
                 case mod::edit : edit_(); break;
             }
-            return UI_RETURN;
+            return console_ui::value::ui_return;
         }
         auto operator=( const config_op & ) -> config_op & = default;
         auto operator=( config_op && ) -> config_op &      = default;
@@ -542,7 +544,7 @@ namespace core {
                 using namespace std::chrono_literals;
                 std::print( " (i) 规则为空.\n\n" );
                 wait( 3s );
-                return UI_RETURN;
+                return console_ui::value::ui_return;
             }
             std::print( " -> 生成并执行操作系统命令.\n{}\n", string_type( WINDOW_WIDTH, '-' ) );
             switch ( mod_data_ ) {
@@ -590,7 +592,7 @@ namespace core {
                     break;
                 }
             }
-            return UI_RETURN;
+            return console_ui::value::ui_return;
         }
         auto operator=( const rule_op & ) -> rule_op & = default;
         auto operator=( rule_op && ) -> rule_op &      = default;
