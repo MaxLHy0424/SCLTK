@@ -153,7 +153,7 @@ class console_ui final {
         DWORD reg;
         while ( true ) {
             std::this_thread::sleep_for( 10ms );
-            ReadConsoleInputA( GetStdHandle( STD_INPUT_HANDLE ), &record, 1, &reg );
+            ReadConsoleInputW( GetStdHandle( STD_INPUT_HANDLE ), &record, 1, &reg );
             if ( record.EventType == MOUSE_EVENT && _is_mouse_move | ( record.Event.MouseEvent.dwEventFlags != MOUSE_MOVE ) ) {
                 return record.Event.MouseEvent;
             }
@@ -354,23 +354,23 @@ class console_ui final {
         return *this;
     }
     auto &set_console(
-      const string_type &_title, const UINT _code_page, const SHORT _width, const SHORT _height, const bool _is_fix_size,
+      const wstring_type &_title, const UINT _code_page, const SHORT _width, const SHORT _height, const bool _is_fix_size,
       const bool _is_enable_minimize_ctrl, const bool is_enable_close_window_ctrl, const BYTE _translucency )
     {
         SetConsoleOutputCP( _code_page );
         SetConsoleCP( _code_page );
-        SetConsoleTitleA( _title.c_str() );
+        SetConsoleTitleW( _title.c_str() );
         system( std::format( "mode.com con cols={} lines={}", _width, _height ).c_str() );
-        SetWindowLongPtrA(
+        SetWindowLongPtrW(
           GetConsoleWindow(), GWL_STYLE,
           _is_fix_size
-            ? GetWindowLongPtrA( GetConsoleWindow(), GWL_STYLE ) & ~WS_SIZEBOX & ~WS_MAXIMIZEBOX
-            : GetWindowLongPtrA( GetConsoleWindow(), GWL_STYLE ) | WS_SIZEBOX | WS_MAXIMIZEBOX );
-        SetWindowLongPtrA(
+            ? GetWindowLongPtrW( GetConsoleWindow(), GWL_STYLE ) & ~WS_SIZEBOX & ~WS_MAXIMIZEBOX
+            : GetWindowLongPtrW( GetConsoleWindow(), GWL_STYLE ) | WS_SIZEBOX | WS_MAXIMIZEBOX );
+        SetWindowLongPtrW(
           GetConsoleWindow(), GWL_STYLE,
           _is_enable_minimize_ctrl
-            ? GetWindowLongPtrA( GetConsoleWindow(), GWL_STYLE ) | WS_MINIMIZEBOX
-            : GetWindowLongPtrA( GetConsoleWindow(), GWL_STYLE ) & ~WS_MINIMIZEBOX );
+            ? GetWindowLongPtrW( GetConsoleWindow(), GWL_STYLE ) | WS_MINIMIZEBOX
+            : GetWindowLongPtrW( GetConsoleWindow(), GWL_STYLE ) & ~WS_MINIMIZEBOX );
         EnableMenuItem(
           GetSystemMenu( GetConsoleWindow(), FALSE ), SC_CLOSE,
           is_enable_close_window_ctrl ? MF_BYCOMMAND | MF_ENABLED : MF_BYCOMMAND | MF_DISABLED | MF_GRAYED );

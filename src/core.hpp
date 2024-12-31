@@ -1,5 +1,6 @@
 #pragma once
 #include <climits>
+#include <codecvt>
 #include <fstream>
 #include "console_ui.hpp"
 #include "info.hpp"
@@ -81,6 +82,10 @@ namespace core {
           "FormatPaper.exe" },
        { "appcheck2", "checkapp2" }                }
     };
+    inline auto convert_to_wstring( const std::string _str )
+    {
+        return std::wstring_convert< std::codecvt_utf8< wchar_t > >{}.from_bytes( _str );
+    }
     inline auto is_run_as_admin()
     {
         BOOL is_admin{};
@@ -119,7 +124,7 @@ namespace core {
     {
         auto visit_repo_webpage{ []( console_ui::func_args )
         {
-            ShellExecuteA( nullptr, "open", INFO_REPO_URL, nullptr, nullptr, SW_SHOWNORMAL );
+            ShellExecuteW( nullptr, L"open", convert_to_wstring( INFO_REPO_URL ).c_str(), nullptr, nullptr, SW_SHOWNORMAL );
             return UI_RETURN;
         } };
         console_ui ui;
@@ -140,14 +145,14 @@ namespace core {
         {
             _args.parent_ui
               .set_console(
-                WINDOW_TITLE " - 命令提示符", CODE_PAGE, 120, 30, false, false, options[ 1 ][ 1 ].is_enabled ? false : true,
-                options[ 1 ][ 2 ].is_enabled ? 230 : 255 )
+                convert_to_wstring( WINDOW_TITLE " - 命令提示符" ), CODE_PAGE, 120, 30, false, false,
+                options[ 1 ][ 1 ].is_enabled ? false : true, options[ 1 ][ 2 ].is_enabled ? 230 : 255 )
               .lock( false, false );
             SetConsoleScreenBufferSize( GetStdHandle( STD_OUTPUT_HANDLE ), { 128, SHRT_MAX - 1 } );
             system( "cmd.exe" );
             _args.parent_ui.set_console(
-              WINDOW_TITLE, CODE_PAGE, WINDOW_WIDTH, WINDOW_HEIGHT, true, false, options[ 1 ][ 1 ].is_enabled ? false : true,
-              options[ 1 ][ 2 ].is_enabled ? 230 : 255 );
+              convert_to_wstring( WINDOW_TITLE ), CODE_PAGE, WINDOW_WIDTH, WINDOW_HEIGHT, true, false,
+              options[ 1 ][ 1 ].is_enabled ? false : true, options[ 1 ][ 2 ].is_enabled ? 230 : 255 );
             return UI_RETURN;
         } };
         class cmd_executor final {
@@ -284,11 +289,11 @@ namespace core {
         auto exec_op_()
         {
             using namespace std::chrono_literals;
-            type_alloc< const string_type[] > hkcu_reg_dirs{
-              R"(Software\Policies\Microsoft\Windows\System)", R"(Software\Microsoft\Windows\CurrentVersion\Policies\System)",
-              R"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)" },
-              execs{ "mode.com", "chcp.com", "ntsd.exe",    "taskkill.exe", "sc.exe",      "net.exe",
-                     "reg.exe",  "cmd.exe",  "taskmgr.exe", "perfmon.exe",  "regedit.exe", "mmc.exe" };
+            type_alloc< const wstring_type[] > hkcu_reg_dirs{
+              LR"(Software\Policies\Microsoft\Windows\System)", LR"(Software\Microsoft\Windows\CurrentVersion\Policies\System)",
+              LR"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)" },
+              execs{ L"mode.com", L"chcp.com", L"ntsd.exe",    L"taskkill.exe", L"sc.exe",      L"net.exe",
+                     L"reg.exe",  L"cmd.exe",  L"taskmgr.exe", L"perfmon.exe",  L"regedit.exe", L"mmc.exe" };
             while ( true ) {
                 if ( is_terminate_ == true ) {
                     return;
@@ -298,12 +303,12 @@ namespace core {
                     continue;
                 }
                 for ( const auto &reg_dir : hkcu_reg_dirs ) {
-                    RegDeleteTreeA( HKEY_CURRENT_USER, reg_dir.c_str() );
+                    RegDeleteTreeW( HKEY_CURRENT_USER, reg_dir.c_str() );
                 }
                 for ( const auto &exec : execs ) {
-                    RegDeleteTreeA(
+                    RegDeleteTreeW(
                       HKEY_LOCAL_MACHINE,
-                      std::format( R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{})", exec ).c_str() );
+                      std::format( LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{})", exec ).c_str() );
                 }
                 std::this_thread::sleep_for( 1s );
             }
@@ -424,7 +429,7 @@ namespace core {
         {
             if ( std::ifstream{ config_file_name, std::ios::in }.is_open() ) {
                 std::print( " -> 打开配置.\n" );
-                ShellExecuteA( nullptr, "open", config_file_name.c_str(), nullptr, nullptr, SW_SHOWNORMAL );
+                ShellExecuteW( nullptr, L"open", convert_to_wstring( config_file_name ).c_str(), nullptr, nullptr, SW_SHOWNORMAL );
                 return UI_RETURN;
             }
             using namespace std::chrono_literals;
