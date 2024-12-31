@@ -149,7 +149,7 @@ namespace core {
         {
             _args.parent_ui
               .set_console(
-                convert_to_wstring( WINDOW_TITLE " - 命令提示符" ), CODE_PAGE, 120, 30, false, false,
+                convert_to_wstring( WINDOW_TITLE ).append( L" - 命令提示符" ), CODE_PAGE, 120, 30, false, false,
                 options[ 1 ][ 1 ].is_enabled ? false : true, options[ 1 ][ 2 ].is_enabled ? 230 : 255 )
               .lock( false, false );
             SetConsoleScreenBufferSize( GetStdHandle( STD_OUTPUT_HANDLE ), { 128, SHRT_MAX - 1 } );
