@@ -347,8 +347,10 @@ namespace core {
         ~fix_os_env()                    = default;
     };
     class config_op final {
+      public:
+        enum class mod { load, edit };
       private:
-        const char mode_;
+        const mod mod_data_;
         inline static constexpr WORD option_buttons_color{
           TEXT_FOREGROUND_RED | TEXT_FOREGROUND_GREEN };
         auto load_( const bool _is_reload )
@@ -546,24 +548,26 @@ namespace core {
       public:
         auto operator()( console_ui::func_args )
         {
-            switch ( mode_ ) {
-                case 'r' : load_( false ); break;
-                case 'w' : edit_(); break;
+            switch ( mod_data_ ) {
+                case mod::load : load_( false ); break;
+                case mod::edit : edit_(); break;
             }
             return UI_RETURN;
         }
         auto operator=( const config_op & ) -> config_op & = default;
         auto operator=( config_op && ) -> config_op &      = default;
-        config_op( const char _mode )
-          : mode_{ _mode }
+        config_op( const mod _mod_data )
+          : mod_data_{ _mod_data }
         { }
         config_op( const config_op & ) = default;
         config_op( config_op && )      = default;
         ~config_op()                   = default;
     };
     class rule_op final {
+      public:
+        enum class mod { crack, recovery };
       private:
-        const char mode_;
+        const mod mod_data_;
         const rule_item &rules_;
       public:
         auto operator()( console_ui::func_args )
@@ -576,8 +580,8 @@ namespace core {
                 return UI_RETURN;
             }
             std::print( " -> 生成并执行操作系统命令.\n{}\n", string_type( WINDOW_WIDTH, '-' ) );
-            switch ( mode_ ) {
-                case 'c' : {
+            switch ( mod_data_ ) {
+                case mod::crack : {
                     if ( options[ 0 ][ 0 ].is_enabled ) {
                         for ( const auto &exec : rules_.execs ) {
                             system(
@@ -601,7 +605,7 @@ namespace core {
                     }
                     break;
                 }
-                case 'r' : {
+                case mod::recovery : {
                     if ( options[ 0 ][ 0 ].is_enabled ) {
                         for ( const auto &exec : rules_.execs ) {
                             system(
@@ -626,8 +630,8 @@ namespace core {
         }
         auto operator=( const rule_op & ) -> rule_op & = default;
         auto operator=( rule_op && ) -> rule_op &      = default;
-        rule_op( const char _mode, const rule_item &_rule )
-          : mode_{ _mode }
+        rule_op( const mod _mod_data, const rule_item &_rule )
+          : mod_data_{ _mod_data }
           , rules_{ _rule }
         { }
         rule_op( const rule_op & ) = default;
