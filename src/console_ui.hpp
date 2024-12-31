@@ -61,6 +61,7 @@ class console_ui final {
     };
     using size_type     = std::size_t;
     using string_type   = std::string;
+    using wstring_type  = std::wstring;
     using callback_type = std::function< bool( func_args ) >;
     template < typename _type_ >
     using type_alloc = _type_;

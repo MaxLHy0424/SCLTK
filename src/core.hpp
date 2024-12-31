@@ -8,7 +8,7 @@
 namespace core {
     using size_type    = console_ui::size_type;
     using string_type  = console_ui::string_type;
-    using wstring_type = std::wstring;
+    using wstring_type = console_ui::wstring_type;
     template < typename _type_ >
     using type_alloc = console_ui::type_alloc< _type_ >;
     inline constexpr string_type config_file_name{ "config.ini" };
