@@ -297,7 +297,7 @@ namespace core {
                       HKEY_LOCAL_MACHINE,
                       std::format( R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{})", exec ).c_str() );
                 }
-                std::this_thread::sleep_for( 1s );
+                sleep_for_st( 1s );
             }
         }
       public:
