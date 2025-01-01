@@ -188,6 +188,8 @@ namespace core {
         return console_ui::common::ui_return;
     }
     class multithread_task {
+      private:
+        std::atomic_flag thread_state{};
       protected:
         struct task_item_ final {
             std::jthread task_thread{};
@@ -207,7 +209,14 @@ namespace core {
             }
         };
         std::vector< task_item_ > threads_{};
-        std::atomic_flag is_terminate_{};
+        auto is_terminated()
+        {
+            return thread_state.test();
+        }
+        auto set_terminated()
+        {
+            thread_state.test_and_set();
+        }
         template < typename _chrono_type_ >
         auto sleep_thread_( _chrono_type_ &&_sleep_time )
         {
@@ -221,7 +230,7 @@ namespace core {
         multithread_task( multithread_task && )                          = default;
         ~multithread_task()
         {
-            is_terminate_.test_and_set();
+            set_terminated();
         }
     };
     class set_window final : private multithread_task {
@@ -229,10 +238,7 @@ namespace core {
         type_alloc< const bool & > is_topmost_, is_disable_close_ctrl_, is_translucency_;
         auto set_attrs_()
         {
-            while ( true ) {
-                if ( is_terminate_.test() == true ) {
-                    break;
-                }
+            while ( !is_terminated() ) {
                 SetLayeredWindowAttributes( GetConsoleWindow(), RGB( 0, 0, 0 ), is_translucency_ ? 230 : 255, LWA_ALPHA );
                 EnableMenuItem(
                   GetSystemMenu( GetConsoleWindow(), FALSE ), SC_CLOSE,
@@ -245,11 +251,7 @@ namespace core {
             using namespace std::chrono_literals;
             const HWND this_window{ GetConsoleWindow() };
             const DWORD foreground_id{ GetWindowThreadProcessId( this_window, nullptr ) }, current_id{ GetCurrentThreadId() };
-            while ( true ) {
-                if ( is_terminate_.test() == true ) {
-                    SetWindowPos( GetConsoleWindow(), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
-                    return;
-                }
+            while ( !is_terminated() ) {
                 if ( !is_topmost_ ) {
                     SetWindowPos( GetConsoleWindow(), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
                     sleep_thread_( default_thread_sleep_time );
@@ -262,6 +264,7 @@ namespace core {
                 SetWindowPos( this_window, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
                 std::this_thread::sleep_for( 100ms );
             }
+            SetWindowPos( GetConsoleWindow(), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
         }
       public:
         auto operator=( const set_window & ) -> set_window & = default;
@@ -295,10 +298,7 @@ namespace core {
               R"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)" },
               execs{ "mode.com", "chcp.com", "ntsd.exe",    "taskkill.exe", "sc.exe",      "net.exe",
                      "reg.exe",  "cmd.exe",  "taskmgr.exe", "perfmon.exe",  "regedit.exe", "mmc.exe" };
-            while ( true ) {
-                if ( is_terminate_.test() == true ) {
-                    return;
-                }
+            while ( !is_terminated() ) {
                 if ( !is_enabled_ ) {
                     sleep_thread_( default_thread_sleep_time );
                     continue;
