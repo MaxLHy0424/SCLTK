@@ -187,7 +187,7 @@ class console_ui final {
     {
         get_console_size_();
         set_cursor_( { 0, 0 } );
-        std::print( "{}", string_type( width_ * height_, ' ' ) );
+        std::print( "{}", string_type( static_cast< size_type >( width_ ) * static_cast< size_type >( height_ ), ' ' ) );
         set_cursor_( { 0, 0 } );
     }
     static auto write_( const string_type &_text, const bool _is_endl = false )
