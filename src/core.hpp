@@ -208,6 +208,12 @@ namespace core {
         };
         std::vector< task_item_ > threads_{};
         std::atomic_flag is_terminate_{};
+        template < typename _chrono_type_ >
+        auto sleep_thread_( _chrono_type_ &&_sleep_time )
+        {
+            std::this_thread::yield();
+            std::this_thread::sleep_for( _sleep_time );
+        }
         auto operator=( const multithread_task & ) -> multithread_task & = default;
         auto operator=( multithread_task && ) -> multithread_task &      = default;
         multithread_task()                                               = default;
@@ -231,7 +237,7 @@ namespace core {
                 EnableMenuItem(
                   GetSystemMenu( GetConsoleWindow(), FALSE ), SC_CLOSE,
                   is_disable_close_ctrl_ ? MF_BYCOMMAND | MF_DISABLED | MF_GRAYED : MF_BYCOMMAND | MF_ENABLED );
-                std::this_thread::sleep_for( default_thread_sleep_time );
+                sleep_thread_( default_thread_sleep_time );
             }
         }
         auto topmost_show_()
@@ -246,7 +252,7 @@ namespace core {
                 }
                 if ( !is_topmost_ ) {
                     SetWindowPos( GetConsoleWindow(), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
-                    std::this_thread::sleep_for( default_thread_sleep_time );
+                    sleep_thread_( default_thread_sleep_time );
                     continue;
                 }
                 AttachThreadInput( current_id, foreground_id, TRUE );
@@ -294,7 +300,7 @@ namespace core {
                     return;
                 }
                 if ( !is_enabled_ ) {
-                    std::this_thread::sleep_for( default_thread_sleep_time );
+                    sleep_thread_( default_thread_sleep_time );
                     continue;
                 }
                 for ( const auto &reg_dir : hkcu_reg_dirs ) {
