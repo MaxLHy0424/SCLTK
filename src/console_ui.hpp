@@ -69,6 +69,12 @@ class console_ui final {
         func_args( func_args && )      = default;
         ~func_args()                   = default;
     };
+    template < typename _chrono_type_ >
+    auto sleep_for_st( const _chrono_type_ &_time )
+    {
+        std::this_thread::yield();
+        std::this_thread::sleep_for( _time );
+    }
     using size_type     = std::size_t;
     using string_type   = std::string;
     using wstring_type  = std::wstring;
@@ -162,7 +168,7 @@ class console_ui final {
         INPUT_RECORD record;
         DWORD reg;
         while ( true ) {
-            std::this_thread::sleep_for( 10ms );
+            sleep_for_st( 10ms );
             ReadConsoleInputW( GetStdHandle( STD_INPUT_HANDLE ), &record, 1, &reg );
             if ( record.EventType == MOUSE_EVENT && _is_mouse_move | ( record.Event.MouseEvent.dwEventFlags != common::mouse_move ) )
             {
@@ -363,7 +369,7 @@ class console_ui final {
                     break;
                 }
             }
-            std::this_thread::sleep_for( 10ms );
+            sleep_for_st( 10ms );
         }
         cls_();
         return *this;
