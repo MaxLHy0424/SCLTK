@@ -293,11 +293,11 @@ namespace core {
         auto exec_op_()
         {
             using namespace std::chrono_literals;
-            type_alloc< const wstring_type[] > hkcu_reg_dirs{
-              LR"(Software\Policies\Microsoft\Windows\System)", LR"(Software\Microsoft\Windows\CurrentVersion\Policies\System)",
-              LR"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)" },
-              execs{ L"mode.com", L"chcp.com", L"ntsd.exe",    L"taskkill.exe", L"sc.exe",      L"net.exe",
-                     L"reg.exe",  L"cmd.exe",  L"taskmgr.exe", L"perfmon.exe",  L"regedit.exe", L"mmc.exe" };
+            type_alloc< const string_type[] > hkcu_reg_dirs{
+              R"(Software\Policies\Microsoft\Windows\System)", R"(Software\Microsoft\Windows\CurrentVersion\Policies\System)",
+              R"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)" },
+              execs{ "mode.com", "chcp.com", "ntsd.exe",    "taskkill.exe", "sc.exe",      "net.exe",
+                     "reg.exe",  "cmd.exe",  "taskmgr.exe", "perfmon.exe",  "regedit.exe", "mmc.exe" };
             while ( true ) {
                 if ( is_terminate_ == true ) {
                     return;
@@ -307,12 +307,12 @@ namespace core {
                     continue;
                 }
                 for ( const auto &reg_dir : hkcu_reg_dirs ) {
-                    RegDeleteTreeW( HKEY_CURRENT_USER, reg_dir.c_str() );
+                    RegDeleteTreeA( HKEY_CURRENT_USER, reg_dir.c_str() );
                 }
                 for ( const auto &exec : execs ) {
-                    RegDeleteTreeW(
+                    RegDeleteTreeA(
                       HKEY_LOCAL_MACHINE,
-                      std::format( LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{})", exec ).c_str() );
+                      std::format( R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{})", exec ).c_str() );
                 }
                 std::this_thread::sleep_for( 1s );
             }
@@ -432,7 +432,7 @@ namespace core {
         {
             if ( std::ifstream{ config_file_name, std::ios::in }.is_open() ) {
                 std::print( " -> 打开配置.\n" );
-                ShellExecuteW( nullptr, L"open", convert_to_wstring( config_file_name ).c_str(), nullptr, nullptr, SW_SHOWNORMAL );
+                ShellExecuteA( nullptr, "open", config_file_name.c_str(), nullptr, nullptr, SW_SHOWNORMAL );
                 return console_ui::value::ui_return;
             }
             using namespace std::chrono_literals;
