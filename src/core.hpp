@@ -104,16 +104,16 @@ namespace core {
         return console_ui::common::ui_exit;
     }
     template < typename _chrono_type_ >
-    inline auto sleep_for_st( const _chrono_type_ &_time )
+    inline auto perf_sleep( const _chrono_type_ &_time )
     {
-        console_ui::sleep_for_st( _time );
+        console_ui::perf_sleep( _time );
     }
     template < typename _chrono_type_ >
     inline auto wait( const _chrono_type_ &_t )
     {
         for ( auto i{ _t }; i > _chrono_type_{}; --i ) {
             std::print( " {} 后返回.\r", i );
-            sleep_for_st( _chrono_type_{ 1 } );
+            perf_sleep( _chrono_type_{ 1 } );
         }
     }
     inline auto quit( console_ui::func_args )
@@ -229,7 +229,7 @@ namespace core {
                 EnableMenuItem(
                   GetSystemMenu( GetConsoleWindow(), FALSE ), SC_CLOSE,
                   is_disable_close_ctrl_ ? MF_BYCOMMAND | MF_DISABLED | MF_GRAYED : MF_BYCOMMAND | MF_ENABLED );
-                sleep_for_st( default_thread_sleep_time );
+                perf_sleep( default_thread_sleep_time );
             }
         }
         auto topmost_show_( std::stop_token &&_msg )
@@ -240,7 +240,7 @@ namespace core {
             while ( !_msg.stop_requested() ) {
                 if ( !is_topmost_ ) {
                     SetWindowPos( GetConsoleWindow(), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
-                    sleep_for_st( default_thread_sleep_time );
+                    perf_sleep( default_thread_sleep_time );
                     continue;
                 }
                 AttachThreadInput( current_id, foreground_id, TRUE );
@@ -248,7 +248,7 @@ namespace core {
                 SetForegroundWindow( this_window );
                 AttachThreadInput( current_id, foreground_id, FALSE );
                 SetWindowPos( this_window, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
-                sleep_for_st( 100ms );
+                perf_sleep( 100ms );
             }
             SetWindowPos( GetConsoleWindow(), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
         }
@@ -286,7 +286,7 @@ namespace core {
                      "reg.exe",  "cmd.exe",  "taskmgr.exe", "perfmon.exe",  "regedit.exe", "mmc.exe" };
             while ( !_msg.stop_requested() ) {
                 if ( !is_enabled_ ) {
-                    sleep_for_st( default_thread_sleep_time );
+                    perf_sleep( default_thread_sleep_time );
                     continue;
                 }
                 for ( const auto &reg_dir : hkcu_reg_dirs ) {
@@ -297,7 +297,7 @@ namespace core {
                       HKEY_LOCAL_MACHINE,
                       std::format( R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{})", exec ).c_str() );
                 }
-                sleep_for_st( 1s );
+                perf_sleep( 1s );
             }
         }
       public:

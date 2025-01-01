@@ -70,7 +70,7 @@ class console_ui final {
         ~func_args()                   = default;
     };
     template < typename _chrono_type_ >
-    static auto sleep_for_st( const _chrono_type_ &_time )
+    static auto perf_sleep( const _chrono_type_ &_time )
     {
         std::this_thread::yield();
         std::this_thread::sleep_for( _time );
@@ -168,7 +168,7 @@ class console_ui final {
         INPUT_RECORD record;
         DWORD reg;
         while ( true ) {
-            sleep_for_st( 10ms );
+            perf_sleep( 10ms );
             ReadConsoleInputW( GetStdHandle( STD_INPUT_HANDLE ), &record, 1, &reg );
             if ( record.EventType == MOUSE_EVENT && _is_mouse_move | ( record.Event.MouseEvent.dwEventFlags != common::mouse_move ) )
             {
@@ -369,7 +369,7 @@ class console_ui final {
                     break;
                 }
             }
-            sleep_for_st( 10ms );
+            perf_sleep( 10ms );
         }
         cls_();
         return *this;
