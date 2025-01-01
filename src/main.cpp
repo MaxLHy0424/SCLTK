@@ -16,8 +16,8 @@ auto main() -> int
     core::config_op{ core::config_op::mod::load }( console_ui::func_args{ ui } );
     std::print( " -> 准备用户界面.\n" );
     ui.add_back( "                    [ 主  页 ]\n\n" )
-      .add_back( " < 退出 ", core::quit, console_ui::value::text_foreground_red | console_ui::value::text_foreground_intensity )
-      .add_back( " < 重启 ", core::relaunch_as_admin, console_ui::value::text_foreground_green | console_ui::value::text_foreground_intensity )
+      .add_back( " < 退出 ", core::quit, console_ui::common::text_foreground_red | console_ui::common::text_foreground_intensity )
+      .add_back( " < 重启 ", core::relaunch_as_admin, console_ui::common::text_foreground_green | console_ui::common::text_foreground_intensity )
       .add_back( " > 信息 ", core::info )
       .add_back( " > 配置 ", core::config_op{ core::config_op::mod::edit } )
       .add_back( " > 工具箱 ", core::toolkit )
