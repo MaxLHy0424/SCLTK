@@ -104,11 +104,16 @@ namespace core {
         return console_ui::common::ui_exit;
     }
     template < typename _chrono_type_ >
-    inline auto wait( _chrono_type_ &&_t )
+    inline auto sleep_for_st( const _chrono_type_ &_t )
+    {
+        console_ui::sleep_for_st( _t );
+    }
+    template < typename _chrono_type_ >
+    inline auto wait( const _chrono_type_ &_t )
     {
         for ( auto i{ _t }; i > _chrono_type_{}; --i ) {
             std::print( " {} 后返回.\r", i );
-            std::this_thread::sleep_for( _chrono_type_{ 1 } );
+            sleep_for_st( _chrono_type_{ 1 } );
         }
     }
     inline auto quit( console_ui::func_args )
@@ -217,12 +222,6 @@ namespace core {
         {
             thread_state.test_and_set();
         }
-        template < typename _chrono_type_ >
-        auto sleep_thread_( _chrono_type_ &&_sleep_time )
-        {
-            std::this_thread::yield();
-            std::this_thread::sleep_for( _sleep_time );
-        }
         auto operator=( const multithread_task & ) -> multithread_task & = default;
         auto operator=( multithread_task && ) -> multithread_task &      = default;
         multithread_task()                                               = default;
@@ -243,7 +242,7 @@ namespace core {
                 EnableMenuItem(
                   GetSystemMenu( GetConsoleWindow(), FALSE ), SC_CLOSE,
                   is_disable_close_ctrl_ ? MF_BYCOMMAND | MF_DISABLED | MF_GRAYED : MF_BYCOMMAND | MF_ENABLED );
-                sleep_thread_( default_thread_sleep_time );
+                sleep_for_st( default_thread_sleep_time );
             }
         }
         auto topmost_show_()
@@ -254,7 +253,7 @@ namespace core {
             while ( !is_terminated() ) {
                 if ( !is_topmost_ ) {
                     SetWindowPos( GetConsoleWindow(), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
-                    sleep_thread_( default_thread_sleep_time );
+                    sleep_for_st( default_thread_sleep_time );
                     continue;
                 }
                 AttachThreadInput( current_id, foreground_id, TRUE );
@@ -262,7 +261,7 @@ namespace core {
                 SetForegroundWindow( this_window );
                 AttachThreadInput( current_id, foreground_id, FALSE );
                 SetWindowPos( this_window, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
-                std::this_thread::sleep_for( 100ms );
+                sleep_for_st( 100ms );
             }
             SetWindowPos( GetConsoleWindow(), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
         }
@@ -300,7 +299,7 @@ namespace core {
                      "reg.exe",  "cmd.exe",  "taskmgr.exe", "perfmon.exe",  "regedit.exe", "mmc.exe" };
             while ( !is_terminated() ) {
                 if ( !is_enabled_ ) {
-                    sleep_thread_( default_thread_sleep_time );
+                    sleep_for_st( default_thread_sleep_time );
                     continue;
                 }
                 for ( const auto &reg_dir : hkcu_reg_dirs ) {
