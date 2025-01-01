@@ -45,6 +45,13 @@ class console_ui final {
         static constexpr auto text_common_lvb_sbcsdbcs{ static_cast< WORD >( COMMON_LVB_SBCSDBCS ) };
         static constexpr auto ui_return{ false };
         static constexpr auto ui_exit{ true };
+        auto operator=( const value & ) -> value & = delete;
+        auto operator=( value && ) -> value &      = delete;
+        value()                                    = delete;
+        value( auto )                              = delete;
+        value( const value & )                     = delete;
+        value( value && )                          = delete;
+        ~value()                                   = delete;
     };
     struct func_args final {
         console_ui &parent_ui;
