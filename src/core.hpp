@@ -104,9 +104,9 @@ namespace core {
         return console_ui::common::ui_exit;
     }
     template < typename _chrono_type_ >
-    inline auto sleep_for_st( const _chrono_type_ &_t )
+    inline auto sleep_for_st( const _chrono_type_ &_time )
     {
-        console_ui::sleep_for_st( _t );
+        console_ui::sleep_for_st( _time );
     }
     template < typename _chrono_type_ >
     inline auto wait( const _chrono_type_ &_t )
