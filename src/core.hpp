@@ -207,7 +207,7 @@ namespace core {
             }
         };
         std::vector< task_item_ > threads_{};
-        std::atomic< bool > is_terminate_{};
+        std::atomic_flag is_terminate_{};
         auto operator=( const multithread_task & ) -> multithread_task & = default;
         auto operator=( multithread_task && ) -> multithread_task &      = default;
         multithread_task()                                               = default;
@@ -215,7 +215,7 @@ namespace core {
         multithread_task( multithread_task && )                          = default;
         ~multithread_task()
         {
-            is_terminate_ = true;
+            is_terminate_.test_and_set();
         }
     };
     class set_window final : private multithread_task {
@@ -224,7 +224,7 @@ namespace core {
         auto set_attrs_()
         {
             while ( true ) {
-                if ( is_terminate_ == true ) {
+                if ( is_terminate_.test() == true ) {
                     break;
                 }
                 SetLayeredWindowAttributes( GetConsoleWindow(), RGB( 0, 0, 0 ), is_translucency_ ? 230 : 255, LWA_ALPHA );
@@ -240,7 +240,7 @@ namespace core {
             const HWND this_window{ GetConsoleWindow() };
             const DWORD foreground_id{ GetWindowThreadProcessId( this_window, nullptr ) }, current_id{ GetCurrentThreadId() };
             while ( true ) {
-                if ( is_terminate_ == true ) {
+                if ( is_terminate_.test() == true ) {
                     SetWindowPos( GetConsoleWindow(), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
                     return;
                 }
@@ -290,7 +290,7 @@ namespace core {
               execs{ "mode.com", "chcp.com", "ntsd.exe",    "taskkill.exe", "sc.exe",      "net.exe",
                      "reg.exe",  "cmd.exe",  "taskmgr.exe", "perfmon.exe",  "regedit.exe", "mmc.exe" };
             while ( true ) {
-                if ( is_terminate_ == true ) {
+                if ( is_terminate_.test() == true ) {
                     return;
                 }
                 if ( !is_enabled_ ) {
