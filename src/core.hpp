@@ -337,7 +337,7 @@ namespace core {
         enum class mod { load, edit };
       private:
         const mod mod_data_;
-        inline static constexpr WORD option_button_color{
+        static constexpr WORD option_button_color{
           console_ui::value::text_foreground_red | console_ui::value::text_foreground_green };
         auto load_( const bool _is_reload )
         {
