@@ -70,7 +70,7 @@ class console_ui final {
         ~func_args()                   = default;
     };
     template < typename _chrono_type_ >
-    auto sleep_for_st( const _chrono_type_ &_time )
+    static auto sleep_for_st( const _chrono_type_ &_time )
     {
         std::this_thread::yield();
         std::this_thread::sleep_for( _time );
@@ -122,14 +122,14 @@ class console_ui final {
     };
     std::deque< line_item_ > lines_{};
     SHORT width_{}, height_{};
-    auto show_cursor_( const bool _is_show )
+    static auto show_cursor_( const bool _is_show )
     {
         CONSOLE_CURSOR_INFO cursor_data;
         GetConsoleCursorInfo( GetStdHandle( STD_OUTPUT_HANDLE ), &cursor_data );
         cursor_data.bVisible = _is_show;
         SetConsoleCursorInfo( GetStdHandle( STD_OUTPUT_HANDLE ), &cursor_data );
     }
-    auto edit_console_attrs_( const console_attrs_ _mod )
+    static auto edit_console_attrs_( const console_attrs_ _mod )
     {
         DWORD attrs;
         GetConsoleMode( GetStdHandle( STD_INPUT_HANDLE ), &attrs );
@@ -152,17 +152,17 @@ class console_ui final {
         }
         SetConsoleMode( GetStdHandle( STD_INPUT_HANDLE ), attrs );
     }
-    auto get_cursor_()
+    static auto get_cursor_()
     {
         CONSOLE_SCREEN_BUFFER_INFO console_data;
         GetConsoleScreenBufferInfo( GetStdHandle( STD_OUTPUT_HANDLE ), &console_data );
         return console_data.dwCursorPosition;
     }
-    auto set_cursor_( const COORD &_cursor_position )
+    static auto set_cursor_( const COORD &_cursor_position )
     {
         SetConsoleCursorPosition( GetStdHandle( STD_OUTPUT_HANDLE ), _cursor_position );
     }
-    auto wait_mouse_event_( const bool _is_mouse_move = true )
+    static auto wait_mouse_event_( const bool _is_mouse_move = true )
     {
         using namespace std::chrono_literals;
         INPUT_RECORD record;
@@ -190,11 +190,11 @@ class console_ui final {
         std::print( "{}", string_type( width_ * height_, ' ' ) );
         set_cursor_( { 0, 0 } );
     }
-    auto write_( const string_type &_text, const bool _is_endl = false )
+    static auto write_( const string_type &_text, const bool _is_endl = false )
     {
         std::print( "{}{}", _text, _is_endl ? '\n' : '\0' );
     }
-    auto rewrite_( const COORD &_cursor_position, const string_type &_text )
+    static auto rewrite_( const COORD &_cursor_position, const string_type &_text )
     {
         set_cursor_( { 0, _cursor_position.Y } );
         write_( string_type( _cursor_position.X, ' ' ) );
