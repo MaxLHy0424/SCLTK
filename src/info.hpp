@@ -5,6 +5,6 @@
 #define INFO_DEVELOPER "MaxLHy0424"
 #define INFO_LICENSE   "MIT License"
 #define CODE_PAGE      936
-#define WINDOW_TITLE   L"CRCSN"
+#define WINDOW_TITLE   "CRCSN"
 #define WINDOW_WIDTH   50
 #define WINDOW_HEIGHT  25

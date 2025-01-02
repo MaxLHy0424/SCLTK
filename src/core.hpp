@@ -8,7 +8,7 @@
 namespace core {
     using size_type    = console_ui::size_type;
     using string_type  = console_ui::string_type;
-    using wstring_type = console_ui::wstring_type;
+    using wstring_type = std::wstring;
     template < typename _type_ >
     using type_alloc = console_ui::type_alloc< _type_ >;
     inline constexpr string_type config_file_name{ "config.ini" };
@@ -145,7 +145,7 @@ namespace core {
         {
             _args.parent_ui
               .set_console(
-                WINDOW_TITLE L" - 命令提示符", CODE_PAGE, 120, 30, false, false, options[ 1 ][ 1 ].is_enabled ? false : true,
+                WINDOW_TITLE " - 命令提示符", CODE_PAGE, 120, 30, false, false, options[ 1 ][ 1 ].is_enabled ? false : true,
                 options[ 1 ][ 2 ].is_enabled ? 230 : 255 )
               .lock( false, false );
             SetConsoleScreenBufferSize( GetStdHandle( STD_OUTPUT_HANDLE ), { 128, SHRT_MAX - 1 } );

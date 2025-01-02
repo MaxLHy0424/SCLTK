@@ -77,7 +77,6 @@ class console_ui final {
     }
     using size_type     = std::size_t;
     using string_type   = std::string;
-    using wstring_type  = std::wstring;
     using callback_type = std::function< bool( func_args ) >;
     template < typename _type_ >
     using type_alloc = _type_;
@@ -375,12 +374,12 @@ class console_ui final {
         return *this;
     }
     auto &set_console(
-      const wstring_type &_title, const UINT _code_page, const SHORT _width, const SHORT _height, const bool _is_fix_size,
+      const string_type &_title, const UINT _code_page, const SHORT _width, const SHORT _height, const bool _is_fix_size,
       const bool _is_enable_minimize_ctrl, const bool is_enable_close_window_ctrl, const BYTE _translucency )
     {
         SetConsoleOutputCP( _code_page );
         SetConsoleCP( _code_page );
-        SetConsoleTitleW( _title.c_str() );
+        SetConsoleTitleA( _title.c_str() );
         system( std::format( "mode.com con cols={} lines={}", _width, _height ).c_str() );
         SetWindowLongPtrW(
           GetConsoleWindow(), GWL_STYLE,
