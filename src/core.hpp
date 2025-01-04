@@ -340,9 +340,7 @@ namespace core {
                 if ( line.empty() || line.front() == '#' ) {
                     continue;
                 }
-                if ( label != config_label::unknown ) {
-                    NOTHING_TO_DO;
-                } else if ( line.substr( 0, 2 ) == "[ " && line.substr( line.size() - 2, line.size() ) == " ]" ) {
+                if ( line.substr( 0, 2 ) == "[ " && line.substr( line.size() - 2, line.size() ) == " ]" ) {
                     if ( line == "[ options ]" ) {
                         label = config_label::options;
                         continue;
@@ -352,10 +350,10 @@ namespace core {
                     } else if ( line == "[ custom_rule_servs ]" ) {
                         label = config_label::custom_rule_servs;
                         continue;
+                    } else {
+                        label = config_label::unknown;
+                        continue;
                     }
-                } else {
-                    label = config_label::unknown;
-                    continue;
                 }
                 switch ( label ) {
                     case config_label::unknown : break;
