@@ -145,14 +145,14 @@ namespace core {
         {
             _args.parent_ui
               .set_console(
-                WINDOW_TITLE " - 命令提示符", CODE_PAGE, 120, 30, false, false, options[ 1 ][ 1 ].is_enabled ? false : true,
-                options[ 1 ][ 2 ].is_enabled ? 230 : 255 )
+                WINDOW_TITLE " - 命令提示符", CODE_PAGE_CODE, 120, 30, false, false,
+                options[ 1 ][ 1 ].is_enabled ? false : true, options[ 1 ][ 2 ].is_enabled ? 230 : 255 )
               .lock( false, false );
             SetConsoleScreenBufferSize( GetStdHandle( STD_OUTPUT_HANDLE ), { 128, SHRT_MAX - 1 } );
             system( "cmd.exe" );
             _args.parent_ui.set_console(
-              WINDOW_TITLE, CODE_PAGE, WINDOW_WIDTH, WINDOW_HEIGHT, true, false, options[ 1 ][ 1 ].is_enabled ? false : true,
-              options[ 1 ][ 2 ].is_enabled ? 230 : 255 );
+              WINDOW_TITLE, CODE_PAGE_CODE, WINDOW_WIDTH, WINDOW_HEIGHT, true, false,
+              options[ 1 ][ 1 ].is_enabled ? false : true, options[ 1 ][ 2 ].is_enabled ? 230 : 255 );
             return console_ui::common::ui_return;
         } };
         class cmd_executor final {
@@ -387,6 +387,12 @@ namespace core {
             load_( true );
             std::print( " -> 保存更改.\n" );
             string_type config_text;
+            config_text.append( std::format(
+              "# {}\n"
+              "# [同步时间] {} (UTC)\n"
+              "# [同步版本] {}\n"
+              "# [字符编码] {} ({})\n",
+              INFO_NAME, std::chrono::utc_clock::now(), INFO_VERSION, CODE_PAGE_NAME, CODE_PAGE_CODE ) );
             config_text.append( "[ options ]\n" );
             for ( const auto &option : options ) {
                 for ( const auto &sub_option : option.sub_options ) {

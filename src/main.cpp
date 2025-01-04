@@ -3,7 +3,7 @@
 auto main() -> int
 {
     console_ui ui;
-    ui.lock( true, true ).set_console( WINDOW_TITLE, CODE_PAGE, WINDOW_WIDTH, WINDOW_HEIGHT, true, false, true, 255 );
+    ui.lock( true, true ).set_console( WINDOW_TITLE, CODE_PAGE_CODE, WINDOW_WIDTH, WINDOW_HEIGHT, true, false, true, 255 );
     std::print( " -> 检测运行权限.\n" );
     if ( !core::is_run_as_admin() ) {
         std::print( " -> 申请管理员权限.\n" );
