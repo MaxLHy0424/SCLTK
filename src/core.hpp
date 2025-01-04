@@ -495,8 +495,8 @@ namespace core {
                 "     相关信息可参阅文档.\n",
                 default_thread_sleep_time ) )
               .add_back( " < 返回 ", quit, console_ui::value::text_foreground_green | console_ui::value::text_foreground_intensity )
-              .add_back( " > 同步配置 ", [ & ]( console_ui::func_args ) { return sync(); } )
-              .add_back( " > 打开配置文件 ", [ & ]( console_ui::func_args ) { return open_file(); } )
+              .add_back( " > 同步配置 ", [ this ]( console_ui::func_args ) { return sync(); } )
+              .add_back( " > 打开配置文件 ", [ this ]( console_ui::func_args ) { return open_file(); } )
               .add_back( "\n[选项]\n" );
             for ( auto &option : options ) {
                 ui.add_back( std::format( " > {} ", option.showed_name ), option_shower{ option } );
