@@ -9,7 +9,7 @@
 #include <thread>
 class console_ui final {
   public:
-    struct common final {
+    struct value final {
         static constexpr auto mouse_button_left{ static_cast< DWORD >( FROM_LEFT_1ST_BUTTON_PRESSED ) };
         static constexpr auto mouse_button_middle{ static_cast< DWORD >( FROM_LEFT_2ND_BUTTON_PRESSED ) };
         static constexpr auto mouse_button_right{ static_cast< DWORD >( RIGHTMOST_BUTTON_PRESSED ) };
@@ -46,20 +46,20 @@ class console_ui final {
         static constexpr auto text_common_lvb_sbcsdbcs{ static_cast< WORD >( COMMON_LVB_SBCSDBCS ) };
         static constexpr auto ui_return{ false };
         static constexpr auto ui_exit{ true };
-        auto operator=( const common & ) -> common & = delete;
-        auto operator=( common && ) -> common &      = delete;
-        common()                                     = delete;
-        common( auto )                               = delete;
-        common( const common & )                     = delete;
-        common( common && )                          = delete;
-        ~common()                                    = delete;
+        auto operator=( const value & ) -> value & = delete;
+        auto operator=( value && ) -> value &      = delete;
+        value()                                     = delete;
+        value( auto )                               = delete;
+        value( const value & )                     = delete;
+        value( value && )                          = delete;
+        ~value()                                    = delete;
     };
     struct func_args final {
         console_ui &parent_ui;
         const DWORD button_state, ctrl_key_state, event_flag;
         auto operator=( const func_args & ) -> func_args & = default;
         auto operator=( func_args && ) -> func_args &      = default;
-        func_args( console_ui &_parent_ui, const MOUSE_EVENT_RECORD _mouse_event = { {}, common::mouse_button_left, {}, {} } )
+        func_args( console_ui &_parent_ui, const MOUSE_EVENT_RECORD _mouse_event = { {}, value::mouse_button_left, {}, {} } )
           : parent_ui{ _parent_ui }
           , button_state{ _mouse_event.dwButtonState }
           , ctrl_key_state{ _mouse_event.dwControlKeyState }
@@ -104,16 +104,16 @@ class console_ui final {
         auto operator=( const line_item_ & ) -> line_item_ & = default;
         auto operator=( line_item_ && ) -> line_item_ &      = default;
         line_item_()
-          : default_attrs{ common::text_default }
-          , intensity_attrs{ common::text_foreground_green | common::text_foreground_blue }
-          , last_attrs{ common::text_default }
+          : default_attrs{ value::text_default }
+          , intensity_attrs{ value::text_foreground_green | value::text_foreground_blue }
+          , last_attrs{ value::text_default }
         { }
         line_item_( string_type _text, callback_type _func, const WORD _default_attrs, const WORD _intensity_attrs )
           : text{ std::move( _text ) }
           , func{ std::move( _func ) }
           , default_attrs{ _default_attrs }
           , intensity_attrs{ _intensity_attrs }
-          , last_attrs{ common::text_default }
+          , last_attrs{ value::text_default }
         { }
         line_item_( const line_item_ & ) = default;
         line_item_( line_item_ && )      = default;
@@ -169,7 +169,7 @@ class console_ui final {
         while ( true ) {
             perf_sleep( 10ms );
             ReadConsoleInputW( GetStdHandle( STD_INPUT_HANDLE ), &record, 1, &reg );
-            if ( record.EventType == MOUSE_EVENT && _is_mouse_move | ( record.Event.MouseEvent.dwEventFlags != common::mouse_move ) )
+            if ( record.EventType == MOUSE_EVENT && _is_mouse_move | ( record.Event.MouseEvent.dwEventFlags != value::mouse_move ) )
             {
                 return record.Event.MouseEvent;
             }
@@ -282,8 +282,8 @@ class console_ui final {
     }
     auto &add_front(
       string_type _text, callback_type _func = nullptr,
-      const WORD _intensity_attrs = common::text_foreground_green | common::text_foreground_blue,
-      const WORD _default_attrs   = common::text_default )
+      const WORD _intensity_attrs = value::text_foreground_green | value::text_foreground_blue,
+      const WORD _default_attrs   = value::text_default )
     {
         auto is_func{ _func == nullptr ? false : true };
         lines_.emplace_front( line_item_{
@@ -296,8 +296,8 @@ class console_ui final {
     }
     auto &add_back(
       string_type _text, callback_type _func = nullptr,
-      const WORD _intensity_attrs = common::text_foreground_blue | common::text_foreground_green,
-      const WORD _default_attrs   = common::text_default )
+      const WORD _intensity_attrs = value::text_foreground_blue | value::text_foreground_green,
+      const WORD _default_attrs   = value::text_default )
     {
         auto is_func{ _func == nullptr ? false : true };
         lines_.emplace_back( line_item_{
@@ -310,8 +310,8 @@ class console_ui final {
     }
     auto &insert(
       const size_type _index, string_type _text, callback_type _func = nullptr,
-      const WORD _intensity_attrs = common::text_foreground_green | common::text_foreground_blue,
-      const WORD _default_attrs   = common::text_default )
+      const WORD _intensity_attrs = value::text_foreground_green | value::text_foreground_blue,
+      const WORD _default_attrs   = value::text_default )
     {
         auto is_func{ _func == nullptr ? false : true };
         lines_.emplace(
@@ -321,8 +321,8 @@ class console_ui final {
     }
     auto &edit(
       const size_type _index, string_type _text, callback_type _func = nullptr,
-      const WORD _intensity_attrs = common::text_foreground_green | common::text_foreground_blue,
-      const WORD _default_attrs   = common::text_default )
+      const WORD _intensity_attrs = value::text_foreground_green | value::text_foreground_blue,
+      const WORD _default_attrs   = value::text_default )
     {
         auto is_func{ _func == nullptr ? false : true };
         lines_.at( _index )
@@ -356,12 +356,12 @@ class console_ui final {
         edit_console_attrs_( console_attrs_::lock_text );
         MOUSE_EVENT_RECORD mouse_event;
         init_pos_();
-        auto func_return_value{ common::ui_return };
-        while ( func_return_value == common::ui_return ) {
+        auto func_return_value{ value::ui_return };
+        while ( func_return_value == value::ui_return ) {
             mouse_event = wait_mouse_event_();
             switch ( mouse_event.dwEventFlags ) {
-                case common::mouse_move : refresh_( mouse_event.dwMousePosition ); break;
-                case common::mouse_click : {
+                case value::mouse_move : refresh_( mouse_event.dwMousePosition ); break;
+                case value::mouse_click : {
                     if ( mouse_event.dwButtonState != false ) {
                         func_return_value = call_func_( mouse_event );
                     }
