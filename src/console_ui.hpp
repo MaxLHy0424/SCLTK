@@ -77,9 +77,10 @@ class console_ui final {
         std::this_thread::yield();
         std::this_thread::sleep_for( _time );
     }
-    using size_type     = std::size_t;
-    using string_type   = std::string;
-    using callback_type = std::function< bool( func_args ) >;
+    using size_type        = std::size_t;
+    using string_type      = std::string;
+    using string_view_type = std::string_view;
+    using callback_type    = std::function< bool( func_args ) >;
     template < typename _type_ >
     using type_alloc = _type_;
   private:
@@ -87,7 +88,7 @@ class console_ui final {
     struct line_item_ final {
         string_type text{};
         callback_type func{};
-        WORD default_attrs, intensity_attrs, last_attrs;
+        WORD default_attrs{}, intensity_attrs{}, last_attrs{};
         COORD position{};
         auto set_attrs( const WORD _attrs )
         {
@@ -110,12 +111,12 @@ class console_ui final {
           , intensity_attrs{ value::text_foreground_green | value::text_foreground_blue }
           , last_attrs{ value::text_default }
         { }
-        line_item_( string_type _text, callback_type _func, const WORD _default_attrs, const WORD _intensity_attrs )
-          : text{ std::move( _text ) }
+        line_item_( const string_view_type &_text, callback_type _func, const WORD _default_attrs, const WORD _intensity_attrs )
+          : text{ _text }
           , func{ std::move( _func ) }
           , default_attrs{ _default_attrs }
           , intensity_attrs{ _intensity_attrs }
-          , last_attrs{ value::text_default }
+          , last_attrs{ _default_attrs }
         { }
         line_item_( const line_item_ & ) = default;
         line_item_( line_item_ && )      = default;
@@ -191,11 +192,11 @@ class console_ui final {
         std::print( "{}", string_type( static_cast< size_type >( width_ ) * static_cast< size_type >( height_ ), ' ' ) );
         set_cursor_( { 0, 0 } );
     }
-    static auto write_( const string_type &_text, const bool _is_endl = false )
+    static auto write_( const string_view_type &_text, const bool _is_endl = false )
     {
-        std::print( "{}{}", _text, _is_endl ? '\n' : '\0' );
+        std::print( "{}{}", _text.data(), _is_endl ? '\n' : '\0' );
     }
-    static auto rewrite_( const COORD &_cursor_position, const string_type &_text )
+    static auto rewrite_( const COORD &_cursor_position, const string_view_type &_text )
     {
         set_cursor_( { 0, _cursor_position.Y } );
         write_( string_type( _cursor_position.X, ' ' ) );
@@ -283,13 +284,13 @@ class console_ui final {
         return *this;
     }
     auto &add_front(
-      string_type _text, callback_type _func = nullptr,
+      const string_view_type &_text, callback_type _func = nullptr,
       const WORD _intensity_attrs = value::text_foreground_green | value::text_foreground_blue,
       const WORD _default_attrs   = value::text_default )
     {
         auto is_func{ _func == nullptr ? false : true };
         lines_.emplace_front( line_item_{
-          std::move( _text ),
+          _text,
           std::move( _func ),
           _default_attrs,
           is_func ? _intensity_attrs : _default_attrs,
@@ -297,13 +298,13 @@ class console_ui final {
         return *this;
     }
     auto &add_back(
-      string_type _text, callback_type _func = nullptr,
+      const string_view_type &_text, callback_type _func = nullptr,
       const WORD _intensity_attrs = value::text_foreground_blue | value::text_foreground_green,
       const WORD _default_attrs   = value::text_default )
     {
         auto is_func{ _func == nullptr ? false : true };
         lines_.emplace_back( line_item_{
-          std::move( _text ),
+          _text,
           std::move( _func ),
           _default_attrs,
           is_func ? _intensity_attrs : _default_attrs,
@@ -311,24 +312,23 @@ class console_ui final {
         return *this;
     }
     auto &insert(
-      const size_type _index, string_type _text, callback_type _func = nullptr,
+      const size_type _index, const string_view_type &_text, callback_type _func = nullptr,
       const WORD _intensity_attrs = value::text_foreground_green | value::text_foreground_blue,
       const WORD _default_attrs   = value::text_default )
     {
         auto is_func{ _func == nullptr ? false : true };
         lines_.emplace(
           lines_.cbegin() + _index,
-          line_item_{ std::move( _text ), std::move( _func ), _default_attrs, is_func ? _intensity_attrs : _default_attrs } );
+          line_item_{ _text, std::move( _func ), _default_attrs, is_func ? _intensity_attrs : _default_attrs } );
         return *this;
     }
     auto &edit(
-      const size_type _index, string_type _text, callback_type _func = nullptr,
+      const size_type _index, const string_view_type &_text, callback_type _func = nullptr,
       const WORD _intensity_attrs = value::text_foreground_green | value::text_foreground_blue,
       const WORD _default_attrs   = value::text_default )
     {
         auto is_func{ _func == nullptr ? false : true };
-        lines_.at( _index )
-          = line_item_{ std::move( _text ), std::move( _func ), _default_attrs, is_func ? _intensity_attrs : _default_attrs };
+        lines_.at( _index ) = line_item_{ _text, std::move( _func ), _default_attrs, is_func ? _intensity_attrs : _default_attrs };
         return *this;
     }
     auto &remove_front()
@@ -376,12 +376,12 @@ class console_ui final {
         return *this;
     }
     auto &set_console(
-      const string_type &_title, const UINT _code_page, const SHORT _width, const SHORT _height, const bool _is_fix_size,
+      const string_view_type &_title, const UINT _code_page, const SHORT _width, const SHORT _height, const bool _is_fix_size,
       const bool _is_enable_minimize_ctrl, const bool is_enable_close_window_ctrl, const BYTE _translucency )
     {
         SetConsoleOutputCP( _code_page );
         SetConsoleCP( _code_page );
-        SetConsoleTitleA( _title.c_str() );
+        SetConsoleTitleA( _title.data() );
         system( std::format( "mode.com con cols={} lines={}", _width, _height ).c_str() );
         SetWindowLongPtrW(
           GetConsoleWindow(), GWL_STYLE,
