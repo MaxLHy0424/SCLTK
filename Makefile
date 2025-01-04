@@ -1,7 +1,7 @@
 msys2        = C:\\Software\\MSYS2
 cc           = g++.exe
 def          = -D_CRT_SECURE_NO_WARNINGS -DANSI -D_ANSI
-args_base    = -fexec-charset=GBK -std=gnu++26 -Wall -Wextra -Weffc++ -pipe
+args_base    = -fexec-charset=GB18030 -std=gnu++26 -Wall -Wextra -Weffc++ -pipe
 args_release = -DNDEBUG $(args_base) -static -Ofast -flto=auto -fno-rtti
 args_debug   = $(args_base) -Og -g3
 .PHONY: init release debug clean
