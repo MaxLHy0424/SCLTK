@@ -6,13 +6,15 @@
 #define NOTHING_TO_DO \
     { }
 namespace core {
+    using namespace std::string_literals;
+    using namespace std::chrono_literals;
     using size_type    = console_ui::size_type;
     using string_type  = console_ui::string_type;
     using wstring_type = std::wstring;
     template < typename _type_ >
     using type_alloc = console_ui::type_alloc< _type_ >;
-    inline constexpr string_type config_file_name{ "config.ini" };
-    inline constexpr std::chrono::seconds default_thread_sleep_time{ 1 };
+    inline constexpr auto config_file_name{ "config.ini"s };
+    inline constexpr auto default_thread_sleep_time{ 1s };
     struct option_item final {
         struct sub_option_item final {
             const string_type key_name, showed_name;
@@ -44,7 +46,7 @@ namespace core {
         option_item( option_item && )      = default;
         ~option_item()                     = default;
     };
-    inline type_alloc< option_item[] > options{
+    inline option_item options[]{
       {"rule_op", "破解/恢复", { { "hijack_execs", "劫持可执行文件" }, { "set_serv_startup_types", "设置服务启动类型" } }                  },
       {"window",
        "窗口显示",             { { "topmost_show", "置顶显示" }, { "disable_close_ctrl", "禁用关闭控件" }, { "translucency", "半透明化" } }},
@@ -64,8 +66,10 @@ namespace core {
         rule_item( rule_item && )      = default;
         ~rule_item()                   = default;
     };
-    inline rule_item custom_rules{ "自定义", {}, {} };
-    inline type_alloc< const rule_item[] > builtin_rules{
+    inline auto custom_rules{
+      rule_item{ "自定义", {}, {} }
+    };
+    inline const rule_item builtin_rules[]{
       {"极域电子教室",
        { "StudentMain.exe", "DispcapHelper.exe", "VRCwPlayer.exe", "InstHelpApp.exe", "InstHelpApp64.exe", "TDOvrSet.exe",
           "GATESRV.exe", "ProcHelper64.exe", "MasterHelper.exe" },
@@ -83,9 +87,9 @@ namespace core {
     };
     inline auto is_run_as_admin()
     {
-        BOOL is_admin{};
-        PSID admins_group{};
-        SID_IDENTIFIER_AUTHORITY nt_authority{ SECURITY_NT_AUTHORITY };
+        auto is_admin{ BOOL{} };
+        auto admins_group{ PSID{} };
+        auto nt_authority{ SID_IDENTIFIER_AUTHORITY{ SECURITY_NT_AUTHORITY } };
         if ( AllocateAndInitializeSid(
                &nt_authority, 2, SECURITY_BUILTIN_DOMAIN_RID, DOMAIN_ALIAS_RID_ADMINS, 0, 0, 0, 0, 0, 0, &admins_group )
              == true )
@@ -97,9 +101,9 @@ namespace core {
     }
     inline auto relaunch_as_admin( console_ui::func_args )
     {
-        wstring_type file_path( MAX_PATH, L'\0' );
+        auto file_path{ wstring_type( MAX_PATH, L'\0' ) };
         GetModuleFileNameW( nullptr, file_path.data(), MAX_PATH );
-        ShellExecuteW( nullptr, L"runas", file_path.data(), nullptr, nullptr, SW_SHOWNORMAL );
+        ShellExecuteW( nullptr, L"runas", file_path.c_str(), nullptr, nullptr, SW_SHOWNORMAL );
         std::exit( 0 );
         return console_ui::value::ui_exit;
     }
@@ -127,11 +131,11 @@ namespace core {
             ShellExecuteA( nullptr, "open", INFO_REPO_URL, nullptr, nullptr, SW_SHOWNORMAL );
             return console_ui::value::ui_return;
         } };
-        console_ui ui;
+        auto ui{ console_ui{} };
         std::print( " -> 准备用户界面.\n" );
         ui.add_back( "                    [ 信  息 ]\n\n" )
           .add_back( " < 返回 ", quit, console_ui::value::text_foreground_green | console_ui::value::text_foreground_intensity )
-          .add_back( "\n[名称]\n\n " INFO_NAME "\n\n[版本]\n\n " INFO_VERSION )
+          .add_back( "\n[名称]\n\n " INFO_NAME "\n\n[版本]\n\n " INFO_VERSION "" )
           .add_back( "\n[仓库]\n" )
           .add_back( " " INFO_REPO_URL " ", visit_repo_webpage, console_ui::value::text_default | console_ui::value::text_common_lvb_underscore )
           .add_back( "\n[许可证]\n\n " INFO_LICENSE "\n\n (C) 2023 - present " INFO_DEVELOPER "." )
@@ -174,13 +178,13 @@ namespace core {
             cmd_executor( cmd_executor && )      = default;
             ~cmd_executor()                      = default;
         };
-        type_alloc< string_type[][ 2 ] > common_ops{
+        string_type common_ops[][ 2 ]{
           {"重启资源管理器",               R"(taskkill.exe /f /im explorer.exe && timeout /t 3 /nobreak && start C:\Windows\explorer.exe)"},
           {"恢复 USB 设备访问",            R"(reg.exe add "HKLM\SYSTEM\CurrentControlSet\Services\USBSTOR" /f /t reg_dword /v Start /d 3)"},
           {"恢复 Google Chrome 离线游戏",  R"(reg.exe delete "HKLM\SOFTWARE\Policies\Google\Chrome" /f /v AllowDinosaurEasterEgg)"        },
           {"恢复 Microsoft Edge 离线游戏", R"(reg.exe delete "HKLM\SOFTWARE\Policies\Microsoft\Edge" /f /v AllowSurfGame)"                }
         };
-        console_ui ui;
+        auto ui{ console_ui{} };
         std::print( " -> 准备用户界面.\n" );
         ui.add_back( "                   [ 工 具 箱 ]\n\n" )
           .add_back( " < 返回 ", quit, console_ui::value::text_foreground_green | console_ui::value::text_foreground_intensity )
@@ -234,9 +238,9 @@ namespace core {
         }
         auto topmost_show_( std::stop_token &&_msg )
         {
-            using namespace std::chrono_literals;
-            const HWND this_window{ GetConsoleWindow() };
-            const DWORD foreground_id{ GetWindowThreadProcessId( this_window, nullptr ) }, current_id{ GetCurrentThreadId() };
+            const auto this_window{ GetConsoleWindow() };
+            const auto foreground_id{ GetWindowThreadProcessId( this_window, nullptr ) };
+            const auto current_id{ GetCurrentThreadId() };
             while ( !_msg.stop_requested() ) {
                 if ( !is_topmost_ ) {
                     SetWindowPos( GetConsoleWindow(), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
@@ -275,10 +279,9 @@ namespace core {
     };
     class fix_os_env final : private multithread_task {
       private:
-        type_alloc< const bool & > is_enabled_;
+        const bool &is_enabled_;
         auto exec_op_( std::stop_token &&_msg )
         {
-            using namespace std::chrono_literals;
             type_alloc< const string_type[] > hkcu_reg_dirs{
               R"(Software\Policies\Microsoft\Windows\System)", R"(Software\Microsoft\Windows\CurrentVersion\Policies\System)",
               R"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)" },
@@ -320,11 +323,13 @@ namespace core {
         enum class mod { load, edit };
       private:
         const mod mod_data_;
-        static constexpr WORD option_button_color{
+        static constexpr auto option_button_color{
           console_ui::value::text_foreground_red | console_ui::value::text_foreground_green };
         auto load_( const bool _is_reload )
         {
-            std::ifstream config_file{ config_file_name, std::ios::in };
+            auto config_file{
+              std::ifstream{ config_file_name, std::ios::in }
+            };
             if ( !config_file.is_open() ) {
                 config_file.close();
                 return;
@@ -334,8 +339,9 @@ namespace core {
                 custom_rules.execs.clear();
                 custom_rules.servs.clear();
             }
-            string_type line;
-            enum class config_label { unknown, options, custom_rule_execs, custom_rule_servs } label{ config_label::unknown };
+            enum class config_label { unknown, options, custom_rule_execs, custom_rule_servs };
+            auto label{ config_label::unknown };
+            auto line{ string_type{} };
             while ( std::getline( config_file, line ) ) {
                 if ( line.empty() || line.front() == '#' ) {
                     continue;
@@ -382,11 +388,10 @@ namespace core {
         }
         auto sync()
         {
-            using namespace std::chrono_literals;
             std::print( "                    [ 配  置 ]\n\n\n" );
             load_( true );
             std::print( " -> 保存更改.\n" );
-            string_type config_text;
+            auto config_text{ string_type{} };
             config_text.append( std::format(
               "# {}\n"
               "# [同步时间] {} (UTC)\n"
@@ -408,7 +413,9 @@ namespace core {
             for ( const auto &serv : custom_rules.servs ) {
                 config_text.append( serv ).push_back( '\n' );
             }
-            std::ofstream config_file{ config_file_name, std::ios::out | std::ios::trunc };
+            auto config_file{
+              std::ofstream{ config_file_name, std::ios::out | std::ios::trunc }
+            };
             config_file << config_text << std::flush;
             std::print( "\n ({}) 同步配置{}.\n\n", config_file.fail() ? '!' : 'i', config_file.fail() ? "失败" : "成功" );
             wait( 3s );
@@ -422,7 +429,6 @@ namespace core {
                 ShellExecuteA( nullptr, "open", config_file_name.c_str(), nullptr, nullptr, SW_SHOWNORMAL );
                 return console_ui::value::ui_return;
             }
-            using namespace std::chrono_literals;
             std::print(
               "                    [ 配  置 ]\n\n\n"
               " (i) 无法读取配置文件.\n\n" );
@@ -455,7 +461,7 @@ namespace core {
           public:
             auto operator()( console_ui::func_args )
             {
-                console_ui ui;
+                auto ui{ console_ui{} };
                 std::print( " -> 准备用户界面.\n" );
                 ui.add_back( "                    [ 配  置 ]\n\n" )
                   .add_back(
@@ -480,7 +486,7 @@ namespace core {
         };
         auto edit_()
         {
-            console_ui ui;
+            auto ui{ console_ui{} };
             std::print( " -> 准备用户界面.\n" );
             ui
               .add_back( std::format(
@@ -526,7 +532,6 @@ namespace core {
         {
             std::print( "                 [ 破 解 / 恢 复 ]\n\n\n" );
             if ( rules_.execs.empty() && rules_.servs.empty() ) {
-                using namespace std::chrono_literals;
                 std::print( " (i) 规则为空.\n\n" );
                 wait( 3s );
                 return console_ui::value::ui_return;
