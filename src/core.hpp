@@ -8,9 +8,10 @@
 namespace core {
     using namespace std::string_literals;
     using namespace std::chrono_literals;
-    using size_type    = console_ui::size_type;
-    using string_type  = console_ui::string_type;
-    using wstring_type = std::wstring;
+    using size_type        = console_ui::size_type;
+    using string_type      = console_ui::string_type;
+    using string_view_type = console_ui::string_view_type;
+    using wstring_type     = std::wstring;
     template < typename _type_ >
     using type_alloc = console_ui::type_alloc< _type_ >;
     inline constexpr auto config_file_name{ "config.ini"s };
@@ -21,9 +22,9 @@ namespace core {
             bool is_enabled{};
             auto operator=( const sub_option_item & ) -> sub_option_item & = default;
             auto operator=( sub_option_item && ) -> sub_option_item &      = default;
-            sub_option_item( string_type _key_name, string_type _showed_name )
-              : key_name{ std::move( _key_name ) }
-              , showed_name{ std::move( _showed_name ) }
+            sub_option_item( const string_view_type &_key_name, const string_view_type &_showed_name )
+              : key_name{ _key_name }
+              , showed_name{ _showed_name }
             { }
             sub_option_item( const sub_option_item & ) = default;
             sub_option_item( sub_option_item && )      = default;
@@ -37,9 +38,9 @@ namespace core {
         }
         auto operator=( const option_item & ) -> option_item & = default;
         auto operator=( option_item && ) -> option_item &      = default;
-        option_item( string_type _key_name, string_type _showed_name, std::vector< sub_option_item > _sub_options )
-          : key_name{ std::move( _key_name ) }
-          , showed_name{ std::move( _showed_name ) }
+        option_item( const string_view_type &_key_name, const string_view_type &_showed_name, std::vector< sub_option_item > _sub_options )
+          : key_name{ _key_name }
+          , showed_name{ _showed_name }
           , sub_options{ std::move( _sub_options ) }
         { }
         option_item( const option_item & ) = default;
@@ -57,8 +58,8 @@ namespace core {
         std::deque< string_type > execs, servs;
         auto operator=( const rule_item & ) -> rule_item & = default;
         auto operator=( rule_item && ) -> rule_item &      = default;
-        rule_item( string_type _showed_name, std::deque< string_type > _execs, std::deque< string_type > _servs )
-          : showed_name{ std::move( _showed_name ) }
+        rule_item( const string_view_type &_showed_name, std::deque< string_type > _execs, std::deque< string_type > _servs )
+          : showed_name{ _showed_name }
           , execs{ std::move( _execs ) }
           , servs{ std::move( _servs ) }
         { }
@@ -171,14 +172,14 @@ namespace core {
             }
             auto operator=( const cmd_executor & ) -> cmd_executor & = default;
             auto operator=( cmd_executor && ) -> cmd_executor &      = default;
-            cmd_executor( string_type _cmd )
-              : cmd_{ std::move( _cmd ) }
+            cmd_executor( const string_view_type &_cmd )
+              : cmd_{ _cmd }
             { }
             cmd_executor( const cmd_executor & ) = default;
             cmd_executor( cmd_executor && )      = default;
             ~cmd_executor()                      = default;
         };
-        string_type common_ops[][ 2 ]{
+        string_view_type common_ops[][ 2 ]{
           {"重启资源管理器",               R"(taskkill.exe /f /im explorer.exe && timeout /t 3 /nobreak && start C:\Windows\explorer.exe)"},
           {"恢复 USB 设备访问",            R"(reg.exe add "HKLM\SYSTEM\CurrentControlSet\Services\USBSTOR" /f /t reg_dword /v Start /d 3)"},
           {"恢复 Google Chrome 离线游戏",  R"(reg.exe delete "HKLM\SOFTWARE\Policies\Google\Chrome" /f /v AllowDinosaurEasterEgg)"        },
@@ -191,7 +192,7 @@ namespace core {
           .add_back( " > 命令提示符 ", launch_cmd )
           .add_back( "\n[常用操作]\n" );
         for ( auto &op : common_ops ) {
-            ui.add_back( std::format( " > {} ", std::move( op[ 0 ] ) ), cmd_executor{ std::move( op[ 1 ] ) } );
+            ui.add_back( std::format( " > {} ", op[ 0 ].data() ), cmd_executor{ op[ 1 ].data() } );
         }
         ui.show();
         return console_ui::value::ui_return;
@@ -282,7 +283,7 @@ namespace core {
         const bool &is_enabled_;
         auto exec_op_( std::stop_token &&_msg )
         {
-            type_alloc< const string_type[] > hkcu_reg_dirs{
+            type_alloc< const string_view_type[] > hkcu_reg_dirs{
               R"(Software\Policies\Microsoft\Windows\System)", R"(Software\Microsoft\Windows\CurrentVersion\Policies\System)",
               R"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)" },
               execs{ "mode.com", "chcp.com", "ntsd.exe",    "taskkill.exe", "sc.exe",      "net.exe",
@@ -293,7 +294,7 @@ namespace core {
                     continue;
                 }
                 for ( const auto &reg_dir : hkcu_reg_dirs ) {
-                    RegDeleteTreeA( HKEY_CURRENT_USER, reg_dir.c_str() );
+                    RegDeleteTreeA( HKEY_CURRENT_USER, reg_dir.data() );
                 }
                 for ( const auto &exec : execs ) {
                     RegDeleteTreeA(
