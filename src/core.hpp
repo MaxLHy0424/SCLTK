@@ -192,7 +192,7 @@ namespace core {
           .add_back( " > 命令提示符 ", launch_cmd )
           .add_back( "\n[常用操作]\n" );
         for ( auto &op : common_ops ) {
-            ui.add_back( std::format( " > {} ", op[ 0 ].data() ), cmd_executor{ op[ 1 ].data() } );
+            ui.add_back( std::format( " > {} ", op[ 0 ] ), cmd_executor{ op[ 1 ] } );
         }
         ui.show();
         return console_ui::value::ui_return;

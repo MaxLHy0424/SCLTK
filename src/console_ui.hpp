@@ -194,7 +194,7 @@ class console_ui final {
     }
     static auto write_( const string_view_type &_text, const bool _is_endl = false )
     {
-        std::print( "{}{}", _text.data(), _is_endl ? '\n' : '\0' );
+        std::print( "{}{}", _text, _is_endl ? '\n' : '\0' );
     }
     static auto rewrite_( const COORD &_cursor_position, const string_view_type &_text )
     {
