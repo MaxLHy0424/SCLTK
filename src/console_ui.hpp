@@ -10,56 +10,58 @@
 class console_ui final {
   public:
     struct value final {
-        static constexpr auto mouse_button_left{ static_cast< DWORD >( FROM_LEFT_1ST_BUTTON_PRESSED ) };
-        static constexpr auto mouse_button_middle{ static_cast< DWORD >( FROM_LEFT_2ND_BUTTON_PRESSED ) };
-        static constexpr auto mouse_button_right{ static_cast< DWORD >( RIGHTMOST_BUTTON_PRESSED ) };
-        static constexpr auto mouse_click{ static_cast< DWORD >( 0x0000 ) };
-        static constexpr auto mouse_click_double{ static_cast< DWORD >( DOUBLE_CLICK ) };
-        static constexpr auto mouse_move{ static_cast< DWORD >( MOUSE_MOVED ) };
-        static constexpr auto mouse_wheel_height{ static_cast< DWORD >( MOUSE_HWHEELED ) };
-        static constexpr auto mouse_wheel{ static_cast< DWORD >( MOUSE_WHEELED ) };
-        static constexpr auto key_right_alt_press{ static_cast< DWORD >( RIGHT_ALT_PRESSED ) };
-        static constexpr auto key_left_alt_press{ static_cast< DWORD >( LEFT_ALT_PRESSED ) };
-        static constexpr auto key_right_ctrl_press{ static_cast< DWORD >( RIGHT_CTRL_PRESSED ) };
-        static constexpr auto key_left_ctrl_press{ static_cast< DWORD >( LEFT_CTRL_PRESSED ) };
-        static constexpr auto key_shift_press{ static_cast< DWORD >( SHIFT_PRESSED ) };
-        static constexpr auto key_num_lock_on{ static_cast< DWORD >( NUMLOCK_ON ) };
-        static constexpr auto key_scroll_lock_on{ static_cast< DWORD >( SCROLLLOCK_ON ) };
-        static constexpr auto key_caps_lock_on{ static_cast< DWORD >( CAPSLOCK_ON ) };
-        static constexpr auto key_enhanced_key{ static_cast< DWORD >( ENHANCED_KEY ) };
-        static constexpr auto text_default{ static_cast< WORD >( FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE ) };
-        static constexpr auto text_foreground_red{ static_cast< WORD >( FOREGROUND_RED ) };
-        static constexpr auto text_foreground_green{ static_cast< WORD >( FOREGROUND_GREEN ) };
-        static constexpr auto text_foreground_blue{ static_cast< WORD >( FOREGROUND_BLUE ) };
-        static constexpr auto text_foreground_intensity{ static_cast< WORD >( FOREGROUND_INTENSITY ) };
-        static constexpr auto text_background_red{ static_cast< WORD >( BACKGROUND_RED ) };
-        static constexpr auto text_background_green{ static_cast< WORD >( BACKGROUND_GREEN ) };
-        static constexpr auto text_background_blue{ static_cast< WORD >( BACKGROUND_BLUE ) };
-        static constexpr auto text_background_intensity{ static_cast< WORD >( BACKGROUND_INTENSITY ) };
-        static constexpr auto text_common_lvb_leading_byte{ static_cast< WORD >( COMMON_LVB_LEADING_BYTE ) };
-        static constexpr auto text_common_lvb_trailing_byte{ static_cast< WORD >( COMMON_LVB_TRAILING_BYTE ) };
-        static constexpr auto text_common_lvb_grid_horizontal{ static_cast< WORD >( COMMON_LVB_GRID_HORIZONTAL ) };
-        static constexpr auto text_common_lvb_grid_lvertical{ static_cast< WORD >( COMMON_LVB_GRID_LVERTICAL ) };
-        static constexpr auto text_common_lvb_grid_rvertical{ static_cast< WORD >( COMMON_LVB_GRID_RVERTICAL ) };
-        static constexpr auto text_common_lvb_reverse_video{ static_cast< WORD >( COMMON_LVB_REVERSE_VIDEO ) };
-        static constexpr auto text_common_lvb_underscore{ static_cast< WORD >( COMMON_LVB_UNDERSCORE ) };
-        static constexpr auto text_common_lvb_sbcsdbcs{ static_cast< WORD >( COMMON_LVB_SBCSDBCS ) };
+        static constexpr auto mouse_button_left{ DWORD{ FROM_LEFT_1ST_BUTTON_PRESSED } };
+        static constexpr auto mouse_button_middle{ DWORD{ FROM_LEFT_2ND_BUTTON_PRESSED } };
+        static constexpr auto mouse_button_right{ DWORD{ RIGHTMOST_BUTTON_PRESSED } };
+        static constexpr auto mouse_click{ DWORD{ 0x0000 } };
+        static constexpr auto mouse_click_double{ DWORD{ DOUBLE_CLICK } };
+        static constexpr auto mouse_move{ DWORD{ MOUSE_MOVED } };
+        static constexpr auto mouse_wheel_height{ DWORD{ MOUSE_HWHEELED } };
+        static constexpr auto mouse_wheel{ DWORD{ MOUSE_WHEELED } };
+        static constexpr auto key_right_alt_press{ DWORD{ RIGHT_ALT_PRESSED } };
+        static constexpr auto key_left_alt_press{ DWORD{ LEFT_ALT_PRESSED } };
+        static constexpr auto key_right_ctrl_press{ DWORD{ RIGHT_CTRL_PRESSED } };
+        static constexpr auto key_left_ctrl_press{ DWORD{ LEFT_CTRL_PRESSED } };
+        static constexpr auto key_shift_press{ DWORD{ SHIFT_PRESSED } };
+        static constexpr auto key_num_lock_on{ DWORD{ NUMLOCK_ON } };
+        static constexpr auto key_scroll_lock_on{ DWORD{ SCROLLLOCK_ON } };
+        static constexpr auto key_caps_lock_on{ DWORD{ CAPSLOCK_ON } };
+        static constexpr auto key_enhanced_key{ DWORD{ ENHANCED_KEY } };
+        static constexpr auto text_default{ WORD{ FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE } };
+        static constexpr auto text_foreground_red{ WORD{ FOREGROUND_RED } };
+        static constexpr auto text_foreground_green{ WORD{ FOREGROUND_GREEN } };
+        static constexpr auto text_foreground_blue{ WORD{ FOREGROUND_BLUE } };
+        static constexpr auto text_foreground_intensity{ WORD{ FOREGROUND_INTENSITY } };
+        static constexpr auto text_background_red{ WORD{ BACKGROUND_RED } };
+        static constexpr auto text_background_green{ WORD{ BACKGROUND_GREEN } };
+        static constexpr auto text_background_blue{ WORD{ BACKGROUND_BLUE } };
+        static constexpr auto text_background_intensity{ WORD{ BACKGROUND_INTENSITY } };
+        static constexpr auto text_common_lvb_leading_byte{ WORD{ COMMON_LVB_LEADING_BYTE } };
+        static constexpr auto text_common_lvb_trailing_byte{ WORD{ COMMON_LVB_TRAILING_BYTE } };
+        static constexpr auto text_common_lvb_grid_horizontal{ WORD{ COMMON_LVB_GRID_HORIZONTAL } };
+        static constexpr auto text_common_lvb_grid_lvertical{ WORD{ COMMON_LVB_GRID_LVERTICAL } };
+        static constexpr auto text_common_lvb_grid_rvertical{ WORD{ COMMON_LVB_GRID_RVERTICAL } };
+        static constexpr auto text_common_lvb_reverse_video{ WORD{ COMMON_LVB_REVERSE_VIDEO } };
+        static constexpr auto text_common_lvb_underscore{ WORD{ COMMON_LVB_UNDERSCORE } };
+        static constexpr auto text_common_lvb_sbcsdbcs{ WORD{ COMMON_LVB_SBCSDBCS } };
         static constexpr auto ui_return{ false };
         static constexpr auto ui_exit{ true };
         auto operator=( const value & ) -> value & = delete;
         auto operator=( value && ) -> value &      = delete;
-        value()                                     = delete;
-        value( auto )                               = delete;
+        value()                                    = delete;
+        value( auto )                              = delete;
         value( const value & )                     = delete;
         value( value && )                          = delete;
-        ~value()                                    = delete;
+        ~value()                                   = delete;
     };
     struct func_args final {
         console_ui &parent_ui;
         const DWORD button_state, ctrl_key_state, event_flag;
         auto operator=( const func_args & ) -> func_args & = default;
         auto operator=( func_args && ) -> func_args &      = default;
-        func_args( console_ui &_parent_ui, const MOUSE_EVENT_RECORD _mouse_event = { {}, value::mouse_button_left, {}, {} } )
+        func_args(
+          console_ui &_parent_ui,
+          const MOUSE_EVENT_RECORD _mouse_event = MOUSE_EVENT_RECORD{ {}, value::mouse_button_left, {}, {} } )
           : parent_ui{ _parent_ui }
           , button_state{ _mouse_event.dwButtonState }
           , ctrl_key_state{ _mouse_event.dwControlKeyState }
@@ -123,14 +125,14 @@ class console_ui final {
     SHORT width_{}, height_{};
     static auto show_cursor_( const bool _is_show )
     {
-        CONSOLE_CURSOR_INFO cursor_data;
+        auto cursor_data{ CONSOLE_CURSOR_INFO{} };
         GetConsoleCursorInfo( GetStdHandle( STD_OUTPUT_HANDLE ), &cursor_data );
         cursor_data.bVisible = _is_show;
         SetConsoleCursorInfo( GetStdHandle( STD_OUTPUT_HANDLE ), &cursor_data );
     }
     static auto edit_console_attrs_( const console_attrs_ _mod )
     {
-        DWORD attrs;
+        auto attrs{ DWORD{} };
         GetConsoleMode( GetStdHandle( STD_INPUT_HANDLE ), &attrs );
         switch ( _mod ) {
             case console_attrs_::normal :
@@ -153,7 +155,7 @@ class console_ui final {
     }
     static auto get_cursor_()
     {
-        CONSOLE_SCREEN_BUFFER_INFO console_data;
+        auto console_data{ CONSOLE_SCREEN_BUFFER_INFO{} };
         GetConsoleScreenBufferInfo( GetStdHandle( STD_OUTPUT_HANDLE ), &console_data );
         return console_data.dwCursorPosition;
     }
@@ -161,15 +163,15 @@ class console_ui final {
     {
         SetConsoleCursorPosition( GetStdHandle( STD_OUTPUT_HANDLE ), _cursor_position );
     }
-    static auto wait_mouse_event_( const bool _is_mouse_move = true )
+    static auto wait_mouse_event_( const bool _is_mouse_moved = true )
     {
         using namespace std::chrono_literals;
-        INPUT_RECORD record;
-        DWORD reg;
+        auto record{ INPUT_RECORD{} };
+        auto reg{ DWORD{} };
         while ( true ) {
             perf_sleep( 10ms );
             ReadConsoleInputW( GetStdHandle( STD_INPUT_HANDLE ), &record, 1, &reg );
-            if ( record.EventType == MOUSE_EVENT && _is_mouse_move | ( record.Event.MouseEvent.dwEventFlags != value::mouse_move ) )
+            if ( record.EventType == MOUSE_EVENT && _is_mouse_moved | ( record.Event.MouseEvent.dwEventFlags != value::mouse_move ) )
             {
                 return record.Event.MouseEvent;
             }
@@ -177,7 +179,7 @@ class console_ui final {
     }
     auto get_console_size_()
     {
-        CONSOLE_SCREEN_BUFFER_INFO console_data;
+        auto console_data{ CONSOLE_SCREEN_BUFFER_INFO{} };
         GetConsoleScreenBufferInfo( GetStdHandle( STD_OUTPUT_HANDLE ), &console_data );
         height_ = console_data.dwSize.Y;
         width_  = console_data.dwSize.X;
@@ -225,7 +227,7 @@ class console_ui final {
     }
     auto call_func_( const MOUSE_EVENT_RECORD &_mouse_event )
     {
-        bool is_exit{};
+        auto is_exit{ value::ui_return };
         for ( auto &line : lines_ ) {
             if ( line != _mouse_event.dwMousePosition ) {
                 continue;
@@ -354,8 +356,8 @@ class console_ui final {
         using namespace std::chrono_literals;
         show_cursor_( false );
         edit_console_attrs_( console_attrs_::lock_text );
-        MOUSE_EVENT_RECORD mouse_event;
         init_pos_();
+        auto mouse_event{ MOUSE_EVENT_RECORD{} };
         auto func_return_value{ value::ui_return };
         while ( func_return_value == value::ui_return ) {
             mouse_event = wait_mouse_event_();

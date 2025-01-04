@@ -2,7 +2,7 @@
 #include "core.hpp"
 auto main() -> int
 {
-    console_ui ui;
+    auto ui{ console_ui{} };
     ui.lock( true, true ).set_console( WINDOW_TITLE, CODE_PAGE_CODE, WINDOW_WIDTH, WINDOW_HEIGHT, true, false, true, 255 );
     std::print( " -> 检测运行权限.\n" );
     if ( !core::is_run_as_admin() ) {
@@ -10,9 +10,10 @@ auto main() -> int
         core::relaunch_as_admin( console_ui::func_args{ ui } );
         return EXIT_SUCCESS;
     }
-    core::set_window set_window_thread{
-      core::options[ 1 ][ 0 ].is_enabled, core::options[ 1 ][ 1 ].is_enabled, core::options[ 1 ][ 2 ].is_enabled };
-    core::fix_os_env fix_os_env_thread{ core::options[ 2 ][ 0 ].is_enabled };
+    auto set_window_thread{
+      core::set_window{ core::options[ 1 ][ 0 ].is_enabled, core::options[ 1 ][ 1 ].is_enabled, core::options[ 1 ][ 2 ].is_enabled }
+    };
+    auto fix_os_env_thread{ core::fix_os_env{ core::options[ 2 ][ 0 ].is_enabled } };
     core::config_op{ core::config_op::mod::load }( console_ui::func_args{ ui } );
     std::print( " -> 准备用户界面.\n" );
     ui.add_back( "                    [ 主  页 ]\n\n" )
