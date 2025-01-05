@@ -41,7 +41,7 @@ namespace core {
                         return key;
                     }
                 }
-                throw std::runtime_error{ "not found sub option" };
+                throw std::runtime_error{ std::format( "not found '{}'", _self_name ) };
             }
             auto operator=( const main_key & ) -> main_key & = default;
             auto operator=( main_key && ) -> main_key &      = default;
@@ -62,7 +62,7 @@ namespace core {
                     return key;
                 }
             }
-            throw std::runtime_error{ "not found sub option" };
+            throw std::runtime_error{ std::format( "not found '{}'", _self_name ) };
             std::abort();
         }
         auto operator=( const option_node & ) -> option_node & = default;
