@@ -6,15 +6,15 @@
 #define NOTHING_TO_DO \
     { }
 namespace core {
-    using namespace std::string_literals;
     using namespace std::chrono_literals;
+    using namespace std::string_view_literals;
     using size_type        = console_ui::size_type;
     using string_type      = console_ui::string_type;
     using string_view_type = console_ui::string_view_type;
     using wstring_type     = std::wstring;
     template < typename _type_ >
     using type_alloc = console_ui::type_alloc< _type_ >;
-    inline constexpr auto config_file_name{ "config.ini"s };
+    inline constexpr auto config_file_name{ "config.ini"sv };
     inline constexpr auto default_thread_sleep_time{ 1s };
     struct option_item final {
         struct sub_option_item final {
@@ -329,7 +329,7 @@ namespace core {
         auto load_( const bool _is_reload )
         {
             auto config_file{
-              std::ifstream{ config_file_name, std::ios::in }
+              std::ifstream{ config_file_name.data(), std::ios::in }
             };
             if ( !config_file.is_open() ) {
                 config_file.close();
@@ -409,7 +409,7 @@ namespace core {
                 config_text.append( serv ).push_back( '\n' );
             }
             auto config_file{
-              std::ofstream{ config_file_name, std::ios::out | std::ios::trunc }
+              std::ofstream{ config_file_name.data(), std::ios::out | std::ios::trunc }
             };
             config_file << std::format(
               "# {}\n"
@@ -425,9 +425,9 @@ namespace core {
         }
         auto open_file()
         {
-            if ( std::ifstream{ config_file_name, std::ios::in }.is_open() ) {
+            if ( std::ifstream{ config_file_name.data(), std::ios::in }.is_open() ) {
                 std::print( " -> 打开配置.\n" );
-                ShellExecuteA( nullptr, "open", config_file_name.c_str(), nullptr, nullptr, SW_SHOWNORMAL );
+                ShellExecuteA( nullptr, "open", config_file_name.data(), nullptr, nullptr, SW_SHOWNORMAL );
                 return console_ui::value::ui_return;
             }
             std::print(
