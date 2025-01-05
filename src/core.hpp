@@ -212,14 +212,17 @@ namespace core {
             cmd_executor( cmd_executor && )      = default;
             ~cmd_executor()                      = default;
         };
+        using common_op_type = std::array< string_view_type, 2 >;
         const auto common_ops{
           std::array{
-                     std::array{ "重启资源管理器"sv, R"(taskkill.exe /f /im explorer.exe && timeout /t 3 /nobreak && start C:\Windows\explorer.exe)"sv },
-                     std::array{ "恢复 USB 设备访问"sv, R"(reg.exe add "HKLM\SYSTEM\CurrentControlSet\Services\USBSTOR" /f /t reg_dword /v Start /d 3)"sv },
-                     std::array{ "恢复 Google Chrome 离线游戏"sv,
-                        R"(reg.exe delete "HKLM\SOFTWARE\Policies\Google\Chrome" /f /v AllowDinosaurEasterEgg)"sv },
-                     std::array{
-              "恢复 Microsoft Edge 离线游戏"sv, R"(reg.exe delete "HKLM\SOFTWARE\Policies\Microsoft\Edge" /f /v AllowSurfGame)"sv } }
+                     common_op_type{
+              "重启资源管理器", R"(taskkill.exe /f /im explorer.exe && timeout /t 3 /nobreak && start C:\Windows\explorer.exe)" },
+                     common_op_type{
+              "恢复 USB 设备访问", R"(reg.exe add "HKLM\SYSTEM\CurrentControlSet\Services\USBSTOR" /f /t reg_dword /v Start /d 3)" },
+                     common_op_type{
+              "恢复 Google Chrome 离线游戏", R"(reg.exe delete "HKLM\SOFTWARE\Policies\Google\Chrome" /f /v AllowDinosaurEasterEgg)" },
+                     common_op_type{
+              "恢复 Microsoft Edge 离线游戏", R"(reg.exe delete "HKLM\SOFTWARE\Policies\Microsoft\Edge" /f /v AllowSurfGame)" } }
         };
         auto ui{ console_ui{} };
         std::print( " -> 准备用户界面.\n" );
