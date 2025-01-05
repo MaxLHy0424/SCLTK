@@ -85,7 +85,7 @@ class console_ui final {
     using type_alloc = _type_;
   private:
     enum class console_attrs_ { normal, lock_text, lock_all };
-    struct line_item_ final {
+    struct line_node_ final {
         string_type text{};
         callback_type func{};
         WORD default_attrs{}, intensity_attrs{}, last_attrs{};
@@ -104,25 +104,25 @@ class console_ui final {
         {
             return !operator==( _mouse_position );
         }
-        auto operator=( const line_item_ & ) -> line_item_ & = default;
-        auto operator=( line_item_ && ) -> line_item_ &      = default;
-        line_item_()
+        auto operator=( const line_node_ & ) -> line_node_ & = default;
+        auto operator=( line_node_ && ) -> line_node_ &      = default;
+        line_node_()
           : default_attrs{ value::text_default }
           , intensity_attrs{ value::text_foreground_green | value::text_foreground_blue }
           , last_attrs{ value::text_default }
         { }
-        line_item_( const string_view_type &_text, callback_type _func, const WORD _default_attrs, const WORD _intensity_attrs )
+        line_node_( const string_view_type &_text, callback_type _func, const WORD _default_attrs, const WORD _intensity_attrs )
           : text{ _text }
           , func{ std::move( _func ) }
           , default_attrs{ _default_attrs }
           , intensity_attrs{ _intensity_attrs }
           , last_attrs{ _default_attrs }
         { }
-        line_item_( const line_item_ & ) = default;
-        line_item_( line_item_ && )      = default;
-        ~line_item_()                    = default;
+        line_node_( const line_node_ & ) = default;
+        line_node_( line_node_ && )      = default;
+        ~line_node_()                    = default;
     };
-    std::deque< line_item_ > lines_{};
+    std::deque< line_node_ > lines_{};
     SHORT width_{}, height_{};
     static auto show_cursor_( const bool _is_show )
     {
@@ -289,7 +289,7 @@ class console_ui final {
       const WORD _default_attrs   = value::text_default )
     {
         auto is_func{ _func == nullptr ? false : true };
-        lines_.emplace_front( line_item_{
+        lines_.emplace_front( line_node_{
           _text,
           std::move( _func ),
           _default_attrs,
@@ -303,7 +303,7 @@ class console_ui final {
       const WORD _default_attrs   = value::text_default )
     {
         auto is_func{ _func == nullptr ? false : true };
-        lines_.emplace_back( line_item_{
+        lines_.emplace_back( line_node_{
           _text,
           std::move( _func ),
           _default_attrs,
@@ -319,7 +319,7 @@ class console_ui final {
         auto is_func{ _func == nullptr ? false : true };
         lines_.emplace(
           lines_.cbegin() + _index,
-          line_item_{ _text, std::move( _func ), _default_attrs, is_func ? _intensity_attrs : _default_attrs } );
+          line_node_{ _text, std::move( _func ), _default_attrs, is_func ? _intensity_attrs : _default_attrs } );
         return *this;
     }
     auto &edit(
@@ -328,7 +328,7 @@ class console_ui final {
       const WORD _default_attrs   = value::text_default )
     {
         auto is_func{ _func == nullptr ? false : true };
-        lines_.at( _index ) = line_item_{ _text, std::move( _func ), _default_attrs, is_func ? _intensity_attrs : _default_attrs };
+        lines_.at( _index ) = line_node_{ _text, std::move( _func ), _default_attrs, is_func ? _intensity_attrs : _default_attrs };
         return *this;
     }
     auto &remove_front()

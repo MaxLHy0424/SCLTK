@@ -79,24 +79,24 @@ namespace core {
           { { "topmost_show", "置顶显示" }, { "disable_close_ctrl", "禁用关闭控件" }, { "translucency", "半透明化" } } },
        { "other", "其他", { { "fix_os_env", "修复操作系统环境" } } } }
     };
-    struct rule_item final {
+    struct rule_node final {
         const string_view_type showed_name;
         std::deque< string_type > execs, servs;
-        auto operator=( const rule_item & ) -> rule_item & = default;
-        auto operator=( rule_item && ) -> rule_item &      = default;
-        rule_item( const string_view_type &_showed_name, std::deque< string_type > _execs, std::deque< string_type > _servs )
+        auto operator=( const rule_node & ) -> rule_node & = default;
+        auto operator=( rule_node && ) -> rule_node &      = default;
+        rule_node( const string_view_type &_showed_name, std::deque< string_type > _execs, std::deque< string_type > _servs )
           : showed_name{ _showed_name }
           , execs{ std::move( _execs ) }
           , servs{ std::move( _servs ) }
         { }
-        rule_item( const rule_item & ) = default;
-        rule_item( rule_item && )      = default;
-        ~rule_item()                   = default;
+        rule_node( const rule_node & ) = default;
+        rule_node( rule_node && )      = default;
+        ~rule_node()                   = default;
     };
     inline auto custom_rules{
-      rule_item{ "自定义", {}, {} }
+      rule_node{ "自定义", {}, {} }
     };
-    inline const rule_item builtin_rules[]{
+    inline const rule_node builtin_rules[]{
       {"极域电子教室",
        { "StudentMain.exe", "DispcapHelper.exe", "VRCwPlayer.exe", "InstHelpApp.exe", "InstHelpApp64.exe", "TDOvrSet.exe",
           "GATESRV.exe", "ProcHelper64.exe", "MasterHelper.exe" },
@@ -227,24 +227,24 @@ namespace core {
     }
     class multithread_task {
       protected:
-        struct task_item_ final {
+        struct task_node_ final {
             std::jthread task_thread{};
-            auto operator=( const task_item_ & ) -> task_item_ & = default;
-            auto operator=( task_item_ && ) -> task_item_ &      = default;
-            task_item_()                                         = default;
-            task_item_( std::jthread _task_thread )
+            auto operator=( const task_node_ & ) -> task_node_ & = default;
+            auto operator=( task_node_ && ) -> task_node_ &      = default;
+            task_node_()                                         = default;
+            task_node_( std::jthread _task_thread )
               : task_thread{ std::move( _task_thread ) }
             { }
-            task_item_( const task_item_ & ) = default;
-            task_item_( task_item_ && )      = default;
-            ~task_item_()
+            task_node_( const task_node_ & ) = default;
+            task_node_( task_node_ && )      = default;
+            ~task_node_()
             {
                 if ( task_thread.joinable() ) {
                     std::print( " -> 终止线程 {}.\n", task_thread.get_id() );
                 }
             }
         };
-        std::vector< task_item_ > threads_{};
+        std::vector< task_node_ > threads_{};
         auto operator=( const multithread_task & ) -> multithread_task & = default;
         auto operator=( multithread_task && ) -> multithread_task &      = default;
         multithread_task()                                               = default;
@@ -294,11 +294,11 @@ namespace core {
           , is_translucency_{ _is_translucency }
         {
             std::print( " -> 创建线程: 窗口属性设定.\n" );
-            threads_.emplace_back( task_item_{
+            threads_.emplace_back( task_node_{
               std::jthread{ set_attrs_, this }
             } );
             std::print( " -> 创建线程: 置顶显示.\n" );
-            threads_.emplace_back( task_item_{
+            threads_.emplace_back( task_node_{
               std::jthread{ topmost_show_, this }
             } );
         }
@@ -339,7 +339,7 @@ namespace core {
           : is_enabled_{ _is_enabled }
         {
             std::print( " -> 创建线程: 修复操作系统环境.\n" );
-            threads_.emplace_back( task_item_{
+            threads_.emplace_back( task_node_{
               std::jthread{ exec_op_, this }
             } );
         }
@@ -555,7 +555,7 @@ namespace core {
         enum class mod { crack, recovery };
       private:
         const mod mod_data_;
-        const rule_item &rules_;
+        const rule_node &rules_;
       public:
         auto operator()( console_ui::func_args )
         {
@@ -615,7 +615,7 @@ namespace core {
         }
         auto operator=( const rule_op & ) -> rule_op & = default;
         auto operator=( rule_op && ) -> rule_op &      = default;
-        rule_op( const mod _mod_data, const rule_item &_rule )
+        rule_op( const mod _mod_data, const rule_node &_rule )
           : mod_data_{ _mod_data }
           , rules_{ _rule }
         { }
