@@ -145,9 +145,9 @@ namespace core {
         console_ui::perf_sleep( _time );
     }
     template < typename _chrono_type_ >
-    inline auto wait( const _chrono_type_ &_t )
+    inline auto wait( const _chrono_type_ &_time )
     {
-        for ( auto i{ _t }; i > _chrono_type_{}; --i ) {
+        for ( auto i{ _time }; i > _chrono_type_{}; --i ) {
             std::print( " {} 后返回.\r", i );
             perf_sleep( _chrono_type_{ 1 } );
         }
