@@ -18,7 +18,7 @@ namespace core {
     inline constexpr auto default_thread_sleep_time{ 1s };
     struct option_item final {
         struct sub_option_item final {
-            const string_type key_name, showed_name;
+            const string_view_type key_name, showed_name;
             bool is_enabled{};
             auto operator=( const sub_option_item & ) -> sub_option_item & = default;
             auto operator=( sub_option_item && ) -> sub_option_item &      = default;
@@ -30,7 +30,7 @@ namespace core {
             sub_option_item( sub_option_item && )      = default;
             ~sub_option_item()                         = default;
         };
-        const string_type key_name, showed_name;
+        const string_view_type key_name, showed_name;
         std::vector< sub_option_item > sub_options;
         auto &operator[]( size_type _index )
         {
@@ -54,7 +54,7 @@ namespace core {
       {"other",   "其他",      { { "fix_os_env", "修复操作系统环境" } }                                                                    }
     };
     struct rule_item final {
-        const string_type showed_name;
+        const string_view_type showed_name;
         std::deque< string_type > execs, servs;
         auto operator=( const rule_item & ) -> rule_item & = default;
         auto operator=( rule_item && ) -> rule_item &      = default;
