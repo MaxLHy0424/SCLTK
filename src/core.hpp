@@ -62,6 +62,7 @@ namespace core {
                 }
             }
             throw std::runtime_error{ "not found sub option" };
+            std::abort();
         }
         auto operator=( const option_node & ) -> option_node & = default;
         auto operator=( option_node && ) -> option_node &      = default;
