@@ -73,13 +73,12 @@ namespace core {
         option_node( option_node && )      = default;
         ~option_node()                     = default;
     };
-    inline option_node options{
+    inline auto options{ option_node{
       { { "rule_op", "破解/恢复", { { "hijack_execs", "劫持可执行文件" }, { "set_serv_startup_types", "设置服务启动类型" } } },
-       { "window",
+        { "window",
           "窗口显示",
           { { "topmost_show", "置顶显示" }, { "disable_close_ctrl", "禁用关闭控件" }, { "translucency", "半透明化" } } },
-       { "other", "其他", { { "fix_os_env", "修复操作系统环境" } } } }
-    };
+        { "other", "其他", { { "fix_os_env", "修复操作系统环境" } } } } } };
     struct rule_node final {
         const string_view_type showed_name;
         std::deque< string_type > execs, servs;
