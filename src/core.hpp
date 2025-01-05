@@ -16,42 +16,68 @@ namespace core {
     using type_alloc = console_ui::type_alloc< _type_ >;
     inline constexpr auto config_file_name{ "config.ini"sv };
     inline constexpr auto default_thread_sleep_time{ 1s };
-    struct option_item final {
-        struct sub_option_item final {
-            const string_view_type key_name, showed_name;
+    struct option_node final {
+        struct sub_key final {
+            const string_view_type self_name, showed_name;
             bool is_enabled{};
-            auto operator=( const sub_option_item & ) -> sub_option_item & = default;
-            auto operator=( sub_option_item && ) -> sub_option_item &      = default;
-            sub_option_item( const string_view_type &_key_name, const string_view_type &_showed_name )
-              : key_name{ _key_name }
+            auto operator=( const sub_key & ) -> sub_key & = default;
+            auto operator=( sub_key && ) -> sub_key &      = default;
+            sub_key( const string_view_type &_self_name, const string_view_type &_showed_name )
+              : self_name{ _self_name }
               , showed_name{ _showed_name }
             { }
-            sub_option_item( const sub_option_item & ) = default;
-            sub_option_item( sub_option_item && )      = default;
-            ~sub_option_item()                         = default;
+            sub_key( const sub_key & ) = default;
+            sub_key( sub_key && )      = default;
+            ~sub_key()                 = default;
         };
-        const string_view_type key_name, showed_name;
-        std::vector< sub_option_item > sub_options;
-        auto &operator[]( size_type _index )
+        struct main_key final {
+            const string_view_type self_name, showed_name;
+            std::vector< sub_key > sub_keys;
+            auto &operator[]( const string_view_type &_self_name )
+            {
+                for ( auto &key : sub_keys ) {
+                    if ( key.self_name == _self_name ) {
+                        return key;
+                    }
+                }
+                throw std::runtime_error{ "not found sub option" };
+            }
+            auto operator=( const main_key & ) -> main_key & = default;
+            auto operator=( main_key && ) -> main_key &      = default;
+            main_key( const string_view_type &_self_name, const string_view_type &_showed_name, std::vector< sub_key > _sub_keys )
+              : self_name{ _self_name }
+              , showed_name{ _showed_name }
+              , sub_keys{ std::move( _sub_keys ) }
+            { }
+            main_key( const main_key & ) = default;
+            main_key( main_key && )      = default;
+            ~main_key()                  = default;
+        };
+        std::vector< main_key > main_keys;
+        auto &operator[]( const string_view_type &_self_name )
         {
-            return sub_options.at( _index );
+            for ( auto &key : main_keys ) {
+                if ( key.self_name == _self_name ) {
+                    return key;
+                }
+            }
+            throw std::runtime_error{ "not found sub option" };
         }
-        auto operator=( const option_item & ) -> option_item & = default;
-        auto operator=( option_item && ) -> option_item &      = default;
-        option_item( const string_view_type &_key_name, const string_view_type &_showed_name, std::vector< sub_option_item > _sub_options )
-          : key_name{ _key_name }
-          , showed_name{ _showed_name }
-          , sub_options{ std::move( _sub_options ) }
+        auto operator=( const option_node & ) -> option_node & = default;
+        auto operator=( option_node && ) -> option_node &      = default;
+        option_node( std::vector< main_key > _main_keys )
+          : main_keys{ std::move( _main_keys ) }
         { }
-        option_item( const option_item & ) = default;
-        option_item( option_item && )      = default;
-        ~option_item()                     = default;
+        option_node( const option_node & ) = default;
+        option_node( option_node && )      = default;
+        ~option_node()                     = default;
     };
-    inline option_item options[]{
-      {"rule_op", "破解/恢复", { { "hijack_execs", "劫持可执行文件" }, { "set_serv_startup_types", "设置服务启动类型" } }                  },
-      {"window",
-       "窗口显示",             { { "topmost_show", "置顶显示" }, { "disable_close_ctrl", "禁用关闭控件" }, { "translucency", "半透明化" } }},
-      {"other",   "其他",      { { "fix_os_env", "修复操作系统环境" } }                                                                    }
+    inline option_node options{
+      { { "rule_op", "破解/恢复", { { "hijack_execs", "劫持可执行文件" }, { "set_serv_startup_types", "设置服务启动类型" } } },
+       { "window",
+          "窗口显示",
+          { { "topmost_show", "置顶显示" }, { "disable_close_ctrl", "禁用关闭控件" }, { "translucency", "半透明化" } } },
+       { "other", "其他", { { "fix_os_env", "修复操作系统环境" } } } }
     };
     struct rule_item final {
         const string_view_type showed_name;
@@ -151,13 +177,15 @@ namespace core {
             _args.parent_ui
               .set_console(
                 WINDOW_TITLE " - 命令提示符", CODE_PAGE_CODE, 120, 30, false, false,
-                options[ 1 ][ 1 ].is_enabled ? false : true, options[ 1 ][ 2 ].is_enabled ? 230 : 255 )
+                options[ "window" ][ "disable_close_ctrl" ].is_enabled ? false : true,
+                options[ "window" ][ "translucency" ].is_enabled ? 230 : 255 )
               .lock( false, false );
             SetConsoleScreenBufferSize( GetStdHandle( STD_OUTPUT_HANDLE ), { 128, SHRT_MAX - 1 } );
             system( "cmd.exe" );
             _args.parent_ui.set_console(
               WINDOW_TITLE, CODE_PAGE_CODE, WINDOW_WIDTH, WINDOW_HEIGHT, true, false,
-              options[ 1 ][ 1 ].is_enabled ? false : true, options[ 1 ][ 2 ].is_enabled ? 230 : 255 );
+              options[ "window" ][ "disable_close_ctrl" ].is_enabled ? false : true,
+              options[ "window" ][ "translucency" ].is_enabled ? 230 : 255 );
             return console_ui::value::ui_return;
         } };
         class cmd_executor final {
@@ -368,13 +396,13 @@ namespace core {
                         if ( _is_reload ) {
                             continue;
                         }
-                        for ( auto &option : options ) {
-                            for ( auto &sub_option : option.sub_options ) {
-                                if ( line == std::format( "{}::{} = true", option.key_name, sub_option.key_name ) ) {
-                                    sub_option.is_enabled = true;
+                        for ( auto &main_key : options.main_keys ) {
+                            for ( auto &sub_key : main_key.sub_keys ) {
+                                if ( line == std::format( "{}::{} = true", main_key.self_name, sub_key.self_name ) ) {
+                                    sub_key.is_enabled = true;
                                 }
-                                if ( line == std::format( "{}::{} = false", option.key_name, sub_option.key_name ) ) {
-                                    sub_option.is_enabled = false;
+                                if ( line == std::format( "{}::{} = false", main_key.self_name, sub_key.self_name ) ) {
+                                    sub_key.is_enabled = false;
                                 }
                             }
                         }
@@ -394,10 +422,10 @@ namespace core {
             std::print( " -> 保存更改.\n" );
             auto config_text{ string_type{} };
             config_text.append( "[ options ]\n" );
-            for ( const auto &option : options ) {
-                for ( const auto &sub_option : option.sub_options ) {
+            for ( const auto &main_key : options.main_keys ) {
+                for ( const auto &sub_key : main_key.sub_keys ) {
                     config_text.append( std::format(
-                      "{}::{} = {}\n", option.key_name, sub_option.key_name, sub_option.is_enabled ? "true" : "false" ) );
+                      "{}::{} = {}\n", main_key.self_name, sub_key.self_name, sub_key.is_enabled ? "true" : "false" ) );
                 }
             }
             config_text.append( "[ custom_rule_execs ]\n" );
@@ -438,19 +466,19 @@ namespace core {
         }
         class option_setter {
           private:
-            option_item::sub_option_item &sub_option_;
-            const bool sub_option_value_;
+            option_node::sub_key &sub_key_;
+            const bool sub_key_value_;
           public:
             auto operator()( console_ui::func_args )
             {
-                sub_option_.is_enabled = sub_option_value_;
+                sub_key_.is_enabled = sub_key_value_;
                 return console_ui::value::ui_return;
             }
             auto operator=( const option_setter & ) -> option_setter & = default;
             auto operator=( option_setter && ) -> option_setter &      = default;
-            option_setter( option_item::sub_option_item &_sub_option, const bool _sub_option_value )
-              : sub_option_{ _sub_option }
-              , sub_option_value_{ _sub_option_value }
+            option_setter( option_node::sub_key &_sub_key, const bool _sub_key_value )
+              : sub_key_{ _sub_key }
+              , sub_key_value_{ _sub_key_value }
             { }
             option_setter( const option_setter & ) = default;
             option_setter( option_setter && )      = default;
@@ -458,7 +486,7 @@ namespace core {
         };
         class option_shower final {
           private:
-            option_item &option_;
+            option_node::main_key &main_key_;
           public:
             auto operator()( console_ui::func_args )
             {
@@ -466,20 +494,20 @@ namespace core {
                 std::print( " -> 准备用户界面.\n" );
                 ui.add_back( "                    [ 配  置 ]\n\n" )
                   .add_back(
-                    std::format( " < 折叠 {} ", option_.showed_name ), quit,
+                    std::format( " < 折叠 {} ", main_key_.showed_name ), quit,
                     console_ui::value::text_foreground_green | console_ui::value::text_foreground_intensity );
-                for ( auto &sub_option : option_.sub_options ) {
-                    ui.add_back( std::format( "\n[{}]\n", sub_option.showed_name ) )
-                      .add_back( " > 启用 ", option_setter{ sub_option, true }, option_button_color )
-                      .add_back( " > 禁用 ", option_setter{ sub_option, false }, option_button_color );
+                for ( auto &sub_key : main_key_.sub_keys ) {
+                    ui.add_back( std::format( "\n[{}]\n", sub_key.showed_name ) )
+                      .add_back( " > 启用 ", option_setter{ sub_key, true }, option_button_color )
+                      .add_back( " > 禁用 ", option_setter{ sub_key, false }, option_button_color );
                 }
                 ui.show();
                 return console_ui::value::ui_return;
             }
             auto operator=( const option_shower & ) -> option_shower & = default;
             auto operator=( option_shower && ) -> option_shower &      = default;
-            option_shower( option_item &_option )
-              : option_{ _option }
+            option_shower( option_node::main_key &_main_key )
+              : main_key_{ _main_key }
             { }
             option_shower( const option_shower & ) = default;
             option_shower( option_shower && )      = default;
@@ -499,8 +527,8 @@ namespace core {
               .add_back( " > 同步配置 ", [ this ]( console_ui::func_args ) { return sync(); } )
               .add_back( " > 打开配置文件 ", [ this ]( console_ui::func_args ) { return open_file(); } )
               .add_back( "\n[选项]\n" );
-            for ( auto &option : options ) {
-                ui.add_back( std::format( " > {} ", option.showed_name ), option_shower{ option } );
+            for ( auto &key : options.main_keys ) {
+                ui.add_back( std::format( " > {} ", key.showed_name ), option_shower{ key } );
             }
             ui.show();
         }
@@ -540,7 +568,7 @@ namespace core {
             std::print( " -> 生成并执行操作系统命令.\n{}\n", string_type( WINDOW_WIDTH, '-' ) );
             switch ( mod_data_ ) {
                 case mod::crack : {
-                    if ( options[ 0 ][ 0 ].is_enabled ) {
+                    if ( options[ "rule_op" ][ "hijack_execs" ].is_enabled ) {
                         for ( const auto &exec : rules_.execs ) {
                             system(
                               std::format(
@@ -549,7 +577,7 @@ namespace core {
                                 .c_str() );
                         }
                     }
-                    if ( options[ 0 ][ 1 ].is_enabled ) {
+                    if ( options[ "rule_op" ][ "set_serv_startup_types" ].is_enabled ) {
                         for ( const auto &serv : rules_.servs ) {
                             system( std::format( R"(sc.exe config "{}" start= disabled)", serv ).c_str() );
                         }
@@ -563,7 +591,7 @@ namespace core {
                     break;
                 }
                 case mod::recovery : {
-                    if ( options[ 0 ][ 0 ].is_enabled ) {
+                    if ( options[ "rule_op" ][ "hijack_execs" ].is_enabled ) {
                         for ( const auto &exec : rules_.execs ) {
                             system(
                               std::format(
@@ -572,7 +600,7 @@ namespace core {
                                 .c_str() );
                         }
                     }
-                    if ( options[ 0 ][ 1 ].is_enabled ) {
+                    if ( options[ "rule_op" ][ "set_serv_startup_types" ].is_enabled ) {
                         for ( const auto &serv : rules_.servs ) {
                             system( std::format( R"(sc.exe config "{}" start= auto)", serv ).c_str() );
                         }

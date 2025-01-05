@@ -11,9 +11,11 @@ auto main() -> int
         return EXIT_SUCCESS;
     }
     auto set_window_thread{
-      core::set_window{ core::options[ 1 ][ 0 ].is_enabled, core::options[ 1 ][ 1 ].is_enabled, core::options[ 1 ][ 2 ].is_enabled }
+      core::set_window{
+                       core::options[ "window" ][ "topmost_show" ].is_enabled, core::options[ "window" ][ "disable_close_ctrl" ].is_enabled,
+                       core::options[ "window" ][ "translucency" ].is_enabled }
     };
-    auto fix_os_env_thread{ core::fix_os_env{ core::options[ 2 ][ 0 ].is_enabled } };
+    auto fix_os_env_thread{ core::fix_os_env{ core::options[ "other" ][ "fix_os_env" ].is_enabled } };
     core::config_op{ core::config_op::mod::load }( console_ui::func_args{ ui } );
     std::print( " -> 准备用户界面.\n" );
     ui.add_back( "                    [ 主  页 ]\n\n" )
