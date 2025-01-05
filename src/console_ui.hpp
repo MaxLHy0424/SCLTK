@@ -72,7 +72,7 @@ class console_ui final {
         ~func_args()                   = default;
     };
     template < typename _chrono_type_ >
-    static auto perf_sleep( const _chrono_type_ &_time )
+    static auto perf_sleep( const _chrono_type_ _time )
     {
         std::this_thread::yield();
         std::this_thread::sleep_for( _time );
@@ -95,12 +95,12 @@ class console_ui final {
             SetConsoleTextAttribute( GetStdHandle( STD_OUTPUT_HANDLE ), _attrs );
             last_attrs = _attrs;
         }
-        auto operator==( const COORD &_mouse_position ) const
+        auto operator==( const COORD _mouse_position ) const
         {
             return position.Y == _mouse_position.Y && position.X <= _mouse_position.X
                 && _mouse_position.X < ( position.X + static_cast< SHORT >( text.size() ) );
         }
-        auto operator!=( const COORD &_mouse_position ) const
+        auto operator!=( const COORD _mouse_position ) const
         {
             return !operator==( _mouse_position );
         }
@@ -111,7 +111,7 @@ class console_ui final {
           , intensity_attrs{ value::text_foreground_green | value::text_foreground_blue }
           , last_attrs{ value::text_default }
         { }
-        line_node_( const string_view_type &_text, callback_type _func, const WORD _default_attrs, const WORD _intensity_attrs )
+        line_node_( const string_view_type _text, callback_type &_func, const WORD _default_attrs, const WORD _intensity_attrs )
           : text{ _text }
           , func{ std::move( _func ) }
           , default_attrs{ _default_attrs }
@@ -160,7 +160,7 @@ class console_ui final {
         GetConsoleScreenBufferInfo( GetStdHandle( STD_OUTPUT_HANDLE ), &console_data );
         return console_data.dwCursorPosition;
     }
-    static auto set_cursor_( const COORD &_cursor_position )
+    static auto set_cursor_( const COORD _cursor_position )
     {
         SetConsoleCursorPosition( GetStdHandle( STD_OUTPUT_HANDLE ), _cursor_position );
     }
@@ -192,11 +192,11 @@ class console_ui final {
         std::print( "{}", string_type( static_cast< size_type >( width_ ) * static_cast< size_type >( height_ ), ' ' ) );
         set_cursor_( { 0, 0 } );
     }
-    static auto write_( const string_view_type &_text, const bool _is_endl = false )
+    static auto write_( const string_view_type _text, const bool _is_endl = false )
     {
         std::print( "{}{}", _text, _is_endl ? '\n' : '\0' );
     }
-    static auto rewrite_( const COORD &_cursor_position, const string_view_type &_text )
+    static auto rewrite_( const COORD _cursor_position, const string_view_type _text )
     {
         set_cursor_( { 0, _cursor_position.Y } );
         write_( string_type( _cursor_position.X, ' ' ) );
@@ -213,7 +213,7 @@ class console_ui final {
             write_( line.text, true );
         }
     }
-    auto refresh_( const COORD &_hang_position )
+    auto refresh_( const COORD _hang_position )
     {
         for ( auto &line : lines_ ) {
             if ( line == _hang_position && line.last_attrs != line.intensity_attrs ) {
@@ -284,51 +284,50 @@ class console_ui final {
         return *this;
     }
     auto &add_front(
-      const string_view_type &_text, callback_type _func = nullptr,
+      const string_view_type _text, callback_type _func = nullptr,
       const WORD _intensity_attrs = value::text_foreground_green | value::text_foreground_blue,
       const WORD _default_attrs   = value::text_default )
     {
         auto is_func{ _func == nullptr ? false : true };
         lines_.emplace_front( line_node_{
           _text,
-          std::move( _func ),
+          _func,
           _default_attrs,
           is_func ? _intensity_attrs : _default_attrs,
         } );
         return *this;
     }
     auto &add_back(
-      const string_view_type &_text, callback_type _func = nullptr,
+      const string_view_type _text, callback_type _func = nullptr,
       const WORD _intensity_attrs = value::text_foreground_blue | value::text_foreground_green,
       const WORD _default_attrs   = value::text_default )
     {
         auto is_func{ _func == nullptr ? false : true };
         lines_.emplace_back( line_node_{
           _text,
-          std::move( _func ),
+          _func,
           _default_attrs,
           is_func ? _intensity_attrs : _default_attrs,
         } );
         return *this;
     }
     auto &insert(
-      const size_type _index, const string_view_type &_text, callback_type _func = nullptr,
+      const size_type _index, const string_view_type _text, callback_type _func = nullptr,
       const WORD _intensity_attrs = value::text_foreground_green | value::text_foreground_blue,
       const WORD _default_attrs   = value::text_default )
     {
         auto is_func{ _func == nullptr ? false : true };
         lines_.emplace(
-          lines_.cbegin() + _index,
-          line_node_{ _text, std::move( _func ), _default_attrs, is_func ? _intensity_attrs : _default_attrs } );
+          lines_.cbegin() + _index, line_node_{ _text, _func, _default_attrs, is_func ? _intensity_attrs : _default_attrs } );
         return *this;
     }
     auto &edit(
-      const size_type _index, const string_view_type &_text, callback_type _func = nullptr,
+      const size_type _index, const string_view_type _text, callback_type _func = nullptr,
       const WORD _intensity_attrs = value::text_foreground_green | value::text_foreground_blue,
       const WORD _default_attrs   = value::text_default )
     {
         auto is_func{ _func == nullptr ? false : true };
-        lines_.at( _index ) = line_node_{ _text, std::move( _func ), _default_attrs, is_func ? _intensity_attrs : _default_attrs };
+        lines_.at( _index ) = line_node_{ _text, _func, _default_attrs, is_func ? _intensity_attrs : _default_attrs };
         return *this;
     }
     auto &remove_front()
@@ -376,7 +375,7 @@ class console_ui final {
         return *this;
     }
     auto &set_console(
-      const string_view_type &_title, const UINT _code_page, const SHORT _width, const SHORT _height, const bool _is_fix_size,
+      const string_view_type _title, const UINT _code_page, const SHORT _width, const SHORT _height, const bool _is_fix_size,
       const bool _is_enable_minimize_ctrl, const bool is_enable_close_window_ctrl, const BYTE _translucency )
     {
         SetConsoleOutputCP( _code_page );

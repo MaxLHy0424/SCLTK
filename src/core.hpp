@@ -23,7 +23,7 @@ namespace core {
             bool is_enabled{};
             auto operator=( const sub_key & ) -> sub_key & = default;
             auto operator=( sub_key && ) -> sub_key &      = default;
-            sub_key( const string_view_type &_self_name, const string_view_type &_showed_name )
+            sub_key( const string_view_type _self_name, const string_view_type _showed_name )
               : self_name{ _self_name }
               , showed_name{ _showed_name }
             { }
@@ -34,7 +34,7 @@ namespace core {
         struct main_key final {
             const string_view_type self_name, showed_name;
             std::vector< sub_key > sub_keys;
-            auto &operator[]( const string_view_type &_self_name )
+            auto &operator[]( const string_view_type _self_name )
             {
                 for ( auto &key : sub_keys ) {
                     if ( key.self_name == _self_name ) {
@@ -45,7 +45,7 @@ namespace core {
             }
             auto operator=( const main_key & ) -> main_key & = default;
             auto operator=( main_key && ) -> main_key &      = default;
-            main_key( const string_view_type &_self_name, const string_view_type &_showed_name, std::vector< sub_key > _sub_keys )
+            main_key( const string_view_type _self_name, const string_view_type _showed_name, std::vector< sub_key > _sub_keys )
               : self_name{ _self_name }
               , showed_name{ _showed_name }
               , sub_keys{ std::move( _sub_keys ) }
@@ -55,7 +55,7 @@ namespace core {
             ~main_key()                  = default;
         };
         std::vector< main_key > main_keys;
-        auto &operator[]( const string_view_type &_self_name )
+        auto &operator[]( const string_view_type _self_name )
         {
             for ( auto &key : main_keys ) {
                 if ( key.self_name == _self_name ) {
@@ -85,7 +85,7 @@ namespace core {
         std::deque< string_type > execs, servs;
         auto operator=( const rule_node & ) -> rule_node & = default;
         auto operator=( rule_node && ) -> rule_node &      = default;
-        rule_node( const string_view_type &_showed_name, std::deque< string_type > _execs, std::deque< string_type > _servs )
+        rule_node( const string_view_type _showed_name, std::deque< string_type > _execs, std::deque< string_type > _servs )
           : showed_name{ _showed_name }
           , execs{ std::move( _execs ) }
           , servs{ std::move( _servs ) }
@@ -140,12 +140,12 @@ namespace core {
         return console_ui::value::ui_exit;
     }
     template < typename _chrono_type_ >
-    inline auto perf_sleep( const _chrono_type_ &_time )
+    inline auto perf_sleep( const _chrono_type_ _time )
     {
         console_ui::perf_sleep( _time );
     }
     template < typename _chrono_type_ >
-    inline auto wait( const _chrono_type_ &_time )
+    inline auto wait( const _chrono_type_ _time )
     {
         for ( auto i{ _time }; i > _chrono_type_{}; --i ) {
             std::print( " {} 后返回.\r", i );
@@ -205,7 +205,7 @@ namespace core {
             }
             auto operator=( const cmd_executor & ) -> cmd_executor & = default;
             auto operator=( cmd_executor && ) -> cmd_executor &      = default;
-            cmd_executor( const string_view_type &_cmd )
+            cmd_executor( const string_view_type _cmd )
               : cmd_{ _cmd }
             { }
             cmd_executor( const cmd_executor & ) = default;
