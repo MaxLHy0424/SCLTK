@@ -11,8 +11,8 @@ namespace core {
     using namespace std::string_view_literals;
     using size_type        = cpp_utils::size_type;
     using string_type      = cpp_utils::string_type;
+    using wstring_type     = cpp_utils::wstring_type;
     using string_view_type = cpp_utils::string_view_type;
-    using wstring_type     = std::wstring;
     template < typename _type_ >
     using type_alloc = cpp_utils::type_alloc< _type_ >;
     inline constexpr auto config_file_name{ "config.ini"sv };
