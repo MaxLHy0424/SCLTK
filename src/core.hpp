@@ -271,11 +271,16 @@ namespace core {
         const bool &is_enabled_;
         auto exec_op_( std::stop_token &&_msg )
         {
-            type_alloc< const string_view_type[] > hkcu_reg_dirs{
-              R"(Software\Policies\Microsoft\Windows\System)", R"(Software\Microsoft\Windows\CurrentVersion\Policies\System)",
-              R"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)" },
-              execs{ "mode.com", "chcp.com", "ntsd.exe",    "taskkill.exe", "sc.exe",      "net.exe",
-                     "reg.exe",  "cmd.exe",  "taskmgr.exe", "perfmon.exe",  "regedit.exe", "mmc.exe" };
+            constexpr auto hkcu_reg_dirs{
+              std::array{
+                         R"(Software\Policies\Microsoft\Windows\System)"sv, R"(Software\Microsoft\Windows\CurrentVersion\Policies\System)"sv,
+                         R"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)"sv }
+            };
+            constexpr auto execs{
+              std::array{
+                         "mode.com"sv, "chcp.com"sv, "ntsd.exe"sv, "taskkill.exe"sv, "sc.exe"sv, "net.exe"sv, "reg.exe"sv, "cmd.exe"sv,
+                         "taskmgr.exe"sv, "perfmon.exe"sv, "regedit.exe"sv, "mmc.exe"sv }
+            };
             while ( !_msg.stop_requested() ) {
                 if ( !is_enabled_ ) {
                     cpp_utils::perf_sleep( default_thread_sleep_time );
