@@ -401,7 +401,7 @@ namespace core {
               "# [同步时间] {} (UTC)\n"
               "# [同步版本] {}\n"
               "# [字符编码] {} ({})\n",
-              INFO_NAME, std::chrono::utc_clock::now(), INFO_VERSION, CODE_PAGE_NAME, CODE_PAGE_CODE )
+              INFO_NAME, std::chrono::system_clock::now(), INFO_VERSION, CODE_PAGE_NAME, CODE_PAGE_CODE )
                         << config_text << std::flush;
             std::print( "\n ({}) 同步配置{}.\n\n", config_file.fail() ? '!' : 'i', config_file.fail() ? "失败" : "成功" );
             wait( 3s );
