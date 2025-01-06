@@ -56,7 +56,8 @@ CRCSN 发行版文件名规则为 `CRCSN-[arch]-[runtime].exe`, 其中 `[arch]` 
 ## 3 配置 CRCSN
 
 > [!NOTE]
-> 配置文件 `config.ini` 中以 `#` 开头的行会被忽略.
+> 配置文件 `config.ini` 中以 `#` 开头的行位注释.\
+> 配置文件头部注释为 CRCSN 自动生成.
 
 - **进入配置编辑页面**\
   `> 配置`
