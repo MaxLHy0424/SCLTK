@@ -333,7 +333,7 @@ namespace core {
             enum class config_label { unknown, options, custom_rule_execs, custom_rule_servs };
             auto label{ config_label::unknown };
             auto line{ string_type{} };
-            while ( std::getline( config_file, line ).good() ) {
+            while ( std::getline( config_file, line ) ) {
                 if ( line.empty() || line.front() == '#' ) {
                     continue;
                 }
