@@ -167,6 +167,11 @@ namespace cpp_utils {
     {
         std::print( "{}", u8string_to_string( u8format( _fmt, std::forward< _args_ >( _args )... ) ) );
     }
+    template < typename... _args_ >
+    inline auto u8println( const u8string_view_type _fmt, _args_ &&..._args )
+    {
+        std::println( "{}", u8string_to_string( u8format( _fmt, std::forward< _args_ >( _args )... ) ) );
+    }
     template < size_type _length_ >
     struct template_string final {
         char data[ _length_ ]{};
