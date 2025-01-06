@@ -194,22 +194,22 @@ namespace cpp_utils {
                 }
             }
         };
-        std::deque< task_node_ > tasks{};
+        std::vector< task_node_ > tasks_{};
       protected:
         auto add_task( std::jthread _task_thread )
         {
-            tasks.emplace_back( task_node_{ std::move( _task_thread ) } );
+            tasks_.emplace_back( task_node_{ std::move( _task_thread ) } );
         }
         auto join_task( const size_type _index )
         {
-            auto &task{ tasks.at( _index ).task_thread };
+            auto &task{ tasks_.at( _index ).task_thread };
             if ( task.joinable() ) {
                 task.join();
             }
         }
         auto detach_task( const size_type _index )
         {
-            auto &task{ tasks.at( _index ).task_thread };
+            auto &task{ tasks_.at( _index ).task_thread };
             if ( task.joinable() ) {
                 task.detach();
             }
@@ -217,9 +217,12 @@ namespace cpp_utils {
         auto operator=( const multithread_task & ) -> multithread_task & = default;
         auto operator=( multithread_task && ) -> multithread_task &      = default;
         multithread_task()                                               = default;
-        multithread_task( const multithread_task & )                     = default;
-        multithread_task( multithread_task && )                          = default;
-        ~multithread_task()                                              = default;
+        multithread_task( const size_type _size )
+          : tasks_{ _size }
+        { }
+        multithread_task( const multithread_task & ) = default;
+        multithread_task( multithread_task && )      = default;
+        ~multithread_task()                          = default;
     };
 #if defined( _WIN32 ) || defined( _WIN64 )
     inline auto is_run_as_admin()
