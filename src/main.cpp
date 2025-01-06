@@ -4,9 +4,9 @@ auto main() -> int
     auto ui{ cpp_utils::console_ui{} };
     ui.lock( true, true ).set_console( WINDOW_TITLE, CODE_PAGE_CODE, WINDOW_WIDTH, WINDOW_HEIGHT, true, false, true, 255 );
     std::print( " -> 检测运行权限.\n" );
-    if ( !core::is_run_as_admin() ) {
+    if ( !cpp_utils::is_run_as_admin() ) {
         std::print( " -> 申请管理员权限.\n" );
-        core::relaunch_as_admin( cpp_utils::console_ui::func_args{ ui } );
+        cpp_utils::relaunch_as_admin();
         return EXIT_SUCCESS;
     }
     auto set_window_thread{
@@ -20,7 +20,8 @@ auto main() -> int
     ui.add_back( "                    [ 主  页 ]\n\n" )
       .add_back( " < 退出 ", core::quit, cpp_utils::console_value::text_foreground_red | cpp_utils::console_value::text_foreground_intensity )
       .add_back(
-        " < 重启 ", core::relaunch_as_admin,
+        " < 重启 ",
+        []( cpp_utils::console_ui::func_args ) { return ( cpp_utils::relaunch_as_admin(), cpp_utils::console_value::ui_exit ); },
         cpp_utils::console_value::text_foreground_green | cpp_utils::console_value::text_foreground_intensity )
       .add_back( " > 信息 ", core::info )
       .add_back( " > 配置 ", core::config_op{ core::config_op::mod::edit } )

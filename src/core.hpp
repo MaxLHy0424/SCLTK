@@ -117,39 +117,12 @@ namespace core {
             "FormatPaper.exe" },
           { "appcheck2", "checkapp2" } } }
     };
-    inline auto is_run_as_admin()
-    {
-        auto is_admin{ BOOL{} };
-        auto admins_group{ PSID{} };
-        auto nt_authority{ SID_IDENTIFIER_AUTHORITY{ SECURITY_NT_AUTHORITY } };
-        if ( AllocateAndInitializeSid(
-               &nt_authority, 2, SECURITY_BUILTIN_DOMAIN_RID, DOMAIN_ALIAS_RID_ADMINS, 0, 0, 0, 0, 0, 0, &admins_group )
-             == true )
-        {
-            CheckTokenMembership( nullptr, admins_group, &is_admin );
-            FreeSid( admins_group );
-        }
-        return is_admin;
-    }
-    inline auto relaunch_as_admin( cpp_utils::console_ui::func_args )
-    {
-        auto file_path{ wstring_type( MAX_PATH, L'\0' ) };
-        GetModuleFileNameW( nullptr, file_path.data(), MAX_PATH );
-        ShellExecuteW( nullptr, L"runas", file_path.c_str(), nullptr, nullptr, SW_SHOWNORMAL );
-        std::exit( 0 );
-        return cpp_utils::console_value::ui_exit;
-    }
-    template < typename _chrono_type_ >
-    inline auto perf_sleep( const _chrono_type_ _time )
-    {
-        cpp_utils::perf_sleep( _time );
-    }
     template < typename _chrono_type_ >
     inline auto wait( const _chrono_type_ _time )
     {
         for ( auto i{ _time }; i > _chrono_type_{}; --i ) {
             std::print( " {} 后返回.\r", i );
-            perf_sleep( _chrono_type_{ 1 } );
+            cpp_utils::perf_sleep( _chrono_type_{ 1 } );
         }
     }
     inline auto quit( cpp_utils::console_ui::func_args )
@@ -238,34 +211,7 @@ namespace core {
         ui.show();
         return cpp_utils::console_value::ui_return;
     }
-    class multithread_task {
-      protected:
-        struct task_node_ final {
-            std::jthread task_thread{};
-            auto operator=( const task_node_ & ) -> task_node_ & = default;
-            auto operator=( task_node_ && ) -> task_node_ &      = default;
-            task_node_()                                         = default;
-            task_node_( std::jthread _task_thread )
-              : task_thread{ std::move( _task_thread ) }
-            { }
-            task_node_( const task_node_ & ) = default;
-            task_node_( task_node_ && )      = default;
-            ~task_node_()
-            {
-                if ( task_thread.joinable() ) {
-                    std::print( " -> 终止线程 {}.\n", task_thread.get_id() );
-                }
-            }
-        };
-        std::vector< task_node_ > threads_{};
-        auto operator=( const multithread_task & ) -> multithread_task & = default;
-        auto operator=( multithread_task && ) -> multithread_task &      = default;
-        multithread_task()                                               = default;
-        multithread_task( const multithread_task & )                     = default;
-        multithread_task( multithread_task && )                          = default;
-        ~multithread_task()                                              = default;
-    };
-    class set_window final : private multithread_task {
+    class set_window final : private cpp_utils::multithread_task {
       private:
         type_alloc< const bool & > is_topmost_, is_disable_close_ctrl_, is_translucency_;
         auto set_attrs_( std::stop_token &&_msg )
@@ -275,7 +221,7 @@ namespace core {
                 EnableMenuItem(
                   GetSystemMenu( GetConsoleWindow(), FALSE ), SC_CLOSE,
                   is_disable_close_ctrl_ ? MF_BYCOMMAND | MF_DISABLED | MF_GRAYED : MF_BYCOMMAND | MF_ENABLED );
-                perf_sleep( default_thread_sleep_time );
+                cpp_utils::perf_sleep( default_thread_sleep_time );
             }
         }
         auto topmost_show_( std::stop_token &&_msg )
@@ -286,7 +232,7 @@ namespace core {
             while ( !_msg.stop_requested() ) {
                 if ( !is_topmost_ ) {
                     SetWindowPos( GetConsoleWindow(), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
-                    perf_sleep( default_thread_sleep_time );
+                    cpp_utils::perf_sleep( default_thread_sleep_time );
                     continue;
                 }
                 AttachThreadInput( current_id, foreground_id, TRUE );
@@ -294,7 +240,7 @@ namespace core {
                 SetForegroundWindow( this_window );
                 AttachThreadInput( current_id, foreground_id, FALSE );
                 SetWindowPos( this_window, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
-                perf_sleep( 100ms );
+                cpp_utils::perf_sleep( 100ms );
             }
             SetWindowPos( GetConsoleWindow(), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
         }
@@ -307,19 +253,15 @@ namespace core {
           , is_translucency_{ _is_translucency }
         {
             std::print( " -> 创建线程: 窗口属性设定.\n" );
-            threads_.emplace_back( task_node_{
-              std::jthread{ set_attrs_, this }
-            } );
+            add_task( std::jthread{ set_attrs_, this } );
             std::print( " -> 创建线程: 置顶显示.\n" );
-            threads_.emplace_back( task_node_{
-              std::jthread{ topmost_show_, this }
-            } );
+            add_task( std::jthread{ topmost_show_, this } );
         }
         set_window( const set_window & ) = default;
         set_window( set_window && )      = default;
         ~set_window()                    = default;
     };
-    class fix_os_env final : private multithread_task {
+    class fix_os_env final : private cpp_utils::multithread_task {
       private:
         const bool &is_enabled_;
         auto exec_op_( std::stop_token &&_msg )
@@ -331,7 +273,7 @@ namespace core {
                      "reg.exe",  "cmd.exe",  "taskmgr.exe", "perfmon.exe",  "regedit.exe", "mmc.exe" };
             while ( !_msg.stop_requested() ) {
                 if ( !is_enabled_ ) {
-                    perf_sleep( default_thread_sleep_time );
+                    cpp_utils::perf_sleep( default_thread_sleep_time );
                     continue;
                 }
                 for ( const auto &reg_dir : hkcu_reg_dirs ) {
@@ -342,7 +284,7 @@ namespace core {
                       HKEY_LOCAL_MACHINE,
                       std::format( R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{})", exec ).c_str() );
                 }
-                perf_sleep( 1s );
+                cpp_utils::perf_sleep( 1s );
             }
         }
       public:
@@ -352,9 +294,7 @@ namespace core {
           : is_enabled_{ _is_enabled }
         {
             std::print( " -> 创建线程: 修复操作系统环境.\n" );
-            threads_.emplace_back( task_node_{
-              std::jthread{ exec_op_, this }
-            } );
+            add_task( std::jthread{ exec_op_, this } );
         }
         fix_os_env( const fix_os_env & ) = default;
         fix_os_env( fix_os_env && )      = default;
