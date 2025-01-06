@@ -316,8 +316,7 @@ namespace core {
             auto config_file{
               std::ifstream{ config_file_name.data(), std::ios::in }
             };
-            if ( !config_file.is_open() ) {
-                config_file.close();
+            if ( !config_file.good() ) {
                 return;
             }
             std::print( " -> 加载配置文件.\n" );
@@ -328,7 +327,7 @@ namespace core {
             enum class config_label { unknown, options, custom_rule_execs, custom_rule_servs };
             auto label{ config_label::unknown };
             auto line{ string_type{} };
-            while ( std::getline( config_file, line ) ) {
+            while ( std::getline( config_file, line ).good() ) {
                 if ( line.empty() || line.front() == '#' ) {
                     continue;
                 }
@@ -369,7 +368,6 @@ namespace core {
                     case config_label::custom_rule_servs : custom_rules.servs.emplace_back( std::move( line ) ); break;
                 }
             }
-            config_file.close();
             return;
         }
         auto sync()
@@ -403,14 +401,13 @@ namespace core {
               "# [字符编码] {} ({})\n",
               INFO_NAME, std::chrono::system_clock::now(), INFO_VERSION, CODE_PAGE_NAME, CODE_PAGE_CODE )
                         << config_text << std::flush;
-            std::print( "\n ({}) 同步配置{}.\n\n", config_file.fail() ? '!' : 'i', config_file.fail() ? "失败" : "成功" );
+            std::print( "\n ({}) 同步配置{}.\n\n", config_file.good() ? 'i' : '!', config_file.good() ? "成功" : "失败" );
             wait( 3s );
-            config_file.close();
             return cpp_utils::console_value::ui_return;
         }
         auto open_file()
         {
-            if ( std::ifstream{ config_file_name.data(), std::ios::in }.is_open() ) {
+            if ( std::ifstream{ config_file_name.data(), std::ios::in }.good() ) {
                 std::print( " -> 打开配置.\n" );
                 ShellExecuteA( nullptr, "open", config_file_name.data(), nullptr, nullptr, SW_SHOWNORMAL );
                 return cpp_utils::console_value::ui_return;
