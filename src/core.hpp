@@ -43,8 +43,8 @@ namespace core {
                 }
 #if !defined( NDEBUG )
                 throw std::runtime_error{ std::format( "not found '{}'", _self_name ) };
-                std::abort();
 #endif
+                std::abort();
             }
             auto operator=( const main_key & ) -> main_key & = default;
             auto operator=( main_key && ) -> main_key &      = default;
@@ -67,8 +67,8 @@ namespace core {
             }
 #if !defined( NDEBUG )
             throw std::runtime_error{ std::format( "not found '{}'", _self_name ) };
-            std::abort();
 #endif
+            std::abort();
         }
         auto operator=( const option_node & ) -> option_node & = default;
         auto operator=( option_node && ) -> option_node &      = default;
