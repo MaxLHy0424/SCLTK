@@ -175,7 +175,7 @@ namespace cpp_utils {
     template < size_type _length_ >
     struct template_u8string final {
         char8_t data[ _length_ ]{};
-        constexpr template_string( const char8_t ( &_str )[ _length_ ] )
+        constexpr template_u8string( const char8_t ( &_str )[ _length_ ] )
         {
             std::copy( _str, _str + _length_, data );
         }
