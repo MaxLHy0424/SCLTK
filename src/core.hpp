@@ -317,7 +317,7 @@ namespace core {
           .add_back( " < 返回 ", quit, cpp_utils::console_value::text_foreground_green | cpp_utils::console_value::text_foreground_intensity )
           .add_back( " > 命令提示符 ", launch_cmd )
           .add_back( "\n[常用操作]\n" );
-        for ( auto &op : common_ops ) {
+        for ( const auto &op : common_ops ) {
             ui.add_back( std::format( " > {} ", op[ 0 ] ), cmd_executor{ op[ 1 ] } );
         }
         ui.show();
