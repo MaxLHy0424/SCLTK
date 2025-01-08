@@ -173,9 +173,9 @@ namespace cpp_utils {
         std::println( "{}", u8string_to_string( u8format( _fmt, std::forward< _args_ >( _args )... ) ) );
     }
     template < size_type _length_ >
-    struct template_u8string final {
+    struct constexpr_u8string final {
         char8_t data[ _length_ ]{};
-        constexpr template_u8string( const char8_t ( &_str )[ _length_ ] )
+        constexpr constexpr_u8string( const char8_t ( &_str )[ _length_ ] )
         {
             std::copy( _str, _str + _length_, data );
         }
