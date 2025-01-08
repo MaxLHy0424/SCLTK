@@ -122,6 +122,113 @@ namespace core {
             "FormatPaper.exe" },
           { "appcheck2", "checkapp2" } } }
     };
+    class config_item_base {
+      public:
+        const string_view_type self_name;
+        virtual auto load( const bool, const string_view_type ) -> void  = 0;
+        virtual auto reload_init() -> void                               = 0;
+        virtual auto sync( string_type & ) -> void                       = 0;
+        auto operator=( const config_item_base & ) -> config_item_base & = default;
+        auto operator=( config_item_base && ) -> config_item_base &      = default;
+        config_item_base( const string_view_type _self_name )
+          : self_name{ _self_name }
+        { }
+        config_item_base( const config_item_base & ) = default;
+        config_item_base( config_item_base && )      = default;
+        virtual ~config_item_base()                  = default;
+    };
+    class option_op final : public config_item_base {
+      public:
+        auto load( const bool _is_reload, const string_view_type _line ) -> void override final
+        {
+            if ( _is_reload ) {
+                return;
+            }
+            for ( auto &main_key : options.main_keys ) {
+                for ( auto &sub_key : main_key.sub_keys ) {
+                    if ( _line == std::format( "{}::{} = true", main_key.self_name, sub_key.self_name ) ) {
+                        sub_key.is_enabled = true;
+                    }
+                    if ( _line == std::format( "{}::{} = false", main_key.self_name, sub_key.self_name ) ) {
+                        sub_key.is_enabled = false;
+                    }
+                }
+            }
+        }
+        auto reload_init() -> void override final { }
+        auto sync( string_type &_out ) -> void override final
+        {
+            for ( const auto &main_key : options.main_keys ) {
+                for ( const auto &sub_key : main_key.sub_keys ) {
+                    _out.append( std::format(
+                      "{}::{} = {}\n", main_key.self_name, sub_key.self_name, sub_key.is_enabled ? "true" : "false" ) );
+                }
+            }
+        }
+        auto operator=( const option_op & ) -> option_op & = default;
+        auto operator=( option_op && ) -> option_op &      = default;
+        option_op()
+          : config_item_base{ "options" }
+        { }
+        option_op( const option_op & ) = default;
+        option_op( option_op && )      = default;
+        virtual ~option_op()           = default;
+    };
+    class custom_rule_execs_op final : public config_item_base {
+      public:
+        auto load( const bool, const string_view_type _line ) -> void override final
+        {
+            custom_rules.execs.emplace_back( _line );
+        }
+        auto reload_init() -> void override final
+        {
+            custom_rules.execs.clear();
+        }
+        auto sync( string_type &_out ) -> void override final
+        {
+            for ( const auto &exec : custom_rules.execs ) {
+                _out.append( exec ).push_back( '\n' );
+            }
+        }
+        auto operator=( const custom_rule_execs_op & ) -> custom_rule_execs_op & = default;
+        auto operator=( custom_rule_execs_op && ) -> custom_rule_execs_op &      = default;
+        custom_rule_execs_op()
+          : config_item_base{ "custom_rule_execs" }
+        { }
+        custom_rule_execs_op( const custom_rule_execs_op & ) = default;
+        custom_rule_execs_op( custom_rule_execs_op && )      = default;
+        virtual ~custom_rule_execs_op()                      = default;
+    };
+    class custom_rule_servs_op final : public config_item_base {
+      public:
+        auto load( const bool, const string_view_type _line ) -> void override final
+        {
+            custom_rules.servs.emplace_back( _line );
+        }
+        auto reload_init() -> void override final
+        {
+            custom_rules.servs.clear();
+        }
+        auto sync( string_type &_out ) -> void override final
+        {
+            for ( const auto &serv : custom_rules.servs ) {
+                _out.append( serv ).push_back( '\n' );
+            }
+        }
+        auto operator=( const custom_rule_servs_op & ) -> custom_rule_servs_op & = default;
+        auto operator=( custom_rule_servs_op && ) -> custom_rule_servs_op &      = default;
+        custom_rule_servs_op()
+          : config_item_base{ "custom_rule_servs" }
+        { }
+        custom_rule_servs_op( const custom_rule_servs_op & ) = default;
+        custom_rule_servs_op( custom_rule_servs_op && )      = default;
+        virtual ~custom_rule_servs_op()                      = default;
+    };
+    inline auto config_items{
+      std::array{
+                 std::unique_ptr< config_item_base >{ new option_op }, std::unique_ptr< config_item_base >{ new custom_rule_execs_op },
+                 std::unique_ptr< config_item_base >{ new custom_rule_servs_op } }
+    };
     template < typename _chrono_type_ >
     inline auto wait( const _chrono_type_ _time )
     {
@@ -325,53 +432,39 @@ namespace core {
             if ( !config_file.good() ) {
                 return;
             }
-            std::print( " -> 加载配置文件.\n" );
             if ( _is_reload ) {
-                custom_rules.execs.clear();
-                custom_rules.servs.clear();
+                std::print( " -> 初始化配置.\n" );
+                for ( auto &config_item : config_items ) {
+                    config_item->reload_init();
+                }
             }
-            enum class config_label { unknown, options, custom_rule_execs, custom_rule_servs };
-            auto label{ config_label::unknown };
+            std::print( " -> 加载配置文件.\n" );
             auto line{ string_type{} };
+            auto view{ string_view_type{} };
+            auto config_item_ptr{ ( config_item_base * ) {} };
             while ( std::getline( config_file, line ) ) {
-                if ( line.empty() || line.front() == '#' ) {
+                view = line;
+                if ( view.empty() ) {
                     continue;
                 }
-                if ( line.substr( 0, 2 ) == "[ " && line.substr( line.size() - 2, line.size() ) == " ]" ) {
-                    if ( line == "[ options ]" ) {
-                        label = config_label::options;
-                        continue;
-                    } else if ( line == "[ custom_rule_execs ]" ) {
-                        label = config_label::custom_rule_execs;
-                        continue;
-                    } else if ( line == "[ custom_rule_servs ]" ) {
-                        label = config_label::custom_rule_servs;
-                        continue;
-                    } else {
-                        label = config_label::unknown;
-                        continue;
-                    }
+                if ( view.front() == '#' ) {
+                    continue;
                 }
-                switch ( label ) {
-                    case config_label::unknown : break;
-                    case config_label::options : {
-                        if ( _is_reload ) {
-                            continue;
+                if ( view.substr( 0, sizeof( "[ " ) - 1 ) == "[ "
+                     && view.substr( view.size() - sizeof( " ]" ) + 1, view.size() ) == " ]" )
+                {
+                    view = view.substr( sizeof( "[ " ) - 1, view.size() - sizeof( " ]" ) - 1 );
+                    for ( auto &config_item : config_items ) {
+                        if ( config_item->self_name == view ) {
+                            config_item_ptr = config_item.get();
+                            break;
                         }
-                        for ( auto &main_key : options.main_keys ) {
-                            for ( auto &sub_key : main_key.sub_keys ) {
-                                if ( line == std::format( "{}::{} = true", main_key.self_name, sub_key.self_name ) ) {
-                                    sub_key.is_enabled = true;
-                                }
-                                if ( line == std::format( "{}::{} = false", main_key.self_name, sub_key.self_name ) ) {
-                                    sub_key.is_enabled = false;
-                                }
-                            }
-                        }
-                        break;
+                        config_item_ptr = nullptr;
                     }
-                    case config_label::custom_rule_execs : custom_rules.execs.emplace_back( std::move( line ) ); break;
-                    case config_label::custom_rule_servs : custom_rules.servs.emplace_back( std::move( line ) ); break;
+                    continue;
+                }
+                if ( config_item_ptr != nullptr ) {
+                    config_item_ptr->load( _is_reload, view );
                 }
             }
             return;
@@ -382,20 +475,9 @@ namespace core {
             load_( true );
             std::print( " -> 保存更改.\n" );
             auto config_text{ string_type{} };
-            config_text.append( "[ options ]\n" );
-            for ( const auto &main_key : options.main_keys ) {
-                for ( const auto &sub_key : main_key.sub_keys ) {
-                    config_text.append( std::format(
-                      "{}::{} = {}\n", main_key.self_name, sub_key.self_name, sub_key.is_enabled ? "true" : "false" ) );
-                }
-            }
-            config_text.append( "[ custom_rule_execs ]\n" );
-            for ( const auto &exec : custom_rules.execs ) {
-                config_text.append( exec ).push_back( '\n' );
-            }
-            config_text.append( "[ custom_rule_servs ]\n" );
-            for ( const auto &serv : custom_rules.servs ) {
-                config_text.append( serv ).push_back( '\n' );
+            for ( auto &config_item : config_items ) {
+                config_text.append( std::format( "[ {} ]\n", config_item->self_name ) );
+                config_item->sync( config_text );
             }
             auto config_file{
               std::ofstream{ config_file_name.data(), std::ios::out | std::ios::trunc }
