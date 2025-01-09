@@ -607,7 +607,7 @@ namespace cpp_utils {
             SetConsoleOutputCP( _code_page );
             SetConsoleCP( _code_page );
             SetConsoleTitleA( _title.data() );
-            system( std::format( "mode.com con cols={} lines={}", _width, _height ).c_str() );
+            std::system( std::format( "mode.com con cols={} lines={}", _width, _height ).c_str() );
             SetWindowLongPtrW(
               GetConsoleWindow(), GWL_STYLE,
               _is_fix_size

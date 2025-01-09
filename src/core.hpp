@@ -273,7 +273,7 @@ namespace core {
                 options[ "window" ][ "translucency" ].is_enabled ? 230 : 255 )
               .lock( false, false );
             SetConsoleScreenBufferSize( GetStdHandle( STD_OUTPUT_HANDLE ), { 128, SHRT_MAX - 1 } );
-            system( "cmd.exe" );
+            std::system( "cmd.exe" );
             _args.parent_ui.set_console(
               WINDOW_TITLE, CODE_PAGE_CODE, WINDOW_WIDTH, WINDOW_HEIGHT, true, false,
               options[ "window" ][ "disable_close_ctrl" ].is_enabled ? false : true,
@@ -287,7 +287,7 @@ namespace core {
             auto operator()( cpp_utils::console_ui::func_args )
             {
                 std::print( " -> 执行操作系统命令.\n{}\n", string_type( WINDOW_WIDTH, '-' ) );
-                system( cmd_.c_str() );
+                std::system( cmd_.c_str() );
                 return cpp_utils::console_value::ui_return;
             }
             auto operator=( const cmd_executor & ) -> cmd_executor & = default;
@@ -612,7 +612,7 @@ namespace core {
                 case mod::crack : {
                     if ( options[ "rule_op" ][ "hijack_execs" ].is_enabled ) {
                         for ( const auto &exec : rules_.execs ) {
-                            system(
+                            std::system(
                               std::format(
                                 R"(reg.exe add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\{}" /f /t reg_sz /v debugger /d "nul")",
                                 exec )
@@ -621,21 +621,21 @@ namespace core {
                     }
                     if ( options[ "rule_op" ][ "set_serv_startup_types" ].is_enabled ) {
                         for ( const auto &serv : rules_.servs ) {
-                            system( std::format( R"(sc.exe config "{}" start= disabled)", serv ).c_str() );
+                            std::system( std::format( R"(sc.exe config "{}" start= disabled)", serv ).c_str() );
                         }
                     }
                     for ( const auto &exec : rules_.execs ) {
-                        system( std::format( R"(taskkill.exe /f /im "{}")", exec ).c_str() );
+                        std::system( std::format( R"(taskkill.exe /f /im "{}")", exec ).c_str() );
                     }
                     for ( const auto &serv : rules_.servs ) {
-                        system( std::format( R"(net.exe stop "{}" /y)", serv ).c_str() );
+                        std::system( std::format( R"(net.exe stop "{}" /y)", serv ).c_str() );
                     }
                     break;
                 }
                 case mod::recovery : {
                     if ( options[ "rule_op" ][ "hijack_execs" ].is_enabled ) {
                         for ( const auto &exec : rules_.execs ) {
-                            system(
+                            std::system(
                               std::format(
                                 R"(reg.exe delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\{}" /f)",
                                 exec )
@@ -644,11 +644,11 @@ namespace core {
                     }
                     if ( options[ "rule_op" ][ "set_serv_startup_types" ].is_enabled ) {
                         for ( const auto &serv : rules_.servs ) {
-                            system( std::format( R"(sc.exe config "{}" start= auto)", serv ).c_str() );
+                            std::system( std::format( R"(sc.exe config "{}" start= auto)", serv ).c_str() );
                         }
                     }
                     for ( const auto &serv : rules_.servs ) {
-                        system( std::format( R"(net.exe start "{}")", serv ).c_str() );
+                        std::system( std::format( R"(net.exe start "{}")", serv ).c_str() );
                     }
                     break;
                 }
