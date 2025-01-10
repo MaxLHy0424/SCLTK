@@ -77,7 +77,9 @@ namespace core {
         ~option_node()                     = default;
     };
     inline auto options{ option_node{
-      { { "rule_op", "破解/恢复", { { "hijack_execs", "劫持可执行文件" }, { "set_serv_startup_types", "设置服务启动类型" } } },
+      { { "crack_restore",
+          "破解 & 恢复",
+          { { "hijack_execs", "劫持可执行文件" }, { "set_serv_startup_types", "设置服务启动类型" } } },
         { "window",
           "窗口显示",
           { { "topmost_show", "置顶显示" }, { "disable_close_ctrl", "禁用关闭控件" }, { "translucency", "半透明化" } } },
@@ -607,7 +609,7 @@ namespace core {
             std::print( " -> 生成并执行操作系统命令.\n{}\n", string_type( WINDOW_WIDTH, '-' ) );
             switch ( mod_data_ ) {
                 case mod::crack : {
-                    if ( options[ "rule_op" ][ "hijack_execs" ].is_enabled ) {
+                    if ( options[ "crack_restore" ][ "hijack_execs" ].is_enabled ) {
                         for ( const auto &exec : rules_.execs ) {
                             std::system(
                               std::format(
@@ -616,7 +618,7 @@ namespace core {
                                 .c_str() );
                         }
                     }
-                    if ( options[ "rule_op" ][ "set_serv_startup_types" ].is_enabled ) {
+                    if ( options[ "crack_restore" ][ "set_serv_startup_types" ].is_enabled ) {
                         for ( const auto &serv : rules_.servs ) {
                             std::system( std::format( R"(sc.exe config "{}" start= disabled)", serv ).c_str() );
                         }
@@ -630,7 +632,7 @@ namespace core {
                     break;
                 }
                 case mod::restore : {
-                    if ( options[ "rule_op" ][ "hijack_execs" ].is_enabled ) {
+                    if ( options[ "crack_restore" ][ "hijack_execs" ].is_enabled ) {
                         for ( const auto &exec : rules_.execs ) {
                             std::system(
                               std::format(
@@ -639,7 +641,7 @@ namespace core {
                                 .c_str() );
                         }
                     }
-                    if ( options[ "rule_op" ][ "set_serv_startup_types" ].is_enabled ) {
+                    if ( options[ "crack_restore" ][ "set_serv_startup_types" ].is_enabled ) {
                         for ( const auto &serv : rules_.servs ) {
                             std::system( std::format( R"(sc.exe config "{}" start= auto)", serv ).c_str() );
                         }
