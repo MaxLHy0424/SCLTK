@@ -119,22 +119,22 @@ namespace core {
             "FormatPaper.exe" },
           { "appcheck2", "checkapp2" } } }
     };
-    class config_item_base {
+    class config_item {
       public:
         const string_view_type self_name;
-        virtual auto load( const bool, const string_view_type ) -> void  = 0;
-        virtual auto reload_init() -> void                               = 0;
-        virtual auto sync( string_type & ) -> void                       = 0;
-        auto operator=( const config_item_base & ) -> config_item_base & = default;
-        auto operator=( config_item_base && ) -> config_item_base &      = default;
-        config_item_base( const string_view_type _self_name )
+        virtual auto load( const bool, const string_view_type ) -> void = 0;
+        virtual auto reload_init() -> void                              = 0;
+        virtual auto sync( string_type & ) -> void                      = 0;
+        auto operator=( const config_item & ) -> config_item &          = default;
+        auto operator=( config_item && ) -> config_item &               = default;
+        config_item( const string_view_type _self_name )
           : self_name{ _self_name }
         { }
-        config_item_base( const config_item_base & ) = default;
-        config_item_base( config_item_base && )      = default;
-        virtual ~config_item_base()                  = default;
+        config_item( const config_item & ) = default;
+        config_item( config_item && )      = default;
+        virtual ~config_item()             = default;
     };
-    class option_op final : public config_item_base {
+    class option_op final : public config_item {
       public:
         auto load( const bool _is_reload, const string_view_type _line ) -> void override final
         {
@@ -164,13 +164,13 @@ namespace core {
         auto operator=( const option_op & ) -> option_op & = default;
         auto operator=( option_op && ) -> option_op &      = default;
         option_op()
-          : config_item_base{ "options" }
+          : config_item{ "options" }
         { }
         option_op( const option_op & ) = default;
         option_op( option_op && )      = default;
         virtual ~option_op()           = default;
     };
-    class custom_rule_execs_op final : public config_item_base {
+    class custom_rule_execs_op final : public config_item {
       public:
         auto load( const bool, const string_view_type _line ) -> void override final
         {
@@ -189,13 +189,13 @@ namespace core {
         auto operator=( const custom_rule_execs_op & ) -> custom_rule_execs_op & = default;
         auto operator=( custom_rule_execs_op && ) -> custom_rule_execs_op &      = default;
         custom_rule_execs_op()
-          : config_item_base{ "custom_rule_execs" }
+          : config_item{ "custom_rule_execs" }
         { }
         custom_rule_execs_op( const custom_rule_execs_op & ) = default;
         custom_rule_execs_op( custom_rule_execs_op && )      = default;
         virtual ~custom_rule_execs_op()                      = default;
     };
-    class custom_rule_servs_op final : public config_item_base {
+    class custom_rule_servs_op final : public config_item {
       public:
         auto load( const bool, const string_view_type _line ) -> void override final
         {
@@ -214,7 +214,7 @@ namespace core {
         auto operator=( const custom_rule_servs_op & ) -> custom_rule_servs_op & = default;
         auto operator=( custom_rule_servs_op && ) -> custom_rule_servs_op &      = default;
         custom_rule_servs_op()
-          : config_item_base{ "custom_rule_servs" }
+          : config_item{ "custom_rule_servs" }
         { }
         custom_rule_servs_op( const custom_rule_servs_op & ) = default;
         custom_rule_servs_op( custom_rule_servs_op && )      = default;
@@ -222,8 +222,8 @@ namespace core {
     };
     inline auto config_items{
       std::array{
-                 std::unique_ptr< config_item_base >{ new option_op }, std::unique_ptr< config_item_base >{ new custom_rule_execs_op },
-                 std::unique_ptr< config_item_base >{ new custom_rule_servs_op } }
+                 std::unique_ptr< config_item >{ new option_op }, std::unique_ptr< config_item >{ new custom_rule_execs_op },
+                 std::unique_ptr< config_item >{ new custom_rule_servs_op } }
     };
     template < typename _chrono_type_ >
     inline auto wait( const _chrono_type_ _time )
@@ -446,7 +446,7 @@ namespace core {
             std::print( " -> 加载配置文件.\n" );
             auto line{ string_type{} };
             auto view{ string_view_type{} };
-            auto config_item_ptr{ ( config_item_base * ) {} };
+            auto config_item_ptr{ ( config_item * ) {} };
             while ( std::getline( config_file, line ) ) {
                 view = line;
                 if ( view.empty() ) {
