@@ -251,12 +251,21 @@ namespace core {
         std::print( " -> 准备用户界面.\n" );
         ui.add_back( "                    [ 信  息 ]\n\n" )
           .add_back( " < 返回 ", quit, cpp_utils::console_value::text_foreground_green | cpp_utils::console_value::text_foreground_intensity )
-          .add_back( "\n[名称]\n\n " INFO_NAME "\n\n[版本]\n\n " INFO_VERSION "" )
+          .add_back( std::format(
+            "\n[名称]\n"
+            "\n {} \n"
+            "\n[版本]\n"
+            "\n {} ",
+            INFO_NAME, INFO_VERSION ) )
           .add_back( "\n[仓库]\n" )
           .add_back(
-            " " INFO_REPO_URL " ", visit_repo_webpage,
+            std::format( " {} ", INFO_REPO_URL ), visit_repo_webpage,
             cpp_utils::console_value::text_default | cpp_utils::console_value::text_common_lvb_underscore )
-          .add_back( "\n[许可证]\n\n " INFO_LICENSE "\n\n (C) 2023 - present " INFO_DEVELOPER "." )
+          .add_back( std::format(
+            "\n[许可证]\n"
+            "\n {} \n"
+            "\n (C) 2023 - present {}.",
+            INFO_LICENSE, INFO_DEVELOPER ) )
           .show();
         return cpp_utils::console_value::ui_return;
     }
