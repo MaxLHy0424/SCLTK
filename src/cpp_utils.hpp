@@ -187,7 +187,7 @@ namespace cpp_utils {
             auto operator=( const task_node_ & ) -> task_node_ & = default;
             auto operator=( task_node_ && ) -> task_node_ &      = default;
             task_node_()                                         = default;
-            task_node_( std::jthread _task_thread )
+            task_node_( std::jthread &&_task_thread )
               : task_thread{ std::move( _task_thread ) }
             { }
             task_node_( const task_node_ & ) = default;
@@ -201,7 +201,7 @@ namespace cpp_utils {
         };
         std::vector< task_node_ > tasks_{};
       protected:
-        auto add_task( std::jthread _task_thread )
+        auto add_task( std::jthread &&_task_thread )
         {
             tasks_.emplace_back( task_node_{ std::move( _task_thread ) } );
         }

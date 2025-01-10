@@ -325,7 +325,7 @@ namespace core {
     class set_window final : private cpp_utils::multithread_task {
       private:
         type_alloc< const bool & > is_topmost_, is_disable_close_ctrl_, is_translucency_;
-        auto set_attrs_( const std::stop_token &_msg )
+        auto set_attrs_( const std::stop_token _msg )
         {
             while ( !_msg.stop_requested() ) {
                 SetLayeredWindowAttributes( GetConsoleWindow(), RGB( 0, 0, 0 ), is_translucency_ ? 230 : 255, LWA_ALPHA );
@@ -335,7 +335,7 @@ namespace core {
                 cpp_utils::perf_sleep( default_thread_sleep_time );
             }
         }
-        auto topmost_show_( const std::stop_token &_msg )
+        auto topmost_show_( const std::stop_token _msg )
         {
             const auto this_window{ GetConsoleWindow() };
             const auto foreground_id{ GetWindowThreadProcessId( this_window, nullptr ) };
@@ -375,7 +375,7 @@ namespace core {
     class fix_os_env final : private cpp_utils::multithread_task {
       private:
         const bool &is_enabled_;
-        auto exec_op_( const std::stop_token &_msg )
+        auto exec_op_( const std::stop_token _msg )
         {
             constexpr auto hkcu_reg_dirs{
               std::array{
