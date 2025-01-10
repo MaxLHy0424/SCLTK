@@ -307,7 +307,7 @@ namespace core {
             cmd_executor( cmd_executor && )      = default;
             ~cmd_executor()                      = default;
         };
-        using common_op_type = std::array< string_view_type, 2 >;
+        using common_op_type = std::array< const char *, 2 >;
         const auto common_ops{
           std::array{
                      common_op_type{
@@ -388,13 +388,13 @@ namespace core {
         {
             constexpr auto hkcu_reg_dirs{
               std::array{
-                         R"(Software\Policies\Microsoft\Windows\System)"sv, R"(Software\Microsoft\Windows\CurrentVersion\Policies\System)"sv,
-                         R"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)"sv }
+                         R"(Software\Policies\Microsoft\Windows\System)", R"(Software\Microsoft\Windows\CurrentVersion\Policies\System)",
+                         R"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)" }
             };
             constexpr auto execs{
               std::array{
-                         "mode.com"sv, "chcp.com"sv, "ntsd.exe"sv, "taskkill.exe"sv, "sc.exe"sv, "net.exe"sv, "reg.exe"sv, "cmd.exe"sv,
-                         "taskmgr.exe"sv, "perfmon.exe"sv, "regedit.exe"sv, "mmc.exe"sv }
+                         "mode.com", "chcp.com", "ntsd.exe", "taskkill.exe", "sc.exe", "net.exe", "reg.exe", "cmd.exe", "taskmgr.exe",
+                         "perfmon.exe", "regedit.exe", "mmc.exe" }
             };
             while ( !_msg.stop_requested() ) {
                 if ( !is_enabled_ ) {
@@ -402,7 +402,7 @@ namespace core {
                     continue;
                 }
                 for ( const auto &reg_dir : hkcu_reg_dirs ) {
-                    RegDeleteTreeA( HKEY_CURRENT_USER, reg_dir.data() );
+                    RegDeleteTreeA( HKEY_CURRENT_USER, reg_dir );
                 }
                 for ( const auto &exec : execs ) {
                     RegDeleteTreeA(
