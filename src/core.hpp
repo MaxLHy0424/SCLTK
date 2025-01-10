@@ -87,6 +87,10 @@ namespace core {
     struct rule_node final {
         const string_view_type showed_name;
         std::deque< string_type > execs, servs;
+        auto is_empty() const
+        {
+            return execs.empty() && servs.empty();
+        }
         auto operator=( const rule_node & ) -> rule_node & = default;
         auto operator=( rule_node && ) -> rule_node &      = default;
         rule_node( const string_view_type _showed_name, std::deque< string_type > _execs, std::deque< string_type > _servs )
@@ -610,7 +614,7 @@ namespace core {
         auto operator()( cpp_utils::console_ui::func_args )
         {
             std::print( "                 [ 破 解 / 恢 复 ]\n\n\n" );
-            if ( rules_.execs.empty() && rules_.servs.empty() ) {
+            if ( rules_.is_empty() ) {
                 std::print( " (i) 规则为空.\n\n" );
                 wait( 3s );
                 return cpp_utils::console_value::ui_return;
