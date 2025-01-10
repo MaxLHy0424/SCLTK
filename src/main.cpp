@@ -34,9 +34,9 @@ auto main() -> int
     }
     ui.add_back( "\n[恢复]\n" )
       .add_back(
-        std::format( " > {} ", core::custom_rules.showed_name ), core::rule_op{ core::rule_op::mod::recovery, core::custom_rules } );
+        std::format( " > {} ", core::custom_rules.showed_name ), core::rule_op{ core::rule_op::mod::restore, core::custom_rules } );
     for ( const auto &rule : core::builtin_rules ) {
-        ui.add_back( std::format( " > {} ", rule.showed_name ), core::rule_op{ core::rule_op::mod::recovery, rule } );
+        ui.add_back( std::format( " > {} ", rule.showed_name ), core::rule_op{ core::rule_op::mod::restore, rule } );
     }
     ui.show().lock( true, true );
     return EXIT_SUCCESS;

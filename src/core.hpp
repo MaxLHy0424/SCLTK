@@ -591,7 +591,7 @@ namespace core {
     };
     class rule_op final {
       public:
-        enum class mod { crack, recovery };
+        enum class mod { crack, restore };
       private:
         const mod mod_data_;
         const rule_node &rules_;
@@ -629,7 +629,7 @@ namespace core {
                     }
                     break;
                 }
-                case mod::recovery : {
+                case mod::restore : {
                     if ( options[ "rule_op" ][ "hijack_execs" ].is_enabled ) {
                         for ( const auto &exec : rules_.execs ) {
                             std::system(
