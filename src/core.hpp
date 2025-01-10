@@ -145,8 +145,7 @@ namespace core {
                 for ( auto &sub_key : main_key.sub_keys ) {
                     if ( _line == std::format( "{}::{} = true", main_key.self_name, sub_key.self_name ) ) {
                         sub_key.is_enabled = true;
-                    }
-                    if ( _line == std::format( "{}::{} = false", main_key.self_name, sub_key.self_name ) ) {
+                    } else if ( _line == std::format( "{}::{} = false", main_key.self_name, sub_key.self_name ) ) {
                         sub_key.is_enabled = false;
                     }
                 }
