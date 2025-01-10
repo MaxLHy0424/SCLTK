@@ -125,8 +125,8 @@ namespace core {
         virtual auto load( const bool, const string_view_type ) -> void = 0;
         virtual auto reload_init() -> void                              = 0;
         virtual auto sync( string_type & ) -> void                      = 0;
-        auto operator=( const config_item & ) -> config_item &          = default;
-        auto operator=( config_item && ) -> config_item &               = default;
+        virtual auto operator=( const config_item & ) -> config_item &  = default;
+        virtual auto operator=( config_item && ) -> config_item &       = default;
         config_item( const string_view_type _self_name )
           : self_name{ _self_name }
         { }
@@ -136,7 +136,7 @@ namespace core {
     };
     class option_op final : public config_item {
       public:
-        auto load( const bool _is_reload, const string_view_type _line ) -> void override final
+        virtual auto load( const bool _is_reload, const string_view_type _line ) -> void override final
         {
             if ( _is_reload ) {
                 return;
@@ -151,8 +151,8 @@ namespace core {
                 }
             }
         }
-        auto reload_init() -> void override final { }
-        auto sync( string_type &_out ) -> void override final
+        virtual auto reload_init() -> void override final { }
+        virtual auto sync( string_type &_out ) -> void override final
         {
             for ( const auto &main_key : options.main_keys ) {
                 for ( const auto &sub_key : main_key.sub_keys ) {
@@ -161,8 +161,8 @@ namespace core {
                 }
             }
         }
-        auto operator=( const option_op & ) -> option_op & = default;
-        auto operator=( option_op && ) -> option_op &      = default;
+        virtual auto operator=( const option_op & ) -> option_op & = default;
+        virtual auto operator=( option_op && ) -> option_op &      = default;
         option_op()
           : config_item{ "options" }
         { }
@@ -172,22 +172,22 @@ namespace core {
     };
     class custom_rule_execs_op final : public config_item {
       public:
-        auto load( const bool, const string_view_type _line ) -> void override final
+        virtual auto load( const bool, const string_view_type _line ) -> void override final
         {
             custom_rules.execs.emplace_back( _line );
         }
-        auto reload_init() -> void override final
+        virtual auto reload_init() -> void override final
         {
             custom_rules.execs.clear();
         }
-        auto sync( string_type &_out ) -> void override final
+        virtual auto sync( string_type &_out ) -> void override final
         {
             for ( const auto &exec : custom_rules.execs ) {
                 _out.append( exec ).push_back( '\n' );
             }
         }
-        auto operator=( const custom_rule_execs_op & ) -> custom_rule_execs_op & = default;
-        auto operator=( custom_rule_execs_op && ) -> custom_rule_execs_op &      = default;
+        virtual auto operator=( const custom_rule_execs_op & ) -> custom_rule_execs_op & = default;
+        virtual auto operator=( custom_rule_execs_op && ) -> custom_rule_execs_op &      = default;
         custom_rule_execs_op()
           : config_item{ "custom_rule_execs" }
         { }
@@ -197,22 +197,22 @@ namespace core {
     };
     class custom_rule_servs_op final : public config_item {
       public:
-        auto load( const bool, const string_view_type _line ) -> void override final
+        virtual auto load( const bool, const string_view_type _line ) -> void override final
         {
             custom_rules.servs.emplace_back( _line );
         }
-        auto reload_init() -> void override final
+        virtual auto reload_init() -> void override final
         {
             custom_rules.servs.clear();
         }
-        auto sync( string_type &_out ) -> void override final
+        virtual auto sync( string_type &_out ) -> void override final
         {
             for ( const auto &serv : custom_rules.servs ) {
                 _out.append( serv ).push_back( '\n' );
             }
         }
-        auto operator=( const custom_rule_servs_op & ) -> custom_rule_servs_op & = default;
-        auto operator=( custom_rule_servs_op && ) -> custom_rule_servs_op &      = default;
+        virtual auto operator=( const custom_rule_servs_op & ) -> custom_rule_servs_op & = default;
+        virtual auto operator=( custom_rule_servs_op && ) -> custom_rule_servs_op &      = default;
         custom_rule_servs_op()
           : config_item{ "custom_rule_servs" }
         { }
