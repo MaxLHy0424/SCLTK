@@ -126,11 +126,11 @@ namespace cpp_utils {
     using string_view_type   = std::string_view;
     using wstring_view_type  = std::wstring_view;
     using u8string_view_type = std::u8string_view;
-    inline const auto u8string_to_string( const u8string_view_type _str )
+    inline const auto u8str_to_str( const u8string_view_type _str )
     {
         return string_type{ reinterpret_cast< const char * >( _str.data() ) };
     }
-    inline const auto string_to_u8string( const string_view_type _str )
+    inline const auto str_to_u8str( const string_view_type _str )
     {
         return u8string_type{ reinterpret_cast< const char8_t * >( _str.data() ) };
     }
@@ -143,22 +143,22 @@ namespace cpp_utils {
                            || std::is_same_v< std::decay_t< decltype( _arg ) >, char8_t * >
                            || std::is_same_v< std::decay_t< decltype( _arg ) >, const char8_t * > )
             {
-                return u8string_to_string( _arg );
+                return u8str_to_str( _arg );
             } else {
                 return std::as_const( _arg );
             }
         } };
-        return string_to_u8string( std::vformat( u8string_to_string( _fmt ), std::make_format_args( convert_arg( _args )... ) ) );
+        return str_to_u8str( std::vformat( u8str_to_str( _fmt ), std::make_format_args( convert_arg( _args )... ) ) );
     }
     template < typename... _args_ >
     inline auto u8print( const u8string_view_type _fmt, _args_ &&..._args )
     {
-        std::print( "{}", u8string_to_string( u8format( _fmt, std::forward< _args_ >( _args )... ) ) );
+        std::print( "{}", u8str_to_str( u8format( _fmt, std::forward< _args_ >( _args )... ) ) );
     }
     template < typename... _args_ >
     inline auto u8println( const u8string_view_type _fmt, _args_ &&..._args )
     {
-        std::println( "{}", u8string_to_string( u8format( _fmt, std::forward< _args_ >( _args )... ) ) );
+        std::println( "{}", u8str_to_str( u8format( _fmt, std::forward< _args_ >( _args )... ) ) );
     }
     template < typename _chrono_type_ >
     inline auto perf_sleep( const _chrono_type_ _time )
@@ -178,7 +178,7 @@ namespace cpp_utils {
         requires( std::is_pointer_v< _type_ > )
     inline auto ptr_to_u8string( _type_ _ptr )
     {
-        return string_to_u8string( std::to_string( reinterpret_cast< std::uintptr_t >( _ptr ) ) );
+        return str_to_u8str( std::to_string( reinterpret_cast< std::uintptr_t >( _ptr ) ) );
     }
     template < size_type _length_ >
     struct constexpr_u8string final {
