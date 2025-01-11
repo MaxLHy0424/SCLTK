@@ -1,8 +1,6 @@
 #pragma once
 #include "cpp_utils.hpp"
 #include "info.hpp"
-#define NOTHING_TO_DO \
-    { }
 namespace core {
     using namespace std::chrono_literals;
     using namespace std::string_view_literals;
