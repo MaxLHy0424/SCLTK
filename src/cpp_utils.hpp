@@ -128,11 +128,11 @@ namespace cpp_utils {
     using u8string_view_type = std::u8string_view;
     inline const auto u8string_to_string( const u8string_view_type _str )
     {
-        return std::string{ reinterpret_cast< const char * >( _str.data() ) };
+        return string_type{ reinterpret_cast< const char * >( _str.data() ) };
     }
     inline const auto string_to_u8string( const string_view_type _str )
     {
-        return std::u8string{ reinterpret_cast< const char8_t * >( _str.data() ) };
+        return u8string_type{ reinterpret_cast< const char8_t * >( _str.data() ) };
     }
     template < typename... _args_ >
     inline auto u8format( const u8string_view_type _fmt, _args_ &&..._args )
