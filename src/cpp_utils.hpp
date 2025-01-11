@@ -185,12 +185,6 @@ namespace cpp_utils {
     {
         std::println( "{}", string_convert< char >( u8format( _fmt, std::forward< _args_ >( _args )... ) ) );
     }
-    template < typename _chrono_type_ >
-    inline auto perf_sleep( const _chrono_type_ _time )
-    {
-        std::this_thread::yield();
-        std::this_thread::sleep_for( _time );
-    }
     template < typename _ptr_type_ >
         requires( std::is_pointer_v< _ptr_type_ > )
     inline auto ptr_to_string( _ptr_type_ _ptr )
@@ -219,6 +213,12 @@ namespace cpp_utils {
             std::copy( _str, _str + _length_, data );
         }
     };
+    template < typename _chrono_type_ >
+    inline auto perf_sleep( const _chrono_type_ _time )
+    {
+        std::this_thread::yield();
+        std::this_thread::sleep_for( _time );
+    }
     class multithread_task {
       private:
         struct task_node_ final {
