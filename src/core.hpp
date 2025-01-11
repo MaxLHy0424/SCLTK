@@ -70,7 +70,7 @@ namespace core {
     };
     inline auto options{ option_node{
       { { "crack_restore",
-          "破解&恢复",
+          "破解/恢复",
           { { "hijack_execs", "劫持可执行文件" }, { "set_serv_startup_types", "设置服务启动类型" } } },
         { "window",
           "窗口显示",
