@@ -191,9 +191,9 @@ namespace cpp_utils {
     }
     template < typename _type_ >
     using type_alloc = _type_;
-    template < typename _type_ >
-        requires( std::is_pointer_v< _type_ > )
-    inline auto ptr_to_string( _type_ _ptr )
+    template < typename _ptr_type_ >
+        requires( std::is_pointer_v< _ptr_type_ > )
+    inline auto ptr_to_string( _ptr_type_ _ptr )
     {
         return std::to_string( reinterpret_cast< std::uintptr_t >( _ptr ) );
     }
