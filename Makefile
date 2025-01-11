@@ -9,7 +9,14 @@ all: init clean release
 init:
 	$(msys2)\\usr\\bin\\pacman.exe -Syyu --noconfirm --needed\
 	 mingw-w64-i686-toolchain\
-	 mingw-w64-ucrt-x86_64-toolchain
+	 mingw-w64-ucrt-x86_64-toolchain\
+	 make\
+	 base\
+	 base-devel\
+	 bash\
+	 bash-devel\
+	 bc\
+	 binutils
 release: bin/release/CRCSN-i686-msvcrt.exe\
          bin/release/CRCSN-x86_64-ucrt.exe
 debug: src/* bin/debug/.gitkeep
