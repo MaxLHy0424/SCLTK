@@ -130,18 +130,17 @@ namespace cpp_utils {
     using std_string = std::basic_string< _char_type >;
     template < typename _char_type >
     using std_string_view = std::basic_string_view< _char_type >;
+    template < typename _char_type_ >
+    inline consteval auto is_char_type()
+    {
+        return std::is_same_v< _char_type_, char > || std::is_same_v< _char_type_, wchar_t > || std::is_same_v< _char_type_, char8_t >
+            || std::is_same_v< _char_type_, char16_t > || std::is_same_v< _char_type_, char32_t >;
+    }
     template < typename _target_char_type_, typename _source_char_type_ >
+        requires( is_char_type< std::decay_t< _target_char_type_ > >() && is_char_type< std::decay_t< _source_char_type_ > >() )
     inline consteval auto is_convertible_char_type()
     {
-        using pure_target_type = std::decay_t< _target_char_type_ >;
-        using pure_source_type = std::decay_t< _source_char_type_ >;
-        return ( std::is_same_v< pure_target_type, char > || std::is_same_v< pure_target_type, wchar_t >
-                 || std::is_same_v< pure_target_type, char8_t > || std::is_same_v< pure_target_type, char16_t >
-                 || std::is_same_v< pure_target_type, char32_t > )
-            && ( std::is_same_v< pure_source_type, char > || std::is_same_v< pure_source_type, wchar_t >
-                 || std::is_same_v< pure_source_type, char8_t > || std::is_same_v< pure_source_type, char16_t >
-                 || std::is_same_v< pure_source_type, char32_t > )
-            && sizeof( pure_target_type ) == sizeof( pure_source_type );
+        return sizeof( std::decay_t< _target_char_type_ > ) == sizeof( std::decay_t< _source_char_type_ > );
     }
     template < typename _target_char_type_, typename _source_char_type_ >
         requires( is_convertible_char_type< _target_char_type_, _source_char_type_ >() )
