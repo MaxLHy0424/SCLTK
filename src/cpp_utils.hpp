@@ -200,10 +200,15 @@ namespace cpp_utils {
     template < typename _char_type_, std::size_t _length_ >
     struct constexpr_string final {
         _char_type_ data[ _length_ ]{};
+        auto operator=( const constexpr_string & ) -> constexpr_string & = delete;
+        auto operator=( constexpr_string && ) -> constexpr_string &      = delete;
         constexpr constexpr_string( const _char_type_ ( &_str )[ _length_ ] )
         {
             std::copy( _str, _str + _length_, data );
         }
+        constexpr constexpr_string( const constexpr_string & ) = default;
+        constexpr constexpr_string( constexpr_string && )      = delete;
+        constexpr ~constexpr_string()                          = default;
     };
     template < typename _chrono_type_ >
     inline auto perf_sleep( const _chrono_type_ _time )
