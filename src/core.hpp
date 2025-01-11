@@ -233,18 +233,18 @@ namespace core {
             cpp_utils::perf_sleep( _chrono_type_{ 1 } );
         }
     }
-    inline auto quit( cpp_utils::console_ui::func_args )
+    inline auto quit( cpp_utils::console_ui< char >::func_args )
     {
         return cpp_utils::console_value::ui_exit;
     }
-    inline auto info( cpp_utils::console_ui::func_args )
+    inline auto info( cpp_utils::console_ui< char >::func_args )
     {
-        auto visit_repo_webpage{ []( cpp_utils::console_ui::func_args )
+        auto visit_repo_webpage{ []( cpp_utils::console_ui< char >::func_args )
         {
             ShellExecuteA( nullptr, "open", INFO_REPO_URL, nullptr, nullptr, SW_SHOWNORMAL );
             return cpp_utils::console_value::ui_return;
         } };
-        auto ui{ cpp_utils::console_ui{} };
+        auto ui{ cpp_utils::console_ui< char >{} };
         std::print( " -> 准备用户界面.\n" );
         ui.add_back( "                    [ 信  息 ]\n\n" )
           .add_back( " < 返回 ", quit, cpp_utils::console_value::text_foreground_green | cpp_utils::console_value::text_foreground_intensity )
@@ -266,10 +266,10 @@ namespace core {
           .show();
         return cpp_utils::console_value::ui_return;
     }
-    inline auto toolkit( cpp_utils::console_ui::func_args )
+    inline auto toolkit( cpp_utils::console_ui< char >::func_args )
     {
         std::print( " -> 准备用户界面.\n" );
-        auto launch_cmd{ []( cpp_utils::console_ui::func_args _args )
+        auto launch_cmd{ []( cpp_utils::console_ui< char >::func_args _args )
         {
             _args.parent_ui
               .set_console(
@@ -289,7 +289,7 @@ namespace core {
           private:
             const string_type cmd_;
           public:
-            auto operator()( cpp_utils::console_ui::func_args )
+            auto operator()( cpp_utils::console_ui< char >::func_args )
             {
                 std::print( " -> 执行操作系统命令.\n{}\n", string_type( WINDOW_WIDTH, '-' ) );
                 std::system( cmd_.c_str() );
@@ -316,7 +316,7 @@ namespace core {
                      common_op_type{
               "恢复 Microsoft Edge 离线游戏", R"(reg.exe delete "HKLM\SOFTWARE\Policies\Microsoft\Edge" /f /v AllowSurfGame)" } }
         };
-        auto ui{ cpp_utils::console_ui{} };
+        auto ui{ cpp_utils::console_ui< char >{} };
         std::print( " -> 准备用户界面.\n" );
         ui.add_back( "                   [ 工 具 箱 ]\n\n" )
           .add_back( " < 返回 ", quit, cpp_utils::console_value::text_foreground_green | cpp_utils::console_value::text_foreground_intensity )
@@ -516,7 +516,7 @@ namespace core {
             option_node::sub_key &sub_key_;
             const bool sub_key_value_;
           public:
-            auto operator()( cpp_utils::console_ui::func_args )
+            auto operator()( cpp_utils::console_ui< char >::func_args )
             {
                 sub_key_.is_enabled = sub_key_value_;
                 return cpp_utils::console_value::ui_return;
@@ -535,9 +535,9 @@ namespace core {
           private:
             option_node::main_key &main_key_;
           public:
-            auto operator()( cpp_utils::console_ui::func_args )
+            auto operator()( cpp_utils::console_ui< char >::func_args )
             {
-                auto ui{ cpp_utils::console_ui{} };
+                auto ui{ cpp_utils::console_ui< char >{} };
                 std::print( " -> 准备用户界面.\n" );
                 ui.add_back( "                    [ 配  置 ]\n\n" )
                   .add_back(
@@ -562,7 +562,7 @@ namespace core {
         };
         auto edit_()
         {
-            auto ui{ cpp_utils::console_ui{} };
+            auto ui{ cpp_utils::console_ui< char >{} };
             std::print( " -> 准备用户界面.\n" );
             ui
               .add_back( std::format(
@@ -571,8 +571,8 @@ namespace core {
                 "     相关信息可参阅文档.\n",
                 default_thread_sleep_time ) )
               .add_back( " < 返回 ", quit, cpp_utils::console_value::text_foreground_green | cpp_utils::console_value::text_foreground_intensity )
-              .add_back( " > 同步配置 ", [ this ]( cpp_utils::console_ui::func_args ) { return sync(); } )
-              .add_back( " > 打开配置文件 ", [ this ]( cpp_utils::console_ui::func_args ) { return open_file(); } )
+              .add_back( " > 同步配置 ", [ this ]( cpp_utils::console_ui< char >::func_args ) { return sync(); } )
+              .add_back( " > 打开配置文件 ", [ this ]( cpp_utils::console_ui< char >::func_args ) { return open_file(); } )
               .add_back( "\n[选项]\n" );
             for ( auto &key : options.main_keys ) {
                 ui.add_back( std::format( " > {} ", key.showed_name ), option_shower{ key } );
@@ -580,7 +580,7 @@ namespace core {
             ui.show();
         }
       public:
-        auto operator()( cpp_utils::console_ui::func_args )
+        auto operator()( cpp_utils::console_ui< char >::func_args )
         {
             switch ( mod_data_ ) {
                 case mod::load : load_( false ); break;
@@ -604,7 +604,7 @@ namespace core {
         const mod mod_data_;
         const rule_node &rules_;
       public:
-        auto operator()( cpp_utils::console_ui::func_args )
+        auto operator()( cpp_utils::console_ui< char >::func_args )
         {
             std::print( "                 [ 破 解 / 恢 复 ]\n\n\n" );
             if ( rules_.is_empty() ) {
