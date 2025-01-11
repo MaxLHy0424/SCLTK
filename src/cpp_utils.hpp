@@ -126,6 +126,8 @@ namespace cpp_utils {
     using string_view_type   = std::string_view;
     using wstring_view_type  = std::wstring_view;
     using u8string_view_type = std::u8string_view;
+    template < typename _type_ >
+    using type_alloc = _type_;
     template < typename _char_type >
     using std_string = std::basic_string< _char_type >;
     template < typename _char_type >
@@ -189,8 +191,6 @@ namespace cpp_utils {
         std::this_thread::yield();
         std::this_thread::sleep_for( _time );
     }
-    template < typename _type_ >
-    using type_alloc = _type_;
     template < typename _ptr_type_ >
         requires( std::is_pointer_v< _ptr_type_ > )
     inline auto ptr_to_string( _ptr_type_ _ptr )
