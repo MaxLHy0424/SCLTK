@@ -126,6 +126,10 @@ namespace cpp_utils {
     using string_view_type   = std::string_view;
     using wstring_view_type  = std::wstring_view;
     using u8string_view_type = std::u8string_view;
+    template < typename _char_type >
+    using std_string = std::basic_string< _char_type >;
+    template < typename _char_type >
+    using std_string_view = std::basic_string_view< _char_type >;
     inline const auto u8str_to_str( const u8string_view_type _str )
     {
         return string_type{ reinterpret_cast< const char * >( _str.data() ) };
@@ -139,9 +143,11 @@ namespace cpp_utils {
     {
         const auto convert_arg{ []( auto &&_arg ) -> decltype( auto )
         {
-            if constexpr ( std::is_same_v< std::decay_t< decltype( _arg ) >, u8string_type >
-                           || std::is_same_v< std::decay_t< decltype( _arg ) >, char8_t * >
-                           || std::is_same_v< std::decay_t< decltype( _arg ) >, const char8_t * > )
+            if constexpr (
+              std::is_same_v< std::decay_t< decltype( _arg ) >, u8string_type >
+              || std::is_same_v< std::decay_t< decltype( _arg ) >, u8string_view_type >
+              || std::is_same_v< std::decay_t< decltype( _arg ) >, char8_t * >
+              || std::is_same_v< std::decay_t< decltype( _arg ) >, const char8_t * > )
             {
                 return u8str_to_str( _arg );
             } else {
@@ -306,15 +312,17 @@ namespace cpp_utils {
         inline constexpr auto ui_return{ false };
         inline constexpr auto ui_exit{ true };
     };
+    template < typename _char_type_ >
+        requires( std::is_same_v< _char_type_, char > || std::is_same_v< _char_type_, char8_t > )
     class console_ui final {
       public:
         struct func_args final {
-            console_ui &parent_ui;
+            console_ui< _char_type_ > &parent_ui;
             const DWORD button_state, ctrl_key_state, event_flag;
             auto operator=( const func_args & ) -> func_args & = default;
             auto operator=( func_args && ) -> func_args &      = default;
             func_args(
-              console_ui &_parent_ui,
+              console_ui< _char_type_ > &_parent_ui,
               const MOUSE_EVENT_RECORD _mouse_event = MOUSE_EVENT_RECORD{ {}, console_value::mouse_button_left, {}, {} } )
               : parent_ui{ _parent_ui }
               , button_state{ _mouse_event.dwButtonState }
@@ -329,7 +337,7 @@ namespace cpp_utils {
       private:
         enum class console_attrs_ { normal, lock_text, lock_all };
         struct line_node_ final {
-            string_type text{};
+            std_string< _char_type_ > text{};
             callback_type func{};
             WORD default_attrs{}, intensity_attrs{}, last_attrs{};
             COORD position{};
@@ -354,7 +362,9 @@ namespace cpp_utils {
               , intensity_attrs{ console_value::text_foreground_green | console_value::text_foreground_blue }
               , last_attrs{ console_value::text_default }
             { }
-            line_node_( const string_view_type _text, callback_type &_func, const WORD _default_attrs, const WORD _intensity_attrs )
+            line_node_(
+              const std_string_view< _char_type_ > _text, callback_type &_func, const WORD _default_attrs,
+              const WORD _intensity_attrs )
               : text{ _text }
               , func{ std::move( _func ) }
               , default_attrs{ _default_attrs }
@@ -432,17 +442,29 @@ namespace cpp_utils {
         {
             get_console_size_();
             set_cursor_( { 0, 0 } );
-            std::print( "{}", string_type( static_cast< size_type >( width_ ) * static_cast< size_type >( height_ ), ' ' ) );
+            if constexpr ( std::is_same_v< _char_type_, char > ) {
+                std::print( "{}", string_type( static_cast< size_type >( width_ ) * static_cast< size_type >( height_ ), ' ' ) );
+            } else if constexpr ( std::is_same_v< _char_type_, char8_t > ) {
+                u8print( u8"{}", u8string_type( static_cast< size_type >( width_ ) * static_cast< size_type >( height_ ), ' ' ) );
+            }
             set_cursor_( { 0, 0 } );
         }
-        static auto write_( const string_view_type _text, const bool _is_endl = false )
+        static auto write_( const std_string_view< _char_type_ > _text, const bool _is_endl = false )
         {
-            std::print( "{}{}", _text, _is_endl ? '\n' : '\0' );
+            if constexpr ( std::is_same_v< _char_type_, char > ) {
+                std::print( "{}{}", _text, _is_endl ? '\n' : '\0' );
+            } else if constexpr ( std::is_same_v< _char_type_, char8_t > ) {
+                u8print( u8"{}{}", _text, _is_endl ? '\n' : '\0' );
+            }
         }
-        static auto rewrite_( const COORD _cursor_position, const string_view_type _text )
+        static auto rewrite_( const COORD _cursor_position, const std_string_view< _char_type_ > _text )
         {
             set_cursor_( { 0, _cursor_position.Y } );
-            write_( string_type( _cursor_position.X, ' ' ) );
+            if constexpr ( std::is_same_v< _char_type_, char > ) {
+                write_( string_type( _cursor_position.X, ' ' ) );
+            } else if constexpr ( std::is_same_v< _char_type_, char8_t > ) {
+                write_( u8string_type( _cursor_position.X, ' ' ) );
+            }
             set_cursor_( { 0, _cursor_position.Y } );
             write_( _text );
             set_cursor_( { 0, _cursor_position.Y } );
@@ -527,7 +549,7 @@ namespace cpp_utils {
             return *this;
         }
         auto &add_front(
-          const string_view_type _text, callback_type _func = nullptr,
+          const std_string_view< _char_type_ > _text, callback_type _func = nullptr,
           const WORD _intensity_attrs = console_value::text_foreground_green | console_value::text_foreground_blue,
           const WORD _default_attrs   = console_value::text_default )
         {
@@ -540,7 +562,7 @@ namespace cpp_utils {
             return *this;
         }
         auto &add_back(
-          const string_view_type _text, callback_type _func = nullptr,
+          const std_string_view< _char_type_ > _text, callback_type _func = nullptr,
           const WORD _intensity_attrs = console_value::text_foreground_blue | console_value::text_foreground_green,
           const WORD _default_attrs   = console_value::text_default )
         {
@@ -553,7 +575,7 @@ namespace cpp_utils {
             return *this;
         }
         auto &insert(
-          const size_type _index, const string_view_type _text, callback_type _func = nullptr,
+          const size_type _index, const std_string_view< _char_type_ > _text, callback_type _func = nullptr,
           const WORD _intensity_attrs = console_value::text_foreground_green | console_value::text_foreground_blue,
           const WORD _default_attrs   = console_value::text_default )
         {
@@ -563,7 +585,7 @@ namespace cpp_utils {
             return *this;
         }
         auto &edit(
-          const size_type _index, const string_view_type _text, callback_type _func = nullptr,
+          const size_type _index, const std_string_view< _char_type_ > _text, callback_type _func = nullptr,
           const WORD _intensity_attrs = console_value::text_foreground_green | console_value::text_foreground_blue,
           const WORD _default_attrs   = console_value::text_default )
         {
@@ -614,12 +636,17 @@ namespace cpp_utils {
             return *this;
         }
         auto &set_console(
-          const string_view_type _title, const UINT _code_page, const SHORT _width, const SHORT _height, const bool _is_fixed_size,
-          const bool _is_enabled_minimize_ctrl, const bool is_enabled_close_window_ctrl, const BYTE _translucency_value )
+          const std_string_view< _char_type_ > _title, const UINT _code_page, const SHORT _width, const SHORT _height,
+          const bool _is_fixed_size, const bool _is_enabled_minimize_ctrl, const bool is_enabled_close_window_ctrl,
+          const BYTE _translucency_value )
         {
             SetConsoleOutputCP( _code_page );
             SetConsoleCP( _code_page );
-            SetConsoleTitleA( _title.data() );
+            if constexpr ( std::is_same_v< _char_type_, char > ) {
+                SetConsoleTitleA( _title.data() );
+            } else if constexpr ( std::is_same_v< _char_type_, char8_t > ) {
+                SetConsoleTitleA( u8str_to_str( _title ).c_str() );
+            }
             std::system( std::format( "mode.com con cols={} lines={}", _width, _height ).c_str() );
             SetWindowLongPtrW(
               GetConsoleWindow(), GWL_STYLE,
