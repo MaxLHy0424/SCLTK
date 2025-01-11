@@ -351,11 +351,11 @@ namespace cpp_utils {
         };
         std::deque< line_node_ > lines_{};
         SHORT width_{}, height_{};
-        static auto show_cursor_( const bool _is_show )
+        static auto show_cursor_( const bool _is_shown )
         {
             auto cursor_data{ CONSOLE_CURSOR_INFO{} };
             GetConsoleCursorInfo( GetStdHandle( STD_OUTPUT_HANDLE ), &cursor_data );
-            cursor_data.bVisible = _is_show;
+            cursor_data.bVisible = _is_shown;
             SetConsoleCursorInfo( GetStdHandle( STD_OUTPUT_HANDLE ), &cursor_data );
         }
         static auto edit_console_attrs_( const console_attrs_ _mod )
@@ -455,7 +455,7 @@ namespace cpp_utils {
         }
         auto call_func_( const MOUSE_EVENT_RECORD &_mouse_event )
         {
-            auto is_exit{ console_value::ui_return };
+            auto is_exited{ console_value::ui_return };
             for ( auto &line : lines_ ) {
                 if ( line != _mouse_event.dwMousePosition ) {
                     continue;
@@ -467,13 +467,13 @@ namespace cpp_utils {
                 line.set_attrs( line.default_attrs );
                 show_cursor_( false );
                 edit_console_attrs_( console_attrs_::lock_all );
-                is_exit = line.func( func_args{ *this, _mouse_event } );
+                is_exited = line.func( func_args{ *this, _mouse_event } );
                 show_cursor_( false );
                 edit_console_attrs_( console_attrs_::lock_text );
                 init_pos_();
                 break;
             }
-            return is_exit;
+            return is_exited;
         }
       public:
         auto empty() const
@@ -601,8 +601,8 @@ namespace cpp_utils {
             return *this;
         }
         auto &set_console(
-          const string_view_type _title, const UINT _code_page, const SHORT _width, const SHORT _height, const bool _is_fix_size,
-          const bool _is_enable_minimize_ctrl, const bool is_enable_close_window_ctrl, const BYTE _translucency )
+          const string_view_type _title, const UINT _code_page, const SHORT _width, const SHORT _height, const bool _is_fixed_size,
+          const bool _is_enabled_minimize_ctrl, const bool is_enabled_close_window_ctrl, const BYTE _translucency_value )
         {
             SetConsoleOutputCP( _code_page );
             SetConsoleCP( _code_page );
@@ -610,24 +610,24 @@ namespace cpp_utils {
             std::system( std::format( "mode.com con cols={} lines={}", _width, _height ).c_str() );
             SetWindowLongPtrW(
               GetConsoleWindow(), GWL_STYLE,
-              _is_fix_size
+              _is_fixed_size
                 ? GetWindowLongPtrW( GetConsoleWindow(), GWL_STYLE ) & ~WS_SIZEBOX & ~WS_MAXIMIZEBOX
                 : GetWindowLongPtrW( GetConsoleWindow(), GWL_STYLE ) | WS_SIZEBOX | WS_MAXIMIZEBOX );
             SetWindowLongPtrW(
               GetConsoleWindow(), GWL_STYLE,
-              _is_enable_minimize_ctrl
+              _is_enabled_minimize_ctrl
                 ? GetWindowLongPtrW( GetConsoleWindow(), GWL_STYLE ) | WS_MINIMIZEBOX
                 : GetWindowLongPtrW( GetConsoleWindow(), GWL_STYLE ) & ~WS_MINIMIZEBOX );
             EnableMenuItem(
               GetSystemMenu( GetConsoleWindow(), FALSE ), SC_CLOSE,
-              is_enable_close_window_ctrl ? MF_BYCOMMAND | MF_ENABLED : MF_BYCOMMAND | MF_DISABLED | MF_GRAYED );
-            SetLayeredWindowAttributes( GetConsoleWindow(), RGB( 0, 0, 0 ), _translucency, LWA_ALPHA );
+              is_enabled_close_window_ctrl ? MF_BYCOMMAND | MF_ENABLED : MF_BYCOMMAND | MF_DISABLED | MF_GRAYED );
+            SetLayeredWindowAttributes( GetConsoleWindow(), RGB( 0, 0, 0 ), _translucency_value, LWA_ALPHA );
             return *this;
         }
-        auto &lock( const bool _is_hide_cursor, const bool _is_lock_text )
+        auto &lock( const bool _is_hidden_cursor, const bool _is_locked_text )
         {
-            show_cursor_( !_is_hide_cursor );
-            edit_console_attrs_( _is_lock_text ? console_attrs_::lock_all : console_attrs_::normal );
+            show_cursor_( !_is_hidden_cursor );
+            edit_console_attrs_( _is_locked_text ? console_attrs_::lock_all : console_attrs_::normal );
             return *this;
         }
         auto operator=( const console_ui & ) -> console_ui & = default;
