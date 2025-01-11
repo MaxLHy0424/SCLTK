@@ -192,13 +192,13 @@ namespace cpp_utils {
       private:
         struct task_node_ final {
             std::jthread task_thread{};
-            auto operator=( const task_node_ & ) -> task_node_ & = default;
+            auto operator=( const task_node_ & ) -> task_node_ & = delete;
             auto operator=( task_node_ && ) -> task_node_ &      = default;
             task_node_()                                         = default;
             task_node_( std::jthread &&_task_thread )
               : task_thread{ std::move( _task_thread ) }
             { }
-            task_node_( const task_node_ & ) = default;
+            task_node_( const task_node_ & ) = delete;
             task_node_( task_node_ && )      = default;
             ~task_node_()
             {
@@ -227,13 +227,13 @@ namespace cpp_utils {
                 task.detach();
             }
         }
-        auto operator=( const multithread_task & ) -> multithread_task & = default;
+        auto operator=( const multithread_task & ) -> multithread_task & = delete;
         auto operator=( multithread_task && ) -> multithread_task &      = default;
         multithread_task()                                               = default;
         multithread_task( const size_type _size )
           : tasks_{ _size }
         { }
-        multithread_task( const multithread_task & ) = default;
+        multithread_task( const multithread_task & ) = delete;
         multithread_task( multithread_task && )      = default;
         ~multithread_task()                          = default;
     };

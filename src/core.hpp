@@ -18,8 +18,8 @@ namespace core {
         struct sub_key final {
             const string_view_type self_name, showed_name;
             bool is_enabled{};
-            auto operator=( const sub_key & ) -> sub_key & = default;
-            auto operator=( sub_key && ) -> sub_key &      = default;
+            auto operator=( const sub_key & ) -> sub_key & = delete;
+            auto operator=( sub_key && ) -> sub_key &      = delete;
             sub_key( const string_view_type _self_name, const string_view_type _showed_name )
               : self_name{ _self_name }
               , showed_name{ _showed_name }
@@ -40,8 +40,8 @@ namespace core {
                 }
                 std::abort();
             }
-            auto operator=( const main_key & ) -> main_key & = default;
-            auto operator=( main_key && ) -> main_key &      = default;
+            auto operator=( const main_key & ) -> main_key & = delete;
+            auto operator=( main_key && ) -> main_key &      = delete;
             main_key( const string_view_type _self_name, const string_view_type _showed_name, std::vector< sub_key > _sub_keys )
               : self_name{ _self_name }
               , showed_name{ _showed_name }
@@ -61,8 +61,8 @@ namespace core {
             }
             std::abort();
         }
-        auto operator=( const option_node & ) -> option_node & = default;
-        auto operator=( option_node && ) -> option_node &      = default;
+        auto operator=( const option_node & ) -> option_node & = delete;
+        auto operator=( option_node && ) -> option_node &      = delete;
         option_node( std::vector< main_key > _main_keys )
           : main_keys{ std::move( _main_keys ) }
         { }
@@ -85,8 +85,8 @@ namespace core {
         {
             return execs.empty() && servs.empty();
         }
-        auto operator=( const rule_node & ) -> rule_node & = default;
-        auto operator=( rule_node && ) -> rule_node &      = default;
+        auto operator=( const rule_node & ) -> rule_node & = delete;
+        auto operator=( rule_node && ) -> rule_node &      = delete;
         rule_node( const string_view_type _showed_name, std::deque< string_type > _execs, std::deque< string_type > _servs )
           : showed_name{ _showed_name }
           , execs{ std::move( _execs ) }
@@ -125,13 +125,13 @@ namespace core {
         virtual auto load( const bool, const string_view_type ) -> void = 0;
         virtual auto reload_init() -> void                              = 0;
         virtual auto sync( string_type & ) -> void                      = 0;
-        virtual auto operator=( const config_item & ) -> config_item &  = default;
-        virtual auto operator=( config_item && ) -> config_item &       = default;
+        virtual auto operator=( const config_item & ) -> config_item &  = delete;
+        virtual auto operator=( config_item && ) -> config_item &       = delete;
         config_item( const string_view_type _self_name )
           : self_name{ _self_name }
         { }
-        config_item( const config_item & ) = default;
-        config_item( config_item && )      = default;
+        config_item( const config_item & ) = delete;
+        config_item( config_item && )      = delete;
         virtual ~config_item()             = default;
     };
     class option_op final : public config_item {
@@ -161,13 +161,13 @@ namespace core {
                 }
             }
         }
-        virtual auto operator=( const option_op & ) -> option_op & = default;
-        virtual auto operator=( option_op && ) -> option_op &      = default;
+        virtual auto operator=( const option_op & ) -> option_op & = delete;
+        virtual auto operator=( option_op && ) -> option_op &      = delete;
         option_op()
           : config_item{ "options" }
         { }
-        option_op( const option_op & ) = default;
-        option_op( option_op && )      = default;
+        option_op( const option_op & ) = delete;
+        option_op( option_op && )      = delete;
         virtual ~option_op()           = default;
     };
     class custom_rule_execs_op final : public config_item {
@@ -186,13 +186,13 @@ namespace core {
                 _out.append( exec ).push_back( '\n' );
             }
         }
-        virtual auto operator=( const custom_rule_execs_op & ) -> custom_rule_execs_op & = default;
-        virtual auto operator=( custom_rule_execs_op && ) -> custom_rule_execs_op &      = default;
+        virtual auto operator=( const custom_rule_execs_op & ) -> custom_rule_execs_op & = delete;
+        virtual auto operator=( custom_rule_execs_op && ) -> custom_rule_execs_op &      = delete;
         custom_rule_execs_op()
           : config_item{ "custom_rule_execs" }
         { }
-        custom_rule_execs_op( const custom_rule_execs_op & ) = default;
-        custom_rule_execs_op( custom_rule_execs_op && )      = default;
+        custom_rule_execs_op( const custom_rule_execs_op & ) = delete;
+        custom_rule_execs_op( custom_rule_execs_op && )      = delete;
         virtual ~custom_rule_execs_op()                      = default;
     };
     class custom_rule_servs_op final : public config_item {
@@ -211,13 +211,13 @@ namespace core {
                 _out.append( serv ).push_back( '\n' );
             }
         }
-        virtual auto operator=( const custom_rule_servs_op & ) -> custom_rule_servs_op & = default;
-        virtual auto operator=( custom_rule_servs_op && ) -> custom_rule_servs_op &      = default;
+        virtual auto operator=( const custom_rule_servs_op & ) -> custom_rule_servs_op & = delete;
+        virtual auto operator=( custom_rule_servs_op && ) -> custom_rule_servs_op &      = delete;
         custom_rule_servs_op()
           : config_item{ "custom_rule_servs" }
         { }
-        custom_rule_servs_op( const custom_rule_servs_op & ) = default;
-        custom_rule_servs_op( custom_rule_servs_op && )      = default;
+        custom_rule_servs_op( const custom_rule_servs_op & ) = delete;
+        custom_rule_servs_op( custom_rule_servs_op && )      = delete;
         virtual ~custom_rule_servs_op()                      = default;
     };
     inline auto config_items{
@@ -295,8 +295,8 @@ namespace core {
                 std::system( cmd_.c_str() );
                 return cpp_utils::console_value::ui_return;
             }
-            auto operator=( const cmd_executor & ) -> cmd_executor & = default;
-            auto operator=( cmd_executor && ) -> cmd_executor &      = default;
+            auto operator=( const cmd_executor & ) -> cmd_executor & = delete;
+            auto operator=( cmd_executor && ) -> cmd_executor &      = delete;
             cmd_executor( const string_view_type _cmd )
               : cmd_{ _cmd }
             { }
@@ -362,8 +362,8 @@ namespace core {
             SetWindowPos( GetConsoleWindow(), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
         }
       public:
-        auto operator=( const set_window & ) -> set_window & = default;
-        auto operator=( set_window && ) -> set_window &      = default;
+        auto operator=( const set_window & ) -> set_window & = delete;
+        auto operator=( set_window && ) -> set_window &      = delete;
         set_window( const bool &_is_topmost_shown, const bool &_is_disabled_close_ctrl, const bool &_is_translucency )
           : is_topmost_shown_{ _is_topmost_shown }
           , is_disabled_close_ctrl_{ _is_disabled_close_ctrl }
@@ -374,8 +374,8 @@ namespace core {
             std::print( " -> 创建线程: 置顶显示.\n" );
             add_task( std::jthread{ topmost_show_, this } );
         }
-        set_window( const set_window & ) = default;
-        set_window( set_window && )      = default;
+        set_window( const set_window & ) = delete;
+        set_window( set_window && )      = delete;
         ~set_window()                    = default;
     };
     class fix_os_env final : private cpp_utils::multithread_task {
@@ -410,16 +410,16 @@ namespace core {
             }
         }
       public:
-        auto operator=( const fix_os_env & ) -> fix_os_env & = default;
-        auto operator=( fix_os_env && ) -> fix_os_env &      = default;
+        auto operator=( const fix_os_env & ) -> fix_os_env & = delete;
+        auto operator=( fix_os_env && ) -> fix_os_env &      = delete;
         fix_os_env( const bool &_is_enabled )
           : is_enabled_{ _is_enabled }
         {
             std::print( " -> 创建线程: 修复操作系统环境.\n" );
             add_task( std::jthread{ exec_op_, this } );
         }
-        fix_os_env( const fix_os_env & ) = default;
-        fix_os_env( fix_os_env && )      = default;
+        fix_os_env( const fix_os_env & ) = delete;
+        fix_os_env( fix_os_env && )      = delete;
         ~fix_os_env()                    = default;
     };
     class config_op final {
@@ -521,8 +521,8 @@ namespace core {
                 sub_key_.is_enabled = sub_key_value_;
                 return cpp_utils::console_value::ui_return;
             }
-            auto operator=( const option_setter & ) -> option_setter & = default;
-            auto operator=( option_setter && ) -> option_setter &      = default;
+            auto operator=( const option_setter & ) -> option_setter & = delete;
+            auto operator=( option_setter && ) -> option_setter &      = delete;
             option_setter( option_node::sub_key &_sub_key, const bool _sub_key_value )
               : sub_key_{ _sub_key }
               , sub_key_value_{ _sub_key_value }
@@ -551,8 +551,8 @@ namespace core {
                 ui.show();
                 return cpp_utils::console_value::ui_return;
             }
-            auto operator=( const option_shower & ) -> option_shower & = default;
-            auto operator=( option_shower && ) -> option_shower &      = default;
+            auto operator=( const option_shower & ) -> option_shower & = delete;
+            auto operator=( option_shower && ) -> option_shower &      = delete;
             option_shower( option_node::main_key &_main_key )
               : main_key_{ _main_key }
             { }
@@ -588,8 +588,8 @@ namespace core {
             }
             return cpp_utils::console_value::ui_return;
         }
-        auto operator=( const config_op & ) -> config_op & = default;
-        auto operator=( config_op && ) -> config_op &      = default;
+        auto operator=( const config_op & ) -> config_op & = delete;
+        auto operator=( config_op && ) -> config_op &      = delete;
         config_op( const mod _mod_data )
           : mod_data_{ _mod_data }
         { }
@@ -660,8 +660,8 @@ namespace core {
             }
             return cpp_utils::console_value::ui_return;
         }
-        auto operator=( const rule_op & ) -> rule_op & = default;
-        auto operator=( rule_op && ) -> rule_op &      = default;
+        auto operator=( const rule_op & ) -> rule_op & = delete;
+        auto operator=( rule_op && ) -> rule_op &      = delete;
         rule_op( const mod _mod_data, const rule_node &_rule )
           : mod_data_{ _mod_data }
           , rules_{ _rule }
