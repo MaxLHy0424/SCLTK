@@ -219,6 +219,8 @@ namespace cpp_utils {
         std::this_thread::yield();
         std::this_thread::sleep_for( _time );
     }
+    template < typename _log_char_type_ >
+        requires( std::is_same_v< _log_char_type_, char > || std::is_same_v< _log_char_type_, char8_t > )
     class multithread_task {
       private:
         struct task_node_ final {
@@ -234,7 +236,11 @@ namespace cpp_utils {
             ~task_node_()
             {
                 if ( task_thread.joinable() ) {
-                    std::print( " -> 终止线程 {}.\n", task_thread.get_id() );
+                    if constexpr ( std::is_same_v< _log_char_type_, char > ) {
+                        std::print( " -> 终止线程 {}.\n", task_thread.get_id() );
+                    } else if constexpr ( std::is_same_v< _log_char_type_, char8_t > ) {
+                        u8print( u8" -> 终止线程 {}.\n", task_thread.get_id() );
+                    }
                 }
             }
         };

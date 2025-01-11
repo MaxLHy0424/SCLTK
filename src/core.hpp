@@ -326,7 +326,7 @@ namespace core {
         ui.show();
         return cpp_utils::console_value::ui_return;
     }
-    class set_window final : private cpp_utils::multithread_task {
+    class set_window final : private cpp_utils::multithread_task< char > {
       private:
         type_alloc< const bool & > is_topmost_shown_, is_disabled_close_ctrl_, is_translucency_;
         auto set_attrs_( const std::stop_token _msg )
@@ -376,7 +376,7 @@ namespace core {
         set_window( set_window && )      = delete;
         ~set_window()                    = default;
     };
-    class fix_os_env final : private cpp_utils::multithread_task {
+    class fix_os_env final : private cpp_utils::multithread_task< char > {
       private:
         const bool &is_enabled_;
         auto exec_op_( const std::stop_token _msg )
