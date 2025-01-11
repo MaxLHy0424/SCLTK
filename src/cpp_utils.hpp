@@ -197,18 +197,10 @@ namespace cpp_utils {
     {
         return string_convert< char8_t >( std::to_string( reinterpret_cast< std::uintptr_t >( _ptr ) ) );
     }
-    template < size_type _length_ >
+    template < typename _char_type_, std::size_t _length_ >
     struct constexpr_string final {
-        char data[ _length_ ]{};
-        constexpr constexpr_string( const char ( &_str )[ _length_ ] )
-        {
-            std::copy( _str, _str + _length_, data );
-        }
-    };
-    template < size_type _length_ >
-    struct constexpr_u8string final {
-        char8_t data[ _length_ ]{};
-        constexpr constexpr_u8string( const char8_t ( &_str )[ _length_ ] )
+        _char_type_ data[ _length_ ]{};
+        constexpr constexpr_string( const _char_type_ ( &_str )[ _length_ ] )
         {
             std::copy( _str, _str + _length_, data );
         }
