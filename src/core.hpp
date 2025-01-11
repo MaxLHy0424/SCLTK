@@ -136,9 +136,9 @@ namespace core {
     };
     class option_op final : public config_item {
       public:
-        virtual auto load( const bool _is_reload, const string_view_type _line ) -> void override final
+        virtual auto load( const bool _is_reloaded, const string_view_type _line ) -> void override final
         {
-            if ( _is_reload ) {
+            if ( _is_reloaded ) {
                 return;
             }
             for ( auto &main_key : options.main_keys ) {
@@ -330,14 +330,14 @@ namespace core {
     }
     class set_window final : private cpp_utils::multithread_task {
       private:
-        type_alloc< const bool & > is_topmost_, is_disable_close_ctrl_, is_translucency_;
+        type_alloc< const bool & > is_topmost_shown_, is_disabled_close_ctrl_, is_translucency_;
         auto set_attrs_( const std::stop_token _msg )
         {
             while ( !_msg.stop_requested() ) {
                 SetLayeredWindowAttributes( GetConsoleWindow(), RGB( 0, 0, 0 ), is_translucency_ ? 230 : 255, LWA_ALPHA );
                 EnableMenuItem(
                   GetSystemMenu( GetConsoleWindow(), FALSE ), SC_CLOSE,
-                  is_disable_close_ctrl_ ? MF_BYCOMMAND | MF_DISABLED | MF_GRAYED : MF_BYCOMMAND | MF_ENABLED );
+                  is_disabled_close_ctrl_ ? MF_BYCOMMAND | MF_DISABLED | MF_GRAYED : MF_BYCOMMAND | MF_ENABLED );
                 cpp_utils::perf_sleep( default_thread_sleep_time );
             }
         }
@@ -347,7 +347,7 @@ namespace core {
             const auto foreground_id{ GetWindowThreadProcessId( this_window, nullptr ) };
             const auto current_id{ GetCurrentThreadId() };
             while ( !_msg.stop_requested() ) {
-                if ( !is_topmost_ ) {
+                if ( !is_topmost_shown_ ) {
                     SetWindowPos( GetConsoleWindow(), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
                     cpp_utils::perf_sleep( default_thread_sleep_time );
                     continue;
@@ -364,9 +364,9 @@ namespace core {
       public:
         auto operator=( const set_window & ) -> set_window & = default;
         auto operator=( set_window && ) -> set_window &      = default;
-        set_window( const bool &_is_topmost, const bool &_is_disable_close_ctrl, const bool &_is_translucency )
-          : is_topmost_{ _is_topmost }
-          , is_disable_close_ctrl_{ _is_disable_close_ctrl }
+        set_window( const bool &_is_topmost_shown, const bool &_is_disabled_close_ctrl, const bool &_is_translucency )
+          : is_topmost_shown_{ _is_topmost_shown }
+          , is_disabled_close_ctrl_{ _is_disabled_close_ctrl }
           , is_translucency_{ _is_translucency }
         {
             std::print( " -> 创建线程: 窗口属性设定.\n" );
@@ -429,7 +429,7 @@ namespace core {
         const mod mod_data_;
         static constexpr auto option_button_color{
           cpp_utils::console_value::text_foreground_red | cpp_utils::console_value::text_foreground_green };
-        auto load_( const bool _is_reload )
+        auto load_( const bool _is_reloaded )
         {
             auto config_file{
               std::ifstream{ config_file_name.data(), std::ios::in }
@@ -437,7 +437,7 @@ namespace core {
             if ( !config_file.good() ) {
                 return;
             }
-            if ( _is_reload ) {
+            if ( _is_reloaded ) {
                 std::print( " -> 初始化配置.\n" );
                 for ( auto &config_item : config_items ) {
                     config_item->reload_init();
@@ -469,7 +469,7 @@ namespace core {
                     continue;
                 }
                 if ( config_item_ptr != nullptr ) {
-                    config_item_ptr->load( _is_reload, view );
+                    config_item_ptr->load( _is_reloaded, view );
                 }
             }
             return;
