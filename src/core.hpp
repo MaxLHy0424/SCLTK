@@ -511,7 +511,7 @@ namespace core {
             wait( 3s );
             return cpp_utils::console_value::ui_return;
         }
-        class option_setter {
+        class option_setter final {
           private:
             option_node::sub_key &sub_key_;
             const bool sub_key_value_;
