@@ -515,12 +515,11 @@ namespace cpp_utils {
           const WORD _intensity_attrs = console_value::text_foreground_green | console_value::text_foreground_blue,
           const WORD _default_attrs   = console_value::text_default )
         {
-            auto is_func{ _func == nullptr ? false : true };
             lines_.emplace_front( line_node_{
               _text,
               _func,
               _default_attrs,
-              is_func ? _intensity_attrs : _default_attrs,
+              _func != nullptr ? _intensity_attrs : _default_attrs,
             } );
             return *this;
         }
@@ -529,12 +528,11 @@ namespace cpp_utils {
           const WORD _intensity_attrs = console_value::text_foreground_blue | console_value::text_foreground_green,
           const WORD _default_attrs   = console_value::text_default )
         {
-            auto is_func{ _func == nullptr ? false : true };
             lines_.emplace_back( line_node_{
               _text,
               _func,
               _default_attrs,
-              is_func ? _intensity_attrs : _default_attrs,
+              _func != nullptr ? _intensity_attrs : _default_attrs,
             } );
             return *this;
         }
@@ -543,9 +541,9 @@ namespace cpp_utils {
           const WORD _intensity_attrs = console_value::text_foreground_green | console_value::text_foreground_blue,
           const WORD _default_attrs   = console_value::text_default )
         {
-            auto is_func{ _func == nullptr ? false : true };
             lines_.emplace(
-              lines_.cbegin() + _index, line_node_{ _text, _func, _default_attrs, is_func ? _intensity_attrs : _default_attrs } );
+              lines_.cbegin() + _index,
+              line_node_{ _text, _func, _default_attrs, _func != nullptr ? _intensity_attrs : _default_attrs } );
             return *this;
         }
         auto &edit(
@@ -553,8 +551,7 @@ namespace cpp_utils {
           const WORD _intensity_attrs = console_value::text_foreground_green | console_value::text_foreground_blue,
           const WORD _default_attrs   = console_value::text_default )
         {
-            auto is_func{ _func == nullptr ? false : true };
-            lines_.at( _index ) = line_node_{ _text, _func, _default_attrs, is_func ? _intensity_attrs : _default_attrs };
+            lines_.at( _index ) = line_node_{ _text, _func, _default_attrs, _func != nullptr ? _intensity_attrs : _default_attrs };
             return *this;
         }
         auto &remove_front()
