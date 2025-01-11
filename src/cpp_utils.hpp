@@ -133,11 +133,15 @@ namespace cpp_utils {
     template < typename _target_char_type_, typename _source_char_type_ >
     inline consteval auto is_convertible_char_type()
     {
-        return !std::is_pointer_v< _target_char_type_ > && !std::is_pointer_v< _source_char_type_ >
-            && sizeof( _target_char_type_ ) == sizeof( _source_char_type_ )
-            && !std::is_same_v< std::decay_t< _target_char_type_ >, std::decay_t< _source_char_type_ > >
-            && std::is_same_v< std::decay_t< _target_char_type_ >, _target_char_type_ >
-            && std::is_same_v< std::decay_t< _source_char_type_ >, _source_char_type_ >;
+        using pure_target_type = std::decay_t< _target_char_type_ >;
+        using pure_source_type = std::decay_t< _source_char_type_ >;
+        return ( std::is_same_v< pure_target_type, char > || std::is_same_v< pure_target_type, wchar_t >
+                 || std::is_same_v< pure_target_type, char8_t > || std::is_same_v< pure_target_type, char16_t >
+                 || std::is_same_v< pure_target_type, char32_t > )
+            && ( std::is_same_v< pure_source_type, char > || std::is_same_v< pure_source_type, wchar_t >
+                 || std::is_same_v< pure_source_type, char8_t > || std::is_same_v< pure_source_type, char16_t >
+                 || std::is_same_v< pure_source_type, char32_t > )
+            && sizeof( pure_target_type ) == sizeof( pure_source_type );
     }
     template < typename _target_char_type_, typename _source_char_type_ >
         requires( is_convertible_char_type< _target_char_type_, _source_char_type_ >() )
