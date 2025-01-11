@@ -4,9 +4,11 @@
 # include <shlguid.h>
 # include <shlobj.h>
 # include <shlwapi.h>
+# include <tchar.h>
 # include <windows.h>
 #endif
 #include <ciso646>
+#include <iconv.h>
 #include <stdatomic.h>
 #include <algorithm>
 #include <any>
@@ -124,20 +126,6 @@ namespace cpp_utils {
     using string_view_type   = std::string_view;
     using wstring_view_type  = std::wstring_view;
     using u8string_view_type = std::u8string_view;
-    template < typename _chrono_type_ >
-    inline auto perf_sleep( const _chrono_type_ _time )
-    {
-        std::this_thread::yield();
-        std::this_thread::sleep_for( _time );
-    }
-    template < typename _type_ >
-    using type_alloc = _type_;
-    template < typename _type_ >
-        requires( std::is_pointer_v< _type_ > )
-    inline auto ptr_to_string( _type_ _ptr )
-    {
-        return std::to_string( reinterpret_cast< std::uintptr_t >( _ptr ) );
-    }
     inline const auto u8string_to_string( const u8string_view_type _str )
     {
         return std::string{ reinterpret_cast< const char * >( _str.data() ) };
@@ -171,6 +159,26 @@ namespace cpp_utils {
     inline auto u8println( const u8string_view_type _fmt, _args_ &&..._args )
     {
         std::println( "{}", u8string_to_string( u8format( _fmt, std::forward< _args_ >( _args )... ) ) );
+    }
+    template < typename _chrono_type_ >
+    inline auto perf_sleep( const _chrono_type_ _time )
+    {
+        std::this_thread::yield();
+        std::this_thread::sleep_for( _time );
+    }
+    template < typename _type_ >
+    using type_alloc = _type_;
+    template < typename _type_ >
+        requires( std::is_pointer_v< _type_ > )
+    inline auto ptr_to_string( _type_ _ptr )
+    {
+        return std::to_string( reinterpret_cast< std::uintptr_t >( _ptr ) );
+    }
+    template < typename _type_ >
+        requires( std::is_pointer_v< _type_ > )
+    inline auto ptr_to_u8string( _type_ _ptr )
+    {
+        return string_to_u8string( std::to_string( reinterpret_cast< std::uintptr_t >( _ptr ) ) );
     }
     template < size_type _length_ >
     struct constexpr_u8string final {
