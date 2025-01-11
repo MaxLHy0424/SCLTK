@@ -266,6 +266,8 @@ namespace cpp_utils {
         multithread_task( multithread_task && )      = default;
         ~multithread_task()                          = default;
     };
+    using multithread_task_ansi = multithread_task< char >;
+    using multithread_task_u8   = multithread_task< char8_t >;
 #if defined( _WIN32 ) || defined( _WIN64 )
     inline auto is_run_as_admin()
     {
@@ -692,5 +694,7 @@ namespace cpp_utils {
         console_ui( console_ui && )                          = default;
         ~console_ui()                                        = default;
     };
+    using console_ui_ansi = console_ui< char >;
+    using console_ui_u8   = console_ui< char8_t >;
 #endif
 }
