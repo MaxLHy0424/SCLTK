@@ -424,22 +424,22 @@ namespace core {
             }
             std::print( " -> 加载配置文件.\n" );
             auto line{ ansi_string{} };
-            auto view{ ansi_string_view{} };
+            auto line_view{ ansi_string_view{} };
             auto config_item_ptr{ ( config_item * ) {} };
             while ( std::getline( config_file, line ) ) {
-                view = line;
-                if ( view.empty() ) {
+                line_view = line;
+                if ( line_view.empty() ) {
                     continue;
                 }
-                if ( view.front() == '#' ) {
+                if ( line_view.front() == '#' ) {
                     continue;
                 }
-                if ( view.substr( 0, sizeof( "[ " ) - 1 ) == "[ "
-                     && view.substr( view.size() - sizeof( " ]" ) + 1, view.size() ) == " ]" )
+                if ( line_view.substr( 0, sizeof( "[ " ) - 1 ) == "[ "
+                     && line_view.substr( line_view.size() - sizeof( " ]" ) + 1, line_view.size() ) == " ]" )
                 {
-                    view = view.substr( sizeof( "[ " ) - 1, view.size() - sizeof( " ]" ) - 1 );
+                    line_view = line_view.substr( sizeof( "[ " ) - 1, line_view.size() - sizeof( " ]" ) - 1 );
                     for ( auto &config_item : config_items ) {
-                        if ( config_item->self_name == view ) {
+                        if ( config_item->self_name == line_view ) {
                             config_item_ptr = config_item.get();
                             break;
                         }
@@ -448,7 +448,7 @@ namespace core {
                     continue;
                 }
                 if ( config_item_ptr != nullptr ) {
-                    config_item_ptr->load( _is_reloaded, view );
+                    config_item_ptr->load( _is_reloaded, line_view );
                 }
             }
             return;
