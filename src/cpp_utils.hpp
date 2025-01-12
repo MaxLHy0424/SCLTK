@@ -430,7 +430,7 @@ namespace cpp_utils {
             ~line_node_()                    = default;
         };
         std::deque< line_node_ > lines_{};
-        SHORT width_{}, height_{};
+        SHORT console_width_{}, console_height_{};
         static auto show_cursor_( const bool _is_shown )
         {
             auto cursor_data{ CONSOLE_CURSOR_INFO{} };
@@ -489,17 +489,21 @@ namespace cpp_utils {
         {
             auto console_data{ CONSOLE_SCREEN_BUFFER_INFO{} };
             GetConsoleScreenBufferInfo( GetStdHandle( STD_OUTPUT_HANDLE ), &console_data );
-            height_ = console_data.dwSize.Y;
-            width_  = console_data.dwSize.X;
+            console_height_ = console_data.dwSize.Y;
+            console_width_  = console_data.dwSize.X;
         }
         auto cls_()
         {
             get_console_size_();
             set_cursor_( { 0, 0 } );
             if constexpr ( std::is_same_v< _char_type_, ansi_char > ) {
-                std::print( "{}", ansi_string( static_cast< size_type >( width_ ) * static_cast< size_type >( height_ ), ' ' ) );
+                std::print(
+                  "{}",
+                  ansi_string( static_cast< size_type >( console_width_ ) * static_cast< size_type >( console_height_ ), ' ' ) );
             } else if constexpr ( std::is_same_v< _char_type_, utf8_char > ) {
-                utf8_print( u8"{}", utf8_string( static_cast< size_type >( width_ ) * static_cast< size_type >( height_ ), ' ' ) );
+                utf8_print(
+                  u8"{}",
+                  utf8_string( static_cast< size_type >( console_width_ ) * static_cast< size_type >( console_height_ ), ' ' ) );
             }
             set_cursor_( { 0, 0 } );
         }
