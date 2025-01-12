@@ -5,20 +5,21 @@ namespace core {
     using namespace std::chrono_literals;
     using namespace std::string_view_literals;
     using size_type        = cpp_utils::size_type;
-    using string_type      = cpp_utils::string_type;
-    using wstring_type     = cpp_utils::wstring_type;
-    using string_view_type = cpp_utils::string_view_type;
+    using ansi_char        = cpp_utils::ansi_char;
+    using ansi_string      = cpp_utils::ansi_string;
+    using ansi_string_view = cpp_utils::ansi_string_view;
+    using wide_string      = cpp_utils::wide_string;
     template < typename _type_ >
     using type_alloc = cpp_utils::type_alloc< _type_ >;
     inline constexpr auto config_file_name{ "config.ini"sv };
     inline constexpr auto default_thread_sleep_time{ 1s };
     struct option_node final {
         struct sub_key final {
-            const string_view_type self_name, showed_name;
+            const ansi_string_view self_name, showed_name;
             bool is_enabled{};
             auto operator=( const sub_key & ) -> sub_key & = delete;
             auto operator=( sub_key && ) -> sub_key &      = delete;
-            sub_key( const string_view_type _self_name, const string_view_type _showed_name )
+            sub_key( const ansi_string_view _self_name, const ansi_string_view _showed_name )
               : self_name{ _self_name }
               , showed_name{ _showed_name }
             { }
@@ -27,9 +28,9 @@ namespace core {
             ~sub_key()                 = default;
         };
         struct main_key final {
-            const string_view_type self_name, showed_name;
+            const ansi_string_view self_name, showed_name;
             std::vector< sub_key > sub_keys;
-            auto &operator[]( const string_view_type _self_name )
+            auto &operator[]( const ansi_string_view _self_name )
             {
                 for ( auto &key : sub_keys ) {
                     if ( key.self_name == _self_name ) {
@@ -40,7 +41,7 @@ namespace core {
             }
             auto operator=( const main_key & ) -> main_key & = delete;
             auto operator=( main_key && ) -> main_key &      = delete;
-            main_key( const string_view_type _self_name, const string_view_type _showed_name, std::vector< sub_key > _sub_keys )
+            main_key( const ansi_string_view _self_name, const ansi_string_view _showed_name, std::vector< sub_key > _sub_keys )
               : self_name{ _self_name }
               , showed_name{ _showed_name }
               , sub_keys{ std::move( _sub_keys ) }
@@ -50,7 +51,7 @@ namespace core {
             ~main_key()                  = default;
         };
         std::vector< main_key > main_keys;
-        auto &operator[]( const string_view_type _self_name )
+        auto &operator[]( const ansi_string_view _self_name )
         {
             for ( auto &key : main_keys ) {
                 if ( key.self_name == _self_name ) {
@@ -77,15 +78,15 @@ namespace core {
           { { "topmost_show", "置顶显示" }, { "disable_close_ctrl", "禁用关闭控件" }, { "translucency", "半透明化" } } },
         { "other", "其他", { { "fix_os_env", "修复操作系统环境" } } } } } };
     struct rule_node final {
-        const string_view_type showed_name;
-        std::deque< string_type > execs, servs;
+        const ansi_string_view showed_name;
+        std::deque< ansi_string > execs, servs;
         auto empty() const
         {
             return execs.empty() && servs.empty();
         }
         auto operator=( const rule_node & ) -> rule_node & = delete;
         auto operator=( rule_node && ) -> rule_node &      = delete;
-        rule_node( const string_view_type _showed_name, std::deque< string_type > _execs, std::deque< string_type > _servs )
+        rule_node( const ansi_string_view _showed_name, std::deque< ansi_string > _execs, std::deque< ansi_string > _servs )
           : showed_name{ _showed_name }
           , execs{ std::move( _execs ) }
           , servs{ std::move( _servs ) }
@@ -119,13 +120,13 @@ namespace core {
     };
     class config_item {
       public:
-        const string_view_type self_name;
-        virtual auto load( const bool, const string_view_type ) -> void = 0;
+        const ansi_string_view self_name;
+        virtual auto load( const bool, const ansi_string_view ) -> void = 0;
         virtual auto reload_init() -> void                              = 0;
-        virtual auto sync( string_type & ) -> void                      = 0;
+        virtual auto sync( ansi_string & ) -> void                      = 0;
         virtual auto operator=( const config_item & ) -> config_item &  = delete;
         virtual auto operator=( config_item && ) -> config_item &       = delete;
-        config_item( const string_view_type _self_name )
+        config_item( const ansi_string_view _self_name )
           : self_name{ _self_name }
         { }
         config_item( const config_item & ) = delete;
@@ -134,7 +135,7 @@ namespace core {
     };
     class option_op final : public config_item {
       public:
-        virtual auto load( const bool _is_reloaded, const string_view_type _line ) -> void override final
+        virtual auto load( const bool _is_reloaded, const ansi_string_view _line ) -> void override final
         {
             if ( _is_reloaded ) {
                 return;
@@ -150,7 +151,7 @@ namespace core {
             }
         }
         virtual auto reload_init() -> void override final { }
-        virtual auto sync( string_type &_out ) -> void override final
+        virtual auto sync( ansi_string &_out ) -> void override final
         {
             for ( const auto &main_key : options.main_keys ) {
                 for ( const auto &sub_key : main_key.sub_keys ) {
@@ -170,7 +171,7 @@ namespace core {
     };
     class custom_rule_execs_op final : public config_item {
       public:
-        virtual auto load( const bool, const string_view_type _line ) -> void override final
+        virtual auto load( const bool, const ansi_string_view _line ) -> void override final
         {
             custom_rules.execs.emplace_back( _line );
         }
@@ -178,7 +179,7 @@ namespace core {
         {
             custom_rules.execs.clear();
         }
-        virtual auto sync( string_type &_out ) -> void override final
+        virtual auto sync( ansi_string &_out ) -> void override final
         {
             for ( const auto &exec : custom_rules.execs ) {
                 _out.append( exec ).push_back( '\n' );
@@ -195,7 +196,7 @@ namespace core {
     };
     class custom_rule_servs_op final : public config_item {
       public:
-        virtual auto load( const bool, const string_view_type _line ) -> void override final
+        virtual auto load( const bool, const ansi_string_view _line ) -> void override final
         {
             custom_rules.servs.emplace_back( _line );
         }
@@ -203,7 +204,7 @@ namespace core {
         {
             custom_rules.servs.clear();
         }
-        virtual auto sync( string_type &_out ) -> void override final
+        virtual auto sync( ansi_string &_out ) -> void override final
         {
             for ( const auto &serv : custom_rules.servs ) {
                 _out.append( serv ).push_back( '\n' );
@@ -285,24 +286,24 @@ namespace core {
         } };
         class cmd_executor final {
           private:
-            const string_type cmd_;
+            const ansi_string cmd_;
           public:
             auto operator()( cpp_utils::console_ui_ansi::func_args )
             {
-                std::print( " -> 执行操作系统命令.\n{}\n", string_type( WINDOW_WIDTH, '-' ) );
+                std::print( " -> 执行操作系统命令.\n{}\n", ansi_string( WINDOW_WIDTH, '-' ) );
                 std::system( cmd_.c_str() );
                 return cpp_utils::console_value::ui_return;
             }
             auto operator=( const cmd_executor & ) -> cmd_executor & = delete;
             auto operator=( cmd_executor && ) -> cmd_executor &      = delete;
-            cmd_executor( const string_view_type _cmd )
+            cmd_executor( const ansi_string_view _cmd )
               : cmd_{ _cmd }
             { }
             cmd_executor( const cmd_executor & ) = default;
             cmd_executor( cmd_executor && )      = default;
             ~cmd_executor()                      = default;
         };
-        using common_op_type = std::array< const char *, 2 >;
+        using common_op_type = std::array< const ansi_char *, 2 >;
         const auto common_ops{
           std::array{
                      common_op_type{
@@ -442,8 +443,8 @@ namespace core {
                 }
             }
             std::print( " -> 加载配置文件.\n" );
-            auto line{ string_type{} };
-            auto view{ string_view_type{} };
+            auto line{ ansi_string{} };
+            auto view{ ansi_string_view{} };
             auto config_item_ptr{ ( config_item * ) {} };
             while ( std::getline( config_file, line ) ) {
                 view = line;
@@ -477,7 +478,7 @@ namespace core {
             std::print( "                    [ 配  置 ]\n\n\n" );
             load_( true );
             std::print( " -> 保存更改.\n" );
-            auto config_text{ string_type{} };
+            auto config_text{ ansi_string{} };
             for ( auto &config_item : config_items ) {
                 config_text.append( std::format( "[ {} ]\n", config_item->self_name ) );
                 config_item->sync( config_text );
@@ -610,7 +611,7 @@ namespace core {
                 wait( 3s );
                 return cpp_utils::console_value::ui_return;
             }
-            std::print( " -> 生成并执行操作系统命令.\n{}\n", string_type( WINDOW_WIDTH, '-' ) );
+            std::print( " -> 生成并执行操作系统命令.\n{}\n", ansi_string( WINDOW_WIDTH, '-' ) );
             switch ( mod_data_ ) {
                 case mod::crack : {
                     if ( options[ "crack_restore" ][ "hijack_execs" ].is_enabled ) {
