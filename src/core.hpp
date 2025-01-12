@@ -98,25 +98,21 @@ namespace core {
     inline auto custom_rules{
       rule_node{ "自定义", {}, {} }
     };
-    inline const auto builtin_rules{
-      std::array{
-                 rule_node{
-          "极域电子教室",
-          { "StudentMain.exe", "DispcapHelper.exe", "VRCwPlayer.exe", "InstHelpApp.exe", "InstHelpApp64.exe", "TDOvrSet.exe",
-            "GATESRV.exe", "ProcHelper64.exe", "MasterHelper.exe" },
-          { "TDNetFilter", "TDFileFilter", "STUDSRV" } },
-                 rule_node{
-          "联想智能云教室",
-          { "vncviewer.exe", "tvnserver32.exe", "WfbsPnpInstall.exe", "WFBSMon.exe", "WFBSMlogon.exe", "WFBSSvrLogShow.exe",
-            "ResetIp.exe", "FuncForWIN64.exe", "CertMgr.exe", "Fireware.exe", "BCDBootCopy.exe", "refreship.exe",
-            "lenovoLockScreen.exe", "PortControl64.exe", "DesktopCheck.exe", "DeploymentManager.exe", "DeploymentAgent.exe",
-            "XYNTService.exe" },
-          { "BSAgentSvr", "tvnserver", "WFBSMlogon" } },
-                 rule_node{
-          "红蜘蛛多媒体网络教室",
-          { "rscheck.exe", "checkrs.exe", "REDAgent.exe", "PerformanceCheck.exe", "edpaper.exe", "Adapter.exe", "repview.exe",
-            "FormatPaper.exe" },
-          { "appcheck2", "checkapp2" } } }
+    inline const rule_node builtin_rules[]{
+      {"极域电子教室",
+       { "StudentMain.exe", "DispcapHelper.exe", "VRCwPlayer.exe", "InstHelpApp.exe", "InstHelpApp64.exe", "TDOvrSet.exe",
+          "GATESRV.exe", "ProcHelper64.exe", "MasterHelper.exe" },
+       { "TDNetFilter", "TDFileFilter", "STUDSRV" }},
+      {"联想智能云教室",
+       { "vncviewer.exe", "tvnserver32.exe", "WfbsPnpInstall.exe", "WFBSMon.exe", "WFBSMlogon.exe", "WFBSSvrLogShow.exe",
+          "ResetIp.exe", "FuncForWIN64.exe", "CertMgr.exe", "Fireware.exe", "BCDBootCopy.exe", "refreship.exe",
+          "lenovoLockScreen.exe", "PortControl64.exe", "DesktopCheck.exe", "DeploymentManager.exe", "DeploymentAgent.exe",
+          "XYNTService.exe" },
+       { "BSAgentSvr", "tvnserver", "WFBSMlogon" } },
+      {"红蜘蛛多媒体网络教室",
+       { "rscheck.exe", "checkrs.exe", "REDAgent.exe", "PerformanceCheck.exe", "edpaper.exe", "Adapter.exe", "repview.exe",
+          "FormatPaper.exe" },
+       { "appcheck2", "checkapp2" }                }
     };
     class config_item {
       public:
@@ -219,11 +215,9 @@ namespace core {
         custom_rule_servs_op( custom_rule_servs_op && )      = delete;
         virtual ~custom_rule_servs_op()                      = default;
     };
-    inline auto config_items{
-      std::array{
-                 std::unique_ptr< config_item >{ new option_op }, std::unique_ptr< config_item >{ new custom_rule_execs_op },
-                 std::unique_ptr< config_item >{ new custom_rule_servs_op } }
-    };
+    inline std::unique_ptr< config_item > config_items[]{
+      std::unique_ptr< config_item >{ new option_op }, std::unique_ptr< config_item >{ new custom_rule_execs_op },
+      std::unique_ptr< config_item >{ new custom_rule_servs_op } };
     template < typename _chrono_type_ >
     inline auto wait( const _chrono_type_ _time )
     {
@@ -299,17 +293,11 @@ namespace core {
             cmd_executor( cmd_executor && )      = default;
             ~cmd_executor()                      = default;
         };
-        using common_op_type = std::array< const ansi_char *, 2 >;
-        const auto common_ops{
-          std::array{
-                     common_op_type{
-              "重启资源管理器", R"(taskkill.exe /f /im explorer.exe && timeout /t 3 /nobreak && start C:\Windows\explorer.exe)" },
-                     common_op_type{
-              "恢复 USB 设备访问", R"(reg.exe add "HKLM\SYSTEM\CurrentControlSet\Services\USBSTOR" /f /t reg_dword /v Start /d 3)" },
-                     common_op_type{
-              "恢复 Google Chrome 离线游戏", R"(reg.exe delete "HKLM\SOFTWARE\Policies\Google\Chrome" /f /v AllowDinosaurEasterEgg)" },
-                     common_op_type{
-              "恢复 Microsoft Edge 离线游戏", R"(reg.exe delete "HKLM\SOFTWARE\Policies\Microsoft\Edge" /f /v AllowSurfGame)" } }
+        const char *const common_ops[][ 2 ]{
+          {"重启资源管理器",               R"(taskkill.exe /f /im explorer.exe && timeout /t 3 /nobreak && start C:\Windows\explorer.exe)"},
+          {"恢复 USB 设备访问",            R"(reg.exe add "HKLM\SYSTEM\CurrentControlSet\Services\USBSTOR" /f /t reg_dword /v Start /d 3)"},
+          {"恢复 Google Chrome 离线游戏",  R"(reg.exe delete "HKLM\SOFTWARE\Policies\Google\Chrome" /f /v AllowDinosaurEasterEgg)"        },
+          {"恢复 Microsoft Edge 离线游戏", R"(reg.exe delete "HKLM\SOFTWARE\Policies\Microsoft\Edge" /f /v AllowSurfGame)"                }
         };
         auto ui{ cpp_utils::console_ui_ansi{} };
         std::print( " -> 准备用户界面.\n" );
@@ -378,16 +366,12 @@ namespace core {
         const bool &is_enabled_;
         auto exec_op_( const std::stop_token _msg )
         {
-            constexpr auto hkcu_reg_dirs{
-              std::array{
-                         R"(Software\Policies\Microsoft\Windows\System)", R"(Software\Microsoft\Windows\CurrentVersion\Policies\System)",
-                         R"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)" }
-            };
-            constexpr auto execs{
-              std::array{
-                         "mode.com", "chcp.com", "ntsd.exe", "taskkill.exe", "sc.exe", "net.exe", "reg.exe", "cmd.exe", "taskmgr.exe",
-                         "perfmon.exe", "regedit.exe", "mmc.exe" }
-            };
+            constexpr const char *const hkcu_reg_dirs[]{
+              R"(Software\Policies\Microsoft\Windows\System)", R"(Software\Microsoft\Windows\CurrentVersion\Policies\System)",
+              R"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)" };
+            constexpr const char *const execs[]{
+              "mode.com", "chcp.com", "ntsd.exe",    "taskkill.exe", "sc.exe",      "net.exe",
+              "reg.exe",  "cmd.exe",  "taskmgr.exe", "perfmon.exe",  "regedit.exe", "mmc.exe" };
             while ( !_msg.stop_requested() ) {
                 if ( !is_enabled_ ) {
                     cpp_utils::perf_sleep( default_thread_sleep_time );
