@@ -220,6 +220,13 @@ namespace cpp_utils {
           std::vformat( string_view_convert< ansi_char >( _fmt ), std::make_format_args( convert_arg( _args )... ) ) );
     }
     template < typename... _args_ >
+    inline auto &utf8_format_to( utf8_string &_str, const utf8_string_view _fmt, _args_ &&..._args )
+    {
+        auto tmp{ utf8_format( _fmt, std::forward< _args_ >( _args )... ) };
+        _str.swap( tmp );
+        return _str;
+    }
+    template < typename... _args_ >
     inline auto utf8_print( const utf8_string_view _fmt, _args_ &&..._args )
     {
         std::print( "{}", string_view_convert< ansi_char >( utf8_format( _fmt, std::forward< _args_ >( _args )... ) ) );
