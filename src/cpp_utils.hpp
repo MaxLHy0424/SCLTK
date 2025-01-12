@@ -209,6 +209,13 @@ namespace cpp_utils {
             return std_string_view< _target_char_type_ >{ reinterpret_cast< const _target_char_type_ * >( _str ) };
         }
     }
+    template < typename _char_type_, typename _ptr_type_ >
+        requires( is_char_type< _char_type_ >() && std::is_pointer_v< _ptr_type_ > )
+    inline auto ptr_to_string( _ptr_type_ _ptr )
+    {
+        return string_convert< _char_type_ >(
+          _ptr == nullptr ? "nullptr"s : std::format( "0x{:x}", reinterpret_cast< std::uintptr_t >( _ptr ) ) );
+    }
     template < typename... _args_ >
     inline auto utf8_format( const utf8_string_view _fmt, _args_ &&..._args )
     {
@@ -221,6 +228,8 @@ namespace cpp_utils {
               || std::is_same_v< std::decay_t< decltype( _arg ) >, const utf8_char * > )
             {
                 return static_cast< const ansi_string_view >( string_view_convert< ansi_char >( utf8_string_view{ _arg } ) );
+            } else if constexpr ( std::is_pointer_v< std::decay_t< decltype( _arg ) > > ) {
+                return static_cast< const ansi_string >( ptr_to_string< ansi_char >( std::forward< decltype( _arg ) >( _arg ) ) );
             } else {
                 return std::as_const( _arg );
             }
@@ -237,13 +246,6 @@ namespace cpp_utils {
     inline auto utf8_println( const utf8_string_view _fmt, _args_ &&..._args )
     {
         std::println( "{}", string_view_convert< ansi_char >( utf8_format( _fmt, std::forward< _args_ >( _args )... ) ) );
-    }
-    template < typename _char_type_, typename _ptr_type_ >
-        requires( is_char_type< _char_type_ >() && std::is_pointer_v< _ptr_type_ > )
-    inline auto ptr_to_string( _ptr_type_ _ptr )
-    {
-        return string_convert< _char_type_ >(
-          _ptr == nullptr ? "nullptr"s : std::format( "0x{:x}", reinterpret_cast< std::uintptr_t >( _ptr ) ) );
     }
     template < typename _char_type_, std::size_t _length_ >
     struct constexpr_string final {
