@@ -114,22 +114,22 @@ namespace core {
           "FormatPaper.exe" },
        { "appcheck2", "checkapp2" }                }
     };
-    class config_item {
+    class config_node {
       public:
         const ansi_string_view self_name;
         virtual auto load( const bool, const ansi_string_view ) -> void = 0;
         virtual auto prepare_to_reload() -> void                        = 0;
         virtual auto sync( ansi_string & ) -> void                      = 0;
-        virtual auto operator=( const config_item & ) -> config_item &  = delete;
-        virtual auto operator=( config_item && ) -> config_item &       = delete;
-        config_item( const ansi_string_view _self_name )
+        virtual auto operator=( const config_node & ) -> config_node &  = delete;
+        virtual auto operator=( config_node && ) -> config_node &       = delete;
+        config_node( const ansi_string_view _self_name )
           : self_name{ _self_name }
         { }
-        config_item( const config_item & ) = delete;
-        config_item( config_item && )      = delete;
-        virtual ~config_item()             = default;
+        config_node( const config_node & ) = delete;
+        config_node( config_node && )      = delete;
+        virtual ~config_node()             = default;
     };
-    class option_op final : public config_item {
+    class option_op final : public config_node {
       public:
         virtual auto load( const bool _is_reloaded, const ansi_string_view _line ) -> void override final
         {
@@ -159,13 +159,13 @@ namespace core {
         virtual auto operator=( const option_op & ) -> option_op & = delete;
         virtual auto operator=( option_op && ) -> option_op &      = delete;
         option_op()
-          : config_item{ "options" }
+          : config_node{ "options" }
         { }
         option_op( const option_op & ) = delete;
         option_op( option_op && )      = delete;
         virtual ~option_op()           = default;
     };
-    class custom_rule_execs_op final : public config_item {
+    class custom_rule_execs_op final : public config_node {
       public:
         virtual auto load( const bool, const ansi_string_view _line ) -> void override final
         {
@@ -184,13 +184,13 @@ namespace core {
         virtual auto operator=( const custom_rule_execs_op & ) -> custom_rule_execs_op & = delete;
         virtual auto operator=( custom_rule_execs_op && ) -> custom_rule_execs_op &      = delete;
         custom_rule_execs_op()
-          : config_item{ "custom_rule_execs" }
+          : config_node{ "custom_rule_execs" }
         { }
         custom_rule_execs_op( const custom_rule_execs_op & ) = delete;
         custom_rule_execs_op( custom_rule_execs_op && )      = delete;
         virtual ~custom_rule_execs_op()                      = default;
     };
-    class custom_rule_servs_op final : public config_item {
+    class custom_rule_servs_op final : public config_node {
       public:
         virtual auto load( const bool, const ansi_string_view _line ) -> void override final
         {
@@ -209,15 +209,15 @@ namespace core {
         virtual auto operator=( const custom_rule_servs_op & ) -> custom_rule_servs_op & = delete;
         virtual auto operator=( custom_rule_servs_op && ) -> custom_rule_servs_op &      = delete;
         custom_rule_servs_op()
-          : config_item{ "custom_rule_servs" }
+          : config_node{ "custom_rule_servs" }
         { }
         custom_rule_servs_op( const custom_rule_servs_op & ) = delete;
         custom_rule_servs_op( custom_rule_servs_op && )      = delete;
         virtual ~custom_rule_servs_op()                      = default;
     };
-    inline std::unique_ptr< config_item > config_items[]{
-      std::unique_ptr< config_item >{ new option_op }, std::unique_ptr< config_item >{ new custom_rule_execs_op },
-      std::unique_ptr< config_item >{ new custom_rule_servs_op } };
+    inline std::unique_ptr< config_node > configs[]{
+      std::unique_ptr< config_node >{ new option_op }, std::unique_ptr< config_node >{ new custom_rule_execs_op },
+      std::unique_ptr< config_node >{ new custom_rule_servs_op } };
     template < typename _chrono_type_ >
     inline auto wait( const _chrono_type_ _time )
     {
@@ -418,14 +418,14 @@ namespace core {
             }
             if ( _is_reloaded ) {
                 std::print( " -> 准备配置重载.\n" );
-                for ( auto &config_item : config_items ) {
-                    config_item->prepare_to_reload();
+                for ( auto &config : configs ) {
+                    config->prepare_to_reload();
                 }
             }
             std::print( " -> 加载配置文件.\n" );
             auto line{ ansi_string{} };
             auto line_view{ ansi_string_view{} };
-            auto config_item_ptr{ ( config_item * ) {} };
+            auto node_ptr{ ( config_node * ) {} };
             while ( std::getline( config_file, line ) ) {
                 line_view = line;
                 if ( line_view.empty() ) {
@@ -438,17 +438,17 @@ namespace core {
                      && line_view.substr( line_view.size() - sizeof( " ]" ) + 1, line_view.size() ) == " ]" )
                 {
                     line_view = line_view.substr( sizeof( "[ " ) - 1, line_view.size() - sizeof( " ]" ) - 1 );
-                    for ( auto &config_item : config_items ) {
-                        if ( config_item->self_name == line_view ) {
-                            config_item_ptr = config_item.get();
+                    for ( auto &config : configs ) {
+                        if ( config->self_name == line_view ) {
+                            node_ptr = config.get();
                             break;
                         }
-                        config_item_ptr = nullptr;
+                        node_ptr = nullptr;
                     }
                     continue;
                 }
-                if ( config_item_ptr != nullptr ) {
-                    config_item_ptr->load( _is_reloaded, line_view );
+                if ( node_ptr != nullptr ) {
+                    node_ptr->load( _is_reloaded, line_view );
                 }
             }
             return;
@@ -459,9 +459,9 @@ namespace core {
             load_( true );
             std::print( " -> 保存更改.\n" );
             auto config_text{ ansi_string{} };
-            for ( auto &config_item : config_items ) {
-                config_text.append( std::format( "[ {} ]\n", config_item->self_name ) );
-                config_item->sync( config_text );
+            for ( auto &config : configs ) {
+                config_text.append( std::format( "[ {} ]\n", config->self_name ) );
+                config->sync( config_text );
             }
             auto config_file{
               std::ofstream{ config_file_name.data(), std::ios::out | std::ios::trunc }
