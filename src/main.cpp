@@ -20,9 +20,7 @@ auto main() -> int
     ui.add_back( "                    [ 主  页 ]\n\n" )
       .add_back( " < 退出 ", core::quit, cpp_utils::console_value::text_foreground_red | cpp_utils::console_value::text_foreground_intensity )
       .add_back(
-        " < 重启 ",
-        []( cpp_utils::console_ui_ansi::func_args )
-    { return ( cpp_utils::relaunch_as_admin(), cpp_utils::console_value::ui_exit ); },
+        " < 重启 ", core::relaunch,
         cpp_utils::console_value::text_foreground_green | cpp_utils::console_value::text_foreground_intensity )
       .add_back( " > 信息 ", core::info )
       .add_back( " > 配置 ", core::config_op{ core::config_op::mod::edit } )

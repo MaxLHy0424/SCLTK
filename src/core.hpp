@@ -236,6 +236,11 @@ namespace core {
     {
         return cpp_utils::console_value::ui_exit;
     }
+    inline auto relaunch( cpp_utils::console_ui_ansi::func_args )
+    {
+        cpp_utils::relaunch_as_admin();
+        return cpp_utils::console_value::ui_exit;
+    }
     inline auto info( cpp_utils::console_ui_ansi::func_args )
     {
         auto visit_repo_webpage{ []( cpp_utils::console_ui_ansi::func_args )
