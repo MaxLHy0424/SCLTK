@@ -263,14 +263,14 @@ namespace core {
         {
             _args.parent_ui
               .set_console(
-                WINDOW_TITLE " - 命令提示符", CODE_PAGE_CODE, 120, 30, false, false,
+                CONSOLE_TITLE " - 命令提示符", CODE_PAGE_ID, 120, 30, false, false,
                 options[ "window" ][ "disable_close_ctrl" ].is_enabled ? false : true,
                 options[ "window" ][ "translucency" ].is_enabled ? 230 : 255 )
               .lock( false, false );
             SetConsoleScreenBufferSize( GetStdHandle( STD_OUTPUT_HANDLE ), { 128, SHRT_MAX - 1 } );
             std::system( "cmd.exe" );
             _args.parent_ui.set_console(
-              WINDOW_TITLE, CODE_PAGE_CODE, WINDOW_WIDTH, WINDOW_HEIGHT, true, false,
+              CONSOLE_TITLE, CODE_PAGE_ID, CONSOLE_WIDTH, CONSOLE_HEIGHT, true, false,
               options[ "window" ][ "disable_close_ctrl" ].is_enabled ? false : true,
               options[ "window" ][ "translucency" ].is_enabled ? 230 : 255 );
             return cpp_utils::console_value::ui_return;
@@ -281,7 +281,7 @@ namespace core {
           public:
             auto operator()( cpp_utils::console_ui_ansi::func_args )
             {
-                std::print( " -> 执行操作系统命令.\n{}\n", ansi_string( WINDOW_WIDTH, '-' ) );
+                std::print( " -> 执行操作系统命令.\n{}\n", ansi_string( CONSOLE_WIDTH, '-' ) );
                 std::system( cmd_.c_str() );
                 return cpp_utils::console_value::ui_return;
             }
@@ -482,7 +482,7 @@ namespace core {
               "# [同步时间] {} (UTC)\n"
               "# [同步版本] {}\n"
               "# [字符编码] {} ({})\n",
-              INFO_NAME, std::chrono::system_clock::now(), INFO_VERSION, CODE_PAGE_NAME, CODE_PAGE_CODE )
+              INFO_NAME, std::chrono::system_clock::now(), INFO_VERSION, CODE_PAGE_NAME, CODE_PAGE_ID )
                         << config_text << std::flush;
             std::print( "\n ({}) 同步配置{}.\n\n", config_file.good() ? 'i' : '!', config_file.good() ? "成功" : "失败" );
             wait( 3s );
@@ -602,7 +602,7 @@ namespace core {
                 wait( 3s );
                 return cpp_utils::console_value::ui_return;
             }
-            std::print( " -> 生成并执行操作系统命令.\n{}\n", ansi_string( WINDOW_WIDTH, '-' ) );
+            std::print( " -> 生成并执行操作系统命令.\n{}\n", ansi_string( CONSOLE_WIDTH, '-' ) );
             switch ( mod_data_ ) {
                 case mod::crack : {
                     if ( options[ "crack_restore" ][ "hijack_execs" ].is_enabled ) {
