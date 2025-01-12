@@ -146,27 +146,39 @@ namespace cpp_utils {
     }
     template < typename _target_char_type_, typename _source_char_type_ >
         requires( is_convertible_char_type< _target_char_type_, _source_char_type_ >() )
-    inline auto string_convert( const std_string_view< _source_char_type_ > _str )
+    inline decltype( auto ) string_convert( const std_string< _source_char_type_ > &_str )
+    {
+        return std_string< _target_char_type_ >{ reinterpret_cast< const _target_char_type_ * >( _str.c_str() ) };
+    }
+    template < typename _target_char_type_, typename _source_char_type_ >
+        requires( is_convertible_char_type< _target_char_type_, _source_char_type_ >() )
+    inline decltype( auto ) string_convert( const std_string_view< _source_char_type_ > _str )
     {
         return std_string< _target_char_type_ >{ reinterpret_cast< const _target_char_type_ * >( _str.data() ) };
     }
     template < typename _target_char_type_, typename _source_char_type_ >
         requires( is_convertible_char_type< _target_char_type_, _source_char_type_ >() )
-    inline auto string_convert( const std_string< _source_char_type_ > _str )
+    inline decltype( auto ) string_convert( const _source_char_type_ *_str )
     {
-        return std_string< _target_char_type_ >{ reinterpret_cast< const _target_char_type_ * >( _str.data() ) };
+        return std_string< _target_char_type_ >{ reinterpret_cast< const _target_char_type_ * >( _str ) };
     }
     template < typename _target_char_type_, typename _source_char_type_ >
         requires( is_convertible_char_type< _target_char_type_, _source_char_type_ >() )
-    inline auto string_view_convert( const std_string_view< _source_char_type_ > _str )
+    inline decltype( auto ) string_view_convert( const std_string< _source_char_type_ > &_str )
+    {
+        return std_string_view< _target_char_type_ >{ reinterpret_cast< const _target_char_type_ * >( _str.c_str() ) };
+    }
+    template < typename _target_char_type_, typename _source_char_type_ >
+        requires( is_convertible_char_type< _target_char_type_, _source_char_type_ >() )
+    inline decltype( auto ) string_view_convert( const std_string_view< _source_char_type_ > _str )
     {
         return std_string_view< _target_char_type_ >{ reinterpret_cast< const _target_char_type_ * >( _str.data() ) };
     }
     template < typename _target_char_type_, typename _source_char_type_ >
         requires( is_convertible_char_type< _target_char_type_, _source_char_type_ >() )
-    inline auto string_view_convert( const std_string< _source_char_type_ > _str )
+    inline decltype( auto ) string_view_convert( const _source_char_type_ *_str )
     {
-        return std_string_view< _target_char_type_ >{ reinterpret_cast< const _target_char_type_ * >( _str.data() ) };
+        return std_string_view< _target_char_type_ >{ reinterpret_cast< const _target_char_type_ * >( _str ) };
     }
     template < typename... _args_ >
     inline auto u8format( const u8string_view_type _fmt, _args_ &&..._args )
@@ -179,23 +191,23 @@ namespace cpp_utils {
               || std::is_same_v< std::decay_t< decltype( _arg ) >, char8_t * >
               || std::is_same_v< std::decay_t< decltype( _arg ) >, const char8_t * > )
             {
-                return static_cast< const std_string< char > >( string_convert< char >( _arg ) );
+                return static_cast< const string_view_type >( string_view_convert< char >( u8string_view_type{ _arg } ) );
             } else {
                 return std::as_const( _arg );
             }
         } };
         return string_convert< char8_t >(
-          std::vformat( string_convert< char >( _fmt ), std::make_format_args( convert_arg( _args )... ) ) );
+          std::vformat( string_view_convert< char >( _fmt ), std::make_format_args( convert_arg( _args )... ) ) );
     }
     template < typename... _args_ >
     inline auto u8print( const u8string_view_type _fmt, _args_ &&..._args )
     {
-        std::print( "{}", string_convert< char >( u8format( _fmt, std::forward< _args_ >( _args )... ) ) );
+        std::print( "{}", string_view_convert< char >( u8format( _fmt, std::forward< _args_ >( _args )... ) ) );
     }
     template < typename... _args_ >
     inline auto u8println( const u8string_view_type _fmt, _args_ &&..._args )
     {
-        std::println( "{}", string_convert< char >( u8format( _fmt, std::forward< _args_ >( _args )... ) ) );
+        std::println( "{}", string_view_convert< char >( u8format( _fmt, std::forward< _args_ >( _args )... ) ) );
     }
     template < typename _ptr_type_ >
         requires( std::is_pointer_v< _ptr_type_ > )
@@ -679,7 +691,7 @@ namespace cpp_utils {
             if constexpr ( std::is_same_v< _char_type_, char > ) {
                 SetConsoleTitleA( _title.data() );
             } else if constexpr ( std::is_same_v< _char_type_, char8_t > ) {
-                SetConsoleTitleA( string_convert< char >( _title ).c_str() );
+                SetConsoleTitleA( string_view_convert< char >( _title ).c_str() );
             }
             std::system( std::format( "mode.com con cols={} lines={}", _width, _height ).c_str() );
             SetWindowLongPtrW(
