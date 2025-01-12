@@ -1,6 +1,11 @@
 #pragma once
 #include "cpp_utils.hpp"
 #include "info.hpp"
+#define CONSOLE_TITLE  "CRCSN"
+#define CONSOLE_WIDTH  50
+#define CONSOLE_HEIGHT 25
+#define CODE_PAGE_ID   54936
+#define CODE_PAGE_NAME "GB18030"
 namespace core {
     using namespace std::chrono_literals;
     using namespace std::string_view_literals;
