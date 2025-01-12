@@ -119,13 +119,16 @@
 #include <version>
 namespace cpp_utils {
     using namespace std::chrono_literals;
-    using size_type          = std::size_t;
-    using string_type        = std::string;
-    using wstring_type       = std::wstring;
-    using u8string_type      = std::u8string;
-    using string_view_type   = std::string_view;
-    using wstring_view_type  = std::wstring_view;
-    using u8string_view_type = std::u8string_view;
+    using size_type        = std::size_t;
+    using ansi_char        = char;
+    using ansi_string      = std::string;
+    using ansi_string_view = std::string_view;
+    using wide_char        = wchar_t;
+    using wide_string      = std::wstring;
+    using wide_string_view = std::wstring_view;
+    using utf8_char        = char8_t;
+    using utf8_string      = std::u8string;
+    using utf8_string_view = std::u8string_view;
     template < typename _type_ >
     using type_alloc = _type_;
     template < typename _char_type >
@@ -135,8 +138,9 @@ namespace cpp_utils {
     template < typename _char_type_ >
     inline consteval auto is_char_type()
     {
-        return std::is_same_v< _char_type_, char > || std::is_same_v< _char_type_, wchar_t > || std::is_same_v< _char_type_, char8_t >
-            || std::is_same_v< _char_type_, char16_t > || std::is_same_v< _char_type_, char32_t >;
+        return std::is_same_v< _char_type_, ansi_char > || std::is_same_v< _char_type_, wide_char >
+            || std::is_same_v< _char_type_, utf8_char > || std::is_same_v< _char_type_, char16_t >
+            || std::is_same_v< _char_type_, char32_t >;
     }
     template < typename _target_char_type_, typename _source_char_type_ >
         requires( is_char_type< std::decay_t< _target_char_type_ > >() && is_char_type< std::decay_t< _source_char_type_ > >() )
@@ -181,45 +185,45 @@ namespace cpp_utils {
         return std_string_view< _target_char_type_ >{ reinterpret_cast< const _target_char_type_ * >( _str ) };
     }
     template < typename... _args_ >
-    inline auto u8format( const u8string_view_type _fmt, _args_ &&..._args )
+    inline auto utf8_format( const utf8_string_view _fmt, _args_ &&..._args )
     {
         const auto convert_arg{ []( auto &&_arg ) -> decltype( auto )
         {
             if constexpr (
-              std::is_same_v< std::decay_t< decltype( _arg ) >, u8string_type >
-              || std::is_same_v< std::decay_t< decltype( _arg ) >, u8string_view_type >
-              || std::is_same_v< std::decay_t< decltype( _arg ) >, char8_t * >
-              || std::is_same_v< std::decay_t< decltype( _arg ) >, const char8_t * > )
+              std::is_same_v< std::decay_t< decltype( _arg ) >, utf8_string >
+              || std::is_same_v< std::decay_t< decltype( _arg ) >, utf8_string_view >
+              || std::is_same_v< std::decay_t< decltype( _arg ) >, utf8_char * >
+              || std::is_same_v< std::decay_t< decltype( _arg ) >, const utf8_char * > )
             {
-                return static_cast< const string_view_type >( string_view_convert< char >( u8string_view_type{ _arg } ) );
+                return static_cast< const ansi_string_view >( string_view_convert< ansi_char >( utf8_string_view{ _arg } ) );
             } else {
                 return std::as_const( _arg );
             }
         } };
-        return string_convert< char8_t >(
-          std::vformat( string_view_convert< char >( _fmt ), std::make_format_args( convert_arg( _args )... ) ) );
+        return string_convert< utf8_char >(
+          std::vformat( string_view_convert< ansi_char >( _fmt ), std::make_format_args( convert_arg( _args )... ) ) );
     }
     template < typename... _args_ >
-    inline auto u8print( const u8string_view_type _fmt, _args_ &&..._args )
+    inline auto utf8_print( const utf8_string_view _fmt, _args_ &&..._args )
     {
-        std::print( "{}", string_view_convert< char >( u8format( _fmt, std::forward< _args_ >( _args )... ) ) );
+        std::print( "{}", string_view_convert< ansi_char >( utf8_format( _fmt, std::forward< _args_ >( _args )... ) ) );
     }
     template < typename... _args_ >
-    inline auto u8println( const u8string_view_type _fmt, _args_ &&..._args )
+    inline auto utf8_println( const utf8_string_view _fmt, _args_ &&..._args )
     {
-        std::println( "{}", string_view_convert< char >( u8format( _fmt, std::forward< _args_ >( _args )... ) ) );
+        std::println( "{}", string_view_convert< ansi_char >( utf8_format( _fmt, std::forward< _args_ >( _args )... ) ) );
     }
     template < typename _ptr_type_ >
         requires( std::is_pointer_v< _ptr_type_ > )
-    inline auto ptr_to_string( _ptr_type_ _ptr )
+    inline auto ptr_to_ansi_string( _ptr_type_ _ptr )
     {
         return std::to_string( reinterpret_cast< std::uintptr_t >( _ptr ) );
     }
     template < typename _ptr_type_ >
         requires( std::is_pointer_v< _ptr_type_ > )
-    inline auto ptr_to_u8string( _ptr_type_ _ptr )
+    inline auto ptr_to_utf8_string( _ptr_type_ _ptr )
     {
-        return string_convert< char8_t >( std::to_string( reinterpret_cast< std::uintptr_t >( _ptr ) ) );
+        return string_convert< utf8_char >( std::to_string( reinterpret_cast< std::uintptr_t >( _ptr ) ) );
     }
     template < typename _char_type_, std::size_t _length_ >
     struct constexpr_string final {
@@ -241,7 +245,7 @@ namespace cpp_utils {
         std::this_thread::sleep_for( _time );
     }
     template < typename _log_char_type_ >
-        requires( std::is_same_v< _log_char_type_, char > || std::is_same_v< _log_char_type_, char8_t > )
+        requires( std::is_same_v< _log_char_type_, ansi_char > || std::is_same_v< _log_char_type_, utf8_char > )
     class multithread_task {
       private:
         struct task_node_ final {
@@ -257,10 +261,10 @@ namespace cpp_utils {
             ~task_node_()
             {
                 if ( task_thread.joinable() ) {
-                    if constexpr ( std::is_same_v< _log_char_type_, char > ) {
+                    if constexpr ( std::is_same_v< _log_char_type_, ansi_char > ) {
                         std::print( " -> 终止线程 {}.\n", task_thread.get_id() );
-                    } else if constexpr ( std::is_same_v< _log_char_type_, char8_t > ) {
-                        u8print( u8" -> 终止线程 {}.\n", task_thread.get_id() );
+                    } else if constexpr ( std::is_same_v< _log_char_type_, utf8_char > ) {
+                        utf8_print( u8" -> 终止线程 {}.\n", task_thread.get_id() );
                     }
                 }
             }
@@ -295,8 +299,8 @@ namespace cpp_utils {
         multithread_task( multithread_task && )      = default;
         ~multithread_task()                          = default;
     };
-    using multithread_task_ansi = multithread_task< char >;
-    using multithread_task_u8   = multithread_task< char8_t >;
+    using multithread_task_ansi = multithread_task< ansi_char >;
+    using multithread_task_utf8 = multithread_task< utf8_char >;
 #if defined( _WIN32 ) || defined( _WIN64 )
     inline auto is_run_as_admin()
     {
@@ -314,7 +318,7 @@ namespace cpp_utils {
     }
     inline auto relaunch_as_admin()
     {
-        auto file_path{ wstring_type( MAX_PATH, L'\0' ) };
+        auto file_path{ wide_string( MAX_PATH, L'\0' ) };
         GetModuleFileNameW( nullptr, file_path.data(), MAX_PATH );
         ShellExecuteW( nullptr, L"runas", file_path.c_str(), nullptr, nullptr, SW_SHOWNORMAL );
         std::exit( 0 );
@@ -359,7 +363,7 @@ namespace cpp_utils {
         inline constexpr auto ui_exit{ true };
     };
     template < typename _char_type_ >
-        requires( std::is_same_v< _char_type_, char > || std::is_same_v< _char_type_, char8_t > )
+        requires( std::is_same_v< _char_type_, ansi_char > || std::is_same_v< _char_type_, utf8_char > )
     class console_ui final {
       public:
         struct func_args final {
@@ -488,28 +492,28 @@ namespace cpp_utils {
         {
             get_console_size_();
             set_cursor_( { 0, 0 } );
-            if constexpr ( std::is_same_v< _char_type_, char > ) {
-                std::print( "{}", string_type( static_cast< size_type >( width_ ) * static_cast< size_type >( height_ ), ' ' ) );
-            } else if constexpr ( std::is_same_v< _char_type_, char8_t > ) {
-                u8print( u8"{}", u8string_type( static_cast< size_type >( width_ ) * static_cast< size_type >( height_ ), ' ' ) );
+            if constexpr ( std::is_same_v< _char_type_, ansi_char > ) {
+                std::print( "{}", ansi_string( static_cast< size_type >( width_ ) * static_cast< size_type >( height_ ), ' ' ) );
+            } else if constexpr ( std::is_same_v< _char_type_, utf8_char > ) {
+                utf8_print( u8"{}", utf8_string( static_cast< size_type >( width_ ) * static_cast< size_type >( height_ ), ' ' ) );
             }
             set_cursor_( { 0, 0 } );
         }
         static auto write_( const std_string_view< _char_type_ > _text, const bool _is_endl = false )
         {
-            if constexpr ( std::is_same_v< _char_type_, char > ) {
+            if constexpr ( std::is_same_v< _char_type_, ansi_char > ) {
                 std::print( "{}{}", _text, _is_endl ? '\n' : '\0' );
-            } else if constexpr ( std::is_same_v< _char_type_, char8_t > ) {
-                u8print( u8"{}{}", _text, _is_endl ? '\n' : '\0' );
+            } else if constexpr ( std::is_same_v< _char_type_, utf8_char > ) {
+                utf8_print( u8"{}{}", _text, _is_endl ? '\n' : '\0' );
             }
         }
         static auto rewrite_( const COORD _cursor_position, const std_string_view< _char_type_ > _text )
         {
             set_cursor_( { 0, _cursor_position.Y } );
-            if constexpr ( std::is_same_v< _char_type_, char > ) {
-                write_( string_type( _cursor_position.X, ' ' ) );
-            } else if constexpr ( std::is_same_v< _char_type_, char8_t > ) {
-                write_( u8string_type( _cursor_position.X, ' ' ) );
+            if constexpr ( std::is_same_v< _char_type_, ansi_char > ) {
+                write_( ansi_string( _cursor_position.X, ' ' ) );
+            } else if constexpr ( std::is_same_v< _char_type_, utf8_char > ) {
+                write_( utf8_string( _cursor_position.X, ' ' ) );
             }
             set_cursor_( { 0, _cursor_position.Y } );
             write_( _text );
@@ -688,10 +692,10 @@ namespace cpp_utils {
         {
             SetConsoleOutputCP( _code_page );
             SetConsoleCP( _code_page );
-            if constexpr ( std::is_same_v< _char_type_, char > ) {
+            if constexpr ( std::is_same_v< _char_type_, ansi_char > ) {
                 SetConsoleTitleA( _title.data() );
-            } else if constexpr ( std::is_same_v< _char_type_, char8_t > ) {
-                SetConsoleTitleA( string_view_convert< char >( _title ).c_str() );
+            } else if constexpr ( std::is_same_v< _char_type_, utf8_char > ) {
+                SetConsoleTitleA( string_view_convert< ansi_char >( _title ).c_str() );
             }
             std::system( std::format( "mode.com con cols={} lines={}", _width, _height ).c_str() );
             SetWindowLongPtrW(
@@ -723,7 +727,7 @@ namespace cpp_utils {
         console_ui( console_ui && )                          = default;
         ~console_ui()                                        = default;
     };
-    using console_ui_ansi = console_ui< char >;
-    using console_ui_u8   = console_ui< char8_t >;
+    using console_ui_ansi = console_ui< ansi_char >;
+    using console_ui_utf8 = console_ui< utf8_char >;
 #endif
 }
