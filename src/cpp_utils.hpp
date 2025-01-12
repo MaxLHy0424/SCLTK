@@ -120,6 +120,7 @@
 namespace cpp_utils {
     using namespace std::chrono_literals;
     using namespace std::string_literals;
+    using io_stream        = std::FILE;
     using size_type        = std::size_t;
     using ansi_char        = char;
     using ansi_string      = std::string;
@@ -236,9 +237,19 @@ namespace cpp_utils {
         std::print( "{}", string_view_convert< ansi_char >( utf8_format( _fmt, std::forward< _args_ >( _args )... ) ) );
     }
     template < typename... _args_ >
+    inline auto utf8_print( io_stream *_stream, const utf8_string_view _fmt, _args_ &&..._args )
+    {
+        std::print( _stream, "{}", string_view_convert< ansi_char >( utf8_format( _fmt, std::forward< _args_ >( _args )... ) ) );
+    }
+    template < typename... _args_ >
     inline auto utf8_println( const utf8_string_view _fmt, _args_ &&..._args )
     {
         std::println( "{}", string_view_convert< ansi_char >( utf8_format( _fmt, std::forward< _args_ >( _args )... ) ) );
+    }
+    template < typename... _args_ >
+    inline auto utf8_println( io_stream *_stream, const utf8_string_view _fmt, _args_ &&..._args )
+    {
+        std::println( _stream, "{}", string_view_convert< ansi_char >( utf8_format( _fmt, std::forward< _args_ >( _args )... ) ) );
     }
     template < typename _char_type_, std::size_t _length_ >
     struct constexpr_string final {
