@@ -417,7 +417,7 @@ namespace core {
                 return;
             }
             if ( _is_reloaded ) {
-                std::print( " -> 初始化配置.\n" );
+                std::print( " -> 准备配置重载.\n" );
                 for ( auto &config_item : config_items ) {
                     config_item->prepare_to_reload();
                 }
