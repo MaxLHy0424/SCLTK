@@ -210,7 +210,11 @@ namespace cpp_utils {
               || std::is_same_v< std::decay_t< decltype( _arg ) >, const utf8_char * > )
             {
                 return static_cast< const ansi_string_view >( string_view_convert< ansi_char >( utf8_string_view{ _arg } ) );
-            } else if constexpr ( std::is_pointer_v< std::decay_t< decltype( _arg ) > > ) {
+            } else if constexpr (
+              std::is_pointer_v< std::decay_t< decltype( _arg ) > >
+              && !( std::is_same_v< std::decay_t< decltype( _arg ) >, ansi_char * >
+                    || std::is_same_v< std::decay_t< decltype( _arg ) >, const ansi_char * > ) )
+            {
                 return static_cast< const ansi_string >( ptr_to_ansi_string( std::forward< decltype( _arg ) >( _arg ) ) );
             } else {
                 return std::as_const( _arg );
