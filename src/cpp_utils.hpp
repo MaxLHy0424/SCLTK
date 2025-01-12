@@ -146,15 +146,27 @@ namespace cpp_utils {
     }
     template < typename _target_char_type_, typename _source_char_type_ >
         requires( is_convertible_char_type< _target_char_type_, _source_char_type_ >() )
-    inline const auto string_convert( const std_string_view< _source_char_type_ > _str )
+    inline auto string_convert( const std_string_view< _source_char_type_ > _str )
     {
         return std_string< _target_char_type_ >{ reinterpret_cast< const _target_char_type_ * >( _str.data() ) };
     }
     template < typename _target_char_type_, typename _source_char_type_ >
         requires( is_convertible_char_type< _target_char_type_, _source_char_type_ >() )
-    inline const auto string_convert( const std_string< _source_char_type_ > _str )
+    inline auto string_convert( const std_string< _source_char_type_ > _str )
     {
         return std_string< _target_char_type_ >{ reinterpret_cast< const _target_char_type_ * >( _str.data() ) };
+    }
+    template < typename _target_char_type_, typename _source_char_type_ >
+        requires( is_convertible_char_type< _target_char_type_, _source_char_type_ >() )
+    inline auto string_view_convert( const std_string_view< _source_char_type_ > _str )
+    {
+        return std_string_view< _target_char_type_ >{ reinterpret_cast< const _target_char_type_ * >( _str.data() ) };
+    }
+    template < typename _target_char_type_, typename _source_char_type_ >
+        requires( is_convertible_char_type< _target_char_type_, _source_char_type_ >() )
+    inline auto string_view_convert( const std_string< _source_char_type_ > _str )
+    {
+        return std_string_view< _target_char_type_ >{ reinterpret_cast< const _target_char_type_ * >( _str.data() ) };
     }
     template < typename... _args_ >
     inline auto u8format( const u8string_view_type _fmt, _args_ &&..._args )
@@ -167,7 +179,7 @@ namespace cpp_utils {
               || std::is_same_v< std::decay_t< decltype( _arg ) >, char8_t * >
               || std::is_same_v< std::decay_t< decltype( _arg ) >, const char8_t * > )
             {
-                return string_convert< char >( _arg );
+                return static_cast< const std_string< char > >( string_convert< char >( _arg ) );
             } else {
                 return std::as_const( _arg );
             }
