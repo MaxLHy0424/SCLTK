@@ -154,14 +154,14 @@ namespace cpp_utils {
         requires( is_convertible_char_type< _target_char_type_, _source_char_type_ >() )
     inline auto string_convert( const std_string< _source_char_type_ > &_str )
     {
-        auto str_it{ reinterpret_cast< const _target_char_type_ * >( _str.cbegin() ) };
+        auto str_it{ reinterpret_cast< const _target_char_type_ * >( _str.c_str() ) };
         return std_string< _target_char_type_ >{ str_it, str_it + _str.size() };
     }
     template < typename _target_char_type_, typename _source_char_type_ >
         requires( is_convertible_char_type< _target_char_type_, _source_char_type_ >() )
     inline auto string_convert( const std_string_view< _source_char_type_ > _str )
     {
-        auto str_it{ reinterpret_cast< const _target_char_type_ * >( _str.cbegin() ) };
+        auto str_it{ reinterpret_cast< const _target_char_type_ * >( _str.data() ) };
         return std_string< _target_char_type_ >{ str_it, str_it + _str.size() };
     }
     template < typename _target_char_type_, typename _source_char_type_ >
@@ -174,14 +174,14 @@ namespace cpp_utils {
         requires( is_convertible_char_type< _target_char_type_, _source_char_type_ >() )
     inline auto string_view_convert( const std_string< _source_char_type_ > &_str )
     {
-        auto str_it{ reinterpret_cast< const _target_char_type_ * >( _str.cbegin() ) };
+        auto str_it{ reinterpret_cast< const _target_char_type_ * >( _str.c_str() ) };
         return std_string_view< _target_char_type_ >{ str_it, str_it + _str.size() };
     }
     template < typename _target_char_type_, typename _source_char_type_ >
         requires( is_convertible_char_type< _target_char_type_, _source_char_type_ >() )
     inline auto string_view_convert( const std_string_view< _source_char_type_ > _str )
     {
-        auto str_it{ reinterpret_cast< const _target_char_type_ * >( _str.cbegin() ) };
+        auto str_it{ reinterpret_cast< const _target_char_type_ * >( _str.data() ) };
         return std_string_view< _target_char_type_ >{ str_it, str_it + _str.size() };
     }
     template < typename _target_char_type_, typename _source_char_type_ >
