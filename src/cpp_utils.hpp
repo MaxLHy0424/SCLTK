@@ -274,7 +274,7 @@ namespace cpp_utils {
         std::this_thread::yield();
         std::this_thread::sleep_for( _time );
     }
-    template < typename _char_type_ >
+    template < typename _char_type_, bool _is_enabled_log_ >
         requires( std::is_same_v< _char_type_, ansi_char > || std::is_same_v< _char_type_, utf8_char > )
     class multithread_task final {
       private:
@@ -290,27 +290,34 @@ namespace cpp_utils {
             task_node_( task_node_ && )      = default;
             ~task_node_()
             {
-                if ( task_thread.joinable() ) {
-                    if constexpr ( std::is_same_v< _char_type_, ansi_char > ) {
-                        std::print( " -> 终止线程 {}.\n", task_thread.get_id() );
-                    } else if constexpr ( std::is_same_v< _char_type_, utf8_char > ) {
-                        utf8_print( u8" -> 终止线程 {}.\n", task_thread.get_id() );
+                if constexpr ( _is_enabled_log_ ) {
+                    if ( task_thread.joinable() ) {
+                        if constexpr ( std::is_same_v< _char_type_, ansi_char > ) {
+                            std::print( " -> 终止线程 {}.\n", task_thread.get_id() );
+                        } else if constexpr ( std::is_same_v< _char_type_, utf8_char > ) {
+                            utf8_print( u8" -> 终止线程 {}.\n", task_thread.get_id() );
+                        }
                     }
                 }
             }
         };
         std::vector< task_node_ > tasks_{};
       public:
-        auto &add_task( const std_string_view< _char_type_ > _comment, std::jthread &&_task_thread )
+        template < typename _callable_, typename... _args_ >
+            requires( !( std::is_same_v< std::remove_cvref_t< _callable_ >, std::thread >
+                         || std::is_same_v< std::remove_cvref_t< _callable_ >, std::jthread > ) )
+        auto &add_task( const std_string_view< _char_type_ > _comment, _callable_ &&_func, _args_ &&..._args )
         {
-            if ( _task_thread.joinable() ) {
+            if constexpr ( _is_enabled_log_ ) {
                 if constexpr ( std::is_same_v< _char_type_, ansi_char > ) {
                     std::print( " -> 创建线程: {}.\n", _comment );
                 } else if constexpr ( std::is_same_v< _char_type_, utf8_char > ) {
                     utf8_print( u8" -> 创建线程: {}.\n", _comment );
                 }
             }
-            tasks_.emplace_back( task_node_{ std::move( _task_thread ) } );
+            tasks_.emplace_back( task_node_{
+              std::jthread{ std::forward< _callable_ >( _func ), std::forward< _args_ >( _args )... }
+            } );
             return *this;
         }
         auto &join_task( const size_type _index )
@@ -336,8 +343,10 @@ namespace cpp_utils {
         multithread_task( multithread_task && )                          = default;
         ~multithread_task()                                              = default;
     };
-    using multithread_task_ansi = multithread_task< ansi_char >;
-    using multithread_task_utf8 = multithread_task< utf8_char >;
+    using multithread_task_ansi       = multithread_task< ansi_char, true >;
+    using multithread_task_ansi_nolog = multithread_task< ansi_char, false >;
+    using multithread_task_utf8       = multithread_task< utf8_char, true >;
+    using multithread_task_utf8_nolog = multithread_task< utf8_char, false >;
 #if defined( _WIN32 ) || defined( _WIN64 )
     inline auto is_run_as_admin()
     {

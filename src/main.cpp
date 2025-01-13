@@ -10,14 +10,11 @@ auto main() -> int
         return EXIT_SUCCESS;
     }
     auto thread_pool{ cpp_utils::multithread_task_ansi{} };
-    thread_pool
-      .add_task( "置顶显示", std::jthread{ core::topmost_show_window, core::options[ "window" ][ "topmost_show" ].value } )
+    thread_pool.add_task( "置顶显示", core::topmost_show_window, core::options[ "window" ][ "topmost_show" ].value )
       .add_task(
-        "窗口属性设定",
-        std::jthread{
-          core::set_console_attrs, core::options[ "window" ][ "disable_close_ctrl" ].value,
-          core::options[ "window" ][ "translucency" ].value } )
-      .add_task( "修复操作系统环境", std::jthread{ core::fix_os_env, core::options[ "other" ][ "fix_os_env" ].value } );
+        "窗口属性设定", core::set_console_attrs, core::options[ "window" ][ "disable_close_ctrl" ].value,
+        core::options[ "window" ][ "translucency" ].value )
+      .add_task( "修复操作系统环境", core::fix_os_env, core::options[ "other" ][ "fix_os_env" ].value );
     core::config_op{ core::config_op::mod::load }( cpp_utils::console_ui_ansi::func_args{ ui } );
     std::print( " -> 准备用户界面.\n" );
     ui.add_back( "                    [ 主  页 ]\n\n" )
