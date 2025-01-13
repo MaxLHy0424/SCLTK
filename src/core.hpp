@@ -21,7 +21,7 @@ namespace core {
     struct option_node final {
         struct sub_key final {
             const ansi_string_view self_name, showed_name;
-            bool is_enabled{};
+            bool value{};
             auto operator=( const sub_key & ) -> sub_key & = delete;
             auto operator=( sub_key && ) -> sub_key &      = delete;
             sub_key( const ansi_string_view _self_name, const ansi_string_view _showed_name )
@@ -144,9 +144,9 @@ namespace core {
             for ( auto &main_key : options.main_keys ) {
                 for ( auto &sub_key : main_key.sub_keys ) {
                     if ( _line == std::format( "{}::{} = true", main_key.self_name, sub_key.self_name ) ) {
-                        sub_key.is_enabled = true;
+                        sub_key.value = true;
                     } else if ( _line == std::format( "{}::{} = false", main_key.self_name, sub_key.self_name ) ) {
-                        sub_key.is_enabled = false;
+                        sub_key.value = false;
                     }
                 }
             }
@@ -156,8 +156,8 @@ namespace core {
         {
             for ( const auto &main_key : options.main_keys ) {
                 for ( const auto &sub_key : main_key.sub_keys ) {
-                    _out.append( std::format(
-                      "{}::{} = {}\n", main_key.self_name, sub_key.self_name, sub_key.is_enabled ? "true" : "false" ) );
+                    _out.append(
+                      std::format( "{}::{} = {}\n", main_key.self_name, sub_key.self_name, sub_key.value ? "true" : "false" ) );
                 }
             }
         }
@@ -268,15 +268,15 @@ namespace core {
             _args.parent_ui
               .set_console(
                 CONSOLE_TITLE " - 命令提示符", CODE_PAGE_ID, 120, 30, false, false,
-                options[ "window" ][ "disable_close_ctrl" ].is_enabled ? false : true,
-                options[ "window" ][ "translucency" ].is_enabled ? 230 : 255 )
+                options[ "window" ][ "disable_close_ctrl" ].value ? false : true,
+                options[ "window" ][ "translucency" ].value ? 230 : 255 )
               .lock( false, false );
             SetConsoleScreenBufferSize( GetStdHandle( STD_OUTPUT_HANDLE ), { 128, SHRT_MAX - 1 } );
             std::system( "cmd.exe" );
             _args.parent_ui.set_console(
               CONSOLE_TITLE, CODE_PAGE_ID, CONSOLE_WIDTH, CONSOLE_HEIGHT, true, false,
-              options[ "window" ][ "disable_close_ctrl" ].is_enabled ? false : true,
-              options[ "window" ][ "translucency" ].is_enabled ? 230 : 255 );
+              options[ "window" ][ "disable_close_ctrl" ].value ? false : true,
+              options[ "window" ][ "translucency" ].value ? 230 : 255 );
             return cpp_utils::console_value::ui_return;
         } };
         class cmd_executor final {
@@ -466,7 +466,7 @@ namespace core {
           public:
             auto operator()( cpp_utils::console_ui_ansi::func_args )
             {
-                sub_key_.is_enabled = sub_key_value_;
+                sub_key_.value = sub_key_value_;
                 return cpp_utils::console_value::ui_return;
             }
             auto operator=( const option_setter & ) -> option_setter & = delete;
@@ -563,7 +563,7 @@ namespace core {
             std::print( " -> 生成并执行操作系统命令.\n{}\n", ansi_string( CONSOLE_WIDTH, '-' ) );
             switch ( mod_data_ ) {
                 case mod::crack : {
-                    if ( options[ "crack_restore" ][ "hijack_execs" ].is_enabled ) {
+                    if ( options[ "crack_restore" ][ "hijack_execs" ].value ) {
                         for ( const auto &exec : rules_.execs ) {
                             std::system(
                               std::format(
@@ -572,7 +572,7 @@ namespace core {
                                 .c_str() );
                         }
                     }
-                    if ( options[ "crack_restore" ][ "set_serv_startup_types" ].is_enabled ) {
+                    if ( options[ "crack_restore" ][ "set_serv_startup_types" ].value ) {
                         for ( const auto &serv : rules_.servs ) {
                             std::system( std::format( R"(sc.exe config "{}" start= disabled)", serv ).c_str() );
                         }
@@ -586,7 +586,7 @@ namespace core {
                     break;
                 }
                 case mod::restore : {
-                    if ( options[ "crack_restore" ][ "hijack_execs" ].is_enabled ) {
+                    if ( options[ "crack_restore" ][ "hijack_execs" ].value ) {
                         for ( const auto &exec : rules_.execs ) {
                             std::system(
                               std::format(
@@ -595,7 +595,7 @@ namespace core {
                                 .c_str() );
                         }
                     }
-                    if ( options[ "crack_restore" ][ "set_serv_startup_types" ].is_enabled ) {
+                    if ( options[ "crack_restore" ][ "set_serv_startup_types" ].value ) {
                         for ( const auto &serv : rules_.servs ) {
                             std::system( std::format( R"(sc.exe config "{}" start= auto)", serv ).c_str() );
                         }
