@@ -278,17 +278,17 @@ namespace cpp_utils {
         requires( std::is_same_v< _char_type_, ansi_char > || std::is_same_v< _char_type_, utf8_char > )
     class thread_pool final {
       private:
-        struct task_node_ final {
+        struct node_ final {
             std::jthread task_thread{};
-            auto operator=( const task_node_ & ) -> task_node_ & = delete;
-            auto operator=( task_node_ && ) -> task_node_ &      = default;
-            task_node_()                                         = default;
-            task_node_( std::jthread &&_task_thread )
+            auto operator=( const node_ & ) -> node_ & = delete;
+            auto operator=( node_ && ) -> node_ &      = default;
+            node_()                                    = default;
+            node_( std::jthread &&_task_thread )
               : task_thread{ std::move( _task_thread ) }
             { }
-            task_node_( const task_node_ & ) = delete;
-            task_node_( task_node_ && )      = default;
-            ~task_node_()
+            node_( const node_ & ) = delete;
+            node_( node_ && )      = default;
+            ~node_()
             {
                 if constexpr ( _is_enabled_log_ ) {
                     if ( task_thread.joinable() ) {
@@ -301,7 +301,7 @@ namespace cpp_utils {
                 }
             }
         };
-        std::vector< task_node_ > tasks_{};
+        std::vector< node_ > tasks_{};
       public:
         template < typename _callable_, typename... _args_ >
             requires( !( std::is_same_v< std::remove_cvref_t< _callable_ >, std::thread >
@@ -315,7 +315,7 @@ namespace cpp_utils {
                     utf8_print( u8" -> 创建线程: {}.\n", _comment );
                 }
             }
-            tasks_.emplace_back( task_node_{
+            tasks_.emplace_back( node_{
               std::jthread{ std::forward< _callable_ >( _func ), std::forward< _args_ >( _args )... }
             } );
             return *this;
