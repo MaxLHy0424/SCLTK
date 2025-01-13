@@ -346,7 +346,7 @@ namespace cpp_utils {
         auto nt_authority{ SID_IDENTIFIER_AUTHORITY{ SECURITY_NT_AUTHORITY } };
         if ( AllocateAndInitializeSid(
                &nt_authority, 2, SECURITY_BUILTIN_DOMAIN_RID, DOMAIN_ALIAS_RID_ADMINS, 0, 0, 0, 0, 0, 0, &admins_group )
-             == true )
+             == TRUE )
         {
             CheckTokenMembership( nullptr, admins_group, &is_admin );
             FreeSid( admins_group );
