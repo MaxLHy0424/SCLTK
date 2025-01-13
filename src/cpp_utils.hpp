@@ -276,7 +276,7 @@ namespace cpp_utils {
     }
     template < typename _char_type_, bool _is_enabled_log_ >
         requires( std::is_same_v< _char_type_, ansi_char > || std::is_same_v< _char_type_, utf8_char > )
-    class multithread_task final {
+    class thread_pool final {
       private:
         struct task_node_ final {
             std::jthread task_thread{};
@@ -336,17 +336,17 @@ namespace cpp_utils {
             }
             return *this;
         }
-        auto operator=( const multithread_task & ) -> multithread_task & = delete;
-        auto operator=( multithread_task && ) -> multithread_task &      = default;
-        multithread_task()                                               = default;
-        multithread_task( const multithread_task & )                     = delete;
-        multithread_task( multithread_task && )                          = default;
-        ~multithread_task()                                              = default;
+        auto operator=( const thread_pool & ) -> thread_pool & = delete;
+        auto operator=( thread_pool && ) -> thread_pool &      = default;
+        thread_pool()                                          = default;
+        thread_pool( const thread_pool & )                     = delete;
+        thread_pool( thread_pool && )                          = default;
+        ~thread_pool()                                         = default;
     };
-    using multithread_task_ansi       = multithread_task< ansi_char, true >;
-    using multithread_task_ansi_nolog = multithread_task< ansi_char, false >;
-    using multithread_task_utf8       = multithread_task< utf8_char, true >;
-    using multithread_task_utf8_nolog = multithread_task< utf8_char, false >;
+    using thread_pool_ansi       = thread_pool< ansi_char, true >;
+    using thread_pool_ansi_nolog = thread_pool< ansi_char, false >;
+    using thread_pool_utf8       = thread_pool< utf8_char, true >;
+    using thread_pool_utf8_nolog = thread_pool< utf8_char, false >;
 #if defined( _WIN32 ) || defined( _WIN64 )
     inline auto is_run_as_admin()
     {
