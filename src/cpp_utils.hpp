@@ -274,9 +274,9 @@ namespace cpp_utils {
         std::this_thread::yield();
         std::this_thread::sleep_for( _time );
     }
-    template < typename _log_char_type_ >
-        requires( std::is_same_v< _log_char_type_, ansi_char > || std::is_same_v< _log_char_type_, utf8_char > )
-    class multithread_task {
+    template < typename _char_type_ >
+        requires( std::is_same_v< _char_type_, ansi_char > || std::is_same_v< _char_type_, utf8_char > )
+    class multithread_task final {
       private:
         struct task_node_ final {
             std::jthread task_thread{};
@@ -291,43 +291,50 @@ namespace cpp_utils {
             ~task_node_()
             {
                 if ( task_thread.joinable() ) {
-                    if constexpr ( std::is_same_v< _log_char_type_, ansi_char > ) {
+                    if constexpr ( std::is_same_v< _char_type_, ansi_char > ) {
                         std::print( " -> 终止线程 {}.\n", task_thread.get_id() );
-                    } else if constexpr ( std::is_same_v< _log_char_type_, utf8_char > ) {
+                    } else if constexpr ( std::is_same_v< _char_type_, utf8_char > ) {
                         utf8_print( u8" -> 终止线程 {}.\n", task_thread.get_id() );
                     }
                 }
             }
         };
         std::vector< task_node_ > tasks_{};
-      protected:
-        auto add_task( std::jthread &&_task_thread )
+      public:
+        auto &add_task( const std_string_view< _char_type_ > _comment, std::jthread &&_task_thread )
         {
+            if ( _task_thread.joinable() ) {
+                if constexpr ( std::is_same_v< _char_type_, ansi_char > ) {
+                    std::print( " -> 创建线程: {}.\n", _comment );
+                } else if constexpr ( std::is_same_v< _char_type_, utf8_char > ) {
+                    utf8_print( u8" -> 创建线程: {}.\n", _comment );
+                }
+            }
             tasks_.emplace_back( task_node_{ std::move( _task_thread ) } );
+            return *this;
         }
-        auto join_task( const size_type _index )
+        auto &join_task( const size_type _index )
         {
             auto &task{ tasks_.at( _index ).task_thread };
             if ( task.joinable() ) {
                 task.join();
             }
+            return *this;
         }
-        auto detach_task( const size_type _index )
+        auto &detach_task( const size_type _index )
         {
             auto &task{ tasks_.at( _index ).task_thread };
             if ( task.joinable() ) {
                 task.detach();
             }
+            return *this;
         }
         auto operator=( const multithread_task & ) -> multithread_task & = delete;
         auto operator=( multithread_task && ) -> multithread_task &      = default;
         multithread_task()                                               = default;
-        multithread_task( const size_type _size )
-          : tasks_{ _size }
-        { }
-        multithread_task( const multithread_task & ) = delete;
-        multithread_task( multithread_task && )      = default;
-        ~multithread_task()                          = default;
+        multithread_task( const multithread_task & )                     = delete;
+        multithread_task( multithread_task && )                          = default;
+        ~multithread_task()                                              = default;
     };
     using multithread_task_ansi = multithread_task< ansi_char >;
     using multithread_task_utf8 = multithread_task< utf8_char >;

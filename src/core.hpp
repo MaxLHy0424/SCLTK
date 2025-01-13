@@ -316,96 +316,60 @@ namespace core {
         ui.show();
         return cpp_utils::console_value::ui_return;
     }
-    class set_window final : private cpp_utils::multithread_task_ansi {
-      private:
-        type_alloc< const bool & > is_topmost_shown_, is_disabled_close_ctrl_, is_translucency_;
-        auto set_attrs_( const std::stop_token _msg )
-        {
-            while ( !_msg.stop_requested() ) {
-                SetLayeredWindowAttributes( GetConsoleWindow(), RGB( 0, 0, 0 ), is_translucency_ ? 230 : 255, LWA_ALPHA );
-                EnableMenuItem(
-                  GetSystemMenu( GetConsoleWindow(), FALSE ), SC_CLOSE,
-                  is_disabled_close_ctrl_ ? MF_BYCOMMAND | MF_DISABLED | MF_GRAYED : MF_BYCOMMAND | MF_ENABLED );
+    auto set_console_attrs( const std::stop_token _msg, const bool &_is_disabled_close_ctrl, const bool &_is_translucency )
+    {
+        while ( !_msg.stop_requested() ) {
+            SetLayeredWindowAttributes( GetConsoleWindow(), RGB( 0, 0, 0 ), _is_translucency ? 230 : 255, LWA_ALPHA );
+            EnableMenuItem(
+              GetSystemMenu( GetConsoleWindow(), FALSE ), SC_CLOSE,
+              _is_disabled_close_ctrl ? MF_BYCOMMAND | MF_DISABLED | MF_GRAYED : MF_BYCOMMAND | MF_ENABLED );
+            cpp_utils::perf_sleep( default_thread_sleep_time );
+        }
+    }
+    auto topmost_show_window( const std::stop_token _msg, const bool &_is_enabled )
+    {
+        const auto this_window{ GetConsoleWindow() };
+        const auto foreground_id{ GetWindowThreadProcessId( this_window, nullptr ) };
+        const auto current_id{ GetCurrentThreadId() };
+        while ( !_msg.stop_requested() ) {
+            if ( !_is_enabled ) {
+                SetWindowPos( GetConsoleWindow(), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
                 cpp_utils::perf_sleep( default_thread_sleep_time );
+                continue;
             }
+            AttachThreadInput( current_id, foreground_id, TRUE );
+            ShowWindow( this_window, SW_SHOWNORMAL );
+            SetForegroundWindow( this_window );
+            AttachThreadInput( current_id, foreground_id, FALSE );
+            SetWindowPos( this_window, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
+            cpp_utils::perf_sleep( 100ms );
         }
-        auto topmost_show_( const std::stop_token _msg )
-        {
-            const auto this_window{ GetConsoleWindow() };
-            const auto foreground_id{ GetWindowThreadProcessId( this_window, nullptr ) };
-            const auto current_id{ GetCurrentThreadId() };
-            while ( !_msg.stop_requested() ) {
-                if ( !is_topmost_shown_ ) {
-                    SetWindowPos( GetConsoleWindow(), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
-                    cpp_utils::perf_sleep( default_thread_sleep_time );
-                    continue;
-                }
-                AttachThreadInput( current_id, foreground_id, TRUE );
-                ShowWindow( this_window, SW_SHOWNORMAL );
-                SetForegroundWindow( this_window );
-                AttachThreadInput( current_id, foreground_id, FALSE );
-                SetWindowPos( this_window, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
-                cpp_utils::perf_sleep( 100ms );
+        SetWindowPos( GetConsoleWindow(), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
+    }
+    auto fix_os_env( const std::stop_token _msg, const bool &_is_enabled )
+    {
+        constexpr const char *const hkcu_reg_dirs[]{
+          R"(Software\Policies\Microsoft\Windows\System)", R"(Software\Microsoft\Windows\CurrentVersion\Policies\System)",
+          R"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)" };
+        constexpr const char *const execs[]{
+          "mode.com", "chcp.com", "ntsd.exe",    "taskkill.exe", "sc.exe",      "net.exe",
+          "reg.exe",  "cmd.exe",  "taskmgr.exe", "perfmon.exe",  "regedit.exe", "mmc.exe" };
+        while ( !_msg.stop_requested() ) {
+            if ( !_is_enabled ) {
+                cpp_utils::perf_sleep( default_thread_sleep_time );
+                continue;
             }
-            SetWindowPos( GetConsoleWindow(), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
-        }
-      public:
-        auto operator=( const set_window & ) -> set_window & = delete;
-        auto operator=( set_window && ) -> set_window &      = delete;
-        set_window( const bool &_is_topmost_shown, const bool &_is_disabled_close_ctrl, const bool &_is_translucency )
-          : is_topmost_shown_{ _is_topmost_shown }
-          , is_disabled_close_ctrl_{ _is_disabled_close_ctrl }
-          , is_translucency_{ _is_translucency }
-        {
-            std::print( " -> 创建线程: 窗口属性设定.\n" );
-            add_task( std::jthread{ set_attrs_, this } );
-            std::print( " -> 创建线程: 置顶显示.\n" );
-            add_task( std::jthread{ topmost_show_, this } );
-        }
-        set_window( const set_window & ) = delete;
-        set_window( set_window && )      = delete;
-        ~set_window()                    = default;
-    };
-    class fix_os_env final : private cpp_utils::multithread_task_ansi {
-      private:
-        const bool &is_enabled_;
-        auto exec_op_( const std::stop_token _msg )
-        {
-            constexpr const char *const hkcu_reg_dirs[]{
-              R"(Software\Policies\Microsoft\Windows\System)", R"(Software\Microsoft\Windows\CurrentVersion\Policies\System)",
-              R"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)" };
-            constexpr const char *const execs[]{
-              "mode.com", "chcp.com", "ntsd.exe",    "taskkill.exe", "sc.exe",      "net.exe",
-              "reg.exe",  "cmd.exe",  "taskmgr.exe", "perfmon.exe",  "regedit.exe", "mmc.exe" };
-            while ( !_msg.stop_requested() ) {
-                if ( !is_enabled_ ) {
-                    cpp_utils::perf_sleep( default_thread_sleep_time );
-                    continue;
-                }
-                for ( const auto &reg_dir : hkcu_reg_dirs ) {
-                    RegDeleteTreeA( HKEY_CURRENT_USER, reg_dir );
-                }
-                for ( const auto &exec : execs ) {
-                    RegDeleteTreeA(
-                      HKEY_LOCAL_MACHINE,
-                      std::format( R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{})", exec ).c_str() );
-                }
-                cpp_utils::perf_sleep( 1s );
+            for ( const auto &reg_dir : hkcu_reg_dirs ) {
+                RegDeleteTreeA( HKEY_CURRENT_USER, reg_dir );
             }
+            for ( const auto &exec : execs ) {
+                RegDeleteTreeA(
+                  HKEY_LOCAL_MACHINE,
+                  std::format( R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{})", exec ).c_str() );
+            }
+            cpp_utils::perf_sleep( 1s );
         }
-      public:
-        auto operator=( const fix_os_env & ) -> fix_os_env & = delete;
-        auto operator=( fix_os_env && ) -> fix_os_env &      = delete;
-        fix_os_env( const bool &_is_enabled )
-          : is_enabled_{ _is_enabled }
-        {
-            std::print( " -> 创建线程: 修复操作系统环境.\n" );
-            add_task( std::jthread{ exec_op_, this } );
-        }
-        fix_os_env( const fix_os_env & ) = delete;
-        fix_os_env( fix_os_env && )      = delete;
-        ~fix_os_env()                    = default;
-    };
+    }
     class config_op final {
       public:
         enum class mod { load, edit };

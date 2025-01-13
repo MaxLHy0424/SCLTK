@@ -9,12 +9,15 @@ auto main() -> int
         cpp_utils::relaunch_as_admin();
         return EXIT_SUCCESS;
     }
-    auto set_window_thread{
-      core::set_window{
-                       core::options[ "window" ][ "topmost_show" ].is_enabled, core::options[ "window" ][ "disable_close_ctrl" ].is_enabled,
-                       core::options[ "window" ][ "translucency" ].is_enabled }
-    };
-    auto fix_os_env_thread{ core::fix_os_env{ core::options[ "other" ][ "fix_os_env" ].is_enabled } };
+    auto thread_pool{ cpp_utils::multithread_task_ansi{} };
+    thread_pool
+      .add_task( "置顶显示", std::jthread{ core::topmost_show_window, core::options[ "window" ][ "topmost_show" ].is_enabled } )
+      .add_task(
+        "窗口属性设定",
+        std::jthread{
+          core::set_console_attrs, core::options[ "window" ][ "disable_close_ctrl" ].is_enabled,
+          core::options[ "window" ][ "translucency" ].is_enabled } )
+      .add_task( "修复操作系统环境", std::jthread{ core::fix_os_env, core::options[ "other" ][ "fix_os_env" ].is_enabled } );
     core::config_op{ core::config_op::mod::load }( cpp_utils::console_ui_ansi::func_args{ ui } );
     std::print( " -> 准备用户界面.\n" );
     ui.add_back( "                    [ 主  页 ]\n\n" )
