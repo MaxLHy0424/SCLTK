@@ -437,10 +437,10 @@ namespace core {
             };
             config_file << std::format(
               "# {}\n"
-              "# [同步时间] {} (UTC)\n"
+              "# [同步时间] UTC {} \n"
               "# [同步版本] {}\n"
-              "# [字符编码] {} ({})\n",
-              INFO_NAME, std::chrono::system_clock::now(), INFO_VERSION, CODE_PAGE_NAME, CODE_PAGE_ID )
+              "# [字符编码] {}\n",
+              INFO_NAME, std::chrono::system_clock::now(), INFO_VERSION, CODE_PAGE_NAME )
                         << config_text << std::flush;
             std::print( "\n ({}) 同步配置{}.\n\n", config_file.good() ? 'i' : '!', config_file.good() ? "成功" : "失败" );
             wait( 3s );
