@@ -20,11 +20,11 @@ namespace core {
     inline constexpr auto default_thread_sleep_time{ 1s };
     struct option_node final {
         struct sub_key final {
-            const ansi_string_view self_name, showed_name;
+            type_alloc< const ansi_char *const > self_name, showed_name;
             bool value{};
             auto operator=( const sub_key & ) -> sub_key & = delete;
             auto operator=( sub_key && ) -> sub_key &      = delete;
-            sub_key( const ansi_string_view _self_name, const ansi_string_view _showed_name )
+            sub_key( const ansi_char *const _self_name, const ansi_char *const _showed_name )
               : self_name{ _self_name }
               , showed_name{ _showed_name }
             { }
@@ -33,12 +33,12 @@ namespace core {
             ~sub_key()                 = default;
         };
         struct main_key final {
-            const ansi_string_view self_name, showed_name;
+            type_alloc< const ansi_char *const > self_name, showed_name;
             std::vector< sub_key > sub_keys;
             auto &operator[]( const ansi_string_view _self_name )
             {
                 for ( auto &key : sub_keys ) {
-                    if ( key.self_name == _self_name ) {
+                    if ( _self_name == key.self_name ) {
                         return key;
                     }
                 }
@@ -46,7 +46,7 @@ namespace core {
             }
             auto operator=( const main_key & ) -> main_key & = delete;
             auto operator=( main_key && ) -> main_key &      = delete;
-            main_key( const ansi_string_view _self_name, const ansi_string_view _showed_name, std::vector< sub_key > _sub_keys )
+            main_key( const ansi_char *const _self_name, const ansi_char *const _showed_name, std::vector< sub_key > _sub_keys )
               : self_name{ _self_name }
               , showed_name{ _showed_name }
               , sub_keys{ std::move( _sub_keys ) }
@@ -59,7 +59,7 @@ namespace core {
         auto &operator[]( const ansi_string_view _self_name )
         {
             for ( auto &key : main_keys ) {
-                if ( key.self_name == _self_name ) {
+                if ( _self_name == key.self_name ) {
                     return key;
                 }
             }
@@ -83,7 +83,7 @@ namespace core {
           { { "topmost_show", "置顶显示" }, { "disable_close_ctrl", "禁用关闭控件" }, { "translucency", "半透明化" } } },
         { "other", "其他", { { "fix_os_env", "修复操作系统环境" } } } } } };
     struct rule_node final {
-        const ansi_string_view showed_name;
+        const ansi_char *const showed_name;
         std::deque< ansi_string > execs, servs;
         auto empty() const
         {
@@ -91,7 +91,7 @@ namespace core {
         }
         auto operator=( const rule_node & ) -> rule_node & = delete;
         auto operator=( rule_node && ) -> rule_node &      = delete;
-        rule_node( const ansi_string_view _showed_name, std::deque< ansi_string > _execs, std::deque< ansi_string > _servs )
+        rule_node( const ansi_char *const _showed_name, std::deque< ansi_string > _execs, std::deque< ansi_string > _servs )
           : showed_name{ _showed_name }
           , execs{ std::move( _execs ) }
           , servs{ std::move( _servs ) }
@@ -121,13 +121,13 @@ namespace core {
     };
     class config_node {
       public:
-        const ansi_string_view self_name;
-        virtual auto load( const bool, const ansi_string_view ) -> void = 0;
+        const ansi_char *const self_name;
+        virtual auto load( const bool, const ansi_char *const ) -> void = 0;
         virtual auto prepare_to_reload() -> void                        = 0;
         virtual auto sync( ansi_string & ) -> void                      = 0;
         virtual auto operator=( const config_node & ) -> config_node &  = delete;
         virtual auto operator=( config_node && ) -> config_node &       = delete;
-        config_node( const ansi_string_view _self_name )
+        config_node( const ansi_char *const _self_name )
           : self_name{ _self_name }
         { }
         config_node( const config_node & ) = delete;
@@ -136,7 +136,7 @@ namespace core {
     };
     class option_op final : public config_node {
       public:
-        virtual auto load( const bool _is_reloaded, const ansi_string_view _line ) -> void override final
+        virtual auto load( const bool _is_reloaded, const ansi_char *const _line ) -> void override final
         {
             if ( _is_reloaded ) {
                 return;
@@ -172,7 +172,7 @@ namespace core {
     };
     class custom_rule_execs_op final : public config_node {
       public:
-        virtual auto load( const bool, const ansi_string_view _line ) -> void override final
+        virtual auto load( const bool, const ansi_char *const _line ) -> void override final
         {
             custom_rules.execs.emplace_back( _line );
         }
@@ -197,7 +197,7 @@ namespace core {
     };
     class custom_rule_servs_op final : public config_node {
       public:
-        virtual auto load( const bool, const ansi_string_view _line ) -> void override final
+        virtual auto load( const bool, const ansi_char *const _line ) -> void override final
         {
             custom_rules.servs.emplace_back( _line );
         }
@@ -291,7 +291,7 @@ namespace core {
             }
             auto operator=( const cmd_executor & ) -> cmd_executor & = delete;
             auto operator=( cmd_executor && ) -> cmd_executor &      = delete;
-            cmd_executor( const ansi_string_view _cmd )
+            cmd_executor( const ansi_char *const _cmd )
               : cmd_{ _cmd }
             { }
             cmd_executor( const cmd_executor & ) = default;
@@ -408,7 +408,7 @@ namespace core {
                 {
                     line_view = line_view.substr( sizeof( "[ " ) - 1, line_view.size() - sizeof( " ]" ) - 1 );
                     for ( auto &config : configs ) {
-                        if ( config->self_name == line_view ) {
+                        if ( line_view == config->self_name ) {
                             node_ptr = config.get();
                             break;
                         }
@@ -417,7 +417,7 @@ namespace core {
                     continue;
                 }
                 if ( node_ptr != nullptr ) {
-                    node_ptr->load( _is_reloaded, line_view );
+                    node_ptr->load( _is_reloaded, line.c_str() );
                 }
             }
             return;
