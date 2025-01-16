@@ -123,7 +123,7 @@ namespace core {
       public:
         const ansi_char *const self_name;
         virtual auto load( const bool, const ansi_char *const ) -> void = 0;
-        virtual auto prepare_to_reload() -> void                        = 0;
+        virtual auto prepare_reloading() -> void                        = 0;
         virtual auto sync( ansi_string & ) -> void                      = 0;
         virtual auto operator=( const config_node & ) -> config_node &  = delete;
         virtual auto operator=( config_node && ) -> config_node &       = delete;
@@ -151,7 +151,7 @@ namespace core {
                 }
             }
         }
-        virtual auto prepare_to_reload() -> void override final { }
+        virtual auto prepare_reloading() -> void override final { }
         virtual auto sync( ansi_string &_out ) -> void override final
         {
             for ( const auto &main_key : options.main_keys ) {
@@ -176,7 +176,7 @@ namespace core {
         {
             custom_rules.execs.emplace_back( _line );
         }
-        virtual auto prepare_to_reload() -> void override final
+        virtual auto prepare_reloading() -> void override final
         {
             custom_rules.execs.clear();
         }
@@ -201,7 +201,7 @@ namespace core {
         {
             custom_rules.servs.emplace_back( _line );
         }
-        virtual auto prepare_to_reload() -> void override final
+        virtual auto prepare_reloading() -> void override final
         {
             custom_rules.servs.clear();
         }
@@ -388,7 +388,7 @@ namespace core {
             if ( _is_reloaded ) {
                 std::print( " -> 准备配置重载.\n" );
                 for ( auto &config : configs ) {
-                    config->prepare_to_reload();
+                    config->prepare_reloading();
                 }
             }
             std::print( " -> 加载配置文件.\n" );
