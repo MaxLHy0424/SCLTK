@@ -16,7 +16,7 @@ namespace core {
     using wide_string      = cpp_utils::wide_string;
     template < typename _type_ >
     using type_alloc = cpp_utils::type_alloc< _type_ >;
-    inline constexpr auto config_file_name{ "config.ini"sv };
+    inline constexpr auto config_file_name{ "config.ini" };
     inline constexpr auto default_thread_sleep_time{ 1s };
     struct option_node final {
         struct sub_key final {
@@ -380,7 +380,7 @@ namespace core {
         auto load_( const bool _is_reloaded )
         {
             auto config_file{
-              std::ifstream{ config_file_name.data(), std::ios::in }
+              std::ifstream{ config_file_name, std::ios::in }
             };
             if ( !config_file.good() ) {
                 return;
@@ -433,7 +433,7 @@ namespace core {
                 config->sync( config_text );
             }
             auto config_file{
-              std::ofstream{ config_file_name.data(), std::ios::out | std::ios::trunc }
+              std::ofstream{ config_file_name, std::ios::out | std::ios::trunc }
             };
             config_file << std::format(
               "# {}\n"
@@ -448,9 +448,9 @@ namespace core {
         }
         auto open_file()
         {
-            if ( std::ifstream{ config_file_name.data(), std::ios::in }.good() ) {
+            if ( std::ifstream{ config_file_name, std::ios::in }.good() ) {
                 std::print( " -> 打开配置.\n" );
-                ShellExecuteA( nullptr, "open", config_file_name.data(), nullptr, nullptr, SW_SHOWNORMAL );
+                ShellExecuteA( nullptr, "open", config_file_name, nullptr, nullptr, SW_SHOWNORMAL );
                 return cpp_utils::console_value::ui_return;
             }
             std::print(
