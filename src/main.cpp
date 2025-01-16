@@ -12,16 +12,16 @@ auto main() -> int
     auto threads{ cpp_utils::thread_pool_ansi{} };
     threads.add_task( "置顶显示", core::topmost_show_window, core::options[ "window" ][ "topmost_show" ].value )
       .add_task(
-        "窗口属性设定", core::set_console_attrs, core::options[ "window" ][ "disable_close_ctrl" ].value,
+        "窗口属性设定",
+        core::set_console_attrs,
+        core::options[ "window" ][ "disable_close_ctrl" ].value,
         core::options[ "window" ][ "translucency" ].value )
       .add_task( "修复操作系统环境", core::fix_os_env, core::options[ "other" ][ "fix_os_env" ].value );
     core::config_op{ core::config_op::mod::load }( cpp_utils::console_ui_ansi::func_args{ ui } );
     std::print( " -> 准备用户界面.\n" );
     ui.add_back( "                    [ 主  页 ]\n\n" )
       .add_back( " < 退出 ", core::quit, cpp_utils::console_value::text_foreground_red | cpp_utils::console_value::text_foreground_intensity )
-      .add_back(
-        " < 重启 ", core::relaunch,
-        cpp_utils::console_value::text_foreground_green | cpp_utils::console_value::text_foreground_intensity )
+      .add_back( " < 重启 ", core::relaunch, cpp_utils::console_value::text_foreground_green | cpp_utils::console_value::text_foreground_intensity )
       .add_back( " > 信息 ", core::info )
       .add_back( " > 配置 ", core::config_op{ core::config_op::mod::edit } )
       .add_back( " > 工具箱 ", core::toolkit )

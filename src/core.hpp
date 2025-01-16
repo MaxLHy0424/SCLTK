@@ -221,8 +221,8 @@ namespace core {
         virtual ~custom_rule_servs_op()                      = default;
     };
     inline std::unique_ptr< config_node > configs[]{
-      std::unique_ptr< config_node >{ new option_op }, std::unique_ptr< config_node >{ new custom_rule_execs_op },
-      std::unique_ptr< config_node >{ new custom_rule_servs_op } };
+      std::unique_ptr< config_node >{ new option_op{} }, std::unique_ptr< config_node >{ new custom_rule_execs_op{} },
+      std::unique_ptr< config_node >{ new custom_rule_servs_op{} } };
     template < typename _chrono_type_ >
     inline auto wait( const _chrono_type_ _time )
     {
