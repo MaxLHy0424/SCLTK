@@ -1,7 +1,6 @@
 #pragma once
 #include "cpp_utils.hpp"
 #include "info.hpp"
-#define CONSOLE_TITLE  "CRCSN"
 #define CONSOLE_WIDTH  50
 #define CONSOLE_HEIGHT 25
 #define CODE_PAGE_ID   54936
@@ -272,7 +271,7 @@ namespace core {
         std::print( " -> 准备用户界面.\n" );
         ui.add_back( "                    [ 信  息 ]\n\n" )
           .add_back( " < 返回 ", quit, cpp_utils::console_value::text_foreground_green | cpp_utils::console_value::text_foreground_intensity )
-          .add_back( "\n[ 名称 ]\n\n " INFO_NAME " \n\n[ 版本 ]\n\n " INFO_VERSION " " )
+          .add_back( "\n[ 名称 ]\n\n " INFO_FULL_NAME " \n\n[ 版本 ]\n\n " INFO_VERSION " " )
           .add_back( "\n[ 仓库 ]\n" )
           .add_back(
             " " INFO_REPO_URL " ", visit_repo_webpage,
@@ -288,14 +287,14 @@ namespace core {
         {
             _args.parent_ui
               .set_console(
-                CONSOLE_TITLE " - 命令提示符", CODE_PAGE_ID, 120, 30, false, false,
+                INFO_SHORT_NAME " - 命令提示符", CODE_PAGE_ID, 120, 30, false, false,
                 options[ "window" ][ "disable_close_ctrl" ].get() ? false : true,
                 options[ "window" ][ "translucency" ].get() ? 230 : 255 )
               .lock( false, false );
             SetConsoleScreenBufferSize( GetStdHandle( STD_OUTPUT_HANDLE ), { 128, SHRT_MAX - 1 } );
             std::system( "cmd.exe" );
             _args.parent_ui.set_console(
-              CONSOLE_TITLE, CODE_PAGE_ID, CONSOLE_WIDTH, CONSOLE_HEIGHT, true, false,
+              INFO_SHORT_NAME, CODE_PAGE_ID, CONSOLE_WIDTH, CONSOLE_HEIGHT, true, false,
               options[ "window" ][ "disable_close_ctrl" ].get() ? false : true,
               options[ "window" ][ "translucency" ].get() ? 230 : 255 );
             return cpp_utils::console_value::ui_back;
@@ -465,7 +464,7 @@ namespace core {
               "# [ 同步时间 ] UTC {}\n"
               "# [ 同步版本 ] {}\n"
               "# [ 字符编码 ] {}\n",
-              INFO_NAME, std::chrono::system_clock::now(), INFO_VERSION, CODE_PAGE_NAME )
+              INFO_FULL_NAME, std::chrono::system_clock::now(), INFO_VERSION, CODE_PAGE_NAME )
                         << config_text << std::flush;
             std::print( "\n ({}) 同步配置{}.\n\n", config_file.good() ? 'i' : '!', config_file.good() ? "成功" : "失败" );
             wait( 3s );

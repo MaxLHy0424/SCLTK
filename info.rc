@@ -7,8 +7,8 @@ BEGIN
     BEGIN
         BLOCK "040904B0"
         BEGIN
-            VALUE "ProductName", INFO_NAME
-            VALUE "FileDescription", INFO_NAME
+            VALUE "ProductName", INFO_FULL_NAME
+            VALUE "FileDescription", INFO_FULL_NAME
             VALUE "ProductVersion", INFO_VERSION
             VALUE "CompanyName", INFO_DEVELOPER
             VALUE "LegalCopyright", "(C) 2023 - present " INFO_DEVELOPER "."
