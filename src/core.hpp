@@ -20,17 +20,39 @@ namespace core {
     inline constexpr auto default_thread_sleep_time{ 1s };
     struct option_node final {
         struct sub_key final {
+          private:
+            std::atomic_flag value{};
+          public:
             type_alloc< const ansi_char *const > self_name, showed_name;
-            bool value{};
+            auto enable()
+            {
+                value.test_and_set();
+            }
+            auto disable()
+            {
+                value.clear();
+            }
+            auto get() const
+            {
+                return value.test();
+            }
             auto operator=( const sub_key & ) -> sub_key & = delete;
             auto operator=( sub_key && ) -> sub_key &      = delete;
             sub_key( const ansi_char *const _self_name, const ansi_char *const _showed_name )
               : self_name{ _self_name }
               , showed_name{ _showed_name }
             { }
-            sub_key( const sub_key & ) = default;
-            sub_key( sub_key && )      = default;
-            ~sub_key()                 = default;
+            sub_key( const sub_key &_src )
+              : value{ _src.get() }
+              , self_name{ _src.self_name }
+              , showed_name{ _src.showed_name }
+            { }
+            sub_key( sub_key &&_src )
+              : value{ _src.get() }
+              , self_name{ _src.self_name }
+              , showed_name{ _src.showed_name }
+            { }
+            ~sub_key() = default;
         };
         struct main_key final {
             type_alloc< const ansi_char *const > self_name, showed_name;
@@ -144,9 +166,9 @@ namespace core {
             for ( auto &main_key : options.main_keys ) {
                 for ( auto &sub_key : main_key.sub_keys ) {
                     if ( _line == std::format( "{}::{} = true", main_key.self_name, sub_key.self_name ) ) {
-                        sub_key.value = true;
+                        sub_key.enable();
                     } else if ( _line == std::format( "{}::{} = false", main_key.self_name, sub_key.self_name ) ) {
-                        sub_key.value = false;
+                        sub_key.disable();
                     }
                 }
             }
@@ -157,7 +179,7 @@ namespace core {
             for ( const auto &main_key : options.main_keys ) {
                 for ( const auto &sub_key : main_key.sub_keys ) {
                     _out.append(
-                      std::format( "{}::{} = {}\n", main_key.self_name, sub_key.self_name, sub_key.value ? "true" : "false" ) );
+                      std::format( "{}::{} = {}\n", main_key.self_name, sub_key.self_name, sub_key.get() ? "true" : "false" ) );
                 }
             }
         }
@@ -268,15 +290,15 @@ namespace core {
             _args.parent_ui
               .set_console(
                 CONSOLE_TITLE " - 命令提示符", CODE_PAGE_ID, 120, 30, false, false,
-                options[ "window" ][ "disable_close_ctrl" ].value ? false : true,
-                options[ "window" ][ "translucency" ].value ? 230 : 255 )
+                options[ "window" ][ "disable_close_ctrl" ].get() ? false : true,
+                options[ "window" ][ "translucency" ].get() ? 230 : 255 )
               .lock( false, false );
             SetConsoleScreenBufferSize( GetStdHandle( STD_OUTPUT_HANDLE ), { 128, SHRT_MAX - 1 } );
             std::system( "cmd.exe" );
             _args.parent_ui.set_console(
               CONSOLE_TITLE, CODE_PAGE_ID, CONSOLE_WIDTH, CONSOLE_HEIGHT, true, false,
-              options[ "window" ][ "disable_close_ctrl" ].value ? false : true,
-              options[ "window" ][ "translucency" ].value ? 230 : 255 );
+              options[ "window" ][ "disable_close_ctrl" ].get() ? false : true,
+              options[ "window" ][ "translucency" ].get() ? 230 : 255 );
             return cpp_utils::console_value::ui_back;
         } };
         class cmd_executor final {
@@ -316,23 +338,26 @@ namespace core {
         ui.show();
         return cpp_utils::console_value::ui_back;
     }
-    auto set_console_attrs( const std::stop_token _msg, const bool &_is_disabled_close_ctrl, const bool &_is_translucency )
+    auto set_console_attrs( const std::stop_token _msg )
     {
+        const auto &is_translucency{ core::options[ "window" ][ "translucency" ] };
+        const auto &is_disabled_close_ctrl{ core::options[ "window" ][ "disable_close_ctrl" ] };
         while ( !_msg.stop_requested() ) {
-            SetLayeredWindowAttributes( GetConsoleWindow(), RGB( 0, 0, 0 ), _is_translucency ? 230 : 255, LWA_ALPHA );
+            SetLayeredWindowAttributes( GetConsoleWindow(), RGB( 0, 0, 0 ), is_translucency.get() ? 230 : 255, LWA_ALPHA );
             EnableMenuItem(
               GetSystemMenu( GetConsoleWindow(), FALSE ), SC_CLOSE,
-              _is_disabled_close_ctrl ? MF_BYCOMMAND | MF_DISABLED | MF_GRAYED : MF_BYCOMMAND | MF_ENABLED );
+              is_disabled_close_ctrl.get() ? MF_BYCOMMAND | MF_DISABLED | MF_GRAYED : MF_BYCOMMAND | MF_ENABLED );
             cpp_utils::perf_sleep( default_thread_sleep_time );
         }
     }
-    auto topmost_show_window( const std::stop_token _msg, const bool &_is_enabled )
+    auto topmost_show_window( const std::stop_token _msg )
     {
         const auto this_window{ GetConsoleWindow() };
         const auto foreground_id{ GetWindowThreadProcessId( this_window, nullptr ) };
         const auto current_id{ GetCurrentThreadId() };
+        const auto &is_topmost_shown{ core::options[ "window" ][ "topmost_show" ] };
         while ( !_msg.stop_requested() ) {
-            if ( !_is_enabled ) {
+            if ( !is_topmost_shown.get() ) {
                 SetWindowPos( GetConsoleWindow(), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
                 cpp_utils::perf_sleep( default_thread_sleep_time );
                 continue;
@@ -346,7 +371,7 @@ namespace core {
         }
         SetWindowPos( GetConsoleWindow(), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
     }
-    auto fix_os_env( const std::stop_token _msg, const bool &_is_enabled )
+    auto fix_os_env( const std::stop_token _msg )
     {
         constexpr const char *const hkcu_reg_dirs[]{
           R"(Software\Policies\Microsoft\Windows\System)", R"(Software\Microsoft\Windows\CurrentVersion\Policies\System)",
@@ -354,8 +379,9 @@ namespace core {
         constexpr const char *const execs[]{
           "mode.com", "chcp.com", "ntsd.exe",    "taskkill.exe", "sc.exe",      "net.exe",
           "reg.exe",  "cmd.exe",  "taskmgr.exe", "perfmon.exe",  "regedit.exe", "mmc.exe" };
+        const auto &is_fixed_os_env{ core::options[ "other" ][ "fix_os_env" ] };
         while ( !_msg.stop_requested() ) {
-            if ( !_is_enabled ) {
+            if ( !is_fixed_os_env.get() ) {
                 cpp_utils::perf_sleep( default_thread_sleep_time );
                 continue;
             }
@@ -465,7 +491,10 @@ namespace core {
           public:
             auto operator()( cpp_utils::console_ui_ansi::func_args )
             {
-                sub_key_.value = sub_key_value_;
+                switch ( sub_key_value_ ) {
+                    case true : sub_key_.enable(); break;
+                    case false : sub_key_.disable(); break;
+                }
                 return cpp_utils::console_value::ui_back;
             }
             auto operator=( const option_setter & ) -> option_setter & = delete;
@@ -562,7 +591,7 @@ namespace core {
             std::print( " -> 生成并执行操作系统命令.\n{}\n", ansi_string( CONSOLE_WIDTH, '-' ) );
             switch ( mod_data_ ) {
                 case mod::crack : {
-                    if ( options[ "crack_restore" ][ "hijack_execs" ].value ) {
+                    if ( options[ "crack_restore" ][ "hijack_execs" ].get() ) {
                         for ( const auto &exec : rules_.execs ) {
                             std::system(
                               std::format(
@@ -571,7 +600,7 @@ namespace core {
                                 .c_str() );
                         }
                     }
-                    if ( options[ "crack_restore" ][ "set_serv_startup_types" ].value ) {
+                    if ( options[ "crack_restore" ][ "set_serv_startup_types" ].get() ) {
                         for ( const auto &serv : rules_.servs ) {
                             std::system( std::format( R"(sc.exe config "{}" start= disabled)", serv ).c_str() );
                         }
@@ -585,7 +614,7 @@ namespace core {
                     break;
                 }
                 case mod::restore : {
-                    if ( options[ "crack_restore" ][ "hijack_execs" ].value ) {
+                    if ( options[ "crack_restore" ][ "hijack_execs" ].get() ) {
                         for ( const auto &exec : rules_.execs ) {
                             std::system(
                               std::format(
@@ -594,7 +623,7 @@ namespace core {
                                 .c_str() );
                         }
                     }
-                    if ( options[ "crack_restore" ][ "set_serv_startup_types" ].value ) {
+                    if ( options[ "crack_restore" ][ "set_serv_startup_types" ].get() ) {
                         for ( const auto &serv : rules_.servs ) {
                             std::system( std::format( R"(sc.exe config "{}" start= auto)", serv ).c_str() );
                         }
