@@ -440,15 +440,15 @@ namespace cpp_utils {
         inline constexpr auto text_background_green{ WORD{ BACKGROUND_GREEN } };
         inline constexpr auto text_background_blue{ WORD{ BACKGROUND_BLUE } };
         inline constexpr auto text_background_intensity{ WORD{ BACKGROUND_INTENSITY } };
-        inline constexpr auto text_common_lvb_leading_byte{ WORD{ COMMON_LVB_LEADING_BYTE } };
-        inline constexpr auto text_common_lvb_trailing_byte{ WORD{ COMMON_LVB_TRAILING_BYTE } };
-        inline constexpr auto text_common_lvb_grid_horizontal{ WORD{ COMMON_LVB_GRID_HORIZONTAL } };
-        inline constexpr auto text_common_lvb_grid_lvertical{ WORD{ COMMON_LVB_GRID_LVERTICAL } };
-        inline constexpr auto text_common_lvb_grid_rvertical{ WORD{ COMMON_LVB_GRID_RVERTICAL } };
-        inline constexpr auto text_common_lvb_reverse_video{ WORD{ COMMON_LVB_REVERSE_VIDEO } };
-        inline constexpr auto text_common_lvb_underscore{ WORD{ COMMON_LVB_UNDERSCORE } };
-        inline constexpr auto text_common_lvb_sbcsdbcs{ WORD{ COMMON_LVB_SBCSDBCS } };
-        inline constexpr auto ui_return{ false };
+        inline constexpr auto text_lvb_leading_byte{ WORD{ COMMON_LVB_LEADING_BYTE } };
+        inline constexpr auto text_lvb_trailing_byte{ WORD{ COMMON_LVB_TRAILING_BYTE } };
+        inline constexpr auto text_lvb_grid_horizontal{ WORD{ COMMON_LVB_GRID_HORIZONTAL } };
+        inline constexpr auto text_lvb_grid_lvertical{ WORD{ COMMON_LVB_GRID_LVERTICAL } };
+        inline constexpr auto text_lvb_grid_rvertical{ WORD{ COMMON_LVB_GRID_RVERTICAL } };
+        inline constexpr auto text_lvb_reverse_video{ WORD{ COMMON_LVB_REVERSE_VIDEO } };
+        inline constexpr auto text_lvb_underscore{ WORD{ COMMON_LVB_UNDERSCORE } };
+        inline constexpr auto text_lvb_sbcsdbcs{ WORD{ COMMON_LVB_SBCSDBCS } };
+        inline constexpr auto ui_back{ false };
         inline constexpr auto ui_exit{ true };
     };
     template < typename _char_type_ >
@@ -636,7 +636,7 @@ namespace cpp_utils {
         }
         auto call_func_( const MOUSE_EVENT_RECORD &_mouse_event )
         {
-            auto is_exited{ console_value::ui_return };
+            auto is_exited{ console_value::ui_back };
             for ( auto &line : lines_ ) {
                 if ( line != _mouse_event.dwMousePosition ) {
                     continue;
@@ -761,8 +761,8 @@ namespace cpp_utils {
             edit_console_attrs_( console_attrs_::lock_text );
             init_pos_();
             auto mouse_event{ MOUSE_EVENT_RECORD{} };
-            auto func_return_value{ console_value::ui_return };
-            while ( func_return_value == console_value::ui_return ) {
+            auto func_return_value{ console_value::ui_back };
+            while ( func_return_value == console_value::ui_back ) {
                 mouse_event = wait_mouse_event_();
                 switch ( mouse_event.dwEventFlags ) {
                     case console_value::mouse_move : refresh_( mouse_event.dwMousePosition ); break;
