@@ -421,7 +421,7 @@ namespace core {
             std::print( " -> 加载配置文件.\n" );
             auto line{ ansi_string{} };
             auto line_view{ ansi_string_view{} };
-            auto node_ptr{ ( config_node * ) {} };
+            auto node_ptr{ static_cast< config_node * >( nullptr ) };
             while ( std::getline( config_file, line ) ) {
                 line_view = line;
                 if ( line_view.empty() ) {
