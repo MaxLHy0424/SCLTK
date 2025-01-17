@@ -286,18 +286,18 @@ namespace core {
         std::print( " -> 准备用户界面.\n" );
         auto launch_cmd{ []( cpp_utils::console_ui_ansi::func_args _args )
         {
+            const auto &is_disabled_close_ctrl{ options[ "window" ][ "disable_close_ctrl" ] };
+            const auto &is_translucency{ options[ "window" ][ "translucency" ] };
             _args.parent_ui
               .set_console(
                 INFO_SHORT_NAME " - 命令提示符", CODE_PAGE_ID, 120, 30, false, false,
-                options[ "window" ][ "disable_close_ctrl" ].get() ? false : true,
-                options[ "window" ][ "translucency" ].get() ? 230 : 255 )
+                is_disabled_close_ctrl.get() ? false : true, is_translucency.get() ? 230 : 255 )
               .lock( false, false );
             SetConsoleScreenBufferSize( GetStdHandle( STD_OUTPUT_HANDLE ), { 128, SHRT_MAX - 1 } );
             std::system( "cmd.exe" );
             _args.parent_ui.set_console(
               INFO_SHORT_NAME, CODE_PAGE_ID, CONSOLE_WIDTH, CONSOLE_HEIGHT, true, false,
-              options[ "window" ][ "disable_close_ctrl" ].get() ? false : true,
-              options[ "window" ][ "translucency" ].get() ? 230 : 255 );
+              is_disabled_close_ctrl.get() ? false : true, is_translucency.get() ? 230 : 255 );
             return cpp_utils::console_value::ui_back;
         } };
         class cmd_executor final {
@@ -587,10 +587,13 @@ namespace core {
                 wait( 3s );
                 return cpp_utils::console_value::ui_back;
             }
+            auto &crack_restore_option_node{ options[ "crack_restore" ] };
+            const auto &is_hijacked_execs{ crack_restore_option_node[ "hijack_execs" ] };
+            const auto &is_set_serv_startup_types{ crack_restore_option_node[ "set_serv_startup_types" ] };
             std::print( " -> 生成并执行操作系统命令.\n{}\n", ansi_string( CONSOLE_WIDTH, '-' ) );
             switch ( mod_data_ ) {
                 case mod::crack : {
-                    if ( options[ "crack_restore" ][ "hijack_execs" ].get() ) {
+                    if ( is_hijacked_execs.get() ) {
                         for ( const auto &exec : rules_.execs ) {
                             std::system(
                               std::format(
@@ -599,7 +602,7 @@ namespace core {
                                 .c_str() );
                         }
                     }
-                    if ( options[ "crack_restore" ][ "set_serv_startup_types" ].get() ) {
+                    if ( is_set_serv_startup_types.get() ) {
                         for ( const auto &serv : rules_.servs ) {
                             std::system( std::format( R"(sc.exe config "{}" start= disabled)", serv ).c_str() );
                         }
@@ -613,7 +616,7 @@ namespace core {
                     break;
                 }
                 case mod::restore : {
-                    if ( options[ "crack_restore" ][ "hijack_execs" ].get() ) {
+                    if ( is_hijacked_execs.get() ) {
                         for ( const auto &exec : rules_.execs ) {
                             std::system(
                               std::format(
@@ -622,7 +625,7 @@ namespace core {
                                 .c_str() );
                         }
                     }
-                    if ( options[ "crack_restore" ][ "set_serv_startup_types" ].get() ) {
+                    if ( is_set_serv_startup_types.get() ) {
                         for ( const auto &serv : rules_.servs ) {
                             std::system( std::format( R"(sc.exe config "{}" start= auto)", serv ).c_str() );
                         }
