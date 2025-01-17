@@ -251,12 +251,12 @@ namespace core {
         std::print( " -> 准备用户界面.\n" );
         ui.add_back( "                    [ 信  息 ]\n\n" )
           .add_back( " < 返回 ", quit, cpp_utils::console_value::text_foreground_green | cpp_utils::console_value::text_foreground_intensity )
-          .add_back( "\n[名称]\n\n " INFO_NAME " \n\n[版本]\n\n " INFO_VERSION " " )
-          .add_back( "\n[仓库]\n" )
+          .add_back( "\n[ 名称 ]\n\n " INFO_NAME " \n\n[ 版本 ]\n\n " INFO_VERSION " " )
+          .add_back( "\n[ 仓库 ]\n" )
           .add_back(
             " " INFO_REPO_URL " ", visit_repo_webpage,
             cpp_utils::console_value::text_default | cpp_utils::console_value::text_lvb_underscore )
-          .add_back( "\n[许可证]\n\n " INFO_LICENSE " \n\n (C) 2023 - present " INFO_DEVELOPER "." )
+          .add_back( "\n[ 许可证 ]\n\n " INFO_LICENSE " \n\n (C) 2023 - present " INFO_DEVELOPER "." )
           .show();
         return cpp_utils::console_value::ui_back;
     }
@@ -309,7 +309,7 @@ namespace core {
         ui.add_back( "                   [ 工 具 箱 ]\n\n" )
           .add_back( " < 返回 ", quit, cpp_utils::console_value::text_foreground_green | cpp_utils::console_value::text_foreground_intensity )
           .add_back( " > 命令提示符 ", launch_cmd )
-          .add_back( "\n[常用操作]\n" );
+          .add_back( "\n[ 常用操作 ]\n" );
         for ( const auto &op : common_ops ) {
             ui.add_back( std::format( " > {} ", op[ 0 ] ), cmd_executor{ op[ 1 ] } );
         }
@@ -436,9 +436,9 @@ namespace core {
               std::ofstream{ config_file_name, std::ios::out | std::ios::trunc }
             };
             config_file << std::format(
-              "# " INFO_NAME "\n# [同步版本] " INFO_VERSION
-              "\n# [同步时间] UTC {}"
-              "\n# [字符编码] " CODE_PAGE_NAME "\n",
+              "# " INFO_NAME "\n# [ 同步版本 ] " INFO_VERSION
+              "\n# [ 同步时间 ] UTC {}"
+              "\n# [ 字符编码 ] " CODE_PAGE_NAME "\n",
               std::chrono::system_clock::now() )
                         << config_text << std::flush;
             std::print( "\n ({}) 同步配置{}.\n\n", config_file.good() ? 'i' : '!', config_file.good() ? "成功" : "失败" );
@@ -491,7 +491,7 @@ namespace core {
                     std::format( " < 折叠 {} ", main_key_.showed_name ), quit,
                     cpp_utils::console_value::text_foreground_green | cpp_utils::console_value::text_foreground_intensity );
                 for ( auto &sub_key : main_key_.sub_keys ) {
-                    ui.add_back( std::format( "\n[{}]\n", sub_key.showed_name ) )
+                    ui.add_back( std::format( "\n[ {} ]\n", sub_key.showed_name ) )
                       .add_back( " > 启用 ", option_setter{ sub_key, true }, option_button_color )
                       .add_back( " > 禁用 ", option_setter{ sub_key, false }, option_button_color );
                 }
@@ -520,7 +520,7 @@ namespace core {
               .add_back( " < 返回 ", quit, cpp_utils::console_value::text_foreground_green | cpp_utils::console_value::text_foreground_intensity )
               .add_back( " > 同步配置 ", [ this ]( cpp_utils::console_ui_ansi::func_args ) { return sync(); } )
               .add_back( " > 打开配置文件 ", [ this ]( cpp_utils::console_ui_ansi::func_args ) { return open_file(); } )
-              .add_back( "\n[选项]\n" );
+              .add_back( "\n[ 选项 ]\n" );
             for ( auto &key : options.main_keys ) {
                 ui.add_back( std::format( " > {} ", key.showed_name ), option_shower{ key } );
             }
