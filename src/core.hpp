@@ -13,8 +13,6 @@ namespace core {
     using ansi_string      = cpp_utils::ansi_string;
     using ansi_string_view = cpp_utils::ansi_string_view;
     using wide_string      = cpp_utils::wide_string;
-    template < typename _type_ >
-    using type_alloc = cpp_utils::type_alloc< _type_ >;
     inline constexpr auto config_file_name{ "config.ini" };
     inline constexpr auto default_thread_sleep_time{ 1s };
     struct option_node final {
@@ -22,7 +20,8 @@ namespace core {
           private:
             std::atomic_flag value{};
           public:
-            type_alloc< const ansi_char *const > self_name, showed_name;
+            const ansi_char *const self_name;
+            const ansi_char *const showed_name;
             auto enable()
             {
                 value.test_and_set();
@@ -54,7 +53,8 @@ namespace core {
             ~sub_key() = default;
         };
         struct main_key final {
-            type_alloc< const ansi_char *const > self_name, showed_name;
+            const ansi_char *const self_name;
+            const ansi_char *const showed_name;
             std::vector< sub_key > sub_keys;
             auto &operator[]( const ansi_string_view _self_name )
             {
@@ -105,7 +105,8 @@ namespace core {
         { "other", "其他", { { "fix_os_env", "修复操作系统环境" } } } } } };
     struct rule_node final {
         const ansi_char *const showed_name;
-        std::deque< ansi_string > execs, servs;
+        std::deque< ansi_string > execs;
+        std::deque< ansi_string > servs;
         auto empty() const
         {
             return execs.empty() && servs.empty();
