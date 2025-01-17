@@ -225,8 +225,8 @@ namespace cpp_utils {
                 return std::as_const( _arg );
             }
         } };
-        return string_convert< utf8_char >(
-          std::vformat( string_view_convert< ansi_char >( _fmt ), std::make_format_args( convert_arg( _args )... ) ) );
+        return string_convert< utf8_char >( std::vformat(
+          string_view_convert< ansi_char >( _fmt ), std::make_format_args( convert_arg( std::forward< _args_ >( _args ) )... ) ) );
     }
     template < typename... _args_ >
     inline auto &utf8_format_to( utf8_string &_str, const utf8_string_view _fmt, _args_ &&..._args )
@@ -274,7 +274,7 @@ namespace cpp_utils {
         std::this_thread::yield();
         std::this_thread::sleep_for( _time );
     }
-    template < typename _char_type_, bool _is_enabled_log_ >
+    template < typename _char_type_ >
         requires( std::is_same_v< _char_type_, ansi_char > || std::is_same_v< _char_type_, utf8_char > )
     class thread_pool final {
       private:
@@ -290,13 +290,11 @@ namespace cpp_utils {
             node_( node_ && )      = default;
             ~node_()
             {
-                if constexpr ( _is_enabled_log_ ) {
-                    if ( task_thread.joinable() ) {
-                        if constexpr ( std::is_same_v< _char_type_, ansi_char > ) {
-                            std::print( " -> 终止线程 {}.\n", task_thread.get_id() );
-                        } else if constexpr ( std::is_same_v< _char_type_, utf8_char > ) {
-                            utf8_print( u8" -> 终止线程 {}.\n", task_thread.get_id() );
-                        }
+                if ( task_thread.joinable() ) {
+                    if constexpr ( std::is_same_v< _char_type_, ansi_char > ) {
+                        std::print( " -> 终止线程 {}.\n", task_thread.get_id() );
+                    } else if constexpr ( std::is_same_v< _char_type_, utf8_char > ) {
+                        utf8_print( u8" -> 终止线程 {}.\n", task_thread.get_id() );
                     }
                 }
             }
@@ -308,12 +306,10 @@ namespace cpp_utils {
                          || std::is_same_v< std::remove_cvref_t< _callable_ >, std::jthread > ) )
         auto &add_task( const std_string_view< _char_type_ > _comment, _callable_ &&_func, _args_ &&..._args )
         {
-            if constexpr ( _is_enabled_log_ ) {
-                if constexpr ( std::is_same_v< _char_type_, ansi_char > ) {
-                    std::print( " -> 创建线程: {}.\n", _comment );
-                } else if constexpr ( std::is_same_v< _char_type_, utf8_char > ) {
-                    utf8_print( u8" -> 创建线程: {}.\n", _comment );
-                }
+            if constexpr ( std::is_same_v< _char_type_, ansi_char > ) {
+                std::print( " -> 创建线程: {}.\n", _comment );
+            } else if constexpr ( std::is_same_v< _char_type_, utf8_char > ) {
+                utf8_print( u8" -> 创建线程: {}.\n", _comment );
             }
             tasks_.emplace_back( node_{
               std::jthread{ std::forward< _callable_ >( _func ), std::forward< _args_ >( _args )... }
@@ -343,10 +339,57 @@ namespace cpp_utils {
         thread_pool( thread_pool && )                          = default;
         ~thread_pool()                                         = default;
     };
-    using thread_pool_ansi       = thread_pool< ansi_char, true >;
-    using thread_pool_ansi_nolog = thread_pool< ansi_char, false >;
-    using thread_pool_utf8       = thread_pool< utf8_char, true >;
-    using thread_pool_utf8_nolog = thread_pool< utf8_char, false >;
+    using thread_pool_ansi = thread_pool< ansi_char >;
+    using thread_pool_utf8 = thread_pool< utf8_char >;
+    class thread_pool_nolog final {
+      private:
+        struct node_ final {
+            std::jthread task_thread{};
+            auto operator=( const node_ & ) -> node_ & = delete;
+            auto operator=( node_ && ) -> node_ &      = default;
+            node_()                                    = default;
+            node_( std::jthread &&_task_thread )
+              : task_thread{ std::move( _task_thread ) }
+            { }
+            node_( const node_ & ) = delete;
+            node_( node_ && )      = default;
+            ~node_()               = default;
+        };
+        std::vector< node_ > tasks_{};
+      public:
+        template < typename _callable_, typename... _args_ >
+            requires( !( std::is_same_v< std::remove_cvref_t< _callable_ >, std::thread >
+                         || std::is_same_v< std::remove_cvref_t< _callable_ >, std::jthread > ) )
+        auto &add_task( _callable_ &&_func, _args_ &&..._args )
+        {
+            tasks_.emplace_back( node_{
+              std::jthread{ std::forward< _callable_ >( _func ), std::forward< _args_ >( _args )... }
+            } );
+            return *this;
+        }
+        auto &join_task( const size_type _index )
+        {
+            auto &task{ tasks_.at( _index ).task_thread };
+            if ( task.joinable() ) {
+                task.join();
+            }
+            return *this;
+        }
+        auto &detach_task( const size_type _index )
+        {
+            auto &task{ tasks_.at( _index ).task_thread };
+            if ( task.joinable() ) {
+                task.detach();
+            }
+            return *this;
+        }
+        auto operator=( const thread_pool_nolog & ) -> thread_pool_nolog & = delete;
+        auto operator=( thread_pool_nolog && ) -> thread_pool_nolog &      = default;
+        thread_pool_nolog()                                                = default;
+        thread_pool_nolog( const thread_pool_nolog & )                     = delete;
+        thread_pool_nolog( thread_pool_nolog && )                          = default;
+        ~thread_pool_nolog()                                               = default;
+    };
 #if defined( _WIN32 ) || defined( _WIN64 )
     inline auto is_run_as_admin()
     {
@@ -360,7 +403,7 @@ namespace cpp_utils {
             CheckTokenMembership( nullptr, admins_group, &is_admin );
             FreeSid( admins_group );
         }
-        return is_admin;
+        return is_admin ? true : false;
     }
     inline auto relaunch_as_admin()
     {
@@ -397,15 +440,15 @@ namespace cpp_utils {
         inline constexpr auto text_background_green{ WORD{ BACKGROUND_GREEN } };
         inline constexpr auto text_background_blue{ WORD{ BACKGROUND_BLUE } };
         inline constexpr auto text_background_intensity{ WORD{ BACKGROUND_INTENSITY } };
-        inline constexpr auto text_lvb_leading_byte{ WORD{ COMMON_LVB_LEADING_BYTE } };
-        inline constexpr auto text_lvb_trailing_byte{ WORD{ COMMON_LVB_TRAILING_BYTE } };
-        inline constexpr auto text_lvb_grid_horizontal{ WORD{ COMMON_LVB_GRID_HORIZONTAL } };
-        inline constexpr auto text_lvb_grid_lvertical{ WORD{ COMMON_LVB_GRID_LVERTICAL } };
-        inline constexpr auto text_lvb_grid_rvertical{ WORD{ COMMON_LVB_GRID_RVERTICAL } };
-        inline constexpr auto text_lvb_reverse_video{ WORD{ COMMON_LVB_REVERSE_VIDEO } };
-        inline constexpr auto text_lvb_underscore{ WORD{ COMMON_LVB_UNDERSCORE } };
-        inline constexpr auto text_lvb_sbcsdbcs{ WORD{ COMMON_LVB_SBCSDBCS } };
-        inline constexpr auto ui_back{ false };
+        inline constexpr auto text_common_lvb_leading_byte{ WORD{ COMMON_LVB_LEADING_BYTE } };
+        inline constexpr auto text_common_lvb_trailing_byte{ WORD{ COMMON_LVB_TRAILING_BYTE } };
+        inline constexpr auto text_common_lvb_grid_horizontal{ WORD{ COMMON_LVB_GRID_HORIZONTAL } };
+        inline constexpr auto text_common_lvb_grid_lvertical{ WORD{ COMMON_LVB_GRID_LVERTICAL } };
+        inline constexpr auto text_common_lvb_grid_rvertical{ WORD{ COMMON_LVB_GRID_RVERTICAL } };
+        inline constexpr auto text_common_lvb_reverse_video{ WORD{ COMMON_LVB_REVERSE_VIDEO } };
+        inline constexpr auto text_common_lvb_underscore{ WORD{ COMMON_LVB_UNDERSCORE } };
+        inline constexpr auto text_common_lvb_sbcsdbcs{ WORD{ COMMON_LVB_SBCSDBCS } };
+        inline constexpr auto ui_return{ false };
         inline constexpr auto ui_exit{ true };
     };
     template < typename _char_type_ >
@@ -593,7 +636,7 @@ namespace cpp_utils {
         }
         auto call_func_( const MOUSE_EVENT_RECORD &_mouse_event )
         {
-            auto is_exited{ console_value::ui_back };
+            auto is_exited{ console_value::ui_return };
             for ( auto &line : lines_ ) {
                 if ( line != _mouse_event.dwMousePosition ) {
                     continue;
@@ -718,8 +761,8 @@ namespace cpp_utils {
             edit_console_attrs_( console_attrs_::lock_text );
             init_pos_();
             auto mouse_event{ MOUSE_EVENT_RECORD{} };
-            auto func_return_value{ console_value::ui_back };
-            while ( func_return_value == console_value::ui_back ) {
+            auto func_return_value{ console_value::ui_return };
+            while ( func_return_value == console_value::ui_return ) {
                 mouse_event = wait_mouse_event_();
                 switch ( mouse_event.dwEventFlags ) {
                     case console_value::mouse_move : refresh_( mouse_event.dwMousePosition ); break;
