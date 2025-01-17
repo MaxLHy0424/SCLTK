@@ -449,7 +449,7 @@ namespace cpp_utils {
         inline constexpr auto text_lvb_underscore{ WORD{ COMMON_LVB_UNDERSCORE } };
         inline constexpr auto text_lvb_sbcsdbcs{ WORD{ COMMON_LVB_SBCSDBCS } };
         inline constexpr auto ui_back{ false };
-        inline constexpr auto ui_exit{ true };
+        inline constexpr auto ui_quit{ true };
     };
     template < typename _char_type_ >
         requires( std::is_same_v< _char_type_, ansi_char > || std::is_same_v< _char_type_, utf8_char > )

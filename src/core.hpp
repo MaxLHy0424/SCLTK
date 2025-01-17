@@ -253,12 +253,12 @@ namespace core {
     }
     inline auto quit( cpp_utils::console_ui_ansi::func_args )
     {
-        return cpp_utils::console_value::ui_exit;
+        return cpp_utils::console_value::ui_quit;
     }
     inline auto relaunch( cpp_utils::console_ui_ansi::func_args )
     {
         cpp_utils::relaunch_as_admin();
-        return cpp_utils::console_value::ui_exit;
+        return cpp_utils::console_value::ui_quit;
     }
     inline auto info( cpp_utils::console_ui_ansi::func_args )
     {
