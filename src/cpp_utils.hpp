@@ -457,7 +457,9 @@ namespace cpp_utils {
       public:
         struct func_args final {
             console_ui< _char_type_ > &parent_ui;
-            const DWORD button_state, ctrl_key_state, event_flag;
+            const DWORD button_state;
+            const DWORD ctrl_key_state;
+            const DWORD event_flag;
             auto operator=( const func_args & ) -> func_args & = default;
             auto operator=( func_args && ) -> func_args &      = default;
             func_args(
@@ -478,7 +480,9 @@ namespace cpp_utils {
         struct line_node_ final {
             std_string< _char_type_ > text{};
             callback_type func{};
-            WORD default_attrs{}, intensity_attrs{}, last_attrs{};
+            WORD default_attrs{};
+            WORD intensity_attrs{};
+            WORD last_attrs{};
             COORD position{};
             auto set_attrs( const WORD _attrs )
             {
@@ -515,7 +519,8 @@ namespace cpp_utils {
             ~line_node_()                    = default;
         };
         std::deque< line_node_ > lines_{};
-        SHORT console_width_{}, console_height_{};
+        SHORT console_width_{};
+        SHORT console_height_{};
         static auto show_cursor_( const bool _is_shown )
         {
             auto cursor_data{ CONSOLE_CURSOR_INFO{} };
