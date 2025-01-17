@@ -7,7 +7,6 @@ auto main() -> int
     if ( !cpp_utils::is_run_as_admin() ) {
         std::print( " -> 申请管理员权限.\n" );
         cpp_utils::relaunch_as_admin();
-        return EXIT_SUCCESS;
     }
     core::config_op{ core::config_op::mod::load }( cpp_utils::console_ui_ansi::func_args{ ui } );
     auto threads{ cpp_utils::multithread_task_ansi{} };
