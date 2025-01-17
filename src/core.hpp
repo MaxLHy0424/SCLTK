@@ -436,11 +436,10 @@ namespace core {
               std::ofstream{ config_file_name, std::ios::out | std::ios::trunc }
             };
             config_file << std::format(
-              "# {}\n"
-              "# [同步时间] UTC {} \n"
-              "# [同步版本] {}\n"
-              "# [字符编码] {}\n",
-              INFO_NAME, std::chrono::system_clock::now(), INFO_VERSION, CODE_PAGE_NAME )
+              "# " INFO_NAME "\n# [同步版本] " INFO_VERSION
+              "\n# [同步时间] UTC {}"
+              "\n# [字符编码] " CODE_PAGE_NAME "\n",
+              std::chrono::system_clock::now() )
                         << config_text << std::flush;
             std::print( "\n ({}) 同步配置{}.\n\n", config_file.good() ? 'i' : '!', config_file.good() ? "成功" : "失败" );
             wait( 3s );
