@@ -163,11 +163,13 @@ namespace core {
             if ( _is_reloaded ) {
                 return;
             }
+            ansi_string tmp;
             for ( auto &main_key : options.main_keys ) {
                 for ( auto &sub_key : main_key.sub_keys ) {
-                    if ( _line == std::format( "{}::{} = true", main_key.self_name, sub_key.self_name ) ) {
+                    tmp = std::format( "{}::{}", main_key.self_name, sub_key.self_name );
+                    if ( _line == std::format( "{} = {}", tmp, true ) ) {
                         sub_key.enable();
-                    } else if ( _line == std::format( "{}::{} = false", main_key.self_name, sub_key.self_name ) ) {
+                    } else if ( _line == std::format( "{} = {}", tmp, false ) ) {
                         sub_key.disable();
                     }
                 }
@@ -178,8 +180,7 @@ namespace core {
         {
             for ( const auto &main_key : options.main_keys ) {
                 for ( const auto &sub_key : main_key.sub_keys ) {
-                    _out.append(
-                      std::format( "{}::{} = {}\n", main_key.self_name, sub_key.self_name, sub_key.get() ? "true" : "false" ) );
+                    _out.append( std::format( "{}::{} = {}\n", main_key.self_name, sub_key.self_name, sub_key.get() ) );
                 }
             }
         }
