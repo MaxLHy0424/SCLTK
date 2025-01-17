@@ -25,13 +25,13 @@ auto main() -> int
       .add_back( " > 信息 ", core::info )
       .add_back( " > 配置 ", core::config_op{ core::config_op::mod::edit } )
       .add_back( " > 工具箱 ", core::toolkit )
-      .add_back( "\n[破解]\n" )
+      .add_back( "\n[ 破解 ]\n" )
       .add_back(
         std::format( " > {} ", core::custom_rules.showed_name ), core::rule_op{ core::rule_op::mod::crack, core::custom_rules } );
     for ( const auto &rule : core::builtin_rules ) {
         ui.add_back( std::format( " > {} ", rule.showed_name ), core::rule_op{ core::rule_op::mod::crack, rule } );
     }
-    ui.add_back( "\n[恢复]\n" )
+    ui.add_back( "\n[ 恢复 ]\n" )
       .add_back(
         std::format( " > {} ", core::custom_rules.showed_name ), core::rule_op{ core::rule_op::mod::restore, core::custom_rules } );
     for ( const auto &rule : core::builtin_rules ) {
