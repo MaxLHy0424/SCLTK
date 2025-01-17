@@ -9,7 +9,7 @@ auto main() -> int
         cpp_utils::relaunch_as_admin();
         return EXIT_SUCCESS;
     }
-    auto threads{ cpp_utils::thread_pool_ansi{} };
+    auto threads{ cpp_utils::multithread_task_ansi{} };
     threads.add_task( "置顶显示", core::topmost_show_window, core::options[ "window" ][ "topmost_show" ].value )
       .add_task(
         "窗口属性设定",

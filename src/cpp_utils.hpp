@@ -276,7 +276,7 @@ namespace cpp_utils {
     }
     template < typename _char_type_ >
         requires( std::is_same_v< _char_type_, ansi_char > || std::is_same_v< _char_type_, utf8_char > )
-    class thread_pool final {
+    class multithread_task final {
       private:
         struct node_ final {
             std::jthread task_thread{};
@@ -332,16 +332,16 @@ namespace cpp_utils {
             }
             return *this;
         }
-        auto operator=( const thread_pool & ) -> thread_pool & = delete;
-        auto operator=( thread_pool && ) -> thread_pool &      = default;
-        thread_pool()                                          = default;
-        thread_pool( const thread_pool & )                     = delete;
-        thread_pool( thread_pool && )                          = default;
-        ~thread_pool()                                         = default;
+        auto operator=( const multithread_task & ) -> multithread_task & = delete;
+        auto operator=( multithread_task && ) -> multithread_task &      = default;
+        multithread_task()                                               = default;
+        multithread_task( const multithread_task & )                     = delete;
+        multithread_task( multithread_task && )                          = default;
+        ~multithread_task()                                              = default;
     };
-    using thread_pool_ansi = thread_pool< ansi_char >;
-    using thread_pool_utf8 = thread_pool< utf8_char >;
-    class thread_pool_nolog final {
+    using multithread_task_ansi = multithread_task< ansi_char >;
+    using multithread_task_utf8 = multithread_task< utf8_char >;
+    class multithread_task_nolog final {
       private:
         struct node_ final {
             std::jthread task_thread{};
@@ -383,12 +383,12 @@ namespace cpp_utils {
             }
             return *this;
         }
-        auto operator=( const thread_pool_nolog & ) -> thread_pool_nolog & = delete;
-        auto operator=( thread_pool_nolog && ) -> thread_pool_nolog &      = default;
-        thread_pool_nolog()                                                = default;
-        thread_pool_nolog( const thread_pool_nolog & )                     = delete;
-        thread_pool_nolog( thread_pool_nolog && )                          = default;
-        ~thread_pool_nolog()                                               = default;
+        auto operator=( const multithread_task_nolog & ) -> multithread_task_nolog & = delete;
+        auto operator=( multithread_task_nolog && ) -> multithread_task_nolog &      = default;
+        multithread_task_nolog()                                                     = default;
+        multithread_task_nolog( const multithread_task_nolog & )                     = delete;
+        multithread_task_nolog( multithread_task_nolog && )                          = default;
+        ~multithread_task_nolog()                                                    = default;
     };
 #if defined( _WIN32 ) || defined( _WIN64 )
     inline auto is_run_as_admin()
