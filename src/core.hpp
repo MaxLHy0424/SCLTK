@@ -339,8 +339,8 @@ namespace core {
     }
     auto set_console_attrs( const std::stop_token _msg )
     {
-        const auto &is_translucency{ core::options[ "window" ][ "translucency" ] };
-        const auto &is_disabled_close_ctrl{ core::options[ "window" ][ "disable_close_ctrl" ] };
+        const auto &is_translucency{ options[ "window" ][ "translucency" ] };
+        const auto &is_disabled_close_ctrl{ options[ "window" ][ "disable_close_ctrl" ] };
         while ( !_msg.stop_requested() ) {
             SetLayeredWindowAttributes( GetConsoleWindow(), RGB( 0, 0, 0 ), is_translucency.get() ? 230 : 255, LWA_ALPHA );
             EnableMenuItem(
@@ -354,7 +354,7 @@ namespace core {
         const auto this_window{ GetConsoleWindow() };
         const auto foreground_id{ GetWindowThreadProcessId( this_window, nullptr ) };
         const auto current_id{ GetCurrentThreadId() };
-        const auto &is_topmost_shown{ core::options[ "window" ][ "topmost_show" ] };
+        const auto &is_topmost_shown{ options[ "window" ][ "topmost_show" ] };
         while ( !_msg.stop_requested() ) {
             if ( !is_topmost_shown.get() ) {
                 SetWindowPos( GetConsoleWindow(), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
@@ -378,7 +378,7 @@ namespace core {
         constexpr const char *const execs[]{
           "mode.com", "chcp.com", "ntsd.exe",    "taskkill.exe", "sc.exe",      "net.exe",
           "reg.exe",  "cmd.exe",  "taskmgr.exe", "perfmon.exe",  "regedit.exe", "mmc.exe" };
-        const auto &is_fixed_os_env{ core::options[ "other" ][ "fix_os_env" ] };
+        const auto &is_fixed_os_env{ options[ "other" ][ "fix_os_env" ] };
         while ( !_msg.stop_requested() ) {
             if ( !is_fixed_os_env.get() ) {
                 cpp_utils::perf_sleep( default_thread_sleep_time );
