@@ -120,18 +120,18 @@
 namespace cpp_utils {
     using namespace std::chrono_literals;
     using namespace std::string_literals;
-    using io_stream        = std::FILE;
-    using size_type        = std::size_t;
-    using nullptr_type     = std::nullptr_t;
-    using ansi_char        = char;
-    using ansi_string      = std::string;
-    using ansi_string_view = std::string_view;
-    using wide_char        = wchar_t;
-    using wide_string      = std::wstring;
-    using wide_string_view = std::wstring_view;
-    using utf8_char        = char8_t;
-    using utf8_string      = std::u8string;
-    using utf8_string_view = std::u8string_view;
+    using io_stream            = std::FILE;
+    using size_type            = std::size_t;
+    using nullptr_type         = std::nullptr_t;
+    using ansi_char            = char;
+    using ansi_std_string      = std::string;
+    using ansi_std_string_view = std::string_view;
+    using wide_char            = wchar_t;
+    using wide_std_string      = std::wstring;
+    using wide_std_string_view = std::wstring_view;
+    using utf8_char            = char8_t;
+    using utf8_std_string      = std::u8string;
+    using utf8_std_string_view = std::u8string_view;
     template < typename _type_ >
     using type_alloc = _type_;
     template < typename _char_type >
@@ -205,23 +205,23 @@ namespace cpp_utils {
           _ptr == nullptr ? "nullptr"s : std::format( "0x{:x}", reinterpret_cast< std::uintptr_t >( _ptr ) ) );
     }
     template < typename... _args_ >
-    inline auto utf8_format( const utf8_string_view _fmt, _args_ &&..._args )
+    inline auto utf8_format( const utf8_std_string_view _fmt, _args_ &&..._args )
     {
         const auto convert_arg{ []( auto &&_arg ) -> decltype( auto )
         {
             if constexpr (
-              std::is_same_v< std::decay_t< decltype( _arg ) >, utf8_string >
-              || std::is_same_v< std::decay_t< decltype( _arg ) >, utf8_string_view >
+              std::is_same_v< std::decay_t< decltype( _arg ) >, utf8_std_string >
+              || std::is_same_v< std::decay_t< decltype( _arg ) >, utf8_std_string_view >
               || std::is_same_v< std::decay_t< decltype( _arg ) >, utf8_char * >
               || std::is_same_v< std::decay_t< decltype( _arg ) >, const utf8_char * > )
             {
-                return static_cast< const ansi_string_view >( string_view_convert< ansi_char >( utf8_string_view{ _arg } ) );
+                return static_cast< const ansi_std_string_view >( string_view_convert< ansi_char >( utf8_std_string_view{ _arg } ) );
             } else if constexpr (
               std::is_pointer_v< std::decay_t< decltype( _arg ) > >
               && !( std::is_same_v< std::decay_t< decltype( _arg ) >, ansi_char * >
                     || std::is_same_v< std::decay_t< decltype( _arg ) >, const ansi_char * > ) )
             {
-                return static_cast< const ansi_string >( ptr_to_ansi_string( std::forward< decltype( _arg ) >( _arg ) ) );
+                return static_cast< const ansi_std_string >( ptr_to_ansi_string( std::forward< decltype( _arg ) >( _arg ) ) );
             } else {
                 return std::as_const( _arg );
             }
@@ -230,29 +230,29 @@ namespace cpp_utils {
           string_view_convert< ansi_char >( _fmt ), std::make_format_args( convert_arg( std::forward< _args_ >( _args ) )... ) ) );
     }
     template < typename... _args_ >
-    inline auto &utf8_format_to( utf8_string &_str, const utf8_string_view _fmt, _args_ &&..._args )
+    inline auto &utf8_format_to( utf8_std_string &_str, const utf8_std_string_view _fmt, _args_ &&..._args )
     {
         auto tmp{ utf8_format( _fmt, std::forward< _args_ >( _args )... ) };
         _str.swap( tmp );
         return _str;
     }
     template < typename... _args_ >
-    inline auto utf8_print( const utf8_string_view _fmt, _args_ &&..._args )
+    inline auto utf8_print( const utf8_std_string_view _fmt, _args_ &&..._args )
     {
         std::print( "{}", string_view_convert< ansi_char >( utf8_format( _fmt, std::forward< _args_ >( _args )... ) ) );
     }
     template < typename... _args_ >
-    inline auto utf8_print( io_stream *_stream, const utf8_string_view _fmt, _args_ &&..._args )
+    inline auto utf8_print( io_stream *_stream, const utf8_std_string_view _fmt, _args_ &&..._args )
     {
         std::print( _stream, "{}", string_view_convert< ansi_char >( utf8_format( _fmt, std::forward< _args_ >( _args )... ) ) );
     }
     template < typename... _args_ >
-    inline auto utf8_println( const utf8_string_view _fmt, _args_ &&..._args )
+    inline auto utf8_println( const utf8_std_string_view _fmt, _args_ &&..._args )
     {
         std::println( "{}", string_view_convert< ansi_char >( utf8_format( _fmt, std::forward< _args_ >( _args )... ) ) );
     }
     template < typename... _args_ >
-    inline auto utf8_println( io_stream *_stream, const utf8_string_view _fmt, _args_ &&..._args )
+    inline auto utf8_println( io_stream *_stream, const utf8_std_string_view _fmt, _args_ &&..._args )
     {
         std::println( _stream, "{}", string_view_convert< ansi_char >( utf8_format( _fmt, std::forward< _args_ >( _args )... ) ) );
     }
@@ -330,6 +330,9 @@ namespace cpp_utils {
             delete[] data_;
         }
     };
+    using ansi_simple_string = simple_string< ansi_char >;
+    using wide_simple_string = simple_string< wide_char >;
+    using utf8_simple_string = simple_string< utf8_char >;
     template < typename _chrono_type_ >
     inline auto perf_sleep( const _chrono_type_ _time )
     {
@@ -469,7 +472,7 @@ namespace cpp_utils {
     }
     inline auto relaunch_as_admin()
     {
-        auto file_path{ wide_string( MAX_PATH, L'\0' ) };
+        auto file_path{ wide_std_string( MAX_PATH, L'\0' ) };
         GetModuleFileNameW( nullptr, file_path.data(), MAX_PATH );
         ShellExecuteW( nullptr, L"runas", file_path.c_str(), nullptr, nullptr, SW_SHOWNORMAL );
         std::exit( 0 );
@@ -651,11 +654,11 @@ namespace cpp_utils {
             if constexpr ( std::is_same_v< _char_type_, ansi_char > ) {
                 std::print(
                   "{}",
-                  ansi_string( static_cast< size_type >( console_width_ ) * static_cast< size_type >( console_height_ ), ' ' ) );
+                  ansi_std_string( static_cast< size_type >( console_width_ ) * static_cast< size_type >( console_height_ ), ' ' ) );
             } else if constexpr ( std::is_same_v< _char_type_, utf8_char > ) {
                 utf8_print(
                   u8"{}",
-                  utf8_string( static_cast< size_type >( console_width_ ) * static_cast< size_type >( console_height_ ), ' ' ) );
+                  utf8_std_string( static_cast< size_type >( console_width_ ) * static_cast< size_type >( console_height_ ), ' ' ) );
             }
             set_cursor_( { 0, 0 } );
         }
@@ -671,9 +674,9 @@ namespace cpp_utils {
         {
             set_cursor_( { 0, _cursor_position.Y } );
             if constexpr ( std::is_same_v< _char_type_, ansi_char > ) {
-                write_( ansi_string( _cursor_position.X, ' ' ) );
+                write_( ansi_std_string( _cursor_position.X, ' ' ) );
             } else if constexpr ( std::is_same_v< _char_type_, utf8_char > ) {
-                write_( utf8_string( _cursor_position.X, ' ' ) );
+                write_( utf8_std_string( _cursor_position.X, ' ' ) );
             }
             set_cursor_( { 0, _cursor_position.Y } );
             write_( _text );
