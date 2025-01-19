@@ -284,6 +284,10 @@ namespace cpp_utils {
         {
             return length_;
         }
+        auto operator[]( const size_type _index )
+        {
+            return data_[ _index ];
+        }
         const auto operator[]( const size_type _index ) const
         {
             return data_[ _index ];
