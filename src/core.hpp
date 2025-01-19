@@ -8,11 +8,12 @@
 namespace core {
     using namespace std::chrono_literals;
     using namespace std::string_view_literals;
-    using size_type        = cpp_utils::size_type;
-    using ansi_char        = cpp_utils::ansi_char;
-    using ansi_string      = cpp_utils::ansi_string;
-    using ansi_string_view = cpp_utils::ansi_string_view;
-    using wide_string      = cpp_utils::wide_string;
+    using size_type            = cpp_utils::size_type;
+    using ansi_char            = cpp_utils::ansi_char;
+    using ansi_simple_string   = cpp_utils::ansi_simple_string;
+    using ansi_std_string      = cpp_utils::ansi_std_string;
+    using ansi_std_string_view = cpp_utils::ansi_std_string_view;
+    using wide_std_string      = cpp_utils::wide_std_string;
     inline constexpr auto config_file_name{ "config.ini" };
     inline constexpr auto default_thread_sleep_time{ 1s };
     struct option_node final {
@@ -56,7 +57,7 @@ namespace core {
             const ansi_char *const self_name;
             const ansi_char *const showed_name;
             std::vector< sub_key > sub_keys;
-            auto &operator[]( const ansi_string_view _self_name )
+            auto &operator[]( const ansi_std_string_view _self_name )
             {
                 for ( auto &key : sub_keys ) {
                     if ( _self_name == key.self_name ) {
@@ -77,7 +78,7 @@ namespace core {
             ~main_key()                  = default;
         };
         std::vector< main_key > main_keys;
-        auto &operator[]( const ansi_string_view _self_name )
+        auto &operator[]( const ansi_std_string_view _self_name )
         {
             for ( auto &key : main_keys ) {
                 if ( _self_name == key.self_name ) {
@@ -105,17 +106,15 @@ namespace core {
         { "other", "其他", { { "fix_os_env", "修复操作系统环境" } } } } } };
     struct rule_node final {
         const ansi_char *const showed_name;
-        std::deque< cpp_utils::simple_string< ansi_char > > execs;
-        std::deque< cpp_utils::simple_string< ansi_char > > servs;
+        std::deque< ansi_simple_string > execs;
+        std::deque< ansi_simple_string > servs;
         auto empty() const
         {
             return execs.empty() && servs.empty();
         }
         auto operator=( const rule_node & ) -> rule_node & = delete;
         auto operator=( rule_node && ) -> rule_node &      = delete;
-        rule_node(
-          const ansi_char *const _showed_name, std::deque< cpp_utils::simple_string< ansi_char > > _execs,
-          std::deque< cpp_utils::simple_string< ansi_char > > _servs )
+        rule_node( const ansi_char *const _showed_name, std::deque< ansi_simple_string > _execs, std::deque< ansi_simple_string > _servs )
           : showed_name{ _showed_name }
           , execs{ std::move( _execs ) }
           , servs{ std::move( _servs ) }
@@ -148,7 +147,7 @@ namespace core {
         const ansi_char *const self_name;
         virtual auto load( const bool, const ansi_char *const ) -> void = 0;
         virtual auto prepare_reloading() -> void                        = 0;
-        virtual auto sync( ansi_string & ) -> void                      = 0;
+        virtual auto sync( ansi_std_string & ) -> void                  = 0;
         virtual auto operator=( const config_node & ) -> config_node &  = delete;
         virtual auto operator=( config_node && ) -> config_node &       = delete;
         config_node( const ansi_char *const _self_name )
@@ -176,7 +175,7 @@ namespace core {
             }
         }
         virtual auto prepare_reloading() -> void override final { }
-        virtual auto sync( ansi_string &_out ) -> void override final
+        virtual auto sync( ansi_std_string &_out ) -> void override final
         {
             for ( const auto &main_key : options.main_keys ) {
                 for ( const auto &sub_key : main_key.sub_keys ) {
@@ -203,7 +202,7 @@ namespace core {
         {
             custom_rules.execs.clear();
         }
-        virtual auto sync( ansi_string &_out ) -> void override final
+        virtual auto sync( ansi_std_string &_out ) -> void override final
         {
             for ( const auto &exec : custom_rules.execs ) {
                 _out.append( exec.c_str() ).push_back( '\n' );
@@ -228,7 +227,7 @@ namespace core {
         {
             custom_rules.servs.clear();
         }
-        virtual auto sync( ansi_string &_out ) -> void override final
+        virtual auto sync( ansi_std_string &_out ) -> void override final
         {
             for ( const auto &serv : custom_rules.servs ) {
                 _out.append( serv.c_str() ).push_back( '\n' );
@@ -304,11 +303,11 @@ namespace core {
         } };
         class cmd_executor final {
           private:
-            const ansi_string cmd_;
+            const ansi_std_string cmd_;
           public:
             auto operator()( cpp_utils::console_ui_ansi::func_args )
             {
-                std::print( " -> 执行操作系统命令.\n{}\n", ansi_string( CONSOLE_WIDTH, '-' ) );
+                std::print( " -> 执行操作系统命令.\n{}\n", ansi_std_string( CONSOLE_WIDTH, '-' ) );
                 std::system( cmd_.c_str() );
                 return cpp_utils::console_value::ui_back;
             }
@@ -419,8 +418,8 @@ namespace core {
                 }
             }
             std::print( " -> 加载配置文件.\n" );
-            auto line{ ansi_string{} };
-            auto line_view{ ansi_string_view{} };
+            auto line{ ansi_std_string{} };
+            auto line_view{ ansi_std_string_view{} };
             auto node_ptr{ static_cast< config_node * >( nullptr ) };
             while ( std::getline( config_file, line ) ) {
                 line_view = line;
@@ -454,7 +453,7 @@ namespace core {
             std::print( "                    [ 配  置 ]\n\n\n" );
             load_( true );
             std::print( " -> 保存更改.\n" );
-            auto config_text{ ansi_string{} };
+            auto config_text{ ansi_std_string{} };
             for ( auto &config : configs ) {
                 config_text.append( std::format( "[ {} ]\n", config->self_name ) );
                 config->sync( config_text );
@@ -592,7 +591,7 @@ namespace core {
             auto &crack_restore_option_node{ options[ "crack_restore" ] };
             const auto &is_hijacked_execs{ crack_restore_option_node[ "hijack_execs" ] };
             const auto &is_set_serv_startup_types{ crack_restore_option_node[ "set_serv_startup_types" ] };
-            std::print( " -> 生成并执行操作系统命令.\n{}\n", ansi_string( CONSOLE_WIDTH, '-' ) );
+            std::print( " -> 生成并执行操作系统命令.\n{}\n", ansi_std_string( CONSOLE_WIDTH, '-' ) );
             switch ( mod_data_ ) {
                 case mod::crack : {
                     if ( is_hijacked_execs.get() ) {
