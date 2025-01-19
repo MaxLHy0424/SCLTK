@@ -155,19 +155,19 @@ namespace cpp_utils {
         requires( is_convertible_char_type< _target_char_type_, _source_char_type_ >() )
     inline auto string_convert( const std_string< _source_char_type_ > &_str )
     {
-        auto str_it{ reinterpret_cast< const _target_char_type_ * >( _str.c_str() ) };
+        const auto str_it{ reinterpret_cast< const _target_char_type_ * >( _str.c_str() ) };
         return std_string< _target_char_type_ >{ str_it, str_it + _str.size() };
     }
     template < typename _target_char_type_, typename _source_char_type_ >
         requires( is_convertible_char_type< _target_char_type_, _source_char_type_ >() )
     inline auto string_convert( const std_string_view< _source_char_type_ > _str )
     {
-        auto str_it{ reinterpret_cast< const _target_char_type_ * >( _str.data() ) };
+        const auto str_it{ reinterpret_cast< const _target_char_type_ * >( _str.data() ) };
         return std_string< _target_char_type_ >{ str_it, str_it + _str.size() };
     }
     template < typename _target_char_type_, typename _source_char_type_ >
         requires( is_convertible_char_type< _target_char_type_, _source_char_type_ >() )
-    inline auto string_convert( const _source_char_type_ *_str )
+    inline auto string_convert( const _source_char_type_ *const _str )
     {
         return std_string< _target_char_type_ >{ reinterpret_cast< const _target_char_type_ * >( _str ) };
     }
@@ -175,31 +175,31 @@ namespace cpp_utils {
         requires( is_convertible_char_type< _target_char_type_, _source_char_type_ >() )
     inline auto string_view_convert( const std_string< _source_char_type_ > &_str )
     {
-        auto str_it{ reinterpret_cast< const _target_char_type_ * >( _str.c_str() ) };
+        const auto str_it{ reinterpret_cast< const _target_char_type_ * >( _str.c_str() ) };
         return std_string_view< _target_char_type_ >{ str_it, str_it + _str.size() };
     }
     template < typename _target_char_type_, typename _source_char_type_ >
         requires( is_convertible_char_type< _target_char_type_, _source_char_type_ >() )
     inline auto string_view_convert( const std_string_view< _source_char_type_ > _str )
     {
-        auto str_it{ reinterpret_cast< const _target_char_type_ * >( _str.data() ) };
+        const auto str_it{ reinterpret_cast< const _target_char_type_ * >( _str.data() ) };
         return std_string_view< _target_char_type_ >{ str_it, str_it + _str.size() };
     }
     template < typename _target_char_type_, typename _source_char_type_ >
         requires( is_convertible_char_type< _target_char_type_, _source_char_type_ >() )
-    inline auto string_view_convert( const _source_char_type_ *_str )
+    inline auto string_view_convert( const _source_char_type_ *const _str )
     {
         return std_string_view< _target_char_type_ >{ reinterpret_cast< const _target_char_type_ * >( _str ) };
     }
     template < typename _ptr_type_ >
         requires( std::is_pointer_v< _ptr_type_ > )
-    inline auto ptr_to_ansi_string( _ptr_type_ _ptr )
+    inline auto ptr_to_ansi_string( const _ptr_type_ _ptr )
     {
         return _ptr == nullptr ? "nullptr"s : std::format( "0x{:x}", reinterpret_cast< std::uintptr_t >( _ptr ) );
     }
     template < typename _ptr_type_ >
         requires( std::is_pointer_v< _ptr_type_ > )
-    inline auto ptr_to_utf8_string( _ptr_type_ _ptr )
+    inline auto ptr_to_utf8_string( const _ptr_type_ _ptr )
     {
         return string_convert< utf8_char >(
           _ptr == nullptr ? "nullptr"s : std::format( "0x{:x}", reinterpret_cast< std::uintptr_t >( _ptr ) ) );
@@ -242,7 +242,7 @@ namespace cpp_utils {
         std::print( "{}", string_view_convert< ansi_char >( utf8_format( _fmt, std::forward< _args_ >( _args )... ) ) );
     }
     template < typename... _args_ >
-    inline auto utf8_print( io_stream *_stream, const utf8_std_string_view _fmt, _args_ &&..._args )
+    inline auto utf8_print( io_stream *const _stream, const utf8_std_string_view _fmt, _args_ &&..._args )
     {
         std::print( _stream, "{}", string_view_convert< ansi_char >( utf8_format( _fmt, std::forward< _args_ >( _args )... ) ) );
     }
@@ -252,7 +252,7 @@ namespace cpp_utils {
         std::println( "{}", string_view_convert< ansi_char >( utf8_format( _fmt, std::forward< _args_ >( _args )... ) ) );
     }
     template < typename... _args_ >
-    inline auto utf8_println( io_stream *_stream, const utf8_std_string_view _fmt, _args_ &&..._args )
+    inline auto utf8_println( io_stream *const _stream, const utf8_std_string_view _fmt, _args_ &&..._args )
     {
         std::println( _stream, "{}", string_view_convert< ansi_char >( utf8_format( _fmt, std::forward< _args_ >( _args )... ) ) );
     }
@@ -312,7 +312,7 @@ namespace cpp_utils {
         }
         simple_string( nullptr_type ) = delete;
         simple_string()               = default;
-        simple_string( const _char_type_ *_str )
+        simple_string( const _char_type_ *const _str )
         {
             length_ = std::strlen( _str );
             data_   = new _char_type_[ length_ + 1 ];
