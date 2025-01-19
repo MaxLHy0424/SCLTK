@@ -66,6 +66,15 @@ namespace core {
                 }
                 std::abort();
             }
+            const auto &operator[]( const ansi_std_string_view _self_name ) const
+            {
+                for ( auto &key : sub_keys ) {
+                    if ( _self_name == key.self_name ) {
+                        return key;
+                    }
+                }
+                std::abort();
+            }
             auto operator=( const main_key & ) -> main_key & = delete;
             auto operator=( main_key && ) -> main_key &      = delete;
             main_key( const ansi_char *const _self_name, const ansi_char *const _showed_name, std::vector< sub_key > _sub_keys )
@@ -79,6 +88,15 @@ namespace core {
         };
         std::vector< main_key > main_keys;
         auto &operator[]( const ansi_std_string_view _self_name )
+        {
+            for ( auto &key : main_keys ) {
+                if ( _self_name == key.self_name ) {
+                    return key;
+                }
+            }
+            std::abort();
+        }
+        const auto &operator[]( const ansi_std_string_view _self_name ) const
         {
             for ( auto &key : main_keys ) {
                 if ( _self_name == key.self_name ) {
@@ -590,7 +608,7 @@ namespace core {
                 wait( 3s );
                 return cpp_utils::console_value::ui_back;
             }
-            auto &crack_restore_option_node{ options[ "crack_restore" ] };
+            const auto &crack_restore_option_node{ options[ "crack_restore" ] };
             const auto &is_hijacked_execs{ crack_restore_option_node[ "hijack_execs" ] };
             const auto &is_set_serv_startup_types{ crack_restore_option_node[ "set_serv_startup_types" ] };
             std::print( " -> 生成并执行操作系统命令.\n{}\n", ansi_std_string( CONSOLE_WIDTH, '-' ) );
