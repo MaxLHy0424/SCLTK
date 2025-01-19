@@ -122,6 +122,7 @@ namespace cpp_utils {
     using namespace std::string_literals;
     using io_stream        = std::FILE;
     using size_type        = std::size_t;
+    using nullptr_type     = std::nullptr_t;
     using ansi_char        = char;
     using ansi_string      = std::string;
     using ansi_string_view = std::string_view;
@@ -267,6 +268,67 @@ namespace cpp_utils {
         constexpr constexpr_string( const constexpr_string & ) = default;
         constexpr constexpr_string( constexpr_string && )      = delete;
         constexpr ~constexpr_string()                          = default;
+    };
+    template < typename _char_type_ >
+    class simple_string final {
+      private:
+        _char_type_ *data_{};
+        size_type length_{};
+      public:
+        const auto c_str() const
+        {
+            return data_;
+        }
+        const auto length() const
+        {
+            return length_;
+        }
+        const auto operator[]( const size_type _index ) const
+        {
+            return data_[ _index ];
+        }
+        auto operator==( const simple_string &_src ) const
+        {
+            return length_ == _src.length_ && std::strcmp( data_, _src.data_ ) == 0;
+        }
+        auto operator=( const simple_string &_src ) -> simple_string &
+        {
+            length_ = _src.length_;
+            std::copy( _src.data_, _src.data_ + _src.length_ + 1, data_ );
+            return *this;
+        }
+        auto operator=( simple_string &&_src ) -> simple_string &
+        {
+            length_      = _src.length_;
+            _src.length_ = 0;
+            data_        = _src.data_;
+            _src.data_   = nullptr;
+            return *this;
+        }
+        simple_string( nullptr_type ) = delete;
+        simple_string()               = default;
+        simple_string( const _char_type_ *_str )
+        {
+            length_ = std::strlen( _str );
+            data_   = new _char_type_[ length_ + 1 ];
+            std::copy( _str, _str + length_ + 1, data_ );
+        }
+        simple_string( const simple_string &_src )
+        {
+            length_ = _src.length_;
+            std::copy( _src.data_, _src.data_ + _src.length_ + 1, data_ );
+        }
+        simple_string( simple_string &&_src )
+        {
+            length_      = _src.length_;
+            _src.length_ = 0;
+            data_        = _src.data_;
+            _src.data_   = nullptr;
+        }
+        ~simple_string()
+        {
+            delete[] data_;
+        }
     };
     template < typename _chrono_type_ >
     inline auto perf_sleep( const _chrono_type_ _time )
