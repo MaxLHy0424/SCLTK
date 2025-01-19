@@ -375,10 +375,10 @@ namespace core {
     }
     auto fix_os_env( const std::stop_token _msg )
     {
-        constexpr const char *const hkcu_reg_dirs[]{
+        const char *const hkcu_reg_dirs[]{
           R"(Software\Policies\Microsoft\Windows\System)", R"(Software\Microsoft\Windows\CurrentVersion\Policies\System)",
           R"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)" };
-        constexpr const char *const execs[]{
+        const char *const execs[]{
           "mode.com", "chcp.com", "ntsd.exe",    "taskkill.exe", "sc.exe",      "net.exe",
           "reg.exe",  "cmd.exe",  "taskmgr.exe", "perfmon.exe",  "regedit.exe", "mmc.exe" };
         const auto &is_fixed_os_env{ options[ "other" ][ "fix_os_env" ] };
