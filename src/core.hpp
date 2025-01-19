@@ -248,9 +248,11 @@ namespace core {
     template < typename _chrono_type_ >
     inline auto wait( const _chrono_type_ _time )
     {
-        for ( auto i{ _time }; i > _chrono_type_{}; --i ) {
+        const auto zero{ _chrono_type_{ 0 } };
+        const auto one{ _chrono_type_{ 1 } };
+        for ( auto i{ _time }; i > zero; --i ) {
             std::print( " {} 后返回.\r", i );
-            cpp_utils::perf_sleep( _chrono_type_{ 1 } );
+            cpp_utils::perf_sleep( one );
         }
     }
     inline auto quit( cpp_utils::console_ui_ansi::func_args )
