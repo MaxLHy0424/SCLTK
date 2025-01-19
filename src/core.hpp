@@ -105,15 +105,17 @@ namespace core {
         { "other", "其他", { { "fix_os_env", "修复操作系统环境" } } } } } };
     struct rule_node final {
         const ansi_char *const showed_name;
-        std::deque< ansi_string > execs;
-        std::deque< ansi_string > servs;
+        std::deque< cpp_utils::simple_string< ansi_char > > execs;
+        std::deque< cpp_utils::simple_string< ansi_char > > servs;
         auto empty() const
         {
             return execs.empty() && servs.empty();
         }
         auto operator=( const rule_node & ) -> rule_node & = delete;
         auto operator=( rule_node && ) -> rule_node &      = delete;
-        rule_node( const ansi_char *const _showed_name, std::deque< ansi_string > _execs, std::deque< ansi_string > _servs )
+        rule_node(
+          const ansi_char *const _showed_name, std::deque< cpp_utils::simple_string< ansi_char > > _execs,
+          std::deque< cpp_utils::simple_string< ansi_char > > _servs )
           : showed_name{ _showed_name }
           , execs{ std::move( _execs ) }
           , servs{ std::move( _servs ) }
@@ -204,7 +206,7 @@ namespace core {
         virtual auto sync( ansi_string &_out ) -> void override final
         {
             for ( const auto &exec : custom_rules.execs ) {
-                _out.append( exec ).push_back( '\n' );
+                _out.append( exec.c_str() ).push_back( '\n' );
             }
         }
         virtual auto operator=( const custom_rule_execs_op & ) -> custom_rule_execs_op & = delete;
@@ -229,7 +231,7 @@ namespace core {
         virtual auto sync( ansi_string &_out ) -> void override final
         {
             for ( const auto &serv : custom_rules.servs ) {
-                _out.append( serv ).push_back( '\n' );
+                _out.append( serv.c_str() ).push_back( '\n' );
             }
         }
         virtual auto operator=( const custom_rule_servs_op & ) -> custom_rule_servs_op & = delete;
@@ -598,20 +600,20 @@ namespace core {
                             std::system(
                               std::format(
                                 R"(reg.exe add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\{}" /f /t reg_sz /v debugger /d "nul")",
-                                exec )
+                                exec.c_str() )
                                 .c_str() );
                         }
                     }
                     if ( is_set_serv_startup_types.get() ) {
                         for ( const auto &serv : rules_.servs ) {
-                            std::system( std::format( R"(sc.exe config "{}" start= disabled)", serv ).c_str() );
+                            std::system( std::format( R"(sc.exe config "{}" start= disabled)", serv.c_str() ).c_str() );
                         }
                     }
                     for ( const auto &exec : rules_.execs ) {
-                        std::system( std::format( R"(taskkill.exe /f /im "{}")", exec ).c_str() );
+                        std::system( std::format( R"(taskkill.exe /f /im "{}")", exec.c_str() ).c_str() );
                     }
                     for ( const auto &serv : rules_.servs ) {
-                        std::system( std::format( R"(net.exe stop "{}" /y)", serv ).c_str() );
+                        std::system( std::format( R"(net.exe stop "{}" /y)", serv.c_str() ).c_str() );
                     }
                     break;
                 }
@@ -621,17 +623,17 @@ namespace core {
                             std::system(
                               std::format(
                                 R"(reg.exe delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\{}" /f)",
-                                exec )
+                                exec.c_str() )
                                 .c_str() );
                         }
                     }
                     if ( is_set_serv_startup_types.get() ) {
                         for ( const auto &serv : rules_.servs ) {
-                            std::system( std::format( R"(sc.exe config "{}" start= auto)", serv ).c_str() );
+                            std::system( std::format( R"(sc.exe config "{}" start= auto)", serv.c_str() ).c_str() );
                         }
                     }
                     for ( const auto &serv : rules_.servs ) {
-                        std::system( std::format( R"(net.exe start "{}")", serv ).c_str() );
+                        std::system( std::format( R"(net.exe start "{}")", serv.c_str() ).c_str() );
                     }
                     break;
                 }
