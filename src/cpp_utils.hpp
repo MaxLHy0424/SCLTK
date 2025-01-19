@@ -270,6 +270,7 @@ namespace cpp_utils {
         constexpr ~constexpr_string()                          = default;
     };
     template < typename _char_type_ >
+        requires( is_char_type< _char_type_ >() )
     class simple_string final {
       private:
         _char_type_ *data_{};
