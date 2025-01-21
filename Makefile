@@ -22,13 +22,16 @@ clean:
 	$(msys2)\\usr\\bin\\rm.exe -rf bin
 	$(msys2)\\usr\\bin\\mkdir.exe bin
 	$(msys2)\\usr\\bin\\touch.exe bin/.gitkeep
-bin/release/CRCSN-i686-msvcrt.exe: src/* bin/info-i686.obj bin/release/.gitkeep
+bit32_executable_dependent_items = src/* bin/info-i686.obj bin/release/.gitkeep
+bit64_executable_dependent_items = src/* bin/info-x86_64.obj bin/release/.gitkeep
+bin/release/CRCSN-i686-msvcrt.exe: $(bit32_executable_dependent_items)
 	$(msys2)\\mingw32\\bin\\$(cc) src/*.cpp bin/info-i686.obj $(def) $(args_release) -o $@
-bin/release/CRCSN-x86_64-ucrt.exe: src/* bin/info-x86_64.obj bin/release/.gitkeep
+bin/release/CRCSN-x86_64-ucrt.exe: $(bit64_executable_dependent_items)
 	$(msys2)\\ucrt64\\bin\\$(cc) src/*.cpp bin/info-x86_64.obj $(def) $(args_release) -o $@
-bin/info-i686.obj: info.rc img/favicon.ico bin/.gitkeep
+info_obj_dependent_items = info.rc img/favicon.ico src/info.hpp bin/.gitkeep
+bin/info-i686.obj: $(info_obj_dependent_items)
 	$(msys2)\\usr\\bin\\windres.exe -i $< $(def) -o $@ -F pe-i386
-bin/info-x86_64.obj: info.rc img/favicon.ico bin/.gitkeep
+bin/info-x86_64.obj: $(info_obj_dependent_items)
 	$(msys2)\\usr\\bin\\windres.exe -i $< $(def) -o $@ -F pe-x86-64
 	$(msys2)\\usr\\bin\\mkdir.exe bin -p
 	$(msys2)\\usr\\bin\\touch.exe $@
