@@ -67,7 +67,7 @@ namespace core {
             }
             const auto &operator[]( const ansi_std_string_view _self_name ) const
             {
-                for ( auto &key : sub_keys ) {
+                for ( const auto &key : sub_keys ) {
                     if ( _self_name == key.self_name ) {
                         return key;
                     }
@@ -97,7 +97,7 @@ namespace core {
         }
         const auto &operator[]( const ansi_std_string_view _self_name ) const
         {
-            for ( auto &key : main_keys ) {
+            for ( const auto &key : main_keys ) {
                 if ( _self_name == key.self_name ) {
                     return key;
                 }
@@ -113,14 +113,14 @@ namespace core {
         option_node( option_node && )      = default;
         ~option_node()                     = default;
     };
-    inline auto options{ option_node{
-      { { "crack_restore",
-          "破解/恢复",
-          { { "hijack_execs", "劫持可执行文件" }, { "set_serv_startup_types", "设置服务启动类型" } } },
-        { "window",
-          "窗口显示",
-          { { "topmost_show", "置顶显示" }, { "disable_close_ctrl", "禁用关闭控件" }, { "translucency", "半透明化" } } },
-        { "other", "其他", { { "fix_os_env", "修复操作系统环境" } } } } } };
+    inline option_node options{
+      { { { "crack_restore",
+            "破解/恢复",
+            { { "hijack_execs", "劫持可执行文件" }, { "set_serv_startup_types", "设置服务启动类型" } } },
+          { "window",
+            "窗口显示",
+            { { "topmost_show", "置顶显示" }, { "disable_close_ctrl", "禁用关闭控件" }, { "translucency", "半透明化" } } },
+          { "other", "其他", { { "fix_os_env", "修复操作系统环境" } } } } } };
     struct rule_node final {
         const ansi_char *const showed_name;
         std::deque< ansi_std_string > execs;
@@ -265,8 +265,8 @@ namespace core {
     template < typename _chrono_type_ >
     inline auto wait( const _chrono_type_ _time )
     {
-        const auto zero{ _chrono_type_{ 0 } };
-        const auto one{ _chrono_type_{ 1 } };
+        const _chrono_type_ zero{ 0 };
+        const _chrono_type_ one{ 1 };
         for ( auto i{ _time }; i > zero; --i ) {
             std::print( " {} 后返回.\r", i );
             cpp_utils::perf_sleep( one );
@@ -288,7 +288,7 @@ namespace core {
             ShellExecuteA( nullptr, "open", INFO_REPO_URL, nullptr, nullptr, SW_SHOWNORMAL );
             return cpp_utils::console_value::ui_back;
         } };
-        auto ui{ cpp_utils::console_ui_ansi{} };
+        cpp_utils::console_ui_ansi ui{};
         std::print( " -> 准备用户界面.\n" );
         ui.add_back( "                    [ 信  息 ]\n\n" )
           .add_back( " < 返回 ", quit, cpp_utils::console_value::text_foreground_green | cpp_utils::console_value::text_foreground_intensity )
@@ -345,7 +345,7 @@ namespace core {
           {"恢复 Google Chrome 离线游戏",  R"(reg.exe delete "HKLM\SOFTWARE\Policies\Google\Chrome" /f /v AllowDinosaurEasterEgg)"        },
           {"恢复 Microsoft Edge 离线游戏", R"(reg.exe delete "HKLM\SOFTWARE\Policies\Microsoft\Edge" /f /v AllowSurfGame)"                }
         };
-        auto ui{ cpp_utils::console_ui_ansi{} };
+        cpp_utils::console_ui_ansi ui{};
         std::print( " -> 准备用户界面.\n" );
         ui.add_back( "                   [ 工 具 箱 ]\n\n" )
           .add_back( " < 返回 ", quit, cpp_utils::console_value::text_foreground_green | cpp_utils::console_value::text_foreground_intensity )
@@ -424,9 +424,7 @@ namespace core {
           cpp_utils::console_value::text_foreground_red | cpp_utils::console_value::text_foreground_green };
         auto load_( const bool _is_reloaded )
         {
-            auto config_file{
-              std::ifstream{ config_file_name, std::ios::in }
-            };
+            std::ifstream config_file{ config_file_name, std::ios::in };
             if ( !config_file.good() ) {
                 return;
             }
@@ -437,9 +435,9 @@ namespace core {
                 }
             }
             std::print( " -> 加载配置文件.\n" );
-            auto line{ ansi_std_string{} };
-            auto line_view{ ansi_std_string_view{} };
-            auto node_ptr{ static_cast< config_node * >( nullptr ) };
+            ansi_std_string line{};
+            ansi_std_string_view line_view{};
+            config_node *node_ptr{ nullptr };
             while ( std::getline( config_file, line ) ) {
                 line_view = line;
                 if ( line_view.empty() ) {
@@ -472,14 +470,12 @@ namespace core {
             std::print( "                    [ 配  置 ]\n\n\n" );
             load_( true );
             std::print( " -> 保存更改.\n" );
-            auto config_text{ ansi_std_string{} };
+            ansi_std_string config_text{};
             for ( auto &config : configs ) {
                 config_text.append( std::format( "[ {} ]\n", config->self_name ) );
                 config->sync( config_text );
             }
-            auto config_file{
-              std::ofstream{ config_file_name, std::ios::out | std::ios::trunc }
-            };
+            std::ofstream config_file{ config_file_name, std::ios::out | std::ios::trunc };
             config_file << std::format(
               "# " INFO_FULL_NAME
               "\n# [ 同步时间 ] UTC {}"
@@ -532,7 +528,7 @@ namespace core {
           public:
             auto operator()( cpp_utils::console_ui_ansi::func_args )
             {
-                auto ui{ cpp_utils::console_ui_ansi{} };
+                cpp_utils::console_ui_ansi ui{};
                 std::print( " -> 准备用户界面.\n" );
                 ui.add_back( "                    [ 配  置 ]\n\n" )
                   .add_back(
@@ -557,7 +553,7 @@ namespace core {
         };
         auto edit_()
         {
-            auto ui{ cpp_utils::console_ui_ansi{} };
+            cpp_utils::console_ui_ansi ui{};
             std::print( " -> 准备用户界面.\n" );
             ui
               .add_back( std::format(
