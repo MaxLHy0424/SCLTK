@@ -13,9 +13,6 @@ init:
 	 make\
 	 base\
 	 base-devel\
-	 bash\
-	 bash-devel\
-	 bc\
 	 binutils
 release: bin/release/CRCSN-i686-msvcrt.exe\
          bin/release/CRCSN-x86_64-ucrt.exe
