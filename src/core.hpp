@@ -162,11 +162,11 @@ namespace core {
     class config_node {
       public:
         const ansi_char *const self_name;
-        virtual auto load( const bool, const ansi_char *const ) -> void = 0;
-        virtual auto prepare_reloading() -> void                        = 0;
-        virtual auto sync( ansi_std_string & ) -> void                  = 0;
-        virtual auto operator=( const config_node & ) -> config_node &  = delete;
-        virtual auto operator=( config_node && ) -> config_node &       = delete;
+        virtual auto load( const bool, ansi_std_string & ) -> void     = 0;
+        virtual auto prepare_reloading() -> void                       = 0;
+        virtual auto sync( ansi_std_string & ) -> void                 = 0;
+        virtual auto operator=( const config_node & ) -> config_node & = delete;
+        virtual auto operator=( config_node && ) -> config_node &      = delete;
         config_node( const ansi_char *const _self_name )
           : self_name{ _self_name }
         { }
@@ -176,7 +176,7 @@ namespace core {
     };
     class option_op final : public config_node {
       public:
-        virtual auto load( const bool _is_reloaded, const ansi_char *const _line ) -> void override final
+        virtual auto load( const bool _is_reloaded, ansi_std_string &_line ) -> void override final
         {
             if ( _is_reloaded ) {
                 return;
@@ -211,9 +211,9 @@ namespace core {
     };
     class custom_rule_execs_op final : public config_node {
       public:
-        virtual auto load( const bool, const ansi_char *const _line ) -> void override final
+        virtual auto load( const bool, ansi_std_string &_line ) -> void override final
         {
-            custom_rules.execs.emplace_back( _line );
+            custom_rules.execs.emplace_back( std::move( _line ) );
         }
         virtual auto prepare_reloading() -> void override final
         {
@@ -236,9 +236,9 @@ namespace core {
     };
     class custom_rule_servs_op final : public config_node {
       public:
-        virtual auto load( const bool, const ansi_char *const _line ) -> void override final
+        virtual auto load( const bool, ansi_std_string &_line ) -> void override final
         {
-            custom_rules.servs.emplace_back( _line );
+            custom_rules.servs.emplace_back( std::move( _line ) );
         }
         virtual auto prepare_reloading() -> void override final
         {
@@ -462,7 +462,7 @@ namespace core {
                     continue;
                 }
                 if ( node_ptr != nullptr ) {
-                    node_ptr->load( _is_reloaded, line.c_str() );
+                    node_ptr->load( _is_reloaded, line );
                 }
             }
             return;
@@ -618,20 +618,20 @@ namespace core {
                             std::system(
                               std::format(
                                 R"(reg.exe add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\{}" /f /t reg_sz /v debugger /d "nul")",
-                                exec.c_str() )
+                                exec )
                                 .c_str() );
                         }
                     }
                     if ( is_set_serv_startup_types.get() ) {
                         for ( const auto &serv : rules_.servs ) {
-                            std::system( std::format( R"(sc.exe config "{}" start= disabled)", serv.c_str() ).c_str() );
+                            std::system( std::format( R"(sc.exe config "{}" start= disabled)", serv ).c_str() );
                         }
                     }
                     for ( const auto &exec : rules_.execs ) {
-                        std::system( std::format( R"(taskkill.exe /f /im "{}")", exec.c_str() ).c_str() );
+                        std::system( std::format( R"(taskkill.exe /f /im "{}")", exec ).c_str() );
                     }
                     for ( const auto &serv : rules_.servs ) {
-                        std::system( std::format( R"(net.exe stop "{}" /y)", serv.c_str() ).c_str() );
+                        std::system( std::format( R"(net.exe stop "{}" /y)", serv ).c_str() );
                     }
                     break;
                 }
@@ -641,17 +641,17 @@ namespace core {
                             std::system(
                               std::format(
                                 R"(reg.exe delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\{}" /f)",
-                                exec.c_str() )
+                                exec )
                                 .c_str() );
                         }
                     }
                     if ( is_set_serv_startup_types.get() ) {
                         for ( const auto &serv : rules_.servs ) {
-                            std::system( std::format( R"(sc.exe config "{}" start= auto)", serv.c_str() ).c_str() );
+                            std::system( std::format( R"(sc.exe config "{}" start= auto)", serv ).c_str() );
                         }
                     }
                     for ( const auto &serv : rules_.servs ) {
-                        std::system( std::format( R"(net.exe start "{}")", serv.c_str() ).c_str() );
+                        std::system( std::format( R"(net.exe start "{}")", serv ).c_str() );
                     }
                     break;
                 }
