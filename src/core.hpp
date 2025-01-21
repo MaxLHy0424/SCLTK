@@ -10,7 +10,6 @@ namespace core {
     using namespace std::string_view_literals;
     using size_type            = cpp_utils::size_type;
     using ansi_char            = cpp_utils::ansi_char;
-    using ansi_simple_string   = cpp_utils::ansi_simple_string;
     using ansi_std_string      = cpp_utils::ansi_std_string;
     using ansi_std_string_view = cpp_utils::ansi_std_string_view;
     using wide_std_string      = cpp_utils::wide_std_string;
@@ -124,15 +123,15 @@ namespace core {
         { "other", "其他", { { "fix_os_env", "修复操作系统环境" } } } } } };
     struct rule_node final {
         const ansi_char *const showed_name;
-        std::deque< ansi_simple_string > execs;
-        std::deque< ansi_simple_string > servs;
+        std::deque< ansi_std_string > execs;
+        std::deque< ansi_std_string > servs;
         auto empty() const
         {
             return execs.empty() && servs.empty();
         }
         auto operator=( const rule_node & ) -> rule_node & = delete;
         auto operator=( rule_node && ) -> rule_node &      = delete;
-        rule_node( const ansi_char *const _showed_name, std::deque< ansi_simple_string > _execs, std::deque< ansi_simple_string > _servs )
+        rule_node( const ansi_char *const _showed_name, std::deque< ansi_std_string > _execs, std::deque< ansi_std_string > _servs )
           : showed_name{ _showed_name }
           , execs{ std::move( _execs ) }
           , servs{ std::move( _servs ) }
