@@ -394,9 +394,9 @@ namespace cpp_utils {
 #if defined( _WIN32 ) || defined( _WIN64 )
     inline auto is_run_as_admin()
     {
-        auto is_admin{ BOOL{} };
-        auto admins_group{ PSID{} };
-        auto nt_authority{ SID_IDENTIFIER_AUTHORITY{ SECURITY_NT_AUTHORITY } };
+        BOOL is_admin{};
+        PSID admins_group{};
+        SID_IDENTIFIER_AUTHORITY nt_authority{ SECURITY_NT_AUTHORITY };
         if ( AllocateAndInitializeSid(
                &nt_authority, 2, SECURITY_BUILTIN_DOMAIN_RID, DOMAIN_ALIAS_RID_ADMINS, 0, 0, 0, 0, 0, 0, &admins_group )
              == TRUE )
@@ -408,47 +408,47 @@ namespace cpp_utils {
     }
     inline auto relaunch_as_admin()
     {
-        auto file_path{ wide_std_string( MAX_PATH, L'\0' ) };
+        wide_std_string file_path( MAX_PATH, L'\0' );
         GetModuleFileNameW( nullptr, file_path.data(), MAX_PATH );
         ShellExecuteW( nullptr, L"runas", file_path.c_str(), nullptr, nullptr, SW_SHOWNORMAL );
         std::exit( 0 );
         return;
     }
     namespace console_value {
-        inline constexpr auto mouse_button_left{ DWORD{ FROM_LEFT_1ST_BUTTON_PRESSED } };
-        inline constexpr auto mouse_button_middle{ DWORD{ FROM_LEFT_2ND_BUTTON_PRESSED } };
-        inline constexpr auto mouse_button_right{ DWORD{ RIGHTMOST_BUTTON_PRESSED } };
-        inline constexpr auto mouse_click{ DWORD{ 0x0000 } };
-        inline constexpr auto mouse_click_double{ DWORD{ DOUBLE_CLICK } };
-        inline constexpr auto mouse_move{ DWORD{ MOUSE_MOVED } };
-        inline constexpr auto mouse_wheel_height{ DWORD{ MOUSE_HWHEELED } };
-        inline constexpr auto mouse_wheel{ DWORD{ MOUSE_WHEELED } };
-        inline constexpr auto key_right_alt_press{ DWORD{ RIGHT_ALT_PRESSED } };
-        inline constexpr auto key_left_alt_press{ DWORD{ LEFT_ALT_PRESSED } };
-        inline constexpr auto key_right_ctrl_press{ DWORD{ RIGHT_CTRL_PRESSED } };
-        inline constexpr auto key_left_ctrl_press{ DWORD{ LEFT_CTRL_PRESSED } };
-        inline constexpr auto key_shift_press{ DWORD{ SHIFT_PRESSED } };
-        inline constexpr auto key_num_lock_on{ DWORD{ NUMLOCK_ON } };
-        inline constexpr auto key_scroll_lock_on{ DWORD{ SCROLLLOCK_ON } };
-        inline constexpr auto key_caps_lock_on{ DWORD{ CAPSLOCK_ON } };
-        inline constexpr auto key_enhanced_key{ DWORD{ ENHANCED_KEY } };
-        inline constexpr auto text_default{ WORD{ FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE } };
-        inline constexpr auto text_foreground_red{ WORD{ FOREGROUND_RED } };
-        inline constexpr auto text_foreground_green{ WORD{ FOREGROUND_GREEN } };
-        inline constexpr auto text_foreground_blue{ WORD{ FOREGROUND_BLUE } };
-        inline constexpr auto text_foreground_intensity{ WORD{ FOREGROUND_INTENSITY } };
-        inline constexpr auto text_background_red{ WORD{ BACKGROUND_RED } };
-        inline constexpr auto text_background_green{ WORD{ BACKGROUND_GREEN } };
-        inline constexpr auto text_background_blue{ WORD{ BACKGROUND_BLUE } };
-        inline constexpr auto text_background_intensity{ WORD{ BACKGROUND_INTENSITY } };
-        inline constexpr auto text_lvb_leading_byte{ WORD{ COMMON_LVB_LEADING_BYTE } };
-        inline constexpr auto text_lvb_trailing_byte{ WORD{ COMMON_LVB_TRAILING_BYTE } };
-        inline constexpr auto text_lvb_grid_horizontal{ WORD{ COMMON_LVB_GRID_HORIZONTAL } };
-        inline constexpr auto text_lvb_grid_lvertical{ WORD{ COMMON_LVB_GRID_LVERTICAL } };
-        inline constexpr auto text_lvb_grid_rvertical{ WORD{ COMMON_LVB_GRID_RVERTICAL } };
-        inline constexpr auto text_lvb_reverse_video{ WORD{ COMMON_LVB_REVERSE_VIDEO } };
-        inline constexpr auto text_lvb_underscore{ WORD{ COMMON_LVB_UNDERSCORE } };
-        inline constexpr auto text_lvb_sbcsdbcs{ WORD{ COMMON_LVB_SBCSDBCS } };
+        inline constexpr DWORD mouse_button_left{ FROM_LEFT_1ST_BUTTON_PRESSED };
+        inline constexpr DWORD mouse_button_middle{ FROM_LEFT_2ND_BUTTON_PRESSED };
+        inline constexpr DWORD mouse_button_right{ RIGHTMOST_BUTTON_PRESSED };
+        inline constexpr DWORD mouse_click{ 0x0000 };
+        inline constexpr DWORD mouse_click_double{ DOUBLE_CLICK };
+        inline constexpr DWORD mouse_move{ MOUSE_MOVED };
+        inline constexpr DWORD mouse_wheel_height{ MOUSE_HWHEELED };
+        inline constexpr DWORD mouse_wheel{ MOUSE_WHEELED };
+        inline constexpr DWORD key_right_alt_press{ RIGHT_ALT_PRESSED };
+        inline constexpr DWORD key_left_alt_press{ LEFT_ALT_PRESSED };
+        inline constexpr DWORD key_right_ctrl_press{ RIGHT_CTRL_PRESSED };
+        inline constexpr DWORD key_left_ctrl_press{ LEFT_CTRL_PRESSED };
+        inline constexpr DWORD key_shift_press{ SHIFT_PRESSED };
+        inline constexpr DWORD key_num_lock_on{ NUMLOCK_ON };
+        inline constexpr DWORD key_scroll_lock_on{ SCROLLLOCK_ON };
+        inline constexpr DWORD key_caps_lock_on{ CAPSLOCK_ON };
+        inline constexpr DWORD key_enhanced_key{ ENHANCED_KEY };
+        inline constexpr WORD text_default{ FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE };
+        inline constexpr WORD text_foreground_red{ FOREGROUND_RED };
+        inline constexpr WORD text_foreground_green{ FOREGROUND_GREEN };
+        inline constexpr WORD text_foreground_blue{ FOREGROUND_BLUE };
+        inline constexpr WORD text_foreground_intensity{ FOREGROUND_INTENSITY };
+        inline constexpr WORD text_background_red{ BACKGROUND_RED };
+        inline constexpr WORD text_background_green{ BACKGROUND_GREEN };
+        inline constexpr WORD text_background_blue{ BACKGROUND_BLUE };
+        inline constexpr WORD text_background_intensity{ BACKGROUND_INTENSITY };
+        inline constexpr WORD text_lvb_leading_byte{ COMMON_LVB_LEADING_BYTE };
+        inline constexpr WORD text_lvb_trailing_byte{ COMMON_LVB_TRAILING_BYTE };
+        inline constexpr WORD text_lvb_grid_horizontal{ COMMON_LVB_GRID_HORIZONTAL };
+        inline constexpr WORD text_lvb_grid_lvertical{ COMMON_LVB_GRID_LVERTICAL };
+        inline constexpr WORD text_lvb_grid_rvertical{ COMMON_LVB_GRID_RVERTICAL };
+        inline constexpr WORD text_lvb_reverse_video{ COMMON_LVB_REVERSE_VIDEO };
+        inline constexpr WORD text_lvb_underscore{ COMMON_LVB_UNDERSCORE };
+        inline constexpr WORD text_lvb_sbcsdbcs{ COMMON_LVB_SBCSDBCS };
         inline constexpr auto ui_back{ false };
         inline constexpr auto ui_quit{ true };
     };
@@ -524,14 +524,14 @@ namespace cpp_utils {
         SHORT console_height_{};
         static auto show_cursor_( const bool _is_shown )
         {
-            auto cursor_data{ CONSOLE_CURSOR_INFO{} };
+            CONSOLE_CURSOR_INFO cursor_data;
             GetConsoleCursorInfo( GetStdHandle( STD_OUTPUT_HANDLE ), &cursor_data );
             cursor_data.bVisible = _is_shown;
             SetConsoleCursorInfo( GetStdHandle( STD_OUTPUT_HANDLE ), &cursor_data );
         }
         static auto edit_console_attrs_( const console_attrs_ _mod )
         {
-            auto attrs{ DWORD{} };
+            DWORD attrs;
             GetConsoleMode( GetStdHandle( STD_INPUT_HANDLE ), &attrs );
             switch ( _mod ) {
                 case console_attrs_::normal :
@@ -554,7 +554,7 @@ namespace cpp_utils {
         }
         static auto get_cursor_()
         {
-            auto console_data{ CONSOLE_SCREEN_BUFFER_INFO{} };
+            CONSOLE_SCREEN_BUFFER_INFO console_data;
             GetConsoleScreenBufferInfo( GetStdHandle( STD_OUTPUT_HANDLE ), &console_data );
             return console_data.dwCursorPosition;
         }
@@ -564,8 +564,8 @@ namespace cpp_utils {
         }
         static auto wait_mouse_event_( const bool _is_mouse_moved = true )
         {
-            auto record{ INPUT_RECORD{} };
-            auto reg{ DWORD{} };
+            INPUT_RECORD record;
+            DWORD reg;
             while ( true ) {
                 perf_sleep( 10ms );
                 ReadConsoleInputW( GetStdHandle( STD_INPUT_HANDLE ), &record, 1, &reg );
@@ -578,7 +578,7 @@ namespace cpp_utils {
         }
         auto get_console_size_()
         {
-            auto console_data{ CONSOLE_SCREEN_BUFFER_INFO{} };
+            CONSOLE_SCREEN_BUFFER_INFO console_data;
             GetConsoleScreenBufferInfo( GetStdHandle( STD_OUTPUT_HANDLE ), &console_data );
             console_height_ = console_data.dwSize.Y;
             console_width_  = console_data.dwSize.X;
