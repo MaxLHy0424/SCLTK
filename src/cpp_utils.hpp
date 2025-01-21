@@ -120,18 +120,24 @@
 namespace cpp_utils {
     using namespace std::chrono_literals;
     using namespace std::string_literals;
-    using io_stream            = std::FILE;
-    using size_type            = std::size_t;
-    using nullptr_type         = std::nullptr_t;
-    using ansi_char            = char;
-    using ansi_std_string      = std::string;
-    using ansi_std_string_view = std::string_view;
-    using wide_char            = wchar_t;
-    using wide_std_string      = std::wstring;
-    using wide_std_string_view = std::wstring_view;
-    using utf8_char            = char8_t;
-    using utf8_std_string      = std::u8string;
-    using utf8_std_string_view = std::u8string_view;
+    using io_stream             = std::FILE;
+    using size_type             = std::size_t;
+    using nullptr_type          = std::nullptr_t;
+    using ansi_char             = char;
+    using ansi_std_string       = std::string;
+    using ansi_std_string_view  = std::string_view;
+    using wide_char             = wchar_t;
+    using wide_std_string       = std::wstring;
+    using wide_std_string_view  = std::wstring_view;
+    using utf8_char             = char8_t;
+    using utf8_std_string       = std::u8string;
+    using utf8_std_string_view  = std::u8string_view;
+    using utf16_char            = char16_t;
+    using utf16_std_string      = std::u16string;
+    using utf16_std_string_view = std::u16string_view;
+    using utf32_char            = char32_t;
+    using utf32_std_string      = std::u32string;
+    using utf32_std_string_view = std::u32string_view;
     template < typename _type_ >
     using type_alloc = _type_;
     template < typename _char_type >
@@ -142,8 +148,8 @@ namespace cpp_utils {
     inline consteval auto is_char_type()
     {
         return std::is_same_v< _char_type_, ansi_char > || std::is_same_v< _char_type_, wide_char >
-            || std::is_same_v< _char_type_, utf8_char > || std::is_same_v< _char_type_, char16_t >
-            || std::is_same_v< _char_type_, char32_t >;
+            || std::is_same_v< _char_type_, utf8_char > || std::is_same_v< _char_type_, utf16_char >
+            || std::is_same_v< _char_type_, utf32_char >;
     }
     template < typename _target_char_type_, typename _source_char_type_ >
         requires( is_char_type< std::decay_t< _target_char_type_ > >() && is_char_type< std::decay_t< _source_char_type_ > >() )
