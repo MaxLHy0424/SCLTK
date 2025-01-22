@@ -259,9 +259,10 @@ namespace core {
         servs_of_custom_rule_op( servs_of_custom_rule_op && )      = delete;
         virtual ~servs_of_custom_rule_op()                         = default;
     };
-    inline std::unique_ptr< config_node > configs[]{
-      std::unique_ptr< config_node >{ new option_op{} }, std::unique_ptr< config_node >{ new execs_of_custom_rule_op{} },
-      std::unique_ptr< config_node >{ new servs_of_custom_rule_op{} } };
+    using config_node_smart_ptr = std::unique_ptr< config_node >;
+    inline config_node_smart_ptr configs[]{
+      config_node_smart_ptr{ new option_op{} }, config_node_smart_ptr{ new execs_of_custom_rule_op{} },
+      config_node_smart_ptr{ new servs_of_custom_rule_op{} } };
     template < typename _chrono_type_ >
     inline auto wait( const _chrono_type_ _time )
     {
