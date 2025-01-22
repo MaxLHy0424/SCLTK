@@ -1,7 +1,6 @@
 #include "core.hpp"
 auto main() -> int
 {
-    std::system( "color.com 00" );
     cpp_utils::console_ui_ansi ui{};
     ui.lock( true, true ).set_console( INFO_SHORT_NAME, CHARSET_ID, CONSOLE_WIDTH, CONSOLE_HEIGHT, true, false, true, 255 );
     std::print( " -> 检测运行权限.\n" );
