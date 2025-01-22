@@ -3,7 +3,7 @@ auto main() -> int
 {
     std::system( "color 00" );
     cpp_utils::console_ui_ansi ui{};
-    ui.lock( true, true ).set_console( INFO_SHORT_NAME, CODE_PAGE_ID, CONSOLE_WIDTH, CONSOLE_HEIGHT, true, false, true, 255 );
+    ui.lock( true, true ).set_console( INFO_SHORT_NAME, CHARSET_ID, CONSOLE_WIDTH, CONSOLE_HEIGHT, true, false, true, 255 );
     std::print( " -> 检测运行权限.\n" );
     if ( !cpp_utils::is_run_as_admin() ) {
         std::print( " -> 申请管理员权限.\n" );

@@ -3,8 +3,8 @@
 #include "info.hpp"
 #define CONSOLE_WIDTH  50
 #define CONSOLE_HEIGHT 25
-#define CODE_PAGE_ID   54936
-#define CODE_PAGE_NAME "GB18030"
+#define CHARSET_ID     54936
+#define CHARSET_NAME   "GB18030"
 namespace core {
     using namespace std::chrono_literals;
     using namespace std::string_view_literals;
@@ -310,13 +310,13 @@ namespace core {
             const auto &is_translucency{ options[ "window" ][ "translucency" ] };
             _args.parent_ui
               .set_console(
-                INFO_SHORT_NAME " - 命令提示符", CODE_PAGE_ID, 120, 30, false, false,
-                is_disabled_close_ctrl.get() ? false : true, is_translucency.get() ? 230 : 255 )
+                INFO_SHORT_NAME " - 命令提示符", CHARSET_ID, 120, 30, false, false, is_disabled_close_ctrl.get() ? false : true,
+                is_translucency.get() ? 230 : 255 )
               .lock( false, false );
             SetConsoleScreenBufferSize( GetStdHandle( STD_OUTPUT_HANDLE ), { 128, SHRT_MAX - 1 } );
             std::system( "cmd.exe" );
             _args.parent_ui.set_console(
-              INFO_SHORT_NAME, CODE_PAGE_ID, CONSOLE_WIDTH, CONSOLE_HEIGHT, true, false,
+              INFO_SHORT_NAME, CHARSET_ID, CONSOLE_WIDTH, CONSOLE_HEIGHT, true, false,
               is_disabled_close_ctrl.get() ? false : true, is_translucency.get() ? 230 : 255 );
             return cpp_utils::console_value::ui_back;
         } };
@@ -479,7 +479,7 @@ namespace core {
             config_file << std::format(
               "# " INFO_FULL_NAME
               "\n# [ 同步时间 ] UTC {}"
-              "\n# [ 同步版本 ] " INFO_VERSION "\n# [ 字符编码 ] " CODE_PAGE_NAME "\n",
+              "\n# [ 同步版本 ] " INFO_VERSION "\n# [ 字符编码 ] " CHARSET_NAME "\n",
               std::chrono::system_clock::now() )
                         << config_text << std::flush;
             std::print( "\n ({}) 同步配置{}.\n\n", config_file.good() ? 'i' : '!', config_file.good() ? "成功" : "失败" );
