@@ -209,7 +209,7 @@ namespace core {
         option_op( option_op && )      = delete;
         virtual ~option_op()           = default;
     };
-    class custom_rule_execs_op final : public config_node {
+    class execs_of_custom_rule_op final : public config_node {
       public:
         virtual auto load( const bool, ansi_std_string &_line ) -> void override final
         {
@@ -225,16 +225,16 @@ namespace core {
                 _out.append( exec.c_str() ).push_back( '\n' );
             }
         }
-        virtual auto operator=( const custom_rule_execs_op & ) -> custom_rule_execs_op & = delete;
-        virtual auto operator=( custom_rule_execs_op && ) -> custom_rule_execs_op &      = delete;
-        custom_rule_execs_op()
-          : config_node{ "custom_rule_execs" }
+        virtual auto operator=( const execs_of_custom_rule_op & ) -> execs_of_custom_rule_op & = delete;
+        virtual auto operator=( execs_of_custom_rule_op && ) -> execs_of_custom_rule_op &      = delete;
+        execs_of_custom_rule_op()
+          : config_node{ "execs_of_custom_rule" }
         { }
-        custom_rule_execs_op( const custom_rule_execs_op & ) = delete;
-        custom_rule_execs_op( custom_rule_execs_op && )      = delete;
-        virtual ~custom_rule_execs_op()                      = default;
+        execs_of_custom_rule_op( const execs_of_custom_rule_op & ) = delete;
+        execs_of_custom_rule_op( execs_of_custom_rule_op && )      = delete;
+        virtual ~execs_of_custom_rule_op()                         = default;
     };
-    class custom_rule_servs_op final : public config_node {
+    class servs_of_custom_rule_op final : public config_node {
       public:
         virtual auto load( const bool, ansi_std_string &_line ) -> void override final
         {
@@ -250,18 +250,18 @@ namespace core {
                 _out.append( serv.c_str() ).push_back( '\n' );
             }
         }
-        virtual auto operator=( const custom_rule_servs_op & ) -> custom_rule_servs_op & = delete;
-        virtual auto operator=( custom_rule_servs_op && ) -> custom_rule_servs_op &      = delete;
-        custom_rule_servs_op()
-          : config_node{ "custom_rule_servs" }
+        virtual auto operator=( const servs_of_custom_rule_op & ) -> servs_of_custom_rule_op & = delete;
+        virtual auto operator=( servs_of_custom_rule_op && ) -> servs_of_custom_rule_op &      = delete;
+        servs_of_custom_rule_op()
+          : config_node{ "servs_of_custom_rule" }
         { }
-        custom_rule_servs_op( const custom_rule_servs_op & ) = delete;
-        custom_rule_servs_op( custom_rule_servs_op && )      = delete;
-        virtual ~custom_rule_servs_op()                      = default;
+        servs_of_custom_rule_op( const servs_of_custom_rule_op & ) = delete;
+        servs_of_custom_rule_op( servs_of_custom_rule_op && )      = delete;
+        virtual ~servs_of_custom_rule_op()                         = default;
     };
     inline std::unique_ptr< config_node > configs[]{
-      std::unique_ptr< config_node >{ new option_op{} }, std::unique_ptr< config_node >{ new custom_rule_execs_op{} },
-      std::unique_ptr< config_node >{ new custom_rule_servs_op{} } };
+      std::unique_ptr< config_node >{ new option_op{} }, std::unique_ptr< config_node >{ new execs_of_custom_rule_op{} },
+      std::unique_ptr< config_node >{ new servs_of_custom_rule_op{} } };
     template < typename _chrono_type_ >
     inline auto wait( const _chrono_type_ _time )
     {
