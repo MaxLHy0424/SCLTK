@@ -463,7 +463,6 @@ namespace core {
                     node_ptr->load( _is_reloaded, line );
                 }
             }
-            return;
         }
         auto sync()
         {
