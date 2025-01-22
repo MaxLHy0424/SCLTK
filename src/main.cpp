@@ -9,10 +9,10 @@ auto main() -> int
         cpp_utils::relaunch_as_admin();
     }
     core::config_op{ core::config_op::mod::load }( cpp_utils::console_ui_ansi::func_args{ ui } );
-    cpp_utils::multithread_task_ansi threads{};
-    threads.add_task( "置顶显示", core::topmost_show_window )
-      .add_task( "窗口属性设定", core::set_console_attrs )
-      .add_task( "修复操作系统环境", core::fix_os_env );
+    cpp_utils::thread_pool_ansi threads{};
+    threads.add( "置顶显示", core::topmost_show_window )
+      .add( "窗口属性设定", core::set_console_attrs )
+      .add( "修复操作系统环境", core::fix_os_env );
     std::print( " -> 准备用户界面.\n" );
     ui.add_back( "                    [ 主  页 ]\n\n" )
       .add_back( " < 退出 ", core::quit, cpp_utils::console_value::text_foreground_red | cpp_utils::console_value::text_foreground_intensity )
