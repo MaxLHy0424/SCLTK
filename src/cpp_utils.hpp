@@ -808,7 +808,7 @@ namespace cpp_utils {
             } else if constexpr ( std::is_same_v< _char_type_, utf8_char > ) {
                 SetConsoleTitleA( string_view_convert< ansi_char >( _title ).c_str() );
             }
-            std::system( std::format( R"(%SystemRoot%\System32\mode.com con cols={} lines={})", _width, _height ).c_str() );
+            std::system( std::format( R"(C:\Windows\System32\mode.com con cols={} lines={})", _width, _height ).c_str() );
             SetWindowLongPtrW(
               GetConsoleWindow(), GWL_STYLE,
               _is_fixed_size
