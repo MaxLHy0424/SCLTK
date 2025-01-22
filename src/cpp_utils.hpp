@@ -299,9 +299,9 @@ namespace cpp_utils {
             {
                 if ( task_thread.joinable() ) {
                     if constexpr ( std::is_same_v< _char_type_, ansi_char > ) {
-                        std::print( " -> 终止线程 {}.\n", task_thread.get_id() );
+                        std::print( "    - 终止线程 {}.\n", task_thread.get_id() );
                     } else if constexpr ( std::is_same_v< _char_type_, utf8_char > ) {
-                        utf8_print( u8" -> 终止线程 {}.\n", task_thread.get_id() );
+                        utf8_print( u8"    - 终止线程 {}.\n", task_thread.get_id() );
                     }
                 }
             }
@@ -344,7 +344,14 @@ namespace cpp_utils {
         multithread_task()                                               = default;
         multithread_task( const multithread_task & )                     = delete;
         multithread_task( multithread_task && )                          = default;
-        ~multithread_task()                                              = default;
+        ~multithread_task()
+        {
+            if constexpr ( std::is_same_v< _char_type_, ansi_char > ) {
+                std::print( " -> 清理线程池.\n" );
+            } else if constexpr ( std::is_same_v< _char_type_, utf8_char > ) {
+                utf8_print( u8" -> 清理线程池.\n" );
+            }
+        }
     };
     using multithread_task_ansi = multithread_task< ansi_char >;
     using multithread_task_utf8 = multithread_task< utf8_char >;
