@@ -111,11 +111,11 @@ CRCSN 发行版文件名规则为 `CRCSN-[arch]-[runtime].exe`, 其中 `[arch]` 
 
 #### 3.3.1 可执行文件
 
-配置文件中标签 `[ custom_rule_execs ]` 到下一个标签的部分, 每个项目保留文件扩展名.
+配置文件中标签 `[ execs_of_custom_rule ]` 到下一个标签的部分, 每个项目保留文件扩展名.
 
 示例:
 ```ini
-[ custom_rule_execs ]
+[ execs_of_custom_rule ]
 abc_client_gui.exe
 abc_client_server.exe
 abc_protect_server.com
@@ -123,13 +123,13 @@ abc_protect_server.com
 
 #### 3.3.2 服务
 
-配置文件中标签 `[ custom_rule_servs ]` 到下一个标签的部分.
+配置文件中标签 `[ servs_of_custom_rule ]` 到下一个标签的部分.
 
 每项规则为服务名称, 非显示名称.
 
 示例:
 ```ini
-[ custom_rule_servs ]
+[ servs_of_custom_rule ]
 abc_network
 abc_diag_track
 ```
