@@ -315,7 +315,7 @@ namespace core {
                 is_translucency.get() ? 230 : 255 )
               .lock( false, false );
             SetConsoleScreenBufferSize( GetStdHandle( STD_OUTPUT_HANDLE ), { 128, SHRT_MAX - 1 } );
-            std::system( R"(%SystemRoot%\System32\cmd.exe)" );
+            std::system( R"(C:\Windows\System32\cmd.exe)" );
             _args.parent_ui.set_console(
               INFO_SHORT_NAME, CHARSET_ID, CONSOLE_WIDTH, CONSOLE_HEIGHT, true, false,
               is_disabled_close_ctrl.get() ? false : true, is_translucency.get() ? 230 : 255 );
@@ -342,13 +342,13 @@ namespace core {
         };
         constexpr const ansi_char *common_ops[][ 2 ]{
           {"重启资源管理器",
-           R"(%SystemRoot%\System32\taskkill.exe /f /im explorer.exe && timeout /t 3 /nobreak && start C:\Windows\explorer.exe)"},
+           R"(C:\Windows\System32\taskkill.exe /f /im explorer.exe && timeout /t 3 /nobreak && start C:\Windows\explorer.exe)"},
           {"恢复 USB 设备访问",
-           R"(%SystemRoot%\System32\reg.exe add "HKLM\SYSTEM\CurrentControlSet\Services\USBSTOR" /f /t reg_dword /v Start /d 3)"},
+           R"(C:\Windows\System32\reg.exe add "HKLM\SYSTEM\CurrentControlSet\Services\USBSTOR" /f /t reg_dword /v Start /d 3)"},
           {"恢复 Google Chrome 离线游戏",
-           R"(%SystemRoot%\System32\reg.exe delete "HKLM\SOFTWARE\Policies\Google\Chrome" /f /v AllowDinosaurEasterEgg)"        },
+           R"(C:\Windows\System32\reg.exe delete "HKLM\SOFTWARE\Policies\Google\Chrome" /f /v AllowDinosaurEasterEgg)"        },
           {"恢复 Microsoft Edge 离线游戏",
-           R"(%SystemRoot%\System32\reg.exe delete "HKLM\SOFTWARE\Policies\Microsoft\Edge" /f /v AllowSurfGame)"                }
+           R"(C:\Windows\System32\reg.exe delete "HKLM\SOFTWARE\Policies\Microsoft\Edge" /f /v AllowSurfGame)"                }
         };
         cpp_utils::console_ui_ansi ui{};
         std::print( " -> 准备用户界面.\n" );
@@ -617,22 +617,21 @@ namespace core {
                         for ( const auto &exec : rules_.execs ) {
                             std::system(
                               std::format(
-                                R"(%SystemRoot%\System32\reg.exe add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\{}" /f /t reg_sz /v debugger /d "nul")",
+                                R"(C:\Windows\System32\reg.exe add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\{}" /f /t reg_sz /v debugger /d "nul")",
                                 exec )
                                 .c_str() );
                         }
                     }
                     if ( is_set_serv_startup_types.get() ) {
                         for ( const auto &serv : rules_.servs ) {
-                            std::system(
-                              std::format( R"(%SystemRoot%\System32\sc.exe config "{}" start= disabled)", serv ).c_str() );
+                            std::system( std::format( R"(C:\Windows\System32\sc.exe config "{}" start= disabled)", serv ).c_str() );
                         }
                     }
                     for ( const auto &exec : rules_.execs ) {
-                        std::system( std::format( R"(%SystemRoot%\System32\taskkill.exe /f /im "{}")", exec ).c_str() );
+                        std::system( std::format( R"(C:\Windows\System32\taskkill.exe /f /im "{}")", exec ).c_str() );
                     }
                     for ( const auto &serv : rules_.servs ) {
-                        std::system( std::format( R"(%SystemRoot%\System32\net.exe stop "{}" /y)", serv ).c_str() );
+                        std::system( std::format( R"(C:\Windows\System32\net.exe stop "{}" /y)", serv ).c_str() );
                     }
                     break;
                 }
@@ -641,18 +640,18 @@ namespace core {
                         for ( const auto &exec : rules_.execs ) {
                             std::system(
                               std::format(
-                                R"(%SystemRoot%\System32\reg.exe delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\{}" /f)",
+                                R"(C:\Windows\System32\reg.exe delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\{}" /f)",
                                 exec )
                                 .c_str() );
                         }
                     }
                     if ( is_set_serv_startup_types.get() ) {
                         for ( const auto &serv : rules_.servs ) {
-                            std::system( std::format( R"(%SystemRoot%\System32\sc.exe config "{}" start= auto)", serv ).c_str() );
+                            std::system( std::format( R"(C:\Windows\System32\sc.exe config "{}" start= auto)", serv ).c_str() );
                         }
                     }
                     for ( const auto &serv : rules_.servs ) {
-                        std::system( std::format( R"(%SystemRoot%\System32\net.exe start "{}")", serv ).c_str() );
+                        std::system( std::format( R"(C:\Windows\System32\net.exe start "{}")", serv ).c_str() );
                     }
                     break;
                 }
