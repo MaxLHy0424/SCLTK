@@ -265,8 +265,8 @@ namespace core {
     template < typename _chrono_type_ >
     inline auto wait( const _chrono_type_ _time )
     {
-        const _chrono_type_ zero{ 0 };
-        const _chrono_type_ one{ 1 };
+        constexpr _chrono_type_ zero{ 0 };
+        constexpr _chrono_type_ one{ 1 };
         for ( auto i{ _time }; i > zero; --i ) {
             std::print( " {} 后返回.\r", i );
             cpp_utils::perf_sleep( one );
@@ -339,7 +339,7 @@ namespace core {
             cmd_executor( cmd_executor && )      = default;
             ~cmd_executor()                      = default;
         };
-        constexpr const ansi_char *const common_ops[][ 2 ]{
+        constexpr const ansi_char *common_ops[][ 2 ]{
           {"重启资源管理器",               R"(taskkill.exe /f /im explorer.exe && timeout /t 3 /nobreak && start C:\Windows\explorer.exe)"},
           {"恢复 USB 设备访问",            R"(reg.exe add "HKLM\SYSTEM\CurrentControlSet\Services\USBSTOR" /f /t reg_dword /v Start /d 3)"},
           {"恢复 Google Chrome 离线游戏",  R"(reg.exe delete "HKLM\SOFTWARE\Policies\Google\Chrome" /f /v AllowDinosaurEasterEgg)"        },
@@ -392,10 +392,10 @@ namespace core {
     }
     auto fix_os_env( const std::stop_token _msg )
     {
-        constexpr const ansi_char *const hkcu_reg_dirs[]{
+        constexpr const ansi_char *hkcu_reg_dirs[]{
           R"(Software\Policies\Microsoft\Windows\System)", R"(Software\Microsoft\Windows\CurrentVersion\Policies\System)",
           R"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)" };
-        constexpr const ansi_char *const execs[]{
+        constexpr const ansi_char *execs[]{
           "mode.com", "chcp.com", "ntsd.exe",    "taskkill.exe", "sc.exe",      "net.exe",
           "reg.exe",  "cmd.exe",  "taskmgr.exe", "perfmon.exe",  "regedit.exe", "mmc.exe" };
         const auto &is_fixed_os_env{ options[ "other" ][ "fix_os_env" ] };
