@@ -421,9 +421,9 @@ namespace cpp_utils {
     }
     inline auto relaunch_as_admin()
     {
-        wide_std_string file_path( MAX_PATH, L'\0' );
-        GetModuleFileNameW( nullptr, file_path.data(), MAX_PATH );
-        ShellExecuteW( nullptr, L"runas", file_path.c_str(), nullptr, nullptr, SW_SHOWNORMAL );
+        wide_char file_path[ MAX_PATH ]{};
+        GetModuleFileNameW( nullptr, file_path, MAX_PATH );
+        ShellExecuteW( nullptr, L"runas", file_path, nullptr, nullptr, SW_SHOWNORMAL );
         std::exit( 0 );
     }
     namespace console_value {
