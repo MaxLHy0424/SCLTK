@@ -419,6 +419,13 @@ namespace cpp_utils {
         }
         return is_admin ? true : false;
     }
+    inline auto relaunch()
+    {
+        wide_char file_path[ MAX_PATH ]{};
+        GetModuleFileNameW( nullptr, file_path, MAX_PATH );
+        ShellExecuteW( nullptr, L"open", file_path, nullptr, nullptr, SW_SHOWNORMAL );
+        std::exit( 0 );
+    }
     inline auto relaunch_as_admin()
     {
         wide_char file_path[ MAX_PATH ]{};
