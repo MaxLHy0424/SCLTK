@@ -183,9 +183,9 @@ namespace core {
             }
             for ( auto &main_key : options.main_keys ) {
                 for ( auto &sub_key : main_key.sub_keys ) {
-                    if ( _line == std::format( "{}::{} = {}", main_key.self_name, sub_key.self_name, true ) ) {
+                    if ( _line == std::format( "{}.{} = {}", main_key.self_name, sub_key.self_name, true ) ) {
                         sub_key.enable();
-                    } else if ( _line == std::format( "{}::{} = {}", main_key.self_name, sub_key.self_name, false ) ) {
+                    } else if ( _line == std::format( "{}.{} = {}", main_key.self_name, sub_key.self_name, false ) ) {
                         sub_key.disable();
                     }
                 }
@@ -196,7 +196,7 @@ namespace core {
         {
             for ( const auto &main_key : options.main_keys ) {
                 for ( const auto &sub_key : main_key.sub_keys ) {
-                    _out.append( std::format( "{}::{} = {}\n", main_key.self_name, sub_key.self_name, sub_key.get() ) );
+                    _out.append( std::format( "{}.{} = {}\n", main_key.self_name, sub_key.self_name, sub_key.get() ) );
                 }
             }
         }
