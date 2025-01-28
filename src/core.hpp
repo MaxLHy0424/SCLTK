@@ -119,8 +119,13 @@ namespace core {
             { { "hijack_execs", "劫持可执行文件" }, { "set_serv_startup_types", "设置服务启动类型" } } },
           { "window",
             "窗口显示",
-            { { "topmost_show", "置顶显示" }, { "disable_close_ctrl", "禁用关闭控件" }, { "translucency", "半透明化" } } },
-          { "other", "其他", { { "fix_os_env", "修复操作系统环境" } } } } } };
+            { { "topmost_show", "(*) 置顶显示" },
+              { "disable_close_ctrl", "(*) 禁用关闭控件" },
+              { "translucency", "(*) 半透明化" } } },
+          { "other",
+            "其他",
+            { { "fix_os_env", "(*) 修复操作系统环境" }, { "disable_x_option_hot_reload", "(-) 禁用标 (*) 选项热重载" } } } } } };
+    inline const auto &is_disabled_x_option_hot_reload{ options[ "other" ][ "disable_x_option_hot_reload" ] };
     struct rule_node final {
         const ansi_char *const showed_name;
         std::deque< ansi_std_string > execs;
@@ -366,6 +371,13 @@ namespace core {
     {
         const auto &is_translucency{ options[ "window" ][ "translucency" ] };
         const auto &is_disabled_close_ctrl{ options[ "window" ][ "disable_close_ctrl" ] };
+        if ( is_disabled_x_option_hot_reload.get() ) {
+            SetLayeredWindowAttributes( GetConsoleWindow(), RGB( 0, 0, 0 ), is_translucency.get() ? 230 : 255, LWA_ALPHA );
+            EnableMenuItem(
+              GetSystemMenu( GetConsoleWindow(), FALSE ), SC_CLOSE,
+              is_disabled_close_ctrl.get() ? MF_BYCOMMAND | MF_DISABLED | MF_GRAYED : MF_BYCOMMAND | MF_ENABLED );
+            return;
+        }
         while ( !_msg.stop_requested() ) {
             SetLayeredWindowAttributes( GetConsoleWindow(), RGB( 0, 0, 0 ), is_translucency.get() ? 230 : 255, LWA_ALPHA );
             EnableMenuItem(
@@ -376,39 +388,53 @@ namespace core {
     }
     auto topmost_show_window( const std::stop_token _msg )
     {
+        const auto &is_topmost_shown{ options[ "window" ][ "topmost_show" ] };
+        if ( is_disabled_x_option_hot_reload.get() && !is_topmost_shown.get() ) {
+            return;
+        }
         const auto this_window{ GetConsoleWindow() };
         const auto foreground_id{ GetWindowThreadProcessId( this_window, nullptr ) };
         const auto current_id{ GetCurrentThreadId() };
-        const auto &is_topmost_shown{ options[ "window" ][ "topmost_show" ] };
-        while ( !_msg.stop_requested() ) {
-            if ( !is_topmost_shown.get() ) {
-                SetWindowPos( GetConsoleWindow(), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
-                cpp_utils::perf_sleep( default_thread_sleep_time );
-                continue;
-            }
+        auto core_op{ [ = ]
+        {
             AttachThreadInput( current_id, foreground_id, TRUE );
             ShowWindow( this_window, SW_SHOWNORMAL );
             SetForegroundWindow( this_window );
             AttachThreadInput( current_id, foreground_id, FALSE );
             SetWindowPos( this_window, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
             cpp_utils::perf_sleep( 100ms );
+        } };
+        if ( is_disabled_x_option_hot_reload.get() ) {
+            while ( !_msg.stop_requested() ) {
+                core_op();
+            }
+            SetWindowPos( GetConsoleWindow(), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
+            return;
+        }
+        while ( !_msg.stop_requested() ) {
+            if ( !is_topmost_shown.get() ) {
+                SetWindowPos( GetConsoleWindow(), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
+                cpp_utils::perf_sleep( default_thread_sleep_time );
+                continue;
+            }
+            core_op();
         }
         SetWindowPos( GetConsoleWindow(), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
     }
     auto fix_os_env( const std::stop_token _msg )
     {
+        const auto &is_fixed_os_env{ options[ "other" ][ "fix_os_env" ] };
+        if ( is_disabled_x_option_hot_reload.get() && !is_fixed_os_env.get() ) {
+            return;
+        }
         constexpr const ansi_char *hkcu_reg_dirs[]{
           R"(Software\Policies\Microsoft\Windows\System)", R"(Software\Microsoft\Windows\CurrentVersion\Policies\System)",
           R"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)" };
         constexpr const ansi_char *execs[]{
           "mode.com", "chcp.com", "ntsd.exe",    "taskkill.exe", "sc.exe",      "net.exe",
           "reg.exe",  "cmd.exe",  "taskmgr.exe", "perfmon.exe",  "regedit.exe", "mmc.exe" };
-        const auto &is_fixed_os_env{ options[ "other" ][ "fix_os_env" ] };
-        while ( !_msg.stop_requested() ) {
-            if ( !is_fixed_os_env.get() ) {
-                cpp_utils::perf_sleep( default_thread_sleep_time );
-                continue;
-            }
+        auto core_op{ [ = ]
+        {
             for ( const auto &reg_dir : hkcu_reg_dirs ) {
                 RegDeleteTreeA( HKEY_CURRENT_USER, reg_dir );
             }
@@ -418,6 +444,19 @@ namespace core {
                   std::format( R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{})", exec ).c_str() );
             }
             cpp_utils::perf_sleep( 1s );
+        } };
+        if ( is_disabled_x_option_hot_reload.get() ) {
+            while ( !_msg.stop_requested() ) {
+                core_op();
+            }
+            return;
+        }
+        while ( !_msg.stop_requested() ) {
+            if ( !is_fixed_os_env.get() ) {
+                cpp_utils::perf_sleep( default_thread_sleep_time );
+                continue;
+            }
+            core_op();
         }
     }
     class config_op final {
@@ -562,8 +601,11 @@ namespace core {
             ui
               .add_back( std::format(
                 "                    [ 配  置 ]\n\n\n"
-                " (i) 所有选项默认禁用, 每 {} 自动应用.\n"
-                "     相关信息可参阅文档.\n",
+                " (i) 所有选项默认禁用. 相关信息可参阅文档.\n"
+                "     无标识选项可进行实时热重载.\n"
+                "     标 (*) 选项热重载默认启用,\n"
+                "     每 {} 自动执行, 可手工禁用.\n"
+                "     标 (-) 选项无法进行热重载.\n",
                 default_thread_sleep_time ) )
               .add_back( " < 返回 ", quit, cpp_utils::console_value::text_foreground_green | cpp_utils::console_value::text_foreground_intensity )
               .add_back( " > 同步配置 ", [ this ]( cpp_utils::console_ui_ansi::func_args ) { return sync(); } )
