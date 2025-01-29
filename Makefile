@@ -28,13 +28,11 @@ bin/release/CRCSN-i686-msvcrt.exe: $(bit32_executable_dependent_items) bin/relea
 	$(msys2)\\mingw32\\bin\\$(cc) $(bit32_executable_dependent_items) $(def) $(args_release) -o $@
 bin/release/CRCSN-x86_64-ucrt.exe: $(bit64_executable_dependent_items) bin/release/.gitkeep
 	$(msys2)\\ucrt64\\bin\\$(cc) $(bit64_executable_dependent_items) $(def) $(args_release) -o $@
-info_obj_dependent_items = info.rc img/favicon.ico src/info.hpp bin/.gitkeep
-bin/info-i686.obj: $(info_obj_dependent_items)
+info_obj_dependent_items = info.rc img/favicon.ico src/info.hpp
+bin/info-i686.obj: $(info_obj_dependent_items) bin/.gitkeep
 	$(msys2)\\usr\\bin\\windres.exe -i $< $(def) -o $@ -F pe-i386
-bin/info-x86_64.obj: $(info_obj_dependent_items)
+bin/info-x86_64.obj: $(info_obj_dependent_items) bin/.gitkeep
 	$(msys2)\\usr\\bin\\windres.exe -i $< $(def) -o $@ -F pe-x86-64
-	$(msys2)\\usr\\bin\\mkdir.exe bin -p
-	$(msys2)\\usr\\bin\\touch.exe $@
 bin/.gitkeep:
 	$(msys2)\\usr\\bin\\mkdir.exe bin -p
 	$(msys2)\\usr\\bin\\touch.exe $@
