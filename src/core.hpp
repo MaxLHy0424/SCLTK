@@ -604,7 +604,7 @@ namespace core {
                 " (i) 所有选项默认禁用. 相关信息可参阅文档.\n"
                 "     无标识选项可进行实时热重载.\n"
                 "     标 (*) 选项热重载默认启用,\n"
-                "     每 {} 自动执行, 可手工禁用.\n"
+                "     每 {} 自动执行, 可禁用.\n"
                 "     标 (-) 选项无法进行热重载.\n",
                 default_thread_sleep_time ) )
               .add_back( " < 返回 ", quit, cpp_utils::console_value::text_foreground_green | cpp_utils::console_value::text_foreground_intensity )
