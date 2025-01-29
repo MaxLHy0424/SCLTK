@@ -164,22 +164,22 @@ namespace core {
           "FormatPaper.exe" },
        { "appcheck2", "checkapp2" }                }
     };
-    class config_node {
+    class basic_config_node {
       public:
         const ansi_char *const self_name;
-        virtual auto load( const bool, ansi_std_string & ) -> void     = 0;
-        virtual auto prepare_reloading() -> void                       = 0;
-        virtual auto sync( ansi_std_string & ) -> void                 = 0;
-        virtual auto operator=( const config_node & ) -> config_node & = delete;
-        virtual auto operator=( config_node && ) -> config_node &      = delete;
-        config_node( const ansi_char *const _self_name )
+        virtual auto load( const bool, ansi_std_string & ) -> void                 = 0;
+        virtual auto prepare_reloading() -> void                                   = 0;
+        virtual auto sync( ansi_std_string & ) -> void                             = 0;
+        virtual auto operator=( const basic_config_node & ) -> basic_config_node & = delete;
+        virtual auto operator=( basic_config_node && ) -> basic_config_node &      = delete;
+        basic_config_node( const ansi_char *const _self_name )
           : self_name{ _self_name }
         { }
-        config_node( const config_node & ) = delete;
-        config_node( config_node && )      = delete;
-        virtual ~config_node()             = default;
+        basic_config_node( const basic_config_node & ) = delete;
+        basic_config_node( basic_config_node && )      = delete;
+        virtual ~basic_config_node()                   = default;
     };
-    class option_op final : public config_node {
+    class option_op final : public basic_config_node {
       public:
         virtual auto load( const bool _is_reloaded, ansi_std_string &_line ) -> void override final
         {
@@ -208,13 +208,13 @@ namespace core {
         virtual auto operator=( const option_op & ) -> option_op & = delete;
         virtual auto operator=( option_op && ) -> option_op &      = delete;
         option_op()
-          : config_node{ "options" }
+          : basic_config_node{ "options" }
         { }
         option_op( const option_op & ) = delete;
         option_op( option_op && )      = delete;
         virtual ~option_op()           = default;
     };
-    class custom_rules_execs_op final : public config_node {
+    class custom_rules_execs_op final : public basic_config_node {
       public:
         virtual auto load( const bool, ansi_std_string &_line ) -> void override final
         {
@@ -233,13 +233,13 @@ namespace core {
         virtual auto operator=( const custom_rules_execs_op & ) -> custom_rules_execs_op & = delete;
         virtual auto operator=( custom_rules_execs_op && ) -> custom_rules_execs_op &      = delete;
         custom_rules_execs_op()
-          : config_node{ "custom_rules_execs" }
+          : basic_config_node{ "custom_rules_execs" }
         { }
         custom_rules_execs_op( const custom_rules_execs_op & ) = delete;
         custom_rules_execs_op( custom_rules_execs_op && )      = delete;
         virtual ~custom_rules_execs_op()                       = default;
     };
-    class custom_rules_servs_op final : public config_node {
+    class custom_rules_servs_op final : public basic_config_node {
       public:
         virtual auto load( const bool, ansi_std_string &_line ) -> void override final
         {
@@ -258,16 +258,16 @@ namespace core {
         virtual auto operator=( const custom_rules_servs_op & ) -> custom_rules_servs_op & = delete;
         virtual auto operator=( custom_rules_servs_op && ) -> custom_rules_servs_op &      = delete;
         custom_rules_servs_op()
-          : config_node{ "custom_rules_servs" }
+          : basic_config_node{ "custom_rules_servs" }
         { }
         custom_rules_servs_op( const custom_rules_servs_op & ) = delete;
         custom_rules_servs_op( custom_rules_servs_op && )      = delete;
         virtual ~custom_rules_servs_op()                       = default;
     };
-    using config_node_smart_ptr = std::unique_ptr< config_node >;
-    inline config_node_smart_ptr configs[]{
-      config_node_smart_ptr{ new option_op{} }, config_node_smart_ptr{ new custom_rules_execs_op{} },
-      config_node_smart_ptr{ new custom_rules_servs_op{} } };
+    using basic_config_node_smart_ptr = std::unique_ptr< basic_config_node >;
+    inline basic_config_node_smart_ptr configs[]{
+      basic_config_node_smart_ptr{ new option_op }, basic_config_node_smart_ptr{ new custom_rules_execs_op },
+      basic_config_node_smart_ptr{ new custom_rules_servs_op } };
     template < typename _chrono_type_ >
     inline auto wait( const _chrono_type_ _time )
     {
@@ -481,7 +481,7 @@ namespace core {
             std::print( " -> 加载配置文件.\n" );
             ansi_std_string line{};
             ansi_std_string_view line_view{};
-            config_node *node_ptr{ nullptr };
+            basic_config_node *node_ptr{ nullptr };
             while ( std::getline( config_file, line ) ) {
                 line_view = line;
                 if ( line_view.empty() ) {
