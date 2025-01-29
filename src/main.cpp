@@ -9,7 +9,7 @@ auto main() -> int
         cpp_utils::relaunch_as_admin();
     }
     core::config_op{ core::config_op::mod::load }( cpp_utils::console_ui_ansi::func_args{ ui } );
-    cpp_utils::thread_pool_ansi threads{};
+    cpp_utils::multithread_task_ansi threads{};
     threads.add( "置顶显示", core::topmost_show_window )
       .add( "窗口属性设定", core::set_console_attrs )
       .add( "修复操作系统环境", core::fix_os_env );
