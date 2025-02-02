@@ -364,13 +364,13 @@ namespace cpp_utils {
         inline constexpr WORD text_lvb_reverse_video{ COMMON_LVB_REVERSE_VIDEO };
         inline constexpr WORD text_lvb_underscore{ COMMON_LVB_UNDERSCORE };
         inline constexpr WORD text_lvb_sbcsdbcs{ COMMON_LVB_SBCSDBCS };
-        inline constexpr auto ui_back{ false };
-        inline constexpr auto ui_quit{ true };
     };
     template < typename _char_type_ >
         requires( std::is_same_v< _char_type_, ansi_char > || std::is_same_v< _char_type_, utf8_char > )
     class console_ui final {
       public:
+        static constexpr auto back{ false };
+        static constexpr auto quit{ true };
         struct func_args final {
             console_ui< _char_type_ > &parent_ui;
             const DWORD button_state;
@@ -551,7 +551,7 @@ namespace cpp_utils {
         }
         auto call_func_( const MOUSE_EVENT_RECORD &_mouse_event )
         {
-            auto is_exited{ console_value::ui_back };
+            auto is_exited{ back };
             for ( auto &line : lines_ ) {
                 if ( line != _mouse_event.dwMousePosition ) {
                     continue;
@@ -676,8 +676,8 @@ namespace cpp_utils {
             edit_console_attrs_( console_attrs_::lock_text );
             init_pos_();
             auto mouse_event{ MOUSE_EVENT_RECORD{} };
-            auto func_return_value{ console_value::ui_back };
-            while ( func_return_value == console_value::ui_back ) {
+            auto func_return_value{ back };
+            while ( func_return_value == back ) {
                 mouse_event = wait_mouse_event_();
                 switch ( mouse_event.dwEventFlags ) {
                     case console_value::mouse_move : refresh_( mouse_event.dwMousePosition ); break;

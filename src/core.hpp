@@ -281,19 +281,19 @@ namespace core {
     }
     inline auto quit( cpp_utils::console_ui_ansi::func_args )
     {
-        return cpp_utils::console_value::ui_quit;
+        return cpp_utils::console_ui_ansi::quit;
     }
     inline auto relaunch( cpp_utils::console_ui_ansi::func_args )
     {
         cpp_utils::relaunch_as_admin();
-        return cpp_utils::console_value::ui_quit;
+        return cpp_utils::console_ui_ansi::quit;
     }
     inline auto info( cpp_utils::console_ui_ansi::func_args )
     {
         auto visit_repo_webpage{ []( cpp_utils::console_ui_ansi::func_args )
         {
             ShellExecuteA( nullptr, "open", INFO_REPO_URL, nullptr, nullptr, SW_SHOWNORMAL );
-            return cpp_utils::console_value::ui_back;
+            return cpp_utils::console_ui_ansi::back;
         } };
         cpp_utils::console_ui_ansi ui{};
         std::print( " -> 准备用户界面.\n" );
@@ -306,7 +306,7 @@ namespace core {
             cpp_utils::console_value::text_default | cpp_utils::console_value::text_lvb_underscore )
           .add_back( "\n[ 许可证 ]\n\n " INFO_LICENSE " \n\n (C) 2023 - present " INFO_DEVELOPER "." )
           .show();
-        return cpp_utils::console_value::ui_back;
+        return cpp_utils::console_ui_ansi::back;
     }
     inline auto toolkit( cpp_utils::console_ui_ansi::func_args )
     {
@@ -325,7 +325,7 @@ namespace core {
             _args.parent_ui.set_console(
               INFO_SHORT_NAME, CHARSET_ID, CONSOLE_WIDTH, CONSOLE_HEIGHT, true, false,
               is_disabled_close_ctrl.get() ? false : true, is_translucency.get() ? 230 : 255 );
-            return cpp_utils::console_value::ui_back;
+            return cpp_utils::console_ui_ansi::back;
         } };
         class cmd_executor final {
           private:
@@ -335,7 +335,7 @@ namespace core {
             {
                 std::print( " -> 执行操作系统命令.\n{}\n", ansi_std_string( CONSOLE_WIDTH, '-' ) );
                 std::system( cmd_.c_str() );
-                return cpp_utils::console_value::ui_back;
+                return cpp_utils::console_ui_ansi::back;
             }
             auto operator=( const cmd_executor & ) -> cmd_executor & = delete;
             auto operator=( cmd_executor && ) -> cmd_executor &      = delete;
@@ -366,7 +366,7 @@ namespace core {
             ui.add_back( std::format( " > {} ", common_op[ 0 ] ), cmd_executor{ common_op[ 1 ] } );
         }
         ui.show();
-        return cpp_utils::console_value::ui_back;
+        return cpp_utils::console_ui_ansi::back;
     }
     auto set_console_attrs( const std::stop_token _msg )
     {
@@ -528,20 +528,20 @@ namespace core {
                         << config_text << std::flush;
             std::print( "\n ({}) 同步配置{}.\n\n", config_file.good() ? 'i' : '!', config_file.good() ? "成功" : "失败" );
             wait( 3s );
-            return cpp_utils::console_value::ui_back;
+            return cpp_utils::console_ui_ansi::back;
         }
         auto open_file()
         {
             if ( std::ifstream{ config_file_name, std::ios::in }.good() ) {
                 std::print( " -> 打开配置.\n" );
                 ShellExecuteA( nullptr, "open", config_file_name, nullptr, nullptr, SW_SHOWNORMAL );
-                return cpp_utils::console_value::ui_back;
+                return cpp_utils::console_ui_ansi::back;
             }
             std::print(
               "                    [ 配  置 ]\n\n\n"
               " (i) 无法读取配置文件.\n\n" );
             wait( 3s );
-            return cpp_utils::console_value::ui_back;
+            return cpp_utils::console_ui_ansi::back;
         }
         class option_setter final {
           private:
@@ -554,7 +554,7 @@ namespace core {
                     case true : sub_key_.enable(); break;
                     case false : sub_key_.disable(); break;
                 }
-                return cpp_utils::console_value::ui_back;
+                return cpp_utils::console_ui_ansi::back;
             }
             auto operator=( const option_setter & ) -> option_setter & = delete;
             auto operator=( option_setter && ) -> option_setter &      = delete;
@@ -584,7 +584,7 @@ namespace core {
                       .add_back( " > 禁用 ", option_setter{ sub_key, false }, option_button_color );
                 }
                 ui.show();
-                return cpp_utils::console_value::ui_back;
+                return cpp_utils::console_ui_ansi::back;
             }
             auto operator=( const option_shower & ) -> option_shower & = delete;
             auto operator=( option_shower && ) -> option_shower &      = delete;
@@ -624,7 +624,7 @@ namespace core {
                 case mod::load : load_( false ); break;
                 case mod::edit : edit_(); break;
             }
-            return cpp_utils::console_value::ui_back;
+            return cpp_utils::console_ui_ansi::back;
         }
         auto operator=( const config_op & ) -> config_op & = delete;
         auto operator=( config_op && ) -> config_op &      = delete;
@@ -648,7 +648,7 @@ namespace core {
             if ( rules_.empty() ) {
                 std::print( " (i) 规则为空.\n\n" );
                 wait( 3s );
-                return cpp_utils::console_value::ui_back;
+                return cpp_utils::console_ui_ansi::back;
             }
             const auto &crack_restore_option_node{ options[ "crack_restore" ] };
             const auto &is_hijacked_execs{ crack_restore_option_node[ "hijack_execs" ] };
@@ -699,7 +699,7 @@ namespace core {
                     break;
                 }
             }
-            return cpp_utils::console_value::ui_back;
+            return cpp_utils::console_ui_ansi::back;
         }
         auto operator=( const rule_op & ) -> rule_op & = delete;
         auto operator=( rule_op && ) -> rule_op &      = delete;
