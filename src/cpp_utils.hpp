@@ -110,25 +110,26 @@ namespace cpp_utils {
     {
         const auto convert_arg{ []( auto &&_arg ) -> decltype( auto )
         {
-            if constexpr (
-              std::is_same_v< std::decay_t< decltype( _arg ) >, utf8_std_string >
-              || std::is_same_v< std::decay_t< decltype( _arg ) >, utf8_std_string_view >
-              || std::is_same_v< std::decay_t< decltype( _arg ) >, utf8_char * >
-              || std::is_same_v< std::decay_t< decltype( _arg ) >, const utf8_char * > )
-            {
-                return static_cast< const ansi_std_string_view >( string_view_convert< ansi_char >( utf8_std_string_view{ _arg } ) );
+            if constexpr ( std::is_same_v< std::decay_t< decltype( _arg ) >, utf8_std_string > ) {
+                return reinterpret_cast< ansi_std_string * >( &_arg );
+            } else if constexpr ( std::is_same_v< std::decay_t< decltype( _arg ) >, utf8_std_string_view > ) {
+                return reinterpret_cast< ansi_std_string_view * >( &_arg );
+            } else if constexpr ( std::is_same_v< std::decay_t< decltype( _arg ) >, utf8_char * > ) {
+                return reinterpret_cast< ansi_char * >( &_arg );
+            } else if constexpr ( std::is_same_v< std::decay_t< decltype( _arg ) >, const utf8_char * > ) {
+                return reinterpret_cast< const ansi_char * >( &_arg );
             } else if constexpr (
               std::is_pointer_v< std::decay_t< decltype( _arg ) > >
               && !( std::is_same_v< std::decay_t< decltype( _arg ) >, ansi_char * >
                     || std::is_same_v< std::decay_t< decltype( _arg ) >, const ansi_char * > ) )
             {
-                return static_cast< const ansi_std_string >( ptr_to_ansi_string( std::forward< decltype( _arg ) >( _arg ) ) );
+                return std::make_unique< const ansi_std_string >( ptr_to_ansi_string( std::forward< decltype( _arg ) >( _arg ) ) );
             } else {
-                return std::as_const( _arg );
+                return &_arg;
             }
         } };
         return string_convert< utf8_char >( std::vformat(
-          string_view_convert< ansi_char >( _fmt ), std::make_format_args( convert_arg( std::forward< _args_ >( _args ) )... ) ) );
+          string_view_convert< ansi_char >( _fmt ), std::make_format_args( *convert_arg( std::forward< _args_ >( _args ) )... ) ) );
     }
     template < typename... _args_ >
     inline auto &utf8_format_to( utf8_std_string &_str, const utf8_std_string_view _fmt, _args_ &&..._args )
