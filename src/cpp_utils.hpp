@@ -502,15 +502,9 @@ namespace cpp_utils {
         {
             get_console_size_();
             set_cursor_( { 0, 0 } );
-            if constexpr ( std::is_same_v< _char_type_, ansi_char > ) {
-                std::print(
-                  "{}",
-                  ansi_std_string( static_cast< size_type >( console_width_ ) * static_cast< size_type >( console_height_ ), ' ' ) );
-            } else if constexpr ( std::is_same_v< _char_type_, utf8_char > ) {
-                utf8_print(
-                  u8"{}",
-                  utf8_std_string( static_cast< size_type >( console_width_ ) * static_cast< size_type >( console_height_ ), ' ' ) );
-            }
+            std::print(
+              "{}",
+              ansi_std_string( static_cast< size_type >( console_width_ ) * static_cast< size_type >( console_height_ ), ' ' ) );
             set_cursor_( { 0, 0 } );
         }
         static auto write_( const std_string_view< _char_type_ > _text, const bool _is_endl = false )
@@ -518,7 +512,7 @@ namespace cpp_utils {
             if constexpr ( std::is_same_v< _char_type_, ansi_char > ) {
                 std::print( "{}{}", _text, _is_endl ? '\n' : '\0' );
             } else if constexpr ( std::is_same_v< _char_type_, utf8_char > ) {
-                utf8_print( u8"{}{}", _text, _is_endl ? '\n' : '\0' );
+                std::print( "{}{}", *reinterpret_cast< const ansi_std_string_view * >( &_text ), _is_endl ? '\n' : '\0' );
             }
         }
         static auto rewrite_( const COORD _cursor_position, const std_string_view< _char_type_ > _text )
