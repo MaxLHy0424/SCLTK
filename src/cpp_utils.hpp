@@ -439,7 +439,7 @@ namespace cpp_utils {
         {
             CONSOLE_CURSOR_INFO cursor_data;
             GetConsoleCursorInfo( GetStdHandle( STD_OUTPUT_HANDLE ), &cursor_data );
-            cursor_data.bVisible = _is_shown;
+            cursor_data.bVisible = static_cast< WINBOOL >( _is_shown );
             SetConsoleCursorInfo( GetStdHandle( STD_OUTPUT_HANDLE ), &cursor_data );
         }
         static auto edit_console_attrs_( const console_attrs_ _mod )
