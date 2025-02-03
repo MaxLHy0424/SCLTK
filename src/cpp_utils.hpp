@@ -483,7 +483,7 @@ namespace cpp_utils {
                 perf_sleep( 10ms );
                 ReadConsoleInputW( GetStdHandle( STD_INPUT_HANDLE ), &record, 1, &reg );
                 if ( record.EventType == MOUSE_EVENT
-                     && _is_mouse_moved | ( record.Event.MouseEvent.dwEventFlags != console_value::mouse_move ) )
+                     && ( _is_mouse_moved || record.Event.MouseEvent.dwEventFlags != console_value::mouse_move ) )
                 {
                     return record.Event.MouseEvent;
                 }
