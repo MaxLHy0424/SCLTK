@@ -177,7 +177,7 @@ msys2_path = \\path\\to\\msys2
 make all
 ```
 
-即开始安装工具链和依赖库, 并编译 CRCSN. 生成的 CRCSN 可执行文件位于 `bin/i686` 和 `bin/x86_64` 中.
+即开始安装工具链和依赖库, 并编译 CRCSN. 生成的 CRCSN 可执行文件位于 `bin/debug` 和 `bin/release` 中.
 
 后续编译可使用:
 ```bash
