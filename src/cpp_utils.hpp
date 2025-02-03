@@ -161,15 +161,15 @@ namespace cpp_utils {
     template < typename _char_type_, std::size_t _length_ >
     struct constexpr_string final {
         _char_type_ data[ _length_ ]{};
-        auto operator=( const constexpr_string & ) -> constexpr_string & = delete;
-        auto operator=( constexpr_string && ) -> constexpr_string &      = delete;
+        auto operator=( const constexpr_string< _char_type_, _length_ > & ) -> constexpr_string< _char_type_, _length_ > & = delete;
+        auto operator=( constexpr_string< _char_type_, _length_ > && ) -> constexpr_string< _char_type_, _length_ > & = delete;
         constexpr constexpr_string( const _char_type_ ( &_str )[ _length_ ] )
         {
             std::copy( _str, _str + _length_, data );
         }
-        constexpr constexpr_string( const constexpr_string & ) = default;
-        constexpr constexpr_string( constexpr_string && )      = delete;
-        constexpr ~constexpr_string()                          = default;
+        constexpr constexpr_string( const constexpr_string< _char_type_, _length_ > & ) = default;
+        constexpr constexpr_string( constexpr_string< _char_type_, _length_ > && )      = delete;
+        constexpr ~constexpr_string()                                                   = default;
     };
     template < typename _chrono_type_ >
     inline auto perf_sleep( const _chrono_type_ _time )
@@ -237,11 +237,11 @@ namespace cpp_utils {
             }
             return *this;
         }
-        auto operator=( const multithread_task & ) -> multithread_task & = delete;
-        auto operator=( multithread_task && ) -> multithread_task &      = default;
-        multithread_task()                                               = default;
-        multithread_task( const multithread_task & )                     = delete;
-        multithread_task( multithread_task && )                          = default;
+        auto operator=( const multithread_task< _char_type_ > & ) -> multithread_task< _char_type_ > & = delete;
+        auto operator=( multithread_task< _char_type_ > && ) -> multithread_task< _char_type_ > &      = default;
+        multithread_task()                                                                             = default;
+        multithread_task( const multithread_task< _char_type_ > & )                                    = delete;
+        multithread_task( multithread_task< _char_type_ > && )                                         = default;
         ~multithread_task()
         {
             if constexpr ( std::is_same_v< _char_type_, ansi_char > ) {
@@ -595,7 +595,7 @@ namespace cpp_utils {
             lines_.shrink_to_fit();
             return *this;
         }
-        auto &swap( console_ui &_src )
+        auto &swap( console_ui< _char_type_ > &_src )
         {
             lines_.swap( _src.lines_ );
             return *this;
@@ -722,12 +722,12 @@ namespace cpp_utils {
             edit_console_attrs_( _is_locked_text ? console_attrs_::lock_all : console_attrs_::normal );
             return *this;
         }
-        auto operator=( const console_ui & ) -> console_ui & = default;
-        auto operator=( console_ui && ) -> console_ui &      = default;
-        console_ui()                                         = default;
-        console_ui( const console_ui & )                     = default;
-        console_ui( console_ui && )                          = default;
-        ~console_ui()                                        = default;
+        auto operator=( const console_ui< _char_type_ > & ) -> console_ui< _char_type_ > & = default;
+        auto operator=( console_ui< _char_type_ > && ) -> console_ui< _char_type_ > &      = default;
+        console_ui()                                                                       = default;
+        console_ui( const console_ui< _char_type_ > & )                                    = default;
+        console_ui( console_ui< _char_type_ > && )                                         = default;
+        ~console_ui()                                                                      = default;
     };
     using console_ui_ansi = console_ui< ansi_char >;
     using console_ui_utf8 = console_ui< utf8_char >;
