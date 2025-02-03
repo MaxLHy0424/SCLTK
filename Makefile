@@ -18,6 +18,7 @@ init:
 	 mingw-w64-i686-toolchain\
 	 mingw-w64-ucrt-x86_64-toolchain\
 	 make\
+	 git\
 	 base\
 	 base-devel\
 	 binutils
