@@ -177,17 +177,23 @@ namespace cpp_utils {
         std::this_thread::yield();
         std::this_thread::sleep_for( _time );
     }
+    template < typename _type_ >
+    concept callable_object = requires {
+        requires( !(
+          std::is_same_v< std::remove_cvref_t< _type_ >, std::thread >
+          || std::is_same_v< std::remove_cvref_t< _type_ >, std::jthread > ) );
+    };
     template < typename _char_type_ >
         requires( std::is_same_v< _char_type_, ansi_char > || std::is_same_v< _char_type_, utf8_char > )
     class multithread_task final {
       private:
         struct node_ final {
-            std::jthread task_thread{};
+            std::jthread task_thread;
             auto operator=( const node_ & ) -> node_ & = delete;
             auto operator=( node_ && ) -> node_ &      = default;
-            node_()                                    = default;
-            node_( std::jthread &&_task_thread )
-              : task_thread{ std::move( _task_thread ) }
+            template < callable_object _callee_, typename... _args_ >
+            node_( _callee_ &&_func, _args_ &&..._args )
+              : task_thread{ std::forward< _callee_ >( _func ), std::forward< _args_ >( _args )... }
             { }
             node_( const node_ & ) = delete;
             node_( node_ && )      = default;
@@ -204,19 +210,15 @@ namespace cpp_utils {
         };
         std::vector< node_ > tasks_{};
       public:
-        template < typename _callable_, typename... _args_ >
-            requires( !( std::is_same_v< std::remove_cvref_t< _callable_ >, std::thread >
-                         || std::is_same_v< std::remove_cvref_t< _callable_ >, std::jthread > ) )
-        auto &add( const std_string_view< _char_type_ > _comment, _callable_ &&_func, _args_ &&..._args )
+        template < callable_object _callee_, typename... _args_ >
+        auto &add( const std_string_view< _char_type_ > _comment, _callee_ &&_func, _args_ &&..._args )
         {
             if constexpr ( std::is_same_v< _char_type_, ansi_char > ) {
                 std::print( " -> 创建线程: {}.\n", _comment );
             } else if constexpr ( std::is_same_v< _char_type_, utf8_char > ) {
                 utf8_print( u8" -> 创建线程: {}.\n", _comment );
             }
-            tasks_.emplace_back( node_{
-              std::jthread{ std::forward< _callable_ >( _func ), std::forward< _args_ >( _args )... }
-            } );
+            tasks_.emplace_back( node_{ std::forward< _callee_ >( _func ), std::forward< _args_ >( _args )... } );
             return *this;
         }
         auto &join( const size_type _index )
@@ -254,12 +256,12 @@ namespace cpp_utils {
     class multithread_task_nolog final {
       private:
         struct node_ final {
-            std::jthread task_thread{};
+            std::jthread task_thread;
             auto operator=( const node_ & ) -> node_ & = delete;
             auto operator=( node_ && ) -> node_ &      = default;
-            node_()                                    = default;
-            node_( std::jthread &&_task_thread )
-              : task_thread{ std::move( _task_thread ) }
+            template < callable_object _callee_, typename... _args_ >
+            node_( _callee_ &&_func, _args_ &&..._args )
+              : task_thread{ std::forward< _callee_ >( _func ), std::forward< _args_ >( _args )... }
             { }
             node_( const node_ & ) = delete;
             node_( node_ && )      = default;
@@ -267,14 +269,10 @@ namespace cpp_utils {
         };
         std::vector< node_ > tasks_{};
       public:
-        template < typename _callable_, typename... _args_ >
-            requires( !( std::is_same_v< std::remove_cvref_t< _callable_ >, std::thread >
-                         || std::is_same_v< std::remove_cvref_t< _callable_ >, std::jthread > ) )
-        auto &add( _callable_ &&_func, _args_ &&..._args )
+        template < callable_object _callee_, typename... _args_ >
+        auto &add( _callee_ &&_func, _args_ &&..._args )
         {
-            tasks_.emplace_back( node_{
-              std::jthread{ std::forward< _callable_ >( _func ), std::forward< _args_ >( _args )... }
-            } );
+            tasks_.emplace_back( node_{ std::forward< _callee_ >( _func ), std::forward< _args_ >( _args )... } );
             return *this;
         }
         auto &join( const size_type _index )
