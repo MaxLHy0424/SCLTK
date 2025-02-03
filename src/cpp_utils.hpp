@@ -367,8 +367,8 @@ namespace cpp_utils {
         requires( std::is_same_v< _char_type_, ansi_char > || std::is_same_v< _char_type_, utf8_char > )
     class console_ui final {
       public:
-        static constexpr auto back{ false };
-        static constexpr auto quit{ true };
+        inline static constexpr auto back{ false };
+        inline static constexpr auto quit{ true };
         struct func_args final {
             console_ui< _char_type_ > &parent_ui;
             const DWORD button_state;
