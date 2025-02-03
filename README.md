@@ -40,9 +40,9 @@ CRCSN 发行版文件名规则为 `CRCSN-[ arch ]-[ runtime ].exe`, 其中 `[ ar
 
 `[ arch ]` 和 `[ runtime ]` 的具体信息如下:
 - **`x86_64` & `ucrt` \(推荐\)**\
-  开发工具链为 *MSYS2* `mingw-w64-ucrt-x86_64-toolchain`, 64 位可执行文件, 运行时库为 *Universal C Runtime*, 支持 Windows 10 以上的 Windows OS \(部分 Windows OS 在安装特定更新后可以运行\).
+  开发工具链为 msys2 `mingw-w64-ucrt-x86_64-toolchain`, 64 位可执行文件, 运行时库为 *Universal C Runtime*, 支持 Windows 10 以上的 Windows OS \(部分 Windows OS 在安装特定更新后可以运行\).
 - **`i686` & `msvcrt`**\
-  开发工具链为 *MSYS2* `mingw-w64-i686-toolchain`, 32 位可执行文件, 运行时库为 *Microsoft Visual C Runtime*, 支持大部分 Windows OS.
+  开发工具链为 msys2 `mingw-w64-i686-toolchain`, 32 位可执行文件, 运行时库为 *Microsoft Visual C Runtime*, 支持大部分 Windows OS.
 
 ## 2 常规操作
 
@@ -160,6 +160,32 @@ abc_diag_track
 # 📜 许可证
 
 CRCSN 使用 [MIT License](./LICENSE), 详细内容请自行阅读.
+
+# 🛠️ 二次开发相关事宜
+
+首先, 请确保您已经安装了 [msys2](https://www.msys2.org), 并在 msys2 的 `msys` 环境中安装了软件包 `make` 和 `git`.
+
+然后, 使用 `git` 克隆本仓库到本地, 在仓库本地目录下创建 `msys2` 文件, 内容如下:
+```
+msys2_path = \\path\\to\\msys2
+```
+
+其中 `\\path\\to\\msys2` 为 msys2 的安装路径 (以 `\\` 作为路径分隔符, 如 `C:\\msys2`).
+
+接下来, 在仓库本地目录下打开终端, 执行:
+```bash
+make all
+```
+
+即开始安装工具链和依赖库, 并编译 CRCSN. 生成的 CRCSN 可执行文件位于 `bin/i686` 和 `bin/x86_64` 中.
+
+后续编译可使用:
+```bash
+make debug
+```
+```bash
+make release
+```
 
 # ❓ 常见问题
 
