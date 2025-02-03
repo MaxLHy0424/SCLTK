@@ -589,14 +589,10 @@ namespace cpp_utils {
         }
         auto &optimize_storage()
         {
-            lines_.shrink_to_fit();
-            return *this;
-        }
-        auto &optimize_text()
-        {
             for ( auto &line : lines_ ) {
                 line.text.shrink_to_fit();
             }
+            lines_.shrink_to_fit();
             return *this;
         }
         auto &swap( console_ui &_src )
