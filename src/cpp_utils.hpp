@@ -15,7 +15,7 @@
 namespace cpp_utils {
     using namespace std::chrono_literals;
     using namespace std::string_literals;
-    using io_stream             = std::FILE;
+    using io_buffer             = std::FILE;
     using size_type             = std::size_t;
     using nullptr_type          = std::nullptr_t;
     using ansi_char             = char;
@@ -142,7 +142,7 @@ namespace cpp_utils {
         std::print( "{}", string_view_convert< ansi_char >( utf8_format( _fmt, std::forward< _args_ >( _args )... ) ) );
     }
     template < typename... _args_ >
-    inline auto utf8_print( io_stream *const _stream, const utf8_std_string_view _fmt, _args_ &&..._args )
+    inline auto utf8_print( io_buffer *const _stream, const utf8_std_string_view _fmt, _args_ &&..._args )
     {
         std::print( _stream, "{}", string_view_convert< ansi_char >( utf8_format( _fmt, std::forward< _args_ >( _args )... ) ) );
     }
@@ -152,7 +152,7 @@ namespace cpp_utils {
         std::println( "{}", string_view_convert< ansi_char >( utf8_format( _fmt, std::forward< _args_ >( _args )... ) ) );
     }
     template < typename... _args_ >
-    inline auto utf8_println( io_stream *const _stream, const utf8_std_string_view _fmt, _args_ &&..._args )
+    inline auto utf8_println( io_buffer *const _stream, const utf8_std_string_view _fmt, _args_ &&..._args )
     {
         std::println( _stream, "{}", string_view_convert< ansi_char >( utf8_format( _fmt, std::forward< _args_ >( _args )... ) ) );
     }
