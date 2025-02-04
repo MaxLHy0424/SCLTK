@@ -218,7 +218,7 @@ namespace cpp_utils {
             } else if constexpr ( std::is_same_v< _char_type_, utf8_char > ) {
                 utf8_print( u8" -> 创建线程: {}.\n", _comment );
             }
-            tasks_.emplace_back( node_{ std::forward< _callee_ >( _func ), std::forward< _args_ >( _args )... } );
+            tasks_.emplace_back( std::forward< _callee_ >( _func ), std::forward< _args_ >( _args )... );
             return *this;
         }
         auto &join( const size_type _index )
@@ -272,7 +272,7 @@ namespace cpp_utils {
         template < callable_object _callee_, typename... _args_ >
         auto &add( _callee_ &&_func, _args_ &&..._args )
         {
-            tasks_.emplace_back( node_{ std::forward< _callee_ >( _func ), std::forward< _args_ >( _args )... } );
+            tasks_.emplace_back( std::forward< _callee_ >( _func ), std::forward< _args_ >( _args )... );
             return *this;
         }
         auto &join( const size_type _index )
@@ -605,12 +605,7 @@ namespace cpp_utils {
           const WORD _intensity_attrs = console_value::text_foreground_green | console_value::text_foreground_blue,
           const WORD _default_attrs   = console_value::text_default )
         {
-            lines_.emplace_front( line_node_{
-              _text,
-              _func,
-              _default_attrs,
-              _func != nullptr ? _intensity_attrs : _default_attrs,
-            } );
+            lines_.emplace_front( _text, _func, _default_attrs, _func != nullptr ? _intensity_attrs : _default_attrs );
             return *this;
         }
         auto &add_back(
@@ -618,12 +613,7 @@ namespace cpp_utils {
           const WORD _intensity_attrs = console_value::text_foreground_blue | console_value::text_foreground_green,
           const WORD _default_attrs   = console_value::text_default )
         {
-            lines_.emplace_back( line_node_{
-              _text,
-              _func,
-              _default_attrs,
-              _func != nullptr ? _intensity_attrs : _default_attrs,
-            } );
+            lines_.emplace_back( _text, _func, _default_attrs, _func != nullptr ? _intensity_attrs : _default_attrs );
             return *this;
         }
         auto &insert(
@@ -632,8 +622,7 @@ namespace cpp_utils {
           const WORD _default_attrs   = console_value::text_default )
         {
             lines_.emplace(
-              lines_.cbegin() + _index,
-              line_node_{ _text, _func, _default_attrs, _func != nullptr ? _intensity_attrs : _default_attrs } );
+              lines_.cbegin() + _index, _text, _func, _default_attrs, _func != nullptr ? _intensity_attrs : _default_attrs );
             return *this;
         }
         auto &edit(
