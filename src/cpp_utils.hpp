@@ -115,9 +115,9 @@ namespace cpp_utils {
             } else if constexpr ( std::is_same_v< std::decay_t< _type_ >, utf8_std_string_view > ) {
                 return reinterpret_cast< ansi_std_string_view * >( &_arg );
             } else if constexpr ( std::is_same_v< std::decay_t< _type_ >, utf8_char * > ) {
-                return reinterpret_cast< ansi_char * >( &_arg );
+                return std::make_unique< ansi_std_string_view >( reinterpret_cast< ansi_char * >( &_arg ) );
             } else if constexpr ( std::is_same_v< std::decay_t< _type_ >, const utf8_char * > ) {
-                return reinterpret_cast< const ansi_char * >( &_arg );
+                return std::make_unique< ansi_std_string_view >( reinterpret_cast< const ansi_char * >( &_arg ) );
             } else if constexpr (
               std::is_pointer_v< std::decay_t< _type_ > >
               && !( std::is_same_v< std::decay_t< _type_ >, ansi_char * >
