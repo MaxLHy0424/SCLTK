@@ -171,6 +171,16 @@ namespace cpp_utils {
         constexpr constexpr_string( constexpr_string< _char_type_, _length_ > && )      = delete;
         constexpr ~constexpr_string()                                                   = default;
     };
+    template < std::size_t _length_ >
+    using constexpr_ansi_string = constexpr_string< ansi_char, _length_ >;
+    template < std::size_t _length_ >
+    using constexpr_wide_string = constexpr_string< wide_char, _length_ >;
+    template < std::size_t _length_ >
+    using constexpr_utf8_string = constexpr_string< utf8_char, _length_ >;
+    template < std::size_t _length_ >
+    using constexpr_utf16_string = constexpr_string< utf16_char, _length_ >;
+    template < std::size_t _length_ >
+    using constexpr_utf32_string = constexpr_string< utf32_char, _length_ >;
     template < typename _chrono_type_ >
     inline auto perf_sleep( const _chrono_type_ _time )
     {
