@@ -3,6 +3,7 @@
 # include <windows.h>
 #endif
 #include <chrono>
+#include <concepts>
 #include <deque>
 #include <functional>
 #include <print>
@@ -10,7 +11,6 @@
 #include <string_view>
 #include <thread>
 #include <type_traits>
-#include <utility>
 #include <vector>
 namespace cpp_utils {
     using namespace std::chrono_literals;
@@ -39,68 +39,66 @@ namespace cpp_utils {
     using std_string = std::basic_string< _char_type >;
     template < typename _char_type >
     using std_string_view = std::basic_string_view< _char_type >;
-    template < typename _char_type_ >
-    inline consteval auto is_char_type()
+    template < typename _type_ >
+    concept char_type
+      = std::is_same_v< std::decay_t< _type_ >, ansi_char > || std::is_same_v< std::decay_t< _type_ >, wide_char >
+     || std::is_same_v< std::decay_t< _type_ >, utf8_char > || std::is_same_v< std::decay_t< _type_ >, utf16_char >
+     || std::is_same_v< std::decay_t< _type_ >, utf32_char >;
+    template < typename _type_a_, typename _type_b_ >
+    concept convertible_char_type = char_type< _type_a_ > && char_type< _type_b_ > && sizeof( _type_a_ ) == sizeof( _type_b_ );
+    template < typename _type_ >
+    concept pointer_type = std::is_pointer_v< _type_ >;
+    template < typename _type_ >
+    concept callable_object
+      = !std::is_same_v< std::remove_cvref_t< _type_ >, std::thread >
+     && !std::is_same_v< std::remove_cvref_t< _type_ >, std::jthread >;
+    template < char_type _target_, char_type _source_ >
+        requires( convertible_char_type< _target_, _source_ > )
+    inline auto string_convert( const std_string< _source_ > &_str )
     {
-        return std::is_same_v< _char_type_, ansi_char > || std::is_same_v< _char_type_, wide_char >
-            || std::is_same_v< _char_type_, utf8_char > || std::is_same_v< _char_type_, utf16_char >
-            || std::is_same_v< _char_type_, utf32_char >;
+        const auto str_it{ reinterpret_cast< const _target_ * >( _str.c_str() ) };
+        return std_string< _target_ >{ str_it, str_it + _str.size() };
     }
-    template < typename _target_char_type_, typename _source_char_type_ >
-        requires( is_char_type< std::decay_t< _target_char_type_ > >() && is_char_type< std::decay_t< _source_char_type_ > >() )
-    inline consteval auto is_convertible_char_type()
+    template < char_type _target_, char_type _source_ >
+        requires( convertible_char_type< _target_, _source_ > )
+    inline auto string_convert( const std_string_view< _source_ > _str )
     {
-        return sizeof( std::decay_t< _target_char_type_ > ) == sizeof( std::decay_t< _source_char_type_ > );
+        const auto str_it{ reinterpret_cast< const _target_ * >( _str.data() ) };
+        return std_string< _target_ >{ str_it, str_it + _str.size() };
     }
-    template < typename _target_char_type_, typename _source_char_type_ >
-        requires( is_convertible_char_type< _target_char_type_, _source_char_type_ >() )
-    inline auto string_convert( const std_string< _source_char_type_ > &_str )
+    template < char_type _target_, char_type _source_ >
+        requires( convertible_char_type< _target_, _source_ > )
+    inline auto string_convert( const _source_ *const _str )
     {
-        const auto str_it{ reinterpret_cast< const _target_char_type_ * >( _str.c_str() ) };
-        return std_string< _target_char_type_ >{ str_it, str_it + _str.size() };
+        return std_string< _target_ >{ reinterpret_cast< const _target_ * >( _str ) };
     }
-    template < typename _target_char_type_, typename _source_char_type_ >
-        requires( is_convertible_char_type< _target_char_type_, _source_char_type_ >() )
-    inline auto string_convert( const std_string_view< _source_char_type_ > _str )
+    template < char_type _target_, char_type _source_ >
+        requires( convertible_char_type< _target_, _source_ > )
+    inline auto string_view_convert( const std_string< _source_ > &_str )
     {
-        const auto str_it{ reinterpret_cast< const _target_char_type_ * >( _str.data() ) };
-        return std_string< _target_char_type_ >{ str_it, str_it + _str.size() };
+        const auto str_it{ reinterpret_cast< const _target_ * >( _str.c_str() ) };
+        return std_string_view< _target_ >{ str_it, str_it + _str.size() };
     }
-    template < typename _target_char_type_, typename _source_char_type_ >
-        requires( is_convertible_char_type< _target_char_type_, _source_char_type_ >() )
-    inline auto string_convert( const _source_char_type_ *const _str )
+    template < char_type _target_, char_type _source_ >
+        requires( convertible_char_type< _target_, _source_ > )
+    inline auto string_view_convert( const std_string_view< _source_ > _str )
     {
-        return std_string< _target_char_type_ >{ reinterpret_cast< const _target_char_type_ * >( _str ) };
+        const auto str_it{ reinterpret_cast< const _target_ * >( _str.data() ) };
+        return std_string_view< _target_ >{ str_it, str_it + _str.size() };
     }
-    template < typename _target_char_type_, typename _source_char_type_ >
-        requires( is_convertible_char_type< _target_char_type_, _source_char_type_ >() )
-    inline auto string_view_convert( const std_string< _source_char_type_ > &_str )
+    template < char_type _target_, char_type _source_ >
+        requires( convertible_char_type< _target_, _source_ > )
+    inline auto string_view_convert( const _source_ *const _str )
     {
-        const auto str_it{ reinterpret_cast< const _target_char_type_ * >( _str.c_str() ) };
-        return std_string_view< _target_char_type_ >{ str_it, str_it + _str.size() };
+        return std_string_view< _target_ >{ reinterpret_cast< const _target_ * >( _str ) };
     }
-    template < typename _target_char_type_, typename _source_char_type_ >
-        requires( is_convertible_char_type< _target_char_type_, _source_char_type_ >() )
-    inline auto string_view_convert( const std_string_view< _source_char_type_ > _str )
-    {
-        const auto str_it{ reinterpret_cast< const _target_char_type_ * >( _str.data() ) };
-        return std_string_view< _target_char_type_ >{ str_it, str_it + _str.size() };
-    }
-    template < typename _target_char_type_, typename _source_char_type_ >
-        requires( is_convertible_char_type< _target_char_type_, _source_char_type_ >() )
-    inline auto string_view_convert( const _source_char_type_ *const _str )
-    {
-        return std_string_view< _target_char_type_ >{ reinterpret_cast< const _target_char_type_ * >( _str ) };
-    }
-    template < typename _ptr_type_ >
-        requires( std::is_pointer_v< _ptr_type_ > )
-    inline auto ptr_to_ansi_string( const _ptr_type_ _ptr )
+    template < pointer_type _type_ >
+    inline auto ptr_to_ansi_string( const _type_ _ptr )
     {
         return _ptr == nullptr ? "nullptr"s : std::format( "0x{:x}", reinterpret_cast< std::uintptr_t >( _ptr ) );
     }
-    template < typename _ptr_type_ >
-        requires( std::is_pointer_v< _ptr_type_ > )
-    inline auto ptr_to_utf8_string( const _ptr_type_ _ptr )
+    template < pointer_type _type_ >
+    inline auto ptr_to_utf8_string( const _type_ _ptr )
     {
         return string_convert< utf8_char >(
           _ptr == nullptr ? "nullptr"s : std::format( "0x{:x}", reinterpret_cast< std::uintptr_t >( _ptr ) ) );
@@ -158,18 +156,18 @@ namespace cpp_utils {
     {
         std::println( _stream, "{}", string_view_convert< ansi_char >( utf8_format( _fmt, std::forward< _args_ >( _args )... ) ) );
     }
-    template < typename _char_type_, std::size_t _length_ >
+    template < char_type _type_, std::size_t _length_ >
     struct constexpr_string final {
-        _char_type_ data[ _length_ ]{};
-        auto operator=( const constexpr_string< _char_type_, _length_ > & ) -> constexpr_string< _char_type_, _length_ > & = delete;
-        auto operator=( constexpr_string< _char_type_, _length_ > && ) -> constexpr_string< _char_type_, _length_ > & = delete;
-        constexpr constexpr_string( const _char_type_ ( &_str )[ _length_ ] )
+        _type_ data[ _length_ ]{};
+        auto operator=( const constexpr_string< _type_, _length_ > & ) -> constexpr_string< _type_, _length_ > & = delete;
+        auto operator=( constexpr_string< _type_, _length_ > && ) -> constexpr_string< _type_, _length_ > &      = delete;
+        constexpr constexpr_string( const _type_ ( &_str )[ _length_ ] )
         {
             std::copy( _str, _str + _length_, data );
         }
-        constexpr constexpr_string( const constexpr_string< _char_type_, _length_ > & ) = default;
-        constexpr constexpr_string( constexpr_string< _char_type_, _length_ > && )      = delete;
-        constexpr ~constexpr_string()                                                   = default;
+        constexpr constexpr_string( const constexpr_string< _type_, _length_ > & ) = default;
+        constexpr constexpr_string( constexpr_string< _type_, _length_ > && )      = delete;
+        constexpr ~constexpr_string()                                              = default;
     };
     template < std::size_t _length_ >
     using constexpr_ansi_string = constexpr_string< ansi_char, _length_ >;
@@ -188,13 +186,7 @@ namespace cpp_utils {
         std::this_thread::sleep_for( _time );
     }
     template < typename _type_ >
-    concept callable_object = requires {
-        requires( !(
-          std::is_same_v< std::remove_cvref_t< _type_ >, std::thread >
-          || std::is_same_v< std::remove_cvref_t< _type_ >, std::jthread > ) );
-    };
-    template < typename _char_type_ >
-        requires( std::is_same_v< _char_type_, ansi_char > || std::is_same_v< _char_type_, utf8_char > )
+        requires( std::is_same_v< _type_, ansi_char > || std::is_same_v< _type_, utf8_char > )
     class multithread_task final {
       private:
         struct node_ final {
@@ -210,9 +202,9 @@ namespace cpp_utils {
             ~node_()
             {
                 if ( task_thread.joinable() ) {
-                    if constexpr ( std::is_same_v< _char_type_, ansi_char > ) {
+                    if constexpr ( std::is_same_v< _type_, ansi_char > ) {
                         std::print( "    - 终止线程 {}.\n", task_thread.get_id() );
-                    } else if constexpr ( std::is_same_v< _char_type_, utf8_char > ) {
+                    } else if constexpr ( std::is_same_v< _type_, utf8_char > ) {
                         utf8_print( u8"    - 终止线程 {}.\n", task_thread.get_id() );
                     }
                 }
@@ -221,11 +213,11 @@ namespace cpp_utils {
         std::vector< node_ > tasks_{};
       public:
         template < callable_object _callee_, typename... _args_ >
-        auto &add( const std_string_view< _char_type_ > _comment, _callee_ &&_func, _args_ &&..._args )
+        auto &add( const std_string_view< _type_ > _comment, _callee_ &&_func, _args_ &&..._args )
         {
-            if constexpr ( std::is_same_v< _char_type_, ansi_char > ) {
+            if constexpr ( std::is_same_v< _type_, ansi_char > ) {
                 std::print( " -> 创建线程: {}.\n", _comment );
-            } else if constexpr ( std::is_same_v< _char_type_, utf8_char > ) {
+            } else if constexpr ( std::is_same_v< _type_, utf8_char > ) {
                 utf8_print( u8" -> 创建线程: {}.\n", _comment );
             }
             tasks_.emplace_back( std::forward< _callee_ >( _func ), std::forward< _args_ >( _args )... );
@@ -247,16 +239,16 @@ namespace cpp_utils {
             }
             return *this;
         }
-        auto operator=( const multithread_task< _char_type_ > & ) -> multithread_task< _char_type_ > & = delete;
-        auto operator=( multithread_task< _char_type_ > && ) -> multithread_task< _char_type_ > &      = default;
-        multithread_task()                                                                             = default;
-        multithread_task( const multithread_task< _char_type_ > & )                                    = delete;
-        multithread_task( multithread_task< _char_type_ > && )                                         = default;
+        auto operator=( const multithread_task< _type_ > & ) -> multithread_task< _type_ > & = delete;
+        auto operator=( multithread_task< _type_ > && ) -> multithread_task< _type_ > &      = default;
+        multithread_task()                                                                   = default;
+        multithread_task( const multithread_task< _type_ > & )                               = delete;
+        multithread_task( multithread_task< _type_ > && )                                    = default;
         ~multithread_task()
         {
-            if constexpr ( std::is_same_v< _char_type_, ansi_char > ) {
+            if constexpr ( std::is_same_v< _type_, ansi_char > ) {
                 std::print( " -> 清理线程池.\n" );
-            } else if constexpr ( std::is_same_v< _char_type_, utf8_char > ) {
+            } else if constexpr ( std::is_same_v< _type_, utf8_char > ) {
                 utf8_print( u8" -> 清理线程池.\n" );
             }
         }
@@ -373,21 +365,21 @@ namespace cpp_utils {
         inline constexpr WORD text_lvb_underscore{ COMMON_LVB_UNDERSCORE };
         inline constexpr WORD text_lvb_sbcsdbcs{ COMMON_LVB_SBCSDBCS };
     };
-    template < typename _char_type_ >
-        requires( std::is_same_v< _char_type_, ansi_char > || std::is_same_v< _char_type_, utf8_char > )
+    template < typename _type_ >
+        requires( std::is_same_v< _type_, ansi_char > || std::is_same_v< _type_, utf8_char > )
     class console_ui final {
       public:
         inline static constexpr auto back{ false };
         inline static constexpr auto quit{ true };
         struct func_args final {
-            console_ui< _char_type_ > &parent_ui;
+            console_ui< _type_ > &parent_ui;
             const DWORD button_state;
             const DWORD ctrl_key_state;
             const DWORD event_flag;
             auto operator=( const func_args & ) -> func_args & = default;
             auto operator=( func_args && ) -> func_args &      = default;
             func_args(
-              console_ui< _char_type_ > &_parent_ui,
+              console_ui< _type_ > &_parent_ui,
               const MOUSE_EVENT_RECORD _mouse_event = MOUSE_EVENT_RECORD{ {}, console_value::mouse_button_left, {}, {} } )
               : parent_ui{ _parent_ui }
               , button_state{ _mouse_event.dwButtonState }
@@ -402,7 +394,7 @@ namespace cpp_utils {
       private:
         enum class console_attrs_ { normal, lock_text, lock_all };
         struct line_node_ final {
-            std_string< _char_type_ > text{};
+            std_string< _type_ > text{};
             callback_type func{};
             WORD default_attrs{};
             WORD intensity_attrs{};
@@ -429,9 +421,7 @@ namespace cpp_utils {
               , intensity_attrs{ console_value::text_foreground_green | console_value::text_foreground_blue }
               , last_attrs{ console_value::text_default }
             { }
-            line_node_(
-              const std_string_view< _char_type_ > _text, callback_type &_func, const WORD _default_attrs,
-              const WORD _intensity_attrs )
+            line_node_( const std_string_view< _type_ > _text, callback_type &_func, const WORD _default_attrs, const WORD _intensity_attrs )
               : text{ _text }
               , func{ std::move( _func ) }
               , default_attrs{ _default_attrs }
@@ -515,20 +505,20 @@ namespace cpp_utils {
               ansi_std_string( static_cast< size_type >( console_width_ ) * static_cast< size_type >( console_height_ ), ' ' ) );
             set_cursor_( { 0, 0 } );
         }
-        static auto write_( const std_string_view< _char_type_ > _text, const bool _is_endl = false )
+        static auto write_( const std_string_view< _type_ > _text, const bool _is_endl = false )
         {
-            if constexpr ( std::is_same_v< _char_type_, ansi_char > ) {
+            if constexpr ( std::is_same_v< _type_, ansi_char > ) {
                 std::print( "{}{}", _text, _is_endl ? '\n' : '\0' );
-            } else if constexpr ( std::is_same_v< _char_type_, utf8_char > ) {
+            } else if constexpr ( std::is_same_v< _type_, utf8_char > ) {
                 std::print( "{}{}", *reinterpret_cast< const ansi_std_string_view * >( &_text ), _is_endl ? '\n' : '\0' );
             }
         }
-        static auto rewrite_( const COORD _cursor_position, const std_string_view< _char_type_ > _text )
+        static auto rewrite_( const COORD _cursor_position, const std_string_view< _type_ > _text )
         {
             set_cursor_( { 0, _cursor_position.Y } );
-            if constexpr ( std::is_same_v< _char_type_, ansi_char > ) {
+            if constexpr ( std::is_same_v< _type_, ansi_char > ) {
                 write_( ansi_std_string( _cursor_position.X, ' ' ) );
-            } else if constexpr ( std::is_same_v< _char_type_, utf8_char > ) {
+            } else if constexpr ( std::is_same_v< _type_, utf8_char > ) {
                 write_( utf8_std_string( _cursor_position.X, ' ' ) );
             }
             set_cursor_( { 0, _cursor_position.Y } );
@@ -605,13 +595,13 @@ namespace cpp_utils {
             lines_.shrink_to_fit();
             return *this;
         }
-        auto &swap( console_ui< _char_type_ > &_src )
+        auto &swap( console_ui< _type_ > &_src )
         {
             lines_.swap( _src.lines_ );
             return *this;
         }
         auto &add_front(
-          const std_string_view< _char_type_ > _text, callback_type _func = nullptr,
+          const std_string_view< _type_ > _text, callback_type _func = nullptr,
           const WORD _intensity_attrs = console_value::text_foreground_green | console_value::text_foreground_blue,
           const WORD _default_attrs   = console_value::text_default )
         {
@@ -619,7 +609,7 @@ namespace cpp_utils {
             return *this;
         }
         auto &add_back(
-          const std_string_view< _char_type_ > _text, callback_type _func = nullptr,
+          const std_string_view< _type_ > _text, callback_type _func = nullptr,
           const WORD _intensity_attrs = console_value::text_foreground_blue | console_value::text_foreground_green,
           const WORD _default_attrs   = console_value::text_default )
         {
@@ -627,7 +617,7 @@ namespace cpp_utils {
             return *this;
         }
         auto &insert(
-          const size_type _index, const std_string_view< _char_type_ > _text, callback_type _func = nullptr,
+          const size_type _index, const std_string_view< _type_ > _text, callback_type _func = nullptr,
           const WORD _intensity_attrs = console_value::text_foreground_green | console_value::text_foreground_blue,
           const WORD _default_attrs   = console_value::text_default )
         {
@@ -636,7 +626,7 @@ namespace cpp_utils {
             return *this;
         }
         auto &edit(
-          const size_type _index, const std_string_view< _char_type_ > _text, callback_type _func = nullptr,
+          const size_type _index, const std_string_view< _type_ > _text, callback_type _func = nullptr,
           const WORD _intensity_attrs = console_value::text_foreground_green | console_value::text_foreground_blue,
           const WORD _default_attrs   = console_value::text_default )
         {
@@ -687,15 +677,15 @@ namespace cpp_utils {
             return *this;
         }
         auto &set_console(
-          const std_string_view< _char_type_ > _title, const UINT _code_page, const SHORT _width, const SHORT _height,
+          const std_string_view< _type_ > _title, const UINT _code_page, const SHORT _width, const SHORT _height,
           const bool _is_fixed_size, const bool _is_enabled_minimize_ctrl, const bool is_enabled_close_window_ctrl,
           const BYTE _translucency_value )
         {
             SetConsoleOutputCP( _code_page );
             SetConsoleCP( _code_page );
-            if constexpr ( std::is_same_v< _char_type_, ansi_char > ) {
+            if constexpr ( std::is_same_v< _type_, ansi_char > ) {
                 SetConsoleTitleA( _title.data() );
-            } else if constexpr ( std::is_same_v< _char_type_, utf8_char > ) {
+            } else if constexpr ( std::is_same_v< _type_, utf8_char > ) {
                 SetConsoleTitleA( string_view_convert< ansi_char >( _title ).c_str() );
             }
             std::system( std::format( R"(C:\Windows\System32\mode.com con cols={} lines={})", _width, _height ).c_str() );
@@ -721,12 +711,12 @@ namespace cpp_utils {
             edit_console_attrs_( _is_locked_text ? console_attrs_::lock_all : console_attrs_::normal );
             return *this;
         }
-        auto operator=( const console_ui< _char_type_ > & ) -> console_ui< _char_type_ > & = default;
-        auto operator=( console_ui< _char_type_ > && ) -> console_ui< _char_type_ > &      = default;
-        console_ui()                                                                       = default;
-        console_ui( const console_ui< _char_type_ > & )                                    = default;
-        console_ui( console_ui< _char_type_ > && )                                         = default;
-        ~console_ui()                                                                      = default;
+        auto operator=( const console_ui< _type_ > & ) -> console_ui< _type_ > & = default;
+        auto operator=( console_ui< _type_ > && ) -> console_ui< _type_ > &      = default;
+        console_ui()                                                             = default;
+        console_ui( const console_ui< _type_ > & )                               = default;
+        console_ui( console_ui< _type_ > && )                                    = default;
+        ~console_ui()                                                            = default;
     };
     using console_ui_ansi = console_ui< ansi_char >;
     using console_ui_utf8 = console_ui< utf8_char >;
