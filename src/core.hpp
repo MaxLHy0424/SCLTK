@@ -290,7 +290,7 @@ namespace core {
     }
     inline auto info( cpp_utils::console_ui_ansi::func_args )
     {
-        auto visit_repo_webpage{ []( cpp_utils::console_ui_ansi::func_args )
+        auto visit_repo_webpage{ []( cpp_utils::console_ui_ansi::func_args ) static
         {
             ShellExecuteA( nullptr, "open", INFO_REPO_URL, nullptr, nullptr, SW_SHOWNORMAL );
             return cpp_utils::console_ui_ansi::back;
@@ -311,7 +311,7 @@ namespace core {
     inline auto toolkit( cpp_utils::console_ui_ansi::func_args )
     {
         std::print( " -> 准备用户界面.\n" );
-        auto launch_cmd{ []( cpp_utils::console_ui_ansi::func_args _args )
+        auto launch_cmd{ []( cpp_utils::console_ui_ansi::func_args _args ) static
         {
             const auto &is_disabled_close_ctrl{ options[ "window" ][ "disable_close_ctrl" ] };
             const auto &is_translucency{ options[ "window" ][ "translucency" ] };
