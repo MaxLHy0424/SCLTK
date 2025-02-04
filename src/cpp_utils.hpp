@@ -41,17 +41,17 @@ namespace cpp_utils {
     using std_string_view = std::basic_string_view< _char_type >;
     template < typename _type_ >
     concept char_type
-      = std::is_same_v< std::decay_t< _type_ >, ansi_char > || std::is_same_v< std::decay_t< _type_ >, wide_char >
-     || std::is_same_v< std::decay_t< _type_ >, utf8_char > || std::is_same_v< std::decay_t< _type_ >, utf16_char >
-     || std::is_same_v< std::decay_t< _type_ >, utf32_char >;
+      = std::same_as< std::decay_t< _type_ >, ansi_char > || std::same_as< std::decay_t< _type_ >, wide_char >
+     || std::same_as< std::decay_t< _type_ >, utf8_char > || std::same_as< std::decay_t< _type_ >, utf16_char >
+     || std::same_as< std::decay_t< _type_ >, utf32_char >;
     template < typename _type_a_, typename _type_b_ >
     concept convertible_char_type = char_type< _type_a_ > && char_type< _type_b_ > && sizeof( _type_a_ ) == sizeof( _type_b_ );
     template < typename _type_ >
     concept pointer_type = std::is_pointer_v< _type_ >;
     template < typename _type_ >
     concept callable_object
-      = !std::is_same_v< std::remove_cvref_t< _type_ >, std::thread >
-     && !std::is_same_v< std::remove_cvref_t< _type_ >, std::jthread >;
+      = !std::same_as< std::remove_cvref_t< _type_ >, std::thread >
+     && !std::same_as< std::remove_cvref_t< _type_ >, std::jthread >;
     template < char_type _target_, char_type _source_ >
         requires( convertible_char_type< _target_, _source_ > )
     inline auto string_convert( const std_string< _source_ > &_str )
@@ -108,18 +108,17 @@ namespace cpp_utils {
     {
         const auto convert_arg{ []< typename _type_ >( _type_ &&_arg ) static -> decltype( auto )
         {
-            if constexpr ( std::is_same_v< std::decay_t< _type_ >, utf8_std_string > ) {
+            if constexpr ( std::same_as< std::decay_t< _type_ >, utf8_std_string > ) {
                 return reinterpret_cast< ansi_std_string * >( &_arg );
-            } else if constexpr ( std::is_same_v< std::decay_t< _type_ >, utf8_std_string_view > ) {
+            } else if constexpr ( std::same_as< std::decay_t< _type_ >, utf8_std_string_view > ) {
                 return reinterpret_cast< ansi_std_string_view * >( &_arg );
-            } else if constexpr ( std::is_same_v< std::decay_t< _type_ >, utf8_char * > ) {
+            } else if constexpr ( std::same_as< std::decay_t< _type_ >, utf8_char * > ) {
                 return std::make_unique< ansi_std_string_view >( reinterpret_cast< ansi_char * >( &_arg ) );
-            } else if constexpr ( std::is_same_v< std::decay_t< _type_ >, const utf8_char * > ) {
+            } else if constexpr ( std::same_as< std::decay_t< _type_ >, const utf8_char * > ) {
                 return std::make_unique< ansi_std_string_view >( reinterpret_cast< const ansi_char * >( &_arg ) );
             } else if constexpr (
               std::is_pointer_v< std::decay_t< _type_ > >
-              && !( std::is_same_v< std::decay_t< _type_ >, ansi_char * >
-                    || std::is_same_v< std::decay_t< _type_ >, const ansi_char * > ) )
+              && !( std::same_as< std::decay_t< _type_ >, ansi_char * > || std::same_as< std::decay_t< _type_ >, const ansi_char * > ) )
             {
                 return std::make_unique< const ansi_std_string >( ptr_to_ansi_string( std::forward< _type_ >( _arg ) ) );
             } else {
@@ -186,7 +185,7 @@ namespace cpp_utils {
         std::this_thread::sleep_for( _time );
     }
     template < typename _type_ >
-        requires( std::is_same_v< _type_, ansi_char > || std::is_same_v< _type_, utf8_char > )
+        requires( std::same_as< _type_, ansi_char > || std::same_as< _type_, utf8_char > )
     class multithread_task final {
       private:
         struct node_ final {
@@ -202,9 +201,9 @@ namespace cpp_utils {
             ~node_()
             {
                 if ( task_thread.joinable() ) {
-                    if constexpr ( std::is_same_v< _type_, ansi_char > ) {
+                    if constexpr ( std::same_as< _type_, ansi_char > ) {
                         std::print( "    - 终止线程 {}.\n", task_thread.get_id() );
-                    } else if constexpr ( std::is_same_v< _type_, utf8_char > ) {
+                    } else if constexpr ( std::same_as< _type_, utf8_char > ) {
                         utf8_print( u8"    - 终止线程 {}.\n", task_thread.get_id() );
                     }
                 }
@@ -215,9 +214,9 @@ namespace cpp_utils {
         template < callable_object _callee_, typename... _args_ >
         auto &add( const std_string_view< _type_ > _comment, _callee_ &&_func, _args_ &&..._args )
         {
-            if constexpr ( std::is_same_v< _type_, ansi_char > ) {
+            if constexpr ( std::same_as< _type_, ansi_char > ) {
                 std::print( " -> 创建线程: {}.\n", _comment );
-            } else if constexpr ( std::is_same_v< _type_, utf8_char > ) {
+            } else if constexpr ( std::same_as< _type_, utf8_char > ) {
                 utf8_print( u8" -> 创建线程: {}.\n", _comment );
             }
             tasks_.emplace_back( std::forward< _callee_ >( _func ), std::forward< _args_ >( _args )... );
@@ -246,9 +245,9 @@ namespace cpp_utils {
         multithread_task( multithread_task< _type_ > && )                                    = default;
         ~multithread_task()
         {
-            if constexpr ( std::is_same_v< _type_, ansi_char > ) {
+            if constexpr ( std::same_as< _type_, ansi_char > ) {
                 std::print( " -> 清理线程池.\n" );
-            } else if constexpr ( std::is_same_v< _type_, utf8_char > ) {
+            } else if constexpr ( std::same_as< _type_, utf8_char > ) {
                 utf8_print( u8" -> 清理线程池.\n" );
             }
         }
@@ -366,7 +365,7 @@ namespace cpp_utils {
         inline constexpr WORD text_lvb_sbcsdbcs{ COMMON_LVB_SBCSDBCS };
     };
     template < typename _type_ >
-        requires( std::is_same_v< _type_, ansi_char > || std::is_same_v< _type_, utf8_char > )
+        requires( std::same_as< _type_, ansi_char > || std::same_as< _type_, utf8_char > )
     class console_ui final {
       public:
         inline static constexpr auto back{ false };
@@ -507,18 +506,18 @@ namespace cpp_utils {
         }
         static auto write_( const std_string_view< _type_ > _text, const bool _is_endl = false )
         {
-            if constexpr ( std::is_same_v< _type_, ansi_char > ) {
+            if constexpr ( std::same_as< _type_, ansi_char > ) {
                 std::print( "{}{}", _text, _is_endl ? '\n' : '\0' );
-            } else if constexpr ( std::is_same_v< _type_, utf8_char > ) {
+            } else if constexpr ( std::same_as< _type_, utf8_char > ) {
                 std::print( "{}{}", *reinterpret_cast< const ansi_std_string_view * >( &_text ), _is_endl ? '\n' : '\0' );
             }
         }
         static auto rewrite_( const COORD _cursor_position, const std_string_view< _type_ > _text )
         {
             set_cursor_( { 0, _cursor_position.Y } );
-            if constexpr ( std::is_same_v< _type_, ansi_char > ) {
+            if constexpr ( std::same_as< _type_, ansi_char > ) {
                 write_( ansi_std_string( _cursor_position.X, ' ' ) );
-            } else if constexpr ( std::is_same_v< _type_, utf8_char > ) {
+            } else if constexpr ( std::same_as< _type_, utf8_char > ) {
                 write_( utf8_std_string( _cursor_position.X, ' ' ) );
             }
             set_cursor_( { 0, _cursor_position.Y } );
@@ -683,9 +682,9 @@ namespace cpp_utils {
         {
             SetConsoleOutputCP( _code_page );
             SetConsoleCP( _code_page );
-            if constexpr ( std::is_same_v< _type_, ansi_char > ) {
+            if constexpr ( std::same_as< _type_, ansi_char > ) {
                 SetConsoleTitleA( _title.data() );
-            } else if constexpr ( std::is_same_v< _type_, utf8_char > ) {
+            } else if constexpr ( std::same_as< _type_, utf8_char > ) {
                 SetConsoleTitleA( string_view_convert< ansi_char >( _title ).c_str() );
             }
             std::system( std::format( R"(C:\Windows\System32\mode.com con cols={} lines={})", _width, _height ).c_str() );
