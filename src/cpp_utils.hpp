@@ -108,22 +108,22 @@ namespace cpp_utils {
     template < typename... _args_ >
     inline auto utf8_format( const utf8_std_string_view _fmt, _args_ &&..._args )
     {
-        const auto convert_arg{ []( auto &&_arg ) -> decltype( auto )
+        const auto convert_arg{ []< typename _type_ >( _type_ &&_arg ) static -> decltype( auto )
         {
-            if constexpr ( std::is_same_v< std::decay_t< decltype( _arg ) >, utf8_std_string > ) {
+            if constexpr ( std::is_same_v< std::decay_t< _type_ >, utf8_std_string > ) {
                 return reinterpret_cast< ansi_std_string * >( &_arg );
-            } else if constexpr ( std::is_same_v< std::decay_t< decltype( _arg ) >, utf8_std_string_view > ) {
+            } else if constexpr ( std::is_same_v< std::decay_t< _type_ >, utf8_std_string_view > ) {
                 return reinterpret_cast< ansi_std_string_view * >( &_arg );
-            } else if constexpr ( std::is_same_v< std::decay_t< decltype( _arg ) >, utf8_char * > ) {
+            } else if constexpr ( std::is_same_v< std::decay_t< _type_ >, utf8_char * > ) {
                 return reinterpret_cast< ansi_char * >( &_arg );
-            } else if constexpr ( std::is_same_v< std::decay_t< decltype( _arg ) >, const utf8_char * > ) {
+            } else if constexpr ( std::is_same_v< std::decay_t< _type_ >, const utf8_char * > ) {
                 return reinterpret_cast< const ansi_char * >( &_arg );
             } else if constexpr (
-              std::is_pointer_v< std::decay_t< decltype( _arg ) > >
-              && !( std::is_same_v< std::decay_t< decltype( _arg ) >, ansi_char * >
-                    || std::is_same_v< std::decay_t< decltype( _arg ) >, const ansi_char * > ) )
+              std::is_pointer_v< std::decay_t< _type_ > >
+              && !( std::is_same_v< std::decay_t< _type_ >, ansi_char * >
+                    || std::is_same_v< std::decay_t< _type_ >, const ansi_char * > ) )
             {
-                return std::make_unique< const ansi_std_string >( ptr_to_ansi_string( std::forward< decltype( _arg ) >( _arg ) ) );
+                return std::make_unique< const ansi_std_string >( ptr_to_ansi_string( std::forward< _type_ >( _arg ) ) );
             } else {
                 return &_arg;
             }
