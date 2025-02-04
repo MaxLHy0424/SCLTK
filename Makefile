@@ -14,7 +14,7 @@ args_release     = -DNDEBUG -static $(args_base) $(args_opt_release)
 .PHONY: init release debug clean
 all: init clean release debug
 init:
-	$(msys2_path)\\usr\\bin\\pacman.exe -Syyu --noconfirm --needed\
+	$(msys2_path)\\usr\\bin\\pacman.exe -Sy --noconfirm --needed\
 	 mingw-w64-i686-toolchain\
 	 mingw-w64-ucrt-x86_64-toolchain\
 	 make\
