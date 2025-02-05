@@ -356,7 +356,7 @@ namespace core {
           {"恢复 Microsoft Edge 离线游戏",
            R"(C:\Windows\System32\reg.exe delete "HKLM\SOFTWARE\Policies\Microsoft\Edge" /f /v AllowSurfGame)"                },
           {"修复操作系统文件缺失",
-           R"(C:\Windows\System32\Dism.exe /online /cleanup-image /restorehealth && C:\Windows\System32\sfc.exe /scannow)"    }
+           R"(C:\Windows\System32\dism.exe /online /cleanup-image /restorehealth && C:\Windows\System32\sfc.exe /scannow)"    }
         };
         cpp_utils::console_ui_ansi ui{};
         std::print( " -> 准备用户界面.\n" );
@@ -435,7 +435,7 @@ namespace core {
           R"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)" };
         constexpr const ansi_char *execs[]{
           "mode.com",    "chcp.com",    "taskkill.exe", "sc.exe",  "net.exe",  "reg.exe", "cmd.exe",
-          "taskmgr.exe", "perfmon.exe", "regedit.exe",  "mmc.exe", "Dism.exe", "sfc.exe" };
+          "taskmgr.exe", "perfmon.exe", "regedit.exe",  "mmc.exe", "dism.exe", "sfc.exe" };
         auto core_op{ [ = ]
         {
             for ( const auto &reg_dir : hkcu_reg_dirs ) {
