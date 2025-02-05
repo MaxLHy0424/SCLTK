@@ -348,15 +348,15 @@ namespace core {
         };
         constexpr const ansi_char *common_ops[][ 2 ]{
           {"重启资源管理器",
-           R"(C:\Windows\System32\taskkill.exe /f /im explorer.exe && timeout /t 3 /nobreak && start C:\Windows\explorer.exe)"},
+           R"(C:\Windows\System32\taskkill.exe /f /im explorer.exe && C:\Windows\System32\timeout.exe /t 3 /nobreak && start C:\Windows\explorer.exe)"},
           {"恢复 USB 设备访问",
-           R"(C:\Windows\System32\reg.exe add "HKLM\SYSTEM\CurrentControlSet\Services\USBSTOR" /f /t reg_dword /v Start /d 3)"},
+           R"(C:\Windows\System32\reg.exe add "HKLM\SYSTEM\CurrentControlSet\Services\USBSTOR" /f /t reg_dword /v Start /d 3)"                        },
           {"恢复 Google Chrome 离线游戏",
-           R"(C:\Windows\System32\reg.exe delete "HKLM\SOFTWARE\Policies\Google\Chrome" /f /v AllowDinosaurEasterEgg)"        },
+           R"(C:\Windows\System32\reg.exe delete "HKLM\SOFTWARE\Policies\Google\Chrome" /f /v AllowDinosaurEasterEgg)"                                },
           {"恢复 Microsoft Edge 离线游戏",
-           R"(C:\Windows\System32\reg.exe delete "HKLM\SOFTWARE\Policies\Microsoft\Edge" /f /v AllowSurfGame)"                },
+           R"(C:\Windows\System32\reg.exe delete "HKLM\SOFTWARE\Policies\Microsoft\Edge" /f /v AllowSurfGame)"                                        },
           {"修复操作系统文件缺失",
-           R"(C:\Windows\System32\dism.exe /online /cleanup-image /restorehealth && C:\Windows\System32\sfc.exe /scannow)"    }
+           R"(C:\Windows\System32\dism.exe /online /cleanup-image /restorehealth && C:\Windows\System32\sfc.exe /scannow)"                            }
         };
         cpp_utils::console_ui_ansi ui{};
         std::print( " -> 准备用户界面.\n" );
