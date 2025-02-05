@@ -12,9 +12,9 @@ args_base        = -pipe -finput-charset=$(input_charset) -fexec-charset=$(outpu
 args_debug       = -g3 $(args_base) $(args_opt_debug)
 args_release     = -DNDEBUG -static $(args_base) $(args_opt_release)
 debug_dependencies         = src/*
-release_32bit_dependencies = bin/info-i686.obj src/*
-release_64bit_dependencies = bin/info-x86_64.obj src/*
-info_obj_dependencies      = info.rc img/favicon.ico src/info.hpp
+release_32bit_dependencies = bin/info-i686.o src/*
+release_64bit_dependencies = bin/info-x86_64.o src/*
+info_bin_dependencies      = info.rc img/favicon.ico src/info.hpp
 .PHONY: init clean debug release
 all: init clean debug release
 init:
@@ -39,9 +39,9 @@ bin/release/CRCSN-i686-msvcrt.exe: $(release_32bit_dependencies) bin/release/.gi
 	$(msys2_path)\\mingw32\\bin\\$(compiler) $(release_32bit_dependencies).cpp $(args_release) -o $@
 bin/release/CRCSN-x86_64-ucrt.exe: $(release_64bit_dependencies) bin/release/.gitkeep
 	$(msys2_path)\\ucrt64\\bin\\$(compiler) $(release_64bit_dependencies).cpp $(args_release) -o $@
-bin/info-i686.obj: $(info_obj_dependencies) bin/.gitkeep
+bin/info-i686.o: $(info_bin_dependencies) bin/.gitkeep
 	$(msys2_path)\\usr\\bin\\windres.exe -i $< -o $@ $(args_defines) -F pe-i386
-bin/info-x86_64.obj: $(info_obj_dependencies) bin/.gitkeep
+bin/info-x86_64.o: $(info_bin_dependencies) bin/.gitkeep
 	$(msys2_path)\\usr\\bin\\windres.exe -i $< -o $@ $(args_defines) -F pe-x86-64
 bin/.gitkeep:
 	$(msys2_path)\\usr\\bin\\mkdir.exe bin -p
