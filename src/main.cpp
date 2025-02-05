@@ -1,6 +1,7 @@
 #include "core.hpp"
 auto main() -> int
 {
+    cpp_utils::ignore_console_exit_sinal( true );
     cpp_utils::console_ui_ansi ui{};
     ui.lock( true, true ).set_console( INFO_SHORT_NAME, CHARSET_ID, CONSOLE_WIDTH, CONSOLE_HEIGHT, true, false, true, 255 );
     std::print( " -> 检测运行权限.\n" );

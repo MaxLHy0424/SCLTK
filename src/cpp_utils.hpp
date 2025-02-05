@@ -300,6 +300,10 @@ namespace cpp_utils {
         ~multithread_task_nolog()                                                    = default;
     };
 #if defined( _WIN32 ) || defined( _WIN64 )
+    inline auto ignore_console_exit_sinal( const bool _is_ignored )
+    {
+        return SetConsoleCtrlHandler( nullptr, static_cast< BOOL >( _is_ignored ) );
+    }
     inline auto is_run_as_admin()
     {
         BOOL is_admin{};
