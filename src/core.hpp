@@ -434,8 +434,8 @@ namespace core {
           R"(Software\Policies\Microsoft\Windows\System)", R"(Software\Microsoft\Windows\CurrentVersion\Policies\System)",
           R"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)" };
         constexpr const ansi_char *execs[]{
-          "mode.com", "chcp.com", "ntsd.exe",    "taskkill.exe", "sc.exe",      "net.exe",
-          "reg.exe",  "cmd.exe",  "taskmgr.exe", "perfmon.exe",  "regedit.exe", "mmc.exe" };
+          "mode.com",    "chcp.com",    "taskkill.exe", "sc.exe",  "net.exe",  "reg.exe", "cmd.exe",
+          "taskmgr.exe", "perfmon.exe", "regedit.exe",  "mmc.exe", "Dism.exe", "sfc.exe" };
         auto core_op{ [ = ]
         {
             for ( const auto &reg_dir : hkcu_reg_dirs ) {
