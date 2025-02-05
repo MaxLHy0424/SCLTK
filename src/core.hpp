@@ -354,7 +354,9 @@ namespace core {
           {"恢复 Google Chrome 离线游戏",
            R"(C:\Windows\System32\reg.exe delete "HKLM\SOFTWARE\Policies\Google\Chrome" /f /v AllowDinosaurEasterEgg)"        },
           {"恢复 Microsoft Edge 离线游戏",
-           R"(C:\Windows\System32\reg.exe delete "HKLM\SOFTWARE\Policies\Microsoft\Edge" /f /v AllowSurfGame)"                }
+           R"(C:\Windows\System32\reg.exe delete "HKLM\SOFTWARE\Policies\Microsoft\Edge" /f /v AllowSurfGame)"                },
+          {"修复操作系统文件缺失",
+           R"(C:\Windows\System32\Dism.exe /online /cleanup-image /restorehealth && C:\Windows\System32\sfc.exe /scannow)"    }
         };
         cpp_utils::console_ui_ansi ui{};
         std::print( " -> 准备用户界面.\n" );
