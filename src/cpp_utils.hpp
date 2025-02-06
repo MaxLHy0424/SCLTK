@@ -156,13 +156,83 @@ namespace cpp_utils {
         std::println( _stream, "{}", string_view_convert< ansi_char >( utf8_format( _fmt, std::forward< _args_ >( _args )... ) ) );
     }
     template < char_type _type_, size_type _capacity_ >
+        requires( std::is_same_v< _type_, std::decay_t< _type_ > > )
     struct constexpr_string final {
-        _type_ data[ _capacity_ ]{};
+      private:
+        _type_ data_[ _capacity_ ]{};
+      public:
+        auto c_str() const
+        {
+            return reinterpret_cast< const _type_ * >( data_ );
+        }
+        auto compare( const _type_ *const _src ) const
+        {
+            if ( _src == nullptr ) {
+                return false;
+            }
+            size_type src_size{ 0 };
+            while ( _src[ src_size ] != '\0' ) {
+                ++src_size;
+            }
+            if ( src_size + 1 != _capacity_ ) {
+                return false;
+            }
+            for ( size_type i{ 0 }; i < _capacity_; ++i ) {
+                if ( data_[ i ] != _src[ i ] ) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        template < size_type _src_capacity_ >
+        auto compare( const _type_ ( &_src )[ _src_capacity_ ] ) const
+        {
+            if ( _src_capacity_ != _capacity_ ) {
+                return false;
+            }
+            for ( size_type i{ 0 }; i < _capacity_; ++i ) {
+                if ( data_[ i ] != _src[ i ] ) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        template < size_type _src_capacity_ >
+        auto compare( const constexpr_string< _type_, _src_capacity_ > &_src ) const
+        {
+            if ( _src_capacity_ != _capacity_ ) {
+                return false;
+            }
+            for ( size_type i{ 0 }; i < _capacity_; ++i ) {
+                if ( data_[ i ] != _src.data_[ i ] ) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        auto operator==( const _type_ *const _src ) const
+        {
+            return compare( _src );
+        }
+        template < size_type _src_capacity_ >
+        auto operator==( const _type_ ( &_src )[ _src_capacity_ ] ) const
+        {
+            return compare( _src );
+        }
+        template < size_type _src_capacity_ >
+        auto operator==( const constexpr_string< _type_, _src_capacity_ > &_src ) const
+        {
+            return compare( _src );
+        }
+        const auto &operator[]( size_type _index ) const
+        {
+            return data_[ _index ];
+        }
         auto operator=( const constexpr_string< _type_, _capacity_ > & ) -> constexpr_string< _type_, _capacity_ > & = delete;
         auto operator=( constexpr_string< _type_, _capacity_ > && ) -> constexpr_string< _type_, _capacity_ > &      = delete;
         constexpr constexpr_string( const _type_ ( &_str )[ _capacity_ ] )
         {
-            std::copy( _str, _str + _capacity_, data );
+            std::copy( _str, _str + _capacity_, data_ );
         }
         constexpr constexpr_string( const constexpr_string< _type_, _capacity_ > & ) = default;
         constexpr constexpr_string( constexpr_string< _type_, _capacity_ > && )      = delete;
