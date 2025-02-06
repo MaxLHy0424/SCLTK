@@ -53,41 +53,41 @@ namespace cpp_utils {
       = !std::same_as< std::remove_cvref_t< _type_ >, std::thread >
      && !std::same_as< std::remove_cvref_t< _type_ >, std::jthread >;
     template < char_type _target_, char_type _source_ >
-        requires( convertible_char_type< _target_, _source_ > )
+        requires convertible_char_type< _target_, _source_ >
     inline auto string_convert( const std_string< _source_ > &_str )
     {
         const auto str_it{ reinterpret_cast< const _target_ * >( _str.c_str() ) };
         return std_string< _target_ >{ str_it, str_it + _str.size() };
     }
     template < char_type _target_, char_type _source_ >
-        requires( convertible_char_type< _target_, _source_ > )
+        requires convertible_char_type< _target_, _source_ >
     inline auto string_convert( const std_string_view< _source_ > _str )
     {
         const auto str_it{ reinterpret_cast< const _target_ * >( _str.data() ) };
         return std_string< _target_ >{ str_it, str_it + _str.size() };
     }
     template < char_type _target_, char_type _source_ >
-        requires( convertible_char_type< _target_, _source_ > )
+        requires convertible_char_type< _target_, _source_ >
     inline auto string_convert( const _source_ *const _str )
     {
         return std_string< _target_ >{ reinterpret_cast< const _target_ * >( _str ) };
     }
     template < char_type _target_, char_type _source_ >
-        requires( convertible_char_type< _target_, _source_ > )
+        requires convertible_char_type< _target_, _source_ >
     inline auto string_view_convert( const std_string< _source_ > &_str )
     {
         const auto str_it{ reinterpret_cast< const _target_ * >( _str.c_str() ) };
         return std_string_view< _target_ >{ str_it, str_it + _str.size() };
     }
     template < char_type _target_, char_type _source_ >
-        requires( convertible_char_type< _target_, _source_ > )
+        requires convertible_char_type< _target_, _source_ >
     inline auto string_view_convert( const std_string_view< _source_ > _str )
     {
         const auto str_it{ reinterpret_cast< const _target_ * >( _str.data() ) };
         return std_string_view< _target_ >{ str_it, str_it + _str.size() };
     }
     template < char_type _target_, char_type _source_ >
-        requires( convertible_char_type< _target_, _source_ > )
+        requires convertible_char_type< _target_, _source_ >
     inline auto string_view_convert( const _source_ *const _str )
     {
         return std_string_view< _target_ >{ reinterpret_cast< const _target_ * >( _str ) };
@@ -185,7 +185,7 @@ namespace cpp_utils {
         std::this_thread::sleep_for( _time );
     }
     template < typename _type_ >
-        requires( std::same_as< _type_, ansi_char > || std::same_as< _type_, utf8_char > )
+        requires std::same_as< _type_, ansi_char > || std::same_as< _type_, utf8_char >
     class multithread_task final {
       private:
         struct node_ final {
@@ -369,7 +369,7 @@ namespace cpp_utils {
         inline constexpr WORD text_lvb_sbcsdbcs{ COMMON_LVB_SBCSDBCS };
     };
     template < typename _type_ >
-        requires( std::same_as< _type_, ansi_char > || std::same_as< _type_, utf8_char > )
+        requires std::same_as< _type_, ansi_char > || std::same_as< _type_, utf8_char >
     class console_ui final {
       public:
         inline static constexpr auto back{ false };
