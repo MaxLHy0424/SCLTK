@@ -50,8 +50,7 @@ namespace cpp_utils {
     concept pointer_type = std::is_pointer_v< _type_ >;
     template < typename _type_ >
     concept callable_object
-      = !std::same_as< std::remove_cvref_t< _type_ >, std::thread >
-     && !std::same_as< std::remove_cvref_t< _type_ >, std::jthread >;
+      = !std::same_as< std::decay_t< _type_ >, std::thread > && !std::same_as< std::decay_t< _type_ >, std::jthread >;
     template < char_type _target_, char_type _source_ >
         requires convertible_char_type< _target_, _source_ >
     inline auto string_convert( const std_string< _source_ > &_str )
