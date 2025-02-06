@@ -157,7 +157,7 @@ namespace cpp_utils {
     }
     template < char_type _type_, size_type _capacity_ >
         requires( std::is_same_v< _type_, std::decay_t< _type_ > > )
-    struct constexpr_string final {
+    struct constant_string final {
       private:
         _type_ data_[ _capacity_ ]{};
       public:
@@ -198,7 +198,7 @@ namespace cpp_utils {
             return true;
         }
         template < size_type _src_capacity_ >
-        auto compare( const constexpr_string< _type_, _src_capacity_ > &_src ) const
+        auto compare( const constant_string< _type_, _src_capacity_ > &_src ) const
         {
             if ( _src_capacity_ != _capacity_ ) {
                 return false;
@@ -220,7 +220,7 @@ namespace cpp_utils {
             return compare( _src );
         }
         template < size_type _src_capacity_ >
-        auto operator==( const constexpr_string< _type_, _src_capacity_ > &_src ) const
+        auto operator==( const constant_string< _type_, _src_capacity_ > &_src ) const
         {
             return compare( _src );
         }
@@ -228,26 +228,26 @@ namespace cpp_utils {
         {
             return data_[ _index ];
         }
-        auto operator=( const constexpr_string< _type_, _capacity_ > & ) -> constexpr_string< _type_, _capacity_ > & = delete;
-        auto operator=( constexpr_string< _type_, _capacity_ > && ) -> constexpr_string< _type_, _capacity_ > &      = delete;
-        constexpr constexpr_string( const _type_ ( &_str )[ _capacity_ ] )
+        auto operator=( const constant_string< _type_, _capacity_ > & ) -> constant_string< _type_, _capacity_ > & = delete;
+        auto operator=( constant_string< _type_, _capacity_ > && ) -> constant_string< _type_, _capacity_ > &      = delete;
+        constexpr constant_string( const _type_ ( &_str )[ _capacity_ ] )
         {
             std::copy( _str, _str + _capacity_, data_ );
         }
-        constexpr constexpr_string( const constexpr_string< _type_, _capacity_ > & ) = default;
-        constexpr constexpr_string( constexpr_string< _type_, _capacity_ > && )      = delete;
-        constexpr ~constexpr_string()                                                = default;
+        constexpr constant_string( const constant_string< _type_, _capacity_ > & ) = default;
+        constexpr constant_string( constant_string< _type_, _capacity_ > && )      = delete;
+        constexpr ~constant_string()                                               = default;
     };
     template < size_type _capacity_ >
-    using constexpr_ansi_string = constexpr_string< ansi_char, _capacity_ >;
+    using constant_ansi_string = constant_string< ansi_char, _capacity_ >;
     template < size_type _capacity_ >
-    using constexpr_wide_string = constexpr_string< wide_char, _capacity_ >;
+    using constant_wide_string = constant_string< wide_char, _capacity_ >;
     template < size_type _capacity_ >
-    using constexpr_utf8_string = constexpr_string< utf8_char, _capacity_ >;
+    using constant_utf8_string = constant_string< utf8_char, _capacity_ >;
     template < size_type _capacity_ >
-    using constexpr_utf16_string = constexpr_string< utf16_char, _capacity_ >;
+    using constant_utf16_string = constant_string< utf16_char, _capacity_ >;
     template < size_type _capacity_ >
-    using constexpr_utf32_string = constexpr_string< utf32_char, _capacity_ >;
+    using constant_utf32_string = constant_string< utf32_char, _capacity_ >;
     template < typename _chrono_type_ >
     inline auto perf_sleep( const _chrono_type_ _time )
     {
