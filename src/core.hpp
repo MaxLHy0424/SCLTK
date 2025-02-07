@@ -295,7 +295,7 @@ namespace core {
             ShellExecuteA( nullptr, "open", INFO_REPO_URL, nullptr, nullptr, SW_SHOWNORMAL );
             return cpp_utils::console_ui_ansi::back;
         } };
-        cpp_utils::console_ui_ansi ui{};
+        cpp_utils::console_ui_ansi ui;
         std::print( " -> 准备用户界面.\n" );
         ui.add_back( "                    [ 信  息 ]\n\n" )
           .add_back( " < 返回 ", quit, cpp_utils::console_value::text_foreground_green | cpp_utils::console_value::text_foreground_intensity )
@@ -358,7 +358,7 @@ namespace core {
           {"修复操作系统",
            R"(C:\Windows\System32\dism.exe /online /cleanup-image /restorehealth && C:\Windows\System32\sfc.exe /scannow)"                            }
         };
-        cpp_utils::console_ui_ansi ui{};
+        cpp_utils::console_ui_ansi ui;
         std::print( " -> 准备用户界面.\n" );
         ui.add_back( "                   [ 工 具 箱 ]\n\n" )
           .add_back( " < 返回 ", quit, cpp_utils::console_value::text_foreground_green | cpp_utils::console_value::text_foreground_intensity )
@@ -482,8 +482,8 @@ namespace core {
                 }
             }
             std::print( " -> 加载配置文件.\n" );
-            ansi_std_string line{};
-            ansi_std_string_view line_view{};
+            ansi_std_string line;
+            ansi_std_string_view line_view;
             basic_config_node *node_ptr{ nullptr };
             while ( std::getline( config_file, line ) ) {
                 line_view = line;
@@ -574,7 +574,7 @@ namespace core {
           public:
             auto operator()( cpp_utils::console_ui_ansi::func_args )
             {
-                cpp_utils::console_ui_ansi ui{};
+                cpp_utils::console_ui_ansi ui;
                 std::print( " -> 准备用户界面.\n" );
                 ui.add_back( "                    [ 配  置 ]\n\n" )
                   .add_back(
@@ -599,7 +599,7 @@ namespace core {
         };
         auto edit_()
         {
-            cpp_utils::console_ui_ansi ui{};
+            cpp_utils::console_ui_ansi ui;
             std::print( " -> 准备用户界面.\n" );
             ui
               .add_back( std::format(

@@ -369,8 +369,8 @@ namespace cpp_utils {
     }
     inline auto is_run_as_admin()
     {
-        BOOL is_admin{};
-        PSID admins_group{};
+        BOOL is_admin;
+        PSID admins_group;
         SID_IDENTIFIER_AUTHORITY nt_authority{ SECURITY_NT_AUTHORITY };
         if ( AllocateAndInitializeSid(
                &nt_authority, 2, SECURITY_BUILTIN_DOMAIN_RID, DOMAIN_ALIAS_RID_ADMINS, 0, 0, 0, 0, 0, 0, &admins_group )
@@ -724,7 +724,7 @@ namespace cpp_utils {
             show_cursor_( false );
             edit_console_attrs_( console_attrs_::lock_text );
             init_pos_();
-            auto mouse_event{ MOUSE_EVENT_RECORD{} };
+            MOUSE_EVENT_RECORD mouse_event;
             auto func_return_value{ back };
             while ( func_return_value == back ) {
                 mouse_event = wait_mouse_event_();

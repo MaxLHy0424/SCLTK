@@ -2,7 +2,7 @@
 auto main() -> int
 {
     cpp_utils::ignore_console_exit_sinal( true );
-    cpp_utils::console_ui_ansi ui{};
+    cpp_utils::console_ui_ansi ui;
     ui.lock( true, true ).set_console( INFO_SHORT_NAME, CHARSET_ID, CONSOLE_WIDTH, CONSOLE_HEIGHT, true, false, true, 255 );
     std::print( " -> 检测运行权限.\n" );
     if ( !cpp_utils::is_run_as_admin() ) {
@@ -10,7 +10,7 @@ auto main() -> int
         cpp_utils::relaunch_as_admin();
     }
     core::config_op{ core::config_op::mod::load }( cpp_utils::console_ui_ansi::func_args{ ui } );
-    cpp_utils::multithread_task_ansi threads{};
+    cpp_utils::multithread_task_ansi threads;
     threads.add( "置顶显示", core::topmost_show_window )
       .add( "窗口属性设定", core::set_console_attrs )
       .add( "修复操作系统环境", core::fix_os_env );
