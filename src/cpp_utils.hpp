@@ -363,9 +363,9 @@ namespace cpp_utils {
         ~multithread_task_nolog()                                                    = default;
     };
 #if defined( _WIN32 ) || defined( _WIN64 )
-    inline auto ignore_console_exit_sinal( const bool _is_ignored )
+    inline auto ignore_console_exit_sinal( const bool _is_ignore )
     {
-        return SetConsoleCtrlHandler( nullptr, static_cast< BOOL >( _is_ignored ) );
+        return SetConsoleCtrlHandler( nullptr, static_cast< BOOL >( _is_ignore ) );
     }
     inline auto is_run_as_admin()
     {
@@ -501,11 +501,11 @@ namespace cpp_utils {
         std::deque< line_node_ > lines_{};
         SHORT console_width_{};
         SHORT console_height_{};
-        static auto show_cursor_( const bool _is_shown )
+        static auto show_cursor_( const bool _is_show )
         {
             CONSOLE_CURSOR_INFO cursor_data;
             GetConsoleCursorInfo( GetStdHandle( STD_OUTPUT_HANDLE ), &cursor_data );
-            cursor_data.bVisible = static_cast< WINBOOL >( _is_shown );
+            cursor_data.bVisible = static_cast< WINBOOL >( _is_show );
             SetConsoleCursorInfo( GetStdHandle( STD_OUTPUT_HANDLE ), &cursor_data );
         }
         static auto edit_console_attrs_( const console_attrs_ _mod )
@@ -541,7 +541,7 @@ namespace cpp_utils {
         {
             SetConsoleCursorPosition( GetStdHandle( STD_OUTPUT_HANDLE ), _cursor_position );
         }
-        static auto wait_mouse_event_( const bool _is_mouse_moved = true )
+        static auto wait_mouse_event_( const bool _is_mouse_move = true )
         {
             INPUT_RECORD record;
             DWORD reg;
@@ -549,7 +549,7 @@ namespace cpp_utils {
                 perf_sleep( 10ms );
                 ReadConsoleInputW( GetStdHandle( STD_INPUT_HANDLE ), &record, 1, &reg );
                 if ( record.EventType == MOUSE_EVENT
-                     && ( _is_mouse_moved || record.Event.MouseEvent.dwEventFlags != console_value::mouse_move ) )
+                     && ( _is_mouse_move || record.Event.MouseEvent.dwEventFlags != console_value::mouse_move ) )
                 {
                     return record.Event.MouseEvent;
                 }
@@ -615,7 +615,7 @@ namespace cpp_utils {
         }
         auto call_func_( const MOUSE_EVENT_RECORD &_mouse_event )
         {
-            auto is_exited{ back };
+            auto is_exit{ back };
             for ( auto &line : lines_ ) {
                 if ( line != _mouse_event.dwMousePosition ) {
                     continue;
@@ -627,13 +627,13 @@ namespace cpp_utils {
                 line.set_attrs( line.default_attrs );
                 show_cursor_( false );
                 edit_console_attrs_( console_attrs_::lock_all );
-                is_exited = line.func( func_args{ *this, _mouse_event } );
+                is_exit = line.func( func_args{ *this, _mouse_event } );
                 show_cursor_( false );
                 edit_console_attrs_( console_attrs_::lock_text );
                 init_pos_();
                 break;
             }
-            return is_exited;
+            return is_exit;
         }
       public:
         auto empty() const
@@ -743,12 +743,12 @@ namespace cpp_utils {
             return *this;
         }
         auto &set_console(
-          const std_string_view< _type_ > _title, const UINT _code_page, const SHORT _width, const SHORT _height,
-          const bool _is_fixed_size, const bool _is_enabled_minimize_ctrl, const bool is_enabled_close_window_ctrl,
+          const std_string_view< _type_ > _title, const UINT _charset, const SHORT _width, const SHORT _height,
+          const bool _is_fix_size, const bool _is_enable_minimize_ctrl, const bool is_enable_close_ctrl,
           const BYTE _translucency_value )
         {
-            SetConsoleOutputCP( _code_page );
-            SetConsoleCP( _code_page );
+            SetConsoleOutputCP( _charset );
+            SetConsoleCP( _charset );
             if constexpr ( std::is_same_v< _type_, ansi_char > ) {
                 SetConsoleTitleA( _title.data() );
             } else if constexpr ( std::is_same_v< _type_, utf8_char > ) {
@@ -757,24 +757,24 @@ namespace cpp_utils {
             std::system( std::format( R"(C:\Windows\System32\mode.com con cols={} lines={})", _width, _height ).c_str() );
             SetWindowLongPtrW(
               GetConsoleWindow(), GWL_STYLE,
-              _is_fixed_size
+              _is_fix_size
                 ? GetWindowLongPtrW( GetConsoleWindow(), GWL_STYLE ) & ~WS_SIZEBOX & ~WS_MAXIMIZEBOX
                 : GetWindowLongPtrW( GetConsoleWindow(), GWL_STYLE ) | WS_SIZEBOX | WS_MAXIMIZEBOX );
             SetWindowLongPtrW(
               GetConsoleWindow(), GWL_STYLE,
-              _is_enabled_minimize_ctrl
+              _is_enable_minimize_ctrl
                 ? GetWindowLongPtrW( GetConsoleWindow(), GWL_STYLE ) | WS_MINIMIZEBOX
                 : GetWindowLongPtrW( GetConsoleWindow(), GWL_STYLE ) & ~WS_MINIMIZEBOX );
             EnableMenuItem(
               GetSystemMenu( GetConsoleWindow(), FALSE ), SC_CLOSE,
-              is_enabled_close_window_ctrl ? MF_BYCOMMAND | MF_ENABLED : MF_BYCOMMAND | MF_DISABLED | MF_GRAYED );
+              is_enable_close_ctrl ? MF_BYCOMMAND | MF_ENABLED : MF_BYCOMMAND | MF_DISABLED | MF_GRAYED );
             SetLayeredWindowAttributes( GetConsoleWindow(), RGB( 0, 0, 0 ), _translucency_value, LWA_ALPHA );
             return *this;
         }
-        auto &lock( const bool _is_hidden_cursor, const bool _is_locked_text )
+        auto &lock( const bool _is_hide_cursor, const bool _is_lock_text )
         {
-            show_cursor_( !_is_hidden_cursor );
-            edit_console_attrs_( _is_locked_text ? console_attrs_::lock_all : console_attrs_::normal );
+            show_cursor_( !_is_hide_cursor );
+            edit_console_attrs_( _is_lock_text ? console_attrs_::lock_all : console_attrs_::normal );
             return *this;
         }
         auto operator=( const console_ui< _type_ > & ) -> console_ui< _type_ > & = default;
