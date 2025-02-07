@@ -126,7 +126,7 @@ namespace core {
           { "experiment",
             "实验性内容",
             { { "fix_os_env", "(*) 修复操作系统环境" }, { "disable_x_option_hot_reload", "(-) 禁用标 (*) 选项热重载" } } } } } };
-    inline const auto &is_disabled_x_option_hot_reload{ options[ "experiment" ][ "disable_x_option_hot_reload" ] };
+    inline const auto &is_disable_x_option_hot_reload{ options[ "experiment" ][ "disable_x_option_hot_reload" ] };
     struct rule_node final {
         const ansi_char *const showed_name;
         std::deque< ansi_std_string > execs;
@@ -182,9 +182,9 @@ namespace core {
     };
     class option_op final : public basic_config_node {
       public:
-        virtual auto load( const bool _is_reloaded, ansi_std_string &_line ) -> void override final
+        virtual auto load( const bool _is_reload, ansi_std_string &_line ) -> void override final
         {
-            if ( _is_reloaded ) {
+            if ( _is_reload ) {
                 return;
             }
             for ( auto &main_key : options.main_keys ) {
@@ -313,18 +313,18 @@ namespace core {
         std::print( " -> 准备用户界面.\n" );
         auto launch_cmd{ []( const cpp_utils::console_ui_ansi::func_args _args ) static
         {
-            const auto &is_disabled_close_ctrl{ options[ "window" ][ "disable_close_ctrl" ] };
+            const auto &is_disable_close_ctrl{ options[ "window" ][ "disable_close_ctrl" ] };
             const auto &is_translucency{ options[ "window" ][ "translucency" ] };
             _args.parent_ui
               .set_console(
-                INFO_SHORT_NAME " - 命令提示符", CHARSET_ID, 120, 30, false, false, is_disabled_close_ctrl.get() ? false : true,
+                INFO_SHORT_NAME " - 命令提示符", CHARSET_ID, 120, 30, false, false, is_disable_close_ctrl.get() ? false : true,
                 is_translucency.get() ? 230 : 255 )
               .lock( false, false );
             SetConsoleScreenBufferSize( GetStdHandle( STD_OUTPUT_HANDLE ), { 128, SHRT_MAX - 1 } );
             std::system( R"(C:\Windows\System32\cmd.exe)" );
             _args.parent_ui.set_console(
               INFO_SHORT_NAME, CHARSET_ID, CONSOLE_WIDTH, CONSOLE_HEIGHT, true, false,
-              is_disabled_close_ctrl.get() ? false : true, is_translucency.get() ? 230 : 255 );
+              is_disable_close_ctrl.get() ? false : true, is_translucency.get() ? 230 : 255 );
             return cpp_utils::console_ui_ansi::back;
         } };
         class cmd_executor final {
@@ -373,26 +373,26 @@ namespace core {
     auto set_console_attrs( const std::stop_token _msg )
     {
         const auto &is_translucency{ options[ "window" ][ "translucency" ] };
-        const auto &is_disabled_close_ctrl{ options[ "window" ][ "disable_close_ctrl" ] };
-        if ( is_disabled_x_option_hot_reload.get() ) {
+        const auto &is_disable_close_ctrl{ options[ "window" ][ "disable_close_ctrl" ] };
+        if ( is_disable_x_option_hot_reload.get() ) {
             SetLayeredWindowAttributes( GetConsoleWindow(), RGB( 0, 0, 0 ), is_translucency.get() ? 230 : 255, LWA_ALPHA );
             EnableMenuItem(
               GetSystemMenu( GetConsoleWindow(), FALSE ), SC_CLOSE,
-              is_disabled_close_ctrl.get() ? MF_BYCOMMAND | MF_DISABLED | MF_GRAYED : MF_BYCOMMAND | MF_ENABLED );
+              is_disable_close_ctrl.get() ? MF_BYCOMMAND | MF_DISABLED | MF_GRAYED : MF_BYCOMMAND | MF_ENABLED );
             return;
         }
         while ( !_msg.stop_requested() ) {
             SetLayeredWindowAttributes( GetConsoleWindow(), RGB( 0, 0, 0 ), is_translucency.get() ? 230 : 255, LWA_ALPHA );
             EnableMenuItem(
               GetSystemMenu( GetConsoleWindow(), FALSE ), SC_CLOSE,
-              is_disabled_close_ctrl.get() ? MF_BYCOMMAND | MF_DISABLED | MF_GRAYED : MF_BYCOMMAND | MF_ENABLED );
+              is_disable_close_ctrl.get() ? MF_BYCOMMAND | MF_DISABLED | MF_GRAYED : MF_BYCOMMAND | MF_ENABLED );
             cpp_utils::perf_sleep( default_thread_sleep_time );
         }
     }
     auto topmost_show_window( const std::stop_token _msg )
     {
-        const auto &is_topmost_shown{ options[ "window" ][ "topmost_show" ] };
-        if ( is_disabled_x_option_hot_reload.get() && !is_topmost_shown.get() ) {
+        const auto &is_topmost_show{ options[ "window" ][ "topmost_show" ] };
+        if ( is_disable_x_option_hot_reload.get() && !is_topmost_show.get() ) {
             return;
         }
         const auto this_window{ GetConsoleWindow() };
@@ -407,7 +407,7 @@ namespace core {
             SetWindowPos( this_window, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
             cpp_utils::perf_sleep( 100ms );
         } };
-        if ( is_disabled_x_option_hot_reload.get() ) {
+        if ( is_disable_x_option_hot_reload.get() ) {
             while ( !_msg.stop_requested() ) {
                 core_op();
             }
@@ -415,7 +415,7 @@ namespace core {
             return;
         }
         while ( !_msg.stop_requested() ) {
-            if ( !is_topmost_shown.get() ) {
+            if ( !is_topmost_show.get() ) {
                 SetWindowPos( GetConsoleWindow(), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
                 cpp_utils::perf_sleep( default_thread_sleep_time );
                 continue;
@@ -426,8 +426,8 @@ namespace core {
     }
     auto fix_os_env( const std::stop_token _msg )
     {
-        const auto &is_fixed_os_env{ options[ "experiment" ][ "fix_os_env" ] };
-        if ( is_disabled_x_option_hot_reload.get() && !is_fixed_os_env.get() ) {
+        const auto &is_fix_os_env{ options[ "experiment" ][ "fix_os_env" ] };
+        if ( is_disable_x_option_hot_reload.get() && !is_fix_os_env.get() ) {
             return;
         }
         constexpr const ansi_char *hkcu_reg_dirs[]{
@@ -448,14 +448,14 @@ namespace core {
             }
             cpp_utils::perf_sleep( 1s );
         } };
-        if ( is_disabled_x_option_hot_reload.get() ) {
+        if ( is_disable_x_option_hot_reload.get() ) {
             while ( !_msg.stop_requested() ) {
                 core_op();
             }
             return;
         }
         while ( !_msg.stop_requested() ) {
-            if ( !is_fixed_os_env.get() ) {
+            if ( !is_fix_os_env.get() ) {
                 cpp_utils::perf_sleep( default_thread_sleep_time );
                 continue;
             }
@@ -469,13 +469,13 @@ namespace core {
         const mod mod_data_;
         static constexpr auto option_button_color{
           cpp_utils::console_value::text_foreground_red | cpp_utils::console_value::text_foreground_green };
-        auto load_( const bool _is_reloaded )
+        auto load_( const bool _is_reload )
         {
             std::ifstream config_file{ config_file_name, std::ios::in };
             if ( !config_file.good() ) {
                 return;
             }
-            if ( _is_reloaded ) {
+            if ( _is_reload ) {
                 std::print( " -> 准备配置重载.\n" );
                 for ( auto &config : configs ) {
                     config->prepare_reloading();
@@ -507,7 +507,7 @@ namespace core {
                     continue;
                 }
                 if ( node_ptr != nullptr ) {
-                    node_ptr->load( _is_reloaded, line );
+                    node_ptr->load( _is_reload, line );
                 }
             }
         }
@@ -653,12 +653,12 @@ namespace core {
                 return cpp_utils::console_ui_ansi::back;
             }
             const auto &crack_restore_option_node{ options[ "crack_restore" ] };
-            const auto &is_hijacked_execs{ crack_restore_option_node[ "hijack_execs" ] };
+            const auto &is_hijack_execs{ crack_restore_option_node[ "hijack_execs" ] };
             const auto &is_set_serv_startup_types{ crack_restore_option_node[ "set_serv_startup_types" ] };
             std::print( " -> 生成并执行操作系统命令.\n{}\n", ansi_std_string( CONSOLE_WIDTH, '-' ) );
             switch ( mod_data_ ) {
                 case mod::crack : {
-                    if ( is_hijacked_execs.get() ) {
+                    if ( is_hijack_execs.get() ) {
                         for ( const auto &exec : rules_.execs ) {
                             std::system(
                               std::format(
@@ -681,7 +681,7 @@ namespace core {
                     break;
                 }
                 case mod::restore : {
-                    if ( is_hijacked_execs.get() ) {
+                    if ( is_hijack_execs.get() ) {
                         for ( const auto &exec : rules_.execs ) {
                             std::system(
                               std::format(
