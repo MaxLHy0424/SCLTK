@@ -105,16 +105,16 @@ namespace cpp_utils {
     template < typename... _args_ >
     inline auto utf8_format( const utf8_std_string_view _fmt, _args_ &&..._args )
     {
-        const auto convert_arg{ []< typename _type_ >( _type_ &&_arg ) static -> decltype( auto )
+        auto convert_arg{ []< typename _type_ >( _type_ &&_arg ) static -> decltype( auto )
         {
             if constexpr ( std::is_same_v< std::decay_t< _type_ >, utf8_std_string > ) {
-                return reinterpret_cast< ansi_std_string * >( &_arg );
+                return reinterpret_cast< const ansi_std_string * >( &_arg );
             } else if constexpr ( std::is_same_v< std::decay_t< _type_ >, utf8_std_string_view > ) {
-                return reinterpret_cast< ansi_std_string_view * >( &_arg );
+                return reinterpret_cast< const ansi_std_string_view * >( &_arg );
             } else if constexpr ( std::is_same_v< std::decay_t< _type_ >, utf8_char * > ) {
-                return std::make_unique< ansi_std_string_view >( reinterpret_cast< ansi_char * >( &_arg ) );
+                return std::make_unique< ansi_char * >( reinterpret_cast< ansi_char * >( &_arg ) );
             } else if constexpr ( std::is_same_v< std::decay_t< _type_ >, const utf8_char * > ) {
-                return std::make_unique< ansi_std_string_view >( reinterpret_cast< const ansi_char * >( &_arg ) );
+                return std::make_unique< const ansi_char * >( reinterpret_cast< const ansi_char * >( &_arg ) );
             } else if constexpr (
               std::is_pointer_v< std::decay_t< _type_ > >
               && !( std::is_same_v< std::decay_t< _type_ >, ansi_char * >
@@ -576,7 +576,7 @@ namespace cpp_utils {
             if constexpr ( std::is_same_v< _type_, ansi_char > ) {
                 std::print( "{}{}", _text, _is_endl ? '\n' : '\0' );
             } else if constexpr ( std::is_same_v< _type_, utf8_char > ) {
-                std::print( "{}{}", *reinterpret_cast< const ansi_std_string_view * >( &_text ), _is_endl ? '\n' : '\0' );
+                utf8_print( u8"{}{}", _text, _is_endl ? '\n' : '\0' );
             }
         }
         static auto rewrite_( const COORD _cursor_position, const std_string_view< _type_ > _text )
