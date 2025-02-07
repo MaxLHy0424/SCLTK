@@ -581,15 +581,15 @@ namespace cpp_utils {
         }
         static auto rewrite_( const COORD _cursor_position, const std_string_view< _type_ > _text )
         {
-            set_cursor_( { 0, _cursor_position.Y } );
+            set_cursor_( COORD{ 0, _cursor_position.Y } );
             if constexpr ( std::is_same_v< _type_, ansi_char > ) {
                 write_( ansi_std_string( _cursor_position.X, ' ' ) );
             } else if constexpr ( std::is_same_v< _type_, utf8_char > ) {
                 write_( utf8_std_string( _cursor_position.X, ' ' ) );
             }
-            set_cursor_( { 0, _cursor_position.Y } );
+            set_cursor_( COORD{ 0, _cursor_position.Y } );
             write_( _text );
-            set_cursor_( { 0, _cursor_position.Y } );
+            set_cursor_( COORD{ 0, _cursor_position.Y } );
         }
         auto init_pos_()
         {
