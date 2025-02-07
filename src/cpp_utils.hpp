@@ -108,9 +108,17 @@ namespace cpp_utils {
         auto convert_arg{ []< typename _type_ >( _type_ &&_arg ) static -> decltype( auto )
         {
             if constexpr ( std::is_same_v< std::decay_t< _type_ >, utf8_std_string > ) {
-                return reinterpret_cast< const ansi_std_string * >( &_arg );
+                if constexpr ( std::is_const_v< std::remove_reference_t< _type_ > > ) {
+                    return reinterpret_cast< const ansi_std_string * >( &_arg );
+                } else {
+                    return reinterpret_cast< ansi_std_string * >( &_arg );
+                }
             } else if constexpr ( std::is_same_v< std::decay_t< _type_ >, utf8_std_string_view > ) {
-                return reinterpret_cast< const ansi_std_string_view * >( &_arg );
+                if constexpr ( std::is_const_v< std::remove_reference_t< _type_ > > ) {
+                    return reinterpret_cast< const ansi_std_string_view * >( &_arg );
+                } else {
+                    return reinterpret_cast< ansi_std_string_view * >( &_arg );
+                }
             } else if constexpr ( std::is_same_v< std::decay_t< _type_ >, utf8_char * > ) {
                 return std::make_unique< ansi_char * >( reinterpret_cast< ansi_char * >( &_arg ) );
             } else if constexpr ( std::is_same_v< std::decay_t< _type_ >, const utf8_char * > ) {
