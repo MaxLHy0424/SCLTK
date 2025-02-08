@@ -269,14 +269,11 @@ namespace core {
     inline basic_config_node_smart_ptr configs[]{
       basic_config_node_smart_ptr{ new option_op }, basic_config_node_smart_ptr{ new custom_rules_execs_op },
       basic_config_node_smart_ptr{ new custom_rules_servs_op } };
-    template < typename _chrono_type_ >
-    inline auto wait( const _chrono_type_ _time )
+    inline auto wait()
     {
-        constexpr _chrono_type_ zero{ 0 };
-        constexpr _chrono_type_ one{ 1 };
-        for ( auto i{ _time }; i > zero; --i ) {
+        for ( auto i{ 3s }; i > 0s; --i ) {
             std::print( " {} 后返回.\r", i );
-            cpp_utils::perf_sleep( one );
+            cpp_utils::perf_sleep( 1s );
         }
     }
     inline auto quit( cpp_utils::console_ui_ansi::func_args )
@@ -529,7 +526,7 @@ namespace core {
               std::chrono::system_clock::now() )
                         << config_text << std::flush;
             std::print( "\n ({}) 同步配置{}.\n\n", config_file.good() ? 'i' : '!', config_file.good() ? "成功" : "失败" );
-            wait( 3s );
+            wait();
             return cpp_utils::console_ui_ansi::back;
         }
         auto open_file()
@@ -542,7 +539,7 @@ namespace core {
             std::print(
               "                    [ 配  置 ]\n\n\n"
               " (i) 无法读取配置文件.\n\n" );
-            wait( 3s );
+            wait();
             return cpp_utils::console_ui_ansi::back;
         }
         class option_setter final {
@@ -649,7 +646,7 @@ namespace core {
             std::print( "                 [ 破 解 / 恢 复 ]\n\n\n" );
             if ( rules_.empty() ) {
                 std::print( " (i) 规则为空.\n\n" );
-                wait( 3s );
+                wait();
                 return cpp_utils::console_ui_ansi::back;
             }
             const auto &crack_restore_option_node{ options[ "crack_restore" ] };
