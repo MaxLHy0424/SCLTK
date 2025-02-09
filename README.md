@@ -167,10 +167,10 @@ CRCSN 使用 [MIT License](./LICENSE), 详细内容请自行阅读.
 
 然后, 使用 git 克隆本仓库到本地, 在仓库本地目录下创建 `msys2` 文件, 内容如下:
 ```
-msys2_path = \\path\\to\\msys2
+msys2_path = /path/to/msys2
 ```
 
-其中 `\\path\\to\\msys2` 为 msys2 的安装路径 (以 `\\` 作为路径分隔符, 如 `C:\\msys2`).
+其中 `/path/to/msys2` 为 msys2 的安装路径 (以 `/` 作为路径分隔符, 如 `C:/msys2`).
 
 接下来, 在仓库本地目录下打开终端, 执行:
 ```bash
