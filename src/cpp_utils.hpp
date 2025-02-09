@@ -370,6 +370,24 @@ namespace cpp_utils {
         multithread_task_nolog( multithread_task_nolog && )                          = default;
         ~multithread_task_nolog()                                                    = default;
     };
+    template < typename _type_, class... _args_ >
+        requires( std::same_as< _type_, _args_ > && ... )
+    auto make_unique_array( std::size_t _capacity, _args_ &&..._args )
+    {
+        if ( _capacity < sizeof...( _args ) ) {
+            throw std::runtime_error{ "the capacity must be greater than or equal to the size of arguments" };
+        }
+        return std::unique_ptr< _type_[] >{ new _type_[ _capacity ]{ std::forward< _args_ >( _args )... } };
+    }
+    template < typename _type_, class... _args_ >
+        requires( std::same_as< _type_, _args_ > && ... )
+    auto make_shared_array( std::size_t _capacity, _args_ &&..._args )
+    {
+        if ( _capacity < sizeof...( _args ) ) {
+            throw std::runtime_error{ "the capacity must be greater than or equal to the size of arguments" };
+        }
+        return std::unique_ptr< _type_[] >{ new _type_[ _capacity ]{ std::forward< _args_ >( _args )... } };
+    }
 #if defined( _WIN32 ) || defined( _WIN64 )
     inline auto ignore_console_exit_sinal( const bool _is_ignore )
     {
