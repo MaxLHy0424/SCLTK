@@ -19,21 +19,21 @@ namespace core {
     struct option_node final {
         struct sub_key final {
           private:
-            std::atomic_flag value{};
+            std::atomic_flag value_{};
           public:
             const ansi_char *const self_name;
             const ansi_char *const showed_name;
             auto enable()
             {
-                value.test_and_set();
+                value_.test_and_set();
             }
             auto disable()
             {
-                value.clear();
+                value_.clear();
             }
             auto get() const
             {
-                return value.test();
+                return value_.test();
             }
             auto operator=( const sub_key & ) -> sub_key & = delete;
             auto operator=( sub_key && ) -> sub_key &      = delete;
@@ -42,12 +42,12 @@ namespace core {
               , showed_name{ _showed_name }
             { }
             sub_key( const sub_key &_src )
-              : value{ _src.get() }
+              : value_{ _src.get() }
               , self_name{ _src.self_name }
               , showed_name{ _src.showed_name }
             { }
             sub_key( sub_key &&_src )
-              : value{ _src.get() }
+              : value_{ _src.get() }
               , self_name{ _src.self_name }
               , showed_name{ _src.showed_name }
             { }
