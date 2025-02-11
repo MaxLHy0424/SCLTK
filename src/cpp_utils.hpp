@@ -264,17 +264,17 @@ namespace cpp_utils {
     }
     class thread_pool final {
       private:
-        std::vector< std::jthread > tasks_{};
+        std::vector< std::jthread > threads_{};
       public:
         template < callable_object _callee_, typename... _args_ >
         auto &add( _callee_ &&_func, _args_ &&..._args )
         {
-            tasks_.emplace_back( std::forward< _callee_ >( _func ), std::forward< _args_ >( _args )... );
+            threads_.emplace_back( std::forward< _callee_ >( _func ), std::forward< _args_ >( _args )... );
             return *this;
         }
         auto &join( const size_type _index )
         {
-            auto &task{ tasks_.at( _index ) };
+            auto &task{ threads_.at( _index ) };
             if ( task.joinable() ) {
                 task.join();
             }
@@ -282,7 +282,7 @@ namespace cpp_utils {
         }
         auto &detach( const size_type _index )
         {
-            auto &task{ tasks_.at( _index ) };
+            auto &task{ threads_.at( _index ) };
             if ( task.joinable() ) {
                 task.detach();
             }
