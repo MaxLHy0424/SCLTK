@@ -262,70 +262,7 @@ namespace cpp_utils {
         std::this_thread::yield();
         std::this_thread::sleep_for( _time );
     }
-    template < typename _type_ >
-        requires std::is_same_v< _type_, ansi_char > || std::is_same_v< _type_, utf8_char >
     class multithread_task final {
-      private:
-        struct node_ final {
-            std::jthread task_thread;
-            auto operator=( const node_ & ) -> node_ & = delete;
-            auto operator=( node_ && ) -> node_ &      = default;
-            template < callable_object _callee_, typename... _args_ >
-            node_( _callee_ &&_func, _args_ &&..._args )
-              : task_thread{ std::forward< _callee_ >( _func ), std::forward< _args_ >( _args )... }
-            { }
-            node_( const node_ & ) = delete;
-            node_( node_ && )      = default;
-            ~node_()
-            {
-                if ( task_thread.joinable() ) {
-                    if constexpr ( std::is_same_v< _type_, ansi_char > ) {
-                        std::print( " -> 终止线程 {}.\n", task_thread.get_id() );
-                    } else if constexpr ( std::is_same_v< _type_, utf8_char > ) {
-                        utf8_print( u8" -> 终止线程 {}.\n", task_thread.get_id() );
-                    }
-                }
-            }
-        };
-        std::vector< node_ > tasks_{};
-      public:
-        template < callable_object _callee_, typename... _args_ >
-        auto &add( const std_string_view< _type_ > _comment, _callee_ &&_func, _args_ &&..._args )
-        {
-            if constexpr ( std::is_same_v< _type_, ansi_char > ) {
-                std::print( " -> 创建线程: {}.\n", _comment );
-            } else if constexpr ( std::is_same_v< _type_, utf8_char > ) {
-                utf8_print( u8" -> 创建线程: {}.\n", _comment );
-            }
-            tasks_.emplace_back( std::forward< _callee_ >( _func ), std::forward< _args_ >( _args )... );
-            return *this;
-        }
-        auto &join( const size_type _index )
-        {
-            auto &task{ tasks_.at( _index ).task_thread };
-            if ( task.joinable() ) {
-                task.join();
-            }
-            return *this;
-        }
-        auto &detach( const size_type _index )
-        {
-            auto &task{ tasks_.at( _index ).task_thread };
-            if ( task.joinable() ) {
-                task.detach();
-            }
-            return *this;
-        }
-        auto operator=( const multithread_task< _type_ > & ) -> multithread_task< _type_ > & = delete;
-        auto operator=( multithread_task< _type_ > && ) -> multithread_task< _type_ > &      = default;
-        multithread_task()                                                                   = default;
-        multithread_task( const multithread_task< _type_ > & )                               = delete;
-        multithread_task( multithread_task< _type_ > && )                                    = default;
-        ~multithread_task()                                                                  = default;
-    };
-    using multithread_task_ansi = multithread_task< ansi_char >;
-    using multithread_task_utf8 = multithread_task< utf8_char >;
-    class multithread_task_nolog final {
       private:
         struct node_ final {
             std::jthread task_thread;
@@ -363,12 +300,12 @@ namespace cpp_utils {
             }
             return *this;
         }
-        auto operator=( const multithread_task_nolog & ) -> multithread_task_nolog & = delete;
-        auto operator=( multithread_task_nolog && ) -> multithread_task_nolog &      = default;
-        multithread_task_nolog()                                                     = default;
-        multithread_task_nolog( const multithread_task_nolog & )                     = delete;
-        multithread_task_nolog( multithread_task_nolog && )                          = default;
-        ~multithread_task_nolog()                                                    = default;
+        auto operator=( const multithread_task & ) -> multithread_task & = delete;
+        auto operator=( multithread_task && ) -> multithread_task &      = default;
+        multithread_task()                                               = default;
+        multithread_task( const multithread_task & )                     = delete;
+        multithread_task( multithread_task && )                          = default;
+        ~multithread_task()                                              = default;
     };
     template < typename _type_, class... _args_ >
         requires( std::same_as< _type_, _args_ > && ... )
