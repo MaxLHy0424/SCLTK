@@ -460,9 +460,9 @@ namespace core {
     }
     class config_op final {
       public:
-        enum class mod { load, edit };
+        enum class mode { load, edit };
       private:
-        const mod mod_data_;
+        const mode mod_data_;
         static constexpr auto option_button_color{
           cpp_utils::console_value::text_foreground_red | cpp_utils::console_value::text_foreground_green };
         auto load_( const bool _is_reload )
@@ -619,14 +619,14 @@ namespace core {
         auto operator()( cpp_utils::console_ui_ansi::func_args )
         {
             switch ( mod_data_ ) {
-                case mod::load : load_( false ); break;
-                case mod::edit : edit_(); break;
+                case mode::load : load_( false ); break;
+                case mode::edit : edit_(); break;
             }
             return cpp_utils::console_ui_ansi::back;
         }
         auto operator=( const config_op & ) -> config_op & = delete;
         auto operator=( config_op && ) -> config_op &      = delete;
-        config_op( const mod _mod_data )
+        config_op( const mode _mod_data )
           : mod_data_{ _mod_data }
         { }
         config_op( const config_op & ) = default;
@@ -635,9 +635,9 @@ namespace core {
     };
     class rule_op final {
       public:
-        enum class mod { crack, restore };
+        enum class mode { crack, restore };
       private:
-        const mod mod_data_;
+        const mode mod_data_;
         const rule_node &rules_;
       public:
         auto operator()( cpp_utils::console_ui_ansi::func_args )
@@ -653,7 +653,7 @@ namespace core {
             const auto &is_set_serv_startup_types{ crack_restore_option_node[ "set_serv_startup_types" ] };
             std::print( " -> 生成并执行操作系统命令.\n{}\n", ansi_std_string( CONSOLE_WIDTH, '-' ) );
             switch ( mod_data_ ) {
-                case mod::crack : {
+                case mode::crack : {
                     if ( is_hijack_execs.get() ) {
                         for ( const auto &exec : rules_.execs ) {
                             std::system(
@@ -676,7 +676,7 @@ namespace core {
                     }
                     break;
                 }
-                case mod::restore : {
+                case mode::restore : {
                     if ( is_hijack_execs.get() ) {
                         for ( const auto &exec : rules_.execs ) {
                             std::system(
@@ -701,7 +701,7 @@ namespace core {
         }
         auto operator=( const rule_op & ) -> rule_op & = delete;
         auto operator=( rule_op && ) -> rule_op &      = delete;
-        rule_op( const mod _mod_data, const rule_node &_rule )
+        rule_op( const mode _mod_data, const rule_node &_rule )
           : mod_data_{ _mod_data }
           , rules_{ _rule }
         { }
