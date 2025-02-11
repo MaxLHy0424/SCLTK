@@ -282,17 +282,17 @@ namespace cpp_utils {
         }
         auto &join( const size_type _index )
         {
-            auto &task{ threads_.at( _index ) };
-            if ( task.joinable() ) {
-                task.join();
+            auto &thread{ threads_.at( _index ) };
+            if ( thread.joinable() ) {
+                thread.join();
             }
             return *this;
         }
         auto &detach( const size_type _index )
         {
-            auto &task{ threads_.at( _index ) };
-            if ( task.joinable() ) {
-                task.detach();
+            auto &thread{ threads_.at( _index ) };
+            if ( thread.joinable() ) {
+                thread.detach();
             }
             return *this;
         }
