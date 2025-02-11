@@ -264,19 +264,7 @@ namespace cpp_utils {
     }
     class thread_pool final {
       private:
-        struct node_ final {
-            std::jthread task_thread;
-            auto operator=( const node_ & ) -> node_ & = delete;
-            auto operator=( node_ && ) -> node_ &      = default;
-            template < callable_object _callee_, typename... _args_ >
-            node_( _callee_ &&_func, _args_ &&..._args )
-              : task_thread{ std::forward< _callee_ >( _func ), std::forward< _args_ >( _args )... }
-            { }
-            node_( const node_ & ) = delete;
-            node_( node_ && )      = default;
-            ~node_()               = default;
-        };
-        std::vector< node_ > tasks_{};
+        std::vector< std::jthread > tasks_{};
       public:
         template < callable_object _callee_, typename... _args_ >
         auto &add( _callee_ &&_func, _args_ &&..._args )
@@ -286,7 +274,7 @@ namespace cpp_utils {
         }
         auto &join( const size_type _index )
         {
-            auto &task{ tasks_.at( _index ).task_thread };
+            auto &task{ tasks_.at( _index ) };
             if ( task.joinable() ) {
                 task.join();
             }
@@ -294,7 +282,7 @@ namespace cpp_utils {
         }
         auto &detach( const size_type _index )
         {
-            auto &task{ tasks_.at( _index ).task_thread };
+            auto &task{ tasks_.at( _index ) };
             if ( task.joinable() ) {
                 task.detach();
             }
