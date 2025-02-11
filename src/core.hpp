@@ -117,15 +117,15 @@ namespace core {
     inline option_node options{
       { { { "crack_restore",
             "破解/恢复",
-            { { "hijack_execs", "劫持可执行文件" }, { "set_serv_startup_types", "设置服务启动类型" } } },
+            { { "hijack_execs", "劫持可执行文件" },
+              { "set_serv_startup_types", "设置服务启动类型" },
+              { "fix_os_env", "(*) 修复操作系统环境" } } },
           { "window",
             "窗口显示",
             { { "topmost_show", "(*) 置顶显示" },
               { "disable_close_ctrl", "(*) 禁用关闭控件" },
               { "translucency", "(*) 半透明化" } } },
-          { "experiment",
-            "实验性内容",
-            { { "fix_os_env", "(*) 修复操作系统环境" }, { "disable_x_option_hot_reload", "(-) 禁用标 (*) 选项热重载" } } } } } };
+          { "experiment", "实验性内容", { { "disable_x_option_hot_reload", "(-) 禁用标 (*) 选项热重载" } } } } } };
     inline const auto &is_disable_x_option_hot_reload{ options[ "experiment" ][ "disable_x_option_hot_reload" ] };
     struct rule_node final {
         const ansi_char *const showed_name;
@@ -423,7 +423,7 @@ namespace core {
     }
     auto fix_os_env( const std::stop_token _msg )
     {
-        const auto &is_fix_os_env{ options[ "experiment" ][ "fix_os_env" ] };
+        const auto &is_fix_os_env{ options[ "crack_restore" ][ "fix_os_env" ] };
         if ( is_disable_x_option_hot_reload.get() && !is_fix_os_env.get() ) {
             return;
         }
