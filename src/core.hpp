@@ -13,7 +13,6 @@ namespace core {
     using ansi_char            = cpp_utils::ansi_char;
     using ansi_std_string      = cpp_utils::ansi_std_string;
     using ansi_std_string_view = cpp_utils::ansi_std_string_view;
-    using wide_std_string      = cpp_utils::wide_std_string;
     inline constexpr auto config_file_name{ "config.ini" };
     inline constexpr auto default_thread_sleep_time{ 1s };
     struct option_node final {
