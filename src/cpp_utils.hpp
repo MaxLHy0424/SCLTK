@@ -266,6 +266,14 @@ namespace cpp_utils {
       private:
         std::vector< std::jthread > threads_{};
       public:
+        auto get_id( const size_type _index )
+        {
+            return threads_.at( _index ).get_id();
+        }
+        auto native_handle( const size_type _index )
+        {
+            return threads_.at( _index ).native_handle();
+        }
         template < callable_object _callee_, typename... _args_ >
         auto &add( _callee_ &&_func, _args_ &&..._args )
         {
