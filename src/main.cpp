@@ -11,7 +11,7 @@ auto main() -> int
     }
     core::config_op{ core::config_op::mod::load }( cpp_utils::console_ui_ansi::func_args{ ui } );
     std::print( " -> 创建线程.\n" );
-    cpp_utils::multithread_task threads;
+    cpp_utils::thread_pool threads;
     threads.add( core::topmost_show_window ).add( core::set_console_attrs ).add( core::fix_os_env );
     std::print( " -> 准备用户界面.\n" );
     ui.add_back( "                    [ 主  页 ]\n\n" )

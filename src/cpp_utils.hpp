@@ -262,7 +262,7 @@ namespace cpp_utils {
         std::this_thread::yield();
         std::this_thread::sleep_for( _time );
     }
-    class multithread_task final {
+    class thread_pool final {
       private:
         struct node_ final {
             std::jthread task_thread;
@@ -300,12 +300,12 @@ namespace cpp_utils {
             }
             return *this;
         }
-        auto operator=( const multithread_task & ) -> multithread_task & = delete;
-        auto operator=( multithread_task && ) -> multithread_task &      = default;
-        multithread_task()                                               = default;
-        multithread_task( const multithread_task & )                     = delete;
-        multithread_task( multithread_task && )                          = default;
-        ~multithread_task()                                              = default;
+        auto operator=( const thread_pool & ) -> thread_pool & = delete;
+        auto operator=( thread_pool && ) -> thread_pool &      = default;
+        thread_pool()                                          = default;
+        thread_pool( const thread_pool & )                     = delete;
+        thread_pool( thread_pool && )                          = default;
+        ~thread_pool()                                         = default;
     };
     template < typename _type_, class... _args_ >
         requires( std::same_as< _type_, _args_ > && ... )
