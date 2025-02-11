@@ -467,11 +467,11 @@ namespace cpp_utils {
             cursor_data.bVisible = static_cast< WINBOOL >( _is_show );
             SetConsoleCursorInfo( GetStdHandle( STD_OUTPUT_HANDLE ), &cursor_data );
         }
-        static auto edit_console_attrs_( const console_attrs_ _mod )
+        static auto edit_console_attrs_( const console_attrs_ _attrs )
         {
             DWORD attrs;
             GetConsoleMode( GetStdHandle( STD_INPUT_HANDLE ), &attrs );
-            switch ( _mod ) {
+            switch ( _attrs ) {
                 case console_attrs_::normal :
                     attrs |= ENABLE_QUICK_EDIT_MODE;
                     attrs |= ENABLE_INSERT_MODE;
