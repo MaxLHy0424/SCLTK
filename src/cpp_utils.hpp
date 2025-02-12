@@ -445,6 +445,62 @@ namespace cpp_utils {
     {
         return SetConsoleCtrlHandler( nullptr, static_cast< BOOL >( _is_ignore ) );
     }
+    template < char_type _type_ >
+        requires std::is_same_v< _type_, ansi_char > || std::is_same_v< _type_, utf8_char >
+    auto set_console_title( const std_string_view< _type_ > _title )
+    {
+        if constexpr ( std::is_same_v< _type_, ansi_char > ) {
+            SetConsoleTitleA( _title.data() );
+        } else if constexpr ( std::is_same_v< _type_, utf8_char > ) {
+            SetConsoleTitleA( string_view_convert< ansi_char >( _title ).c_str() );
+        }
+    }
+    auto set_console_charset( const UINT _charset )
+    {
+        SetConsoleOutputCP( _charset );
+        SetConsoleCP( _charset );
+    }
+    auto set_console_size( const SHORT _width, const SHORT _height )
+    {
+        HANDLE output_handle{ GetStdHandle( STD_OUTPUT_HANDLE ) };
+        SMALL_RECT wrt{ 0, 0, static_cast< SHORT >( _width - 1 ), static_cast< SHORT >( _height - 1 ) };
+        COORD size{ _width, _height };
+        ShowWindow( GetConsoleWindow(), SW_RESTORE );
+        SetConsoleScreenBufferSize( output_handle, size );
+        SetConsoleWindowInfo( output_handle, TRUE, &wrt );
+        SetConsoleScreenBufferSize( output_handle, size );
+    }
+    auto set_console_translucency( const BYTE _value )
+    {
+        SetLayeredWindowAttributes( GetConsoleWindow(), RGB( 0, 0, 0 ), _value, LWA_ALPHA );
+    }
+    auto fix_console_size( const bool _is_enable )
+    {
+        SetWindowLongPtrW(
+          GetConsoleWindow(), GWL_STYLE,
+          _is_enable
+            ? GetWindowLongPtrW( GetConsoleWindow(), GWL_STYLE ) & ~WS_SIZEBOX & ~WS_MAXIMIZEBOX
+            : GetWindowLongPtrW( GetConsoleWindow(), GWL_STYLE ) | WS_SIZEBOX | WS_MAXIMIZEBOX );
+    }
+    auto enable_console_minimize_button( const bool _is_enable )
+    {
+        SetWindowLongPtrW(
+          GetConsoleWindow(), GWL_STYLE,
+          _is_enable
+            ? GetWindowLongPtrW( GetConsoleWindow(), GWL_STYLE ) | WS_MINIMIZEBOX
+            : GetWindowLongPtrW( GetConsoleWindow(), GWL_STYLE ) & ~WS_MINIMIZEBOX );
+    }
+    auto enable_console_close_button( const bool _is_enable )
+    {
+        SetWindowLongPtrW(
+          GetConsoleWindow(), GWL_STYLE,
+          _is_enable
+            ? GetWindowLongPtrW( GetConsoleWindow(), GWL_STYLE ) | WS_SYSMENU
+            : GetWindowLongPtrW( GetConsoleWindow(), GWL_STYLE ) & ~WS_SYSMENU );
+        EnableMenuItem(
+          GetSystemMenu( GetConsoleWindow(), FALSE ), SC_CLOSE,
+          _is_enable ? MF_BYCOMMAND | MF_ENABLED : MF_BYCOMMAND | MF_DISABLED | MF_GRAYED );
+    }
     namespace console_value {
         inline constexpr DWORD mouse_button_left{ FROM_LEFT_1ST_BUTTON_PRESSED };
         inline constexpr DWORD mouse_button_middle{ FROM_LEFT_2ND_BUTTON_PRESSED };
@@ -797,62 +853,40 @@ namespace cpp_utils {
         auto &set_console_title( const std_string_view< _type_ > _title )
         {
             if constexpr ( std::is_same_v< _type_, ansi_char > ) {
-                SetConsoleTitleA( _title.data() );
+                cpp_utils::set_console_title( _title );
             } else if constexpr ( std::is_same_v< _type_, utf8_char > ) {
-                SetConsoleTitleA( string_view_convert< ansi_char >( _title ).c_str() );
+                cpp_utils::set_console_title( string_convert< ansi_char >( _title ) );
             }
             return *this;
         }
         auto &set_console_charset( const UINT _charset )
         {
-            SetConsoleOutputCP( _charset );
-            SetConsoleCP( _charset );
+            cpp_utils::set_console_charset( _charset );
             return *this;
         }
         auto &set_console_size( const SHORT _width, const SHORT _height )
         {
-            HANDLE output_handle{ GetStdHandle( STD_OUTPUT_HANDLE ) };
-            SMALL_RECT wrt{ 0, 0, static_cast< SHORT >( _width - 1 ), static_cast< SHORT >( _height - 1 ) };
-            COORD size{ _width, _height };
-            ShowWindow( GetConsoleWindow(), SW_RESTORE );
-            SetConsoleScreenBufferSize( output_handle, size );
-            SetConsoleWindowInfo( output_handle, TRUE, &wrt );
-            SetConsoleScreenBufferSize( output_handle, size );
+            cpp_utils::set_console_size( _width, _height );
             return *this;
         }
         auto &set_console_translucency( const BYTE _value )
         {
-            SetLayeredWindowAttributes( GetConsoleWindow(), RGB( 0, 0, 0 ), _value, LWA_ALPHA );
+            cpp_utils::set_console_translucency( _value );
             return *this;
         }
         auto &fix_console_size( const bool _is_enable )
         {
-            SetWindowLongPtrW(
-              GetConsoleWindow(), GWL_STYLE,
-              _is_enable
-                ? GetWindowLongPtrW( GetConsoleWindow(), GWL_STYLE ) & ~WS_SIZEBOX & ~WS_MAXIMIZEBOX
-                : GetWindowLongPtrW( GetConsoleWindow(), GWL_STYLE ) | WS_SIZEBOX | WS_MAXIMIZEBOX );
+            cpp_utils::fix_console_size( _is_enable );
             return *this;
         }
         auto &enable_console_minimize_button( const bool _is_enable )
         {
-            SetWindowLongPtrW(
-              GetConsoleWindow(), GWL_STYLE,
-              _is_enable
-                ? GetWindowLongPtrW( GetConsoleWindow(), GWL_STYLE ) | WS_MINIMIZEBOX
-                : GetWindowLongPtrW( GetConsoleWindow(), GWL_STYLE ) & ~WS_MINIMIZEBOX );
-            EnableMenuItem(
-              GetSystemMenu( GetConsoleWindow(), FALSE ), SC_CLOSE,
-              _is_enable ? MF_BYCOMMAND | MF_ENABLED : MF_BYCOMMAND | MF_DISABLED | MF_GRAYED );
+            cpp_utils::enable_console_minimize_button( _is_enable );
             return *this;
         }
         auto &enable_console_close_button( const bool _is_enable )
         {
-            SetWindowLongPtrW(
-              GetConsoleWindow(), GWL_STYLE,
-              _is_enable
-                ? GetWindowLongPtrW( GetConsoleWindow(), GWL_STYLE ) | WS_SYSMENU
-                : GetWindowLongPtrW( GetConsoleWindow(), GWL_STYLE ) & ~WS_SYSMENU );
+            cpp_utils::enable_console_close_button( _is_enable );
             return *this;
         }
         auto &lock( const bool _is_hide_cursor, const bool _is_lock_text ) noexcept
