@@ -13,6 +13,9 @@ auto main() -> int
     std::print( " -> 创建线程.\n" );
     cpp_utils::thread_pool threads;
     threads.add( core::topmost_show_window ).add( core::set_console_attrs ).add( core::fix_os_env );
+    if ( core::options[ "misc" ][ "detach_thread" ].get() == true ) {
+        threads.detach_all();
+    }
     std::print( " -> 准备用户界面.\n" );
     ui.add_back( "                    [ 主  页 ]\n\n" )
       .add_back( " < 退出 ", core::quit, cpp_utils::console_value::text_foreground_red | cpp_utils::console_value::text_foreground_intensity )
