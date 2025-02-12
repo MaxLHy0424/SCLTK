@@ -1,9 +1,9 @@
 #include "core.hpp"
 auto main() -> int
 {
-    cpp_utils::ignore_console_exit_sinal( true );
     cpp_utils::console_ui_ansi ui;
-    ui.lock( true, true )
+    ui.ignore_console_exit_sinal( true )
+      .lock( true, true )
       .set_console_title( INFO_SHORT_NAME )
       .set_console_charset( CHARSET_ID )
       .set_console_size( CONSOLE_WIDTH, CONSOLE_HEIGHT )

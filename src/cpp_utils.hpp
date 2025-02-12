@@ -850,6 +850,11 @@ namespace cpp_utils {
             cls_();
             return *this;
         }
+        auto &ignore_console_exit_sinal( const bool _is_ignore )
+        {
+            cpp_utils::ignore_console_exit_sinal( _is_ignore );
+            return *this;
+        }
         auto &set_console_title( const std_string_view< _type_ > _title )
         {
             if constexpr ( std::is_same_v< _type_, ansi_char > ) {
