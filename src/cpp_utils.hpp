@@ -266,7 +266,38 @@ namespace cpp_utils {
       private:
         std::vector< std::jthread > threads_{};
       public:
-        auto get_id( const size_type _index )
+        auto empty() const noexcept
+        {
+            return threads_.empty();
+        }
+        auto size() const noexcept
+        {
+            return threads_.size();
+        }
+        auto max_size() const noexcept
+        {
+            return threads_.max_size();
+        }
+        auto &resize( const size_type _size )
+        {
+            threads_.resize( _size );
+            return *this;
+        }
+        auto &swap( thread_pool &_src ) noexcept
+        {
+            threads_.swap( _src.threads_ );
+            return *this;
+        }
+        auto &swap( const size_type _index, std::jthread &_src )
+        {
+            threads_.at( _index ).swap( _src );
+            return *this;
+        }
+        auto joinable( const size_type _index ) const
+        {
+            return threads_.at( _index ).joinable();
+        }
+        auto get_id( const size_type _index ) const
         {
             return threads_.at( _index ).get_id();
         }
@@ -295,6 +326,18 @@ namespace cpp_utils {
                 thread.detach();
             }
             return *this;
+        }
+        auto get_stop_source( const size_type _index )
+        {
+            return threads_.at( _index ).get_stop_source();
+        }
+        auto get_stop_token( const size_type _index ) const
+        {
+            return threads_.at( _index ).get_stop_token();
+        }
+        auto request_stop( const size_type _index )
+        {
+            return threads_.at( _index ).request_stop();
         }
         auto operator=( const thread_pool & ) -> thread_pool & = delete;
         auto operator=( thread_pool && ) -> thread_pool &      = default;
