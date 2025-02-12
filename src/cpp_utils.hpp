@@ -445,9 +445,13 @@ namespace cpp_utils {
     {
         return SetConsoleCtrlHandler( nullptr, static_cast< BOOL >( _is_ignore ) );
     }
+    auto set_console_title( const ansi_char *const _title )
+    {
+        SetConsoleTitleA( _title );
+    }
     auto set_console_title( const ansi_std_string _title )
     {
-        SetConsoleTitleA( _title.data() );
+        SetConsoleTitleA( _title.c_str() );
     }
     auto set_console_charset( const UINT _charset )
     {
@@ -847,6 +851,15 @@ namespace cpp_utils {
         auto &ignore_console_exit_sinal( const bool _is_ignore )
         {
             cpp_utils::ignore_console_exit_sinal( _is_ignore );
+            return *this;
+        }
+        auto &set_console_title( const _type_ *const _title )
+        {
+            if constexpr ( std::is_same_v< _type_, ansi_char > ) {
+                cpp_utils::set_console_title( _title );
+            } else if constexpr ( std::is_same_v< _type_, utf8_char > ) {
+                cpp_utils::set_console_title( string_convert< ansi_char >( _title ) );
+            }
             return *this;
         }
         auto &set_console_title( const std_string< _type_ > &_title )
