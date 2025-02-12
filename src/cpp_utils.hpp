@@ -318,11 +318,29 @@ namespace cpp_utils {
             }
             return *this;
         }
+        auto &join_all()
+        {
+            for ( auto &thread : threads_ ) {
+                if ( thread.joinable() ) {
+                    thread.join();
+                }
+            }
+            return *this;
+        }
         auto &detach( const size_type _index )
         {
             auto &thread{ threads_.at( _index ) };
             if ( thread.joinable() ) {
                 thread.detach();
+            }
+            return *this;
+        }
+        auto &detach_all()
+        {
+            for ( auto &thread : threads_ ) {
+                if ( thread.joinable() ) {
+                    thread.detach();
+                }
             }
             return *this;
         }
@@ -337,6 +355,13 @@ namespace cpp_utils {
         auto request_stop( const size_type _index )
         {
             return threads_.at( _index ).request_stop();
+        }
+        auto &request_stop_to_all()
+        {
+            for ( auto &thread : threads_ ) {
+                thread.request_stop();
+            }
+            return *this;
         }
         auto operator=( const thread_pool & ) -> thread_pool & = delete;
         auto operator=( thread_pool && ) -> thread_pool &      = default;
