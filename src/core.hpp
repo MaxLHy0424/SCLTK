@@ -124,7 +124,9 @@ namespace core {
             { { "topmost_show", "(*) 置顶显示" },
               { "disable_close_ctrl", "(*) 禁用关闭控件" },
               { "translucency", "(*) 半透明化" } } },
-          { "misc", "杂项", { { "disable_x_option_hot_reload", "(-) 禁用标 (*) 选项热重载" } } } } } };
+          { "misc",
+            "杂项",
+            { { "detach_thread", "(-) 分离线程" }, { "disable_x_option_hot_reload", "(-) 禁用标 (*) 选项热重载" } } } } } };
     inline const auto &is_disable_x_option_hot_reload{ options[ "misc" ][ "disable_x_option_hot_reload" ] };
     struct rule_node final {
         const ansi_char *const showed_name;
