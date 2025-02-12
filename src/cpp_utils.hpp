@@ -312,6 +312,11 @@ namespace cpp_utils {
         }
         auto &join( const size_type _index )
         {
+            threads_.at( _index ).join();
+            return *this;
+        }
+        auto &safe_join( const size_type _index )
+        {
             auto &thread{ threads_.at( _index ) };
             if ( thread.joinable() ) {
                 thread.join();
@@ -319,6 +324,13 @@ namespace cpp_utils {
             return *this;
         }
         auto &join_all()
+        {
+            for ( auto &thread : threads_ ) {
+                thread.join();
+            }
+            return *this;
+        }
+        auto &safe_join_all()
         {
             for ( auto &thread : threads_ ) {
                 if ( thread.joinable() ) {
@@ -329,6 +341,11 @@ namespace cpp_utils {
         }
         auto &detach( const size_type _index )
         {
+            threads_.at( _index ).detach();
+            return *this;
+        }
+        auto &safe_detach( const size_type _index )
+        {
             auto &thread{ threads_.at( _index ) };
             if ( thread.joinable() ) {
                 thread.detach();
@@ -336,6 +353,13 @@ namespace cpp_utils {
             return *this;
         }
         auto &detach_all()
+        {
+            for ( auto &thread : threads_ ) {
+                thread.detach();
+            }
+            return *this;
+        }
+        auto &safe_detach_all()
         {
             for ( auto &thread : threads_ ) {
                 if ( thread.joinable() ) {
