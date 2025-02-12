@@ -794,33 +794,59 @@ namespace cpp_utils {
             cls_();
             return *this;
         }
-        auto &set_console(
-          const std_string_view< _type_ > _title, const UINT _charset, const SHORT _width, const SHORT _height,
-          const bool _is_fix_size, const bool _is_enable_minimize_ctrl, const bool is_enable_close_ctrl,
-          const BYTE _translucency_value ) noexcept
+        auto &set_console_title( const std_string_view< _type_ > _title )
         {
-            SetConsoleOutputCP( _charset );
-            SetConsoleCP( _charset );
             if constexpr ( std::is_same_v< _type_, ansi_char > ) {
                 SetConsoleTitleA( _title.data() );
             } else if constexpr ( std::is_same_v< _type_, utf8_char > ) {
                 SetConsoleTitleA( string_view_convert< ansi_char >( _title ).c_str() );
             }
+            return *this;
+        }
+        auto &set_console_charset( const UINT _charset )
+        {
+            SetConsoleOutputCP( _charset );
+            SetConsoleCP( _charset );
+            return *this;
+        }
+        auto &set_console_size( const SHORT _width, const SHORT _height )
+        {
             std::system( std::format( R"(C:\Windows\System32\mode.com con cols={} lines={})", _width, _height ).c_str() );
+            return *this;
+        }
+        auto &set_console_translucency( const BYTE _value )
+        {
+            SetLayeredWindowAttributes( GetConsoleWindow(), RGB( 0, 0, 0 ), _value, LWA_ALPHA );
+            return *this;
+        }
+        auto &fix_console_size( const bool _is_enable )
+        {
             SetWindowLongPtrW(
               GetConsoleWindow(), GWL_STYLE,
-              _is_fix_size
+              _is_enable
                 ? GetWindowLongPtrW( GetConsoleWindow(), GWL_STYLE ) & ~WS_SIZEBOX & ~WS_MAXIMIZEBOX
                 : GetWindowLongPtrW( GetConsoleWindow(), GWL_STYLE ) | WS_SIZEBOX | WS_MAXIMIZEBOX );
+            return *this;
+        }
+        auto &enable_console_minimize_button( const bool _is_enable )
+        {
             SetWindowLongPtrW(
               GetConsoleWindow(), GWL_STYLE,
-              _is_enable_minimize_ctrl
+              _is_enable
                 ? GetWindowLongPtrW( GetConsoleWindow(), GWL_STYLE ) | WS_MINIMIZEBOX
                 : GetWindowLongPtrW( GetConsoleWindow(), GWL_STYLE ) & ~WS_MINIMIZEBOX );
             EnableMenuItem(
               GetSystemMenu( GetConsoleWindow(), FALSE ), SC_CLOSE,
-              is_enable_close_ctrl ? MF_BYCOMMAND | MF_ENABLED : MF_BYCOMMAND | MF_DISABLED | MF_GRAYED );
-            SetLayeredWindowAttributes( GetConsoleWindow(), RGB( 0, 0, 0 ), _translucency_value, LWA_ALPHA );
+              _is_enable ? MF_BYCOMMAND | MF_ENABLED : MF_BYCOMMAND | MF_DISABLED | MF_GRAYED );
+            return *this;
+        }
+        auto &enable_console_close_button( const bool _is_enable )
+        {
+            SetWindowLongPtrW(
+              GetConsoleWindow(), GWL_STYLE,
+              _is_enable
+                ? GetWindowLongPtrW( GetConsoleWindow(), GWL_STYLE ) | WS_SYSMENU
+                : GetWindowLongPtrW( GetConsoleWindow(), GWL_STYLE ) & ~WS_SYSMENU );
             return *this;
         }
         auto &lock( const bool _is_hide_cursor, const bool _is_lock_text ) noexcept

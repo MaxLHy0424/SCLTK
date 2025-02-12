@@ -312,18 +312,15 @@ namespace core {
         std::print( " -> 准备用户界面.\n" );
         auto launch_cmd{ []( cpp_utils::console_ui_ansi::func_args _args ) static
         {
-            const auto &is_disable_close_ctrl{ options[ "window" ][ "disable_close_ctrl" ] };
-            const auto &is_translucency{ options[ "window" ][ "translucency" ] };
-            _args.parent_ui
-              .set_console(
-                INFO_SHORT_NAME " - 命令提示符", CHARSET_ID, 120, 30, false, false, is_disable_close_ctrl.get() ? false : true,
-                is_translucency.get() ? 230 : 255 )
+            _args.parent_ui.set_console_title( INFO_SHORT_NAME " - 命令提示符" )
+              .set_console_size( 120, 30 )
+              .fix_console_size( false )
               .lock( false, false );
             SetConsoleScreenBufferSize( GetStdHandle( STD_OUTPUT_HANDLE ), { 128, SHRT_MAX - 1 } );
             std::system( R"(C:\Windows\System32\cmd.exe)" );
-            _args.parent_ui.set_console(
-              INFO_SHORT_NAME, CHARSET_ID, CONSOLE_WIDTH, CONSOLE_HEIGHT, true, false,
-              is_disable_close_ctrl.get() ? false : true, is_translucency.get() ? 230 : 255 );
+            _args.parent_ui.set_console_title( INFO_SHORT_NAME )
+              .set_console_size( CONSOLE_WIDTH, CONSOLE_HEIGHT )
+              .fix_console_size( true );
             return cpp_utils::console_ui_ansi::back;
         } };
         class cmd_executor final {
