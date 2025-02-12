@@ -445,15 +445,9 @@ namespace cpp_utils {
     {
         return SetConsoleCtrlHandler( nullptr, static_cast< BOOL >( _is_ignore ) );
     }
-    template < char_type _type_ >
-        requires std::is_same_v< _type_, ansi_char > || std::is_same_v< _type_, utf8_char >
-    auto set_console_title( const std_string_view< _type_ > _title )
+    auto set_console_title( const ansi_std_string _title )
     {
-        if constexpr ( std::is_same_v< _type_, ansi_char > ) {
-            SetConsoleTitleA( _title.data() );
-        } else if constexpr ( std::is_same_v< _type_, utf8_char > ) {
-            SetConsoleTitleA( string_view_convert< ansi_char >( _title ).c_str() );
-        }
+        SetConsoleTitleA( _title.data() );
     }
     auto set_console_charset( const UINT _charset )
     {
@@ -855,7 +849,7 @@ namespace cpp_utils {
             cpp_utils::ignore_console_exit_sinal( _is_ignore );
             return *this;
         }
-        auto &set_console_title( const std_string_view< _type_ > _title )
+        auto &set_console_title( const std_string< _type_ > &_title )
         {
             if constexpr ( std::is_same_v< _type_, ansi_char > ) {
                 cpp_utils::set_console_title( _title );
