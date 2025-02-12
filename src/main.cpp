@@ -13,16 +13,20 @@ auto main() -> int
     std::print( " -> 创建线程.\n" );
     cpp_utils::thread_pool threads;
     threads.add( core::topmost_show_window ).add( core::set_console_attrs ).add( core::fix_os_env );
-    if ( core::options[ "misc" ][ "detach_thread" ].get() == true ) {
+    const auto &is_enable_quick_exit_and_relaunch{ core::options[ "misc" ][ "quick_exit_and_relaunch" ] };
+    if ( is_enable_quick_exit_and_relaunch.get() == true ) {
         threads.detach_all();
     }
     std::print( " -> 准备用户界面.\n" );
     ui.add_back( "                    [ 主  页 ]\n\n" )
-      .add_back( " < 退出 ", core::exit, cpp_utils::console_value::text_foreground_red | cpp_utils::console_value::text_foreground_intensity )
       .add_back(
-        " < 重启 ", core::relaunch,
-        cpp_utils::console_value::text_foreground_green | cpp_utils::console_value::text_foreground_intensity )
-      .add_back( " > 信息 ", core::info )
+        " < 退出 ", core::exit, cpp_utils::console_value::text_foreground_red | cpp_utils::console_value::text_foreground_intensity );
+    if ( is_enable_quick_exit_and_relaunch.get() == true ) {
+        ui.add_back(
+          " < 重启 ", core::relaunch,
+          cpp_utils::console_value::text_foreground_green | cpp_utils::console_value::text_foreground_intensity );
+    }
+    ui.add_back( " > 信息 ", core::info )
       .add_back( " > 配置 ", core::config_op{ core::config_op::mode::edit } )
       .add_back( " > 工具箱 ", core::toolkit )
       .add_back( "\n[ 破解 ]\n" )
