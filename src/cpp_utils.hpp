@@ -462,7 +462,7 @@ namespace cpp_utils {
     class console_ui final {
       public:
         inline static constexpr auto back{ false };
-        inline static constexpr auto quit{ true };
+        inline static constexpr auto exit{ true };
         struct func_args final {
             console_ui< _type_ > &parent_ui;
             const DWORD button_state;
