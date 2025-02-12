@@ -4,14 +4,13 @@
 #endif
 #include <chrono>
 #include <concepts>
-#include <deque>
 #include <functional>
 #include <print>
+#include <queue>
 #include <string>
 #include <string_view>
 #include <thread>
 #include <type_traits>
-#include <vector>
 namespace cpp_utils {
     using namespace std::chrono_literals;
     using namespace std::string_literals;
@@ -264,7 +263,7 @@ namespace cpp_utils {
     }
     class thread_pool final {
       private:
-        std::vector< std::jthread > threads_{};
+        std::deque< std::jthread > threads_{};
       public:
         auto empty() const noexcept
         {
