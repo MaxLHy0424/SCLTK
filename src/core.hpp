@@ -277,14 +277,14 @@ namespace core {
             cpp_utils::perf_sleep( 1s );
         }
     }
-    inline auto quit( cpp_utils::console_ui_ansi::func_args )
+    inline auto exit( cpp_utils::console_ui_ansi::func_args )
     {
-        return cpp_utils::console_ui_ansi::quit;
+        return cpp_utils::console_ui_ansi::exit;
     }
     inline auto relaunch( cpp_utils::console_ui_ansi::func_args )
     {
         cpp_utils::relaunch_as_admin();
-        return cpp_utils::console_ui_ansi::quit;
+        return cpp_utils::console_ui_ansi::exit;
     }
     inline auto info( cpp_utils::console_ui_ansi::func_args )
     {
@@ -296,7 +296,7 @@ namespace core {
         cpp_utils::console_ui_ansi ui;
         std::print( " -> 准备用户界面.\n" );
         ui.add_back( "                    [ 信  息 ]\n\n" )
-          .add_back( " < 返回 ", quit, cpp_utils::console_value::text_foreground_green | cpp_utils::console_value::text_foreground_intensity )
+          .add_back( " < 返回 ", exit, cpp_utils::console_value::text_foreground_green | cpp_utils::console_value::text_foreground_intensity )
           .add_back( "\n[ 名称 ]\n\n " INFO_FULL_NAME " \n\n[ 版本 ]\n\n " INFO_VERSION " " )
           .add_back( "\n[ 仓库 ]\n" )
           .add_back(
@@ -359,7 +359,7 @@ namespace core {
         cpp_utils::console_ui_ansi ui;
         std::print( " -> 准备用户界面.\n" );
         ui.add_back( "                   [ 工 具 箱 ]\n\n" )
-          .add_back( " < 返回 ", quit, cpp_utils::console_value::text_foreground_green | cpp_utils::console_value::text_foreground_intensity )
+          .add_back( " < 返回 ", exit, cpp_utils::console_value::text_foreground_green | cpp_utils::console_value::text_foreground_intensity )
           .add_back( " > 命令提示符 ", launch_cmd )
           .add_back( "\n[ 常用操作 ]\n" );
         for ( const auto &common_op : common_ops ) {
@@ -576,7 +576,7 @@ namespace core {
                 std::print( " -> 准备用户界面.\n" );
                 ui.add_back( "                    [ 配  置 ]\n\n" )
                   .add_back(
-                    std::format( " < 折叠 {} ", main_key_.showed_name ), quit,
+                    std::format( " < 折叠 {} ", main_key_.showed_name ), exit,
                     cpp_utils::console_value::text_foreground_green | cpp_utils::console_value::text_foreground_intensity );
                 for ( auto &sub_key : main_key_.sub_keys ) {
                     ui.add_back( std::format( "\n[ {} ]\n", sub_key.showed_name ) )
@@ -608,7 +608,7 @@ namespace core {
                 "     每 {} 自动执行, 可禁用.\n"
                 "     标 (-) 选项无法进行热重载.\n",
                 default_thread_sleep_time ) )
-              .add_back( " < 返回 ", quit, cpp_utils::console_value::text_foreground_green | cpp_utils::console_value::text_foreground_intensity )
+              .add_back( " < 返回 ", exit, cpp_utils::console_value::text_foreground_green | cpp_utils::console_value::text_foreground_intensity )
               .add_back( " > 同步配置 ", [ this ]( cpp_utils::console_ui_ansi::func_args ) { return sync(); } )
               .add_back( " > 打开配置文件 ", [ this ]( cpp_utils::console_ui_ansi::func_args ) { return open_file(); } )
               .add_back( "\n[ 选项 ]\n" );

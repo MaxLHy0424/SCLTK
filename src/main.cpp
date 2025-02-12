@@ -18,7 +18,7 @@ auto main() -> int
     }
     std::print( " -> 准备用户界面.\n" );
     ui.add_back( "                    [ 主  页 ]\n\n" )
-      .add_back( " < 退出 ", core::quit, cpp_utils::console_value::text_foreground_red | cpp_utils::console_value::text_foreground_intensity )
+      .add_back( " < 退出 ", core::exit, cpp_utils::console_value::text_foreground_red | cpp_utils::console_value::text_foreground_intensity )
       .add_back(
         " < 重启 ", core::relaunch,
         cpp_utils::console_value::text_foreground_green | cpp_utils::console_value::text_foreground_intensity )
