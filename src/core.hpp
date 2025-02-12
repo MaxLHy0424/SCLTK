@@ -126,7 +126,8 @@ namespace core {
               { "translucency", "(*) 半透明化" } } },
           { "misc",
             "杂项",
-            { { "detach_thread", "(-) 分离线程" }, { "disable_x_option_hot_reload", "(-) 禁用标 (*) 选项热重载" } } } } } };
+            { { "quick_exit_and_relaunch", "(-) 快速退出与重启" },
+              { "disable_x_option_hot_reload", "(-) 禁用标 (*) 选项热重载" } } } } } };
     inline const auto &is_disable_x_option_hot_reload{ options[ "misc" ][ "disable_x_option_hot_reload" ] };
     struct rule_node final {
         const ansi_char *const showed_name;
