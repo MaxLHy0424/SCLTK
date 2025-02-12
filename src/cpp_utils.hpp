@@ -413,10 +413,6 @@ namespace cpp_utils {
         return std::unique_ptr< _type_[] >{ new _type_[ _capacity ]{ std::forward< _args_ >( _args )... } };
     }
 #if defined( _WIN32 ) || defined( _WIN64 )
-    inline auto ignore_console_exit_sinal( const bool _is_ignore ) noexcept
-    {
-        return SetConsoleCtrlHandler( nullptr, static_cast< BOOL >( _is_ignore ) );
-    }
     inline auto is_run_as_admin() noexcept
     {
         BOOL is_admin;
@@ -444,6 +440,10 @@ namespace cpp_utils {
         GetModuleFileNameW( nullptr, file_path, MAX_PATH );
         ShellExecuteW( nullptr, L"runas", file_path, nullptr, nullptr, SW_SHOWNORMAL );
         std::exit( 0 );
+    }
+    inline auto ignore_console_exit_sinal( const bool _is_ignore ) noexcept
+    {
+        return SetConsoleCtrlHandler( nullptr, static_cast< BOOL >( _is_ignore ) );
     }
     namespace console_value {
         inline constexpr DWORD mouse_button_left{ FROM_LEFT_1ST_BUTTON_PRESSED };
