@@ -169,11 +169,11 @@ namespace cpp_utils {
       private:
         _type_ data_[ _capacity_ ]{};
       public:
-        auto c_str() const
+        auto c_str() const noexcept
         {
-            return reinterpret_cast< const _type_ * >( data_ );
+            return const_cast< const _type_ * >( data_ );
         }
-        auto compare( const _type_ *const _src ) const
+        auto compare( const _type_ *const _src ) const noexcept
         {
             if ( _src == nullptr ) {
                 return false;
@@ -193,7 +193,7 @@ namespace cpp_utils {
             return true;
         }
         template < size_type _src_capacity_ >
-        auto compare( const _type_ ( &_src )[ _src_capacity_ ] ) const
+        auto compare( const _type_ ( &_src )[ _src_capacity_ ] ) const noexcept
         {
             if ( _src_capacity_ != _capacity_ ) {
                 return false;
@@ -206,7 +206,7 @@ namespace cpp_utils {
             return true;
         }
         template < size_type _src_capacity_ >
-        auto compare( const constant_string< _type_, _src_capacity_ > &_src ) const
+        auto compare( const constant_string< _type_, _src_capacity_ > &_src ) const noexcept
         {
             if ( _src_capacity_ != _capacity_ ) {
                 return false;
@@ -218,27 +218,27 @@ namespace cpp_utils {
             }
             return true;
         }
-        auto operator==( const _type_ *const _src ) const
+        auto operator==( const _type_ *const _src ) const noexcept
         {
             return compare( _src );
         }
         template < size_type _src_capacity_ >
-        auto operator==( const _type_ ( &_src )[ _src_capacity_ ] ) const
+        auto operator==( const _type_ ( &_src )[ _src_capacity_ ] ) const noexcept
         {
             return compare( _src );
         }
         template < size_type _src_capacity_ >
-        auto operator==( const constant_string< _type_, _src_capacity_ > &_src ) const
+        auto operator==( const constant_string< _type_, _src_capacity_ > &_src ) const noexcept
         {
             return compare( _src );
         }
-        const auto &operator[]( size_type _index ) const
+        const auto &operator[]( size_type _index ) const noexcept
         {
             return data_[ _index ];
         }
         auto operator=( const constant_string< _type_, _capacity_ > & ) -> constant_string< _type_, _capacity_ > & = delete;
         auto operator=( constant_string< _type_, _capacity_ > && ) -> constant_string< _type_, _capacity_ > &      = delete;
-        constexpr constant_string( const _type_ ( &_str )[ _capacity_ ] )
+        constexpr constant_string( const _type_ ( &_str )[ _capacity_ ] ) noexcept
         {
             std::copy( _str, _str + _capacity_, data_ );
         }
@@ -365,11 +365,11 @@ namespace cpp_utils {
         return std::unique_ptr< _type_[] >{ new _type_[ _capacity ]{ std::forward< _args_ >( _args )... } };
     }
 #if defined( _WIN32 ) || defined( _WIN64 )
-    inline auto ignore_console_exit_sinal( const bool _is_ignore )
+    inline auto ignore_console_exit_sinal( const bool _is_ignore ) noexcept
     {
         return SetConsoleCtrlHandler( nullptr, static_cast< BOOL >( _is_ignore ) );
     }
-    inline auto is_run_as_admin()
+    inline auto is_run_as_admin() noexcept
     {
         BOOL is_admin;
         PSID admins_group;
@@ -383,14 +383,14 @@ namespace cpp_utils {
         }
         return is_admin ? true : false;
     }
-    inline auto relaunch()
+    inline auto relaunch() noexcept
     {
         wide_char file_path[ MAX_PATH ]{};
         GetModuleFileNameW( nullptr, file_path, MAX_PATH );
         ShellExecuteW( nullptr, L"open", file_path, nullptr, nullptr, SW_SHOWNORMAL );
         std::exit( 0 );
     }
-    inline auto relaunch_as_admin()
+    inline auto relaunch_as_admin() noexcept
     {
         wide_char file_path[ MAX_PATH ]{};
         GetModuleFileNameW( nullptr, file_path, MAX_PATH );
@@ -444,19 +444,19 @@ namespace cpp_utils {
             const DWORD button_state;
             const DWORD ctrl_key_state;
             const DWORD event_flag;
-            auto operator=( const func_args & ) -> func_args & = default;
-            auto operator=( func_args && ) -> func_args &      = default;
+            auto operator=( const func_args & ) noexcept -> func_args & = default;
+            auto operator=( func_args && ) noexcept -> func_args &      = default;
             func_args(
               console_ui< _type_ > &_parent_ui,
-              const MOUSE_EVENT_RECORD _mouse_event = MOUSE_EVENT_RECORD{ {}, console_value::mouse_button_left, {}, {} } )
+              const MOUSE_EVENT_RECORD _mouse_event = MOUSE_EVENT_RECORD{ {}, console_value::mouse_button_left, {}, {} } ) noexcept
               : parent_ui{ _parent_ui }
               , button_state{ _mouse_event.dwButtonState }
               , ctrl_key_state{ _mouse_event.dwControlKeyState }
               , event_flag{ _mouse_event.dwEventFlags }
             { }
-            func_args( const func_args & ) = default;
-            func_args( func_args && )      = default;
-            ~func_args()                   = default;
+            func_args( const func_args & ) noexcept = default;
+            func_args( func_args && ) noexcept      = default;
+            ~func_args() noexcept                   = default;
         };
         using callback_type = std::function< bool( func_args ) >;
       private:
@@ -468,49 +468,51 @@ namespace cpp_utils {
             WORD intensity_attrs{};
             WORD last_attrs{};
             COORD position{};
-            auto set_attrs( const WORD _attrs )
+            auto set_attrs( const WORD _attrs ) noexcept
             {
                 SetConsoleTextAttribute( GetStdHandle( STD_OUTPUT_HANDLE ), _attrs );
                 last_attrs = _attrs;
             }
-            auto operator==( const COORD _mouse_position ) const
+            auto operator==( const COORD _mouse_position ) const noexcept
             {
                 return position.Y == _mouse_position.Y && position.X <= _mouse_position.X
                     && _mouse_position.X < ( position.X + static_cast< SHORT >( text.size() ) );
             }
-            auto operator!=( const COORD _mouse_position ) const
+            auto operator!=( const COORD _mouse_position ) const noexcept
             {
                 return !operator==( _mouse_position );
             }
-            auto operator=( const line_node_ & ) -> line_node_ & = default;
-            auto operator=( line_node_ && ) -> line_node_ &      = default;
-            line_node_()
+            auto operator=( const line_node_ & ) noexcept -> line_node_ & = default;
+            auto operator=( line_node_ && ) noexcept -> line_node_ &      = default;
+            line_node_() noexcept
               : default_attrs{ console_value::text_default }
               , intensity_attrs{ console_value::text_foreground_green | console_value::text_foreground_blue }
               , last_attrs{ console_value::text_default }
             { }
-            line_node_( const std_string_view< _type_ > _text, callback_type &_func, const WORD _default_attrs, const WORD _intensity_attrs )
+            line_node_(
+              const std_string_view< _type_ > _text, callback_type &_func, const WORD _default_attrs,
+              const WORD _intensity_attrs ) noexcept
               : text{ _text }
               , func{ std::move( _func ) }
               , default_attrs{ _default_attrs }
               , intensity_attrs{ _intensity_attrs }
               , last_attrs{ _default_attrs }
             { }
-            line_node_( const line_node_ & ) = default;
-            line_node_( line_node_ && )      = default;
-            ~line_node_()                    = default;
+            line_node_( const line_node_ & ) noexcept = default;
+            line_node_( line_node_ && ) noexcept      = default;
+            ~line_node_() noexcept                    = default;
         };
         std::deque< line_node_ > lines_{};
         SHORT console_width_{};
         SHORT console_height_{};
-        static auto show_cursor_( const bool _is_show )
+        static auto show_cursor_( const bool _is_show ) noexcept
         {
             CONSOLE_CURSOR_INFO cursor_data;
             GetConsoleCursorInfo( GetStdHandle( STD_OUTPUT_HANDLE ), &cursor_data );
             cursor_data.bVisible = static_cast< WINBOOL >( _is_show );
             SetConsoleCursorInfo( GetStdHandle( STD_OUTPUT_HANDLE ), &cursor_data );
         }
-        static auto edit_console_attrs_( const console_attrs_ _attrs )
+        static auto edit_console_attrs_( const console_attrs_ _attrs ) noexcept
         {
             DWORD attrs;
             GetConsoleMode( GetStdHandle( STD_INPUT_HANDLE ), &attrs );
@@ -533,17 +535,17 @@ namespace cpp_utils {
             }
             SetConsoleMode( GetStdHandle( STD_INPUT_HANDLE ), attrs );
         }
-        static auto get_cursor_()
+        static auto get_cursor_() noexcept
         {
             CONSOLE_SCREEN_BUFFER_INFO console_data;
             GetConsoleScreenBufferInfo( GetStdHandle( STD_OUTPUT_HANDLE ), &console_data );
             return console_data.dwCursorPosition;
         }
-        static auto set_cursor_( const COORD _cursor_position )
+        static auto set_cursor_( const COORD _cursor_position ) noexcept
         {
             SetConsoleCursorPosition( GetStdHandle( STD_OUTPUT_HANDLE ), _cursor_position );
         }
-        static auto wait_mouse_event_( const bool _is_mouse_move = true )
+        static auto wait_mouse_event_( const bool _is_mouse_move = true ) noexcept
         {
             INPUT_RECORD record;
             DWORD reg;
@@ -557,7 +559,7 @@ namespace cpp_utils {
                 }
             }
         }
-        auto get_console_size_()
+        auto get_console_size_() noexcept
         {
             CONSOLE_SCREEN_BUFFER_INFO console_data;
             GetConsoleScreenBufferInfo( GetStdHandle( STD_OUTPUT_HANDLE ), &console_data );
@@ -638,15 +640,15 @@ namespace cpp_utils {
             return is_exit;
         }
       public:
-        auto empty() const
+        auto empty() const noexcept
         {
             return lines_.empty();
         }
-        auto size() const
+        auto size() const noexcept
         {
             return lines_.size();
         }
-        auto max_size() const
+        auto max_size() const noexcept
         {
             return lines_.max_size();
         }
@@ -655,7 +657,7 @@ namespace cpp_utils {
             lines_.resize( _size );
             return *this;
         }
-        auto &optimize_storage()
+        auto &optimize_storage() noexcept
         {
             for ( auto &line : lines_ ) {
                 line.text.shrink_to_fit();
@@ -663,7 +665,7 @@ namespace cpp_utils {
             lines_.shrink_to_fit();
             return *this;
         }
-        auto &swap( console_ui< _type_ > &_src )
+        auto &swap( console_ui< _type_ > &_src ) noexcept
         {
             lines_.swap( _src.lines_ );
             return *this;
@@ -701,12 +703,12 @@ namespace cpp_utils {
             lines_.at( _index ) = line_node_{ _text, _func, _default_attrs, _func != nullptr ? _intensity_attrs : _default_attrs };
             return *this;
         }
-        auto &remove_front()
+        auto &remove_front() noexcept
         {
             lines_.pop_front();
             return *this;
         }
-        auto &remove_back()
+        auto &remove_back() noexcept
         {
             lines_.pop_back();
             return *this;
@@ -716,7 +718,7 @@ namespace cpp_utils {
             lines_.erase( lines_.cbegin() + _begin, lines_.cbegin() + _end );
             return *this;
         }
-        auto &clear()
+        auto &clear() noexcept
         {
             lines_.clear();
             return *this;
@@ -747,7 +749,7 @@ namespace cpp_utils {
         auto &set_console(
           const std_string_view< _type_ > _title, const UINT _charset, const SHORT _width, const SHORT _height,
           const bool _is_fix_size, const bool _is_enable_minimize_ctrl, const bool is_enable_close_ctrl,
-          const BYTE _translucency_value )
+          const BYTE _translucency_value ) noexcept
         {
             SetConsoleOutputCP( _charset );
             SetConsoleCP( _charset );
@@ -773,18 +775,18 @@ namespace cpp_utils {
             SetLayeredWindowAttributes( GetConsoleWindow(), RGB( 0, 0, 0 ), _translucency_value, LWA_ALPHA );
             return *this;
         }
-        auto &lock( const bool _is_hide_cursor, const bool _is_lock_text )
+        auto &lock( const bool _is_hide_cursor, const bool _is_lock_text ) noexcept
         {
             show_cursor_( !_is_hide_cursor );
             edit_console_attrs_( _is_lock_text ? console_attrs_::lock_all : console_attrs_::normal );
             return *this;
         }
-        auto operator=( const console_ui< _type_ > & ) -> console_ui< _type_ > & = default;
-        auto operator=( console_ui< _type_ > && ) -> console_ui< _type_ > &      = default;
-        console_ui()                                                             = default;
-        console_ui( const console_ui< _type_ > & )                               = default;
-        console_ui( console_ui< _type_ > && )                                    = default;
-        ~console_ui()                                                            = default;
+        auto operator=( const console_ui< _type_ > & ) noexcept -> console_ui< _type_ > & = default;
+        auto operator=( console_ui< _type_ > && ) noexcept -> console_ui< _type_ > &      = default;
+        console_ui() noexcept                                                             = default;
+        console_ui( const console_ui< _type_ > & ) noexcept                               = default;
+        console_ui( console_ui< _type_ > && ) noexcept                                    = default;
+        ~console_ui() noexcept                                                            = default;
     };
     using console_ui_ansi = console_ui< ansi_char >;
     using console_ui_utf8 = console_ui< utf8_char >;
