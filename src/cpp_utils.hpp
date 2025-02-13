@@ -396,7 +396,7 @@ namespace cpp_utils {
     };
     template < typename _type_, class... _args_ >
         requires( std::same_as< _type_, _args_ > && ... )
-    auto make_unique_array( std::size_t _capacity, _args_ &&..._args )
+    inline auto make_unique_array( std::size_t _capacity, _args_ &&..._args )
     {
         if ( _capacity < sizeof...( _args ) ) {
             throw std::runtime_error{ "the capacity must be greater than or equal to the size of arguments" };
@@ -405,7 +405,7 @@ namespace cpp_utils {
     }
     template < typename _type_, class... _args_ >
         requires( std::same_as< _type_, _args_ > && ... )
-    auto make_shared_array( std::size_t _capacity, _args_ &&..._args )
+    inline auto make_shared_array( std::size_t _capacity, _args_ &&..._args )
     {
         if ( _capacity < sizeof...( _args ) ) {
             throw std::runtime_error{ "the capacity must be greater than or equal to the size of arguments" };
@@ -445,20 +445,20 @@ namespace cpp_utils {
     {
         return SetConsoleCtrlHandler( nullptr, static_cast< BOOL >( _is_ignore ) );
     }
-    auto set_console_title( const ansi_char *const _title )
+    inline auto set_console_title( const ansi_char *const _title )
     {
         SetConsoleTitleA( _title );
     }
-    auto set_console_title( const ansi_std_string _title )
+    inline auto set_console_title( const ansi_std_string _title )
     {
         SetConsoleTitleA( _title.c_str() );
     }
-    auto set_console_charset( const UINT _charset )
+    inline auto set_console_charset( const UINT _charset )
     {
         SetConsoleOutputCP( _charset );
         SetConsoleCP( _charset );
     }
-    auto set_console_size( const SHORT _width, const SHORT _height )
+    inline auto set_console_size( const SHORT _width, const SHORT _height )
     {
         HANDLE output_handle{ GetStdHandle( STD_OUTPUT_HANDLE ) };
         SMALL_RECT wrt{ 0, 0, static_cast< SHORT >( _width - 1 ), static_cast< SHORT >( _height - 1 ) };
@@ -468,11 +468,11 @@ namespace cpp_utils {
         SetConsoleWindowInfo( output_handle, TRUE, &wrt );
         SetConsoleScreenBufferSize( output_handle, size );
     }
-    auto set_console_translucency( const BYTE _value )
+    inline auto set_console_translucency( const BYTE _value )
     {
         SetLayeredWindowAttributes( GetConsoleWindow(), RGB( 0, 0, 0 ), _value, LWA_ALPHA );
     }
-    auto fix_console_size( const bool _is_enable )
+    inline auto fix_console_size( const bool _is_enable )
     {
         SetWindowLongPtrW(
           GetConsoleWindow(), GWL_STYLE,
@@ -480,7 +480,7 @@ namespace cpp_utils {
             ? GetWindowLongPtrW( GetConsoleWindow(), GWL_STYLE ) & ~WS_SIZEBOX & ~WS_MAXIMIZEBOX
             : GetWindowLongPtrW( GetConsoleWindow(), GWL_STYLE ) | WS_SIZEBOX | WS_MAXIMIZEBOX );
     }
-    auto enable_console_minimize_button( const bool _is_enable )
+    inline auto enable_console_minimize_button( const bool _is_enable )
     {
         SetWindowLongPtrW(
           GetConsoleWindow(), GWL_STYLE,
@@ -488,7 +488,7 @@ namespace cpp_utils {
             ? GetWindowLongPtrW( GetConsoleWindow(), GWL_STYLE ) | WS_MINIMIZEBOX
             : GetWindowLongPtrW( GetConsoleWindow(), GWL_STYLE ) & ~WS_MINIMIZEBOX );
     }
-    auto enable_console_close_button( const bool _is_enable )
+    inline auto enable_console_close_button( const bool _is_enable )
     {
         SetWindowLongPtrW(
           GetConsoleWindow(), GWL_STYLE,
@@ -906,6 +906,7 @@ namespace cpp_utils {
             show_cursor_( !_is_hide_cursor );
             edit_console_attrs_( _is_lock_text ? console_attrs_::lock_all : console_attrs_::normal );
             return *this;
+            inline
         }
         auto operator=( const console_ui< _type_ > & ) noexcept -> console_ui< _type_ > & = default;
         auto operator=( console_ui< _type_ > && ) noexcept -> console_ui< _type_ > &      = default;
