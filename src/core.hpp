@@ -366,7 +366,7 @@ namespace core {
         ui.show();
         return cpp_utils::console_ui_ansi::back;
     }
-    auto set_console_attrs( const std::stop_token _msg )
+    inline auto set_console_attrs( const std::stop_token _msg )
     {
         const auto &is_translucency{ options[ "window" ][ "translucency" ] };
         const auto &is_disable_close_ctrl{ options[ "window" ][ "disable_close_ctrl" ] };
@@ -385,14 +385,14 @@ namespace core {
             cpp_utils::perf_sleep( default_thread_sleep_time );
         }
     }
-    auto get_window_state( const HWND _window_handle )
+    inline auto get_window_state( const HWND _window_handle )
     {
         WINDOWPLACEMENT wp;
         wp.length = sizeof( WINDOWPLACEMENT );
         GetWindowPlacement( _window_handle, &wp );
         return wp.showCmd;
     }
-    auto topmost_show_window( const std::stop_token _msg )
+    inline auto topmost_show_window( const std::stop_token _msg )
     {
         const auto &is_topmost_show{ options[ "window" ][ "topmost_show" ] };
         if ( is_disable_x_option_hot_reload.get() && !is_topmost_show.get() ) {
@@ -427,7 +427,7 @@ namespace core {
         }
         SetWindowPos( GetConsoleWindow(), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
     }
-    auto fix_os_env( const std::stop_token _msg )
+    inline auto fix_os_env( const std::stop_token _msg )
     {
         const auto &is_fix_os_env{ options[ "crack_restore" ][ "fix_os_env" ] };
         if ( is_disable_x_option_hot_reload.get() && !is_fix_os_env.get() ) {
