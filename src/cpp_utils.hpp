@@ -406,7 +406,7 @@ namespace cpp_utils {
         thread_pool( thread_pool && )                          = default;
         ~thread_pool()                                         = default;
     };
-    template < typename _type_, class... _args_ >
+    template < typename _type_, typename... _args_ >
         requires( std::same_as< _type_, _args_ > && ... )
     inline auto make_unique_array( const std::size_t _capacity, _args_ &&..._args )
     {
@@ -415,7 +415,7 @@ namespace cpp_utils {
         }
         return std::unique_ptr< _type_[] >{ new _type_[ _capacity ]{ std::forward< _args_ >( _args )... } };
     }
-    template < typename _type_, class... _args_ >
+    template < typename _type_, typename... _args_ >
         requires( std::same_as< _type_, _args_ > && ... )
     inline auto make_shared_array( const std::size_t _capacity, _args_ &&..._args )
     {
