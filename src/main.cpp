@@ -9,8 +9,8 @@ auto main() -> int
       .set_console_size( CONSOLE_WIDTH, CONSOLE_HEIGHT )
       .set_console_translucency( 255 )
       .fix_console_size( true )
-      .enable_console_close_button( true )
-      .enable_console_minimize_button( false );
+      .enable_console_close_ctrl( true )
+      .enable_console_minimize_ctrl( false );
     std::print( " -> 检测运行权限.\n" );
     if ( !cpp_utils::is_run_as_admin() ) {
         std::print( " -> 申请管理员权限.\n" );

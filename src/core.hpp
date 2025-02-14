@@ -470,7 +470,7 @@ namespace core {
         enum class mode { load, edit };
       private:
         const mode mod_data_;
-        static constexpr auto option_button_color{
+        static constexpr auto option_ctrl_color{
           cpp_utils::console_value::text_foreground_red | cpp_utils::console_value::text_foreground_green };
         auto load_( const bool _is_reload )
         {
@@ -585,8 +585,8 @@ namespace core {
                     cpp_utils::console_value::text_foreground_green | cpp_utils::console_value::text_foreground_intensity );
                 for ( auto &sub_key : main_key_.sub_keys ) {
                     ui.add_back( std::format( "\n[ {} ]\n", sub_key.showed_name ) )
-                      .add_back( " > 启用 ", option_setter{ sub_key, true }, option_button_color )
-                      .add_back( " > 禁用 ", option_setter{ sub_key, false }, option_button_color );
+                      .add_back( " > 启用 ", option_setter{ sub_key, true }, option_ctrl_color )
+                      .add_back( " > 禁用 ", option_setter{ sub_key, false }, option_ctrl_color );
                 }
                 ui.show();
                 return cpp_utils::console_ui_ansi::back;

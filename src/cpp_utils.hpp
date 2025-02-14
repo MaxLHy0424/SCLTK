@@ -480,7 +480,7 @@ namespace cpp_utils {
             ? GetWindowLongPtrW( GetConsoleWindow(), GWL_STYLE ) & ~WS_SIZEBOX & ~WS_MAXIMIZEBOX
             : GetWindowLongPtrW( GetConsoleWindow(), GWL_STYLE ) | WS_SIZEBOX | WS_MAXIMIZEBOX );
     }
-    inline auto enable_console_minimize_button( const bool _is_enable )
+    inline auto enable_console_minimize_ctrl( const bool _is_enable )
     {
         SetWindowLongPtrW(
           GetConsoleWindow(), GWL_STYLE,
@@ -488,7 +488,7 @@ namespace cpp_utils {
             ? GetWindowLongPtrW( GetConsoleWindow(), GWL_STYLE ) | WS_MINIMIZEBOX
             : GetWindowLongPtrW( GetConsoleWindow(), GWL_STYLE ) & ~WS_MINIMIZEBOX );
     }
-    inline auto enable_console_close_button( const bool _is_enable )
+    inline auto enable_console_close_ctrl( const bool _is_enable )
     {
         SetWindowLongPtrW(
           GetConsoleWindow(), GWL_STYLE,
@@ -543,7 +543,7 @@ namespace cpp_utils {
         inline static constexpr auto exit{ true };
         struct func_args final {
             console_ui< _type_ > &parent_ui;
-            const DWORD button_state;
+            const DWORD mouse_button_state;
             const DWORD ctrl_key_state;
             const DWORD event_flag;
             auto operator=( const func_args & ) noexcept -> func_args & = default;
@@ -552,7 +552,7 @@ namespace cpp_utils {
               console_ui< _type_ > &_parent_ui,
               const MOUSE_EVENT_RECORD _mouse_event = MOUSE_EVENT_RECORD{ {}, console_value::mouse_button_left, {}, {} } ) noexcept
               : parent_ui{ _parent_ui }
-              , button_state{ _mouse_event.dwButtonState }
+              , mouse_button_state{ _mouse_event.dwButtonState }
               , ctrl_key_state{ _mouse_event.dwControlKeyState }
               , event_flag{ _mouse_event.dwEventFlags }
             { }
@@ -891,14 +891,14 @@ namespace cpp_utils {
             cpp_utils::fix_console_size( _is_enable );
             return *this;
         }
-        auto &enable_console_minimize_button( const bool _is_enable )
+        auto &enable_console_minimize_ctrl( const bool _is_enable )
         {
-            cpp_utils::enable_console_minimize_button( _is_enable );
+            cpp_utils::enable_console_minimize_ctrl( _is_enable );
             return *this;
         }
-        auto &enable_console_close_button( const bool _is_enable )
+        auto &enable_console_close_ctrl( const bool _is_enable )
         {
-            cpp_utils::enable_console_close_button( _is_enable );
+            cpp_utils::enable_console_close_ctrl( _is_enable );
             return *this;
         }
         auto &lock( const bool _is_hide_cursor, const bool _is_lock_text ) noexcept
