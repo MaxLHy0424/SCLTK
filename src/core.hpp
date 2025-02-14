@@ -385,6 +385,13 @@ namespace core {
             cpp_utils::perf_sleep( default_thread_sleep_time );
         }
     }
+    auto get_window_state( const HWND _window_handle )
+    {
+        WINDOWPLACEMENT wp;
+        wp.length = sizeof( WINDOWPLACEMENT );
+        GetWindowPlacement( _window_handle, &wp );
+        return wp.showCmd;
+    }
     auto topmost_show_window( const std::stop_token _msg )
     {
         const auto &is_topmost_show{ options[ "window" ][ "topmost_show" ] };
@@ -397,7 +404,7 @@ namespace core {
         auto core_op{ [ = ]
         {
             AttachThreadInput( current_id, foreground_id, TRUE );
-            ShowWindow( this_window, SW_SHOWNORMAL );
+            ShowWindow( this_window, get_window_state( this_window ) );
             SetForegroundWindow( this_window );
             AttachThreadInput( current_id, foreground_id, FALSE );
             SetWindowPos( this_window, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
