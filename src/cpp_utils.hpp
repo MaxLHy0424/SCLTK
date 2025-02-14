@@ -924,6 +924,12 @@ namespace cpp_utils {
             cls_();
             return *this;
         }
+        auto &lock( const bool _is_hide_cursor, const bool _is_lock_text ) noexcept
+        {
+            show_cursor_( !_is_hide_cursor );
+            edit_console_attrs_( _is_lock_text ? console_attrs_::lock_all : console_attrs_::normal );
+            return *this;
+        }
         auto &ignore_console_exit_sinal( const bool _is_ignore )
         {
             cpp_utils::ignore_console_exit_sinal( _is_ignore );
@@ -975,12 +981,6 @@ namespace cpp_utils {
         auto &enable_console_close_ctrl( const bool _is_enable )
         {
             cpp_utils::enable_console_close_ctrl( _is_enable );
-            return *this;
-        }
-        auto &lock( const bool _is_hide_cursor, const bool _is_lock_text ) noexcept
-        {
-            show_cursor_( !_is_hide_cursor );
-            edit_console_attrs_( _is_lock_text ? console_attrs_::lock_all : console_attrs_::normal );
             return *this;
         }
         auto operator=( const console_ui< _type_ > & ) noexcept -> console_ui< _type_ > & = default;
