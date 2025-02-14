@@ -11,10 +11,6 @@ output_charset   = gb18030
 args_base        = -pipe -finput-charset=$(input_charset) -fexec-charset=$(output_charset) -std=$(args_std) $(args_link) $(args_warning) $(args_defines)
 args_debug       = -g3 $(args_base) $(args_opt_debug)
 args_release     = -DNDEBUG -static $(args_base) $(args_opt_release)
-debug_dependencies         = src/*
-release_32bit_dependencies = bin/info-i686.o src/*
-release_64bit_dependencies = bin/info-x86_64.o src/*
-info_bin_dependencies      = info.rc img/favicon.ico src/info.hpp
 .PHONY: init build clean debug release
 all: init build release
 init:
@@ -34,12 +30,16 @@ clean:
 	$(msys2_path)/usr/bin/rm.exe -rf bin
 	$(msys2_path)/usr/bin/mkdir.exe bin
 	$(msys2_path)/usr/bin/touch.exe bin/.gitkeep
-bin/debug/__debug__.exe: $(debug_dependencies) bin/debug/.gitkeep
-	$(msys2_path)/ucrt64/bin/$(compiler) $(debug_dependencies).cpp $(args_debug) -o $@
-bin/release/CRCSN-i686-msvcrt.exe: $(release_32bit_dependencies) bin/release/.gitkeep
-	$(msys2_path)/mingw32/bin/$(compiler) $(release_32bit_dependencies).cpp $(args_release) -o $@
+dependencies_debug = src/*
+bin/debug/__debug__.exe: $(dependencies_debug) bin/debug/.gitkeep
+	$(msys2_path)/ucrt64/bin/$(compiler) $(dependencies_debug).cpp $(args_debug) -o $@
+dependencies_release_32bit = bin/info-i686.o src/*
+bin/release/CRCSN-i686-msvcrt.exe: $(dependencies_release_32bit) bin/release/.gitkeep
+	$(msys2_path)/mingw32/bin/$(compiler) $(dependencies_release_32bit).cpp $(args_release) -o $@
+dependencies_release_64bit = bin/info-x86_64.o src/*
 bin/release/CRCSN-x86_64-ucrt.exe: $(release_64bit_dependencies) bin/release/.gitkeep
 	$(msys2_path)/ucrt64/bin/$(compiler) $(release_64bit_dependencies).cpp $(args_release) -o $@
+dependencies_info = info.rc img/favicon.ico src/info.hpp
 bin/info-i686.o: $(info_bin_dependencies) bin/.gitkeep
 	$(msys2_path)/usr/bin/windres.exe -i $< -o $@ $(args_defines) -F pe-i386
 bin/info-x86_64.o: $(info_bin_dependencies) bin/.gitkeep
