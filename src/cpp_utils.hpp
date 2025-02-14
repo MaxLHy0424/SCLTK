@@ -40,29 +40,27 @@ namespace cpp_utils {
     using std_string_view = std::basic_string_view< _char_type >;
     template < typename _type_ >
     concept char_type
-      = std::is_same_v< std::decay_t< _type_ >, ansi_char > || std::is_same_v< std::decay_t< _type_ >, wide_char >
-     || std::is_same_v< std::decay_t< _type_ >, utf8_char > || std::is_same_v< std::decay_t< _type_ >, utf16_char >
-     || std::is_same_v< std::decay_t< _type_ >, utf32_char >;
+      = std::same_as< std::decay_t< _type_ >, ansi_char > || std::same_as< std::decay_t< _type_ >, wide_char >
+     || std::same_as< std::decay_t< _type_ >, utf8_char > || std::same_as< std::decay_t< _type_ >, utf16_char >
+     || std::same_as< std::decay_t< _type_ >, utf32_char >;
     template < typename _type_a_, typename _type_b_ >
     concept convertible_char_type = char_type< _type_a_ > && char_type< _type_b_ > && sizeof( _type_a_ ) == sizeof( _type_b_ );
     template < typename _type_ >
     concept pointer_type = std::is_pointer_v< _type_ >;
     template < typename _type_ >
     concept callable_object
-      = !std::is_same_v< std::decay_t< _type_ >, std::thread > && !std::is_same_v< std::decay_t< _type_ >, std::jthread >;
+      = !std::same_as< std::decay_t< _type_ >, std::thread > && !std::same_as< std::decay_t< _type_ >, std::jthread >;
     template < typename _type_ >
     concept std_chrono_type = requires {
         requires(
-          std::is_same_v< std::decay_t< _type_ >, std::chrono::nanoseconds >
-          || std::is_same_v< std::decay_t< _type_ >, std::chrono::microseconds >
-          || std::is_same_v< std::decay_t< _type_ >, std::chrono::milliseconds >
-          || std::is_same_v< std::decay_t< _type_ >, std::chrono::seconds >
-          || std::is_same_v< std::decay_t< _type_ >, std::chrono::minutes >
-          || std::is_same_v< std::decay_t< _type_ >, std::chrono::hours >
-          || std::is_same_v< std::decay_t< _type_ >, std::chrono::days >
-          || std::is_same_v< std::decay_t< _type_ >, std::chrono::weeks >
-          || std::is_same_v< std::decay_t< _type_ >, std::chrono::months >
-          || std::is_same_v< std::decay_t< _type_ >, std::chrono::years > );
+          std::same_as< std::decay_t< _type_ >, std::chrono::nanoseconds >
+          || std::same_as< std::decay_t< _type_ >, std::chrono::microseconds >
+          || std::same_as< std::decay_t< _type_ >, std::chrono::milliseconds >
+          || std::same_as< std::decay_t< _type_ >, std::chrono::seconds >
+          || std::same_as< std::decay_t< _type_ >, std::chrono::minutes >
+          || std::same_as< std::decay_t< _type_ >, std::chrono::hours > || std::same_as< std::decay_t< _type_ >, std::chrono::days >
+          || std::same_as< std::decay_t< _type_ >, std::chrono::weeks > || std::same_as< std::decay_t< _type_ >, std::chrono::months >
+          || std::same_as< std::decay_t< _type_ >, std::chrono::years > );
     };
     template < char_type _target_, char_type _source_ >
         requires convertible_char_type< _target_, _source_ >
@@ -120,26 +118,25 @@ namespace cpp_utils {
     {
         auto convert_arg{ []< typename _type_ >( _type_ &&_arg ) static -> decltype( auto )
         {
-            if constexpr ( std::is_same_v< std::decay_t< _type_ >, utf8_std_string > ) {
+            if constexpr ( std::same_as< std::decay_t< _type_ >, utf8_std_string > ) {
                 if constexpr ( std::is_const_v< std::remove_reference_t< _type_ > > ) {
                     return reinterpret_cast< const ansi_std_string * >( &_arg );
                 } else {
                     return reinterpret_cast< ansi_std_string * >( &_arg );
                 }
-            } else if constexpr ( std::is_same_v< std::decay_t< _type_ >, utf8_std_string_view > ) {
+            } else if constexpr ( std::same_as< std::decay_t< _type_ >, utf8_std_string_view > ) {
                 if constexpr ( std::is_const_v< std::remove_reference_t< _type_ > > ) {
                     return reinterpret_cast< const ansi_std_string_view * >( &_arg );
                 } else {
                     return reinterpret_cast< ansi_std_string_view * >( &_arg );
                 }
-            } else if constexpr ( std::is_same_v< std::decay_t< _type_ >, utf8_char * > ) {
+            } else if constexpr ( std::same_as< std::decay_t< _type_ >, utf8_char * > ) {
                 return std::make_unique< ansi_char * >( reinterpret_cast< ansi_char * >( &_arg ) );
-            } else if constexpr ( std::is_same_v< std::decay_t< _type_ >, const utf8_char * > ) {
+            } else if constexpr ( std::same_as< std::decay_t< _type_ >, const utf8_char * > ) {
                 return std::make_unique< const ansi_char * >( reinterpret_cast< const ansi_char * >( &_arg ) );
             } else if constexpr (
               std::is_pointer_v< std::decay_t< _type_ > >
-              && !( std::is_same_v< std::decay_t< _type_ >, ansi_char * >
-                    || std::is_same_v< std::decay_t< _type_ >, const ansi_char * > ) )
+              && !( std::same_as< std::decay_t< _type_ >, ansi_char * > || std::same_as< std::decay_t< _type_ >, const ansi_char * > ) )
             {
                 return std::make_unique< const ansi_std_string >( ptr_to_ansi_string( std::forward< _type_ >( _arg ) ) );
             } else {
@@ -177,7 +174,7 @@ namespace cpp_utils {
         std::println( _stream, "{}", string_view_convert< ansi_char >( utf8_format( _fmt, std::forward< _args_ >( _args )... ) ) );
     }
     template < char_type _type_, size_type _capacity_ >
-        requires( std::is_same_v< _type_, std::decay_t< _type_ > > )
+        requires( std::same_as< _type_, std::decay_t< _type_ > > )
     struct constant_string final {
       private:
         _type_ data_[ _capacity_ ]{};
@@ -612,7 +609,7 @@ namespace cpp_utils {
         inline constexpr WORD text_lvb_sbcsdbcs{ COMMON_LVB_SBCSDBCS };
     };
     template < typename _type_ >
-        requires std::is_same_v< _type_, ansi_char > || std::is_same_v< _type_, utf8_char >
+        requires std::same_as< _type_, ansi_char > || std::same_as< _type_, utf8_char >
     class console_ui final {
       public:
         inline static constexpr auto back{ false };
@@ -755,18 +752,18 @@ namespace cpp_utils {
         }
         static auto write_( const std_string_view< _type_ > _text, const bool _is_endl = false )
         {
-            if constexpr ( std::is_same_v< _type_, ansi_char > ) {
+            if constexpr ( std::same_as< _type_, ansi_char > ) {
                 std::print( "{}{}", _text, _is_endl ? '\n' : '\0' );
-            } else if constexpr ( std::is_same_v< _type_, utf8_char > ) {
+            } else if constexpr ( std::same_as< _type_, utf8_char > ) {
                 utf8_print( u8"{}{}", _text, _is_endl ? '\n' : '\0' );
             }
         }
         static auto rewrite_( const COORD _cursor_position, const std_string_view< _type_ > _text )
         {
             set_cursor_( COORD{ 0, _cursor_position.Y } );
-            if constexpr ( std::is_same_v< _type_, ansi_char > ) {
+            if constexpr ( std::same_as< _type_, ansi_char > ) {
                 write_( ansi_std_string( _cursor_position.X, ' ' ) );
-            } else if constexpr ( std::is_same_v< _type_, utf8_char > ) {
+            } else if constexpr ( std::same_as< _type_, utf8_char > ) {
                 write_( utf8_std_string( _cursor_position.X, ' ' ) );
             }
             set_cursor_( COORD{ 0, _cursor_position.Y } );
@@ -937,18 +934,18 @@ namespace cpp_utils {
         }
         auto &set_console_title( const _type_ *const _title )
         {
-            if constexpr ( std::is_same_v< _type_, ansi_char > ) {
+            if constexpr ( std::same_as< _type_, ansi_char > ) {
                 cpp_utils::set_console_title( _title );
-            } else if constexpr ( std::is_same_v< _type_, utf8_char > ) {
+            } else if constexpr ( std::same_as< _type_, utf8_char > ) {
                 cpp_utils::set_console_title( string_convert< ansi_char >( _title ) );
             }
             return *this;
         }
         auto &set_console_title( const std_string< _type_ > &_title )
         {
-            if constexpr ( std::is_same_v< _type_, ansi_char > ) {
+            if constexpr ( std::same_as< _type_, ansi_char > ) {
                 cpp_utils::set_console_title( _title );
-            } else if constexpr ( std::is_same_v< _type_, utf8_char > ) {
+            } else if constexpr ( std::same_as< _type_, utf8_char > ) {
                 cpp_utils::set_console_title( string_convert< ansi_char >( _title ) );
             }
             return *this;
