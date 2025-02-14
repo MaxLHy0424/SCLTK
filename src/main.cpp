@@ -4,13 +4,13 @@ auto main() -> int
     cpp_utils::console_ui_ansi ui;
     ui.ignore_console_exit_sinal( true )
       .lock( true, true )
+      .fix_console_size( true )
+      .enable_console_close_ctrl( true )
+      .enable_console_minimize_ctrl( false )
       .set_console_title( INFO_SHORT_NAME )
       .set_console_charset( CHARSET_ID )
       .set_console_size( CONSOLE_WIDTH, CONSOLE_HEIGHT )
-      .set_console_translucency( 255 )
-      .fix_console_size( true )
-      .enable_console_close_ctrl( true )
-      .enable_console_minimize_ctrl( false );
+      .set_console_translucency( 255 );
     std::print( " -> 检测运行权限.\n" );
     if ( !cpp_utils::is_run_as_admin() ) {
         std::print( " -> 申请管理员权限.\n" );
