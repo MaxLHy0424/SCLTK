@@ -37,12 +37,12 @@ dependencies_release_32bit = bin/info-i686.o src/*
 bin/release/CRCSN-i686-msvcrt.exe: $(dependencies_release_32bit) bin/release/.gitkeep
 	$(msys2_path)/mingw32/bin/$(compiler) $(dependencies_release_32bit).cpp $(args_release) -o $@
 dependencies_release_64bit = bin/info-x86_64.o src/*
-bin/release/CRCSN-x86_64-ucrt.exe: $(release_64bit_dependencies) bin/release/.gitkeep
-	$(msys2_path)/ucrt64/bin/$(compiler) $(release_64bit_dependencies).cpp $(args_release) -o $@
+bin/release/CRCSN-x86_64-ucrt.exe: $(dependencies_release_64bit) bin/release/.gitkeep
+	$(msys2_path)/ucrt64/bin/$(compiler) $(dependencies_release_64bit).cpp $(args_release) -o $@
 dependencies_info = info.rc img/favicon.ico src/info.hpp
-bin/info-i686.o: $(info_bin_dependencies) bin/.gitkeep
+bin/info-i686.o: $(dependencies_info) bin/.gitkeep
 	$(msys2_path)/usr/bin/windres.exe -i $< -o $@ $(args_defines) -F pe-i386
-bin/info-x86_64.o: $(info_bin_dependencies) bin/.gitkeep
+bin/info-x86_64.o: $(dependencies_info) bin/.gitkeep
 	$(msys2_path)/usr/bin/windres.exe -i $< -o $@ $(args_defines) -F pe-x86-64
 bin/.gitkeep:
 	$(msys2_path)/usr/bin/mkdir.exe bin -p
