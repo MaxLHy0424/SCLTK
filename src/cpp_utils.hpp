@@ -4,6 +4,7 @@
 #endif
 #include <chrono>
 #include <concepts>
+#include <exception>
 #include <functional>
 #include <print>
 #include <queue>
@@ -407,19 +408,19 @@ namespace cpp_utils {
     };
     template < typename _type_, class... _args_ >
         requires( std::same_as< _type_, _args_ > && ... )
-    inline auto make_unique_array( std::size_t _capacity, _args_ &&..._args )
+    inline auto make_unique_array( const std::size_t _capacity, _args_ &&..._args )
     {
         if ( _capacity < sizeof...( _args ) ) {
-            throw std::runtime_error{ "the capacity must be greater than or equal to the size of arguments" };
+            throw std::length_error{ "the capacity must be greater than or equal to the number of arguments" };
         }
         return std::unique_ptr< _type_[] >{ new _type_[ _capacity ]{ std::forward< _args_ >( _args )... } };
     }
     template < typename _type_, class... _args_ >
         requires( std::same_as< _type_, _args_ > && ... )
-    inline auto make_shared_array( std::size_t _capacity, _args_ &&..._args )
+    inline auto make_shared_array( const std::size_t _capacity, _args_ &&..._args )
     {
         if ( _capacity < sizeof...( _args ) ) {
-            throw std::runtime_error{ "the capacity must be greater than or equal to the size of arguments" };
+            throw std::length_error{ "the capacity must be greater than or equal to the number of arguments" };
         }
         return std::unique_ptr< _type_[] >{ new _type_[ _capacity ]{ std::forward< _args_ >( _args )... } };
     }
