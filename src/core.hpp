@@ -121,7 +121,7 @@ namespace core {
               { "fix_os_env", "(*) 修复操作系统环境" } } },
           { "window",
             "窗口显示",
-            { { "topmost_show", "(*) 置顶显示" },
+            { { "set_top_window", "(*) 置顶窗口" },
               { "disable_close_ctrl", "(*) 禁用关闭控件" },
               { "translucency", "(*) 半透明化" } } },
           { "misc",
@@ -392,10 +392,10 @@ namespace core {
         GetWindowPlacement( _window_handle, &wp );
         return wp.showCmd;
     }
-    inline auto topmost_show_window( const std::stop_token _msg )
+    inline auto set_top_window_window( const std::stop_token _msg )
     {
-        const auto &is_topmost_show{ options[ "window" ][ "topmost_show" ] };
-        if ( is_disable_x_option_hot_reload.get() && !is_topmost_show.get() ) {
+        const auto &is_set_top_window{ options[ "window" ][ "set_top_window" ] };
+        if ( is_disable_x_option_hot_reload.get() && !is_set_top_window.get() ) {
             return;
         }
         const auto this_window{ GetConsoleWindow() };
@@ -418,7 +418,7 @@ namespace core {
             return;
         }
         while ( !_msg.stop_requested() ) {
-            if ( !is_topmost_show.get() ) {
+            if ( !is_set_top_window.get() ) {
                 SetWindowPos( GetConsoleWindow(), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
                 cpp_utils::perf_sleep( default_thread_sleep_time );
                 continue;
