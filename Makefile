@@ -15,8 +15,8 @@ debug_dependencies         = src/*
 release_32bit_dependencies = bin/info-i686.o src/*
 release_64bit_dependencies = bin/info-x86_64.o src/*
 info_bin_dependencies      = info.rc img/favicon.ico src/info.hpp
-.PHONY: init clean debug release
-all: init clean debug release
+.PHONY: init build clean debug release
+all: init build release
 init:
 	$(msys2_path)/usr/bin/pacman.exe -Sy --noconfirm --needed\
 	 mingw-w64-i686-toolchain\
@@ -26,9 +26,10 @@ init:
 	 base\
 	 base-devel\
 	 binutils
+build: debug release
+debug: bin/debug/__debug__.exe
 release: bin/release/CRCSN-i686-msvcrt.exe\
          bin/release/CRCSN-x86_64-ucrt.exe
-debug: bin/debug/__debug__.exe
 clean:
 	$(msys2_path)/usr/bin/rm.exe -rf bin
 	$(msys2_path)/usr/bin/mkdir.exe bin
