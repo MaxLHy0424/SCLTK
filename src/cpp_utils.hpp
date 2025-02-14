@@ -50,6 +50,20 @@ namespace cpp_utils {
     template < typename _type_ >
     concept callable_object
       = !std::is_same_v< std::decay_t< _type_ >, std::thread > && !std::is_same_v< std::decay_t< _type_ >, std::jthread >;
+    template < typename _type_ >
+    concept std_chrono_type = requires {
+        requires(
+          std::is_same_v< std::decay_t< _type_ >, std::chrono::nanoseconds >
+          || std::is_same_v< std::decay_t< _type_ >, std::chrono::microseconds >
+          || std::is_same_v< std::decay_t< _type_ >, std::chrono::milliseconds >
+          || std::is_same_v< std::decay_t< _type_ >, std::chrono::seconds >
+          || std::is_same_v< std::decay_t< _type_ >, std::chrono::minutes >
+          || std::is_same_v< std::decay_t< _type_ >, std::chrono::hours >
+          || std::is_same_v< std::decay_t< _type_ >, std::chrono::days >
+          || std::is_same_v< std::decay_t< _type_ >, std::chrono::weeks >
+          || std::is_same_v< std::decay_t< _type_ >, std::chrono::months >
+          || std::is_same_v< std::decay_t< _type_ >, std::chrono::years > );
+    };
     template < char_type _target_, char_type _source_ >
         requires convertible_char_type< _target_, _source_ >
     inline auto string_convert( const std_string< _source_ > &_str )
@@ -440,6 +454,43 @@ namespace cpp_utils {
         GetModuleFileNameW( nullptr, file_path, MAX_PATH );
         ShellExecuteW( nullptr, L"runas", file_path, nullptr, nullptr, SW_SHOWNORMAL );
         std::exit( 0 );
+    }
+    inline auto get_window_state( const HWND _window_handle )
+    {
+        WINDOWPLACEMENT wp;
+        wp.length = sizeof( WINDOWPLACEMENT );
+        GetWindowPlacement( _window_handle, &wp );
+        return wp.showCmd;
+    }
+    inline auto set_window_state( const HWND _window_handle, const UINT _state )
+    {
+        ShowWindow( _window_handle, _state );
+    }
+    inline auto set_top_window( const HWND _window_handle, const DWORD _thread_id, const DWORD _window_thread_process_id )
+    {
+        AttachThreadInput( _thread_id, _window_thread_process_id, TRUE );
+        set_window_state( _window_handle, get_window_state( _window_handle ) );
+        SetForegroundWindow( _window_handle );
+        AttachThreadInput( _thread_id, _window_thread_process_id, FALSE );
+        SetWindowPos( _window_handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
+    }
+    template < std_chrono_type _chrono_type_, callable_object _callee_, typename... _args_ >
+    inline auto set_top_window_loop(
+      const HWND _window_handle, const DWORD _thread_id, const DWORD _window_thread_process_id, const _chrono_type_ _sleep_time,
+      _callee_ &&_condition_checker, _args_ &&..._condition_checker_args )
+    {
+        while ( _condition_checker( std::forward< _args_ >( _condition_checker_args )... ) ) {
+            AttachThreadInput( _thread_id, _window_thread_process_id, TRUE );
+            set_window_state( _window_handle, get_window_state( _window_handle ) );
+            SetForegroundWindow( _window_handle );
+            AttachThreadInput( _thread_id, _window_thread_process_id, FALSE );
+            SetWindowPos( _window_handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
+            perf_sleep( _sleep_time );
+        }
+    }
+    inline auto cancle_top_window( const HWND _window_handle )
+    {
+        SetWindowPos( _window_handle, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
     }
     inline auto ignore_console_exit_sinal( const bool _is_ignore ) noexcept
     {

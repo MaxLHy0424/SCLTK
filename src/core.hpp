@@ -398,34 +398,27 @@ namespace core {
         if ( is_disable_x_option_hot_reload.get() && !is_set_top_window.get() ) {
             return;
         }
-        const auto this_window{ GetConsoleWindow() };
-        const auto foreground_id{ GetWindowThreadProcessId( this_window, nullptr ) };
-        const auto current_id{ GetCurrentThreadId() };
-        auto core_op{ [ = ]
-        {
-            AttachThreadInput( current_id, foreground_id, TRUE );
-            ShowWindow( this_window, get_window_state( this_window ) );
-            SetForegroundWindow( this_window );
-            AttachThreadInput( current_id, foreground_id, FALSE );
-            SetWindowPos( this_window, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
-            cpp_utils::perf_sleep( 100ms );
-        } };
+        constexpr auto sleep_time{ 100ms };
+        const auto current_window{ GetConsoleWindow() };
+        const auto current_thread_id{ GetCurrentThreadId() };
+        const auto window_thread_frocess_id{ GetWindowThreadProcessId( current_window, nullptr ) };
         if ( is_disable_x_option_hot_reload.get() ) {
-            while ( !_msg.stop_requested() ) {
-                core_op();
-            }
-            SetWindowPos( GetConsoleWindow(), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
+            cpp_utils::set_top_window_loop(
+              current_window, current_thread_id, window_thread_frocess_id, sleep_time, []( const std::stop_token _msg )
+            { return !_msg.stop_requested(); }, _msg );
+            cpp_utils::cancle_top_window( current_window );
             return;
         }
         while ( !_msg.stop_requested() ) {
             if ( !is_set_top_window.get() ) {
-                SetWindowPos( GetConsoleWindow(), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
+                cpp_utils::cancle_top_window( current_window );
                 cpp_utils::perf_sleep( default_thread_sleep_time );
                 continue;
             }
-            core_op();
+            cpp_utils::set_top_window( current_window, current_thread_id, window_thread_frocess_id );
+            cpp_utils::perf_sleep( sleep_time );
         }
-        SetWindowPos( GetConsoleWindow(), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
+        cpp_utils::cancle_top_window( current_window );
     }
     inline auto fix_os_env( const std::stop_token _msg )
     {
