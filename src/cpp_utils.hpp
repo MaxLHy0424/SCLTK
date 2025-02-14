@@ -455,6 +455,17 @@ namespace cpp_utils {
         ShellExecuteW( nullptr, L"runas", file_path, nullptr, nullptr, SW_SHOWNORMAL );
         std::exit( 0 );
     }
+    inline auto get_current_window_handle()
+    {
+        auto window_handle{ GetActiveWindow() };
+        if ( window_handle == nullptr ) {
+            window_handle = GetForegroundWindow();
+        }
+        if ( window_handle == nullptr ) {
+            window_handle = GetConsoleWindow();
+        }
+        return window_handle;
+    }
     inline auto get_window_state( const HWND _window_handle )
     {
         WINDOWPLACEMENT wp;
@@ -474,6 +485,11 @@ namespace cpp_utils {
         AttachThreadInput( _thread_id, _window_thread_process_id, FALSE );
         SetWindowPos( _window_handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
     }
+    inline auto set_top_current_window()
+    {
+        auto window_handle{ get_current_window_handle() };
+        set_top_window( window_handle, GetCurrentThreadId(), GetWindowThreadProcessId( window_handle, nullptr ) );
+    }
     template < std_chrono_type _chrono_type_, callable_object _callee_, typename... _args_ >
     inline auto set_top_window_loop(
       const HWND _window_handle, const DWORD _thread_id, const DWORD _window_thread_process_id, const _chrono_type_ _sleep_time,
@@ -487,6 +503,15 @@ namespace cpp_utils {
             SetWindowPos( _window_handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
             perf_sleep( _sleep_time );
         }
+    }
+    template < std_chrono_type _chrono_type_, callable_object _callee_, typename... _args_ >
+    inline auto set_top_current_window_loop(
+      const _chrono_type_ _sleep_time, _callee_ &&_condition_checker, _args_ &&..._condition_checker_args )
+    {
+        auto window_handle{ get_current_window_handle() };
+        set_top_window_loop(
+          window_handle, GetCurrentThreadId(), GetWindowThreadProcessId( window_handle, nullptr ), _sleep_time,
+          std::forward< _callee_ >( _condition_checker ), std::forward< _args_ >( _condition_checker_args )... );
     }
     inline auto cancle_top_window( const HWND _window_handle )
     {
