@@ -462,7 +462,7 @@ namespace core {
       public:
         enum class mode { load, edit };
       private:
-        const mode mod_data_;
+        const mode mod_choice_;
         static constexpr auto option_ctrl_color{
           cpp_utils::console_value::text_foreground_red | cpp_utils::console_value::text_foreground_green };
         auto load_( const bool _is_reload )
@@ -618,7 +618,7 @@ namespace core {
       public:
         auto operator()( cpp_utils::console_ui_ansi::func_args )
         {
-            switch ( mod_data_ ) {
+            switch ( mod_choice_ ) {
                 case mode::load : load_( false ); break;
                 case mode::edit : edit_(); break;
             }
@@ -626,8 +626,8 @@ namespace core {
         }
         auto operator=( const config_op & ) -> config_op & = delete;
         auto operator=( config_op && ) -> config_op &      = delete;
-        config_op( const mode _mod_data )
-          : mod_data_{ _mod_data }
+        config_op( const mode _mod_choice )
+          : mod_choice_{ _mod_choice }
         { }
         config_op( const config_op & ) = default;
         config_op( config_op && )      = default;
@@ -637,7 +637,7 @@ namespace core {
       public:
         enum class mode { crack, restore };
       private:
-        const mode mod_data_;
+        const mode mod_choice_;
         const rule_node &rules_;
       public:
         auto operator()( cpp_utils::console_ui_ansi::func_args )
@@ -652,7 +652,7 @@ namespace core {
             const auto &is_hijack_execs{ crack_restore_option_node[ "hijack_execs" ] };
             const auto &is_set_serv_startup_types{ crack_restore_option_node[ "set_serv_startup_types" ] };
             std::print( " -> 生成并执行操作系统命令.\n{}\n", ansi_std_string( CONSOLE_WIDTH, '-' ) );
-            switch ( mod_data_ ) {
+            switch ( mod_choice_ ) {
                 case mode::crack : {
                     if ( is_hijack_execs.get() ) {
                         for ( const auto &exec : rules_.execs ) {
@@ -701,8 +701,8 @@ namespace core {
         }
         auto operator=( const rule_op & ) -> rule_op & = delete;
         auto operator=( rule_op && ) -> rule_op &      = delete;
-        rule_op( const mode _mod_data, const rule_node &_rule )
-          : mod_data_{ _mod_data }
+        rule_op( const mode _mod_choice, const rule_node &_rule )
+          : mod_choice_{ _mod_choice }
           , rules_{ _rule }
         { }
         rule_op( const rule_op & ) = default;
