@@ -906,7 +906,6 @@ namespace cpp_utils {
             show_cursor_( !_is_hide_cursor );
             edit_console_attrs_( _is_lock_text ? console_attrs_::lock_all : console_attrs_::normal );
             return *this;
-            inline
         }
         auto operator=( const console_ui< _type_ > & ) noexcept -> console_ui< _type_ > & = default;
         auto operator=( console_ui< _type_ > && ) noexcept -> console_ui< _type_ > &      = default;
