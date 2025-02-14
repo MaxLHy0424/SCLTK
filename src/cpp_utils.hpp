@@ -48,7 +48,7 @@ namespace cpp_utils {
     template < typename _type_ >
     concept pointer_type = std::is_pointer_v< _type_ >;
     template < typename _type_ >
-    concept callable_object
+    concept callable_type
       = !std::same_as< std::decay_t< _type_ >, std::thread > && !std::same_as< std::decay_t< _type_ >, std::jthread >;
     template < typename _type_ >
     concept std_chrono_type = requires {
@@ -315,7 +315,7 @@ namespace cpp_utils {
         {
             return threads_.at( _index ).native_handle();
         }
-        template < callable_object _callee_, typename... _args_ >
+        template < callable_type _callee_, typename... _args_ >
         auto &add( _callee_ &&_func, _args_ &&..._args )
         {
             threads_.emplace_back( std::forward< _callee_ >( _func ), std::forward< _args_ >( _args )... );
@@ -487,7 +487,7 @@ namespace cpp_utils {
         auto window_handle{ get_current_window_handle() };
         set_top_window( window_handle, GetCurrentThreadId(), GetWindowThreadProcessId( window_handle, nullptr ) );
     }
-    template < std_chrono_type _chrono_type_, callable_object _callee_, typename... _args_ >
+    template < std_chrono_type _chrono_type_, callable_type _callee_, typename... _args_ >
     inline auto set_top_window_loop(
       const HWND _window_handle, const DWORD _thread_id, const DWORD _window_thread_process_id, const _chrono_type_ _sleep_time,
       _callee_ &&_condition_checker, _args_ &&..._condition_checker_args )
@@ -501,7 +501,7 @@ namespace cpp_utils {
             perf_sleep( _sleep_time );
         }
     }
-    template < std_chrono_type _chrono_type_, callable_object _callee_, typename... _args_ >
+    template < std_chrono_type _chrono_type_, callable_type _callee_, typename... _args_ >
     inline auto set_top_current_window_loop(
       const _chrono_type_ _sleep_time, _callee_ &&_condition_checker, _args_ &&..._condition_checker_args )
     {
