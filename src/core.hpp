@@ -302,7 +302,7 @@ namespace core {
           .add_back( "\n[ 仓库 ]\n" )
           .add_back(
             " " INFO_REPO_URL " ", visit_repo_webpage,
-            cpp_utils::console_value::text_default | cpp_utils::console_value::text_lvb_underscore )
+            cpp_utils::console_value::text_default | cpp_utils::console_value::text_foreground_intensity )
           .add_back( "\n[ 许可证 ]\n\n " INFO_LICENSE " \n\n (C) 2023 - present " INFO_DEVELOPER "." )
           .show();
         return cpp_utils::console_ui_ansi::back;
