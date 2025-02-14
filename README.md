@@ -185,6 +185,9 @@ make all
 
 后续编译可使用:
 ```bash
+make build
+```
+```bash
 make debug
 ```
 ```bash
