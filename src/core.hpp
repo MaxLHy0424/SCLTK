@@ -392,7 +392,7 @@ namespace core {
         GetWindowPlacement( _window_handle, &wp );
         return wp.showCmd;
     }
-    inline auto set_top_window_window( const std::stop_token _msg )
+    inline auto set_top_window( const std::stop_token _msg )
     {
         const auto &is_set_top_window{ options[ "window" ][ "set_top_window" ] };
         if ( is_disable_x_option_hot_reload.get() && !is_set_top_window.get() ) {

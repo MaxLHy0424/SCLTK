@@ -19,7 +19,7 @@ auto main() -> int
     core::config_op{ core::config_op::mode::load }( cpp_utils::console_ui_ansi::func_args{ ui } );
     std::print( " -> 创建线程.\n" );
     cpp_utils::thread_pool threads;
-    threads.add( core::set_top_window_window ).add( core::set_console_attrs ).add( core::fix_os_env );
+    threads.add( core::set_top_window ).add( core::set_console_attrs ).add( core::fix_os_env );
     const auto &is_enable_quick_exit_and_relaunch{ core::options[ "misc" ][ "quick_exit_and_relaunch" ] };
     if ( is_enable_quick_exit_and_relaunch.get() == true ) {
         threads.detach_all();
