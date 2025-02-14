@@ -1,6 +1,6 @@
 <div align="center">
 
-![logo](./img/title.png)\
+![title](./img/title.png)\
 **Computer Room Control Software Nemesis**\
 **轻松破解机房控制**\
 ©️ 2023 - present MaxLHy0424.
