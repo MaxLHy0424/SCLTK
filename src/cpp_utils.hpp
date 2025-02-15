@@ -532,6 +532,18 @@ namespace cpp_utils {
         SetConsoleOutputCP( _charset );
         SetConsoleCP( _charset );
     }
+    auto clear_screen()
+    {
+        CONSOLE_SCREEN_BUFFER_INFO console_data;
+        GetConsoleScreenBufferInfo( GetStdHandle( STD_OUTPUT_HANDLE ), &console_data );
+        SetConsoleCursorPosition( GetStdHandle( STD_OUTPUT_HANDLE ), { 0, 0 } );
+        std::print(
+          "{}",
+          ansi_std_string(
+            static_cast< size_type >( console_data.dwSize.Y ) * static_cast< size_type >( console_data.dwSize.X ), ' ' ) );
+        SetConsoleCursorPosition( GetStdHandle( STD_OUTPUT_HANDLE ), { 0, 0 } );
+        return;
+    }
     inline auto set_console_size( const SHORT _width, const SHORT _height )
     {
         HANDLE output_handle{ GetStdHandle( STD_OUTPUT_HANDLE ) };
@@ -541,6 +553,7 @@ namespace cpp_utils {
         SetConsoleScreenBufferSize( output_handle, size );
         SetConsoleWindowInfo( output_handle, TRUE, &wrt );
         SetConsoleScreenBufferSize( output_handle, size );
+        clear_screen();
     }
     inline auto set_console_translucency( const BYTE _value )
     {
