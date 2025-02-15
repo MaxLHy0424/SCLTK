@@ -697,11 +697,11 @@ namespace cpp_utils {
             ~line_node_() noexcept                    = default;
         };
         std::deque< line_node_ > lines_{};
-        static auto show_cursor_( const bool _is_show ) noexcept
+        static auto show_cursor_( const WINBOOL _is_show ) noexcept
         {
             CONSOLE_CURSOR_INFO cursor_data;
             GetConsoleCursorInfo( GetStdHandle( STD_OUTPUT_HANDLE ), &cursor_data );
-            cursor_data.bVisible = static_cast< WINBOOL >( _is_show );
+            cursor_data.bVisible = _is_show;
             SetConsoleCursorInfo( GetStdHandle( STD_OUTPUT_HANDLE ), &cursor_data );
         }
         static auto edit_console_attrs_( const console_attrs_ _attrs ) noexcept
@@ -810,10 +810,10 @@ namespace cpp_utils {
                 }
                 cls_();
                 line.set_attrs( line.default_attrs );
-                show_cursor_( false );
+                show_cursor_( FALSE );
                 edit_console_attrs_( console_attrs_::lock_all );
                 is_exit = line.func( func_args{ *this, _mouse_event } );
-                show_cursor_( false );
+                show_cursor_( FALSE );
                 edit_console_attrs_( console_attrs_::lock_text );
                 init_pos_();
                 break;
@@ -906,7 +906,7 @@ namespace cpp_utils {
         }
         auto &show()
         {
-            show_cursor_( false );
+            show_cursor_( FALSE );
             edit_console_attrs_( console_attrs_::lock_text );
             init_pos_();
             MOUSE_EVENT_RECORD mouse_event;
@@ -929,7 +929,7 @@ namespace cpp_utils {
         }
         auto &lock( const bool _is_hide_cursor, const bool _is_lock_text ) noexcept
         {
-            show_cursor_( !_is_hide_cursor );
+            show_cursor_( _is_hide_cursor ? FALSE : TRUE );
             edit_console_attrs_( _is_lock_text ? console_attrs_::lock_all : console_attrs_::normal );
             return *this;
         }
