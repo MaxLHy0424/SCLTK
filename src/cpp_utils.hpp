@@ -519,6 +519,32 @@ namespace cpp_utils {
     {
         return SetConsoleCtrlHandler( nullptr, static_cast< BOOL >( _is_ignore ) );
     }
+    inline auto clear_screen()
+    {
+        HANDLE output_handle{ GetStdHandle( STD_OUTPUT_HANDLE ) };
+        CONSOLE_SCREEN_BUFFER_INFO buffer_info;
+        SMALL_RECT scroll;
+        COORD new_cursor_position;
+        CHAR_INFO char_info_fill;
+        if ( !GetConsoleScreenBufferInfo( output_handle, &buffer_info ) ) {
+            return;
+        }
+        scroll.Left                     = 0;
+        scroll.Top                      = 0;
+        scroll.Right                    = buffer_info.dwSize.X;
+        scroll.Bottom                   = buffer_info.dwSize.Y;
+        new_cursor_position.X           = 0;
+        new_cursor_position.Y           = -buffer_info.dwSize.Y;
+        char_info_fill.Char.UnicodeChar = L' ';
+        char_info_fill.Attributes       = buffer_info.wAttributes;
+        ScrollConsoleScreenBufferW( output_handle, &scroll, NULL, new_cursor_position, &char_info_fill );
+        new_cursor_position.Y = 0;
+        SetConsoleCursorPosition( output_handle, new_cursor_position );
+    }
+    inline auto clear_screen_cmd()
+    {
+        std::system( "cls" );
+    }
     inline auto set_console_title( const ansi_char *const _title )
     {
         SetConsoleTitleA( _title );
@@ -531,18 +557,6 @@ namespace cpp_utils {
     {
         SetConsoleOutputCP( _charset );
         SetConsoleCP( _charset );
-    }
-    auto clear_screen()
-    {
-        CONSOLE_SCREEN_BUFFER_INFO console_data;
-        GetConsoleScreenBufferInfo( GetStdHandle( STD_OUTPUT_HANDLE ), &console_data );
-        SetConsoleCursorPosition( GetStdHandle( STD_OUTPUT_HANDLE ), { 0, 0 } );
-        std::print(
-          "{}",
-          ansi_std_string(
-            static_cast< size_type >( console_data.dwSize.Y ) * static_cast< size_type >( console_data.dwSize.X ), ' ' ) );
-        SetConsoleCursorPosition( GetStdHandle( STD_OUTPUT_HANDLE ), { 0, 0 } );
-        return;
     }
     inline auto set_console_size( const SHORT _width, const SHORT _height )
     {
