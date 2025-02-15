@@ -535,7 +535,7 @@ namespace cpp_utils {
         new_cursor_position.Y = 0;
         SetConsoleCursorPosition( output_handle, new_cursor_position );
     }
-    inline auto clear_screen_cmd()
+    inline auto clear_screen_with_cmd()
     {
         std::system( "cls" );
     }
