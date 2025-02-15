@@ -556,22 +556,20 @@ namespace cpp_utils {
     {
         HANDLE output_handle{ GetStdHandle( STD_OUTPUT_HANDLE ) };
         SMALL_RECT wrt{ 0, 0, static_cast< SHORT >( _width - 1 ), static_cast< SHORT >( _height - 1 ) };
-        COORD size{ _width, _height };
         ShowWindow( GetConsoleWindow(), SW_RESTORE );
-        SetConsoleScreenBufferSize( output_handle, size );
+        SetConsoleScreenBufferSize( output_handle, { _width, _height } );
         SetConsoleWindowInfo( output_handle, TRUE, &wrt );
-        SetConsoleScreenBufferSize( output_handle, size );
+        SetConsoleScreenBufferSize( output_handle, { _width, _height } );
         clear_screen_with_winapi();
     }
     inline auto set_console_size_with_cmd_cls( const SHORT _width, const SHORT _height )
     {
         HANDLE output_handle{ GetStdHandle( STD_OUTPUT_HANDLE ) };
         SMALL_RECT wrt{ 0, 0, static_cast< SHORT >( _width - 1 ), static_cast< SHORT >( _height - 1 ) };
-        COORD size{ _width, _height };
         ShowWindow( GetConsoleWindow(), SW_RESTORE );
-        SetConsoleScreenBufferSize( output_handle, size );
+        SetConsoleScreenBufferSize( output_handle, { _width, _height } );
         SetConsoleWindowInfo( output_handle, TRUE, &wrt );
-        SetConsoleScreenBufferSize( output_handle, size );
+        SetConsoleScreenBufferSize( output_handle, { _width, _height } );
         clear_screen_with_cmd();
     }
     inline auto set_console_translucency( const BYTE _value )
