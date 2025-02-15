@@ -314,13 +314,13 @@ namespace core {
         auto launch_cmd{ []( cpp_utils::console_ui::func_args _args ) static
         {
             cpp_utils::set_console_title( INFO_SHORT_NAME " - 命令提示符" );
-            cpp_utils::set_console_size_with_cmd_cls( 120, 30 );
+            cpp_utils::set_console_size( 120, 30 );
             cpp_utils::fix_console_size( false );
             _args.parent_ui.lock( false, false );
             SetConsoleScreenBufferSize( GetStdHandle( STD_OUTPUT_HANDLE ), { 128, SHRT_MAX - 1 } );
             std::system( R"(C:\Windows\System32\cmd.exe)" );
             cpp_utils::set_console_title( INFO_SHORT_NAME );
-            cpp_utils::set_console_size_with_cmd_cls( CONSOLE_WIDTH, CONSOLE_HEIGHT );
+            cpp_utils::set_console_size( CONSOLE_WIDTH, CONSOLE_HEIGHT );
             cpp_utils::fix_console_size( true );
             return cpp_utils::console_ui::back;
         } };

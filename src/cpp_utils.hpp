@@ -513,29 +513,7 @@ namespace cpp_utils {
     {
         return SetConsoleCtrlHandler( nullptr, static_cast< WINBOOL >( _is_ignore ) );
     }
-    inline auto clear_screen_with_winapi()
-    {
-        HANDLE output_handle{ GetStdHandle( STD_OUTPUT_HANDLE ) };
-        CONSOLE_SCREEN_BUFFER_INFO buffer_info;
-        SMALL_RECT scroll;
-        COORD new_cursor_position;
-        CHAR_INFO char_info_fill;
-        if ( !GetConsoleScreenBufferInfo( output_handle, &buffer_info ) ) {
-            return;
-        }
-        scroll.Left                     = 0;
-        scroll.Top                      = 0;
-        scroll.Right                    = buffer_info.dwSize.X;
-        scroll.Bottom                   = buffer_info.dwSize.Y;
-        new_cursor_position.X           = 0;
-        new_cursor_position.Y           = -buffer_info.dwSize.Y;
-        char_info_fill.Char.UnicodeChar = L' ';
-        char_info_fill.Attributes       = buffer_info.wAttributes;
-        ScrollConsoleScreenBufferW( output_handle, &scroll, NULL, new_cursor_position, &char_info_fill );
-        new_cursor_position.Y = 0;
-        SetConsoleCursorPosition( output_handle, new_cursor_position );
-    }
-    inline auto clear_screen_with_cmd()
+    inline auto clear_screen()
     {
         std::system( "cls" );
     }
@@ -552,7 +530,7 @@ namespace cpp_utils {
         SetConsoleOutputCP( _charset );
         SetConsoleCP( _charset );
     }
-    inline auto set_console_size_with_winapi_cls( const SHORT _width, const SHORT _height )
+    inline auto set_console_size( const SHORT _width, const SHORT _height )
     {
         HANDLE output_handle{ GetStdHandle( STD_OUTPUT_HANDLE ) };
         SMALL_RECT wrt{ 0, 0, static_cast< SHORT >( _width - 1 ), static_cast< SHORT >( _height - 1 ) };
@@ -560,17 +538,7 @@ namespace cpp_utils {
         SetConsoleScreenBufferSize( output_handle, { _width, _height } );
         SetConsoleWindowInfo( output_handle, TRUE, &wrt );
         SetConsoleScreenBufferSize( output_handle, { _width, _height } );
-        clear_screen_with_winapi();
-    }
-    inline auto set_console_size_with_cmd_cls( const SHORT _width, const SHORT _height )
-    {
-        HANDLE output_handle{ GetStdHandle( STD_OUTPUT_HANDLE ) };
-        SMALL_RECT wrt{ 0, 0, static_cast< SHORT >( _width - 1 ), static_cast< SHORT >( _height - 1 ) };
-        ShowWindow( GetConsoleWindow(), SW_SHOWNORMAL );
-        SetConsoleScreenBufferSize( output_handle, { _width, _height } );
-        SetConsoleWindowInfo( output_handle, TRUE, &wrt );
-        SetConsoleScreenBufferSize( output_handle, { _width, _height } );
-        clear_screen_with_cmd();
+        clear_screen();
     }
     inline auto set_console_translucency( const BYTE _value )
     {
