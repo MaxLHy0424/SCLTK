@@ -104,15 +104,9 @@ namespace cpp_utils {
         return std_string_view< _target_ >{ reinterpret_cast< const _target_ * >( _str ) };
     }
     template < pointer_type _type_ >
-    inline auto ptr_to_ansi_string( const _type_ _ptr )
+    inline auto ptr_to_string( const _type_ _ptr )
     {
         return _ptr == nullptr ? "nullptr"s : std::format( "0x{:x}", reinterpret_cast< std::uintptr_t >( _ptr ) );
-    }
-    template < pointer_type _type_ >
-    inline auto ptr_to_utf8_string( const _type_ _ptr )
-    {
-        return string_convert< utf8_char >(
-          _ptr == nullptr ? "nullptr"s : std::format( "0x{:x}", reinterpret_cast< std::uintptr_t >( _ptr ) ) );
     }
     template < typename... _args_ >
     inline auto utf8_format( const utf8_std_string_view _fmt, _args_ &&..._args )
