@@ -513,7 +513,7 @@ namespace cpp_utils {
     {
         return SetConsoleCtrlHandler( nullptr, static_cast< WINBOOL >( _is_ignore ) );
     }
-    inline auto clear_screen()
+    inline auto clear_console_screen()
     {
         const auto output_handle{ GetStdHandle( STD_OUTPUT_HANDLE ) };
         DWORD mode;
@@ -543,7 +543,7 @@ namespace cpp_utils {
         SetConsoleScreenBufferSize( output_handle, { _width, _height } );
         SetConsoleWindowInfo( output_handle, TRUE, &wrt );
         SetConsoleScreenBufferSize( output_handle, { _width, _height } );
-        clear_screen();
+        clear_console_screen();
     }
     inline auto set_console_translucency( const BYTE _value )
     {
