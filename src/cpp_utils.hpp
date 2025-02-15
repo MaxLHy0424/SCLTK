@@ -941,59 +941,6 @@ namespace cpp_utils {
             edit_console_attrs_( _is_lock_text ? console_attrs_::lock_all : console_attrs_::normal );
             return *this;
         }
-        auto &ignore_console_exit_sinal( const bool _is_ignore )
-        {
-            cpp_utils::ignore_console_exit_sinal( _is_ignore );
-            return *this;
-        }
-        auto &set_console_title( const _type_ *const _title )
-        {
-            if constexpr ( std::same_as< _type_, ansi_char > ) {
-                cpp_utils::set_console_title( _title );
-            } else if constexpr ( std::same_as< _type_, utf8_char > ) {
-                cpp_utils::set_console_title( string_convert< ansi_char >( _title ) );
-            }
-            return *this;
-        }
-        auto &set_console_title( const std_string< _type_ > &_title )
-        {
-            if constexpr ( std::same_as< _type_, ansi_char > ) {
-                cpp_utils::set_console_title( _title );
-            } else if constexpr ( std::same_as< _type_, utf8_char > ) {
-                cpp_utils::set_console_title( string_convert< ansi_char >( _title ) );
-            }
-            return *this;
-        }
-        auto &set_console_charset( const UINT _charset )
-        {
-            cpp_utils::set_console_charset( _charset );
-            return *this;
-        }
-        auto &set_console_size( const SHORT _width, const SHORT _height )
-        {
-            cpp_utils::set_console_size( _width, _height );
-            return *this;
-        }
-        auto &set_console_translucency( const BYTE _value )
-        {
-            cpp_utils::set_console_translucency( _value );
-            return *this;
-        }
-        auto &fix_console_size( const bool _is_enable )
-        {
-            cpp_utils::fix_console_size( _is_enable );
-            return *this;
-        }
-        auto &enable_console_minimize_ctrl( const bool _is_enable )
-        {
-            cpp_utils::enable_console_minimize_ctrl( _is_enable );
-            return *this;
-        }
-        auto &enable_console_close_ctrl( const bool _is_enable )
-        {
-            cpp_utils::enable_console_close_ctrl( _is_enable );
-            return *this;
-        }
         auto operator=( const console_ui< _type_ > & ) noexcept -> console_ui< _type_ > & = default;
         auto operator=( console_ui< _type_ > && ) noexcept -> console_ui< _type_ > &      = default;
         console_ui() noexcept                                                             = default;
