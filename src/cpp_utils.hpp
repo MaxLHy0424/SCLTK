@@ -556,7 +556,7 @@ namespace cpp_utils {
     {
         HANDLE output_handle{ GetStdHandle( STD_OUTPUT_HANDLE ) };
         SMALL_RECT wrt{ 0, 0, static_cast< SHORT >( _width - 1 ), static_cast< SHORT >( _height - 1 ) };
-        ShowWindow( GetConsoleWindow(), SW_RESTORE );
+        ShowWindow( GetConsoleWindow(), SW_SHOWNORMAL );
         SetConsoleScreenBufferSize( output_handle, { _width, _height } );
         SetConsoleWindowInfo( output_handle, TRUE, &wrt );
         SetConsoleScreenBufferSize( output_handle, { _width, _height } );
@@ -566,7 +566,7 @@ namespace cpp_utils {
     {
         HANDLE output_handle{ GetStdHandle( STD_OUTPUT_HANDLE ) };
         SMALL_RECT wrt{ 0, 0, static_cast< SHORT >( _width - 1 ), static_cast< SHORT >( _height - 1 ) };
-        ShowWindow( GetConsoleWindow(), SW_RESTORE );
+        ShowWindow( GetConsoleWindow(), SW_SHOWNORMAL );
         SetConsoleScreenBufferSize( output_handle, { _width, _height } );
         SetConsoleWindowInfo( output_handle, TRUE, &wrt );
         SetConsoleScreenBufferSize( output_handle, { _width, _height } );
