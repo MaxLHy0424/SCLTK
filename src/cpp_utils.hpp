@@ -636,21 +636,19 @@ namespace cpp_utils {
         inline constexpr WORD text_lvb_underscore{ COMMON_LVB_UNDERSCORE };
         inline constexpr WORD text_lvb_sbcsdbcs{ COMMON_LVB_SBCSDBCS };
     };
-    template < typename _type_ >
-        requires std::same_as< _type_, ansi_char > || std::same_as< _type_, utf8_char >
     class console_ui final {
       public:
         inline static constexpr auto back{ false };
         inline static constexpr auto exit{ true };
         struct func_args final {
-            console_ui< _type_ > &parent_ui;
+            console_ui &parent_ui;
             const DWORD mouse_button_state;
             const DWORD ctrl_key_state;
             const DWORD event_flag;
             auto operator=( const func_args & ) noexcept -> func_args & = default;
             auto operator=( func_args && ) noexcept -> func_args &      = default;
             func_args(
-              console_ui< _type_ > &_parent_ui,
+              console_ui &_parent_ui,
               const MOUSE_EVENT_RECORD _mouse_event = MOUSE_EVENT_RECORD{ {}, console_value::mouse_button_left, {}, {} } ) noexcept
               : parent_ui{ _parent_ui }
               , mouse_button_state{ _mouse_event.dwButtonState }
@@ -665,7 +663,7 @@ namespace cpp_utils {
       private:
         enum class console_attrs_ { normal, lock_text, lock_all };
         struct line_node_ final {
-            std_string< _type_ > text{};
+            ansi_std_string text{};
             callback_type func{};
             WORD default_attrs{};
             WORD intensity_attrs{};
@@ -693,8 +691,7 @@ namespace cpp_utils {
               , last_attrs{ console_value::text_default }
             { }
             line_node_(
-              const std_string_view< _type_ > _text, callback_type &_func, const WORD _default_attrs,
-              const WORD _intensity_attrs ) noexcept
+              const ansi_std_string_view _text, callback_type &_func, const WORD _default_attrs, const WORD _intensity_attrs ) noexcept
               : text{ _text }
               , func{ std::move( _func ) }
               , default_attrs{ _default_attrs }
@@ -778,22 +775,14 @@ namespace cpp_utils {
               ansi_std_string( static_cast< size_type >( console_width_ ) * static_cast< size_type >( console_height_ ), ' ' ) );
             set_cursor_( { 0, 0 } );
         }
-        static auto write_( const std_string_view< _type_ > _text, const bool _is_endl = false )
+        static auto write_( const ansi_std_string_view _text, const bool _is_endl = false )
         {
-            if constexpr ( std::same_as< _type_, ansi_char > ) {
-                std::print( "{}{}", _text, _is_endl ? '\n' : '\0' );
-            } else if constexpr ( std::same_as< _type_, utf8_char > ) {
-                utf8_print( u8"{}{}", _text, _is_endl ? '\n' : '\0' );
-            }
+            std::print( "{}{}", _text, _is_endl ? '\n' : '\0' );
         }
-        static auto rewrite_( const COORD _cursor_position, const std_string_view< _type_ > _text )
+        static auto rewrite_( const COORD _cursor_position, const ansi_std_string_view _text )
         {
             set_cursor_( COORD{ 0, _cursor_position.Y } );
-            if constexpr ( std::same_as< _type_, ansi_char > ) {
-                write_( ansi_std_string( _cursor_position.X, ' ' ) );
-            } else if constexpr ( std::same_as< _type_, utf8_char > ) {
-                write_( utf8_std_string( _cursor_position.X, ' ' ) );
-            }
+            write_( ansi_std_string( _cursor_position.X, ' ' ) );
             set_cursor_( COORD{ 0, _cursor_position.Y } );
             write_( _text );
             set_cursor_( COORD{ 0, _cursor_position.Y } );
@@ -868,13 +857,13 @@ namespace cpp_utils {
             lines_.shrink_to_fit();
             return *this;
         }
-        auto &swap( console_ui< _type_ > &_src ) noexcept
+        auto &swap( console_ui &_src ) noexcept
         {
             lines_.swap( _src.lines_ );
             return *this;
         }
         auto &add_front(
-          const std_string_view< _type_ > _text, callback_type _func = nullptr,
+          const ansi_std_string_view _text, callback_type _func = nullptr,
           const WORD _intensity_attrs = console_value::text_foreground_green | console_value::text_foreground_blue,
           const WORD _default_attrs   = console_value::text_default )
         {
@@ -882,7 +871,7 @@ namespace cpp_utils {
             return *this;
         }
         auto &add_back(
-          const std_string_view< _type_ > _text, callback_type _func = nullptr,
+          const ansi_std_string_view _text, callback_type _func = nullptr,
           const WORD _intensity_attrs = console_value::text_foreground_blue | console_value::text_foreground_green,
           const WORD _default_attrs   = console_value::text_default )
         {
@@ -890,7 +879,7 @@ namespace cpp_utils {
             return *this;
         }
         auto &insert(
-          const size_type _index, const std_string_view< _type_ > _text, callback_type _func = nullptr,
+          const size_type _index, const ansi_std_string_view _text, callback_type _func = nullptr,
           const WORD _intensity_attrs = console_value::text_foreground_green | console_value::text_foreground_blue,
           const WORD _default_attrs   = console_value::text_default )
         {
@@ -899,7 +888,7 @@ namespace cpp_utils {
             return *this;
         }
         auto &edit(
-          const size_type _index, const std_string_view< _type_ > _text, callback_type _func = nullptr,
+          const size_type _index, ansi_std_string_view _text, callback_type _func = nullptr,
           const WORD _intensity_attrs = console_value::text_foreground_green | console_value::text_foreground_blue,
           const WORD _default_attrs   = console_value::text_default )
         {
@@ -955,14 +944,12 @@ namespace cpp_utils {
             edit_console_attrs_( _is_lock_text ? console_attrs_::lock_all : console_attrs_::normal );
             return *this;
         }
-        auto operator=( const console_ui< _type_ > & ) noexcept -> console_ui< _type_ > & = default;
-        auto operator=( console_ui< _type_ > && ) noexcept -> console_ui< _type_ > &      = default;
-        console_ui() noexcept                                                             = default;
-        console_ui( const console_ui< _type_ > & ) noexcept                               = default;
-        console_ui( console_ui< _type_ > && ) noexcept                                    = default;
-        ~console_ui() noexcept                                                            = default;
+        auto operator=( const console_ui & ) noexcept -> console_ui & = default;
+        auto operator=( console_ui && ) noexcept -> console_ui &      = default;
+        console_ui() noexcept                                         = default;
+        console_ui( const console_ui & ) noexcept                     = default;
+        console_ui( console_ui && ) noexcept                          = default;
+        ~console_ui() noexcept                                        = default;
     };
-    using console_ui_ansi = console_ui< ansi_char >;
-    using console_ui_utf8 = console_ui< utf8_char >;
 #endif
 }
