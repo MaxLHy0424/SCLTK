@@ -3,7 +3,7 @@ auto main() -> int
 {
     cpp_utils::console_ui_ansi ui;
     ui.lock( true, true );
-    cpp_utils::ignore_console_exit_sinal( true );
+    cpp_utils::ignore_console_exit_signal( true );
     cpp_utils::fix_console_size( true );
     cpp_utils::enable_console_close_ctrl( true );
     cpp_utils::enable_console_minimize_ctrl( false );

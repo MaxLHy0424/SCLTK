@@ -515,7 +515,7 @@ namespace cpp_utils {
     {
         SetWindowPos( _window_handle, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
     }
-    inline auto ignore_console_exit_sinal( const bool _is_ignore ) noexcept
+    inline auto ignore_console_exit_signal( const bool _is_ignore ) noexcept
     {
         return SetConsoleCtrlHandler( nullptr, static_cast< BOOL >( _is_ignore ) );
     }
