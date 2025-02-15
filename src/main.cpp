@@ -1,7 +1,7 @@
 #include "core.hpp"
 auto main() -> int
 {
-    cpp_utils::console_ui_ansi ui;
+    cpp_utils::console_ui ui;
     ui.lock( true, true );
     cpp_utils::ignore_console_exit_signal( true );
     cpp_utils::fix_console_size( true );
@@ -16,7 +16,7 @@ auto main() -> int
         std::print( " -> 申请管理员权限.\n" );
         cpp_utils::relaunch_as_admin();
     }
-    core::config_op{ core::config_op::mode::load }( cpp_utils::console_ui_ansi::func_args{ ui } );
+    core::config_op{ core::config_op::mode::load }( cpp_utils::console_ui::func_args{ ui } );
     std::print( " -> 创建线程.\n" );
     cpp_utils::thread_pool threads;
     threads.add( core::set_top_window ).add( core::set_console_attrs ).add( core::fix_os_env );
