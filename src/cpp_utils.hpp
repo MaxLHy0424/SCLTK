@@ -511,7 +511,7 @@ namespace cpp_utils {
     }
     inline auto ignore_console_exit_signal( const bool _is_ignore ) noexcept
     {
-        return SetConsoleCtrlHandler( nullptr, static_cast< BOOL >( _is_ignore ) );
+        return SetConsoleCtrlHandler( nullptr, static_cast< WINBOOL >( _is_ignore ) );
     }
     inline auto clear_screen_with_winapi()
     {
