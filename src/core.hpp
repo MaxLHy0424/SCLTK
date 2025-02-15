@@ -346,14 +346,14 @@ namespace core {
         constexpr const ansi_char *common_ops[][ 2 ]{
           {"重启资源管理器",
            R"(C:\Windows\System32\taskkill.exe /f /im explorer.exe && C:\Windows\System32\timeout.exe /t 3 /nobreak && start C:\Windows\explorer.exe)"},
+          {"修复操作系统",
+           R"(C:\Windows\System32\dism.exe /online /cleanup-image /restorehealth && C:\Windows\System32\sfc.exe /scannow)"                            },
           {"恢复 USB 设备访问",
            R"(C:\Windows\System32\reg.exe add "HKLM\SYSTEM\CurrentControlSet\Services\USBSTOR" /f /t reg_dword /v Start /d 3)"                        },
           {"恢复 Google Chrome 离线游戏",
            R"(C:\Windows\System32\reg.exe delete "HKLM\SOFTWARE\Policies\Google\Chrome" /f /v AllowDinosaurEasterEgg)"                                },
           {"恢复 Microsoft Edge 离线游戏",
-           R"(C:\Windows\System32\reg.exe delete "HKLM\SOFTWARE\Policies\Microsoft\Edge" /f /v AllowSurfGame)"                                        },
-          {"修复操作系统",
-           R"(C:\Windows\System32\dism.exe /online /cleanup-image /restorehealth && C:\Windows\System32\sfc.exe /scannow)"                            }
+           R"(C:\Windows\System32\reg.exe delete "HKLM\SOFTWARE\Policies\Microsoft\Edge" /f /v AllowSurfGame)"                                        }
         };
         cpp_utils::console_ui ui;
         std::print( " -> 准备用户界面.\n" );
