@@ -520,7 +520,7 @@ namespace cpp_utils {
         GetConsoleMode( output_handle, &mode );
         mode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
         SetConsoleMode( output_handle, mode );
-        std::print( "\033c" );
+        std::print( "\033[H\033[2J\033c" );
     }
     inline auto set_console_title( const ansi_char *const _title )
     {
