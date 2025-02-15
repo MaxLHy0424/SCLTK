@@ -755,7 +755,7 @@ namespace cpp_utils {
         {
             CONSOLE_SCREEN_BUFFER_INFO console_data;
             GetConsoleScreenBufferInfo( GetStdHandle( STD_OUTPUT_HANDLE ), &console_data );
-            return COORD{ console_data.dwSize.X, console_data.dwSize.Y };
+            return console_data.dwSize;
         }
         auto cls_()
         {
