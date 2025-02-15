@@ -697,8 +697,6 @@ namespace cpp_utils {
             ~line_node_() noexcept                    = default;
         };
         std::deque< line_node_ > lines_{};
-        SHORT console_width_{};
-        SHORT console_height_{};
         static auto show_cursor_( const bool _is_show ) noexcept
         {
             CONSOLE_CURSOR_INFO cursor_data;
@@ -757,16 +755,13 @@ namespace cpp_utils {
         {
             CONSOLE_SCREEN_BUFFER_INFO console_data;
             GetConsoleScreenBufferInfo( GetStdHandle( STD_OUTPUT_HANDLE ), &console_data );
-            console_height_ = console_data.dwSize.Y;
-            console_width_  = console_data.dwSize.X;
+            return COORD{ console_data.dwSize.X, console_data.dwSize.Y };
         }
         auto cls_()
         {
-            get_console_size_();
+            auto size{ get_console_size_() };
             set_cursor_( { 0, 0 } );
-            std::print(
-              "{}",
-              ansi_std_string( static_cast< size_type >( console_width_ ) * static_cast< size_type >( console_height_ ), ' ' ) );
+            std::print( "{}", ansi_std_string( static_cast< size_type >( size.X ) * static_cast< size_type >( size.Y ), ' ' ) );
             set_cursor_( { 0, 0 } );
         }
         static auto write_( const ansi_std_string_view _text, const bool _is_endl = false )
