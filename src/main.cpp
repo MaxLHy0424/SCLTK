@@ -9,9 +9,8 @@ auto main() -> int
     cpp_utils::enable_console_minimize_ctrl( false );
     cpp_utils::set_console_title( INFO_SHORT_NAME );
     cpp_utils::set_console_charset( CHARSET_ID );
-    cpp_utils::set_console_size( CONSOLE_WIDTH, CONSOLE_HEIGHT );
+    cpp_utils::set_console_size_with_cmd_cls( CONSOLE_WIDTH, CONSOLE_HEIGHT );
     cpp_utils::set_console_translucency( 255 );
-    cpp_utils::clear_screen_with_cmd();
     std::print( " -> 检测运行权限.\n" );
     if ( !cpp_utils::is_run_as_admin() ) {
         std::print( " -> 申请管理员权限.\n" );
