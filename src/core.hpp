@@ -328,6 +328,7 @@ namespace core {
             cpp_utils::set_console_title( INFO_SHORT_NAME );
             cpp_utils::set_console_size( CONSOLE_WIDTH, CONSOLE_HEIGHT );
             cpp_utils::fix_window_size( current_window_handle, true );
+            cpp_utils::enable_window_maximize_ctrl( current_window_handle, false );
             return cpp_utils::console_ui::back;
         } };
         class cmd_executor final {
