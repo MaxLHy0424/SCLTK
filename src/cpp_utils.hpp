@@ -469,7 +469,7 @@ namespace cpp_utils {
     {
         ShowWindow( _window_handle, _state );
     }
-    inline auto set_top_window( const HWND _window_handle, const DWORD _thread_id, const DWORD _window_thread_process_id )
+    inline auto keep_window_top( const HWND _window_handle, const DWORD _thread_id, const DWORD _window_thread_process_id )
     {
         AttachThreadInput( _thread_id, _window_thread_process_id, TRUE );
         set_window_state( _window_handle, get_window_state( _window_handle ) );
@@ -477,13 +477,13 @@ namespace cpp_utils {
         AttachThreadInput( _thread_id, _window_thread_process_id, FALSE );
         SetWindowPos( _window_handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
     }
-    inline auto set_top_current_window()
+    inline auto keep_current_window_top()
     {
         auto window_handle{ get_current_window_handle() };
-        set_top_window( window_handle, GetCurrentThreadId(), GetWindowThreadProcessId( window_handle, nullptr ) );
+        keep_window_top( window_handle, GetCurrentThreadId(), GetWindowThreadProcessId( window_handle, nullptr ) );
     }
     template < std_chrono_type _chrono_type_, callable_type _callee_, typename... _args_ >
-    inline auto set_top_window_loop(
+    inline auto loop_keep_window_top(
       const HWND _window_handle, const DWORD _thread_id, const DWORD _window_thread_process_id, const _chrono_type_ _sleep_time,
       _callee_ &&_condition_checker, _args_ &&..._condition_checker_args )
     {
@@ -497,11 +497,11 @@ namespace cpp_utils {
         }
     }
     template < std_chrono_type _chrono_type_, callable_type _callee_, typename... _args_ >
-    inline auto set_top_current_window_loop(
+    inline auto loop_keep_current_window_top(
       const _chrono_type_ _sleep_time, _callee_ &&_condition_checker, _args_ &&..._condition_checker_args )
     {
         auto window_handle{ get_current_window_handle() };
-        set_top_window_loop(
+        loop_keep_window_top(
           window_handle, GetCurrentThreadId(), GetWindowThreadProcessId( window_handle, nullptr ), _sleep_time,
           std::forward< _callee_ >( _condition_checker ), std::forward< _args_ >( _condition_checker_args )... );
     }

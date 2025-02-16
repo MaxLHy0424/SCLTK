@@ -122,7 +122,7 @@ namespace core {
               { "fix_os_env", "(*) 修复操作系统环境" } } },
           { "window",
             "窗口显示",
-            { { "set_top_window", "(*) 置顶窗口" },
+            { { "keep_window_top", "(*) 置顶窗口" },
               { "disable_close_ctrl", "(*) 禁用关闭控件" },
               { "translucency", "(*) 半透明化" } } },
           { "misc",
@@ -388,29 +388,29 @@ namespace core {
             cpp_utils::perf_sleep( default_thread_sleep_time );
         }
     }
-    inline auto set_top_window( const std::stop_token _msg )
+    inline auto keep_window_top( const std::stop_token _msg )
     {
-        const auto &is_set_top_window{ options[ "window" ][ "set_top_window" ] };
-        if ( is_disable_x_option_hot_reload.get() && !is_set_top_window.get() ) {
+        const auto &is_keep_window_top{ options[ "window" ][ "keep_window_top" ] };
+        if ( is_disable_x_option_hot_reload.get() && !is_keep_window_top.get() ) {
             return;
         }
         constexpr auto sleep_time{ 100ms };
         const auto current_thread_id{ GetCurrentThreadId() };
         const auto current_window_thread_frocess_id{ GetWindowThreadProcessId( current_window_handle, nullptr ) };
         if ( is_disable_x_option_hot_reload.get() ) {
-            cpp_utils::set_top_window_loop(
+            cpp_utils::loop_keep_window_top(
               current_window_handle, current_thread_id, current_window_thread_frocess_id, sleep_time,
               []( const std::stop_token _msg ) { return !_msg.stop_requested(); }, _msg );
             cpp_utils::cancle_top_window( current_window_handle );
             return;
         }
         while ( !_msg.stop_requested() ) {
-            if ( !is_set_top_window.get() ) {
+            if ( !is_keep_window_top.get() ) {
                 cpp_utils::cancle_top_window( current_window_handle );
                 cpp_utils::perf_sleep( default_thread_sleep_time );
                 continue;
             }
-            cpp_utils::set_top_window( current_window_handle, current_thread_id, current_window_thread_frocess_id );
+            cpp_utils::keep_window_top( current_window_handle, current_thread_id, current_window_thread_frocess_id );
             cpp_utils::perf_sleep( sleep_time );
         }
         cpp_utils::cancle_top_window( current_window_handle );
