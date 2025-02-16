@@ -541,51 +541,46 @@ namespace cpp_utils {
         SetConsoleScreenBufferSize( output_handle, { _width, _height } );
         clear_console_screen();
     }
-    inline auto set_console_translucency( const BYTE _value )
+    inline auto set_window_translucency( const HWND _window_handle, const BYTE _value )
     {
-        SetLayeredWindowAttributes( GetConsoleWindow(), RGB( 0, 0, 0 ), _value, LWA_ALPHA );
+        SetLayeredWindowAttributes( _window_handle, RGB( 0, 0, 0 ), _value, LWA_ALPHA );
     }
-    inline auto fix_console_size( const bool _is_enable )
+    inline auto fix_window_size( const HWND _window_handle, const bool _is_enable )
     {
-        const auto current_window{ GetConsoleWindow() };
         SetWindowLongPtrW(
-          current_window, GWL_STYLE,
+          _window_handle, GWL_STYLE,
           _is_enable
-            ? GetWindowLongPtrW( current_window, GWL_STYLE ) & ~WS_SIZEBOX
-            : GetWindowLongPtrW( current_window, GWL_STYLE ) | WS_SIZEBOX );
+            ? GetWindowLongPtrW( _window_handle, GWL_STYLE ) & ~WS_SIZEBOX
+            : GetWindowLongPtrW( _window_handle, GWL_STYLE ) | WS_SIZEBOX );
     }
-    inline auto enable_window_menu( const bool _is_enable )
+    inline auto enable_window_menu( const HWND _window_handle, const bool _is_enable )
     {
-        const auto current_window{ GetConsoleWindow() };
         SetWindowLongPtrW(
-          current_window, GWL_STYLE,
+          _window_handle, GWL_STYLE,
           _is_enable
-            ? GetWindowLongPtrW( current_window, GWL_STYLE ) | WS_SYSMENU
-            : GetWindowLongPtrW( current_window, GWL_STYLE ) & ~WS_SYSMENU );
+            ? GetWindowLongPtrW( _window_handle, GWL_STYLE ) | WS_SYSMENU
+            : GetWindowLongPtrW( _window_handle, GWL_STYLE ) & ~WS_SYSMENU );
     }
-    inline auto enable_console_minimize_ctrl( const bool _is_enable )
+    inline auto enable_window_minimize_ctrl( const HWND _window_handle, const bool _is_enable )
     {
-        const auto current_window{ GetConsoleWindow() };
         SetWindowLongPtrW(
-          current_window, GWL_STYLE,
+          _window_handle, GWL_STYLE,
           _is_enable
-            ? GetWindowLongPtrW( current_window, GWL_STYLE ) | WS_MINIMIZEBOX
-            : GetWindowLongPtrW( current_window, GWL_STYLE ) & ~WS_MINIMIZEBOX );
+            ? GetWindowLongPtrW( _window_handle, GWL_STYLE ) | WS_MINIMIZEBOX
+            : GetWindowLongPtrW( _window_handle, GWL_STYLE ) & ~WS_MINIMIZEBOX );
     }
-    inline auto enable_console_maximize_ctrl( const bool _is_enable )
+    inline auto enable_window_maximize_ctrl( const HWND _window_handle, const bool _is_enable )
     {
-        const auto current_window{ GetConsoleWindow() };
         SetWindowLongPtrW(
-          current_window, GWL_STYLE,
+          _window_handle, GWL_STYLE,
           _is_enable
-            ? GetWindowLongPtrW( current_window, GWL_STYLE ) | WS_MAXIMIZEBOX
-            : GetWindowLongPtrW( current_window, GWL_STYLE ) & ~WS_MAXIMIZEBOX );
+            ? GetWindowLongPtrW( _window_handle, GWL_STYLE ) | WS_MAXIMIZEBOX
+            : GetWindowLongPtrW( _window_handle, GWL_STYLE ) & ~WS_MAXIMIZEBOX );
     }
-    inline auto enable_console_close_ctrl( const bool _is_enable )
+    inline auto enable_window_close_ctrl( const HWND _window_handle, const bool _is_enable )
     {
-        const auto current_window{ GetConsoleWindow() };
         EnableMenuItem(
-          GetSystemMenu( current_window, FALSE ), SC_CLOSE,
+          GetSystemMenu( _window_handle, FALSE ), SC_CLOSE,
           _is_enable ? MF_BYCOMMAND | MF_ENABLED : MF_BYCOMMAND | MF_DISABLED | MF_GRAYED );
     }
     namespace console_value {

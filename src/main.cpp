@@ -4,11 +4,11 @@ auto main() -> int
     cpp_utils::console_ui ui;
     ui.lock( true, true );
     cpp_utils::ignore_console_exit_signal( true );
-    cpp_utils::fix_console_size( true );
-    cpp_utils::enable_console_maximize_ctrl( false );
-    cpp_utils::enable_console_close_ctrl( true );
-    cpp_utils::enable_console_minimize_ctrl( false );
-    cpp_utils::set_console_translucency( 255 );
+    cpp_utils::fix_window_size( core::current_window_handle, true );
+    cpp_utils::enable_window_maximize_ctrl( core::current_window_handle, false );
+    cpp_utils::enable_window_close_ctrl( core::current_window_handle, true );
+    cpp_utils::enable_window_minimize_ctrl( core::current_window_handle, false );
+    cpp_utils::set_window_translucency( core::current_window_handle, 255 );
     cpp_utils::set_console_title( INFO_SHORT_NAME );
     cpp_utils::set_console_charset( CHARSET_ID );
     cpp_utils::set_console_size( CONSOLE_WIDTH, CONSOLE_HEIGHT );
