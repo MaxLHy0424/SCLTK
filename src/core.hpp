@@ -388,13 +388,6 @@ namespace core {
             cpp_utils::perf_sleep( default_thread_sleep_time );
         }
     }
-    inline auto get_window_state( const HWND _window_handle )
-    {
-        WINDOWPLACEMENT wp;
-        wp.length = sizeof( WINDOWPLACEMENT );
-        GetWindowPlacement( _window_handle, &wp );
-        return wp.showCmd;
-    }
     inline auto set_top_window( const std::stop_token _msg )
     {
         const auto &is_set_top_window{ options[ "window" ][ "set_top_window" ] };
