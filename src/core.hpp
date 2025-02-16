@@ -35,6 +35,10 @@ namespace core {
             {
                 return value_.test();
             }
+            operator bool() const
+            {
+                return value_.test();
+            }
             auto operator=( const sub_key & ) -> sub_key & = delete;
             auto operator=( sub_key && ) -> sub_key &      = delete;
             sub_key( const ansi_char *const _self_name, const ansi_char *const _showed_name )
@@ -42,12 +46,12 @@ namespace core {
               , showed_name{ _showed_name }
             { }
             sub_key( const sub_key &_src )
-              : value_{ _src.get() }
+              : value_{ _src }
               , self_name{ _src.self_name }
               , showed_name{ _src.showed_name }
             { }
             sub_key( sub_key &&_src )
-              : value_{ _src.get() }
+              : value_{ _src }
               , self_name{ _src.self_name }
               , showed_name{ _src.showed_name }
             { }
@@ -373,31 +377,31 @@ namespace core {
     {
         const auto &is_translucency{ options[ "window" ][ "translucency" ] };
         const auto &is_disable_close_ctrl{ options[ "window" ][ "disable_close_ctrl" ] };
-        if ( is_disable_x_option_hot_reload.get() ) {
-            SetLayeredWindowAttributes( current_window_handle, RGB( 0, 0, 0 ), is_translucency.get() ? 230 : 255, LWA_ALPHA );
+        if ( is_disable_x_option_hot_reload ) {
+            SetLayeredWindowAttributes( current_window_handle, RGB( 0, 0, 0 ), is_translucency ? 230 : 255, LWA_ALPHA );
             EnableMenuItem(
               GetSystemMenu( current_window_handle, FALSE ), SC_CLOSE,
-              is_disable_close_ctrl.get() ? MF_BYCOMMAND | MF_DISABLED | MF_GRAYED : MF_BYCOMMAND | MF_ENABLED );
+              is_disable_close_ctrl ? MF_BYCOMMAND | MF_DISABLED | MF_GRAYED : MF_BYCOMMAND | MF_ENABLED );
             return;
         }
         while ( !_msg.stop_requested() ) {
-            SetLayeredWindowAttributes( current_window_handle, RGB( 0, 0, 0 ), is_translucency.get() ? 230 : 255, LWA_ALPHA );
+            SetLayeredWindowAttributes( current_window_handle, RGB( 0, 0, 0 ), is_translucency ? 230 : 255, LWA_ALPHA );
             EnableMenuItem(
               GetSystemMenu( current_window_handle, FALSE ), SC_CLOSE,
-              is_disable_close_ctrl.get() ? MF_BYCOMMAND | MF_DISABLED | MF_GRAYED : MF_BYCOMMAND | MF_ENABLED );
+              is_disable_close_ctrl ? MF_BYCOMMAND | MF_DISABLED | MF_GRAYED : MF_BYCOMMAND | MF_ENABLED );
             cpp_utils::perf_sleep( default_thread_sleep_time );
         }
     }
     inline auto keep_window_top( const std::stop_token _msg )
     {
         const auto &is_keep_window_top{ options[ "window" ][ "keep_window_top" ] };
-        if ( is_disable_x_option_hot_reload.get() && !is_keep_window_top.get() ) {
+        if ( is_disable_x_option_hot_reload && !is_keep_window_top ) {
             return;
         }
         constexpr auto sleep_time{ 100ms };
         const auto current_thread_id{ GetCurrentThreadId() };
         const auto current_window_thread_frocess_id{ GetWindowThreadProcessId( current_window_handle, nullptr ) };
-        if ( is_disable_x_option_hot_reload.get() ) {
+        if ( is_disable_x_option_hot_reload ) {
             cpp_utils::loop_keep_window_top(
               current_window_handle, current_thread_id, current_window_thread_frocess_id, sleep_time,
               []( const std::stop_token _msg ) { return !_msg.stop_requested(); }, _msg );
@@ -405,7 +409,7 @@ namespace core {
             return;
         }
         while ( !_msg.stop_requested() ) {
-            if ( !is_keep_window_top.get() ) {
+            if ( !is_keep_window_top ) {
                 cpp_utils::cancle_top_window( current_window_handle );
                 cpp_utils::perf_sleep( default_thread_sleep_time );
                 continue;
@@ -418,7 +422,7 @@ namespace core {
     inline auto fix_os_env( const std::stop_token _msg )
     {
         const auto &is_fix_os_env{ options[ "crack_restore" ][ "fix_os_env" ] };
-        if ( is_disable_x_option_hot_reload.get() && !is_fix_os_env.get() ) {
+        if ( is_disable_x_option_hot_reload && !is_fix_os_env ) {
             return;
         }
         constexpr const ansi_char *hkcu_reg_dirs[]{
@@ -439,14 +443,14 @@ namespace core {
             }
             cpp_utils::perf_sleep( 1s );
         } };
-        if ( is_disable_x_option_hot_reload.get() ) {
+        if ( is_disable_x_option_hot_reload ) {
             while ( !_msg.stop_requested() ) {
                 core_op();
             }
             return;
         }
         while ( !_msg.stop_requested() ) {
-            if ( !is_fix_os_env.get() ) {
+            if ( !is_fix_os_env ) {
                 cpp_utils::perf_sleep( default_thread_sleep_time );
                 continue;
             }
@@ -457,7 +461,7 @@ namespace core {
       public:
         enum class mode { load, edit };
       private:
-        const mode mod_choice_;
+        const mode mode_choice_;
         static constexpr auto option_ctrl_color{
           cpp_utils::console_value::text_foreground_red | cpp_utils::console_value::text_foreground_green };
         auto load_( const bool _is_reload )
@@ -613,7 +617,7 @@ namespace core {
       public:
         auto operator()( cpp_utils::console_ui::func_args )
         {
-            switch ( mod_choice_ ) {
+            switch ( mode_choice_ ) {
                 case mode::load : load_( false ); break;
                 case mode::edit : edit_(); break;
             }
@@ -621,8 +625,8 @@ namespace core {
         }
         auto operator=( const config_op & ) -> config_op & = delete;
         auto operator=( config_op && ) -> config_op &      = delete;
-        config_op( const mode _mod_choice )
-          : mod_choice_{ _mod_choice }
+        config_op( const mode _mode_choice )
+          : mode_choice_{ _mode_choice }
         { }
         config_op( const config_op & ) = default;
         config_op( config_op && )      = default;
@@ -632,7 +636,7 @@ namespace core {
       public:
         enum class mode { crack, restore };
       private:
-        const mode mod_choice_;
+        const mode mode_choice_;
         const rule_node &rules_;
       public:
         auto operator()( cpp_utils::console_ui::func_args )
@@ -647,9 +651,9 @@ namespace core {
             const auto &is_hijack_execs{ crack_restore_option_node[ "hijack_execs" ] };
             const auto &is_set_serv_startup_types{ crack_restore_option_node[ "set_serv_startup_types" ] };
             std::print( " -> 生成并执行操作系统命令.\n{}\n", ansi_std_string( CONSOLE_WIDTH, '-' ) );
-            switch ( mod_choice_ ) {
+            switch ( mode_choice_ ) {
                 case mode::crack : {
-                    if ( is_hijack_execs.get() ) {
+                    if ( is_hijack_execs ) {
                         for ( const auto &exec : rules_.execs ) {
                             std::system(
                               std::format(
@@ -658,7 +662,7 @@ namespace core {
                                 .c_str() );
                         }
                     }
-                    if ( is_set_serv_startup_types.get() ) {
+                    if ( is_set_serv_startup_types ) {
                         for ( const auto &serv : rules_.servs ) {
                             std::system( std::format( R"(C:\Windows\System32\sc.exe config "{}" start= disabled)", serv ).c_str() );
                         }
@@ -672,7 +676,7 @@ namespace core {
                     break;
                 }
                 case mode::restore : {
-                    if ( is_hijack_execs.get() ) {
+                    if ( is_hijack_execs ) {
                         for ( const auto &exec : rules_.execs ) {
                             std::system(
                               std::format(
@@ -681,7 +685,7 @@ namespace core {
                                 .c_str() );
                         }
                     }
-                    if ( is_set_serv_startup_types.get() ) {
+                    if ( is_set_serv_startup_types ) {
                         for ( const auto &serv : rules_.servs ) {
                             std::system( std::format( R"(C:\Windows\System32\sc.exe config "{}" start= auto)", serv ).c_str() );
                         }
@@ -696,8 +700,8 @@ namespace core {
         }
         auto operator=( const rule_op & ) -> rule_op & = delete;
         auto operator=( rule_op && ) -> rule_op &      = delete;
-        rule_op( const mode _mod_choice, const rule_node &_rule )
-          : mod_choice_{ _mod_choice }
+        rule_op( const mode _mode_choice, const rule_node &_rule )
+          : mode_choice_{ _mode_choice }
           , rules_{ _rule }
         { }
         rule_op( const rule_op & ) = default;
