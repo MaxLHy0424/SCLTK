@@ -17,7 +17,7 @@ auto main() -> int
         std::print( " -> 申请管理员权限.\n" );
         cpp_utils::relaunch_as_admin();
     }
-    core::config_op{ core::config_op::mode::load }( cpp_utils::console_ui::func_args{ ui } );
+    core::load_config( false );
     std::print( " -> 创建线程.\n" );
     cpp_utils::thread_pool threads;
     threads.add( core::keep_window_top ).add( core::set_console_attrs ).add( core::fix_os_env );
@@ -35,19 +35,17 @@ auto main() -> int
           cpp_utils::console_value::text_foreground_green | cpp_utils::console_value::text_foreground_intensity );
     }
     ui.add_back( " > 信息 ", core::info )
-      .add_back( " > 配置 ", core::config_op{ core::config_op::mode::edit } )
+      .add_back( " > 配置 ", core::edit_config )
       .add_back( " > 工具箱 ", core::toolkit )
       .add_back( "\n[ 破解 ]\n" )
-      .add_back(
-        std::format( " > {} ", core::custom_rules.showed_name ), core::rule_op{ core::rule_op::mode::crack, core::custom_rules } );
+      .add_back( std::format( " > {} ", core::custom_rules.showed_name ), core::crack_with_rules{ core::custom_rules } );
     for ( const auto &rule : core::builtin_rules ) {
-        ui.add_back( std::format( " > {} ", rule.showed_name ), core::rule_op{ core::rule_op::mode::crack, rule } );
+        ui.add_back( std::format( " > {} ", rule.showed_name ), core::crack_with_rules{ rule } );
     }
     ui.add_back( "\n[ 恢复 ]\n" )
-      .add_back(
-        std::format( " > {} ", core::custom_rules.showed_name ), core::rule_op{ core::rule_op::mode::restore, core::custom_rules } );
+      .add_back( std::format( " > {} ", core::custom_rules.showed_name ), core::restore_with_rules{ core::custom_rules } );
     for ( const auto &rule : core::builtin_rules ) {
-        ui.add_back( std::format( " > {} ", rule.showed_name ), core::rule_op{ core::rule_op::mode::restore, rule } );
+        ui.add_back( std::format( " > {} ", rule.showed_name ), core::restore_with_rules{ rule } );
     }
     ui.show().lock( true, true );
     std::print( " -> 清理资源.\n" );

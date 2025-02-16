@@ -457,59 +457,56 @@ namespace core {
             core_op();
         }
     }
-    class config_op final {
-      public:
-        enum class mode { load, edit };
-      private:
-        const mode choice_;
-        static constexpr auto option_ctrl_color{
-          cpp_utils::console_value::text_foreground_red | cpp_utils::console_value::text_foreground_green };
-        auto load_( const bool _is_reload )
-        {
-            std::ifstream config_file{ config_file_name, std::ios::in };
-            if ( !config_file.good() ) {
-                return;
-            }
-            if ( _is_reload ) {
-                std::print( " -> 准备配置重载.\n" );
-                for ( auto &config : configs ) {
-                    config->prepare_reload();
-                }
-            }
-            std::print( " -> 加载配置文件.\n" );
-            ansi_std_string line;
-            ansi_std_string_view line_view;
-            basic_config_node *node_ptr{ nullptr };
-            while ( std::getline( config_file, line ) ) {
-                line_view = line;
-                if ( line_view.empty() ) {
-                    continue;
-                }
-                if ( line_view.front() == '#' ) {
-                    continue;
-                }
-                if ( line_view.size() >= 4 && line_view.substr( 0, sizeof( "[ " ) - 1 ) == "[ "
-                     && line_view.substr( line_view.size() - sizeof( " ]" ) + 1, line_view.size() ) == " ]" )
-                {
-                    line_view = line_view.substr( sizeof( "[ " ) - 1, line_view.size() - sizeof( " ]" ) - 1 );
-                    for ( auto &config : configs ) {
-                        if ( line_view == config->self_name ) {
-                            node_ptr = config.get();
-                            break;
-                        }
-                        node_ptr = nullptr;
-                    }
-                    continue;
-                }
-                if ( node_ptr != nullptr ) {
-                    node_ptr->load( _is_reload, line );
-                }
+    inline constexpr auto option_ctrl_color{
+      cpp_utils::console_value::text_foreground_red | cpp_utils::console_value::text_foreground_green };
+    auto load_config( const bool _is_reload )
+    {
+        std::ifstream config_file{ config_file_name, std::ios::in };
+        if ( !config_file.good() ) {
+            return;
+        }
+        if ( _is_reload ) {
+            std::print( " -> 准备配置重载.\n" );
+            for ( auto &config : configs ) {
+                config->prepare_reload();
             }
         }
-        auto sync()
+        std::print( " -> 加载配置文件.\n" );
+        ansi_std_string line;
+        ansi_std_string_view line_view;
+        basic_config_node *node_ptr{ nullptr };
+        while ( std::getline( config_file, line ) ) {
+            line_view = line;
+            if ( line_view.empty() ) {
+                continue;
+            }
+            if ( line_view.front() == '#' ) {
+                continue;
+            }
+            if ( line_view.size() >= 4 && line_view.substr( 0, sizeof( "[ " ) - 1 ) == "[ "
+                 && line_view.substr( line_view.size() - sizeof( " ]" ) + 1, line_view.size() ) == " ]" )
+            {
+                line_view = line_view.substr( sizeof( "[ " ) - 1, line_view.size() - sizeof( " ]" ) - 1 );
+                for ( auto &config : configs ) {
+                    if ( line_view == config->self_name ) {
+                        node_ptr = config.get();
+                        break;
+                    }
+                    node_ptr = nullptr;
+                }
+                continue;
+            }
+            if ( node_ptr != nullptr ) {
+                node_ptr->load( _is_reload, line );
+            }
+        }
+    }
+    auto edit_config( cpp_utils::console_ui::func_args )
+    {
+        auto sync{ []( cpp_utils::console_ui::func_args )
         {
             std::print( "                    [ 配  置 ]\n\n\n" );
-            load_( true );
+            load_config( true );
             std::print( " -> 保存更改.\n" );
             ansi_std_string config_text{};
             for ( auto &config : configs ) {
@@ -526,8 +523,8 @@ namespace core {
             std::print( "\n ({}) 同步配置{}.\n\n", config_file.good() ? 'i' : '!', config_file.good() ? "成功" : "失败" );
             wait();
             return cpp_utils::console_ui::back;
-        }
-        auto open_file()
+        } };
+        auto open_file{ []( cpp_utils::console_ui::func_args )
         {
             if ( std::ifstream{ config_file_name, std::ios::in }.good() ) {
                 std::print( " -> 打开配置.\n" );
@@ -539,7 +536,7 @@ namespace core {
               " (i) 无法读取配置文件.\n\n" );
             wait();
             return cpp_utils::console_ui::back;
-        }
+        } };
         class option_setter final {
           private:
             option_node::sub_key &sub_key_;
@@ -592,120 +589,113 @@ namespace core {
             option_shower( option_shower && )      = default;
             ~option_shower()                       = default;
         };
-        auto edit_()
-        {
-            cpp_utils::console_ui ui;
-            std::print( " -> 准备用户界面.\n" );
-            ui
-              .add_back( std::format(
-                "                    [ 配  置 ]\n\n\n"
-                " (i) 所有选项默认禁用. 相关信息可参阅文档.\n"
-                "     无标识选项可进行实时热重载.\n"
-                "     标 (*) 选项热重载默认启用,\n"
-                "     每 {} 自动执行, 可禁用.\n"
-                "     标 (-) 选项无法进行热重载.\n",
-                default_thread_sleep_time ) )
-              .add_back( " < 返回 ", exit, cpp_utils::console_value::text_foreground_green | cpp_utils::console_value::text_foreground_intensity )
-              .add_back( " > 同步配置 ", [ this ]( cpp_utils::console_ui::func_args ) { return sync(); } )
-              .add_back( " > 打开配置文件 ", [ this ]( cpp_utils::console_ui::func_args ) { return open_file(); } )
-              .add_back( "\n[ 选项 ]\n" );
-            for ( auto &key : options.main_keys ) {
-                ui.add_back( std::format( " > {} ", key.showed_name ), option_shower{ key } );
-            }
-            ui.show();
+        cpp_utils::console_ui ui;
+        std::print( " -> 准备用户界面.\n" );
+        ui
+          .add_back( std::format(
+            "                    [ 配  置 ]\n\n\n"
+            " (i) 所有选项默认禁用. 相关信息可参阅文档.\n"
+            "     无标识选项可进行实时热重载.\n"
+            "     标 (*) 选项热重载默认启用,\n"
+            "     每 {} 自动执行, 可禁用.\n"
+            "     标 (-) 选项无法进行热重载.\n",
+            default_thread_sleep_time ) )
+          .add_back( " < 返回 ", exit, cpp_utils::console_value::text_foreground_green | cpp_utils::console_value::text_foreground_intensity )
+          .add_back( " > 同步配置 ", sync )
+          .add_back( " > 打开配置文件 ", open_file )
+          .add_back( "\n[ 选项 ]\n" );
+        for ( auto &key : options.main_keys ) {
+            ui.add_back( std::format( " > {} ", key.showed_name ), option_shower{ key } );
         }
+        ui.show();
+        return cpp_utils::console_ui::back;
+    }
+    inline const auto &crack_restore_option_node{ options[ "crack_restore" ] };
+    inline const auto &is_hijack_execs{ crack_restore_option_node[ "hijack_execs" ] };
+    inline const auto &is_set_serv_startup_types{ crack_restore_option_node[ "set_serv_startup_types" ] };
+    class crack_with_rules final {
       public:
-        auto operator()( cpp_utils::console_ui::func_args )
-        {
-            switch ( choice_ ) {
-                case mode::load : load_( false ); break;
-                case mode::edit : edit_(); break;
-            }
-            return cpp_utils::console_ui::back;
-        }
-        auto operator=( const config_op & ) -> config_op & = delete;
-        auto operator=( config_op && ) -> config_op &      = delete;
-        config_op( const mode _mode_choice )
-          : choice_{ _mode_choice }
-        { }
-        config_op( const config_op & ) = default;
-        config_op( config_op && )      = default;
-        ~config_op()                   = default;
-    };
-    class rule_op final {
-      public:
-        enum class mode { crack, restore };
-      private:
-        const mode choice_;
         const rule_node &rules_;
       public:
         auto operator()( cpp_utils::console_ui::func_args )
         {
-            std::print( "                 [ 破 解 / 恢 复 ]\n\n\n" );
+            std::print( "                    [ 破  解 ]\n\n\n" );
             if ( rules_.empty() ) {
                 std::print( " (i) 规则为空.\n\n" );
                 wait();
                 return cpp_utils::console_ui::back;
             }
-            const auto &crack_restore_option_node{ options[ "crack_restore" ] };
-            const auto &is_hijack_execs{ crack_restore_option_node[ "hijack_execs" ] };
-            const auto &is_set_serv_startup_types{ crack_restore_option_node[ "set_serv_startup_types" ] };
             std::print( " -> 生成并执行操作系统命令.\n{}\n", ansi_std_string( CONSOLE_WIDTH, '-' ) );
-            switch ( choice_ ) {
-                case mode::crack : {
-                    if ( is_hijack_execs ) {
-                        for ( const auto &exec : rules_.execs ) {
-                            std::system(
-                              std::format(
-                                R"(C:\Windows\System32\reg.exe add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\{}" /f /t reg_sz /v debugger /d "nul")",
-                                exec )
-                                .c_str() );
-                        }
-                    }
-                    if ( is_set_serv_startup_types ) {
-                        for ( const auto &serv : rules_.servs ) {
-                            std::system( std::format( R"(C:\Windows\System32\sc.exe config "{}" start= disabled)", serv ).c_str() );
-                        }
-                    }
-                    for ( const auto &exec : rules_.execs ) {
-                        std::system( std::format( R"(C:\Windows\System32\taskkill.exe /f /im "{}")", exec ).c_str() );
-                    }
-                    for ( const auto &serv : rules_.servs ) {
-                        std::system( std::format( R"(C:\Windows\System32\net.exe stop "{}" /y)", serv ).c_str() );
-                    }
-                    break;
+            if ( is_hijack_execs ) {
+                for ( const auto &exec : rules_.execs ) {
+                    std::system(
+                      std::format(
+                        R"(C:\Windows\System32\reg.exe add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\{}" /f /t reg_sz /v debugger /d "nul")",
+                        exec )
+                        .c_str() );
                 }
-                case mode::restore : {
-                    if ( is_hijack_execs ) {
-                        for ( const auto &exec : rules_.execs ) {
-                            std::system(
-                              std::format(
-                                R"(C:\Windows\System32\reg.exe delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\{}" /f)",
-                                exec )
-                                .c_str() );
-                        }
-                    }
-                    if ( is_set_serv_startup_types ) {
-                        for ( const auto &serv : rules_.servs ) {
-                            std::system( std::format( R"(C:\Windows\System32\sc.exe config "{}" start= auto)", serv ).c_str() );
-                        }
-                    }
-                    for ( const auto &serv : rules_.servs ) {
-                        std::system( std::format( R"(C:\Windows\System32\net.exe start "{}")", serv ).c_str() );
-                    }
-                    break;
+            }
+            if ( is_set_serv_startup_types ) {
+                for ( const auto &serv : rules_.servs ) {
+                    std::system( std::format( R"(C:\Windows\System32\sc.exe config "{}" start= disabled)", serv ).c_str() );
                 }
+            }
+            for ( const auto &exec : rules_.execs ) {
+                std::system( std::format( R"(C:\Windows\System32\taskkill.exe /f /im "{}")", exec ).c_str() );
+            }
+            for ( const auto &serv : rules_.servs ) {
+                std::system( std::format( R"(C:\Windows\System32\net.exe stop "{}" /y)", serv ).c_str() );
             }
             return cpp_utils::console_ui::back;
         }
-        auto operator=( const rule_op & ) -> rule_op & = delete;
-        auto operator=( rule_op && ) -> rule_op &      = delete;
-        rule_op( const mode _mode_choice, const rule_node &_rule )
-          : choice_{ _mode_choice }
-          , rules_{ _rule }
+        auto operator=( const crack_with_rules & ) -> crack_with_rules & = default;
+        auto operator=( crack_with_rules && ) -> crack_with_rules &      = default;
+        crack_with_rules( const rule_node &_rules )
+          : rules_{ _rules }
         { }
-        rule_op( const rule_op & ) = default;
-        rule_op( rule_op && )      = default;
-        ~rule_op()                 = default;
+        crack_with_rules( const crack_with_rules & ) = default;
+        crack_with_rules( crack_with_rules && )      = default;
+        ~crack_with_rules()                          = default;
+    };
+    class restore_with_rules final {
+      public:
+        const rule_node &rules_;
+      public:
+        auto operator()( cpp_utils::console_ui::func_args )
+        {
+            std::print( "                    [ 恢  复 ]\n\n\n" );
+            if ( rules_.empty() ) {
+                std::print( " (i) 规则为空.\n\n" );
+                wait();
+                return cpp_utils::console_ui::back;
+            }
+            std::print( " -> 生成并执行操作系统命令.\n{}\n", ansi_std_string( CONSOLE_WIDTH, '-' ) );
+            if ( is_hijack_execs ) {
+                for ( const auto &exec : rules_.execs ) {
+                    std::system(
+                      std::format(
+                        R"(C:\Windows\System32\reg.exe delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\{}" /f)",
+                        exec )
+                        .c_str() );
+                }
+            }
+            if ( is_set_serv_startup_types ) {
+                for ( const auto &serv : rules_.servs ) {
+                    std::system( std::format( R"(C:\Windows\System32\sc.exe config "{}" start= auto)", serv ).c_str() );
+                }
+            }
+            for ( const auto &serv : rules_.servs ) {
+                std::system( std::format( R"(C:\Windows\System32\net.exe start "{}")", serv ).c_str() );
+            }
+            return cpp_utils::console_ui::back;
+        }
+        auto operator=( const restore_with_rules & ) -> restore_with_rules & = default;
+        auto operator=( restore_with_rules && ) -> restore_with_rules &      = default;
+        restore_with_rules( const rule_node &_rules )
+          : rules_{ _rules }
+        { }
+        restore_with_rules( const restore_with_rules & ) = default;
+        restore_with_rules( restore_with_rules && )      = default;
+        ~restore_with_rules()                            = default;
     };
 }
