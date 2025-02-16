@@ -5,6 +5,7 @@ auto main() -> int
     ui.lock( true, true );
     cpp_utils::ignore_console_exit_signal( true );
     cpp_utils::fix_console_size( true );
+    cpp_utils::enable_console_maximize_ctrl( false );
     cpp_utils::enable_console_close_ctrl( true );
     cpp_utils::enable_console_minimize_ctrl( false );
     cpp_utils::set_console_translucency( 255 );
