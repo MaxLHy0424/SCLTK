@@ -15,6 +15,7 @@ namespace core {
     using ansi_std_string_view = cpp_utils::ansi_std_string_view;
     inline constexpr auto config_file_name{ "config.ini" };
     inline constexpr auto default_thread_sleep_time{ 1s };
+    inline const auto current_window_handle{ GetConsoleWindow() };
     struct option_node final {
         struct sub_key final {
           private:
@@ -315,13 +316,13 @@ namespace core {
         {
             cpp_utils::set_console_title( INFO_SHORT_NAME " - 命令提示符" );
             cpp_utils::set_console_size( 120, 30 );
-            cpp_utils::fix_console_size( false );
+            cpp_utils::fix_window_size( current_window_handle, false );
             _args.parent_ui.lock( false, false );
             SetConsoleScreenBufferSize( GetStdHandle( STD_OUTPUT_HANDLE ), { 128, SHRT_MAX - 1 } );
             std::system( R"(C:\Windows\System32\cmd.exe)" );
             cpp_utils::set_console_title( INFO_SHORT_NAME );
             cpp_utils::set_console_size( CONSOLE_WIDTH, CONSOLE_HEIGHT );
-            cpp_utils::fix_console_size( true );
+            cpp_utils::fix_window_size( current_window_handle, true );
             return cpp_utils::console_ui::back;
         } };
         class cmd_executor final {
@@ -371,18 +372,17 @@ namespace core {
     {
         const auto &is_translucency{ options[ "window" ][ "translucency" ] };
         const auto &is_disable_close_ctrl{ options[ "window" ][ "disable_close_ctrl" ] };
-        const auto current_window{ GetConsoleWindow() };
         if ( is_disable_x_option_hot_reload.get() ) {
-            SetLayeredWindowAttributes( current_window, RGB( 0, 0, 0 ), is_translucency.get() ? 230 : 255, LWA_ALPHA );
+            SetLayeredWindowAttributes( current_window_handle, RGB( 0, 0, 0 ), is_translucency.get() ? 230 : 255, LWA_ALPHA );
             EnableMenuItem(
-              GetSystemMenu( current_window, FALSE ), SC_CLOSE,
+              GetSystemMenu( current_window_handle, FALSE ), SC_CLOSE,
               is_disable_close_ctrl.get() ? MF_BYCOMMAND | MF_DISABLED | MF_GRAYED : MF_BYCOMMAND | MF_ENABLED );
             return;
         }
         while ( !_msg.stop_requested() ) {
-            SetLayeredWindowAttributes( current_window, RGB( 0, 0, 0 ), is_translucency.get() ? 230 : 255, LWA_ALPHA );
+            SetLayeredWindowAttributes( current_window_handle, RGB( 0, 0, 0 ), is_translucency.get() ? 230 : 255, LWA_ALPHA );
             EnableMenuItem(
-              GetSystemMenu( current_window, FALSE ), SC_CLOSE,
+              GetSystemMenu( current_window_handle, FALSE ), SC_CLOSE,
               is_disable_close_ctrl.get() ? MF_BYCOMMAND | MF_DISABLED | MF_GRAYED : MF_BYCOMMAND | MF_ENABLED );
             cpp_utils::perf_sleep( default_thread_sleep_time );
         }
@@ -401,26 +401,25 @@ namespace core {
             return;
         }
         constexpr auto sleep_time{ 100ms };
-        const auto current_window{ GetConsoleWindow() };
         const auto current_thread_id{ GetCurrentThreadId() };
-        const auto window_thread_frocess_id{ GetWindowThreadProcessId( current_window, nullptr ) };
+        const auto current_window_thread_frocess_id{ GetWindowThreadProcessId( current_window_handle, nullptr ) };
         if ( is_disable_x_option_hot_reload.get() ) {
             cpp_utils::set_top_window_loop(
-              current_window, current_thread_id, window_thread_frocess_id, sleep_time, []( const std::stop_token _msg )
-            { return !_msg.stop_requested(); }, _msg );
-            cpp_utils::cancle_top_window( current_window );
+              current_window_handle, current_thread_id, current_window_thread_frocess_id, sleep_time,
+              []( const std::stop_token _msg ) { return !_msg.stop_requested(); }, _msg );
+            cpp_utils::cancle_top_window( current_window_handle );
             return;
         }
         while ( !_msg.stop_requested() ) {
             if ( !is_set_top_window.get() ) {
-                cpp_utils::cancle_top_window( current_window );
+                cpp_utils::cancle_top_window( current_window_handle );
                 cpp_utils::perf_sleep( default_thread_sleep_time );
                 continue;
             }
-            cpp_utils::set_top_window( current_window, current_thread_id, window_thread_frocess_id );
+            cpp_utils::set_top_window( current_window_handle, current_thread_id, current_window_thread_frocess_id );
             cpp_utils::perf_sleep( sleep_time );
         }
-        cpp_utils::cancle_top_window( current_window );
+        cpp_utils::cancle_top_window( current_window_handle );
     }
     inline auto fix_os_env( const std::stop_token _msg )
     {
