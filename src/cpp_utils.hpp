@@ -255,7 +255,7 @@ namespace cpp_utils {
         {
             return compare( _src );
         }
-        const auto &operator[]( size_type _index ) const noexcept
+        const auto &operator[]( const size_type _index ) const noexcept
         {
             return data_[ _index ];
         }
@@ -304,6 +304,11 @@ namespace cpp_utils {
         auto &resize( const size_type _size )
         {
             threads_.resize( _size );
+            return *this;
+        }
+        auto &optimize_storage() noexcept
+        {
+            threads_.shrink_to_fit();
             return *this;
         }
         auto &swap( thread_pool &_src ) noexcept
@@ -749,9 +754,9 @@ namespace cpp_utils {
         static auto cls_()
         {
             auto size{ get_console_size_() };
-            set_cursor_( { 0, 0 } );
+            set_cursor_( COORD{ 0, 0 } );
             std::print( "{}", ansi_std_string( static_cast< size_type >( size.X ) * static_cast< size_type >( size.Y ), ' ' ) );
-            set_cursor_( { 0, 0 } );
+            set_cursor_( COORD{ 0, 0 } );
         }
         static auto write_( const ansi_std_string_view _text, const bool _is_endl = false )
         {
