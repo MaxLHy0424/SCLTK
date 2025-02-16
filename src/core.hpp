@@ -317,6 +317,7 @@ namespace core {
             cpp_utils::set_console_title( INFO_SHORT_NAME " - 命令提示符" );
             cpp_utils::set_console_size( 120, 30 );
             cpp_utils::fix_window_size( current_window_handle, false );
+            cpp_utils::enable_window_maximize_ctrl( current_window_handle, true );
             _args.parent_ui.lock( false, false );
             SetConsoleScreenBufferSize( GetStdHandle( STD_OUTPUT_HANDLE ), { 128, SHRT_MAX - 1 } );
             std::system( R"(C:\Windows\System32\cmd.exe)" );
