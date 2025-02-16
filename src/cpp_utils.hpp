@@ -740,13 +740,13 @@ namespace cpp_utils {
                 }
             }
         }
-        auto get_console_size_() noexcept
+        static auto get_console_size_() noexcept
         {
             CONSOLE_SCREEN_BUFFER_INFO console_data;
             GetConsoleScreenBufferInfo( GetStdHandle( STD_OUTPUT_HANDLE ), &console_data );
             return console_data.dwSize;
         }
-        auto cls_()
+        static auto cls_()
         {
             auto size{ get_console_size_() };
             set_cursor_( { 0, 0 } );
