@@ -554,8 +554,8 @@ namespace cpp_utils {
         SetWindowLongPtrW(
           GetConsoleWindow(), GWL_STYLE,
           _is_enable
-            ? GetWindowLongPtrW( GetConsoleWindow(), GWL_STYLE ) & ~WS_SIZEBOX & ~WS_MAXIMIZEBOX
-            : GetWindowLongPtrW( GetConsoleWindow(), GWL_STYLE ) | WS_SIZEBOX | WS_MAXIMIZEBOX );
+            ? GetWindowLongPtrW( GetConsoleWindow(), GWL_STYLE ) & ~WS_SIZEBOX
+            : GetWindowLongPtrW( GetConsoleWindow(), GWL_STYLE ) | WS_SIZEBOX );
     }
     inline auto enable_console_minimize_ctrl( const bool _is_enable )
     {
