@@ -522,13 +522,9 @@ namespace cpp_utils {
         SetConsoleMode( output_handle, mode );
         std::print( "\033[H\033[2J\033c" );
     }
-    inline auto set_console_title( const ansi_char *const _title )
+    inline auto set_console_title( const ansi_std_string_view _title )
     {
-        SetConsoleTitleA( _title );
-    }
-    inline auto set_console_title( const ansi_std_string _title )
-    {
-        SetConsoleTitleA( _title.c_str() );
+        SetConsoleTitleA( _title.data() );
     }
     inline auto set_console_charset( const UINT _charset )
     {
