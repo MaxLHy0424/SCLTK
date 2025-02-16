@@ -371,17 +371,18 @@ namespace core {
     {
         const auto &is_translucency{ options[ "window" ][ "translucency" ] };
         const auto &is_disable_close_ctrl{ options[ "window" ][ "disable_close_ctrl" ] };
+        const auto current_window{ GetConsoleWindow() };
         if ( is_disable_x_option_hot_reload.get() ) {
-            SetLayeredWindowAttributes( GetConsoleWindow(), RGB( 0, 0, 0 ), is_translucency.get() ? 230 : 255, LWA_ALPHA );
+            SetLayeredWindowAttributes( current_window, RGB( 0, 0, 0 ), is_translucency.get() ? 230 : 255, LWA_ALPHA );
             EnableMenuItem(
-              GetSystemMenu( GetConsoleWindow(), FALSE ), SC_CLOSE,
+              GetSystemMenu( current_window, FALSE ), SC_CLOSE,
               is_disable_close_ctrl.get() ? MF_BYCOMMAND | MF_DISABLED | MF_GRAYED : MF_BYCOMMAND | MF_ENABLED );
             return;
         }
         while ( !_msg.stop_requested() ) {
-            SetLayeredWindowAttributes( GetConsoleWindow(), RGB( 0, 0, 0 ), is_translucency.get() ? 230 : 255, LWA_ALPHA );
+            SetLayeredWindowAttributes( current_window, RGB( 0, 0, 0 ), is_translucency.get() ? 230 : 255, LWA_ALPHA );
             EnableMenuItem(
-              GetSystemMenu( GetConsoleWindow(), FALSE ), SC_CLOSE,
+              GetSystemMenu( current_window, FALSE ), SC_CLOSE,
               is_disable_close_ctrl.get() ? MF_BYCOMMAND | MF_DISABLED | MF_GRAYED : MF_BYCOMMAND | MF_ENABLED );
             cpp_utils::perf_sleep( default_thread_sleep_time );
         }

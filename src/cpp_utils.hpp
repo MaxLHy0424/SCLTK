@@ -551,37 +551,36 @@ namespace cpp_utils {
     }
     inline auto fix_console_size( const bool _is_enable )
     {
+        const auto current_window{ GetConsoleWindow() };
         SetWindowLongPtrW(
-          GetConsoleWindow(), GWL_STYLE,
+          current_window, GWL_STYLE,
           _is_enable
-            ? GetWindowLongPtrW( GetConsoleWindow(), GWL_STYLE ) & ~WS_SIZEBOX
-            : GetWindowLongPtrW( GetConsoleWindow(), GWL_STYLE ) | WS_SIZEBOX );
+            ? GetWindowLongPtrW( current_window, GWL_STYLE ) & ~WS_SIZEBOX
+            : GetWindowLongPtrW( current_window, GWL_STYLE ) | WS_SIZEBOX );
     }
     inline auto enable_console_minimize_ctrl( const bool _is_enable )
     {
+        const auto current_window{ GetConsoleWindow() };
         SetWindowLongPtrW(
-          GetConsoleWindow(), GWL_STYLE,
+          current_window, GWL_STYLE,
           _is_enable
-            ? GetWindowLongPtrW( GetConsoleWindow(), GWL_STYLE ) | WS_MINIMIZEBOX
-            : GetWindowLongPtrW( GetConsoleWindow(), GWL_STYLE ) & ~WS_MINIMIZEBOX );
+            ? GetWindowLongPtrW( current_window, GWL_STYLE ) | WS_MINIMIZEBOX
+            : GetWindowLongPtrW( current_window, GWL_STYLE ) & ~WS_MINIMIZEBOX );
     }
     inline auto enable_console_maximize_ctrl( const bool _is_enable )
     {
+        const auto current_window{ GetConsoleWindow() };
         SetWindowLongPtrW(
-          GetConsoleWindow(), GWL_STYLE,
+          current_window, GWL_STYLE,
           _is_enable
-            ? GetWindowLongPtrW( GetConsoleWindow(), GWL_STYLE ) | WS_MAXIMIZEBOX
-            : GetWindowLongPtrW( GetConsoleWindow(), GWL_STYLE ) & ~WS_MAXIMIZEBOX );
+            ? GetWindowLongPtrW( current_window, GWL_STYLE ) | WS_MAXIMIZEBOX
+            : GetWindowLongPtrW( current_window, GWL_STYLE ) & ~WS_MAXIMIZEBOX );
     }
     inline auto enable_console_close_ctrl( const bool _is_enable )
     {
-        SetWindowLongPtrW(
-          GetConsoleWindow(), GWL_STYLE,
-          _is_enable
-            ? GetWindowLongPtrW( GetConsoleWindow(), GWL_STYLE ) | WS_SYSMENU
-            : GetWindowLongPtrW( GetConsoleWindow(), GWL_STYLE ) & ~WS_SYSMENU );
+        const auto current_window{ GetConsoleWindow() };
         EnableMenuItem(
-          GetSystemMenu( GetConsoleWindow(), FALSE ), SC_CLOSE,
+          GetSystemMenu( current_window, FALSE ), SC_CLOSE,
           _is_enable ? MF_BYCOMMAND | MF_ENABLED : MF_BYCOMMAND | MF_DISABLED | MF_GRAYED );
     }
     namespace console_value {
