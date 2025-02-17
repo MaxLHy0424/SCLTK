@@ -187,7 +187,7 @@ namespace cpp_utils {
         std::println( _stream, "{}", string_view_convert< ansi_char >( utf8_format( _fmt, std::forward< _args_ >( _args )... ) ) );
     }
     template < char_type _type_, size_type _capacity_ >
-        requires( std::same_as< _type_, std::decay_t< _type_ > > )
+        requires( std::same_as< _type_, std::decay_t< _type_ > > && _capacity_ > 0 )
     struct constant_string final {
       private:
         _type_ data_[ _capacity_ ]{};
@@ -527,9 +527,21 @@ namespace cpp_utils {
         SetConsoleMode( output_handle, mode );
         std::print( "\033[H\033[2J\033c" );
     }
-    inline auto set_console_title( const ansi_std_string_view _title )
+    inline auto set_console_title( const ansi_char *const _title )
+    {
+        SetConsoleTitleA( _title );
+    }
+    inline auto set_console_title( const ansi_std_string &_title )
     {
         SetConsoleTitleA( _title.data() );
+    }
+    inline auto set_console_title( const wide_char *const _title )
+    {
+        SetConsoleTitleW( _title );
+    }
+    inline auto set_console_title( const wide_std_string &_title )
+    {
+        SetConsoleTitleW( _title.data() );
     }
     inline auto set_console_charset( const UINT _charset )
     {

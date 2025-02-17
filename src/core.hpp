@@ -128,7 +128,7 @@ namespace core {
             "窗口显示",
             { { "keep_window_top", "(*) 置顶窗口" },
               { "disable_close_ctrl", "(*) 禁用关闭控件" },
-              { "translucency", "(*) 半透明化" } } },
+              { "translucent", "(*) 半透明化" } } },
           { "misc",
             "杂项",
             { { "quick_exit_and_relaunch", "(-) 快速退出与重启" },
@@ -309,7 +309,7 @@ namespace core {
             " " INFO_REPO_URL " ", visit_repo_webpage,
             cpp_utils::console_value::text_default | cpp_utils::console_value::text_foreground_intensity
               | cpp_utils::console_value::text_lvb_underscore )
-          .add_back( "\n[ 许可证 ]\n\n " INFO_LICENSE " \n\n (C) 2023 - present " INFO_DEVELOPER "." )
+          .add_back( "\n[ 许可证 ]\n\n " INFO_LICENSE " \n\n " INFO_COPYRIGHT )
           .show();
         return cpp_utils::console_ui::back;
     }
@@ -376,17 +376,17 @@ namespace core {
     }
     inline auto set_console_attrs( const std::stop_token _msg )
     {
-        const auto &is_translucency{ options[ "window" ][ "translucency" ] };
+        const auto &is_translucent{ options[ "window" ][ "translucent" ] };
         const auto &is_disable_close_ctrl{ options[ "window" ][ "disable_close_ctrl" ] };
         if ( is_disable_x_option_hot_reload ) {
-            SetLayeredWindowAttributes( current_window_handle, RGB( 0, 0, 0 ), is_translucency ? 230 : 255, LWA_ALPHA );
+            SetLayeredWindowAttributes( current_window_handle, RGB( 0, 0, 0 ), is_translucent ? 230 : 255, LWA_ALPHA );
             EnableMenuItem(
               GetSystemMenu( current_window_handle, FALSE ), SC_CLOSE,
               is_disable_close_ctrl ? MF_BYCOMMAND | MF_DISABLED | MF_GRAYED : MF_BYCOMMAND | MF_ENABLED );
             return;
         }
         while ( !_msg.stop_requested() ) {
-            SetLayeredWindowAttributes( current_window_handle, RGB( 0, 0, 0 ), is_translucency ? 230 : 255, LWA_ALPHA );
+            SetLayeredWindowAttributes( current_window_handle, RGB( 0, 0, 0 ), is_translucent ? 230 : 255, LWA_ALPHA );
             EnableMenuItem(
               GetSystemMenu( current_window_handle, FALSE ), SC_CLOSE,
               is_disable_close_ctrl ? MF_BYCOMMAND | MF_DISABLED | MF_GRAYED : MF_BYCOMMAND | MF_ENABLED );
@@ -460,7 +460,7 @@ namespace core {
     }
     inline constexpr auto option_ctrl_color{
       cpp_utils::console_value::text_foreground_red | cpp_utils::console_value::text_foreground_green };
-    auto load_config( const bool _is_reload )
+    inline auto load_config( const bool _is_reload )
     {
         std::ifstream config_file{ config_file_name, std::ios::in };
         if ( !config_file.good() ) {
@@ -502,7 +502,7 @@ namespace core {
             }
         }
     }
-    auto edit_config( cpp_utils::console_ui::func_args )
+    inline auto edit_config( cpp_utils::console_ui::func_args )
     {
         auto sync{ []( cpp_utils::console_ui::func_args )
         {
