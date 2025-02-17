@@ -10,8 +10,7 @@ BEGIN
             VALUE "ProductName", INFO_FULL_NAME
             VALUE "FileDescription", INFO_SHORT_NAME
             VALUE "ProductVersion", INFO_VERSION
-            VALUE "CompanyName", INFO_DEVELOPER
-            VALUE "LegalCopyright", "(C) 2023 - present " INFO_DEVELOPER "."
+            VALUE "LegalCopyright", INFO_COPYRIGHT
         END
     END
     BLOCK "VarFileInfo"

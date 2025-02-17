@@ -1,17 +1,17 @@
 #include "core.hpp"
 auto main() -> int
 {
-    cpp_utils::console_ui ui;
-    ui.lock( true, true );
     cpp_utils::ignore_console_exit_signal( true );
     cpp_utils::fix_window_size( core::current_window_handle, true );
+    cpp_utils::set_console_charset( CHARSET_ID );
+    cpp_utils::set_console_title( INFO_SHORT_NAME );
+    cpp_utils::set_console_size( CONSOLE_WIDTH, CONSOLE_HEIGHT );
+    cpp_utils::set_window_translucency( core::current_window_handle, 255 );
+    cpp_utils::enable_window_minimize_ctrl( core::current_window_handle, false );
     cpp_utils::enable_window_maximize_ctrl( core::current_window_handle, false );
     cpp_utils::enable_window_close_ctrl( core::current_window_handle, true );
-    cpp_utils::enable_window_minimize_ctrl( core::current_window_handle, false );
-    cpp_utils::set_window_translucency( core::current_window_handle, 255 );
-    cpp_utils::set_console_title( INFO_SHORT_NAME );
-    cpp_utils::set_console_charset( CHARSET_ID );
-    cpp_utils::set_console_size( CONSOLE_WIDTH, CONSOLE_HEIGHT );
+    cpp_utils::console_ui ui;
+    ui.lock( true, true );
     std::print( " -> 检测运行权限.\n" );
     if ( !cpp_utils::is_run_as_admin() ) {
         std::print( " -> 申请管理员权限.\n" );
