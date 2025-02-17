@@ -1,7 +1,7 @@
 <div align="center">
 
 ![title](./img/title.png)\
-**Computer Room Control Software Nemesis**\
+**Student Computer Lab Toolkit**\
 **轻松破解机房控制**\
 ©️ 2023 - present MaxLHy0424.
 
@@ -9,19 +9,19 @@
 
 # 📦 获取
 
-| 分支    | 最新发行版                                                                       | 状态       | 生命周期                |
-| ------- | -------------------------------------------------------------------------------- | ---------- | ----------------------- |
-| CRCSN 1 | [v1.0_Stable](https://github.com/MaxLHy0424/CRCSN/releases/tag/v1.0_Stable)      | ❌ 停止开发 | 2023/12/17 ~ 2023/12/18 |
-| CRCSN 2 | [v2.5_Stable](https://github.com/MaxLHy0424/CRCSN/releases/tag/v2.5_Stable)      | ❌ 停止开发 | 2024/01/01 ~ 2024/01/07 |
-| CRCSN 3 | [v3.0.1 \(Build 30174\)](https://github.com/MaxLHy0424/CRCSN/releases/tag/30174) | ❌ 停止开发 | 2024/02/09 ~ 2024/02/10 |
-| CRCSN 4 | [v4.10.7](https://github.com/MaxLHy0424/CRCSN/releases/tag/v4.10.7)              | ❌ 停止开发 | 2024/03/26 ~ 2024/06/19 |
-| CRCSN 5 | [v5.11.1](https://github.com/MaxLHy0424/CRCSN/releases/tag/v5.11.1)              | ❌ 停止开发 | 2024/08/25 ~ 2024/12/23 |
-| CRCSN 6 | [v6.0.0](https://github.com/MaxLHy0424/CRCSN/releases/tag/v6.0.0)                | ✔️ 主线开发 | 2025/01/29 ~            |
+> [!NOTE]
+> 从 v6.1.0 起, 原 CRCSN (Computer Room Control Software Nemesis) 正式改名为 SCLTK (Student Computer Lab Toolkit).
 
-相关链接:
+| 分支            | 最新发行版                                                                       | 状态       | 生命周期                |
+| --------------- | -------------------------------------------------------------------------------- | ---------- | ----------------------- |
+| SCLTK (CRCSN) 1 | [v1.0_Stable](https://github.com/MaxLHy0424/SCLTK/releases/tag/v1.0_Stable)      | ❌ 停止开发 | 2023/12/17 ~ 2023/12/18 |
+| SCLTK (CRCSN) 2 | [v2.5_Stable](https://github.com/MaxLHy0424/SCLTK/releases/tag/v2.5_Stable)      | ❌ 停止开发 | 2024/01/01 ~ 2024/01/07 |
+| SCLTK (CRCSN) 3 | [v3.0.1 \(Build 30174\)](https://github.com/MaxLHy0424/SCLTK/releases/tag/30174) | ❌ 停止开发 | 2024/02/09 ~ 2024/02/10 |
+| SCLTK (CRCSN) 4 | [v4.10.7](https://github.com/MaxLHy0424/SCLTK/releases/tag/v4.10.7)              | ❌ 停止开发 | 2024/03/26 ~ 2024/06/19 |
+| SCLTK (CRCSN) 5 | [v5.11.1](https://github.com/MaxLHy0424/SCLTK/releases/tag/v5.11.1)              | ❌ 停止开发 | 2024/08/25 ~ 2024/12/23 |
+| SCLTK (CRCSN) 6 | [v6.0.0](https://github.com/MaxLHy0424/SCLTK/releases/tag/v6.0.0)                | ✔️ 主线开发 | 2025/01/29 ~            |
 
-- [GitHub Repository Release](https://github.com/MaxLHy0424/CRCSN/releases).
-- [中国大陆云盘镜像站点 \(不含预发行版\)](https://pan.astpan.com/s/DDOCq).
+**下载速度慢? 试试[中国大陆云盘镜像站点 \(不含预发行版\)](https://pan.astpan.com/s/DDOCq).**
 
 # 📖 使用指南
 
@@ -30,13 +30,13 @@
 
 ## 0 开始之前
 
-**使用 CRCSN 时建议关闭防病毒软件. 若 CRCSN 被报为恶意软件, 请在防病毒软件中添加排除项.**
+**使用 SCLTK 时建议关闭防病毒软件. 若 SCLTK 被报为恶意软件, 请在防病毒软件中添加排除项.**
 
-**请勿使用 CRCSN 扰乱课堂纪律, 造成的后果与开发者无关.**
+**请勿使用 SCLTK 扰乱课堂纪律, 造成的后果与开发者无关.**
 
 ## 1 启动
 
-CRCSN 发行版文件名规则为 `CRCSN-[ arch ]-[ runtime ].exe`, 其中 `[ arch ]` 一般为 `x86_64` 或 `i686`, `[ runtime ]` 一般为 `ucrt` 或 `msvcrt`.
+SCLTK 发行版文件名规则为 `SCLTK-[ arch ]-[ runtime ].exe`, 其中 `[ arch ]` 一般为 `x86_64` 或 `i686`, `[ runtime ]` 一般为 `ucrt` 或 `msvcrt`.
 
 `[ arch ]` 和 `[ runtime ]` 的具体信息如下:
 - **`x86_64` & `ucrt` \(推荐\)**\
@@ -46,19 +46,19 @@ CRCSN 发行版文件名规则为 `CRCSN-[ arch ]-[ runtime ].exe`, 其中 `[ ar
 
 ## 2 常规操作
 
-- **退出 CRCSN**\
+- **退出 SCLTK**\
   `< 退出`
-- **重新启动 CRCSN**\
+- **重新启动 SCLTK**\
   `< 重启`
   > 需要启用 "快速退出和重启" 选项 \(详见 [3.2.3 选项分类: 杂项](#323-选项分类-杂项)\).
-- **查看 CRCSN 发行版信息**\
+- **查看 SCLTK 发行版信息**\
   `> 信息`
 
-## 3 配置 CRCSN
+## 3 配置 SCLTK
 
 > [!NOTE]
 > 配置文件 `config.ini` 中以 `#` 开头的行为注释.\
-> 配置文件头部注释为 CRCSN 自动生成.
+> 配置文件头部注释为 SCLTK 自动生成.
 
 - **进入配置编辑页面**\
   `> 配置`
@@ -91,7 +91,7 @@ CRCSN 发行版文件名规则为 `CRCSN-[ arch ]-[ runtime ].exe`, 其中 `[ ar
 
 #### 3.2.2 选项分类: 窗口显示
 
-CRCSN 窗口相关选项.
+SCLTK 窗口相关选项.
 
 - **\(\*\) 置顶窗口**\
   每 100ms 强制显示窗口并设为置顶.
@@ -105,7 +105,7 @@ CRCSN 窗口相关选项.
 与上述分类无关的选项, 部分选项可能尚未经过广泛验证.
 
 - **\(\-\) 快速退出和重启**\
-  通过提前分离线程来将加快退出速度, 同时添加 "重启" 控件. 注意: 在某些情况下, 这可能导致 CRCSN 退出或重启时时发生异常.
+  通过提前分离线程来将加快退出速度, 同时添加 "重启" 控件. 注意: 在某些情况下, 这可能导致 SCLTK 退出或重启时时发生异常.
 - **\(\-\) 禁用标 \(\*\) 选项热重载**\
   禁用上述标 (\*) 的选项的热重载. 启用后部分标 (\*) 选项仅会执行一次. 启用后可适当减少资源消耗. 本选项不可热重载.
 
@@ -162,7 +162,7 @@ abc_diag_track
 
 # 📜 许可证
 
-CRCSN 使用 [MIT License](./LICENSE), 详细内容请自行阅读.
+SCLTK 使用 [MIT License](./LICENSE), 详细内容请自行阅读.
 
 # 🛠️ 二次开发
 
@@ -180,7 +180,7 @@ msys2_path = /path/to/msys2
 make all
 ```
 
-即开始安装工具链和依赖库, 并编译 CRCSN. 生成的 CRCSN 可执行文件位于 `bin/debug` 和 `bin/release` 中.
+即开始安装工具链和依赖库, 并编译 SCLTK. 生成的 SCLTK 可执行文件位于 `bin/debug` 和 `bin/release` 中.
 
 后续编译可使用:
 ```bash
@@ -197,12 +197,12 @@ make release
 
 ## 1 无法执行包含非 ASCII 字符的自定义规则.
 
-请尝试将配置文件 `config.ini` 使用 GB18030 \/ GBK 编码重新保存后重新启动 CRCSN.
+请尝试将配置文件 `config.ini` 使用 GB18030 \/ GBK 编码重新保存后重新启动 SCLTK.
 
 > [!NOTE]
 > 由于 Microsoft Windows OS 历史遗留问题, GB18030 \/ GBK 编码为语言设置为简体中文时的默认文本编码. 此方法仅能支持自定义规则中的大部分中文字符, 部分韩文字符及日文字符.
 
-## 2 CRCSN 窗口总是输出 "... 已被管理员禁用" 或 "找不到 ..."
+## 2 SCLTK 窗口总是输出 "... 已被管理员禁用" 或 "找不到 ..."
 
 可尝试启用 "修复操作系统环境", 详见 [3.2.1 选项分类: 破解/恢复](#321-选项分类-破解恢复).
 
