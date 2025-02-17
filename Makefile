@@ -24,8 +24,8 @@ init:
 	 binutils
 build: debug release
 debug: bin/debug/__debug__.exe
-release: bin/release/CRCSN-i686-msvcrt.exe\
-         bin/release/CRCSN-x86_64-ucrt.exe
+release: bin/release/SCLTK-i686-msvcrt.exe\
+         bin/release/SCLTK-x86_64-ucrt.exe
 clean:
 	$(msys2_path)/usr/bin/rm.exe -rf bin
 	$(msys2_path)/usr/bin/mkdir.exe bin
@@ -34,10 +34,10 @@ dependencies_debug = src/*
 bin/debug/__debug__.exe: $(dependencies_debug) bin/debug/.gitkeep
 	$(msys2_path)/ucrt64/bin/$(compiler) $(dependencies_debug).cpp $(args_debug) -o $@
 dependencies_release_32bit = bin/info-i686.o src/*
-bin/release/CRCSN-i686-msvcrt.exe: $(dependencies_release_32bit) bin/release/.gitkeep
+bin/release/SCLTK-i686-msvcrt.exe: $(dependencies_release_32bit) bin/release/.gitkeep
 	$(msys2_path)/mingw32/bin/$(compiler) $(dependencies_release_32bit).cpp $(args_release) -o $@
 dependencies_release_64bit = bin/info-x86_64.o src/*
-bin/release/CRCSN-x86_64-ucrt.exe: $(dependencies_release_64bit) bin/release/.gitkeep
+bin/release/SCLTK-x86_64-ucrt.exe: $(dependencies_release_64bit) bin/release/.gitkeep
 	$(msys2_path)/ucrt64/bin/$(compiler) $(dependencies_release_64bit).cpp $(args_release) -o $@
 dependencies_info = info.rc img/favicon.ico src/info.hpp
 bin/info-i686.o: $(dependencies_info) bin/.gitkeep
