@@ -38,14 +38,14 @@ auto main() -> int
       .add_back( " > 配置 ", core::edit_config )
       .add_back( " > 工具箱 ", core::toolkit )
       .add_back( "\n[ 破解 ]\n" )
-      .add_back( std::format( " > {} ", core::custom_rules.showed_name ), core::crack_with_rules{ core::custom_rules } );
+      .add_back( std::format( " > {} ", core::custom_rules.shown_name ), core::crack_with_rules{ core::custom_rules } );
     for ( const auto &rule : core::builtin_rules ) {
-        ui.add_back( std::format( " > {} ", rule.showed_name ), core::crack_with_rules{ rule } );
+        ui.add_back( std::format( " > {} ", rule.shown_name ), core::crack_with_rules{ rule } );
     }
     ui.add_back( "\n[ 恢复 ]\n" )
-      .add_back( std::format( " > {} ", core::custom_rules.showed_name ), core::restore_with_rules{ core::custom_rules } );
+      .add_back( std::format( " > {} ", core::custom_rules.shown_name ), core::restore_with_rules{ core::custom_rules } );
     for ( const auto &rule : core::builtin_rules ) {
-        ui.add_back( std::format( " > {} ", rule.showed_name ), core::restore_with_rules{ rule } );
+        ui.add_back( std::format( " > {} ", rule.shown_name ), core::restore_with_rules{ rule } );
     }
     ui.show().lock( true, true );
     std::print( " -> 清理资源.\n" );
