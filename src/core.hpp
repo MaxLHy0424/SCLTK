@@ -16,109 +16,109 @@ namespace core {
     inline constexpr auto config_file_name{ "config.ini" };
     inline constexpr auto default_thread_sleep_time{ 1s };
     inline const auto current_window_handle{ GetConsoleWindow() };
-    struct option_node final {
-        struct sub_key final {
-          private:
-            std::atomic_flag value_{};
-          public:
+    struct option_container final {
+        struct node final {
+            struct item final {
+              private:
+                std::atomic_flag value_{};
+              public:
+                const ansi_char *const self_name;
+                const ansi_char *const shown_name;
+                auto enable()
+                {
+                    value_.test_and_set();
+                }
+                auto disable()
+                {
+                    value_.clear();
+                }
+                auto get() const
+                {
+                    return value_.test();
+                }
+                operator bool() const
+                {
+                    return value_.test();
+                }
+                auto operator=( const item & ) -> item & = delete;
+                auto operator=( item && ) -> item &      = delete;
+                item( const ansi_char *const _self_name, const ansi_char *const _shown_name )
+                  : self_name{ _self_name }
+                  , shown_name{ _shown_name }
+                { }
+                item( const item &_src )
+                  : value_{ _src }
+                  , self_name{ _src.self_name }
+                  , shown_name{ _src.shown_name }
+                { }
+                item( item &&_src )
+                  : value_{ _src }
+                  , self_name{ _src.self_name }
+                  , shown_name{ _src.shown_name }
+                { }
+                ~item() = default;
+            };
             const ansi_char *const self_name;
             const ansi_char *const shown_name;
-            auto enable()
-            {
-                value_.test_and_set();
-            }
-            auto disable()
-            {
-                value_.clear();
-            }
-            auto get() const
-            {
-                return value_.test();
-            }
-            operator bool() const
-            {
-                return value_.test();
-            }
-            auto operator=( const sub_key & ) -> sub_key & = delete;
-            auto operator=( sub_key && ) -> sub_key &      = delete;
-            sub_key( const ansi_char *const _self_name, const ansi_char *const _shown_name )
-              : self_name{ _self_name }
-              , shown_name{ _shown_name }
-            { }
-            sub_key( const sub_key &_src )
-              : value_{ _src }
-              , self_name{ _src.self_name }
-              , shown_name{ _src.shown_name }
-            { }
-            sub_key( sub_key &&_src )
-              : value_{ _src }
-              , self_name{ _src.self_name }
-              , shown_name{ _src.shown_name }
-            { }
-            ~sub_key() = default;
-        };
-        struct main_key final {
-            const ansi_char *const self_name;
-            const ansi_char *const shown_name;
-            std::vector< sub_key > sub_keys;
+            std::vector< item > items;
             auto &operator[]( const ansi_std_string_view _self_name )
             {
-                for ( auto &key : sub_keys ) {
-                    if ( _self_name == key.self_name ) {
-                        return key;
+                for ( auto &item : items ) {
+                    if ( _self_name == item.self_name ) {
+                        return item;
                     }
                 }
                 std::abort();
             }
             const auto &operator[]( const ansi_std_string_view _self_name ) const
             {
-                for ( const auto &key : sub_keys ) {
-                    if ( _self_name == key.self_name ) {
-                        return key;
+                for ( const auto &item : items ) {
+                    if ( _self_name == item.self_name ) {
+                        return item;
                     }
                 }
                 std::abort();
             }
-            auto operator=( const main_key & ) -> main_key & = delete;
-            auto operator=( main_key && ) -> main_key &      = delete;
-            main_key( const ansi_char *const _self_name, const ansi_char *const _shown_name, std::vector< sub_key > _sub_keys )
+            auto operator=( const node & ) -> node & = delete;
+            auto operator=( node && ) -> node &      = delete;
+            node( const ansi_char *const _self_name, const ansi_char *const _shown_name, std::vector< item > _items )
               : self_name{ _self_name }
               , shown_name{ _shown_name }
-              , sub_keys{ std::move( _sub_keys ) }
+              , items{ std::move( _items ) }
             { }
-            main_key( const main_key & ) = default;
-            main_key( main_key && )      = default;
-            ~main_key()                  = default;
+            node( const node & ) = default;
+            node( node && )      = default;
+            ~node()              = default;
         };
-        std::vector< main_key > main_keys;
+        std::vector< node > nodes;
         auto &operator[]( const ansi_std_string_view _self_name )
         {
-            for ( auto &key : main_keys ) {
-                if ( _self_name == key.self_name ) {
-                    return key;
+            for ( auto &node : nodes ) {
+                if ( _self_name == node.self_name ) {
+                    return node;
                 }
             }
             std::abort();
         }
         const auto &operator[]( const ansi_std_string_view _self_name ) const
         {
-            for ( const auto &key : main_keys ) {
-                if ( _self_name == key.self_name ) {
-                    return key;
+            for ( const auto &node : nodes ) {
+                if ( _self_name == node.self_name ) {
+                    return node;
                 }
             }
             std::abort();
         }
-        auto operator=( const option_node & ) -> option_node & = delete;
-        auto operator=( option_node && ) -> option_node &      = delete;
-        option_node( std::vector< main_key > _main_keys )
-          : main_keys{ std::move( _main_keys ) }
+        auto operator=( const option_container & ) -> option_container & = delete;
+        auto operator=( option_container && ) -> option_container &      = delete;
+        option_container( std::vector< node > _nodes )
+          : nodes{ std::move( _nodes ) }
         { }
-        option_node( const option_node & ) = default;
-        option_node( option_node && )      = default;
-        ~option_node()                     = default;
+        option_container( const option_container & ) = default;
+        option_container( option_container && )      = default;
+        ~option_container()                          = default;
     };
-    inline option_node options{
+    inline option_container options{
       { { { "crack_restore",
             "破解/恢复",
             { { "hijack_execs", "劫持可执行文件" },
@@ -194,12 +194,12 @@ namespace core {
             if ( _is_reload ) {
                 return;
             }
-            for ( auto &main_key : options.main_keys ) {
-                for ( auto &sub_key : main_key.sub_keys ) {
-                    if ( _line == std::format( "{}.{} = {}", main_key.self_name, sub_key.self_name, true ) ) {
-                        sub_key.enable();
-                    } else if ( _line == std::format( "{}.{} = {}", main_key.self_name, sub_key.self_name, false ) ) {
-                        sub_key.disable();
+            for ( auto &node : options.nodes ) {
+                for ( auto &item : node.items ) {
+                    if ( _line == std::format( "{}.{} = {}", node.self_name, item.self_name, true ) ) {
+                        item.enable();
+                    } else if ( _line == std::format( "{}.{} = {}", node.self_name, item.self_name, false ) ) {
+                        item.disable();
                     }
                 }
             }
@@ -207,9 +207,9 @@ namespace core {
         virtual auto prepare_reload() -> void override final { }
         virtual auto sync( ansi_std_string &_out ) -> void override final
         {
-            for ( const auto &main_key : options.main_keys ) {
-                for ( const auto &sub_key : main_key.sub_keys ) {
-                    _out.append( std::format( "{}.{} = {}\n", main_key.self_name, sub_key.self_name, sub_key.get() ) );
+            for ( const auto &node : options.nodes ) {
+                for ( const auto &item : node.items ) {
+                    _out.append( std::format( "{}.{} = {}\n", node.self_name, item.self_name, item.get() ) );
                 }
             }
         }
@@ -540,22 +540,22 @@ namespace core {
         } };
         class option_setter final {
           private:
-            option_node::sub_key &sub_key_;
-            const bool sub_key_value_;
+            option_container::node::item &item_;
+            const bool item_value_;
           public:
             auto operator()( cpp_utils::console_ui::func_args )
             {
-                switch ( sub_key_value_ ) {
-                    case true : sub_key_.enable(); break;
-                    case false : sub_key_.disable(); break;
+                switch ( item_value_ ) {
+                    case true : item_.enable(); break;
+                    case false : item_.disable(); break;
                 }
                 return cpp_utils::console_ui::back;
             }
             auto operator=( const option_setter & ) -> option_setter & = delete;
             auto operator=( option_setter && ) -> option_setter &      = delete;
-            option_setter( option_node::sub_key &_sub_key, const bool _sub_key_value )
-              : sub_key_{ _sub_key }
-              , sub_key_value_{ _sub_key_value }
+            option_setter( option_container::node::item &_item, const bool _item_value )
+              : item_{ _item }
+              , item_value_{ _item_value }
             { }
             option_setter( const option_setter & ) = default;
             option_setter( option_setter && )      = default;
@@ -563,7 +563,7 @@ namespace core {
         };
         class option_shower final {
           private:
-            option_node::main_key &main_key_;
+            option_container::node &node_;
           public:
             auto operator()( cpp_utils::console_ui::func_args )
             {
@@ -571,20 +571,20 @@ namespace core {
                 std::print( " -> 准备用户界面.\n" );
                 ui.add_back( "                    [ 配  置 ]\n\n" )
                   .add_back(
-                    std::format( " < 折叠 {} ", main_key_.shown_name ), exit,
+                    std::format( " < 折叠 {} ", node_.shown_name ), exit,
                     cpp_utils::console_value::text_foreground_green | cpp_utils::console_value::text_foreground_intensity );
-                for ( auto &sub_key : main_key_.sub_keys ) {
-                    ui.add_back( std::format( "\n[ {} ]\n", sub_key.shown_name ) )
-                      .add_back( " > 启用 ", option_setter{ sub_key, true }, option_ctrl_color )
-                      .add_back( " > 禁用 ", option_setter{ sub_key, false }, option_ctrl_color );
+                for ( auto &item : node_.items ) {
+                    ui.add_back( std::format( "\n[ {} ]\n", item.shown_name ) )
+                      .add_back( " > 启用 ", option_setter{ item, true }, option_ctrl_color )
+                      .add_back( " > 禁用 ", option_setter{ item, false }, option_ctrl_color );
                 }
                 ui.show();
                 return cpp_utils::console_ui::back;
             }
             auto operator=( const option_shower & ) -> option_shower & = delete;
             auto operator=( option_shower && ) -> option_shower &      = delete;
-            option_shower( option_node::main_key &_main_key )
-              : main_key_{ _main_key }
+            option_shower( option_container::node &_node )
+              : node_{ _node }
             { }
             option_shower( const option_shower & ) = default;
             option_shower( option_shower && )      = default;
@@ -605,15 +605,15 @@ namespace core {
           .add_back( " > 同步配置 ", sync )
           .add_back( " > 打开配置文件 ", open_file )
           .add_back( "\n[ 选项 ]\n" );
-        for ( auto &key : options.main_keys ) {
-            ui.add_back( std::format( " > {} ", key.shown_name ), option_shower{ key } );
+        for ( auto &node : options.nodes ) {
+            ui.add_back( std::format( " > {} ", node.shown_name ), option_shower{ node } );
         }
         ui.show();
         return cpp_utils::console_ui::back;
     }
-    inline const auto &crack_restore_option_node{ options[ "crack_restore" ] };
-    inline const auto &is_hijack_execs{ crack_restore_option_node[ "hijack_execs" ] };
-    inline const auto &is_set_serv_startup_types{ crack_restore_option_node[ "set_serv_startup_types" ] };
+    inline const auto &crack_restore_option_container{ options[ "crack_restore" ] };
+    inline const auto &is_hijack_execs{ crack_restore_option_container[ "hijack_execs" ] };
+    inline const auto &is_set_serv_startup_types{ crack_restore_option_container[ "set_serv_startup_types" ] };
     class crack_with_rules final {
       public:
         const rule_node &rules_;
