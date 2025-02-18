@@ -22,7 +22,7 @@ namespace core {
             std::atomic_flag value_{};
           public:
             const ansi_char *const self_name;
-            const ansi_char *const showed_name;
+            const ansi_char *const shown_name;
             auto enable()
             {
                 value_.test_and_set();
@@ -41,25 +41,25 @@ namespace core {
             }
             auto operator=( const sub_key & ) -> sub_key & = delete;
             auto operator=( sub_key && ) -> sub_key &      = delete;
-            sub_key( const ansi_char *const _self_name, const ansi_char *const _showed_name )
+            sub_key( const ansi_char *const _self_name, const ansi_char *const _shown_name )
               : self_name{ _self_name }
-              , showed_name{ _showed_name }
+              , shown_name{ _shown_name }
             { }
             sub_key( const sub_key &_src )
               : value_{ _src }
               , self_name{ _src.self_name }
-              , showed_name{ _src.showed_name }
+              , shown_name{ _src.shown_name }
             { }
             sub_key( sub_key &&_src )
               : value_{ _src }
               , self_name{ _src.self_name }
-              , showed_name{ _src.showed_name }
+              , shown_name{ _src.shown_name }
             { }
             ~sub_key() = default;
         };
         struct main_key final {
             const ansi_char *const self_name;
-            const ansi_char *const showed_name;
+            const ansi_char *const shown_name;
             std::vector< sub_key > sub_keys;
             auto &operator[]( const ansi_std_string_view _self_name )
             {
@@ -81,9 +81,9 @@ namespace core {
             }
             auto operator=( const main_key & ) -> main_key & = delete;
             auto operator=( main_key && ) -> main_key &      = delete;
-            main_key( const ansi_char *const _self_name, const ansi_char *const _showed_name, std::vector< sub_key > _sub_keys )
+            main_key( const ansi_char *const _self_name, const ansi_char *const _shown_name, std::vector< sub_key > _sub_keys )
               : self_name{ _self_name }
-              , showed_name{ _showed_name }
+              , shown_name{ _shown_name }
               , sub_keys{ std::move( _sub_keys ) }
             { }
             main_key( const main_key & ) = default;
@@ -135,7 +135,7 @@ namespace core {
               { "disable_x_option_hot_reload", "(-) 禁用标 (*) 选项热重载" } } } } } };
     inline const auto &is_disable_x_option_hot_reload{ options[ "misc" ][ "disable_x_option_hot_reload" ] };
     struct rule_node final {
-        const ansi_char *const showed_name;
+        const ansi_char *const shown_name;
         std::deque< ansi_std_string > execs;
         std::deque< ansi_std_string > servs;
         auto empty() const
@@ -144,8 +144,8 @@ namespace core {
         }
         auto operator=( const rule_node & ) -> rule_node & = delete;
         auto operator=( rule_node && ) -> rule_node &      = delete;
-        rule_node( const ansi_char *const _showed_name, std::deque< ansi_std_string > _execs, std::deque< ansi_std_string > _servs )
-          : showed_name{ _showed_name }
+        rule_node( const ansi_char *const _shown_name, std::deque< ansi_std_string > _execs, std::deque< ansi_std_string > _servs )
+          : shown_name{ _shown_name }
           , execs{ std::move( _execs ) }
           , servs{ std::move( _servs ) }
         { }
@@ -571,10 +571,10 @@ namespace core {
                 std::print( " -> 准备用户界面.\n" );
                 ui.add_back( "                    [ 配  置 ]\n\n" )
                   .add_back(
-                    std::format( " < 折叠 {} ", main_key_.showed_name ), exit,
+                    std::format( " < 折叠 {} ", main_key_.shown_name ), exit,
                     cpp_utils::console_value::text_foreground_green | cpp_utils::console_value::text_foreground_intensity );
                 for ( auto &sub_key : main_key_.sub_keys ) {
-                    ui.add_back( std::format( "\n[ {} ]\n", sub_key.showed_name ) )
+                    ui.add_back( std::format( "\n[ {} ]\n", sub_key.shown_name ) )
                       .add_back( " > 启用 ", option_setter{ sub_key, true }, option_ctrl_color )
                       .add_back( " > 禁用 ", option_setter{ sub_key, false }, option_ctrl_color );
                 }
@@ -606,7 +606,7 @@ namespace core {
           .add_back( " > 打开配置文件 ", open_file )
           .add_back( "\n[ 选项 ]\n" );
         for ( auto &key : options.main_keys ) {
-            ui.add_back( std::format( " > {} ", key.showed_name ), option_shower{ key } );
+            ui.add_back( std::format( " > {} ", key.shown_name ), option_shower{ key } );
         }
         ui.show();
         return cpp_utils::console_ui::back;
