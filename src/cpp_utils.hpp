@@ -642,15 +642,17 @@ namespace cpp_utils {
         inline static constexpr auto exit{ true };
         struct func_args final {
             console_ui &parent_ui;
+            const size_type node_index;
             const DWORD mouse_button_state;
             const DWORD ctrl_key_state;
             const DWORD event_flag;
             auto operator=( const func_args & ) noexcept -> func_args & = default;
             auto operator=( func_args && ) noexcept -> func_args &      = default;
             func_args(
-              console_ui &_parent_ui,
+              console_ui &_parent_ui, const size_type _node_index,
               const MOUSE_EVENT_RECORD _mouse_event = MOUSE_EVENT_RECORD{ {}, console_value::mouse_button_left, {}, {} } ) noexcept
               : parent_ui{ _parent_ui }
+              , node_index{ _node_index }
               , mouse_button_state{ _mouse_event.dwButtonState }
               , ctrl_key_state{ _mouse_event.dwControlKeyState }
               , event_flag{ _mouse_event.dwEventFlags }
@@ -807,7 +809,9 @@ namespace cpp_utils {
         auto call_func_( const MOUSE_EVENT_RECORD &_mouse_event )
         {
             auto is_exit{ back };
-            for ( auto &line : lines_ ) {
+            auto size{ lines_.size() };
+            for ( size_type idx{ 0 }; idx < size; ++idx ) {
+                auto &line{ lines_[ idx ] };
                 if ( line != _mouse_event.dwMousePosition ) {
                     continue;
                 }
@@ -818,7 +822,7 @@ namespace cpp_utils {
                 line.set_attrs( line.default_attrs );
                 show_cursor_( FALSE );
                 edit_console_attrs_( console_attrs_::lock_all );
-                is_exit = line.func( func_args{ *this, _mouse_event } );
+                is_exit = line.func( func_args{ *this, idx, _mouse_event } );
                 show_cursor_( FALSE );
                 edit_console_attrs_( console_attrs_::lock_text );
                 init_pos_();
