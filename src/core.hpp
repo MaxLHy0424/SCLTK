@@ -541,21 +541,26 @@ namespace core {
         class option_setter final {
           private:
             option_container::node::item &item_;
-            const bool item_value_;
           public:
-            auto operator()( cpp_utils::console_ui::func_args )
+            auto operator()( cpp_utils::console_ui::func_args _args )
             {
-                switch ( item_value_ ) {
-                    case true : item_.enable(); break;
-                    case false : item_.disable(); break;
+                switch ( item_.get() ) {
+                    case true : {
+                        item_.disable();
+                        break;
+                    }
+                    case false : {
+                        item_.enable();
+                        break;
+                    }
                 }
+                _args.parent_ui.edit_text( _args.node_index, std::format( " > {}用 ", item_.get() ? "禁" : "启" ) );
                 return cpp_utils::console_ui::back;
             }
             auto operator=( const option_setter & ) -> option_setter & = delete;
             auto operator=( option_setter && ) -> option_setter &      = delete;
-            option_setter( option_container::node::item &_item, const bool _item_value )
+            option_setter( option_container::node::item &_item )
               : item_{ _item }
-              , item_value_{ _item_value }
             { }
             option_setter( const option_setter & ) = default;
             option_setter( option_setter && )      = default;
@@ -575,8 +580,7 @@ namespace core {
                     cpp_utils::console_value::text_foreground_green | cpp_utils::console_value::text_foreground_intensity );
                 for ( auto &item : node_.items ) {
                     ui.add_back( std::format( "\n[ {} ]\n", item.shown_name ) )
-                      .add_back( " > 启用 ", option_setter{ item, true }, option_ctrl_color )
-                      .add_back( " > 禁用 ", option_setter{ item, false }, option_ctrl_color );
+                      .add_back( std::format( " > {}用 ", item.get() ? "禁" : "启" ), option_setter{ item }, option_ctrl_color );
                 }
                 ui.show();
                 return cpp_utils::console_ui::back;
