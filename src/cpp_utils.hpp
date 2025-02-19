@@ -886,8 +886,28 @@ namespace cpp_utils {
               lines_.cbegin() + _index, _text, _func, _default_attrs, _func != nullptr ? _intensity_attrs : _default_attrs );
             return *this;
         }
+        auto &edit_text( const size_type _index, ansi_std_string_view _text )
+        {
+            lines_.at( _index ).text = _text;
+            return *this;
+        }
+        auto &edit_func( const size_type _index, callback_type _func )
+        {
+            lines_.at( _index ).func = std::move( _func );
+            return *this;
+        }
+        auto &edit_intensity_attrs( const size_type _index, const WORD _intensity_attrs )
+        {
+            lines_.at( _index ).intensity_attrs = _intensity_attrs;
+            return *this;
+        }
+        auto &edit_default_attrs( const size_type _index, const WORD _default_attrs )
+        {
+            lines_.at( _index ).default_attrs = _default_attrs;
+            return *this;
+        }
         auto &edit(
-          const size_type _index, ansi_std_string_view _text, callback_type _func = nullptr,
+          const size_type _index, const ansi_std_string_view _text, callback_type _func = nullptr,
           const WORD _intensity_attrs = console_value::text_foreground_green | console_value::text_foreground_blue,
           const WORD _default_attrs   = console_value::text_default )
         {
