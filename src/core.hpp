@@ -26,19 +26,19 @@ namespace core {
                 const ansi_char *const shown_name;
                 auto enable()
                 {
-                    value_.test_and_set();
+                    value_.test_and_set( std::memory_order_acq_rel );
                 }
                 auto disable()
                 {
-                    value_.clear();
+                    value_.clear( std::memory_order_release );
                 }
                 auto get() const
                 {
-                    return value_.test();
+                    return value_.test( std::memory_order_acquire );
                 }
                 operator bool() const
                 {
-                    return value_.test();
+                    return get();
                 }
                 auto operator=( const item & ) -> item & = delete;
                 auto operator=( item && ) -> item &      = delete;
