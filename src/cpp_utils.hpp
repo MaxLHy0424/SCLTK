@@ -4,8 +4,12 @@
 #endif
 #include <chrono>
 #include <concepts>
+#include <coroutine>
 #include <exception>
+#include <expected>
 #include <functional>
+#include <generator>
+#include <optional>
 #include <print>
 #include <queue>
 #include <string>
@@ -267,6 +271,311 @@ namespace cpp_utils {
         std::this_thread::yield();
         std::this_thread::sleep_for( _time );
     }
+    class coroutine_void final {
+      public:
+        struct promise_type final {
+            auto get_return_object()
+            {
+                return coroutine_void{ handle::from_promise( *this ) };
+            }
+            static auto initial_suspend() noexcept
+            {
+                return std::suspend_always{};
+            }
+            static auto final_suspend() noexcept
+            {
+                return std::suspend_always{};
+            }
+            static auto return_void() noexcept { }
+            [[noreturn]]
+            static auto unhandled_exception()
+            {
+                throw;
+            }
+            auto await_transform() -> void                               = delete;
+            auto operator=( const promise_type & ) -> promise_type &     = default;
+            auto operator=( promise_type && ) noexcept -> promise_type & = default;
+            promise_type()                                               = default;
+            promise_type( const promise_type & )                         = default;
+            promise_type( promise_type && ) noexcept                     = default;
+            ~promise_type()                                              = default;
+        };
+        using handle = std::coroutine_handle< promise_type >;
+        auto empty() const noexcept
+        {
+            return coroutine_handle_ == nullptr;
+        }
+        auto done() const noexcept
+        {
+            return coroutine_handle_.done();
+        }
+        auto address() const noexcept
+        {
+            return coroutine_handle_.address();
+        }
+        auto destroy() const
+        {
+            coroutine_handle_.destroy();
+        }
+        auto safe_destroy() noexcept
+        {
+            if ( !empty() ) {
+                destroy();
+                coroutine_handle_ = {};
+            }
+        }
+        auto reset( coroutine_void &&_src )
+        {
+            if ( this != &_src ) {
+                if ( !empty() ) {
+                    destroy();
+                }
+                coroutine_handle_      = _src.coroutine_handle_;
+                _src.coroutine_handle_ = {};
+            }
+        }
+        auto resume() const
+        {
+            coroutine_handle_.resume();
+        }
+        auto safe_resume() const noexcept
+        {
+            if ( !done() ) {
+                resume();
+            }
+        }
+        auto operator=( const coroutine_void & ) -> coroutine_void & = delete;
+        auto operator=( coroutine_void &&_src ) -> coroutine_void &
+        {
+            reset( std::move( _src ) );
+            return *this;
+        }
+        coroutine_void() = default;
+        coroutine_void( const handle _coroutine_handle )
+          : coroutine_handle_{ _coroutine_handle }
+        { }
+        coroutine_void( const coroutine_void & ) = delete;
+        coroutine_void( coroutine_void &&_src ) noexcept
+          : coroutine_handle_{ _src.coroutine_handle_ }
+        {
+            _src.coroutine_handle_ = {};
+        }
+        ~coroutine_void()
+        {
+            if ( !empty() ) {
+                coroutine_handle_.destroy();
+            }
+        }
+      private:
+        handle coroutine_handle_{};
+    };
+    template < std::movable _type_ >
+    class coroutine final {
+      public:
+        struct promise_type final {
+            std::optional< _type_ > current_value{ std::nullopt };
+            auto get_return_object()
+            {
+                return coroutine< _type_ >{ handle::from_promise( *this ) };
+            }
+            static auto initial_suspend() noexcept
+            {
+                return std::suspend_always{};
+            }
+            static auto final_suspend() noexcept
+            {
+                return std::suspend_always{};
+            }
+            auto yield_value( _type_ _value ) noexcept
+            {
+                current_value = std::move( _value );
+                return std::suspend_always{};
+            }
+            auto yield_value( std::nullopt_t ) noexcept
+            {
+                current_value = std::nullopt;
+                return std::suspend_always{};
+            }
+            auto return_value( _type_ _value ) noexcept
+            {
+                current_value = std::move( _value );
+            }
+            auto return_value( std::nullopt_t ) noexcept
+            {
+                current_value = std::nullopt;
+            }
+            [[noreturn]]
+            static auto unhandled_exception()
+            {
+                throw;
+            }
+            auto await_transform() -> void                               = delete;
+            auto operator=( const promise_type & ) -> promise_type &     = default;
+            auto operator=( promise_type && ) noexcept -> promise_type & = default;
+            promise_type()                                               = default;
+            promise_type( const promise_type & )                         = default;
+            promise_type( promise_type && ) noexcept                     = default;
+            ~promise_type()                                              = default;
+        };
+        using handle = std::coroutine_handle< promise_type >;
+        class iterator final {
+          private:
+            const handle coroutine_handle_;
+          public:
+            auto operator++() -> coroutine< _type_ >::iterator &
+            {
+                coroutine_handle_.resume();
+                return *this;
+            }
+            auto operator++( int ) -> coroutine< _type_ >::iterator
+            {
+                coroutine_handle_.resume();
+                return *this;
+            }
+            auto &operator*()
+            {
+                return coroutine_handle_.promise().current_value;
+            }
+            const auto &operator*() const
+            {
+                return coroutine_handle_.promise().current_value;
+            }
+            auto operator&() const
+            {
+                return &coroutine_handle_.promise().current_value;
+            }
+            auto operator==( std::default_sentinel_t ) const
+            {
+                return !coroutine_handle_ || coroutine_handle_.done();
+            }
+            auto operator=( const iterator & ) -> iterator &     = default;
+            auto operator=( iterator && ) noexcept -> iterator & = default;
+            iterator( const handle _coroutine_handle )
+              : coroutine_handle_{ _coroutine_handle }
+            { }
+            iterator( const iterator & )     = default;
+            iterator( iterator && ) noexcept = default;
+            ~iterator()                      = default;
+        };
+        auto empty() const noexcept
+        {
+            return coroutine_handle_ == nullptr;
+        }
+        auto done() const noexcept
+        {
+            return coroutine_handle_.done();
+        }
+        auto address() const noexcept
+        {
+            return coroutine_handle_.address();
+        }
+        auto destroy() const
+        {
+            coroutine_handle_.destroy();
+        }
+        auto safe_destroy() noexcept
+        {
+            if ( !empty() ) {
+                destroy();
+                coroutine_handle_ = {};
+            }
+        }
+        auto reset( coroutine< _type_ > &&_src )
+        {
+            if ( this != &_src ) {
+                if ( !empty() ) {
+                    destroy();
+                }
+                coroutine_handle_      = _src.coroutine_handle_;
+                _src.coroutine_handle_ = {};
+            }
+        }
+        auto resume() const
+        {
+            coroutine_handle_.resume();
+        }
+        auto safe_resume() const noexcept
+        {
+            if ( !done() ) {
+                resume();
+            }
+        }
+        auto copy_optional() const
+        {
+            return coroutine_handle_.promise().current_value;
+        }
+        auto resume_and_copy_optional() const
+        {
+            resume();
+            return coroutine_handle_.promise().current_value;
+        }
+        auto safe_resume_and_copy_optional() const noexcept
+        {
+            safe_resume();
+            return coroutine_handle_.promise().current_value;
+        }
+        auto &reference_optional() noexcept
+        {
+            return coroutine_handle_.promise().current_value;
+        }
+        auto &resume_and_reference_optional()
+        {
+            resume();
+            return coroutine_handle_.promise().current_value;
+        }
+        auto &safe_resume_and_reference_optional() noexcept
+        {
+            safe_resume();
+            return coroutine_handle_.promise().current_value;
+        }
+        auto &&move_optional() noexcept
+        {
+            return std::move( coroutine_handle_.promise().current_value );
+        }
+        auto &&resume_and_move_optional() noexcept
+        {
+            resume();
+            return std::move( coroutine_handle_.promise().current_value );
+        }
+        auto &&safe_resume_and_move_optional() noexcept
+        {
+            safe_resume();
+            return std::move( coroutine_handle_.promise().current_value );
+        }
+        auto begin()
+        {
+            if ( !empty() ) {
+                coroutine_handle_.resume();
+            }
+            return iterator{ coroutine_handle_ };
+        }
+        auto end() noexcept
+        {
+            return std::default_sentinel_t{};
+        }
+        auto operator=( const coroutine< _type_ > & ) -> coroutine< _type_ > & = delete;
+        auto operator=( coroutine< _type_ > &&_src ) noexcept -> coroutine< _type_ > &
+        {
+            reset( std::move( _src ) );
+            return *this;
+        }
+        coroutine() = default;
+        coroutine( const handle _coroutine_handle )
+          : coroutine_handle_{ _coroutine_handle }
+        { }
+        coroutine( const coroutine< _type_ > & ) = delete;
+        coroutine( coroutine< _type_ > &&_src ) noexcept
+          : coroutine_handle_{ _src.coroutine_handle_ }
+        {
+            _src.coroutine_handle_ = {};
+        }
+        ~coroutine()
+        {
+            safe_destroy();
+        }
+      private:
+        handle coroutine_handle_{};
+    };
     class thread_pool final {
       private:
         std::deque< std::jthread > threads_{};
