@@ -337,7 +337,10 @@ namespace core {
           public:
             auto operator()( cpp_utils::console_ui::func_args )
             {
-                std::print( " -> 执行操作系统命令.\n{}\n", ansi_std_string( CONSOLE_WIDTH, '-' ) );
+                std::print(
+                  "                   [ 工 具 箱 ]\n\n\n"
+                  " -> 执行操作系统命令.\n{}\n",
+                  ansi_std_string( CONSOLE_WIDTH, '-' ) );
                 std::system( cmd_.c_str() );
                 return cpp_utils::console_ui::back;
             }
