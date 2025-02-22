@@ -63,24 +63,6 @@ namespace cpp_utils {
           || std::same_as< std::decay_t< _type_ >, std::chrono::weeks > || std::same_as< std::decay_t< _type_ >, std::chrono::months >
           || std::same_as< std::decay_t< _type_ >, std::chrono::years > );
     };
-    template < typename _type_, typename... _args_ >
-        requires( std::same_as< _type_, _args_ > && ... )
-    inline auto make_unique_array( const std::size_t _capacity, _args_ &&..._args )
-    {
-        if ( _capacity < sizeof...( _args ) ) {
-            throw std::length_error{ "the capacity must be greater than or equal to the number of arguments" };
-        }
-        return std::unique_ptr< _type_[] >{ new _type_[ _capacity ]{ std::forward< _args_ >( _args )... } };
-    }
-    template < typename _type_, typename... _args_ >
-        requires( std::same_as< _type_, _args_ > && ... )
-    inline auto make_shared_array( const std::size_t _capacity, _args_ &&..._args )
-    {
-        if ( _capacity < sizeof...( _args ) ) {
-            throw std::length_error{ "the capacity must be greater than or equal to the number of arguments" };
-        }
-        return std::unique_ptr< _type_[] >{ new _type_[ _capacity ]{ std::forward< _args_ >( _args )... } };
-    }
     template < char_type _target_, char_type _source_ >
         requires convertible_char_type< _target_, _source_ >
     inline auto string_convert( const std_string< _source_ > &_str )
