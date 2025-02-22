@@ -17,8 +17,6 @@
 #include <thread>
 #include <type_traits>
 namespace cpp_utils {
-    using namespace std::chrono_literals;
-    using namespace std::string_literals;
     using io_buffer             = std::FILE;
     using size_type             = std::size_t;
     using nullptr_type          = std::nullptr_t;
@@ -110,6 +108,7 @@ namespace cpp_utils {
     template < pointer_type _type_ >
     inline auto ptr_to_string( const _type_ _ptr )
     {
+        using namespace std::string_literals;
         return _ptr == nullptr ? "nullptr"s : std::format( "0x{:x}", reinterpret_cast< std::uintptr_t >( _ptr ) );
     }
     template < typename... _args_ >
@@ -1038,6 +1037,7 @@ namespace cpp_utils {
         }
         static auto wait_mouse_event_( const bool _is_mouse_move = true ) noexcept
         {
+            using namespace std::chrono_literals;
             INPUT_RECORD record;
             DWORD reg;
             while ( true ) {
@@ -1227,6 +1227,7 @@ namespace cpp_utils {
         }
         auto &show()
         {
+            using namespace std::chrono_literals;
             show_cursor_( FALSE );
             edit_console_attrs_( console_attrs_::lock_text );
             init_pos_();
