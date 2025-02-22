@@ -382,17 +382,13 @@ namespace core {
         const auto &is_translucent{ options[ "window" ][ "translucent" ] };
         const auto &is_disable_close_ctrl{ options[ "window" ][ "disable_close_ctrl" ] };
         if ( is_disable_x_option_hot_reload ) {
-            SetLayeredWindowAttributes( current_window_handle, RGB( 0, 0, 0 ), is_translucent ? 230 : 255, LWA_ALPHA );
-            EnableMenuItem(
-              GetSystemMenu( current_window_handle, FALSE ), SC_CLOSE,
-              is_disable_close_ctrl ? MF_BYCOMMAND | MF_DISABLED | MF_GRAYED : MF_BYCOMMAND | MF_ENABLED );
+            cpp_utils::set_window_translucency( current_window_handle, is_translucent ? 230 : 255 );
+            cpp_utils::enable_window_close_ctrl( current_window_handle, !is_disable_close_ctrl );
             return;
         }
         while ( !_msg.stop_requested() ) {
-            SetLayeredWindowAttributes( current_window_handle, RGB( 0, 0, 0 ), is_translucent ? 230 : 255, LWA_ALPHA );
-            EnableMenuItem(
-              GetSystemMenu( current_window_handle, FALSE ), SC_CLOSE,
-              is_disable_close_ctrl ? MF_BYCOMMAND | MF_DISABLED | MF_GRAYED : MF_BYCOMMAND | MF_ENABLED );
+            cpp_utils::set_window_translucency( current_window_handle, is_translucent ? 230 : 255 );
+            cpp_utils::enable_window_close_ctrl( current_window_handle, !is_disable_close_ctrl );
             cpp_utils::perf_sleep( default_thread_sleep_time );
         }
     }
