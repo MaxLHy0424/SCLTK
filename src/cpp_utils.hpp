@@ -800,7 +800,7 @@ namespace cpp_utils {
           window_handle, GetCurrentThreadId(), GetWindowThreadProcessId( window_handle, nullptr ), _sleep_time,
           std::forward< _callee_ >( _condition_checker ), std::forward< _args_ >( _condition_checker_args )... );
     }
-    inline auto cancle_top_window( const HWND _window_handle )
+    inline auto cancel_top_window( const HWND _window_handle )
     {
         SetWindowPos( _window_handle, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
     }

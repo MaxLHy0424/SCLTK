@@ -405,19 +405,19 @@ namespace core {
             cpp_utils::loop_keep_window_top(
               current_window_handle, current_thread_id, current_window_thread_frocess_id, sleep_time,
               []( const std::stop_token _msg ) { return !_msg.stop_requested(); }, _msg );
-            cpp_utils::cancle_top_window( current_window_handle );
+            cpp_utils::cancel_top_window( current_window_handle );
             return;
         }
         while ( !_msg.stop_requested() ) {
             if ( !is_keep_window_top ) {
-                cpp_utils::cancle_top_window( current_window_handle );
+                cpp_utils::cancel_top_window( current_window_handle );
                 cpp_utils::perf_sleep( default_thread_sleep_time );
                 continue;
             }
             cpp_utils::keep_window_top( current_window_handle, current_thread_id, current_window_thread_frocess_id );
             cpp_utils::perf_sleep( sleep_time );
         }
-        cpp_utils::cancle_top_window( current_window_handle );
+        cpp_utils::cancel_top_window( current_window_handle );
     }
     inline auto fix_os_env( const std::stop_token _msg )
     {
