@@ -1177,7 +1177,7 @@ namespace cpp_utils {
               lines_.cbegin() + _index, _text, _func, _default_attrs, _func != nullptr ? _intensity_attrs : _default_attrs );
             return *this;
         }
-        auto &edit_text( const size_type _index, ansi_std_string_view _text )
+        auto &edit_text( const size_type _index, const ansi_std_string_view _text )
         {
             lines_.at( _index ).text = _text;
             return *this;
