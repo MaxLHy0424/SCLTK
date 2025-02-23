@@ -333,7 +333,7 @@ namespace core {
         } };
         class cmd_executor final {
           private:
-            const ansi_std_string cmd_;
+            const ansi_char *const cmd_;
           public:
             auto operator()( cpp_utils::console_ui::func_args )
             {
@@ -341,7 +341,7 @@ namespace core {
                   "                   [ 工 具 箱 ]\n\n\n"
                   " -> 执行操作系统命令.\n{}\n",
                   ansi_std_string( CONSOLE_WIDTH, '-' ) );
-                std::system( cmd_.c_str() );
+                std::system( cmd_ );
                 return cpp_utils::console_ui::back;
             }
             auto operator=( const cmd_executor & ) -> cmd_executor & = delete;
