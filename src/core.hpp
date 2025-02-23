@@ -514,12 +514,9 @@ namespace core {
                 config->sync( config_text );
             }
             std::ofstream config_file{ config_file_name, std::ios::out | std::ios::trunc };
-            config_file << std::format(
-              "# " INFO_FULL_NAME
-              "\n# [ 同步时间 ] UTC {}"
-              "\n# [ 同步版本 ] " INFO_VERSION "\n# [ 字符编码 ] " CHARSET_NAME "\n",
-              std::chrono::system_clock::now() )
-                        << config_text << std::flush;
+            config_file
+              << "# " INFO_FULL_NAME "\n# [ 同步版本 ] " INFO_VERSION "\n# [ 字符编码 ] " CHARSET_NAME "\n"
+              << config_text << std::flush;
             std::print( "\n ({}) 同步配置{}.\n\n", config_file.good() ? 'i' : '!', config_file.good() ? "成功" : "失败" );
             wait();
             return cpp_utils::console_ui::back;
