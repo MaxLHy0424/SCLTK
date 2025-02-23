@@ -177,7 +177,7 @@ namespace core {
         const ansi_char *const self_name;
         virtual auto load( const bool, ansi_std_string & ) -> void                 = 0;
         virtual auto prepare_reload() -> void                                      = 0;
-        virtual auto sync( ansi_std_string & ) -> void                             = 0;
+        virtual auto sync( std::ofstream & ) -> void                               = 0;
         virtual auto operator=( const basic_config_node & ) -> basic_config_node & = delete;
         virtual auto operator=( basic_config_node && ) -> basic_config_node &      = delete;
         basic_config_node( const ansi_char *const _self_name )
@@ -205,11 +205,11 @@ namespace core {
             }
         }
         virtual auto prepare_reload() -> void override final { }
-        virtual auto sync( ansi_std_string &_out ) -> void override final
+        virtual auto sync( std::ofstream &_out ) -> void override final
         {
             for ( const auto &node : options.nodes ) {
                 for ( const auto &item : node.items ) {
-                    _out.append( std::format( "{}.{} = {}\n", node.self_name, item.self_name, item.get() ) );
+                    _out << std::format( "{}.{} = {}\n", node.self_name, item.self_name, item.get() );
                 }
             }
         }
@@ -232,10 +232,10 @@ namespace core {
         {
             custom_rules.execs.clear();
         }
-        virtual auto sync( ansi_std_string &_out ) -> void override final
+        virtual auto sync( std::ofstream &_out ) -> void override final
         {
             for ( const auto &exec : custom_rules.execs ) {
-                _out.append( exec.c_str() ).push_back( '\n' );
+                _out << exec << '\n';
             }
         }
         virtual auto operator=( const custom_rules_execs_op & ) -> custom_rules_execs_op & = delete;
@@ -257,10 +257,10 @@ namespace core {
         {
             custom_rules.servs.clear();
         }
-        virtual auto sync( ansi_std_string &_out ) -> void override final
+        virtual auto sync( std::ofstream &_out ) -> void override final
         {
             for ( const auto &serv : custom_rules.servs ) {
-                _out.append( serv.c_str() ).push_back( '\n' );
+                _out << serv << '\n';
             }
         }
         virtual auto operator=( const custom_rules_servs_op & ) -> custom_rules_servs_op & = delete;
@@ -508,16 +508,15 @@ namespace core {
             std::print( "                    [ 配  置 ]\n\n\n" );
             load_config( true );
             std::print( " -> 保存更改.\n" );
-            ansi_std_string config_text{};
-            for ( auto &config : configs ) {
-                config_text.append( std::format( "[ {} ]\n", config->self_name ) );
-                config->sync( config_text );
-            }
             std::ofstream config_file{ config_file_name, std::ios::out | std::ios::trunc };
-            config_file
-              << "# " INFO_FULL_NAME "\n# [ 同步版本 ] " INFO_VERSION "\n# [ 字符编码 ] " CHARSET_NAME "\n"
-              << config_text << std::flush;
-            std::print( "\n ({}) 同步配置{}.\n\n", config_file.good() ? 'i' : '!', config_file.good() ? "成功" : "失败" );
+            config_file << "# " INFO_FULL_NAME "\n# [ 同步版本 ] " INFO_VERSION "\n# [ 字符编码 ] " CHARSET_NAME "\n";
+            for ( auto &config : configs ) {
+                config_file << std::format( "[ {} ]\n", config->self_name );
+                config->sync( config_file );
+            }
+            config_file << std::flush;
+            const auto is_good{ config_file.good() };
+            std::print( "\n ({}) 同步配置{}.\n\n", is_good ? 'i' : '!', is_good ? "成功" : "失败" );
             wait();
             return cpp_utils::console_ui::back;
         } };
