@@ -533,7 +533,7 @@ namespace core {
             }
             std::print(
               "                    [ 配  置 ]\n\n\n"
-              " (i) 无法读取配置文件.\n\n" );
+              " (!) 无法打开配置文件.\n\n" );
             wait();
             return cpp_utils::console_ui::back;
         } };
