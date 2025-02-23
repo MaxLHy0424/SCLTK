@@ -1059,9 +1059,9 @@ namespace cpp_utils {
         }
         static auto cls_()
         {
-            auto size{ get_console_size_() };
+            auto [ width, height ]{ get_console_size_() };
             set_cursor_( COORD{ 0, 0 } );
-            std::print( "{}", ansi_std_string( static_cast< size_type >( size.X ) * static_cast< size_type >( size.Y ), ' ' ) );
+            std::print( "{}", ansi_std_string( static_cast< size_type >( width ) * static_cast< size_type >( height ), ' ' ) );
             set_cursor_( COORD{ 0, 0 } );
         }
         static auto write_( const ansi_std_string_view _text, const bool _is_endl = false )
