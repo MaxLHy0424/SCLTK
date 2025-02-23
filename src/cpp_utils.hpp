@@ -928,8 +928,9 @@ namespace cpp_utils {
     };
     class console_ui final {
       public:
-        inline static constexpr auto back{ false };
-        inline static constexpr auto exit{ true };
+        using func_return_type = bool;
+        inline static constexpr func_return_type back{ false };
+        inline static constexpr func_return_type exit{ true };
         struct func_args final {
             console_ui &parent_ui;
             const size_type node_index;
@@ -951,7 +952,7 @@ namespace cpp_utils {
             func_args( func_args && ) noexcept      = default;
             ~func_args() noexcept                   = default;
         };
-        using callback_type = std::function< bool( func_args ) >;
+        using callback_type = std::function< func_return_type( func_args ) >;
       private:
         enum class console_attrs_ { normal, lock_text, lock_all };
         struct line_node_ final {
