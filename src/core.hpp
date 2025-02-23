@@ -128,7 +128,7 @@ namespace core {
             "窗口显示",
             { { "keep_window_top", "(*) 置顶窗口" },
               { "disable_close_ctrl", "(*) 禁用关闭控件" },
-              { "translucent", "(*) 半透明化" } } },
+              { "translucent", "(*) 半透明" } } },
           { "misc",
             "杂项",
             { { "quick_exit_and_relaunch", "(-) 快速退出与重启" },
