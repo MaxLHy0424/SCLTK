@@ -25,7 +25,7 @@ auto main() -> int
     if ( is_enable_quick_exit_and_relaunch ) {
         threads.detach_all();
     }
-    std::print( " -> 准备用户界面.\n" );
+    std::print( " -> 初始化 UI.\n" );
     ui.add_back( "                    [ 主  页 ]\n\n" )
       .add_back(
         " < 退出 ", core::exit, cpp_utils::console_value::text_foreground_red | cpp_utils::console_value::text_foreground_intensity );
