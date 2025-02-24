@@ -300,7 +300,7 @@ namespace core {
             return cpp_utils::console_ui::back;
         } };
         cpp_utils::console_ui ui;
-        std::print( " -> 准备用户界面.\n" );
+        std::print( " -> 初始化 UI.\n" );
         ui.add_back( "                    [ 信  息 ]\n\n" )
           .add_back( " < 返回 ", exit, cpp_utils::console_value::text_foreground_green | cpp_utils::console_value::text_foreground_intensity )
           .add_back( "\n[ 名称 ]\n\n " INFO_FULL_NAME " \n\n[ 版本 ]\n\n " INFO_VERSION " " )
@@ -315,7 +315,7 @@ namespace core {
     }
     inline auto toolkit( cpp_utils::console_ui::func_args )
     {
-        std::print( " -> 准备用户界面.\n" );
+        std::print( " -> 初始化 UI.\n" );
         auto launch_cmd{ []( cpp_utils::console_ui::func_args _args ) static
         {
             cpp_utils::set_console_title( INFO_SHORT_NAME " - 命令提示符" );
@@ -366,7 +366,7 @@ namespace core {
            R"(C:\Windows\System32\reg.exe delete "HKLM\SOFTWARE\Policies\Microsoft\Edge" /f /v AllowSurfGame)"                                        }
         };
         cpp_utils::console_ui ui;
-        std::print( " -> 准备用户界面.\n" );
+        std::print( " -> 初始化 UI.\n" );
         ui.add_back( "                   [ 工 具 箱 ]\n\n" )
           .add_back( " < 返回 ", exit, cpp_utils::console_value::text_foreground_green | cpp_utils::console_value::text_foreground_intensity )
           .add_back( " > 命令提示符 ", launch_cmd )
@@ -568,7 +568,7 @@ namespace core {
             auto operator()( cpp_utils::console_ui::func_args )
             {
                 cpp_utils::console_ui ui;
-                std::print( " -> 准备用户界面.\n" );
+                std::print( " -> 初始化 UI.\n" );
                 ui.add_back( "                    [ 配  置 ]\n\n" )
                   .add_back(
                     std::format( " < 折叠 {} ", node_.shown_name ), exit,
@@ -590,7 +590,7 @@ namespace core {
             ~option_shower()                       = default;
         };
         cpp_utils::console_ui ui;
-        std::print( " -> 准备用户界面.\n" );
+        std::print( " -> 初始化 UI.\n" );
         ui
           .add_back( std::format(
             "                    [ 配  置 ]\n\n\n"
