@@ -20,7 +20,7 @@ namespace core {
         struct node final {
             struct item final {
               private:
-                std::atomic_flag value_{};
+                std::atomic_flag value_{ ATOMIC_FLAG_INIT };
               public:
                 const ansi_char *const self_name;
                 const ansi_char *const shown_name;
