@@ -147,8 +147,7 @@ namespace cpp_utils {
     template < typename... _args_ >
     inline auto &utf8_format_to( utf8_std_string &_str, const utf8_std_string_view _fmt, _args_ &&..._args )
     {
-        auto tmp{ utf8_format( _fmt, std::forward< _args_ >( _args )... ) };
-        _str.swap( tmp );
+        _str = utf8_format( _fmt, std::forward< _args_ >( _args )... );
         return _str;
     }
     template < typename... _args_ >
