@@ -602,7 +602,7 @@ namespace core {
           .add_back( " > 打开配置文件 ", open_file )
           .add_back( "\n[ 选项 ]\n" );
         for ( auto &node : options.nodes ) {
-            ui.add_back( std::format( " > {} ", node.shown_name ), option_shower{ node } );
+            ui.add_back( std::format( " > {} ", node.shown_name ), option_shower{ node }, option_ctrl_color );
         }
         ui.show();
         return cpp_utils::console_ui::back;
