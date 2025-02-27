@@ -18,10 +18,10 @@ auto main() -> int
         cpp_utils::relaunch_as_admin();
     }
     core::load_config( false );
+    const auto &is_enable_quick_exit_and_relaunch{ core::options[ "misc" ][ "quick_exit_and_relaunch" ] };
     std::print( " -> 创建线程.\n" );
     cpp_utils::thread_pool threads;
     threads.add( core::keep_window_top ).add( core::set_console_attrs ).add( core::fix_os_env );
-    const auto &is_enable_quick_exit_and_relaunch{ core::options[ "misc" ][ "quick_exit_and_relaunch" ] };
     if ( is_enable_quick_exit_and_relaunch ) {
         threads.detach_all();
     }
