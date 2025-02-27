@@ -607,9 +607,9 @@ namespace core {
         ui.show();
         return cpp_utils::console_ui::back;
     }
-    inline const auto &crack_restore_option_container{ options[ "crack_restore" ] };
-    inline const auto &is_hijack_execs{ crack_restore_option_container[ "hijack_execs" ] };
-    inline const auto &is_set_serv_startup_types{ crack_restore_option_container[ "set_serv_startup_types" ] };
+    inline const auto &option_crack_restore{ options[ "crack_restore" ] };
+    inline const auto &is_hijack_execs{ option_crack_restore[ "hijack_execs" ] };
+    inline const auto &is_set_serv_startup_types{ option_crack_restore[ "set_serv_startup_types" ] };
     class crack_with_rules final {
       public:
         const rule_node &rules_;
