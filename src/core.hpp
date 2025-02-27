@@ -276,6 +276,7 @@ namespace core {
       basic_config_node_smart_ptr{ new custom_rules_servs_op } };
     inline auto wait()
     {
+        std::print( "\n\n" );
         for ( auto i{ 3s }; i > 0s; --i ) {
             std::print( " {} 后返回.\r", i );
             std::this_thread::sleep_for( 1s );
@@ -514,7 +515,7 @@ namespace core {
             }
             config_file << std::flush;
             const auto is_good{ config_file.good() };
-            std::print( "\n ({}) 同步配置{}.\n\n", is_good ? 'i' : '!', is_good ? "成功" : "失败" );
+            std::print( "\n ({}) 同步配置{}.", is_good ? 'i' : '!', is_good ? "成功" : "失败" );
             wait();
             return cpp_utils::console_ui::back;
         } };
@@ -527,7 +528,7 @@ namespace core {
             }
             std::print(
               "                    [ 配  置 ]\n\n\n"
-              " (!) 无法打开配置文件.\n\n" );
+              " (!) 无法打开配置文件." );
             wait();
             return cpp_utils::console_ui::back;
         } };
@@ -618,7 +619,7 @@ namespace core {
         {
             std::print( "                    [ 破  解 ]\n\n\n" );
             if ( rules_.empty() ) {
-                std::print( " (i) 规则为空.\n\n" );
+                std::print( " (i) 规则为空." );
                 wait();
                 return cpp_utils::console_ui::back;
             }
@@ -662,7 +663,7 @@ namespace core {
         {
             std::print( "                    [ 恢  复 ]\n\n\n" );
             if ( rules_.empty() ) {
-                std::print( " (i) 规则为空.\n\n" );
+                std::print( " (i) 规则为空." );
                 wait();
                 return cpp_utils::console_ui::back;
             }
