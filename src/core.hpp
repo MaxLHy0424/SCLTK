@@ -306,7 +306,7 @@ namespace core {
             " " INFO_REPO_URL " ", visit_repo_webpage,
             cpp_utils::console_value::text_default | cpp_utils::console_value::text_foreground_intensity
               | cpp_utils::console_value::text_lvb_underscore )
-          .add_back( "\n[ 许可证 ]\n\n " INFO_LICENSE " \n\n " INFO_COPYRIGHT )
+          .add_back( "\n[ 许可证 & 版权 ]\n\n " INFO_LICENSE " \n\n " INFO_COPYRIGHT )
           .show();
         return cpp_utils::console_ui::back;
     }
