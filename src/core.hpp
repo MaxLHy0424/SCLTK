@@ -153,9 +153,7 @@ namespace core {
         rule_node( rule_node && )      = default;
         ~rule_node()                   = default;
     };
-    inline auto custom_rules{
-      rule_node{ "自定义", {}, {} }
-    };
+    inline rule_node custom_rules{ "自定义", {}, {} };
     inline const rule_node builtin_rules[]{
       {"极域电子教室",
        { "StudentMain.exe", "DispcapHelper.exe", "VRCwPlayer.exe", "InstHelpApp.exe", "InstHelpApp64.exe", "TDOvrSet.exe",
