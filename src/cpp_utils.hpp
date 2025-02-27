@@ -263,12 +263,6 @@ namespace cpp_utils {
     using constant_utf16_string = constant_string< utf16_char, _capacity_ >;
     template < size_type _capacity_ >
     using constant_utf32_string = constant_string< utf32_char, _capacity_ >;
-    template < typename _chrono_type_ >
-    inline auto perf_sleep( const _chrono_type_ _time )
-    {
-        std::this_thread::yield();
-        std::this_thread::sleep_for( _time );
-    }
     class coroutine_void final {
       public:
         struct promise_type final {
@@ -787,7 +781,7 @@ namespace cpp_utils {
             SetForegroundWindow( _window_handle );
             AttachThreadInput( _thread_id, _window_thread_process_id, FALSE );
             SetWindowPos( _window_handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
-            perf_sleep( _sleep_time );
+            std::this_thread::sleep_for( _sleep_time );
         }
     }
     template < std_chrono_type _chrono_type_, callable_type _callee_, typename... _args_ >
@@ -1041,7 +1035,7 @@ namespace cpp_utils {
             INPUT_RECORD record;
             DWORD reg;
             while ( true ) {
-                perf_sleep( 10ms );
+                std::this_thread::sleep_for( 10ms );
                 ReadConsoleInputW( GetStdHandle( STD_INPUT_HANDLE ), &record, 1, &reg );
                 if ( record.EventType == MOUSE_EVENT
                      && ( _is_mouse_move || record.Event.MouseEvent.dwEventFlags != console_value::mouse_move ) )
@@ -1244,7 +1238,7 @@ namespace cpp_utils {
                         break;
                     }
                 }
-                perf_sleep( 10ms );
+                std::this_thread::sleep_for( 10ms );
             }
             cls_();
             return *this;

@@ -280,7 +280,7 @@ namespace core {
     {
         for ( auto i{ 3s }; i > 0s; --i ) {
             std::print( " {} 后返回.\r", i );
-            cpp_utils::perf_sleep( 1s );
+            std::this_thread::sleep_for( 1s );
         }
     }
     inline auto exit( cpp_utils::console_ui::func_args )
@@ -389,7 +389,7 @@ namespace core {
         while ( !_msg.stop_requested() ) {
             cpp_utils::set_window_translucency( current_window_handle, is_translucent ? 230 : 255 );
             cpp_utils::enable_window_close_ctrl( current_window_handle, !is_disable_close_ctrl );
-            cpp_utils::perf_sleep( default_thread_sleep_time );
+            std::this_thread::sleep_for( default_thread_sleep_time );
         }
     }
     inline auto keep_window_top( const std::stop_token _msg )
@@ -411,11 +411,11 @@ namespace core {
         while ( !_msg.stop_requested() ) {
             if ( !is_keep_window_top ) {
                 cpp_utils::cancel_top_window( current_window_handle );
-                cpp_utils::perf_sleep( default_thread_sleep_time );
+                std::this_thread::sleep_for( default_thread_sleep_time );
                 continue;
             }
             cpp_utils::keep_window_top( current_window_handle, current_thread_id, current_window_thread_frocess_id );
-            cpp_utils::perf_sleep( sleep_time );
+            std::this_thread::sleep_for( sleep_time );
         }
         cpp_utils::cancel_top_window( current_window_handle );
     }
@@ -441,7 +441,7 @@ namespace core {
                   HKEY_LOCAL_MACHINE,
                   std::format( R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{})", exec ).c_str() );
             }
-            cpp_utils::perf_sleep( 1s );
+            std::this_thread::sleep_for( 1s );
         } };
         if ( is_disable_x_option_hot_reload ) {
             while ( !_msg.stop_requested() ) {
@@ -451,7 +451,7 @@ namespace core {
         }
         while ( !_msg.stop_requested() ) {
             if ( !is_fix_os_env ) {
-                cpp_utils::perf_sleep( default_thread_sleep_time );
+                std::this_thread::sleep_for( default_thread_sleep_time );
                 continue;
             }
             core_op();
