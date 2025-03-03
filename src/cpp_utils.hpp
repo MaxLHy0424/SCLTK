@@ -826,10 +826,10 @@ namespace cpp_utils {
     {
         SetConsoleTitleW( _title.data() );
     }
-    inline auto set_console_charset( const UINT _charset )
+    inline auto set_console_charset( const UINT _charset_id )
     {
-        SetConsoleOutputCP( _charset );
-        SetConsoleCP( _charset );
+        SetConsoleOutputCP( _charset_id );
+        SetConsoleCP( _charset_id );
     }
     inline auto set_console_size( const SHORT _width, const SHORT _height )
     {
@@ -1054,12 +1054,15 @@ namespace cpp_utils {
         {
             auto [ width, height ]{ get_console_size_() };
             set_cursor_( COORD{ 0, 0 } );
-            std::print( "{}", ansi_std_string( static_cast< size_type >( width ) * static_cast< size_type >( height ), ' ' ) );
+            std::print( "{}", ansi_std_string( static_cast< unsigned int >( width ) * static_cast< unsigned int >( height ), ' ' ) );
             set_cursor_( COORD{ 0, 0 } );
         }
         static auto write_( const ansi_std_string_view _text, const bool _is_endl = false )
         {
-            std::print( "{}{}", _text, _is_endl ? '\n' : '\0' );
+            std::print( "{}", _text );
+            if ( _is_endl ) {
+                std::print( "\n" );
+            }
         }
         static auto rewrite_( const COORD _cursor_position, const ansi_std_string_view _text )
         {
