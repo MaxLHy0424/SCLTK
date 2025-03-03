@@ -5,7 +5,6 @@
 #define CONSOLE_WIDTH  50
 #define CONSOLE_HEIGHT 25
 #define CHARSET_ID     54936
-#define CHARSET_NAME   "GB18030"
 namespace core {
     using namespace std::chrono_literals;
     using namespace std::string_view_literals;
@@ -271,7 +270,7 @@ namespace core {
         virtual ~custom_rules_servs_op()                       = default;
     };
     using basic_config_node_smart_ptr = std::unique_ptr< basic_config_node >;
-    inline basic_config_node_smart_ptr configs[]{
+    inline basic_config_node_smart_ptr config_nodes[]{
       basic_config_node_smart_ptr{ new option_op }, basic_config_node_smart_ptr{ new custom_rules_execs_op },
       basic_config_node_smart_ptr{ new custom_rules_servs_op } };
     inline auto wait()
@@ -465,8 +464,8 @@ namespace core {
         }
         if ( _is_reload ) {
             std::print( " -> 准备配置重载.\n" );
-            for ( auto &config : configs ) {
-                config->prepare_reload();
+            for ( auto &config_node : config_nodes ) {
+                config_node->prepare_reload();
             }
         }
         std::print( " -> 加载配置文件.\n" );
@@ -485,9 +484,9 @@ namespace core {
                  && line_view.substr( line_view.size() - sizeof( " ]" ) + 1, line_view.size() ) == " ]" )
             {
                 line_view = line_view.substr( sizeof( "[ " ) - 1, line_view.size() - sizeof( " ]" ) - 1 );
-                for ( auto &config : configs ) {
-                    if ( line_view == config->self_name ) {
-                        node_ptr = config.get();
+                for ( auto &config_node : config_nodes ) {
+                    if ( line_view == config_node->self_name ) {
+                        node_ptr = config_node.get();
                         break;
                     }
                     node_ptr = nullptr;
@@ -507,14 +506,14 @@ namespace core {
             std::print( "                    [ 配  置 ]\n\n\n" );
             load_config( true );
             std::print( " -> 保存更改.\n" );
-            std::ofstream config_file{ config_file_name, std::ios::out | std::ios::trunc };
-            config_file << "# " INFO_FULL_NAME "\n# [ 同步版本 ] " INFO_VERSION "\n# [ 字符编码 ] " CHARSET_NAME "\n";
-            for ( auto &config : configs ) {
-                config_file << std::format( "[ {} ]\n", config->self_name );
-                config->sync( config_file );
+            std::ofstream config_file_stream{ config_file_name, std::ios::out | std::ios::trunc };
+            config_file_stream << "# " INFO_FULL_NAME " (" INFO_VERSION ")\n";
+            for ( auto &config_node : config_nodes ) {
+                config_file_stream << std::format( "[ {} ]\n", config_node->self_name );
+                config_node->sync( config_file_stream );
             }
-            config_file << std::flush;
-            const auto is_good{ config_file.good() };
+            config_file_stream << std::flush;
+            const auto is_good{ config_file_stream.good() };
             std::print( "\n ({}) 同步配置{}.", is_good ? 'i' : '!', is_good ? "成功" : "失败" );
             wait();
             return cpp_utils::console_ui::back;
