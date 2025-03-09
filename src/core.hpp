@@ -9,14 +9,14 @@ namespace core {
     using ansi_char            = cpp_utils::ansi_char;
     using ansi_std_string      = cpp_utils::ansi_std_string;
     using ansi_std_string_view = cpp_utils::ansi_std_string_view;
-    inline constexpr auto config_file_name{ "config.ini" };
-    inline constexpr auto default_thread_sleep_time{ 1s };
-    inline const auto window_handle{ GetConsoleWindow() };
-    inline const auto std_input_handle{ GetStdHandle( STD_INPUT_HANDLE ) };
-    inline const auto std_output_handle{ GetStdHandle( STD_OUTPUT_HANDLE ) };
     inline constexpr SHORT console_width{ 50 };
     inline constexpr SHORT console_height{ 25 };
     inline constexpr UINT charset_id{ 54936 };
+    inline const auto window_handle{ GetConsoleWindow() };
+    inline const auto std_input_handle{ GetStdHandle( STD_INPUT_HANDLE ) };
+    inline const auto std_output_handle{ GetStdHandle( STD_OUTPUT_HANDLE ) };
+    inline constexpr auto config_file_name{ "config.ini" };
+    inline constexpr auto default_thread_sleep_time{ 1s };
     struct option_container final {
         struct node final {
             struct item final {
