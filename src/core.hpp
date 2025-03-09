@@ -126,11 +126,11 @@ namespace core {
           { "window",
             "窗口显示",
             { { "keep_window_top", "* 置顶窗口" }, { "disable_close_ctrl", "* 禁用关闭控件" }, { "translucent", "* 半透明" } } },
-          { "misc",
-            "杂项",
+          { "perf",
+            "性能",
             { { "quick_exit_and_relaunch", "** 快速退出与重启" },
               { "disable_x_option_hot_reload", "** 禁用标 * 选项热重载" } } } } } };
-    inline const auto &is_disable_x_option_hot_reload{ options[ "misc" ][ "disable_x_option_hot_reload" ] };
+    inline const auto &is_disable_x_option_hot_reload{ options[ "perf" ][ "disable_x_option_hot_reload" ] };
     struct rule_node final {
         const ansi_char *const shown_name;
         std::deque< ansi_std_string > execs;
