@@ -11,7 +11,9 @@ namespace core {
     using ansi_std_string_view = cpp_utils::ansi_std_string_view;
     inline constexpr auto config_file_name{ "config.ini" };
     inline constexpr auto default_thread_sleep_time{ 1s };
-    inline const auto current_window_handle{ GetConsoleWindow() };
+    inline const auto window_handle{ GetConsoleWindow() };
+    inline const auto std_input_handle{ GetStdHandle( STD_INPUT_HANDLE ) };
+    inline const auto std_output_handle{ GetStdHandle( STD_OUTPUT_HANDLE ) };
     inline constexpr SHORT default_console_width{ 50 };
     inline constexpr SHORT default_console_height{ 25 };
     inline constexpr UINT charset_id{ 54936 };
@@ -296,7 +298,7 @@ namespace core {
             ShellExecuteA( nullptr, "open", INFO_REPO_URL, nullptr, nullptr, SW_SHOWNORMAL );
             return cpp_utils::console_ui::back;
         } };
-        cpp_utils::console_ui ui;
+        cpp_utils::console_ui ui{ std_input_handle, std_output_handle };
         ui.add_back( "                    [ 信  息 ]\n\n" )
           .add_back( " < 返回 ", exit, cpp_utils::console_value::text_foreground_green | cpp_utils::console_value::text_foreground_intensity )
           .add_back(
@@ -315,16 +317,16 @@ namespace core {
         auto launch_cmd{ []( cpp_utils::console_ui::func_args _args ) static
         {
             cpp_utils::set_console_title( INFO_SHORT_NAME " - 命令提示符" );
-            cpp_utils::set_console_size( 120, 30 );
-            cpp_utils::fix_window_size( current_window_handle, false );
-            cpp_utils::enable_window_maximize_ctrl( current_window_handle, true );
+            cpp_utils::set_console_size( window_handle, std_output_handle, 120, 30 );
+            cpp_utils::fix_window_size( window_handle, false );
+            cpp_utils::enable_window_maximize_ctrl( window_handle, true );
             _args.parent_ui.lock( false, false );
-            SetConsoleScreenBufferSize( GetStdHandle( STD_OUTPUT_HANDLE ), { 127, SHRT_MAX - 1 } );
+            SetConsoleScreenBufferSize( std_output_handle, { 127, SHRT_MAX - 1 } );
             std::system( R"(C:\Windows\System32\cmd.exe)" );
             cpp_utils::set_console_title( INFO_SHORT_NAME );
-            cpp_utils::set_console_size( default_console_width, default_console_height );
-            cpp_utils::fix_window_size( current_window_handle, true );
-            cpp_utils::enable_window_maximize_ctrl( current_window_handle, false );
+            cpp_utils::set_console_size( window_handle, std_output_handle, default_console_width, default_console_height );
+            cpp_utils::fix_window_size( window_handle, true );
+            cpp_utils::enable_window_maximize_ctrl( window_handle, false );
             return cpp_utils::console_ui::back;
         } };
         class cmd_executor final {
@@ -361,7 +363,7 @@ namespace core {
           {"恢复 Microsoft Edge 离线游戏",
            R"(C:\Windows\System32\reg.exe delete "HKLM\SOFTWARE\Policies\Microsoft\Edge" /f /v AllowSurfGame)"                                        }
         };
-        cpp_utils::console_ui ui;
+        cpp_utils::console_ui ui{ std_input_handle, std_output_handle };
         ui.add_back( "                   [ 工 具 箱 ]\n\n" )
           .add_back( " < 返回 ", exit, cpp_utils::console_value::text_foreground_green | cpp_utils::console_value::text_foreground_intensity )
           .add_back( " > 命令提示符 ", launch_cmd )
@@ -377,13 +379,13 @@ namespace core {
         const auto &is_translucent{ options[ "window" ][ "translucent" ] };
         const auto &is_disable_close_ctrl{ options[ "window" ][ "disable_close_ctrl" ] };
         if ( is_disable_x_option_hot_reload ) {
-            cpp_utils::set_window_translucency( current_window_handle, is_translucent ? 230 : 255 );
-            cpp_utils::enable_window_close_ctrl( current_window_handle, !is_disable_close_ctrl );
+            cpp_utils::set_window_translucency( window_handle, is_translucent ? 230 : 255 );
+            cpp_utils::enable_window_close_ctrl( window_handle, !is_disable_close_ctrl );
             return;
         }
         while ( !_msg.stop_requested() ) {
-            cpp_utils::set_window_translucency( current_window_handle, is_translucent ? 230 : 255 );
-            cpp_utils::enable_window_close_ctrl( current_window_handle, !is_disable_close_ctrl );
+            cpp_utils::set_window_translucency( window_handle, is_translucent ? 230 : 255 );
+            cpp_utils::enable_window_close_ctrl( window_handle, !is_disable_close_ctrl );
             std::this_thread::sleep_for( default_thread_sleep_time );
         }
     }
@@ -395,24 +397,24 @@ namespace core {
         }
         constexpr auto sleep_time{ 100ms };
         const auto current_thread_id{ GetCurrentThreadId() };
-        const auto current_window_thread_frocess_id{ GetWindowThreadProcessId( current_window_handle, nullptr ) };
+        const auto current_window_thread_frocess_id{ GetWindowThreadProcessId( window_handle, nullptr ) };
         if ( is_disable_x_option_hot_reload ) {
             cpp_utils::loop_keep_window_top(
-              current_window_handle, current_thread_id, current_window_thread_frocess_id, sleep_time,
-              []( const std::stop_token _msg ) { return !_msg.stop_requested(); }, _msg );
-            cpp_utils::cancel_top_window( current_window_handle );
+              window_handle, current_thread_id, current_window_thread_frocess_id, sleep_time, []( const std::stop_token _msg )
+            { return !_msg.stop_requested(); }, _msg );
+            cpp_utils::cancel_top_window( window_handle );
             return;
         }
         while ( !_msg.stop_requested() ) {
             if ( !is_keep_window_top ) {
-                cpp_utils::cancel_top_window( current_window_handle );
+                cpp_utils::cancel_top_window( window_handle );
                 std::this_thread::sleep_for( default_thread_sleep_time );
                 continue;
             }
-            cpp_utils::keep_window_top( current_window_handle, current_thread_id, current_window_thread_frocess_id );
+            cpp_utils::keep_window_top( window_handle, current_thread_id, current_window_thread_frocess_id );
             std::this_thread::sleep_for( sleep_time );
         }
-        cpp_utils::cancel_top_window( current_window_handle );
+        cpp_utils::cancel_top_window( window_handle );
     }
     inline auto fix_os_env( const std::stop_token _msg )
     {
@@ -564,7 +566,7 @@ namespace core {
             auto operator()( cpp_utils::console_ui::func_args )
             {
                 std::print( " -> 初始化 UI.\n" );
-                cpp_utils::console_ui ui;
+                cpp_utils::console_ui ui{ std_input_handle, std_output_handle };
                 ui.add_back( "                    [ 配  置 ]\n\n" )
                   .add_back(
                     std::format( " < 折叠 {} ", node_.shown_name ), exit,
@@ -585,7 +587,7 @@ namespace core {
             option_shower( option_shower && )      = default;
             ~option_shower()                       = default;
         };
-        cpp_utils::console_ui ui;
+        cpp_utils::console_ui ui{ std_input_handle, std_output_handle };
         ui
           .add_back( std::format(
             "                    [ 配  置 ]\n\n\n"
