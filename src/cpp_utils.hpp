@@ -735,14 +735,18 @@ namespace cpp_utils {
         ShellExecuteW( nullptr, L"runas", file_path, nullptr, nullptr, SW_SHOWNORMAL );
         std::exit( 0 );
     }
+    inline auto get_current_console_std_handle( const DWORD _std_handle_flag )
+    {
+        return GetStdHandle( _std_handle_flag );
+    }
     inline auto get_current_window_handle()
     {
-        auto window_handle{ GetActiveWindow() };
+        auto window_handle{ GetConsoleWindow() };
         if ( window_handle == nullptr ) {
             window_handle = GetForegroundWindow();
         }
         if ( window_handle == nullptr ) {
-            window_handle = GetConsoleWindow();
+            window_handle = GetActiveWindow();
         }
         return window_handle;
     }
@@ -801,13 +805,12 @@ namespace cpp_utils {
     {
         return SetConsoleCtrlHandler( nullptr, static_cast< WINBOOL >( _is_ignore ) );
     }
-    inline auto clear_console_screen()
+    inline auto clear_console_screen( const HANDLE _std_output_handle )
     {
-        const auto output_handle{ GetStdHandle( STD_OUTPUT_HANDLE ) };
         DWORD mode;
-        GetConsoleMode( output_handle, &mode );
+        GetConsoleMode( _std_output_handle, &mode );
         mode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
-        SetConsoleMode( output_handle, mode );
+        SetConsoleMode( _std_output_handle, mode );
         std::print( "\033[H\033[2J\033c" );
     }
     inline auto set_console_title( const ansi_char *const _title )
@@ -831,15 +834,14 @@ namespace cpp_utils {
         SetConsoleOutputCP( _charset_id );
         SetConsoleCP( _charset_id );
     }
-    inline auto set_console_size( const SHORT _width, const SHORT _height )
+    inline auto set_console_size( const HWND _window_handle, const HANDLE _std_output_handle, const SHORT _width, const SHORT _height )
     {
-        HANDLE output_handle{ GetStdHandle( STD_OUTPUT_HANDLE ) };
         SMALL_RECT wrt{ 0, 0, static_cast< SHORT >( _width - 1 ), static_cast< SHORT >( _height - 1 ) };
-        set_window_state( GetConsoleWindow(), SW_SHOWNORMAL );
-        SetConsoleScreenBufferSize( output_handle, { _width, _height } );
-        SetConsoleWindowInfo( output_handle, TRUE, &wrt );
-        SetConsoleScreenBufferSize( output_handle, { _width, _height } );
-        clear_console_screen();
+        set_window_state( _window_handle, SW_SHOWNORMAL );
+        SetConsoleScreenBufferSize( _std_output_handle, { _width, _height } );
+        SetConsoleWindowInfo( _std_output_handle, TRUE, &wrt );
+        SetConsoleScreenBufferSize( _std_output_handle, { _width, _height } );
+        clear_console_screen( _std_output_handle );
     }
     inline auto set_window_translucency( const HWND _window_handle, const BYTE _value )
     {
@@ -884,6 +886,9 @@ namespace cpp_utils {
           _is_enable ? MF_BYCOMMAND | MF_ENABLED : MF_BYCOMMAND | MF_DISABLED | MF_GRAYED );
     }
     namespace console_value {
+        inline constexpr DWORD std_input_handle_flag{ STD_INPUT_HANDLE };
+        inline constexpr DWORD std_output_handle_flag{ STD_OUTPUT_HANDLE };
+        inline constexpr DWORD std_error_handle_flag{ STD_ERROR_HANDLE };
         inline constexpr DWORD mouse_button_left{ FROM_LEFT_1ST_BUTTON_PRESSED };
         inline constexpr DWORD mouse_button_middle{ FROM_LEFT_2ND_BUTTON_PRESSED };
         inline constexpr DWORD mouse_button_right{ RIGHTMOST_BUTTON_PRESSED };
@@ -947,6 +952,8 @@ namespace cpp_utils {
         };
         using callback_type = std::function< func_return_type( func_args ) >;
       private:
+        inline static HANDLE std_input_handle_;
+        inline static HANDLE std_output_handle_;
         enum class console_attrs_ { normal, lock_text, lock_all };
         struct line_node_ final {
             ansi_std_string text{};
@@ -957,7 +964,7 @@ namespace cpp_utils {
             COORD position{};
             auto set_attrs( const WORD _attrs ) noexcept
             {
-                SetConsoleTextAttribute( GetStdHandle( STD_OUTPUT_HANDLE ), _attrs );
+                SetConsoleTextAttribute( std_output_handle_, _attrs );
                 last_attrs = _attrs;
             }
             auto operator==( const COORD _mouse_position ) const noexcept
@@ -992,14 +999,14 @@ namespace cpp_utils {
         static auto show_cursor_( const WINBOOL _is_show ) noexcept
         {
             CONSOLE_CURSOR_INFO cursor_data;
-            GetConsoleCursorInfo( GetStdHandle( STD_OUTPUT_HANDLE ), &cursor_data );
+            GetConsoleCursorInfo( std_output_handle_, &cursor_data );
             cursor_data.bVisible = _is_show;
-            SetConsoleCursorInfo( GetStdHandle( STD_OUTPUT_HANDLE ), &cursor_data );
+            SetConsoleCursorInfo( std_output_handle_, &cursor_data );
         }
         static auto edit_console_attrs_( const console_attrs_ _attrs ) noexcept
         {
             DWORD attrs;
-            GetConsoleMode( GetStdHandle( STD_INPUT_HANDLE ), &attrs );
+            GetConsoleMode( std_input_handle_, &attrs );
             switch ( _attrs ) {
                 case console_attrs_::normal :
                     attrs |= ENABLE_QUICK_EDIT_MODE;
@@ -1017,17 +1024,17 @@ namespace cpp_utils {
                     attrs &= ~ENABLE_MOUSE_INPUT;
                     break;
             }
-            SetConsoleMode( GetStdHandle( STD_INPUT_HANDLE ), attrs );
+            SetConsoleMode( std_input_handle_, attrs );
         }
         static auto get_cursor_() noexcept
         {
             CONSOLE_SCREEN_BUFFER_INFO console_data;
-            GetConsoleScreenBufferInfo( GetStdHandle( STD_OUTPUT_HANDLE ), &console_data );
+            GetConsoleScreenBufferInfo( std_output_handle_, &console_data );
             return console_data.dwCursorPosition;
         }
         static auto set_cursor_( const COORD _cursor_position ) noexcept
         {
-            SetConsoleCursorPosition( GetStdHandle( STD_OUTPUT_HANDLE ), _cursor_position );
+            SetConsoleCursorPosition( std_output_handle_, _cursor_position );
         }
         static auto wait_mouse_event_( const bool _is_mouse_move = true ) noexcept
         {
@@ -1036,7 +1043,7 @@ namespace cpp_utils {
             DWORD reg;
             while ( true ) {
                 std::this_thread::sleep_for( 10ms );
-                ReadConsoleInputW( GetStdHandle( STD_INPUT_HANDLE ), &record, 1, &reg );
+                ReadConsoleInputW( std_input_handle_, &record, 1, &reg );
                 if ( record.EventType == MOUSE_EVENT
                      && ( _is_mouse_move || record.Event.MouseEvent.dwEventFlags != console_value::mouse_move ) )
                 {
@@ -1047,7 +1054,7 @@ namespace cpp_utils {
         static auto get_console_size_() noexcept
         {
             CONSOLE_SCREEN_BUFFER_INFO console_data;
-            GetConsoleScreenBufferInfo( GetStdHandle( STD_OUTPUT_HANDLE ), &console_data );
+            GetConsoleScreenBufferInfo( std_output_handle_, &console_data );
             return console_data.dwSize;
         }
         static auto cls_()
@@ -1254,10 +1261,15 @@ namespace cpp_utils {
         }
         auto operator=( const console_ui & ) noexcept -> console_ui & = default;
         auto operator=( console_ui && ) noexcept -> console_ui &      = default;
-        console_ui() noexcept                                         = default;
-        console_ui( const console_ui & ) noexcept                     = default;
-        console_ui( console_ui && ) noexcept                          = default;
-        ~console_ui() noexcept                                        = default;
+        console_ui( const HANDLE _std_input_handle, const HANDLE _std_output_handle ) noexcept
+        {
+            std_input_handle_  = _std_input_handle;
+            std_output_handle_ = _std_output_handle;
+        }
+        console_ui( const console_ui & ) noexcept = default;
+        console_ui( console_ui && ) noexcept      = default;
+        ~console_ui() noexcept                    = default;
     };
+
 #endif
 }
