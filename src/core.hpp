@@ -14,8 +14,8 @@ namespace core {
     inline const auto window_handle{ GetConsoleWindow() };
     inline const auto std_input_handle{ GetStdHandle( STD_INPUT_HANDLE ) };
     inline const auto std_output_handle{ GetStdHandle( STD_OUTPUT_HANDLE ) };
-    inline constexpr SHORT default_console_width{ 50 };
-    inline constexpr SHORT default_console_height{ 25 };
+    inline constexpr SHORT console_width{ 50 };
+    inline constexpr SHORT console_height{ 25 };
     inline constexpr UINT charset_id{ 54936 };
     struct option_container final {
         struct node final {
@@ -324,7 +324,7 @@ namespace core {
             SetConsoleScreenBufferSize( std_output_handle, { 127, SHRT_MAX - 1 } );
             std::system( R"(C:\Windows\System32\cmd.exe)" );
             cpp_utils::set_console_title( INFO_SHORT_NAME );
-            cpp_utils::set_console_size( window_handle, std_output_handle, default_console_width, default_console_height );
+            cpp_utils::set_console_size( window_handle, std_output_handle, console_width, console_height );
             cpp_utils::fix_window_size( window_handle, true );
             cpp_utils::enable_window_maximize_ctrl( window_handle, false );
             return cpp_utils::console_ui::back;
@@ -338,7 +338,7 @@ namespace core {
                 std::print(
                   "                   [ 工 具 箱 ]\n\n\n"
                   " -> 执行操作系统命令.\n{}\n",
-                  ansi_std_string( default_console_width, '-' ) );
+                  ansi_std_string( console_width, '-' ) );
                 std::system( cmd_ );
                 return cpp_utils::console_ui::back;
             }
@@ -622,7 +622,7 @@ namespace core {
                 wait();
                 return cpp_utils::console_ui::back;
             }
-            std::print( " -> 生成并执行操作系统命令.\n{}\n", ansi_std_string( default_console_width, '-' ) );
+            std::print( " -> 生成并执行操作系统命令.\n{}\n", ansi_std_string( console_width, '-' ) );
             if ( is_hijack_execs ) {
                 for ( const auto &exec : rules_.execs ) {
                     std::system(
@@ -666,7 +666,7 @@ namespace core {
                 wait();
                 return cpp_utils::console_ui::back;
             }
-            std::print( " -> 生成并执行操作系统命令.\n{}\n", ansi_std_string( default_console_width, '-' ) );
+            std::print( " -> 生成并执行操作系统命令.\n{}\n", ansi_std_string( console_width, '-' ) );
             if ( is_hijack_execs ) {
                 for ( const auto &exec : rules_.execs ) {
                     std::system(
