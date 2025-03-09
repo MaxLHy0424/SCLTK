@@ -122,16 +122,14 @@ namespace core {
             "破解/恢复",
             { { "hijack_execs", "劫持可执行文件" },
               { "set_serv_startup_types", "设置服务启动类型" },
-              { "fix_os_env", "(*) 修复操作系统环境" } } },
+              { "fix_os_env", "* 修复操作系统环境" } } },
           { "window",
             "窗口显示",
-            { { "keep_window_top", "(*) 置顶窗口" },
-              { "disable_close_ctrl", "(*) 禁用关闭控件" },
-              { "translucent", "(*) 半透明" } } },
+            { { "keep_window_top", "* 置顶窗口" }, { "disable_close_ctrl", "* 禁用关闭控件" }, { "translucent", "* 半透明" } } },
           { "misc",
             "杂项",
-            { { "quick_exit_and_relaunch", "(-) 快速退出与重启" },
-              { "disable_x_option_hot_reload", "(-) 禁用标 (*) 选项热重载" } } } } } };
+            { { "quick_exit_and_relaunch", "** 快速退出与重启" },
+              { "disable_x_option_hot_reload", "** 禁用标 * 选项热重载" } } } } } };
     inline const auto &is_disable_x_option_hot_reload{ options[ "misc" ][ "disable_x_option_hot_reload" ] };
     struct rule_node final {
         const ansi_char *const shown_name;
@@ -593,9 +591,9 @@ namespace core {
             "                    [ 配  置 ]\n\n\n"
             " (i) 所有选项默认禁用. 相关信息可参阅文档.\n"
             "     无标识选项可进行实时热重载.\n"
-            "     标 (*) 选项热重载默认启用,\n"
+            "     标 * 选项热重载默认启用,\n"
             "     每 {} 自动执行, 可禁用.\n"
-            "     标 (-) 选项无法进行热重载.\n",
+            "     标 ** 选项无法进行热重载.\n",
             default_thread_sleep_time ) )
           .add_back( " < 返回 ", exit, cpp_utils::console_value::text_foreground_green | cpp_utils::console_value::text_foreground_intensity )
           .add_back( " > 同步配置 ", sync )
