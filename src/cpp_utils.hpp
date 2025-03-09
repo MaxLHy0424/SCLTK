@@ -954,7 +954,7 @@ namespace cpp_utils {
       private:
         inline static HANDLE std_input_handle_;
         inline static HANDLE std_output_handle_;
-        enum class console_attrs_ { normal, lock_text, lock_all };
+        enum class console_attrs_ : ansi_char { normal, lock_text, lock_all };
         struct line_node_ final {
             ansi_std_string text{};
             callback_type func{};
