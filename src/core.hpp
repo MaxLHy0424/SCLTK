@@ -206,8 +206,10 @@ namespace core {
         {
             for ( const auto &node : options.nodes ) {
                 for ( const auto &item : node.items ) {
-                    _out << std::format( R"("{}.{}": "{}")", node.self_name, item.self_name, item.get() ? "enabled" : "disabled" )
-                         << '\n';
+                    _out << std::format(
+                      R"("{}.{}": "{}")"
+                      "\n",
+                      node.self_name, item.self_name, item.get() ? "enabled" : "disabled" );
                 }
             }
         }
