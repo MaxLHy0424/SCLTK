@@ -193,9 +193,9 @@ namespace core {
             }
             for ( auto &node : options.nodes ) {
                 for ( auto &item : node.items ) {
-                    if ( _line == std::format( "{}.{} = {}", node.self_name, item.self_name, true ) ) {
+                    if ( _line == std::format( R"("{}.{}": "enabled")", node.self_name, item.self_name ) ) {
                         item.enable();
-                    } else if ( _line == std::format( "{}.{} = {}", node.self_name, item.self_name, false ) ) {
+                    } else if ( _line == std::format( R"("{}.{}": "disabled")", node.self_name, item.self_name ) ) {
                         item.disable();
                     }
                 }
@@ -206,7 +206,8 @@ namespace core {
         {
             for ( const auto &node : options.nodes ) {
                 for ( const auto &item : node.items ) {
-                    _out << std::format( "{}.{} = {}\n", node.self_name, item.self_name, item.get() );
+                    _out << std::format( R"("{}.{}": "{}")", node.self_name, item.self_name, item.get() ? "enabled" : "disabled" )
+                         << '\n';
                 }
             }
         }
