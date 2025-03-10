@@ -322,7 +322,7 @@ namespace core {
             cpp_utils::enable_window_maximize_ctrl( window_handle, true );
             _args.parent_ui.lock( false, false );
             SetConsoleScreenBufferSize( std_output_handle, { 127, SHRT_MAX - 1 } );
-            std::system( R"(C:\Windows\System32\cmd.exe)" );
+            std::system( "cmd.exe" );
             cpp_utils::set_console_title( INFO_SHORT_NAME );
             cpp_utils::set_console_size( window_handle, std_output_handle, console_width, console_height );
             cpp_utils::fix_window_size( window_handle, true );
@@ -352,16 +352,11 @@ namespace core {
             ~cmd_executor()                      = default;
         };
         constexpr const ansi_char *common_ops[][ 2 ]{
-          {"重启资源管理器",
-           R"(C:\Windows\System32\taskkill.exe /f /im explorer.exe && C:\Windows\System32\timeout.exe /t 3 /nobreak && start C:\Windows\explorer.exe)"},
-          {"修复操作系统",
-           R"(C:\Windows\System32\dism.exe /online /cleanup-image /restorehealth && C:\Windows\System32\sfc.exe /scannow)"                            },
-          {"恢复 USB 设备访问",
-           R"(C:\Windows\System32\reg.exe add "HKLM\SYSTEM\CurrentControlSet\Services\USBSTOR" /f /t reg_dword /v Start /d 3)"                        },
-          {"恢复 Google Chrome 离线游戏",
-           R"(C:\Windows\System32\reg.exe delete "HKLM\SOFTWARE\Policies\Google\Chrome" /f /v AllowDinosaurEasterEgg)"                                },
-          {"恢复 Microsoft Edge 离线游戏",
-           R"(C:\Windows\System32\reg.exe delete "HKLM\SOFTWARE\Policies\Microsoft\Edge" /f /v AllowSurfGame)"                                        }
+          {"重启资源管理器",               R"(taskkill.exe /f /im explorer.exe && timeout.exe /t 3 /nobreak && start C:\Windows\explorer.exe)"},
+          {"修复操作系统",                 "dism.exe /online /cleanup-image /restorehealth && sfc.exe /scannow"                               },
+          {"恢复 USB 设备访问",            R"(reg.exe add "HKLM\SYSTEM\CurrentControlSet\Services\USBSTOR" /f /t reg_dword /v Start /d 3)"    },
+          {"恢复 Google Chrome 离线游戏",  R"(reg.exe delete "HKLM\SOFTWARE\Policies\Google\Chrome" /f /v AllowDinosaurEasterEgg)"            },
+          {"恢复 Microsoft Edge 离线游戏", R"(reg.exe delete "HKLM\SOFTWARE\Policies\Microsoft\Edge" /f /v AllowSurfGame)"                    }
         };
         cpp_utils::console_ui ui{ std_input_handle, std_output_handle };
         ui.add_back( "                   [ 工 具 箱 ]\n\n" )
@@ -627,21 +622,21 @@ namespace core {
                 for ( const auto &exec : rules_.execs ) {
                     std::system(
                       std::format(
-                        R"(C:\Windows\System32\reg.exe add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\{}" /f /t reg_sz /v debugger /d "nul")",
+                        R"(reg.exe add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\{}" /f /t reg_sz /v debugger /d "nul")",
                         exec )
                         .c_str() );
                 }
             }
             if ( is_set_serv_startup_types ) {
                 for ( const auto &serv : rules_.servs ) {
-                    std::system( std::format( R"(C:\Windows\System32\sc.exe config "{}" start= disabled)", serv ).c_str() );
+                    std::system( std::format( R"(sc.exe config "{}" start= disabled)", serv ).c_str() );
                 }
             }
             for ( const auto &exec : rules_.execs ) {
-                std::system( std::format( R"(C:\Windows\System32\taskkill.exe /f /im "{}")", exec ).c_str() );
+                std::system( std::format( R"(taskkill.exe /f /im "{}")", exec ).c_str() );
             }
             for ( const auto &serv : rules_.servs ) {
-                std::system( std::format( R"(C:\Windows\System32\net.exe stop "{}" /y)", serv ).c_str() );
+                std::system( std::format( R"(net.exe stop "{}" /y)", serv ).c_str() );
             }
             return cpp_utils::console_ui::back;
         }
@@ -671,18 +666,17 @@ namespace core {
                 for ( const auto &exec : rules_.execs ) {
                     std::system(
                       std::format(
-                        R"(C:\Windows\System32\reg.exe delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\{}" /f)",
-                        exec )
+                        R"(reg.exe delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\{}" /f)", exec )
                         .c_str() );
                 }
             }
             if ( is_set_serv_startup_types ) {
                 for ( const auto &serv : rules_.servs ) {
-                    std::system( std::format( R"(C:\Windows\System32\sc.exe config "{}" start= auto)", serv ).c_str() );
+                    std::system( std::format( R"(sc.exe config "{}" start= auto)", serv ).c_str() );
                 }
             }
             for ( const auto &serv : rules_.servs ) {
-                std::system( std::format( R"(C:\Windows\System32\net.exe start "{}")", serv ).c_str() );
+                std::system( std::format( R"(net.exe start "{}")", serv ).c_str() );
             }
             return cpp_utils::console_ui::back;
         }
