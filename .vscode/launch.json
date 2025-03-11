@@ -13,7 +13,6 @@
             "externalConsole": true,
             "internalConsoleOptions": "openOnSessionStart",
             "MIMode": "gdb",
-            "miDebuggerPath": "C:\\Software\\MSYS2\\ucrt64\\bin\\gdb.exe",
             "preLaunchTask": "debug"
         }
     ]
