@@ -11,7 +11,6 @@
                 "ANSI",
                 "_ANSI"
             ],
-            "compilerPath": "C:\\Software\\MSYS2\\ucrt64\\bin\\g++.exe",
             "compilerArgs": [
                 "-fexec-charset=GBK",
                 "-std=gnu++26",
@@ -20,7 +19,7 @@
                 "-Weffc++",
                 "-pipe",
                 "-static",
-                "-Oz",
+                "-O3",
                 "-flto=auto",
                 "-fno-rtti"
             ],
