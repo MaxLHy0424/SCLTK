@@ -17,6 +17,23 @@ namespace core {
     inline const auto std_output_handle{ GetStdHandle( STD_OUTPUT_HANDLE ) };
     inline constexpr auto config_file_name{ "config.ini" };
     inline constexpr auto default_thread_sleep_time{ 1s };
+    inline auto exit( cpp_utils::console_ui::func_args )
+    {
+        return cpp_utils::console_ui::exit;
+    }
+    inline auto wait()
+    {
+        std::print( "\n\n" );
+        for ( auto i{ 3s }; i > 0s; --i ) {
+            std::print( " {} 后返回.\r", i );
+            std::this_thread::sleep_for( 1s );
+        }
+    }
+    inline auto relaunch( cpp_utils::console_ui::func_args )
+    {
+        cpp_utils::relaunch_as_admin();
+        return cpp_utils::console_ui::exit;
+    }
     struct option_container final {
         struct node final {
             struct item final {
@@ -172,9 +189,10 @@ namespace core {
     class basic_config_node {
       public:
         const ansi_char *const self_name;
-        virtual auto load( const bool, ansi_std_string & ) -> void                 = 0;
-        virtual auto prepare_reload() -> void                                      = 0;
-        virtual auto sync( std::ofstream & ) -> void                               = 0;
+        virtual auto load( const bool, ansi_std_string & ) -> void = 0;
+        virtual auto prepare_reload() -> void { }
+        virtual auto sync( std::ofstream & ) -> void = 0;
+        virtual auto ui_pannel( cpp_utils::console_ui & ) -> void { }
         virtual auto operator=( const basic_config_node & ) -> basic_config_node & = delete;
         virtual auto operator=( basic_config_node && ) -> basic_config_node &      = delete;
         basic_config_node( const ansi_char *const _self_name )
@@ -201,7 +219,6 @@ namespace core {
                 }
             }
         }
-        virtual auto prepare_reload() -> void override final { }
         virtual auto sync( std::ofstream &_out ) -> void override final
         {
             for ( const auto &node : options.nodes ) {
@@ -211,6 +228,76 @@ namespace core {
                       "\n",
                       node.self_name, item.self_name, item.get() ? "enabled" : "disabled" );
                 }
+            }
+        }
+        virtual auto ui_pannel( cpp_utils::console_ui &_ui ) -> void
+        {
+            constexpr auto option_ctrl_color{
+              cpp_utils::console_value::text_foreground_red | cpp_utils::console_value::text_foreground_green };
+            class option_setter final {
+              private:
+                option_container::node::item &item_;
+              public:
+                auto operator()( cpp_utils::console_ui::func_args _args )
+                {
+                    switch ( item_.get() ) {
+                        case true : {
+                            item_.disable();
+                            break;
+                        }
+                        case false : {
+                            item_.enable();
+                            break;
+                        }
+                    }
+                    _args.parent_ui.edit_text( _args.node_index, std::format( " > {}用 ", item_.get() ? "禁" : "启" ) );
+                    return cpp_utils::console_ui::back;
+                }
+                auto operator=( const option_setter & ) -> option_setter & = delete;
+                auto operator=( option_setter && ) -> option_setter &      = delete;
+                option_setter( option_container::node::item &_item )
+                  : item_{ _item }
+                { }
+                option_setter( const option_setter & ) = default;
+                option_setter( option_setter && )      = default;
+                ~option_setter()                       = default;
+            };
+            class option_shower final {
+              private:
+                option_container::node &node_;
+              public:
+                auto operator()( cpp_utils::console_ui::func_args )
+                {
+                    std::print( " -> 初始化 UI.\n" );
+                    cpp_utils::console_ui ui{ std_input_handle, std_output_handle };
+                    ui.add_back( "                    [ 配  置 ]\n\n" )
+                      .add_back(
+                        std::format( " < 折叠 {} ", node_.shown_name ), exit,
+                        cpp_utils::console_value::text_foreground_green | cpp_utils::console_value::text_foreground_intensity );
+                    for ( auto &item : node_.items ) {
+                        ui.add_back( std::format( "\n[ {} ]\n", item.shown_name ) )
+                          .add_back( std::format( " > {}用 ", item.get() ? "禁" : "启" ), option_setter{ item }, option_ctrl_color );
+                    }
+                    ui.show();
+                    return cpp_utils::console_ui::back;
+                }
+                auto operator=( const option_shower & ) -> option_shower & = delete;
+                auto operator=( option_shower && ) -> option_shower &      = delete;
+                option_shower( option_container::node &_node )
+                  : node_{ _node }
+                { }
+                option_shower( const option_shower & ) = default;
+                option_shower( option_shower && )      = default;
+                ~option_shower()                       = default;
+            };
+            _ui.add_back( std::format(
+              "\n[ 选项 ]\n\n"
+              " (i) 选项相关信息可参阅文档.\n"
+              "     标 * 选项热重载每 {} 自动执行, 可禁用.\n"
+              "     标 ** 选项无法热重载. 其余选项可实时热重载.\n",
+              default_thread_sleep_time ) );
+            for ( auto &node : options.nodes ) {
+                _ui.add_back( std::format( " > {} ", node.shown_name ), option_shower{ node }, option_ctrl_color );
             }
         }
         virtual auto operator=( const option_op & ) -> option_op & = delete;
@@ -276,23 +363,6 @@ namespace core {
     inline basic_config_node_smart_ptr config_nodes[]{
       basic_config_node_smart_ptr{ new option_op }, basic_config_node_smart_ptr{ new custom_rules_execs_op },
       basic_config_node_smart_ptr{ new custom_rules_servs_op } };
-    inline auto wait()
-    {
-        std::print( "\n\n" );
-        for ( auto i{ 3s }; i > 0s; --i ) {
-            std::print( " {} 后返回.\r", i );
-            std::this_thread::sleep_for( 1s );
-        }
-    }
-    inline auto exit( cpp_utils::console_ui::func_args )
-    {
-        return cpp_utils::console_ui::exit;
-    }
-    inline auto relaunch( cpp_utils::console_ui::func_args )
-    {
-        cpp_utils::relaunch_as_admin();
-        return cpp_utils::console_ui::exit;
-    }
     inline auto info( cpp_utils::console_ui::func_args )
     {
         std::print( " -> 初始化 UI.\n" );
@@ -452,8 +522,6 @@ namespace core {
             core_op();
         }
     }
-    inline constexpr auto option_ctrl_color{
-      cpp_utils::console_value::text_foreground_red | cpp_utils::console_value::text_foreground_green };
     inline auto load_config( const bool _is_reload )
     {
         std::ifstream config_file{ config_file_name, std::ios::in };
@@ -529,78 +597,13 @@ namespace core {
             wait();
             return cpp_utils::console_ui::back;
         } };
-        class option_setter final {
-          private:
-            option_container::node::item &item_;
-          public:
-            auto operator()( cpp_utils::console_ui::func_args _args )
-            {
-                switch ( item_.get() ) {
-                    case true : {
-                        item_.disable();
-                        break;
-                    }
-                    case false : {
-                        item_.enable();
-                        break;
-                    }
-                }
-                _args.parent_ui.edit_text( _args.node_index, std::format( " > {}用 ", item_.get() ? "禁" : "启" ) );
-                return cpp_utils::console_ui::back;
-            }
-            auto operator=( const option_setter & ) -> option_setter & = delete;
-            auto operator=( option_setter && ) -> option_setter &      = delete;
-            option_setter( option_container::node::item &_item )
-              : item_{ _item }
-            { }
-            option_setter( const option_setter & ) = default;
-            option_setter( option_setter && )      = default;
-            ~option_setter()                       = default;
-        };
-        class option_shower final {
-          private:
-            option_container::node &node_;
-          public:
-            auto operator()( cpp_utils::console_ui::func_args )
-            {
-                std::print( " -> 初始化 UI.\n" );
-                cpp_utils::console_ui ui{ std_input_handle, std_output_handle };
-                ui.add_back( "                    [ 配  置 ]\n\n" )
-                  .add_back(
-                    std::format( " < 折叠 {} ", node_.shown_name ), exit,
-                    cpp_utils::console_value::text_foreground_green | cpp_utils::console_value::text_foreground_intensity );
-                for ( auto &item : node_.items ) {
-                    ui.add_back( std::format( "\n[ {} ]\n", item.shown_name ) )
-                      .add_back( std::format( " > {}用 ", item.get() ? "禁" : "启" ), option_setter{ item }, option_ctrl_color );
-                }
-                ui.show();
-                return cpp_utils::console_ui::back;
-            }
-            auto operator=( const option_shower & ) -> option_shower & = delete;
-            auto operator=( option_shower && ) -> option_shower &      = delete;
-            option_shower( option_container::node &_node )
-              : node_{ _node }
-            { }
-            option_shower( const option_shower & ) = default;
-            option_shower( option_shower && )      = default;
-            ~option_shower()                       = default;
-        };
         cpp_utils::console_ui ui{ std_input_handle, std_output_handle };
-        ui
-          .add_back( std::format(
-            "                    [ 配  置 ]\n\n\n"
-            " (i) 所有选项默认禁用. 相关信息可参阅文档.\n"
-            "     无标识选项可进行实时热重载.\n"
-            "     标 * 选项热重载默认启用,\n"
-            "     每 {} 自动执行, 可禁用.\n"
-            "     标 ** 选项无法进行热重载.\n",
-            default_thread_sleep_time ) )
+        ui.add_back( "                    [ 配  置 ]\n\n" )
           .add_back( " < 返回 ", exit, cpp_utils::console_value::text_foreground_green | cpp_utils::console_value::text_foreground_intensity )
           .add_back( " > 同步配置 ", sync )
-          .add_back( " > 打开配置文件 ", open_file )
-          .add_back( "\n[ 选项 ]\n" );
-        for ( auto &node : options.nodes ) {
-            ui.add_back( std::format( " > {} ", node.shown_name ), option_shower{ node }, option_ctrl_color );
+          .add_back( " > 打开配置文件 ", open_file );
+        for ( auto &config_node : config_nodes ) {
+            config_node->ui_pannel( ui );
         }
         ui.show();
         return cpp_utils::console_ui::back;
