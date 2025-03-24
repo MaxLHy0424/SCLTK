@@ -34,7 +34,7 @@ auto main() -> int
           " < 重启 ", core::relaunch,
           cpp_utils::console_value::text_foreground_green | cpp_utils::console_value::text_foreground_intensity );
     }
-    ui.add_back( " > 信息 ", core::info )
+    ui.add_back( " > 关于 ", core::info )
       .add_back( " > 配置 ", core::edit_config )
       .add_back( " > 工具箱 ", core::toolkit )
       .add_back( "\n[ 破解 ]\n" )
