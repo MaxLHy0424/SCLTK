@@ -192,7 +192,7 @@ namespace core {
         virtual auto load( const bool, ansi_std_string & ) -> void = 0;
         virtual auto prepare_reload() -> void { }
         virtual auto sync( std::ofstream & ) -> void = 0;
-        virtual auto ui_pannel( cpp_utils::console_ui & ) -> void { }
+        virtual auto ui_panel( cpp_utils::console_ui & ) -> void { }
         virtual auto operator=( const basic_config_node & ) -> basic_config_node & = delete;
         virtual auto operator=( basic_config_node && ) -> basic_config_node &      = delete;
         basic_config_node( const ansi_char *const _self_name )
@@ -230,7 +230,7 @@ namespace core {
                 }
             }
         }
-        virtual auto ui_pannel( cpp_utils::console_ui &_ui ) -> void
+        virtual auto ui_panel( cpp_utils::console_ui &_ui ) -> void
         {
             constexpr auto option_ctrl_color{
               cpp_utils::console_value::text_foreground_red | cpp_utils::console_value::text_foreground_green };
@@ -361,8 +361,9 @@ namespace core {
     };
     using basic_config_node_smart_ptr = std::unique_ptr< basic_config_node >;
     inline basic_config_node_smart_ptr config_nodes[]{
-      basic_config_node_smart_ptr{ new option_op }, basic_config_node_smart_ptr{ new custom_rules_execs_op },
-      basic_config_node_smart_ptr{ new custom_rules_servs_op } };
+      basic_config_node_smart_ptr{ std::make_unique< option_op >() },
+      basic_config_node_smart_ptr{ std::make_unique< custom_rules_execs_op >() },
+      basic_config_node_smart_ptr{ std::make_unique< custom_rules_servs_op >() } };
     inline auto info( cpp_utils::console_ui::func_args )
     {
         std::print( " -> 初始化 UI.\n" );
@@ -468,7 +469,7 @@ namespace core {
         const auto current_window_thread_frocess_id{ GetWindowThreadProcessId( window_handle, nullptr ) };
         if ( is_disable_x_option_hot_reload ) {
             cpp_utils::loop_keep_window_top(
-              window_handle, current_thread_id, current_window_thread_frocess_id, sleep_time, []( const std::stop_token _msg )
+              window_handle, current_thread_id, current_window_thread_frocess_id, sleep_time, []( const std::stop_token _msg ) static
             { return !_msg.stop_requested(); }, _msg );
             cpp_utils::cancel_top_window( window_handle );
             return;
@@ -567,7 +568,7 @@ namespace core {
     inline auto edit_config( cpp_utils::console_ui::func_args )
     {
         std::print( " -> 初始化 UI.\n" );
-        auto sync{ []( cpp_utils::console_ui::func_args )
+        auto sync{ []( cpp_utils::console_ui::func_args ) static
         {
             std::print( "                    [ 配  置 ]\n\n\n" );
             load_config( true );
@@ -584,7 +585,7 @@ namespace core {
             wait();
             return cpp_utils::console_ui::back;
         } };
-        auto open_file{ []( cpp_utils::console_ui::func_args )
+        auto open_file{ []( cpp_utils::console_ui::func_args ) static
         {
             if ( std::ifstream{ config_file_name, std::ios::in }.good() ) {
                 std::print( " -> 打开配置.\n" );
@@ -603,7 +604,7 @@ namespace core {
           .add_back( " > 同步配置 ", sync )
           .add_back( " > 打开配置文件 ", open_file );
         for ( auto &config_node : config_nodes ) {
-            config_node->ui_pannel( ui );
+            config_node->ui_panel( ui );
         }
         ui.show();
         return cpp_utils::console_ui::back;
