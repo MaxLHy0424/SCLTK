@@ -269,7 +269,7 @@ namespace core {
                 auto operator()( cpp_utils::console_ui::func_args )
                 {
                     std::print( " -> 初始化 UI.\n" );
-                    cpp_utils::console_ui ui{ std_input_handle, std_output_handle };
+                    cpp_utils::console_ui ui;
                     ui.add_back( "                    [ 配  置 ]\n\n" )
                       .add_back(
                         std::format( " < 折叠 {} ", node_.shown_name ), exit,
@@ -372,7 +372,7 @@ namespace core {
             ShellExecuteA( nullptr, "open", INFO_REPO_URL, nullptr, nullptr, SW_SHOWNORMAL );
             return cpp_utils::console_ui::back;
         } };
-        cpp_utils::console_ui ui{ std_input_handle, std_output_handle };
+        cpp_utils::console_ui ui;
         ui.add_back( "                    [ 信  息 ]\n\n" )
           .add_back( " < 返回 ", exit, cpp_utils::console_value::text_foreground_green | cpp_utils::console_value::text_foreground_intensity )
           .add_back(
@@ -432,7 +432,7 @@ namespace core {
           {"恢复 Google Chrome 离线游戏",  R"(reg.exe delete "HKLM\SOFTWARE\Policies\Google\Chrome" /f /v AllowDinosaurEasterEgg)"            },
           {"恢复 Microsoft Edge 离线游戏", R"(reg.exe delete "HKLM\SOFTWARE\Policies\Microsoft\Edge" /f /v AllowSurfGame)"                    }
         };
-        cpp_utils::console_ui ui{ std_input_handle, std_output_handle };
+        cpp_utils::console_ui ui;
         ui.add_back( "                   [ 工 具 箱 ]\n\n" )
           .add_back( " < 返回 ", exit, cpp_utils::console_value::text_foreground_green | cpp_utils::console_value::text_foreground_intensity )
           .add_back( " > 命令提示符 ", launch_cmd )
@@ -598,7 +598,7 @@ namespace core {
             wait();
             return cpp_utils::console_ui::back;
         } };
-        cpp_utils::console_ui ui{ std_input_handle, std_output_handle };
+        cpp_utils::console_ui ui;
         ui.add_back( "                    [ 配  置 ]\n\n" )
           .add_back( " < 返回 ", exit, cpp_utils::console_value::text_foreground_green | cpp_utils::console_value::text_foreground_intensity )
           .add_back( " > 同步配置 ", sync )
