@@ -1528,6 +1528,15 @@ namespace cpp_utils {
         }
         auto operator=( const console_ui & ) noexcept -> console_ui & = default;
         auto operator=( console_ui && ) noexcept -> console_ui &      = default;
+        console_ui() noexcept
+        {
+            if ( std_input_handle_ == nullptr ) {
+                std_input_handle_ = GetStdHandle( console_value::std_input_handle_flag );
+            }
+            if ( std_output_handle_ == nullptr ) {
+                std_output_handle_ = GetStdHandle( console_value::std_output_handle_flag );
+            }
+        }
         console_ui( const HANDLE _std_input_handle, const HANDLE _std_output_handle ) noexcept
         {
             std_input_handle_  = _std_input_handle;
