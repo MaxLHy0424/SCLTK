@@ -492,7 +492,7 @@ namespace core {
         if ( is_disable_x_option_hot_reload && !is_fix_os_env ) {
             return;
         }
-        auto engine{ [] static
+        auto engine{ []() static
         {
             constexpr const ansi_char *hkcu_reg_dirs[]{
               R"(Software\Policies\Microsoft\Windows\System)", R"(Software\Microsoft\Windows\CurrentVersion\Policies\System)",
