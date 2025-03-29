@@ -1025,8 +1025,8 @@ namespace cpp_utils {
         AttachThreadInput( _thread_id, _window_thread_process_id, TRUE );
         set_window_state( _window_handle, get_window_state( _window_handle ) );
         SetForegroundWindow( _window_handle );
-        AttachThreadInput( _thread_id, _window_thread_process_id, FALSE );
         SetWindowPos( _window_handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
+        AttachThreadInput( _thread_id, _window_thread_process_id, FALSE );
     }
     inline auto keep_current_window_top()
     {
@@ -1042,8 +1042,8 @@ namespace cpp_utils {
             AttachThreadInput( _thread_id, _window_thread_process_id, TRUE );
             set_window_state( _window_handle, get_window_state( _window_handle ) );
             SetForegroundWindow( _window_handle );
-            AttachThreadInput( _thread_id, _window_thread_process_id, FALSE );
             SetWindowPos( _window_handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
+            AttachThreadInput( _thread_id, _window_thread_process_id, FALSE );
             std::this_thread::sleep_for( _sleep_time );
         }
     }
