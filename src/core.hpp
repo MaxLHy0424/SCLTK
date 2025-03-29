@@ -491,14 +491,14 @@ namespace core {
         if ( is_disable_x_option_hot_reload && !is_fix_os_env ) {
             return;
         }
-        constexpr const ansi_char *hkcu_reg_dirs[]{
-          R"(Software\Policies\Microsoft\Windows\System)", R"(Software\Microsoft\Windows\CurrentVersion\Policies\System)",
-          R"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)" };
-        constexpr const ansi_char *execs[]{
-          "taskkill.exe", "sc.exe",      "net.exe", "reg.exe",  "cmd.exe", "taskmgr.exe",
-          "perfmon.exe",  "regedit.exe", "mmc.exe", "dism.exe", "sfc.exe" };
-        auto core_op{ [ = ]
+        auto core_op{ []
         {
+            constexpr const ansi_char *hkcu_reg_dirs[]{
+              R"(Software\Policies\Microsoft\Windows\System)", R"(Software\Microsoft\Windows\CurrentVersion\Policies\System)",
+              R"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)" };
+            constexpr const ansi_char *execs[]{
+              "taskkill.exe", "sc.exe",      "net.exe", "reg.exe",  "cmd.exe", "taskmgr.exe",
+              "perfmon.exe",  "regedit.exe", "mmc.exe", "dism.exe", "sfc.exe" };
             for ( const auto &reg_dir : hkcu_reg_dirs ) {
                 RegDeleteTreeA( HKEY_CURRENT_USER, reg_dir );
             }
