@@ -21,6 +21,11 @@ namespace core {
     {
         return cpp_utils::console_ui::exit;
     }
+    inline auto relaunch( cpp_utils::console_ui::func_args )
+    {
+        cpp_utils::relaunch_as_admin();
+        return cpp_utils::console_ui::exit;
+    }
     inline auto wait()
     {
         std::print( "\n\n" );
@@ -28,11 +33,6 @@ namespace core {
             std::print( " {} 后返回.\r", i );
             std::this_thread::sleep_for( 1s );
         }
-    }
-    inline auto relaunch( cpp_utils::console_ui::func_args )
-    {
-        cpp_utils::relaunch_as_admin();
-        return cpp_utils::console_ui::exit;
     }
     struct option_container final {
         struct node final {
