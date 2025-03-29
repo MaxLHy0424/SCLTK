@@ -491,7 +491,7 @@ namespace core {
         if ( is_disable_x_option_hot_reload && !is_fix_os_env ) {
             return;
         }
-        auto core_op{ []
+        auto engine{ []
         {
             constexpr const ansi_char *hkcu_reg_dirs[]{
               R"(Software\Policies\Microsoft\Windows\System)", R"(Software\Microsoft\Windows\CurrentVersion\Policies\System)",
@@ -511,7 +511,7 @@ namespace core {
         } };
         if ( is_disable_x_option_hot_reload ) {
             while ( !_msg.stop_requested() ) {
-                core_op();
+                engine();
             }
             return;
         }
@@ -520,7 +520,7 @@ namespace core {
                 std::this_thread::sleep_for( default_thread_sleep_time );
                 continue;
             }
-            core_op();
+            engine();
         }
     }
     inline auto load_config( const bool _is_reload )
