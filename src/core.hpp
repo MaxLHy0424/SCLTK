@@ -466,10 +466,10 @@ namespace core {
         }
         constexpr auto sleep_time{ 100ms };
         const auto current_thread_id{ GetCurrentThreadId() };
-        const auto current_window_thread_frocess_id{ GetWindowThreadProcessId( window_handle, nullptr ) };
+        const auto current_window_thread_process_id{ GetWindowThreadProcessId( window_handle, nullptr ) };
         if ( is_disable_x_option_hot_reload ) {
             cpp_utils::loop_keep_window_top(
-              window_handle, current_thread_id, current_window_thread_frocess_id, sleep_time, []( const std::stop_token _msg ) static
+              window_handle, current_thread_id, current_window_thread_process_id, sleep_time, []( const std::stop_token _msg ) static
             { return !_msg.stop_requested(); }, _msg );
             cpp_utils::cancel_top_window( window_handle );
             return;
@@ -480,7 +480,7 @@ namespace core {
                 std::this_thread::sleep_for( default_thread_sleep_time );
                 continue;
             }
-            cpp_utils::keep_window_top( window_handle, current_thread_id, current_window_thread_frocess_id );
+            cpp_utils::keep_window_top( window_handle, current_thread_id, current_window_thread_process_id );
             std::this_thread::sleep_for( sleep_time );
         }
         cpp_utils::cancel_top_window( window_handle );
