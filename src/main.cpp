@@ -9,7 +9,7 @@ auto main() -> int
     cpp_utils::set_window_translucency( core::window_handle, 255 );
     cpp_utils::enable_window_minimize_ctrl( core::window_handle, false );
     cpp_utils::enable_window_maximize_ctrl( core::window_handle, false );
-    cpp_utils::enable_window_close_ctrl( core::window_handle, true );
+    cpp_utils::enable_window_close_ctrl( core::window_handle, false );
     cpp_utils::console_ui ui{ core::std_input_handle, core::std_output_handle };
     ui.lock( true, true );
     std::print( " -> 检测运行权限.\n" );
