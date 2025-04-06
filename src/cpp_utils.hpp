@@ -148,7 +148,7 @@ namespace cpp_utils {
         }
         consteval constant_string( const constant_string< _type_, _capacity_ > & )     = default;
         consteval constant_string( constant_string< _type_, _capacity_ > && ) noexcept = delete;
-        consteval ~constant_string() noexcept                                          = default;
+        ~constant_string() noexcept                                                    = default;
     };
     template < size_type _capacity_ >
     using constant_ansi_string = constant_string< ansi_char, _capacity_ >;
