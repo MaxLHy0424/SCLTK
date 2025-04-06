@@ -27,12 +27,10 @@ auto main() -> int
     }
     std::print( " -> 初始化 UI.\n" );
     ui.add_back( "                    [ 主  页 ]\n\n" )
-      .add_back(
-        " < 退出 ", core::exit, cpp_utils::console_value::text_foreground_red | cpp_utils::console_value::text_foreground_intensity );
+      .add_back( " < 退出 ", core::exit, cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_intensity );
     if ( is_enable_quick_exit_and_relaunch ) {
         ui.add_back(
-          " < 重启 ", core::relaunch,
-          cpp_utils::console_value::text_foreground_green | cpp_utils::console_value::text_foreground_intensity );
+          " < 重启 ", core::relaunch, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity );
     }
     ui.add_back( " > 关于 ", core::info )
       .add_back( " > 配置 ", core::edit_config )
