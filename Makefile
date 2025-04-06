@@ -31,20 +31,32 @@ clean:
 	$(msys2_path)/usr/bin/mkdir.exe bin
 	$(msys2_path)/usr/bin/touch.exe bin/.gitkeep
 genarate_info:
-	$(pwsh_path) -ExecutionPolicy Bypass -File genarate_info.ps1
+	$(pwsh_path) -ExecutionPolicy Bypass -File ./genarate_info.ps1
 dependencies_debug = src/*
-bin/debug/__debug__.exe: $(dependencies_debug) genarate_info bin/debug/.gitkeep
+bin/debug/__debug__.exe: $(dependencies_debug) \
+                         genarate_info \
+						 bin/debug/.gitkeep
 	$(msys2_path)/ucrt64/bin/$(compiler) $(dependencies_debug).cpp $(args_debug) -o $@
-dependencies_release_32bit = bin/info-i686.o src/*
-bin/release/SCLTK-i686-msvcrt.exe: $(dependencies_release_32bit) genarate_info bin/release/.gitkeep
+dependencies_release_32bit = bin/info-i686.o \
+                             src/*
+bin/release/SCLTK-i686-msvcrt.exe: $(dependencies_release_32bit) \
+                                   genarate_info \
+								   bin/release/.gitkeep
 	$(msys2_path)/mingw32/bin/$(compiler) $(dependencies_release_32bit).cpp $(args_release) -o $@
-dependencies_release_64bit = bin/info-x86_64.o src/*
+dependencies_release_64bit = bin/info-x86_64.o \
+                             src/*
 bin/release/SCLTK-x86_64-ucrt.exe: $(dependencies_release_64bit) genarate_info bin/release/.gitkeep
 	$(msys2_path)/ucrt64/bin/$(compiler) $(dependencies_release_64bit).cpp $(args_release) -o $@
-dependencies_info = info.rc img/favicon.ico src/info.hpp
-bin/info-i686.o: $(dependencies_info) genarate_info bin/.gitkeep
+dependencies_info = info.rc \
+                    img/favicon.ico \
+					src/info.hpp
+bin/info-i686.o: $(dependencies_info) \
+                 genarate_info \
+				 bin/.gitkeep
 	$(msys2_path)/usr/bin/windres.exe -i $< -o $@ $(args_defines) -F pe-i386
-bin/info-x86_64.o: $(dependencies_info) genarate_info bin/.gitkeep
+bin/info-x86_64.o: $(dependencies_info) \
+                   genarate_info \
+				   bin/.gitkeep
 	$(msys2_path)/usr/bin/windres.exe -i $< -o $@ $(args_defines) -F pe-x86-64
 bin/.gitkeep:
 	$(msys2_path)/usr/bin/mkdir.exe bin -p
