@@ -232,8 +232,7 @@ namespace core {
         }
         virtual auto ui_panel( cpp_utils::console_ui &_ui ) -> void
         {
-            constexpr auto option_ctrl_color{
-              cpp_utils::console_value::text_foreground_red | cpp_utils::console_value::text_foreground_green };
+            constexpr auto option_ctrl_color{ cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_green };
             class option_setter final {
               private:
                 option_container::node::item &item_;
@@ -273,7 +272,7 @@ namespace core {
                     ui.add_back( "                    [ 配  置 ]\n\n" )
                       .add_back(
                         std::format( " < 折叠 {} ", node_.shown_name ), exit,
-                        cpp_utils::console_value::text_foreground_green | cpp_utils::console_value::text_foreground_intensity );
+                        cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity );
                     for ( auto &item : node_.items ) {
                         ui.add_back( std::format( "\n[ {} ]\n", item.shown_name ) )
                           .add_back( std::format( " > {}用 ", item.get() ? "禁" : "启" ), option_setter{ item }, option_ctrl_color );
@@ -374,14 +373,13 @@ namespace core {
         } };
         cpp_utils::console_ui ui;
         ui.add_back( "                    [ 关  于 ]\n\n" )
-          .add_back( " < 返回 ", exit, cpp_utils::console_value::text_foreground_green | cpp_utils::console_value::text_foreground_intensity )
+          .add_back( " < 返回 ", exit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
           .add_back(
             "\n[ 名称 ]\n\n " INFO_FULL_NAME "\n\n[ 版本 ]\n\n " INFO_VERSION "\n\n[ 许可证 & 版权 ]\n\n " INFO_LICENSE
             "\n\n " INFO_COPYRIGHT "\n\n[ 仓库 ]\n" )
           .add_back(
             " " INFO_REPO_URL " ", visit_repo_webpage,
-            cpp_utils::console_value::text_default | cpp_utils::console_value::text_foreground_intensity
-              | cpp_utils::console_value::text_lvb_underscore )
+            cpp_utils::console_text::default_set | cpp_utils::console_text::foreground_intensity | cpp_utils::console_text::lvb_underscore )
           .show();
         return cpp_utils::console_ui::back;
     }
@@ -435,7 +433,7 @@ namespace core {
         };
         cpp_utils::console_ui ui;
         ui.add_back( "                   [ 工 具 箱 ]\n\n" )
-          .add_back( " < 返回 ", exit, cpp_utils::console_value::text_foreground_green | cpp_utils::console_value::text_foreground_intensity )
+          .add_back( " < 返回 ", exit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
           .add_back( " > 命令提示符 ", launch_cmd )
           .add_back( "\n[ 常用操作 ]\n" );
         for ( const auto &common_op : common_ops ) {
@@ -601,7 +599,7 @@ namespace core {
         } };
         cpp_utils::console_ui ui;
         ui.add_back( "                    [ 配  置 ]\n\n" )
-          .add_back( " < 返回 ", exit, cpp_utils::console_value::text_foreground_green | cpp_utils::console_value::text_foreground_intensity )
+          .add_back( " < 返回 ", exit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
           .add_back( " > 同步配置 ", sync )
           .add_back( " > 打开配置文件 ", open_file );
         for ( auto &config_node : config_nodes ) {
