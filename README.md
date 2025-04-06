@@ -192,6 +192,11 @@ make debug
 make release
 ```
 
+更新工具链, 可使用:
+```bash
+make toolchain
+```
+
 # ❓ 常见问题
 
 ## 1 无法执行包含非 ASCII 字符的自定义规则.
