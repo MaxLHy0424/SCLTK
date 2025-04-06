@@ -1,3 +1,4 @@
 /bin/
 !/bin/.gitkeep
-/msys2
+/environment
+/src/info.hpp
