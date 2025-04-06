@@ -5,13 +5,11 @@
 #include <chrono>
 #include <concepts>
 #include <coroutine>
+#include <deque>
 #include <exception>
-#include <expected>
 #include <functional>
-#include <generator>
 #include <optional>
 #include <print>
-#include <queue>
 #include <string>
 #include <string_view>
 #include <thread>
@@ -46,8 +44,6 @@ namespace cpp_utils {
       = std::same_as< std::decay_t< _type_ >, ansi_char > || std::same_as< std::decay_t< _type_ >, wide_char >
      || std::same_as< std::decay_t< _type_ >, utf8_char > || std::same_as< std::decay_t< _type_ >, utf16_char >
      || std::same_as< std::decay_t< _type_ >, utf32_char >;
-    template < typename _type_a_, typename _type_b_ >
-    concept convertible_char_type = char_type< _type_a_ > && char_type< _type_b_ > && sizeof( _type_a_ ) == sizeof( _type_b_ );
     template < typename _type_ >
     concept pointer_type = std::is_pointer_v< _type_ >;
     template < typename _type_ >
@@ -65,110 +61,11 @@ namespace cpp_utils {
           || std::same_as< std::decay_t< _type_ >, std::chrono::weeks > || std::same_as< std::decay_t< _type_ >, std::chrono::months >
           || std::same_as< std::decay_t< _type_ >, std::chrono::years > );
     };
-    template < char_type _target_, char_type _source_ >
-        requires convertible_char_type< _target_, _source_ >
-    inline auto string_convert( const std_string< _source_ > &_str )
-    {
-        const auto str_it{ reinterpret_cast< const _target_ * >( _str.c_str() ) };
-        return std_string< _target_ >{ str_it, str_it + _str.size() };
-    }
-    template < char_type _target_, char_type _source_ >
-        requires convertible_char_type< _target_, _source_ >
-    inline auto string_convert( const std_string_view< _source_ > _str )
-    {
-        const auto str_it{ reinterpret_cast< const _target_ * >( _str.data() ) };
-        return std_string< _target_ >{ str_it, str_it + _str.size() };
-    }
-    template < char_type _target_, char_type _source_ >
-        requires convertible_char_type< _target_, _source_ >
-    inline auto string_convert( const _source_ *const _str )
-    {
-        return std_string< _target_ >{ reinterpret_cast< const _target_ * >( _str ) };
-    }
-    template < char_type _target_, char_type _source_ >
-        requires convertible_char_type< _target_, _source_ >
-    inline auto string_view_convert( const std_string< _source_ > &_str )
-    {
-        const auto str_it{ reinterpret_cast< const _target_ * >( _str.c_str() ) };
-        return std_string_view< _target_ >{ str_it, str_it + _str.size() };
-    }
-    template < char_type _target_, char_type _source_ >
-        requires convertible_char_type< _target_, _source_ >
-    inline auto string_view_convert( const std_string_view< _source_ > _str )
-    {
-        const auto str_it{ reinterpret_cast< const _target_ * >( _str.data() ) };
-        return std_string_view< _target_ >{ str_it, str_it + _str.size() };
-    }
-    template < char_type _target_, char_type _source_ >
-        requires convertible_char_type< _target_, _source_ >
-    inline auto string_view_convert( const _source_ *const _str )
-    {
-        return std_string_view< _target_ >{ reinterpret_cast< const _target_ * >( _str ) };
-    }
     template < pointer_type _type_ >
     inline auto ptr_to_string( const _type_ _ptr )
     {
         using namespace std::string_literals;
         return _ptr == nullptr ? "nullptr"s : std::format( "0x{:x}", reinterpret_cast< std::uintptr_t >( _ptr ) );
-    }
-    template < typename... _args_ >
-    inline auto utf8_format( const utf8_std_string_view _fmt, _args_ &&..._args )
-    {
-        auto convert_arg{ []< typename _type_ >( _type_ &&_arg ) static -> decltype( auto )
-        {
-            if constexpr ( std::same_as< std::decay_t< _type_ >, utf8_std_string > ) {
-                if constexpr ( std::is_const_v< std::remove_reference_t< _type_ > > ) {
-                    return reinterpret_cast< const ansi_std_string * >( &_arg );
-                } else {
-                    return reinterpret_cast< ansi_std_string * >( &_arg );
-                }
-            } else if constexpr ( std::same_as< std::decay_t< _type_ >, utf8_std_string_view > ) {
-                if constexpr ( std::is_const_v< std::remove_reference_t< _type_ > > ) {
-                    return reinterpret_cast< const ansi_std_string_view * >( &_arg );
-                } else {
-                    return reinterpret_cast< ansi_std_string_view * >( &_arg );
-                }
-            } else if constexpr ( std::same_as< std::decay_t< _type_ >, utf8_char * > ) {
-                return std::make_unique< ansi_char * >( reinterpret_cast< ansi_char * >( _arg ) );
-            } else if constexpr ( std::same_as< std::decay_t< _type_ >, const utf8_char * > ) {
-                return std::make_unique< const ansi_char * >( reinterpret_cast< const ansi_char * >( _arg ) );
-            } else if constexpr (
-              std::is_pointer_v< std::decay_t< _type_ > >
-              && !( std::same_as< std::decay_t< _type_ >, ansi_char * > || std::same_as< std::decay_t< _type_ >, const ansi_char * > ) )
-            {
-                return std::make_unique< const ansi_std_string >( ptr_to_ansi_string( std::forward< _type_ >( _arg ) ) );
-            } else {
-                return &_arg;
-            }
-        } };
-        return string_convert< utf8_char >( std::vformat(
-          string_view_convert< ansi_char >( _fmt ), std::make_format_args( *convert_arg( std::forward< _args_ >( _args ) )... ) ) );
-    }
-    template < typename... _args_ >
-    inline auto &utf8_format_to( utf8_std_string &_str, const utf8_std_string_view _fmt, _args_ &&..._args )
-    {
-        _str = utf8_format( _fmt, std::forward< _args_ >( _args )... );
-        return _str;
-    }
-    template < typename... _args_ >
-    inline auto utf8_print( const utf8_std_string_view _fmt, _args_ &&..._args )
-    {
-        std::print( "{}", string_view_convert< ansi_char >( utf8_format( _fmt, std::forward< _args_ >( _args )... ) ) );
-    }
-    template < typename... _args_ >
-    inline auto utf8_print( io_buffer *const _stream, const utf8_std_string_view _fmt, _args_ &&..._args )
-    {
-        std::print( _stream, "{}", string_view_convert< ansi_char >( utf8_format( _fmt, std::forward< _args_ >( _args )... ) ) );
-    }
-    template < typename... _args_ >
-    inline auto utf8_println( const utf8_std_string_view _fmt, _args_ &&..._args )
-    {
-        std::println( "{}", string_view_convert< ansi_char >( utf8_format( _fmt, std::forward< _args_ >( _args )... ) ) );
-    }
-    template < typename... _args_ >
-    inline auto utf8_println( io_buffer *const _stream, const utf8_std_string_view _fmt, _args_ &&..._args )
-    {
-        std::println( _stream, "{}", string_view_convert< ansi_char >( utf8_format( _fmt, std::forward< _args_ >( _args )... ) ) );
     }
     template < char_type _type_, size_type _capacity_ >
         requires( std::same_as< _type_, std::decay_t< _type_ > > && _capacity_ > 0 )
@@ -245,13 +142,13 @@ namespace cpp_utils {
         }
         auto operator=( const constant_string< _type_, _capacity_ > & ) -> constant_string< _type_, _capacity_ > & = delete;
         auto operator=( constant_string< _type_, _capacity_ > && ) -> constant_string< _type_, _capacity_ > &      = delete;
-        constexpr constant_string( const _type_ ( &_str )[ _capacity_ ] ) noexcept
+        consteval constant_string( const _type_ ( &_str )[ _capacity_ ] ) noexcept
         {
             std::copy( _str, _str + _capacity_, data_ );
         }
-        constexpr constant_string( const constant_string< _type_, _capacity_ > & ) = default;
-        constexpr constant_string( constant_string< _type_, _capacity_ > && )      = delete;
-        constexpr ~constant_string()                                               = default;
+        consteval constant_string( const constant_string< _type_, _capacity_ > & )     = default;
+        consteval constant_string( constant_string< _type_, _capacity_ > && ) noexcept = delete;
+        consteval ~constant_string() noexcept                                          = default;
     };
     template < size_type _capacity_ >
     using constant_ansi_string = constant_string< ansi_char, _capacity_ >;
@@ -263,8 +160,7 @@ namespace cpp_utils {
     using constant_utf16_string = constant_string< utf16_char, _capacity_ >;
     template < size_type _capacity_ >
     using constant_utf32_string = constant_string< utf32_char, _capacity_ >;
-    template < typename _type_ >
-        requires( std::movable< _type_ > || std::same_as< _type_, void > )
+    template < std::movable _type_ >
     class coroutine final {
       public:
         struct promise_type;
@@ -275,7 +171,8 @@ namespace cpp_utils {
       public:
         struct promise_type final {
             std::optional< return_type_ > current_value{ std::nullopt };
-            auto get_return_object()
+            std::exception_ptr current_exception{ nullptr };
+            auto get_return_object() noexcept
             {
                 return coroutine< return_type_ >{ handle_::from_promise( *this ) };
             }
@@ -300,23 +197,24 @@ namespace cpp_utils {
             auto return_value( const return_type_ &_value ) noexcept
             {
                 current_value = _value;
+                return std::suspend_always{};
             }
             auto return_value( return_type_ &&_value ) noexcept
             {
                 current_value = std::move( _value );
+                return std::suspend_always{};
             }
-            [[noreturn]]
-            static auto unhandled_exception()
+            auto unhandled_exception() noexcept
             {
-                throw;
+                current_exception = std::current_exception();
             }
             auto await_transform() -> void                               = delete;
             auto operator=( const promise_type & ) -> promise_type &     = default;
             auto operator=( promise_type && ) noexcept -> promise_type & = default;
-            promise_type()                                               = default;
-            promise_type( const promise_type & )                         = default;
+            promise_type() noexcept                                      = default;
+            promise_type( const promise_type & ) noexcept                = default;
             promise_type( promise_type && ) noexcept                     = default;
-            ~promise_type()                                              = default;
+            ~promise_type() noexcept                                     = default;
         };
         class iterator final {
           private:
@@ -340,22 +238,18 @@ namespace cpp_utils {
             {
                 return coroutine_handle_.promise().current_value.value();
             }
-            auto operator&() const
-            {
-                return &coroutine_handle_.promise().current_value.value();
-            }
             auto operator==( std::default_sentinel_t ) const
             {
                 return !coroutine_handle_ || coroutine_handle_.done();
             }
             auto operator=( const iterator & ) -> iterator &     = default;
             auto operator=( iterator && ) noexcept -> iterator & = default;
-            iterator( const handle_ _coroutine_handle )
+            iterator( const handle_ _coroutine_handle ) noexcept
               : coroutine_handle_{ _coroutine_handle }
             { }
-            iterator( const iterator & )     = default;
-            iterator( iterator && ) noexcept = default;
-            ~iterator()                      = default;
+            iterator( const iterator & ) noexcept = default;
+            iterator( iterator && ) noexcept      = default;
+            ~iterator() noexcept                  = default;
         };
         auto empty() const noexcept
         {
@@ -373,14 +267,15 @@ namespace cpp_utils {
         {
             coroutine_handle_.destroy();
         }
-        auto safe_destroy() noexcept
+        auto &safe_destroy() noexcept
         {
             if ( !empty() ) {
                 destroy();
                 coroutine_handle_ = {};
             }
+            return *this;
         }
-        auto reset( coroutine< return_type_ > &&_src )
+        auto &reset( coroutine< return_type_ > &&_src ) noexcept
         {
             if ( this != &_src ) {
                 if ( !empty() ) {
@@ -389,74 +284,52 @@ namespace cpp_utils {
                 coroutine_handle_      = _src.coroutine_handle_;
                 _src.coroutine_handle_ = {};
             }
+            return *this;
         }
-        auto resume() const
+        auto has_exception() const noexcept
+        {
+            return coroutine_handle_.promise().current_exception != nullptr;
+        }
+        [[noreturn]] auto rethrow_exception() const
+        {
+            std::rethrow_exception( coroutine_handle_.promise().current_exception );
+        }
+        auto safe_rethrow_exception() const
+        {
+            if ( has_exception() ) {
+                std::rethrow_exception( coroutine_handle_.promise().current_exception );
+            }
+        }
+        auto &resume() const
         {
             coroutine_handle_.resume();
+            return *this;
         }
-        auto safe_resume() const noexcept
+        auto &safe_resume() const
         {
             if ( empty() ) {
-                return;
+                return *this;
             }
             if ( !done() ) {
                 resume();
+                safe_rethrow_exception();
             }
+            return *this;
         }
         auto copy_value() const
         {
-            return coroutine_handle_.promise().current_value.value();
-        }
-        auto resume_and_copy_value() const
-        {
-            resume();
-            return coroutine_handle_.promise().current_value.value();
-        }
-        auto safe_resume_and_copy_value() const
-        {
-            safe_resume();
             return coroutine_handle_.promise().current_value.value();
         }
         auto &reference_value()
         {
             return coroutine_handle_.promise().current_value.value();
         }
-        auto &resume_and_reference_value()
+        const auto &const_reference_value() const
         {
-            resume();
-            return coroutine_handle_.promise().current_value.value();
-        }
-        auto &safe_resume_and_reference_value()
-        {
-            safe_resume();
-            return coroutine_handle_.promise().current_value.value();
-        }
-        const auto &const_reference_value()
-        {
-            return coroutine_handle_.promise().current_value.value();
-        }
-        const auto &resume_and_const_reference_value()
-        {
-            resume();
-            return coroutine_handle_.promise().current_value.value();
-        }
-        const auto &safe_resume_and_const_reference_value()
-        {
-            safe_resume();
             return coroutine_handle_.promise().current_value.value();
         }
         auto &&move_value()
         {
-            return std::move( coroutine_handle_.promise().current_value.value() );
-        }
-        auto &&resume_and_move_value()
-        {
-            resume();
-            return std::move( coroutine_handle_.promise().current_value.value() );
-        }
-        auto &&safe_resume_and_move_value()
-        {
-            safe_resume();
             return std::move( coroutine_handle_.promise().current_value.value() );
         }
         auto begin()
@@ -476,8 +349,8 @@ namespace cpp_utils {
             reset( std::move( _src ) );
             return *this;
         }
-        coroutine() = default;
-        coroutine( const handle_ _coroutine_handle )
+        coroutine() noexcept = default;
+        coroutine( const handle_ _coroutine_handle ) noexcept
           : coroutine_handle_{ _coroutine_handle }
         { }
         coroutine( const coroutine< return_type_ > & ) = delete;
@@ -486,15 +359,14 @@ namespace cpp_utils {
         {
             _src.coroutine_handle_ = {};
         }
-        ~coroutine()
+        ~coroutine() noexcept
         {
             if ( !empty() ) {
                 destroy();
             }
         }
     };
-    template < typename _type_ >
-        requires( std::movable< _type_ > || std::same_as< _type_, void > )
+    template < std::movable _type_ >
     class coroutine< std::optional< _type_ > > final {
       public:
         struct promise_type;
@@ -505,7 +377,8 @@ namespace cpp_utils {
       public:
         struct promise_type final {
             return_type_ current_value{ std::nullopt };
-            auto get_return_object()
+            std::exception_ptr current_exception{ nullptr };
+            auto get_return_object() noexcept
             {
                 return coroutine< return_type_ >{ handle_::from_promise( *this ) };
             }
@@ -530,23 +403,24 @@ namespace cpp_utils {
             auto return_value( const return_type_ &_value ) noexcept
             {
                 current_value = _value;
+                return std::suspend_always{};
             }
             auto return_value( return_type_ &&_value ) noexcept
             {
                 current_value = std::move( _value );
+                return std::suspend_always{};
             }
-            [[noreturn]]
-            static auto unhandled_exception()
+            auto unhandled_exception() noexcept
             {
-                throw;
+                current_exception = std::current_exception();
             }
             auto await_transform() -> void                               = delete;
             auto operator=( const promise_type & ) -> promise_type &     = default;
             auto operator=( promise_type && ) noexcept -> promise_type & = default;
-            promise_type()                                               = default;
-            promise_type( const promise_type & )                         = default;
+            promise_type() noexcept                                      = default;
+            promise_type( const promise_type & ) noexcept                = default;
             promise_type( promise_type && ) noexcept                     = default;
-            ~promise_type()                                              = default;
+            ~promise_type() noexcept                                     = default;
         };
         class iterator final {
           private:
@@ -570,22 +444,18 @@ namespace cpp_utils {
             {
                 return coroutine_handle_.promise().current_value;
             }
-            auto operator&() const
-            {
-                return &coroutine_handle_.promise().current_value;
-            }
             auto operator==( std::default_sentinel_t ) const
             {
                 return !coroutine_handle_ || coroutine_handle_.done();
             }
             auto operator=( const iterator & ) -> iterator &     = default;
             auto operator=( iterator && ) noexcept -> iterator & = default;
-            iterator( const handle_ _coroutine_handle )
+            iterator( const handle_ _coroutine_handle ) noexcept
               : coroutine_handle_{ _coroutine_handle }
             { }
-            iterator( const iterator & )     = default;
-            iterator( iterator && ) noexcept = default;
-            ~iterator()                      = default;
+            iterator( const iterator & ) noexcept = default;
+            iterator( iterator && ) noexcept      = default;
+            ~iterator() noexcept                  = default;
         };
         auto empty() const noexcept
         {
@@ -603,14 +473,15 @@ namespace cpp_utils {
         {
             coroutine_handle_.destroy();
         }
-        auto safe_destroy() noexcept
+        auto &safe_destroy() noexcept
         {
             if ( !empty() ) {
                 destroy();
                 coroutine_handle_ = {};
             }
+            return *this;
         }
-        auto reset( coroutine< return_type_ > &&_src )
+        auto &reset( coroutine< return_type_ > &&_src ) noexcept
         {
             if ( this != &_src ) {
                 if ( !empty() ) {
@@ -619,74 +490,52 @@ namespace cpp_utils {
                 coroutine_handle_      = _src.coroutine_handle_;
                 _src.coroutine_handle_ = {};
             }
+            return *this;
         }
-        auto resume() const
+        auto has_exception() const noexcept
+        {
+            return coroutine_handle_.promise().current_exception != nullptr;
+        }
+        [[noreturn]] auto rethrow_exception() const
+        {
+            std::rethrow_exception( coroutine_handle_.promise().current_exception );
+        }
+        auto safe_rethrow_exception() const
+        {
+            if ( has_exception() ) {
+                std::rethrow_exception( coroutine_handle_.promise().current_exception );
+            }
+        }
+        auto &resume() const
         {
             coroutine_handle_.resume();
+            return *this;
         }
-        auto safe_resume() const noexcept
+        auto &safe_resume() const
         {
             if ( empty() ) {
-                return;
+                return *this;
             }
             if ( !done() ) {
                 resume();
+                safe_rethrow_exception();
             }
+            return *this;
         }
         auto copy_value() const
         {
-            return coroutine_handle_.promise().current_value;
-        }
-        auto resume_and_copy_value() const
-        {
-            resume();
-            return coroutine_handle_.promise().current_value;
-        }
-        auto safe_resume_and_copy_value() const
-        {
-            safe_resume();
             return coroutine_handle_.promise().current_value;
         }
         auto &reference_value()
         {
             return coroutine_handle_.promise().current_value;
         }
-        auto &resume_and_reference_value()
+        const auto &const_reference_value() const
         {
-            resume();
-            return coroutine_handle_.promise().current_value;
-        }
-        auto &safe_resume_and_reference_value()
-        {
-            safe_resume();
-            return coroutine_handle_.promise().current_value;
-        }
-        const auto &const_reference_value()
-        {
-            return coroutine_handle_.promise().current_value;
-        }
-        const auto &resume_and_const_reference_value()
-        {
-            resume();
-            return coroutine_handle_.promise().current_value;
-        }
-        const auto &safe_resume_and_const_reference()
-        {
-            safe_resume();
             return coroutine_handle_.promise().current_value;
         }
         auto &&move_value()
         {
-            return std::move( coroutine_handle_.promise().current_value );
-        }
-        auto &&resume_and_move_value()
-        {
-            resume();
-            return std::move( coroutine_handle_.promise().current_value );
-        }
-        auto &&safe_resume_and_move_value()
-        {
-            safe_resume();
             return std::move( coroutine_handle_.promise().current_value );
         }
         auto begin()
@@ -706,8 +555,8 @@ namespace cpp_utils {
             reset( std::move( _src ) );
             return *this;
         }
-        coroutine() = default;
-        coroutine( const handle_ _coroutine_handle )
+        coroutine() noexcept = default;
+        coroutine( const handle_ _coroutine_handle ) noexcept
           : coroutine_handle_{ _coroutine_handle }
         { }
         coroutine( const coroutine< return_type_ > & ) = delete;
@@ -716,15 +565,14 @@ namespace cpp_utils {
         {
             _src.coroutine_handle_ = {};
         }
-        ~coroutine()
+        ~coroutine() noexcept
         {
             if ( !empty() ) {
                 destroy();
             }
         }
     };
-    template <>
-    class coroutine< void > final {
+    class coroutine_void final {
       public:
         struct promise_type;
       private:
@@ -732,9 +580,10 @@ namespace cpp_utils {
         handle_ coroutine_handle_{};
       public:
         struct promise_type final {
-            auto get_return_object()
+            std::exception_ptr current_exception{ nullptr };
+            auto get_return_object() noexcept
             {
-                return coroutine< void >{ handle_::from_promise( *this ) };
+                return coroutine_void{ handle_::from_promise( *this ) };
             }
             static auto initial_suspend() noexcept
             {
@@ -745,18 +594,17 @@ namespace cpp_utils {
                 return std::suspend_always{};
             }
             static auto return_void() noexcept { }
-            [[noreturn]]
-            static auto unhandled_exception()
+            auto unhandled_exception() noexcept
             {
-                throw;
+                current_exception = std::current_exception();
             }
             auto await_transform() -> void                               = delete;
             auto operator=( const promise_type & ) -> promise_type &     = default;
             auto operator=( promise_type && ) noexcept -> promise_type & = default;
-            promise_type()                                               = default;
-            promise_type( const promise_type & )                         = default;
+            promise_type() noexcept                                      = default;
+            promise_type( const promise_type & ) noexcept                = default;
             promise_type( promise_type && ) noexcept                     = default;
-            ~promise_type()                                              = default;
+            ~promise_type() noexcept                                     = default;
         };
         auto empty() const noexcept
         {
@@ -774,14 +622,15 @@ namespace cpp_utils {
         {
             coroutine_handle_.destroy();
         }
-        auto safe_destroy() noexcept
+        auto &safe_destroy() noexcept
         {
             if ( !empty() ) {
                 destroy();
                 coroutine_handle_ = {};
             }
+            return *this;
         }
-        auto reset( coroutine< void > &&_src )
+        auto reset( coroutine_void &&_src ) noexcept
         {
             if ( this != &_src ) {
                 if ( !empty() ) {
@@ -791,36 +640,53 @@ namespace cpp_utils {
                 _src.coroutine_handle_ = {};
             }
         }
-        auto resume() const
+        auto has_exception() const noexcept
+        {
+            return coroutine_handle_.promise().current_exception != nullptr;
+        }
+        [[noreturn]] auto rethrow_exception() const
+        {
+            std::rethrow_exception( coroutine_handle_.promise().current_exception );
+        }
+        auto safe_rethrow_exception() const
+        {
+            if ( has_exception() ) {
+                std::rethrow_exception( coroutine_handle_.promise().current_exception );
+            }
+        }
+        auto &resume() const
         {
             coroutine_handle_.resume();
+            return *this;
         }
-        auto safe_resume() const noexcept
+        auto &safe_resume() const
         {
             if ( empty() ) {
-                return;
+                return *this;
             }
             if ( !done() ) {
                 resume();
+                safe_rethrow_exception();
             }
+            return *this;
         }
-        auto operator=( const coroutine< void > & ) -> coroutine< void > & = delete;
-        auto operator=( coroutine< void > &&_src ) -> coroutine< void > &
+        auto operator=( const coroutine_void & ) -> coroutine_void & = delete;
+        auto operator=( coroutine_void &&_src ) noexcept -> coroutine_void &
         {
             reset( std::move( _src ) );
             return *this;
         }
-        coroutine() = default;
-        coroutine( const handle_ _coroutine_handle )
+        coroutine_void() noexcept = default;
+        coroutine_void( const handle_ _coroutine_handle ) noexcept
           : coroutine_handle_{ _coroutine_handle }
         { }
-        coroutine( const coroutine< void > & ) = delete;
-        coroutine( coroutine< void > &&_src ) noexcept
+        coroutine_void( const coroutine_void & ) = delete;
+        coroutine_void( coroutine_void &&_src ) noexcept
           : coroutine_handle_{ _src.coroutine_handle_ }
         {
             _src.coroutine_handle_ = {};
         }
-        ~coroutine()
+        ~coroutine_void() noexcept
         {
             if ( !empty() ) {
                 destroy();
@@ -960,12 +826,71 @@ namespace cpp_utils {
         }
         auto operator=( const thread_pool & ) -> thread_pool & = delete;
         auto operator=( thread_pool && ) -> thread_pool &      = default;
-        thread_pool()                                          = default;
+        thread_pool() noexcept                                 = default;
         thread_pool( const thread_pool & )                     = delete;
-        thread_pool( thread_pool && )                          = default;
+        thread_pool( thread_pool && ) noexcept                 = default;
         ~thread_pool()                                         = default;
     };
 #if defined( _WIN32 ) || defined( _WIN64 )
+    namespace mouse {
+        inline constexpr DWORD button_left{ FROM_LEFT_1ST_BUTTON_PRESSED };
+        inline constexpr DWORD button_middle{ FROM_LEFT_2ND_BUTTON_PRESSED };
+        inline constexpr DWORD button_right{ RIGHTMOST_BUTTON_PRESSED };
+        inline constexpr DWORD click{ 0x0000 };
+        inline constexpr DWORD click_double{ DOUBLE_CLICK };
+        inline constexpr DWORD move{ MOUSE_MOVED };
+        inline constexpr DWORD wheel_height{ MOUSE_HWHEELED };
+        inline constexpr DWORD wheel{ MOUSE_WHEELED };
+    };
+    namespace keyboard {
+        inline constexpr DWORD right_alt_press{ RIGHT_ALT_PRESSED };
+        inline constexpr DWORD left_alt_press{ LEFT_ALT_PRESSED };
+        inline constexpr DWORD right_ctrl_press{ RIGHT_CTRL_PRESSED };
+        inline constexpr DWORD left_ctrl_press{ LEFT_CTRL_PRESSED };
+        inline constexpr DWORD shift_press{ SHIFT_PRESSED };
+        inline constexpr DWORD num_lock_on{ NUMLOCK_ON };
+        inline constexpr DWORD scroll_lock_on{ SCROLLLOCK_ON };
+        inline constexpr DWORD caps_lock_on{ CAPSLOCK_ON };
+        inline constexpr DWORD enhanced_key{ ENHANCED_KEY };
+    }
+    namespace console_handle_flag {
+        inline constexpr DWORD std_input{ STD_INPUT_HANDLE };
+        inline constexpr DWORD std_output{ STD_OUTPUT_HANDLE };
+        inline constexpr DWORD std_error{ STD_ERROR_HANDLE };
+    };
+    namespace console_text {
+        inline constexpr WORD default_set{ FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE };
+        inline constexpr WORD foreground_red{ FOREGROUND_RED };
+        inline constexpr WORD foreground_green{ FOREGROUND_GREEN };
+        inline constexpr WORD foreground_blue{ FOREGROUND_BLUE };
+        inline constexpr WORD foreground_intensity{ FOREGROUND_INTENSITY };
+        inline constexpr WORD background_red{ BACKGROUND_RED };
+        inline constexpr WORD background_green{ BACKGROUND_GREEN };
+        inline constexpr WORD background_blue{ BACKGROUND_BLUE };
+        inline constexpr WORD background_intensity{ BACKGROUND_INTENSITY };
+        inline constexpr WORD lvb_leading_byte{ COMMON_LVB_LEADING_BYTE };
+        inline constexpr WORD lvb_trailing_byte{ COMMON_LVB_TRAILING_BYTE };
+        inline constexpr WORD lvb_grid_horizontal{ COMMON_LVB_GRID_HORIZONTAL };
+        inline constexpr WORD lvb_grid_lvertical{ COMMON_LVB_GRID_LVERTICAL };
+        inline constexpr WORD lvb_grid_rvertical{ COMMON_LVB_GRID_RVERTICAL };
+        inline constexpr WORD lvb_reverse_video{ COMMON_LVB_REVERSE_VIDEO };
+        inline constexpr WORD lvb_underscore{ COMMON_LVB_UNDERSCORE };
+        inline constexpr WORD lvb_sbcsdbcs{ COMMON_LVB_SBCSDBCS };
+    };
+    namespace window_state {
+        inline constexpr UINT hide{ SW_HIDE };
+        inline constexpr UINT show{ SW_SHOW };
+        inline constexpr UINT show_without_activating{ SW_SHOWNA };
+        inline constexpr UINT show_default{ SW_SHOWDEFAULT };
+        inline constexpr UINT show_normal{ SW_SHOWNORMAL };
+        inline constexpr UINT show_normal_without_activating{ SW_SHOWNOACTIVATE };
+        inline constexpr UINT minimize{ SW_SHOWMINIMIZED };
+        inline constexpr UINT minimize_and_activate_next_window_with_z_order{ SW_MINIMIZE };
+        inline constexpr UINT minimize_without_activating{ SW_SHOWMINNOACTIVE };
+        inline constexpr UINT minimize_force{ SW_FORCEMINIMIZE };
+        inline constexpr UINT maximize{ SW_SHOWMAXIMIZED };
+        inline constexpr UINT restore{ SW_RESTORE };
+    };
     inline auto is_run_as_admin() noexcept
     {
         BOOL is_admin;
@@ -994,11 +919,11 @@ namespace cpp_utils {
         ShellExecuteW( nullptr, L"runas", file_path, nullptr, nullptr, SW_SHOWNORMAL );
         std::exit( 0 );
     }
-    inline auto get_current_console_std_handle( const DWORD _std_handle_flag )
+    inline auto get_current_console_std_handle( const DWORD _std_handle_flag ) noexcept
     {
         return GetStdHandle( _std_handle_flag );
     }
-    inline auto get_current_window_handle()
+    inline auto get_current_window_handle() noexcept
     {
         auto window_handle{ GetConsoleWindow() };
         if ( window_handle == nullptr ) {
@@ -1009,18 +934,18 @@ namespace cpp_utils {
         }
         return window_handle;
     }
-    inline auto get_window_state( const HWND _window_handle )
+    inline auto get_window_state( const HWND _window_handle ) noexcept
     {
         WINDOWPLACEMENT wp;
         wp.length = sizeof( WINDOWPLACEMENT );
         GetWindowPlacement( _window_handle, &wp );
         return wp.showCmd;
     }
-    inline auto set_window_state( const HWND _window_handle, const UINT _state )
+    inline auto set_window_state( const HWND _window_handle, const UINT _state ) noexcept
     {
         ShowWindow( _window_handle, _state );
     }
-    inline auto keep_window_top( const HWND _window_handle, const DWORD _thread_id, const DWORD _window_thread_process_id )
+    inline auto keep_window_top( const HWND _window_handle, const DWORD _thread_id, const DWORD _window_thread_process_id ) noexcept
     {
         AttachThreadInput( _thread_id, _window_thread_process_id, TRUE );
         set_window_state( _window_handle, get_window_state( _window_handle ) );
@@ -1028,7 +953,7 @@ namespace cpp_utils {
         SetWindowPos( _window_handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
         AttachThreadInput( _thread_id, _window_thread_process_id, FALSE );
     }
-    inline auto keep_current_window_top()
+    inline auto keep_current_window_top() noexcept
     {
         auto window_handle{ get_current_window_handle() };
         keep_window_top( window_handle, GetCurrentThreadId(), GetWindowThreadProcessId( window_handle, nullptr ) );
@@ -1056,7 +981,7 @@ namespace cpp_utils {
           window_handle, GetCurrentThreadId(), GetWindowThreadProcessId( window_handle, nullptr ), _sleep_time,
           std::forward< _callee_ >( _condition_checker ), std::forward< _args_ >( _condition_checker_args )... );
     }
-    inline auto cancel_top_window( const HWND _window_handle )
+    inline auto cancel_top_window( const HWND _window_handle ) noexcept
     {
         SetWindowPos( _window_handle, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
     }
@@ -1080,28 +1005,29 @@ namespace cpp_utils {
         SetConsoleMode( _std_output_handle, mode );
         std::print( "\033c" );
     }
-    inline auto set_console_title( const ansi_char *const _title )
+    inline auto set_console_title( const ansi_char *const _title ) noexcept
     {
         SetConsoleTitleA( _title );
     }
-    inline auto set_console_title( const ansi_std_string &_title )
+    inline auto set_console_title( const ansi_std_string &_title ) noexcept
     {
         SetConsoleTitleA( _title.data() );
     }
-    inline auto set_console_title( const wide_char *const _title )
+    inline auto set_console_title( const wide_char *const _title ) noexcept
     {
         SetConsoleTitleW( _title );
     }
-    inline auto set_console_title( const wide_std_string &_title )
+    inline auto set_console_title( const wide_std_string &_title ) noexcept
     {
         SetConsoleTitleW( _title.data() );
     }
-    inline auto set_console_charset( const UINT _charset_id )
+    inline auto set_console_charset( const UINT _charset_id ) noexcept
     {
         SetConsoleOutputCP( _charset_id );
         SetConsoleCP( _charset_id );
     }
-    inline auto set_console_size( const HWND _window_handle, const HANDLE _std_output_handle, const SHORT _width, const SHORT _height )
+    inline auto
+      set_console_size( const HWND _window_handle, const HANDLE _std_output_handle, const SHORT _width, const SHORT _height ) noexcept
     {
         SMALL_RECT wrt{ 0, 0, static_cast< SHORT >( _width - 1 ), static_cast< SHORT >( _height - 1 ) };
         set_window_state( _window_handle, SW_SHOWNORMAL );
@@ -1110,11 +1036,11 @@ namespace cpp_utils {
         SetConsoleScreenBufferSize( _std_output_handle, { _width, _height } );
         clear_console_screen( _std_output_handle );
     }
-    inline auto set_window_translucency( const HWND _window_handle, const BYTE _value )
+    inline auto set_window_translucency( const HWND _window_handle, const BYTE _value ) noexcept
     {
         SetLayeredWindowAttributes( _window_handle, RGB( 0, 0, 0 ), _value, LWA_ALPHA );
     }
-    inline auto fix_window_size( const HWND _window_handle, const bool _is_enable )
+    inline auto fix_window_size( const HWND _window_handle, const bool _is_enable ) noexcept
     {
         SetWindowLongPtrW(
           _window_handle, GWL_STYLE,
@@ -1122,7 +1048,7 @@ namespace cpp_utils {
             ? GetWindowLongPtrW( _window_handle, GWL_STYLE ) & ~WS_SIZEBOX
             : GetWindowLongPtrW( _window_handle, GWL_STYLE ) | WS_SIZEBOX );
     }
-    inline auto enable_window_menu( const HWND _window_handle, const bool _is_enable )
+    inline auto enable_window_menu( const HWND _window_handle, const bool _is_enable ) noexcept
     {
         SetWindowLongPtrW(
           _window_handle, GWL_STYLE,
@@ -1130,7 +1056,7 @@ namespace cpp_utils {
             ? GetWindowLongPtrW( _window_handle, GWL_STYLE ) | WS_SYSMENU
             : GetWindowLongPtrW( _window_handle, GWL_STYLE ) & ~WS_SYSMENU );
     }
-    inline auto enable_window_minimize_ctrl( const HWND _window_handle, const bool _is_enable )
+    inline auto enable_window_minimize_ctrl( const HWND _window_handle, const bool _is_enable ) noexcept
     {
         SetWindowLongPtrW(
           _window_handle, GWL_STYLE,
@@ -1138,7 +1064,7 @@ namespace cpp_utils {
             ? GetWindowLongPtrW( _window_handle, GWL_STYLE ) | WS_MINIMIZEBOX
             : GetWindowLongPtrW( _window_handle, GWL_STYLE ) & ~WS_MINIMIZEBOX );
     }
-    inline auto enable_window_maximize_ctrl( const HWND _window_handle, const bool _is_enable )
+    inline auto enable_window_maximize_ctrl( const HWND _window_handle, const bool _is_enable ) noexcept
     {
         SetWindowLongPtrW(
           _window_handle, GWL_STYLE,
@@ -1146,51 +1072,12 @@ namespace cpp_utils {
             ? GetWindowLongPtrW( _window_handle, GWL_STYLE ) | WS_MAXIMIZEBOX
             : GetWindowLongPtrW( _window_handle, GWL_STYLE ) & ~WS_MAXIMIZEBOX );
     }
-    inline auto enable_window_close_ctrl( const HWND _window_handle, const bool _is_enable )
+    inline auto enable_window_close_ctrl( const HWND _window_handle, const bool _is_enable ) noexcept
     {
         EnableMenuItem(
           GetSystemMenu( _window_handle, FALSE ), SC_CLOSE,
           _is_enable ? MF_BYCOMMAND | MF_ENABLED : MF_BYCOMMAND | MF_DISABLED | MF_GRAYED );
     }
-    namespace console_value {
-        inline constexpr DWORD std_input_handle_flag{ STD_INPUT_HANDLE };
-        inline constexpr DWORD std_output_handle_flag{ STD_OUTPUT_HANDLE };
-        inline constexpr DWORD std_error_handle_flag{ STD_ERROR_HANDLE };
-        inline constexpr DWORD mouse_button_left{ FROM_LEFT_1ST_BUTTON_PRESSED };
-        inline constexpr DWORD mouse_button_middle{ FROM_LEFT_2ND_BUTTON_PRESSED };
-        inline constexpr DWORD mouse_button_right{ RIGHTMOST_BUTTON_PRESSED };
-        inline constexpr DWORD mouse_click{ 0x0000 };
-        inline constexpr DWORD mouse_click_double{ DOUBLE_CLICK };
-        inline constexpr DWORD mouse_move{ MOUSE_MOVED };
-        inline constexpr DWORD mouse_wheel_height{ MOUSE_HWHEELED };
-        inline constexpr DWORD mouse_wheel{ MOUSE_WHEELED };
-        inline constexpr DWORD key_right_alt_press{ RIGHT_ALT_PRESSED };
-        inline constexpr DWORD key_left_alt_press{ LEFT_ALT_PRESSED };
-        inline constexpr DWORD key_right_ctrl_press{ RIGHT_CTRL_PRESSED };
-        inline constexpr DWORD key_left_ctrl_press{ LEFT_CTRL_PRESSED };
-        inline constexpr DWORD key_shift_press{ SHIFT_PRESSED };
-        inline constexpr DWORD key_num_lock_on{ NUMLOCK_ON };
-        inline constexpr DWORD key_scroll_lock_on{ SCROLLLOCK_ON };
-        inline constexpr DWORD key_caps_lock_on{ CAPSLOCK_ON };
-        inline constexpr DWORD key_enhanced_key{ ENHANCED_KEY };
-        inline constexpr WORD text_default{ FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE };
-        inline constexpr WORD text_foreground_red{ FOREGROUND_RED };
-        inline constexpr WORD text_foreground_green{ FOREGROUND_GREEN };
-        inline constexpr WORD text_foreground_blue{ FOREGROUND_BLUE };
-        inline constexpr WORD text_foreground_intensity{ FOREGROUND_INTENSITY };
-        inline constexpr WORD text_background_red{ BACKGROUND_RED };
-        inline constexpr WORD text_background_green{ BACKGROUND_GREEN };
-        inline constexpr WORD text_background_blue{ BACKGROUND_BLUE };
-        inline constexpr WORD text_background_intensity{ BACKGROUND_INTENSITY };
-        inline constexpr WORD text_lvb_leading_byte{ COMMON_LVB_LEADING_BYTE };
-        inline constexpr WORD text_lvb_trailing_byte{ COMMON_LVB_TRAILING_BYTE };
-        inline constexpr WORD text_lvb_grid_horizontal{ COMMON_LVB_GRID_HORIZONTAL };
-        inline constexpr WORD text_lvb_grid_lvertical{ COMMON_LVB_GRID_LVERTICAL };
-        inline constexpr WORD text_lvb_grid_rvertical{ COMMON_LVB_GRID_RVERTICAL };
-        inline constexpr WORD text_lvb_reverse_video{ COMMON_LVB_REVERSE_VIDEO };
-        inline constexpr WORD text_lvb_underscore{ COMMON_LVB_UNDERSCORE };
-        inline constexpr WORD text_lvb_sbcsdbcs{ COMMON_LVB_SBCSDBCS };
-    };
     class console_ui final {
       public:
         using func_return_type = bool;
@@ -1199,19 +1086,19 @@ namespace cpp_utils {
         struct func_args final {
             console_ui &parent_ui;
             const size_type node_index;
-            const DWORD mouse_button_state;
-            const DWORD ctrl_key_state;
+            const DWORD button_state;
+            const DWORD ctrl_state;
             const DWORD event_flag;
             auto operator=( const func_args & ) noexcept -> func_args & = default;
             auto operator=( func_args && ) noexcept -> func_args &      = default;
             func_args(
               console_ui &_parent_ui, const size_type _node_index,
-              const MOUSE_EVENT_RECORD _mouse_event = MOUSE_EVENT_RECORD{ {}, console_value::mouse_button_left, {}, {} } ) noexcept
+              const MOUSE_EVENT_RECORD _event = MOUSE_EVENT_RECORD{ {}, mouse::button_left, {}, {} } ) noexcept
               : parent_ui{ _parent_ui }
               , node_index{ _node_index }
-              , mouse_button_state{ _mouse_event.dwButtonState }
-              , ctrl_key_state{ _mouse_event.dwControlKeyState }
-              , event_flag{ _mouse_event.dwEventFlags }
+              , button_state{ _event.dwButtonState }
+              , ctrl_state{ _event.dwControlKeyState }
+              , event_flag{ _event.dwEventFlags }
             { }
             func_args( const func_args & ) noexcept = default;
             func_args( func_args && ) noexcept      = default;
@@ -1234,21 +1121,21 @@ namespace cpp_utils {
                 SetConsoleTextAttribute( std_output_handle_, _attrs );
                 last_attrs = _attrs;
             }
-            auto operator==( const COORD _mouse_position ) const noexcept
+            auto operator==( const COORD _position ) const noexcept
             {
-                return position.Y == _mouse_position.Y && position.X <= _mouse_position.X
-                    && _mouse_position.X < ( position.X + static_cast< SHORT >( text.size() ) );
+                return position.Y == _position.Y && position.X <= _position.X
+                    && _position.X < ( position.X + static_cast< SHORT >( text.size() ) );
             }
-            auto operator!=( const COORD _mouse_position ) const noexcept
+            auto operator!=( const COORD _position ) const noexcept
             {
-                return !operator==( _mouse_position );
+                return !operator==( _position );
             }
             auto operator=( const line_node_ & ) noexcept -> line_node_ & = default;
             auto operator=( line_node_ && ) noexcept -> line_node_ &      = default;
             line_node_() noexcept
-              : default_attrs{ console_value::text_default }
-              , intensity_attrs{ console_value::text_foreground_green | console_value::text_foreground_blue }
-              , last_attrs{ console_value::text_default }
+              : default_attrs{ console_text::default_set }
+              , intensity_attrs{ console_text::foreground_green | console_text::foreground_blue }
+              , last_attrs{ console_text::default_set }
             { }
             line_node_(
               const ansi_std_string_view _text, callback_type &_func, const WORD _default_attrs, const WORD _intensity_attrs ) noexcept
@@ -1258,9 +1145,9 @@ namespace cpp_utils {
               , intensity_attrs{ _intensity_attrs }
               , last_attrs{ _default_attrs }
             { }
-            line_node_( const line_node_ & ) noexcept = default;
-            line_node_( line_node_ && ) noexcept      = default;
-            ~line_node_() noexcept                    = default;
+            line_node_( const line_node_ & )     = default;
+            line_node_( line_node_ && ) noexcept = default;
+            ~line_node_() noexcept               = default;
         };
         std::deque< line_node_ > lines_{};
         static auto show_cursor_( const WINBOOL _is_show ) noexcept
@@ -1303,7 +1190,7 @@ namespace cpp_utils {
         {
             SetConsoleCursorPosition( std_output_handle_, _cursor_position );
         }
-        static auto wait_mouse_event_( const bool _is_mouse_move = true ) noexcept
+        static auto wait_event_( const bool _is_move = true ) noexcept
         {
             using namespace std::chrono_literals;
             INPUT_RECORD record;
@@ -1311,9 +1198,7 @@ namespace cpp_utils {
             while ( true ) {
                 std::this_thread::sleep_for( 10ms );
                 ReadConsoleInputW( std_input_handle_, &record, 1, &reg );
-                if ( record.EventType == MOUSE_EVENT
-                     && ( _is_mouse_move || record.Event.MouseEvent.dwEventFlags != console_value::mouse_move ) )
-                {
+                if ( record.EventType == MOUSE_EVENT && ( _is_move || record.Event.MouseEvent.dwEventFlags != mouse::move ) ) {
                     return record.Event.MouseEvent;
                 }
             }
@@ -1368,13 +1253,13 @@ namespace cpp_utils {
                 }
             }
         }
-        auto call_func_( const MOUSE_EVENT_RECORD &_mouse_event )
+        auto call_func_( const MOUSE_EVENT_RECORD &_event )
         {
             auto is_exit{ back };
             auto size{ lines_.size() };
             for ( size_type idx{ 0 }; idx < size; ++idx ) {
                 auto &line{ lines_[ idx ] };
-                if ( line != _mouse_event.dwMousePosition ) {
+                if ( line != _event.dwMousePosition ) {
                     continue;
                 }
                 if ( line.func == nullptr ) {
@@ -1384,7 +1269,7 @@ namespace cpp_utils {
                 line.set_attrs( line.default_attrs );
                 show_cursor_( FALSE );
                 edit_console_attrs_( console_attrs_::lock_all );
-                is_exit = line.func( func_args{ *this, idx, _mouse_event } );
+                is_exit = line.func( func_args{ *this, idx, _event } );
                 show_cursor_( FALSE );
                 edit_console_attrs_( console_attrs_::lock_text );
                 init_pos_();
@@ -1425,24 +1310,24 @@ namespace cpp_utils {
         }
         auto &add_front(
           const ansi_std_string_view _text, callback_type _func = nullptr,
-          const WORD _intensity_attrs = console_value::text_foreground_green | console_value::text_foreground_blue,
-          const WORD _default_attrs   = console_value::text_default )
+          const WORD _intensity_attrs = console_text::foreground_green | console_text::foreground_blue,
+          const WORD _default_attrs   = console_text::default_set )
         {
             lines_.emplace_front( _text, _func, _default_attrs, _func != nullptr ? _intensity_attrs : _default_attrs );
             return *this;
         }
         auto &add_back(
           const ansi_std_string_view _text, callback_type _func = nullptr,
-          const WORD _intensity_attrs = console_value::text_foreground_blue | console_value::text_foreground_green,
-          const WORD _default_attrs   = console_value::text_default )
+          const WORD _intensity_attrs = console_text::foreground_blue | console_text::foreground_green,
+          const WORD _default_attrs   = console_text::default_set )
         {
             lines_.emplace_back( _text, _func, _default_attrs, _func != nullptr ? _intensity_attrs : _default_attrs );
             return *this;
         }
         auto &insert(
           const size_type _index, const ansi_std_string_view _text, callback_type _func = nullptr,
-          const WORD _intensity_attrs = console_value::text_foreground_green | console_value::text_foreground_blue,
-          const WORD _default_attrs   = console_value::text_default )
+          const WORD _intensity_attrs = console_text::foreground_green | console_text::foreground_blue,
+          const WORD _default_attrs   = console_text::default_set )
         {
             lines_.emplace(
               lines_.cbegin() + _index, _text, _func, _default_attrs, _func != nullptr ? _intensity_attrs : _default_attrs );
@@ -1470,8 +1355,8 @@ namespace cpp_utils {
         }
         auto &edit(
           const size_type _index, const ansi_std_string_view _text, callback_type _func = nullptr,
-          const WORD _intensity_attrs = console_value::text_foreground_green | console_value::text_foreground_blue,
-          const WORD _default_attrs   = console_value::text_default )
+          const WORD _intensity_attrs = console_text::foreground_green | console_text::foreground_blue,
+          const WORD _default_attrs   = console_text::default_set )
         {
             lines_.at( _index ) = line_node_{ _text, _func, _default_attrs, _func != nullptr ? _intensity_attrs : _default_attrs };
             return *this;
@@ -1502,15 +1387,15 @@ namespace cpp_utils {
             show_cursor_( FALSE );
             edit_console_attrs_( console_attrs_::lock_text );
             init_pos_();
-            MOUSE_EVENT_RECORD mouse_event;
+            MOUSE_EVENT_RECORD event;
             auto func_return_value{ back };
             while ( func_return_value == back ) {
-                mouse_event = wait_mouse_event_();
-                switch ( mouse_event.dwEventFlags ) {
-                    case console_value::mouse_move : refresh_( mouse_event.dwMousePosition ); break;
-                    case console_value::mouse_click : {
-                        if ( mouse_event.dwButtonState != false ) {
-                            func_return_value = call_func_( mouse_event );
+                event = wait_event_();
+                switch ( event.dwEventFlags ) {
+                    case mouse::move : refresh_( event.dwMousePosition ); break;
+                    case mouse::click : {
+                        if ( event.dwButtonState != false ) {
+                            func_return_value = call_func_( event );
                         }
                         break;
                     }
@@ -1531,10 +1416,10 @@ namespace cpp_utils {
         console_ui() noexcept
         {
             if ( std_input_handle_ == nullptr ) {
-                std_input_handle_ = GetStdHandle( console_value::std_input_handle_flag );
+                std_input_handle_ = GetStdHandle( console_handle_flag::std_input );
             }
             if ( std_output_handle_ == nullptr ) {
-                std_output_handle_ = GetStdHandle( console_value::std_output_handle_flag );
+                std_output_handle_ = GetStdHandle( console_handle_flag::std_output );
             }
         }
         console_ui( const HANDLE _std_input_handle, const HANDLE _std_output_handle ) noexcept
