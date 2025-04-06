@@ -11,9 +11,9 @@ output_charset   = gb18030
 args_base        = -pipe -finput-charset=$(input_charset) -fexec-charset=$(output_charset) -std=$(args_std) $(args_link) $(args_warning) $(args_defines)
 args_debug       = -g3 $(args_base) $(args_opt_debug)
 args_release     = -DNDEBUG -static $(args_base) $(args_opt_release)
-.PHONY: init build clean debug release
-all: init build release
-init:
+.PHONY: toolchain build clean debug release
+all: toolchain build release
+toolchain:
 	$(msys2_path)/usr/bin/pacman.exe -Sy --noconfirm --needed\
 	 mingw-w64-i686-toolchain\
 	 mingw-w64-ucrt-x86_64-toolchain\
