@@ -375,8 +375,9 @@ namespace core {
         ui.add_back( "                    [ 关  于 ]\n\n" )
           .add_back( " < 返回 ", exit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
           .add_back(
-            "\n[ 名称 ]\n\n " INFO_FULL_NAME "\n\n[ 版本 ]\n\n " INFO_VERSION "\n\n[ 许可证 & 版权 ]\n\n " INFO_LICENSE
-            "\n\n " INFO_COPYRIGHT "\n\n[ 仓库 ]\n" )
+            "\n[ 名称 ]\n\n " INFO_FULL_NAME " (" INFO_SHORT_NAME ")\n\n[ 版本 ]\n\n " INFO_VERSION
+            "\n (提交时间: " INFO_TIME_ZONE " " INFO_GIT_DATE ")\n (构建时间: " INFO_TIME_ZONE " " INFO_BUILD_TIME
+            ")\n\n[ 许可证 & 版权 ]\n\n " INFO_LICENSE "\n " INFO_COPYRIGHT "\n\n[ 仓库 ]\n" )
           .add_back(
             " " INFO_REPO_URL " ", visit_repo_webpage,
             cpp_utils::console_text::default_set | cpp_utils::console_text::foreground_intensity | cpp_utils::console_text::lvb_underscore )
@@ -573,7 +574,7 @@ namespace core {
             load_config( true );
             std::print( " -> 保存更改.\n" );
             std::ofstream config_file_stream{ config_file_name, std::ios::out | std::ios::trunc };
-            config_file_stream << "# " INFO_FULL_NAME " (" INFO_VERSION ")\n";
+            config_file_stream << "# " INFO_FULL_NAME " (" INFO_GIT_TAG ")\n";
             for ( auto &config_node : config_nodes ) {
                 config_file_stream << std::format( "[ {} ]\n", config_node->self_name );
                 config_node->sync( config_file_stream );
