@@ -2,8 +2,7 @@
 
 ![title](./img/title.png)\
 **Student Computer Lab Toolkit**\
-**轻松破解机房控制**\
-©️ 2023 - present MaxLHy0424.
+**轻松破解机房控制**
 
 </div>
 
