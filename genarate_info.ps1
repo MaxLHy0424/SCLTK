@@ -8,7 +8,7 @@ $git_branch = git branch --show-current
 $git_tag = git describe --tags --abbrev=0
 $git_date = git log -1 --format=%cd --date=format:"%Y/%m/%d %H:%M:%S"
 $build_time = Get-Date -Format "yyyy/MM/dd HH:mm:ss"
-$time_zone = Get-TimeZone | Select-Object -ExpandProperty StandardName
+$time_zone = Get-TimeZone | Select-Object -ExpandProperty Id
 @"
 #pragma once
 #define INFO_FULL_NAME "$software_full_name"
