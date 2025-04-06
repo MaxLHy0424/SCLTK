@@ -144,10 +144,7 @@ namespace core {
               { "fix_os_env", "* 修复操作系统环境" } } },
           { "window",
             "窗口显示",
-            { { "keep_window_top", "* 置顶窗口" },
-              { "disable_close_ctrl", "* 禁用关闭控件" },
-              { "minimalist_titlebar", "* 极简标题栏" },
-              { "translucent", "* 半透明" } } },
+            { { "keep_window_top", "* 置顶窗口" }, { "minimalist_titlebar", "* 极简标题栏" }, { "translucent", "* 半透明" } } },
           { "perf",
             "性能",
             { { "quick_exit_and_relaunch", "** 快速退出与重启" },
@@ -449,17 +446,14 @@ namespace core {
     inline auto set_console_attrs( const std::stop_token _msg )
     {
         const auto &window_options{ options[ "window" ] };
-        const auto &is_disable_close_ctrl{ window_options[ "disable_close_ctrl" ] };
         const auto &is_enable_minimalist_titlebar{ window_options[ "minimalist_titlebar" ] };
         const auto &is_translucent{ window_options[ "translucent" ] };
         if ( is_disable_x_option_hot_reload ) {
-            cpp_utils::enable_window_close_ctrl( window_handle, !is_disable_close_ctrl );
             cpp_utils::enable_window_menu( window_handle, !is_enable_minimalist_titlebar );
             cpp_utils::set_window_translucency( window_handle, is_translucent ? 230 : 255 );
             return;
         }
         while ( !_msg.stop_requested() ) {
-            cpp_utils::enable_window_close_ctrl( window_handle, !is_disable_close_ctrl );
             cpp_utils::enable_window_menu( window_handle, !is_enable_minimalist_titlebar );
             cpp_utils::set_window_translucency( window_handle, is_translucent ? 230 : 255 );
             std::this_thread::sleep_for( default_thread_sleep_time );
