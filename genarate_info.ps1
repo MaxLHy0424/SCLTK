@@ -11,16 +11,16 @@ $build_time = Get-Date -Format "yyyy/MM/dd HH:mm:ss"
 $time_zone = Get-TimeZone | Select-Object -ExpandProperty Id
 @"
 #pragma once
-#define INFO_FULL_NAME "$software_full_name"
+#define INFO_FULL_NAME  "$software_full_name"
 #define INFO_SHORT_NAME "$software_short_name"
-#define INFO_LICENSE "$license"
-#define INFO_COPYRIGHT "$coprright"
-#define INFO_REPO_URL "$repo_url"
-#define INFO_GIT_HASH "$git_hash"
+#define INFO_LICENSE    "$license"
+#define INFO_COPYRIGHT  "$coprright"
+#define INFO_REPO_URL   "$repo_url"
+#define INFO_GIT_HASH   "$git_hash"
 #define INFO_GIT_BRANCH "$git_branch"
-#define INFO_GIT_TAG "$git_tag"
-#define INFO_GIT_DATE "$git_date"
+#define INFO_GIT_TAG    "$git_tag"
+#define INFO_GIT_DATE   "$git_date"
 #define INFO_BUILD_TIME "$build_time"
-#define INFO_TIME_ZONE "$time_zone"
-#define INFO_VERSION INFO_GIT_TAG "-" INFO_GIT_BRANCH "-" INFO_GIT_HASH
+#define INFO_TIME_ZONE  "$time_zone"
+#define INFO_VERSION    INFO_GIT_TAG "-" INFO_GIT_BRANCH "-" INFO_GIT_HASH
 "@ | Out-File -FilePath "src/info.hpp" -Encoding UTF8 -NoNewline
