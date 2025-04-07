@@ -539,7 +539,7 @@ namespace core {
         std::print( " -> 加载配置文件.\n" );
         ansi_std_string line;
         ansi_std_string_view line_view;
-        basic_config_node *node_ptr{ nullptr };
+        basic_config_node *node_ptr{};
         while ( std::getline( config_file, line ) ) {
             line_view = line;
             if ( line_view.empty() ) {
