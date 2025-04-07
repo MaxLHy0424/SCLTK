@@ -170,8 +170,8 @@ namespace cpp_utils {
         handle_ coroutine_handle_{};
       public:
         struct promise_type final {
-            std::optional< return_type_ > current_value{ std::nullopt };
-            std::exception_ptr current_exception{ nullptr };
+            std::optional< return_type_ > current_value{};
+            std::exception_ptr current_exception{};
             auto get_return_object() noexcept
             {
                 return coroutine< return_type_ >{ handle_::from_promise( *this ) };
@@ -376,8 +376,8 @@ namespace cpp_utils {
         handle_ coroutine_handle_{};
       public:
         struct promise_type final {
-            return_type_ current_value{ std::nullopt };
-            std::exception_ptr current_exception{ nullptr };
+            return_type_ current_value{};
+            std::exception_ptr current_exception{};
             auto get_return_object() noexcept
             {
                 return coroutine< return_type_ >{ handle_::from_promise( *this ) };
@@ -580,7 +580,7 @@ namespace cpp_utils {
         handle_ coroutine_handle_{};
       public:
         struct promise_type final {
-            std::exception_ptr current_exception{ nullptr };
+            std::exception_ptr current_exception{};
             auto get_return_object() noexcept
             {
                 return coroutine_void{ handle_::from_promise( *this ) };
