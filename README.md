@@ -34,9 +34,9 @@ SCLTK 发行版文件名规则为 `SCLTK-[ arch ]-[ runtime ].exe`, 其中 `[ ar
 
 `[ arch ]` 和 `[ runtime ]` 的具体信息如下:
 - **`x86_64` & `ucrt` \(推荐\)**\
-  开发工具链为 msys2 `mingw-w64-ucrt-x86_64-toolchain`, 64 位可执行文件, 运行时库为 *Universal C Runtime*, 支持 Windows 10 以上的 Windows OS \(部分 Windows OS 在安装特定更新后可以运行\).
+  开发工具链为 msys2 `mingw-w64-ucrt-x86_64-toolchain`, 64 位可执行文件, 运行时库为 *Universal C Runtime \(UCRT\)*, 支持 Windows 10 以上的 Windows OS \(部分 Windows OS 在安装特定更新后可以运行\).
 - **`i686` & `msvcrt`**\
-  开发工具链为 msys2 `mingw-w64-i686-toolchain`, 32 位可执行文件, 运行时库为 *Microsoft Visual C Runtime*, 支持大部分 Windows OS.
+  开发工具链为 msys2 `mingw-w64-i686-toolchain`, 32 位可执行文件, 运行时库为 *Microsoft Visual C Runtime \(MSVCRT\)*, 支持大部分 Windows OS.
 
 ## 2 常规操作
 
@@ -105,7 +105,7 @@ SCLTK 窗口相关选项.
 
 ### 3.3 自定义规则
 
-在执行从自定义规则破解/恢复时使用自定义规则.
+在执行从自定义规则破解\/恢复时使用自定义规则.
 
 #### 3.3.1 可执行文件
 
@@ -150,7 +150,7 @@ abc_diag_track
 
 每个控制软件有独立的破解/恢复选项, 可根据需求执行.
 
-`[ 破解 ]`/`[ 恢复 ]` 下的 `> 自定义` 将执行自定义规则, 配置参阅 [3.3 自定义规则](#33-自定义规则).
+`[ 破解 ]`\/`[ 恢复 ]` 下的 `> 自定义` 将执行自定义规则, 配置参阅 [3.3 自定义规则](#33-自定义规则).
 
 当启用特定选项 (详见 [3.2.1 选项分类: 破解/恢复](#321-选项分类-破解恢复)) 时, 破解/恢复时将映像劫持可执行文件, 禁用相关服务.
 
@@ -168,7 +168,7 @@ msys2_path = /path/to/msys2
 pwsh_path  = /path/to/pwsh
 ```
 
-其中 `/path/to/msys2` 为 msys2 的安装路径 (以 `/` 作为路径分隔符, 若路径中存在空格, 需要先将路径用英文半角引号引起来 ,如 `"C:/dev tools/msys2"`, 下同), `/path/to/pwsh` 为 PowerShell 的安装路径 (可通过命令 `where.exe powershell.exe` 或 `where.exe pwsh.exe` 查询).
+其中 `/path/to/msys2` 为 msys2 的安装路径 \(以 `/` 作为路径分隔符, 若路径中存在空格, 需要先将路径用英文半角引号引起来 ,如 `"C:/dev tools/msys2"`, 下同\), `/path/to/pwsh` 为 PowerShell 的安装路径 \(可通过命令 `where.exe powershell.exe` 或 `where.exe pwsh.exe` 查询\).
 
 接下来, 在仓库本地目录下打开终端, 执行:
 ```bash
@@ -195,20 +195,24 @@ make toolchain
 
 # ❓ 常见问题
 
-## 1 无法执行包含非 ASCII 字符的自定义规则.
+## 无法执行包含非 ASCII 字符的自定义规则.
 
 请尝试将配置文件 `config.ini` 使用 GB18030 \/ GBK 编码重新保存后重新启动 SCLTK.
 
 > [!NOTE]
-> 由于 Microsoft Windows OS 历史遗留问题, GB18030 \/ GBK 编码为语言设置为简体中文时的默认文本编码. 此方法仅能支持自定义规则中的大部分中文字符, 部分韩文字符及日文字符.
+> 由于 Microsoft Windows OS 历史遗留问题, GB18030 \/ GBK 编码为语言设置为简体中文时的默认文本编码. 此方法仅能支持自定义规则中的大部分中文字符, 部分日文和韩文字符.
 
-## 2 SCLTK 窗口总是输出 "... 已被管理员禁用" 或 "找不到 ..."
+## SCLTK 窗口总是输出 "... 已被管理员禁用" 或 "找不到 ..."
 
 可尝试启用 "修复操作系统环境", 详见 [3.2.1 选项分类: 破解/恢复](#321-选项分类-破解恢复).
 
-## 3 破解后一些软件运行时报错 "找不到文件".
+## 破解后一些软件运行时报错 "找不到文件".
 
 在不影响软件正常运行的情况下, 可以给软件文件修改一个名称, 再试试. 或者打开注册表编辑器, 定位到 `HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options`, 找到和要运行的软件的文件名称相同的项, 删除即可.
+
+## SCLTK 在某些版本的 Windows OS 上无法运行.
+
+SCLTK 不对 Windows Vista 及更早的版本保有任何技术支持. SCLTK 将会持续支持对当前受 Microsoft 支持的 Windows OS. 针对于 Windows 7\/8\/8.1, 我们将开始进行兼容性改进, 确保在 2027 年前保留对 Windows 7\/8\/8.1 的支持.
 
 # ❤️ 鸣谢
 
