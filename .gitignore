@@ -1,4 +1,4 @@
 /bin/
 !/bin/.gitkeep
-/environment
+/env
 /src/info.hpp
