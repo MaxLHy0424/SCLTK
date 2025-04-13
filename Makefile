@@ -1,6 +1,6 @@
 include environment
 compiler         = g++.exe
-args_defines     = -D_CRT_SECURE_NO_WARNINGS -DANSI -D_ANSI
+args_defines     = -DANSI -D_ANSI
 args_link        =
 args_std         = gnu++26
 args_warning     = -Wall -Wextra -Weffc++
