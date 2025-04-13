@@ -1,4 +1,4 @@
-include environment
+include env
 compiler         = g++.exe
 args_defines     = -DANSI -D_ANSI
 args_link        =
