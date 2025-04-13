@@ -203,6 +203,8 @@ namespace core {
         virtual ~basic_config_node()                   = default;
     };
     class option_op final : public basic_config_node {
+      private:
+        static constexpr auto format_string{ R"("{}.{}": {})" };
       public:
         virtual auto load( const bool _is_reload, ansi_std_string &_line ) -> void override final
         {
@@ -211,9 +213,9 @@ namespace core {
             }
             for ( auto &node : options.nodes ) {
                 for ( auto &item : node.items ) {
-                    if ( _line == std::format( R"("{}.{}": "enabled")", node.self_name, item.self_name ) ) {
+                    if ( _line == std::format( format_string, node.self_name, item.self_name, true ) ) {
                         item.enable();
-                    } else if ( _line == std::format( R"("{}.{}": "disabled")", node.self_name, item.self_name ) ) {
+                    } else if ( _line == std::format( format_string, node.self_name, item.self_name, false ) ) {
                         item.disable();
                     }
                 }
@@ -223,10 +225,7 @@ namespace core {
         {
             for ( const auto &node : options.nodes ) {
                 for ( const auto &item : node.items ) {
-                    _out << std::format(
-                      R"("{}.{}": "{}")"
-                      "\n",
-                      node.self_name, item.self_name, item.get() ? "enabled" : "disabled" );
+                    _out << std::format( format_string, node.self_name, item.self_name, item.get() ) << '\n';
                 }
             }
         }
