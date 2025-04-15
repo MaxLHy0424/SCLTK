@@ -1,6 +1,4 @@
 #pragma once
-#include <algorithm>
-#include <execution>
 #include <fstream>
 #include "cpp_utils.hpp"
 #include "info.hpp"
@@ -584,7 +582,6 @@ namespace core {
         ui.show();
         return cpp_utils::console_ui::back;
     }
-    inline constexpr auto parallel_mode{ std::execution::par_unseq };
     inline const auto &option_crack_restore{ options[ "crack_restore" ] };
     inline const auto &is_hijack_execs{ option_crack_restore[ "hijack_execs" ] };
     inline const auto &is_set_serv_startup_types{ option_crack_restore[ "set_serv_startup_types" ] };
@@ -593,33 +590,31 @@ namespace core {
         const rule_node &rules_;
         auto hijiack_execs()
         {
-            auto single{ []( const auto &_exec ) static
-            {
+            for ( const auto &exec : rules_.execs ) {
                 std::system(
                   std::format(
                     R"(reg.exe add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\{}" /f /t reg_sz /v debugger /d "nul")",
-                    _exec )
+                    exec )
                     .c_str() );
-            } };
-            std::for_each( parallel_mode, rules_.execs.begin(), rules_.execs.end(), single );
+            }
         }
         auto set_serv_startup_types()
         {
-            auto single{ []( const auto &_serv ) static
-            { std::system( std::format( R"(sc.exe config "{}" start= disabled)", _serv ).c_str() ); } };
-            std::for_each( parallel_mode, rules_.servs.begin(), rules_.servs.end(), single );
+            for ( const auto &serv : rules_.servs ) {
+                std::system( std::format( R"(sc.exe config "{}" start= disabled)", serv ).c_str() );
+            }
         }
         auto kill_execs()
         {
-            auto single{ []( const auto &_exec ) static
-            { std::system( std::format( R"(taskkill.exe /f /im "{}")", _exec ).c_str() ); } };
-            std::for_each( parallel_mode, rules_.execs.begin(), rules_.execs.end(), single );
+            for ( const auto &exec : rules_.execs ) {
+                std::system( std::format( R"(taskkill.exe /f /im "{}")", exec ).c_str() );
+            }
         }
         auto stop_servs()
         {
-            auto single{ []( const auto &_serv ) static
-            { std::system( std::format( R"(net.exe stop "{}" /y)", _serv ).c_str() ); } };
-            std::for_each( parallel_mode, rules_.servs.begin(), rules_.servs.end(), single );
+            for ( const auto &serv : rules_.servs ) {
+                std::system( std::format( R"(net.exe stop "{}" /y)", serv ).c_str() );
+            }
         }
       public:
         auto operator()( cpp_utils::console_ui::func_args )
@@ -653,26 +648,24 @@ namespace core {
         const rule_node &rules_;
         auto undo_hijack_execs()
         {
-            auto single{ []( const auto &_exec ) static
-            {
+            for ( const auto &exec : rules_.execs ) {
                 std::system(
                   std::format(
-                    R"(reg.exe delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\{}" /f)", _exec )
+                    R"(reg.exe delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\{}" /f)", exec )
                     .c_str() );
-            } };
-            std::for_each( parallel_mode, rules_.execs.begin(), rules_.execs.end(), single );
+            }
         }
         auto undo_set_serv_startup_types()
         {
-            auto single{ []( const auto &_serv ) static
-            { std::system( std::format( R"(sc.exe config "{}" start= auto)", _serv ).c_str() ); } };
-            std::for_each( parallel_mode, rules_.servs.begin(), rules_.servs.end(), single );
+            for ( const auto &serv : rules_.servs ) {
+                std::system( std::format( R"(sc.exe config "{}" start= auto)", serv ).c_str() );
+            }
         }
         auto start_servs()
         {
-            auto single{ []( const auto &_serv ) static
-            { std::system( std::format( R"(net.exe start "{}")", _serv ).c_str() ); } };
-            std::for_each( parallel_mode, rules_.servs.begin(), rules_.servs.end(), single );
+            for ( const auto &serv : rules_.servs ) {
+                std::system( std::format( R"(net.exe start "{}")", serv ).c_str() );
+            }
         }
       public:
         auto operator()( cpp_utils::console_ui::func_args )
