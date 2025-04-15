@@ -208,13 +208,6 @@ namespace cpp_utils {
             {
                 current_exception = std::current_exception();
             }
-            auto await_transform() -> void                               = delete;
-            auto operator=( const promise_type & ) -> promise_type &     = default;
-            auto operator=( promise_type && ) noexcept -> promise_type & = default;
-            promise_type() noexcept                                      = default;
-            promise_type( const promise_type & ) noexcept                = default;
-            promise_type( promise_type && ) noexcept                     = default;
-            ~promise_type() noexcept                                     = default;
         };
         class iterator final {
           private:
@@ -414,13 +407,6 @@ namespace cpp_utils {
             {
                 current_exception = std::current_exception();
             }
-            auto await_transform() -> void                               = delete;
-            auto operator=( const promise_type & ) -> promise_type &     = default;
-            auto operator=( promise_type && ) noexcept -> promise_type & = default;
-            promise_type() noexcept                                      = default;
-            promise_type( const promise_type & ) noexcept                = default;
-            promise_type( promise_type && ) noexcept                     = default;
-            ~promise_type() noexcept                                     = default;
         };
         class iterator final {
           private:
@@ -598,13 +584,6 @@ namespace cpp_utils {
             {
                 current_exception = std::current_exception();
             }
-            auto await_transform() -> void                               = delete;
-            auto operator=( const promise_type & ) -> promise_type &     = default;
-            auto operator=( promise_type && ) noexcept -> promise_type & = default;
-            promise_type() noexcept                                      = default;
-            promise_type( const promise_type & ) noexcept                = default;
-            promise_type( promise_type && ) noexcept                     = default;
-            ~promise_type() noexcept                                     = default;
         };
         auto empty() const noexcept
         {
@@ -1112,9 +1091,9 @@ namespace cpp_utils {
         struct line_node_ final {
             ansi_std_string text{};
             callback_type func{};
-            WORD default_attrs{};
-            WORD intensity_attrs{};
-            WORD last_attrs{};
+            WORD default_attrs{ console_text::default_set };
+            WORD intensity_attrs{ console_text::foreground_green | console_text::foreground_blue };
+            WORD last_attrs{ console_text::default_set };
             COORD position{};
             auto set_attrs( const WORD _attrs ) noexcept
             {
@@ -1132,11 +1111,7 @@ namespace cpp_utils {
             }
             auto operator=( const line_node_ & ) noexcept -> line_node_ & = default;
             auto operator=( line_node_ && ) noexcept -> line_node_ &      = default;
-            line_node_() noexcept
-              : default_attrs{ console_text::default_set }
-              , intensity_attrs{ console_text::foreground_green | console_text::foreground_blue }
-              , last_attrs{ console_text::default_set }
-            { }
+            line_node_() noexcept                                         = default;
             line_node_(
               const ansi_std_string_view _text, callback_type &_func, const WORD _default_attrs, const WORD _intensity_attrs ) noexcept
               : text{ _text }
