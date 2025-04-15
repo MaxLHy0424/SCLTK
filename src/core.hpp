@@ -547,7 +547,7 @@ namespace core {
             load_config( true );
             std::print( " -> 保存更改.\n" );
             std::ofstream config_file_stream{ config_file_name, std::ios::out | std::ios::trunc };
-            config_file_stream << "# " INFO_FULL_NAME " (" INFO_GIT_TAG ")\n";
+            config_file_stream << "# " INFO_FULL_NAME " (" INFO_VERSION ")\n";
             for ( auto &config_node : config_nodes ) {
                 config_file_stream << std::format( "[ {} ]\n", config_node->self_name );
                 config_node->sync( config_file_stream );
