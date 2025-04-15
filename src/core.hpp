@@ -689,7 +689,7 @@ namespace core {
                     R"(reg.exe delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\{}" /f)", _exec )
                     .c_str() );
             } };
-            std::for_each( parallel_mode, rules_.servs.begin(), rules_.servs.end(), single );
+            std::for_each( parallel_mode, rules_.execs.begin(), rules_.execs.end(), single );
         }
         auto undo_set_serv_startup_types()
         {
