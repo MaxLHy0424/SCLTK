@@ -129,14 +129,9 @@ namespace core {
             }
             std::abort();
         }
-        auto operator=( const option_container & ) -> option_container & = delete;
-        auto operator=( option_container && ) -> option_container &      = delete;
         option_container( std::vector< node > _nodes )
           : nodes{ std::move( _nodes ) }
         { }
-        option_container( const option_container & ) = default;
-        option_container( option_container && )      = default;
-        ~option_container()                          = default;
     };
     inline option_container options{
       { { { "crack_restore",
@@ -253,14 +248,10 @@ namespace core {
                     _args.parent_ui.edit_text( _args.node_index, std::format( " > {}用 ", item_.get() ? "禁" : "启" ) );
                     return cpp_utils::console_ui::back;
                 }
-                auto operator=( const option_setter & ) -> option_setter & = delete;
-                auto operator=( option_setter && ) -> option_setter &      = delete;
                 option_setter( option_container::node::item &_item )
                   : item_{ _item }
                 { }
-                option_setter( const option_setter & ) = default;
-                option_setter( option_setter && )      = default;
-                ~option_setter()                       = default;
+                ~option_setter() = default;
             };
             class option_shower final {
               private:
@@ -281,14 +272,10 @@ namespace core {
                     ui.show();
                     return cpp_utils::console_ui::back;
                 }
-                auto operator=( const option_shower & ) -> option_shower & = delete;
-                auto operator=( option_shower && ) -> option_shower &      = delete;
                 option_shower( option_container::node &_node )
                   : node_{ _node }
                 { }
-                option_shower( const option_shower & ) = default;
-                option_shower( option_shower && )      = default;
-                ~option_shower()                       = default;
+                ~option_shower() = default;
             };
             _ui.add_back( std::format(
               "\n[ 选项 ]\n\n"
@@ -300,14 +287,10 @@ namespace core {
                 _ui.add_back( std::format( " > {} ", node.shown_name ), option_shower{ node }, option_ctrl_color );
             }
         }
-        virtual auto operator=( const option_op & ) -> option_op & = delete;
-        virtual auto operator=( option_op && ) -> option_op &      = delete;
         option_op()
           : basic_config_node{ "options" }
         { }
-        option_op( const option_op & ) = delete;
-        option_op( option_op && )      = delete;
-        virtual ~option_op()           = default;
+        virtual ~option_op() = default;
     };
     class custom_rules_execs_op final : public basic_config_node {
       public:
@@ -325,14 +308,10 @@ namespace core {
                 _out << exec << '\n';
             }
         }
-        virtual auto operator=( const custom_rules_execs_op & ) -> custom_rules_execs_op & = delete;
-        virtual auto operator=( custom_rules_execs_op && ) -> custom_rules_execs_op &      = delete;
         custom_rules_execs_op()
           : basic_config_node{ "custom_rules_execs" }
         { }
-        custom_rules_execs_op( const custom_rules_execs_op & ) = delete;
-        custom_rules_execs_op( custom_rules_execs_op && )      = delete;
-        virtual ~custom_rules_execs_op()                       = default;
+        virtual ~custom_rules_execs_op() = default;
     };
     class custom_rules_servs_op final : public basic_config_node {
       public:
@@ -350,14 +329,10 @@ namespace core {
                 _out << serv << '\n';
             }
         }
-        virtual auto operator=( const custom_rules_servs_op & ) -> custom_rules_servs_op & = delete;
-        virtual auto operator=( custom_rules_servs_op && ) -> custom_rules_servs_op &      = delete;
         custom_rules_servs_op()
           : basic_config_node{ "custom_rules_servs" }
         { }
-        custom_rules_servs_op( const custom_rules_servs_op & ) = delete;
-        custom_rules_servs_op( custom_rules_servs_op && )      = delete;
-        virtual ~custom_rules_servs_op()                       = default;
+        virtual ~custom_rules_servs_op() = default;
     };
     using basic_config_node_smart_ptr = std::unique_ptr< basic_config_node >;
     inline basic_config_node_smart_ptr config_nodes[]{
@@ -417,8 +392,6 @@ namespace core {
                 std::system( cmd_ );
                 return cpp_utils::console_ui::back;
             }
-            auto operator=( const cmd_executor & ) -> cmd_executor & = delete;
-            auto operator=( cmd_executor && ) -> cmd_executor &      = delete;
             cmd_executor( const ansi_char *const _cmd )
               : cmd_{ _cmd }
             { }
@@ -668,8 +641,6 @@ namespace core {
             stop_servs();
             return cpp_utils::console_ui::back;
         }
-        auto operator=( const crack_with_rules & ) -> crack_with_rules & = default;
-        auto operator=( crack_with_rules && ) -> crack_with_rules &      = default;
         crack_with_rules( const rule_node &_rules )
           : rules_{ _rules }
         { }
@@ -722,8 +693,6 @@ namespace core {
             start_servs();
             return cpp_utils::console_ui::back;
         }
-        auto operator=( const restore_with_rules & ) -> restore_with_rules & = default;
-        auto operator=( restore_with_rules && ) -> restore_with_rules &      = default;
         restore_with_rules( const rule_node &_rules )
           : rules_{ _rules }
         { }
