@@ -1186,7 +1186,7 @@ namespace cpp_utils {
         }
         static auto cls_()
         {
-            auto [ width, height ]{ get_console_size_() };
+            const auto [ width, height ]{ get_console_size_() };
             set_cursor_( COORD{ 0, 0 } );
             std::print( "{}", ansi_std_string( static_cast< unsigned int >( width ) * static_cast< unsigned int >( height ), ' ' ) );
             set_cursor_( COORD{ 0, 0 } );
