@@ -1,7 +1,7 @@
 $software_full_name = "Student Computer Lab Toolkit"
 $software_short_name = "SCLTK"
 $license = "MIT License"
-$coprright = "Copyright (C) 2023 - present MaxLHy0424."
+$copyright = "Copyright (C) 2023 - present MaxLHy0424."
 $repo_url = "https://github.com/MaxLHy0424/SCLTK"
 $git_branch = git branch --show-current
 $git_tag = git describe --tags --abbrev=0
@@ -14,7 +14,7 @@ $time_zone = Get-TimeZone | Select-Object -ExpandProperty Id
 #define INFO_FULL_NAME  "$software_full_name"
 #define INFO_SHORT_NAME "$software_short_name"
 #define INFO_LICENSE    "$license"
-#define INFO_COPYRIGHT  "$coprright"
+#define INFO_COPYRIGHT  "$copyright"
 #define INFO_REPO_URL   "$repo_url"
 #define INFO_GIT_BRANCH "$git_branch"
 #define INFO_GIT_TAG    "$git_tag"
