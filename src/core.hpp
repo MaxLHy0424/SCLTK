@@ -136,6 +136,7 @@ namespace core {
             "破解/恢复",
             { { "hijack_execs", "劫持可执行文件" },
               { "set_serv_startup_types", "设置服务启动类型" },
+              { "parallel_op", "并行操作 (实验性)" },
               { "fix_os_env", "* 修复操作系统环境" } } },
           { "window",
             "窗口显示",
@@ -585,36 +586,44 @@ namespace core {
     inline const auto &option_crack_restore{ options[ "crack_restore" ] };
     inline const auto &is_hijack_execs{ option_crack_restore[ "hijack_execs" ] };
     inline const auto &is_set_serv_startup_types{ option_crack_restore[ "set_serv_startup_types" ] };
+    inline const auto &is_parallel_op{ option_crack_restore[ "parallel_op" ] };
     class crack_with_rules final {
       private:
         const rule_node &rules_;
-        auto hijack_execs_()
+        static auto basic_executor_( auto &&_func, auto &&_container )
         {
-            for ( const auto &exec : rules_.execs ) {
-                std::system(
-                  std::format(
-                    R"(reg.exe add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\{}" /f /t reg_sz /v debugger /d "nul")",
-                    exec )
-                    .c_str() );
+            switch ( is_parallel_op ) {
+                case true : {
+                    cpp_utils::parallel_for_each( std::begin( _container ), std::end( _container ), _func );
+                    break;
+                }
+                case false : {
+                    for ( auto &&item : _container ) {
+                        _func( item );
+                    }
+                    break;
+                }
             }
         }
-        auto set_serv_startup_types_()
+        static auto hijack_exec_( std::add_lvalue_reference_t< std::add_const_t< decltype( rules_.execs[ 0 ] ) > > _exec )
         {
-            for ( const auto &serv : rules_.servs ) {
-                std::system( std::format( R"(sc.exe config "{}" start= disabled)", serv ).c_str() );
-            }
+            std::system(
+              std::format(
+                R"(reg.exe add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\{}" /f /t reg_sz /v debugger /d "nul")",
+                _exec )
+                .c_str() );
         }
-        auto kill_execs_()
+        static auto set_serv_startup_type_( std::add_lvalue_reference_t< std::add_const_t< decltype( rules_.servs[ 0 ] ) > > _serv )
         {
-            for ( const auto &exec : rules_.execs ) {
-                std::system( std::format( R"(taskkill.exe /f /im "{}")", exec ).c_str() );
-            }
+            std::system( std::format( R"(sc.exe config "{}" start= disabled)", _serv ).c_str() );
         }
-        auto stop_servs_()
+        static auto kill_exec_( std::add_lvalue_reference_t< std::add_const_t< decltype( rules_.execs[ 0 ] ) > > _exec )
         {
-            for ( const auto &serv : rules_.servs ) {
-                std::system( std::format( R"(net.exe stop "{}" /y)", serv ).c_str() );
-            }
+            std::system( std::format( R"(taskkill.exe /f /im "{}")", _exec ).c_str() );
+        }
+        static auto stop_serv_( std::add_lvalue_reference_t< std::add_const_t< decltype( rules_.servs[ 0 ] ) > > _serv )
+        {
+            std::system( std::format( R"(net.exe stop "{}" /y)", _serv ).c_str() );
         }
       public:
         auto operator()( cpp_utils::console_ui::func_args )
@@ -626,14 +635,31 @@ namespace core {
                 return cpp_utils::console_ui::back;
             }
             std::print( " -> 生成并执行操作系统命令.\n{}\n", ansi_std_string( console_width, '-' ) );
-            if ( is_hijack_execs ) {
-                hijack_execs_();
+            switch ( is_parallel_op ) {
+                case true : {
+                    cpp_utils::thread_pool threads;
+                    if ( is_hijack_execs ) {
+                        threads.add( [ this ]() { basic_executor_( hijack_exec_, rules_.execs ); } );
+                    }
+                    if ( is_set_serv_startup_types ) {
+                        threads.add( [ this ]() { basic_executor_( set_serv_startup_type_, rules_.servs ); } );
+                    }
+                    threads.add( [ this ]() { basic_executor_( kill_exec_, rules_.execs ); } )
+                      .add( [ this ]() { basic_executor_( stop_serv_, rules_.servs ); } );
+                    break;
+                }
+                case false : {
+                    if ( is_hijack_execs ) {
+                        basic_executor_( hijack_exec_, rules_.execs );
+                    }
+                    if ( is_set_serv_startup_types ) {
+                        basic_executor_( set_serv_startup_type_, rules_.servs );
+                    }
+                    basic_executor_( kill_exec_, rules_.execs );
+                    basic_executor_( stop_serv_, rules_.servs );
+                    break;
+                }
             }
-            if ( is_set_serv_startup_types ) {
-                set_serv_startup_types_();
-            }
-            kill_execs_();
-            stop_servs_();
             return cpp_utils::console_ui::back;
         }
         crack_with_rules( const rule_node &_rules )
@@ -646,26 +672,36 @@ namespace core {
     class restore_with_rules final {
       private:
         const rule_node &rules_;
-        auto undo_hijack_execs_()
+        static auto basic_executor_( auto &&_func, auto &&_container )
         {
-            for ( const auto &exec : rules_.execs ) {
-                std::system(
-                  std::format(
-                    R"(reg.exe delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\{}" /f)", exec )
-                    .c_str() );
+            switch ( is_parallel_op ) {
+                case true : {
+                    cpp_utils::parallel_for_each( std::begin( _container ), std::end( _container ), _func );
+                    break;
+                }
+                case false : {
+                    for ( auto &&item : _container ) {
+                        _func( item );
+                    }
+                    break;
+                }
             }
         }
-        auto undo_set_serv_startup_types_()
+        static auto undo_hijack_exec_( std::add_lvalue_reference_t< std::add_const_t< decltype( rules_.execs[ 0 ] ) > > _exec )
         {
-            for ( const auto &serv : rules_.servs ) {
-                std::system( std::format( R"(sc.exe config "{}" start= auto)", serv ).c_str() );
-            }
+            std::system(
+              std::format(
+                R"(reg.exe delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\{}" /f)", _exec )
+                .c_str() );
         }
-        auto start_servs_()
+        static auto
+          undo_set_serv_startup_type_( std::add_lvalue_reference_t< std::add_const_t< decltype( rules_.servs[ 0 ] ) > > _serv )
         {
-            for ( const auto &serv : rules_.servs ) {
-                std::system( std::format( R"(net.exe start "{}")", serv ).c_str() );
-            }
+            std::system( std::format( R"(sc.exe config "{}" start= auto)", _serv ).c_str() );
+        }
+        static auto start_serv_( std::add_lvalue_reference_t< std::add_const_t< decltype( rules_.servs[ 0 ] ) > > _serv )
+        {
+            std::system( std::format( R"(net.exe start "{}")", _serv ).c_str() );
         }
       public:
         auto operator()( cpp_utils::console_ui::func_args )
@@ -678,12 +714,12 @@ namespace core {
             }
             std::print( " -> 生成并执行操作系统命令.\n{}\n", ansi_std_string( console_width, '-' ) );
             if ( is_hijack_execs ) {
-                undo_hijack_execs_();
+                basic_executor_( undo_hijack_exec_, rules_.execs );
             }
             if ( is_set_serv_startup_types ) {
-                undo_set_serv_startup_types_();
+                basic_executor_( undo_set_serv_startup_type_, rules_.servs );
             }
-            start_servs_();
+            basic_executor_( start_serv_, rules_.servs );
             return cpp_utils::console_ui::back;
         }
         restore_with_rules( const rule_node &_rules )
