@@ -10,10 +10,12 @@
 #include <functional>
 #include <optional>
 #include <print>
+#include <ranges>
 #include <string>
 #include <string_view>
 #include <thread>
 #include <type_traits>
+#include <vector>
 namespace cpp_utils {
     using io_buffer             = std::FILE;
     using size_type             = std::size_t;
@@ -61,6 +63,43 @@ namespace cpp_utils {
           || std::same_as< std::decay_t< _type_ >, std::chrono::weeks > || std::same_as< std::decay_t< _type_ >, std::chrono::months >
           || std::same_as< std::decay_t< _type_ >, std::chrono::years > );
     };
+    template < typename _type_ >
+    concept iterator = requires( _type_ it ) {
+        *it;
+        {
+            ++it
+        } -> std::same_as< _type_ & >;
+        {
+            it++
+        } -> std::same_as< _type_ >;
+        {
+            it != it
+        } -> std::same_as< bool >;
+        {
+            it == it
+        } -> std::same_as< bool >;
+    };
+    auto parallel_for_each( iterator auto _begin, iterator auto _end, auto &&_func )
+        requires std::same_as< decltype( _begin ), decltype( _end ) >
+    {
+        const auto max_thread_num{ std::thread::hardware_concurrency() };
+        const auto chunk_size{ ( _end - _begin ) / max_thread_num };
+        std::vector< std::thread > threads;
+        threads.reserve( max_thread_num );
+        for ( const auto i : std::ranges::iota_view( decltype( max_thread_num ){ 0 }, max_thread_num ) ) {
+            const auto chunk_start{ _begin + i * chunk_size };
+            const auto chunk_end{ ( i == max_thread_num - 1 ) ? _end : chunk_start + chunk_size };
+            threads.emplace_back( [ & ]( const auto _chunk_start, const auto _chunk_end )
+            {
+                for ( auto it{ _chunk_start }; it != _chunk_end; ++it ) {
+                    _func( *it );
+                }
+            }, chunk_start, chunk_end );
+        }
+        for ( auto &thread : threads ) {
+            thread.join();
+        }
+    }
     template < pointer_type _type_ >
     inline auto ptr_to_string( const _type_ _ptr )
     {
