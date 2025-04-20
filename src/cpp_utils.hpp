@@ -86,7 +86,7 @@ namespace cpp_utils {
         const auto chunk_size{ ( _end - _begin ) / max_thread_num };
         std::vector< std::thread > threads;
         threads.reserve( max_thread_num );
-        for ( const auto i : std::ranges::iota_view( decltype( max_thread_num ){ 0 }, max_thread_num ) ) {
+        for ( const auto i : std::ranges::iota_view{ decltype( max_thread_num ){ 0 }, max_thread_num } ) {
             const auto chunk_start{ _begin + i * chunk_size };
             const auto chunk_end{ ( i == max_thread_num - 1 ) ? _end : chunk_start + chunk_size };
             threads.emplace_back( [ & ]( const auto _chunk_start, const auto _chunk_end )
@@ -128,7 +128,7 @@ namespace cpp_utils {
             if ( src_size + 1 != _capacity_ ) {
                 return false;
             }
-            for ( size_type i{ 0 }; i < _capacity_; ++i ) {
+            for ( const auto i : std::ranges::iota_view{ decltype( _capacity_ ){ 0 }, _capacity_ } ) {
                 if ( data_[ i ] != _src[ i ] ) {
                     return false;
                 }
@@ -141,7 +141,7 @@ namespace cpp_utils {
             if ( _src_capacity_ != _capacity_ ) {
                 return false;
             }
-            for ( size_type i{ 0 }; i < _capacity_; ++i ) {
+            for ( const auto i : std::ranges::iota_view{ decltype( _capacity_ ){ 0 }, _capacity_ } ) {
                 if ( data_[ i ] != _src[ i ] ) {
                     return false;
                 }
@@ -154,7 +154,7 @@ namespace cpp_utils {
             if ( _src_capacity_ != _capacity_ ) {
                 return false;
             }
-            for ( size_type i{ 0 }; i < _capacity_; ++i ) {
+            for ( const auto i : std::ranges::iota_view{ decltype( _capacity_ ){ 0 }, _capacity_ } ) {
                 if ( data_[ i ] != _src.data_[ i ] ) {
                     return false;
                 }
@@ -1271,7 +1271,7 @@ namespace cpp_utils {
         {
             auto is_exit{ back };
             auto size{ lines_.size() };
-            for ( size_type idx{ 0 }; idx < size; ++idx ) {
+            for ( const auto idx : std::ranges::iota_view{ decltype( size ){ 0 }, size } ) {
                 auto &line{ lines_[ idx ] };
                 if ( line != _event.dwMousePosition ) {
                     continue;
