@@ -586,9 +586,9 @@ namespace core {
     inline const auto &is_hijack_execs{ option_crack_restore[ "hijack_execs" ] };
     inline const auto &is_set_serv_startup_types{ option_crack_restore[ "set_serv_startup_types" ] };
     class crack_with_rules final {
-      public:
+      private:
         const rule_node &rules_;
-        auto hijiack_execs()
+        auto hijack_execs_()
         {
             for ( const auto &exec : rules_.execs ) {
                 std::system(
@@ -598,19 +598,19 @@ namespace core {
                     .c_str() );
             }
         }
-        auto set_serv_startup_types()
+        auto set_serv_startup_types_()
         {
             for ( const auto &serv : rules_.servs ) {
                 std::system( std::format( R"(sc.exe config "{}" start= disabled)", serv ).c_str() );
             }
         }
-        auto kill_execs()
+        auto kill_execs_()
         {
             for ( const auto &exec : rules_.execs ) {
                 std::system( std::format( R"(taskkill.exe /f /im "{}")", exec ).c_str() );
             }
         }
-        auto stop_servs()
+        auto stop_servs_()
         {
             for ( const auto &serv : rules_.servs ) {
                 std::system( std::format( R"(net.exe stop "{}" /y)", serv ).c_str() );
@@ -627,13 +627,13 @@ namespace core {
             }
             std::print( " -> 生成并执行操作系统命令.\n{}\n", ansi_std_string( console_width, '-' ) );
             if ( is_hijack_execs ) {
-                hijiack_execs();
+                hijack_execs_();
             }
             if ( is_set_serv_startup_types ) {
-                set_serv_startup_types();
+                set_serv_startup_types_();
             }
-            kill_execs();
-            stop_servs();
+            kill_execs_();
+            stop_servs_();
             return cpp_utils::console_ui::back;
         }
         crack_with_rules( const rule_node &_rules )
@@ -644,9 +644,9 @@ namespace core {
         ~crack_with_rules()                          = default;
     };
     class restore_with_rules final {
-      public:
+      private:
         const rule_node &rules_;
-        auto undo_hijack_execs()
+        auto undo_hijack_execs_()
         {
             for ( const auto &exec : rules_.execs ) {
                 std::system(
@@ -655,13 +655,13 @@ namespace core {
                     .c_str() );
             }
         }
-        auto undo_set_serv_startup_types()
+        auto undo_set_serv_startup_types_()
         {
             for ( const auto &serv : rules_.servs ) {
                 std::system( std::format( R"(sc.exe config "{}" start= auto)", serv ).c_str() );
             }
         }
-        auto start_servs()
+        auto start_servs_()
         {
             for ( const auto &serv : rules_.servs ) {
                 std::system( std::format( R"(net.exe start "{}")", serv ).c_str() );
@@ -678,12 +678,12 @@ namespace core {
             }
             std::print( " -> 生成并执行操作系统命令.\n{}\n", ansi_std_string( console_width, '-' ) );
             if ( is_hijack_execs ) {
-                undo_hijack_execs();
+                undo_hijack_execs_();
             }
             if ( is_set_serv_startup_types ) {
-                undo_set_serv_startup_types();
+                undo_set_serv_startup_types_();
             }
-            start_servs();
+            start_servs_();
             return cpp_utils::console_ui::back;
         }
         restore_with_rules( const rule_node &_rules )
