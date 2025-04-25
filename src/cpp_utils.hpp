@@ -51,7 +51,7 @@ namespace cpp_utils {
           || std::same_as< std::decay_t< _type_ >, std::chrono::years > );
     };
     template < std::random_access_iterator _iterator_ >
-    auto parallel_for_each( _iterator_ _begin, _iterator_ _end, auto &&_func )
+    auto parallel_for_each( _iterator_ &&_begin, _iterator_ &&_end, auto &&_func )
     {
         const auto max_thread_num{ std::thread::hardware_concurrency() };
         const auto chunk_size{ ( _end - _begin ) / max_thread_num };
@@ -60,6 +60,29 @@ namespace cpp_utils {
         for ( const auto i : std::ranges::iota_view{ decltype( max_thread_num ){ 0 }, max_thread_num } ) {
             const auto chunk_start{ _begin + i * chunk_size };
             const auto chunk_end{ ( i == max_thread_num - 1 ) ? _end : chunk_start + chunk_size };
+            threads.emplace_back( [ =, &_func ]()
+            {
+                for ( auto it{ chunk_start }; it != chunk_end; ++it ) {
+                    _func( *it );
+                }
+            } );
+        }
+        for ( auto &thread : threads ) {
+            thread.join();
+        }
+    }
+    template < std::random_access_iterator _iterator_ >
+    auto parallel_for_each( unsigned int _thread_num, _iterator_ &&_begin, _iterator_ &&_end, auto &&_func )
+    {
+        if ( _thread_num == 0 ) {
+            _thread_num = 1;
+        }
+        const auto chunk_size{ ( _end - _begin ) / _thread_num };
+        std::vector< std::thread > threads;
+        threads.reserve( _thread_num );
+        for ( const auto i : std::ranges::iota_view{ decltype( _thread_num ){ 0 }, _thread_num } ) {
+            const auto chunk_start{ _begin + i * chunk_size };
+            const auto chunk_end{ ( i == _thread_num - 1 ) ? _end : chunk_start + chunk_size };
             threads.emplace_back( [ =, &_func ]()
             {
                 for ( auto it{ chunk_start }; it != chunk_end; ++it ) {
