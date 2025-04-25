@@ -37,9 +37,9 @@ SCLTK 发行版文件名规则为 `SCLTK-[ arch ]-[ runtime ].exe`, 其中 `[ ar
 
 `[ arch ]` 和 `[ runtime ]` 的具体信息如下:
 - **`x86_64` & `ucrt` \(推荐\)**\
-  开发工具链为 msys2 `mingw-w64-ucrt-x86_64-toolchain`, 64 位可执行文件, 运行时库为 *Universal C Runtime \(UCRT\)*, 支持 Windows 10 以上的 Windows OS \(部分 Windows OS 在安装特定更新后可以运行\).
+  开发工具链为 msys2 `mingw-w64-ucrt-x86_64-toolchain`, 64 位可执行文件, 运行时库为 Universal C Runtime \(UCRT\), 支持 Windows 10 以上的 Windows OS \(部分 Windows OS 在安装特定更新后可以运行\).
 - **`i686` & `msvcrt`**\
-  开发工具链为 msys2 `mingw-w64-i686-toolchain`, 32 位可执行文件, 运行时库为 *Microsoft Visual C Runtime \(MSVCRT\)*, 支持大部分 Windows OS.
+  开发工具链为 msys2 `mingw-w64-i686-toolchain`, 32 位可执行文件, 运行时库为 Microsoft Visual C Runtime \(MSVCRT\), 支持大部分 Windows OS.
 
 ## 2 常规操作
 
