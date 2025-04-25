@@ -134,7 +134,7 @@ namespace core {
             "破解/恢复",
             { { "hijack_execs", "劫持可执行文件" },
               { "set_serv_startup_types", "设置服务启动类型" },
-              { "parallel_op", "并行操作 (实验性)" },
+              { "parallel_op", "并行操作 (预览版)" },
               { "fix_os_env", "* 修复操作系统环境" } } },
           { "window",
             "窗口显示",
