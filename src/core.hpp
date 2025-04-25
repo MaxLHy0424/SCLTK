@@ -587,62 +587,28 @@ namespace core {
     inline const auto &is_hijack_execs{ option_crack_restore[ "hijack_execs" ] };
     inline const auto &is_set_serv_startup_types{ option_crack_restore[ "set_serv_startup_types" ] };
     inline const auto &is_parallel_op{ option_crack_restore[ "parallel_op" ] };
-    class crack_with_rules final {
+    class crack final {
       private:
         const rule_node &rules_;
-        auto hijack_execs_()
+        static auto basic_hijack_exec_( cpp_utils::add_const_lvalue_reference_type< decltype( rules_.execs[ 0 ] ) > _exec )
         {
-            for ( const auto &exec : rules_.execs ) {
-                std::system(
-                  std::format(
-                    R"(reg.exe add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\{}" /f /t reg_sz /v debugger /d "nul")",
-                    exec )
-                    .c_str() );
-            }
+            std::system(
+              std::format(
+                R"(reg.exe add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\{}" /f /t reg_sz /v debugger /d "nul")",
+                _exec )
+                .c_str() );
         }
-        auto parallel_hijack_execs_()
+        static auto basic_disable_serv_( cpp_utils::add_const_lvalue_reference_type< decltype( rules_.servs[ 0 ] ) > _serv )
         {
-            cpp_utils::parallel_for_each( rules_.execs.begin(), rules_.execs.end(), []( const auto &_exec ) static
-            {
-                std::system(
-                  std::format(
-                    R"(reg.exe add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\{}" /f /t reg_sz /v debugger /d "nul")",
-                    _exec )
-                    .c_str() );
-            } );
+            std::system( std::format( R"(sc.exe config "{}" start= disabled)", _serv ).c_str() );
         }
-        auto set_serv_startup_types_()
+        static auto basic_kill_exec_( cpp_utils::add_const_lvalue_reference_type< decltype( rules_.execs[ 0 ] ) > _exec )
         {
-            for ( const auto &serv : rules_.servs ) {
-                std::system( std::format( R"(sc.exe config "{}" start= disabled)", serv ).c_str() );
-            }
+            std::system( std::format( R"(taskkill.exe /f /im "{}")", _exec ).c_str() );
         }
-        auto parallel_set_serv_startup_types_()
+        static auto basic_stop_serv_( cpp_utils::add_const_lvalue_reference_type< decltype( rules_.servs[ 0 ] ) > _serv )
         {
-            cpp_utils::parallel_for_each( rules_.servs.begin(), rules_.servs.end(), []( const auto &_serv ) static
-            { std::system( std::format( R"(sc.exe config "{}" start= disabled)", _serv ).c_str() ); } );
-        }
-        auto kill_execs_()
-        {
-            for ( const auto &exec : rules_.execs ) {
-                std::system( std::format( R"(taskkill.exe /f /im "{}")", exec ).c_str() );
-            }
-        }
-        auto parallel_kill_execs_()
-        {
-            cpp_utils::parallel_for_each( rules_.execs.begin(), rules_.execs.end(), []( const auto &_exec ) static
-            { std::system( std::format( R"(taskkill.exe /f /im "{}")", _exec ).c_str() ); } );
-        }
-        auto stop_servs_()
-        {
-            for ( const auto &serv : rules_.servs ) {
-                std::system( std::format( R"(net.exe stop "{}" /y)", serv ).c_str() );
-            }
-        }
-        auto parallel_stop_servs_()
-        {
-            cpp_utils::parallel_for_each( rules_.servs.begin(), rules_.servs.end(), []( const auto &_serv ) static
-            { std::system( std::format( R"(net.exe stop "{}" /y)", _serv ).c_str() ); } );
+            std::system( std::format( R"(net.exe stop "{}" /y)", _serv ).c_str() );
         }
       public:
         auto operator()( cpp_utils::console_ui::func_args )
@@ -654,82 +620,68 @@ namespace core {
                 return cpp_utils::console_ui::back;
             }
             std::print( " -> 生成并执行操作系统命令.\n{}\n", ansi_std_string( console_width, '-' ) );
+            const auto &execs{ rules_.execs };
+            const auto &servs{ rules_.servs };
             switch ( is_parallel_op ) {
                 case true : {
                     cpp_utils::thread_pool threads;
                     if ( is_hijack_execs ) {
-                        threads.add( parallel_hijack_execs_, this );
+                        threads.add( [ & ]() { cpp_utils::parallel_for_each( execs.begin(), execs.end(), basic_hijack_exec_ ); } );
                     }
                     if ( is_set_serv_startup_types ) {
-                        threads.add( parallel_set_serv_startup_types_, this );
+                        threads.add( [ & ]()
+                        { cpp_utils::parallel_for_each( servs.begin(), servs.end(), basic_disable_serv_ ); } );
                     }
-                    threads.add( parallel_kill_execs_, this ).add( parallel_stop_servs_, this );
+                    threads.add( [ & ]() { cpp_utils::parallel_for_each( execs.begin(), execs.end(), basic_kill_exec_ ); } )
+                      .add( [ & ]() { cpp_utils::parallel_for_each( servs.begin(), servs.end(), basic_stop_serv_ ); } );
                     break;
                 }
                 case false : {
                     if ( is_hijack_execs ) {
-                        hijack_execs_();
+                        for ( const auto &exec : execs ) {
+                            basic_hijack_exec_( exec );
+                        }
                     }
                     if ( is_set_serv_startup_types ) {
-                        set_serv_startup_types_();
+                        for ( const auto &serv : servs ) {
+                            basic_disable_serv_( serv );
+                        }
                     }
-                    kill_execs_();
-                    stop_servs_();
+                    for ( const auto &exec : execs ) {
+                        basic_kill_exec_( exec );
+                    }
+                    for ( const auto &serv : servs ) {
+                        basic_stop_serv_( serv );
+                    }
                     break;
                 }
             }
             return cpp_utils::console_ui::back;
         }
-        crack_with_rules( const rule_node &_rules )
+        crack( const rule_node &_rules )
           : rules_{ _rules }
         { }
-        crack_with_rules( const crack_with_rules & ) = default;
-        crack_with_rules( crack_with_rules && )      = default;
-        ~crack_with_rules()                          = default;
+        crack( const crack & ) = default;
+        crack( crack && )      = default;
+        ~crack()               = default;
     };
-    class restore_with_rules final {
+    class restore final {
       private:
         const rule_node &rules_;
-        auto undo_hijack_execs_()
+        static auto basic_undo_hijack_exec_( cpp_utils::add_const_lvalue_reference_type< decltype( rules_.execs[ 0 ] ) > _exec )
         {
-            for ( const auto &exec : rules_.execs ) {
-                std::system(
-                  std::format(
-                    R"(reg.exe delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\{}" /f)", exec )
-                    .c_str() );
-            }
+            std::system(
+              std::format(
+                R"(reg.exe delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\{}" /f)", _exec )
+                .c_str() );
         }
-        auto parallel_undo_hijack_execs_()
+        static auto basic_enable_serv_( cpp_utils::add_const_lvalue_reference_type< decltype( rules_.servs[ 0 ] ) > _serv )
         {
-            cpp_utils::parallel_for_each( rules_.execs.begin(), rules_.execs.end(), []( const auto &_exec ) static
-            {
-                std::system(
-                  std::format(
-                    R"(reg.exe delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\{}" /f)", _exec )
-                    .c_str() );
-            } );
+            std::system( std::format( R"(sc.exe config "{}" start= auto)", _serv ).c_str() );
         }
-        auto undo_set_serv_startup_types_()
+        static auto basic_start_serv_( cpp_utils::add_const_lvalue_reference_type< decltype( rules_.servs[ 0 ] ) > _serv )
         {
-            for ( const auto &serv : rules_.servs ) {
-                std::system( std::format( R"(sc.exe config "{}" start= auto)", serv ).c_str() );
-            }
-        }
-        auto parallel_undo_set_serv_startup_types_()
-        {
-            cpp_utils::parallel_for_each( rules_.servs.begin(), rules_.servs.end(), []( const auto &_serv ) static
-            { std::system( std::format( R"(sc.exe config "{}" start= auto)", _serv ).c_str() ); } );
-        }
-        auto start_servs_()
-        {
-            for ( const auto &serv : rules_.servs ) {
-                std::system( std::format( R"(net.exe start "{}")", serv ).c_str() );
-            }
-        }
-        auto parallel_start_servs_()
-        {
-            cpp_utils::parallel_for_each( rules_.servs.begin(), rules_.servs.end(), []( const auto &_serv ) static
-            { std::system( std::format( R"(net.exe start "{}")", _serv ).c_str() ); } );
+            std::system( std::format( R"(net.exe start "{}")", _serv ).c_str() );
         }
       public:
         auto operator()( cpp_utils::console_ui::func_args )
@@ -741,35 +693,43 @@ namespace core {
                 return cpp_utils::console_ui::back;
             }
             std::print( " -> 生成并执行操作系统命令.\n{}\n", ansi_std_string( console_width, '-' ) );
+            const auto &execs{ rules_.execs };
+            const auto &servs{ rules_.servs };
             switch ( is_parallel_op ) {
                 case true : {
                     if ( is_hijack_execs ) {
-                        parallel_undo_hijack_execs_();
+                        cpp_utils::parallel_for_each( execs.begin(), execs.end(), basic_undo_hijack_exec_ );
                     }
                     if ( is_set_serv_startup_types ) {
-                        parallel_undo_set_serv_startup_types_();
+                        cpp_utils::parallel_for_each( servs.begin(), servs.end(), basic_enable_serv_ );
                     }
-                    parallel_start_servs_();
+                    cpp_utils::parallel_for_each( servs.begin(), servs.end(), basic_start_serv_ );
                     break;
                 }
                 case false : {
                     if ( is_hijack_execs ) {
-                        undo_hijack_execs_();
+                        for ( const auto &exec : execs ) {
+                            basic_undo_hijack_exec_( exec );
+                        }
                     }
                     if ( is_set_serv_startup_types ) {
-                        undo_set_serv_startup_types_();
+                        for ( const auto &serv : servs ) {
+                            basic_enable_serv_( serv );
+                        }
                     }
-                    start_servs_();
+                    for ( const auto &serv : servs ) {
+                        basic_start_serv_( serv );
+                    }
                     break;
                 }
             }
             return cpp_utils::console_ui::back;
         }
-        restore_with_rules( const rule_node &_rules )
+        restore( const rule_node &_rules )
           : rules_{ _rules }
         { }
-        restore_with_rules( const restore_with_rules & ) = default;
-        restore_with_rules( restore_with_rules && )      = default;
-        ~restore_with_rules()                            = default;
+        restore( const restore & ) = default;
+        restore( restore && )      = default;
+        ~restore()                 = default;
     };
 }
