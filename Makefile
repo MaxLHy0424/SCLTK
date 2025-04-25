@@ -30,8 +30,8 @@ clean:
 	$(msys2_path)/usr/bin/rm.exe -rf bin
 	$(msys2_path)/usr/bin/mkdir.exe bin
 	$(msys2_path)/usr/bin/touch.exe bin/.gitkeep
-genarate_info:
-	$(pwsh_path) -ExecutionPolicy Bypass -File ./genarate_info.ps1
+generate_info:
+	$(pwsh_path) -ExecutionPolicy Bypass -File ./generate_info.ps1
 dependencies_debug = src/*
 bin/debug/__debug__.exe: $(dependencies_debug) \
                          genarate_info \

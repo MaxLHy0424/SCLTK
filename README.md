@@ -167,7 +167,7 @@ SCLTK 使用 [MIT License](./LICENSE), 详细内容请自行阅读.
 
 首先, 请确保您已经安装了 [msys2](https://www.msys2.org), 并在 msys2 的 `msys` 环境中安装了软件包 `make` 和 `git`.
 
-然后, 使用 git 克隆本仓库到本地, 在仓库本地目录下创建 `env` 文件, 内容如下:
+然后, 使用 git 克隆本仓库到本地, 在仓库本地目录下运行 `.\generate_env.ps1`, 这将会创建 `env` 文件, 文件内容如下:
 ```
 msys2_path = /path/to/msys2
 pwsh_path  = /path/to/pwsh
