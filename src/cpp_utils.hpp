@@ -43,6 +43,8 @@ namespace cpp_utils {
     template < typename _char_type >
     using std_string_view = std::basic_string_view< _char_type >;
     template < typename _type_ >
+    using add_const_lvalue_reference_type = std::add_lvalue_reference_t< std::add_const_t< _type_ > >;
+    template < typename _type_ >
     concept char_type
       = std::same_as< std::decay_t< _type_ >, ansi_char > || std::same_as< std::decay_t< _type_ >, wide_char >
      || std::same_as< std::decay_t< _type_ >, utf8_char > || std::same_as< std::decay_t< _type_ >, utf16_char >
