@@ -408,8 +408,8 @@ namespace core {
           .add_back( " < 返回 ", exit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
           .add_back( " > 命令提示符 ", launch_cmd )
           .add_back( "\n[ 常用操作 ]\n" );
-        for ( const auto &common_op : common_cmds ) {
-            ui.add_back( std::format( " > {} ", common_op[ 0 ] ), cmd_executor{ common_op[ 1 ] } );
+        for ( const auto &common_cmd : common_cmds ) {
+            ui.add_back( std::format( " > {} ", common_cmd[ 0 ] ), cmd_executor{ common_cmd[ 1 ] } );
         }
         ui.show();
         return cpp_utils::console_ui::back;
