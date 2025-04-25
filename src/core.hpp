@@ -5,10 +5,7 @@
 namespace core {
     using namespace std::chrono_literals;
     using namespace std::string_view_literals;
-    using size_type            = cpp_utils::size_type;
-    using ansi_char            = cpp_utils::ansi_char;
-    using ansi_std_string      = cpp_utils::ansi_std_string;
-    using ansi_std_string_view = cpp_utils::ansi_std_string_view;
+    using size_type = cpp_utils::size_type;
     inline constexpr SHORT console_width{ 50 };
     inline constexpr SHORT console_height{ 25 };
     inline constexpr UINT charset_id{ 54936 };
@@ -40,8 +37,8 @@ namespace core {
               private:
                 std::atomic_flag value_{ ATOMIC_FLAG_INIT };
               public:
-                const ansi_char *const self_name;
-                const ansi_char *const shown_name;
+                const char *const self_name;
+                const char *const shown_name;
                 auto enable()
                 {
                     value_.test_and_set( std::memory_order_acq_rel );
@@ -60,7 +57,7 @@ namespace core {
                 }
                 auto operator=( const item & ) -> item & = delete;
                 auto operator=( item && ) -> item &      = delete;
-                item( const ansi_char *const _self_name, const ansi_char *const _shown_name )
+                item( const char *const _self_name, const char *const _shown_name )
                   : self_name{ _self_name }
                   , shown_name{ _shown_name }
                 { }
@@ -76,10 +73,10 @@ namespace core {
                 { }
                 ~item() = default;
             };
-            const ansi_char *const self_name;
-            const ansi_char *const shown_name;
+            const char *const self_name;
+            const char *const shown_name;
             std::vector< item > items;
-            auto &operator[]( const ansi_std_string_view _self_name )
+            auto &operator[]( const std::string_view _self_name )
             {
                 for ( auto &item : items ) {
                     if ( _self_name == item.self_name ) {
@@ -88,7 +85,7 @@ namespace core {
                 }
                 std::abort();
             }
-            const auto &operator[]( const ansi_std_string_view _self_name ) const
+            const auto &operator[]( const std::string_view _self_name ) const
             {
                 for ( const auto &item : items ) {
                     if ( _self_name == item.self_name ) {
@@ -99,7 +96,7 @@ namespace core {
             }
             auto operator=( const node & ) -> node & = delete;
             auto operator=( node && ) -> node &      = delete;
-            node( const ansi_char *const _self_name, const ansi_char *const _shown_name, std::vector< item > _items )
+            node( const char *const _self_name, const char *const _shown_name, std::vector< item > _items )
               : self_name{ _self_name }
               , shown_name{ _shown_name }
               , items{ std::move( _items ) }
@@ -109,7 +106,7 @@ namespace core {
             ~node()              = default;
         };
         std::vector< node > nodes;
-        auto &operator[]( const ansi_std_string_view _self_name )
+        auto &operator[]( const std::string_view _self_name )
         {
             for ( auto &node : nodes ) {
                 if ( _self_name == node.self_name ) {
@@ -118,7 +115,7 @@ namespace core {
             }
             std::abort();
         }
-        const auto &operator[]( const ansi_std_string_view _self_name ) const
+        const auto &operator[]( const std::string_view _self_name ) const
         {
             for ( const auto &node : nodes ) {
                 if ( _self_name == node.self_name ) {
@@ -147,16 +144,16 @@ namespace core {
               { "disable_x_option_hot_reload", "** 禁用标 * 选项热重载" } } } } } };
     inline const auto &is_disable_x_option_hot_reload{ options[ "perf" ][ "disable_x_option_hot_reload" ] };
     struct rule_node final {
-        const ansi_char *const shown_name;
-        std::deque< ansi_std_string > execs;
-        std::deque< ansi_std_string > servs;
+        const char *const shown_name;
+        std::deque< std::string > execs;
+        std::deque< std::string > servs;
         auto empty() const
         {
             return execs.empty() && servs.empty();
         }
         auto operator=( const rule_node & ) -> rule_node & = delete;
         auto operator=( rule_node && ) -> rule_node &      = delete;
-        rule_node( const ansi_char *const _shown_name, std::deque< ansi_std_string > _execs, std::deque< ansi_std_string > _servs )
+        rule_node( const char *const _shown_name, std::deque< std::string > _execs, std::deque< std::string > _servs )
           : shown_name{ _shown_name }
           , execs{ std::move( _execs ) }
           , servs{ std::move( _servs ) }
@@ -184,14 +181,14 @@ namespace core {
     };
     class basic_config_node {
       public:
-        const ansi_char *const self_name;
-        virtual auto load( const bool, ansi_std_string & ) -> void = 0;
+        const char *const self_name;
+        virtual auto load( const bool, std::string & ) -> void = 0;
         virtual auto prepare_reload() -> void { }
         virtual auto sync( std::ofstream & ) -> void = 0;
         virtual auto ui_panel( cpp_utils::console_ui & ) -> void { }
         virtual auto operator=( const basic_config_node & ) -> basic_config_node & = delete;
         virtual auto operator=( basic_config_node && ) -> basic_config_node &      = delete;
-        basic_config_node( const ansi_char *const _self_name )
+        basic_config_node( const char *const _self_name )
           : self_name{ _self_name }
         { }
         basic_config_node( const basic_config_node & ) = delete;
@@ -202,7 +199,7 @@ namespace core {
       private:
         static constexpr auto format_string_{ R"("{}.{}": {})" };
       public:
-        virtual auto load( const bool _is_reload, ansi_std_string &_line ) -> void override final
+        virtual auto load( const bool _is_reload, std::string &_line ) -> void override final
         {
             if ( _is_reload ) {
                 return;
@@ -293,7 +290,7 @@ namespace core {
     };
     class custom_rules_execs_op final : public basic_config_node {
       public:
-        virtual auto load( const bool, ansi_std_string &_line ) -> void override final
+        virtual auto load( const bool, std::string &_line ) -> void override final
         {
             custom_rules.execs.emplace_back( std::move( _line ) );
         }
@@ -314,7 +311,7 @@ namespace core {
     };
     class custom_rules_servs_op final : public basic_config_node {
       public:
-        virtual auto load( const bool, ansi_std_string &_line ) -> void override final
+        virtual auto load( const bool, std::string &_line ) -> void override final
         {
             custom_rules.servs.emplace_back( std::move( _line ) );
         }
@@ -380,25 +377,25 @@ namespace core {
         } };
         class cmd_executor final {
           private:
-            const ansi_char *const cmd_;
+            const char *const cmd_;
           public:
             auto operator()( cpp_utils::console_ui::func_args )
             {
                 std::print(
                   "                   [ 工 具 箱 ]\n\n\n"
                   " -> 执行操作系统命令.\n{}\n",
-                  ansi_std_string( console_width, '-' ) );
+                  std::string( console_width, '-' ) );
                 std::system( cmd_ );
                 return cpp_utils::console_ui::back;
             }
-            cmd_executor( const ansi_char *const _cmd )
+            cmd_executor( const char *const _cmd )
               : cmd_{ _cmd }
             { }
             cmd_executor( const cmd_executor & ) = default;
             cmd_executor( cmd_executor && )      = default;
             ~cmd_executor()                      = default;
         };
-        constexpr const ansi_char *common_ops[][ 2 ]{
+        constexpr const char *common_ops[][ 2 ]{
           {"重启资源管理器",               R"(taskkill.exe /f /im explorer.exe && timeout.exe /t 3 /nobreak && start C:\Windows\explorer.exe)"},
           {"重启至高级选项",               "shutdown.exe /r /o /f /t 15"                                                                      },
           {"恢复 USB 设备访问",            R"(reg.exe add "HKLM\SYSTEM\CurrentControlSet\Services\USBSTOR" /f /t reg_dword /v Start /d 3)"    },
@@ -467,10 +464,10 @@ namespace core {
         }
         auto engine{ []() static
         {
-            constexpr const ansi_char *hkcu_reg_dirs[]{
+            constexpr const char *hkcu_reg_dirs[]{
               R"(Software\Policies\Microsoft\Windows\System)", R"(Software\Microsoft\Windows\CurrentVersion\Policies\System)",
               R"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)" };
-            constexpr const ansi_char *execs[]{
+            constexpr const char *execs[]{
               "taskkill.exe", "sc.exe",      "net.exe", "reg.exe",  "cmd.exe", "taskmgr.exe",
               "perfmon.exe",  "regedit.exe", "mmc.exe", "dism.exe", "sfc.exe" };
             for ( const auto &reg_dir : hkcu_reg_dirs ) {
@@ -510,8 +507,8 @@ namespace core {
             }
         }
         std::print( " -> 加载配置文件.\n" );
-        ansi_std_string line;
-        ansi_std_string_view line_view;
+        std::string line;
+        std::string_view line_view;
         basic_config_node *node_ptr{};
         while ( std::getline( config_file, line ) ) {
             line_view = line;
@@ -619,7 +616,7 @@ namespace core {
                 wait();
                 return cpp_utils::console_ui::back;
             }
-            std::print( " -> 生成并执行操作系统命令.\n{}\n", ansi_std_string( console_width, '-' ) );
+            std::print( " -> 生成并执行操作系统命令.\n{}\n", std::string( console_width, '-' ) );
             const auto &execs{ rules_.execs };
             const auto &servs{ rules_.servs };
             switch ( is_parallel_op ) {
@@ -692,7 +689,7 @@ namespace core {
                 wait();
                 return cpp_utils::console_ui::back;
             }
-            std::print( " -> 生成并执行操作系统命令.\n{}\n", ansi_std_string( console_width, '-' ) );
+            std::print( " -> 生成并执行操作系统命令.\n{}\n", std::string( console_width, '-' ) );
             const auto &execs{ rules_.execs };
             const auto &servs{ rules_.servs };
             switch ( is_parallel_op ) {
