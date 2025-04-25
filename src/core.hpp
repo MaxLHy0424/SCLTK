@@ -148,7 +148,7 @@ namespace core {
         const char *const shown_name;
         std::deque< std::string > execs;
         std::deque< std::string > servs;
-        auto empty() const
+        auto empty() const noexcept
         {
             return execs.empty() && servs.empty();
         }
