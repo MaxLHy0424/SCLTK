@@ -1242,10 +1242,11 @@ namespace cpp_utils {
         auto init_pos_()
         {
             cls_();
+            const auto tail{ &lines_.back() };
             for ( auto &line : lines_ ) {
                 line.position = get_cursor_();
                 line.set_attrs( line.default_attrs );
-                write_( line.text, true );
+                write_( line.text, &line != tail );
             }
         }
         auto refresh_( const COORD _hang_position )
@@ -1391,6 +1392,9 @@ namespace cpp_utils {
         }
         auto &show()
         {
+            if ( empty() ) {
+                return *this;
+            }
             using namespace std::chrono_literals;
             show_cursor_( FALSE );
             edit_console_attrs_( console_attrs_::lock_text );
