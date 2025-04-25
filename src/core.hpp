@@ -8,7 +8,7 @@ namespace core {
     using size_type = cpp_utils::size_type;
     inline constexpr SHORT console_width{ 50 };
     inline constexpr SHORT console_height{ 25 };
-    inline constexpr UINT charset_id{ 54936 };
+    inline constexpr UINT charset_id{ 936 };
     inline const auto cpu_core{ std::thread::hardware_concurrency() };
     inline const auto window_handle{ GetConsoleWindow() };
     inline const auto std_input_handle{ GetStdHandle( STD_INPUT_HANDLE ) };
