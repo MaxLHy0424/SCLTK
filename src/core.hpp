@@ -9,6 +9,7 @@ namespace core {
     inline constexpr SHORT console_width{ 50 };
     inline constexpr SHORT console_height{ 25 };
     inline constexpr UINT charset_id{ 54936 };
+    inline const auto thread_num{ std::thread::hardware_concurrency() };
     inline const auto window_handle{ GetConsoleWindow() };
     inline const auto std_input_handle{ GetStdHandle( STD_INPUT_HANDLE ) };
     inline const auto std_output_handle{ GetStdHandle( STD_OUTPUT_HANDLE ) };
@@ -623,14 +624,17 @@ namespace core {
                 case true : {
                     cpp_utils::thread_pool threads;
                     if ( is_hijack_execs ) {
-                        threads.add( [ & ]() { cpp_utils::parallel_for_each( execs.begin(), execs.end(), basic_hijack_exec_ ); } );
+                        threads.add( [ & ]()
+                        { cpp_utils::parallel_for_each( thread_num, execs.begin(), execs.end(), basic_hijack_exec_ ); } );
                     }
                     if ( is_set_serv_startup_types ) {
                         threads.add( [ & ]()
-                        { cpp_utils::parallel_for_each( servs.begin(), servs.end(), basic_disable_serv_ ); } );
+                        { cpp_utils::parallel_for_each( thread_num, servs.begin(), servs.end(), basic_disable_serv_ ); } );
                     }
-                    threads.add( [ & ]() { cpp_utils::parallel_for_each( execs.begin(), execs.end(), basic_kill_exec_ ); } )
-                      .add( [ & ]() { cpp_utils::parallel_for_each( servs.begin(), servs.end(), basic_stop_serv_ ); } );
+                    threads
+                      .add( [ & ]() { cpp_utils::parallel_for_each( thread_num, execs.begin(), execs.end(), basic_kill_exec_ ); } )
+                      .add( [ & ]()
+                    { cpp_utils::parallel_for_each( thread_num, servs.begin(), servs.end(), basic_stop_serv_ ); } );
                     break;
                 }
                 case false : {
@@ -695,12 +699,12 @@ namespace core {
             switch ( is_parallel_op ) {
                 case true : {
                     if ( is_hijack_execs ) {
-                        cpp_utils::parallel_for_each( execs.begin(), execs.end(), basic_undo_hijack_exec_ );
+                        cpp_utils::parallel_for_each( thread_num, execs.begin(), execs.end(), basic_undo_hijack_exec_ );
                     }
                     if ( is_set_serv_startup_types ) {
-                        cpp_utils::parallel_for_each( servs.begin(), servs.end(), basic_enable_serv_ );
+                        cpp_utils::parallel_for_each( thread_num, servs.begin(), servs.end(), basic_enable_serv_ );
                     }
-                    cpp_utils::parallel_for_each( servs.begin(), servs.end(), basic_start_serv_ );
+                    cpp_utils::parallel_for_each( thread_num, servs.begin(), servs.end(), basic_start_serv_ );
                     break;
                 }
                 case false : {
