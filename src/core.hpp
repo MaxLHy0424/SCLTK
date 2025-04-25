@@ -367,7 +367,7 @@ namespace core {
             cpp_utils::fix_window_size( window_handle, false );
             cpp_utils::enable_window_maximize_ctrl( window_handle, true );
             _args.parent_ui.lock( false, false );
-            SetConsoleScreenBufferSize( std_output_handle, { 127, SHRT_MAX - 1 } );
+            SetConsoleScreenBufferSize( std_output_handle, COORD{ 127, SHRT_MAX - 1 } );
             std::system( "cmd.exe" );
             cpp_utils::set_console_charset( charset_id );
             cpp_utils::set_console_title( INFO_SHORT_NAME );
