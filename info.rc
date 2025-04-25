@@ -7,9 +7,9 @@ BEGIN
     BEGIN
         BLOCK "040904B0"
         BEGIN
-            VALUE "ProductName", INFO_FULL_NAME
             VALUE "FileDescription", INFO_SHORT_NAME
-            VALUE "ProductVersion", INFO_VERSION
+            VALUE "ProductName", INFO_FULL_NAME
+            VALUE "ProductVersion", INFO_GIT_TAG
             VALUE "LegalCopyright", INFO_COPYRIGHT
         END
     END

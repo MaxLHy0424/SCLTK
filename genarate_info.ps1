@@ -22,5 +22,5 @@ $time_zone = Get-TimeZone | Select-Object -ExpandProperty Id
 #define INFO_GIT_DATE   "$git_date"
 #define INFO_BUILD_TIME "$build_time"
 #define INFO_TIME_ZONE  "$time_zone"
-#define INFO_VERSION    INFO_GIT_TAG "-" INFO_GIT_BRANCH "-" INFO_GIT_HASH
+#define INFO_VERSION    INFO_GIT_TAG " (" INFO_GIT_BRANCH " " INFO_GIT_HASH ")"
 "@ | Out-File -FilePath "src/info.hpp" -Encoding UTF8 -NoNewline
