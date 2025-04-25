@@ -11,7 +11,7 @@ output_charset   = gbk
 args_base        = -pipe -finput-charset=$(input_charset) -fexec-charset=$(output_charset) -std=$(args_std) $(args_link) $(args_warning) $(args_defines)
 args_debug       = -g3 $(args_base) $(args_opt_debug)
 args_release     = -DNDEBUG -static $(args_base) $(args_opt_release)
-.PHONY: toolchain build debug release clean
+.PHONY: toolchain generate_info build debug release clean
 all: toolchain build
 toolchain:
 	$(msys2_path)/usr/bin/pacman.exe -Sy --noconfirm --needed\
