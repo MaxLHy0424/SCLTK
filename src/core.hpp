@@ -581,6 +581,10 @@ namespace core {
         ui.show();
         return cpp_utils::console_ui::back;
     }
+    using exec_const_ref_type
+      = cpp_utils::add_const_lvalue_reference_type< std::decay_t< decltype( std::declval< rule_node >().execs[ 0 ] ) > >;
+    using serv_const_ref_type
+      = cpp_utils::add_const_lvalue_reference_type< std::decay_t< decltype( std::declval< rule_node >().servs[ 0 ] ) > >;
     inline const auto &option_crack_restore{ options[ "crack_restore" ] };
     inline const auto &is_hijack_execs{ option_crack_restore[ "hijack_execs" ] };
     inline const auto &is_set_serv_startup_types{ option_crack_restore[ "set_serv_startup_types" ] };
@@ -588,7 +592,7 @@ namespace core {
     class crack final {
       private:
         const rule_node &rules_;
-        static auto basic_hijack_exec_( cpp_utils::add_const_lvalue_reference_type< decltype( rules_.execs[ 0 ] ) > _exec )
+        static auto basic_hijack_exec_( exec_const_ref_type _exec )
         {
             std::system(
               std::format(
@@ -596,15 +600,15 @@ namespace core {
                 _exec )
                 .c_str() );
         }
-        static auto basic_disable_serv_( cpp_utils::add_const_lvalue_reference_type< decltype( rules_.servs[ 0 ] ) > _serv )
+        static auto basic_disable_serv_( serv_const_ref_type _serv )
         {
             std::system( std::format( R"(sc.exe config "{}" start= disabled)", _serv ).c_str() );
         }
-        static auto basic_kill_exec_( cpp_utils::add_const_lvalue_reference_type< decltype( rules_.execs[ 0 ] ) > _exec )
+        static auto basic_kill_exec_( exec_const_ref_type _exec )
         {
             std::system( std::format( R"(taskkill.exe /f /im "{}")", _exec ).c_str() );
         }
-        static auto basic_stop_serv_( cpp_utils::add_const_lvalue_reference_type< decltype( rules_.servs[ 0 ] ) > _serv )
+        static auto basic_stop_serv_( serv_const_ref_type _serv )
         {
             std::system( std::format( R"(net.exe stop "{}" /y)", _serv ).c_str() );
         }
@@ -668,18 +672,18 @@ namespace core {
     class restore final {
       private:
         const rule_node &rules_;
-        static auto basic_undo_hijack_exec_( cpp_utils::add_const_lvalue_reference_type< decltype( rules_.execs[ 0 ] ) > _exec )
+        static auto basic_undo_hijack_exec_( exec_const_ref_type _exec )
         {
             std::system(
               std::format(
                 R"(reg.exe delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\{}" /f)", _exec )
                 .c_str() );
         }
-        static auto basic_enable_serv_( cpp_utils::add_const_lvalue_reference_type< decltype( rules_.servs[ 0 ] ) > _serv )
+        static auto basic_enable_serv_( serv_const_ref_type _serv )
         {
             std::system( std::format( R"(sc.exe config "{}" start= auto)", _serv ).c_str() );
         }
-        static auto basic_start_serv_( cpp_utils::add_const_lvalue_reference_type< decltype( rules_.servs[ 0 ] ) > _serv )
+        static auto basic_start_serv_( serv_const_ref_type _serv )
         {
             std::system( std::format( R"(net.exe start "{}")", _serv ).c_str() );
         }
