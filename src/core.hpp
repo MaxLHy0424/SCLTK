@@ -396,7 +396,7 @@ namespace core {
             cmd_executor( cmd_executor && )      = default;
             ~cmd_executor()                      = default;
         };
-        constexpr const char *common_ops[][ 2 ]{
+        constexpr const char *common_cmds[][ 2 ]{
           {"重启资源管理器",               R"(taskkill.exe /f /im explorer.exe && timeout.exe /t 3 /nobreak && start C:\Windows\explorer.exe)"},
           {"重启至高级选项",               "shutdown.exe /r /o /f /t 15"                                                                      },
           {"恢复 USB 设备访问",            R"(reg.exe add "HKLM\SYSTEM\CurrentControlSet\Services\USBSTOR" /f /t reg_dword /v Start /d 3)"    },
@@ -408,7 +408,7 @@ namespace core {
           .add_back( " < 返回 ", exit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
           .add_back( " > 命令提示符 ", launch_cmd )
           .add_back( "\n[ 常用操作 ]\n" );
-        for ( const auto &common_op : common_ops ) {
+        for ( const auto &common_op : common_cmds ) {
             ui.add_back( std::format( " > {} ", common_op[ 0 ] ), cmd_executor{ common_op[ 1 ] } );
         }
         ui.show();
