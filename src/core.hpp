@@ -348,9 +348,9 @@ namespace core {
         ui.add_back( "                    [ 关  于 ]\n\n" )
           .add_back( " < 返回 ", exit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
           .add_back(
-            "\n[ 名称 ]\n\n " INFO_FULL_NAME " (" INFO_SHORT_NAME ")\n\n[ 版本 ]\n\n " INFO_VERSION "\n (时区: " INFO_TIME_ZONE
-            ")\n 提交时间: " INFO_GIT_DATE "\n 构建时间: " INFO_BUILD_TIME "\n\n[ 许可证 & 版权 ]\n\n " INFO_LICENSE
-            "\n " INFO_COPYRIGHT "\n\n[ 仓库 ]\n" )
+            "\n[ 名称 ]\n\n " INFO_FULL_NAME " (缩写: " INFO_SHORT_NAME ")\n\n[ 版本 ]\n\n " INFO_VERSION
+            "\n (时区: " INFO_TIME_ZONE ")\n 提交时间: " INFO_GIT_DATE "\n 构建时间: " INFO_BUILD_TIME
+            "\n\n[ 许可证 & 版权 ]\n\n " INFO_LICENSE "\n " INFO_COPYRIGHT "\n\n[ 仓库 ]\n" )
           .add_back(
             " " INFO_REPO_URL " ", visit_repo_webpage,
             cpp_utils::console_text::default_set | cpp_utils::console_text::foreground_intensity | cpp_utils::console_text::lvb_underscore )
