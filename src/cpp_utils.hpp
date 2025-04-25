@@ -780,7 +780,7 @@ namespace cpp_utils {
             }
             return *this;
         }
-        auto &safe_join_all()
+        auto &safe_join_all() noexcept
         {
             for ( auto &thread : threads_ ) {
                 if ( thread.joinable() ) {
@@ -809,7 +809,7 @@ namespace cpp_utils {
             }
             return *this;
         }
-        auto &safe_detach_all()
+        auto &safe_detach_all() noexcept
         {
             for ( auto &thread : threads_ ) {
                 if ( thread.joinable() ) {
@@ -830,7 +830,7 @@ namespace cpp_utils {
         {
             return threads_.at( _index ).request_stop();
         }
-        auto &request_stop_to_all()
+        auto &request_stop_to_all() noexcept
         {
             for ( auto &thread : threads_ ) {
                 thread.request_stop();
