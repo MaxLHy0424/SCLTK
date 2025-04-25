@@ -18,24 +18,8 @@
 #include <type_traits>
 #include <vector>
 namespace cpp_utils {
-    using io_buffer             = std::FILE;
-    using size_type             = std::size_t;
-    using nullptr_type          = std::nullptr_t;
-    using ansi_char             = char;
-    using ansi_std_string       = std::string;
-    using ansi_std_string_view  = std::string_view;
-    using wide_char             = wchar_t;
-    using wide_std_string       = std::wstring;
-    using wide_std_string_view  = std::wstring_view;
-    using utf8_char             = char8_t;
-    using utf8_std_string       = std::u8string;
-    using utf8_std_string_view  = std::u8string_view;
-    using utf16_char            = char16_t;
-    using utf16_std_string      = std::u16string;
-    using utf16_std_string_view = std::u16string_view;
-    using utf32_char            = char32_t;
-    using utf32_std_string      = std::u32string;
-    using utf32_std_string_view = std::u32string_view;
+    using size_type    = std::size_t;
+    using nullptr_type = std::nullptr_t;
     template < typename _type_ >
     using type_alloc = _type_;
     template < typename _char_type >
@@ -46,9 +30,9 @@ namespace cpp_utils {
     using add_const_lvalue_reference_type = std::add_lvalue_reference_t< std::add_const_t< _type_ > >;
     template < typename _type_ >
     concept char_type
-      = std::same_as< std::decay_t< _type_ >, ansi_char > || std::same_as< std::decay_t< _type_ >, wide_char >
-     || std::same_as< std::decay_t< _type_ >, utf8_char > || std::same_as< std::decay_t< _type_ >, utf16_char >
-     || std::same_as< std::decay_t< _type_ >, utf32_char >;
+      = std::same_as< std::decay_t< _type_ >, char > || std::same_as< std::decay_t< _type_ >, wchar_t >
+     || std::same_as< std::decay_t< _type_ >, char8_t > || std::same_as< std::decay_t< _type_ >, char16_t >
+     || std::same_as< std::decay_t< _type_ >, char32_t >;
     template < typename _type_ >
     concept pointer_type = std::is_pointer_v< _type_ >;
     template < typename _type_ >
@@ -177,15 +161,15 @@ namespace cpp_utils {
         ~constant_string() noexcept                                                    = default;
     };
     template < size_type _capacity_ >
-    using constant_ansi_string = constant_string< ansi_char, _capacity_ >;
+    using constant_ansi_string = constant_string< char, _capacity_ >;
     template < size_type _capacity_ >
-    using constant_wide_string = constant_string< wide_char, _capacity_ >;
+    using constant_wide_string = constant_string< wchar_t, _capacity_ >;
     template < size_type _capacity_ >
-    using constant_utf8_string = constant_string< utf8_char, _capacity_ >;
+    using constant_utf8_string = constant_string< char8_t, _capacity_ >;
     template < size_type _capacity_ >
-    using constant_utf16_string = constant_string< utf16_char, _capacity_ >;
+    using constant_utf16_string = constant_string< char16_t, _capacity_ >;
     template < size_type _capacity_ >
-    using constant_utf32_string = constant_string< utf32_char, _capacity_ >;
+    using constant_utf32_string = constant_string< char32_t, _capacity_ >;
     template < std::movable _type_ >
     class coroutine final {
       public:
@@ -912,14 +896,14 @@ namespace cpp_utils {
     }
     inline auto relaunch() noexcept
     {
-        wide_char file_path[ MAX_PATH ]{};
+        wchar_t file_path[ MAX_PATH ]{};
         GetModuleFileNameW( nullptr, file_path, MAX_PATH );
         ShellExecuteW( nullptr, L"open", file_path, nullptr, nullptr, SW_SHOWNORMAL );
         std::exit( 0 );
     }
     inline auto relaunch_as_admin() noexcept
     {
-        wide_char file_path[ MAX_PATH ]{};
+        wchar_t file_path[ MAX_PATH ]{};
         GetModuleFileNameW( nullptr, file_path, MAX_PATH );
         ShellExecuteW( nullptr, L"runas", file_path, nullptr, nullptr, SW_SHOWNORMAL );
         std::exit( 0 );
@@ -1010,19 +994,19 @@ namespace cpp_utils {
         SetConsoleMode( _std_output_handle, mode );
         std::print( "\033c" );
     }
-    inline auto set_console_title( const ansi_char *const _title ) noexcept
+    inline auto set_console_title( const char *const _title ) noexcept
     {
         SetConsoleTitleA( _title );
     }
-    inline auto set_console_title( const ansi_std_string &_title ) noexcept
+    inline auto set_console_title( const std::string &_title ) noexcept
     {
         SetConsoleTitleA( _title.data() );
     }
-    inline auto set_console_title( const wide_char *const _title ) noexcept
+    inline auto set_console_title( const wchar_t *const _title ) noexcept
     {
         SetConsoleTitleW( _title );
     }
-    inline auto set_console_title( const wide_std_string &_title ) noexcept
+    inline auto set_console_title( const std::wstring &_title ) noexcept
     {
         SetConsoleTitleW( _title.data() );
     }
@@ -1113,9 +1097,9 @@ namespace cpp_utils {
       private:
         inline static HANDLE std_input_handle_;
         inline static HANDLE std_output_handle_;
-        enum class console_attrs_ : ansi_char { normal, lock_text, lock_all };
+        enum class console_attrs_ : char { normal, lock_text, lock_all };
         struct line_node_ final {
-            ansi_std_string text{};
+            std::string text{};
             callback_type func{};
             WORD default_attrs{ console_text::default_set };
             WORD intensity_attrs{ console_text::foreground_green | console_text::foreground_blue };
@@ -1138,8 +1122,7 @@ namespace cpp_utils {
             auto operator=( const line_node_ & ) noexcept -> line_node_ & = default;
             auto operator=( line_node_ && ) noexcept -> line_node_ &      = default;
             line_node_() noexcept                                         = default;
-            line_node_(
-              const ansi_std_string_view _text, callback_type &_func, const WORD _default_attrs, const WORD _intensity_attrs ) noexcept
+            line_node_( const std::string_view _text, callback_type &_func, const WORD _default_attrs, const WORD _intensity_attrs ) noexcept
               : text{ _text }
               , func{ std::move( _func ) }
               , default_attrs{ _default_attrs }
@@ -1214,20 +1197,20 @@ namespace cpp_utils {
         {
             const auto [ width, height ]{ get_console_size_() };
             set_cursor_( COORD{ 0, 0 } );
-            std::print( "{}", ansi_std_string( static_cast< unsigned int >( width ) * static_cast< unsigned int >( height ), ' ' ) );
+            std::print( "{}", std::string( static_cast< unsigned int >( width ) * static_cast< unsigned int >( height ), ' ' ) );
             set_cursor_( COORD{ 0, 0 } );
         }
-        static auto write_( const ansi_std_string_view _text, const bool _is_endl = false )
+        static auto write_( const std::string_view _text, const bool _is_endl = false )
         {
             std::print( "{}", _text );
             if ( _is_endl ) {
                 std::print( "\n" );
             }
         }
-        static auto rewrite_( const COORD _cursor_position, const ansi_std_string_view _text )
+        static auto rewrite_( const COORD _cursor_position, const std::string_view _text )
         {
             set_cursor_( COORD{ 0, _cursor_position.Y } );
-            write_( ansi_std_string( _cursor_position.X, ' ' ) );
+            write_( std::string( _cursor_position.X, ' ' ) );
             set_cursor_( COORD{ 0, _cursor_position.Y } );
             write_( _text );
             set_cursor_( COORD{ 0, _cursor_position.Y } );
@@ -1310,7 +1293,7 @@ namespace cpp_utils {
             return *this;
         }
         auto &add_front(
-          const ansi_std_string_view _text, callback_type _func = nullptr,
+          const std::string_view _text, callback_type _func = nullptr,
           const WORD _intensity_attrs = console_text::foreground_green | console_text::foreground_blue,
           const WORD _default_attrs   = console_text::default_set )
         {
@@ -1318,7 +1301,7 @@ namespace cpp_utils {
             return *this;
         }
         auto &add_back(
-          const ansi_std_string_view _text, callback_type _func = nullptr,
+          const std::string_view _text, callback_type _func = nullptr,
           const WORD _intensity_attrs = console_text::foreground_blue | console_text::foreground_green,
           const WORD _default_attrs   = console_text::default_set )
         {
@@ -1326,7 +1309,7 @@ namespace cpp_utils {
             return *this;
         }
         auto &insert(
-          const size_type _index, const ansi_std_string_view _text, callback_type _func = nullptr,
+          const size_type _index, const std::string_view _text, callback_type _func = nullptr,
           const WORD _intensity_attrs = console_text::foreground_green | console_text::foreground_blue,
           const WORD _default_attrs   = console_text::default_set )
         {
@@ -1334,7 +1317,7 @@ namespace cpp_utils {
               lines_.cbegin() + _index, _text, _func, _default_attrs, _func != nullptr ? _intensity_attrs : _default_attrs );
             return *this;
         }
-        auto &edit_text( const size_type _index, const ansi_std_string_view _text )
+        auto &edit_text( const size_type _index, const std::string_view _text )
         {
             lines_.at( _index ).text = _text;
             return *this;
@@ -1355,7 +1338,7 @@ namespace cpp_utils {
             return *this;
         }
         auto &edit(
-          const size_type _index, const ansi_std_string_view _text, callback_type _func = nullptr,
+          const size_type _index, const std::string_view _text, callback_type _func = nullptr,
           const WORD _intensity_attrs = console_text::foreground_green | console_text::foreground_blue,
           const WORD _default_attrs   = console_text::default_set )
         {
