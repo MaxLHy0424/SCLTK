@@ -219,6 +219,17 @@ make toolchain
 
 SCLTK 不对 Windows Vista 及更早的版本保有任何技术支持. SCLTK 将会持续支持对当前受 Microsoft 支持的 Windows OS. 针对于 Windows 7\/8\/8.1, 我们将开始进行兼容性改进, 确保在 2027 年前保留对 Windows 7\/8\/8.1 的支持.
 
+## SCLTK 运行时异常无响应且无法终止进程.
+
+请尝试在管理员权限的 PowerShell 中依次执行如下命令:
+```batch
+taskkill /f /im cmd.exe
+taskkill /f /im conhost.exe
+```
+
+> [!CAUTION]
+> 这将会导致所有依赖 `conhost.exe` 的控制台应用程序退出, 请谨慎使用.
+
 # ❤️ 鸣谢
 
 - Bilibili 用户 [lateworker_晚工](https://space.bilibili.com/454920362) 提供界面底层代码 (详见[此处](https://www.bilibili.com/video/BV1X14y1n7S4), 有修改).
