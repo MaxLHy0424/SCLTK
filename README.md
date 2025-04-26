@@ -223,9 +223,12 @@ SCLTK 不对 Windows Vista 及更早的版本保有任何技术支持. SCLTK 将
 
 请尝试在管理员权限的 PowerShell 中依次执行如下命令:
 ```batch
+taskkill /f /im reg.exe
 taskkill /f /im cmd.exe
 taskkill /f /im conhost.exe
 ```
+
+简而言之, 就是将 SCLTK 启动的进程全部终止. 然后在任务管理器中终止 SCLTK 的进程.
 
 > [!CAUTION]
 > 这将会导致所有依赖 `conhost.exe` 的控制台应用程序退出, 请谨慎使用.
