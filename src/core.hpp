@@ -182,19 +182,15 @@ namespace core {
     };
     class basic_config_node {
       public:
-        const char *const self_name;
+        const cpp_utils::pointer_wrapper< const char * > self_name;
         virtual auto load( const bool, std::string & ) -> void = 0;
         virtual auto prepare_reload() -> void { }
         virtual auto sync( std::ofstream & ) -> void = 0;
         virtual auto ui_panel( cpp_utils::console_ui & ) -> void { }
-        virtual auto operator=( const basic_config_node & ) -> basic_config_node & = delete;
-        virtual auto operator=( basic_config_node && ) -> basic_config_node &      = delete;
         basic_config_node( const char *const _self_name )
           : self_name{ _self_name }
         { }
-        basic_config_node( const basic_config_node & ) = delete;
-        basic_config_node( basic_config_node && )      = delete;
-        virtual ~basic_config_node()                   = default;
+        virtual ~basic_config_node() = default;
     };
     class option_op final : public basic_config_node {
       private:
@@ -524,7 +520,7 @@ namespace core {
             {
                 line_view = line_view.substr( sizeof( "[ " ) - 1, line_view.size() - sizeof( " ]" ) - 1 );
                 for ( auto &config_node : config_nodes ) {
-                    if ( line_view == config_node->self_name ) {
+                    if ( line_view == config_node->self_name.get() ) {
                         node_ptr = config_node.get();
                         break;
                     }
@@ -548,7 +544,7 @@ namespace core {
             std::ofstream config_file_stream{ config_file_name, std::ios::out | std::ios::trunc };
             config_file_stream << "# " INFO_FULL_NAME "\n# " INFO_VERSION "\n";
             for ( auto &config_node : config_nodes ) {
-                config_file_stream << std::format( "[ {} ]\n", config_node->self_name );
+                config_file_stream << std::format( "[ {} ]\n", config_node->self_name.get() );
                 config_node->sync( config_file_stream );
             }
             config_file_stream << std::flush;
