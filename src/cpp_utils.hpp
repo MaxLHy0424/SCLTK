@@ -101,6 +101,51 @@ namespace cpp_utils {
         using namespace std::string_literals;
         return _ptr == nullptr ? "nullptr"s : std::format( "0x{:x}", reinterpret_cast< std::uintptr_t >( _ptr ) );
     }
+    template < pointer_type _type_ >
+        requires( !std::same_as< std::decay_t< _type_ >, void * > && !std::is_const_v< _type_ > )
+    struct pointer_wrapper final {
+      private:
+        _type_ ptr_{};
+      public:
+        auto get() const
+        {
+            return ptr_;
+        }
+        auto &operator*() const
+        {
+            return *ptr_;
+        }
+        auto &operator[]( const size_type _n ) const
+        {
+            return ptr_[ _n ];
+        }
+        auto operator+( const size_type _n ) const
+        {
+            return ptr_ + _n;
+        }
+        auto operator-( const size_type _n ) const
+        {
+            return ptr_ - _n;
+        }
+        auto operator++() -> pointer_wrapper< _type_ > &
+        {
+            ++ptr_;
+            return *this;
+        }
+        auto operator++( int ) -> pointer_wrapper< _type_ >
+        {
+            return ptr_++;
+        }
+        auto operator=( const pointer_wrapper< _type_ > & ) -> pointer_wrapper< _type_ > & = default;
+        auto operator=( pointer_wrapper< _type_ > && ) -> pointer_wrapper< _type_ > &      = default;
+        pointer_wrapper()                                                                  = default;
+        pointer_wrapper( _type_ _ptr )
+          : ptr_{ _ptr }
+        { }
+        pointer_wrapper( const pointer_wrapper< _type_ > & ) = default;
+        pointer_wrapper( pointer_wrapper< _type_ > && )      = default;
+        ~pointer_wrapper()                                   = default;
+    };
     template < char_type _type_, size_type _capacity_ >
         requires( std::same_as< _type_, std::decay_t< _type_ > > && _capacity_ > 0 )
     struct constant_string final {
