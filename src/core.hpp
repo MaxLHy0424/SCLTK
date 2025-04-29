@@ -252,7 +252,6 @@ namespace core {
               public:
                 auto operator()( cpp_utils::console_ui::func_args )
                 {
-                    std::print( " -> 初始化 UI.\n" );
                     cpp_utils::console_ui ui;
                     ui.add_back( "                    [ 配  置 ]\n\n" )
                       .add_back(
@@ -334,7 +333,6 @@ namespace core {
       basic_config_node_smart_ptr{ std::make_unique< custom_rules_servs_op >() } };
     inline auto info( cpp_utils::console_ui::func_args )
     {
-        std::print( " -> 初始化 UI.\n" );
         auto visit_repo_webpage{ []( cpp_utils::console_ui::func_args ) static
         {
             ShellExecuteA( nullptr, "open", INFO_REPO_URL, nullptr, nullptr, SW_SHOWNORMAL );
@@ -355,7 +353,6 @@ namespace core {
     }
     inline auto toolkit( cpp_utils::console_ui::func_args )
     {
-        std::print( " -> 初始化 UI.\n" );
         auto launch_cmd{ []( cpp_utils::console_ui::func_args _args ) static
         {
             cpp_utils::set_console_title( INFO_SHORT_NAME " - 命令提示符" );
@@ -545,7 +542,6 @@ namespace core {
     }
     inline auto edit_config( cpp_utils::console_ui::func_args )
     {
-        std::print( " -> 初始化 UI.\n" );
         auto sync{ []( cpp_utils::console_ui::func_args ) static
         {
             std::print( "                    [ 配  置 ]\n\n\n" );
