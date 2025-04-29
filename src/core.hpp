@@ -184,9 +184,9 @@ namespace core {
       public:
         const cpp_utils::pointer_wrapper< const char * > self_name;
         virtual auto load( const bool, std::string & ) -> void = 0;
+        virtual auto sync( std::ofstream & ) -> void           = 0;
         virtual auto prepare_reload() -> void { }
-        virtual auto sync( std::ofstream & ) -> void = 0;
-        virtual auto ui_panel( cpp_utils::console_ui & ) -> void { }
+        virtual auto ui( cpp_utils::console_ui & ) -> void { }
         basic_config_node( const char *const _self_name )
           : self_name{ _self_name }
         { }
@@ -219,7 +219,7 @@ namespace core {
                 }
             }
         }
-        virtual auto ui_panel( cpp_utils::console_ui &_ui ) -> void
+        virtual auto ui( cpp_utils::console_ui &_ui ) -> void
         {
             constexpr auto option_ctrl_color{ cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_green };
             class option_setter final {
@@ -238,7 +238,7 @@ namespace core {
                             break;
                         }
                     }
-                    _args.parent_ui.edit_text( _args.node_index, std::format( " > {}用 ", item_.get() ? "禁" : "启" ) );
+                    _args.parent_ui.edit_text( _args.node_index, std::format( " > {}用 ", item_ ? "禁" : "启" ) );
                     return cpp_utils::console_ui::back;
                 }
                 option_setter( option_container::node::item &_item )
@@ -259,7 +259,7 @@ namespace core {
                         cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity );
                     for ( auto &item : node_.items ) {
                         ui.add_back( std::format( "\n[ {} ]\n", item.shown_name ) )
-                          .add_back( std::format( " > {}用 ", item.get() ? "禁" : "启" ), option_setter{ item }, option_ctrl_color );
+                          .add_back( std::format( " > {}用 ", item ? "禁" : "启" ), option_setter{ item }, option_ctrl_color );
                     }
                     ui.show();
                     return cpp_utils::console_ui::back;
@@ -290,15 +290,15 @@ namespace core {
         {
             custom_rules.execs.emplace_back( std::move( _line ) );
         }
-        virtual auto prepare_reload() -> void override final
-        {
-            custom_rules.execs.clear();
-        }
         virtual auto sync( std::ofstream &_out ) -> void override final
         {
             for ( const auto &exec : custom_rules.execs ) {
                 _out << exec << '\n';
             }
+        }
+        virtual auto prepare_reload() -> void override final
+        {
+            custom_rules.execs.clear();
         }
         custom_rules_execs_op()
           : basic_config_node{ "custom_rules_execs" }
@@ -311,15 +311,15 @@ namespace core {
         {
             custom_rules.servs.emplace_back( std::move( _line ) );
         }
-        virtual auto prepare_reload() -> void override final
-        {
-            custom_rules.servs.clear();
-        }
         virtual auto sync( std::ofstream &_out ) -> void override final
         {
             for ( const auto &serv : custom_rules.servs ) {
                 _out << serv << '\n';
             }
+        }
+        virtual auto prepare_reload() -> void override final
+        {
+            custom_rules.servs.clear();
         }
         custom_rules_servs_op()
           : basic_config_node{ "custom_rules_servs" }
@@ -578,7 +578,7 @@ namespace core {
           .add_back( " > 同步配置 ", sync )
           .add_back( " > 打开配置文件 ", open_file );
         for ( auto &config_node : config_nodes ) {
-            config_node->ui_panel( ui );
+            config_node->ui( ui );
         }
         ui.show();
         return cpp_utils::console_ui::back;
