@@ -374,19 +374,29 @@ namespace core {
         } };
         class cmd_executor final {
           private:
-            const char *const cmd_;
+            const char *const ( &item_ )[ 2 ];
           public:
             auto operator()( cpp_utils::console_ui::func_args )
             {
-                std::print(
-                  "                   [ 工 具 箱 ]\n\n\n"
-                  " -> 执行操作系统命令.\n{}\n",
-                  std::string( console_width, '-' ) );
-                std::system( cmd_ );
+                auto execute{ [ this ]( cpp_utils::console_ui::func_args )
+                {
+                    std::print(
+                      "                   [ 工 具 箱 ]\n\n\n"
+                      " -> 执行操作系统命令.\n{}\n",
+                      std::string( console_width, '-' ) );
+                    std::system( item_[ 1 ] );
+                    return cpp_utils::console_ui::exit;
+                } };
+                cpp_utils::console_ui ui;
+                ui.add_back( "                   [ 工 具 箱 ]\n\n" )
+                  .add_back( std::format( " (i) 是否确认执行 \"{}\"?\n", item_[ 0 ] ) )
+                  .add_back( " > 是 ", execute )
+                  .add_back( " > 否 ", exit )
+                  .show();
                 return cpp_utils::console_ui::back;
             }
-            cmd_executor( const char *const _cmd )
-              : cmd_{ _cmd }
+            cmd_executor( const char *const ( &_item )[ 2 ] )
+              : item_{ _item }
             { }
             cmd_executor( const cmd_executor & ) = default;
             cmd_executor( cmd_executor && )      = default;
@@ -405,7 +415,7 @@ namespace core {
           .add_back( " > 命令提示符 ", launch_cmd )
           .add_back( "\n[ 常用操作 ]\n" );
         for ( const auto &common_cmd : common_cmds ) {
-            ui.add_back( std::format( " > {} ", common_cmd[ 0 ] ), cmd_executor{ common_cmd[ 1 ] } );
+            ui.add_back( std::format( " > {} ", common_cmd[ 0 ] ), cmd_executor{ common_cmd } );
         }
         ui.show();
         return cpp_utils::console_ui::back;
