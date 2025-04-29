@@ -13,12 +13,12 @@
 
 | 分支            | 最新发行版                                                                       | 状态       | 生命周期                |
 | --------------- | -------------------------------------------------------------------------------- | ---------- | ----------------------- |
-| SCLTK (CRCSN) 1 | [v1.0_Stable](https://github.com/MaxLHy0424/SCLTK/releases/tag/v1.0_Stable)      | ❌ 停止开发 | 2023/12/17 ~ 2023/12/18 |
-| SCLTK (CRCSN) 2 | [v2.5_Stable](https://github.com/MaxLHy0424/SCLTK/releases/tag/v2.5_Stable)      | ❌ 停止开发 | 2024/01/01 ~ 2024/01/07 |
-| SCLTK (CRCSN) 3 | [v3.0.1 \(Build 30174\)](https://github.com/MaxLHy0424/SCLTK/releases/tag/30174) | ❌ 停止开发 | 2024/02/09 ~ 2024/02/10 |
-| SCLTK (CRCSN) 4 | [v4.10.7](https://github.com/MaxLHy0424/SCLTK/releases/tag/v4.10.7)              | ❌ 停止开发 | 2024/03/26 ~ 2024/06/19 |
-| SCLTK (CRCSN) 5 | [v5.11.1](https://github.com/MaxLHy0424/SCLTK/releases/tag/v5.11.1)              | ❌ 停止开发 | 2024/08/25 ~ 2024/12/23 |
-| SCLTK (CRCSN) 6 | [v6.2.0](https://github.com/MaxLHy0424/SCLTK/releases/tag/v6.2.0)                | ✔️ 主线开发 | 2025/01/29 ~            |
+| SCLTK (CRCSN) 1 | [v1.0_Stable](https://github.com/MaxLHy0424/SCLTK/releases/tag/v1.0_Stable)      | ❌ 停止开发 | 2023/12/17 - 2023/12/18 |
+| SCLTK (CRCSN) 2 | [v2.5_Stable](https://github.com/MaxLHy0424/SCLTK/releases/tag/v2.5_Stable)      | ❌ 停止开发 | 2024/01/01 - 2024/01/07 |
+| SCLTK (CRCSN) 3 | [v3.0.1 \(Build 30174\)](https://github.com/MaxLHy0424/SCLTK/releases/tag/30174) | ❌ 停止开发 | 2024/02/09 - 2024/02/10 |
+| SCLTK (CRCSN) 4 | [v4.10.7](https://github.com/MaxLHy0424/SCLTK/releases/tag/v4.10.7)              | ❌ 停止开发 | 2024/03/26 - 2024/06/19 |
+| SCLTK (CRCSN) 5 | [v5.11.1](https://github.com/MaxLHy0424/SCLTK/releases/tag/v5.11.1)              | ❌ 停止开发 | 2024/08/25 - 2024/12/23 |
+| SCLTK (CRCSN) 6 | [v6.2.0](https://github.com/MaxLHy0424/SCLTK/releases/tag/v6.2.0)                | ✔️ 主线开发 | 2025/01/29 - present    |
 
 # 📖 使用指南
 
@@ -75,7 +75,7 @@ SCLTK 发行版文件名规则为 `SCLTK-[ arch ]-[ runtime ].exe`, 其中 `[ ar
 
 具体描述见下文.
 
-#### 3.2.1 选项分类: 破解/恢复
+#### 3.2.1 选项分类: 破解\/恢复
 
 破解/恢复控制软件相关选项.
 
@@ -144,7 +144,7 @@ abc_diag_track
 - **启动命令提示符**\
 `> 命令提示符`
 
-点击 `[ 快捷操作 ]` 下的文本控件以执行相应操作.
+点击 `[ 快捷操作 ]` 下的项目, 二次确认后方可执行.
 
 ## 5 破解/恢复
 
@@ -157,7 +157,7 @@ abc_diag_track
 
 `[ 破解 ]`\/`[ 恢复 ]` 下的 `> 自定义` 将执行自定义规则, 配置参阅 [3.3 自定义规则](#33-自定义规则).
 
-当启用特定选项 (详见 [3.2.1 选项分类: 破解/恢复](#321-选项分类-破解恢复)) 时, 破解/恢复时将映像劫持可执行文件, 禁用相关服务.
+当启用特定选项 (详见 [3.2.1 选项分类: 破解\/恢复](#321-选项分类-破解恢复)) 时, 破解/恢复时将映像劫持可执行文件, 禁用相关服务.
 
 # 📜 许可证
 
@@ -165,7 +165,7 @@ SCLTK 使用 [MIT License](./LICENSE), 详细内容请自行阅读.
 
 # 🛠️ 二次开发
 
-首先, 请确保您已经安装了 [msys2](https://www.msys2.org), 并在 msys2 的 `msys` 环境中安装了软件包 `make` 和 `git`.
+首先, 请确保您已经安装了 [msys2](https://www.msys2.org), 并在 [msys2](https://www.msys2.org) 的 `msys` 环境中安装了软件包 `make` 和 `git`.
 
 然后, 使用 git 克隆本仓库到本地, 在仓库本地目录下运行 `.\generate_env.ps1`, 这将会创建 `env` 文件, 文件内容如下:
 ```
