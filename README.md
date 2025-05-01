@@ -9,7 +9,7 @@
 # 📦 获取
 
 > [!NOTE]
-> 从 v6.1.0 起, 原 CRCSN (Computer Room Control Software Nemesis) 正式改名为 SCLTK (Student Computer Lab Toolkit).
+> 从 v6.1.0 起, 原 CRCSN (Computer Room Control Software Nemesis) 正式更名为 SCLTK (Student Computer Lab Toolkit).
 
 | 分支            | 最新发行版                                                                       | 状态       | 生命周期                |
 | --------------- | -------------------------------------------------------------------------------- | ---------- | ----------------------- |
@@ -106,7 +106,7 @@ SCLTK 窗口相关选项.
 - **\*\* 快速退出和重启**\
   通过提前分离线程来将加快退出速度, 同时添加 "重启" 控件. 本选项不可热重载. 注意: 在某些情况下, 这可能导致 SCLTK 退出或重启时时发生异常.
 - **\*\* 禁用标 \* 选项热重载**\
-  禁用上述标 \* 的选项的热重载. 启用后部分标 \* 选项仅会执行一次. 启用后可适当减少资源消耗. 本选项不可热重载.
+  禁用上述标 \* 的选项的热重载, 可适当减少资源消耗. 本选项不可热重载.
 
 ### 3.3 自定义规则
 
@@ -218,20 +218,6 @@ make toolchain
 ## SCLTK 在某些版本的 Windows OS 上无法运行.
 
 SCLTK 不对 Windows Vista 及更早的版本保有任何技术支持. SCLTK 将会持续支持对当前受 Microsoft 支持的 Windows OS. 针对于 Windows 7\/8\/8.1, 我们将开始进行兼容性改进, 确保在 2027 年前保留对 Windows 7\/8\/8.1 的支持.
-
-## SCLTK 运行时异常无响应且无法终止进程.
-
-请尝试在管理员权限的 PowerShell 中依次执行如下命令:
-```batch
-taskkill /f /im reg.exe
-taskkill /f /im cmd.exe
-taskkill /f /im conhost.exe
-```
-
-简而言之, 就是将 SCLTK 启动的进程全部终止. 然后在任务管理器中终止 SCLTK 的进程.
-
-> [!CAUTION]
-> 这将会导致所有依赖 `conhost.exe` 的控制台应用程序退出, 请谨慎使用.
 
 # ❤️ 鸣谢
 
