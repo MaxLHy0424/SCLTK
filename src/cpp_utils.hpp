@@ -2,6 +2,7 @@
 #if defined( _WIN32 ) || defined( _WIN64 )
 # include <windows.h>
 #endif
+#include <any>
 #include <chrono>
 #include <concepts>
 #include <coroutine>
@@ -9,13 +10,16 @@
 #include <exception>
 #include <functional>
 #include <iterator>
+#include <memory>
 #include <optional>
 #include <print>
 #include <ranges>
+#include <stdexcept>
 #include <string>
 #include <string_view>
 #include <thread>
 #include <type_traits>
+#include <typeindex>
 #include <utility>
 #include <vector>
 namespace cpp_utils {
@@ -75,9 +79,6 @@ namespace cpp_utils {
     template < std::random_access_iterator _iterator_ >
     auto parallel_for_each( unsigned int _thread_num, _iterator_ &&_begin, _iterator_ &&_end, auto &&_func )
     {
-        if ( _thread_num == 0 ) {
-            _thread_num = 1;
-        }
         const auto chunk_size{ ( _end - _begin ) / _thread_num };
         std::vector< std::thread > threads;
         threads.reserve( _thread_num );
@@ -96,14 +97,14 @@ namespace cpp_utils {
         }
     }
     template < pointer_type _type_ >
-    inline auto ptr_to_string( const _type_ _ptr )
+    inline auto pointer_to_string( const _type_ _ptr )
     {
         using namespace std::string_literals;
         return _ptr == nullptr ? "nullptr"s : std::format( "0x{:x}", reinterpret_cast< std::uintptr_t >( _ptr ) );
     }
     template < pointer_type _type_ >
         requires( !std::same_as< std::decay_t< _type_ >, void * > && !std::is_const_v< _type_ > )
-    struct pointer_wrapper final {
+    class pointer_wrapper final {
       private:
         _type_ ptr_{};
       public:
@@ -148,7 +149,7 @@ namespace cpp_utils {
     };
     template < char_type _type_, size_type _capacity_ >
         requires( std::same_as< _type_, std::decay_t< _type_ > > && _capacity_ > 0 )
-    struct constant_string final {
+    class constant_string final {
       private:
         _type_ data_[ _capacity_ ]{};
       public:
@@ -239,6 +240,155 @@ namespace cpp_utils {
     using constant_utf16_string = constant_string< char16_t, _capacity_ >;
     template < size_type _capacity_ >
     using constant_utf32_string = constant_string< char32_t, _capacity_ >;
+#if ( defined( __GNUC__ ) && defined( __GXX_RTTI ) ) || ( defined( _MSC_VER ) && defined( _CPPRTTI ) ) \
+  || ( defined( __clang__ ) && __has_feature( cxx_rtti ) )
+    class func_wrapper_impl {
+      public:
+        virtual ~func_wrapper_impl()                                                 = default;
+        virtual auto empty() const -> bool                                           = 0;
+        virtual auto args_type() const -> const std::vector< std::type_index > &     = 0;
+        virtual auto invoke( const std::vector< std::any > &args ) const -> std::any = 0;
+    };
+    template < typename _return_type_, typename... _args_ >
+    class func_wrapper : public func_wrapper_impl {
+      private:
+        std::function< _return_type_( _args_... ) > func_;
+        std::vector< std::type_index > args_type_{ std::type_index{ typeid( _args_ ) }... };
+        template < std::size_t... _args_index_ >
+        auto invoke_impl_( const std::vector< std::any > &_args, std::index_sequence< _args_index_... > ) const -> std::any
+        {
+            if constexpr ( std::is_void_v< _return_type_ > ) {
+                std::invoke( func_, std::any_cast< _args_ >( _args[ _args_index_ ] )... );
+                return {};
+            } else {
+                return std::invoke( func_, std::any_cast< _args_ >( _args[ _args_index_ ] )... );
+            }
+        }
+      public:
+        virtual auto empty() const -> bool
+        {
+            return func_ == nullptr;
+        }
+        virtual auto args_type() const -> const std::vector< std::type_index > & override final
+        {
+            return args_type_;
+        }
+        virtual auto invoke( const std::vector< std::any > &_args ) const -> std::any override final
+        {
+            if ( sizeof...( _args_ ) < _args.size() ) {
+                throw std::invalid_argument{ "arguments error" };
+            }
+            return invoke_impl_( _args, std::index_sequence_for< _args_... >{} );
+        }
+        func_wrapper( std::function< _return_type_( _args_... ) > _f )
+          : func_{ std::move( _f ) }
+        { }
+    };
+    class func_container final {
+      private:
+        std::deque< std::unique_ptr< func_wrapper_impl > > func_nodes_{};
+      public:
+        auto empty() const noexcept
+        {
+            return func_nodes_.empty();
+        }
+        auto size() const noexcept
+        {
+            return func_nodes_.size();
+        }
+        auto max_size() const noexcept
+        {
+            return func_nodes_.max_size();
+        }
+        auto &resize( const size_type _size )
+        {
+            func_nodes_.resize( _size );
+            return *this;
+        }
+        auto &optimize_storage() noexcept
+        {
+            func_nodes_.shrink_to_fit();
+            return *this;
+        }
+        auto &swap( func_container &_src ) noexcept
+        {
+            func_nodes_.swap( _src.func_nodes_ );
+            return *this;
+        }
+        template < typename... _args_ >
+        static auto make_args( _args_ &&..._args )
+        {
+            std::vector< std::any > args;
+            args.reserve( sizeof...( _args ) );
+            ( args.emplace_back( std::forward< _args_ >( _args ) ), ... );
+            return args;
+        }
+        template < typename _return_type_, typename... _args_ >
+        auto &add_front( std::function< _return_type_( _args_... ) > _func )
+        {
+            func_nodes_.emplace_front( std::make_unique< func_wrapper< _return_type_, _args_... > >( std::move( _func ) ) );
+            return *this;
+        }
+        template < typename _return_type_, typename... _args_ >
+        auto &add_back( std::function< _return_type_( _args_... ) > _func )
+        {
+            func_nodes_.emplace_back( std::make_unique< func_wrapper< _return_type_, _args_... > >( std::move( _func ) ) );
+            return *this;
+        }
+        template < typename _return_type_, typename... _args_ >
+        auto &insert( const size_type _index, std::function< _return_type_( _args_... ) > _func )
+        {
+            func_nodes_.emplace(
+              func_nodes_.cbegin() + _index, std::make_unique< func_wrapper< _return_type_, _args_... > >( std::move( _func ) ) );
+            return *this;
+        }
+        template < typename _return_type_, typename... _args_ >
+        auto &edit( const size_type _index, std::function< _return_type_( _args_... ) > _func )
+        {
+            func_nodes_.at( _index ) = std::make_unique< func_wrapper< _return_type_, _args_... > >( std::move( _func ) );
+            return *this;
+        }
+        auto &remove_front() noexcept
+        {
+            func_nodes_.pop_front();
+            return *this;
+        }
+        auto &remove_back() noexcept
+        {
+            func_nodes_.pop_back();
+            return *this;
+        }
+        auto &remove( const size_type _begin, const size_type _length )
+        {
+            func_nodes_.erase( func_nodes_.cbegin() + _begin, func_nodes_.cbegin() + _begin + _length );
+            return *this;
+        }
+        auto &clear() noexcept
+        {
+            func_nodes_.clear();
+            return *this;
+        }
+        template < typename _return_type_, typename... _args_ >
+        auto invoke( const size_type _index, _args_ &&..._args ) const
+        {
+            if constexpr ( std::same_as< std::decay_t< _return_type_ >, void > ) {
+                func_nodes_.at( _index )->invoke( make_args( std::forward< _args_ >( _args )... ) );
+            } else {
+                return std::any_cast< _return_type_ >(
+                  func_nodes_.at( _index )->invoke( make_args( std::forward< _args_ >( _args )... ) ) );
+            }
+        }
+        template < typename _return_type_ >
+        auto dynamic_invoke( const size_type _index, const std::vector< std::any > &_args ) const
+        {
+            if constexpr ( std::same_as< std::decay_t< _return_type_ >, void > ) {
+                func_nodes_.at( _index )->invoke( _args );
+            } else {
+                return std::any_cast< _return_type_ >( func_nodes_.at( _index )->invoke( _args ) );
+            }
+        }
+    };
+#endif
     template < std::movable _type_ >
     class coroutine final {
       public:
@@ -799,10 +949,10 @@ namespace cpp_utils {
         {
             return threads_.at( _index ).native_handle();
         }
-        template < callable_type _callee_, typename... _args_ >
-        auto &add( _callee_ &&_func, _args_ &&..._args )
+        template < callable_type _func_, typename... _args_ >
+        auto &add( _func_ &&_func, _args_ &&..._args )
         {
-            threads_.emplace_back( std::forward< _callee_ >( _func ), std::forward< _args_ >( _args )... );
+            threads_.emplace_back( std::forward< _func_ >( _func ), std::forward< _args_ >( _args )... );
             return *this;
         }
         auto &join( const size_type _index )
@@ -1016,10 +1166,10 @@ namespace cpp_utils {
         auto window_handle{ get_current_window_handle() };
         keep_window_top( window_handle, GetCurrentThreadId(), GetWindowThreadProcessId( window_handle, nullptr ) );
     }
-    template < std_chrono_type _chrono_type_, callable_type _callee_, typename... _args_ >
+    template < std_chrono_type _chrono_type_, callable_type _func_, typename... _args_ >
     inline auto loop_keep_window_top(
       const HWND _window_handle, const DWORD _thread_id, const DWORD _window_thread_process_id, const _chrono_type_ _sleep_time,
-      _callee_ &&_condition_checker, _args_ &&..._condition_checker_args )
+      _func_ &&_condition_checker, _args_ &&..._condition_checker_args )
     {
         while ( _condition_checker( std::forward< _args_ >( _condition_checker_args )... ) ) {
             AttachThreadInput( _thread_id, _window_thread_process_id, TRUE );
@@ -1030,14 +1180,14 @@ namespace cpp_utils {
             std::this_thread::sleep_for( _sleep_time );
         }
     }
-    template < std_chrono_type _chrono_type_, callable_type _callee_, typename... _args_ >
+    template < std_chrono_type _chrono_type_, callable_type _func_, typename... _args_ >
     inline auto loop_keep_current_window_top(
-      const _chrono_type_ _sleep_time, _callee_ &&_condition_checker, _args_ &&..._condition_checker_args )
+      const _chrono_type_ _sleep_time, _func_ &&_condition_checker, _args_ &&..._condition_checker_args )
     {
         auto window_handle{ get_current_window_handle() };
         loop_keep_window_top(
           window_handle, GetCurrentThreadId(), GetWindowThreadProcessId( window_handle, nullptr ), _sleep_time,
-          std::forward< _callee_ >( _condition_checker ), std::forward< _args_ >( _condition_checker_args )... );
+          std::forward< _func_ >( _condition_checker ), std::forward< _args_ >( _condition_checker_args )... );
     }
     inline auto cancel_top_window( const HWND _window_handle ) noexcept
     {
@@ -1307,7 +1457,7 @@ namespace cpp_utils {
                 }
             }
         }
-        auto call_func_( const MOUSE_EVENT_RECORD &_event )
+        auto invoke_func_( const MOUSE_EVENT_RECORD &_event )
         {
             auto is_exit{ back };
             auto size{ lines_.size() };
@@ -1452,7 +1602,7 @@ namespace cpp_utils {
                     case mouse::move : refresh_( event.dwMousePosition ); break;
                     case mouse::click : {
                         if ( event.dwButtonState != false ) {
-                            func_return_value = call_func_( event );
+                            func_return_value = invoke_func_( event );
                         }
                         break;
                     }
