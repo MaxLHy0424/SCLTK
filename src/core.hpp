@@ -379,7 +379,7 @@ namespace core {
                 {
                     std::print(
                       "                   [ 工 具 箱 ]\n\n\n"
-                      " -> 执行操作系统命令.\n{}\n",
+                      " -> 正在执行操作系统命令...\n{}\n",
                       std::string( console_width, '-' ) );
                     std::system( item_[ 1 ] );
                     return cpp_utils::console_ui::exit;
@@ -505,12 +505,10 @@ namespace core {
             return;
         }
         if ( _is_reload ) {
-            std::print( " -> 准备配置重载.\n" );
             for ( auto &config_node : config_nodes ) {
                 config_node->prepare_reload();
             }
         }
-        std::print( " -> 加载配置文件.\n" );
         std::string line;
         std::string_view line_view;
         basic_config_node *node_ptr{};
@@ -544,9 +542,10 @@ namespace core {
     {
         auto sync{ []( cpp_utils::console_ui::func_args ) static
         {
-            std::print( "                    [ 配  置 ]\n\n\n" );
+            std::print(
+              "                    [ 配  置 ]\n\n\n"
+              " -> 正在同步配置...\n" );
             load_config( true );
-            std::print( " -> 保存更改.\n" );
             std::ofstream config_file_stream{ config_file_name, std::ios::out | std::ios::trunc };
             config_file_stream << "# " INFO_FULL_NAME "\n# " INFO_VERSION "\n";
             for ( auto &config_node : config_nodes ) {
@@ -562,7 +561,9 @@ namespace core {
         auto open_file{ []( cpp_utils::console_ui::func_args ) static
         {
             if ( std::ifstream{ config_file_name, std::ios::in }.good() ) {
-                std::print( " -> 打开配置.\n" );
+                std::print(
+                  "                    [ 配  置 ]\n\n\n"
+                  " -> 正在打开配置文件..." );
                 ShellExecuteA( nullptr, "open", config_file_name, nullptr, nullptr, SW_SHOWNORMAL );
                 return cpp_utils::console_ui::back;
             }
@@ -623,7 +624,7 @@ namespace core {
                 wait();
                 return cpp_utils::console_ui::back;
             }
-            std::print( " -> 生成并执行操作系统命令.\n{}\n", std::string( console_width, '-' ) );
+            std::print( " -> 正在生成并执行操作系统命令...\n{}\n", std::string( console_width, '-' ) );
             const auto &execs{ rules_.execs };
             const auto &servs{ rules_.servs };
             switch ( is_parallel_op ) {
@@ -698,7 +699,7 @@ namespace core {
                 wait();
                 return cpp_utils::console_ui::back;
             }
-            std::print( " -> 生成并执行操作系统命令.\n{}\n", std::string( console_width, '-' ) );
+            std::print( " -> 正在生成并执行操作系统命令...\n{}\n", std::string( console_width, '-' ) );
             const auto &execs{ rules_.execs };
             const auto &servs{ rules_.servs };
             switch ( is_parallel_op ) {
