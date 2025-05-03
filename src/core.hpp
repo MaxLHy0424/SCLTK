@@ -340,7 +340,8 @@ namespace core {
             "\n\n[ 许可证 & 版权 ]\n\n " INFO_LICENSE "\n " INFO_COPYRIGHT "\n\n[ 仓库 ]\n" )
           .add_back(
             " " INFO_REPO_URL " ", visit_repo_webpage,
-            cpp_utils::console_text::default_set | cpp_utils::console_text::foreground_intensity | cpp_utils::console_text::lvb_underscore )
+            cpp_utils::console_text::default_attrs | cpp_utils::console_text::foreground_intensity
+              | cpp_utils::console_text::lvb_underscore )
           .show();
         return cpp_utils::console_ui::back;
     }

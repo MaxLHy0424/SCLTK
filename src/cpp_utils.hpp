@@ -1067,7 +1067,7 @@ namespace cpp_utils {
         inline constexpr DWORD std_error{ STD_ERROR_HANDLE };
     };
     namespace console_text {
-        inline constexpr WORD default_set{ FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE };
+        inline constexpr WORD default_attrs{ FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE };
         inline constexpr WORD foreground_red{ FOREGROUND_RED };
         inline constexpr WORD foreground_green{ FOREGROUND_GREEN };
         inline constexpr WORD foreground_blue{ FOREGROUND_BLUE };
@@ -1320,9 +1320,9 @@ namespace cpp_utils {
         struct line_node_ final {
             std::string text{};
             callback_type func{};
-            WORD default_attrs{ console_text::default_set };
+            WORD default_attrs{ console_text::default_attrs };
             WORD intensity_attrs{ console_text::foreground_green | console_text::foreground_blue };
-            WORD last_attrs{ console_text::default_set };
+            WORD last_attrs{ console_text::default_attrs };
             COORD position{};
             auto set_attrs( const WORD _attrs ) noexcept
             {
@@ -1515,7 +1515,7 @@ namespace cpp_utils {
         auto &add_front(
           const std::string_view _text, callback_type _func = nullptr,
           const WORD _intensity_attrs = console_text::foreground_green | console_text::foreground_blue,
-          const WORD _default_attrs   = console_text::default_set )
+          const WORD _default_attrs   = console_text::default_attrs )
         {
             lines_.emplace_front( _text, _func, _default_attrs, _func != nullptr ? _intensity_attrs : _default_attrs );
             return *this;
@@ -1523,7 +1523,7 @@ namespace cpp_utils {
         auto &add_back(
           const std::string_view _text, callback_type _func = nullptr,
           const WORD _intensity_attrs = console_text::foreground_blue | console_text::foreground_green,
-          const WORD _default_attrs   = console_text::default_set )
+          const WORD _default_attrs   = console_text::default_attrs )
         {
             lines_.emplace_back( _text, _func, _default_attrs, _func != nullptr ? _intensity_attrs : _default_attrs );
             return *this;
@@ -1531,7 +1531,7 @@ namespace cpp_utils {
         auto &insert(
           const size_type _index, const std::string_view _text, callback_type _func = nullptr,
           const WORD _intensity_attrs = console_text::foreground_green | console_text::foreground_blue,
-          const WORD _default_attrs   = console_text::default_set )
+          const WORD _default_attrs   = console_text::default_attrs )
         {
             lines_.emplace(
               lines_.cbegin() + _index, _text, _func, _default_attrs, _func != nullptr ? _intensity_attrs : _default_attrs );
@@ -1560,7 +1560,7 @@ namespace cpp_utils {
         auto &edit(
           const size_type _index, const std::string_view _text, callback_type _func = nullptr,
           const WORD _intensity_attrs = console_text::foreground_green | console_text::foreground_blue,
-          const WORD _default_attrs   = console_text::default_set )
+          const WORD _default_attrs   = console_text::default_attrs )
         {
             lines_.at( _index ) = line_node_{ _text, _func, _default_attrs, _func != nullptr ? _intensity_attrs : _default_attrs };
             return *this;
