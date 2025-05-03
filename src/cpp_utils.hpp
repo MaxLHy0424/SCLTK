@@ -139,13 +139,13 @@ namespace cpp_utils {
         }
         auto operator=( const raw_pointer_wrapper< _type_ > & ) -> raw_pointer_wrapper< _type_ > & = default;
         auto operator=( raw_pointer_wrapper< _type_ > && ) -> raw_pointer_wrapper< _type_ > &      = default;
-        raw_pointer_wrapper()                                                                      = default;
-        raw_pointer_wrapper( _type_ _ptr )
+        constexpr raw_pointer_wrapper()                                                            = default;
+        constexpr raw_pointer_wrapper( _type_ _ptr )
           : ptr_{ _ptr }
         { }
-        raw_pointer_wrapper( const raw_pointer_wrapper< _type_ > & ) = default;
-        raw_pointer_wrapper( raw_pointer_wrapper< _type_ > && )      = default;
-        ~raw_pointer_wrapper()                                       = default;
+        constexpr raw_pointer_wrapper( const raw_pointer_wrapper< _type_ > & ) = default;
+        constexpr raw_pointer_wrapper( raw_pointer_wrapper< _type_ > && )      = default;
+        ~raw_pointer_wrapper()                                                 = default;
     };
     template < char_type _type_, size_type _capacity_ >
         requires( std::same_as< _type_, std::decay_t< _type_ > > && _capacity_ > 0 )
