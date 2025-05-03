@@ -104,7 +104,7 @@ namespace cpp_utils {
     }
     template < pointer_type _type_ >
         requires( !std::same_as< std::decay_t< _type_ >, void * > && !std::is_const_v< _type_ > )
-    class pointer_wrapper final {
+    class raw_pointer_wrapper final {
       private:
         _type_ ptr_{};
       public:
@@ -128,24 +128,24 @@ namespace cpp_utils {
         {
             return ptr_ - _n;
         }
-        auto operator++() -> pointer_wrapper< _type_ > &
+        auto operator++() -> raw_pointer_wrapper< _type_ > &
         {
             ++ptr_;
             return *this;
         }
-        auto operator++( int ) -> pointer_wrapper< _type_ >
+        auto operator++( int ) -> raw_pointer_wrapper< _type_ >
         {
             return ptr_++;
         }
-        auto operator=( const pointer_wrapper< _type_ > & ) -> pointer_wrapper< _type_ > & = default;
-        auto operator=( pointer_wrapper< _type_ > && ) -> pointer_wrapper< _type_ > &      = default;
-        pointer_wrapper()                                                                  = default;
-        pointer_wrapper( _type_ _ptr )
+        auto operator=( const raw_pointer_wrapper< _type_ > & ) -> raw_pointer_wrapper< _type_ > & = default;
+        auto operator=( raw_pointer_wrapper< _type_ > && ) -> raw_pointer_wrapper< _type_ > &      = default;
+        raw_pointer_wrapper()                                                                      = default;
+        raw_pointer_wrapper( _type_ _ptr )
           : ptr_{ _ptr }
         { }
-        pointer_wrapper( const pointer_wrapper< _type_ > & ) = default;
-        pointer_wrapper( pointer_wrapper< _type_ > && )      = default;
-        ~pointer_wrapper()                                   = default;
+        raw_pointer_wrapper( const raw_pointer_wrapper< _type_ > & ) = default;
+        raw_pointer_wrapper( raw_pointer_wrapper< _type_ > && )      = default;
+        ~raw_pointer_wrapper()                                       = default;
     };
     template < char_type _type_, size_type _capacity_ >
         requires( std::same_as< _type_, std::decay_t< _type_ > > && _capacity_ > 0 )
