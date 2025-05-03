@@ -61,7 +61,7 @@ namespace cpp_utils {
     template < typename _msg_type_ >
         requires( requires( _msg_type_ _m ) { std::format( "{}", _m ); } )
     auto make_log(
-      const _msg_type_ _msg, const std::source_location _location = std::source_location::current(),
+      _msg_type_ &&_msg, const std::source_location _location = std::source_location::current(),
       const std::stacktrace _stacktrace = std::stacktrace::current() )
     {
         return std::format(
