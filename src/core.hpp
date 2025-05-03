@@ -222,26 +222,19 @@ namespace core {
         virtual auto ui( cpp_utils::console_ui &_ui ) -> void
         {
             constexpr auto option_ctrl_color{ cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_green };
+            using item_type = option_container::node::item;
             class option_setter final {
               private:
-                option_container::node::item &item_;
+                item_type &item_;
               public:
                 auto operator()( cpp_utils::console_ui::func_args _args )
                 {
-                    switch ( item_.get() ) {
-                        case true : {
-                            item_.disable();
-                            break;
-                        }
-                        case false : {
-                            item_.enable();
-                            break;
-                        }
-                    }
+                    constexpr void ( item_type::*fn[] )(){ &item_type::enable, &item_type::disable };
+                    ( item_.*fn[ static_cast< size_type >( item_.get() ) ] )();
                     _args.parent_ui.edit_text( _args.node_index, std::format( " > {}用 ", item_ ? "禁" : "启" ) );
                     return cpp_utils::console_ui::back;
                 }
-                option_setter( option_container::node::item &_item )
+                option_setter( item_type &_item )
                   : item_{ _item }
                 { }
                 ~option_setter() = default;
