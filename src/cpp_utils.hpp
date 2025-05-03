@@ -254,7 +254,7 @@ namespace cpp_utils {
       private:
         std::function< _return_type_( _args_... ) > func_;
         std::vector< std::type_index > args_type_{ std::type_index{ typeid( _args_ ) }... };
-        template < std::size_t... _args_index_ >
+        template < size_type... _args_index_ >
         auto invoke_impl_( const std::vector< std::any > &_args, std::index_sequence< _args_index_... > ) const -> std::any
         {
             if constexpr ( std::is_void_v< _return_type_ > ) {
