@@ -219,7 +219,7 @@ namespace core {
                 }
             }
         }
-        virtual auto ui( cpp_utils::console_ui &_ui ) -> void
+        virtual auto ui( cpp_utils::console_ui &_ui ) -> void override final
         {
             constexpr auto option_ctrl_color{ cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_green };
             using item_type = option_container::node::item;
