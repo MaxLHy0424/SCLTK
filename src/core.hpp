@@ -182,7 +182,7 @@ namespace core {
     };
     class basic_config_node {
       public:
-        const cpp_utils::pointer_wrapper< const char * > self_name;
+        const cpp_utils::raw_pointer_wrapper< const char * > self_name;
         virtual auto load( const bool, std::string & ) -> void = 0;
         virtual auto sync( std::ofstream & ) -> void           = 0;
         virtual auto prepare_reload() -> void { }
