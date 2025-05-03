@@ -619,46 +619,48 @@ namespace core {
                 return cpp_utils::console_ui::back;
             }
             std::print( " -> 正在生成并执行操作系统命令...\n{}\n", std::string( console_width, '-' ) );
-            const auto &execs{ rules_.execs };
-            const auto &servs{ rules_.servs };
-            switch ( is_parallel_op ) {
-                case true : {
-                    cpp_utils::thread_pool threads;
-                    if ( is_hijack_execs ) {
-                        threads.add( [ & ]()
-                        { cpp_utils::parallel_for_each( cpu_core, std::begin( execs ), std::cend( execs ), hijack_exec_ ); } );
-                    }
-                    if ( is_set_serv_startup_types ) {
-                        threads.add( [ & ]()
-                        { cpp_utils::parallel_for_each( cpu_core, std::begin( servs ), std::cend( servs ), disable_serv_ ); } );
-                    }
-                    threads
-                      .add( [ & ]()
-                    { cpp_utils::parallel_for_each( cpu_core, std::begin( execs ), std::cend( execs ), kill_exec_ ); } )
-                      .add( [ & ]()
-                    { cpp_utils::parallel_for_each( cpu_core, std::begin( servs ), std::cend( servs ), stop_serv_ ); } );
-                    break;
-                }
-                case false : {
-                    if ( is_hijack_execs ) {
-                        for ( const auto &exec : execs ) {
-                            hijack_exec_( exec );
-                        }
-                    }
-                    if ( is_set_serv_startup_types ) {
-                        for ( const auto &serv : servs ) {
-                            disable_serv_( serv );
-                        }
-                    }
+            void ( *fn[] )( const rule_node & ){
+              +[]( const rule_node &_rules ) static
+            {
+                const auto &execs{ _rules.execs };
+                const auto &servs{ _rules.servs };
+                if ( is_hijack_execs ) {
                     for ( const auto &exec : execs ) {
-                        kill_exec_( exec );
+                        hijack_exec_( exec );
                     }
-                    for ( const auto &serv : servs ) {
-                        stop_serv_( serv );
-                    }
-                    break;
                 }
-            }
+                if ( is_set_serv_startup_types ) {
+                    for ( const auto &serv : servs ) {
+                        disable_serv_( serv );
+                    }
+                }
+                for ( const auto &exec : execs ) {
+                    kill_exec_( exec );
+                }
+                for ( const auto &serv : servs ) {
+                    stop_serv_( serv );
+                }
+            },
+              +[]( const rule_node &_rules ) static
+            {
+                const auto &execs{ _rules.execs };
+                const auto &servs{ _rules.servs };
+                cpp_utils::thread_pool threads;
+                if ( is_hijack_execs ) {
+                    threads.add( [ & ]()
+                    { cpp_utils::parallel_for_each( cpu_core, std::begin( execs ), std::cend( execs ), hijack_exec_ ); } );
+                }
+                if ( is_set_serv_startup_types ) {
+                    threads.add( [ & ]()
+                    { cpp_utils::parallel_for_each( cpu_core, std::begin( servs ), std::cend( servs ), disable_serv_ ); } );
+                }
+                threads
+                  .add( [ & ]()
+                { cpp_utils::parallel_for_each( cpu_core, std::begin( execs ), std::cend( execs ), kill_exec_ ); } )
+                  .add( [ & ]()
+                { cpp_utils::parallel_for_each( cpu_core, std::begin( servs ), std::cend( servs ), stop_serv_ ); } );
+            } };
+            fn[ static_cast< size_type >( is_parallel_op.get() ) ]( rules_ );
             return cpp_utils::console_ui::back;
         }
         crack( const rule_node &_rules )
@@ -696,36 +698,38 @@ namespace core {
                 return cpp_utils::console_ui::back;
             }
             std::print( " -> 正在生成并执行操作系统命令...\n{}\n", std::string( console_width, '-' ) );
-            const auto &execs{ rules_.execs };
-            const auto &servs{ rules_.servs };
-            switch ( is_parallel_op ) {
-                case true : {
-                    if ( is_hijack_execs ) {
-                        cpp_utils::parallel_for_each( cpu_core, std::begin( execs ), std::cend( execs ), undo_hijack_exec_ );
+            void ( *fn[] )( const rule_node & ){
+              +[]( const rule_node &_rules ) static
+            {
+                const auto &execs{ _rules.execs };
+                const auto &servs{ _rules.servs };
+                if ( is_hijack_execs ) {
+                    for ( const auto &exec : execs ) {
+                        undo_hijack_exec_( exec );
                     }
-                    if ( is_set_serv_startup_types ) {
-                        cpp_utils::parallel_for_each( cpu_core, std::begin( servs ), std::cend( servs ), enable_serv_ );
-                    }
-                    cpp_utils::parallel_for_each( cpu_core, std::begin( servs ), std::cend( servs ), start_serv_ );
-                    break;
                 }
-                case false : {
-                    if ( is_hijack_execs ) {
-                        for ( const auto &exec : execs ) {
-                            undo_hijack_exec_( exec );
-                        }
-                    }
-                    if ( is_set_serv_startup_types ) {
-                        for ( const auto &serv : servs ) {
-                            enable_serv_( serv );
-                        }
-                    }
+                if ( is_set_serv_startup_types ) {
                     for ( const auto &serv : servs ) {
-                        start_serv_( serv );
+                        enable_serv_( serv );
                     }
-                    break;
                 }
-            }
+                for ( const auto &serv : servs ) {
+                    start_serv_( serv );
+                }
+            },
+              +[]( const rule_node &_rules ) static
+            {
+                const auto &execs{ _rules.execs };
+                const auto &servs{ _rules.servs };
+                if ( is_hijack_execs ) {
+                    cpp_utils::parallel_for_each( cpu_core, std::begin( execs ), std::cend( execs ), undo_hijack_exec_ );
+                }
+                if ( is_set_serv_startup_types ) {
+                    cpp_utils::parallel_for_each( cpu_core, std::begin( servs ), std::cend( servs ), enable_serv_ );
+                }
+                cpp_utils::parallel_for_each( cpu_core, std::begin( servs ), std::cend( servs ), start_serv_ );
+            } };
+            fn[ static_cast< size_type >( is_parallel_op.get() ) ]( rules_ );
             return cpp_utils::console_ui::back;
         }
         restore( const rule_node &_rules )
