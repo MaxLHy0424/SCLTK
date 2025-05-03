@@ -131,7 +131,7 @@ namespace core {
     };
     inline option_container options{
       { { { "crack_restore",
-            "破解/恢复",
+            "破解 & 恢复",
             { { "hijack_execs", "劫持可执行文件" },
               { "set_serv_startup_types", "设置服务启动类型" },
               { "parallel_op", "并行操作 (预览版)" },
@@ -255,7 +255,7 @@ namespace core {
                     cpp_utils::console_ui ui;
                     ui.add_back( "                    [ 配  置 ]\n\n" )
                       .add_back(
-                        std::format( " < 折叠 {} ", node_.shown_name ), exit,
+                        std::format( R"( < 折叠 "{}" )", node_.shown_name ), exit,
                         cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity );
                     for ( auto &item : node_.items ) {
                         ui.add_back( std::format( "\n[ {} ]\n", item.shown_name ) )
