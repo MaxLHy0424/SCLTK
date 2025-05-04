@@ -90,6 +90,7 @@ namespace cpp_utils {
     auto parallel_for_each( _iterator_ &&_begin, _iterator_ &&_end, auto &&_func )
     {
         const auto max_thread_num{ std::thread::hardware_concurrency() };
+        [[assume( max_thread_num > 0 )]];
         const auto chunk_size{ ( _end - _begin ) / max_thread_num };
         std::vector< std::thread > threads;
         threads.reserve( max_thread_num );
@@ -110,6 +111,7 @@ namespace cpp_utils {
     template < std::random_access_iterator _iterator_ >
     auto parallel_for_each( unsigned int _thread_num, _iterator_ &&_begin, _iterator_ &&_end, auto &&_func )
     {
+        [[assume( _thread_num > 0 )]];
         const auto chunk_size{ ( _end - _begin ) / _thread_num };
         std::vector< std::thread > threads;
         threads.reserve( _thread_num );
