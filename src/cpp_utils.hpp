@@ -58,24 +58,31 @@ namespace cpp_utils {
           || std::same_as< std::decay_t< _type_ >, std::chrono::weeks > || std::same_as< std::decay_t< _type_ >, std::chrono::months >
           || std::same_as< std::decay_t< _type_ >, std::chrono::years > );
     };
-    template < typename _msg_type_ >
-        requires( requires( _msg_type_ _m ) { std::format( "{}", _m ); } )
+    template < typename _message_type_ >
+        requires( requires( _message_type_ _m ) { std::format( "{}", _m ); } )
     auto make_log(
-      _msg_type_ &&_msg,
+      _message_type_ &&_message,
       const std::source_location _location = std::source_location::current(),
       const std::stacktrace _stacktrace    = std::stacktrace::current() )
     {
         return std::format(
           "{}({}:{}) `{}`: {}\n{}\n", _location.file_name(), _location.line(), _location.column(), _location.function_name(),
-          _msg, _stacktrace );
+          std::forward< _message_type_ >( _message ), _stacktrace );
     }
+    template < bool _with_highlight_ = false >
     auto dynamic_assert(
       const bool _expressions,
+      const std::string_view _failed_message      = "assertion failed!",
       const std::source_location _source_location = std::source_location::current(),
       std::stacktrace _stacktrace                 = std::stacktrace::current() ) noexcept
     {
-        if ( _expressions == false ) {
-            std::print( "{}", cpp_utils::make_log( "assertion failed!", _source_location, std::move( _stacktrace ) ) );
+        if ( _expressions == false ) [[unlikely]] {
+            const auto message{ cpp_utils::make_log( _failed_message, _source_location, std::move( _stacktrace ) ) };
+            if constexpr ( _with_highlight_ ) {
+                std::print( "\033[48;5;226;38;5;0;1m{}\033[0m", message );
+            } else {
+                std::print( "{}", message );
+            }
             std::terminate();
         }
     }
