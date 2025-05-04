@@ -445,7 +445,7 @@ namespace core {
             return;
         }
         while ( !_msg.stop_requested() ) {
-            if ( !is_keep_window_top ) {
+            if ( !is_keep_window_top ) [[unlikely]] {
                 cpp_utils::cancel_top_window( window_handle );
                 std::this_thread::sleep_for( default_thread_sleep_time );
                 continue;
@@ -486,7 +486,7 @@ namespace core {
             return;
         }
         while ( !_msg.stop_requested() ) {
-            if ( !is_fix_os_env ) {
+            if ( !is_fix_os_env ) [[unlikely]] {
                 std::this_thread::sleep_for( default_thread_sleep_time );
                 continue;
             }
