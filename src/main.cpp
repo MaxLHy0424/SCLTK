@@ -13,7 +13,7 @@ auto main() -> int
     cpp_utils::console_ui ui{ core::std_input_handle, core::std_output_handle };
     ui.lock( true, true );
     if ( !cpp_utils::is_run_as_admin() ) {
-        cpp_utils::relaunch_as_admin();
+        cpp_utils::relaunch_as_admin( EXIT_SUCCESS );
     }
     std::print( " -> 准备就绪...\n" );
     core::config_loader();

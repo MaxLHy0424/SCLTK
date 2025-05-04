@@ -21,7 +21,7 @@ namespace core {
     }
     inline auto relaunch( cpp_utils::console_ui::func_args )
     {
-        cpp_utils::relaunch_as_admin();
+        cpp_utils::relaunch_as_admin( EXIT_SUCCESS );
         return cpp_utils::console_ui::exit;
     }
     inline auto wait()
