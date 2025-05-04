@@ -306,7 +306,7 @@ namespace cpp_utils {
         }
         virtual auto invoke( const std::vector< std::any > &_args ) const -> std::any override final
         {
-            if ( sizeof...( _args_ ) < _args.size() ) {
+            if ( sizeof...( _args_ ) < _args.size() ) [[unlikely]] {
                 throw std::invalid_argument{ "arguments error" };
             }
             return invoke_impl_( _args, std::index_sequence_for< _args_... >{} );
@@ -530,7 +530,7 @@ namespace cpp_utils {
         }
         auto &reset( coroutine< return_type_ > &&_src ) noexcept
         {
-            if ( this != &_src ) {
+            if ( this != &_src ) [[likely]] {
                 if ( !empty() ) {
                     destroy();
                 }
@@ -729,7 +729,7 @@ namespace cpp_utils {
         }
         auto &reset( coroutine< return_type_ > &&_src ) noexcept
         {
-            if ( this != &_src ) {
+            if ( this != &_src ) [[likely]] {
                 if ( !empty() ) {
                     destroy();
                 }
@@ -871,7 +871,7 @@ namespace cpp_utils {
         }
         auto reset( coroutine_void &&_src ) noexcept
         {
-            if ( this != &_src ) {
+            if ( this != &_src ) [[likely]] {
                 if ( !empty() ) {
                     destroy();
                 }
@@ -1165,10 +1165,10 @@ namespace cpp_utils {
     inline auto get_current_window_handle() noexcept
     {
         auto window_handle{ GetConsoleWindow() };
-        if ( window_handle == nullptr ) {
+        if ( window_handle == nullptr ) [[unlikely]] {
             window_handle = GetForegroundWindow();
         }
-        if ( window_handle == nullptr ) {
+        if ( window_handle == nullptr ) [[unlikely]] {
             window_handle = GetActiveWindow();
         }
         return window_handle;
@@ -1653,10 +1653,10 @@ namespace cpp_utils {
         auto operator=( console_ui && ) noexcept -> console_ui &      = default;
         console_ui() noexcept
         {
-            if ( std_input_handle_ == nullptr ) {
+            if ( std_input_handle_ == nullptr ) [[unlikely]] {
                 std_input_handle_ = GetStdHandle( console_handle_flag::std_input );
             }
-            if ( std_output_handle_ == nullptr ) {
+            if ( std_output_handle_ == nullptr ) [[unlikely]] {
                 std_output_handle_ = GetStdHandle( console_handle_flag::std_output );
             }
         }
