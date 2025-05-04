@@ -1126,19 +1126,19 @@ namespace cpp_utils {
         }
         return is_admin ? true : false;
     }
-    inline auto relaunch() noexcept
+    inline auto relaunch( const int _exit_code ) noexcept
     {
         wchar_t file_path[ MAX_PATH ]{};
         GetModuleFileNameW( nullptr, file_path, MAX_PATH );
         ShellExecuteW( nullptr, L"open", file_path, nullptr, nullptr, SW_SHOWNORMAL );
-        std::exit( 0 );
+        std::exit( _exit_code );
     }
-    inline auto relaunch_as_admin() noexcept
+    inline auto relaunch_as_admin( const int _exit_code ) noexcept
     {
         wchar_t file_path[ MAX_PATH ]{};
         GetModuleFileNameW( nullptr, file_path, MAX_PATH );
         ShellExecuteW( nullptr, L"runas", file_path, nullptr, nullptr, SW_SHOWNORMAL );
-        std::exit( 0 );
+        std::exit( _exit_code );
     }
     inline auto get_current_console_std_handle( const DWORD _std_handle_flag ) noexcept
     {
