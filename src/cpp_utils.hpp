@@ -1230,20 +1230,28 @@ namespace cpp_utils {
     {
         return SetConsoleCtrlHandler( nullptr, static_cast< WINBOOL >( _is_ignore ) );
     }
-    inline auto clear_console_screen( const HANDLE _std_output_handle )
+    inline auto enable_virtual_terminal_processing( const HANDLE _std_output_handle ) noexcept
     {
         DWORD mode;
         GetConsoleMode( _std_output_handle, &mode );
         mode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
         SetConsoleMode( _std_output_handle, mode );
+    }
+    inline auto disable_virtual_terminal_processing( const HANDLE _std_output_handle ) noexcept
+    {
+        DWORD mode;
+        GetConsoleMode( _std_output_handle, &mode );
+        mode &= ~ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+        SetConsoleMode( _std_output_handle, mode );
+    }
+    inline auto clear_console_screen( const HANDLE _std_output_handle ) noexcept
+    {
+        enable_virtual_terminal_processing( _std_output_handle );
         std::print( "\033[H\033[2J" );
     }
-    inline auto reset_console_screen( const HANDLE _std_output_handle )
+    inline auto reset_console_screen( const HANDLE _std_output_handle ) noexcept
     {
-        DWORD mode;
-        GetConsoleMode( _std_output_handle, &mode );
-        mode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
-        SetConsoleMode( _std_output_handle, mode );
+        enable_virtual_terminal_processing( _std_output_handle );
         std::print( "\033c" );
     }
     inline auto set_console_title( const char *const _title ) noexcept
