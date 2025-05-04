@@ -155,7 +155,7 @@ namespace core {
         }
         auto operator=( const rule_node & ) -> rule_node & = delete;
         auto operator=( rule_node && ) -> rule_node &      = delete;
-        rule_node( const char *const _shown_name, std::deque< std::string > _execs, std::deque< std::string > _servs )
+        rule_node( const char *const _shown_name, decltype( execs ) _execs, decltype( execs ) _servs )
           : shown_name{ _shown_name }
           , execs{ std::move( _execs ) }
           , servs{ std::move( _servs ) }
