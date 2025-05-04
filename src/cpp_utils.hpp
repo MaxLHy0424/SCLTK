@@ -1244,12 +1244,12 @@ namespace cpp_utils {
         mode &= ~ENABLE_VIRTUAL_TERMINAL_PROCESSING;
         SetConsoleMode( _std_output_handle, mode );
     }
-    inline auto clear_console_screen( const HANDLE _std_output_handle ) noexcept
+    inline auto clear_console( const HANDLE _std_output_handle ) noexcept
     {
         enable_virtual_terminal_processing( _std_output_handle );
         std::print( "\033[H\033[2J" );
     }
-    inline auto reset_console_screen( const HANDLE _std_output_handle ) noexcept
+    inline auto reset_console( const HANDLE _std_output_handle ) noexcept
     {
         enable_virtual_terminal_processing( _std_output_handle );
         std::print( "\033c" );
@@ -1283,7 +1283,7 @@ namespace cpp_utils {
         SetConsoleScreenBufferSize( _std_output_handle, { _width, _height } );
         SetConsoleWindowInfo( _std_output_handle, TRUE, &wrt );
         SetConsoleScreenBufferSize( _std_output_handle, { _width, _height } );
-        clear_console_screen( _std_output_handle );
+        clear_console( _std_output_handle );
     }
     inline auto set_window_translucency( const HWND _window_handle, const BYTE _value ) noexcept
     {
