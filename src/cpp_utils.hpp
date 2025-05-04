@@ -58,31 +58,31 @@ namespace cpp_utils {
           || std::same_as< std::decay_t< _type_ >, std::chrono::weeks > || std::same_as< std::decay_t< _type_ >, std::chrono::months >
           || std::same_as< std::decay_t< _type_ >, std::chrono::years > );
     };
-    template < typename _message_type_ >
-        requires( requires( _message_type_ _m ) { std::format( "{}", _m ); } )
+    template < bool _with_ansi_highlight_ = false >
     auto make_log(
-      _message_type_ &&_message,
+      const std::string_view _message,
       const std::source_location _location = std::source_location::current(),
       const std::stacktrace _stacktrace    = std::stacktrace::current() )
     {
-        return std::format(
-          "{}({}:{}) `{}`: {}\n{}\n", _location.file_name(), _location.line(), _location.column(), _location.function_name(),
-          std::forward< _message_type_ >( _message ), _stacktrace );
+        if constexpr ( _with_ansi_highlight_ ) {
+            return std::format(
+              "\033[48;5;226;38;5;0;1m{}({}:{}) `{}`: {}\n{}\n\033[0m", _location.file_name(), _location.line(),
+              _location.column(), _location.function_name(), _message, _stacktrace );
+        } else {
+            return std::format(
+              "{}({}:{}) `{}`: {}\n{}\n", _location.file_name(), _location.line(), _location.column(),
+              _location.function_name(), _message, _stacktrace );
+        }
     }
-    template < bool _with_highlight_ = false >
+    template < bool _with_ansi_highlight_ = false >
     auto dynamic_assert(
-      const bool _expressions,
+      const bool _expression,
       const std::string_view _failed_message      = "assertion failed!",
       const std::source_location _source_location = std::source_location::current(),
       std::stacktrace _stacktrace                 = std::stacktrace::current() ) noexcept
     {
         if ( _expressions == false ) [[unlikely]] {
-            const auto message{ cpp_utils::make_log( _failed_message, _source_location, std::move( _stacktrace ) ) };
-            if constexpr ( _with_highlight_ ) {
-                std::print( "\033[48;5;226;38;5;0;1m{}\033[0m", message );
-            } else {
-                std::print( "{}", message );
-            }
+            std::print( "{}", make_log< _with_ansi_highlight_ >( failed_message, _source_location, std::move( _stacktrace ) ) );
             std::terminate();
         }
     }
