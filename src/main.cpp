@@ -43,6 +43,6 @@ auto main() -> int
         ui.add_back( std::format( " > {} ", rule.shown_name ), core::restore{ rule } );
     }
     ui.show().lock( true, true );
-    std::print( " -> 即将完成...\n" );
+    std::print( " -> 正在等待线程终止...\n" );
     return EXIT_SUCCESS;
 }
