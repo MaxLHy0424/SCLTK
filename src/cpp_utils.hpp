@@ -75,7 +75,7 @@ namespace cpp_utils {
       std::stacktrace _stacktrace                 = std::stacktrace::current() ) noexcept
     {
         if ( _expressions == false ) {
-            std::print( "{}", cpp_utils::make_log( "assert failid!", _source_location, std::move( _stacktrace ) ) );
+            std::print( "{}", cpp_utils::make_log( "assertion failed!", _source_location, std::move( _stacktrace ) ) );
             std::terminate();
         }
     }
