@@ -61,12 +61,23 @@ namespace cpp_utils {
     template < typename _msg_type_ >
         requires( requires( _msg_type_ _m ) { std::format( "{}", _m ); } )
     auto make_log(
-      _msg_type_ &&_msg, const std::source_location _location = std::source_location::current(),
-      const std::stacktrace _stacktrace = std::stacktrace::current() )
+      _msg_type_ &&_msg,
+      const std::source_location _location = std::source_location::current(),
+      const std::stacktrace _stacktrace    = std::stacktrace::current() )
     {
         return std::format(
           "{}({}:{}) `{}`: {}\n{}\n", _location.file_name(), _location.line(), _location.column(), _location.function_name(),
           _msg, _stacktrace );
+    }
+    auto dynamic_assert(
+      const bool _expressions,
+      const std::source_location _source_location = std::source_location::current(),
+      std::stacktrace _stacktrace                 = std::stacktrace::current() ) noexcept
+    {
+        if ( _expressions == false ) {
+            std::print( "{}", cpp_utils::make_log( "assert failid!", _source_location, std::move( _stacktrace ) ) );
+            std::terminate();
+        }
     }
     template < std::random_access_iterator _iterator_ >
     auto parallel_for_each( _iterator_ &&_begin, _iterator_ &&_end, auto &&_func )
