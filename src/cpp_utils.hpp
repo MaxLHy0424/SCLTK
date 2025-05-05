@@ -58,32 +58,35 @@ namespace cpp_utils {
           || std::same_as< std::decay_t< _type_ >, std::chrono::weeks > || std::same_as< std::decay_t< _type_ >, std::chrono::months >
           || std::same_as< std::decay_t< _type_ >, std::chrono::years > );
     };
-    template < bool _with_ansi_highlight_ = false >
     auto make_log(
       const std::string_view _message,
-      const std::source_location _location = std::source_location::current(),
-      const std::stacktrace _stacktrace    = std::stacktrace::current() )
+      const std::source_location _source_location = std::source_location::current(),
+      const std::stacktrace _stacktrace           = std::stacktrace::current() )
     {
-        if constexpr ( _with_ansi_highlight_ ) {
-            return std::format(
-              "\033[48;5;226;38;5;0;1m{}({}:{}) `{}`: {}\n{}\n\033[0m", _location.file_name(), _location.line(),
-              _location.column(), _location.function_name(), _message, _stacktrace );
-        } else {
-            return std::format(
-              "{}({}:{}) `{}`: {}\n{}\n", _location.file_name(), _location.line(), _location.column(),
-              _location.function_name(), _message, _stacktrace );
-        }
+        return std::format(
+          "{}({}:{}) `{}`: {}\n{}\n", _source_location.file_name(), _source_location.line(), _source_location.column(),
+          _source_location.function_name(), _message, _stacktrace );
     }
-    template < bool _with_ansi_highlight_ = false >
     auto dynamic_assert(
       const bool _expression,
-      const std::string_view _failed_message      = "assertion failed!",
+      const std::string_view _failed_message      = "assertion failid!",
       const std::source_location _source_location = std::source_location::current(),
       std::stacktrace _stacktrace                 = std::stacktrace::current() ) noexcept
     {
-        if ( _expression == false ) [[unlikely]] {
-            std::print( "{}", make_log< _with_ansi_highlight_ >( _failed_message, _source_location, std::move( _stacktrace ) ) );
+        if ( _expression == false ) {
+            std::print( "{}", make_log( _failed_message, _source_location, std::move( _stacktrace ) ) );
             std::terminate();
+        }
+    }
+    template < bool _condition_ >
+    auto dynamic_assert_if(
+      const bool _expression,
+      const std::string_view _failed_message      = "assertion failid!",
+      const std::source_location _source_location = std::source_location::current(),
+      std::stacktrace _stacktrace                 = std::stacktrace::current() ) noexcept
+    {
+        if constexpr ( _condition_ == true ) {
+            dynamic_assert( _expression, _failed_message, _source_location, std::move( _stacktrace ) );
         }
     }
     template < std::random_access_iterator _iterator_ >
