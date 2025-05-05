@@ -16,7 +16,7 @@ auto main() -> int
         cpp_utils::relaunch_as_admin( EXIT_SUCCESS );
     }
     std::print( " -> 准备就绪...\n" );
-    core::config_loader();
+    core::load_config();
     const auto &is_enable_quick_exit_and_relaunch{ core::options[ "perf" ][ "quick_exit_and_relaunch" ] };
     cpp_utils::thread_pool threads;
     threads.add( core::keep_window_top ).add( core::set_console_attrs ).add( core::fix_os_env );
