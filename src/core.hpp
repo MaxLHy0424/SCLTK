@@ -727,7 +727,7 @@ namespace core {
                 return cpp_utils::console_ui::back;
             }
             std::print( " -> 正在生成并执行操作系统命令...\n{}\n", std::string( console_width, '-' ) );
-            void ( *fn[] )( const rule_node & ){ &restore::singlethread_mode_, &restore::multithread_mode_ };
+            constexpr void ( *fn[] )( const rule_node & ){ &restore::singlethread_mode_, &restore::multithread_mode_ };
             fn[ static_cast< size_type >( is_parallel_op.get() ) ]( rules_ );
             return cpp_utils::console_ui::back;
         }
