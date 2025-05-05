@@ -81,8 +81,8 @@ namespace cpp_utils {
       const std::source_location _source_location = std::source_location::current(),
       std::stacktrace _stacktrace                 = std::stacktrace::current() ) noexcept
     {
-        if ( _expressions == false ) [[unlikely]] {
-            std::print( "{}", make_log< _with_ansi_highlight_ >( failed_message, _source_location, std::move( _stacktrace ) ) );
+        if ( _expression == false ) [[unlikely]] {
+            std::print( "{}", make_log< _with_ansi_highlight_ >( _failed_message, _source_location, std::move( _stacktrace ) ) );
             std::terminate();
         }
     }
