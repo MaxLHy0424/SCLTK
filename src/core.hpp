@@ -493,7 +493,7 @@ namespace core {
             engine();
         }
     }
-    inline auto config_loader( const bool _is_reload = false )
+    inline auto load_config( const bool _is_reload = false )
     {
         std::ifstream config_file{ config_file_name, std::ios::in };
         if ( !config_file.good() ) {
@@ -540,7 +540,7 @@ namespace core {
             std::print(
               "                    [ 配  置 ]\n\n\n"
               " -> 正在同步配置...\n" );
-            config_loader( true );
+            load_config( true );
             std::ofstream config_file_stream{ config_file_name, std::ios::out | std::ios::trunc };
             config_file_stream << "# " INFO_FULL_NAME "\n# " INFO_VERSION "\n";
             for ( auto &config_node : config_nodes ) {
