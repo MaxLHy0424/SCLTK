@@ -953,11 +953,6 @@ namespace cpp_utils {
         {
             return threads_.max_size();
         }
-        auto &resize( const size_type _size )
-        {
-            threads_.resize( _size );
-            return *this;
-        }
         auto &optimize_storage() noexcept
         {
             threads_.shrink_to_fit();
@@ -968,50 +963,20 @@ namespace cpp_utils {
             threads_.swap( _src.threads_ );
             return *this;
         }
-        auto &swap( const size_type _index, std::jthread &_src )
-        {
-            threads_.at( _index ).swap( _src );
-            return *this;
-        }
-        auto joinable( const size_type _index ) const
-        {
-            return threads_.at( _index ).joinable();
-        }
-        auto get_id( const size_type _index ) const
-        {
-            return threads_.at( _index ).get_id();
-        }
-        auto native_handle( const size_type _index )
-        {
-            return threads_.at( _index ).native_handle();
-        }
         template < callable_type _func_, typename... _args_ >
         auto &add( _func_ &&_func, _args_ &&..._args )
         {
             threads_.emplace_back( std::forward< _func_ >( _func ), std::forward< _args_ >( _args )... );
             return *this;
         }
-        auto &join( const size_type _index )
-        {
-            threads_.at( _index ).join();
-            return *this;
-        }
-        auto &safe_join( const size_type _index )
-        {
-            auto &thread{ threads_.at( _index ) };
-            if ( thread.joinable() ) {
-                thread.join();
-            }
-            return *this;
-        }
-        auto &join_all()
+        auto &join()
         {
             for ( auto &thread : threads_ ) {
                 thread.join();
             }
             return *this;
         }
-        auto &safe_join_all() noexcept
+        auto &safe_join() noexcept
         {
             for ( auto &thread : threads_ ) {
                 if ( thread.joinable() ) {
@@ -1020,27 +985,14 @@ namespace cpp_utils {
             }
             return *this;
         }
-        auto &detach( const size_type _index )
-        {
-            threads_.at( _index ).detach();
-            return *this;
-        }
-        auto &safe_detach( const size_type _index )
-        {
-            auto &thread{ threads_.at( _index ) };
-            if ( thread.joinable() ) {
-                thread.detach();
-            }
-            return *this;
-        }
-        auto &detach_all()
+        auto &detach()
         {
             for ( auto &thread : threads_ ) {
                 thread.detach();
             }
             return *this;
         }
-        auto &safe_detach_all() noexcept
+        auto &safe_detach() noexcept
         {
             for ( auto &thread : threads_ ) {
                 if ( thread.joinable() ) {
@@ -1049,19 +1001,7 @@ namespace cpp_utils {
             }
             return *this;
         }
-        auto get_stop_source( const size_type _index )
-        {
-            return threads_.at( _index ).get_stop_source();
-        }
-        auto get_stop_token( const size_type _index ) const
-        {
-            return threads_.at( _index ).get_stop_token();
-        }
-        auto request_stop( const size_type _index )
-        {
-            return threads_.at( _index ).request_stop();
-        }
-        auto &request_stop_all() noexcept
+        auto &request_stop() noexcept
         {
             for ( auto &thread : threads_ ) {
                 thread.request_stop();
