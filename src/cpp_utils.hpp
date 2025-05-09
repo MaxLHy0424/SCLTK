@@ -1443,11 +1443,11 @@ namespace cpp_utils {
             INPUT_RECORD record;
             DWORD reg;
             while ( true ) {
+                std::this_thread::sleep_for( 50ms );
                 ReadConsoleInputW( std_input_handle_, &record, 1, &reg );
                 if ( record.EventType == MOUSE_EVENT && ( _is_move || record.Event.MouseEvent.dwEventFlags != mouse::move ) ) {
                     return record.Event.MouseEvent;
                 }
-                std::this_thread::sleep_for( 50ms );
             }
         }
         static auto get_console_size_() noexcept
@@ -1655,7 +1655,6 @@ namespace cpp_utils {
                         break;
                     }
                 }
-                std::this_thread::sleep_for( 50ms );
             }
             cls_();
             return *this;
