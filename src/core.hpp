@@ -9,12 +9,12 @@ namespace core {
     inline constexpr SHORT console_width{ 50 };
     inline constexpr SHORT console_height{ 25 };
     inline constexpr UINT charset_id{ 65001 };
+    inline constexpr auto default_thread_sleep_time{ 1s };
+    inline constexpr auto config_file_name{ "config.ini" };
     inline const auto cpu_core{ std::thread::hardware_concurrency() };
     inline const auto window_handle{ GetConsoleWindow() };
     inline const auto std_input_handle{ GetStdHandle( STD_INPUT_HANDLE ) };
     inline const auto std_output_handle{ GetStdHandle( STD_OUTPUT_HANDLE ) };
-    inline constexpr auto config_file_name{ "config.ini" };
-    inline constexpr auto default_thread_sleep_time{ 1s };
     inline auto exit( cpp_utils::console_ui::func_args )
     {
         return cpp_utils::console_ui::exit;
@@ -42,7 +42,7 @@ namespace core {
                 const char *const shown_name;
                 auto enable()
                 {
-                    value_.test_and_set( std::memory_order_acq_rel );
+                    value_.test_and_set( std::memory_order_release );
                 }
                 auto disable()
                 {
@@ -148,7 +148,6 @@ namespace core {
         const char *const shown_name;
         std::deque< std::string > execs;
         std::deque< std::string > servs;
-        static_assert( std::is_same_v< decltype( execs ), decltype( servs ) > );
         auto empty() const noexcept
         {
             return execs.empty() && servs.empty();
@@ -196,6 +195,10 @@ namespace core {
     class option_op final : public basic_config_node {
       private:
         static constexpr auto format_string_{ R"("{}.{}": {})" };
+        static auto make_swith_button_text_( const auto _is_enabled )
+        {
+            return std::format( " > {}用 ", _is_enabled ? "禁" : "启" );
+        }
       public:
         virtual auto load( const bool _is_reload, std::string &_line ) -> void override final
         {
@@ -232,7 +235,7 @@ namespace core {
                 {
                     constexpr void ( item_type::*fn[] )(){ &item_type::enable, &item_type::disable };
                     ( item_.*fn[ static_cast< size_type >( item_.get() ) ] )();
-                    _args.parent_ui.edit_text( _args.node_index, std::format( " > {}用 ", item_ ? "禁" : "启" ) );
+                    _args.parent_ui.edit_text( _args.node_index, make_swith_button_text_( item_ ) );
                     return cpp_utils::console_ui::back;
                 }
                 option_setter( item_type &_item )
@@ -253,7 +256,7 @@ namespace core {
                         cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity );
                     for ( auto &item : node_.items ) {
                         ui.add_back( std::format( "\n[ {} ]\n", item.shown_name ) )
-                          .add_back( std::format( " > {}用 ", item ? "禁" : "启" ), option_setter{ item }, option_ctrl_color );
+                          .add_back( make_swith_button_text_( item ), option_setter{ item }, option_ctrl_color );
                     }
                     ui.show();
                     return cpp_utils::console_ui::back;
