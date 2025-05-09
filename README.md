@@ -36,6 +36,7 @@
 SCLTK 发行版文件名规则为 `SCLTK-[ arch ]-[ runtime ].exe`, 其中 `[ arch ]` 一般为 `x86_64` 或 `i686`, `[ runtime ]` 一般为 `ucrt` 或 `msvcrt`.
 
 `[ arch ]` 和 `[ runtime ]` 的具体信息如下:
+
 - **`x86_64` & `ucrt` \(推荐\)**\
   开发工具链为 msys2 `mingw-w64-ucrt-x86_64-toolchain`, 64 位可执行文件, 运行时库为 Universal C Runtime \(UCRT\), 支持 Windows 10 以上的 Windows OS \(部分 Windows OS 在安装特定更新后可以运行\).
 - **`i686` & `msvcrt`**\
@@ -117,6 +118,7 @@ SCLTK 窗口相关选项.
 配置文件中标签 `[ custom_rules_execs ]` 到下一个标签的部分, 每个项目保留文件扩展名.
 
 示例:
+
 ```ini
 [ custom_rules_execs ]
 abc_client_gui.exe
@@ -131,6 +133,7 @@ abc_protect_server.com
 每项规则为服务名称, 非显示名称.
 
 示例:
+
 ```ini
 [ custom_rules_servs ]
 abc_network
@@ -151,7 +154,7 @@ abc_diag_track
 - **破解控制**\
   `[ 破解 ]`
 - **恢复控制**\
-  `[ 恢复 ] `
+  `[ 恢复 ]`
 
 每个控制软件有独立的破解/恢复选项, 可根据需求执行.
 
@@ -168,7 +171,8 @@ SCLTK 使用 [MIT License](./LICENSE), 详细内容请自行阅读.
 首先, 请确保您已经安装了 [msys2](https://www.msys2.org), 并在 [msys2](https://www.msys2.org) 的 `msys` 环境中安装了软件包 `make` 和 `git`.
 
 然后, 使用 git 克隆本仓库到本地, 在仓库本地目录下运行 `.\generate_env.ps1`, 这将会创建 `env` 文件, 文件内容如下:
-```
+
+```makefile
 msys2_path = /path/to/msys2
 pwsh_path  = /path/to/pwsh
 ```
@@ -176,6 +180,7 @@ pwsh_path  = /path/to/pwsh
 其中 `/path/to/msys2` 为 msys2 的安装路径 \(以 `/` 作为路径分隔符, 若路径中存在空格, 需要先将路径用英文半角引号引起来 ,如 `"C:/dev tools/msys2"`, 下同\), `/path/to/pwsh` 为 PowerShell 的安装路径 \(可通过命令 `where.exe powershell.exe` 或 `where.exe pwsh.exe` 查询\).
 
 接下来, 在仓库本地目录下打开终端, 执行:
+
 ```bash
 make all
 ```
@@ -183,24 +188,28 @@ make all
 即开始安装工具链和依赖库, 并编译 SCLTK. 生成的 SCLTK 可执行文件位于 `bin/debug` 和 `bin/release` 中.
 
 后续编译可使用:
+
 ```bash
 make build
 ```
+
 ```bash
 make debug
 ```
+
 ```bash
 make release
 ```
 
 更新工具链, 可使用:
+
 ```bash
 make toolchain
 ```
 
 # ❓ 常见问题
 
-## 无法执行包含非 ASCII 字符的自定义规则.
+## 无法执行包含非 ASCII 字符的自定义规则
 
 请尝试将配置文件 `config.ini` 使用 GBK 编码重新保存后重新启动 SCLTK.
 
@@ -211,11 +220,11 @@ make toolchain
 
 可尝试启用 "修复操作系统环境", 详见 [3.2.1 选项分类: 破解/恢复](#321-选项分类-破解恢复).
 
-## 破解后一些软件运行时报错 "找不到文件".
+## 破解后一些软件运行时报错 "找不到文件"
 
 在不影响软件正常运行的情况下, 可以给软件文件修改一个名称, 再试试. 或者打开注册表编辑器, 定位到 `HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options`, 找到和要运行的软件的文件名称相同的项, 删除即可.
 
-## SCLTK 在某些版本的 Windows OS 上无法运行.
+## SCLTK 在某些版本的 Windows OS 上无法运行
 
 SCLTK 不对 Windows Vista 及更早的版本保有任何技术支持. SCLTK 将会持续支持对当前受 Microsoft 支持的 Windows OS. 针对于 Windows 7\/8\/8.1, 我们将开始进行兼容性改进, 确保在 2027 年前保留对 Windows 7\/8\/8.1 的支持.
 
