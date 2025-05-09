@@ -1,16 +1,17 @@
 {
     "recommendations": [
         "ms-vscode.cpptools",
-        "streetsidesoftware.code-spell-checker",
-        "ms-vscode.makefile-tools",
-        "yzhang.markdown-all-in-one",
-        "ionutvmi.path-autocomplete",
         "ms-vscode.hexeditor",
-        "maziac.asm-code-lens",
+        "ms-vscode.makefile-tools",
+        "ms-vscode.powershell",
         "github.copilot",
         "github.copilot-chat",
+        "github.remotehub",
         "github.vscode-pull-request-github",
-        "ms-vscode.powershell",
-        "github.remotehub"
+        "streetsidesoftware.code-spell-checker",
+        "maziac.asm-code-lens",
+        "ionutvmi.path-autocomplete",
+        "yzhang.markdown-all-in-one",
+        "davidanson.vscode-markdownlint"
     ]
 }
