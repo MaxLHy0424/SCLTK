@@ -11,7 +11,7 @@ auto main() -> int
     cpp_utils::enable_window_minimize_ctrl( core::window_handle, false );
     cpp_utils::enable_window_close_ctrl( core::window_handle, false );
     cpp_utils::console_ui ui{ core::std_input_handle, core::std_output_handle };
-    ui.lock( true, true );
+    ui.set_limits( true, true );
     if ( !cpp_utils::is_run_as_admin() ) {
         cpp_utils::relaunch_as_admin( EXIT_SUCCESS );
     }
@@ -42,7 +42,7 @@ auto main() -> int
     for ( const auto &rule : core::builtin_rules ) {
         ui.add_back( std::format( " > {} ", rule.shown_name ), core::restore{ rule } );
     }
-    ui.show().lock( true, true );
+    ui.show().set_limits( true, true );
     std::print( " -> 正在等待线程终止...\n" );
     return EXIT_SUCCESS;
 }

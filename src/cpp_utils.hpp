@@ -1599,7 +1599,7 @@ namespace cpp_utils {
             cls_();
             return *this;
         }
-        auto &lock( const bool _is_hide_cursor, const bool _is_lock_text ) noexcept
+        auto &set_limits( const bool _is_hide_cursor, const bool _is_lock_text ) noexcept
         {
             show_cursor_( static_cast< WINBOOL >( !_is_hide_cursor ) );
             edit_console_attrs_( _is_lock_text ? console_attrs_::lock_all : console_attrs_::normal );
