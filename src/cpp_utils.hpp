@@ -1443,11 +1443,11 @@ namespace cpp_utils {
             INPUT_RECORD record;
             DWORD reg;
             while ( true ) {
-                std::this_thread::sleep_for( 10ms );
                 ReadConsoleInputW( std_input_handle_, &record, 1, &reg );
                 if ( record.EventType == MOUSE_EVENT && ( _is_move || record.Event.MouseEvent.dwEventFlags != mouse::move ) ) {
                     return record.Event.MouseEvent;
                 }
+                std::this_thread::sleep_for( 50ms );
             }
         }
         static auto get_console_size_() noexcept
@@ -1463,14 +1463,14 @@ namespace cpp_utils {
             std::print( "{}", std::string( static_cast< unsigned int >( width ) * static_cast< unsigned int >( height ), ' ' ) );
             set_cursor_( COORD{ 0, 0 } );
         }
-        static auto write_( const std::string_view _text, const bool _is_endl = false )
+        static auto write_( const std::string &_text, const bool _is_endl = false )
         {
             std::print( "{}", _text );
             if ( _is_endl ) {
                 std::print( "\n" );
             }
         }
-        static auto rewrite_( const COORD _cursor_position, const std::string_view _text )
+        static auto rewrite_( const COORD _cursor_position, const std::string &_text )
         {
             set_cursor_( COORD{ 0, _cursor_position.Y } );
             write_( std::string( _cursor_position.X, ' ' ) );
@@ -1545,8 +1545,12 @@ namespace cpp_utils {
         }
         auto &optimize_storage() noexcept
         {
+            constexpr auto default_capacity{ std::string{}.capacity() };
             for ( auto &line : lines_ ) {
-                line.text.shrink_to_fit();
+                auto &text{ line.text };
+                if ( text.capacity() > text.size() && text.capacity() != default_capacity ) {
+                    text.shrink_to_fit();
+                }
             }
             lines_.shrink_to_fit();
             return *this;
@@ -1651,7 +1655,7 @@ namespace cpp_utils {
                         break;
                     }
                 }
-                std::this_thread::sleep_for( 10ms );
+                std::this_thread::sleep_for( 50ms );
             }
             cls_();
             return *this;
