@@ -1061,7 +1061,7 @@ namespace cpp_utils {
         {
             return threads_.at( _index ).request_stop();
         }
-        auto &request_stop_to_all() noexcept
+        auto &request_stop_all() noexcept
         {
             for ( auto &thread : threads_ ) {
                 thread.request_stop();
