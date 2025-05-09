@@ -12,6 +12,6 @@
         "maziac.asm-code-lens",
         "ionutvmi.path-autocomplete",
         "yzhang.markdown-all-in-one",
-        "davidanson.vscode-markdownlint"
+        "koehlma.markdown-math"
     ]
 }
