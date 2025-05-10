@@ -11,7 +11,7 @@ output_charset   = utf-8
 args_base        = -pipe -finput-charset=$(input_charset) -fexec-charset=$(output_charset) -std=$(args_std) $(args_link) $(args_warning) $(args_defines)
 args_debug       = -g3 $(args_base) $(args_opt_debug)
 args_release     = -DNDEBUG -static $(args_base) $(args_opt_release)
-.PHONY: toolchain generate_info build debug release clean
+.PHONY: toolchain make_info build debug release clean
 all: toolchain build
 toolchain:
 	$(msys2_path)/usr/bin/pacman.exe -Sy --noconfirm --needed\
@@ -30,34 +30,34 @@ clean:
 	$(msys2_path)/usr/bin/rm.exe -rf bin
 	$(msys2_path)/usr/bin/mkdir.exe bin
 	$(msys2_path)/usr/bin/touch.exe bin/.gitkeep
-generate_info:
-	$(pwsh_path) -ExecutionPolicy Bypass -File ./generate_info.ps1
+make_info:
+	$(pwsh_path) -ExecutionPolicy Bypass -File ./make_info.ps1
 dependencies_debug = src/*
 bin/debug/__debug__.exe: $(dependencies_debug) \
-                         generate_info \
+                         make_info \
                          bin/debug/.gitkeep
 	$(msys2_path)/ucrt64/bin/$(compiler) $(dependencies_debug).cpp $(args_debug) -o $@
 dependencies_release_32bit = bin/info-i686.o \
                              src/*
 bin/release/SCLTK-i686-msvcrt.exe: $(dependencies_release_32bit) \
-                                   generate_info \
+                                   make_info \
                                    bin/release/.gitkeep
 	$(msys2_path)/mingw32/bin/$(compiler) $(dependencies_release_32bit).cpp $(args_release) -o $@
 dependencies_release_64bit = bin/info-x86_64.o \
                              src/*
 bin/release/SCLTK-x86_64-ucrt.exe: $(dependencies_release_64bit) \
-                                   generate_info \
+                                   make_info \
                                    bin/release/.gitkeep
 	$(msys2_path)/ucrt64/bin/$(compiler) $(dependencies_release_64bit).cpp $(args_release) -o $@
 dependencies_info = info.rc \
                     img/favicon.ico \
                     src/info.hpp
 bin/info-i686.o: $(dependencies_info) \
-                 generate_info \
+                 make_info \
                  bin/.gitkeep
 	$(msys2_path)/usr/bin/windres.exe -i $< -o $@ $(args_defines) -F pe-i386
 bin/info-x86_64.o: $(dependencies_info) \
-                   generate_info \
+                   make_info \
                    bin/.gitkeep
 	$(msys2_path)/usr/bin/windres.exe -i $< -o $@ $(args_defines) -F pe-x86-64
 bin/.gitkeep:
