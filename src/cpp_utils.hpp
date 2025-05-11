@@ -1094,18 +1094,18 @@ namespace cpp_utils {
         }
         return is_admin ? true : false;
     }
-    inline auto relaunch( const int _exit_code ) noexcept
+    inline auto relaunch( const int _exit_code, const wchar_t *const _args ) noexcept
     {
         wchar_t file_path[ MAX_PATH ]{};
         GetModuleFileNameW( nullptr, file_path, MAX_PATH );
-        ShellExecuteW( nullptr, L"open", file_path, nullptr, nullptr, SW_SHOWNORMAL );
+        ShellExecuteW( nullptr, L"open", file_path, _args, nullptr, SW_SHOWNORMAL );
         std::exit( _exit_code );
     }
-    inline auto relaunch_as_admin( const int _exit_code ) noexcept
+    inline auto relaunch_as_admin( const int _exit_code, const wchar_t *const _args ) noexcept
     {
         wchar_t file_path[ MAX_PATH ]{};
         GetModuleFileNameW( nullptr, file_path, MAX_PATH );
-        ShellExecuteW( nullptr, L"runas", file_path, nullptr, nullptr, SW_SHOWNORMAL );
+        ShellExecuteW( nullptr, L"runas", file_path, _args, nullptr, SW_SHOWNORMAL );
         std::exit( _exit_code );
     }
     inline auto get_current_console_std_handle( const DWORD _std_handle_flag ) noexcept
