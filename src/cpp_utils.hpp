@@ -44,9 +44,6 @@ namespace cpp_utils {
     template < typename _type_ >
     concept pointer_type = std::is_pointer_v< _type_ >;
     template < typename _type_ >
-    concept callable_type
-      = !std::same_as< std::decay_t< _type_ >, std::thread > && !std::same_as< std::decay_t< _type_ >, std::jthread >;
-    template < typename _type_ >
     concept std_chrono_type = requires {
         requires(
           std::same_as< std::decay_t< _type_ >, std::chrono::nanoseconds >
@@ -89,32 +86,10 @@ namespace cpp_utils {
             dynamic_assert( _expression, _failed_message, _source_location, std::move( _stacktrace ) );
         }
     }
-    template < std::random_access_iterator _iterator_ >
-    auto parallel_for_each( _iterator_ &&_begin, _iterator_ &&_end, auto &&_func )
+    template < std::random_access_iterator _iterator_, typename _callable_ >
+    auto parallel_for_each( unsigned int _thread_num, _iterator_ &&_begin, _iterator_ &&_end, _callable_ &&_func )
     {
-        const auto max_thread_num{ std::thread::hardware_concurrency() };
-        [[assume( max_thread_num > 0 )]];
-        const auto chunk_size{ ( _end - _begin ) / max_thread_num };
-        std::vector< std::thread > threads;
-        threads.reserve( max_thread_num );
-        for ( const auto i : std::ranges::iota_view{ decltype( max_thread_num ){ 0 }, max_thread_num } ) {
-            const auto chunk_start{ _begin + i * chunk_size };
-            const auto chunk_end{ ( i == max_thread_num - 1 ) ? _end : chunk_start + chunk_size };
-            threads.emplace_back( [ =, &_func ]()
-            {
-                for ( auto it{ chunk_start }; it != chunk_end; ++it ) {
-                    _func( *it );
-                }
-            } );
-        }
-        for ( auto &thread : threads ) {
-            thread.join();
-        }
-    }
-    template < std::random_access_iterator _iterator_ >
-    auto parallel_for_each( unsigned int _thread_num, _iterator_ &&_begin, _iterator_ &&_end, auto &&_func )
-    {
-        [[assume( _thread_num > 0 )]];
+        [[assume( _thread_num != 0 )]];
         const auto chunk_size{ ( _end - _begin ) / _thread_num };
         std::vector< std::thread > threads;
         threads.reserve( _thread_num );
@@ -130,6 +105,36 @@ namespace cpp_utils {
         }
         for ( auto &thread : threads ) {
             thread.join();
+        }
+    }
+    template < std::random_access_iterator _iterator_, typename _callable_ >
+    auto parallel_for_each( _iterator_ &&_begin, _iterator_ &&_end, _callable_ &&_func )
+    {
+        parallel_for_each(
+          std::thread::hardware_concurrency(), std::forward< _iterator_ >( _begin ), std::forward< _iterator_ >( _end ),
+          std::forward< _callable_ >( _func ) );
+    }
+    template < std::random_access_iterator _iterator_, typename _callable_ >
+    auto safe_parallel_for_each( unsigned int _thread_num, _iterator_ &&_begin, _iterator_ &&_end, _callable_ &&_func )
+    {
+        if ( _thread_num == 0 ) {
+            std::for_each(
+              std::forward< _iterator_ >( _begin ), std::forward< _iterator_ >( _end ), std::forward< _callable_ >( _func ) );
+        } else {
+            parallel_for_each(
+              _thread_num, std::forward< _iterator_ >( _begin ), std::forward< _iterator_ >( _end ),
+              std::forward< _callable_ >( _func ) );
+        }
+    }
+    template < std::random_access_iterator _iterator_, typename _callable_ >
+    auto safe_parallel_for_each( _iterator_ &&_begin, _iterator_ &&_end, _callable_ &&_func )
+    {
+        if ( std::thread::hardware_concurrency() == 0 ) {
+            std::for_each(
+              std::forward< _iterator_ >( _begin ), std::forward< _iterator_ >( _end ), std::forward< _callable_ >( _func ) );
+        } else {
+            parallel_for_each(
+              std::forward< _iterator_ >( _begin ), std::forward< _iterator_ >( _end ), std::forward< _callable_ >( _func ) );
         }
     }
     template < pointer_type _type_ >
@@ -963,7 +968,7 @@ namespace cpp_utils {
             threads_.swap( _src.threads_ );
             return *this;
         }
-        template < callable_type _func_, typename... _args_ >
+        template < typename _func_, typename... _args_ >
         auto &add( _func_ &&_func, _args_ &&..._args )
         {
             threads_.emplace_back( std::forward< _func_ >( _func ), std::forward< _args_ >( _args )... );
@@ -1142,7 +1147,7 @@ namespace cpp_utils {
         auto window_handle{ get_current_window_handle() };
         keep_window_top( window_handle, GetCurrentThreadId(), GetWindowThreadProcessId( window_handle, nullptr ) );
     }
-    template < std_chrono_type _chrono_type_, callable_type _func_, typename... _args_ >
+    template < std_chrono_type _chrono_type_, typename _func_, typename... _args_ >
     inline auto loop_keep_window_top(
       const HWND _window_handle, const DWORD _thread_id, const DWORD _window_thread_process_id, const _chrono_type_ _sleep_time,
       _func_ &&_condition_checker, _args_ &&..._condition_checker_args )
@@ -1156,7 +1161,7 @@ namespace cpp_utils {
             std::this_thread::sleep_for( _sleep_time );
         }
     }
-    template < std_chrono_type _chrono_type_, callable_type _func_, typename... _args_ >
+    template < std_chrono_type _chrono_type_, typename _func_, typename... _args_ >
     inline auto loop_keep_current_window_top(
       const _chrono_type_ _sleep_time, _func_ &&_condition_checker, _args_ &&..._condition_checker_args )
     {
