@@ -32,6 +32,8 @@ clean:
 	$(msys2_path)/usr/bin/touch.exe bin/.gitkeep
 make_info:
 	$(pwsh_path) -ExecutionPolicy Bypass -File ./make_info.ps1
+src/info.hpp:
+	$(pwsh_path) -ExecutionPolicy Bypass -File ./make_info.ps1
 dependencies_debug = src/*
 bin/debug/__debug__.exe: $(dependencies_debug) \
                          make_info \
