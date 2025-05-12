@@ -155,9 +155,9 @@ namespace cpp_utils {
         {
             return ptr_++;
         }
-        auto operator=( const raw_pointer_wrapper< _type_ > & ) -> raw_pointer_wrapper< _type_ > & = default;
-        auto operator=( raw_pointer_wrapper< _type_ > && ) -> raw_pointer_wrapper< _type_ > &      = default;
-        constexpr raw_pointer_wrapper()                                                            = default;
+        constexpr auto operator=( const raw_pointer_wrapper< _type_ > & ) -> raw_pointer_wrapper< _type_ > & = default;
+        constexpr auto operator=( raw_pointer_wrapper< _type_ > && ) -> raw_pointer_wrapper< _type_ > &      = default;
+        constexpr raw_pointer_wrapper()                                                                      = default;
         constexpr raw_pointer_wrapper( _type_ _ptr )
           : ptr_{ _ptr }
         { }
@@ -1525,14 +1525,6 @@ namespace cpp_utils {
         auto &edit_default_attrs( const size_type _index, const WORD _default_attrs )
         {
             lines_.at( _index ).default_attrs = _default_attrs;
-            return *this;
-        }
-        auto &edit(
-          const size_type _index, const std::string_view _text, callback_type _func = nullptr,
-          const WORD _intensity_attrs = console_text::foreground_green | console_text::foreground_blue,
-          const WORD _default_attrs   = console_text::default_attrs )
-        {
-            lines_.at( _index ) = line_node_{ _text, _func, _default_attrs, _func != nullptr ? _intensity_attrs : _default_attrs };
             return *this;
         }
         auto &remove_front() noexcept
