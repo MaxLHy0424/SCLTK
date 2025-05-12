@@ -1114,7 +1114,6 @@ namespace cpp_utils {
     inline auto keep_window_top( const HWND _window_handle, const DWORD _thread_id, const DWORD _window_thread_process_id ) noexcept
     {
         AttachThreadInput( _thread_id, _window_thread_process_id, TRUE );
-        set_window_state( _window_handle, get_window_state( _window_handle ) );
         SetForegroundWindow( _window_handle );
         SetWindowPos( _window_handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
         AttachThreadInput( _thread_id, _window_thread_process_id, FALSE );
@@ -1131,7 +1130,6 @@ namespace cpp_utils {
     {
         while ( _condition_checker( std::forward< _args_ >( _condition_checker_args )... ) ) {
             AttachThreadInput( _thread_id, _window_thread_process_id, TRUE );
-            set_window_state( _window_handle, get_window_state( _window_handle ) );
             SetForegroundWindow( _window_handle );
             SetWindowPos( _window_handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
             AttachThreadInput( _thread_id, _window_thread_process_id, FALSE );
