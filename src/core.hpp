@@ -27,8 +27,8 @@ namespace core {
     inline auto wait()
     {
         std::print( "\n\n" );
-        for ( auto i{ 3s }; i > 0s; --i ) {
-            std::print( " {} 后返回.\r", i );
+        for ( auto i{ 3 }; i > 0; --i ) {
+            std::print( " {}s 后返回.\r", i );
             std::this_thread::sleep_for( 1s );
         }
     }
@@ -325,9 +325,7 @@ namespace core {
     };
     using basic_config_node_smart_ptr = std::unique_ptr< basic_config_node >;
     inline basic_config_node_smart_ptr config_nodes[]{
-      basic_config_node_smart_ptr{ std::make_unique< option_op >() },
-      basic_config_node_smart_ptr{ std::make_unique< custom_rules_execs_op >() },
-      basic_config_node_smart_ptr{ std::make_unique< custom_rules_servs_op >() } };
+      std::make_unique< option_op >(), std::make_unique< custom_rules_execs_op >(), std::make_unique< custom_rules_servs_op >() };
     inline auto info( cpp_utils::console_ui::func_args )
     {
         auto visit_repo_webpage{ []( cpp_utils::console_ui::func_args ) static
@@ -464,21 +462,25 @@ namespace core {
         if ( is_disable_x_option_hot_reload && !is_fix_os_env ) {
             return;
         }
-        auto engine{ []() static
+        constexpr const char *reg_dirs[]{
+          R"(Software\Policies\Microsoft\Windows\System)", R"(Software\Microsoft\Windows\CurrentVersion\Policies\System)",
+          R"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)" };
+        constexpr const char *execs[]{
+          "taskkill.exe", "sc.exe",      "net.exe", "reg.exe",  "cmd.exe", "taskmgr.exe",
+          "perfmon.exe",  "regedit.exe", "mmc.exe", "dism.exe", "sfc.exe" };
+        constexpr auto number_of_execs{ sizeof( execs ) / sizeof( const char * ) };
+        std::string reg_hijacked_execs[ number_of_execs ];
+        for ( const auto i : std::ranges::iota_view{ decltype( number_of_execs ){ 0 }, number_of_execs } ) {
+            reg_hijacked_execs[ i ]
+              = std::format( R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{})", execs[ i ] );
+        }
+        auto engine{ [ & ]()
         {
-            constexpr const char *hkcu_reg_dirs[]{
-              R"(Software\Policies\Microsoft\Windows\System)", R"(Software\Microsoft\Windows\CurrentVersion\Policies\System)",
-              R"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)" };
-            constexpr const char *execs[]{
-              "taskkill.exe", "sc.exe",      "net.exe", "reg.exe",  "cmd.exe", "taskmgr.exe",
-              "perfmon.exe",  "regedit.exe", "mmc.exe", "dism.exe", "sfc.exe" };
-            for ( const auto &reg_dir : hkcu_reg_dirs ) {
+            for ( const auto &reg_dir : reg_dirs ) {
                 RegDeleteTreeA( HKEY_CURRENT_USER, reg_dir );
             }
-            for ( const auto &exec : execs ) {
-                RegDeleteTreeA(
-                  HKEY_LOCAL_MACHINE,
-                  std::format( R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{})", exec ).c_str() );
+            for ( const auto &reg_hijacked_exec : reg_hijacked_execs ) {
+                RegDeleteTreeA( HKEY_LOCAL_MACHINE, reg_hijacked_exec.c_str() );
             }
             std::this_thread::sleep_for( 1s );
         } };
