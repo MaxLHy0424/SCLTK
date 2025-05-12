@@ -615,7 +615,7 @@ namespace core {
         {
             std::system( std::format( R"(net.exe stop "{}" /y)", _serv ).c_str() );
         }
-        static auto singlethread_mode_( const rule_node &_rules )
+        static auto singlethread_engine_( const rule_node &_rules )
         {
             const auto &execs{ _rules.execs };
             const auto &servs{ _rules.servs };
@@ -636,7 +636,7 @@ namespace core {
                 stop_serv_( serv );
             }
         }
-        static auto multithread_mode_( const rule_node &_rules )
+        static auto multithread_engine_( const rule_node &_rules )
         {
             const auto &execs{ _rules.execs };
             const auto &servs{ _rules.servs };
@@ -663,7 +663,7 @@ namespace core {
                 return cpp_utils::console_ui::back;
             }
             std::print( " -> 正在生成并执行操作系统命令...\n{}\n", std::string( console_width, '-' ) );
-            void ( *fn[] )( const rule_node & ){ &crack::singlethread_mode_, &crack::multithread_mode_ };
+            void ( *fn[] )( const rule_node & ){ &crack::singlethread_engine_, &crack::multithread_engine_ };
             fn[ static_cast< size_type >( is_parallel_op.get() ) ]( rules_ );
             return cpp_utils::console_ui::back;
         }
@@ -692,7 +692,7 @@ namespace core {
         {
             std::system( std::format( R"(net.exe start "{}")", _serv ).c_str() );
         }
-        static auto singlethread_mode_( const rule_node &_rules )
+        static auto singlethread_engine_( const rule_node &_rules )
         {
             const auto &execs{ _rules.execs };
             const auto &servs{ _rules.servs };
@@ -710,7 +710,7 @@ namespace core {
                 start_serv_( serv );
             }
         }
-        static auto multithread_mode_( const rule_node &_rules )
+        static auto multithread_engine_( const rule_node &_rules )
         {
             const auto &execs{ _rules.execs };
             const auto &servs{ _rules.servs };
@@ -732,7 +732,7 @@ namespace core {
                 return cpp_utils::console_ui::back;
             }
             std::print( " -> 正在生成并执行操作系统命令...\n{}\n", std::string( console_width, '-' ) );
-            constexpr void ( *fn[] )( const rule_node & ){ &restore::singlethread_mode_, &restore::multithread_mode_ };
+            constexpr void ( *fn[] )( const rule_node & ){ &restore::singlethread_engine_, &restore::multithread_engine_ };
             fn[ static_cast< size_type >( is_parallel_op.get() ) ]( rules_ );
             return cpp_utils::console_ui::back;
         }
