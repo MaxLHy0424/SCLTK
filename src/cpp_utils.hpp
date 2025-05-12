@@ -55,7 +55,7 @@ namespace cpp_utils {
           || std::same_as< std::decay_t< _type_ >, std::chrono::weeks > || std::same_as< std::decay_t< _type_ >, std::chrono::months >
           || std::same_as< std::decay_t< _type_ >, std::chrono::years > );
     };
-    auto make_log(
+    inline auto make_log(
       const std::string_view _message,
       const std::source_location _source_location = std::source_location::current(),
       const std::stacktrace _stacktrace           = std::stacktrace::current() )
@@ -64,7 +64,7 @@ namespace cpp_utils {
           "{}({}:{}) `{}`: {}\n{}\n", _source_location.file_name(), _source_location.line(), _source_location.column(),
           _source_location.function_name(), _message, _stacktrace );
     }
-    auto dynamic_assert(
+    inline auto dynamic_assert(
       const bool _expression,
       const std::string_view _failed_message      = "assertion failid!",
       const std::source_location _source_location = std::source_location::current(),
@@ -76,7 +76,7 @@ namespace cpp_utils {
         }
     }
     template < bool _condition_ >
-    auto dynamic_assert_if(
+    inline auto dynamic_assert_if(
       const bool _expression,
       const std::string_view _failed_message      = "assertion failid!",
       const std::source_location _source_location = std::source_location::current(),
@@ -87,7 +87,7 @@ namespace cpp_utils {
         }
     }
     template < std::random_access_iterator _iterator_, typename _callable_ >
-    auto parallel_for_each( unsigned int _thread_num, _iterator_ &&_begin, _iterator_ &&_end, _callable_ &&_func )
+    inline auto parallel_for_each( unsigned int _thread_num, _iterator_ &&_begin, _iterator_ &&_end, _callable_ &&_func )
     {
         [[assume( _thread_num != 0 )]];
         const auto chunk_size{ ( _end - _begin ) / _thread_num };
@@ -108,34 +108,11 @@ namespace cpp_utils {
         }
     }
     template < std::random_access_iterator _iterator_, typename _callable_ >
-    auto parallel_for_each( _iterator_ &&_begin, _iterator_ &&_end, _callable_ &&_func )
+    inline auto parallel_for_each( _iterator_ &&_begin, _iterator_ &&_end, _callable_ &&_func )
     {
         parallel_for_each(
           std::thread::hardware_concurrency(), std::forward< _iterator_ >( _begin ), std::forward< _iterator_ >( _end ),
           std::forward< _callable_ >( _func ) );
-    }
-    template < std::random_access_iterator _iterator_, typename _callable_ >
-    auto safe_parallel_for_each( unsigned int _thread_num, _iterator_ &&_begin, _iterator_ &&_end, _callable_ &&_func )
-    {
-        if ( _thread_num == 0 ) {
-            std::for_each(
-              std::forward< _iterator_ >( _begin ), std::forward< _iterator_ >( _end ), std::forward< _callable_ >( _func ) );
-        } else {
-            parallel_for_each(
-              _thread_num, std::forward< _iterator_ >( _begin ), std::forward< _iterator_ >( _end ),
-              std::forward< _callable_ >( _func ) );
-        }
-    }
-    template < std::random_access_iterator _iterator_, typename _callable_ >
-    auto safe_parallel_for_each( _iterator_ &&_begin, _iterator_ &&_end, _callable_ &&_func )
-    {
-        if ( std::thread::hardware_concurrency() == 0 ) {
-            std::for_each(
-              std::forward< _iterator_ >( _begin ), std::forward< _iterator_ >( _end ), std::forward< _callable_ >( _func ) );
-        } else {
-            parallel_for_each(
-              std::forward< _iterator_ >( _begin ), std::forward< _iterator_ >( _end ), std::forward< _callable_ >( _func ) );
-        }
     }
     template < pointer_type _type_ >
     inline auto pointer_to_string( const _type_ _ptr )
