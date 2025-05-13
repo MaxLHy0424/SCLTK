@@ -1365,7 +1365,7 @@ namespace cpp_utils {
         {
             SetConsoleCursorPosition( std_output_handle_, _cursor_position );
         }
-        static auto wait_event_( const bool _is_move = true ) noexcept
+        static auto get_event_( const bool _is_move = true ) noexcept
         {
             using namespace std::chrono_literals;
             INPUT_RECORD record;
@@ -1565,7 +1565,7 @@ namespace cpp_utils {
             MOUSE_EVENT_RECORD event;
             auto func_return_value{ back };
             while ( func_return_value == back ) {
-                event = wait_event_();
+                event = get_event_();
                 switch ( event.dwEventFlags ) {
                     case mouse::move : refresh_( event.dwMousePosition ); break;
                     case mouse::click : {
