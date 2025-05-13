@@ -89,7 +89,12 @@ namespace cpp_utils {
     template < std::random_access_iterator _iterator_, typename _callable_ >
     inline auto parallel_for_each( unsigned int _thread_num, _iterator_ &&_begin, _iterator_ &&_end, _callable_ &&_func )
     {
-        [[assume( _thread_num != 0 )]];
+        if ( _thread_num == 0 ) {
+            std::for_each(
+              std::execution::par_unseq, std::forward< _iterator_ >( _begin ), std::forward< _iterator_ >( _end ),
+              std::forward< _callable_ >( _func ) );
+        }
+        [[assume( _thread_num > 0 )]];
         const auto chunk_size{ ( _end - _begin ) / _thread_num };
         std::vector< std::thread > threads;
         threads.reserve( _thread_num );
@@ -101,6 +106,7 @@ namespace cpp_utils {
                 for ( auto it{ chunk_start }; it != chunk_end; ++it ) {
                     _func( *it );
                 }
+                std::this_thread::yield();
             } );
         }
         for ( auto &thread : threads ) {
