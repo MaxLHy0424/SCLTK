@@ -1351,6 +1351,7 @@ namespace cpp_utils {
                     attrs &= ~ENABLE_INSERT_MODE;
                     attrs &= ~ENABLE_MOUSE_INPUT;
                     break;
+                default : std::unreachable();
             }
             SetConsoleMode( std_input_handle_, attrs );
         }
