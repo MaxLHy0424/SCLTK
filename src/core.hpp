@@ -84,7 +84,7 @@ namespace core {
                         return item;
                     }
                 }
-                std::abort();
+                std::unreachable();
             }
             const auto &operator[]( const std::string_view _self_name ) const
             {
@@ -93,7 +93,7 @@ namespace core {
                         return item;
                     }
                 }
-                std::abort();
+                std::unreachable();
             }
             auto operator=( const node & ) -> node & = delete;
             auto operator=( node && ) -> node &      = delete;
@@ -114,7 +114,7 @@ namespace core {
                     return node;
                 }
             }
-            std::abort();
+            std::unreachable();
         }
         const auto &operator[]( const std::string_view _self_name ) const
         {
@@ -123,7 +123,7 @@ namespace core {
                     return node;
                 }
             }
-            std::abort();
+            std::unreachable();
         }
         option_container( std::vector< node > _nodes )
           : nodes{ std::move( _nodes ) }
