@@ -1302,12 +1302,11 @@ namespace cpp_utils {
             }
             auto operator==( const COORD _position ) const noexcept
             {
-                return position.Y == _position.Y && position.X <= _position.X
-                    && _position.X < ( position.X + static_cast< SHORT >( text.size() ) );
+                return position.Y == _position.Y && position.X <= _position.X && text.size() != 0;
             }
             auto operator!=( const COORD _position ) const noexcept
             {
-                return !operator==( _position );
+                return !( *this == _position );
             }
             auto operator=( const line_node_ & ) noexcept -> line_node_ & = default;
             auto operator=( line_node_ && ) noexcept -> line_node_ &      = default;
