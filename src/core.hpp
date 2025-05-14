@@ -187,10 +187,10 @@ namespace core {
         virtual auto sync( std::ofstream & ) -> void           = 0;
         virtual auto prepare_reload() -> void { }
         virtual auto ui( cpp_utils::console_ui & ) -> void { }
-        basic_config_node( const char *const _self_name )
+        basic_config_node( const char *const _self_name ) noexcept
           : self_name{ _self_name }
         { }
-        virtual ~basic_config_node() = default;
+        virtual ~basic_config_node() noexcept = default;
     };
     class option_op final : public basic_config_node {
       private:
@@ -261,10 +261,10 @@ namespace core {
                     ui.show();
                     return ui_back;
                 }
-                option_shower( option_container::node &_node )
+                option_shower( option_container::node &_node ) noexcept
                   : node_{ _node }
                 { }
-                ~option_shower() = default;
+                ~option_shower() noexcept = default;
             };
             _ui.add_back( std::format(
               "\n[ 选项 ]\n\n"
@@ -276,10 +276,10 @@ namespace core {
                 _ui.add_back( std::format( " > {} ", node.shown_name ), option_shower{ node }, option_ctrl_color );
             }
         }
-        option_op()
+        option_op() noexcept
           : basic_config_node{ "options" }
         { }
-        virtual ~option_op() = default;
+        virtual ~option_op() noexcept = default;
     };
     class custom_rules_execs_op final : public basic_config_node {
       public:
@@ -297,10 +297,10 @@ namespace core {
         {
             custom_rules.execs.clear();
         }
-        custom_rules_execs_op()
+        custom_rules_execs_op() noexcept
           : basic_config_node{ "custom_rules_execs" }
         { }
-        virtual ~custom_rules_execs_op() = default;
+        virtual ~custom_rules_execs_op() noexcept = default;
     };
     class custom_rules_servs_op final : public basic_config_node {
       public:
@@ -318,10 +318,10 @@ namespace core {
         {
             custom_rules.servs.clear();
         }
-        custom_rules_servs_op()
+        custom_rules_servs_op() noexcept
           : basic_config_node{ "custom_rules_servs" }
         { }
-        virtual ~custom_rules_servs_op() = default;
+        virtual ~custom_rules_servs_op() noexcept = default;
     };
     using basic_config_node_smart_ptr = std::unique_ptr< basic_config_node >;
     inline basic_config_node_smart_ptr config_nodes[]{
@@ -388,12 +388,12 @@ namespace core {
                   .show();
                 return ui_back;
             }
-            cmd_executor( const char *const ( &_item )[ 2 ] )
+            cmd_executor( const char *const ( &_item )[ 2 ] ) noexcept
               : item_{ _item }
             { }
-            cmd_executor( const cmd_executor & ) = default;
-            cmd_executor( cmd_executor && )      = default;
-            ~cmd_executor()                      = default;
+            cmd_executor( const cmd_executor & )     = default;
+            cmd_executor( cmd_executor && ) noexcept = default;
+            ~cmd_executor() noexcept                 = default;
         };
         constexpr const char *common_cmds[][ 2 ]{
           {"重启资源管理器",               R"(taskkill.exe /f /im explorer.exe && timeout.exe /t 3 /nobreak && start C:\Windows\explorer.exe)"},
@@ -667,12 +667,12 @@ namespace core {
             fn[ static_cast< size_type >( is_parallel_op.get() ) ]( rules_ );
             return ui_back;
         }
-        crack( const rule_node &_rules )
+        crack( const rule_node &_rules ) noexcept
           : rules_{ _rules }
         { }
-        crack( const crack & ) = default;
-        crack( crack && )      = default;
-        ~crack()               = default;
+        crack( const crack & )     = default;
+        crack( crack && ) noexcept = default;
+        ~crack() noexcept          = default;
     };
     class restore final {
       private:
@@ -737,11 +737,11 @@ namespace core {
             fn[ static_cast< size_type >( is_parallel_op.get() ) ]( rules_ );
             return ui_back;
         }
-        restore( const rule_node &_rules )
+        restore( const rule_node &_rules ) noexcept
           : rules_{ _rules }
         { }
-        restore( const restore & ) = default;
-        restore( restore && )      = default;
-        ~restore()                 = default;
+        restore( const restore & )     = default;
+        restore( restore && ) noexcept = default;
+        ~restore() noexcept            = default;
     };
 }
