@@ -17,19 +17,12 @@ auto main() -> int
     }
     std::print( " -> 准备就绪...\n" );
     core::load_config();
-    const auto &is_enable_quick_exit_and_relaunch{ core::options[ "perf" ][ "quick_exit_and_relaunch" ] };
     cpp_utils::thread_pool threads;
-    threads.add( core::keep_window_top ).add( core::set_console_attrs ).add( core::fix_os_env );
-    if ( is_enable_quick_exit_and_relaunch ) {
-        threads.detach();
-    }
+    threads.add( core::keep_window_top ).add( core::set_console_attrs ).add( core::fix_os_env ).detach();
     ui.add_back( "                    [ 主  页 ]\n\n" )
-      .add_back( " < 退出 ", core::exit, cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_intensity );
-    if ( is_enable_quick_exit_and_relaunch ) {
-        ui.add_back(
-          " < 重启 ", core::relaunch, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity );
-    }
-    ui.add_back( " > 关于 ", core::info )
+      .add_back( " < 退出 ", core::exit, cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_intensity )
+      .add_back( " < 重启 ", core::relaunch, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
+      .add_back( " > 关于 ", core::info )
       .add_back( " > 配置 ", core::config_ui )
       .add_back( " > 工具箱 ", core::toolkit )
       .add_back( "\n[ 破解 ]\n" )
