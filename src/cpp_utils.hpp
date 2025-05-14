@@ -113,7 +113,7 @@ namespace cpp_utils {
     template < std::random_access_iterator _iterator_, typename _callable_ >
     inline auto parallel_for_each( _iterator_ &&_begin, _iterator_ &&_end, _callable_ &&_func )
     {
-        parallel_for_each(
+        parallel_for_each_impl(
           std::max( std::thread::hardware_concurrency(), 1U ), std::forward< _iterator_ >( _begin ),
           std::forward< _iterator_ >( _end ), std::forward< _callable_ >( _func ) );
     }
