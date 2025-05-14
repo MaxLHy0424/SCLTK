@@ -2,6 +2,7 @@
 #if defined( _WIN32 ) || defined( _WIN64 )
 # include <windows.h>
 #endif
+#include <algorithm>
 #include <any>
 #include <chrono>
 #include <concepts>
@@ -88,13 +89,8 @@ namespace cpp_utils {
         }
     }
     template < std::random_access_iterator _iterator_, typename _callable_ >
-    inline auto parallel_for_each( unsigned int _thread_num, _iterator_ &&_begin, _iterator_ &&_end, _callable_ &&_func )
+    inline auto parallel_for_each_impl( unsigned int _thread_num, _iterator_ &&_begin, _iterator_ &&_end, _callable_ &&_func )
     {
-        if ( _thread_num == 0 ) {
-            std::for_each(
-              std::execution::par_unseq, std::forward< _iterator_ >( _begin ), std::forward< _iterator_ >( _end ),
-              std::forward< _callable_ >( _func ) );
-        }
         [[assume( _thread_num > 0 )]];
         const auto chunk_size{ ( _end - _begin ) / _thread_num };
         std::vector< std::thread > threads;
@@ -118,8 +114,8 @@ namespace cpp_utils {
     inline auto parallel_for_each( _iterator_ &&_begin, _iterator_ &&_end, _callable_ &&_func )
     {
         parallel_for_each(
-          std::thread::hardware_concurrency(), std::forward< _iterator_ >( _begin ), std::forward< _iterator_ >( _end ),
-          std::forward< _callable_ >( _func ) );
+          std::max( std::thread::hardware_concurrency(), 1U ), std::forward< _iterator_ >( _begin ),
+          std::forward< _iterator_ >( _end ), std::forward< _callable_ >( _func ) );
     }
     template < pointer_type _type_ >
     inline auto pointer_to_string( const _type_ _ptr )
