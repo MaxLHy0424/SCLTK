@@ -11,18 +11,21 @@ namespace core {
     inline constexpr UINT charset_id{ 65001 };
     inline constexpr auto default_thread_sleep_time{ 1s };
     inline constexpr auto config_file_name{ "config.ini" };
+    inline constexpr auto ui_back{ cpp_utils::console_ui::back };
+    inline constexpr auto ui_exit{ cpp_utils::console_ui::exit };
     inline const auto nproc{ std::thread::hardware_concurrency() };
     inline const auto window_handle{ GetConsoleWindow() };
     inline const auto std_input_handle{ GetStdHandle( STD_INPUT_HANDLE ) };
     inline const auto std_output_handle{ GetStdHandle( STD_OUTPUT_HANDLE ) };
-    inline auto exit( cpp_utils::console_ui::func_args )
+    using ui_func_args = cpp_utils::console_ui::func_args;
+    inline auto exit( ui_func_args )
     {
-        return cpp_utils::console_ui::exit;
+        return ui_exit;
     }
-    inline auto relaunch( cpp_utils::console_ui::func_args )
+    inline auto relaunch( ui_func_args )
     {
         cpp_utils::relaunch_as_admin( EXIT_SUCCESS, nullptr );
-        return cpp_utils::console_ui::exit;
+        return ui_exit;
     }
     inline auto wait()
     {
@@ -231,12 +234,12 @@ namespace core {
               private:
                 item_type &item_;
               public:
-                auto operator()( cpp_utils::console_ui::func_args _args )
+                auto operator()( ui_func_args _args )
                 {
                     constexpr void ( item_type::*fn[] )(){ &item_type::enable, &item_type::disable };
                     ( item_.*fn[ static_cast< size_type >( item_.get() ) ] )();
                     _args.parent_ui.edit_text( _args.node_index, make_swith_button_text_( item_ ) );
-                    return cpp_utils::console_ui::back;
+                    return ui_back;
                 }
                 option_setter( item_type &_item )
                   : item_{ _item }
@@ -247,7 +250,7 @@ namespace core {
               private:
                 option_container::node &node_;
               public:
-                auto operator()( cpp_utils::console_ui::func_args )
+                auto operator()( ui_func_args )
                 {
                     cpp_utils::console_ui ui;
                     ui.add_back( "                    [ 配  置 ]\n\n" )
@@ -259,7 +262,7 @@ namespace core {
                           .add_back( make_swith_button_text_( item ), option_setter{ item }, option_ctrl_color );
                     }
                     ui.show();
-                    return cpp_utils::console_ui::back;
+                    return ui_back;
                 }
                 option_shower( option_container::node &_node )
                   : node_{ _node }
@@ -326,12 +329,12 @@ namespace core {
     using basic_config_node_smart_ptr = std::unique_ptr< basic_config_node >;
     inline basic_config_node_smart_ptr config_nodes[]{
       std::make_unique< option_op >(), std::make_unique< custom_rules_execs_op >(), std::make_unique< custom_rules_servs_op >() };
-    inline auto info( cpp_utils::console_ui::func_args )
+    inline auto info( ui_func_args )
     {
-        auto visit_repo_webpage{ []( cpp_utils::console_ui::func_args ) static
+        auto visit_repo_webpage{ []( ui_func_args ) static
         {
             ShellExecuteA( nullptr, "open", INFO_REPO_URL, nullptr, nullptr, SW_SHOWNORMAL );
-            return cpp_utils::console_ui::back;
+            return ui_back;
         } };
         cpp_utils::console_ui ui;
         ui.add_back( "                    [ 关  于 ]\n\n" )
@@ -345,11 +348,11 @@ namespace core {
             cpp_utils::console_text::default_attrs | cpp_utils::console_text::foreground_intensity
               | cpp_utils::console_text::lvb_underscore )
           .show();
-        return cpp_utils::console_ui::back;
+        return ui_back;
     }
-    inline auto toolkit( cpp_utils::console_ui::func_args )
+    inline auto toolkit( ui_func_args )
     {
-        auto launch_cmd{ []( cpp_utils::console_ui::func_args _args ) static
+        auto launch_cmd{ []( ui_func_args _args ) static
         {
             cpp_utils::set_console_title( INFO_SHORT_NAME " - 命令提示符" );
             cpp_utils::set_console_size( window_handle, std_output_handle, 120, 30 );
@@ -363,22 +366,22 @@ namespace core {
             cpp_utils::set_console_size( window_handle, std_output_handle, console_width, console_height );
             cpp_utils::fix_window_size( window_handle, true );
             cpp_utils::enable_window_maximize_ctrl( window_handle, false );
-            return cpp_utils::console_ui::back;
+            return ui_back;
         } };
         class cmd_executor final {
           private:
             const char *const ( &item_ )[ 2 ];
           public:
-            auto operator()( cpp_utils::console_ui::func_args )
+            auto operator()( ui_func_args )
             {
-                auto execute{ [ this ]( cpp_utils::console_ui::func_args )
+                auto execute{ [ this ]( ui_func_args )
                 {
                     std::print(
                       "                   [ 工 具 箱 ]\n\n\n"
                       " -> 正在执行操作系统命令...\n{}\n",
                       std::string( console_width, '-' ) );
                     std::system( item_[ 1 ] );
-                    return cpp_utils::console_ui::exit;
+                    return ui_exit;
                 } };
                 cpp_utils::console_ui ui;
                 ui.add_back( "                   [ 工 具 箱 ]\n\n" )
@@ -386,7 +389,7 @@ namespace core {
                   .add_back( " > 是, 继续执行 ", execute, cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_intensity )
                   .add_back( " > 否, 立即返回 ", exit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
                   .show();
-                return cpp_utils::console_ui::back;
+                return ui_back;
             }
             cmd_executor( const char *const ( &_item )[ 2 ] )
               : item_{ _item }
@@ -411,7 +414,7 @@ namespace core {
             ui.add_back( std::format( " > {} ", common_cmd[ 0 ] ), cmd_executor{ common_cmd } );
         }
         ui.show();
-        return cpp_utils::console_ui::back;
+        return ui_back;
     }
     inline auto set_console_attrs( const std::stop_token _msg )
     {
@@ -538,9 +541,9 @@ namespace core {
             }
         }
     }
-    inline auto config_ui( cpp_utils::console_ui::func_args )
+    inline auto config_ui( ui_func_args )
     {
-        auto sync{ []( cpp_utils::console_ui::func_args ) static
+        auto sync{ []( ui_func_args ) static
         {
             std::print(
               "                    [ 配  置 ]\n\n\n"
@@ -556,22 +559,22 @@ namespace core {
             const auto is_good{ config_file_stream.good() };
             std::print( "\n ({}) 同步配置{}.", is_good ? 'i' : '!', is_good ? "成功" : "失败" );
             wait();
-            return cpp_utils::console_ui::back;
+            return ui_back;
         } };
-        auto open_file{ []( cpp_utils::console_ui::func_args ) static
+        auto open_file{ []( ui_func_args ) static
         {
             if ( std::ifstream{ config_file_name, std::ios::in }.good() ) {
                 std::print(
                   "                    [ 配  置 ]\n\n\n"
                   " -> 正在打开配置文件..." );
                 ShellExecuteA( nullptr, "open", config_file_name, nullptr, nullptr, SW_SHOWNORMAL );
-                return cpp_utils::console_ui::back;
+                return ui_back;
             }
             std::print(
               "                    [ 配  置 ]\n\n\n"
               " (!) 无法打开配置文件." );
             wait();
-            return cpp_utils::console_ui::back;
+            return ui_back;
         } };
         cpp_utils::console_ui ui;
         ui.add_back( "                    [ 配  置 ]\n\n" )
@@ -582,7 +585,7 @@ namespace core {
             config_node->ui( ui );
         }
         ui.show();
-        return cpp_utils::console_ui::back;
+        return ui_back;
     }
     using exec_const_ref_type
       = cpp_utils::add_const_lvalue_reference_type< std::decay_t< decltype( std::declval< rule_node >().execs[ 0 ] ) > >;
@@ -654,18 +657,18 @@ namespace core {
               .add( [ & ]() { cpp_utils::parallel_for_each_impl( nproc, servs.begin(), servs.end(), stop_serv_ ); } );
         }
       public:
-        auto operator()( cpp_utils::console_ui::func_args )
+        auto operator()( ui_func_args )
         {
             std::print( "                    [ 破  解 ]\n\n\n" );
             if ( rules_.empty() ) {
                 std::print( " (i) 规则为空." );
                 wait();
-                return cpp_utils::console_ui::back;
+                return ui_back;
             }
             std::print( " -> 正在生成并执行操作系统命令...\n{}\n", std::string( console_width, '-' ) );
             void ( *fn[] )( const rule_node & ){ &crack::singlethread_engine_, &crack::multithread_engine_ };
             fn[ static_cast< size_type >( is_parallel_op.get() ) ]( rules_ );
-            return cpp_utils::console_ui::back;
+            return ui_back;
         }
         crack( const rule_node &_rules )
           : rules_{ _rules }
@@ -724,18 +727,18 @@ namespace core {
             cpp_utils::parallel_for_each_impl( nproc, servs.begin(), servs.end(), start_serv_ );
         }
       public:
-        auto operator()( cpp_utils::console_ui::func_args )
+        auto operator()( ui_func_args )
         {
             std::print( "                    [ 恢  复 ]\n\n\n" );
             if ( rules_.empty() ) {
                 std::print( " (i) 规则为空." );
                 wait();
-                return cpp_utils::console_ui::back;
+                return ui_back;
             }
             std::print( " -> 正在生成并执行操作系统命令...\n{}\n", std::string( console_width, '-' ) );
             constexpr void ( *fn[] )( const rule_node & ){ &restore::singlethread_engine_, &restore::multithread_engine_ };
             fn[ static_cast< size_type >( is_parallel_op.get() ) ]( rules_ );
-            return cpp_utils::console_ui::back;
+            return ui_back;
         }
         restore( const rule_node &_rules )
           : rules_{ _rules }
