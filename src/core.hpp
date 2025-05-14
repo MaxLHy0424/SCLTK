@@ -238,10 +238,10 @@ namespace core {
                     _args.parent_ui.edit_text( _args.node_index, make_swith_button_text_( item_ ) );
                     return ui_back;
                 }
-                option_setter( item_type &_item )
+                option_setter( item_type &_item ) noexcept
                   : item_{ _item }
                 { }
-                ~option_setter() = default;
+                ~option_setter() noexcept = default;
             };
             class option_shower final {
               private:
@@ -391,9 +391,9 @@ namespace core {
             cmd_executor( const char *const ( &_item )[ 2 ] ) noexcept
               : item_{ _item }
             { }
-            cmd_executor( const cmd_executor & )     = default;
-            cmd_executor( cmd_executor && ) noexcept = default;
-            ~cmd_executor() noexcept                 = default;
+            cmd_executor( const cmd_executor & ) noexcept = default;
+            cmd_executor( cmd_executor && ) noexcept      = default;
+            ~cmd_executor() noexcept                      = default;
         };
         constexpr const char *common_cmds[][ 2 ]{
           {"重启资源管理器",               R"(taskkill.exe /f /im explorer.exe && timeout.exe /t 3 /nobreak && start C:\Windows\explorer.exe)"},
