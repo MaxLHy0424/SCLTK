@@ -133,6 +133,10 @@ namespace cpp_utils {
         {
             return ptr_;
         }
+        operator _type_()
+        {
+            return ptr_;
+        }
         auto &operator*() const
         {
             return *ptr_;
