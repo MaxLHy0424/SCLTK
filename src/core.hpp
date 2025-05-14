@@ -664,7 +664,7 @@ namespace core {
             }
             std::print( " -> 正在生成并执行操作系统命令...\n{}\n", std::string( console_width, '-' ) );
             void ( *fn[] )( const rule_node & ){ &crack::singlethread_engine_, &crack::multithread_engine_ };
-            fn[ static_cast< size_type >( is_parallel_op.get() ) ]( rules_ );
+            fn[ is_parallel_op.get() ]( rules_ );
             return ui_back;
         }
         crack( const rule_node &_rules ) noexcept
@@ -734,7 +734,7 @@ namespace core {
             }
             std::print( " -> 正在生成并执行操作系统命令...\n{}\n", std::string( console_width, '-' ) );
             constexpr void ( *fn[] )( const rule_node & ){ &restore::singlethread_engine_, &restore::multithread_engine_ };
-            fn[ static_cast< size_type >( is_parallel_op.get() ) ]( rules_ );
+            fn[ is_parallel_op.get() ]( rules_ );
             return ui_back;
         }
         restore( const rule_node &_rules ) noexcept
