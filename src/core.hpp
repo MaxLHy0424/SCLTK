@@ -640,21 +640,18 @@ namespace core {
         {
             const auto &execs{ _rules.execs };
             const auto &servs{ _rules.servs };
-            const auto nproc_of_exec_ops{ nproc / 4 };
+            const auto nproc_for_exec_op{ std::max( nproc / 4, 2U ) };
             cpp_utils::thread_pool threads;
             if ( is_hijack_execs ) {
                 threads.add( [ & ]()
-                { cpp_utils::parallel_for_each( nproc_of_exec_ops, std::begin( execs ), std::cend( execs ), hijack_exec_ ); } );
+                { cpp_utils::parallel_for_each_impl( nproc_for_exec_op, execs.begin(), execs.end(), hijack_exec_ ); } );
             }
             if ( is_set_serv_startup_types ) {
-                threads.add( [ & ]()
-                { cpp_utils::parallel_for_each( nproc_of_exec_ops, std::begin( servs ), std::cend( servs ), disable_serv_ ); } );
+                threads.add( [ & ]() { cpp_utils::parallel_for_each_impl( nproc, servs.begin(), servs.end(), disable_serv_ ); } );
             }
             threads
-              .add( [ & ]()
-            { cpp_utils::parallel_for_each( nproc_of_exec_ops, std::begin( execs ), std::cend( execs ), kill_exec_ ); } )
-              .add( [ & ]()
-            { cpp_utils::parallel_for_each( nproc_of_exec_ops, std::begin( servs ), std::cend( servs ), stop_serv_ ); } );
+              .add( [ & ]() { cpp_utils::parallel_for_each_impl( nproc_for_exec_op, execs.begin(), execs.end(), kill_exec_ ); } )
+              .add( [ & ]() { cpp_utils::parallel_for_each_impl( nproc, servs.begin(), servs.end(), stop_serv_ ); } );
         }
       public:
         auto operator()( cpp_utils::console_ui::func_args )
@@ -717,14 +714,14 @@ namespace core {
         {
             const auto &execs{ _rules.execs };
             const auto &servs{ _rules.servs };
-            const auto nproc_of_exec_ops{ nproc / 4 };
+            const auto nproc_for_exec_op{ std::max( nproc / 4, 2U ) };
             if ( is_hijack_execs ) {
-                cpp_utils::parallel_for_each( nproc_of_exec_ops, std::begin( execs ), std::cend( execs ), undo_hijack_exec_ );
+                cpp_utils::parallel_for_each_impl( nproc_for_exec_op, execs.begin(), execs.end(), undo_hijack_exec_ );
             }
             if ( is_set_serv_startup_types ) {
-                cpp_utils::parallel_for_each( nproc_of_exec_ops, std::begin( servs ), std::cend( servs ), enable_serv_ );
+                cpp_utils::parallel_for_each_impl( nproc_for_exec_op, servs.begin(), servs.end(), enable_serv_ );
             }
-            cpp_utils::parallel_for_each( nproc_of_exec_ops, std::begin( servs ), std::cend( servs ), start_serv_ );
+            cpp_utils::parallel_for_each_impl( nproc, servs.begin(), servs.end(), start_serv_ );
         }
       public:
         auto operator()( cpp_utils::console_ui::func_args )
