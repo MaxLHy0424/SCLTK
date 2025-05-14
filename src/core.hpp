@@ -643,15 +643,15 @@ namespace core {
             const auto nproc_for_exec_op{ std::max( nproc / 4, 2U ) };
             cpp_utils::thread_pool threads;
             if ( is_hijack_execs ) {
-                threads.add( [ & ]()
+                threads.add( [ & ]
                 { cpp_utils::parallel_for_each_impl( nproc_for_exec_op, execs.begin(), execs.end(), hijack_exec_ ); } );
             }
             if ( is_set_serv_startup_types ) {
-                threads.add( [ & ]() { cpp_utils::parallel_for_each_impl( nproc, servs.begin(), servs.end(), disable_serv_ ); } );
+                threads.add( [ & ] { cpp_utils::parallel_for_each_impl( nproc, servs.begin(), servs.end(), disable_serv_ ); } );
             }
             threads
-              .add( [ & ]() { cpp_utils::parallel_for_each_impl( nproc_for_exec_op, execs.begin(), execs.end(), kill_exec_ ); } )
-              .add( [ & ]() { cpp_utils::parallel_for_each_impl( nproc, servs.begin(), servs.end(), stop_serv_ ); } );
+              .add( [ & ] { cpp_utils::parallel_for_each_impl( nproc_for_exec_op, execs.begin(), execs.end(), kill_exec_ ); } )
+              .add( [ & ] { cpp_utils::parallel_for_each_impl( nproc, servs.begin(), servs.end(), stop_serv_ ); } );
         }
       public:
         auto operator()( ui_func_args )
