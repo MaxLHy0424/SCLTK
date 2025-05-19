@@ -1,6 +1,7 @@
 #pragma once
 #include <any>
 #include <concepts>
+#include <coroutine>
 #include <deque>
 #include <functional>
 #include <memory>
@@ -9,7 +10,8 @@
 #include <typeindex>
 #include <utility>
 #include <vector>
-#include "type.hpp"
+#include "coroutine.hpp"
+#include "type_tools.hpp"
 namespace cpp_utils {
 #if ( defined( __GNUC__ ) && defined( __GXX_RTTI ) ) || ( defined( _MSC_VER ) && defined( _CPPRTTI ) ) \
   || ( defined( __clang__ ) && __has_feature( cxx_rtti ) )
@@ -51,8 +53,8 @@ namespace cpp_utils {
             }
             return invoke_impl_( _args, std::index_sequence_for< _args_... >{} );
         }
-        func_wrapper( std::function< _return_type_( _args_... ) > _f )
-          : func_{ std::move( _f ) }
+        func_wrapper( std::function< _return_type_( _args_... ) > _fn )
+          : func_{ std::move( _fn ) }
         { }
     };
     class func_container final {
@@ -95,18 +97,43 @@ namespace cpp_utils {
             return args;
         }
         template < typename _return_type_, typename... _args_ >
+            requires( !coroutine_func_return_type< _return_type_ > )
+        auto &add_front( _return_type_ ( *_func )( _args_... ) )
+        {
+            func_nodes_.emplace_front( std::make_unique< func_wrapper< _return_type_, _args_... > >( _func ) );
+            return *this;
+        }
+        template < typename _return_type_, typename... _args_ >
+            requires( !coroutine_func_return_type< _return_type_ > )
         auto &add_front( std::function< _return_type_( _args_... ) > _func )
         {
             func_nodes_.emplace_front( std::make_unique< func_wrapper< _return_type_, _args_... > >( std::move( _func ) ) );
             return *this;
         }
         template < typename _return_type_, typename... _args_ >
+            requires( !coroutine_func_return_type< _return_type_ > )
+        auto &add_back( _return_type_ ( *_func )( _args_... ) )
+        {
+            func_nodes_.emplace_back( std::make_unique< func_wrapper< _return_type_, _args_... > >( _func ) );
+            return *this;
+        }
+        template < typename _return_type_, typename... _args_ >
+            requires( !coroutine_func_return_type< _return_type_ > )
         auto &add_back( std::function< _return_type_( _args_... ) > _func )
         {
             func_nodes_.emplace_back( std::make_unique< func_wrapper< _return_type_, _args_... > >( std::move( _func ) ) );
             return *this;
         }
         template < typename _return_type_, typename... _args_ >
+            requires( !coroutine_func_return_type< _return_type_ > )
+        auto &insert( const size_type _index, _return_type_ ( *_func )( _args_... ) )
+        {
+            func_nodes_.emplace(
+              func_nodes_.cbegin() + _index, std::make_unique< func_wrapper< _return_type_, _args_... > >( _func ) );
+            return *this;
+        }
+        template < typename _return_type_, typename... _args_ >
+            requires( !coroutine_func_return_type< _return_type_ > )
         auto &insert( const size_type _index, std::function< _return_type_( _args_... ) > _func )
         {
             func_nodes_.emplace(
@@ -114,6 +141,14 @@ namespace cpp_utils {
             return *this;
         }
         template < typename _return_type_, typename... _args_ >
+            requires( !coroutine_func_return_type< _return_type_ > )
+        auto &edit( const size_type _index, _return_type_ ( *_func )( _args_... ) )
+        {
+            func_nodes_.at( _index ) = std::make_unique< func_wrapper< _return_type_, _args_... > >( _func );
+            return *this;
+        }
+        template < typename _return_type_, typename... _args_ >
+            requires( !coroutine_func_return_type< _return_type_ > )
         auto &edit( const size_type _index, std::function< _return_type_( _args_... ) > _func )
         {
             func_nodes_.at( _index ) = std::make_unique< func_wrapper< _return_type_, _args_... > >( std::move( _func ) );
@@ -140,6 +175,7 @@ namespace cpp_utils {
             return *this;
         }
         template < typename _return_type_, typename... _args_ >
+            requires( !coroutine_func_return_type< _return_type_ > )
         auto invoke( const size_type _index, _args_ &&..._args ) const
         {
             if constexpr ( std::same_as< std::decay_t< _return_type_ >, void > ) {
@@ -150,6 +186,7 @@ namespace cpp_utils {
             }
         }
         template < typename _return_type_ >
+            requires( !coroutine_func_return_type< _return_type_ > )
         auto dynamic_invoke( const size_type _index, const std::vector< std::any > &_args ) const
         {
             if constexpr ( std::same_as< std::decay_t< _return_type_ >, void > ) {
