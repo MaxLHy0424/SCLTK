@@ -12,9 +12,6 @@ auto main() -> int
     cpp_utils::enable_window_close_ctrl( core::window_handle, false );
     cpp_utils::console_ui ui{ core::std_input_handle, core::std_output_handle };
     ui.set_limits( true, true );
-    if ( !cpp_utils::is_run_as_admin() ) {
-        cpp_utils::relaunch_as_admin( EXIT_SUCCESS, nullptr );
-    }
     std::print( " -> 准备就绪...\n" );
     core::load_config();
     cpp_utils::thread_pool threads;

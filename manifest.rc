@@ -1,5 +1,6 @@
 #include "src/info.hpp"
 1 ICON "img/favicon.ico"
+1 24 "manifest.xml"
 1 VERSIONINFO
 FILEVERSION 1, 0, 0, 0
 BEGIN
