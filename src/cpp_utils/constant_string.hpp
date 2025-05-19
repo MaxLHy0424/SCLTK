@@ -2,7 +2,7 @@
 #include <algorithm>
 #include <concepts>
 #include <ranges>
-#include "type.hpp"
+#include "type_tools.hpp"
 namespace cpp_utils {
     template < typename _type_ >
     concept char_type
@@ -15,11 +15,11 @@ namespace cpp_utils {
       private:
         _type_ data_[ _capacity_ ]{};
       public:
-        auto c_str() const noexcept
+        auto get() const noexcept
         {
             return const_cast< const _type_ * >( data_ );
         }
-        auto compare( const _type_ *const _src ) const noexcept
+        constexpr auto compare( const _type_ *const _src ) const noexcept
         {
             if ( _src == nullptr ) {
                 return false;
@@ -39,7 +39,7 @@ namespace cpp_utils {
             return true;
         }
         template < size_type _src_capacity_ >
-        auto compare( const _type_ ( &_src )[ _src_capacity_ ] ) const noexcept
+        constexpr auto compare( const _type_ ( &_src )[ _src_capacity_ ] ) const noexcept
         {
             if ( _src_capacity_ != _capacity_ ) {
                 return false;
@@ -52,7 +52,7 @@ namespace cpp_utils {
             return true;
         }
         template < size_type _src_capacity_ >
-        auto compare( const constant_string< _type_, _src_capacity_ > &_src ) const noexcept
+        constexpr auto compare( const constant_string< _type_, _src_capacity_ > &_src ) const noexcept
         {
             if ( _src_capacity_ != _capacity_ ) {
                 return false;
@@ -64,19 +64,33 @@ namespace cpp_utils {
             }
             return true;
         }
-        auto operator==( const _type_ *const _src ) const noexcept
+        constexpr auto operator==( const _type_ *const _src ) const noexcept
         {
             return compare( _src );
         }
         template < size_type _src_capacity_ >
-        auto operator==( const _type_ ( &_src )[ _src_capacity_ ] ) const noexcept
+        constexpr auto operator==( const _type_ ( &_src )[ _src_capacity_ ] ) const noexcept
         {
             return compare( _src );
         }
         template < size_type _src_capacity_ >
-        auto operator==( const constant_string< _type_, _src_capacity_ > &_src ) const noexcept
+        constexpr auto operator==( const constant_string< _type_, _src_capacity_ > &_src ) const noexcept
         {
             return compare( _src );
+        }
+        constexpr auto operator!=( const _type_ *const _src ) const noexcept
+        {
+            return !compare( _src );
+        }
+        template < size_type _src_capacity_ >
+        constexpr auto operator!=( const _type_ ( &_src )[ _src_capacity_ ] ) const noexcept
+        {
+            return !compare( _src );
+        }
+        template < size_type _src_capacity_ >
+        constexpr auto operator!=( const constant_string< _type_, _src_capacity_ > &_src ) const noexcept
+        {
+            return !compare( _src );
         }
         const auto &operator[]( const size_type _index ) const noexcept
         {

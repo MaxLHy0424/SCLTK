@@ -7,7 +7,7 @@
 #include <string>
 #include <thread>
 #include <utility>
-#include "type.hpp"
+#include "type_tools.hpp"
 #include "windows_definations.hpp"
 namespace cpp_utils {
 #if defined( _WIN32 ) || defined( _WIN64 )
@@ -56,7 +56,8 @@ namespace cpp_utils {
             }
             auto operator==( const COORD _position ) const noexcept
             {
-                return position.Y == _position.Y && position.X <= _position.X && text.size() != 0;
+                return position.Y == _position.Y && position.X <= _position.X
+                    && _position.X < position.X + static_cast< SHORT >( text.size() );
             }
             auto operator!=( const COORD _position ) const noexcept
             {
