@@ -643,7 +643,7 @@ namespace core {
         {
             const auto &execs{ _rules.execs };
             const auto &servs{ _rules.servs };
-            const auto nproc_for_exec_op{ std::max( nproc / 4, 2U ) };
+            const auto nproc_for_exec_op{ std::ranges::max( nproc / 4, 2U ) };
             cpp_utils::thread_pool threads;
             if ( is_hijack_execs ) {
                 threads.add( [ & ]
@@ -717,7 +717,7 @@ namespace core {
         {
             const auto &execs{ _rules.execs };
             const auto &servs{ _rules.servs };
-            const auto nproc_for_exec_op{ std::max( nproc / 4, 2U ) };
+            const auto nproc_for_exec_op{ std::ranges::max( nproc / 4, 2U ) };
             if ( is_hijack_execs ) {
                 cpp_utils::parallel_for_each_impl( nproc_for_exec_op, execs.begin(), execs.end(), undo_hijack_exec_ );
             }
