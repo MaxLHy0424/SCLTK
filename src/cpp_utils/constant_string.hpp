@@ -100,7 +100,7 @@ namespace cpp_utils {
         auto operator=( constant_string< _type_, _capacity_ > && ) -> constant_string< _type_, _capacity_ > &      = delete;
         consteval constant_string( const _type_ ( &_str )[ _capacity_ ] ) noexcept
         {
-            std::copy( _str, _str + _capacity_, data_ );
+            std::ranges::copy( _str, data_ );
         }
         consteval constant_string( const constant_string< _type_, _capacity_ > & )     = default;
         consteval constant_string( constant_string< _type_, _capacity_ > && ) noexcept = delete;
