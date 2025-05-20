@@ -20,11 +20,11 @@ namespace cpp_utils {
       private:
         _type_ ptr_{};
       public:
-        auto get() const
+        auto get() const noexcept
         {
             return ptr_;
         }
-        operator _type_()
+        operator _type_() const noexcept
         {
             return ptr_;
         }
@@ -36,20 +36,20 @@ namespace cpp_utils {
         {
             return ptr_[ _n ];
         }
-        auto operator+( const size_type _n ) const
+        auto operator+( const size_type _n ) const noexcept
         {
             return ptr_ + _n;
         }
-        auto operator-( const size_type _n ) const
+        auto operator-( const size_type _n ) const noexcept
         {
             return ptr_ - _n;
         }
-        auto operator++() -> raw_pointer_wrapper< _type_ > &
+        auto operator++() noexcept -> raw_pointer_wrapper< _type_ > &
         {
             ++ptr_;
             return *this;
         }
-        auto operator++( int ) -> raw_pointer_wrapper< _type_ >
+        auto operator++( int ) noexcept -> raw_pointer_wrapper< _type_ >
         {
             return ptr_++;
         }

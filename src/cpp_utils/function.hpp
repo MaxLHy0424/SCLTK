@@ -48,7 +48,7 @@ namespace cpp_utils {
         }
         virtual auto invoke( const std::vector< std::any > &_args ) const -> std::any override final
         {
-            if ( sizeof...( _args_ ) < _args.size() ) [[unlikely]] {
+            if ( sizeof...( _args_ ) != _args.size() ) [[unlikely]] {
                 throw std::invalid_argument{ "arguments error" };
             }
             return invoke_impl_( _args, std::index_sequence_for< _args_... >{} );
