@@ -14,8 +14,8 @@ namespace cpp_utils {
     class console_ui final {
       public:
         using func_return_type = bool;
-        inline static constexpr func_return_type back{ false };
-        inline static constexpr func_return_type exit{ true };
+        inline static constexpr func_return_type func_back{ false };
+        inline static constexpr func_return_type func_exit{ true };
         struct func_args final {
             console_ui &parent_ui;
             const size_type node_index;
@@ -185,7 +185,7 @@ namespace cpp_utils {
         }
         auto invoke_func_( const MOUSE_EVENT_RECORD &_event )
         {
-            auto is_exit{ back };
+            auto is_exit{ func_back };
             auto size{ lines_.size() };
             for ( const auto idx : std::ranges::iota_view{ decltype( size ){ 0 }, size } ) {
                 auto &line{ lines_[ idx ] };
@@ -317,8 +317,8 @@ namespace cpp_utils {
             edit_console_attrs_( console_attrs_::lock_text );
             init_pos_();
             MOUSE_EVENT_RECORD event;
-            auto func_return_value{ back };
-            while ( func_return_value == back ) {
+            auto func_return_value{ func_back };
+            while ( func_return_value == func_back ) {
                 event = get_event_();
                 switch ( event.dwEventFlags ) {
                     case mouse::move : refresh_( event.dwMousePosition ); break;
