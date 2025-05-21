@@ -21,7 +21,7 @@ namespace core {
     inline const auto std_input_handle{ GetStdHandle( STD_INPUT_HANDLE ) };
     inline const auto std_output_handle{ GetStdHandle( STD_OUTPUT_HANDLE ) };
     using ui_func_args = cpp_utils::console_ui::func_args;
-    inline auto exit( ui_func_args )
+    inline auto quit( ui_func_args )
     {
         return func_exit;
     }
@@ -255,7 +255,7 @@ namespace core {
                     cpp_utils::console_ui ui;
                     ui.add_back( "                    [ 配  置 ]\n\n" )
                       .add_back(
-                        std::format( R"( < 折叠 "{}" )", node_.shown_name ), exit,
+                        std::format( R"( < 折叠 "{}" )", node_.shown_name ), quit,
                         cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity );
                     for ( auto &item : node_.items ) {
                         ui.add_back( std::format( "\n[ {} ]\n", item.shown_name ) )
@@ -338,7 +338,7 @@ namespace core {
         } };
         cpp_utils::console_ui ui;
         ui.add_back( "                    [ 关  于 ]\n\n" )
-          .add_back( " < 返回 ", exit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
+          .add_back( " < 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
           .add_back(
             "\n[ 名称 ]\n\n " INFO_FULL_NAME " (缩写: " INFO_SHORT_NAME ")\n\n[ 版本 ]\n\n " INFO_VERSION
             "\n (时区: " INFO_TIME_ZONE ")\n 提交时间: " INFO_GIT_DATE "\n 构建时间: " INFO_BUILD_TIME
@@ -387,7 +387,7 @@ namespace core {
                 ui.add_back( "                   [ 工 具 箱 ]\n\n" )
                   .add_back( std::format( " (i) 是否执行 \"{}\"?\n", item_[ 0 ] ) )
                   .add_back( " > 是, 继续执行 ", execute, cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_intensity )
-                  .add_back( " > 否, 立即返回 ", exit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
+                  .add_back( " > 否, 立即返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
                   .show();
                 return func_back;
             }
@@ -407,7 +407,7 @@ namespace core {
         };
         cpp_utils::console_ui ui;
         ui.add_back( "                   [ 工 具 箱 ]\n\n" )
-          .add_back( " < 返回 ", exit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
+          .add_back( " < 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
           .add_back( " > 命令提示符 ", launch_cmd )
           .add_back( "\n[ 常用操作 ]\n" );
         for ( const auto &common_cmd : common_cmds ) {
@@ -477,7 +477,7 @@ namespace core {
             reg_hijacked_execs[ i ]
               = std::format( R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{})", execs[ i ] );
         }
-        auto engine{ [ & ]()
+        auto engine{ [ & ]
         {
             for ( const auto &reg_dir : reg_dirs ) {
                 RegDeleteTreeA( HKEY_CURRENT_USER, reg_dir );
@@ -578,7 +578,7 @@ namespace core {
         } };
         cpp_utils::console_ui ui;
         ui.add_back( "                    [ 配  置 ]\n\n" )
-          .add_back( " < 返回 ", exit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
+          .add_back( " < 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
           .add_back( " > 同步配置 ", sync )
           .add_back( " > 打开配置文件 ", open_file );
         for ( auto &config_node : config_nodes ) {
