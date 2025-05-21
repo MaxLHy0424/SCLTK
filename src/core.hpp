@@ -1,4 +1,5 @@
 #pragma once
+#include <array>
 #include <fstream>
 #include "cpp_utils/multithread.hpp"
 #include "cpp_utils/pointer.hpp"
@@ -236,8 +237,7 @@ namespace core {
               public:
                 auto operator()( ui_func_args _args )
                 {
-                    constexpr void ( item_type::*fn[] )(){ &item_type::enable, &item_type::disable };
-                    ( item_.*fn[ static_cast< size_type >( item_.get() ) ] )();
+                    ( item_.*std::array{ &item_type::enable, &item_type::disable }[ static_cast< size_type >( item_.get() ) ] )();
                     _args.parent_ui.edit_text( _args.node_index, make_swith_button_text_( item_ ) );
                     return func_back;
                 }
@@ -736,8 +736,7 @@ namespace core {
                 return func_back;
             }
             std::print( " -> 正在生成并执行操作系统命令...\n{}\n", std::string( console_width, '-' ) );
-            constexpr void ( *fn[] )( const rule_node & ){ &restore::singlethread_engine_, &restore::multithread_engine_ };
-            fn[ is_parallel_op.get() ]( rules_ );
+            std::array{ &restore::singlethread_engine_, &restore::multithread_engine_ }[ is_parallel_op.get() ]( rules_ );
             return func_back;
         }
         restore( const rule_node &_rules ) noexcept
