@@ -17,7 +17,7 @@ namespace cpp_utils {
         for ( const auto i : std::ranges::iota_view{ decltype( _thread_num ){ 0 }, _thread_num } ) {
             const auto chunk_start{ _begin + i * chunk_size };
             const auto chunk_end{ ( i == _thread_num - 1 ) ? _end : chunk_start + chunk_size };
-            threads.emplace_back( [ =, &_func ]()
+            threads.emplace_back( [ =, &_func ]
             {
                 for ( auto it{ chunk_start }; it != chunk_end; ++it ) {
                     _func( *it );
