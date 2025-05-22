@@ -119,7 +119,7 @@ namespace core {
             ~node()              = default;
         };
         std::vector< node > nodes;
-        auto &operator[]( const std::string_view _self_name )
+        auto &operator[]( const std::string_view _self_name ) noexcept
         {
             for ( auto &node : nodes ) {
                 if ( _self_name == node.self_name ) {
@@ -128,7 +128,7 @@ namespace core {
             }
             std::unreachable();
         }
-        const auto &operator[]( const std::string_view _self_name ) const
+        const auto &operator[]( const std::string_view _self_name ) const noexcept
         {
             for ( const auto &node : nodes ) {
                 if ( _self_name == node.self_name ) {
@@ -357,7 +357,7 @@ namespace core {
     }
     inline auto toolkit( ui_func_args )
     {
-        auto launch_cmd{ []( ui_func_args _args ) static
+        auto launch_cmd{ []( ui_func_args _args ) static noexcept
         {
             cpp_utils::set_console_title( INFO_SHORT_NAME " - 命令提示符" );
             cpp_utils::set_console_size( window_handle, std_output_handle, 120, 30 );
@@ -448,8 +448,8 @@ namespace core {
         const auto current_window_thread_process_id{ GetWindowThreadProcessId( window_handle, nullptr ) };
         if ( is_disable_x_option_hot_reload ) {
             cpp_utils::loop_keep_window_top(
-              window_handle, current_thread_id, current_window_thread_process_id, sleep_time, []( const std::stop_token _msg ) static
-            { return !_msg.stop_requested(); }, _msg );
+              window_handle, current_thread_id, current_window_thread_process_id, sleep_time,
+              []( const std::stop_token _msg ) static noexcept { return !_msg.stop_requested(); }, _msg );
             cpp_utils::cancel_top_window( window_handle );
             return;
         }
@@ -482,7 +482,7 @@ namespace core {
             reg_hijacked_execs[ i ]
               = std::format( R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{})", execs[ i ] );
         }
-        auto engine{ [ & ]
+        auto engine{ [ & ] noexcept
         {
             for ( const auto &reg_dir : reg_dirs ) {
                 RegDeleteTreeA( HKEY_CURRENT_USER, reg_dir );
@@ -603,7 +603,7 @@ namespace core {
     class crack final {
       private:
         const rule_node &rules_;
-        static auto hijack_exec_( exec_const_ref_type _exec )
+        static auto hijack_exec_( exec_const_ref_type _exec ) noexcept
         {
             std::system(
               std::format(
@@ -611,15 +611,15 @@ namespace core {
                 _exec )
                 .c_str() );
         }
-        static auto disable_serv_( serv_const_ref_type _serv )
+        static auto disable_serv_( serv_const_ref_type _serv ) noexcept
         {
             std::system( std::format( R"(sc.exe config "{}" start= disabled)", _serv ).c_str() );
         }
-        static auto kill_exec_( exec_const_ref_type _exec )
+        static auto kill_exec_( exec_const_ref_type _exec ) noexcept
         {
             std::system( std::format( R"(taskkill.exe /f /im "{}")", _exec ).c_str() );
         }
-        static auto stop_serv_( serv_const_ref_type _serv )
+        static auto stop_serv_( serv_const_ref_type _serv ) noexcept
         {
             std::system( std::format( R"(net.exe stop "{}" /y)", _serv ).c_str() );
         }
@@ -687,18 +687,18 @@ namespace core {
     class restore final {
       private:
         const rule_node &rules_;
-        static auto undo_hijack_exec_( exec_const_ref_type _exec )
+        static auto undo_hijack_exec_( exec_const_ref_type _exec ) noexcept
         {
             std::system(
               std::format(
                 R"(reg.exe delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\{}" /f)", _exec )
                 .c_str() );
         }
-        static auto enable_serv_( serv_const_ref_type _serv )
+        static auto enable_serv_( serv_const_ref_type _serv ) noexcept
         {
             std::system( std::format( R"(sc.exe config "{}" start= auto)", _serv ).c_str() );
         }
-        static auto start_serv_( serv_const_ref_type _serv )
+        static auto start_serv_( serv_const_ref_type _serv ) noexcept
         {
             std::system( std::format( R"(net.exe start "{}")", _serv ).c_str() );
         }
