@@ -23,20 +23,20 @@ namespace core {
     inline const auto std_output_handle{ GetStdHandle( STD_OUTPUT_HANDLE ) };
     using ui_func_args = cpp_utils::console_ui::func_args;
     template < typename... _args_ >
-    inline constexpr auto u8print( const char8_t *const _c_str, _args_ &&..._args ) noexcept
+    inline constexpr auto u8print( const char8_t *const _c_str, _args_ &&..._args )
     {
         std::print( std::runtime_format( reinterpret_cast< const char * >( _c_str ) ), std::forward< _args_ >( _args )... );
     }
-    inline auto quit( ui_func_args )
+    inline auto quit( ui_func_args ) noexcept
     {
         return func_exit;
     }
-    inline auto relaunch( ui_func_args )
+    inline auto relaunch( ui_func_args ) noexcept
     {
         cpp_utils::relaunch_as_admin( EXIT_SUCCESS, nullptr );
         return func_exit;
     }
-    inline auto wait()
+    inline auto wait() noexcept
     {
         std::print( "\n\n" );
         for ( auto i{ 3 }; i > 0; --i ) {
@@ -52,19 +52,19 @@ namespace core {
               public:
                 const char *const self_name;
                 const char *const shown_name;
-                auto enable()
+                auto enable() noexcept
                 {
                     value_.test_and_set( std::memory_order_release );
                 }
-                auto disable()
+                auto disable() noexcept
                 {
                     value_.clear( std::memory_order_release );
                 }
-                auto get() const
+                auto get() const noexcept
                 {
                     return value_.test( std::memory_order_acquire );
                 }
-                operator bool() const
+                operator bool() const noexcept
                 {
                     return get();
                 }
