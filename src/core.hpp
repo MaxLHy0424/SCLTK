@@ -672,8 +672,7 @@ namespace core {
                 return func_back;
             }
             u8print( u8" -> 正在生成并执行操作系统命令...\n{}\n", std::string( console_width, '-' ) );
-            void ( *fn[] )( const rule_node & ){ &crack::singlethread_engine_, &crack::multithread_engine_ };
-            fn[ is_parallel_op.get() ]( rules_ );
+            std::array{ &crack::singlethread_engine_, &crack::multithread_engine_ }[ is_parallel_op.get() ]( rules_ );
             cpp_utils::set_console_charset( charset_id );
             return func_back;
         }
