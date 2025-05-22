@@ -373,9 +373,13 @@ namespace core {
             cpp_utils::enable_window_maximize_ctrl( window_handle, false );
             return func_back;
         } };
+        struct cmd_item final {
+            const char *description;
+            const char *command;
+        };
         class cmd_executor final {
           private:
-            const char *const ( &item_ )[ 2 ];
+            const cmd_item &item_;
           public:
             auto operator()( ui_func_args )
             {
@@ -385,25 +389,25 @@ namespace core {
                       "                   [ 工 具 箱 ]\n\n\n"
                       " -> 正在执行操作系统命令...\n{}\n",
                       std::string( console_width, '-' ) );
-                    std::system( item_[ 1 ] );
+                    std::system( item_.command );
                     return func_exit;
                 } };
                 cpp_utils::console_ui ui;
                 ui.add_back( "                   [ 工 具 箱 ]\n\n" )
-                  .add_back( std::format( " (i) 是否执行 \"{}\"?\n", item_[ 0 ] ) )
+                  .add_back( std::format( " (i) 是否执行 \"{}\"?\n", item_.description ) )
                   .add_back( " > 是, 继续执行 ", execute, cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_intensity )
                   .add_back( " > 否, 立即返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
                   .show();
                 return func_back;
             }
-            cmd_executor( const char *const ( &_item )[ 2 ] ) noexcept
+            cmd_executor( const cmd_item &_item ) noexcept
               : item_{ _item }
             { }
             cmd_executor( const cmd_executor & ) noexcept = default;
             cmd_executor( cmd_executor && ) noexcept      = default;
             ~cmd_executor() noexcept                      = default;
         };
-        constexpr const char *common_cmds[][ 2 ]{
+        constexpr cmd_item common_cmds[]{
           {"重启资源管理器",               R"(taskkill.exe /f /im explorer.exe && timeout.exe /t 3 /nobreak && start C:\Windows\explorer.exe)"},
           {"重启至高级选项",               "shutdown.exe /r /o /f /t 15"                                                                      },
           {"恢复 USB 设备访问",            R"(reg.exe add "HKLM\SYSTEM\CurrentControlSet\Services\USBSTOR" /f /t reg_dword /v Start /d 3)"    },
@@ -416,7 +420,7 @@ namespace core {
           .add_back( " > 命令提示符 ", launch_cmd )
           .add_back( "\n[ 常用操作 ]\n" );
         for ( const auto &common_cmd : common_cmds ) {
-            ui.add_back( std::format( " > {} ", common_cmd[ 0 ] ), cmd_executor{ common_cmd } );
+            ui.add_back( std::format( " > {} ", common_cmd.description ), cmd_executor{ common_cmd } );
         }
         ui.show();
         return func_back;
