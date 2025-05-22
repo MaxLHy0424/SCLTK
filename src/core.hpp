@@ -22,6 +22,11 @@ namespace core {
     inline const auto std_input_handle{ GetStdHandle( STD_INPUT_HANDLE ) };
     inline const auto std_output_handle{ GetStdHandle( STD_OUTPUT_HANDLE ) };
     using ui_func_args = cpp_utils::console_ui::func_args;
+    template < typename... _args_ >
+    inline constexpr auto u8print( const char8_t *const _c_str, _args_ &&..._args ) noexcept
+    {
+        std::print( std::runtime_format( reinterpret_cast< const char * >( _c_str ) ), std::forward< _args_ >( _args )... );
+    }
     inline auto quit( ui_func_args )
     {
         return func_exit;
@@ -659,15 +664,17 @@ namespace core {
       public:
         auto operator()( ui_func_args )
         {
-            std::print( "                    [ 破  解 ]\n\n\n" );
+            cpp_utils::set_console_charset( 65001 );
+            u8print( u8"                    [ 破  解 ]\n\n\n" );
             if ( rules_.empty() ) {
-                std::print( " (i) 规则为空." );
+                u8print( u8" (i) 规则为空." );
                 wait();
                 return func_back;
             }
-            std::print( " -> 正在生成并执行操作系统命令...\n{}\n", std::string( console_width, '-' ) );
+            u8print( u8" -> 正在生成并执行操作系统命令...\n{}\n", std::string( console_width, '-' ) );
             void ( *fn[] )( const rule_node & ){ &crack::singlethread_engine_, &crack::multithread_engine_ };
             fn[ is_parallel_op.get() ]( rules_ );
+            cpp_utils::set_console_charset( charset_id );
             return func_back;
         }
         crack( const rule_node &_rules ) noexcept
@@ -729,14 +736,16 @@ namespace core {
       public:
         auto operator()( ui_func_args )
         {
-            std::print( "                    [ 恢  复 ]\n\n\n" );
+            cpp_utils::set_console_charset( 65001 );
+            u8print( u8"                    [ 恢  复 ]\n\n\n" );
             if ( rules_.empty() ) {
-                std::print( " (i) 规则为空." );
+                u8print( u8" (i) 规则为空." );
                 wait();
                 return func_back;
             }
-            std::print( " -> 正在生成并执行操作系统命令...\n{}\n", std::string( console_width, '-' ) );
+            u8print( u8" -> 正在生成并执行操作系统命令...\n{}\n", std::string( console_width, '-' ) );
             std::array{ &restore::singlethread_engine_, &restore::multithread_engine_ }[ is_parallel_op.get() ]( rules_ );
+            cpp_utils::set_console_charset( charset_id );
             return func_back;
         }
         restore( const rule_node &_rules ) noexcept
