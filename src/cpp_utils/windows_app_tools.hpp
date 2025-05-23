@@ -64,9 +64,17 @@ namespace cpp_utils {
         GetWindowPlacement( _window_handle, &wp );
         return wp.showCmd;
     }
+    inline auto get_current_window_state() noexcept
+    {
+        return get_window_state( get_current_window_handle() );
+    }
     inline auto set_window_state( const HWND _window_handle, const UINT _state ) noexcept
     {
         ShowWindow( _window_handle, _state );
+    }
+    inline auto set_current_window_state( const UINT _state ) noexcept
+    {
+        set_window_state( get_current_window_handle(), _state );
     }
     inline auto keep_window_top( const HWND _window_handle, const DWORD _thread_id, const DWORD _window_thread_process_id ) noexcept
     {
@@ -108,51 +116,60 @@ namespace cpp_utils {
     {
         SetWindowPos( _window_handle, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
     }
-    inline auto ignore_console_exit_signal( const bool _is_ignore ) noexcept
+    inline auto cancel_top_current_window() noexcept
+    {
+        cancel_top_window( get_current_window_handle() );
+    }
+    inline auto ignore_current_console_exit_signal( const bool _is_ignore ) noexcept
     {
         return SetConsoleCtrlHandler( nullptr, static_cast< WINBOOL >( _is_ignore ) );
     }
-    inline auto enable_virtual_terminal_processing( const HANDLE _std_output_handle ) noexcept
+    inline auto enable_virtual_terminal_processing( const HANDLE _std_output_handle, const bool _is_enable ) noexcept
     {
         DWORD mode;
         GetConsoleMode( _std_output_handle, &mode );
-        mode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+        _is_enable ? mode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING : mode &= ~ENABLE_VIRTUAL_TERMINAL_PROCESSING;
         SetConsoleMode( _std_output_handle, mode );
     }
-    inline auto disable_virtual_terminal_processing( const HANDLE _std_output_handle ) noexcept
+    inline auto enable_current_virtual_terminal_processing( const bool _is_enable ) noexcept
     {
-        DWORD mode;
-        GetConsoleMode( _std_output_handle, &mode );
-        mode &= ~ENABLE_VIRTUAL_TERMINAL_PROCESSING;
-        SetConsoleMode( _std_output_handle, mode );
+        enable_virtual_terminal_processing( GetStdHandle( STD_OUTPUT_HANDLE ), _is_enable );
     }
     inline auto clear_console( const HANDLE _std_output_handle ) noexcept
     {
-        enable_virtual_terminal_processing( _std_output_handle );
+        enable_virtual_terminal_processing( _std_output_handle, true );
         std::print( "\033[H\033[2J" );
+    }
+    inline auto clear_current_console() noexcept
+    {
+        clear_console( GetStdHandle( STD_OUTPUT_HANDLE ) );
     }
     inline auto reset_console( const HANDLE _std_output_handle ) noexcept
     {
-        enable_virtual_terminal_processing( _std_output_handle );
+        enable_virtual_terminal_processing( _std_output_handle, true );
         std::print( "\033c" );
     }
-    inline auto set_console_title( const char *const _title ) noexcept
+    inline auto reset_current_console() noexcept
+    {
+        reset_console( GetStdHandle( STD_OUTPUT_HANDLE ) );
+    }
+    inline auto set_current_console_title( const char *const _title ) noexcept
     {
         SetConsoleTitleA( _title );
     }
-    inline auto set_console_title( const std::string &_title ) noexcept
+    inline auto set_current_console_title( const std::string &_title ) noexcept
     {
         SetConsoleTitleA( _title.data() );
     }
-    inline auto set_console_title( const wchar_t *const _title ) noexcept
+    inline auto set_current_console_title( const wchar_t *const _title ) noexcept
     {
         SetConsoleTitleW( _title );
     }
-    inline auto set_console_title( const std::wstring &_title ) noexcept
+    inline auto set_current_console_title( const std::wstring &_title ) noexcept
     {
         SetConsoleTitleW( _title.data() );
     }
-    inline auto set_console_charset( const UINT _charset_id ) noexcept
+    inline auto set_current_console_charset( const UINT _charset_id ) noexcept
     {
         SetConsoleOutputCP( _charset_id );
         SetConsoleCP( _charset_id );
@@ -167,9 +184,17 @@ namespace cpp_utils {
         SetConsoleScreenBufferSize( _std_output_handle, { _width, _height } );
         clear_console( _std_output_handle );
     }
+    inline auto set_current_console_size( const SHORT _width, const SHORT _height ) noexcept
+    {
+        set_console_size( GetConsoleWindow(), GetStdHandle( STD_OUTPUT_HANDLE ), _width, _height );
+    }
     inline auto set_window_translucency( const HWND _window_handle, const BYTE _value ) noexcept
     {
         SetLayeredWindowAttributes( _window_handle, RGB( 0, 0, 0 ), _value, LWA_ALPHA );
+    }
+    inline auto set_current_window_translucency( const HWND _window_handle, const BYTE _value ) noexcept
+    {
+        set_window_translucency( get_current_window_handle(), _value );
     }
     inline auto fix_window_size( const HWND _window_handle, const bool _is_enable ) noexcept
     {
@@ -179,6 +204,10 @@ namespace cpp_utils {
             ? GetWindowLongPtrW( _window_handle, GWL_STYLE ) & ~WS_SIZEBOX
             : GetWindowLongPtrW( _window_handle, GWL_STYLE ) | WS_SIZEBOX );
     }
+    inline auto fix_current_window_size( const bool _is_enable ) noexcept
+    {
+        fix_window_size( get_current_window_handle(), _is_enable );
+    }
     inline auto enable_window_menu( const HWND _window_handle, const bool _is_enable ) noexcept
     {
         SetWindowLongPtrW(
@@ -186,6 +215,10 @@ namespace cpp_utils {
           _is_enable
             ? GetWindowLongPtrW( _window_handle, GWL_STYLE ) | WS_SYSMENU
             : GetWindowLongPtrW( _window_handle, GWL_STYLE ) & ~WS_SYSMENU );
+    }
+    inline auto enable_current_window_menu( const bool _is_enable ) noexcept
+    {
+        enable_window_menu( get_current_window_handle(), _is_enable );
     }
     inline auto enable_window_minimize_ctrl( const HWND _window_handle, const bool _is_enable ) noexcept
     {
@@ -195,6 +228,10 @@ namespace cpp_utils {
             ? GetWindowLongPtrW( _window_handle, GWL_STYLE ) | WS_MINIMIZEBOX
             : GetWindowLongPtrW( _window_handle, GWL_STYLE ) & ~WS_MINIMIZEBOX );
     }
+    inline auto enable_current_window_minimize_ctrl( const bool _is_enable ) noexcept
+    {
+        enable_window_minimize_ctrl( get_current_window_handle(), _is_enable );
+    }
     inline auto enable_window_maximize_ctrl( const HWND _window_handle, const bool _is_enable ) noexcept
     {
         SetWindowLongPtrW(
@@ -203,11 +240,19 @@ namespace cpp_utils {
             ? GetWindowLongPtrW( _window_handle, GWL_STYLE ) | WS_MAXIMIZEBOX
             : GetWindowLongPtrW( _window_handle, GWL_STYLE ) & ~WS_MAXIMIZEBOX );
     }
+    inline auto enable_current_window_maximize_ctrl( const bool _is_enable ) noexcept
+    {
+        enable_window_maximize_ctrl( get_current_window_handle(), _is_enable );
+    }
     inline auto enable_window_close_ctrl( const HWND _window_handle, const bool _is_enable ) noexcept
     {
         EnableMenuItem(
           GetSystemMenu( _window_handle, FALSE ), SC_CLOSE,
           _is_enable ? MF_BYCOMMAND | MF_ENABLED : MF_BYCOMMAND | MF_DISABLED | MF_GRAYED );
+    }
+    inline auto enable_current_window_close_ctrl( const bool _is_enable ) noexcept
+    {
+        enable_window_close_ctrl( get_current_window_handle(), _is_enable );
     }
 #else
 # error "must be compiled on the Windows OS"
