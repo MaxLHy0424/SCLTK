@@ -359,15 +359,15 @@ namespace core {
     {
         auto launch_cmd{ []( ui_func_args _args ) static noexcept
         {
-            cpp_utils::set_console_title( INFO_SHORT_NAME " - 命令提示符" );
+            cpp_utils::set_current_console_title( INFO_SHORT_NAME " - 命令提示符" );
             cpp_utils::set_console_size( window_handle, std_output_handle, 120, 30 );
             cpp_utils::fix_window_size( window_handle, false );
             cpp_utils::enable_window_maximize_ctrl( window_handle, true );
             _args.parent_ui.set_limits( false, false );
             SetConsoleScreenBufferSize( std_output_handle, COORD{ 127, SHRT_MAX - 1 } );
             std::system( "cmd.exe" );
-            cpp_utils::set_console_charset( charset_id );
-            cpp_utils::set_console_title( INFO_SHORT_NAME );
+            cpp_utils::set_current_console_charset( charset_id );
+            cpp_utils::set_current_console_title( INFO_SHORT_NAME );
             cpp_utils::set_console_size( window_handle, std_output_handle, console_width, console_height );
             cpp_utils::fix_window_size( window_handle, true );
             cpp_utils::enable_window_maximize_ctrl( window_handle, false );
@@ -668,7 +668,7 @@ namespace core {
       public:
         auto operator()( ui_func_args )
         {
-            cpp_utils::set_console_charset( 65001 );
+            cpp_utils::set_current_console_charset( 65001 );
             u8print( u8"                    [ 破  解 ]\n\n\n" );
             if ( rules_.empty() ) {
                 u8print( u8" (i) 规则为空." );
@@ -677,7 +677,7 @@ namespace core {
             }
             u8print( u8" -> 正在生成并执行操作系统命令...\n{}\n", std::string( console_width, '-' ) );
             std::array{ &crack::singlethread_engine_, &crack::multithread_engine_ }[ is_parallel_op.get() ]( rules_ );
-            cpp_utils::set_console_charset( charset_id );
+            cpp_utils::set_current_console_charset( charset_id );
             return func_back;
         }
         crack( const rule_node &_rules ) noexcept
@@ -739,7 +739,7 @@ namespace core {
       public:
         auto operator()( ui_func_args )
         {
-            cpp_utils::set_console_charset( 65001 );
+            cpp_utils::set_current_console_charset( 65001 );
             u8print( u8"                    [ 恢  复 ]\n\n\n" );
             if ( rules_.empty() ) {
                 u8print( u8" (i) 规则为空." );
@@ -748,7 +748,7 @@ namespace core {
             }
             u8print( u8" -> 正在生成并执行操作系统命令...\n{}\n", std::string( console_width, '-' ) );
             std::array{ &restore::singlethread_engine_, &restore::multithread_engine_ }[ is_parallel_op.get() ]( rules_ );
-            cpp_utils::set_console_charset( charset_id );
+            cpp_utils::set_current_console_charset( charset_id );
             return func_back;
         }
         restore( const rule_node &_rules ) noexcept
