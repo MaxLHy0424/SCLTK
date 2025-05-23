@@ -409,7 +409,7 @@ namespace core {
         };
         constexpr cmd_item common_cmds[]{
           {"重启资源管理器",               R"(taskkill.exe /f /im explorer.exe && timeout.exe /t 3 /nobreak && start C:\Windows\explorer.exe)"},
-          {"重启至高级选项",               "shutdown.exe /r /o /f /t 15"                                                                      },
+          {"重启至高级选项",               "shutdown.exe /r /o /f /t 0"                                                                       },
           {"恢复 USB 设备访问",            R"(reg.exe add "HKLM\SYSTEM\CurrentControlSet\Services\USBSTOR" /f /t reg_dword /v Start /d 3)"    },
           {"恢复 Google Chrome 离线游戏",  R"(reg.exe delete "HKLM\SOFTWARE\Policies\Google\Chrome" /f /v AllowDinosaurEasterEgg)"            },
           {"恢复 Microsoft Edge 离线游戏", R"(reg.exe delete "HKLM\SOFTWARE\Policies\Microsoft\Edge" /f /v AllowSurfGame)"                    }
