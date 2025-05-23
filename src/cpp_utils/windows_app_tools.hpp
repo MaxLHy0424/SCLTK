@@ -192,7 +192,7 @@ namespace cpp_utils {
     {
         SetLayeredWindowAttributes( _window_handle, RGB( 0, 0, 0 ), _value, LWA_ALPHA );
     }
-    inline auto set_current_window_translucency( const HWND _window_handle, const BYTE _value ) noexcept
+    inline auto set_current_window_translucency( const BYTE _value ) noexcept
     {
         set_window_translucency( get_current_window_handle(), _value );
     }
