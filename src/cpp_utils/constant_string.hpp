@@ -1,5 +1,6 @@
 #pragma once
 #include <algorithm>
+#include <array>
 #include <concepts>
 #include <ranges>
 #include "type_tools.hpp"
@@ -13,11 +14,27 @@ namespace cpp_utils {
         requires( std::same_as< T, std::decay_t< T > > && N > 0 )
     class constant_string final {
       private:
-        T data_[ N ]{};
+        std::array< T, N > data_{};
       public:
-        auto get() const noexcept
+        constexpr auto data() const noexcept
         {
-            return const_cast< const T * >( data_ );
+            return const_cast< const T * >( data_.data() );
+        }
+        constexpr auto size() const noexcept
+        {
+            return data_.size();
+        }
+        constexpr auto max_size() const noexcept
+        {
+            return data_.max_size();
+        }
+        constexpr auto &at( const size_type index ) const noexcept
+        {
+            return data_.at( index );
+        }
+        const auto &operator[]( const size_type index ) const noexcept
+        {
+            return data_[ index ];
         }
         constexpr auto compare( const T *const src ) const noexcept
         {
@@ -92,15 +109,11 @@ namespace cpp_utils {
         {
             return !compare( src );
         }
-        const auto &operator[]( const size_type index ) const noexcept
-        {
-            return data_[ index ];
-        }
         auto operator=( const constant_string< T, N > & ) -> constant_string< T, N > & = delete;
         auto operator=( constant_string< T, N > && ) -> constant_string< T, N > &      = delete;
         consteval constant_string( const T ( &str )[ N ] ) noexcept
         {
-            std::ranges::copy( str, data_ );
+            std::ranges::copy( str, data_.data() );
         }
         consteval constant_string( const constant_string< T, N > & )     = default;
         consteval constant_string( constant_string< T, N > && ) noexcept = delete;
