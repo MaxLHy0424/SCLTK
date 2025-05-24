@@ -95,7 +95,7 @@ namespace cpp_utils {
         {
             return coroutine_handle_.address();
         }
-        auto destroy() const
+        auto &destroy() const
         {
             coroutine_handle_.destroy();
             return *this;
