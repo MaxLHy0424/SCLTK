@@ -8,8 +8,6 @@
 namespace cpp_utils {
     template < typename T >
     concept coroutine_func_return_type = requires { typename T::promise_type; };
-    template < typename T >
-    concept not_coroutine_func_return_type = !coroutine_func_return_type< T >;
     template < std::movable T >
     class coroutine final {
       public:
@@ -33,24 +31,16 @@ namespace cpp_utils {
             {
                 return std::suspend_always{};
             }
-            auto yield_value( const T &value ) noexcept
+            template < typename... Args >
+            auto yield_value( Args &&...args )
             {
-                current_value = value;
+                current_value.emplace( std::forward< Args >( args )... );
                 return std::suspend_always{};
             }
-            auto yield_value( T &&value ) noexcept
+            template < typename... Args >
+            auto return_value( Args &&...args )
             {
-                current_value = std::move( value );
-                return std::suspend_always{};
-            }
-            auto return_value( const T &value ) noexcept
-            {
-                current_value = value;
-                return std::suspend_always{};
-            }
-            auto return_value( T &&value ) noexcept
-            {
-                current_value = std::move( value );
+                current_value.emplace( std::forward< Args >( args )... );
                 return std::suspend_always{};
             }
             auto unhandled_exception() noexcept
@@ -108,6 +98,7 @@ namespace cpp_utils {
         auto destroy() const
         {
             coroutine_handle_.destroy();
+            return *this;
         }
         auto &safe_destroy() noexcept
         {
@@ -145,6 +136,7 @@ namespace cpp_utils {
         auto &resume() const
         {
             coroutine_handle_.resume();
+            safe_rethrow_exception();
             return *this;
         }
         auto &safe_resume() const
@@ -188,8 +180,7 @@ namespace cpp_utils {
         auto operator=( const coroutine< T > & ) -> coroutine< T > & = delete;
         auto operator=( coroutine< T > &&src ) noexcept -> coroutine< T > &
         {
-            reset( std::move( src ) );
-            return *this;
+            return reset( std::move( src ) );
         }
         coroutine() noexcept = default;
         coroutine( const handle_ coroutine_handle ) noexcept
@@ -247,9 +238,10 @@ namespace cpp_utils {
         {
             return coroutine_handle_.address();
         }
-        auto destroy() const
+        auto &destroy() const
         {
             coroutine_handle_.destroy();
+            return *this;
         }
         auto &safe_destroy() noexcept
         {
@@ -259,7 +251,7 @@ namespace cpp_utils {
             }
             return *this;
         }
-        auto reset( coroutine_void &&src ) noexcept
+        auto &reset( coroutine_void &&src ) noexcept
         {
             if ( this != &src ) [[likely]] {
                 if ( !empty() ) {
@@ -268,6 +260,7 @@ namespace cpp_utils {
                 coroutine_handle_     = src.coroutine_handle_;
                 src.coroutine_handle_ = {};
             }
+            return *this;
         }
         auto has_exception() const noexcept
         {
@@ -286,6 +279,7 @@ namespace cpp_utils {
         auto &resume() const
         {
             coroutine_handle_.resume();
+            safe_rethrow_exception();
             return *this;
         }
         auto &safe_resume() const
@@ -302,8 +296,7 @@ namespace cpp_utils {
         auto operator=( const coroutine_void & ) -> coroutine_void & = delete;
         auto operator=( coroutine_void &&src ) noexcept -> coroutine_void &
         {
-            reset( std::move( src ) );
-            return *this;
+            return reset( std::move( src ) );
         }
         coroutine_void() noexcept = default;
         coroutine_void( const handle_ coroutine_handle ) noexcept
