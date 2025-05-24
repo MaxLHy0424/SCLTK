@@ -9,6 +9,11 @@ namespace cpp_utils {
     template < typename T >
     concept pointer_type = std::is_pointer_v< T >;
     template < pointer_type T >
+    inline auto to_universal_pointer( const T pointer )
+    {
+        return reinterpret_cast< void * >( pointer );
+    }
+    template < pointer_type T >
     inline auto pointer_to_string( const T pointer )
     {
         using namespace std::string_literals;

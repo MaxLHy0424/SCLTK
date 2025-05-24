@@ -10,7 +10,6 @@
 #include <typeindex>
 #include <utility>
 #include <vector>
-#include "coroutine.hpp"
 #include "type_tools.hpp"
 namespace cpp_utils {
 #if ( defined( __GNUC__ ) && defined( __GXX_RTTI ) ) || ( defined( _MSC_VER ) && defined( _CPPRTTI ) ) \
@@ -22,7 +21,7 @@ namespace cpp_utils {
         virtual auto args_type() const -> const std::vector< std::type_index > &     = 0;
         virtual auto invoke( const std::vector< std::any > &args ) const -> std::any = 0;
     };
-    template < not_coroutine_func_return_type T, typename... Args >
+    template < typename T, typename... Args >
     class func_wrapper final : public func_wrapper_impl {
       private:
         std::function< T( Args... ) > func_;
@@ -96,49 +95,49 @@ namespace cpp_utils {
             ( target.emplace_back( std::forward< Args >( args ) ), ... );
             return target;
         }
-        template < not_coroutine_func_return_type T, typename... Args >
+        template < typename T, typename... Args >
         auto &add_front( T ( *func )( Args... ) )
         {
             func_nodes_.emplace_front( std::make_unique< func_wrapper< T, Args... > >( func ) );
             return *this;
         }
-        template < not_coroutine_func_return_type T, typename... Args >
+        template < typename T, typename... Args >
         auto &add_front( std::function< T( Args... ) > func )
         {
             func_nodes_.emplace_front( std::make_unique< func_wrapper< T, Args... > >( std::move( func ) ) );
             return *this;
         }
-        template < not_coroutine_func_return_type T, typename... Args >
+        template < typename T, typename... Args >
         auto &add_back( T ( *func )( Args... ) )
         {
             func_nodes_.emplace_back( std::make_unique< func_wrapper< T, Args... > >( func ) );
             return *this;
         }
-        template < not_coroutine_func_return_type T, typename... Args >
+        template < typename T, typename... Args >
         auto &add_back( std::function< T( Args... ) > func )
         {
             func_nodes_.emplace_back( std::make_unique< func_wrapper< T, Args... > >( std::move( func ) ) );
             return *this;
         }
-        template < not_coroutine_func_return_type T, typename... Args >
+        template < typename T, typename... Args >
         auto &insert( const size_type index, T ( *func )( Args... ) )
         {
             func_nodes_.emplace( func_nodes_.cbegin() + index, std::make_unique< func_wrapper< T, Args... > >( func ) );
             return *this;
         }
-        template < not_coroutine_func_return_type T, typename... Args >
+        template < typename T, typename... Args >
         auto &insert( const size_type index, std::function< T( Args... ) > func )
         {
             func_nodes_.emplace( func_nodes_.cbegin() + index, std::make_unique< func_wrapper< T, Args... > >( std::move( func ) ) );
             return *this;
         }
-        template < not_coroutine_func_return_type T, typename... Args >
+        template < typename T, typename... Args >
         auto &edit( const size_type index, T ( *func )( Args... ) )
         {
             func_nodes_.at( index ) = std::make_unique< func_wrapper< T, Args... > >( func );
             return *this;
         }
-        template < not_coroutine_func_return_type T, typename... Args >
+        template < typename T, typename... Args >
         auto &edit( const size_type index, std::function< T( Args... ) > func )
         {
             func_nodes_.at( index ) = std::make_unique< func_wrapper< T, Args... > >( std::move( func ) );
@@ -164,7 +163,7 @@ namespace cpp_utils {
             func_nodes_.clear();
             return *this;
         }
-        template < not_coroutine_func_return_type T, typename... Args >
+        template < typename T, typename... Args >
         decltype( auto ) invoke( const size_type index, Args &&...args ) const
         {
             if constexpr ( std::same_as< std::decay_t< T >, void > ) {
@@ -174,7 +173,7 @@ namespace cpp_utils {
                   func_nodes_.at( index )->invoke( make_args( std::forward< Args >( args )... ) ) ) );
             }
         }
-        template < not_coroutine_func_return_type T >
+        template < typename T >
         decltype( auto ) dynamic_invoke( const size_type index, const std::vector< std::any > &args ) const
         {
             if constexpr ( std::same_as< std::decay_t< T >, void > ) {

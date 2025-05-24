@@ -7,8 +7,8 @@
 #include <utility>
 #include <vector>
 namespace cpp_utils {
-    template < std::random_access_iterator Iter, typename Callable >
-    inline auto parallel_for_each_impl( unsigned int thread_num, Iter &&begin, Iter &&end, Callable &&func )
+    template < std::random_access_iterator Iter, typename Invocable >
+    inline auto parallel_for_each_impl( unsigned int thread_num, Iter &&begin, Iter &&end, Invocable &&func )
     {
         [[assume( thread_num > 0 )]];
         const auto chunk_size{ ( end - begin ) / thread_num };
@@ -29,12 +29,12 @@ namespace cpp_utils {
             thread.join();
         }
     }
-    template < std::random_access_iterator Iter, typename Callable >
-    inline auto parallel_for_each( Iter &&begin, Iter &&end, Callable &&func )
+    template < std::random_access_iterator Iter, typename Invocable >
+    inline auto parallel_for_each( Iter &&begin, Iter &&end, Invocable &&func )
     {
         parallel_for_each_impl(
           std::max( std::thread::hardware_concurrency(), 1U ), std::forward< Iter >( begin ), std::forward< Iter >( end ),
-          std::forward< Callable >( func ) );
+          std::forward< Invocable >( func ) );
     }
     class thread_manager final {
       private:
@@ -62,10 +62,10 @@ namespace cpp_utils {
             threads_.swap( src.threads_ );
             return *this;
         }
-        template < typename Callable, typename... Args >
-        auto &add( Callable &&func, Args &&...args )
+        template < typename Invocable, typename... Args >
+        auto &add( Invocable &&func, Args &&...args )
         {
-            threads_.emplace_back( std::forward< Callable >( func ), std::forward< Args >( args )... );
+            threads_.emplace_back( std::forward< Invocable >( func ), std::forward< Args >( args )... );
             return *this;
         }
         auto &join()
