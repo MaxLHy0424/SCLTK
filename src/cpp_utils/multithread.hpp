@@ -7,20 +7,20 @@
 #include <utility>
 #include <vector>
 namespace cpp_utils {
-    template < std::random_access_iterator _iterator_, typename _callable_ >
-    inline auto parallel_for_each_impl( unsigned int _thread_num, _iterator_ &&_begin, _iterator_ &&_end, _callable_ &&_func )
+    template < std::random_access_iterator Iter, typename Callable >
+    inline auto parallel_for_each_impl( unsigned int thread_num, Iter &&begin, Iter &&end, Callable &&func )
     {
-        [[assume( _thread_num > 0 )]];
-        const auto chunk_size{ ( _end - _begin ) / _thread_num };
+        [[assume( thread_num > 0 )]];
+        const auto chunk_size{ ( end - begin ) / thread_num };
         std::vector< std::thread > threads;
-        threads.reserve( _thread_num );
-        for ( const auto i : std::ranges::iota_view{ decltype( _thread_num ){ 0 }, _thread_num } ) {
-            const auto chunk_start{ _begin + i * chunk_size };
-            const auto chunk_end{ ( i == _thread_num - 1 ) ? _end : chunk_start + chunk_size };
-            threads.emplace_back( [ =, &_func ]
+        threads.reserve( thread_num );
+        for ( const auto i : std::ranges::iota_view{ decltype( thread_num ){ 0 }, thread_num } ) {
+            const auto chunk_start{ begin + i * chunk_size };
+            const auto chunk_end{ ( i == thread_num - 1 ) ? end : chunk_start + chunk_size };
+            threads.emplace_back( [ =, &func ]
             {
                 for ( auto it{ chunk_start }; it != chunk_end; ++it ) {
-                    _func( *it );
+                    func( *it );
                 }
                 std::this_thread::yield();
             } );
@@ -29,14 +29,14 @@ namespace cpp_utils {
             thread.join();
         }
     }
-    template < std::random_access_iterator _iterator_, typename _callable_ >
-    inline auto parallel_for_each( _iterator_ &&_begin, _iterator_ &&_end, _callable_ &&_func )
+    template < std::random_access_iterator Iter, typename Callable >
+    inline auto parallel_for_each( Iter &&begin, Iter &&end, Callable &&func )
     {
         parallel_for_each_impl(
-          std::ranges::max( std::thread::hardware_concurrency(), 1U ), std::forward< _iterator_ >( _begin ),
-          std::forward< _iterator_ >( _end ), std::forward< _callable_ >( _func ) );
+          std::max( std::thread::hardware_concurrency(), 1U ), std::forward< Iter >( begin ), std::forward< Iter >( end ),
+          std::forward< Callable >( func ) );
     }
-    class thread_pool final {
+    class thread_manager final {
       private:
         std::deque< std::jthread > threads_{};
       public:
@@ -57,15 +57,15 @@ namespace cpp_utils {
             threads_.shrink_to_fit();
             return *this;
         }
-        auto &swap( thread_pool &_src ) noexcept
+        auto &swap( thread_manager &src ) noexcept
         {
-            threads_.swap( _src.threads_ );
+            threads_.swap( src.threads_ );
             return *this;
         }
-        template < typename _func_, typename... _args_ >
-        auto &add( _func_ &&_func, _args_ &&..._args )
+        template < typename Callable, typename... Args >
+        auto &add( Callable &&func, Args &&...args )
         {
-            threads_.emplace_back( std::forward< _func_ >( _func ), std::forward< _args_ >( _args )... );
+            threads_.emplace_back( std::forward< Callable >( func ), std::forward< Args >( args )... );
             return *this;
         }
         auto &join()
@@ -107,11 +107,11 @@ namespace cpp_utils {
             }
             return *this;
         }
-        auto operator=( const thread_pool & ) -> thread_pool & = delete;
-        auto operator=( thread_pool && ) -> thread_pool &      = default;
-        thread_pool() noexcept                                 = default;
-        thread_pool( const thread_pool & )                     = delete;
-        thread_pool( thread_pool && ) noexcept                 = default;
-        ~thread_pool()                                         = default;
+        auto operator=( const thread_manager & ) -> thread_manager & = delete;
+        auto operator=( thread_manager && ) -> thread_manager &      = default;
+        thread_manager() noexcept                                    = default;
+        thread_manager( const thread_manager & )                     = delete;
+        thread_manager( thread_manager && ) noexcept                 = default;
+        ~thread_manager()                                            = default;
     };
 }

@@ -6,61 +6,61 @@
 #include <type_traits>
 #include "type_tools.hpp"
 namespace cpp_utils {
-    template < typename _type_ >
-    concept pointer_type = std::is_pointer_v< _type_ >;
-    template < pointer_type _type_ >
-    inline auto pointer_to_string( const _type_ _ptr )
+    template < typename T >
+    concept pointer_type = std::is_pointer_v< T >;
+    template < pointer_type T >
+    inline auto pointer_to_string( const T pointer )
     {
         using namespace std::string_literals;
-        return _ptr == nullptr ? "nullptr"s : std::format( "0x{:x}", reinterpret_cast< std::uintptr_t >( _ptr ) );
+        return pointer == nullptr ? "nullptr"s : std::format( "0x{:x}", reinterpret_cast< std::uintptr_t >( pointer ) );
     }
-    template < pointer_type _type_ >
-        requires( !std::same_as< std::decay_t< _type_ >, void * > && !std::is_const_v< _type_ > )
+    template < pointer_type T >
+        requires( !std::same_as< std::decay_t< T >, void * > && !std::is_const_v< T > )
     class raw_pointer_wrapper final {
       private:
-        _type_ ptr_{};
+        T pointer_{};
       public:
         auto get() const noexcept
         {
-            return ptr_;
+            return pointer_;
         }
-        operator _type_() const noexcept
+        operator T() const noexcept
         {
-            return ptr_;
+            return pointer_;
         }
         auto &operator*() const
         {
-            return *ptr_;
+            return *pointer_;
         }
-        auto &operator[]( const size_type _n ) const
+        auto &operator[]( const size_type n ) const
         {
-            return ptr_[ _n ];
+            return pointer_[ n ];
         }
-        auto operator+( const size_type _n ) const noexcept
+        auto operator+( const size_type n ) const noexcept
         {
-            return ptr_ + _n;
+            return pointer_ + n;
         }
-        auto operator-( const size_type _n ) const noexcept
+        auto operator-( const size_type n ) const noexcept
         {
-            return ptr_ - _n;
+            return pointer_ - n;
         }
-        auto operator++() noexcept -> raw_pointer_wrapper< _type_ > &
+        auto operator++() noexcept -> raw_pointer_wrapper< T > &
         {
-            ++ptr_;
+            ++pointer_;
             return *this;
         }
-        auto operator++( int ) noexcept -> raw_pointer_wrapper< _type_ >
+        auto operator++( int ) noexcept -> raw_pointer_wrapper< T >
         {
-            return ptr_++;
+            return pointer_++;
         }
-        constexpr auto operator=( const raw_pointer_wrapper< _type_ > & ) noexcept -> raw_pointer_wrapper< _type_ > & = default;
-        constexpr auto operator=( raw_pointer_wrapper< _type_ > && ) noexcept -> raw_pointer_wrapper< _type_ > &      = default;
-        constexpr raw_pointer_wrapper() noexcept                                                                      = default;
-        constexpr raw_pointer_wrapper( _type_ _ptr ) noexcept
-          : ptr_{ _ptr }
+        constexpr auto operator=( const raw_pointer_wrapper< T > & ) noexcept -> raw_pointer_wrapper< T > & = default;
+        constexpr auto operator=( raw_pointer_wrapper< T > && ) noexcept -> raw_pointer_wrapper< T > &      = default;
+        constexpr raw_pointer_wrapper() noexcept                                                            = default;
+        constexpr raw_pointer_wrapper( T pointer ) noexcept
+          : pointer_{ pointer }
         { }
-        constexpr raw_pointer_wrapper( const raw_pointer_wrapper< _type_ > & ) noexcept = default;
-        constexpr raw_pointer_wrapper( raw_pointer_wrapper< _type_ > && ) noexcept      = default;
-        ~raw_pointer_wrapper() noexcept                                                 = default;
+        constexpr raw_pointer_wrapper( const raw_pointer_wrapper< T > & ) noexcept = default;
+        constexpr raw_pointer_wrapper( raw_pointer_wrapper< T > && ) noexcept      = default;
+        ~raw_pointer_wrapper() noexcept                                            = default;
     };
 }

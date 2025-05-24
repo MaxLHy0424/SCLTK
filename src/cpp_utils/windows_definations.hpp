@@ -64,6 +64,6 @@ namespace cpp_utils {
         inline constexpr UINT restore{ SW_RESTORE };
     }
 #else
-# error "must be compiled on the Windows OS"
+# error "must be compiled on the windows os"
 #endif
 }

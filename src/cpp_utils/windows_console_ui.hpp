@@ -25,13 +25,13 @@ namespace cpp_utils {
             auto operator=( const func_args & ) noexcept -> func_args & = default;
             auto operator=( func_args && ) noexcept -> func_args &      = default;
             func_args(
-              console_ui &_parent_ui, const size_type _node_index,
-              const MOUSE_EVENT_RECORD _event = MOUSE_EVENT_RECORD{ {}, mouse::button_left, {}, {} } ) noexcept
-              : parent_ui{ _parent_ui }
-              , node_index{ _node_index }
-              , button_state{ _event.dwButtonState }
-              , ctrl_state{ _event.dwControlKeyState }
-              , event_flag{ _event.dwEventFlags }
+              console_ui &parent_ui, const size_type node_index,
+              const MOUSE_EVENT_RECORD event = MOUSE_EVENT_RECORD{ {}, mouse::button_left, {}, {} } ) noexcept
+              : parent_ui{ parent_ui }
+              , node_index{ node_index }
+              , button_state{ event.dwButtonState }
+              , ctrl_state{ event.dwControlKeyState }
+              , event_flag{ event.dwEventFlags }
             { }
             func_args( const func_args & ) noexcept = default;
             func_args( func_args && ) noexcept      = default;
@@ -41,7 +41,7 @@ namespace cpp_utils {
       private:
         inline static HANDLE std_input_handle_;
         inline static HANDLE std_output_handle_;
-        enum class console_attrs_ : char { normal, lock_text, lock_all };
+        enum class console_attrs_selection_ : char { normal, lock_text, lock_all };
         struct line_node_ final {
             std::string text{};
             callback_type func{};
@@ -49,58 +49,58 @@ namespace cpp_utils {
             WORD intensity_attrs{ console_text::foreground_green | console_text::foreground_blue };
             WORD last_attrs{ console_text::default_attrs };
             COORD position{};
-            auto set_attrs( const WORD _attrs ) noexcept
+            auto set_attrs( const WORD current_attrs ) noexcept
             {
-                SetConsoleTextAttribute( std_output_handle_, _attrs );
-                last_attrs = _attrs;
+                SetConsoleTextAttribute( std_output_handle_, current_attrs );
+                last_attrs = current_attrs;
             }
-            auto operator==( const COORD _position ) const noexcept
+            auto operator==( const COORD current_position ) const noexcept
             {
-                return position.Y == _position.Y && position.X <= _position.X
-                    && _position.X < position.X + static_cast< SHORT >( text.size() );
+                return position.Y == current_position.Y && position.X <= current_position.X
+                    && current_position.X < position.X + static_cast< SHORT >( text.size() );
             }
-            auto operator!=( const COORD _position ) const noexcept
+            auto operator!=( const COORD current_position ) const noexcept
             {
-                return !( *this == _position );
+                return !( *this == current_position );
             }
             auto operator=( const line_node_ & ) noexcept -> line_node_ & = default;
             auto operator=( line_node_ && ) noexcept -> line_node_ &      = default;
             line_node_() noexcept                                         = default;
-            line_node_( const std::string_view _text, callback_type &_func, const WORD _default_attrs, const WORD _intensity_attrs ) noexcept
-              : text{ _text }
-              , func{ std::move( _func ) }
-              , default_attrs{ _default_attrs }
-              , intensity_attrs{ _intensity_attrs }
-              , last_attrs{ _default_attrs }
+            line_node_( const std::string_view text, callback_type &func, const WORD default_attrs, const WORD intensity_attrs ) noexcept
+              : text{ text }
+              , func{ std::move( func ) }
+              , default_attrs{ default_attrs }
+              , intensity_attrs{ intensity_attrs }
+              , last_attrs{ default_attrs }
             { }
             line_node_( const line_node_ & )     = default;
             line_node_( line_node_ && ) noexcept = default;
             ~line_node_() noexcept               = default;
         };
         std::deque< line_node_ > lines_{};
-        static auto show_cursor_( const WINBOOL _is_show ) noexcept
+        static auto show_cursor_( const WINBOOL is_show ) noexcept
         {
             CONSOLE_CURSOR_INFO cursor_data;
             GetConsoleCursorInfo( std_output_handle_, &cursor_data );
-            cursor_data.bVisible = _is_show;
+            cursor_data.bVisible = is_show;
             SetConsoleCursorInfo( std_output_handle_, &cursor_data );
         }
-        static auto edit_console_attrs_( const console_attrs_ _attrs ) noexcept
+        static auto edit_console_attrs_( const console_attrs_selection_ attrs_selection ) noexcept
         {
             DWORD attrs;
             GetConsoleMode( std_input_handle_, &attrs );
-            switch ( _attrs ) {
-                case console_attrs_::normal :
+            switch ( attrs_selection ) {
+                case console_attrs_selection_::normal :
                     attrs |= ENABLE_QUICK_EDIT_MODE;
                     attrs |= ENABLE_INSERT_MODE;
                     attrs |= ENABLE_MOUSE_INPUT;
                     break;
-                case console_attrs_::lock_text :
+                case console_attrs_selection_::lock_text :
                     attrs &= ~ENABLE_QUICK_EDIT_MODE;
                     attrs &= ~ENABLE_INSERT_MODE;
                     attrs |= ENABLE_MOUSE_INPUT;
                     break;
-                case console_attrs_::lock_all :
+                case console_attrs_selection_::lock_all :
                     attrs &= ~ENABLE_QUICK_EDIT_MODE;
                     attrs &= ~ENABLE_INSERT_MODE;
                     attrs &= ~ENABLE_MOUSE_INPUT;
@@ -115,11 +115,11 @@ namespace cpp_utils {
             GetConsoleScreenBufferInfo( std_output_handle_, &console_data );
             return console_data.dwCursorPosition;
         }
-        static auto set_cursor_( const COORD _cursor_position ) noexcept
+        static auto set_cursor_( const COORD cursor_position ) noexcept
         {
-            SetConsoleCursorPosition( std_output_handle_, _cursor_position );
+            SetConsoleCursorPosition( std_output_handle_, cursor_position );
         }
-        static auto get_event_( const bool _is_move = true ) noexcept
+        static auto get_event_( const bool is_move = true ) noexcept
         {
             using namespace std::chrono_literals;
             INPUT_RECORD record;
@@ -127,7 +127,7 @@ namespace cpp_utils {
             while ( true ) {
                 std::this_thread::sleep_for( 50ms );
                 ReadConsoleInputW( std_input_handle_, &record, 1, &reg );
-                if ( record.EventType == MOUSE_EVENT && ( _is_move || record.Event.MouseEvent.dwEventFlags != mouse::move ) ) {
+                if ( record.EventType == MOUSE_EVENT && ( is_move || record.Event.MouseEvent.dwEventFlags != mouse::move ) ) {
                     return record.Event.MouseEvent;
                 }
             }
@@ -145,20 +145,20 @@ namespace cpp_utils {
             std::print( "{}", std::string( static_cast< unsigned int >( width ) * static_cast< unsigned int >( height ), ' ' ) );
             set_cursor_( COORD{ 0, 0 } );
         }
-        static auto write_( const std::string &_text, const bool _is_endl = false )
+        static auto write_( const std::string &text, const bool is_endl = false )
         {
-            std::print( "{}", _text );
-            if ( _is_endl ) {
+            std::print( "{}", text );
+            if ( is_endl ) {
                 std::print( "\n" );
             }
         }
-        static auto rewrite_( const COORD _cursor_position, const std::string &_text )
+        static auto rewrite_( const COORD cursor_position, const std::string &text )
         {
-            set_cursor_( COORD{ 0, _cursor_position.Y } );
-            write_( std::string( _cursor_position.X, ' ' ) );
-            set_cursor_( COORD{ 0, _cursor_position.Y } );
-            write_( _text );
-            set_cursor_( COORD{ 0, _cursor_position.Y } );
+            set_cursor_( COORD{ 0, cursor_position.Y } );
+            write_( std::string( cursor_position.X, ' ' ) );
+            set_cursor_( COORD{ 0, cursor_position.Y } );
+            write_( text );
+            set_cursor_( COORD{ 0, cursor_position.Y } );
         }
         auto init_pos_()
         {
@@ -170,26 +170,26 @@ namespace cpp_utils {
                 write_( line.text, &line != tail );
             }
         }
-        auto refresh_( const COORD _hang_position )
+        auto refresh_( const COORD hang_position )
         {
             for ( auto &line : lines_ ) {
-                if ( line == _hang_position && line.last_attrs != line.intensity_attrs ) {
+                if ( line == hang_position && line.last_attrs != line.intensity_attrs ) {
                     line.set_attrs( line.intensity_attrs );
                     rewrite_( line.position, line.text );
                 }
-                if ( line != _hang_position && line.last_attrs != line.default_attrs ) {
+                if ( line != hang_position && line.last_attrs != line.default_attrs ) {
                     line.set_attrs( line.default_attrs );
                     rewrite_( line.position, line.text );
                 }
             }
         }
-        auto invoke_func_( const MOUSE_EVENT_RECORD &_event )
+        auto invoke_func_( const MOUSE_EVENT_RECORD &current_event )
         {
             auto is_exit{ func_back };
             auto size{ lines_.size() };
-            for ( const auto idx : std::ranges::iota_view{ decltype( size ){ 0 }, size } ) {
-                auto &line{ lines_[ idx ] };
-                if ( line != _event.dwMousePosition ) {
+            for ( const auto i : std::ranges::iota_view{ decltype( size ){ 0 }, size } ) {
+                auto &line{ lines_[ i ] };
+                if ( line != current_event.dwMousePosition ) {
                     continue;
                 }
                 if ( line.func == nullptr ) {
@@ -198,10 +198,10 @@ namespace cpp_utils {
                 cls_();
                 line.set_attrs( line.default_attrs );
                 show_cursor_( FALSE );
-                edit_console_attrs_( console_attrs_::lock_all );
-                is_exit = line.func( func_args{ *this, idx, _event } );
+                edit_console_attrs_( console_attrs_selection_::lock_all );
+                is_exit = line.func( func_args{ *this, i, current_event } );
                 show_cursor_( FALSE );
-                edit_console_attrs_( console_attrs_::lock_text );
+                edit_console_attrs_( console_attrs_selection_::lock_text );
                 init_pos_();
                 break;
             }
@@ -220,9 +220,9 @@ namespace cpp_utils {
         {
             return lines_.max_size();
         }
-        auto &resize( const size_type _size )
+        auto &resize( const size_type size )
         {
-            lines_.resize( _size );
+            lines_.resize( size );
             return *this;
         }
         auto &optimize_storage() noexcept
@@ -237,54 +237,57 @@ namespace cpp_utils {
             lines_.shrink_to_fit();
             return *this;
         }
-        auto &swap( console_ui &_src ) noexcept
+        auto &swap( console_ui &src ) noexcept
         {
-            lines_.swap( _src.lines_ );
+            lines_.swap( src.lines_ );
             return *this;
         }
         auto &add_front(
-          const std::string_view _text, callback_type _func = nullptr,
-          const WORD _intensity_attrs = console_text::foreground_green | console_text::foreground_blue,
-          const WORD _default_attrs   = console_text::default_attrs )
+          const std::string_view text,
+          callback_type func         = nullptr,
+          const WORD intensity_attrs = console_text::foreground_green | console_text::foreground_blue,
+          const WORD default_attrs   = console_text::default_attrs )
         {
-            lines_.emplace_front( _text, _func, _default_attrs, _func != nullptr ? _intensity_attrs : _default_attrs );
+            lines_.emplace_front( text, func, default_attrs, func != nullptr ? intensity_attrs : default_attrs );
             return *this;
         }
         auto &add_back(
-          const std::string_view _text, callback_type _func = nullptr,
-          const WORD _intensity_attrs = console_text::foreground_blue | console_text::foreground_green,
-          const WORD _default_attrs   = console_text::default_attrs )
+          const std::string_view text,
+          callback_type func         = nullptr,
+          const WORD intensity_attrs = console_text::foreground_blue | console_text::foreground_green,
+          const WORD default_attrs   = console_text::default_attrs )
         {
-            lines_.emplace_back( _text, _func, _default_attrs, _func != nullptr ? _intensity_attrs : _default_attrs );
+            lines_.emplace_back( text, func, default_attrs, func != nullptr ? intensity_attrs : default_attrs );
             return *this;
         }
         auto &insert(
-          const size_type _index, const std::string_view _text, callback_type _func = nullptr,
-          const WORD _intensity_attrs = console_text::foreground_green | console_text::foreground_blue,
-          const WORD _default_attrs   = console_text::default_attrs )
+          const size_type index,
+          const std::string_view text,
+          callback_type func         = nullptr,
+          const WORD intensity_attrs = console_text::foreground_green | console_text::foreground_blue,
+          const WORD default_attrs   = console_text::default_attrs )
         {
-            lines_.emplace(
-              lines_.cbegin() + _index, _text, _func, _default_attrs, _func != nullptr ? _intensity_attrs : _default_attrs );
+            lines_.emplace( lines_.cbegin() + index, text, func, default_attrs, func != nullptr ? intensity_attrs : default_attrs );
             return *this;
         }
-        auto &edit_text( const size_type _index, const std::string_view _text )
+        auto &edit_text( const size_type index, const std::string_view text )
         {
-            lines_.at( _index ).text = _text;
+            lines_.at( index ).text = text;
             return *this;
         }
-        auto &edit_func( const size_type _index, callback_type _func )
+        auto &edit_func( const size_type index, callback_type func )
         {
-            lines_.at( _index ).func = std::move( _func );
+            lines_.at( index ).func = std::move( func );
             return *this;
         }
-        auto &edit_intensity_attrs( const size_type _index, const WORD _intensity_attrs )
+        auto &edit_intensity_attrs( const size_type index, const WORD intensity_attrs )
         {
-            lines_.at( _index ).intensity_attrs = _intensity_attrs;
+            lines_.at( index ).intensity_attrs = intensity_attrs;
             return *this;
         }
-        auto &edit_default_attrs( const size_type _index, const WORD _default_attrs )
+        auto &edit_default_attrs( const size_type index, const WORD default_attrs )
         {
-            lines_.at( _index ).default_attrs = _default_attrs;
+            lines_.at( index ).default_attrs = default_attrs;
             return *this;
         }
         auto &remove_front() noexcept
@@ -297,9 +300,9 @@ namespace cpp_utils {
             lines_.pop_back();
             return *this;
         }
-        auto &remove( const size_type _begin, const size_type _end )
+        auto &remove( const size_type begin, const size_type length )
         {
-            lines_.erase( lines_.cbegin() + _begin, lines_.cbegin() + _end );
+            lines_.erase( lines_.cbegin() + begin, lines_.cbegin() + begin + length );
             return *this;
         }
         auto &clear() noexcept
@@ -314,7 +317,7 @@ namespace cpp_utils {
             }
             using namespace std::chrono_literals;
             show_cursor_( FALSE );
-            edit_console_attrs_( console_attrs_::lock_text );
+            edit_console_attrs_( console_attrs_selection_::lock_text );
             init_pos_();
             MOUSE_EVENT_RECORD event;
             auto func_return_value{ func_back };
@@ -333,10 +336,10 @@ namespace cpp_utils {
             cls_();
             return *this;
         }
-        auto &set_limits( const bool _is_hide_cursor, const bool _is_lock_text ) noexcept
+        auto &set_limits( const bool is_hide_cursor, const bool is_lock_text ) noexcept
         {
-            show_cursor_( static_cast< WINBOOL >( !_is_hide_cursor ) );
-            edit_console_attrs_( _is_lock_text ? console_attrs_::lock_all : console_attrs_::normal );
+            show_cursor_( static_cast< WINBOOL >( !is_hide_cursor ) );
+            edit_console_attrs_( is_lock_text ? console_attrs_selection_::lock_all : console_attrs_selection_::normal );
             return *this;
         }
         auto operator=( const console_ui & ) noexcept -> console_ui & = default;
@@ -350,16 +353,16 @@ namespace cpp_utils {
                 std_output_handle_ = GetStdHandle( console_handle_flag::std_output );
             }
         }
-        console_ui( const HANDLE _std_input_handle, const HANDLE _std_output_handle ) noexcept
+        console_ui( const HANDLE std_input_handle, const HANDLE std_output_handle ) noexcept
         {
-            std_input_handle_  = _std_input_handle;
-            std_output_handle_ = _std_output_handle;
+            std_input_handle_  = std_input_handle;
+            std_output_handle_ = std_output_handle;
         }
         console_ui( const console_ui & ) noexcept = default;
         console_ui( console_ui && ) noexcept      = default;
         ~console_ui() noexcept                    = default;
     };
 #else
-# error "must be compiled on the Windows OS"
+# error "must be compiled on the windows os"
 #endif
 }
