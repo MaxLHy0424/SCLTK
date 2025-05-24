@@ -1,4 +1,4 @@
-<div align = "center">
+<div align="center">
 
 ![title](./img/title.png)\
 **Student Computer Lab Toolkit**\
