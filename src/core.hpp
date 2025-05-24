@@ -173,21 +173,21 @@ namespace core {
         ~rule_node()                   = default;
     };
     inline rule_node custom_rules{ "自定义", {}, {} };
-    inline const rule_node builtin_rules[]{
-      {"极域电子教室",
-       { "StudentMain.exe", "DispcapHelper.exe", "VRCwPlayer.exe", "InstHelpApp.exe", "InstHelpApp64.exe", "TDOvrSet.exe",
-          "GATESRV.exe", "ProcHelper64.exe", "MasterHelper.exe" },
-       { "TDNetFilter", "TDFileFilter", "STUDSRV" }},
-      {"联想智能云教室",
-       { "vncviewer.exe", "tvnserver32.exe", "WfbsPnpInstall.exe", "WFBSMon.exe", "WFBSMlogon.exe", "WFBSSvrLogShow.exe",
-          "ResetIp.exe", "FuncForWIN64.exe", "CertMgr.exe", "Fireware.exe", "BCDBootCopy.exe", "refreship.exe",
-          "lenovoLockScreen.exe", "PortControl64.exe", "DesktopCheck.exe", "DeploymentManager.exe", "DeploymentAgent.exe",
-          "XYNTService.exe" },
-       { "BSAgentSvr", "tvnserver", "WFBSMlogon" } },
-      {"红蜘蛛多媒体网络教室",
-       { "rscheck.exe", "checkrs.exe", "REDAgent.exe", "PerformanceCheck.exe", "edpaper.exe", "Adapter.exe", "repview.exe",
-          "FormatPaper.exe" },
-       { "appcheck2", "checkapp2" }                }
+    inline const std::array< rule_node, 3 > builtin_rules{
+      { { "极域电子教室",
+          { "StudentMain.exe", "DispcapHelper.exe", "VRCwPlayer.exe", "InstHelpApp.exe", "InstHelpApp64.exe", "TDOvrSet.exe",
+            "GATESRV.exe", "ProcHelper64.exe", "MasterHelper.exe" },
+          { "TDNetFilter", "TDFileFilter", "STUDSRV" } },
+       { "联想智能云教室",
+          { "vncviewer.exe", "tvnserver32.exe", "WfbsPnpInstall.exe", "WFBSMon.exe", "WFBSMlogon.exe", "WFBSSvrLogShow.exe",
+            "ResetIp.exe", "FuncForWIN64.exe", "CertMgr.exe", "Fireware.exe", "BCDBootCopy.exe", "refreship.exe",
+            "lenovoLockScreen.exe", "PortControl64.exe", "DesktopCheck.exe", "DeploymentManager.exe", "DeploymentAgent.exe",
+            "XYNTService.exe" },
+          { "BSAgentSvr", "tvnserver", "WFBSMlogon" } },
+       { "红蜘蛛多媒体网络教室",
+          { "rscheck.exe", "checkrs.exe", "REDAgent.exe", "PerformanceCheck.exe", "edpaper.exe", "Adapter.exe", "repview.exe",
+            "FormatPaper.exe" },
+          { "appcheck2", "checkapp2" } } }
     };
     class basic_config_node {
       public:
@@ -333,7 +333,7 @@ namespace core {
         { }
         virtual ~custom_rules_servs_op() noexcept = default;
     };
-    inline std::unique_ptr< basic_config_node > config_nodes[]{
+    inline std::array< std::unique_ptr< basic_config_node >, 3 > config_nodes{
       std::make_unique< option_op >(), std::make_unique< custom_rules_execs_op >(), std::make_unique< custom_rules_servs_op >() };
     inline auto info( ui_func_args )
     {
@@ -408,12 +408,12 @@ namespace core {
             cmd_executor( cmd_executor && ) noexcept      = default;
             ~cmd_executor() noexcept                      = default;
         };
-        constexpr cmd_item common_cmds[]{
-          {"重启资源管理器",               R"(taskkill.exe /f /im explorer.exe && timeout.exe /t 3 /nobreak && start C:\Windows\explorer.exe)"},
-          {"重启至高级选项",               "shutdown.exe /r /o /f /t 0"                                                                       },
-          {"恢复 USB 设备访问",            R"(reg.exe add "HKLM\SYSTEM\CurrentControlSet\Services\USBSTOR" /f /t reg_dword /v Start /d 3)"    },
-          {"恢复 Google Chrome 离线游戏",  R"(reg.exe delete "HKLM\SOFTWARE\Policies\Google\Chrome" /f /v AllowDinosaurEasterEgg)"            },
-          {"恢复 Microsoft Edge 离线游戏", R"(reg.exe delete "HKLM\SOFTWARE\Policies\Microsoft\Edge" /f /v AllowSurfGame)"                    }
+        constexpr std::array< cmd_item, 5 > common_cmds{
+          { { "重启资源管理器", R"(taskkill.exe /f /im explorer.exe && timeout.exe /t 3 /nobreak && start C:\Windows\explorer.exe)" },
+           { "重启至高级选项", "shutdown.exe /r /o /f /t 0" },
+           { "恢复 USB 设备访问", R"(reg.exe add "HKLM\SYSTEM\CurrentControlSet\Services\USBSTOR" /f /t reg_dword /v Start /d 3)" },
+           { "恢复 Google Chrome 离线游戏", R"(reg.exe delete "HKLM\SOFTWARE\Policies\Google\Chrome" /f /v AllowDinosaurEasterEgg)" },
+           { "恢复 Microsoft Edge 离线游戏", R"(reg.exe delete "HKLM\SOFTWARE\Policies\Microsoft\Edge" /f /v AllowSurfGame)" } }
         };
         cpp_utils::console_ui ui;
         ui.add_back( "                   [ 工 具 箱 ]\n\n" )
@@ -475,15 +475,15 @@ namespace core {
         if ( is_disable_x_option_hot_reload && !is_fix_os_env ) {
             return;
         }
-        constexpr const char *reg_dirs[]{
+        constexpr std::array reg_dirs{
           R"(Software\Policies\Microsoft\Windows\System)", R"(Software\Microsoft\Windows\CurrentVersion\Policies\System)",
           R"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)" };
-        constexpr const char *execs[]{
+        constexpr std::array execs{
           "taskkill.exe", "sc.exe",      "net.exe", "reg.exe",  "cmd.exe", "taskmgr.exe",
           "perfmon.exe",  "regedit.exe", "mmc.exe", "dism.exe", "sfc.exe" };
-        constexpr auto number_of_execs{ sizeof( execs ) / sizeof( const char * ) };
-        std::string reg_hijacked_execs[ number_of_execs ];
-        for ( const auto i : std::ranges::iota_view{ decltype( number_of_execs ){ 0 }, number_of_execs } ) {
+        constexpr auto size_of_execs{ execs.size() };
+        std::array< std::string, size_of_execs > reg_hijacked_execs;
+        for ( const auto i : std::ranges::iota_view{ decltype( size_of_execs ){ 0 }, size_of_execs } ) {
             reg_hijacked_execs[ i ]
               = std::format( R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{})", execs[ i ] );
         }
