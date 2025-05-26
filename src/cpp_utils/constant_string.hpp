@@ -36,7 +36,7 @@ namespace cpp_utils {
         {
             return data_[ index ];
         }
-        constexpr auto compare( const T *const src ) const noexcept
+        constexpr auto compare( const T *const src ) const
         {
             if ( src == nullptr ) {
                 return false;
@@ -81,7 +81,7 @@ namespace cpp_utils {
             }
             return true;
         }
-        constexpr auto operator==( const T *const src ) const noexcept
+        constexpr auto operator==( const T *const src ) const
         {
             return compare( src );
         }
