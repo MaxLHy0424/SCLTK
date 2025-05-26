@@ -27,20 +27,33 @@ namespace core {
     {
         std::print( std::runtime_format( reinterpret_cast< const char * >( format_string ) ), std::forward< Args >( args )... );
     }
-    inline auto quit( ui_func_args ) noexcept
+    inline constexpr auto quit( ui_func_args ) noexcept
     {
         return func_exit;
     }
-    inline auto relaunch( ui_func_args ) noexcept
+    inline constexpr auto relaunch( ui_func_args ) noexcept
     {
         cpp_utils::relaunch_as_admin( EXIT_SUCCESS, nullptr );
         return func_exit;
     }
-    inline auto wait() noexcept
+    inline constexpr auto wait() noexcept
     {
         std::print( "\n\n" );
         for ( auto i{ 3 }; i > 0; --i ) {
             std::print( " {}s 后返回.\r", i );
+            std::this_thread::sleep_for( 1s );
+        }
+    }
+    inline constexpr auto u8quit()
+    {
+        cpp_utils::set_current_console_charset( charset_id );
+        return func_back;
+    }
+    inline constexpr auto u8wait() noexcept
+    {
+        std::print( "\n\n" );
+        for ( auto i{ 3 }; i > 0; --i ) {
+            u8print( u8" {}s 后返回.\r", i );
             std::this_thread::sleep_for( 1s );
         }
     }
@@ -672,13 +685,12 @@ namespace core {
             u8print( u8"                    [ 破  解 ]\n\n\n" );
             if ( rules_.empty() ) {
                 u8print( u8" (i) 规则为空." );
-                wait();
-                return func_back;
+                u8wait();
+                return u8quit();
             }
             u8print( u8" -> 正在生成并执行操作系统命令...\n{}\n", std::string( console_width, '-' ) );
             std::array{ &crack::singlethread_engine_, &crack::multithread_engine_ }[ is_parallel_op.get() ]( rules_ );
-            cpp_utils::set_current_console_charset( charset_id );
-            return func_back;
+            return u8quit();
         }
         crack( const rule_node &rules ) noexcept
           : rules_{ rules }
@@ -743,13 +755,12 @@ namespace core {
             u8print( u8"                    [ 恢  复 ]\n\n\n" );
             if ( rules_.empty() ) {
                 u8print( u8" (i) 规则为空." );
-                wait();
-                return func_back;
+                u8wait();
+                return u8quit();
             }
             u8print( u8" -> 正在生成并执行操作系统命令...\n{}\n", std::string( console_width, '-' ) );
             std::array{ &restore::singlethread_engine_, &restore::multithread_engine_ }[ is_parallel_op.get() ]( rules_ );
-            cpp_utils::set_current_console_charset( charset_id );
-            return func_back;
+            return u8quit();
         }
         restore( const rule_node &rules ) noexcept
           : rules_{ rules }
