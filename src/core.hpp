@@ -154,16 +154,18 @@ namespace core {
           { "perf", "性能", { { "disable_x_option_hot_reload", "** 禁用标 * 选项热重载" } } } } } };
     inline const auto &is_disable_x_option_hot_reload{ options[ "perf" ][ "disable_x_option_hot_reload" ] };
     struct rule_node final {
+        using item_type      = std::string;
+        using container_type = std::deque< item_type >;
         const char *const shown_name;
-        std::deque< std::string > execs;
-        std::deque< std::string > servs;
+        container_type execs;
+        container_type servs;
         auto empty() const noexcept
         {
             return execs.empty() && servs.empty();
         }
         auto operator=( const rule_node & ) -> rule_node & = delete;
         auto operator=( rule_node && ) -> rule_node &      = delete;
-        rule_node( const char *const shown_name, decltype( execs ) execs, decltype( servs ) servs )
+        rule_node( const char *const shown_name, container_type execs, container_type servs )
           : shown_name{ shown_name }
           , execs{ std::move( execs ) }
           , servs{ std::move( servs ) }
@@ -246,8 +248,7 @@ namespace core {
                   public:
                     auto operator()( ui_func_args args )
                     {
-                        ( item_
-                          .*std::array{ &item_type::enable, &item_type::disable }[ static_cast< size_type >( item_.get() ) ] )();
+                        ( item_.*std::array{ &item_type::enable, &item_type::disable }[ item_.get() ] )();
                         args.parent_ui.edit_text( args.node_index, make_swith_button_text_( item_ ) );
                         return func_back;
                     }
@@ -597,10 +598,8 @@ namespace core {
         ui.show();
         return func_back;
     }
-    using exec_const_ref_type
-      = cpp_utils::add_const_lvalue_reference_type< std::decay_t< decltype( std::declval< rule_node >().execs[ 0 ] ) > >;
-    using serv_const_ref_type
-      = cpp_utils::add_const_lvalue_reference_type< std::decay_t< decltype( std::declval< rule_node >().servs[ 0 ] ) > >;
+    using exec_const_ref_type = cpp_utils::add_const_lvalue_reference_type< rule_node::item_type >;
+    using serv_const_ref_type = cpp_utils::add_const_lvalue_reference_type< rule_node::item_type >;
     inline const auto &option_crack_restore{ options[ "crack_restore" ] };
     inline const auto &is_hijack_execs{ option_crack_restore[ "hijack_execs" ] };
     inline const auto &is_set_serv_startup_types{ option_crack_restore[ "set_serv_startup_types" ] };

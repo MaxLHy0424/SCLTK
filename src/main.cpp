@@ -12,7 +12,7 @@ auto main() -> int
     cpp_utils::enable_window_close_ctrl( core::window_handle, false );
     cpp_utils::console_ui ui{ core::std_input_handle, core::std_output_handle };
     ui.set_limits( true, true );
-    std::print( " -> 准备就绪...\n" );
+    std::print( " -> 准备就绪..." );
     core::load_config();
     cpp_utils::thread_manager{}.add( core::keep_window_top ).add( core::set_console_attrs ).add( core::fix_os_env ).detach();
     ui.add_back( "                    [ 主  页 ]\n\n" )
@@ -32,6 +32,6 @@ auto main() -> int
         ui.add_back( std::format( " > {} ", rule.shown_name ), core::restore{ rule } );
     }
     ui.show().set_limits( true, true );
-    std::print( " -> 正在清理...\n" );
+    std::print( " -> 即将完成..." );
     return EXIT_SUCCESS;
 }
