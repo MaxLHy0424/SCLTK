@@ -8,6 +8,7 @@
 #include <vector>
 namespace cpp_utils {
     template < std::random_access_iterator Iter, typename Invocable >
+        requires std::invocable< Invocable, decltype( *std::declval< Iter >() ) >
     inline auto parallel_for_each_impl( unsigned int thread_num, Iter &&begin, Iter &&end, Invocable &&func )
     {
         [[assume( thread_num > 0 )]];
@@ -30,6 +31,7 @@ namespace cpp_utils {
         }
     }
     template < std::random_access_iterator Iter, typename Invocable >
+        requires std::invocable< Invocable, decltype( *std::declval< Iter >() ) >
     inline auto parallel_for_each( Iter &&begin, Iter &&end, Invocable &&func )
     {
         parallel_for_each_impl(
@@ -63,6 +65,7 @@ namespace cpp_utils {
             return *this;
         }
         template < typename Invocable, typename... Args >
+            requires std::invocable< Invocable, Args... > || std::invocable< Invocable, std::stop_token, Args... >
         auto &add( Invocable &&func, Args &&...args )
         {
             threads_.emplace_back( std::forward< Invocable >( func ), std::forward< Args >( args )... );

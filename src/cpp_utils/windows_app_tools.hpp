@@ -26,7 +26,7 @@ namespace cpp_utils {
             CheckTokenMembership( nullptr, admins_group, &is_admin );
             FreeSid( admins_group );
         }
-        return is_admin ? true : false;
+        return static_cast< bool >( is_admin );
     }
     inline auto relaunch( const int exit_code, const wchar_t *const args ) noexcept
     {
@@ -122,7 +122,7 @@ namespace cpp_utils {
     }
     inline auto ignore_current_console_exit_signal( const bool is_ignore ) noexcept
     {
-        return SetConsoleCtrlHandler( nullptr, static_cast< WINBOOL >( is_ignore ) );
+        SetConsoleCtrlHandler( nullptr, static_cast< WINBOOL >( is_ignore ) );
     }
     inline auto enable_virtual_terminal_processing( const HANDLE std_output_handle, const bool is_enable ) noexcept
     {

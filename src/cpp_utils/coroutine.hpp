@@ -70,7 +70,7 @@ namespace cpp_utils {
             {
                 return coroutine_handle_.promise().current_value.value();
             }
-            auto operator==( std::default_sentinel_t ) const
+            auto operator==( std::default_sentinel_t ) const noexcept
             {
                 return !coroutine_handle_ || coroutine_handle_.done();
             }
@@ -146,7 +146,6 @@ namespace cpp_utils {
             }
             if ( !done() ) {
                 resume();
-                safe_rethrow_exception();
             }
             return *this;
         }
@@ -289,7 +288,6 @@ namespace cpp_utils {
             }
             if ( !done() ) {
                 resume();
-                safe_rethrow_exception();
             }
             return *this;
         }

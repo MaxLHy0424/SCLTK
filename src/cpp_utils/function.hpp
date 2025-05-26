@@ -37,7 +37,7 @@ namespace cpp_utils {
             }
         }
       public:
-        virtual auto empty() const -> bool
+        virtual auto empty() const noexcept -> bool
         {
             return func_ == nullptr;
         }
