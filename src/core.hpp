@@ -23,20 +23,20 @@ namespace core {
     inline const auto std_output_handle{ GetStdHandle( STD_OUTPUT_HANDLE ) };
     using ui_func_args = cpp_utils::console_ui::func_args;
     template < typename... Args >
-    inline constexpr auto u8print( const char8_t *const format_string, Args &&...args )
+    inline auto u8print( const char8_t *const format_string, Args &&...args )
     {
         std::print( std::runtime_format( reinterpret_cast< const char * >( format_string ) ), std::forward< Args >( args )... );
     }
-    inline constexpr auto quit( ui_func_args ) noexcept
+    inline auto quit( ui_func_args ) noexcept
     {
         return func_exit;
     }
-    inline constexpr auto relaunch( ui_func_args ) noexcept
+    inline auto relaunch( ui_func_args ) noexcept
     {
         cpp_utils::relaunch_as_admin( EXIT_SUCCESS, nullptr );
         return func_exit;
     }
-    inline constexpr auto wait() noexcept
+    inline auto wait() noexcept
     {
         std::print( "\n\n" );
         for ( auto i{ 3 }; i > 0; --i ) {
@@ -44,12 +44,12 @@ namespace core {
             std::this_thread::sleep_for( 1s );
         }
     }
-    inline constexpr auto u8quit()
+    inline auto u8quit() noexcept
     {
         cpp_utils::set_current_console_charset( charset_id );
         return func_back;
     }
-    inline constexpr auto u8wait() noexcept
+    inline auto u8wait() noexcept
     {
         std::print( "\n\n" );
         for ( auto i{ 3 }; i > 0; --i ) {
