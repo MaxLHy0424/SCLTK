@@ -41,7 +41,11 @@ namespace cpp_utils {
       private:
         inline static HANDLE std_input_handle_;
         inline static HANDLE std_output_handle_;
-        enum class console_attrs_selection_ : char { normal, lock_text, lock_all };
+        enum class console_attrs_selection_ : char {
+            normal,
+            lock_text,
+            lock_all
+        };
         struct line_node_ final {
             std::string text{};
             callback_type func{};
