@@ -487,6 +487,7 @@ namespace core {
         if ( is_disable_x_option_hot_reload && !is_fix_os_env ) {
             return;
         }
+        constexpr auto sleep_time{ 1s };
         constexpr std::array reg_dirs{
           R"(Software\Policies\Microsoft\Windows\System)", R"(Software\Microsoft\Windows\CurrentVersion\Policies\System)",
           R"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)" };
@@ -507,7 +508,7 @@ namespace core {
             for ( const auto &reg_hijacked_exec : reg_hijacked_execs ) {
                 RegDeleteTreeA( HKEY_LOCAL_MACHINE, reg_hijacked_exec.c_str() );
             }
-            std::this_thread::sleep_for( 1s );
+            std::this_thread::sleep_for( sleep_time );
         } };
         if ( is_disable_x_option_hot_reload ) {
             while ( true ) {
