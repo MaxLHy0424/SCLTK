@@ -28,18 +28,18 @@ namespace cpp_utils {
         }
         return static_cast< bool >( is_admin );
     }
-    inline auto relaunch( const int exit_code, const wchar_t *const args ) noexcept
+    inline auto relaunch( const int exit_code ) noexcept
     {
         wchar_t file_path[ MAX_PATH ]{};
         GetModuleFileNameW( nullptr, file_path, MAX_PATH );
-        ShellExecuteW( nullptr, L"open", file_path, args, nullptr, SW_SHOWNORMAL );
+        ShellExecuteW( nullptr, L"open", file_path, nullptr, nullptr, SW_SHOWNORMAL );
         std::exit( exit_code );
     }
-    inline auto relaunch_as_admin( const int exit_code, const wchar_t *const args ) noexcept
+    inline auto relaunch_as_admin( const int exit_code ) noexcept
     {
         wchar_t file_path[ MAX_PATH ]{};
         GetModuleFileNameW( nullptr, file_path, MAX_PATH );
-        ShellExecuteW( nullptr, L"runas", file_path, args, nullptr, SW_SHOWNORMAL );
+        ShellExecuteW( nullptr, L"runas", file_path, nullptr, nullptr, SW_SHOWNORMAL );
         std::exit( exit_code );
     }
     inline auto get_current_console_std_handle( const DWORD std_handle_flag ) noexcept
