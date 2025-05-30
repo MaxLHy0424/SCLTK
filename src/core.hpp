@@ -57,48 +57,48 @@ namespace core {
             std::this_thread::sleep_for( 1s );
         }
     }
-    struct option_container final {
-        struct node final {
-            struct item final {
-              private:
-                std::atomic_flag value_{ ATOMIC_FLAG_INIT };
-              public:
-                const char *const self_name;
-                const char *const shown_name;
-                auto enable() noexcept
-                {
-                    value_.test_and_set( std::memory_order_release );
-                }
-                auto disable() noexcept
-                {
-                    value_.clear( std::memory_order_release );
-                }
-                auto get() const noexcept
-                {
-                    return value_.test( std::memory_order_acquire );
-                }
-                operator bool() const noexcept
-                {
-                    return get();
-                }
-                auto operator=( const item & ) -> item & = delete;
-                auto operator=( item && ) -> item &      = delete;
-                item( const char *const self_name, const char *const shown_name )
-                  : self_name{ self_name }
-                  , shown_name{ shown_name }
-                { }
-                item( const item &src )
-                  : value_{ src }
-                  , self_name{ src.self_name }
-                  , shown_name{ src.shown_name }
-                { }
-                item( item &src )
-                  : value_{ src }
-                  , self_name{ src.self_name }
-                  , shown_name{ src.shown_name }
-                { }
-                ~item() = default;
-            };
+    struct option_set final {
+        struct item final {
+          private:
+            std::atomic_flag value_{ ATOMIC_FLAG_INIT };
+          public:
+            const char *const self_name;
+            const char *const shown_name;
+            auto enable() noexcept
+            {
+                value_.test_and_set( std::memory_order_release );
+            }
+            auto disable() noexcept
+            {
+                value_.clear( std::memory_order_release );
+            }
+            auto get() const noexcept
+            {
+                return value_.test( std::memory_order_acquire );
+            }
+            operator bool() const noexcept
+            {
+                return get();
+            }
+            auto operator=( const item & ) -> item & = delete;
+            auto operator=( item && ) -> item &      = delete;
+            item( const char *const self_name, const char *const shown_name )
+              : self_name{ self_name }
+              , shown_name{ shown_name }
+            { }
+            item( const item &src )
+              : value_{ src }
+              , self_name{ src.self_name }
+              , shown_name{ src.shown_name }
+            { }
+            item( item &src )
+              : value_{ src }
+              , self_name{ src.self_name }
+              , shown_name{ src.shown_name }
+            { }
+            ~item() = default;
+        };
+        struct category final {
             const char *const self_name;
             const char *const shown_name;
             std::vector< item > items;
@@ -120,41 +120,41 @@ namespace core {
                 }
                 std::unreachable();
             }
-            auto operator=( const node & ) -> node & = delete;
-            auto operator=( node && ) -> node &      = delete;
-            node( const char *const self_name, const char *const shown_name, std::vector< item > items )
+            auto operator=( const category & ) -> category & = delete;
+            auto operator=( category && ) -> category &      = delete;
+            category( const char *const self_name, const char *const shown_name, std::vector< item > items )
               : self_name{ self_name }
               , shown_name{ shown_name }
               , items{ std::move( items ) }
             { }
-            node( const node & ) = default;
-            node( node && )      = default;
-            ~node()              = default;
+            category( const category & ) = default;
+            category( category && )      = default;
+            ~category()                  = default;
         };
-        std::vector< node > nodes;
+        std::vector< category > categories;
         auto &operator[]( const std::string_view self_name ) noexcept
         {
-            for ( auto &node : nodes ) {
-                if ( self_name == node.self_name ) {
-                    return node;
+            for ( auto &category : categories ) {
+                if ( self_name == category.self_name ) {
+                    return category;
                 }
             }
             std::unreachable();
         }
         const auto &operator[]( const std::string_view self_name ) const noexcept
         {
-            for ( const auto &node : nodes ) {
-                if ( self_name == node.self_name ) {
-                    return node;
+            for ( const auto &category : categories ) {
+                if ( self_name == category.self_name ) {
+                    return category;
                 }
             }
             std::unreachable();
         }
-        option_container( std::vector< node > nodes )
-          : nodes{ std::move( nodes ) }
+        option_set( std::vector< category > categories )
+          : categories{ std::move( categories ) }
         { }
     };
-    inline option_container options{
+    inline option_set options{
       { { { "crack_restore",
             "破解 & 恢复",
             { { "hijack_execs", "劫持可执行文件" },
@@ -229,11 +229,11 @@ namespace core {
             if ( is_reload ) {
                 return;
             }
-            for ( auto &node : options.nodes ) {
-                for ( auto &item : node.items ) {
-                    if ( line == std::format( format_string_, node.self_name, item.self_name, true ) ) {
+            for ( auto &category : options.categories ) {
+                for ( auto &item : category.items ) {
+                    if ( line == std::format( format_string_, category.self_name, item.self_name, true ) ) {
                         item.enable();
-                    } else if ( line == std::format( format_string_, node.self_name, item.self_name, false ) ) {
+                    } else if ( line == std::format( format_string_, category.self_name, item.self_name, false ) ) {
                         item.disable();
                     }
                 }
@@ -241,20 +241,20 @@ namespace core {
         }
         virtual auto sync( std::ofstream &out ) -> void override final
         {
-            for ( const auto &node : options.nodes ) {
-                for ( const auto &item : node.items ) {
-                    out << std::format( format_string_, node.self_name, item.self_name, item.get() ) << '\n';
+            for ( const auto &category : options.categories ) {
+                for ( const auto &item : category.items ) {
+                    out << std::format( format_string_, category.self_name, item.self_name, item.get() ) << '\n';
                 }
             }
         }
         virtual auto ui( cpp_utils::console_ui &ui ) -> void override final
         {
             constexpr auto option_ctrl_color{ cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_green };
-            using node_type = option_container::node;
-            using item_type = node_type::item;
+            using category_type = option_set::category;
+            using item_type     = option_set::item;
             class option_ui final {
               private:
-                node_type &node_;
+                category_type &category_;
                 class setter_ final {
                   private:
                     item_type &item_;
@@ -276,17 +276,17 @@ namespace core {
                     cpp_utils::console_ui ui;
                     ui.add_back( "                    [ 配  置 ]\n\n" )
                       .add_back(
-                        std::format( R"( < 折叠 "{}" )", node_.shown_name ), quit,
+                        std::format( R"( < 折叠 "{}" )", category_.shown_name ), quit,
                         cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity );
-                    for ( auto &item : node_.items ) {
+                    for ( auto &item : category_.items ) {
                         ui.add_back( std::format( "\n[ {} ]\n", item.shown_name ) )
                           .add_back( make_swith_button_text_( item ), setter_{ item }, option_ctrl_color );
                     }
                     ui.show();
                     return func_back;
                 }
-                option_ui( node_type &node ) noexcept
-                  : node_{ node }
+                option_ui( category_type &category ) noexcept
+                  : category_{ category }
                 { }
                 ~option_ui() noexcept = default;
             };
@@ -296,8 +296,8 @@ namespace core {
               "     标 * 选项热重载每 {} 自动执行, 可禁用.\n"
               "     标 ** 选项无法热重载. 其余选项可实时热重载.\n",
               default_thread_sleep_time ) );
-            for ( auto &node : options.nodes ) {
-                ui.add_back( std::format( " > {} ", node.shown_name ), option_ui{ node }, option_ctrl_color );
+            for ( auto &category : options.categories ) {
+                ui.add_back( std::format( " > {} ", category.shown_name ), option_ui{ category }, option_ctrl_color );
             }
         }
         option_op() noexcept
