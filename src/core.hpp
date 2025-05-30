@@ -33,7 +33,7 @@ namespace core {
     }
     inline auto relaunch( ui_func_args ) noexcept
     {
-        cpp_utils::relaunch_as_admin( EXIT_SUCCESS, nullptr );
+        cpp_utils::relaunch_as_admin( EXIT_SUCCESS );
         return func_exit;
     }
     inline auto wait() noexcept
