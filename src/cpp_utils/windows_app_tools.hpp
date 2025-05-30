@@ -88,6 +88,19 @@ namespace cpp_utils {
         auto window_handle{ get_current_window_handle() };
         keep_window_top( window_handle, GetCurrentThreadId(), GetWindowThreadProcessId( window_handle, nullptr ) );
     }
+    template < typename ChronoRep, typename ChronoPeriod >
+    inline auto loop_keep_window_top(
+      const HWND window_handle, const DWORD thread_id, const DWORD window_thread_process_id,
+      const std::chrono::duration< ChronoRep, ChronoPeriod > sleep_time )
+    {
+        while ( true ) {
+            AttachThreadInput( thread_id, window_thread_process_id, TRUE );
+            SetForegroundWindow( window_handle );
+            SetWindowPos( window_handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
+            AttachThreadInput( thread_id, window_thread_process_id, FALSE );
+            std::this_thread::sleep_for( sleep_time );
+        }
+    }
     template < typename ChronoRep, typename ChronoPeriod, typename Invocable, typename... Args >
     inline auto loop_keep_window_top(
       const HWND window_handle, const DWORD thread_id, const DWORD window_thread_process_id,
@@ -102,12 +115,18 @@ namespace cpp_utils {
             std::this_thread::sleep_for( sleep_time );
         }
     }
+    template < typename ChronoRep, typename ChronoPeriod >
+    inline auto loop_keep_current_window_top( const std::chrono::duration< ChronoRep, ChronoPeriod > sleep_time )
+    {
+        const auto window_handle{ get_current_window_handle() };
+        loop_keep_window_top( window_handle, GetCurrentThreadId(), GetWindowThreadProcessId( window_handle, nullptr ), sleep_time );
+    }
     template < typename ChronoRep, typename ChronoPeriod, typename Invocable, typename... Args >
     inline auto loop_keep_current_window_top(
       const std::chrono::duration< ChronoRep, ChronoPeriod > sleep_time, Invocable &&condition_checker,
       Args &&...condition_checker_args )
     {
-        auto window_handle{ get_current_window_handle() };
+        const auto window_handle{ get_current_window_handle() };
         loop_keep_window_top(
           window_handle, GetCurrentThreadId(), GetWindowThreadProcessId( window_handle, nullptr ), sleep_time,
           std::forward< Invocable >( condition_checker ), std::forward< Args >( condition_checker_args )... );
