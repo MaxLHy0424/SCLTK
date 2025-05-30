@@ -7,23 +7,29 @@
 #include <utility>
 #include <vector>
 namespace cpp_utils {
+    using thread_num_type = unsigned int;
     template < std::random_access_iterator Iter, typename Invocable >
         requires std::invocable< Invocable, decltype( *std::declval< Iter >() ) >
-    inline auto parallel_for_each_impl( unsigned int thread_num, Iter &&begin, Iter &&end, Invocable &&func )
+    inline auto parallel_for_each_impl( thread_num_type thread_num, Iter &&begin, Iter &&end, Invocable &&func )
     {
         [[assume( thread_num > 0 )]];
-        const auto chunk_size{ ( end - begin ) / thread_num };
+        if ( begin == end ) {
+            return;
+        }
+        const auto total{ end - begin };
+        thread_num = std::min< thread_num_type >( thread_num, total );
+        const auto chunk_size{ total / thread_num };
+        const auto remainder{ total % thread_num };
         std::vector< std::thread > threads;
         threads.reserve( thread_num );
-        for ( const auto i : std::ranges::iota_view{ decltype( thread_num ){ 0 }, thread_num } ) {
-            const auto chunk_start{ begin + i * chunk_size };
-            const auto chunk_end{ ( i == thread_num - 1 ) ? end : chunk_start + chunk_size };
-            threads.emplace_back( [ =, &func ]
+        for ( const auto i : std::ranges::iota_view{ 0U, thread_num } ) {
+            const auto chunk_start{ begin + i * chunk_size + std::min< thread_num_type >( i, remainder ) };
+            const auto chunk_end{ chunk_start + chunk_size + ( i < remainder ? 1 : 0 ) };
+            threads.emplace_back( [ =, func = std::forward< Invocable >( func ) ]
             {
-                for ( auto it{ chunk_start }; it != chunk_end; ++it ) {
+                for ( auto it = chunk_start; it != chunk_end; ++it ) {
                     func( *it );
                 }
-                std::this_thread::yield();
             } );
         }
         for ( auto &thread : threads ) {
@@ -35,7 +41,7 @@ namespace cpp_utils {
     inline auto parallel_for_each( Iter &&begin, Iter &&end, Invocable &&func )
     {
         parallel_for_each_impl(
-          std::max( std::thread::hardware_concurrency(), 1U ), std::forward< Iter >( begin ), std::forward< Iter >( end ),
+          std::max( std::thread::hardware_concurrency(), 2U ), std::forward< Iter >( begin ), std::forward< Iter >( end ),
           std::forward< Invocable >( func ) );
     }
     class thread_manager final {
