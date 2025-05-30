@@ -440,7 +440,7 @@ namespace core {
         ui.show();
         return func_back;
     }
-    inline auto set_console_attrs( const std::stop_token token )
+    inline auto set_console_attrs()
     {
         const auto &window_options{ options[ "window" ] };
         const auto &is_enable_minimalist_titlebar{ window_options[ "minimalist_titlebar" ] };
@@ -450,13 +450,13 @@ namespace core {
             cpp_utils::set_window_translucency( window_handle, is_translucent ? 230 : 255 );
             return;
         }
-        while ( !token.stop_requested() ) {
+        while ( true ) {
             cpp_utils::enable_window_menu( window_handle, !is_enable_minimalist_titlebar );
             cpp_utils::set_window_translucency( window_handle, is_translucent ? 230 : 255 );
             std::this_thread::sleep_for( default_thread_sleep_time );
         }
     }
-    inline auto keep_window_top( const std::stop_token token )
+    inline auto keep_window_top()
     {
         const auto &is_keep_window_top{ options[ "window" ][ "keep_window_top" ] };
         if ( is_disable_x_option_hot_reload && !is_keep_window_top ) {
@@ -466,13 +466,11 @@ namespace core {
         const auto current_thread_id{ GetCurrentThreadId() };
         const auto current_window_thread_process_id{ GetWindowThreadProcessId( window_handle, nullptr ) };
         if ( is_disable_x_option_hot_reload ) {
-            cpp_utils::loop_keep_window_top(
-              window_handle, current_thread_id, current_window_thread_process_id, sleep_time,
-              []( const std::stop_token token ) static noexcept { return !token.stop_requested(); }, token );
+            cpp_utils::loop_keep_window_top( window_handle, current_thread_id, current_window_thread_process_id, sleep_time );
             cpp_utils::cancel_top_window( window_handle );
             return;
         }
-        while ( !token.stop_requested() ) {
+        while ( true ) {
             if ( !is_keep_window_top ) [[unlikely]] {
                 cpp_utils::cancel_top_window( window_handle );
                 std::this_thread::sleep_for( default_thread_sleep_time );
@@ -483,7 +481,7 @@ namespace core {
         }
         cpp_utils::cancel_top_window( window_handle );
     }
-    inline auto fix_os_env( const std::stop_token token )
+    inline auto fix_os_env()
     {
         const auto &is_fix_os_env{ options[ "crack_restore" ][ "fix_os_env" ] };
         if ( is_disable_x_option_hot_reload && !is_fix_os_env ) {
@@ -512,12 +510,11 @@ namespace core {
             std::this_thread::sleep_for( 1s );
         } };
         if ( is_disable_x_option_hot_reload ) {
-            while ( !token.stop_requested() ) {
+            while ( true ) {
                 engine();
             }
-            return;
         }
-        while ( !token.stop_requested() ) {
+        while ( true ) {
             if ( !is_fix_os_env ) [[unlikely]] {
                 std::this_thread::sleep_for( default_thread_sleep_time );
                 continue;
