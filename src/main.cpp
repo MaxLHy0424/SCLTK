@@ -32,6 +32,6 @@ auto main() -> int
         ui.add_back( std::format( " > {} ", rule.shown_name ), core::restore{ rule } );
     }
     ui.show().set_limits( true, true );
-    std::print( " -> 即将完成..." );
+    std::print( " -> 正在清理..." );
     return EXIT_SUCCESS;
 }
