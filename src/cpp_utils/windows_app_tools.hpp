@@ -30,16 +30,16 @@ namespace cpp_utils {
     }
     inline auto relaunch( const int exit_code ) noexcept
     {
-        wchar_t file_path[ MAX_PATH ]{};
-        GetModuleFileNameW( nullptr, file_path, MAX_PATH );
-        ShellExecuteW( nullptr, L"open", file_path, nullptr, nullptr, SW_SHOWNORMAL );
+        std::array< wchar_t, MAX_PATH > file_path;
+        GetModuleFileNameW( nullptr, file_path.data(), MAX_PATH );
+        ShellExecuteW( nullptr, L"open", file_path.data(), nullptr, nullptr, SW_SHOWNORMAL );
         std::exit( exit_code );
     }
     inline auto relaunch_as_admin( const int exit_code ) noexcept
     {
-        wchar_t file_path[ MAX_PATH ]{};
-        GetModuleFileNameW( nullptr, file_path, MAX_PATH );
-        ShellExecuteW( nullptr, L"runas", file_path, nullptr, nullptr, SW_SHOWNORMAL );
+        std::array< wchar_t, MAX_PATH > file_path;
+        GetModuleFileNameW( nullptr, file_path.data(), MAX_PATH );
+        ShellExecuteW( nullptr, L"runas", file_path.data(), nullptr, nullptr, SW_SHOWNORMAL );
         std::exit( exit_code );
     }
     inline auto get_current_console_std_handle( const DWORD std_handle_flag ) noexcept
