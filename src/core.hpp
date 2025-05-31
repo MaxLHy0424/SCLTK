@@ -252,24 +252,24 @@ namespace core {
             constexpr auto option_ctrl_color{ cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_green };
             using category_type = option_set::category;
             using item_type     = option_set::item;
+            class option_setter final {
+              private:
+                item_type &item_;
+              public:
+                auto operator()( ui_func_args args )
+                {
+                    ( item_.*std::array{ &item_type::enable, &item_type::disable }[ item_.get() ] )();
+                    args.parent_ui.edit_text( args.node_index, make_swith_button_text_( item_ ) );
+                    return func_back;
+                }
+                option_setter( item_type &item ) noexcept
+                  : item_{ item }
+                { }
+                ~option_setter() noexcept = default;
+            };
             class option_ui final {
               private:
                 category_type &category_;
-                class setter_ final {
-                  private:
-                    item_type &item_;
-                  public:
-                    auto operator()( ui_func_args args )
-                    {
-                        ( item_.*std::array{ &item_type::enable, &item_type::disable }[ item_.get() ] )();
-                        args.parent_ui.edit_text( args.node_index, make_swith_button_text_( item_ ) );
-                        return func_back;
-                    }
-                    setter_( item_type &item ) noexcept
-                      : item_{ item }
-                    { }
-                    ~setter_() noexcept = default;
-                };
               public:
                 auto operator()( ui_func_args )
                 {
@@ -280,7 +280,7 @@ namespace core {
                         cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity );
                     for ( auto &item : category_.items ) {
                         ui.add_back( std::format( "\n[ {} ]\n", item.shown_name ) )
-                          .add_back( make_swith_button_text_( item ), setter_{ item }, option_ctrl_color );
+                          .add_back( make_swith_button_text_( item ), option_setter{ item }, option_ctrl_color );
                     }
                     ui.show();
                     return func_back;
