@@ -102,6 +102,7 @@ namespace cpp_utils {
         }
     }
     template < typename ChronoRep, typename ChronoPeriod, typename Invocable, typename... Args >
+        requires std::invocable< Invocable, Args... >
     inline auto loop_keep_window_top(
       const HWND window_handle, const DWORD thread_id, const DWORD window_thread_process_id,
       const std::chrono::duration< ChronoRep, ChronoPeriod > sleep_time, Invocable &&condition_checker,
@@ -122,6 +123,7 @@ namespace cpp_utils {
         loop_keep_window_top( window_handle, GetCurrentThreadId(), GetWindowThreadProcessId( window_handle, nullptr ), sleep_time );
     }
     template < typename ChronoRep, typename ChronoPeriod, typename Invocable, typename... Args >
+        requires std::invocable< Invocable, Args... >
     inline auto loop_keep_current_window_top(
       const std::chrono::duration< ChronoRep, ChronoPeriod > sleep_time, Invocable &&condition_checker,
       Args &&...condition_checker_args )
