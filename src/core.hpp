@@ -258,7 +258,7 @@ namespace core {
               public:
                 auto operator()( ui_func_args args )
                 {
-                    ( item_.*std::array{ &item_type::enable, &item_type::disable }[ item_.get() ] )();
+                    std::invoke( std::array{ &item_type::enable, &item_type::disable }[ item_.get() ], item_ );
                     args.parent_ui.edit_text( args.node_index, make_swith_button_text_( item_ ) );
                     return func_back;
                 }
@@ -638,10 +638,10 @@ namespace core {
         {
             std::system( std::format( R"(net.exe stop "{}" /y)", serv ).c_str() );
         }
-        static auto singlethread_engine_( const rule_node &rules )
+        auto singlethread_engine_()
         {
-            const auto &execs{ rules.execs };
-            const auto &servs{ rules.servs };
+            const auto &execs{ rules_.execs };
+            const auto &servs{ rules_.servs };
             if ( is_hijack_execs ) {
                 for ( const auto &exec : execs ) {
                     hijack_exec_( exec );
@@ -659,10 +659,10 @@ namespace core {
                 stop_serv_( serv );
             }
         }
-        static auto multithread_engine_( const rule_node &rules )
+        auto multithread_engine_()
         {
-            const auto &execs{ rules.execs };
-            const auto &servs{ rules.servs };
+            const auto &execs{ rules_.execs };
+            const auto &servs{ rules_.servs };
             const auto nproc_for_exec_op{ std::max( nproc / 4, 2U ) };
             cpp_utils::thread_manager threads;
             if ( is_hijack_execs ) {
@@ -687,7 +687,7 @@ namespace core {
                 return u8quit();
             }
             u8print( u8" -> 正在生成并执行操作系统命令...\n{}\n", std::string( console_width, '-' ) );
-            std::array{ &crack::singlethread_engine_, &crack::multithread_engine_ }[ is_parallel_op.get() ]( rules_ );
+            std::invoke( std::array{ &crack::singlethread_engine_, &crack::multithread_engine_ }[ is_parallel_op.get() ], *this );
             return u8quit();
         }
         crack( const rule_node &rules ) noexcept
@@ -715,10 +715,10 @@ namespace core {
         {
             std::system( std::format( R"(net.exe start "{}")", serv ).c_str() );
         }
-        static auto singlethread_engine_( const rule_node &rules )
+        auto singlethread_engine_()
         {
-            const auto &execs{ rules.execs };
-            const auto &servs{ rules.servs };
+            const auto &execs{ rules_.execs };
+            const auto &servs{ rules_.servs };
             if ( is_hijack_execs ) {
                 for ( const auto &exec : execs ) {
                     undo_hijack_exec_( exec );
@@ -733,10 +733,10 @@ namespace core {
                 start_serv_( serv );
             }
         }
-        static auto multithread_engine_( const rule_node &rules )
+        auto multithread_engine_()
         {
-            const auto &execs{ rules.execs };
-            const auto &servs{ rules.servs };
+            const auto &execs{ rules_.execs };
+            const auto &servs{ rules_.servs };
             const auto nproc_for_exec_op{ std::max( nproc / 4, 2U ) };
             if ( is_hijack_execs ) {
                 cpp_utils::parallel_for_each_impl( nproc_for_exec_op, execs.begin(), execs.end(), undo_hijack_exec_ );
@@ -757,7 +757,7 @@ namespace core {
                 return u8quit();
             }
             u8print( u8" -> 正在生成并执行操作系统命令...\n{}\n", std::string( console_width, '-' ) );
-            std::array{ &restore::singlethread_engine_, &restore::multithread_engine_ }[ is_parallel_op.get() ]( rules_ );
+            std::invoke( std::array{ &restore::singlethread_engine_, &restore::multithread_engine_ }[ is_parallel_op.get() ], *this );
             return u8quit();
         }
         restore( const rule_node &rules ) noexcept
