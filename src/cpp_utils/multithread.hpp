@@ -8,9 +8,9 @@
 #include <vector>
 namespace cpp_utils {
     using thread_num_type = unsigned int;
-    template < std::random_access_iterator Iter, typename Invocable >
-        requires std::invocable< Invocable, decltype( *std::declval< Iter >() ) >
-    inline auto parallel_for_each_impl( thread_num_type thread_num, Iter &&begin, Iter &&end, Invocable &&func )
+    template < std::random_access_iterator It, typename F >
+        requires std::invocable< F, decltype( *std::declval< It >() ) >
+    inline auto parallel_for_each_impl( thread_num_type thread_num, It &&begin, It &&end, F &&func )
     {
         if ( thread_num == 0 ) {
             std::unreachable();
@@ -27,7 +27,7 @@ namespace cpp_utils {
         for ( const auto i : std::ranges::iota_view{ 0U, thread_num } ) {
             const auto chunk_start{ begin + i * chunk_size + std::min< thread_num_type >( i, remainder ) };
             const auto chunk_end{ chunk_start + chunk_size + ( i < remainder ? 1 : 0 ) };
-            threads.emplace_back( [ =, func = std::forward< Invocable >( func ) ]
+            threads.emplace_back( [ =, func = std::forward< F >( func ) ]
             {
                 for ( auto it = chunk_start; it != chunk_end; ++it ) {
                     func( *it );
@@ -38,13 +38,13 @@ namespace cpp_utils {
             thread.join();
         }
     }
-    template < std::random_access_iterator Iter, typename Invocable >
-        requires std::invocable< Invocable, decltype( *std::declval< Iter >() ) >
-    inline auto parallel_for_each( Iter &&begin, Iter &&end, Invocable &&func )
+    template < std::random_access_iterator It, typename F >
+        requires std::invocable< F, decltype( *std::declval< It >() ) >
+    inline auto parallel_for_each( It &&begin, It &&end, F &&func )
     {
         parallel_for_each_impl(
-          std::max( std::thread::hardware_concurrency(), 2U ), std::forward< Iter >( begin ), std::forward< Iter >( end ),
-          std::forward< Invocable >( func ) );
+          std::max( std::thread::hardware_concurrency(), 2U ), std::forward< It >( begin ), std::forward< It >( end ),
+          std::forward< F >( func ) );
     }
     class thread_manager final {
       private:
@@ -72,11 +72,11 @@ namespace cpp_utils {
             threads_.swap( src.threads_ );
             return *this;
         }
-        template < typename Invocable, typename... Args >
-            requires std::invocable< Invocable, Args... > || std::invocable< Invocable, std::stop_token, Args... >
-        auto &add( Invocable &&func, Args &&...args )
+        template < typename F, typename... Args >
+            requires std::invocable< F, Args... > || std::invocable< F, std::stop_token, Args... >
+        auto &add( F &&func, Args &&...args )
         {
-            threads_.emplace_back( std::forward< Invocable >( func ), std::forward< Args >( args )... );
+            threads_.emplace_back( std::forward< F >( func ), std::forward< Args >( args )... );
             return *this;
         }
         auto &join()

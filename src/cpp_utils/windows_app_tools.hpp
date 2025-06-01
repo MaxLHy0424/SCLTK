@@ -101,12 +101,11 @@ namespace cpp_utils {
             std::this_thread::sleep_for( sleep_time );
         }
     }
-    template < typename ChronoRep, typename ChronoPeriod, typename Invocable, typename... Args >
-        requires std::invocable< Invocable, Args... >
+    template < typename ChronoRep, typename ChronoPeriod, typename F, typename... Args >
+        requires std::invocable< F, Args... >
     inline auto loop_keep_window_top(
       const HWND window_handle, const DWORD thread_id, const DWORD window_thread_process_id,
-      const std::chrono::duration< ChronoRep, ChronoPeriod > sleep_time, Invocable &&condition_checker,
-      Args &&...condition_checker_args )
+      const std::chrono::duration< ChronoRep, ChronoPeriod > sleep_time, F &&condition_checker, Args &&...condition_checker_args )
     {
         while ( condition_checker( std::forward< Args >( condition_checker_args )... ) ) {
             AttachThreadInput( thread_id, window_thread_process_id, TRUE );
@@ -122,16 +121,15 @@ namespace cpp_utils {
         const auto window_handle{ get_current_window_handle() };
         loop_keep_window_top( window_handle, GetCurrentThreadId(), GetWindowThreadProcessId( window_handle, nullptr ), sleep_time );
     }
-    template < typename ChronoRep, typename ChronoPeriod, typename Invocable, typename... Args >
-        requires std::invocable< Invocable, Args... >
+    template < typename ChronoRep, typename ChronoPeriod, typename F, typename... Args >
+        requires std::invocable< F, Args... >
     inline auto loop_keep_current_window_top(
-      const std::chrono::duration< ChronoRep, ChronoPeriod > sleep_time, Invocable &&condition_checker,
-      Args &&...condition_checker_args )
+      const std::chrono::duration< ChronoRep, ChronoPeriod > sleep_time, F &&condition_checker, Args &&...condition_checker_args )
     {
         const auto window_handle{ get_current_window_handle() };
         loop_keep_window_top(
           window_handle, GetCurrentThreadId(), GetWindowThreadProcessId( window_handle, nullptr ), sleep_time,
-          std::forward< Invocable >( condition_checker ), std::forward< Args >( condition_checker_args )... );
+          std::forward< F >( condition_checker ), std::forward< Args >( condition_checker_args )... );
     }
     inline auto cancel_top_window( const HWND window_handle ) noexcept
     {
