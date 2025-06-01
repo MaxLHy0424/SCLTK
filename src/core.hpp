@@ -60,21 +60,17 @@ namespace core {
     struct option_set final {
         struct item final {
           private:
-            std::atomic_flag value_{ ATOMIC_FLAG_INIT };
+            std::atomic< bool > value_{ false };
           public:
             const char *const self_name;
             const char *const shown_name;
-            auto enable() noexcept
+            auto set( const bool value ) noexcept
             {
-                value_.test_and_set( std::memory_order_release );
-            }
-            auto disable() noexcept
-            {
-                value_.clear( std::memory_order_release );
+                value_.store( value, std::memory_order_release );
             }
             auto get() const noexcept
             {
-                return value_.test( std::memory_order_acquire );
+                return value_.load( std::memory_order_acquire );
             }
             operator bool() const noexcept
             {
@@ -232,9 +228,9 @@ namespace core {
             for ( auto &category : options.categories ) {
                 for ( auto &item : category.items ) {
                     if ( line == std::format( format_string_, category.self_name, item.self_name, true ) ) {
-                        item.enable();
+                        item.set( true );
                     } else if ( line == std::format( format_string_, category.self_name, item.self_name, false ) ) {
-                        item.disable();
+                        item.set( false );
                     }
                 }
             }
@@ -258,7 +254,7 @@ namespace core {
               public:
                 auto operator()( ui_func_args args )
                 {
-                    std::invoke( std::array{ &item_type::enable, &item_type::disable }[ item_.get() ], item_ );
+                    item_.set( !item_.get() );
                     args.parent_ui.edit_text( args.node_index, make_swith_button_text_( item_ ) );
                     return func_back;
                 }
