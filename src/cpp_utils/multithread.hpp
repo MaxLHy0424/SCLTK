@@ -12,7 +12,9 @@ namespace cpp_utils {
         requires std::invocable< Invocable, decltype( *std::declval< Iter >() ) >
     inline auto parallel_for_each_impl( thread_num_type thread_num, Iter &&begin, Iter &&end, Invocable &&func )
     {
-        [[assume( thread_num > 0 )]];
+        if ( thread_num == 0 ) {
+            std::unreachable();
+        }
         if ( begin == end ) {
             return;
         }
