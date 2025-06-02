@@ -3,8 +3,8 @@ compiler         = g++.exe
 args_defines     = -DANSI -D_ANSI
 args_link        =
 args_std         = gnu++26
-args_warning     = -Wall -Wextra -Weffc++
-args_opt_debug   = -Og
+args_warning     = -Wall -Wextra -Weffc++ -Wpedantic
+args_opt_debug   = -Og -fno-omit-frame-pointer
 args_opt_release = -O3 -flto=auto -fno-rtti -fno-exceptions
 input_charset    = utf-8
 output_charset   = gbk
