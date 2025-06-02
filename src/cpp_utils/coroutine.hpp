@@ -7,7 +7,7 @@
 #include <utility>
 namespace cpp_utils {
     template < typename T >
-    concept coroutine_func_return_type = requires { typename T::promise_type; };
+    concept coroutine_func_return_t = requires { typename T::promise_type; };
     template < typename T, template < typename > typename Coroutine >
     struct coroutine_promise final {
         std::unique_ptr< T > current_value{};

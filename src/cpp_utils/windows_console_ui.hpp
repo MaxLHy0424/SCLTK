@@ -13,19 +13,19 @@ namespace cpp_utils {
 #if defined( _WIN32 ) || defined( _WIN64 )
     class console_ui final {
       public:
-        using func_return_type = bool;
-        inline static constexpr func_return_type func_back{ false };
-        inline static constexpr func_return_type func_exit{ true };
+        using func_return_t = bool;
+        inline static constexpr func_return_t func_back{ false };
+        inline static constexpr func_return_t func_exit{ true };
         struct func_args final {
             console_ui &parent_ui;
-            const size_type node_index;
+            const size_t node_index;
             const DWORD button_state;
             const DWORD ctrl_state;
             const DWORD event_flag;
             auto operator=( const func_args & ) noexcept -> func_args & = default;
             auto operator=( func_args && ) noexcept -> func_args &      = default;
             func_args(
-              console_ui &parent_ui, const size_type node_index,
+              console_ui &parent_ui, const size_t node_index,
               const MOUSE_EVENT_RECORD event = MOUSE_EVENT_RECORD{ {}, mouse::button_left, {}, {} } ) noexcept
               : parent_ui{ parent_ui }
               , node_index{ node_index }
@@ -37,7 +37,7 @@ namespace cpp_utils {
             func_args( func_args && ) noexcept      = default;
             ~func_args() noexcept                   = default;
         };
-        using callback_type = std::function< func_return_type( func_args ) >;
+        using callback_t = std::function< func_return_t( func_args ) >;
       private:
         inline static HANDLE std_input_handle_;
         inline static HANDLE std_output_handle_;
@@ -48,7 +48,7 @@ namespace cpp_utils {
         };
         struct line_node_ final {
             std::string text{};
-            callback_type func{};
+            callback_t func{};
             WORD default_attrs{ console_text::default_attrs };
             WORD intensity_attrs{ console_text::foreground_green | console_text::foreground_blue };
             WORD last_attrs{ console_text::default_attrs };
@@ -70,7 +70,7 @@ namespace cpp_utils {
             auto operator=( const line_node_ & ) noexcept -> line_node_ & = default;
             auto operator=( line_node_ && ) noexcept -> line_node_ &      = default;
             line_node_() noexcept                                         = default;
-            line_node_( const std::string_view text, callback_type &func, const WORD default_attrs, const WORD intensity_attrs ) noexcept
+            line_node_( const std::string_view text, callback_t &func, const WORD default_attrs, const WORD intensity_attrs ) noexcept
               : text{ text }
               , func{ std::move( func ) }
               , default_attrs{ default_attrs }
@@ -224,7 +224,7 @@ namespace cpp_utils {
         {
             return lines_.max_size();
         }
-        auto &resize( const size_type size )
+        auto &resize( const size_t size )
         {
             lines_.resize( size );
             return *this;
@@ -248,7 +248,7 @@ namespace cpp_utils {
         }
         auto &add_front(
           const std::string_view text,
-          callback_type func         = nullptr,
+          callback_t func            = nullptr,
           const WORD intensity_attrs = console_text::foreground_green | console_text::foreground_blue,
           const WORD default_attrs   = console_text::default_attrs )
         {
@@ -257,7 +257,7 @@ namespace cpp_utils {
         }
         auto &add_back(
           const std::string_view text,
-          callback_type func         = nullptr,
+          callback_t func            = nullptr,
           const WORD intensity_attrs = console_text::foreground_blue | console_text::foreground_green,
           const WORD default_attrs   = console_text::default_attrs )
         {
@@ -265,31 +265,31 @@ namespace cpp_utils {
             return *this;
         }
         auto &insert(
-          const size_type index,
+          const size_t index,
           const std::string_view text,
-          callback_type func         = nullptr,
+          callback_t func            = nullptr,
           const WORD intensity_attrs = console_text::foreground_green | console_text::foreground_blue,
           const WORD default_attrs   = console_text::default_attrs )
         {
             lines_.emplace( lines_.cbegin() + index, text, func, default_attrs, func != nullptr ? intensity_attrs : default_attrs );
             return *this;
         }
-        auto &edit_text( const size_type index, const std::string_view text )
+        auto &edit_text( const size_t index, const std::string_view text )
         {
             lines_.at( index ).text = text;
             return *this;
         }
-        auto &edit_func( const size_type index, callback_type func )
+        auto &edit_func( const size_t index, callback_t func )
         {
             lines_.at( index ).func = std::move( func );
             return *this;
         }
-        auto &edit_intensity_attrs( const size_type index, const WORD intensity_attrs )
+        auto &edit_intensity_attrs( const size_t index, const WORD intensity_attrs )
         {
             lines_.at( index ).intensity_attrs = intensity_attrs;
             return *this;
         }
-        auto &edit_default_attrs( const size_type index, const WORD default_attrs )
+        auto &edit_default_attrs( const size_t index, const WORD default_attrs )
         {
             lines_.at( index ).default_attrs = default_attrs;
             return *this;
@@ -304,7 +304,7 @@ namespace cpp_utils {
             lines_.pop_back();
             return *this;
         }
-        auto &remove( const size_type begin, const size_type length )
+        auto &remove( const size_t begin, const size_t length )
         {
             lines_.erase( lines_.cbegin() + begin, lines_.cbegin() + begin + length );
             return *this;
