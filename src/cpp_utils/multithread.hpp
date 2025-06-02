@@ -7,10 +7,10 @@
 #include <utility>
 #include <vector>
 namespace cpp_utils {
-    using thread_num_type = unsigned int;
+    using thread_num_t = unsigned int;
     template < std::random_access_iterator It, typename F >
         requires std::invocable< F, decltype( *std::declval< It >() ) >
-    inline auto parallel_for_each_impl( thread_num_type thread_num, It &&begin, It &&end, F &&func )
+    inline auto parallel_for_each_impl( thread_num_t thread_num, It &&begin, It &&end, F &&func )
     {
         if ( thread_num == 0 ) {
             std::unreachable();
@@ -19,13 +19,13 @@ namespace cpp_utils {
             return;
         }
         const auto total{ end - begin };
-        thread_num = std::min< thread_num_type >( thread_num, total );
+        thread_num = std::min< thread_num_t >( thread_num, total );
         const auto chunk_size{ total / thread_num };
         const auto remainder{ total % thread_num };
         std::vector< std::thread > threads;
         threads.reserve( thread_num );
         for ( const auto i : std::ranges::iota_view{ 0U, thread_num } ) {
-            const auto chunk_start{ begin + i * chunk_size + std::min< thread_num_type >( i, remainder ) };
+            const auto chunk_start{ begin + i * chunk_size + std::min< thread_num_t >( i, remainder ) };
             const auto chunk_end{ chunk_start + chunk_size + ( i < remainder ? 1 : 0 ) };
             threads.emplace_back( [ =, func = std::forward< F >( func ) ]
             {

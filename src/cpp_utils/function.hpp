@@ -26,7 +26,7 @@ namespace cpp_utils {
       private:
         std::function< T( Args... ) > func_;
         std::vector< std::type_index > args_type_{ std::type_index{ typeid( Args ) }... };
-        template < size_type... Is >
+        template < size_t... Is >
         auto invoke_impl_( const std::vector< std::any > &args, std::index_sequence< Is... > ) const -> std::any
         {
             if constexpr ( std::is_void_v< T > ) {
@@ -72,7 +72,7 @@ namespace cpp_utils {
         {
             return func_nodes_.max_size();
         }
-        auto &resize( const size_type size )
+        auto &resize( const size_t size )
         {
             func_nodes_.resize( size );
             return *this;
@@ -120,25 +120,25 @@ namespace cpp_utils {
             return *this;
         }
         template < typename T, typename... Args >
-        auto &insert( const size_type index, T ( *func )( Args... ) )
+        auto &insert( const size_t index, T ( *func )( Args... ) )
         {
             func_nodes_.emplace( func_nodes_.cbegin() + index, std::make_unique< func_wrapper< T, Args... > >( func ) );
             return *this;
         }
         template < typename T, typename... Args >
-        auto &insert( const size_type index, std::function< T( Args... ) > func )
+        auto &insert( const size_t index, std::function< T( Args... ) > func )
         {
             func_nodes_.emplace( func_nodes_.cbegin() + index, std::make_unique< func_wrapper< T, Args... > >( std::move( func ) ) );
             return *this;
         }
         template < typename T, typename... Args >
-        auto &edit( const size_type index, T ( *func )( Args... ) )
+        auto &edit( const size_t index, T ( *func )( Args... ) )
         {
             func_nodes_.at( index ) = std::make_unique< func_wrapper< T, Args... > >( func );
             return *this;
         }
         template < typename T, typename... Args >
-        auto &edit( const size_type index, std::function< T( Args... ) > func )
+        auto &edit( const size_t index, std::function< T( Args... ) > func )
         {
             func_nodes_.at( index ) = std::make_unique< func_wrapper< T, Args... > >( std::move( func ) );
             return *this;
@@ -153,7 +153,7 @@ namespace cpp_utils {
             func_nodes_.pop_back();
             return *this;
         }
-        auto &remove( const size_type begin, const size_type length )
+        auto &remove( const size_t begin, const size_t length )
         {
             func_nodes_.erase( func_nodes_.cbegin() + begin, func_nodes_.cbegin() + begin + length );
             return *this;
@@ -164,7 +164,7 @@ namespace cpp_utils {
             return *this;
         }
         template < typename T, typename... Args >
-        decltype( auto ) invoke( const size_type index, Args &&...args ) const
+        decltype( auto ) invoke( const size_t index, Args &&...args ) const
         {
             if constexpr ( std::same_as< std::decay_t< T >, void > ) {
                 func_nodes_.at( index )->invoke( make_args( std::forward< Args >( args )... ) );
@@ -174,7 +174,7 @@ namespace cpp_utils {
             }
         }
         template < typename T >
-        decltype( auto ) dynamic_invoke( const size_type index, const std::vector< std::any > &args ) const
+        decltype( auto ) dynamic_invoke( const size_t index, const std::vector< std::any > &args ) const
         {
             if constexpr ( std::same_as< std::decay_t< T >, void > ) {
                 func_nodes_.at( index )->invoke( args );

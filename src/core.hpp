@@ -9,7 +9,7 @@
 namespace core {
     using namespace std::chrono_literals;
     using namespace std::string_view_literals;
-    using size_type = cpp_utils::size_type;
+    using size_t = cpp_utils::size_t;
     inline constexpr SHORT console_width{ 50 };
     inline constexpr SHORT console_height{ 25 };
     inline constexpr UINT charset_id{ 54936 };
@@ -163,18 +163,18 @@ namespace core {
           { "perf", "性能", { { "disable_x_option_hot_reload", "** 禁用标 * 选项热重载" } } } } } };
     inline const auto &is_disable_x_option_hot_reload{ options[ "perf" ][ "disable_x_option_hot_reload" ] };
     struct rule_node final {
-        using item_type      = std::string;
-        using container_type = std::deque< item_type >;
+        using item_t      = std::string;
+        using container_t = std::deque< item_t >;
         const char *const shown_name;
-        container_type execs;
-        container_type servs;
+        container_t execs;
+        container_t servs;
         auto empty() const noexcept
         {
             return execs.empty() && servs.empty();
         }
         auto operator=( const rule_node & ) -> rule_node & = delete;
         auto operator=( rule_node && ) -> rule_node &      = delete;
-        rule_node( const char *const shown_name, container_type execs, container_type servs )
+        rule_node( const char *const shown_name, container_t execs, container_t servs )
           : shown_name{ shown_name }
           , execs{ std::move( execs ) }
           , servs{ std::move( servs ) }
@@ -246,11 +246,11 @@ namespace core {
         virtual auto ui( cpp_utils::console_ui &ui ) -> void override final
         {
             constexpr auto option_ctrl_color{ cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_green };
-            using category_type = option_set::category;
-            using item_type     = option_set::item;
+            using category_t = option_set::category;
+            using item_t     = option_set::item;
             class option_setter final {
               private:
-                item_type &item_;
+                item_t &item_;
               public:
                 auto operator()( ui_func_args args )
                 {
@@ -258,14 +258,14 @@ namespace core {
                     args.parent_ui.edit_text( args.node_index, make_swith_button_text_( item_ ) );
                     return func_back;
                 }
-                option_setter( item_type &item ) noexcept
+                option_setter( item_t &item ) noexcept
                   : item_{ item }
                 { }
                 ~option_setter() noexcept = default;
             };
             class option_ui final {
               private:
-                category_type &category_;
+                category_t &category_;
               public:
                 auto operator()( ui_func_args )
                 {
@@ -281,7 +281,7 @@ namespace core {
                     ui.show();
                     return func_back;
                 }
-                option_ui( category_type &category ) noexcept
+                option_ui( category_t &category ) noexcept
                   : category_{ category }
                 { }
                 ~option_ui() noexcept = default;
@@ -605,8 +605,8 @@ namespace core {
         ui.show();
         return func_back;
     }
-    using exec_const_ref_type = cpp_utils::add_const_lvalue_reference_type< rule_node::item_type >;
-    using serv_const_ref_type = cpp_utils::add_const_lvalue_reference_type< rule_node::item_type >;
+    using exec_const_ref_t = cpp_utils::add_const_lvalue_reference_t< rule_node::item_t >;
+    using serv_const_ref_t = cpp_utils::add_const_lvalue_reference_t< rule_node::item_t >;
     inline const auto &option_crack_restore{ options[ "crack_restore" ] };
     inline const auto &is_hijack_execs{ option_crack_restore[ "hijack_execs" ] };
     inline const auto &is_set_serv_startup_types{ option_crack_restore[ "set_serv_startup_types" ] };
@@ -614,7 +614,7 @@ namespace core {
     class crack final {
       private:
         const rule_node &rules_;
-        static auto hijack_exec_( exec_const_ref_type exec ) noexcept
+        static auto hijack_exec_( exec_const_ref_t exec ) noexcept
         {
             std::system(
               std::format(
@@ -622,15 +622,15 @@ namespace core {
                 exec )
                 .c_str() );
         }
-        static auto disable_serv_( serv_const_ref_type serv ) noexcept
+        static auto disable_serv_( serv_const_ref_t serv ) noexcept
         {
             std::system( std::format( R"(sc.exe config "{}" start= disabled)", serv ).c_str() );
         }
-        static auto kill_exec_( exec_const_ref_type exec ) noexcept
+        static auto kill_exec_( exec_const_ref_t exec ) noexcept
         {
             std::system( std::format( R"(taskkill.exe /f /im "{}")", exec ).c_str() );
         }
-        static auto stop_serv_( serv_const_ref_type serv ) noexcept
+        static auto stop_serv_( serv_const_ref_t serv ) noexcept
         {
             std::system( std::format( R"(net.exe stop "{}" /y)", serv ).c_str() );
         }
@@ -696,18 +696,18 @@ namespace core {
     class restore final {
       private:
         const rule_node &rules_;
-        static auto undo_hijack_exec_( exec_const_ref_type exec ) noexcept
+        static auto undo_hijack_exec_( exec_const_ref_t exec ) noexcept
         {
             std::system(
               std::format(
                 R"(reg.exe delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\{}" /f)", exec )
                 .c_str() );
         }
-        static auto enable_serv_( serv_const_ref_type serv ) noexcept
+        static auto enable_serv_( serv_const_ref_t serv ) noexcept
         {
             std::system( std::format( R"(sc.exe config "{}" start= auto)", serv ).c_str() );
         }
-        static auto start_serv_( serv_const_ref_type serv ) noexcept
+        static auto start_serv_( serv_const_ref_t serv ) noexcept
         {
             std::system( std::format( R"(net.exe start "{}")", serv ).c_str() );
         }
