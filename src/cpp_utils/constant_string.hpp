@@ -6,11 +6,11 @@
 #include "type_tools.hpp"
 namespace cpp_utils {
     template < typename T >
-    concept char_type
+    concept character
       = std::same_as< std::decay_t< T >, char > || std::same_as< std::decay_t< T >, wchar_t >
      || std::same_as< std::decay_t< T >, char8_t > || std::same_as< std::decay_t< T >, char16_t >
      || std::same_as< std::decay_t< T >, char32_t >;
-    template < char_type T, size_type N >
+    template < character T, size_t N >
         requires( std::same_as< T, std::decay_t< T > > && N > 0 )
     class constant_string final {
       private:
@@ -28,11 +28,11 @@ namespace cpp_utils {
         {
             return data_.max_size();
         }
-        constexpr auto &at( const size_type index ) const noexcept
+        constexpr auto &at( const size_t index ) const noexcept
         {
             return data_.at( index );
         }
-        const auto &operator[]( const size_type index ) const noexcept
+        const auto &operator[]( const size_t index ) const noexcept
         {
             return data_[ index ];
         }
@@ -41,7 +41,7 @@ namespace cpp_utils {
             if ( src == nullptr ) {
                 return false;
             }
-            size_type src_size{ 0 };
+            size_t src_size{ 0 };
             while ( src[ src_size ] != '\0' ) {
                 ++src_size;
             }
@@ -55,7 +55,7 @@ namespace cpp_utils {
             }
             return true;
         }
-        template < size_type SrcN >
+        template < size_t SrcN >
         constexpr auto compare( const T ( &src )[ SrcN ] ) const noexcept
         {
             if ( SrcN != N ) {
@@ -68,7 +68,7 @@ namespace cpp_utils {
             }
             return true;
         }
-        template < size_type SrcN >
+        template < size_t SrcN >
         constexpr auto compare( const constant_string< T, SrcN > &src ) const noexcept
         {
             if ( SrcN != N ) {
@@ -85,12 +85,12 @@ namespace cpp_utils {
         {
             return compare( src );
         }
-        template < size_type SrcN >
+        template < size_t SrcN >
         constexpr auto operator==( const T ( &src )[ SrcN ] ) const noexcept
         {
             return compare( src );
         }
-        template < size_type SrcN >
+        template < size_t SrcN >
         constexpr auto operator==( const constant_string< T, SrcN > &src ) const noexcept
         {
             return compare( src );
@@ -99,12 +99,12 @@ namespace cpp_utils {
         {
             return !compare( src );
         }
-        template < size_type SrcN >
+        template < size_t SrcN >
         constexpr auto operator!=( const T ( &src )[ SrcN ] ) const noexcept
         {
             return !compare( src );
         }
-        template < size_type SrcN >
+        template < size_t SrcN >
         constexpr auto operator!=( const constant_string< T, SrcN > &src ) const noexcept
         {
             return !compare( src );
@@ -119,14 +119,14 @@ namespace cpp_utils {
         consteval constant_string( constant_string< T, N > && ) noexcept = delete;
         ~constant_string() noexcept                                      = default;
     };
-    template < size_type N >
+    template < size_t N >
     using constant_ansi_string = constant_string< char, N >;
-    template < size_type N >
+    template < size_t N >
     using constant_wide_string = constant_string< wchar_t, N >;
-    template < size_type N >
+    template < size_t N >
     using constant_utf8_string = constant_string< char8_t, N >;
-    template < size_type N >
+    template < size_t N >
     using constant_utf16_string = constant_string< char16_t, N >;
-    template < size_type N >
+    template < size_t N >
     using constant_utf32_string = constant_string< char32_t, N >;
 }
