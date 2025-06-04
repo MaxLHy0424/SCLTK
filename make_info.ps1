@@ -34,7 +34,5 @@ $build_time = Get-Date -AsUTC -Format "yyyy/MM/dd HH:mm:ss"
 # define INFO_COMPILER "msvc " TO_STRING( _MSC_VER )
 #else
 # define INFO_COMPILER "{unknow}"
-#undef TO_STRING
-#undef STRINGIFY
 #endif
 "@ | Out-File -FilePath "src/info.hpp" -Encoding UTF8 -NoNewline -Force
