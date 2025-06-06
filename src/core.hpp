@@ -39,7 +39,7 @@ namespace core {
     inline auto wait() noexcept
     {
         std::print( "\n\n" );
-        for ( auto i{ 3 }; i > 0; --i ) {
+        for ( unsigned short i{ 3 }; i > 0; --i ) {
             std::print( " {}s 后返回.\r", i );
             std::this_thread::sleep_for( 1s );
         }
@@ -52,7 +52,7 @@ namespace core {
     inline auto u8wait() noexcept
     {
         std::print( "\n\n" );
-        for ( auto i{ 3 }; i > 0; --i ) {
+        for ( unsigned short i{ 3 }; i > 0; --i ) {
             u8print( u8" {}s 后返回.\r", i );
             std::this_thread::sleep_for( 1s );
         }
