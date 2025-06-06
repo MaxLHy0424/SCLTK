@@ -113,15 +113,15 @@ SCLTK 窗口相关选项.
 
 #### 3.3.1 可执行文件
 
-配置文件中标签 `[ custom_rules_execs ]` 到下一个标签的部分, 每个项目保留文件扩展名.
+配置文件中标签 `[ custom_rules_execs ]` 到下一个标签的部分, 每个项目不得保留文件扩展名 `.exe`. 所有规则不支持以 `.com` 为文件扩展名的可执行文件.
 
 示例:
 
 ```ini
 [ custom_rules_execs ]
-abc_client_gui.exe
-abc_client_server.exe
-abc_protect_server.com
+abc_client_gui
+abc_client_server
+abc_protect_server
 ```
 
 #### 3.3.2 服务
