@@ -186,18 +186,16 @@ namespace core {
     inline rule_node custom_rules{ "自定义", {}, {} };
     inline const std::array< rule_node, 3 > builtin_rules{
       { { "极域电子教室",
-          { "StudentMain.exe", "DispcapHelper.exe", "VRCwPlayer.exe", "InstHelpApp.exe", "InstHelpApp64.exe", "TDOvrSet.exe",
-            "GATESRV.exe", "ProcHelper64.exe", "MasterHelper.exe" },
+          { "StudentMain", "DispcapHelper", "VRCwPlayer", "InstHelpApp", "InstHelpApp64", "TDOvrSet", "GATESRV", "ProcHelper64",
+            "MasterHelper" },
           { "TDNetFilter", "TDFileFilter", "STUDSRV" } },
        { "联想智能云教室",
-          { "vncviewer.exe", "tvnserver32.exe", "WfbsPnpInstall.exe", "WFBSMon.exe", "WFBSMlogon.exe", "WFBSSvrLogShow.exe",
-            "ResetIp.exe", "FuncForWIN64.exe", "CertMgr.exe", "Fireware.exe", "BCDBootCopy.exe", "refreship.exe",
-            "lenovoLockScreen.exe", "PortControl64.exe", "DesktopCheck.exe", "DeploymentManager.exe", "DeploymentAgent.exe",
-            "XYNTService.exe" },
+          { "vncviewer", "tvnserver32", "WfbsPnpInstall", "WFBSMon", "WFBSMlogon", "WFBSSvrLogShow", "ResetIp", "FuncForWIN64",
+            "CertMgr", "Fireware", "BCDBootCopy", "refreship", "lenovoLockScreen", "PortControl64", "DesktopCheck",
+            "DeploymentManager", "DeploymentAgent", "XYNTService" },
           { "BSAgentSvr", "tvnserver", "WFBSMlogon" } },
        { "红蜘蛛多媒体网络教室",
-          { "rscheck.exe", "checkrs.exe", "REDAgent.exe", "PerformanceCheck.exe", "edpaper.exe", "Adapter.exe", "repview.exe",
-            "FormatPaper.exe" },
+          { "rscheck", "checkrs", "REDAgent", "PerformanceCheck", "edpaper", "Adapter", "repview", "FormatPaper" },
           { "appcheck2", "checkapp2" } } }
     };
     class basic_config_node {
@@ -488,13 +486,12 @@ namespace core {
           R"(Software\Policies\Microsoft\Windows\System)", R"(Software\Microsoft\Windows\CurrentVersion\Policies\System)",
           R"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)" };
         constexpr std::array execs{
-          "taskkill.exe", "sc.exe",      "net.exe", "reg.exe",  "cmd.exe", "taskmgr.exe",
-          "perfmon.exe",  "regedit.exe", "mmc.exe", "dism.exe", "sfc.exe" };
+          "taskkill", "sc", "net", "reg", "cmd", "taskmgr", "perfmon", "regedit", "mmc", "dism", "sfc" };
         constexpr auto size_of_execs{ execs.size() };
         std::array< std::string, size_of_execs > reg_hijacked_execs;
         for ( const auto i : std::ranges::iota_view{ decltype( size_of_execs ){ 0 }, size_of_execs } ) {
             reg_hijacked_execs[ i ]
-              = std::format( R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{})", execs[ i ] );
+              = std::format( R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe)", execs[ i ] );
         }
         auto engine{ [ & ] noexcept
         {
@@ -618,7 +615,7 @@ namespace core {
         {
             std::system(
               std::format(
-                R"(reg.exe add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\{}" /f /t reg_sz /v debugger /d "nul")",
+                R"(reg.exe add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe" /f /t reg_sz /v debugger /d "nul")",
                 exec )
                 .c_str() );
         }
@@ -628,7 +625,7 @@ namespace core {
         }
         static auto kill_exec_( exec_const_ref_t exec ) noexcept
         {
-            std::system( std::format( R"(taskkill.exe /f /im "{}")", exec ).c_str() );
+            std::system( std::format( R"(taskkill.exe /f /im "{}.exe")", exec ).c_str() );
         }
         static auto stop_serv_( serv_const_ref_t serv ) noexcept
         {
@@ -700,7 +697,7 @@ namespace core {
         {
             std::system(
               std::format(
-                R"(reg.exe delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution options\{}" /f)", exec )
+                R"(reg.exe delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe" /f)", exec )
                 .c_str() );
         }
         static auto enable_serv_( serv_const_ref_t serv ) noexcept
