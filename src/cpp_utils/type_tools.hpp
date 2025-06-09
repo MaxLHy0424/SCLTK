@@ -9,4 +9,6 @@ namespace cpp_utils
     using type_set = T;
     template < typename T >
     using add_const_lvalue_reference_t = std::add_lvalue_reference_t< std::add_const_t< T > >;
+    template < template < typename... > typename T, template < typename... > typename U, typename... Args >
+    consteval auto get_template_args( U< Args... > ) -> T< Args... >;
 }
