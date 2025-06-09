@@ -6,7 +6,8 @@
 #include "cpp_utils/windows_app_tools.hpp"
 #include "cpp_utils/windows_console_ui.hpp"
 #include "info.hpp"
-namespace core {
+namespace core
+{
     using namespace std::chrono_literals;
     using namespace std::string_view_literals;
     using size_t = cpp_utils::size_t;
@@ -23,9 +24,9 @@ namespace core {
     inline const auto std_output_handle{ GetStdHandle( STD_OUTPUT_HANDLE ) };
     using ui_func_args = cpp_utils::console_ui::func_args;
     template < typename... Args >
-    inline auto u8print( const char8_t *const format_string, Args &&...args )
+    inline auto u8print( const char8_t* const format_string, Args&&... args )
     {
-        std::print( std::runtime_format( reinterpret_cast< const char * >( format_string ) ), std::forward< Args >( args )... );
+        std::print( std::runtime_format( reinterpret_cast< const char* >( format_string ) ), std::forward< Args >( args )... );
     }
     inline auto quit( ui_func_args ) noexcept
     {
@@ -57,13 +58,15 @@ namespace core {
             std::this_thread::sleep_for( 1s );
         }
     }
-    struct option_set final {
-        struct item final {
+    struct option_set final
+    {
+        struct item final
+        {
           private:
             std::atomic< bool > value_{ false };
           public:
-            const char *const self_name;
-            const char *const shown_name;
+            const char* const self_name;
+            const char* const shown_name;
             auto set( const bool value ) noexcept
             {
                 value_.store( value, std::memory_order_release );
@@ -76,70 +79,71 @@ namespace core {
             {
                 return get();
             }
-            auto operator=( const item & ) -> item & = delete;
-            auto operator=( item && ) -> item &      = delete;
-            item( const char *const self_name, const char *const shown_name )
+            auto operator=( const item& ) -> item& = delete;
+            auto operator=( item&& ) -> item&      = delete;
+            item( const char* const self_name, const char* const shown_name )
               : self_name{ self_name }
               , shown_name{ shown_name }
             { }
-            item( const item &src )
+            item( const item& src )
               : value_{ src }
               , self_name{ src.self_name }
               , shown_name{ src.shown_name }
             { }
-            item( item &src )
+            item( item& src )
               : value_{ src }
               , self_name{ src.self_name }
               , shown_name{ src.shown_name }
             { }
             ~item() = default;
         };
-        struct category final {
-            const char *const self_name;
-            const char *const shown_name;
+        struct category final
+        {
+            const char* const self_name;
+            const char* const shown_name;
             std::vector< item > items;
-            auto &operator[]( const std::string_view self_name )
+            auto& operator[]( const std::string_view self_name )
             {
-                for ( auto &item : items ) {
+                for ( auto& item : items ) {
                     if ( self_name == item.self_name ) {
                         return item;
                     }
                 }
                 std::unreachable();
             }
-            const auto &operator[]( const std::string_view self_name ) const
+            const auto& operator[]( const std::string_view self_name ) const
             {
-                for ( const auto &item : items ) {
+                for ( const auto& item : items ) {
                     if ( self_name == item.self_name ) {
                         return item;
                     }
                 }
                 std::unreachable();
             }
-            auto operator=( const category & ) -> category & = delete;
-            auto operator=( category && ) -> category &      = delete;
-            category( const char *const self_name, const char *const shown_name, std::vector< item > items )
+            auto operator=( const category& ) -> category& = delete;
+            auto operator=( category&& ) -> category&      = delete;
+            category( const char* const self_name, const char* const shown_name, std::vector< item > items )
               : self_name{ self_name }
               , shown_name{ shown_name }
               , items{ std::move( items ) }
             { }
-            category( const category & ) = default;
-            category( category && )      = default;
-            ~category()                  = default;
+            category( const category& ) = default;
+            category( category&& )      = default;
+            ~category()                 = default;
         };
         std::vector< category > categories;
-        auto &operator[]( const std::string_view self_name ) noexcept
+        auto& operator[]( const std::string_view self_name ) noexcept
         {
-            for ( auto &category : categories ) {
+            for ( auto& category : categories ) {
                 if ( self_name == category.self_name ) {
                     return category;
                 }
             }
             std::unreachable();
         }
-        const auto &operator[]( const std::string_view self_name ) const noexcept
+        const auto& operator[]( const std::string_view self_name ) const noexcept
         {
-            for ( const auto &category : categories ) {
+            for ( const auto& category : categories ) {
                 if ( self_name == category.self_name ) {
                     return category;
                 }
@@ -152,7 +156,7 @@ namespace core {
     };
     inline option_set options{
       { { { "crack_restore",
-            "破解 & 恢复",
+            "破解& 恢复",
             { { "hijack_execs", "劫持可执行文件" },
               { "set_serv_startup_types", "设置服务启动类型" },
               { "parallel_op", "并行操作 (预览版)" },
@@ -161,27 +165,28 @@ namespace core {
             "窗口显示",
             { { "keep_window_top", "* 置顶窗口" }, { "minimalist_titlebar", "* 极简标题栏" }, { "translucent", "* 半透明" } } },
           { "perf", "性能", { { "disable_x_option_hot_reload", "** 禁用标 * 选项热重载" } } } } } };
-    inline const auto &is_disable_x_option_hot_reload{ options[ "perf" ][ "disable_x_option_hot_reload" ] };
-    struct rule_node final {
+    inline const auto& is_disable_x_option_hot_reload{ options[ "perf" ][ "disable_x_option_hot_reload" ] };
+    struct rule_node final
+    {
         using item_t      = std::string;
         using container_t = std::deque< item_t >;
-        const char *const shown_name;
+        const char* const shown_name;
         container_t execs;
         container_t servs;
         auto empty() const noexcept
         {
             return execs.empty() && servs.empty();
         }
-        auto operator=( const rule_node & ) -> rule_node & = delete;
-        auto operator=( rule_node && ) -> rule_node &      = delete;
-        rule_node( const char *const shown_name, container_t execs, container_t servs )
+        auto operator=( const rule_node& ) -> rule_node& = delete;
+        auto operator=( rule_node&& ) -> rule_node&      = delete;
+        rule_node( const char* const shown_name, container_t execs, container_t servs )
           : shown_name{ shown_name }
           , execs{ std::move( execs ) }
           , servs{ std::move( servs ) }
         { }
-        rule_node( const rule_node & ) = default;
-        rule_node( rule_node && )      = default;
-        ~rule_node()                   = default;
+        rule_node( const rule_node& ) = default;
+        rule_node( rule_node&& )      = default;
+        ~rule_node()                  = default;
     };
     inline rule_node custom_rules{ "自定义", {}, {} };
     inline const std::array< rule_node, 3 > builtin_rules{
@@ -198,19 +203,23 @@ namespace core {
           { "rscheck", "checkrs", "REDAgent", "PerformanceCheck", "edpaper", "Adapter", "repview", "FormatPaper" },
           { "appcheck2", "checkapp2" } } }
     };
-    class basic_config_node {
+    class basic_config_node
+    {
       public:
-        const cpp_utils::raw_pointer_wrapper< const char * > self_name;
-        virtual auto load( const bool, std::string & ) -> void = 0;
-        virtual auto sync( std::ofstream & ) -> void           = 0;
-        virtual auto prepare_reload() -> void { }
-        virtual auto ui( cpp_utils::console_ui & ) -> void { }
-        basic_config_node( const char *const self_name ) noexcept
+        const cpp_utils::raw_pointer_wrapper< const char* > self_name;
+        virtual auto load( const bool, std::string& ) -> void = 0;
+        virtual auto sync( std::ofstream& ) -> void           = 0;
+        virtual auto prepare_reload() -> void
+        { }
+        virtual auto ui( cpp_utils::console_ui& ) -> void
+        { }
+        basic_config_node( const char* const self_name ) noexcept
           : self_name{ self_name }
         { }
         virtual ~basic_config_node() noexcept = default;
     };
-    class option_op final : public basic_config_node {
+    class option_op final : public basic_config_node
+    {
       private:
         static constexpr auto format_string_{ R"("{}.{}": {})" };
         static auto make_swith_button_text_( const auto is_enable )
@@ -218,13 +227,13 @@ namespace core {
             return std::format( " > {}用 ", is_enable ? "禁" : "启" );
         }
       public:
-        virtual auto load( const bool is_reload, std::string &line ) -> void override final
+        virtual auto load( const bool is_reload, std::string& line ) -> void override final
         {
             if ( is_reload ) {
                 return;
             }
-            for ( auto &category : options.categories ) {
-                for ( auto &item : category.items ) {
+            for ( auto& category : options.categories ) {
+                for ( auto& item : category.items ) {
                     if ( line == std::format( format_string_, category.self_name, item.self_name, true ) ) {
                         item.set( true );
                     } else if ( line == std::format( format_string_, category.self_name, item.self_name, false ) ) {
@@ -233,22 +242,23 @@ namespace core {
                 }
             }
         }
-        virtual auto sync( std::ofstream &out ) -> void override final
+        virtual auto sync( std::ofstream& out ) -> void override final
         {
-            for ( const auto &category : options.categories ) {
-                for ( const auto &item : category.items ) {
+            for ( const auto& category : options.categories ) {
+                for ( const auto& item : category.items ) {
                     out << std::format( format_string_, category.self_name, item.self_name, item.get() ) << '\n';
                 }
             }
         }
-        virtual auto ui( cpp_utils::console_ui &ui ) -> void override final
+        virtual auto ui( cpp_utils::console_ui& ui ) -> void override final
         {
             constexpr auto option_ctrl_color{ cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_green };
             using category_t = option_set::category;
             using item_t     = option_set::item;
-            class option_setter final {
+            class option_setter final
+            {
               private:
-                item_t &item_;
+                item_t& item_;
               public:
                 auto operator()( ui_func_args args )
                 {
@@ -256,14 +266,15 @@ namespace core {
                     args.parent_ui.edit_text( args.node_index, make_swith_button_text_( item_ ) );
                     return func_back;
                 }
-                option_setter( item_t &item ) noexcept
+                option_setter( item_t& item ) noexcept
                   : item_{ item }
                 { }
                 ~option_setter() noexcept = default;
             };
-            class option_ui final {
+            class option_ui final
+            {
               private:
-                category_t &category_;
+                category_t& category_;
               public:
                 auto operator()( ui_func_args )
                 {
@@ -272,14 +283,14 @@ namespace core {
                       .add_back(
                         std::format( R"( < 折叠 "{}" )", category_.shown_name ), quit,
                         cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity );
-                    for ( auto &item : category_.items ) {
+                    for ( auto& item : category_.items ) {
                         ui.add_back( std::format( "\n[ {} ]\n", item.shown_name ) )
                           .add_back( make_swith_button_text_( item ), option_setter{ item }, option_ctrl_color );
                     }
                     ui.show();
                     return func_back;
                 }
-                option_ui( category_t &category ) noexcept
+                option_ui( category_t& category ) noexcept
                   : category_{ category }
                 { }
                 ~option_ui() noexcept = default;
@@ -290,7 +301,7 @@ namespace core {
               "     标 * 选项热重载每 {} 自动执行, 可禁用.\n"
               "     标 ** 选项无法热重载. 其余选项可实时热重载.\n",
               default_thread_sleep_time ) );
-            for ( auto &category : options.categories ) {
+            for ( auto& category : options.categories ) {
                 ui.add_back( std::format( " > {} ", category.shown_name ), option_ui{ category }, option_ctrl_color );
             }
         }
@@ -299,15 +310,16 @@ namespace core {
         { }
         virtual ~option_op() noexcept = default;
     };
-    class custom_rules_execs_op final : public basic_config_node {
+    class custom_rules_execs_op final : public basic_config_node
+    {
       public:
-        virtual auto load( const bool, std::string &line ) -> void override final
+        virtual auto load( const bool, std::string& line ) -> void override final
         {
             custom_rules.execs.emplace_back( std::move( line ) );
         }
-        virtual auto sync( std::ofstream &out ) -> void override final
+        virtual auto sync( std::ofstream& out ) -> void override final
         {
-            for ( const auto &exec : custom_rules.execs ) {
+            for ( const auto& exec : custom_rules.execs ) {
                 out << exec << '\n';
             }
         }
@@ -320,15 +332,16 @@ namespace core {
         { }
         virtual ~custom_rules_execs_op() noexcept = default;
     };
-    class custom_rules_servs_op final : public basic_config_node {
+    class custom_rules_servs_op final : public basic_config_node
+    {
       public:
-        virtual auto load( const bool, std::string &line ) -> void override final
+        virtual auto load( const bool, std::string& line ) -> void override final
         {
             custom_rules.servs.emplace_back( std::move( line ) );
         }
-        virtual auto sync( std::ofstream &out ) -> void override final
+        virtual auto sync( std::ofstream& out ) -> void override final
         {
-            for ( const auto &serv : custom_rules.servs ) {
+            for ( const auto& serv : custom_rules.servs ) {
                 out << serv << '\n';
             }
         }
@@ -356,7 +369,7 @@ namespace core {
           .add_back(
             "\n[ 名称 ]\n\n " INFO_FULL_NAME " (缩写: " INFO_SHORT_NAME ")\n\n[ 版本 ]\n\n " INFO_VERSION
             "\n\n 构建时间: " INFO_BUILD_TIME "\n 编译工具: " INFO_COMPILER " " INFO_ARCH
-            "\n\n[ 许可证 & 版权 ]\n\n " INFO_LICENSE "\n " INFO_COPYRIGHT "\n\n[ 仓库 ]\n" )
+            "\n\n[ 许可证& 版权 ]\n\n " INFO_LICENSE "\n " INFO_COPYRIGHT "\n\n[ 仓库 ]\n" )
           .add_back(
             " " INFO_REPO_URL " ", visit_repo_webpage,
             cpp_utils::console_text::default_attrs | cpp_utils::console_text::foreground_intensity
@@ -382,13 +395,15 @@ namespace core {
             cpp_utils::enable_window_maximize_ctrl( window_handle, false );
             return func_back;
         } };
-        struct cmd_item final {
-            const char *description;
-            const char *command;
+        struct cmd_item final
+        {
+            const char* description;
+            const char* command;
         };
-        class cmd_executor final {
+        class cmd_executor final
+        {
           private:
-            const cmd_item &item_;
+            const cmd_item& item_;
           public:
             auto operator()( ui_func_args )
             {
@@ -409,15 +424,15 @@ namespace core {
                   .show();
                 return func_back;
             }
-            cmd_executor( const cmd_item &item ) noexcept
+            cmd_executor( const cmd_item& item ) noexcept
               : item_{ item }
             { }
-            cmd_executor( const cmd_executor & ) noexcept = default;
-            cmd_executor( cmd_executor && ) noexcept      = default;
-            ~cmd_executor() noexcept                      = default;
+            cmd_executor( const cmd_executor& ) noexcept = default;
+            cmd_executor( cmd_executor&& ) noexcept      = default;
+            ~cmd_executor() noexcept                     = default;
         };
         constexpr std::array< cmd_item, 5 > common_cmds{
-          { { "重启资源管理器", R"(taskkill.exe /f /im explorer.exe && timeout.exe /t 3 /nobreak && start C:\Windows\explorer.exe)" },
+          { { "重启资源管理器", R"(taskkill.exe /f /im explorer.exe&& timeout.exe /t 3 /nobreak&& start C:\Windows\explorer.exe)" },
            { "重启至高级选项", "shutdown.exe /r /o /f /t 0" },
            { "恢复 USB 设备访问", R"(reg.exe add "HKLM\SYSTEM\CurrentControlSet\Services\USBSTOR" /f /t reg_dword /v Start /d 3)" },
            { "恢复 Google Chrome 离线游戏", R"(reg.exe delete "HKLM\SOFTWARE\Policies\Google\Chrome" /f /v AllowDinosaurEasterEgg)" },
@@ -428,7 +443,7 @@ namespace core {
           .add_back( " < 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
           .add_back( " > 命令提示符 ", launch_cmd )
           .add_back( "\n[ 常用操作 ]\n" );
-        for ( const auto &common_cmd : common_cmds ) {
+        for ( const auto& common_cmd : common_cmds ) {
             ui.add_back( std::format( " > {} ", common_cmd.description ), cmd_executor{ common_cmd } );
         }
         ui.show();
@@ -436,9 +451,9 @@ namespace core {
     }
     inline auto set_console_attrs()
     {
-        const auto &window_options{ options[ "window" ] };
-        const auto &is_enable_minimalist_titlebar{ window_options[ "minimalist_titlebar" ] };
-        const auto &is_translucent{ window_options[ "translucent" ] };
+        const auto& window_options{ options[ "window" ] };
+        const auto& is_enable_minimalist_titlebar{ window_options[ "minimalist_titlebar" ] };
+        const auto& is_translucent{ window_options[ "translucent" ] };
         if ( is_disable_x_option_hot_reload ) {
             cpp_utils::enable_window_menu( window_handle, !is_enable_minimalist_titlebar );
             cpp_utils::set_window_translucency( window_handle, is_translucent ? 230 : 255 );
@@ -452,7 +467,7 @@ namespace core {
     }
     inline auto keep_window_top()
     {
-        const auto &is_keep_window_top{ options[ "window" ][ "keep_window_top" ] };
+        const auto& is_keep_window_top{ options[ "window" ][ "keep_window_top" ] };
         if ( is_disable_x_option_hot_reload && !is_keep_window_top ) {
             return;
         }
@@ -477,7 +492,7 @@ namespace core {
     }
     inline auto fix_os_env()
     {
-        const auto &is_fix_os_env{ options[ "crack_restore" ][ "fix_os_env" ] };
+        const auto& is_fix_os_env{ options[ "crack_restore" ][ "fix_os_env" ] };
         if ( is_disable_x_option_hot_reload && !is_fix_os_env ) {
             return;
         }
@@ -495,10 +510,10 @@ namespace core {
         }
         auto engine{ [ & ] noexcept
         {
-            for ( const auto &reg_dir : reg_dirs ) {
+            for ( const auto& reg_dir : reg_dirs ) {
                 RegDeleteTreeA( HKEY_CURRENT_USER, reg_dir );
             }
-            for ( const auto &reg_hijacked_exec : reg_hijacked_execs ) {
+            for ( const auto& reg_hijacked_exec : reg_hijacked_execs ) {
                 RegDeleteTreeA( HKEY_LOCAL_MACHINE, reg_hijacked_exec.c_str() );
             }
             std::this_thread::sleep_for( sleep_time );
@@ -523,13 +538,13 @@ namespace core {
             return;
         }
         if ( is_reload ) {
-            for ( auto &config_node : config_nodes ) {
+            for ( auto& config_node : config_nodes ) {
                 config_node->prepare_reload();
             }
         }
         std::string line;
         std::string_view line_view;
-        basic_config_node *node_ptr{};
+        basic_config_node* node_ptr{};
         while ( std::getline( config_file, line ) ) {
             line_view = line;
             if ( line_view.empty() ) {
@@ -542,7 +557,7 @@ namespace core {
                  && line_view.substr( line_view.size() - sizeof( " ]" ) + 1, line_view.size() ) == " ]" )
             {
                 line_view = line_view.substr( sizeof( "[ " ) - 1, line_view.size() - sizeof( " ]" ) - 1 );
-                for ( auto &config_node : config_nodes ) {
+                for ( auto& config_node : config_nodes ) {
                     if ( line_view == config_node->self_name.get() ) {
                         node_ptr = config_node.get();
                         break;
@@ -566,7 +581,7 @@ namespace core {
             load_config( true );
             std::ofstream config_file_stream{ config_file_name, std::ios::out | std::ios::trunc };
             config_file_stream << "# " INFO_FULL_NAME "\n# " INFO_VERSION "\n";
-            for ( auto &config_node : config_nodes ) {
+            for ( auto& config_node : config_nodes ) {
                 config_file_stream << std::format( "[ {} ]\n", config_node->self_name.get() );
                 config_node->sync( config_file_stream );
             }
@@ -596,7 +611,7 @@ namespace core {
           .add_back( " < 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
           .add_back( " > 同步配置 ", sync )
           .add_back( " > 打开配置文件 ", open_file );
-        for ( auto &config_node : config_nodes ) {
+        for ( auto& config_node : config_nodes ) {
             config_node->ui( ui );
         }
         ui.show();
@@ -604,13 +619,14 @@ namespace core {
     }
     using exec_const_ref_t = cpp_utils::add_const_lvalue_reference_t< rule_node::item_t >;
     using serv_const_ref_t = cpp_utils::add_const_lvalue_reference_t< rule_node::item_t >;
-    inline const auto &option_crack_restore{ options[ "crack_restore" ] };
-    inline const auto &is_hijack_execs{ option_crack_restore[ "hijack_execs" ] };
-    inline const auto &is_set_serv_startup_types{ option_crack_restore[ "set_serv_startup_types" ] };
-    inline const auto &is_parallel_op{ option_crack_restore[ "parallel_op" ] };
-    class crack final {
+    inline const auto& option_crack_restore{ options[ "crack_restore" ] };
+    inline const auto& is_hijack_execs{ option_crack_restore[ "hijack_execs" ] };
+    inline const auto& is_set_serv_startup_types{ option_crack_restore[ "set_serv_startup_types" ] };
+    inline const auto& is_parallel_op{ option_crack_restore[ "parallel_op" ] };
+    class crack final
+    {
       private:
-        const rule_node &rules_;
+        const rule_node& rules_;
         static auto hijack_exec_( exec_const_ref_t exec ) noexcept
         {
             std::system(
@@ -633,29 +649,29 @@ namespace core {
         }
         auto singlethread_engine_()
         {
-            const auto &execs{ rules_.execs };
-            const auto &servs{ rules_.servs };
+            const auto& execs{ rules_.execs };
+            const auto& servs{ rules_.servs };
             if ( is_hijack_execs ) {
-                for ( const auto &exec : execs ) {
+                for ( const auto& exec : execs ) {
                     hijack_exec_( exec );
                 }
             }
             if ( is_set_serv_startup_types ) {
-                for ( const auto &serv : servs ) {
+                for ( const auto& serv : servs ) {
                     disable_serv_( serv );
                 }
             }
-            for ( const auto &exec : execs ) {
+            for ( const auto& exec : execs ) {
                 kill_exec_( exec );
             }
-            for ( const auto &serv : servs ) {
+            for ( const auto& serv : servs ) {
                 stop_serv_( serv );
             }
         }
         auto multithread_engine_()
         {
-            const auto &execs{ rules_.execs };
-            const auto &servs{ rules_.servs };
+            const auto& execs{ rules_.execs };
+            const auto& servs{ rules_.servs };
             const auto nproc_for_exec_op{ std::max( nproc / 4, 2U ) };
             cpp_utils::thread_manager threads;
             if ( is_hijack_execs ) {
@@ -683,16 +699,17 @@ namespace core {
             std::invoke( std::array{ &crack::singlethread_engine_, &crack::multithread_engine_ }[ is_parallel_op.get() ], *this );
             return u8quit();
         }
-        crack( const rule_node &rules ) noexcept
+        crack( const rule_node& rules ) noexcept
           : rules_{ rules }
         { }
-        crack( const crack & )     = default;
-        crack( crack && ) noexcept = default;
-        ~crack() noexcept          = default;
+        crack( const crack& )     = default;
+        crack( crack&& ) noexcept = default;
+        ~crack() noexcept         = default;
     };
-    class restore final {
+    class restore final
+    {
       private:
-        const rule_node &rules_;
+        const rule_node& rules_;
         static auto undo_hijack_exec_( exec_const_ref_t exec ) noexcept
         {
             std::system(
@@ -710,26 +727,26 @@ namespace core {
         }
         auto singlethread_engine_()
         {
-            const auto &execs{ rules_.execs };
-            const auto &servs{ rules_.servs };
+            const auto& execs{ rules_.execs };
+            const auto& servs{ rules_.servs };
             if ( is_hijack_execs ) {
-                for ( const auto &exec : execs ) {
+                for ( const auto& exec : execs ) {
                     undo_hijack_exec_( exec );
                 }
             }
             if ( is_set_serv_startup_types ) {
-                for ( const auto &serv : servs ) {
+                for ( const auto& serv : servs ) {
                     enable_serv_( serv );
                 }
             }
-            for ( const auto &serv : servs ) {
+            for ( const auto& serv : servs ) {
                 start_serv_( serv );
             }
         }
         auto multithread_engine_()
         {
-            const auto &execs{ rules_.execs };
-            const auto &servs{ rules_.servs };
+            const auto& execs{ rules_.execs };
+            const auto& servs{ rules_.servs };
             const auto nproc_for_exec_op{ std::max( nproc / 4, 2U ) };
             if ( is_hijack_execs ) {
                 cpp_utils::parallel_for_each_impl( nproc_for_exec_op, execs.begin(), execs.end(), undo_hijack_exec_ );
@@ -753,11 +770,11 @@ namespace core {
             std::invoke( std::array{ &restore::singlethread_engine_, &restore::multithread_engine_ }[ is_parallel_op.get() ], *this );
             return u8quit();
         }
-        restore( const rule_node &rules ) noexcept
+        restore( const rule_node& rules ) noexcept
           : rules_{ rules }
         { }
-        restore( const restore & )     = default;
-        restore( restore && ) noexcept = default;
-        ~restore() noexcept            = default;
+        restore( const restore& )     = default;
+        restore( restore&& ) noexcept = default;
+        ~restore() noexcept           = default;
     };
 }

@@ -1,7 +1,8 @@
 #pragma once
 #include <cstddef>
 #include <type_traits>
-namespace cpp_utils {
+namespace cpp_utils
+{
     using size_t    = std::size_t;
     using nullptr_t = std::nullptr_t;
     template < typename T >

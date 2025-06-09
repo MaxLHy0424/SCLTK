@@ -4,7 +4,8 @@
 #include <concepts>
 #include <ranges>
 #include "type_tools.hpp"
-namespace cpp_utils {
+namespace cpp_utils
+{
     template < typename T >
     concept character
       = std::same_as< std::decay_t< T >, char > || std::same_as< std::decay_t< T >, wchar_t >
@@ -12,13 +13,14 @@ namespace cpp_utils {
      || std::same_as< std::decay_t< T >, char32_t >;
     template < character T, size_t N >
         requires( std::same_as< T, std::decay_t< T > > && N > 0 )
-    class constant_string final {
+    class constant_string final
+    {
       private:
         std::array< T, N > data_{};
       public:
         constexpr auto data() const noexcept
         {
-            return const_cast< const T * >( data_.data() );
+            return const_cast< const T* >( data_.data() );
         }
         constexpr auto size() const noexcept
         {
@@ -28,15 +30,15 @@ namespace cpp_utils {
         {
             return data_.max_size();
         }
-        constexpr auto &at( const size_t index ) const noexcept
+        constexpr auto& at( const size_t index ) const noexcept
         {
             return data_.at( index );
         }
-        const auto &operator[]( const size_t index ) const noexcept
+        const auto& operator[]( const size_t index ) const noexcept
         {
             return data_[ index ];
         }
-        constexpr auto compare( const T *const src ) const
+        constexpr auto compare( const T* const src ) const
         {
             if ( src == nullptr ) {
                 return false;
@@ -69,7 +71,7 @@ namespace cpp_utils {
             return true;
         }
         template < size_t SrcN >
-        constexpr auto compare( const constant_string< T, SrcN > &src ) const noexcept
+        constexpr auto compare( const constant_string< T, SrcN >& src ) const noexcept
         {
             if ( SrcN != N ) {
                 return false;
@@ -81,7 +83,7 @@ namespace cpp_utils {
             }
             return true;
         }
-        constexpr auto operator==( const T *const src ) const
+        constexpr auto operator==( const T* const src ) const
         {
             return compare( src );
         }
@@ -91,11 +93,11 @@ namespace cpp_utils {
             return compare( src );
         }
         template < size_t SrcN >
-        constexpr auto operator==( const constant_string< T, SrcN > &src ) const noexcept
+        constexpr auto operator==( const constant_string< T, SrcN >& src ) const noexcept
         {
             return compare( src );
         }
-        constexpr auto operator!=( const T *const src ) const noexcept
+        constexpr auto operator!=( const T* const src ) const noexcept
         {
             return !compare( src );
         }
@@ -105,19 +107,19 @@ namespace cpp_utils {
             return !compare( src );
         }
         template < size_t SrcN >
-        constexpr auto operator!=( const constant_string< T, SrcN > &src ) const noexcept
+        constexpr auto operator!=( const constant_string< T, SrcN >& src ) const noexcept
         {
             return !compare( src );
         }
-        auto operator=( const constant_string< T, N > & ) -> constant_string< T, N > & = delete;
-        auto operator=( constant_string< T, N > && ) -> constant_string< T, N > &      = delete;
+        auto operator=( const constant_string< T, N >& ) -> constant_string< T, N >& = delete;
+        auto operator=( constant_string< T, N >&& ) -> constant_string< T, N >&      = delete;
         consteval constant_string( const T ( &str )[ N ] ) noexcept
         {
             std::ranges::copy( str, data_.data() );
         }
-        consteval constant_string( const constant_string< T, N > & )     = default;
-        consteval constant_string( constant_string< T, N > && ) noexcept = delete;
-        ~constant_string() noexcept                                      = default;
+        consteval constant_string( const constant_string< T, N >& )     = default;
+        consteval constant_string( constant_string< T, N >&& ) noexcept = delete;
+        ~constant_string() noexcept                                     = default;
     };
     template < size_t N >
     using constant_ansi_string = constant_string< char, N >;
