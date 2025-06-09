@@ -26,16 +26,24 @@ namespace cpp_utils
         {
             return std::suspend_always{};
         }
-        template < typename... Args >
-        auto yield_value( Args&&... args )
+        auto yield_value( const T& args )
         {
-            current_value = std::make_unique< T >( std::forward< Args >( args )... );
+            current_value = std::make_unique< T >( args );
             return std::suspend_always{};
         }
-        template < typename... Args >
-        auto return_value( Args&&... args )
+        auto yield_value( T&& args )
         {
-            current_value = std::make_unique< T >( std::forward< Args >( args )... );
+            current_value = std::make_unique< T >( std::move( args ) );
+            return std::suspend_always{};
+        }
+        auto return_value( const T& args )
+        {
+            current_value = std::make_unique< T >( args );
+            return std::suspend_always{};
+        }
+        auto return_value( T&& args )
+        {
+            current_value = std::make_unique< T >( std::move( args ) );
             return std::suspend_always{};
         }
         auto unhandled_exception() noexcept
@@ -63,16 +71,24 @@ namespace cpp_utils
         {
             return std::suspend_always{};
         }
-        template < typename... Args >
-        auto yield_value( Args&&... args )
+        auto yield_value( const T& args )
         {
-            current_value = std::make_unique< T >( std::forward< Args >( args )... );
+            current_value = std::make_unique< T >( args );
             return std::suspend_always{};
         }
-        template < typename... Args >
-        auto return_value( Args&&... args )
+        auto yield_value( T&& args )
         {
-            current_value = std::make_unique< T >( std::forward< Args >( args )... );
+            current_value = std::make_unique< T >( std::move( args ) );
+            return std::suspend_always{};
+        }
+        auto return_value( const T& args )
+        {
+            current_value = std::make_unique< T >( args );
+            return std::suspend_always{};
+        }
+        auto return_value( T&& args )
+        {
+            current_value = std::make_unique< T >( std::move( args ) );
             return std::suspend_always{};
         }
         static auto unhandled_exception() noexcept
