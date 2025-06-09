@@ -9,7 +9,7 @@ args_opt_release = -O3 -flto=auto -fno-rtti -fno-exceptions
 input_charset    = utf-8
 output_charset   = gbk
 args_base        = -pipe -finput-charset=$(input_charset) -fexec-charset=$(output_charset) -std=$(args_std) $(args_link) $(args_warning) $(args_defines)
-args_debug       = -g3 $(args_base) $(args_opt_debug)
+args_debug       = -g3 -DDEBUG $(args_base) $(args_opt_debug)
 args_release     = -DNDEBUG -static $(args_base) $(args_opt_release)
 .PHONY: toolchain make_info build debug release clean
 all: toolchain build
@@ -32,8 +32,7 @@ clean:
 	$(msys2_path)/usr/bin/touch.exe bin/.gitkeep
 make_info:
 	$(pwsh_path) -ExecutionPolicy Bypass -File ./make_info.ps1
-src/info.hpp:
-	$(pwsh_path) -ExecutionPolicy Bypass -File ./make_info.ps1
+src/info.hpp: make_info
 dependencies_debug = src/*
 bin/debug/__debug__.exe: $(dependencies_debug) \
                          make_info \
