@@ -10,9 +10,14 @@ namespace cpp_utils
     template < typename T >
     concept pointer = std::is_pointer_v< T >;
     template < pointer T >
-    inline auto to_universal_pointer( const T ptr )
+    inline auto to_universal_pointer( const T ptr ) noexcept
     {
         return reinterpret_cast< void* >( ptr );
+    }
+    template < pointer T >
+    inline auto to_const_universal_pointer( const T ptr ) noexcept
+    {
+        return reinterpret_cast< const void* >( ptr );
     }
     template < pointer T >
     inline auto pointer_to_string( const T ptr )
@@ -21,7 +26,7 @@ namespace cpp_utils
         return ptr == nullptr ? "nullptr"s : std::format( "0x{:x}", reinterpret_cast< std::uintptr_t >( ptr ) );
     }
     template < pointer T >
-        requires( !std::same_as< T, void* > && !std::is_const_v< T > )
+        requires( !std::is_const_v< T > )
     class raw_pointer_wrapper final
     {
       private:
@@ -49,7 +54,7 @@ namespace cpp_utils
         }
         auto operator+( const size_t n ) const noexcept
         {
-            return ptr_ + n;
+            return raw_pointer_wrapper< T >{ ptr_ + n };
         }
         auto operator+=( const size_t n ) noexcept -> raw_pointer_wrapper< T >&
         {
@@ -66,7 +71,7 @@ namespace cpp_utils
         }
         auto operator-( const size_t n ) const noexcept
         {
-            return ptr_ - n;
+            return raw_pointer_wrapper< T >{ ptr_ - n };
         }
         auto operator-=( const size_t n ) noexcept -> raw_pointer_wrapper< T >&
         {
@@ -85,6 +90,64 @@ namespace cpp_utils
         constexpr auto operator=( raw_pointer_wrapper< T >&& ) noexcept -> raw_pointer_wrapper< T >&      = default;
         constexpr raw_pointer_wrapper() noexcept                                                          = default;
         constexpr raw_pointer_wrapper( T ptr ) noexcept
+          : ptr_{ ptr }
+        { }
+        constexpr raw_pointer_wrapper( const raw_pointer_wrapper< T >& ) noexcept = default;
+        constexpr raw_pointer_wrapper( raw_pointer_wrapper< T >&& ) noexcept      = default;
+        ~raw_pointer_wrapper() noexcept                                           = default;
+    };
+    template <>
+    class raw_pointer_wrapper< void* > final
+    {
+      private:
+        using T = void*;
+        T ptr_{};
+      public:
+        auto reset( void* const src ) noexcept
+        {
+            ptr_ = src;
+        }
+        auto get() const noexcept
+        {
+            return ptr_;
+        }
+        operator T() const noexcept
+        {
+            return ptr_;
+        }
+        constexpr auto operator=( const raw_pointer_wrapper< T >& ) noexcept -> raw_pointer_wrapper< T >& = default;
+        constexpr auto operator=( raw_pointer_wrapper< T >&& ) noexcept -> raw_pointer_wrapper< T >&      = default;
+        constexpr raw_pointer_wrapper() noexcept                                                          = default;
+        constexpr raw_pointer_wrapper( const T ptr ) noexcept
+          : ptr_{ ptr }
+        { }
+        constexpr raw_pointer_wrapper( const raw_pointer_wrapper< T >& ) noexcept = default;
+        constexpr raw_pointer_wrapper( raw_pointer_wrapper< T >&& ) noexcept      = default;
+        ~raw_pointer_wrapper() noexcept                                           = default;
+    };
+    template <>
+    class raw_pointer_wrapper< const void* > final
+    {
+      private:
+        using T = const void*;
+        T ptr_{};
+      public:
+        auto reset( void* const src ) noexcept
+        {
+            ptr_ = src;
+        }
+        auto get() const noexcept
+        {
+            return ptr_;
+        }
+        operator T() const noexcept
+        {
+            return ptr_;
+        }
+        constexpr auto operator=( const raw_pointer_wrapper< T >& ) noexcept -> raw_pointer_wrapper< T >& = default;
+        constexpr auto operator=( raw_pointer_wrapper< T >&& ) noexcept -> raw_pointer_wrapper< T >&      = default;
+        constexpr raw_pointer_wrapper() noexcept                                                          = default;
+        constexpr raw_pointer_wrapper( const T ptr ) noexcept
           : ptr_{ ptr }
         { }
         constexpr raw_pointer_wrapper( const raw_pointer_wrapper< T >& ) noexcept = default;
