@@ -6,19 +6,18 @@
 #include <stacktrace>
 #include <string_view>
 #include <utility>
-namespace cpp_utils {
+namespace cpp_utils
+{
     inline auto make_log(
-      const std::string_view message,
-      const std::source_location src_location = std::source_location::current(),
-      const std::stacktrace trace             = std::stacktrace::current() )
+      const std::string_view message, const std::source_location src_location = std::source_location::current(),
+      const std::stacktrace trace = std::stacktrace::current() )
     {
         return std::format(
           "{}({}:{}) `{}`: {}\n{}\n", src_location.file_name(), src_location.line(), src_location.column(),
           src_location.function_name(), message, trace );
     }
     inline auto dynamic_assert(
-      const bool expression,
-      const std::string_view failed_message   = "assertion failid!",
+      const bool expression, const std::string_view failed_message = "assertion failid!",
       const std::source_location src_location = std::source_location::current(),
       std::stacktrace trace                   = std::stacktrace::current() ) noexcept
     {
@@ -29,8 +28,7 @@ namespace cpp_utils {
     }
     template < bool Expr >
     inline auto dynamic_assert_if(
-      const bool expression,
-      const std::string_view failed_message   = "assertion failid!",
+      const bool expression, const std::string_view failed_message = "assertion failid!",
       const std::source_location src_location = std::source_location::current(),
       std::stacktrace trace                   = std::stacktrace::current() ) noexcept
     {

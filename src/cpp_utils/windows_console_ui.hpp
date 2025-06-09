@@ -9,23 +9,26 @@
 #include <utility>
 #include "type_tools.hpp"
 #include "windows_definations.hpp"
-namespace cpp_utils {
+namespace cpp_utils
+{
 #if defined( _WIN32 ) || defined( _WIN64 )
-    class console_ui final {
+    class console_ui final
+    {
       public:
         using func_return_t = bool;
-        inline static constexpr func_return_t func_back{ false };
-        inline static constexpr func_return_t func_exit{ true };
-        struct func_args final {
-            console_ui &parent_ui;
+        static inline constexpr func_return_t func_back{ false };
+        static inline constexpr func_return_t func_exit{ true };
+        struct func_args final
+        {
+            console_ui& parent_ui;
             const size_t node_index;
             const DWORD button_state;
             const DWORD ctrl_state;
             const DWORD event_flag;
-            auto operator=( const func_args & ) noexcept -> func_args & = default;
-            auto operator=( func_args && ) noexcept -> func_args &      = default;
+            auto operator=( const func_args& ) noexcept -> func_args& = default;
+            auto operator=( func_args&& ) noexcept -> func_args&      = default;
             func_args(
-              console_ui &parent_ui, const size_t node_index,
+              console_ui& parent_ui, const size_t node_index,
               const MOUSE_EVENT_RECORD event = MOUSE_EVENT_RECORD{ {}, mouse::button_left, {}, {} } ) noexcept
               : parent_ui{ parent_ui }
               , node_index{ node_index }
@@ -33,20 +36,22 @@ namespace cpp_utils {
               , ctrl_state{ event.dwControlKeyState }
               , event_flag{ event.dwEventFlags }
             { }
-            func_args( const func_args & ) noexcept = default;
-            func_args( func_args && ) noexcept      = default;
-            ~func_args() noexcept                   = default;
+            func_args( const func_args& ) noexcept = default;
+            func_args( func_args&& ) noexcept      = default;
+            ~func_args() noexcept                  = default;
         };
         using callback_t = std::function< func_return_t( func_args ) >;
       private:
-        inline static HANDLE std_input_handle_;
-        inline static HANDLE std_output_handle_;
-        enum class console_attrs_selection_ : char {
+        static inline HANDLE std_input_handle_;
+        static inline HANDLE std_output_handle_;
+        enum class console_attrs_selection_ : char
+        {
             normal,
             lock_text,
             lock_all
         };
-        struct line_node_ final {
+        struct line_node_ final
+        {
             std::string text{};
             callback_t func{};
             WORD default_attrs{ console_text::default_attrs };
@@ -67,19 +72,19 @@ namespace cpp_utils {
             {
                 return !( *this == current_position );
             }
-            auto operator=( const line_node_ & ) noexcept -> line_node_ & = default;
-            auto operator=( line_node_ && ) noexcept -> line_node_ &      = default;
-            line_node_() noexcept                                         = default;
-            line_node_( const std::string_view text, callback_t &func, const WORD default_attrs, const WORD intensity_attrs ) noexcept
+            auto operator=( const line_node_& ) noexcept -> line_node_& = default;
+            auto operator=( line_node_&& ) noexcept -> line_node_&      = default;
+            line_node_() noexcept                                       = default;
+            line_node_( const std::string_view text, callback_t& func, const WORD default_attrs, const WORD intensity_attrs ) noexcept
               : text{ text }
               , func{ std::move( func ) }
               , default_attrs{ default_attrs }
               , intensity_attrs{ intensity_attrs }
               , last_attrs{ default_attrs }
             { }
-            line_node_( const line_node_ & )     = default;
-            line_node_( line_node_ && ) noexcept = default;
-            ~line_node_() noexcept               = default;
+            line_node_( const line_node_& )     = default;
+            line_node_( line_node_&& ) noexcept = default;
+            ~line_node_() noexcept              = default;
         };
         std::deque< line_node_ > lines_{};
         static auto show_cursor_( const WINBOOL is_show ) noexcept
@@ -149,14 +154,14 @@ namespace cpp_utils {
             std::print( "{}", std::string( static_cast< unsigned int >( width ) * static_cast< unsigned int >( height ), ' ' ) );
             set_cursor_( COORD{ 0, 0 } );
         }
-        static auto write_( const std::string &text, const bool is_endl = false )
+        static auto write_( const std::string& text, const bool is_endl = false )
         {
             std::print( "{}", text );
             if ( is_endl ) {
                 std::print( "\n" );
             }
         }
-        static auto rewrite_( const COORD cursor_position, const std::string &text )
+        static auto rewrite_( const COORD cursor_position, const std::string& text )
         {
             set_cursor_( COORD{ 0, cursor_position.Y } );
             write_( std::string( cursor_position.X, ' ' ) );
@@ -168,7 +173,7 @@ namespace cpp_utils {
         {
             cls_();
             const auto tail{ &lines_.back() };
-            for ( auto &line : lines_ ) {
+            for ( auto& line : lines_ ) {
                 line.position = get_cursor_();
                 line.set_attrs( line.default_attrs );
                 write_( line.text, &line != tail );
@@ -176,7 +181,7 @@ namespace cpp_utils {
         }
         auto refresh_( const COORD hang_position )
         {
-            for ( auto &line : lines_ ) {
+            for ( auto& line : lines_ ) {
                 if ( line == hang_position && line.last_attrs != line.intensity_attrs ) {
                     line.set_attrs( line.intensity_attrs );
                     rewrite_( line.position, line.text );
@@ -187,12 +192,12 @@ namespace cpp_utils {
                 }
             }
         }
-        auto invoke_func_( const MOUSE_EVENT_RECORD &current_event )
+        auto invoke_func_( const MOUSE_EVENT_RECORD& current_event )
         {
             auto is_exit{ func_back };
             auto size{ lines_.size() };
             for ( const auto i : std::ranges::iota_view{ decltype( size ){ 0 }, size } ) {
-                auto &line{ lines_[ i ] };
+                auto& line{ lines_[ i ] };
                 if ( line != current_event.dwMousePosition ) {
                     continue;
                 }
@@ -224,16 +229,16 @@ namespace cpp_utils {
         {
             return lines_.max_size();
         }
-        auto &resize( const size_t size )
+        auto& resize( const size_t size )
         {
             lines_.resize( size );
             return *this;
         }
-        auto &optimize_storage() noexcept
+        auto& optimize_storage() noexcept
         {
             constexpr auto default_capacity{ std::string{}.capacity() };
-            for ( auto &line : lines_ ) {
-                auto &text{ line.text };
+            for ( auto& line : lines_ ) {
+                auto& text{ line.text };
                 if ( text.capacity() > text.size() && text.capacity() != default_capacity ) {
                     text.shrink_to_fit();
                 }
@@ -241,80 +246,76 @@ namespace cpp_utils {
             lines_.shrink_to_fit();
             return *this;
         }
-        auto &swap( console_ui &src ) noexcept
+        auto& swap( console_ui& src ) noexcept
         {
             lines_.swap( src.lines_ );
             return *this;
         }
-        auto &add_front(
-          const std::string_view text,
-          callback_t func            = nullptr,
+        auto& add_front(
+          const std::string_view text, callback_t func = nullptr,
           const WORD intensity_attrs = console_text::foreground_green | console_text::foreground_blue,
           const WORD default_attrs   = console_text::default_attrs )
         {
             lines_.emplace_front( text, func, default_attrs, func != nullptr ? intensity_attrs : default_attrs );
             return *this;
         }
-        auto &add_back(
-          const std::string_view text,
-          callback_t func            = nullptr,
+        auto& add_back(
+          const std::string_view text, callback_t func = nullptr,
           const WORD intensity_attrs = console_text::foreground_blue | console_text::foreground_green,
           const WORD default_attrs   = console_text::default_attrs )
         {
             lines_.emplace_back( text, func, default_attrs, func != nullptr ? intensity_attrs : default_attrs );
             return *this;
         }
-        auto &insert(
-          const size_t index,
-          const std::string_view text,
-          callback_t func            = nullptr,
+        auto& insert(
+          const size_t index, const std::string_view text, callback_t func = nullptr,
           const WORD intensity_attrs = console_text::foreground_green | console_text::foreground_blue,
           const WORD default_attrs   = console_text::default_attrs )
         {
             lines_.emplace( lines_.cbegin() + index, text, func, default_attrs, func != nullptr ? intensity_attrs : default_attrs );
             return *this;
         }
-        auto &edit_text( const size_t index, const std::string_view text )
+        auto& edit_text( const size_t index, const std::string_view text )
         {
             lines_.at( index ).text = text;
             return *this;
         }
-        auto &edit_func( const size_t index, callback_t func )
+        auto& edit_func( const size_t index, callback_t func )
         {
             lines_.at( index ).func = std::move( func );
             return *this;
         }
-        auto &edit_intensity_attrs( const size_t index, const WORD intensity_attrs )
+        auto& edit_intensity_attrs( const size_t index, const WORD intensity_attrs )
         {
             lines_.at( index ).intensity_attrs = intensity_attrs;
             return *this;
         }
-        auto &edit_default_attrs( const size_t index, const WORD default_attrs )
+        auto& edit_default_attrs( const size_t index, const WORD default_attrs )
         {
             lines_.at( index ).default_attrs = default_attrs;
             return *this;
         }
-        auto &remove_front() noexcept
+        auto& remove_front() noexcept
         {
             lines_.pop_front();
             return *this;
         }
-        auto &remove_back() noexcept
+        auto& remove_back() noexcept
         {
             lines_.pop_back();
             return *this;
         }
-        auto &remove( const size_t begin, const size_t length )
+        auto& remove( const size_t begin, const size_t length )
         {
             lines_.erase( lines_.cbegin() + begin, lines_.cbegin() + begin + length );
             return *this;
         }
-        auto &clear() noexcept
+        auto& clear() noexcept
         {
             lines_.clear();
             return *this;
         }
-        auto &show()
+        auto& show()
         {
             if ( empty() ) {
                 return *this;
@@ -340,14 +341,14 @@ namespace cpp_utils {
             cls_();
             return *this;
         }
-        auto &set_limits( const bool is_hide_cursor, const bool is_lock_text ) noexcept
+        auto& set_limits( const bool is_hide_cursor, const bool is_lock_text ) noexcept
         {
             show_cursor_( static_cast< WINBOOL >( !is_hide_cursor ) );
             edit_console_attrs_( is_lock_text ? console_attrs_selection_::lock_all : console_attrs_selection_::normal );
             return *this;
         }
-        auto operator=( const console_ui & ) noexcept -> console_ui & = default;
-        auto operator=( console_ui && ) noexcept -> console_ui &      = default;
+        auto operator=( const console_ui& ) noexcept -> console_ui& = default;
+        auto operator=( console_ui&& ) noexcept -> console_ui&      = default;
         console_ui() noexcept
         {
             if ( std_input_handle_ == nullptr ) [[unlikely]] {
@@ -362,9 +363,9 @@ namespace cpp_utils {
             std_input_handle_  = std_input_handle;
             std_output_handle_ = std_output_handle;
         }
-        console_ui( const console_ui & ) noexcept = default;
-        console_ui( console_ui && ) noexcept      = default;
-        ~console_ui() noexcept                    = default;
+        console_ui( const console_ui& ) noexcept = default;
+        console_ui( console_ui&& ) noexcept      = default;
+        ~console_ui() noexcept                   = default;
     };
 #else
 # error "must be compiled on the windows os"
