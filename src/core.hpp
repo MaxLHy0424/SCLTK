@@ -15,7 +15,7 @@ namespace core
     using size_t = cpp_utils::size_t;
     inline constexpr SHORT console_width{ 50 };
     inline constexpr SHORT console_height{ 25 };
-    inline constexpr UINT charset_id{ 54936 };
+    inline constexpr UINT charset_id{ 936 };
     inline constexpr auto default_thread_sleep_time{ 1s };
     inline constexpr auto config_file_name{ "config.ini" };
     inline constexpr auto func_back{ cpp_utils::console_ui::func_back };
