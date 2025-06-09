@@ -1,6 +1,8 @@
 #pragma once
 #include <array>
 #include <fstream>
+#include <tuple>
+#include <variant>
 #include "cpp_utils/multithread.hpp"
 #include "cpp_utils/pointer.hpp"
 #include "cpp_utils/windows_app_tools.hpp"
@@ -156,7 +158,7 @@ namespace core
     };
     inline option_set options{
       { { { "crack_restore",
-            "破解& 恢复",
+            "破解与恢复",
             { { "hijack_execs", "劫持可执行文件" },
               { "set_serv_startup_types", "设置服务启动类型" },
               { "parallel_op", "并行操作 (预览版)" },
@@ -203,31 +205,47 @@ namespace core
           { "rscheck", "checkrs", "REDAgent", "PerformanceCheck", "edpaper", "Adapter", "repview", "FormatPaper" },
           { "appcheck2", "checkapp2" } } }
     };
-    class basic_config_node
+    class config_node_impl
     {
       public:
         const cpp_utils::raw_pointer_wrapper< const char* > self_name;
-        virtual auto load( const bool, std::string& ) -> void = 0;
-        virtual auto sync( std::ofstream& ) -> void           = 0;
-        virtual auto prepare_reload() -> void
-        { }
-        virtual auto ui( cpp_utils::console_ui& ) -> void
-        { }
-        basic_config_node( const char* const self_name ) noexcept
+        auto impl_load( this auto&& self, const bool is_reload, std::string& line )
+        {
+            self.load( is_reload, line );
+        }
+        auto impl_sync( this auto&& self, std::ofstream& out )
+        {
+            self.sync( out );
+        }
+        auto impl_prepare_reload( this auto&& self )
+        {
+            using child_t = std::decay_t< decltype( self ) >;
+            if constexpr ( requires( child_t obj ) { obj.prepare_reload(); } ) {
+                self.prepare_reload();
+            }
+        }
+        auto impl_ui( this auto&& self, cpp_utils::console_ui& parent_ui )
+        {
+            using child_t = std::decay_t< decltype( self ) >;
+            if constexpr ( requires( child_t obj ) { obj.ui( parent_ui ); } ) {
+                self.ui( parent_ui );
+            }
+        }
+        config_node_impl( const char* const self_name ) noexcept
           : self_name{ self_name }
         { }
-        virtual ~basic_config_node() noexcept = default;
+        ~config_node_impl() noexcept = default;
     };
-    class option_op final : public basic_config_node
+    class option_op final : public config_node_impl
     {
       private:
+        friend config_node_impl;
         static constexpr auto format_string_{ R"("{}.{}": {})" };
         static auto make_swith_button_text_( const auto is_enable )
         {
             return std::format( " > {}用 ", is_enable ? "禁" : "启" );
         }
-      public:
-        virtual auto load( const bool is_reload, std::string& line ) -> void override final
+        auto load( const bool is_reload, std::string& line )
         {
             if ( is_reload ) {
                 return;
@@ -242,7 +260,7 @@ namespace core
                 }
             }
         }
-        virtual auto sync( std::ofstream& out ) -> void override final
+        auto sync( std::ofstream& out )
         {
             for ( const auto& category : options.categories ) {
                 for ( const auto& item : category.items ) {
@@ -250,7 +268,7 @@ namespace core
                 }
             }
         }
-        virtual auto ui( cpp_utils::console_ui& ui ) -> void override final
+        auto ui( cpp_utils::console_ui& ui )
         {
             constexpr auto option_ctrl_color{ cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_green };
             using category_t = option_set::category;
@@ -305,57 +323,61 @@ namespace core
                 ui.add_back( std::format( " > {} ", category.shown_name ), option_ui{ category }, option_ctrl_color );
             }
         }
-        option_op() noexcept
-          : basic_config_node{ "options" }
-        { }
-        virtual ~option_op() noexcept = default;
-    };
-    class custom_rules_execs_op final : public basic_config_node
-    {
       public:
-        virtual auto load( const bool, std::string& line ) -> void override final
+        option_op() noexcept
+          : config_node_impl{ "options" }
+        { }
+        ~option_op() noexcept = default;
+    };
+    class custom_rules_execs_op final : public config_node_impl
+    {
+      private:
+        friend config_node_impl;
+        auto load( const bool, std::string& line )
         {
             custom_rules.execs.emplace_back( std::move( line ) );
         }
-        virtual auto sync( std::ofstream& out ) -> void override final
+        auto sync( std::ofstream& out )
         {
             for ( const auto& exec : custom_rules.execs ) {
                 out << exec << '\n';
             }
         }
-        virtual auto prepare_reload() -> void override final
+        auto prepare_reload() noexcept
         {
             custom_rules.execs.clear();
         }
-        custom_rules_execs_op() noexcept
-          : basic_config_node{ "custom_rules_execs" }
-        { }
-        virtual ~custom_rules_execs_op() noexcept = default;
-    };
-    class custom_rules_servs_op final : public basic_config_node
-    {
       public:
-        virtual auto load( const bool, std::string& line ) -> void override final
+        custom_rules_execs_op() noexcept
+          : config_node_impl{ "custom_rules_execs" }
+        { }
+        ~custom_rules_execs_op() noexcept = default;
+    };
+    class custom_rules_servs_op final : public config_node_impl
+    {
+      private:
+        friend config_node_impl;
+        auto load( const bool, std::string& line )
         {
             custom_rules.servs.emplace_back( std::move( line ) );
         }
-        virtual auto sync( std::ofstream& out ) -> void override final
+        auto sync( std::ofstream& out )
         {
             for ( const auto& serv : custom_rules.servs ) {
                 out << serv << '\n';
             }
         }
-        virtual auto prepare_reload() -> void override final
+        auto prepare_reload() noexcept
         {
             custom_rules.servs.clear();
         }
+      public:
         custom_rules_servs_op() noexcept
-          : basic_config_node{ "custom_rules_servs" }
+          : config_node_impl{ "custom_rules_servs" }
         { }
-        virtual ~custom_rules_servs_op() noexcept = default;
+        ~custom_rules_servs_op() noexcept = default;
     };
-    inline std::array< std::unique_ptr< basic_config_node >, 3 > config_nodes{
-      std::make_unique< option_op >(), std::make_unique< custom_rules_execs_op >(), std::make_unique< custom_rules_servs_op >() };
+    inline std::tuple< option_op, custom_rules_execs_op, custom_rules_servs_op > config_nodes{};
     inline auto info( ui_func_args )
     {
         auto visit_repo_webpage{ []( ui_func_args ) static
@@ -531,20 +553,21 @@ namespace core
             engine();
         }
     }
+    using unknown_config_node_t = void*;
+    constexpr unknown_config_node_t unknown_config_node{ nullptr };
+    template < typename... Args >
+    inline consteval auto get_config_node_variant_t( std::tuple< Args... > )
+      -> std::variant< unknown_config_node_t, std::add_pointer_t< Args >... >;
     inline auto load_config( const bool is_reload = false )
     {
         std::ifstream config_file{ config_file_name, std::ios::in };
         if ( !config_file.good() ) {
             return;
         }
-        if ( is_reload ) {
-            for ( auto& config_node : config_nodes ) {
-                config_node->prepare_reload();
-            }
-        }
+        std::apply( []( auto&&... config_node ) { ( config_node.impl_prepare_reload(), ... ); }, config_nodes );
         std::string line;
         std::string_view line_view;
-        basic_config_node* node_ptr{};
+        decltype( get_config_node_variant_t( config_nodes ) ) current_config_node;
         while ( std::getline( config_file, line ) ) {
             line_view = line;
             if ( line_view.empty() ) {
@@ -556,19 +579,25 @@ namespace core
             if ( line_view.size() >= sizeof( "[  ]" ) && line_view.substr( 0, sizeof( "[ " ) - 1 ) == "[ "
                  && line_view.substr( line_view.size() - sizeof( " ]" ) + 1, line_view.size() ) == " ]" )
             {
-                line_view = line_view.substr( sizeof( "[ " ) - 1, line_view.size() - sizeof( " ]" ) - 1 );
-                for ( auto& config_node : config_nodes ) {
-                    if ( line_view == config_node->self_name.get() ) {
-                        node_ptr = config_node.get();
-                        break;
-                    }
-                    node_ptr = nullptr;
-                }
+                line_view           = line_view.substr( sizeof( "[ " ) - 1, line_view.size() - sizeof( " ]" ) - 1 );
+                current_config_node = unknown_config_node;
+                std::apply( [ & ]( auto&&... config_node )
+                {
+                    ( [ & ]( auto&& current_node ) noexcept
+                    {
+                        if ( line_view == current_node.self_name.get() ) {
+                            current_config_node = &current_node;
+                        }
+                    }( config_node ), ... );
+                }, config_nodes );
                 continue;
             }
-            if ( node_ptr != nullptr ) {
-                node_ptr->load( is_reload, line );
-            }
+            current_config_node.visit( [ & ]( const auto node_ptr )
+            {
+                if constexpr ( !std::same_as< std::decay_t< decltype( node_ptr ) >, unknown_config_node_t > ) {
+                    node_ptr->impl_load( is_reload, line );
+                }
+            } );
         }
     }
     inline auto config_ui( ui_func_args )
@@ -581,10 +610,12 @@ namespace core
             load_config( true );
             std::ofstream config_file_stream{ config_file_name, std::ios::out | std::ios::trunc };
             config_file_stream << "# " INFO_FULL_NAME "\n# " INFO_VERSION "\n";
-            for ( auto& config_node : config_nodes ) {
-                config_file_stream << std::format( "[ {} ]\n", config_node->self_name.get() );
-                config_node->sync( config_file_stream );
-            }
+            std::apply( [ & ]( auto&&... config_node )
+            {
+                ( ( config_file_stream << std::format( "[ {} ]\n", config_node.self_name.get() ),
+                    config_node.impl_sync( config_file_stream ) ),
+                  ... );
+            }, config_nodes );
             config_file_stream << std::flush;
             const auto is_good{ config_file_stream.good() };
             std::print( "\n ({}) 同步配置{}.", is_good ? 'i' : '!', is_good ? "成功" : "失败" );
@@ -611,9 +642,7 @@ namespace core
           .add_back( " < 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
           .add_back( " > 同步配置 ", sync )
           .add_back( " > 打开配置文件 ", open_file );
-        for ( auto& config_node : config_nodes ) {
-            config_node->ui( ui );
-        }
+        std::apply( [ & ]( auto&&... config_node ) { ( config_node.impl_ui( ui ), ... ); }, config_nodes );
         ui.show();
         return func_back;
     }
