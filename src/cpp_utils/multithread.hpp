@@ -6,11 +6,12 @@
 #include <thread>
 #include <utility>
 #include <vector>
-namespace cpp_utils {
+namespace cpp_utils
+{
     using thread_num_t = unsigned int;
     template < std::random_access_iterator It, typename F >
         requires std::invocable< F, decltype( *std::declval< It >() ) >
-    inline auto parallel_for_each_impl( thread_num_t thread_num, It &&begin, It &&end, F &&func )
+    inline auto parallel_for_each_impl( thread_num_t thread_num, It&& begin, It&& end, F&& func )
     {
         if ( thread_num == 0 ) {
             std::unreachable();
@@ -34,19 +35,20 @@ namespace cpp_utils {
                 }
             } );
         }
-        for ( auto &thread : threads ) {
+        for ( auto& thread : threads ) {
             thread.join();
         }
     }
     template < std::random_access_iterator It, typename F >
         requires std::invocable< F, decltype( *std::declval< It >() ) >
-    inline auto parallel_for_each( It &&begin, It &&end, F &&func )
+    inline auto parallel_for_each( It&& begin, It&& end, F&& func )
     {
         parallel_for_each_impl(
           std::max( std::thread::hardware_concurrency(), 2U ), std::forward< It >( begin ), std::forward< It >( end ),
           std::forward< F >( func ) );
     }
-    class thread_manager final {
+    class thread_manager final
+    {
       private:
         std::deque< std::jthread > threads_{};
       public:
@@ -62,67 +64,67 @@ namespace cpp_utils {
         {
             return threads_.max_size();
         }
-        auto &optimize_storage() noexcept
+        auto& optimize_storage() noexcept
         {
             threads_.shrink_to_fit();
             return *this;
         }
-        auto &swap( thread_manager &src ) noexcept
+        auto& swap( thread_manager& src ) noexcept
         {
             threads_.swap( src.threads_ );
             return *this;
         }
         template < typename F, typename... Args >
             requires std::invocable< F, Args... > || std::invocable< F, std::stop_token, Args... >
-        auto &add( F &&func, Args &&...args )
+        auto& add( F&& func, Args&&... args )
         {
             threads_.emplace_back( std::forward< F >( func ), std::forward< Args >( args )... );
             return *this;
         }
-        auto &join()
+        auto& join()
         {
-            for ( auto &thread : threads_ ) {
+            for ( auto& thread : threads_ ) {
                 thread.join();
             }
             return *this;
         }
-        auto &safe_join() noexcept
+        auto& safe_join() noexcept
         {
-            for ( auto &thread : threads_ ) {
+            for ( auto& thread : threads_ ) {
                 if ( thread.joinable() ) {
                     thread.join();
                 }
             }
             return *this;
         }
-        auto &detach()
+        auto& detach()
         {
-            for ( auto &thread : threads_ ) {
+            for ( auto& thread : threads_ ) {
                 thread.detach();
             }
             return *this;
         }
-        auto &safe_detach() noexcept
+        auto& safe_detach() noexcept
         {
-            for ( auto &thread : threads_ ) {
+            for ( auto& thread : threads_ ) {
                 if ( thread.joinable() ) {
                     thread.detach();
                 }
             }
             return *this;
         }
-        auto &request_stop() noexcept
+        auto& request_stop() noexcept
         {
-            for ( auto &thread : threads_ ) {
+            for ( auto& thread : threads_ ) {
                 thread.request_stop();
             }
             return *this;
         }
-        auto operator=( const thread_manager & ) -> thread_manager & = delete;
-        auto operator=( thread_manager && ) -> thread_manager &      = default;
-        thread_manager() noexcept                                    = default;
-        thread_manager( const thread_manager & )                     = delete;
-        thread_manager( thread_manager && ) noexcept                 = default;
-        ~thread_manager()                                            = default;
+        auto operator=( const thread_manager& ) -> thread_manager& = delete;
+        auto operator=( thread_manager&& ) -> thread_manager&      = default;
+        thread_manager() noexcept                                  = default;
+        thread_manager( const thread_manager& )                    = delete;
+        thread_manager( thread_manager&& ) noexcept                = default;
+        ~thread_manager()                                          = default;
     };
 }

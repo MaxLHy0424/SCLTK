@@ -23,12 +23,12 @@ auto main() -> int
       .add_back( " > 工具箱 ", core::toolkit )
       .add_back( "\n[ 破解 ]\n" )
       .add_back( std::format( " > {} ", core::custom_rules.shown_name ), core::crack{ core::custom_rules } );
-    for ( const auto &rule : core::builtin_rules ) {
+    for ( const auto& rule : core::builtin_rules ) {
         ui.add_back( std::format( " > {} ", rule.shown_name ), core::crack{ rule } );
     }
     ui.add_back( "\n[ 恢复 ]\n" )
       .add_back( std::format( " > {} ", core::custom_rules.shown_name ), core::restore{ core::custom_rules } );
-    for ( const auto &rule : core::builtin_rules ) {
+    for ( const auto& rule : core::builtin_rules ) {
         ui.add_back( std::format( " > {} ", rule.shown_name ), core::restore{ rule } );
     }
     ui.show().set_limits( true, true );
