@@ -677,28 +677,7 @@ namespace core
         {
             cpp_utils::stop_service_with_dependencies< charset_id >( serv.c_str() );
         }
-        auto stable_engine_()
-        {
-            const auto& execs{ rules_.execs };
-            const auto& servs{ rules_.servs };
-            if ( is_hijack_execs ) {
-                for ( const auto& exec : execs ) {
-                    cmd_hijack_exec_( exec );
-                }
-            }
-            if ( is_set_serv_startup_types ) {
-                for ( const auto& serv : servs ) {
-                    cmd_disable_serv_( serv );
-                }
-            }
-            for ( const auto& exec : execs ) {
-                cmd_kill_exec_( exec );
-            }
-            for ( const auto& serv : servs ) {
-                cmd_stop_serv_( serv );
-            }
-        }
-        auto next_gen_engine_()
+        auto engine_()
         {
             const auto& execs{ rules_.execs };
             const auto& servs{ rules_.servs };
@@ -727,7 +706,7 @@ namespace core
                 return func_back;
             }
             std::print( "{}", std::string( console_width, '-' ).c_str() );
-            std::invoke( std::array{ &crack::stable_engine_, &crack::next_gen_engine_ }[ is_next_generation_engine.get() ], *this );
+            engine_();
             return func_back;
         }
         crack( const rule_node& rules ) noexcept
@@ -770,25 +749,7 @@ namespace core
         {
             cpp_utils::start_service_with_dependencies< charset_id >( serv.c_str() );
         }
-        auto stable_engine_()
-        {
-            const auto& execs{ rules_.execs };
-            const auto& servs{ rules_.servs };
-            if ( is_hijack_execs ) {
-                for ( const auto& exec : execs ) {
-                    cmd_undo_hijack_exec_( exec );
-                }
-            }
-            if ( is_set_serv_startup_types ) {
-                for ( const auto& serv : servs ) {
-                    cmd_enable_serv_( serv );
-                }
-            }
-            for ( const auto& serv : servs ) {
-                cmd_start_serv_( serv );
-            }
-        }
-        auto next_gen_engine_()
+        auto engine_()
         {
             const auto& execs{ rules_.execs };
             const auto& servs{ rules_.servs };
@@ -811,8 +772,7 @@ namespace core
                 return func_back;
             }
             std::print( "{}", std::string( console_width, '-' ).c_str() );
-            std::invoke(
-              std::array{ &restore::stable_engine_, &restore::next_gen_engine_ }[ is_next_generation_engine.get() ], *this );
+            engine_();
             return func_back;
         }
         restore( const rule_node& rules ) noexcept
