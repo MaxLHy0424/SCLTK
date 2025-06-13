@@ -720,7 +720,6 @@ namespace core
       public:
         auto operator()( ui_func_args )
         {
-            cpp_utils::set_current_console_charset( 65001 );
             std::print( "                    [ 破  解 ]\n\n\n" );
             if ( rules_.empty() ) {
                 std::print( " (i) 规则为空." );
@@ -805,7 +804,6 @@ namespace core
       public:
         auto operator()( ui_func_args )
         {
-            cpp_utils::set_current_console_charset( 65001 );
             std::print( "                    [ 恢  复 ]\n\n\n" );
             if ( rules_.empty() ) {
                 std::print( " (i) 规则为空." );
