@@ -9,187 +9,190 @@ namespace cpp_utils
 {
     template < typename T >
     concept coroutine_func_return_t = requires { typename T::promise_type; };
-    template < typename R, template < typename > typename Coroutine >
-    struct coroutine_promise final
+    namespace details
     {
-        std::unique_ptr< R > current_value{};
-        std::exception_ptr current_exception{};
-        auto get_return_object() noexcept
+        template < typename R, template < typename > typename Coroutine >
+        struct coroutine_promise final
         {
-            return Coroutine< R >{ std::coroutine_handle< coroutine_promise< R, Coroutine > >::from_promise( *this ) };
-        }
-        static auto initial_suspend() noexcept
+            std::unique_ptr< R > current_value{};
+            std::exception_ptr current_exception{};
+            auto get_return_object() noexcept
+            {
+                return Coroutine< R >{ std::coroutine_handle< coroutine_promise< R, Coroutine > >::from_promise( *this ) };
+            }
+            static auto initial_suspend() noexcept
+            {
+                return std::suspend_always{};
+            }
+            static auto final_suspend() noexcept
+            {
+                return std::suspend_always{};
+            }
+            auto yield_value( const R& args )
+            {
+                current_value = std::make_unique< R >( args );
+                return std::suspend_always{};
+            }
+            auto yield_value( R&& args )
+            {
+                current_value = std::make_unique< R >( std::move( args ) );
+                return std::suspend_always{};
+            }
+            auto return_value( const R& args )
+            {
+                current_value = std::make_unique< R >( args );
+                return std::suspend_always{};
+            }
+            auto return_value( R&& args )
+            {
+                current_value = std::make_unique< R >( std::move( args ) );
+                return std::suspend_always{};
+            }
+            auto unhandled_exception() noexcept
+            {
+                current_exception = std::current_exception();
+            }
+            auto& get_value()
+            {
+                return *current_value;
+            }
+        };
+        template < typename R, template < typename > typename Coroutine >
+        struct coroutine_promise_noexcept final
         {
-            return std::suspend_always{};
-        }
-        static auto final_suspend() noexcept
+            std::unique_ptr< R > current_value{};
+            auto get_return_object() noexcept
+            {
+                return Coroutine< R >{ std::coroutine_handle< coroutine_promise_noexcept< R, Coroutine > >::from_promise( *this ) };
+            }
+            static auto initial_suspend() noexcept
+            {
+                return std::suspend_always{};
+            }
+            static auto final_suspend() noexcept
+            {
+                return std::suspend_always{};
+            }
+            auto yield_value( const R& args )
+            {
+                current_value = std::make_unique< R >( args );
+                return std::suspend_always{};
+            }
+            auto yield_value( R&& args )
+            {
+                current_value = std::make_unique< R >( std::move( args ) );
+                return std::suspend_always{};
+            }
+            auto return_value( const R& args )
+            {
+                current_value = std::make_unique< R >( args );
+                return std::suspend_always{};
+            }
+            auto return_value( R&& args )
+            {
+                current_value = std::make_unique< R >( std::move( args ) );
+                return std::suspend_always{};
+            }
+            static auto unhandled_exception() noexcept
+            { }
+            auto& get_value()
+            {
+                return *current_value;
+            }
+        };
+        template < template < typename > typename Coroutine >
+        struct coroutine_promise< void, Coroutine > final
         {
-            return std::suspend_always{};
-        }
-        auto yield_value( const R& args )
+            std::exception_ptr current_exception{};
+            auto get_return_object() noexcept
+            {
+                return Coroutine< void >{ std::coroutine_handle< coroutine_promise< void, Coroutine > >::from_promise( *this ) };
+            }
+            static auto initial_suspend() noexcept
+            {
+                return std::suspend_always{};
+            }
+            static auto final_suspend() noexcept
+            {
+                return std::suspend_always{};
+            }
+            auto return_void() noexcept
+            { }
+            auto unhandled_exception() noexcept
+            {
+                current_exception = std::current_exception();
+            }
+        };
+        template < template < typename > typename Coroutine >
+        struct coroutine_promise_noexcept< void, Coroutine > final
         {
-            current_value = std::make_unique< R >( args );
-            return std::suspend_always{};
-        }
-        auto yield_value( R&& args )
+            auto get_return_object() noexcept
+            {
+                return Coroutine< void >{
+                  std::coroutine_handle< coroutine_promise_noexcept< void, Coroutine > >::from_promise( *this ) };
+            }
+            static auto initial_suspend() noexcept
+            {
+                return std::suspend_always{};
+            }
+            static auto final_suspend() noexcept
+            {
+                return std::suspend_always{};
+            }
+            static auto unhandled_exception() noexcept
+            { }
+            auto return_void() noexcept
+            { }
+        };
+        template < typename Handle >
+            requires( requires( Handle v ) { v.promise(); } )
+        class coroutine_iterator final
         {
-            current_value = std::make_unique< R >( std::move( args ) );
-            return std::suspend_always{};
-        }
-        auto return_value( const R& args )
-        {
-            current_value = std::make_unique< R >( args );
-            return std::suspend_always{};
-        }
-        auto return_value( R&& args )
-        {
-            current_value = std::make_unique< R >( std::move( args ) );
-            return std::suspend_always{};
-        }
-        auto unhandled_exception() noexcept
-        {
-            current_exception = std::current_exception();
-        }
-        auto& get_value()
-        {
-            return *current_value;
-        }
-    };
-    template < typename R, template < typename > typename Coroutine >
-    struct coroutine_promise_noexcept final
-    {
-        std::unique_ptr< R > current_value{};
-        auto get_return_object() noexcept
-        {
-            return Coroutine< R >{ std::coroutine_handle< coroutine_promise_noexcept< R, Coroutine > >::from_promise( *this ) };
-        }
-        static auto initial_suspend() noexcept
-        {
-            return std::suspend_always{};
-        }
-        static auto final_suspend() noexcept
-        {
-            return std::suspend_always{};
-        }
-        auto yield_value( const R& args )
-        {
-            current_value = std::make_unique< R >( args );
-            return std::suspend_always{};
-        }
-        auto yield_value( R&& args )
-        {
-            current_value = std::make_unique< R >( std::move( args ) );
-            return std::suspend_always{};
-        }
-        auto return_value( const R& args )
-        {
-            current_value = std::make_unique< R >( args );
-            return std::suspend_always{};
-        }
-        auto return_value( R&& args )
-        {
-            current_value = std::make_unique< R >( std::move( args ) );
-            return std::suspend_always{};
-        }
-        static auto unhandled_exception() noexcept
-        { }
-        auto& get_value()
-        {
-            return *current_value;
-        }
-    };
-    template < template < typename > typename Coroutine >
-    struct coroutine_promise< void, Coroutine > final
-    {
-        std::exception_ptr current_exception{};
-        auto get_return_object() noexcept
-        {
-            return Coroutine< void >{ std::coroutine_handle< coroutine_promise< void, Coroutine > >::from_promise( *this ) };
-        }
-        static auto initial_suspend() noexcept
-        {
-            return std::suspend_always{};
-        }
-        static auto final_suspend() noexcept
-        {
-            return std::suspend_always{};
-        }
-        auto return_void() noexcept
-        { }
-        auto unhandled_exception() noexcept
-        {
-            current_exception = std::current_exception();
-        }
-    };
-    template < template < typename > typename Coroutine >
-    struct coroutine_promise_noexcept< void, Coroutine > final
-    {
-        auto get_return_object() noexcept
-        {
-            return Coroutine< void >{
-              std::coroutine_handle< coroutine_promise_noexcept< void, Coroutine > >::from_promise( *this ) };
-        }
-        static auto initial_suspend() noexcept
-        {
-            return std::suspend_always{};
-        }
-        static auto final_suspend() noexcept
-        {
-            return std::suspend_always{};
-        }
-        static auto unhandled_exception() noexcept
-        { }
-        auto return_void() noexcept
-        { }
-    };
-    template < typename Handle >
-        requires( requires( Handle v ) { v.promise(); } )
-    class coroutine_iterator final
-    {
-      private:
-        const Handle coroutine_handle_;
-      public:
-        auto operator++() -> coroutine_iterator< Handle >&
-        {
-            coroutine_handle_.resume();
-            return *this;
-        }
-        auto operator++( int ) -> coroutine_iterator< Handle >
-        {
-            coroutine_handle_.resume();
-            return *this;
-        }
-        auto& operator*()
-        {
-            return coroutine_handle_.promise().get_value();
-        }
-        const auto& operator*() const
-        {
-            return coroutine_handle_.promise().get_value();
-        }
-        auto operator==( std::default_sentinel_t ) const noexcept
-        {
-            return !coroutine_handle_ || coroutine_handle_.done();
-        }
-        auto operator=( const coroutine_iterator< Handle >& ) -> coroutine_iterator< Handle >&     = default;
-        auto operator=( coroutine_iterator< Handle >&& ) noexcept -> coroutine_iterator< Handle >& = default;
-        coroutine_iterator( const Handle coroutine_handle ) noexcept
-          : coroutine_handle_{ coroutine_handle }
-        { }
-        coroutine_iterator( const coroutine_iterator< Handle >& ) noexcept = default;
-        coroutine_iterator( coroutine_iterator< Handle >&& ) noexcept      = default;
-        ~coroutine_iterator() noexcept                                     = default;
-    };
+          private:
+            const Handle coroutine_handle_;
+          public:
+            auto operator++() -> coroutine_iterator< Handle >&
+            {
+                coroutine_handle_.resume();
+                return *this;
+            }
+            auto operator++( int ) -> coroutine_iterator< Handle >
+            {
+                coroutine_handle_.resume();
+                return *this;
+            }
+            auto& operator*()
+            {
+                return coroutine_handle_.promise().get_value();
+            }
+            const auto& operator*() const
+            {
+                return coroutine_handle_.promise().get_value();
+            }
+            auto operator==( std::default_sentinel_t ) const noexcept
+            {
+                return !coroutine_handle_ || coroutine_handle_.done();
+            }
+            auto operator=( const coroutine_iterator< Handle >& ) -> coroutine_iterator< Handle >&     = default;
+            auto operator=( coroutine_iterator< Handle >&& ) noexcept -> coroutine_iterator< Handle >& = default;
+            coroutine_iterator( const Handle coroutine_handle ) noexcept
+              : coroutine_handle_{ coroutine_handle }
+            { }
+            coroutine_iterator( const coroutine_iterator< Handle >& ) noexcept = default;
+            coroutine_iterator( coroutine_iterator< Handle >&& ) noexcept      = default;
+            ~coroutine_iterator() noexcept                                     = default;
+        };
+    }
     template < typename R >
     class coroutine final
     {
       public:
-        using promise_type = coroutine_promise< R, coroutine >;
+        using promise_type = details::coroutine_promise< R, coroutine >;
       private:
         using handle_ = std::coroutine_handle< promise_type >;
         handle_ coroutine_handle_{};
       public:
-        using iterator = coroutine_iterator< handle_ >;
+        using iterator = details::coroutine_iterator< handle_ >;
         auto empty() const noexcept
         {
             return coroutine_handle_ == nullptr;
@@ -297,7 +300,7 @@ namespace cpp_utils
     class coroutine< void > final
     {
       public:
-        using promise_type = coroutine_promise< void, coroutine >;
+        using promise_type = details::coroutine_promise< void, coroutine >;
       private:
         using handle_ = std::coroutine_handle< promise_type >;
         handle_ coroutine_handle_{};
@@ -394,12 +397,12 @@ namespace cpp_utils
     class coroutine_noexcept final
     {
       public:
-        using promise_type = coroutine_promise_noexcept< R, coroutine_noexcept >;
+        using promise_type = details::coroutine_promise_noexcept< R, coroutine_noexcept >;
       private:
         using handle_ = std::coroutine_handle< promise_type >;
         handle_ coroutine_handle_{};
       public:
-        using iterator = coroutine_iterator< handle_ >;
+        using iterator = details::coroutine_iterator< handle_ >;
         auto empty() const noexcept
         {
             return coroutine_handle_ == nullptr;
@@ -492,7 +495,7 @@ namespace cpp_utils
     class coroutine_noexcept< void > final
     {
       public:
-        using promise_type = coroutine_promise_noexcept< void, coroutine_noexcept >;
+        using promise_type = details::coroutine_promise_noexcept< void, coroutine_noexcept >;
       private:
         using handle_ = std::coroutine_handle< promise_type >;
         handle_ coroutine_handle_{};
