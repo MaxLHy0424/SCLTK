@@ -25,11 +25,6 @@ namespace core
     inline const auto std_input_handle{ GetStdHandle( STD_INPUT_HANDLE ) };
     inline const auto std_output_handle{ GetStdHandle( STD_OUTPUT_HANDLE ) };
     using ui_func_args = cpp_utils::console_ui::func_args;
-    template < typename... Args >
-    inline auto u8print( const char8_t* const format_string, Args&&... args )
-    {
-        std::print( std::runtime_format( reinterpret_cast< const char* >( format_string ) ), std::forward< Args >( args )... );
-    }
     inline auto quit( ui_func_args ) noexcept
     {
         return func_exit;
@@ -44,19 +39,6 @@ namespace core
         std::print( "\n\n" );
         for ( unsigned short i{ 3 }; i > 0; --i ) {
             std::print( " {}s 后返回.\r", i );
-            std::this_thread::sleep_for( 1s );
-        }
-    }
-    inline auto u8quit() noexcept
-    {
-        cpp_utils::set_current_console_charset( charset_id );
-        return func_back;
-    }
-    inline auto u8wait() noexcept
-    {
-        std::print( "\n\n" );
-        for ( unsigned short i{ 3 }; i > 0; --i ) {
-            u8print( u8" {}s 后返回.\r", i );
             std::this_thread::sleep_for( 1s );
         }
     }
@@ -739,15 +721,15 @@ namespace core
         auto operator()( ui_func_args )
         {
             cpp_utils::set_current_console_charset( 65001 );
-            u8print( u8"                    [ 破  解 ]\n\n\n" );
+            std::print( "                    [ 破  解 ]\n\n\n" );
             if ( rules_.empty() ) {
-                u8print( u8" (i) 规则为空." );
-                u8wait();
-                return u8quit();
+                std::print( " (i) 规则为空." );
+                wait();
+                return func_back;
             }
-            u8print( std::u8string( console_width, '-' ).c_str() );
+            std::print( "{}", std::string( console_width, '-' ).c_str() );
             std::invoke( std::array{ &crack::stable_engine_, &crack::next_gen_engine_ }[ is_next_generation_engine.get() ], *this );
-            return u8quit();
+            return func_back;
         }
         crack( const rule_node& rules ) noexcept
           : rules_{ rules }
@@ -824,16 +806,16 @@ namespace core
         auto operator()( ui_func_args )
         {
             cpp_utils::set_current_console_charset( 65001 );
-            u8print( u8"                    [ 恢  复 ]\n\n\n" );
+            std::print( "                    [ 恢  复 ]\n\n\n" );
             if ( rules_.empty() ) {
-                u8print( u8" (i) 规则为空." );
-                u8wait();
-                return u8quit();
+                std::print( " (i) 规则为空." );
+                wait();
+                return func_back;
             }
-            u8print( std::u8string( console_width, '-' ).c_str() );
+            std::print( "{}", std::string( console_width, '-' ).c_str() );
             std::invoke(
               std::array{ &restore::stable_engine_, &restore::next_gen_engine_ }[ is_next_generation_engine.get() ], *this );
-            return u8quit();
+            return func_back;
         }
         restore( const rule_node& rules ) noexcept
           : rules_{ rules }
