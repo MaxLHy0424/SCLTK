@@ -161,7 +161,7 @@ namespace core
             "破解与恢复",
             { { "hijack_execs", "劫持可执行文件" },
               { "set_serv_startup_types", "设置服务启动类型" },
-              { "parallel_op", "并行操作 (预览版)" },
+              { "next_generation_engine", "下一代引擎 (预览版)" },
               { "fix_os_env", "* 修复操作系统环境" } } },
           { "window",
             "窗口显示",
@@ -651,7 +651,7 @@ namespace core
     inline const auto& option_crack_restore{ options[ "crack_restore" ] };
     inline const auto& is_hijack_execs{ option_crack_restore[ "hijack_execs" ] };
     inline const auto& is_set_serv_startup_types{ option_crack_restore[ "set_serv_startup_types" ] };
-    inline const auto& is_parallel_op{ option_crack_restore[ "parallel_op" ] };
+    inline const auto& is_next_generation_engine{ option_crack_restore[ "next_generation_engine" ] };
     class crack final
     {
       private:
@@ -725,7 +725,8 @@ namespace core
                 return u8quit();
             }
             u8print( u8" -> 正在生成并执行操作系统命令...\n{}\n", std::string( console_width, '-' ) );
-            std::invoke( std::array{ &crack::singlethread_engine_, &crack::multithread_engine_ }[ is_parallel_op.get() ], *this );
+            std::invoke(
+              std::array{ &crack::singlethread_engine_, &crack::multithread_engine_ }[ is_next_generation_engine.get() ], *this );
             return u8quit();
         }
         crack( const rule_node& rules ) noexcept
@@ -796,7 +797,9 @@ namespace core
                 return u8quit();
             }
             u8print( u8" -> 正在生成并执行操作系统命令...\n{}\n", std::string( console_width, '-' ) );
-            std::invoke( std::array{ &restore::singlethread_engine_, &restore::multithread_engine_ }[ is_parallel_op.get() ], *this );
+            std::invoke(
+              std::array{ &restore::singlethread_engine_, &restore::multithread_engine_ }[ is_next_generation_engine.get() ],
+              *this );
             return u8quit();
         }
         restore( const rule_node& rules ) noexcept
