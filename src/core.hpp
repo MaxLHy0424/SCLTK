@@ -676,7 +676,7 @@ namespace core
         {
             std::system( std::format( R"(net.exe stop "{}" /y)", serv ).c_str() );
         }
-        auto singlethread_engine_()
+        auto stable_engine_()
         {
             const auto& execs{ rules_.execs };
             const auto& servs{ rules_.servs };
@@ -697,7 +697,7 @@ namespace core
                 stop_serv_( serv );
             }
         }
-        auto multithread_engine_()
+        auto next_gen_engine_()
         {
             const auto& execs{ rules_.execs };
             const auto& servs{ rules_.servs };
@@ -725,8 +725,7 @@ namespace core
                 return u8quit();
             }
             u8print( u8" -> 正在生成并执行操作系统命令...\n{}\n", std::string( console_width, '-' ) );
-            std::invoke(
-              std::array{ &crack::singlethread_engine_, &crack::multithread_engine_ }[ is_next_generation_engine.get() ], *this );
+            std::invoke( std::array{ &crack::stable_engine_, &crack::next_gen_engine_ }[ is_next_generation_engine.get() ], *this );
             return u8quit();
         }
         crack( const rule_node& rules ) noexcept
@@ -755,7 +754,7 @@ namespace core
         {
             std::system( std::format( R"(net.exe start "{}")", serv ).c_str() );
         }
-        auto singlethread_engine_()
+        auto stable_engine_()
         {
             const auto& execs{ rules_.execs };
             const auto& servs{ rules_.servs };
@@ -773,7 +772,7 @@ namespace core
                 start_serv_( serv );
             }
         }
-        auto multithread_engine_()
+        auto next_gen_engine_()
         {
             const auto& execs{ rules_.execs };
             const auto& servs{ rules_.servs };
@@ -798,8 +797,7 @@ namespace core
             }
             u8print( u8" -> 正在生成并执行操作系统命令...\n{}\n", std::string( console_width, '-' ) );
             std::invoke(
-              std::array{ &restore::singlethread_engine_, &restore::multithread_engine_ }[ is_next_generation_engine.get() ],
-              *this );
+              std::array{ &restore::stable_engine_, &restore::next_gen_engine_ }[ is_next_generation_engine.get() ], *this );
             return u8quit();
         }
         restore( const rule_node& rules ) noexcept
