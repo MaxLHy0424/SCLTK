@@ -13,7 +13,7 @@ namespace cpp_utils
      || std::same_as< std::decay_t< T >, char32_t >;
     template < character T, size_t N >
         requires( std::same_as< T, std::decay_t< T > > && N > 0 )
-    class basic_constant_string final
+    class basic_const_string final
     {
       private:
         std::array< T, N > data_{};
@@ -30,13 +30,37 @@ namespace cpp_utils
         {
             return data_.max_size();
         }
+        constexpr auto& front() const noexcept
+        {
+            return const_cast< const T& >( data_.front() );
+        }
+        constexpr auto& back() const noexcept
+        {
+            return const_cast< const T& >( data_.back() );
+        }
+        constexpr auto begin() const noexcept
+        {
+            return data_.cbegin();
+        }
+        constexpr auto rbegin() const noexcept
+        {
+            return data_.crbegin();
+        }
+        constexpr auto end() const noexcept
+        {
+            return data_.cend();
+        }
+        constexpr auto rend() const noexcept
+        {
+            return data_.crend();
+        }
         constexpr auto& at( const size_t index ) const noexcept
         {
-            return data_.at( index );
+            return const_cast< const T& >( data_.at( index ) );
         }
         const auto& operator[]( const size_t index ) const noexcept
         {
-            return data_[ index ];
+            return const_cast< const T& >( data_[ index ] );
         }
         constexpr auto compare( const T* const src ) const
         {
@@ -71,7 +95,7 @@ namespace cpp_utils
             return true;
         }
         template < size_t SrcN >
-        constexpr auto compare( const basic_constant_string< T, SrcN >& src ) const noexcept
+        constexpr auto compare( const basic_const_string< T, SrcN >& src ) const noexcept
         {
             if ( SrcN != N ) {
                 return false;
@@ -93,7 +117,7 @@ namespace cpp_utils
             return compare( src );
         }
         template < size_t SrcN >
-        constexpr auto operator==( const basic_constant_string< T, SrcN >& src ) const noexcept
+        constexpr auto operator==( const basic_const_string< T, SrcN >& src ) const noexcept
         {
             return compare( src );
         }
@@ -107,28 +131,40 @@ namespace cpp_utils
             return !compare( src );
         }
         template < size_t SrcN >
-        constexpr auto operator!=( const basic_constant_string< T, SrcN >& src ) const noexcept
+        constexpr auto operator!=( const basic_const_string< T, SrcN >& src ) const noexcept
         {
             return !compare( src );
         }
-        auto operator=( const basic_constant_string< T, N >& ) -> basic_constant_string< T, N >& = delete;
-        auto operator=( basic_constant_string< T, N >&& ) -> basic_constant_string< T, N >&      = delete;
-        consteval basic_constant_string( const T ( &str )[ N ] ) noexcept
+        auto operator=( const basic_const_string< T, N >& ) -> basic_const_string< T, N >& = delete;
+        auto operator=( basic_const_string< T, N >&& ) -> basic_const_string< T, N >&      = delete;
+        consteval basic_const_string( const T ( &str )[ N ] ) noexcept
         {
             std::ranges::copy( str, data_.data() );
         }
-        consteval basic_constant_string( const basic_constant_string< T, N >& )     = default;
-        consteval basic_constant_string( basic_constant_string< T, N >&& ) noexcept = delete;
-        ~basic_constant_string() noexcept                                           = default;
+        consteval basic_const_string( const std::array< T, N >& str ) noexcept
+          : data_{ str }
+        { }
+        consteval basic_const_string( const basic_const_string< T, N >& )     = default;
+        consteval basic_const_string( basic_const_string< T, N >&& ) noexcept = delete;
+        ~basic_const_string() noexcept                                        = default;
     };
     template < size_t N >
-    using constant_string = basic_constant_string< char, N >;
+    using const_string = basic_const_string< char, N >;
     template < size_t N >
-    using constant_wstring = basic_constant_string< wchar_t, N >;
+    using const_wstring = basic_const_string< wchar_t, N >;
     template < size_t N >
-    using constant_u8string = basic_constant_string< char8_t, N >;
+    using const_u8string = basic_const_string< char8_t, N >;
     template < size_t N >
-    using constant_u16string = basic_constant_string< char16_t, N >;
+    using const_u16string = basic_const_string< char16_t, N >;
     template < size_t N >
-    using constant_u32string = basic_constant_string< char32_t, N >;
+    using const_u32string = basic_const_string< char32_t, N >;
+    template < size_t N, auto C >
+        requires character< decltype( C ) >
+    consteval auto make_repeated_const_string() noexcept
+    {
+        using T = decltype( C );
+        std::array< T, N > str;
+        str.fill( C );
+        return basic_const_string< T, N >{ str };
+    }
 }
