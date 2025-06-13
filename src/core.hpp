@@ -209,26 +209,26 @@ namespace core
     {
       public:
         const cpp_utils::raw_pointer_wrapper< const char* > self_name;
-        auto impl_load( this auto&& self, const bool is_reload, std::string& line )
+        auto load( this auto&& self, const bool is_reload, std::string& line )
         {
-            self.load( is_reload, line );
+            self.load_( is_reload, line );
         }
-        auto impl_sync( this auto&& self, std::ofstream& out )
+        auto sync( this auto&& self, std::ofstream& out )
         {
-            self.sync( out );
+            self.sync_( out );
         }
-        auto impl_prepare_reload( this auto&& self )
+        auto prepare_reload( this auto&& self )
         {
             using child_t = std::decay_t< decltype( self ) >;
-            if constexpr ( requires( child_t obj ) { obj.prepare_reload(); } ) {
-                self.prepare_reload();
+            if constexpr ( requires( child_t obj ) { obj.prepare_reload_(); } ) {
+                self.prepare_reload_();
             }
         }
-        auto impl_ui( this auto&& self, cpp_utils::console_ui& parent_ui )
+        auto ui( this auto&& self, cpp_utils::console_ui& parent_ui )
         {
             using child_t = std::decay_t< decltype( self ) >;
-            if constexpr ( requires( child_t obj ) { obj.ui( parent_ui ); } ) {
-                self.ui( parent_ui );
+            if constexpr ( requires( child_t obj ) { obj.ui_( parent_ui ); } ) {
+                self.ui_( parent_ui );
             }
         }
         config_node_impl( const char* const self_name ) noexcept
@@ -245,7 +245,7 @@ namespace core
         {
             return std::format( " > {}用 ", is_enable ? "禁" : "启" );
         }
-        auto load( const bool is_reload, std::string& line )
+        auto load_( const bool is_reload, std::string& line )
         {
             if ( is_reload ) {
                 return;
@@ -260,7 +260,7 @@ namespace core
                 }
             }
         }
-        auto sync( std::ofstream& out )
+        auto sync_( std::ofstream& out )
         {
             for ( const auto& category : options.categories ) {
                 for ( const auto& item : category.items ) {
@@ -268,7 +268,7 @@ namespace core
                 }
             }
         }
-        auto ui( cpp_utils::console_ui& ui )
+        auto ui_( cpp_utils::console_ui& ui )
         {
             constexpr auto option_ctrl_color{ cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_green };
             using category_t = option_set::category;
@@ -333,17 +333,17 @@ namespace core
     {
       private:
         friend config_node_impl;
-        auto load( const bool, std::string& line )
+        auto load_( const bool, std::string& line )
         {
             custom_rules.execs.emplace_back( std::move( line ) );
         }
-        auto sync( std::ofstream& out )
+        auto sync_( std::ofstream& out )
         {
             for ( const auto& exec : custom_rules.execs ) {
                 out << exec << '\n';
             }
         }
-        auto prepare_reload() noexcept
+        auto prepare_reload_() noexcept
         {
             custom_rules.execs.clear();
         }
@@ -357,17 +357,17 @@ namespace core
     {
       private:
         friend config_node_impl;
-        auto load( const bool, std::string& line )
+        auto load_( const bool, std::string& line )
         {
             custom_rules.servs.emplace_back( std::move( line ) );
         }
-        auto sync( std::ofstream& out )
+        auto sync_( std::ofstream& out )
         {
             for ( const auto& serv : custom_rules.servs ) {
                 out << serv << '\n';
             }
         }
-        auto prepare_reload() noexcept
+        auto prepare_reload_() noexcept
         {
             custom_rules.servs.clear();
         }
@@ -564,7 +564,7 @@ namespace core
         if ( !config_file.good() ) {
             return;
         }
-        std::apply( []( auto&&... config_node ) { ( config_node.impl_prepare_reload(), ... ); }, config_nodes );
+        std::apply( []( auto&&... config_node ) { ( config_node.prepare_reload(), ... ); }, config_nodes );
         std::string line;
         std::string_view line_view;
         decltype( get_config_node_variant_t( config_nodes ) ) current_config_node;
@@ -595,7 +595,7 @@ namespace core
             current_config_node.visit( [ & ]( const auto node_ptr )
             {
                 if constexpr ( !std::same_as< std::decay_t< decltype( node_ptr ) >, unknown_config_node_t > ) {
-                    node_ptr->impl_load( is_reload, line );
+                    node_ptr->load( is_reload, line );
                 }
             } );
         }
@@ -613,7 +613,7 @@ namespace core
             std::apply( [ & ]( auto&&... config_node )
             {
                 ( ( config_file_stream << std::format( "[ {} ]\n", config_node.self_name.get() ),
-                    config_node.impl_sync( config_file_stream ) ),
+                    config_node.sync( config_file_stream ) ),
                   ... );
             }, config_nodes );
             config_file_stream << std::flush;
@@ -642,7 +642,7 @@ namespace core
           .add_back( " < 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
           .add_back( " > 同步配置 ", sync )
           .add_back( " > 打开配置文件 ", open_file );
-        std::apply( [ & ]( auto&&... config_node ) { ( config_node.impl_ui( ui ), ... ); }, config_nodes );
+        std::apply( [ & ]( auto&&... config_node ) { ( config_node.ui( ui ), ... ); }, config_nodes );
         ui.show();
         return func_back;
     }
