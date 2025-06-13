@@ -23,20 +23,20 @@ namespace cpp_utils
         virtual auto args_type() const -> const std::vector< std::type_index >&      = 0;
         virtual auto invoke( const std::vector< std::any >& args ) const -> std::any = 0;
     };
-    template < typename T, typename... Args >
+    template < typename R, typename... Args >
     class func_wrapper final : public func_wrapper_impl
     {
       private:
-        std::function< T( Args... ) > func_;
+        std::function< R( Args... ) > func_;
         std::vector< std::type_index > args_type_{ std::type_index{ typeid( Args ) }... };
         template < size_t... Is >
         auto invoke_impl_( const std::vector< std::any >& args, std::index_sequence< Is... > ) const -> std::any
         {
-            if constexpr ( std::is_void_v< T > ) {
+            if constexpr ( std::is_void_v< R > ) {
                 std::invoke( func_, std::any_cast< Args >( args[ Is ] )... );
                 return {};
             } else {
-                return std::make_shared< T >( std::invoke( func_, std::any_cast< Args >( args[ Is ] )... ) );
+                return std::make_shared< R >( std::invoke( func_, std::any_cast< Args >( args[ Is ] )... ) );
             }
         }
       public:
@@ -55,7 +55,7 @@ namespace cpp_utils
             }
             return invoke_impl_( args, std::index_sequence_for< Args... >{} );
         }
-        func_wrapper( std::function< T( Args... ) > func )
+        func_wrapper( std::function< R( Args... ) > func )
           : func_{ std::move( func ) }
         { }
     };
@@ -99,52 +99,52 @@ namespace cpp_utils
             ( target.emplace_back( std::forward< Args >( args ) ), ... );
             return target;
         }
-        template < typename T, typename... Args >
-        auto& add_front( T ( *func )( Args... ) )
+        template < typename R, typename... Args >
+        auto& add_front( R ( *func )( Args... ) )
         {
-            func_nodes_.emplace_front( std::make_unique< func_wrapper< T, Args... > >( func ) );
+            func_nodes_.emplace_front( std::make_unique< func_wrapper< R, Args... > >( func ) );
             return *this;
         }
-        template < typename T, typename... Args >
-        auto& add_front( std::function< T( Args... ) > func )
+        template < typename R, typename... Args >
+        auto& add_front( std::function< R( Args... ) > func )
         {
-            func_nodes_.emplace_front( std::make_unique< func_wrapper< T, Args... > >( std::move( func ) ) );
+            func_nodes_.emplace_front( std::make_unique< func_wrapper< R, Args... > >( std::move( func ) ) );
             return *this;
         }
-        template < typename T, typename... Args >
-        auto& add_back( T ( *func )( Args... ) )
+        template < typename R, typename... Args >
+        auto& add_back( R ( *func )( Args... ) )
         {
-            func_nodes_.emplace_back( std::make_unique< func_wrapper< T, Args... > >( func ) );
+            func_nodes_.emplace_back( std::make_unique< func_wrapper< R, Args... > >( func ) );
             return *this;
         }
-        template < typename T, typename... Args >
-        auto& add_back( std::function< T( Args... ) > func )
+        template < typename R, typename... Args >
+        auto& add_back( std::function< R( Args... ) > func )
         {
-            func_nodes_.emplace_back( std::make_unique< func_wrapper< T, Args... > >( std::move( func ) ) );
+            func_nodes_.emplace_back( std::make_unique< func_wrapper< R, Args... > >( std::move( func ) ) );
             return *this;
         }
-        template < typename T, typename... Args >
-        auto& insert( const size_t index, T ( *func )( Args... ) )
+        template < typename R, typename... Args >
+        auto& insert( const size_t index, R ( *func )( Args... ) )
         {
-            func_nodes_.emplace( func_nodes_.cbegin() + index, std::make_unique< func_wrapper< T, Args... > >( func ) );
+            func_nodes_.emplace( func_nodes_.cbegin() + index, std::make_unique< func_wrapper< R, Args... > >( func ) );
             return *this;
         }
-        template < typename T, typename... Args >
-        auto& insert( const size_t index, std::function< T( Args... ) > func )
+        template < typename R, typename... Args >
+        auto& insert( const size_t index, std::function< R( Args... ) > func )
         {
-            func_nodes_.emplace( func_nodes_.cbegin() + index, std::make_unique< func_wrapper< T, Args... > >( std::move( func ) ) );
+            func_nodes_.emplace( func_nodes_.cbegin() + index, std::make_unique< func_wrapper< R, Args... > >( std::move( func ) ) );
             return *this;
         }
-        template < typename T, typename... Args >
-        auto& edit( const size_t index, T ( *func )( Args... ) )
+        template < typename R, typename... Args >
+        auto& edit( const size_t index, R ( *func )( Args... ) )
         {
-            func_nodes_.at( index ) = std::make_unique< func_wrapper< T, Args... > >( func );
+            func_nodes_.at( index ) = std::make_unique< func_wrapper< R, Args... > >( func );
             return *this;
         }
-        template < typename T, typename... Args >
-        auto& edit( const size_t index, std::function< T( Args... ) > func )
+        template < typename R, typename... Args >
+        auto& edit( const size_t index, std::function< R( Args... ) > func )
         {
-            func_nodes_.at( index ) = std::make_unique< func_wrapper< T, Args... > >( std::move( func ) );
+            func_nodes_.at( index ) = std::make_unique< func_wrapper< R, Args... > >( std::move( func ) );
             return *this;
         }
         auto& remove_front() noexcept
@@ -167,23 +167,23 @@ namespace cpp_utils
             func_nodes_.clear();
             return *this;
         }
-        template < typename T, typename... Args >
+        template < typename R, typename... Args >
         decltype( auto ) invoke( const size_t index, Args&&... args ) const
         {
-            if constexpr ( std::same_as< std::decay_t< T >, void > ) {
+            if constexpr ( std::same_as< std::decay_t< R >, void > ) {
                 func_nodes_.at( index )->invoke( make_args( std::forward< Args >( args )... ) );
             } else {
-                return std::move( *std::any_cast< std::shared_ptr< T > >(
+                return std::move( *std::any_cast< std::shared_ptr< R > >(
                   func_nodes_.at( index )->invoke( make_args( std::forward< Args >( args )... ) ) ) );
             }
         }
-        template < typename T >
+        template < typename R >
         decltype( auto ) dynamic_invoke( const size_t index, const std::vector< std::any >& args ) const
         {
-            if constexpr ( std::same_as< std::decay_t< T >, void > ) {
+            if constexpr ( std::same_as< std::decay_t< R >, void > ) {
                 func_nodes_.at( index )->invoke( args );
             } else {
-                return std::move( *std::any_cast< std::shared_ptr< T > >( func_nodes_.at( index )->invoke( args ) ) );
+                return std::move( *std::any_cast< std::shared_ptr< R > >( func_nodes_.at( index )->invoke( args ) ) );
             }
         }
     };
