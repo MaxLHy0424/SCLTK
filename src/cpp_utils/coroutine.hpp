@@ -9,14 +9,14 @@ namespace cpp_utils
 {
     template < typename T >
     concept coroutine_func_return_t = requires { typename T::promise_type; };
-    template < typename T, template < typename > typename Coroutine >
+    template < typename R, template < typename > typename Coroutine >
     struct coroutine_promise final
     {
-        std::unique_ptr< T > current_value{};
+        std::unique_ptr< R > current_value{};
         std::exception_ptr current_exception{};
         auto get_return_object() noexcept
         {
-            return Coroutine< T >{ std::coroutine_handle< coroutine_promise< T, Coroutine > >::from_promise( *this ) };
+            return Coroutine< R >{ std::coroutine_handle< coroutine_promise< R, Coroutine > >::from_promise( *this ) };
         }
         static auto initial_suspend() noexcept
         {
@@ -26,24 +26,24 @@ namespace cpp_utils
         {
             return std::suspend_always{};
         }
-        auto yield_value( const T& args )
+        auto yield_value( const R& args )
         {
-            current_value = std::make_unique< T >( args );
+            current_value = std::make_unique< R >( args );
             return std::suspend_always{};
         }
-        auto yield_value( T&& args )
+        auto yield_value( R&& args )
         {
-            current_value = std::make_unique< T >( std::move( args ) );
+            current_value = std::make_unique< R >( std::move( args ) );
             return std::suspend_always{};
         }
-        auto return_value( const T& args )
+        auto return_value( const R& args )
         {
-            current_value = std::make_unique< T >( args );
+            current_value = std::make_unique< R >( args );
             return std::suspend_always{};
         }
-        auto return_value( T&& args )
+        auto return_value( R&& args )
         {
-            current_value = std::make_unique< T >( std::move( args ) );
+            current_value = std::make_unique< R >( std::move( args ) );
             return std::suspend_always{};
         }
         auto unhandled_exception() noexcept
@@ -55,13 +55,13 @@ namespace cpp_utils
             return *current_value;
         }
     };
-    template < typename T, template < typename > typename Coroutine >
+    template < typename R, template < typename > typename Coroutine >
     struct coroutine_promise_noexcept final
     {
-        std::unique_ptr< T > current_value{};
+        std::unique_ptr< R > current_value{};
         auto get_return_object() noexcept
         {
-            return Coroutine< T >{ std::coroutine_handle< coroutine_promise_noexcept< T, Coroutine > >::from_promise( *this ) };
+            return Coroutine< R >{ std::coroutine_handle< coroutine_promise_noexcept< R, Coroutine > >::from_promise( *this ) };
         }
         static auto initial_suspend() noexcept
         {
@@ -71,24 +71,24 @@ namespace cpp_utils
         {
             return std::suspend_always{};
         }
-        auto yield_value( const T& args )
+        auto yield_value( const R& args )
         {
-            current_value = std::make_unique< T >( args );
+            current_value = std::make_unique< R >( args );
             return std::suspend_always{};
         }
-        auto yield_value( T&& args )
+        auto yield_value( R&& args )
         {
-            current_value = std::make_unique< T >( std::move( args ) );
+            current_value = std::make_unique< R >( std::move( args ) );
             return std::suspend_always{};
         }
-        auto return_value( const T& args )
+        auto return_value( const R& args )
         {
-            current_value = std::make_unique< T >( args );
+            current_value = std::make_unique< R >( args );
             return std::suspend_always{};
         }
-        auto return_value( T&& args )
+        auto return_value( R&& args )
         {
-            current_value = std::make_unique< T >( std::move( args ) );
+            current_value = std::make_unique< R >( std::move( args ) );
             return std::suspend_always{};
         }
         static auto unhandled_exception() noexcept
@@ -180,11 +180,11 @@ namespace cpp_utils
         coroutine_iterator( coroutine_iterator< Handle >&& ) noexcept      = default;
         ~coroutine_iterator() noexcept                                     = default;
     };
-    template < typename T >
+    template < typename R >
     class coroutine final
     {
       public:
-        using promise_type = coroutine_promise< T, coroutine >;
+        using promise_type = coroutine_promise< R, coroutine >;
       private:
         using handle_ = std::coroutine_handle< promise_type >;
         handle_ coroutine_handle_{};
@@ -215,7 +215,7 @@ namespace cpp_utils
             }
             return *this;
         }
-        auto& reset( coroutine< T >&& src ) noexcept
+        auto& reset( coroutine< R >&& src ) noexcept
         {
             if ( this != &src ) [[likely]] {
                 if ( !empty() ) {
@@ -271,8 +271,8 @@ namespace cpp_utils
         {
             return std::default_sentinel_t{};
         }
-        auto operator=( const coroutine< T >& ) -> coroutine< T >& = delete;
-        auto operator=( coroutine< T >&& src ) noexcept -> coroutine< T >&
+        auto operator=( const coroutine< R >& ) -> coroutine< R >& = delete;
+        auto operator=( coroutine< R >&& src ) noexcept -> coroutine< R >&
         {
             return reset( std::move( src ) );
         }
@@ -280,8 +280,8 @@ namespace cpp_utils
         coroutine( const handle_ coroutine_handle ) noexcept
           : coroutine_handle_{ coroutine_handle }
         { }
-        coroutine( const coroutine< T >& ) = delete;
-        coroutine( coroutine< T >&& src ) noexcept
+        coroutine( const coroutine< R >& ) = delete;
+        coroutine( coroutine< R >&& src ) noexcept
           : coroutine_handle_{ src.coroutine_handle_ }
         {
             src.coroutine_handle_ = {};
@@ -390,11 +390,11 @@ namespace cpp_utils
             }
         }
     };
-    template < typename T >
+    template < typename R >
     class coroutine_noexcept final
     {
       public:
-        using promise_type = coroutine_promise_noexcept< T, coroutine_noexcept >;
+        using promise_type = coroutine_promise_noexcept< R, coroutine_noexcept >;
       private:
         using handle_ = std::coroutine_handle< promise_type >;
         handle_ coroutine_handle_{};
@@ -425,7 +425,7 @@ namespace cpp_utils
             }
             return *this;
         }
-        auto& reset( coroutine_noexcept< T >&& src ) noexcept
+        auto& reset( coroutine_noexcept< R >&& src ) noexcept
         {
             if ( this != &src ) [[likely]] {
                 if ( !empty() ) {
@@ -466,8 +466,8 @@ namespace cpp_utils
         {
             return std::default_sentinel_t{};
         }
-        auto operator=( const coroutine_noexcept< T >& ) -> coroutine_noexcept< T >& = delete;
-        auto operator=( coroutine_noexcept< T >&& src ) noexcept -> coroutine_noexcept< T >&
+        auto operator=( const coroutine_noexcept< R >& ) -> coroutine_noexcept< R >& = delete;
+        auto operator=( coroutine_noexcept< R >&& src ) noexcept -> coroutine_noexcept< R >&
         {
             return reset( std::move( src ) );
         }
@@ -475,8 +475,8 @@ namespace cpp_utils
         coroutine_noexcept( const handle_ coroutine_handle ) noexcept
           : coroutine_handle_{ coroutine_handle }
         { }
-        coroutine_noexcept( const coroutine_noexcept< T >& ) = delete;
-        coroutine_noexcept( coroutine_noexcept< T >&& src ) noexcept
+        coroutine_noexcept( const coroutine_noexcept< R >& ) = delete;
+        coroutine_noexcept( coroutine_noexcept< R >&& src ) noexcept
           : coroutine_handle_{ src.coroutine_handle_ }
         {
             src.coroutine_handle_ = {};
