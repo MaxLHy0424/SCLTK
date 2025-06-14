@@ -1,12 +1,18 @@
+$is_insider_build = $true
 $software_full_name = "Student Computer Lab Toolkit"
 $software_short_name = "SCLTK"
 $license = "MIT License"
 $copyright = "Copyright (C) 2023 - present MaxLHy0424."
 $repo_url = "https://github.com/MaxLHy0424/SCLTK"
 $git_branch = git branch --show-current
-$git_tag = git describe --tags --abbrev=0
 $git_hash = git rev-parse --short HEAD
 $build_time = Get-Date -AsUTC -Format "yyyy/MM/dd HH:mm:ss"
+if ( $is_insider_build -eq $true ) {
+    $git_tag = "Insider Preview"  
+}
+else {
+    $git_tag = git describe --tags --abbrev=0
+}
 @"
 #pragma once
 #define STRINGIFY( x ) #x
