@@ -44,11 +44,11 @@ namespace core
     }
     inline auto make_progress( const size_t now, const size_t total, const size_t digits_of_total ) noexcept
     {
-        return std::format( "({}{}/{})", std::string( digits_of_total - cpp_utils::count_digits( now ), ' ' ).c_str(), now, total );
+        return std::format( "({}{}/{})", std::string( digits_of_total - cpp_utils::count_digits( now ), ' ' ), now, total );
     }
     inline auto make_resetting_line()
     {
-        return std::string( console_width + 1, ' ' ).back() = '\r';
+        return std::format( "{}\r{}\r", std::string( console_width, '#' ), std::string( console_width, ' ' ) );
     }
     struct option_set final
     {
