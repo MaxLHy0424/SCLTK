@@ -46,6 +46,10 @@ namespace core
     {
         return std::format( "({}{}/{})", std::string( digits_of_total - cpp_utils::count_digits( now ), ' ' ), now, total );
     }
+    inline auto make_divider()
+    {
+        return std::string( console_width, '-' );
+    }
     struct option_set final
     {
         struct item final
@@ -448,7 +452,7 @@ namespace core
                     std::print(
                       "                   [ 工 具 箱 ]\n\n\n"
                       " -> 正在执行操作系统命令...\n{}\n",
-                      std::string( console_width, '-' ) );
+                      make_divider() );
                     std::system( item_.command );
                     return func_exit;
                 } };
@@ -696,7 +700,7 @@ namespace core
                 wait();
                 return func_back;
             }
-            std::print( " -> 正在执行...\n\n" );
+            std::print( " -> 正在执行...\n{}\n", make_divider() );
             engine_();
             return func_back;
         }
@@ -766,7 +770,7 @@ namespace core
                 wait();
                 return func_back;
             }
-            std::print( " -> 正在执行...\n\n" );
+            std::print( " -> 正在执行...\n{}\n", make_divider() );
             engine_();
             return func_back;
         }
