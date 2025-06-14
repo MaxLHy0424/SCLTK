@@ -92,7 +92,7 @@ namespace cpp_utils
                         wchar_t* context{ nullptr };
                         auto dep{ wcstok_s( config->lpDependencies, L"\0", &context ) };
                         while ( dep != nullptr ) {
-                            if ( *dep != L'@' ) {  // 忽略服务组
+                            if ( *dep != L'@' ) {
                                 const auto dep_svc{ OpenServiceW( scm, dep, SERVICE_START | SERVICE_QUERY_STATUS ) };
                                 if ( dep_svc ) {
                                     SERVICE_STATUS status;
@@ -193,7 +193,7 @@ namespace cpp_utils
         return RegDeleteTreeW( main_key, details::to_wstring< Charset >( sub_key ).c_str() );
     }
     template < UINT Charset >
-    inline auto disable_service( const char* const service_name ) noexcept
+    inline auto set_service_status( const char* const service_name, const DWORD status_type ) noexcept
     {
         const auto w_name{ details::to_wstring< Charset >( service_name ) };
         if ( w_name.empty() ) {
@@ -207,35 +207,8 @@ namespace cpp_utils
         DWORD result{ ERROR_SUCCESS };
         if ( service != nullptr ) {
             if ( !ChangeServiceConfigW(
-                   service, SERVICE_NO_CHANGE, SERVICE_DISABLED, SERVICE_NO_CHANGE, nullptr, nullptr, nullptr, nullptr, nullptr,
+                   service, SERVICE_NO_CHANGE, status_type, SERVICE_NO_CHANGE, nullptr, nullptr, nullptr, nullptr, nullptr,
                    nullptr, nullptr ) )
-            {
-                result = GetLastError();
-            }
-            CloseServiceHandle( service );
-        } else {
-            result = GetLastError();
-        }
-        CloseServiceHandle( scm );
-        return result;
-    }
-    template < UINT Charset >
-    inline auto enable_service( const char* const service_name ) noexcept
-    {
-        const auto w_name{ details::to_wstring< Charset >( service_name ) };
-        if ( w_name.empty() ) {
-            return static_cast< DWORD >( ERROR_INVALID_PARAMETER );
-        }
-        const auto scm{ OpenSCManagerW( nullptr, nullptr, SC_MANAGER_CONNECT ) };
-        if ( scm == nullptr ) {
-            return GetLastError();
-        }
-        const auto service{ OpenServiceW( scm, w_name.c_str(), SERVICE_CHANGE_CONFIG ) };
-        DWORD result{ ERROR_SUCCESS };
-        if ( service ) {
-            if ( !ChangeServiceConfigW(
-                   service, SERVICE_NO_CHANGE, SERVICE_DEMAND_START, SERVICE_NO_CHANGE, nullptr, nullptr, nullptr, nullptr,
-                   nullptr, nullptr, nullptr ) )
             {
                 result = GetLastError();
             }
