@@ -287,7 +287,7 @@ namespace core
                     cpp_utils::console_ui ui;
                     ui.add_back( "                    [ 配  置 ]\n\n" )
                       .add_back(
-                        std::format( R"( < 折叠 "{}" )", category_.shown_name ), quit,
+                        std::format( " < 折叠 {} ", category_.shown_name ), quit,
                         cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity );
                     for ( auto& item : category_.items ) {
                         ui.add_back( std::format( "\n[ {} ]\n", item.shown_name ) )
