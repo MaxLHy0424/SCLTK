@@ -18,6 +18,7 @@ namespace core
     inline constexpr SHORT console_height{ 25 };
     inline constexpr UINT charset_id{ 936 };
     inline constexpr auto default_thread_sleep_time{ 1s };
+    inline constexpr auto default_execution_sleep_time{ 50ms };
     inline constexpr auto config_file_name{ "config.ini" };
     inline constexpr auto func_back{ cpp_utils::console_ui::func_back };
     inline constexpr auto func_exit{ cpp_utils::console_ui::func_exit };
@@ -410,7 +411,6 @@ namespace core
               "                   [ 工 具 箱 ]\n\n\n"
               " -> 正在尝试恢复...\n{}\n",
               make_divider() );
-            constexpr auto sleep_time{ 50ms };
             constexpr std::array reg_dirs{
               R"(Software\Policies\Microsoft\Windows\System)", R"(Software\Microsoft\Windows\CurrentVersion\Policies\System)",
               R"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)", R"(Software\Policies\Microsoft\MMC\)" };
@@ -423,7 +423,7 @@ namespace core
                 std::print(
                   "{} 删除注册表项: 0x{:x}.\n", make_progress( ++finished_count, total_count, digits_of_total ),
                   RegDeleteTreeA( HKEY_CURRENT_USER, reg_dir ) );
-                std::this_thread::sleep_for( sleep_time );
+                std::this_thread::sleep_for( default_execution_sleep_time );
             }
             for ( const auto& exec : execs ) {
                 std::print(
@@ -432,7 +432,7 @@ namespace core
                     HKEY_LOCAL_MACHINE,
                     std::format( R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe)", exec )
                       .c_str() ) );
-                std::this_thread::sleep_for( sleep_time );
+                std::this_thread::sleep_for( default_execution_sleep_time );
             }
             return func_back;
         } };
@@ -655,7 +655,6 @@ namespace core
         }
         auto engine_()
         {
-            constexpr auto sleep_time{ 50ms };
             const auto& execs{ rules_.execs };
             const auto& servs{ rules_.servs };
             size_t finished_count{ 0 };
@@ -668,7 +667,7 @@ namespace core
                     std::print(
                       "{} 劫持文件 {}: 0x{:x}.\n", make_progress( ++finished_count, total_count, digits_of_total ), exec,
                       hijack_exec_( exec ) );
-                    std::this_thread::sleep_for( sleep_time );
+                    std::this_thread::sleep_for( default_execution_sleep_time );
                 }
             }
             if ( is_set_serv_startup_types ) {
@@ -676,20 +675,20 @@ namespace core
                     std::print(
                       "{} 禁用服务 {}: 0x{:x}.\n", make_progress( ++finished_count, total_count, digits_of_total ), serv,
                       disable_serv_( serv ) );
-                    std::this_thread::sleep_for( sleep_time );
+                    std::this_thread::sleep_for( default_execution_sleep_time );
                 }
             }
             for ( const auto& exec : execs ) {
                 std::print(
                   "{} 终止进程 {}: 0x{:x}.\n", make_progress( ++finished_count, total_count, digits_of_total ), exec,
                   kill_exec_( exec ) );
-                std::this_thread::sleep_for( sleep_time );
+                std::this_thread::sleep_for( default_execution_sleep_time );
             }
             for ( const auto& serv : servs ) {
                 std::print(
                   "{} 停止服务 {}: 0x{:x}.\n", make_progress( ++finished_count, total_count, digits_of_total ), serv,
                   stop_serv_( serv ) );
-                std::this_thread::sleep_for( sleep_time );
+                std::this_thread::sleep_for( default_execution_sleep_time );
             }
         }
       public:
@@ -732,7 +731,6 @@ namespace core
         }
         auto engine_()
         {
-            constexpr auto sleep_time{ 50ms };
             const auto& execs{ rules_.execs };
             const auto& servs{ rules_.servs };
             size_t finished_count{ 0 };
@@ -744,7 +742,7 @@ namespace core
                     std::print(
                       "{} 撤销劫持 {}: 0x{:x}.\n", make_progress( ++finished_count, total_count, digits_of_total ), exec,
                       undo_hijack_exec_( exec ) );
-                    std::this_thread::sleep_for( sleep_time );
+                    std::this_thread::sleep_for( default_execution_sleep_time );
                 }
             }
             if ( is_set_serv_startup_types ) {
@@ -752,14 +750,14 @@ namespace core
                     std::print(
                       "{} 启用服务 {}: 0x{:x}.\n", make_progress( ++finished_count, total_count, digits_of_total ), serv,
                       enable_serv_( serv ) );
-                    std::this_thread::sleep_for( sleep_time );
+                    std::this_thread::sleep_for( default_execution_sleep_time );
                 }
             }
             for ( const auto& serv : servs ) {
                 std::print(
                   "{} 启动服务 {}: 0x{:x}.\n", make_progress( ++finished_count, total_count, digits_of_total ), serv,
                   start_serv_( serv ) );
-                std::this_thread::sleep_for( sleep_time );
+                std::this_thread::sleep_for( default_execution_sleep_time );
             }
         }
       public:
