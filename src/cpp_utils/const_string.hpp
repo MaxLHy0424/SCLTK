@@ -163,8 +163,9 @@ namespace cpp_utils
     consteval auto make_repeated_const_string() noexcept
     {
         using T = decltype( C );
-        std::array< T, N > str;
+        std::array< T, N + 1 > str;
         str.fill( C );
-        return basic_const_string< T, N >{ str };
+        str.back() = '\0';
+        return basic_const_string< T, N + 1 >{ str };
     }
 }
