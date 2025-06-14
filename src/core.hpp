@@ -412,7 +412,7 @@ namespace core
             constexpr auto sleep_time{ 50ms };
             constexpr std::array reg_dirs{
               R"(Software\Policies\Microsoft\Windows\System)", R"(Software\Microsoft\Windows\CurrentVersion\Policies\System)",
-              R"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)" };
+              R"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)", R"(Software\Policies\Microsoft\MMC\)" };
             constexpr std::array execs{
               "taskkill", "sc", "net", "reg", "cmd", "taskmgr", "perfmon", "regedit", "mmc", "dism", "sfc" };
             constexpr auto total_count{ reg_dirs.size() + execs.size() };
