@@ -404,7 +404,7 @@ namespace core
             cpp_utils::enable_window_maximize_ctrl( window_handle, false );
             return func_back;
         } };
-        auto restore_several_os_components{ []( ui_func_args ) static
+        auto restore_several_disabled_os_components{ []( ui_func_args ) static
         {
             std::print(
               "                   [ 工 具 箱 ]\n\n\n"
@@ -421,7 +421,7 @@ namespace core
             size_t finished_count{ 0 };
             for ( const auto& reg_dir : reg_dirs ) {
                 std::print(
-                  "{} {} 重置注册表项目: 0x{:x}.\r", empty_line, make_progress( ++finished_count, total_count, digits_of_total ),
+                  "{} {} 删除注册表项: 0x{:x}.\r", empty_line, make_progress( ++finished_count, total_count, digits_of_total ),
                   RegDeleteTreeA( HKEY_CURRENT_USER, reg_dir ) );
                 std::this_thread::sleep_for( sleep_time );
             }
@@ -459,7 +459,7 @@ namespace core
                 } };
                 cpp_utils::console_ui ui;
                 ui.add_back( "                   [ 工 具 箱 ]\n\n" )
-                  .add_back( std::format( " (i) 是否执行 \"{}\"?\n", item_.description ) )
+                  .add_back( " (i) 执行外部命令通常是高危操作. 是否继续执行?\n" )
                   .add_back( " > 是, 继续执行 ", execute, cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_intensity )
                   .add_back( " > 否, 立即返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
                   .show();
@@ -482,8 +482,8 @@ namespace core
         cpp_utils::console_ui ui;
         ui.add_back( "                   [ 工 具 箱 ]\n\n" )
           .add_back( " < 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
-          .add_back( " > 恢复部分系统组件 ", restore_several_os_components )
           .add_back( " > 命令提示符 ", launch_cmd )
+          .add_back( " > 恢复部分被禁用的操作系统组件 ", restore_several_disabled_os_components )
           .add_back( "\n[ 常用操作 ]\n" );
         for ( const auto& common_cmd : common_cmds ) {
             ui.add_back( std::format( " > {} ", common_cmd.description ), cmd_executor{ common_cmd } );
