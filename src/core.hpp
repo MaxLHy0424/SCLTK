@@ -657,7 +657,7 @@ namespace core
         }
         static auto winapi_disable_serv_( serv_const_ref_t serv ) noexcept
         {
-            cpp_utils::disable_service< charset_id >( serv.c_str() );
+            cpp_utils::set_service_status< charset_id >( serv.c_str(), SERVICE_DISABLED );
         }
         static auto cmd_kill_exec_( exec_const_ref_t exec ) noexcept
         {
@@ -737,7 +737,7 @@ namespace core
         }
         static auto winapi_enable_serv_( serv_const_ref_t serv ) noexcept
         {
-            cpp_utils::enable_service< charset_id >( serv.c_str() );
+            cpp_utils::set_service_status< charset_id >( serv.c_str(), SERVICE_AUTO_START );
         }
         static auto cmd_start_serv_( serv_const_ref_t serv ) noexcept
         {
