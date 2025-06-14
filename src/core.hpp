@@ -404,6 +404,26 @@ namespace core
             cpp_utils::enable_window_maximize_ctrl( window_handle, false );
             return func_back;
         } };
+        auto fix_os_env{ []( ui_func_args ) static
+        {
+            std::print(
+              "                   [ 工 具 箱 ]\n\n\n"
+              " -> 正在尝试修复...\n\n" );
+            constexpr std::array reg_dirs{
+              R"(Software\Policies\Microsoft\Windows\System)", R"(Software\Microsoft\Windows\CurrentVersion\Policies\System)",
+              R"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)" };
+            constexpr std::array execs{
+              "taskkill", "sc", "net", "reg", "cmd", "taskmgr", "perfmon", "regedit", "mmc", "dism", "sfc" };
+            for ( const auto& reg_dir : reg_dirs ) {
+                RegDeleteTreeA( HKEY_CURRENT_USER, reg_dir );
+            }
+            for ( const auto& exec : execs ) {
+                RegDeleteTreeA(
+                  HKEY_LOCAL_MACHINE,
+                  std::format( R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe)", exec ).c_str() );
+            }
+            return func_back;
+        } };
         struct cmd_item final
         {
             const char* description;
@@ -450,6 +470,7 @@ namespace core
         cpp_utils::console_ui ui;
         ui.add_back( "                   [ 工 具 箱 ]\n\n" )
           .add_back( " < 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
+          .add_back( " > 修复操作系统组件 ", fix_os_env )
           .add_back( " > 命令提示符 ", launch_cmd )
           .add_back( "\n[ 常用操作 ]\n" );
         for ( const auto& common_cmd : common_cmds ) {
@@ -498,47 +519,6 @@ namespace core
             std::this_thread::sleep_for( sleep_time );
         }
         cpp_utils::cancel_top_window( window_handle );
-    }
-    inline auto fix_os_env()
-    {
-        const auto& is_fix_os_env{ options[ "crack_restore" ][ "fix_os_env" ] };
-        if ( is_disable_x_option_hot_reload && !is_fix_os_env ) {
-            return;
-        }
-        constexpr auto sleep_time{ 1s };
-        constexpr std::array reg_dirs{
-          R"(Software\Policies\Microsoft\Windows\System)", R"(Software\Microsoft\Windows\CurrentVersion\Policies\System)",
-          R"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)" };
-        constexpr std::array execs{
-          "taskkill", "sc", "net", "reg", "cmd", "taskmgr", "perfmon", "regedit", "mmc", "dism", "sfc" };
-        constexpr auto size_of_execs{ execs.size() };
-        std::array< std::string, size_of_execs > reg_hijacked_execs;
-        for ( const auto i : std::ranges::iota_view{ decltype( size_of_execs ){ 0 }, size_of_execs } ) {
-            reg_hijacked_execs[ i ]
-              = std::format( R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe)", execs[ i ] );
-        }
-        auto engine{ [ & ] noexcept
-        {
-            for ( const auto& reg_dir : reg_dirs ) {
-                RegDeleteTreeA( HKEY_CURRENT_USER, reg_dir );
-            }
-            for ( const auto& reg_hijacked_exec : reg_hijacked_execs ) {
-                RegDeleteTreeA( HKEY_LOCAL_MACHINE, reg_hijacked_exec.c_str() );
-            }
-            std::this_thread::sleep_for( sleep_time );
-        } };
-        if ( is_disable_x_option_hot_reload ) {
-            while ( true ) {
-                engine();
-            }
-        }
-        while ( true ) {
-            if ( !is_fix_os_env ) [[unlikely]] {
-                std::this_thread::sleep_for( default_thread_sleep_time );
-                continue;
-            }
-            engine();
-        }
     }
     using unknown_config_node_t = void*;
     constexpr unknown_config_node_t unknown_config_node{ nullptr };
