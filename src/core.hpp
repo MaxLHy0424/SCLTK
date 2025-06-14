@@ -404,23 +404,36 @@ namespace core
             cpp_utils::enable_window_maximize_ctrl( window_handle, false );
             return func_back;
         } };
-        auto fix_os_env{ []( ui_func_args ) static
+        auto restore_several_os_components{ []( ui_func_args ) static
         {
             std::print(
               "                   [ 工 具 箱 ]\n\n\n"
-              " -> 正在尝试修复...\n\n" );
+              " -> 正在尝试恢复...\n\n" );
+            constexpr auto sleep_time{ 50ms };
             constexpr std::array reg_dirs{
               R"(Software\Policies\Microsoft\Windows\System)", R"(Software\Microsoft\Windows\CurrentVersion\Policies\System)",
               R"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)" };
             constexpr std::array execs{
               "taskkill", "sc", "net", "reg", "cmd", "taskmgr", "perfmon", "regedit", "mmc", "dism", "sfc" };
+            constexpr auto total_count{ reg_dirs.size() + execs.size() };
+            constexpr auto digits_of_total{ cpp_utils::count_digits( total_count ) };
+            const auto empty_line{ reset_line() };
+            size_t finished_count{ 0 };
             for ( const auto& reg_dir : reg_dirs ) {
-                RegDeleteTreeA( HKEY_CURRENT_USER, reg_dir );
+                std::print(
+                  "{} {} 重置注册表项目: 0x{:x}.\r", empty_line, make_progress( ++finished_count, total_count, digits_of_total ),
+                  RegDeleteTreeA( HKEY_CURRENT_USER, reg_dir ) );
+                std::this_thread::sleep_for( sleep_time );
             }
             for ( const auto& exec : execs ) {
-                RegDeleteTreeA(
-                  HKEY_LOCAL_MACHINE,
-                  std::format( R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe)", exec ).c_str() );
+                std::print(
+                  "{} {} 撤销劫持 {}.exe: 0x{:x}.\r", empty_line,
+                  make_progress( ++finished_count, total_count, digits_of_total ), exec,
+                  RegDeleteTreeA(
+                    HKEY_LOCAL_MACHINE,
+                    std::format( R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe)", exec )
+                      .c_str() ) );
+                std::this_thread::sleep_for( sleep_time );
             }
             return func_back;
         } };
@@ -470,7 +483,7 @@ namespace core
         cpp_utils::console_ui ui;
         ui.add_back( "                   [ 工 具 箱 ]\n\n" )
           .add_back( " < 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
-          .add_back( " > 修复操作系统组件 ", fix_os_env )
+          .add_back( " > 恢复部分系统组件 ", restore_several_os_components )
           .add_back( " > 命令提示符 ", launch_cmd )
           .add_back( "\n[ 常用操作 ]\n" );
         for ( const auto& common_cmd : common_cmds ) {
