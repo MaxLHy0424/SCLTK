@@ -228,7 +228,7 @@ namespace core
     {
       private:
         friend config_node_impl;
-        static constexpr auto format_string_{ R"("{}.{}": {})" };
+        static constexpr auto format_string_{ "{}.{}: {}" };
         static auto make_swith_button_text_( const auto is_enable )
         {
             return std::format( " > {}用 ", is_enable ? "禁" : "启" );
