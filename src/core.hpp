@@ -20,7 +20,6 @@ namespace core
     inline constexpr auto config_file_name{ "config.ini" };
     inline constexpr auto func_back{ cpp_utils::console_ui::func_back };
     inline constexpr auto func_exit{ cpp_utils::console_ui::func_exit };
-    inline const auto nproc{ std::thread::hardware_concurrency() };
     inline const auto window_handle{ GetConsoleWindow() };
     inline const auto std_input_handle{ GetStdHandle( STD_INPUT_HANDLE ) };
     inline const auto std_output_handle{ GetStdHandle( STD_OUTPUT_HANDLE ) };
@@ -659,18 +658,22 @@ namespace core
         {
             const auto& execs{ rules_.execs };
             const auto& servs{ rules_.servs };
-            const auto nproc_for_exec_op{ std::max( nproc / 4, 2U ) };
-            cpp_utils::thread_manager threads;
             if ( is_hijack_execs ) {
-                threads.add( [ & ]
-                { cpp_utils::parallel_for_each_impl( nproc_for_exec_op, execs.begin(), execs.end(), hijack_exec_ ); } );
+                for ( const auto& exec : execs ) {
+                    hijack_exec_( exec );
+                }
             }
             if ( is_set_serv_startup_types ) {
-                threads.add( [ & ] { cpp_utils::parallel_for_each_impl( nproc, servs.begin(), servs.end(), disable_serv_ ); } );
+                for ( const auto& serv : servs ) {
+                    disable_serv_( serv );
+                }
             }
-            threads
-              .add( [ & ] { cpp_utils::parallel_for_each_impl( nproc_for_exec_op, execs.begin(), execs.end(), kill_exec_ ); } )
-              .add( [ & ] { cpp_utils::parallel_for_each_impl( nproc, servs.begin(), servs.end(), stop_serv_ ); } );
+            for ( const auto& exec : execs ) {
+                kill_exec_( exec );
+            }
+            for ( const auto& serv : servs ) {
+                stop_serv_( serv );
+            }
         }
       public:
         auto operator()( ui_func_args )
@@ -714,14 +717,19 @@ namespace core
         {
             const auto& execs{ rules_.execs };
             const auto& servs{ rules_.servs };
-            const auto nproc_for_exec_op{ std::max( nproc / 4, 2U ) };
             if ( is_hijack_execs ) {
-                cpp_utils::parallel_for_each_impl( nproc_for_exec_op, execs.begin(), execs.end(), undo_hijack_exec_ );
+                for ( const auto& exec : execs ) {
+                    undo_hijack_exec_( exec );
+                }
             }
             if ( is_set_serv_startup_types ) {
-                cpp_utils::parallel_for_each_impl( nproc_for_exec_op, servs.begin(), servs.end(), enable_serv_ );
+                for ( const auto& serv : servs ) {
+                    enable_serv_( serv );
+                }
             }
-            cpp_utils::parallel_for_each_impl( nproc, servs.begin(), servs.end(), start_serv_ );
+            for ( const auto& serv : servs ) {
+                start_serv_( serv );
+            }
         }
       public:
         auto operator()( ui_func_args )
