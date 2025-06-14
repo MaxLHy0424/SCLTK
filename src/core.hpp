@@ -42,7 +42,7 @@ namespace core
             std::this_thread::sleep_for( 1s );
         }
     }
-    inline auto make_progress( size_t now, size_t total, size_t digits_of_total ) noexcept
+    inline auto make_progress( const size_t now, const size_t total, const size_t digits_of_total ) noexcept
     {
         return std::format( "({}{}/{})", std::string( digits_of_total - cpp_utils::count_digits( now ), ' ' ).c_str(), now, total );
     }
