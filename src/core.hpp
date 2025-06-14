@@ -46,6 +46,10 @@ namespace core
     {
         return std::format( "({}{}/{})", std::string( digits_of_total - cpp_utils::count_digits( now ), ' ' ).c_str(), now, total );
     }
+    inline auto reset_line()
+    {
+        return std::string( console_width, ' ' ).append( "\r" );
+    }
     struct option_set final
     {
         struct item final
@@ -661,7 +665,7 @@ namespace core
         }
         auto engine_()
         {
-            constexpr auto sleep_time{ 10ms };
+            constexpr auto sleep_time{ 50ms };
             const auto& execs{ rules_.execs };
             const auto& servs{ rules_.servs };
             size_t finished_count{ 0 };
@@ -669,32 +673,33 @@ namespace core
               ( is_hijack_execs ? execs.size() * 2 : execs.size() )
               + ( is_set_serv_startup_types ? servs.size() * 2 : servs.size() ) };
             const auto digits_of_total{ cpp_utils::count_digits( total_count ) };
+            const auto empty_line{ reset_line() };
             if ( is_hijack_execs ) {
                 for ( const auto& exec : execs ) {
                     std::print(
-                      " {} 劫持文件 {}.exe: 0x{:x}.\n", make_progress( ++finished_count, total_count, digits_of_total ), exec,
-                      hijack_exec_( exec ) );
+                      "{} {} 劫持文件 {}.exe: 0x{:x}.\r", empty_line,
+                      make_progress( ++finished_count, total_count, digits_of_total ), exec, hijack_exec_( exec ) );
                     std::this_thread::sleep_for( sleep_time );
                 }
             }
             if ( is_set_serv_startup_types ) {
                 for ( const auto& serv : servs ) {
                     std::print(
-                      " {} 禁用服务 {}: 0x{:x}.\n", make_progress( ++finished_count, total_count, digits_of_total ), serv,
-                      disable_serv_( serv ) );
+                      "{} {} 禁用服务 {}: 0x{:x}.\r", empty_line,
+                      make_progress( ++finished_count, total_count, digits_of_total ), serv, disable_serv_( serv ) );
                     std::this_thread::sleep_for( sleep_time );
                 }
             }
             for ( const auto& exec : execs ) {
                 std::print(
-                  " {} 终止进程 {}.exe: 0x{:x}.\n", make_progress( ++finished_count, total_count, digits_of_total ), exec,
-                  kill_exec_( exec ) );
+                  "{} {} 终止进程 {}.exe: 0x{:x}.\r", empty_line,
+                  make_progress( ++finished_count, total_count, digits_of_total ), exec, kill_exec_( exec ) );
                 std::this_thread::sleep_for( sleep_time );
             }
             for ( const auto& serv : servs ) {
                 std::print(
-                  " {} 停止服务 {}: 0x{:x}.\n", make_progress( ++finished_count, total_count, digits_of_total ), serv,
-                  stop_serv_( serv ) );
+                  "{} {} 停止服务 {}: 0x{:x}.\r", empty_line, make_progress( ++finished_count, total_count, digits_of_total ),
+                  serv, stop_serv_( serv ) );
                 std::this_thread::sleep_for( sleep_time );
             }
         }
@@ -707,7 +712,7 @@ namespace core
                 wait();
                 return func_back;
             }
-            std::print( "{}", std::string( console_width, '-' ).c_str() );
+            std::print( " -> 正在执行...\n\n" );
             engine_();
             return func_back;
         }
@@ -738,33 +743,34 @@ namespace core
         }
         auto engine_()
         {
-            constexpr auto sleep_time{ 10ms };
+            constexpr auto sleep_time{ 50ms };
             const auto& execs{ rules_.execs };
             const auto& servs{ rules_.servs };
             size_t finished_count{ 0 };
             const auto total_count{
               ( is_hijack_execs ? execs.size() : 0ULL ) + ( is_set_serv_startup_types ? servs.size() * 2 : servs.size() ) };
             const auto digits_of_total{ cpp_utils::count_digits( total_count ) };
+            const auto empty_line{ reset_line() };
             if ( is_hijack_execs ) {
                 for ( const auto& exec : execs ) {
                     std::print(
-                      " {} 撤销劫持 {}.exe: 0x{:x}.\n", make_progress( ++finished_count, total_count, digits_of_total ), exec,
-                      undo_hijack_exec_( exec ) );
+                      "{} {} 撤销劫持 {}.exe: 0x{:x}.\r", empty_line,
+                      make_progress( ++finished_count, total_count, digits_of_total ), exec, undo_hijack_exec_( exec ) );
                     std::this_thread::sleep_for( sleep_time );
                 }
             }
             if ( is_set_serv_startup_types ) {
                 for ( const auto& serv : servs ) {
                     std::print(
-                      " {} 启用服务 {}: 0x{:x}.\n", make_progress( ++finished_count, total_count, digits_of_total ), serv,
-                      enable_serv_( serv ) );
+                      "{} {} 启用服务 {}: 0x{:x}.\r", empty_line,
+                      make_progress( ++finished_count, total_count, digits_of_total ), serv, enable_serv_( serv ) );
                     std::this_thread::sleep_for( sleep_time );
                 }
             }
             for ( const auto& serv : servs ) {
                 std::print(
-                  " {} 启动服务 {}: 0x{:x}.\n", make_progress( ++finished_count, total_count, digits_of_total ), serv,
-                  start_serv_( serv ) );
+                  "{} {} 启动服务 {}: 0x{:x}.\r", empty_line, make_progress( ++finished_count, total_count, digits_of_total ),
+                  serv, start_serv_( serv ) );
                 std::this_thread::sleep_for( sleep_time );
             }
         }
@@ -777,7 +783,7 @@ namespace core
                 wait();
                 return func_back;
             }
-            std::print( "{}", std::string( console_width, '-' ).c_str() );
+            std::print( " -> 正在执行...\n\n" );
             engine_();
             return func_back;
         }
