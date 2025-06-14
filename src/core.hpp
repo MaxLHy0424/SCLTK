@@ -408,7 +408,8 @@ namespace core
         {
             std::print(
               "                   [ 工 具 箱 ]\n\n\n"
-              " -> 正在尝试恢复...\n\n" );
+              " -> 正在尝试恢复...\n{}\n",
+              make_divider() );
             constexpr auto sleep_time{ 50ms };
             constexpr std::array reg_dirs{
               R"(Software\Policies\Microsoft\Windows\System)", R"(Software\Microsoft\Windows\CurrentVersion\Policies\System)",
