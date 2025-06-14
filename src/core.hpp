@@ -637,42 +637,51 @@ namespace core
         const rule_node& rules_;
         static auto hijack_exec_( exec_const_ref_t exec ) noexcept
         {
-            cpp_utils::create_registry_key< charset_id >(
+            return cpp_utils::create_registry_key< charset_id >(
               HKEY_LOCAL_MACHINE,
               std::format( R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe)", exec ).c_str(),
               "debugger", REG_SZ, reinterpret_cast< const BYTE* >( L"nul" ), sizeof( L"nul" ) );
         }
         static auto disable_serv_( serv_const_ref_t serv ) noexcept
         {
-            cpp_utils::set_service_status< charset_id >( serv.c_str(), SERVICE_DISABLED );
+            return cpp_utils::set_service_status< charset_id >( serv.c_str(), SERVICE_DISABLED );
         }
         static auto kill_exec_( exec_const_ref_t exec ) noexcept
         {
-            cpp_utils::kill_process_by_name< charset_id >( std::format( "{}.exe", exec ).c_str() );
+            return cpp_utils::kill_process_by_name< charset_id >( std::format( "{}.exe", exec ).c_str() );
         }
         static auto stop_serv_( serv_const_ref_t serv ) noexcept
         {
-            cpp_utils::stop_service_with_dependencies< charset_id >( serv.c_str() );
+            return cpp_utils::stop_service_with_dependencies< charset_id >( serv.c_str() );
         }
         auto engine_()
         {
+            constexpr auto sleep_time{ 10ms };
             const auto& execs{ rules_.execs };
             const auto& servs{ rules_.servs };
+            size_t finished_count{ 0 };
+            const auto total_count{
+              ( is_hijack_execs ? execs.size() * 2 : execs.size() )
+              + ( is_set_serv_startup_types ? servs.size() * 2 : servs.size() ) };
             if ( is_hijack_execs ) {
                 for ( const auto& exec : execs ) {
-                    hijack_exec_( exec );
+                    std::print( "({}/{}) 劫持文件 {}.exe: 0x{:x}.\n", ++finished_count, total_count, exec, hijack_exec_( exec ) );
+                    std::this_thread::sleep_for( sleep_time );
                 }
             }
             if ( is_set_serv_startup_types ) {
                 for ( const auto& serv : servs ) {
-                    disable_serv_( serv );
+                    std::print( "({}/{}) 禁用服务 {}: 0x{:x}.\n", ++finished_count, total_count, serv, disable_serv_( serv ) );
+                    std::this_thread::sleep_for( sleep_time );
                 }
             }
             for ( const auto& exec : execs ) {
-                kill_exec_( exec );
+                std::print( "({}/{}) 终止进程 {}.exe: 0x{:x}.\n", ++finished_count, total_count, exec, kill_exec_( exec ) );
+                std::this_thread::sleep_for( sleep_time );
             }
             for ( const auto& serv : servs ) {
-                stop_serv_( serv );
+                std::print( "({}/{}) 停止服务 {}: 0x{:x}.\n", ++finished_count, total_count, serv, stop_serv_( serv ) );
+                std::this_thread::sleep_for( sleep_time );
             }
         }
       public:
@@ -701,34 +710,42 @@ namespace core
         const rule_node& rules_;
         static auto undo_hijack_exec_( exec_const_ref_t exec ) noexcept
         {
-            cpp_utils::delete_registry_tree< charset_id >(
+            return cpp_utils::delete_registry_tree< charset_id >(
               HKEY_LOCAL_MACHINE,
               std::format( R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe)", exec ).c_str() );
         }
         static auto enable_serv_( serv_const_ref_t serv ) noexcept
         {
-            cpp_utils::set_service_status< charset_id >( serv.c_str(), SERVICE_AUTO_START );
+            return cpp_utils::set_service_status< charset_id >( serv.c_str(), SERVICE_AUTO_START );
         }
         static auto start_serv_( serv_const_ref_t serv ) noexcept
         {
-            cpp_utils::start_service_with_dependencies< charset_id >( serv.c_str() );
+            return cpp_utils::start_service_with_dependencies< charset_id >( serv.c_str() );
         }
         auto engine_()
         {
+            constexpr auto sleep_time{ 10ms };
             const auto& execs{ rules_.execs };
             const auto& servs{ rules_.servs };
+            size_t finished_count{ 0 };
+            const auto total_count{
+              ( is_hijack_execs ? execs.size() : 0ULL ) + ( is_set_serv_startup_types ? servs.size() * 2 : servs.size() ) };
             if ( is_hijack_execs ) {
                 for ( const auto& exec : execs ) {
-                    undo_hijack_exec_( exec );
+                    std::print(
+                      "({}/{}) 撤销劫持 {}.exe: 0x{:x}.\n", ++finished_count, total_count, exec, undo_hijack_exec_( exec ) );
+                    std::this_thread::sleep_for( sleep_time );
                 }
             }
             if ( is_set_serv_startup_types ) {
                 for ( const auto& serv : servs ) {
-                    enable_serv_( serv );
+                    std::print( "({}/{}) 启用服务 {}: 0x{:x}.\n", ++finished_count, total_count, serv, enable_serv_( serv ) );
+                    std::this_thread::sleep_for( sleep_time );
                 }
             }
             for ( const auto& serv : servs ) {
-                start_serv_( serv );
+                std::print( "({}/{}) 启动服务 {}: 0x{:x}.\n", ++finished_count, total_count, serv, start_serv_( serv ) );
+                std::this_thread::sleep_for( sleep_time );
             }
         }
       public:
