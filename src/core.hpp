@@ -636,42 +636,22 @@ namespace core
     {
       private:
         const rule_node& rules_;
-        static auto cmd_hijack_exec_( exec_const_ref_t exec ) noexcept
-        {
-            std::system(
-              std::format(
-                R"(reg.exe add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe" /f /t reg_sz /v debugger /d "nul")",
-                exec )
-                .c_str() );
-        }
-        static auto winapi_hijack_exec_( exec_const_ref_t exec ) noexcept
+        static auto hijack_exec_( exec_const_ref_t exec ) noexcept
         {
             cpp_utils::create_registry_key< charset_id >(
               HKEY_LOCAL_MACHINE,
               std::format( R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe)", exec ).c_str(),
               "debugger", REG_SZ, reinterpret_cast< const BYTE* >( L"nul" ), sizeof( L"nul" ) );
         }
-        static auto cmd_disable_serv_( serv_const_ref_t serv ) noexcept
-        {
-            std::system( std::format( R"(sc.exe config "{}" start= disabled)", serv ).c_str() );
-        }
-        static auto winapi_disable_serv_( serv_const_ref_t serv ) noexcept
+        static auto disable_serv_( serv_const_ref_t serv ) noexcept
         {
             cpp_utils::set_service_status< charset_id >( serv.c_str(), SERVICE_DISABLED );
         }
-        static auto cmd_kill_exec_( exec_const_ref_t exec ) noexcept
-        {
-            std::system( std::format( R"(taskkill.exe /f /im "{}.exe")", exec ).c_str() );
-        }
-        static auto winapi_kill_exec_( exec_const_ref_t exec ) noexcept
+        static auto kill_exec_( exec_const_ref_t exec ) noexcept
         {
             cpp_utils::kill_process_by_name< charset_id >( std::format( "{}.exe", exec ).c_str() );
         }
-        static auto cmd_stop_serv_( serv_const_ref_t serv ) noexcept
-        {
-            std::system( std::format( R"(net.exe stop "{}" /y)", serv ).c_str() );
-        }
-        static auto winapi_stop_serv_( serv_const_ref_t serv ) noexcept
+        static auto stop_serv_( serv_const_ref_t serv ) noexcept
         {
             cpp_utils::stop_service_with_dependencies< charset_id >( serv.c_str() );
         }
@@ -683,16 +663,14 @@ namespace core
             cpp_utils::thread_manager threads;
             if ( is_hijack_execs ) {
                 threads.add( [ & ]
-                { cpp_utils::parallel_for_each_impl( nproc_for_exec_op, execs.begin(), execs.end(), winapi_hijack_exec_ ); } );
+                { cpp_utils::parallel_for_each_impl( nproc_for_exec_op, execs.begin(), execs.end(), hijack_exec_ ); } );
             }
             if ( is_set_serv_startup_types ) {
-                threads.add( [ & ]
-                { cpp_utils::parallel_for_each_impl( nproc, servs.begin(), servs.end(), winapi_disable_serv_ ); } );
+                threads.add( [ & ] { cpp_utils::parallel_for_each_impl( nproc, servs.begin(), servs.end(), disable_serv_ ); } );
             }
             threads
-              .add( [ & ]
-            { cpp_utils::parallel_for_each_impl( nproc_for_exec_op, execs.begin(), execs.end(), winapi_kill_exec_ ); } )
-              .add( [ & ] { cpp_utils::parallel_for_each_impl( nproc, servs.begin(), servs.end(), winapi_stop_serv_ ); } );
+              .add( [ & ] { cpp_utils::parallel_for_each_impl( nproc_for_exec_op, execs.begin(), execs.end(), kill_exec_ ); } )
+              .add( [ & ] { cpp_utils::parallel_for_each_impl( nproc, servs.begin(), servs.end(), stop_serv_ ); } );
         }
       public:
         auto operator()( ui_func_args )
@@ -718,32 +696,17 @@ namespace core
     {
       private:
         const rule_node& rules_;
-        static auto cmd_undo_hijack_exec_( exec_const_ref_t exec ) noexcept
-        {
-            std::system(
-              std::format(
-                R"(reg.exe delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe" /f)", exec )
-                .c_str() );
-        }
-        static auto winapi_undo_hijack_exec_( exec_const_ref_t exec ) noexcept
+        static auto undo_hijack_exec_( exec_const_ref_t exec ) noexcept
         {
             cpp_utils::delete_registry_tree< charset_id >(
               HKEY_LOCAL_MACHINE,
               std::format( R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe)", exec ).c_str() );
         }
-        static auto cmd_enable_serv_( serv_const_ref_t serv ) noexcept
-        {
-            std::system( std::format( R"(sc.exe config "{}" start= auto)", serv ).c_str() );
-        }
-        static auto winapi_enable_serv_( serv_const_ref_t serv ) noexcept
+        static auto enable_serv_( serv_const_ref_t serv ) noexcept
         {
             cpp_utils::set_service_status< charset_id >( serv.c_str(), SERVICE_AUTO_START );
         }
-        static auto cmd_start_serv_( serv_const_ref_t serv ) noexcept
-        {
-            std::system( std::format( R"(net.exe start "{}")", serv ).c_str() );
-        }
-        static auto winapi_start_serv_( serv_const_ref_t serv ) noexcept
+        static auto start_serv_( serv_const_ref_t serv ) noexcept
         {
             cpp_utils::start_service_with_dependencies< charset_id >( serv.c_str() );
         }
@@ -753,12 +716,12 @@ namespace core
             const auto& servs{ rules_.servs };
             const auto nproc_for_exec_op{ std::max( nproc / 4, 2U ) };
             if ( is_hijack_execs ) {
-                cpp_utils::parallel_for_each_impl( nproc_for_exec_op, execs.begin(), execs.end(), winapi_undo_hijack_exec_ );
+                cpp_utils::parallel_for_each_impl( nproc_for_exec_op, execs.begin(), execs.end(), undo_hijack_exec_ );
             }
             if ( is_set_serv_startup_types ) {
-                cpp_utils::parallel_for_each_impl( nproc_for_exec_op, servs.begin(), servs.end(), winapi_enable_serv_ );
+                cpp_utils::parallel_for_each_impl( nproc_for_exec_op, servs.begin(), servs.end(), enable_serv_ );
             }
-            cpp_utils::parallel_for_each_impl( nproc, servs.begin(), servs.end(), winapi_start_serv_ );
+            cpp_utils::parallel_for_each_impl( nproc, servs.begin(), servs.end(), start_serv_ );
         }
       public:
         auto operator()( ui_func_args )
