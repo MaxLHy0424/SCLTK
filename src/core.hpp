@@ -149,9 +149,7 @@ namespace core
     inline option_set options{
       { { { "crack_restore",
             "破解与恢复",
-            { { "hijack_execs", "劫持可执行文件" },
-              { "set_serv_startup_types", "设置服务启动类型" },
-              { "fix_os_env", "* 修复操作系统环境" } } },
+            { { "hijack_execs", "劫持可执行文件" }, { "set_serv_startup_types", "设置服务启动类型" } } },
           { "window",
             "窗口显示",
             { { "keep_window_top", "* 置顶窗口" }, { "minimalist_titlebar", "* 极简标题栏" }, { "translucent", "* 半透明" } } },
