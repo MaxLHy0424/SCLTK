@@ -20,17 +20,15 @@ namespace cpp_utils
         return true;
     }
     template < std::integral T >
-    inline constexpr auto count_digits( std::decay_t< T > n ) noexcept
+    inline constexpr auto count_digits( T n ) noexcept
     {
-        if ( n < 0 ) {
-            n = -n;
-        }
-        if ( n == 0 ) {
-            return 1;
+        T abs_n{ n < 0 ? -n : n };
+        if ( abs_n == 0 ) {
+            return static_cast< size_t >( 1 );
         }
         size_t count{ 0 };
-        while ( n > 0 ) {
-            n /= 10;
+        while ( abs_n > 0 ) {
+            abs_n /= 10;
             ++count;
         }
         return count;
