@@ -427,8 +427,7 @@ namespace core
             }
             for ( const auto& exec : execs ) {
                 std::print(
-                  "{} {} 撤销劫持 {}.exe: 0x{:x}.\r", empty_line,
-                  make_progress( ++finished_count, total_count, digits_of_total ), exec,
+                  "{} {} 撤销劫持 {}: 0x{:x}.\r", empty_line, make_progress( ++finished_count, total_count, digits_of_total ), exec,
                   RegDeleteTreeA(
                     HKEY_LOCAL_MACHINE,
                     std::format( R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe)", exec )
@@ -668,7 +667,7 @@ namespace core
             if ( is_hijack_execs ) {
                 for ( const auto& exec : execs ) {
                     std::print(
-                      "{} {} 劫持文件 {}.exe: 0x{:x}.\r", empty_line,
+                      "{} {} 劫持文件 {}: 0x{:x}.\r", empty_line,
                       make_progress( ++finished_count, total_count, digits_of_total ), exec, hijack_exec_( exec ) );
                     std::this_thread::sleep_for( sleep_time );
                 }
@@ -683,8 +682,8 @@ namespace core
             }
             for ( const auto& exec : execs ) {
                 std::print(
-                  "{} {} 终止进程 {}.exe: 0x{:x}.\r", empty_line,
-                  make_progress( ++finished_count, total_count, digits_of_total ), exec, kill_exec_( exec ) );
+                  "{} {} 终止进程 {}: 0x{:x}.\r", empty_line, make_progress( ++finished_count, total_count, digits_of_total ),
+                  exec, kill_exec_( exec ) );
                 std::this_thread::sleep_for( sleep_time );
             }
             for ( const auto& serv : servs ) {
@@ -745,7 +744,7 @@ namespace core
             if ( is_hijack_execs ) {
                 for ( const auto& exec : execs ) {
                     std::print(
-                      "{} {} 撤销劫持 {}.exe: 0x{:x}.\r", empty_line,
+                      "{} {} 撤销劫持 {}: 0x{:x}.\r", empty_line,
                       make_progress( ++finished_count, total_count, digits_of_total ), exec, undo_hijack_exec_( exec ) );
                     std::this_thread::sleep_for( sleep_time );
                 }
