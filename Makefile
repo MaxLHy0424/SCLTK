@@ -11,8 +11,8 @@ output_charset   = gbk
 args_base        = -pipe -finput-charset=$(input_charset) -fexec-charset=$(output_charset) -std=$(args_std) $(args_link) $(args_warning) $(args_defines)
 args_debug       = -g3 -DDEBUG $(args_base) $(args_opt_debug)
 args_release     = -DNDEBUG -static $(args_base) $(args_opt_release)
-.PHONY: toolchain make_info build debug release clean
-all: toolchain build
+.PHONY: toolchain make_info clean debug release
+all: debug release
 toolchain:
 	$(msys2_path)/usr/bin/pacman.exe -Sy --noconfirm --needed\
      mingw-w64-i686-toolchain\
@@ -22,14 +22,13 @@ toolchain:
      base\
      base-devel\
      binutils
-build: debug release
-debug: build/debug/__debug__.exe
-release: build/release/SCLTK-i686-msvcrt.exe\
-         build/release/SCLTK-x86_64-ucrt.exe
 clean:
 	$(msys2_path)/usr/bin/rm.exe -rf build
 	$(msys2_path)/usr/bin/mkdir.exe build
 	$(msys2_path)/usr/bin/touch.exe build/.gitkeep
+debug: build/debug/__debug__.exe
+release: build/release/SCLTK-i686-msvcrt.exe\
+         build/release/SCLTK-x86_64-ucrt.exe
 make_info:
 	$(pwsh_path) -ExecutionPolicy Bypass -File ./make_info.ps1
 src/info.hpp: make_info
