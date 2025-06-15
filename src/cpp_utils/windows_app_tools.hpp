@@ -451,6 +451,7 @@ namespace cpp_utils
         SetConsoleScreenBufferSize( std_output_handle, { width, height } );
         SetConsoleWindowInfo( std_output_handle, TRUE, &wrt );
         SetConsoleScreenBufferSize( std_output_handle, { width, height } );
+        SetConsoleWindowInfo( std_output_handle, TRUE, &wrt );
         clear_console( std_output_handle );
     }
     inline auto set_current_console_size( const SHORT width, const SHORT height ) noexcept
