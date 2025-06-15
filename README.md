@@ -180,9 +180,9 @@ pwsh_path  = /path/to/pwsh
 make all
 ```
 
-即开始安装工具链和依赖库, 并编译 SCLTK. 生成的 SCLTK 可执行文件位于 `build/debug` 和 `build/release` 中.
+即开始安装工具链和依赖库, 并构建 SCLTK. 生成的 SCLTK 可执行文件位于 `build/debug` 和 `build/release` 中.
 
-后续编译可使用:
+后续构建可使用:
 
 ```bash
 make build
@@ -195,6 +195,9 @@ make debug
 ```bash
 make release
 ```
+
+> [!NOTE]
+> 可在 `make build`, `make debug`, `make release` 后附加 `-j` 参数来加快构建速度.
 
 更新工具链, 可使用:
 
