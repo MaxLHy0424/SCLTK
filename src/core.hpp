@@ -379,6 +379,94 @@ namespace core
     template < typename... Args >
     inline consteval auto get_config_node_variant_t( std::tuple< Args... > )
       -> std::variant< unknown_config_node_t, std::add_pointer_t< Args >... >;
+    inline auto load_config( const bool is_reload = false )
+    {
+        std::ifstream config_file{ config_file_name, std::ios::in };
+        if ( !config_file.good() ) {
+            return;
+        }
+        std::apply( []( auto&&... config_node ) { ( config_node.prepare_reload(), ... ); }, config_nodes );
+        std::string line;
+        std::string_view line_view;
+        decltype( get_config_node_variant_t( config_nodes ) ) current_config_node;
+        while ( std::getline( config_file, line ) ) {
+            line_view = line;
+            if ( line_view.empty() ) {
+                continue;
+            }
+            if ( line_view.front() == '#' ) {
+                continue;
+            }
+            if ( line_view.size() >= sizeof( "[  ]" ) && line_view.substr( 0, sizeof( "[ " ) - 1 ) == "[ "
+                 && line_view.substr( line_view.size() - sizeof( " ]" ) + 1, line_view.size() ) == " ]" )
+            {
+                line_view           = line_view.substr( sizeof( "[ " ) - 1, line_view.size() - sizeof( " ]" ) - 1 );
+                current_config_node = unknown_config_node;
+                std::apply( [ & ]( auto&&... config_node )
+                {
+                    ( [ & ]( auto&& current_node ) noexcept
+                    {
+                        if ( line_view == current_node.self_name.get() ) {
+                            current_config_node = &current_node;
+                        }
+                    }( config_node ), ... );
+                }, config_nodes );
+                continue;
+            }
+            current_config_node.visit( [ & ]( const auto node_ptr )
+            {
+                if constexpr ( !std::same_as< std::decay_t< decltype( node_ptr ) >, unknown_config_node_t > ) {
+                    node_ptr->load( is_reload, line );
+                }
+            } );
+        }
+    }
+    inline auto config_ui( ui_func_args )
+    {
+        auto sync{ []( ui_func_args ) static
+        {
+            std::print(
+              "                    [ 配  置 ]\n\n\n"
+              " -> 正在同步配置...\n" );
+            load_config( true );
+            std::ofstream config_file_stream{ config_file_name, std::ios::out | std::ios::trunc };
+            config_file_stream << "# " INFO_FULL_NAME "\n# " INFO_VERSION "\n";
+            std::apply( [ & ]( auto&&... config_node )
+            {
+                ( ( config_file_stream << std::format( "[ {} ]\n", config_node.self_name.get() ),
+                    config_node.sync( config_file_stream ) ),
+                  ... );
+            }, config_nodes );
+            config_file_stream << std::flush;
+            const auto is_good{ config_file_stream.good() };
+            std::print( "\n ({}) 同步配置{}.", is_good ? 'i' : '!', is_good ? "成功" : "失败" );
+            wait();
+            return func_back;
+        } };
+        auto open_file{ []( ui_func_args ) static
+        {
+            if ( std::ifstream{ config_file_name, std::ios::in }.good() ) {
+                std::print(
+                  "                    [ 配  置 ]\n\n\n"
+                  " -> 正在打开配置文件..." );
+                ShellExecuteA( nullptr, "open", config_file_name, nullptr, nullptr, SW_SHOWNORMAL );
+                return func_back;
+            }
+            std::print(
+              "                    [ 配  置 ]\n\n\n"
+              " (!) 无法打开配置文件." );
+            wait();
+            return func_back;
+        } };
+        cpp_utils::console_ui ui;
+        ui.add_back( "                    [ 配  置 ]\n\n" )
+          .add_back( " < 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
+          .add_back( " > 同步配置 ", sync )
+          .add_back( " > 打开配置文件 ", open_file );
+        std::apply( [ & ]( auto&&... config_node ) { ( config_node.ui( ui ), ... ); }, config_nodes );
+        ui.show();
+        return func_back;
+    }
     inline auto info( ui_func_args )
     {
         auto visit_repo_webpage{ []( ui_func_args ) static
@@ -544,94 +632,6 @@ namespace core
             std::this_thread::sleep_for( sleep_time );
         }
         cpp_utils::cancel_top_window( window_handle );
-    }
-    inline auto load_config( const bool is_reload = false )
-    {
-        std::ifstream config_file{ config_file_name, std::ios::in };
-        if ( !config_file.good() ) {
-            return;
-        }
-        std::apply( []( auto&&... config_node ) { ( config_node.prepare_reload(), ... ); }, config_nodes );
-        std::string line;
-        std::string_view line_view;
-        decltype( get_config_node_variant_t( config_nodes ) ) current_config_node;
-        while ( std::getline( config_file, line ) ) {
-            line_view = line;
-            if ( line_view.empty() ) {
-                continue;
-            }
-            if ( line_view.front() == '#' ) {
-                continue;
-            }
-            if ( line_view.size() >= sizeof( "[  ]" ) && line_view.substr( 0, sizeof( "[ " ) - 1 ) == "[ "
-                 && line_view.substr( line_view.size() - sizeof( " ]" ) + 1, line_view.size() ) == " ]" )
-            {
-                line_view           = line_view.substr( sizeof( "[ " ) - 1, line_view.size() - sizeof( " ]" ) - 1 );
-                current_config_node = unknown_config_node;
-                std::apply( [ & ]( auto&&... config_node )
-                {
-                    ( [ & ]( auto&& current_node ) noexcept
-                    {
-                        if ( line_view == current_node.self_name.get() ) {
-                            current_config_node = &current_node;
-                        }
-                    }( config_node ), ... );
-                }, config_nodes );
-                continue;
-            }
-            current_config_node.visit( [ & ]( const auto node_ptr )
-            {
-                if constexpr ( !std::same_as< std::decay_t< decltype( node_ptr ) >, unknown_config_node_t > ) {
-                    node_ptr->load( is_reload, line );
-                }
-            } );
-        }
-    }
-    inline auto config_ui( ui_func_args )
-    {
-        auto sync{ []( ui_func_args ) static
-        {
-            std::print(
-              "                    [ 配  置 ]\n\n\n"
-              " -> 正在同步配置...\n" );
-            load_config( true );
-            std::ofstream config_file_stream{ config_file_name, std::ios::out | std::ios::trunc };
-            config_file_stream << "# " INFO_FULL_NAME "\n# " INFO_VERSION "\n";
-            std::apply( [ & ]( auto&&... config_node )
-            {
-                ( ( config_file_stream << std::format( "[ {} ]\n", config_node.self_name.get() ),
-                    config_node.sync( config_file_stream ) ),
-                  ... );
-            }, config_nodes );
-            config_file_stream << std::flush;
-            const auto is_good{ config_file_stream.good() };
-            std::print( "\n ({}) 同步配置{}.", is_good ? 'i' : '!', is_good ? "成功" : "失败" );
-            wait();
-            return func_back;
-        } };
-        auto open_file{ []( ui_func_args ) static
-        {
-            if ( std::ifstream{ config_file_name, std::ios::in }.good() ) {
-                std::print(
-                  "                    [ 配  置 ]\n\n\n"
-                  " -> 正在打开配置文件..." );
-                ShellExecuteA( nullptr, "open", config_file_name, nullptr, nullptr, SW_SHOWNORMAL );
-                return func_back;
-            }
-            std::print(
-              "                    [ 配  置 ]\n\n\n"
-              " (!) 无法打开配置文件." );
-            wait();
-            return func_back;
-        } };
-        cpp_utils::console_ui ui;
-        ui.add_back( "                    [ 配  置 ]\n\n" )
-          .add_back( " < 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
-          .add_back( " > 同步配置 ", sync )
-          .add_back( " > 打开配置文件 ", open_file );
-        std::apply( [ & ]( auto&&... config_node ) { ( config_node.ui( ui ), ... ); }, config_nodes );
-        ui.show();
-        return func_back;
     }
     using exec_const_ref_t = cpp_utils::add_const_lvalue_reference_t< rule_node::item_t >;
     using serv_const_ref_t = cpp_utils::add_const_lvalue_reference_t< rule_node::item_t >;
