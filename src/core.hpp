@@ -3,6 +3,7 @@
 #include <fstream>
 #include <tuple>
 #include <variant>
+#include "cpp_utils/const_string.hpp"
 #include "cpp_utils/math.hpp"
 #include "cpp_utils/multithread.hpp"
 #include "cpp_utils/pointer.hpp"
@@ -25,7 +26,7 @@ namespace core
     inline const auto window_handle{ GetConsoleWindow() };
     inline const auto std_input_handle{ GetStdHandle( STD_INPUT_HANDLE ) };
     inline const auto std_output_handle{ GetStdHandle( STD_OUTPUT_HANDLE ) };
-    inline const std::string divider( console_width, '-' );
+    inline const auto divider{ cpp_utils::make_repeated_const_string< console_width, '-' >() };
     static_assert( default_thread_sleep_time.count() != 0 );
     static_assert( default_execution_sleep_time.count() != 0 );
     using ui_func_args = cpp_utils::console_ui::func_args;
@@ -507,7 +508,7 @@ namespace core
             std::print(
               "                   [ 工 具 箱 ]\n\n\n"
               " -> 正在尝试恢复...\n\n{}\n\n",
-              divider );
+              divider.data() );
             constexpr std::array reg_dirs{
               R"(Software\Policies\Microsoft\Windows\System)", R"(Software\Microsoft\Windows\CurrentVersion\Policies\System)",
               R"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)", R"(Software\Policies\Microsoft\MMC\)" };
@@ -531,7 +532,7 @@ namespace core
                       .c_str() ) );
                 std::this_thread::sleep_for( default_execution_sleep_time );
             }
-            std::print( "\n{}\n\n (i) 操作已完成.", divider );
+            std::print( "\n{}\n\n (i) 操作已完成.", divider.data() );
             wait();
             return func_back;
         } };
@@ -552,7 +553,7 @@ namespace core
                     std::print(
                       "                   [ 工 具 箱 ]\n\n\n"
                       " -> 正在执行操作系统命令...\n{}\n",
-                      divider );
+                      divider.data() );
                     std::system( item_.command );
                     return func_exit;
                 } };
@@ -706,9 +707,9 @@ namespace core
                 wait();
                 return func_back;
             }
-            std::print( " -> 正在执行...\n\n{}\n\n", divider );
+            std::print( " -> 正在执行...\n\n{}\n\n", divider.data() );
             engine_();
-            std::print( "\n{}\n\n (i) 操作已完成.", divider );
+            std::print( "\n{}\n\n (i) 操作已完成.", divider.data() );
             wait();
             return func_back;
         }
@@ -782,9 +783,9 @@ namespace core
                 wait();
                 return func_back;
             }
-            std::print( " -> 正在执行...\n\n{}\n\n", divider );
+            std::print( " -> 正在执行...\n\n{}\n\n", divider.data() );
             engine_();
-            std::print( "\n{}\n\n (i) 操作已完成.", divider );
+            std::print( "\n{}\n\n (i) 操作已完成.", divider.data() );
             wait();
             return func_back;
         }
