@@ -368,17 +368,17 @@ namespace core
         ~custom_rules_servs() noexcept = default;
     };
     inline std::tuple< options, custom_rules_execs, custom_rules_servs > config_nodes{};
-    template < typename... Args >
-        requires( std::is_base_of_v< config_node_impl, Args > && ... )
-    auto is_config_nodes_valid( std::tuple< Args... > ) -> std::true_type;
-    template < typename... Args >
-    auto is_config_nodes_valid( std::tuple< Args... > ) -> std::false_type;
+    template < typename... Ts >
+        requires( std::is_base_of_v< config_node_impl, Ts > && ... )
+    auto is_config_nodes_valid( std::tuple< Ts... > ) -> std::true_type;
+    template < typename... Ts >
+    auto is_config_nodes_valid( std::tuple< Ts... > ) -> std::false_type;
     static_assert( decltype( is_config_nodes_valid( config_nodes ) )::value );
     using unknown_config_node_t = void*;
     constexpr unknown_config_node_t unknown_config_node{ nullptr };
-    template < typename... Args >
-    inline consteval auto get_config_node_variant_t( std::tuple< Args... > )
-      -> std::variant< unknown_config_node_t, std::add_pointer_t< Args >... >;
+    template < typename... Ts >
+    inline consteval auto get_config_node_variant_t( std::tuple< Ts... > )
+      -> std::variant< unknown_config_node_t, std::add_pointer_t< Ts >... >;
     inline auto load_config( const bool is_reload = false )
     {
         std::ifstream config_file{ config_file_name, std::ios::in };
