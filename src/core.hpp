@@ -149,7 +149,7 @@ namespace core
           : categories{ std::move( categories ) }
         { }
     };
-    inline option_set options{
+    inline option_set opt_set{
       { { { "crack_restore",
             "破解与恢复",
             { { "hijack_execs", "劫持可执行文件" }, { "set_serv_startup_types", "设置服务启动类型" } } },
@@ -157,7 +157,7 @@ namespace core
             "窗口显示",
             { { "keep_window_top", "* 置顶窗口" }, { "minimalist_titlebar", "* 极简标题栏" }, { "translucent", "* 半透明" } } },
           { "perf", "性能", { { "disable_x_option_hot_reload", "** 禁用标 * 选项热重载" } } } } } };
-    inline const auto& is_disable_x_option_hot_reload{ options[ "perf" ][ "disable_x_option_hot_reload" ] };
+    inline const auto& is_disable_x_option_hot_reload{ opt_set[ "perf" ][ "disable_x_option_hot_reload" ] };
     struct rule_node final
     {
         using item_t      = std::string;
@@ -226,7 +226,7 @@ namespace core
         { }
         ~config_node_impl() noexcept = default;
     };
-    class option_op final : public config_node_impl
+    class options final : public config_node_impl
     {
       private:
         friend config_node_impl;
@@ -240,7 +240,7 @@ namespace core
             if ( is_reload ) {
                 return;
             }
-            for ( auto& category : options.categories ) {
+            for ( auto& category : opt_set.categories ) {
                 for ( auto& item : category.items ) {
                     if ( line == std::format( format_string_, category.self_name, item.self_name, true ) ) {
                         item.set( true );
@@ -252,7 +252,7 @@ namespace core
         }
         auto sync_( std::ofstream& out )
         {
-            for ( const auto& category : options.categories ) {
+            for ( const auto& category : opt_set.categories ) {
                 for ( const auto& item : category.items ) {
                     out << std::format( format_string_, category.self_name, item.self_name, item.get() ) << '\n';
                 }
@@ -309,17 +309,17 @@ namespace core
               "     标 * 选项热重载每 {} 自动执行, 可禁用.\n"
               "     标 ** 选项无法热重载. 其余选项可实时热重载.\n",
               default_thread_sleep_time ) );
-            for ( auto& category : options.categories ) {
+            for ( auto& category : opt_set.categories ) {
                 ui.add_back( std::format( " > {} ", category.shown_name ), option_ui{ category }, option_ctrl_color );
             }
         }
       public:
-        option_op() noexcept
-          : config_node_impl{ "options" }
+        options() noexcept
+          : config_node_impl{ "opt_set" }
         { }
-        ~option_op() noexcept = default;
+        ~options() noexcept = default;
     };
-    class custom_rules_execs_op final : public config_node_impl
+    class custom_rules_execs final : public config_node_impl
     {
       private:
         friend config_node_impl;
@@ -338,12 +338,12 @@ namespace core
             custom_rules.execs.clear();
         }
       public:
-        custom_rules_execs_op() noexcept
+        custom_rules_execs() noexcept
           : config_node_impl{ "custom_rules_execs" }
         { }
-        ~custom_rules_execs_op() noexcept = default;
+        ~custom_rules_execs() noexcept = default;
     };
-    class custom_rules_servs_op final : public config_node_impl
+    class custom_rules_servs final : public config_node_impl
     {
       private:
         friend config_node_impl;
@@ -362,12 +362,12 @@ namespace core
             custom_rules.servs.clear();
         }
       public:
-        custom_rules_servs_op() noexcept
+        custom_rules_servs() noexcept
           : config_node_impl{ "custom_rules_servs" }
         { }
-        ~custom_rules_servs_op() noexcept = default;
+        ~custom_rules_servs() noexcept = default;
     };
-    inline std::tuple< option_op, custom_rules_execs_op, custom_rules_servs_op > config_nodes{};
+    inline std::tuple< options, custom_rules_execs, custom_rules_servs > config_nodes{};
     inline auto info( ui_func_args )
     {
         auto visit_repo_webpage{ []( ui_func_args ) static
@@ -495,7 +495,7 @@ namespace core
     }
     inline auto set_console_attrs()
     {
-        const auto& window_options{ options[ "window" ] };
+        const auto& window_options{ opt_set[ "window" ] };
         const auto& is_enable_minimalist_titlebar{ window_options[ "minimalist_titlebar" ] };
         const auto& is_translucent{ window_options[ "translucent" ] };
         if ( is_disable_x_option_hot_reload ) {
@@ -511,7 +511,7 @@ namespace core
     }
     inline auto keep_window_top()
     {
-        const auto& is_keep_window_top{ options[ "window" ][ "keep_window_top" ] };
+        const auto& is_keep_window_top{ opt_set[ "window" ][ "keep_window_top" ] };
         if ( is_disable_x_option_hot_reload && !is_keep_window_top ) {
             return;
         }
@@ -629,7 +629,7 @@ namespace core
     }
     using exec_const_ref_t = cpp_utils::add_const_lvalue_reference_t< rule_node::item_t >;
     using serv_const_ref_t = cpp_utils::add_const_lvalue_reference_t< rule_node::item_t >;
-    inline const auto& option_crack_restore{ options[ "crack_restore" ] };
+    inline const auto& option_crack_restore{ opt_set[ "crack_restore" ] };
     inline const auto& is_hijack_execs{ option_crack_restore[ "hijack_execs" ] };
     inline const auto& is_set_serv_startup_types{ option_crack_restore[ "set_serv_startup_types" ] };
     class crack final
