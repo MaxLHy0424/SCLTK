@@ -177,6 +177,7 @@ pwsh_path  = /path/to/pwsh
 接下来, 在仓库本地目录下打开终端, 执行:
 
 ```bash
+make toolchain
 make all
 ```
 
@@ -185,7 +186,7 @@ make all
 后续编译可使用:
 
 ```bash
-make build
+make all
 ```
 
 ```bash
