@@ -156,8 +156,8 @@ namespace core
           { "window",
             "窗口显示",
             { { "keep_window_top", "* 置顶窗口" }, { "minimalist_titlebar", "* 极简标题栏" }, { "translucent", "* 半透明" } } },
-          { "perf", "性能", { { "disable_x_option_hot_reload", "** 禁用标 * 选项热重载" } } } } } };
-    inline const auto& is_disable_x_option_hot_reload{ opt_set[ "perf" ][ "disable_x_option_hot_reload" ] };
+          { "misc", "杂项", { { "disable_x_option_hot_reload", "** 禁用标 * 选项热重载" } } } } } };
+    inline const auto& is_disable_x_option_hot_reload{ opt_set[ "misc" ][ "disable_x_option_hot_reload" ] };
     struct rule_node final
     {
         using item_t      = std::string;
