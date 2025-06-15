@@ -368,6 +368,12 @@ namespace core
         ~custom_rules_servs() noexcept = default;
     };
     inline std::tuple< options, custom_rules_execs, custom_rules_servs > config_nodes{};
+    template < typename... Args >
+        requires( std::is_base_of_v< config_node_impl, Args > && ... )
+    auto is_config_nodes_valid( std::tuple< Args... > ) -> std::true_type;
+    template < typename... Args >
+    auto is_config_nodes_valid( std::tuple< Args... > ) -> std::false_type;
+    static_assert( decltype( is_config_nodes_valid( config_nodes ) )::value );
     inline auto info( ui_func_args )
     {
         auto visit_repo_webpage{ []( ui_func_args ) static
