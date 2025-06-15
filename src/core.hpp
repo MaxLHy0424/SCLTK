@@ -524,7 +524,7 @@ namespace core
             }
             for ( const auto& exec : execs ) {
                 std::print(
-                  "{} 撤销劫持 {} (0x{:x}).\n", make_progress( ++finished_count, total_count, digits_of_total ), exec,
+                  "{} 撤销劫持 {}.exe (0x{:x}).\n", make_progress( ++finished_count, total_count, digits_of_total ), exec,
                   RegDeleteTreeA(
                     HKEY_LOCAL_MACHINE,
                     std::format( R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe)", exec )
