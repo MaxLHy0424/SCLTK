@@ -25,6 +25,7 @@ namespace core
     inline const auto window_handle{ GetConsoleWindow() };
     inline const auto std_input_handle{ GetStdHandle( STD_INPUT_HANDLE ) };
     inline const auto std_output_handle{ GetStdHandle( STD_OUTPUT_HANDLE ) };
+    inline const std::string divider( console_width, '-' );
     static_assert( default_thread_sleep_time.count() != 0 );
     static_assert( default_execution_sleep_time.count() != 0 );
     using ui_func_args = cpp_utils::console_ui::func_args;
@@ -48,10 +49,6 @@ namespace core
     inline auto make_progress( const size_t now, const size_t total, const size_t digits_of_total ) noexcept
     {
         return std::format( "({}{}/{})", std::string( digits_of_total - cpp_utils::count_digits( now ), ' ' ), now, total );
-    }
-    inline auto make_divider()
-    {
-        return std::string( console_width, '-' );
     }
     struct option_set final
     {
@@ -510,7 +507,7 @@ namespace core
             std::print(
               "                   [ 工 具 箱 ]\n\n\n"
               " -> 正在尝试恢复...\n{}\n",
-              make_divider() );
+              divider );
             constexpr std::array reg_dirs{
               R"(Software\Policies\Microsoft\Windows\System)", R"(Software\Microsoft\Windows\CurrentVersion\Policies\System)",
               R"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)", R"(Software\Policies\Microsoft\MMC\)" };
@@ -553,7 +550,7 @@ namespace core
                     std::print(
                       "                   [ 工 具 箱 ]\n\n\n"
                       " -> 正在执行操作系统命令...\n{}\n",
-                      make_divider() );
+                      divider );
                     std::system( item_.command );
                     return func_exit;
                 } };
@@ -707,7 +704,7 @@ namespace core
                 wait();
                 return func_back;
             }
-            std::print( " -> 正在执行...\n{}\n", make_divider() );
+            std::print( " -> 正在执行...\n{}\n", divider );
             engine_();
             return func_back;
         }
@@ -781,7 +778,7 @@ namespace core
                 wait();
                 return func_back;
             }
-            std::print( " -> 正在执行...\n{}\n", make_divider() );
+            std::print( " -> 正在执行...\n{}\n", divider );
             engine_();
             return func_back;
         }
