@@ -370,10 +370,10 @@ namespace core
     inline std::tuple< options, custom_rules_execs, custom_rules_servs > config_nodes{};
     template < typename... Ts >
         requires( std::is_base_of_v< config_node_impl, Ts > && ... )
-    auto is_config_nodes_valid( std::tuple< Ts... > ) -> std::true_type;
+    auto check_config_nodes_valid( std::tuple< Ts... > ) -> std::true_type;
     template < typename... Ts >
-    auto is_config_nodes_valid( std::tuple< Ts... > ) -> std::false_type;
-    static_assert( decltype( is_config_nodes_valid( config_nodes ) )::value );
+    auto check_config_nodes_valid( std::tuple< Ts... > ) -> std::false_type;
+    static_assert( decltype( check_config_nodes_valid( config_nodes ) )::value );
     using unknown_config_node_t = void*;
     constexpr unknown_config_node_t unknown_config_node{ nullptr };
     template < typename... Ts >
