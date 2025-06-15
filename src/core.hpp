@@ -60,8 +60,8 @@ namespace core
           private:
             std::atomic< bool > value_{ false };
           public:
-            const char* const self_name;
-            const char* const shown_name;
+            const char* self_name;
+            const char* shown_name;
             auto set( const bool value ) noexcept
             {
                 value_.store( value, std::memory_order_release );
@@ -94,8 +94,8 @@ namespace core
         };
         struct category final
         {
-            const char* const self_name;
-            const char* const shown_name;
+            const char* self_name;
+            const char* shown_name;
             std::vector< item > items;
             auto& operator[]( const std::string_view self_name )
             {
@@ -162,7 +162,7 @@ namespace core
     {
         using item_t      = std::string;
         using container_t = std::deque< item_t >;
-        const char* const shown_name;
+        const char* shown_name;
         container_t execs;
         container_t servs;
         auto empty() const noexcept
