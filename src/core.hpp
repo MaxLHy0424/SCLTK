@@ -374,6 +374,11 @@ namespace core
     template < typename... Args >
     auto is_config_nodes_valid( std::tuple< Args... > ) -> std::false_type;
     static_assert( decltype( is_config_nodes_valid( config_nodes ) )::value );
+    using unknown_config_node_t = void*;
+    constexpr unknown_config_node_t unknown_config_node{ nullptr };
+    template < typename... Args >
+    inline consteval auto get_config_node_variant_t( std::tuple< Args... > )
+      -> std::variant< unknown_config_node_t, std::add_pointer_t< Args >... >;
     inline auto info( ui_func_args )
     {
         auto visit_repo_webpage{ []( ui_func_args ) static
@@ -540,11 +545,6 @@ namespace core
         }
         cpp_utils::cancel_top_window( window_handle );
     }
-    using unknown_config_node_t = void*;
-    constexpr unknown_config_node_t unknown_config_node{ nullptr };
-    template < typename... Args >
-    inline consteval auto get_config_node_variant_t( std::tuple< Args... > )
-      -> std::variant< unknown_config_node_t, std::add_pointer_t< Args >... >;
     inline auto load_config( const bool is_reload = false )
     {
         std::ifstream config_file{ config_file_name, std::ios::in };
