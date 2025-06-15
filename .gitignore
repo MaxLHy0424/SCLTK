@@ -1,4 +1,3 @@
 /build/
-!/build/.gitkeep
 /env
 /src/info.hpp
