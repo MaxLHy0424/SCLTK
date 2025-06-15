@@ -170,7 +170,7 @@ namespace cpp_utils
         template < typename R, typename... Args >
         decltype( auto ) invoke( const size_t index, Args&&... args ) const
         {
-            if constexpr ( std::same_as< std::decay_t< R >, void > ) {
+            if constexpr ( std::is_same_v< std::decay_t< R >, void > ) {
                 func_nodes_.at( index )->invoke( make_args( std::forward< Args >( args )... ) );
             } else {
                 return std::move( *std::any_cast< std::shared_ptr< R > >(
@@ -180,7 +180,7 @@ namespace cpp_utils
         template < typename R >
         decltype( auto ) dynamic_invoke( const size_t index, const std::vector< std::any >& args ) const
         {
-            if constexpr ( std::same_as< std::decay_t< R >, void > ) {
+            if constexpr ( std::is_same_v< std::decay_t< R >, void > ) {
                 func_nodes_.at( index )->invoke( args );
             } else {
                 return std::move( *std::any_cast< std::shared_ptr< R > >( func_nodes_.at( index )->invoke( args ) ) );
