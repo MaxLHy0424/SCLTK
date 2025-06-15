@@ -23,51 +23,51 @@ toolchain:
      base-devel\
      binutils
 build: debug release
-debug: bin/debug/__debug__.exe
-release: bin/release/SCLTK-i686-msvcrt.exe\
-         bin/release/SCLTK-x86_64-ucrt.exe
+debug: build/debug/__debug__.exe
+release: build/release/SCLTK-i686-msvcrt.exe\
+         build/release/SCLTK-x86_64-ucrt.exe
 clean:
-	$(msys2_path)/usr/bin/rm.exe -rf bin
-	$(msys2_path)/usr/bin/mkdir.exe bin
-	$(msys2_path)/usr/bin/touch.exe bin/.gitkeep
+	$(msys2_path)/usr/bin/rm.exe -rf build
+	$(msys2_path)/usr/bin/mkdir.exe build
+	$(msys2_path)/usr/bin/touch.exe build/.gitkeep
 make_info:
 	$(pwsh_path) -ExecutionPolicy Bypass -File ./make_info.ps1
 src/info.hpp: make_info
 dependencies_debug = src/*
-bin/debug/__debug__.exe: $(dependencies_debug) \
+build/debug/__debug__.exe: $(dependencies_debug) \
                          make_info \
-                         bin/debug/.gitkeep
+                         build/debug/.gitkeep
 	$(msys2_path)/ucrt64/bin/$(compiler) $(dependencies_debug).cpp $(args_debug) -o $@
-dependencies_release_32bit = bin/manifest-i686.o \
+dependencies_release_32bit = build/manifest-i686.o \
                              src/*
-bin/release/SCLTK-i686-msvcrt.exe: $(dependencies_release_32bit) \
+build/release/SCLTK-i686-msvcrt.exe: $(dependencies_release_32bit) \
                                    make_info \
-                                   bin/release/.gitkeep
+                                   build/release/.gitkeep
 	$(msys2_path)/mingw32/bin/$(compiler) $(dependencies_release_32bit).cpp $(args_release) -o $@
-dependencies_release_64bit = bin/manifest-x86_64.o \
+dependencies_release_64bit = build/manifest-x86_64.o \
                              src/*
-bin/release/SCLTK-x86_64-ucrt.exe: $(dependencies_release_64bit) \
+build/release/SCLTK-x86_64-ucrt.exe: $(dependencies_release_64bit) \
                                    make_info \
-                                   bin/release/.gitkeep
+                                   build/release/.gitkeep
 	$(msys2_path)/ucrt64/bin/$(compiler) $(dependencies_release_64bit).cpp $(args_release) -o $@
 dependencies_info = manifest.rc \
                     img/favicon.ico \
 					manifest.xml \
                     src/info.hpp
-bin/manifest-i686.o: $(dependencies_info) \
+build/manifest-i686.o: $(dependencies_info) \
                  make_info \
-                 bin/.gitkeep
+                 build/.gitkeep
 	$(msys2_path)/usr/bin/windres.exe -i $< -o $@ $(args_defines) -F pe-i386
-bin/manifest-x86_64.o: $(dependencies_info) \
+build/manifest-x86_64.o: $(dependencies_info) \
                    make_info \
-                   bin/.gitkeep
+                   build/.gitkeep
 	$(msys2_path)/usr/bin/windres.exe -i $< -o $@ $(args_defines) -F pe-x86-64
-bin/.gitkeep:
-	$(msys2_path)/usr/bin/mkdir.exe bin -p
+build/.gitkeep:
+	$(msys2_path)/usr/bin/mkdir.exe build -p
 	$(msys2_path)/usr/bin/touch.exe $@
-bin/debug/.gitkeep: bin/.gitkeep
-	$(msys2_path)/usr/bin/mkdir.exe bin/debug -p
+build/debug/.gitkeep: build/.gitkeep
+	$(msys2_path)/usr/bin/mkdir.exe build/debug -p
 	$(msys2_path)/usr/bin/touch.exe $@
-bin/release/.gitkeep: bin/.gitkeep
-	$(msys2_path)/usr/bin/mkdir.exe bin/release -p
+build/release/.gitkeep: build/.gitkeep
+	$(msys2_path)/usr/bin/mkdir.exe build/release -p
 	$(msys2_path)/usr/bin/touch.exe $@
