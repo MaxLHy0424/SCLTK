@@ -776,6 +776,11 @@ namespace core
                 wait();
                 return func_back;
             }
+            if ( !is_hijack_execs && rules_.servs.empty() ) {
+                std::print( " (!) 当前配置下无可用恢复操作." );
+                wait();
+                return func_back;
+            }
             std::print( " -> 正在执行...\n{}\n", make_divider() );
             engine_();
             return func_back;
