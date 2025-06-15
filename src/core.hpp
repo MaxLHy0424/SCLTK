@@ -23,10 +23,10 @@ namespace core
     inline constexpr auto config_file_name{ "config.ini" };
     inline constexpr auto func_back{ cpp_utils::console_ui::func_back };
     inline constexpr auto func_exit{ cpp_utils::console_ui::func_exit };
+    inline constexpr auto separator_line{ cpp_utils::make_repeated_const_string< console_width, '-' >() };
     inline const auto window_handle{ GetConsoleWindow() };
     inline const auto std_input_handle{ GetStdHandle( STD_INPUT_HANDLE ) };
     inline const auto std_output_handle{ GetStdHandle( STD_OUTPUT_HANDLE ) };
-    inline const auto separator_line{ cpp_utils::make_repeated_const_string< console_width, '-' >() };
     static_assert( default_thread_sleep_time.count() != 0 );
     static_assert( default_execution_sleep_time.count() != 0 );
     using ui_func_args = cpp_utils::console_ui::func_args;
