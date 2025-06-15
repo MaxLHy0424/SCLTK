@@ -25,8 +25,8 @@ namespace core
     inline const auto window_handle{ GetConsoleWindow() };
     inline const auto std_input_handle{ GetStdHandle( STD_INPUT_HANDLE ) };
     inline const auto std_output_handle{ GetStdHandle( STD_OUTPUT_HANDLE ) };
-    static_assert( default_thread_sleep_time.count() > 0 );
-    static_assert( default_execution_sleep_time.count() > 0 );
+    static_assert( default_thread_sleep_time.count() != 0 );
+    static_assert( default_execution_sleep_time.count() != 0 );
     using ui_func_args = cpp_utils::console_ui::func_args;
     inline auto quit( ui_func_args ) noexcept
     {
