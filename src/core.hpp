@@ -415,7 +415,7 @@ namespace core
             }
             current_config_node.visit( [ & ]( const auto node_ptr )
             {
-                if constexpr ( !std::same_as< std::decay_t< decltype( node_ptr ) >, unknown_config_node_t > ) {
+                if constexpr ( !std::is_same_v< std::decay_t< decltype( node_ptr ) >, unknown_config_node_t > ) {
                     node_ptr->load( is_reload, line );
                 }
             } );
