@@ -368,10 +368,10 @@ namespace core
         ~custom_rules_servs() noexcept = default;
     };
     inline std::tuple< options, custom_rules_execs, custom_rules_servs > config_nodes{};
+    inline consteval auto verify_config_node_types( auto ) -> std::false_type;
     template < typename... Ts >
         requires( std::is_base_of_v< config_node_impl, Ts > && ... )
     inline consteval auto verify_config_node_types( std::tuple< Ts... > ) -> std::true_type;
-    inline consteval auto verify_config_node_types( auto ) -> std::false_type;
     static_assert( decltype( verify_config_node_types( config_nodes ) )::value );
     using unknown_config_node_t = void*;
     constexpr unknown_config_node_t unknown_config_node{ nullptr };
