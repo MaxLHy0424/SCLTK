@@ -506,7 +506,7 @@ namespace core
         {
             std::print(
               "                   [ 工 具 箱 ]\n\n\n"
-              " -> 正在尝试恢复...\n{}\n",
+              " -> 正在尝试恢复...\n\n{}\n\n",
               divider );
             constexpr std::array reg_dirs{
               R"(Software\Policies\Microsoft\Windows\System)", R"(Software\Microsoft\Windows\CurrentVersion\Policies\System)",
@@ -531,6 +531,8 @@ namespace core
                       .c_str() ) );
                 std::this_thread::sleep_for( default_execution_sleep_time );
             }
+            std::print( "\n{}\n\n (i) 操作已完成.", divider );
+            wait();
             return func_back;
         } };
         struct cmd_item final
@@ -704,8 +706,10 @@ namespace core
                 wait();
                 return func_back;
             }
-            std::print( " -> 正在执行...\n{}\n", divider );
+            std::print( " -> 正在执行...\n\n{}\n\n", divider );
             engine_();
+            std::print( "\n{}\n\n (i) 操作已完成.", divider );
+            wait();
             return func_back;
         }
         crack( const rule_node& rules ) noexcept
@@ -778,8 +782,10 @@ namespace core
                 wait();
                 return func_back;
             }
-            std::print( " -> 正在执行...\n{}\n", divider );
+            std::print( " -> 正在执行...\n\n{}\n\n", divider );
             engine_();
+            std::print( "\n{}\n\n (i) 操作已完成.", divider );
+            wait();
             return func_back;
         }
         restore( const rule_node& rules ) noexcept
