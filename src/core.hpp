@@ -644,13 +644,13 @@ namespace core
         static auto hijack_exec_( exec_const_ref_t exec ) noexcept
         {
             return cpp_utils::create_registry_key< charset_id >(
-              HKEY_LOCAL_MACHINE,
+              cpp_utils::registry::local_machine,
               std::format( R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe)", exec ).c_str(),
-              "debugger", REG_SZ, reinterpret_cast< const BYTE* >( L"nul" ), sizeof( L"nul" ) );
+              "debugger", cpp_utils::registry::string_type, reinterpret_cast< const BYTE* >( L"nul" ), sizeof( L"nul" ) );
         }
         static auto disable_serv_( serv_const_ref_t serv ) noexcept
         {
-            return cpp_utils::set_service_status< charset_id >( serv.c_str(), SERVICE_DISABLED );
+            return cpp_utils::set_service_status< charset_id >( serv.c_str(), cpp_utils::service::disabled_start );
         }
         static auto kill_exec_( exec_const_ref_t exec ) noexcept
         {
@@ -727,12 +727,12 @@ namespace core
         static auto undo_hijack_exec_( exec_const_ref_t exec ) noexcept
         {
             return cpp_utils::delete_registry_tree< charset_id >(
-              HKEY_LOCAL_MACHINE,
+              cpp_utils::registry::local_machine,
               std::format( R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe)", exec ).c_str() );
         }
         static auto enable_serv_( serv_const_ref_t serv ) noexcept
         {
-            return cpp_utils::set_service_status< charset_id >( serv.c_str(), SERVICE_AUTO_START );
+            return cpp_utils::set_service_status< charset_id >( serv.c_str(), cpp_utils::service::disabled_start );
         }
         static auto start_serv_( serv_const_ref_t serv ) noexcept
         {
