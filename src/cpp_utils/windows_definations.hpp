@@ -69,6 +69,33 @@ namespace cpp_utils
         inline constexpr UINT maximize{ SW_SHOWMAXIMIZED };
         inline constexpr UINT restore{ SW_RESTORE };
     }
+    namespace service
+    {
+        inline constexpr DWORD auto_start{ SERVICE_AUTO_START };
+        inline constexpr DWORD boot_start{ SERVICE_BOOT_START };
+        inline constexpr DWORD demand_start{ SERVICE_DEMAND_START };
+        inline constexpr DWORD system_start{ SERVICE_SYSTEM_START };
+        inline constexpr DWORD disabled_start{ SERVICE_DISABLED };
+    }
+    namespace registry
+    {
+        inline constexpr HKEY classes_root{ HKEY_CLASSES_ROOT };
+        inline constexpr HKEY current_user{ HKEY_CURRENT_USER };
+        inline constexpr HKEY current_config{ HKEY_CURRENT_CONFIG };
+        inline constexpr HKEY local_machine{ HKEY_LOCAL_MACHINE };
+        inline constexpr HKEY users{ HKEY_USERS };
+        inline constexpr DWORD binary_type{ REG_BINARY };
+        inline constexpr DWORD dword_type{ REG_DWORD };
+        inline constexpr DWORD dword_big_endian_type{ REG_DWORD_BIG_ENDIAN };
+        inline constexpr DWORD dword_little_endian_type{ REG_DWORD_LITTLE_ENDIAN };
+        inline constexpr DWORD qword_type{ REG_QWORD };
+        inline constexpr DWORD qword_little_endian{ REG_QWORD_LITTLE_ENDIAN };
+        inline constexpr DWORD expandable_string_type{ REG_EXPAND_SZ };
+        inline constexpr DWORD multi_string_type{ REG_MULTI_SZ };
+        inline constexpr DWORD string_type{ REG_SZ };
+        inline constexpr DWORD link_type{ REG_LINK };
+        inline constexpr DWORD none_type{ REG_NONE };
+    }
 #else
 # error "must be compiled on the windows os"
 #endif
