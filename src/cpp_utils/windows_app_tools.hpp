@@ -49,17 +49,17 @@ namespace cpp_utils
                 const auto config{ reinterpret_cast< LPQUERY_SERVICE_CONFIGW >( buffer.get() ) };
                 if ( QueryServiceConfigW( service, config, bytes_needed, &bytes_needed ) ) {
                     if ( config->lpDependencies && *config->lpDependencies ) {
-                        auto dep{ config->lpDependencies };
-                        while ( *dep != L'\0' ) {
-                            const auto dep_svc{ OpenServiceW( scm, dep, SERVICE_STOP | SERVICE_QUERY_STATUS ) };
-                            if ( dep_svc != nullptr ) {
-                                const auto dep_result{ stop_service_and_dependencies( scm, dep_svc ) };
-                                if ( dep_result != ERROR_SUCCESS ) {
-                                    result = dep_result;
+                        auto dependency{ config->lpDependencies };
+                        while ( *dependency != L'\0' ) {
+                            const auto dependency_service{ OpenServiceW( scm, dependency, SERVICE_STOP | SERVICE_QUERY_STATUS ) };
+                            if ( dependency_service != nullptr ) {
+                                const auto dependency_result{ stop_service_and_dependencies( scm, dependency_service ) };
+                                if ( dependency_result != ERROR_SUCCESS ) {
+                                    result = dependency_result;
                                 }
-                                CloseServiceHandle( dep_svc );
+                                CloseServiceHandle( dependency_service );
                             }
-                            dep += wcslen( dep ) + 1;
+                            dependency += wcslen( dependency ) + 1;
                         }
                     }
                 }
@@ -90,21 +90,22 @@ namespace cpp_utils
                 if ( QueryServiceConfigW( service, config, bytes_needed, &bytes_needed ) ) {
                     if ( config->lpDependencies && *config->lpDependencies ) {
                         wchar_t* context{ nullptr };
-                        auto dep{ wcstok_s( config->lpDependencies, L"\0", &context ) };
-                        while ( dep != nullptr ) {
-                            if ( *dep != L'@' ) {
-                                const auto dep_svc{ OpenServiceW( scm, dep, SERVICE_START | SERVICE_QUERY_STATUS ) };
-                                if ( dep_svc ) {
+                        auto dependency{ wcstok_s( config->lpDependencies, L"\0", &context ) };
+                        while ( dependency != nullptr ) {
+                            if ( *dependency != L'@' ) {
+                                const auto dependency_service{
+                                  OpenServiceW( scm, dependency, SERVICE_START | SERVICE_QUERY_STATUS ) };
+                                if ( dependency_service ) {
                                     SERVICE_STATUS status;
-                                    if ( !QueryServiceStatus( dep_svc, &status )
+                                    if ( !QueryServiceStatus( dependency_service, &status )
                                          || ( status.dwCurrentState != SERVICE_RUNNING && status.dwCurrentState != SERVICE_START_PENDING ) )
                                     {
-                                        result = start_service_and_dependencies( scm, dep_svc );
+                                        result = start_service_and_dependencies( scm, dependency_service );
                                     }
-                                    CloseServiceHandle( dep_svc );
+                                    CloseServiceHandle( dependency_service );
                                 }
                             }
-                            dep = wcstok_s( nullptr, L"\0", &context );
+                            dependency = wcstok_s( nullptr, L"\0", &context );
                         }
                     }
                 }
@@ -125,19 +126,19 @@ namespace cpp_utils
         if ( w_name.empty() ) {
             return static_cast< DWORD >( ERROR_INVALID_PARAMETER );
         }
-        const auto snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ) };
-        if ( snapshot == INVALID_HANDLE_VALUE ) {
+        const auto process_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ) };
+        if ( process_snapshot == INVALID_HANDLE_VALUE ) {
             return GetLastError();
         }
-        PROCESSENTRY32W pe{};
-        pe.dwSize = sizeof( pe );
+        PROCESSENTRY32W process_entry{};
+        process_entry.dwSize = sizeof( process_entry );
         DWORD result{ ERROR_SUCCESS };
         bool is_found{ false };
-        if ( Process32FirstW( snapshot, &pe ) ) {
+        if ( Process32FirstW( process_snapshot, &process_entry ) ) {
             do {
-                if ( _wcsicmp( pe.szExeFile, w_name.c_str() ) == 0 ) {
+                if ( _wcsicmp( process_entry.szExeFile, w_name.c_str() ) == 0 ) {
                     is_found                  = true;
-                    const auto process_handle = OpenProcess( PROCESS_TERMINATE, FALSE, pe.th32ProcessID );
+                    const auto process_handle = OpenProcess( PROCESS_TERMINATE, FALSE, process_entry.th32ProcessID );
                     if ( process_handle ) {
                         if ( !TerminateProcess( process_handle, 1 ) ) {
                             result = GetLastError();
@@ -147,11 +148,11 @@ namespace cpp_utils
                         result = GetLastError();
                     }
                 }
-            } while ( Process32NextW( snapshot, &pe ) );
+            } while ( Process32NextW( process_snapshot, &process_entry ) );
         } else {
             result = GetLastError();
         }
-        CloseHandle( snapshot );
+        CloseHandle( process_snapshot );
         return is_found ? result : ERROR_NOT_FOUND;
     }
     template < UINT Charset >
@@ -162,14 +163,14 @@ namespace cpp_utils
         using namespace std::string_literals;
         const auto w_sub_key{ details::to_wstring< Charset >( sub_key ) };
         const auto w_value_name{ value_name ? details::to_wstring< Charset >( value_name ) : L""s };
-        HKEY key;
+        HKEY key_handle;
         auto result{ RegCreateKeyExW(
-          main_key, w_sub_key.c_str(), 0, nullptr, REG_OPTION_NON_VOLATILE, KEY_WRITE, nullptr, &key, nullptr ) };
+          main_key, w_sub_key.c_str(), 0, nullptr, REG_OPTION_NON_VOLATILE, KEY_WRITE, nullptr, &key_handle, nullptr ) };
         if ( result != ERROR_SUCCESS ) {
             return result;
         }
-        result = RegSetValueExW( key, w_value_name.empty() ? nullptr : w_value_name.c_str(), 0, type, data, data_size );
-        RegCloseKey( key );
+        result = RegSetValueExW( key_handle, w_value_name.empty() ? nullptr : w_value_name.c_str(), 0, type, data, data_size );
+        RegCloseKey( key_handle );
         return result;
     }
     template < UINT Charset >
@@ -178,13 +179,13 @@ namespace cpp_utils
         using namespace std::string_literals;
         const auto w_sub_key{ details::to_wstring< Charset >( sub_key ) };
         const auto w_value_name{ value_name ? details::to_wstring< Charset >( value_name ) : L""s };
-        HKEY hKey;
-        auto result{ RegOpenKeyExW( main_key, w_sub_key.c_str(), 0, KEY_WRITE, &hKey ) };
+        HKEY key_handle;
+        auto result{ RegOpenKeyExW( main_key, w_sub_key.c_str(), 0, KEY_WRITE, &key_handle ) };
         if ( result != ERROR_SUCCESS ) {
             return result;
         }
-        result = RegDeleteValueW( hKey, w_value_name.empty() ? nullptr : w_value_name.c_str() );
-        RegCloseKey( hKey );
+        result = RegDeleteValueW( key_handle, w_value_name.empty() ? nullptr : w_value_name.c_str() );
+        RegCloseKey( key_handle );
         return result;
     }
     template < UINT Charset >
