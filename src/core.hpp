@@ -798,9 +798,7 @@ namespace core
             if ( is_set_serv_startup_types ) {
                 cpp_utils::parallel_for_each_impl( nproc, servs.begin(), servs.end(), enable_serv_ );
             }
-            for ( const auto& serv : servs ) {
-                cpp_utils::parallel_for_each_impl( nproc, servs.begin(), servs.end(), start_serv_ );
-            }
+            cpp_utils::parallel_for_each_impl( nproc, servs.begin(), servs.end(), start_serv_ );
         }
       public:
         auto operator()( ui_func_args )
