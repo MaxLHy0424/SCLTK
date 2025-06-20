@@ -95,23 +95,9 @@ namespace core
             const char* self_name;
             const char* shown_name;
             std::vector< item > items;
-            auto& operator[]( const std::string_view self_name )
+            auto& operator[]( const std::string_view self_name ) const noexcept
             {
                 for ( auto& item : items ) {
-                    if ( self_name == item.self_name ) {
-                        return item;
-                    }
-                }
-                if constexpr ( cpp_utils::is_debug_build ) {
-                    std::print( "'{}' does not exists.", self_name );
-                    std::terminate();
-                } else {
-                    std::unreachable();
-                }
-            }
-            const auto& operator[]( const std::string_view self_name ) const
-            {
-                for ( const auto& item : items ) {
                     if ( self_name == item.self_name ) {
                         return item;
                     }
@@ -135,23 +121,9 @@ namespace core
             ~category()                 = default;
         };
         std::vector< category > categories;
-        auto& operator[]( const std::string_view self_name ) noexcept
+        auto& operator[]( const std::string_view self_name ) const noexcept
         {
             for ( auto& category : categories ) {
-                if ( self_name == category.self_name ) {
-                    return category;
-                }
-            }
-            if constexpr ( cpp_utils::is_debug_build ) {
-                std::print( "'{}' does not exists.", self_name );
-                std::terminate();
-            } else {
-                std::unreachable();
-            }
-        }
-        const auto& operator[]( const std::string_view self_name ) const noexcept
-        {
-            for ( const auto& category : categories ) {
                 if ( self_name == category.self_name ) {
                     return category;
                 }
