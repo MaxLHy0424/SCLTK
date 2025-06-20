@@ -700,7 +700,7 @@ namespace core
         }
         auto engine_fast_()
         {
-            std::print( " (i) 详细信息已禁用.\n" );
+            std::print( " (i) 快速模式下不显示详细信息.\n" );
             const auto& execs{ rules_.execs };
             const auto& servs{ rules_.servs };
             const auto less_nproc{ std::max< unsigned >( nproc / 4, 2 ) };
@@ -788,7 +788,7 @@ namespace core
         }
         auto engine_fast_()
         {
-            std::print( " (i) 详细信息已禁用.\n" );
+            std::print( " (i) 快速模式下不显示详细信息.\n" );
             const auto& execs{ rules_.execs };
             const auto& servs{ rules_.servs };
             const auto less_nproc{ std::max< unsigned >( nproc / 4, 2 ) };
