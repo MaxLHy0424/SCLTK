@@ -173,8 +173,9 @@ namespace core
         ~rule_node()                  = default;
     };
     inline rule_node custom_rules{ "自定义", {}, {} };
-    inline const std::array< rule_node, 3 > builtin_rules{
-      { { "极域电子教室",
+    inline const std::array< rule_node, 4 > builtin_rules{
+      { { "学生机房管理助手", { "jfglzs", "przs", "zmserv", "vprtt" }, { "zmserv" } },
+       { "极域电子教室",
           { "StudentMain", "DispcapHelper", "VRCwPlayer", "InstHelpApp", "InstHelpApp64", "TDOvrSet", "GATESRV", "ProcHelper64",
             "MasterHelper" },
           { "TDNetFilter", "TDFileFilter", "STUDSRV" } },
