@@ -2,10 +2,12 @@
 #include <algorithm>
 #include <deque>
 #include <iterator>
+#include <print>
 #include <ranges>
 #include <thread>
 #include <utility>
 #include <vector>
+#include "compiler.hpp"
 namespace cpp_utils
 {
     using thread_num_t = unsigned int;
@@ -14,7 +16,12 @@ namespace cpp_utils
     inline auto parallel_for_each_impl( thread_num_t thread_num, It&& begin, It&& end, F&& func )
     {
         if ( thread_num == 0 ) {
-            std::unreachable();
+            if constexpr ( is_debug_build ) {
+                std::print( "'thread_num' cannot be zero!\n" );
+                std::terminate();
+            } else {
+                std::unreachable();
+            }
         }
         if ( begin == end ) {
             return;

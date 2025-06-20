@@ -102,7 +102,12 @@ namespace core
                         return item;
                     }
                 }
-                std::unreachable();
+                if constexpr ( cpp_utils::is_debug_build ) {
+                    std::print( "'{}' does not exists.", self_name );
+                    std::terminate();
+                } else {
+                    std::unreachable();
+                }
             }
             const auto& operator[]( const std::string_view self_name ) const
             {
@@ -111,7 +116,12 @@ namespace core
                         return item;
                     }
                 }
-                std::unreachable();
+                if constexpr ( cpp_utils::is_debug_build ) {
+                    std::print( "'{}' does not exists.", self_name );
+                    std::terminate();
+                } else {
+                    std::unreachable();
+                }
             }
             auto operator=( const category& ) -> category& = delete;
             auto operator=( category&& ) -> category&      = delete;
@@ -132,7 +142,12 @@ namespace core
                     return category;
                 }
             }
-            std::unreachable();
+            if constexpr ( cpp_utils::is_debug_build ) {
+                std::print( "'{}' does not exists.", self_name );
+                std::terminate();
+            } else {
+                std::unreachable();
+            }
         }
         const auto& operator[]( const std::string_view self_name ) const noexcept
         {
@@ -141,7 +156,12 @@ namespace core
                     return category;
                 }
             }
-            std::unreachable();
+            if constexpr ( cpp_utils::is_debug_build ) {
+                std::print( "'{}' does not exists.", self_name );
+                std::terminate();
+            } else {
+                std::unreachable();
+            }
         }
         option_set( std::vector< category > categories )
           : categories{ std::move( categories ) }
