@@ -143,7 +143,7 @@ namespace core
             "破解与恢复",
             { { "hijack_execs", "劫持可执行文件" },
               { "set_serv_startup_types", "设置服务启动类型" },
-              { "no_details", "禁用详细信息" } } },
+              { "fast_mode", "快速模式" } } },
           { "window",
             "窗口显示",
             { { "keep_window_top", "* 置顶窗口" }, { "minimalist_titlebar", "* 极简标题栏" }, { "translucent", "* 半透明" } } },
@@ -635,7 +635,7 @@ namespace core
     inline const auto& option_crack_restore{ opt_set[ "crack_restore" ] };
     inline const auto& is_hijack_execs{ option_crack_restore[ "hijack_execs" ] };
     inline const auto& is_set_serv_startup_types{ option_crack_restore[ "set_serv_startup_types" ] };
-    inline const auto& is_no_details{ option_crack_restore[ "no_details" ] };
+    inline const auto& is_enable_fast_mode{ option_crack_restore[ "fast_mode" ] };
     class crack final
     {
       private:
@@ -697,7 +697,7 @@ namespace core
                 std::this_thread::sleep_for( default_execution_sleep_time );
             }
         }
-        auto engine_no_details_()
+        auto engine_fast_()
         {
             std::print( " (i) 详细信息已禁用.\n" );
             const auto& execs{ rules_.execs };
@@ -729,7 +729,7 @@ namespace core
                 return func_back;
             }
             std::print( " -> 正在执行...\n\n{}\n\n", separator_line.data() );
-            std::invoke( std::array{ &crack::engine_, &crack::engine_no_details_ }[ is_no_details ], *this );
+            std::invoke( std::array{ &crack::engine_, &crack::engine_fast_ }[ is_enable_fast_mode ], *this );
             std::print( "\n{}\n\n (i) 操作已完成.", separator_line.data() );
             wait();
             return func_back;
@@ -790,7 +790,7 @@ namespace core
                 std::this_thread::sleep_for( default_execution_sleep_time );
             }
         }
-        auto engine_no_details_()
+        auto engine_fast_()
         {
             std::print( " (i) 详细信息已禁用.\n" );
             const auto& execs{ rules_.execs };
@@ -824,7 +824,7 @@ namespace core
                 return func_back;
             }
             std::print( " -> 正在执行...\n\n{}\n\n", separator_line.data() );
-            std::invoke( std::array{ &restore::engine_, &restore::engine_no_details_ }[ is_no_details ], *this );
+            std::invoke( std::array{ &restore::engine_, &restore::engine_fast_ }[ is_enable_fast_mode ], *this );
             std::print( "\n{}\n\n (i) 操作已完成.", separator_line.data() );
             wait();
             return func_back;
