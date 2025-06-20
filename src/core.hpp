@@ -365,20 +365,23 @@ namespace core
         { }
         ~custom_rules_servs() noexcept = default;
     };
+    namespace details
+    {
+        template < typename... Ts >
+        inline consteval auto check_config_nodes_validity( std::type_identity< std::tuple< Ts... > > )
+        {
+            return ( std::is_base_of_v< config_node_impl, Ts > && ... );
+        }
+        using unknown_config_node_t = void*;
+        constexpr unknown_config_node_t unknown_config_node{ nullptr };
+        template < typename... Ts >
+        inline consteval auto make_config_node_variant( std::type_identity< std::tuple< Ts... > > )
+        {
+            return std::variant< unknown_config_node_t, std::add_pointer_t< Ts >... >{};
+        }
+    }
     inline std::tuple< options, custom_rules_execs, custom_rules_servs > config_nodes{};
-    template < typename... Ts >
-    inline consteval auto check_config_nodes_validity( std::type_identity< std::tuple< Ts... > > )
-    {
-        return ( std::is_base_of_v< config_node_impl, Ts > && ... );
-    }
-    static_assert( check_config_nodes_validity( std::type_identity< decltype( config_nodes ) >{} ) == true );
-    using unknown_config_node_t = void*;
-    constexpr unknown_config_node_t unknown_config_node{ nullptr };
-    template < typename... Ts >
-    inline consteval auto make_config_node_variant( std::type_identity< std::tuple< Ts... > > )
-    {
-        return std::variant< unknown_config_node_t, std::add_pointer_t< Ts >... >{};
-    }
+    static_assert( details::check_config_nodes_validity( std::type_identity< decltype( config_nodes ) >{} ) == true );
     inline auto load_config( const bool is_reload = false )
     {
         std::ifstream config_file{ config_file_name, std::ios::in };
@@ -388,7 +391,7 @@ namespace core
         std::apply( []( auto&&... config_node ) { ( config_node.prepare_reload(), ... ); }, config_nodes );
         std::string line;
         std::string_view line_view;
-        auto current_config_node{ make_config_node_variant( std::type_identity< decltype( config_nodes ) >{} ) };
+        auto current_config_node{ details::make_config_node_variant( std::type_identity< decltype( config_nodes ) >{} ) };
         while ( std::getline( config_file, line ) ) {
             line_view = line;
             if ( line_view.empty() ) {
@@ -401,7 +404,7 @@ namespace core
                  && line_view.substr( line_view.size() - sizeof( " ]" ) + 1, line_view.size() ) == " ]" )
             {
                 line_view           = line_view.substr( sizeof( "[ " ) - 1, line_view.size() - sizeof( " ]" ) - 1 );
-                current_config_node = unknown_config_node;
+                current_config_node = details::unknown_config_node;
                 std::apply( [ & ]( auto&&... config_node )
                 {
                     ( [ & ]( auto&& current_node ) noexcept
@@ -415,7 +418,7 @@ namespace core
             }
             current_config_node.visit( [ & ]( const auto node_ptr )
             {
-                if constexpr ( !std::is_same_v< std::decay_t< decltype( node_ptr ) >, unknown_config_node_t > ) {
+                if constexpr ( !std::is_same_v< std::decay_t< decltype( node_ptr ) >, details::unknown_config_node_t > ) {
                     node_ptr->load( is_reload, line );
                 }
             } );
