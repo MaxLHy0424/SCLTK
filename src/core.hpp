@@ -307,7 +307,7 @@ namespace core
         }
       public:
         options() noexcept
-          : config_node_impl{ "opt_set" }
+          : config_node_impl{ "options" }
         { }
         ~options() noexcept = default;
     };
