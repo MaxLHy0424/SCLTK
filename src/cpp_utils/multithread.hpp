@@ -10,7 +10,7 @@
 #include "compiler.hpp"
 namespace cpp_utils
 {
-    using thread_num_t = unsigned int;
+    using thread_num_t = decltype( std::thread::hardware_concurrency() );
     template < std::random_access_iterator It, typename F >
         requires std::invocable< F, decltype( *std::declval< It >() ) >
     inline auto parallel_for_each_impl( thread_num_t thread_num, It&& begin, It&& end, F&& func )
