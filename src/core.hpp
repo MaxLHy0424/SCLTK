@@ -6,7 +6,6 @@
 #include "cpp_utils/const_string.hpp"
 #include "cpp_utils/math.hpp"
 #include "cpp_utils/multithread.hpp"
-#include "cpp_utils/pointer.hpp"
 #include "cpp_utils/windows_app_tools.hpp"
 #include "cpp_utils/windows_console_ui.hpp"
 #include "info.hpp"
@@ -188,7 +187,7 @@ namespace core
     class config_node_impl
     {
       public:
-        const cpp_utils::raw_pointer_wrapper< const char* > self_name;
+        const char* self_name;
         auto load( this auto&& self, const bool is_reload, std::string& line )
         {
             self.load_( is_reload, line );
@@ -401,7 +400,7 @@ namespace core
                 {
                     ( [ & ]( auto&& current_node ) noexcept
                     {
-                        if ( line_view == current_node.self_name.get() ) {
+                        if ( line_view == current_node.self_name ) {
                             current_config_node = &current_node;
                         }
                     }( config_node ), ... );
@@ -428,8 +427,7 @@ namespace core
             config_file_stream << "# " INFO_FULL_NAME "\n# " INFO_VERSION "\n";
             std::apply( [ & ]( auto&&... config_node )
             {
-                ( ( config_file_stream << std::format( "[ {} ]\n", config_node.self_name.get() ),
-                    config_node.sync( config_file_stream ) ),
+                ( ( config_file_stream << std::format( "[ {} ]\n", config_node.self_name ), config_node.sync( config_file_stream ) ),
                   ... );
             }, config_nodes );
             config_file_stream << std::flush;
