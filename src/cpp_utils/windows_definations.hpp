@@ -79,11 +79,11 @@ namespace cpp_utils
     }
     namespace registry
     {
-        inline constexpr HKEY classes_root{ HKEY_CLASSES_ROOT };
-        inline constexpr HKEY current_user{ HKEY_CURRENT_USER };
-        inline constexpr HKEY current_config{ HKEY_CURRENT_CONFIG };
-        inline constexpr HKEY local_machine{ HKEY_LOCAL_MACHINE };
-        inline constexpr HKEY users{ HKEY_USERS };
+        inline const HKEY classes_root{ HKEY_CLASSES_ROOT };
+        inline const HKEY current_user{ HKEY_CURRENT_USER };
+        inline const HKEY current_config{ HKEY_CURRENT_CONFIG };
+        inline const HKEY local_machine{ HKEY_LOCAL_MACHINE };
+        inline const HKEY users{ HKEY_USERS };
         inline constexpr DWORD binary_type{ REG_BINARY };
         inline constexpr DWORD dword_type{ REG_DWORD };
         inline constexpr DWORD dword_big_endian_type{ REG_DWORD_BIG_ENDIAN };
