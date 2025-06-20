@@ -3,6 +3,7 @@
 #include <array>
 #include <concepts>
 #include <ranges>
+#include "compiler.hpp"
 #include "type_tools.hpp"
 namespace cpp_utils
 {
@@ -54,13 +55,17 @@ namespace cpp_utils
         {
             return data_.crend();
         }
-        constexpr auto& at( const size_t index ) const noexcept
-        {
-            return const_cast< const T& >( data_.at( index ) );
-        }
-        const auto& operator[]( const size_t index ) const noexcept
+        constexpr const auto& operator[]( const size_t index ) const noexcept
         {
             return const_cast< const T& >( data_[ index ] );
+        }
+        constexpr const auto& at( const size_t index ) const noexcept
+        {
+            if constexpr ( is_debug_build ) {
+                return const_cast< const T& >( data_.at( index ) );
+            } else {
+                return ( *this )[ index ];
+            }
         }
         constexpr auto compare( const T* const src ) const
         {
