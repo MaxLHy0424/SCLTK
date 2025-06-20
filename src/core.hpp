@@ -507,32 +507,21 @@ namespace core
         {
             std::print(
               "                   [ 工 具 箱 ]\n\n\n"
-              " -> 正在尝试恢复...\n\n{}\n\n",
-              separator_line.data() );
+              " -> 正在尝试恢复...\n\n" );
             constexpr std::array reg_dirs{
               R"(Software\Policies\Microsoft\Windows\System)", R"(Software\Microsoft\Windows\CurrentVersion\Policies\System)",
               R"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)", R"(Software\Policies\Microsoft\MMC\)" };
             constexpr std::array execs{
               "taskkill", "sc", "net", "reg", "cmd", "taskmgr", "perfmon", "regedit", "mmc", "dism", "sfc" };
-            constexpr auto total_count{ reg_dirs.size() + execs.size() };
-            constexpr auto digits_of_total{ cpp_utils::count_digits( total_count ) };
-            size_t finished_count{ 0 };
             for ( const auto& reg_dir : reg_dirs ) {
-                std::print(
-                  "{} 删除注册表项 (0x{:x}).\n", make_progress( ++finished_count, total_count, digits_of_total ),
-                  RegDeleteTreeA( HKEY_CURRENT_USER, reg_dir ) );
-                std::this_thread::sleep_for( default_execution_sleep_time );
+                RegDeleteTreeA( HKEY_CURRENT_USER, reg_dir );
             }
             for ( const auto& exec : execs ) {
-                std::print(
-                  "{} 撤销劫持 {}.exe (0x{:x}).\n", make_progress( ++finished_count, total_count, digits_of_total ), exec,
-                  RegDeleteTreeA(
-                    HKEY_LOCAL_MACHINE,
-                    std::format( R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe)", exec )
-                      .c_str() ) );
-                std::this_thread::sleep_for( default_execution_sleep_time );
+                RegDeleteTreeA(
+                  HKEY_LOCAL_MACHINE,
+                  std::format( R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe)", exec ).c_str() );
             }
-            std::print( "\n{}\n\n (i) 操作已完成.", separator_line.data() );
+            std::print( " (i) 操作已完成." );
             wait();
             return func_back;
         } };
