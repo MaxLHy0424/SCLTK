@@ -26,13 +26,13 @@ namespace cpp_utils
             std::terminate();
         }
     }
-    template < bool Expr >
+    template < bool Cond >
     inline auto dynamic_assert_if(
       const bool expression, const std::string_view failed_message = "assertion failid!",
       const std::source_location src_location = std::source_location::current(),
       std::stacktrace trace                   = std::stacktrace::current() ) noexcept
     {
-        if constexpr ( Expr == true ) {
+        if constexpr ( Cond == true ) {
             dynamic_assert( expression, failed_message, src_location, std::move( trace ) );
         }
     }
