@@ -710,7 +710,7 @@ namespace core
                 { cpp_utils::parallel_for_each_impl( less_nproc, execs.begin(), execs.end(), hijack_exec_ ); } );
             }
             if ( is_set_serv_startup_types ) {
-                threads.add( [ & ] { cpp_utils::parallel_for_each_impl( nproc, servs.begin(), execs.end(), disable_serv_ ); } );
+                threads.add( [ & ] { cpp_utils::parallel_for_each_impl( nproc, servs.begin(), servs.end(), disable_serv_ ); } );
             }
             threads.add( [ & ] { cpp_utils::parallel_for_each_impl( less_nproc, execs.begin(), execs.end(), kill_exec_ ); } );
             threads.add( [ & ] { cpp_utils::parallel_for_each_impl( nproc, servs.begin(), servs.end(), stop_serv_ ); } );
