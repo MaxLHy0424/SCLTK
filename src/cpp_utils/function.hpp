@@ -138,13 +138,21 @@ namespace cpp_utils
         template < typename R, typename... Args >
         auto& edit( const size_t index, R ( *func )( Args... ) )
         {
-            func_nodes_.at( index ) = std::make_unique< func_wrapper< R, Args... > >( func );
+            if constexpr ( is_debug_build ) {
+                func_nodes_.at( index ) = std::make_unique< func_wrapper< R, Args... > >( func );
+            } else {
+                func_nodes_[ index ] = std::make_unique< func_wrapper< R, Args... > >( func );
+            }
             return *this;
         }
         template < typename R, typename... Args >
         auto& edit( const size_t index, std::function< R( Args... ) > func )
         {
-            func_nodes_.at( index ) = std::make_unique< func_wrapper< R, Args... > >( std::move( func ) );
+            if constexpr ( is_debug_build ) {
+                func_nodes_.at( index ) = std::make_unique< func_wrapper< R, Args... > >( std::move( func ) );
+            } else {
+                func_nodes_[ index ] = std::make_unique< func_wrapper< R, Args... > >( std::move( func ) );
+            }
             return *this;
         }
         auto& remove_front() noexcept
@@ -171,19 +179,36 @@ namespace cpp_utils
         decltype( auto ) invoke( const size_t index, Args&&... args ) const
         {
             if constexpr ( std::is_same_v< std::decay_t< R >, void > ) {
-                func_nodes_.at( index )->invoke( make_args( std::forward< Args >( args )... ) );
+                if constexpr ( is_debug_build ) {
+                    func_nodes_.at( index )->invoke( make_args( std::forward< Args >( args )... ) );
+                } else {
+                    func_nodes_[ index ]->invoke( make_args( std::forward< Args >( args )... ) );
+                }
             } else {
-                return std::move( *std::any_cast< std::shared_ptr< R > >(
-                  func_nodes_.at( index )->invoke( make_args( std::forward< Args >( args )... ) ) ) );
+                if constexpr ( is_debug_build ) {
+                    return std::move( *std::any_cast< std::shared_ptr< R > >(
+                      func_nodes_.at( index )->invoke( make_args( std::forward< Args >( args )... ) ) ) );
+                } else {
+                    return std::move( *std::any_cast< std::shared_ptr< R > >(
+                      func_nodes_[ index ]->invoke( make_args( std::forward< Args >( args )... ) ) ) );
+                }
             }
         }
         template < typename R >
         decltype( auto ) dynamic_invoke( const size_t index, const std::vector< std::any >& args ) const
         {
             if constexpr ( std::is_same_v< std::decay_t< R >, void > ) {
-                func_nodes_.at( index )->invoke( args );
+                if constexpr ( is_debug_build ) {
+                    func_nodes_.at( index )->invoke( args );
+                } else {
+                    func_nodes_[ index ]->invoke( args );
+                }
             } else {
-                return std::move( *std::any_cast< std::shared_ptr< R > >( func_nodes_.at( index )->invoke( args ) ) );
+                if constexpr ( is_debug_build ) {
+                    return std::move( *std::any_cast< std::shared_ptr< R > >( func_nodes_.at( index )->invoke( args ) ) );
+                } else {
+                    return std::move( *std::any_cast< std::shared_ptr< R > >( func_nodes_[ index ]->invoke( args ) ) );
+                }
             }
         }
     };

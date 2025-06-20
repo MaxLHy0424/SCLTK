@@ -277,22 +277,38 @@ namespace cpp_utils
         }
         auto& edit_text( const size_t index, const std::string_view text )
         {
-            lines_.at( index ).text = text;
+            if constexpr ( is_debug_build ) {
+                lines_.at( index ).text = text;
+            } else {
+                lines_[ index ].text = text;
+            }
             return *this;
         }
         auto& edit_func( const size_t index, callback_t func )
         {
-            lines_.at( index ).func = std::move( func );
+            if constexpr ( is_debug_build ) {
+                lines_.at( index ).func = std::move( func );
+            } else {
+                lines_[ index ].func = std::move( func );
+            }
             return *this;
         }
         auto& edit_intensity_attrs( const size_t index, const WORD intensity_attrs )
         {
-            lines_.at( index ).intensity_attrs = intensity_attrs;
+            if constexpr ( is_debug_build ) {
+                lines_.at( index ).intensity_attrs = intensity_attrs;
+            } else {
+                lines_[ index ].intensity_attrs = intensity_attrs;
+            }
             return *this;
         }
         auto& edit_default_attrs( const size_t index, const WORD default_attrs )
         {
-            lines_.at( index ).default_attrs = default_attrs;
+            if constexpr ( is_debug_build ) {
+                lines_.at( index ).default_attrs = default_attrs;
+            } else {
+                lines_[ index ].default_attrs = default_attrs;
+            }
             return *this;
         }
         auto& remove_front() noexcept
