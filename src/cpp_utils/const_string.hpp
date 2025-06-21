@@ -140,8 +140,8 @@ namespace cpp_utils
         {
             return !compare( src );
         }
-        auto operator=( const basic_const_string< T, N >& ) -> basic_const_string< T, N >& = delete;
-        auto operator=( basic_const_string< T, N >&& ) -> basic_const_string< T, N >&      = delete;
+        consteval auto operator=( const basic_const_string< T, N >& ) -> basic_const_string< T, N >& = default;
+        auto operator=( basic_const_string< T, N >&& ) -> basic_const_string< T, N >&                = delete;
         consteval basic_const_string( const T ( &str )[ N ] ) noexcept
         {
             std::ranges::copy( str, data_.data() );
