@@ -39,12 +39,15 @@ namespace core
         cpp_utils::relaunch_as_admin( EXIT_SUCCESS );
         return func_exit;
     }
-    inline auto wait() noexcept
+    namespace details
     {
-        std::print( "\n\n" );
-        for ( unsigned short i{ 3 }; i > 0; --i ) {
-            std::print( " {}s 后返回.\r", i );
-            std::this_thread::sleep_for( 1s );
+        inline auto wait() noexcept
+        {
+            std::print( "\n\n" );
+            for ( unsigned short i{ 3 }; i > 0; --i ) {
+                std::print( " {}s 后返回.\r", i );
+                std::this_thread::sleep_for( 1s );
+            }
         }
     }
     struct option_set final
@@ -436,7 +439,7 @@ namespace core
             config_file_stream << std::flush;
             const auto is_good{ config_file_stream.good() };
             std::print( "\n ({}) 同步配置{}.", is_good ? 'i' : '!', is_good ? "成功" : "失败" );
-            wait();
+            details::wait();
             return func_back;
         } };
         auto open_file{ []( ui_func_args ) static
@@ -451,7 +454,7 @@ namespace core
             std::print(
               "                    [ 配  置 ]\n\n\n"
               " (!) 无法打开配置文件." );
-            wait();
+            details::wait();
             return func_back;
         } };
         cpp_utils::console_ui ui;
@@ -521,7 +524,7 @@ namespace core
                   std::format( R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe)", exec ).c_str() );
             }
             std::print( " (i) 操作已完成." );
-            wait();
+            details::wait();
             return func_back;
         } };
         struct cmd_item final
@@ -791,12 +794,12 @@ namespace core
             }
             if ( rules_.empty() ) {
                 std::print( " (i) 规则为空." );
-                wait();
+                details::wait();
                 return;
             }
             if ( executor_mode == mode::restore && !details::is_hijack_execs && rules_.servs.empty() ) {
                 std::print( " (!) 当前配置下无可用恢复操作." );
-                wait();
+                details::wait();
                 return;
             }
             std::print( " -> 正在执行...\n\n" );
@@ -808,7 +811,7 @@ namespace core
             }
             std::invoke( f[ details::is_enable_fast_mode ], *this );
             std::print( " (i) 操作已完成." );
-            wait();
+            details::wait();
         }
         auto operator()( ui_func_args )
         {
