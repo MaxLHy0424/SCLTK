@@ -849,13 +849,11 @@ namespace core
     }
     inline auto execute_all_rules( ui_func_args )
     {
-        rule_node::container_t all_execs;
-        rule_node::container_t all_servs;
+        rule_node all{ "", {}, {} };
         for ( const auto& e : builtin_rules ) {
-            all_execs.append_range( e.execs );
-            all_servs.append_range( e.servs );
+            all.execs.append_range( e.execs );
+            all.servs.append_range( e.servs );
         }
-        rule_node all{ "", std::move( all_execs ), std::move( all_servs ) };
         operation{ all }();
         return func_back;
     }
