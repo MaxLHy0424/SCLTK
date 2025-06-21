@@ -729,15 +729,20 @@ namespace core
             const auto& execs{ rules_.execs };
             const auto& servs{ rules_.servs };
             const auto less_nproc{ std::max< unsigned >( nproc / 4, 2 ) };
-            cpp_utils::thread_manager threads;
+            std::vector< std::thread > threads;
+            threads.reserve(
+              2U + static_cast< unsigned >( details::is_hijack_execs )
+              + static_cast< unsigned >( details::is_set_serv_startup_types ) );
             if ( details::is_hijack_execs ) {
-                threads.add( [ & ] { cpp_utils::parallel_for_each( less_nproc, execs.begin(), execs.end(), hijack_exec_ ); } );
+                threads.emplace_back( [ & ]
+                { cpp_utils::parallel_for_each( less_nproc, execs.begin(), execs.end(), hijack_exec_ ); } );
             }
             if ( details::is_set_serv_startup_types ) {
-                threads.add( [ & ] { cpp_utils::parallel_for_each( nproc, servs.begin(), servs.end(), disable_serv_ ); } );
+                threads.emplace_back( [ & ]
+                { cpp_utils::parallel_for_each( nproc, servs.begin(), servs.end(), disable_serv_ ); } );
             }
-            threads.add( [ & ] { cpp_utils::parallel_for_each( less_nproc, execs.begin(), execs.end(), kill_exec_ ); } );
-            threads.add( [ & ] { cpp_utils::parallel_for_each( nproc, servs.begin(), servs.end(), stop_serv_ ); } );
+            threads.emplace_back( [ & ] { cpp_utils::parallel_for_each( less_nproc, execs.begin(), execs.end(), kill_exec_ ); } );
+            threads.emplace_back( [ & ] { cpp_utils::parallel_for_each( nproc, servs.begin(), servs.end(), stop_serv_ ); } );
         }
         auto default_restore_()
         {
