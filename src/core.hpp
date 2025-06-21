@@ -780,7 +780,7 @@ namespace core
             cpp_utils::parallel_for_each_impl( nproc, servs.begin(), servs.end(), start_serv_ );
         }
       public:
-        auto operator()( ui_func_args )
+        auto operator()()
         {
             switch ( op_mode ) {
                 case mode::crack : std::print( "                    [ 破  解 ]\n\n\n" ); break;
@@ -790,12 +790,12 @@ namespace core
             if ( rules_.empty() ) {
                 std::print( " (i) 规则为空." );
                 wait();
-                return func_back;
+                return;
             }
             if ( op_mode == mode::restore && !details::is_hijack_execs && rules_.servs.empty() ) {
                 std::print( " (!) 当前配置下无可用恢复操作." );
                 wait();
-                return func_back;
+                return;
             }
             std::print( " -> 正在执行...\n\n{}\n\n", separator_line.data() );
             switch ( op_mode ) {
@@ -813,6 +813,10 @@ namespace core
             }
             std::print( "\n{}\n\n (i) 操作已完成.", separator_line.data() );
             wait();
+        }
+        auto operator()( ui_func_args )
+        {
+            ( *this )();
             return func_back;
         }
         operation( const rule_node& rules )
@@ -841,6 +845,18 @@ namespace core
             default : std::unreachable();
         }
         args.parent_ui.edit_text( args.node_index, make_op_mode_text() );
+        return func_back;
+    }
+    inline auto execute_all_rules( ui_func_args )
+    {
+        rule_node::container_t all_execs;
+        rule_node::container_t all_servs;
+        for ( const auto& e : builtin_rules ) {
+            all_execs.append_range( e.execs );
+            all_servs.append_range( e.servs );
+        }
+        rule_node all{ "", std::move( all_execs ), std::move( all_servs ) };
+        operation{ all }();
         return func_back;
     }
 }
