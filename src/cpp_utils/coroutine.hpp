@@ -116,7 +116,7 @@ namespace cpp_utils
             {
                 return std::suspend_always{};
             }
-            auto return_void() noexcept
+            static auto return_void() noexcept
             { }
             auto unhandled_exception() noexcept
             {
@@ -141,7 +141,7 @@ namespace cpp_utils
             }
             static auto unhandled_exception() noexcept
             { }
-            auto return_void() noexcept
+            static auto return_void() noexcept
             { }
         };
         template < typename Handle >
