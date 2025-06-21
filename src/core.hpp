@@ -627,16 +627,18 @@ namespace core
     inline const auto& is_hijack_execs{ option_crack_restore[ "hijack_execs" ] };
     inline const auto& is_set_serv_startup_types{ option_crack_restore[ "set_serv_startup_types" ] };
     inline const auto& is_enable_fast_mode{ option_crack_restore[ "fast_mode" ] };
-    enum class operation_mode : bool
-    {
-        crack,
-        restore
-    };
-    operation_mode op_mode{ operation_mode::crack };
     class operation
     {
+        friend auto core::make_op_mode_text();
+        friend auto core::change_op_mode( ui_func_args );
       private:
         const rule_node& rules_;
+        enum class mode : bool
+        {
+            crack,
+            restore
+        };
+        static mode op_mode;
         static auto hijack_exec_( exec_const_ref_t exec ) noexcept
         {
             return cpp_utils::create_registry_key< charset_id >(
@@ -774,8 +776,8 @@ namespace core
         auto operator()( ui_func_args )
         {
             switch ( op_mode ) {
-                case operation_mode::crack : std::print( "                    [ 破  解 ]\n\n\n" ); break;
-                case operation_mode::restore : std::print( "                    [ 恢  复 ]\n\n\n" ); break;
+                case mode::crack : std::print( "                    [ 破  解 ]\n\n\n" ); break;
+                case mode::restore : std::print( "                    [ 恢  复 ]\n\n\n" ); break;
                 default : std::unreachable();
             }
             if ( rules_.empty() ) {
@@ -783,19 +785,19 @@ namespace core
                 wait();
                 return func_back;
             }
-            if ( op_mode == operation_mode::restore && !is_hijack_execs && rules_.servs.empty() ) {
+            if ( op_mode == mode::restore && !is_hijack_execs && rules_.servs.empty() ) {
                 std::print( " (!) 当前配置下无可用恢复操作." );
                 wait();
                 return func_back;
             }
             std::print( " -> 正在执行...\n\n{}\n\n", separator_line.data() );
             switch ( op_mode ) {
-                case operation_mode::crack :
+                case mode::crack :
                     std::invoke(
                       std::array{ &operation::default_crack_engine_, &operation::fast_crack_engine_ }[ is_enable_fast_mode ],
                       *this );
                     break;
-                case operation_mode::restore :
+                case mode::restore :
                     std::invoke(
                       std::array{ &operation::default_restore_engine_, &operation::fast_restore_engine_ }[ is_enable_fast_mode ],
                       *this );
@@ -812,24 +814,25 @@ namespace core
         operation( operation&& ) noexcept = default;
         ~operation() noexcept             = default;
     };
-    inline auto make_operation_mode_text()
+    inline auto operation::op_mode{ operation::mode::crack };
+    inline auto make_op_mode_text()
     {
         std::string_view ui_text;
-        switch ( op_mode ) {
-            case operation_mode::crack : ui_text = "破解"; break;
-            case operation_mode::restore : ui_text = "恢复"; break;
+        switch ( operation::op_mode ) {
+            case operation::mode::crack : ui_text = "破解"; break;
+            case operation::mode::restore : ui_text = "恢复"; break;
             default : std::unreachable();
         }
         return std::format( "[ {} (点击切换模式) ]", ui_text );
     }
-    inline auto change_operation_mode( ui_func_args args )
+    inline auto change_op_mode( ui_func_args args )
     {
-        switch ( op_mode ) {
-            case operation_mode::crack : op_mode = operation_mode::restore; break;
-            case operation_mode::restore : op_mode = operation_mode::crack; break;
+        switch ( operation::op_mode ) {
+            case operation::mode::crack : operation::op_mode = operation::mode::restore; break;
+            case operation::mode::restore : operation::op_mode = operation::mode::crack; break;
             default : std::unreachable();
         }
-        args.parent_ui.edit_text( args.node_index, make_operation_mode_text() );
+        args.parent_ui.edit_text( args.node_index, make_op_mode_text() );
         return func_back;
     }
 }
