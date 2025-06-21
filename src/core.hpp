@@ -678,7 +678,7 @@ namespace core
         {
             return cpp_utils::start_service_with_dependencies< charset_id >( serv.c_str() );
         }
-        auto default_crack_engine_()
+        auto default_crack_()
         {
             std::print( "{}\n\n", separator_line.data() );
             const auto& execs{ rules_.execs };
@@ -718,7 +718,7 @@ namespace core
             }
             std::print( "\n{}\n\n", separator_line.data() );
         }
-        auto fast_crack_engine_()
+        auto fast_crack_()
         {
             const auto& execs{ rules_.execs };
             const auto& servs{ rules_.servs };
@@ -734,7 +734,7 @@ namespace core
             threads.add( [ & ] { cpp_utils::parallel_for_each_impl( less_nproc, execs.begin(), execs.end(), kill_exec_ ); } );
             threads.add( [ & ] { cpp_utils::parallel_for_each_impl( nproc, servs.begin(), servs.end(), stop_serv_ ); } );
         }
-        auto default_restore_engine_()
+        auto default_restore_()
         {
             std::print( "{}\n\n", separator_line.data() );
             const auto& execs{ rules_.execs };
@@ -768,7 +768,7 @@ namespace core
             }
             std::print( "\n{}\n\n", separator_line.data() );
         }
-        auto fast_restore_engine_()
+        auto fast_restore_()
         {
             const auto& execs{ rules_.execs };
             const auto& servs{ rules_.servs };
@@ -800,21 +800,13 @@ namespace core
                 return;
             }
             std::print( " -> 正在执行...\n\n" );
+            std::array< void ( core::rule_executor::* )(), 2 > f;
             switch ( executor_mode ) {
-                case mode::crack :
-                    std::invoke(
-                      std::array{
-                        &rule_executor::default_crack_engine_, &rule_executor::fast_crack_engine_ }[ details::is_enable_fast_mode ],
-                      *this );
-                    break;
-                case mode::restore :
-                    std::invoke(
-                      std::array{
-                        &rule_executor::default_restore_engine_,
-                        &rule_executor::fast_restore_engine_ }[ details::is_enable_fast_mode ],
-                      *this );
-                    break;
+                case mode::crack : f = { &rule_executor::default_crack_, &rule_executor::fast_crack_ }; break;
+                case mode::restore : f = { &rule_executor::default_restore_, &rule_executor::fast_restore_ }; break;
+                default : std::unreachable();
             }
+            std::invoke( f[ details::is_enable_fast_mode ], *this );
             std::print( " (i) 操作已完成." );
             wait();
         }
