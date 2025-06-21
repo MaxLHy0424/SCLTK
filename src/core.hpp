@@ -728,14 +728,13 @@ namespace core
             const auto less_nproc{ std::max< unsigned >( nproc / 4, 2 ) };
             cpp_utils::thread_manager threads;
             if ( details::is_hijack_execs ) {
-                threads.add( [ & ]
-                { cpp_utils::parallel_for_each_impl( less_nproc, execs.begin(), execs.end(), hijack_exec_ ); } );
+                threads.add( [ & ] { cpp_utils::parallel_for_each( less_nproc, execs.begin(), execs.end(), hijack_exec_ ); } );
             }
             if ( details::is_set_serv_startup_types ) {
-                threads.add( [ & ] { cpp_utils::parallel_for_each_impl( nproc, servs.begin(), servs.end(), disable_serv_ ); } );
+                threads.add( [ & ] { cpp_utils::parallel_for_each( nproc, servs.begin(), servs.end(), disable_serv_ ); } );
             }
-            threads.add( [ & ] { cpp_utils::parallel_for_each_impl( less_nproc, execs.begin(), execs.end(), kill_exec_ ); } );
-            threads.add( [ & ] { cpp_utils::parallel_for_each_impl( nproc, servs.begin(), servs.end(), stop_serv_ ); } );
+            threads.add( [ & ] { cpp_utils::parallel_for_each( less_nproc, execs.begin(), execs.end(), kill_exec_ ); } );
+            threads.add( [ & ] { cpp_utils::parallel_for_each( nproc, servs.begin(), servs.end(), stop_serv_ ); } );
         }
         auto default_restore_()
         {
@@ -777,12 +776,12 @@ namespace core
             const auto& servs{ rules_.servs };
             const auto less_nproc{ std::max< unsigned >( nproc / 4, 2 ) };
             if ( details::is_hijack_execs ) {
-                cpp_utils::parallel_for_each_impl( less_nproc, execs.begin(), execs.end(), undo_hijack_exec_ );
+                cpp_utils::parallel_for_each( less_nproc, execs.begin(), execs.end(), undo_hijack_exec_ );
             }
             if ( details::is_set_serv_startup_types ) {
-                cpp_utils::parallel_for_each_impl( nproc, servs.begin(), servs.end(), enable_serv_ );
+                cpp_utils::parallel_for_each( nproc, servs.begin(), servs.end(), enable_serv_ );
             }
-            cpp_utils::parallel_for_each_impl( nproc, servs.begin(), servs.end(), start_serv_ );
+            cpp_utils::parallel_for_each( nproc, servs.begin(), servs.end(), start_serv_ );
         }
       public:
         auto operator()()

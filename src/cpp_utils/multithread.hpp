@@ -13,7 +13,7 @@ namespace cpp_utils
     using thread_num_t = decltype( std::thread::hardware_concurrency() );
     template < std::random_access_iterator It, typename F >
         requires std::invocable< F, decltype( *std::declval< It >() ) >
-    inline auto parallel_for_each_impl( thread_num_t thread_num, It&& begin, It&& end, F&& func )
+    inline auto parallel_for_each( thread_num_t thread_num, It&& begin, It&& end, F&& func )
     {
         if ( thread_num == 0 ) {
             if constexpr ( is_debug_build ) {
@@ -50,7 +50,7 @@ namespace cpp_utils
         requires std::invocable< F, decltype( *std::declval< It >() ) >
     inline auto parallel_for_each( It&& begin, It&& end, F&& func )
     {
-        parallel_for_each_impl(
+        parallel_for_each(
           std::max( std::thread::hardware_concurrency(), 2U ), std::forward< It >( begin ), std::forward< It >( end ),
           std::forward< F >( func ) );
     }
