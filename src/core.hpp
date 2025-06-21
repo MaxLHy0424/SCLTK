@@ -543,7 +543,7 @@ namespace core
                 {
                     std::print(
                       "                   [ 工 具 箱 ]\n\n\n"
-                      " -> 正在执行操作系统命令...\n{}\n",
+                      " -> 正在执行操作系统命令...\n\n{}\n\n",
                       separator_line.data() );
                     std::system( item_.command );
                     return func_exit;
