@@ -47,10 +47,6 @@ namespace core
             std::this_thread::sleep_for( 1s );
         }
     }
-    inline auto make_progress( const size_t now, const size_t total, const size_t digits_of_total ) noexcept
-    {
-        return std::format( "({}{}/{})", std::string( digits_of_total - cpp_utils::count_digits( now ), ' ' ), now, total );
-    }
     struct option_set final
     {
         struct item final
@@ -632,6 +628,10 @@ namespace core
         inline const auto& is_hijack_execs{ option_crack_restore[ "hijack_execs" ] };
         inline const auto& is_set_serv_startup_types{ option_crack_restore[ "set_serv_startup_types" ] };
         inline const auto& is_enable_fast_mode{ option_crack_restore[ "fast_mode" ] };
+        inline auto make_progress( const size_t now, const size_t total, const size_t digits_of_total ) noexcept
+        {
+            return std::format( "({}{}/{})", std::string( digits_of_total - cpp_utils::count_digits( now ), ' ' ), now, total );
+        }
     }
     namespace operation
     {
@@ -693,29 +693,29 @@ namespace core
                 if ( details::is_hijack_execs ) {
                     for ( const auto& exec : execs ) {
                         std::print(
-                          "{} 劫持文件 {}.exe (0x{:x}).\n", make_progress( ++finished_count, total_count, digits_of_total ),
-                          exec, hijack_exec_( exec ) );
+                          "{} 劫持文件 {}.exe (0x{:x}).\n",
+                          details::make_progress( ++finished_count, total_count, digits_of_total ), exec, hijack_exec_( exec ) );
                         std::this_thread::sleep_for( default_execution_sleep_time );
                     }
                 }
                 if ( details::is_set_serv_startup_types ) {
                     for ( const auto& serv : servs ) {
                         std::print(
-                          "{} 禁用服务 {} (0x{:x}).\n", make_progress( ++finished_count, total_count, digits_of_total ), serv,
-                          disable_serv_( serv ) );
+                          "{} 禁用服务 {} (0x{:x}).\n", details::make_progress( ++finished_count, total_count, digits_of_total ),
+                          serv, disable_serv_( serv ) );
                         std::this_thread::sleep_for( default_execution_sleep_time );
                     }
                 }
                 for ( const auto& exec : execs ) {
                     std::print(
-                      "{} 终止进程 {}.exe (0x{:x}).\n", make_progress( ++finished_count, total_count, digits_of_total ), exec,
-                      kill_exec_( exec ) );
+                      "{} 终止进程 {}.exe (0x{:x}).\n",
+                      details::make_progress( ++finished_count, total_count, digits_of_total ), exec, kill_exec_( exec ) );
                     std::this_thread::sleep_for( default_execution_sleep_time );
                 }
                 for ( const auto& serv : servs ) {
                     std::print(
-                      "{} 停止服务 {} (0x{:x}).\n", make_progress( ++finished_count, total_count, digits_of_total ), serv,
-                      stop_serv_( serv ) );
+                      "{} 停止服务 {} (0x{:x}).\n", details::make_progress( ++finished_count, total_count, digits_of_total ),
+                      serv, stop_serv_( serv ) );
                     std::this_thread::sleep_for( default_execution_sleep_time );
                 }
                 std::print( "\n{}\n\n", separator_line.data() );
@@ -750,23 +750,24 @@ namespace core
                 if ( details::is_hijack_execs ) {
                     for ( const auto& exec : execs ) {
                         std::print(
-                          "{} 撤销劫持 {}.exe (0x{:x}).\n", make_progress( ++finished_count, total_count, digits_of_total ),
-                          exec, undo_hijack_exec_( exec ) );
+                          "{} 撤销劫持 {}.exe (0x{:x}).\n",
+                          details::make_progress( ++finished_count, total_count, digits_of_total ), exec,
+                          undo_hijack_exec_( exec ) );
                         std::this_thread::sleep_for( default_execution_sleep_time );
                     }
                 }
                 if ( details::is_set_serv_startup_types ) {
                     for ( const auto& serv : servs ) {
                         std::print(
-                          "{} 启用服务 {} (0x{:x}).\n", make_progress( ++finished_count, total_count, digits_of_total ), serv,
-                          enable_serv_( serv ) );
+                          "{} 启用服务 {} (0x{:x}).\n",
+                          details::make_progress( ++finished_count, total_count, digits_of_total ), serv, enable_serv_( serv ) );
                         std::this_thread::sleep_for( default_execution_sleep_time );
                     }
                 }
                 for ( const auto& serv : servs ) {
                     std::print(
-                      "{} 启动服务 {} (0x{:x}).\n", make_progress( ++finished_count, total_count, digits_of_total ), serv,
-                      start_serv_( serv ) );
+                      "{} 启动服务 {} (0x{:x}).\n", details::make_progress( ++finished_count, total_count, digits_of_total ),
+                      serv, start_serv_( serv ) );
                     std::this_thread::sleep_for( default_execution_sleep_time );
                 }
                 std::print( "\n{}\n\n", separator_line.data() );
