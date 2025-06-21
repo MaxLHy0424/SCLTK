@@ -221,8 +221,8 @@ namespace core
     };
     class options final : public config_node_impl
     {
-      private:
         friend config_node_impl;
+      private:
         static constexpr auto format_string_{ "{}.{}: {}" };
         static auto make_swith_button_text_( const auto is_enable )
         {
@@ -314,8 +314,8 @@ namespace core
     };
     class custom_rules_execs final : public config_node_impl
     {
-      private:
         friend config_node_impl;
+      private:
         auto load_( const bool, std::string& line )
         {
             custom_rules.execs.emplace_back( std::move( line ) );
@@ -338,8 +338,8 @@ namespace core
     };
     class custom_rules_servs final : public config_node_impl
     {
-      private:
         friend config_node_impl;
+      private:
         auto load_( const bool, std::string& line )
         {
             custom_rules.servs.emplace_back( std::move( line ) );
