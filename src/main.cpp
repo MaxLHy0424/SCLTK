@@ -21,15 +21,12 @@ auto main() -> int
       .add_back( " > 关于 ", core::info )
       .add_back( " > 配置 ", core::config_ui )
       .add_back( " > 工具箱 ", core::toolkit )
-      .add_back( "\n[ 破解 ]\n" )
-      .add_back( std::format( " > {} ", core::custom_rules.shown_name ), core::crack{ core::custom_rules } );
+      .add_back( "" )
+      .add_back( core::make_operation_mode_text(), core::change_operation_mode )
+      .add_back( "" )
+      .add_back( std::format( " > {} ", core::custom_rules.shown_name ), core::operation{ core::custom_rules } );
     for ( const auto& rule : core::builtin_rules ) {
-        ui.add_back( std::format( " > {} ", rule.shown_name ), core::crack{ rule } );
-    }
-    ui.add_back( "\n[ 恢复 ]\n" )
-      .add_back( std::format( " > {} ", core::custom_rules.shown_name ), core::restore{ core::custom_rules } );
-    for ( const auto& rule : core::builtin_rules ) {
-        ui.add_back( std::format( " > {} ", rule.shown_name ), core::restore{ rule } );
+        ui.add_back( std::format( " > {} ", rule.shown_name ), core::operation{ rule } );
     }
     ui.show().set_limits( true, true );
     std::print( " -> 正在清理..." );
