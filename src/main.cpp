@@ -27,6 +27,8 @@ auto main() -> int
         core::make_op_mode_text(), core::change_op_mode,
         cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_green )
       .add_back( "" )
+      .add_back( " > 全部执行 ", core::execute_all_rules )
+      .add_back( "" )
       .add_back( std::format( " > {} ", core::custom_rules.shown_name ), core::operation{ core::custom_rules } );
     for ( const auto& rule : core::builtin_rules ) {
         ui.add_back( std::format( " > {} ", rule.shown_name ), core::operation{ rule } );
