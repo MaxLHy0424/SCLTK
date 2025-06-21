@@ -817,4 +817,209 @@ namespace core
         restore( restore&& ) noexcept = default;
         ~restore() noexcept           = default;
     };
+    enum class operation_mode : bool
+    {
+        crack,
+        restore
+    };
+    operation_mode op_mode{ operation_mode::crack };
+    class operation
+    {
+      private:
+        const rule_node& rules_;
+        static auto hijack_exec_( exec_const_ref_t exec ) noexcept
+        {
+            return cpp_utils::create_registry_key< charset_id >(
+              cpp_utils::registry::local_machine,
+              std::format( R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe)", exec ).c_str(),
+              "debugger", cpp_utils::registry::string_type, reinterpret_cast< const BYTE* >( L"nul" ), sizeof( L"nul" ) );
+        }
+        static auto disable_serv_( serv_const_ref_t serv ) noexcept
+        {
+            return cpp_utils::set_service_status< charset_id >( serv.c_str(), cpp_utils::service::disabled_start );
+        }
+        static auto kill_exec_( exec_const_ref_t exec ) noexcept
+        {
+            return cpp_utils::kill_process_by_name< charset_id >( std::format( "{}.exe", exec ).c_str() );
+        }
+        static auto stop_serv_( serv_const_ref_t serv ) noexcept
+        {
+            return cpp_utils::stop_service_with_dependencies< charset_id >( serv.c_str() );
+        }
+        static auto undo_hijack_exec_( exec_const_ref_t exec ) noexcept
+        {
+            return cpp_utils::delete_registry_tree< charset_id >(
+              cpp_utils::registry::local_machine,
+              std::format( R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe)", exec ).c_str() );
+        }
+        static auto enable_serv_( serv_const_ref_t serv ) noexcept
+        {
+            return cpp_utils::set_service_status< charset_id >( serv.c_str(), cpp_utils::service::disabled_start );
+        }
+        static auto start_serv_( serv_const_ref_t serv ) noexcept
+        {
+            return cpp_utils::start_service_with_dependencies< charset_id >( serv.c_str() );
+        }
+        auto default_crack_engine_()
+        {
+            const auto& execs{ rules_.execs };
+            const auto& servs{ rules_.servs };
+            size_t finished_count{ 0 };
+            const auto total_count{
+              ( is_hijack_execs ? execs.size() * 2 : execs.size() )
+              + ( is_set_serv_startup_types ? servs.size() * 2 : servs.size() ) };
+            const auto digits_of_total{ cpp_utils::count_digits( total_count ) };
+            if ( is_hijack_execs ) {
+                for ( const auto& exec : execs ) {
+                    std::print(
+                      "{} 劫持文件 {}.exe (0x{:x}).\n", make_progress( ++finished_count, total_count, digits_of_total ), exec,
+                      hijack_exec_( exec ) );
+                    std::this_thread::sleep_for( default_execution_sleep_time );
+                }
+            }
+            if ( is_set_serv_startup_types ) {
+                for ( const auto& serv : servs ) {
+                    std::print(
+                      "{} 禁用服务 {} (0x{:x}).\n", make_progress( ++finished_count, total_count, digits_of_total ), serv,
+                      disable_serv_( serv ) );
+                    std::this_thread::sleep_for( default_execution_sleep_time );
+                }
+            }
+            for ( const auto& exec : execs ) {
+                std::print(
+                  "{} 终止进程 {}.exe (0x{:x}).\n", make_progress( ++finished_count, total_count, digits_of_total ), exec,
+                  kill_exec_( exec ) );
+                std::this_thread::sleep_for( default_execution_sleep_time );
+            }
+            for ( const auto& serv : servs ) {
+                std::print(
+                  "{} 停止服务 {} (0x{:x}).\n", make_progress( ++finished_count, total_count, digits_of_total ), serv,
+                  stop_serv_( serv ) );
+                std::this_thread::sleep_for( default_execution_sleep_time );
+            }
+        }
+        auto fast_crack_engine_()
+        {
+            std::print( " (i) 快速模式下不显示详细信息.\n" );
+            const auto& execs{ rules_.execs };
+            const auto& servs{ rules_.servs };
+            const auto less_nproc{ std::max< unsigned >( nproc / 4, 2 ) };
+            cpp_utils::thread_manager threads;
+            if ( is_hijack_execs ) {
+                threads.add( [ & ]
+                { cpp_utils::parallel_for_each_impl( less_nproc, execs.begin(), execs.end(), hijack_exec_ ); } );
+            }
+            if ( is_set_serv_startup_types ) {
+                threads.add( [ & ] { cpp_utils::parallel_for_each_impl( nproc, servs.begin(), servs.end(), disable_serv_ ); } );
+            }
+            threads.add( [ & ] { cpp_utils::parallel_for_each_impl( less_nproc, execs.begin(), execs.end(), kill_exec_ ); } );
+            threads.add( [ & ] { cpp_utils::parallel_for_each_impl( nproc, servs.begin(), servs.end(), stop_serv_ ); } );
+        }
+        auto default_restore_engine_()
+        {
+            const auto& execs{ rules_.execs };
+            const auto& servs{ rules_.servs };
+            size_t finished_count{ 0 };
+            const auto total_count{
+              ( is_hijack_execs ? execs.size() : 0ULL ) + ( is_set_serv_startup_types ? servs.size() * 2 : servs.size() ) };
+            const auto digits_of_total{ cpp_utils::count_digits( total_count ) };
+            if ( is_hijack_execs ) {
+                for ( const auto& exec : execs ) {
+                    std::print(
+                      "{} 撤销劫持 {}.exe (0x{:x}).\n", make_progress( ++finished_count, total_count, digits_of_total ), exec,
+                      undo_hijack_exec_( exec ) );
+                    std::this_thread::sleep_for( default_execution_sleep_time );
+                }
+            }
+            if ( is_set_serv_startup_types ) {
+                for ( const auto& serv : servs ) {
+                    std::print(
+                      "{} 启用服务 {} (0x{:x}).\n", make_progress( ++finished_count, total_count, digits_of_total ), serv,
+                      enable_serv_( serv ) );
+                    std::this_thread::sleep_for( default_execution_sleep_time );
+                }
+            }
+            for ( const auto& serv : servs ) {
+                std::print(
+                  "{} 启动服务 {} (0x{:x}).\n", make_progress( ++finished_count, total_count, digits_of_total ), serv,
+                  start_serv_( serv ) );
+                std::this_thread::sleep_for( default_execution_sleep_time );
+            }
+        }
+        auto fast_restore_engine_()
+        {
+            std::print( " (i) 快速模式下不显示详细信息.\n" );
+            const auto& execs{ rules_.execs };
+            const auto& servs{ rules_.servs };
+            const auto less_nproc{ std::max< unsigned >( nproc / 4, 2 ) };
+            if ( is_hijack_execs ) {
+                cpp_utils::parallel_for_each_impl( less_nproc, execs.begin(), execs.end(), undo_hijack_exec_ );
+            }
+            if ( is_set_serv_startup_types ) {
+                cpp_utils::parallel_for_each_impl( nproc, servs.begin(), servs.end(), enable_serv_ );
+            }
+            cpp_utils::parallel_for_each_impl( nproc, servs.begin(), servs.end(), start_serv_ );
+        }
+      public:
+        auto operator()( ui_func_args )
+        {
+            switch ( op_mode ) {
+                case operation_mode::crack : std::print( "                    [ 破  解 ]\n\n\n" ); break;
+                case operation_mode::restore : std::print( "                    [ 恢  复 ]\n\n\n" ); break;
+                default : std::unreachable();
+            }
+            if ( rules_.empty() ) {
+                std::print( " (i) 规则为空." );
+                wait();
+                return func_back;
+            }
+            if ( op_mode == operation_mode::restore && !is_hijack_execs && rules_.servs.empty() ) {
+                std::print( " (!) 当前配置下无可用恢复操作." );
+                wait();
+                return func_back;
+            }
+            std::print( " -> 正在执行...\n\n{}\n\n", separator_line.data() );
+            switch ( op_mode ) {
+                case operation_mode::crack :
+                    std::invoke(
+                      std::array{ &operation::default_crack_engine_, &operation::fast_crack_engine_ }[ is_enable_fast_mode ],
+                      *this );
+                    break;
+                case operation_mode::restore :
+                    std::invoke(
+                      std::array{ &operation::default_restore_engine_, &operation::fast_restore_engine_ }[ is_enable_fast_mode ],
+                      *this );
+                    break;
+            }
+            std::print( "\n{}\n\n (i) 操作已完成.", separator_line.data() );
+            wait();
+            return func_back;
+        }
+        operation( const rule_node& rules )
+          : rules_{ rules }
+        { }
+        operation( const operation& )     = default;
+        operation( operation&& ) noexcept = default;
+        ~operation() noexcept             = default;
+    };
+    inline auto make_operation_mode_text()
+    {
+        std::string_view ui_text;
+        switch ( op_mode ) {
+            case operation_mode::crack : ui_text = "破解"; break;
+            case operation_mode::restore : ui_text = "恢复"; break;
+            default : std::unreachable();
+        }
+        return std::format( "[ {} (点击切换模式) ]", ui_text );
+    }
+    inline auto change_operation_mode( ui_func_args args )
+    {
+        switch ( op_mode ) {
+            case operation_mode::crack : op_mode = operation_mode::restore; break;
+            case operation_mode::restore : op_mode = operation_mode::crack; break;
+            default : std::unreachable();
+        }
+        args.parent_ui.edit_text( args.node_index, make_operation_mode_text() );
+        return func_back;
+    }
 }
