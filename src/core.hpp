@@ -149,7 +149,10 @@ namespace core
             "窗口显示",
             { { "keep_window_top", "* 置顶窗口" }, { "minimalist_titlebar", "* 极简标题栏" }, { "translucent", "* 半透明" } } },
           { "misc", "杂项", { { "disable_x_option_hot_reload", "** 禁用标 * 选项热重载" } } } } } };
-    inline const auto& is_disable_x_option_hot_reload{ opt_set[ "misc" ][ "disable_x_option_hot_reload" ] };
+    namespace details
+    {
+        inline const auto& is_disable_x_option_hot_reload{ opt_set[ "misc" ][ "disable_x_option_hot_reload" ] };
+    }
     struct rule_node final
     {
         using item_t      = std::string;
@@ -585,7 +588,7 @@ namespace core
         const auto& window_options{ opt_set[ "window" ] };
         const auto& is_enable_minimalist_titlebar{ window_options[ "minimalist_titlebar" ] };
         const auto& is_translucent{ window_options[ "translucent" ] };
-        if ( is_disable_x_option_hot_reload ) {
+        if ( details::is_disable_x_option_hot_reload ) {
             cpp_utils::enable_window_menu( window_handle, !is_enable_minimalist_titlebar );
             cpp_utils::set_window_translucency( window_handle, is_translucent ? 230 : 255 );
             return;
@@ -599,13 +602,13 @@ namespace core
     inline auto keep_window_top()
     {
         const auto& is_keep_window_top{ opt_set[ "window" ][ "keep_window_top" ] };
-        if ( is_disable_x_option_hot_reload && !is_keep_window_top ) {
+        if ( details::is_disable_x_option_hot_reload && !is_keep_window_top ) {
             return;
         }
         constexpr auto sleep_time{ 100ms };
         const auto current_thread_id{ GetCurrentThreadId() };
         const auto current_window_thread_process_id{ GetWindowThreadProcessId( window_handle, nullptr ) };
-        if ( is_disable_x_option_hot_reload ) {
+        if ( details::is_disable_x_option_hot_reload ) {
             cpp_utils::loop_keep_window_top( window_handle, current_thread_id, current_window_thread_process_id, sleep_time );
             cpp_utils::cancel_top_window( window_handle );
             return;
@@ -621,12 +624,15 @@ namespace core
         }
         cpp_utils::cancel_top_window( window_handle );
     }
-    using exec_const_ref_t = cpp_utils::add_const_lvalue_reference_t< rule_node::item_t >;
-    using serv_const_ref_t = cpp_utils::add_const_lvalue_reference_t< rule_node::item_t >;
-    inline const auto& option_crack_restore{ opt_set[ "crack_restore" ] };
-    inline const auto& is_hijack_execs{ option_crack_restore[ "hijack_execs" ] };
-    inline const auto& is_set_serv_startup_types{ option_crack_restore[ "set_serv_startup_types" ] };
-    inline const auto& is_enable_fast_mode{ option_crack_restore[ "fast_mode" ] };
+    namespace details
+    {
+        using exec_const_ref_t = cpp_utils::add_const_lvalue_reference_t< rule_node::item_t >;
+        using serv_const_ref_t = cpp_utils::add_const_lvalue_reference_t< rule_node::item_t >;
+        inline const auto& option_crack_restore{ opt_set[ "crack_restore" ] };
+        inline const auto& is_hijack_execs{ option_crack_restore[ "hijack_execs" ] };
+        inline const auto& is_set_serv_startup_types{ option_crack_restore[ "set_serv_startup_types" ] };
+        inline const auto& is_enable_fast_mode{ option_crack_restore[ "fast_mode" ] };
+    }
     class operation
     {
         friend auto make_op_mode_text() -> std::string;
@@ -639,36 +645,36 @@ namespace core
             restore
         };
         static mode op_mode;
-        static auto hijack_exec_( exec_const_ref_t exec ) noexcept
+        static auto hijack_exec_( details::exec_const_ref_t exec ) noexcept
         {
             return cpp_utils::create_registry_key< charset_id >(
               cpp_utils::registry::local_machine,
               std::format( R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe)", exec ).c_str(),
               "debugger", cpp_utils::registry::string_type, reinterpret_cast< const BYTE* >( L"nul" ), sizeof( L"nul" ) );
         }
-        static auto disable_serv_( serv_const_ref_t serv ) noexcept
+        static auto disable_serv_( details::serv_const_ref_t serv ) noexcept
         {
             return cpp_utils::set_service_status< charset_id >( serv.c_str(), cpp_utils::service::disabled_start );
         }
-        static auto kill_exec_( exec_const_ref_t exec ) noexcept
+        static auto kill_exec_( details::exec_const_ref_t exec ) noexcept
         {
             return cpp_utils::kill_process_by_name< charset_id >( std::format( "{}.exe", exec ).c_str() );
         }
-        static auto stop_serv_( serv_const_ref_t serv ) noexcept
+        static auto stop_serv_( details::serv_const_ref_t serv ) noexcept
         {
             return cpp_utils::stop_service_with_dependencies< charset_id >( serv.c_str() );
         }
-        static auto undo_hijack_exec_( exec_const_ref_t exec ) noexcept
+        static auto undo_hijack_exec_( details::exec_const_ref_t exec ) noexcept
         {
             return cpp_utils::delete_registry_tree< charset_id >(
               cpp_utils::registry::local_machine,
               std::format( R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe)", exec ).c_str() );
         }
-        static auto enable_serv_( serv_const_ref_t serv ) noexcept
+        static auto enable_serv_( details::serv_const_ref_t serv ) noexcept
         {
             return cpp_utils::set_service_status< charset_id >( serv.c_str(), cpp_utils::service::disabled_start );
         }
-        static auto start_serv_( serv_const_ref_t serv ) noexcept
+        static auto start_serv_( details::serv_const_ref_t serv ) noexcept
         {
             return cpp_utils::start_service_with_dependencies< charset_id >( serv.c_str() );
         }
@@ -678,10 +684,10 @@ namespace core
             const auto& servs{ rules_.servs };
             size_t finished_count{ 0 };
             const auto total_count{
-              ( is_hijack_execs ? execs.size() * 2 : execs.size() )
-              + ( is_set_serv_startup_types ? servs.size() * 2 : servs.size() ) };
+              ( details::is_hijack_execs ? execs.size() * 2 : execs.size() )
+              + ( details::is_set_serv_startup_types ? servs.size() * 2 : servs.size() ) };
             const auto digits_of_total{ cpp_utils::count_digits( total_count ) };
-            if ( is_hijack_execs ) {
+            if ( details::is_hijack_execs ) {
                 for ( const auto& exec : execs ) {
                     std::print(
                       "{} 劫持文件 {}.exe (0x{:x}).\n", make_progress( ++finished_count, total_count, digits_of_total ), exec,
@@ -689,7 +695,7 @@ namespace core
                     std::this_thread::sleep_for( default_execution_sleep_time );
                 }
             }
-            if ( is_set_serv_startup_types ) {
+            if ( details::is_set_serv_startup_types ) {
                 for ( const auto& serv : servs ) {
                     std::print(
                       "{} 禁用服务 {} (0x{:x}).\n", make_progress( ++finished_count, total_count, digits_of_total ), serv,
@@ -717,11 +723,11 @@ namespace core
             const auto& servs{ rules_.servs };
             const auto less_nproc{ std::max< unsigned >( nproc / 4, 2 ) };
             cpp_utils::thread_manager threads;
-            if ( is_hijack_execs ) {
+            if ( details::is_hijack_execs ) {
                 threads.add( [ & ]
                 { cpp_utils::parallel_for_each_impl( less_nproc, execs.begin(), execs.end(), hijack_exec_ ); } );
             }
-            if ( is_set_serv_startup_types ) {
+            if ( details::is_set_serv_startup_types ) {
                 threads.add( [ & ] { cpp_utils::parallel_for_each_impl( nproc, servs.begin(), servs.end(), disable_serv_ ); } );
             }
             threads.add( [ & ] { cpp_utils::parallel_for_each_impl( less_nproc, execs.begin(), execs.end(), kill_exec_ ); } );
@@ -733,9 +739,10 @@ namespace core
             const auto& servs{ rules_.servs };
             size_t finished_count{ 0 };
             const auto total_count{
-              ( is_hijack_execs ? execs.size() : 0ULL ) + ( is_set_serv_startup_types ? servs.size() * 2 : servs.size() ) };
+              ( details::is_hijack_execs ? execs.size() : 0ULL )
+              + ( details::is_set_serv_startup_types ? servs.size() * 2 : servs.size() ) };
             const auto digits_of_total{ cpp_utils::count_digits( total_count ) };
-            if ( is_hijack_execs ) {
+            if ( details::is_hijack_execs ) {
                 for ( const auto& exec : execs ) {
                     std::print(
                       "{} 撤销劫持 {}.exe (0x{:x}).\n", make_progress( ++finished_count, total_count, digits_of_total ), exec,
@@ -743,7 +750,7 @@ namespace core
                     std::this_thread::sleep_for( default_execution_sleep_time );
                 }
             }
-            if ( is_set_serv_startup_types ) {
+            if ( details::is_set_serv_startup_types ) {
                 for ( const auto& serv : servs ) {
                     std::print(
                       "{} 启用服务 {} (0x{:x}).\n", make_progress( ++finished_count, total_count, digits_of_total ), serv,
@@ -764,10 +771,10 @@ namespace core
             const auto& execs{ rules_.execs };
             const auto& servs{ rules_.servs };
             const auto less_nproc{ std::max< unsigned >( nproc / 4, 2 ) };
-            if ( is_hijack_execs ) {
+            if ( details::is_hijack_execs ) {
                 cpp_utils::parallel_for_each_impl( less_nproc, execs.begin(), execs.end(), undo_hijack_exec_ );
             }
-            if ( is_set_serv_startup_types ) {
+            if ( details::is_set_serv_startup_types ) {
                 cpp_utils::parallel_for_each_impl( nproc, servs.begin(), servs.end(), enable_serv_ );
             }
             cpp_utils::parallel_for_each_impl( nproc, servs.begin(), servs.end(), start_serv_ );
@@ -785,7 +792,7 @@ namespace core
                 wait();
                 return func_back;
             }
-            if ( op_mode == mode::restore && !is_hijack_execs && rules_.servs.empty() ) {
+            if ( op_mode == mode::restore && !details::is_hijack_execs && rules_.servs.empty() ) {
                 std::print( " (!) 当前配置下无可用恢复操作." );
                 wait();
                 return func_back;
@@ -794,12 +801,13 @@ namespace core
             switch ( op_mode ) {
                 case mode::crack :
                     std::invoke(
-                      std::array{ &operation::default_crack_engine_, &operation::fast_crack_engine_ }[ is_enable_fast_mode ],
+                      std::array{ &operation::default_crack_engine_, &operation::fast_crack_engine_ }[ details::is_enable_fast_mode ],
                       *this );
                     break;
                 case mode::restore :
                     std::invoke(
-                      std::array{ &operation::default_restore_engine_, &operation::fast_restore_engine_ }[ is_enable_fast_mode ],
+                      std::array{
+                        &operation::default_restore_engine_, &operation::fast_restore_engine_ }[ details::is_enable_fast_mode ],
                       *this );
                     break;
             }
