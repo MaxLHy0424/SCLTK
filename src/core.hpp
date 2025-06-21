@@ -629,8 +629,8 @@ namespace core
     inline const auto& is_enable_fast_mode{ option_crack_restore[ "fast_mode" ] };
     class operation
     {
-        friend auto core::make_op_mode_text();
-        friend auto core::change_op_mode( ui_func_args );
+        friend auto make_op_mode_text() -> std::string;
+        friend auto change_op_mode( ui_func_args ) -> cpp_utils::console_ui::func_return_t;
       private:
         const rule_node& rules_;
         enum class mode : bool
@@ -814,8 +814,8 @@ namespace core
         operation( operation&& ) noexcept = default;
         ~operation() noexcept             = default;
     };
-    inline auto operation::op_mode{ operation::mode::crack };
-    inline auto make_op_mode_text()
+    inline operation::mode operation::op_mode{ operation::mode::crack };
+    inline auto make_op_mode_text() -> std::string
     {
         std::string_view ui_text;
         switch ( operation::op_mode ) {
@@ -825,7 +825,7 @@ namespace core
         }
         return std::format( "[ {} (点击切换模式) ]", ui_text );
     }
-    inline auto change_op_mode( ui_func_args args )
+    inline auto change_op_mode( ui_func_args args ) -> cpp_utils::console_ui::func_return_t
     {
         switch ( operation::op_mode ) {
             case operation::mode::crack : operation::op_mode = operation::mode::restore; break;
