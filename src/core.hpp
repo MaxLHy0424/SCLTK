@@ -68,18 +68,18 @@ namespace core
             {
                 return get();
             }
-            auto operator=( const item& ) -> item& = delete;
-            auto operator=( item&& ) -> item&      = delete;
-            item( const char* const self_name, const char* const shown_name )
+            auto operator=( const item& ) -> item&     = delete;
+            auto operator=( item&& ) noexcept -> item& = delete;
+            item( const char* const self_name, const char* const shown_name ) noexcept
               : self_name{ self_name }
               , shown_name{ shown_name }
             { }
-            item( const item& src )
+            item( const item& src ) noexcept
               : value_{ src }
               , self_name{ src.self_name }
               , shown_name{ src.shown_name }
             { }
-            item( item& src )
+            item( item& src ) noexcept
               : value_{ src }
               , self_name{ src.self_name }
               , shown_name{ src.shown_name }
@@ -112,9 +112,9 @@ namespace core
               , shown_name{ shown_name }
               , items{ std::move( items ) }
             { }
-            category( const category& ) = default;
-            category( category&& )      = default;
-            ~category()                 = default;
+            category( const category& )     = default;
+            category( category&& ) noexcept = default;
+            ~category()                     = default;
         };
         std::vector< category > categories;
         auto& operator[]( const std::string_view self_name ) const noexcept
