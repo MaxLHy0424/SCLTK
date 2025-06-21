@@ -834,7 +834,7 @@ namespace core
             case rule_executor::mode::restore : ui_text = "恢复"; break;
             default : std::unreachable();
         }
-        return std::format( "[ {} (点击切换模式) ]", ui_text );
+        return std::format( "[ {} (点击切换) ]", ui_text );
     }
     inline auto change_executor_mode( ui_func_args args ) -> cpp_utils::console_ui::func_return_t
     {
