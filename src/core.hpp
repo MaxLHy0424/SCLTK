@@ -743,6 +743,9 @@ namespace core
             }
             threads.emplace_back( [ & ] { cpp_utils::parallel_for_each( less_nproc, execs.begin(), execs.end(), kill_exec_ ); } );
             threads.emplace_back( [ & ] { cpp_utils::parallel_for_each( nproc, servs.begin(), servs.end(), stop_serv_ ); } );
+            for ( auto& thread : threads ) {
+                thread.join();
+            }
         }
         auto default_restore_()
         {
