@@ -682,6 +682,7 @@ namespace core
             }
             auto default_crack_engine_()
             {
+                std::print( "{}\n\n", separator_line.data() );
                 const auto& execs{ rules_.execs };
                 const auto& servs{ rules_.servs };
                 size_t finished_count{ 0 };
@@ -717,10 +718,10 @@ namespace core
                       stop_serv_( serv ) );
                     std::this_thread::sleep_for( default_execution_sleep_time );
                 }
+                std::print( "\n{}\n\n", separator_line.data() );
             }
             auto fast_crack_engine_()
             {
-                std::print( " (i) 快速模式下不显示详细信息.\n" );
                 const auto& execs{ rules_.execs };
                 const auto& servs{ rules_.servs };
                 const auto less_nproc{ std::max< unsigned >( nproc / 4, 2 ) };
@@ -738,6 +739,7 @@ namespace core
             }
             auto default_restore_engine_()
             {
+                std::print( "{}\n\n", separator_line.data() );
                 const auto& execs{ rules_.execs };
                 const auto& servs{ rules_.servs };
                 size_t finished_count{ 0 };
@@ -767,10 +769,10 @@ namespace core
                       start_serv_( serv ) );
                     std::this_thread::sleep_for( default_execution_sleep_time );
                 }
+                std::print( "\n{}\n\n", separator_line.data() );
             }
             auto fast_restore_engine_()
             {
-                std::print( " (i) 快速模式下不显示详细信息.\n" );
                 const auto& execs{ rules_.execs };
                 const auto& servs{ rules_.servs };
                 const auto less_nproc{ std::max< unsigned >( nproc / 4, 2 ) };
@@ -800,7 +802,7 @@ namespace core
                     wait();
                     return;
                 }
-                std::print( " -> 正在执行...\n\n{}\n\n", separator_line.data() );
+                std::print( " -> 正在执行...\n\n" );
                 switch ( op_mode ) {
                     case mode::crack :
                         std::invoke(
@@ -814,7 +816,7 @@ namespace core
                           *this );
                         break;
                 }
-                std::print( "\n{}\n\n (i) 操作已完成.", separator_line.data() );
+                std::print( " (i) 操作已完成." );
                 wait();
             }
             auto operator()( ui_func_args )
