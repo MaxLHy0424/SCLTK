@@ -171,7 +171,7 @@ namespace core
         rule_node( rule_node&& )      = default;
         ~rule_node()                  = default;
     };
-    inline rule_node custom_rules{ "自定义", {}, {} };
+    inline rule_node custom_rules{ "", {}, {} };
     inline const std::array< rule_node, 4 > builtin_rules{
       { { "学生机房管理助手", { "jfglzs", "przs", "zmserv", "vprtt" }, { "zmserv" } },
        { "极域电子教室",
