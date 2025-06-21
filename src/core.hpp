@@ -173,7 +173,7 @@ namespace core
     };
     inline rule_node custom_rules{ "", {}, {} };
     inline const std::array< rule_node, 4 > builtin_rules{
-      { { "学生机房管理助手", { "jfglzs", "przs", "zmserv", "vprtt" }, { "zmserv" } },
+      { { "学生机房管理助手", { "jfglzs", "przs", "zmserv", "vprtt", "oporn" }, { "zmserv" } },
        { "极域电子教室",
           { "StudentMain", "DispcapHelper", "VRCwPlayer", "InstHelpApp", "InstHelpApp64", "TDOvrSet", "GATESRV", "ProcHelper64",
             "MasterHelper" },
