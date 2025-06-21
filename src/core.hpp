@@ -650,7 +650,7 @@ namespace core
             return cpp_utils::create_registry_key< charset_id >(
               cpp_utils::registry::local_machine,
               std::format( R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe)", exec ).c_str(),
-              "debugger", cpp_utils::registry::string_type, reinterpret_cast< const BYTE* >( L"nul" ), sizeof( L"nul" ) );
+              "Debugger", cpp_utils::registry::string_type, reinterpret_cast< const BYTE* >( L"nul" ), sizeof( L"nul" ) );
         }
         static auto disable_serv_( details::serv_const_ref_t serv ) noexcept
         {
