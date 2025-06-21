@@ -520,7 +520,7 @@ namespace core
             }
             for ( const auto& exec : execs ) {
                 RegDeleteTreeA(
-                  HKEY_LOCAL_MACHINE,
+                  cpp_utils::registry::local_machine,
                   std::format( R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe)", exec ).c_str() );
             }
             std::print( " (i) 操作已完成." );
