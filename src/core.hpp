@@ -587,14 +587,17 @@ namespace core
         const auto& window_options{ opt_set[ "window" ] };
         const auto& is_enable_minimalist_titlebar{ window_options[ "minimalist_titlebar" ] };
         const auto& is_translucent{ window_options[ "translucent" ] };
-        if ( details::is_disable_x_option_hot_reload ) {
+        auto core_op{ [ & ]
+        {
             cpp_utils::enable_window_menu( window_handle, !is_enable_minimalist_titlebar );
             cpp_utils::set_window_translucency( window_handle, is_translucent ? 230 : 255 );
+        } };
+        if ( details::is_disable_x_option_hot_reload ) {
+            core_op();
             return;
         }
         while ( true ) {
-            cpp_utils::enable_window_menu( window_handle, !is_enable_minimalist_titlebar );
-            cpp_utils::set_window_translucency( window_handle, is_translucent ? 230 : 255 );
+            core_op();
             std::this_thread::sleep_for( default_thread_sleep_time );
         }
     }
