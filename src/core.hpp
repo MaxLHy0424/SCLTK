@@ -833,8 +833,9 @@ namespace core
             std::print( " (i) 操作已完成." );
             details__::wait();
         }
-        auto operator()( ui_func_args )
+        auto operator()( ui_func_args args )
         {
+            args.parent_ui.set_limits( true, true );
             ( *this )();
             return func_back;
         }
