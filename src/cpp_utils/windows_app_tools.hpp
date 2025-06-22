@@ -34,7 +34,7 @@ namespace cpp_utils
             if ( size_needed <= 0 ) {
                 return L""s;
             }
-            std::wstring result( size_needed, 0 );
+            std::wstring result( size_needed, '\0' );
             MultiByteToWideChar( Charset, 0, str, -1, result.data(), size_needed );
             return result;
         }
