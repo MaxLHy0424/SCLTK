@@ -869,6 +869,8 @@ namespace core
     inline auto execute_all_rules( ui_func_args )
     {
         rule_node all{ "", {}, {} };
+        all.execs.append_range( custom_rules.execs );
+        all.servs.append_range( custom_rules.servs );
         for ( const auto& e : builtin_rules ) {
             all.execs.append_range( e.execs );
             all.servs.append_range( e.servs );
