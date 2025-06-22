@@ -497,7 +497,17 @@ namespace core
             cpp_utils::enable_window_maximize_ctrl( window_handle, true );
             args.parent_ui.set_limits( false, false );
             SetConsoleScreenBufferSize( std_output_handle, COORD{ 127, SHRT_MAX - 1 } );
-            std::system( "cmd.exe" );
+            STARTUPINFOA startup_info{};
+            startup_info.cb = sizeof( startup_info );
+            PROCESS_INFORMATION process_info;
+            if ( CreateProcessA(
+                   nullptr, const_cast< LPSTR >( "cmd.exe" ), nullptr, nullptr, FALSE, 0, nullptr, nullptr, &startup_info,
+                   &process_info ) )
+            {
+                WaitForSingleObject( process_info.hProcess, INFINITE );
+                CloseHandle( process_info.hProcess );
+                CloseHandle( process_info.hThread );
+            }
             cpp_utils::set_current_console_charset( charset_id );
             cpp_utils::set_current_console_title( INFO_SHORT_NAME );
             cpp_utils::set_console_size( window_handle, std_output_handle, console_width, console_height );
