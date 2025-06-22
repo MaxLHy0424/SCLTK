@@ -878,6 +878,7 @@ namespace core
             all.execs.append_range( e.execs );
             all.servs.append_range( e.servs );
         }
+        cpp_utils::clear_console( std_output_handle );
         rule_executor{ all }();
         return func_back;
     }
