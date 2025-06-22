@@ -136,8 +136,8 @@ namespace cpp_utils
         if ( Process32FirstW( process_snapshot, &process_entry ) ) {
             do {
                 if ( _wcsicmp( process_entry.szExeFile, w_name.c_str() ) == 0 ) {
-                    is_found                  = true;
-                    const auto process_handle = OpenProcess( PROCESS_TERMINATE, FALSE, process_entry.th32ProcessID );
+                    is_found = true;
+                    const auto process_handle{ OpenProcess( PROCESS_TERMINATE, FALSE, process_entry.th32ProcessID ) };
                     if ( process_handle ) {
                         if ( !TerminateProcess( process_handle, 1 ) ) {
                             result = GetLastError();
