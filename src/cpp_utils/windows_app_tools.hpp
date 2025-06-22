@@ -66,11 +66,10 @@ namespace cpp_utils
             }
             if ( ControlService( service, SERVICE_CONTROL_STOP, &status ) ) {
                 while ( QueryServiceStatus( service, &status ) ) {
-                    if ( status.dwCurrentState == SERVICE_STOP_PENDING ) {
-                        std::this_thread::sleep_for( 50ms );
-                    } else {
+                    if ( status.dwCurrentState != SERVICE_STOP_PENDING ) {
                         break;
                     }
+                    std::this_thread::sleep_for( 10ms );
                 }
                 if ( status.dwCurrentState != SERVICE_STOPPED ) {
                     result = ERROR_SERVICE_REQUEST_TIMEOUT;
