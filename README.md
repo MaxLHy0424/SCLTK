@@ -8,7 +8,7 @@
 
 > [!CAUTION]
 > SCLTK 仅适用于中国大陆地区.\
-> SCLTK's service is limited to Chinese mainland.
+> SCLTK's service is limited to the Chinese mainland.
 
 > [!NOTE]
 > 从 v6.1.0 起, 原 CRCSN (Computer Room Control Software Nemesis) 正式更名为 SCLTK (Student Computer Lab Toolkit).
