@@ -26,6 +26,12 @@ namespace cpp_utils
         return ptr == nullptr ? "nullptr"s : std::format( "0x{:x}", reinterpret_cast< std::uintptr_t >( ptr ) );
     }
     template < pointer T >
+    inline auto pointer_to_wstring( const T ptr )
+    {
+        using namespace std::string_literals;
+        return ptr == nullptr ? L"nullptr"s : std::format( L"0x{:x}", reinterpret_cast< std::uintptr_t >( ptr ) );
+    }
+    template < pointer T >
         requires( !std::is_const_v< T > )
     class raw_pointer_wrapper final
     {
