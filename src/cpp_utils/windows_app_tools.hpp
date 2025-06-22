@@ -48,7 +48,7 @@ namespace cpp_utils
                 const auto buffer{ std::make_unique< BYTE[] >( bytes_needed ) };
                 const auto config{ reinterpret_cast< LPQUERY_SERVICE_CONFIGW >( buffer.get() ) };
                 if ( QueryServiceConfigW( service, config, bytes_needed, &bytes_needed ) ) {
-                    if ( config->lpDependencies && *config->lpDependencies ) {
+                    if ( config->lpDependencies != nullptr && *config->lpDependencies != '\0' ) {
                         auto dependency{ config->lpDependencies };
                         while ( *dependency != L'\0' ) {
                             const auto dependency_service{ OpenServiceW( scm, dependency, SERVICE_STOP | SERVICE_QUERY_STATUS ) };
