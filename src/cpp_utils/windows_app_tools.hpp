@@ -18,7 +18,7 @@
 namespace cpp_utils
 {
 #if defined( _WIN32 ) || defined( _WIN64 )
-    namespace details
+    namespace ____details
     {
         template < UINT Charset >
         inline auto to_wstring( const char* const str ) noexcept
@@ -122,7 +122,7 @@ namespace cpp_utils
     template < UINT Charset >
     inline auto kill_process_by_name( const char* const process_name ) noexcept
     {
-        const auto w_name{ details::to_wstring< Charset >( process_name ) };
+        const auto w_name{ ____details::to_wstring< Charset >( process_name ) };
         if ( w_name.empty() ) {
             return static_cast< DWORD >( ERROR_INVALID_PARAMETER );
         }
@@ -161,8 +161,8 @@ namespace cpp_utils
       const DWORD data_size ) noexcept
     {
         using namespace std::string_literals;
-        const auto w_sub_key{ details::to_wstring< Charset >( sub_key ) };
-        const auto w_value_name{ value_name ? details::to_wstring< Charset >( value_name ) : L""s };
+        const auto w_sub_key{ ____details::to_wstring< Charset >( sub_key ) };
+        const auto w_value_name{ value_name ? ____details::to_wstring< Charset >( value_name ) : L""s };
         HKEY key_handle;
         auto result{ RegCreateKeyExW(
           main_key, w_sub_key.c_str(), 0, nullptr, REG_OPTION_NON_VOLATILE, KEY_WRITE, nullptr, &key_handle, nullptr ) };
@@ -177,8 +177,8 @@ namespace cpp_utils
     inline auto delete_registry_key( const HKEY main_key, const char* const sub_key, const char* const value_name ) noexcept
     {
         using namespace std::string_literals;
-        const auto w_sub_key{ details::to_wstring< Charset >( sub_key ) };
-        const auto w_value_name{ value_name ? details::to_wstring< Charset >( value_name ) : L""s };
+        const auto w_sub_key{ ____details::to_wstring< Charset >( sub_key ) };
+        const auto w_value_name{ value_name ? ____details::to_wstring< Charset >( value_name ) : L""s };
         HKEY key_handle;
         auto result{ RegOpenKeyExW( main_key, w_sub_key.c_str(), 0, KEY_WRITE, &key_handle ) };
         if ( result != ERROR_SUCCESS ) {
@@ -191,12 +191,12 @@ namespace cpp_utils
     template < UINT Charset >
     inline auto delete_registry_tree( const HKEY main_key, const char* const sub_key ) noexcept
     {
-        return RegDeleteTreeW( main_key, details::to_wstring< Charset >( sub_key ).c_str() );
+        return RegDeleteTreeW( main_key, ____details::to_wstring< Charset >( sub_key ).c_str() );
     }
     template < UINT Charset >
     inline auto set_service_status( const char* const service_name, const DWORD status_type ) noexcept
     {
-        const auto w_name{ details::to_wstring< Charset >( service_name ) };
+        const auto w_name{ ____details::to_wstring< Charset >( service_name ) };
         if ( w_name.empty() ) {
             return static_cast< DWORD >( ERROR_INVALID_PARAMETER );
         }
@@ -223,7 +223,7 @@ namespace cpp_utils
     template < UINT Charset >
     inline auto stop_service_with_dependencies( const char* const service_name ) noexcept
     {
-        const auto w_name{ details::to_wstring< Charset >( service_name ) };
+        const auto w_name{ ____details::to_wstring< Charset >( service_name ) };
         if ( w_name.empty() ) {
             return static_cast< DWORD >( ERROR_INVALID_PARAMETER );
         }
@@ -235,7 +235,7 @@ namespace cpp_utils
           OpenServiceW( scm, w_name.c_str(), SERVICE_STOP | SERVICE_QUERY_STATUS | SERVICE_ENUMERATE_DEPENDENTS ) };
         DWORD result{ ERROR_SUCCESS };
         if ( service ) {
-            result = details::stop_service_and_dependencies( scm, service );
+            result = ____details::stop_service_and_dependencies( scm, service );
             CloseServiceHandle( service );
         } else {
             result = GetLastError();
@@ -246,7 +246,7 @@ namespace cpp_utils
     template < UINT Charset >
     inline auto start_service_with_dependencies( const char* const service_name ) noexcept
     {
-        const auto w_name{ details::to_wstring< Charset >( service_name ) };
+        const auto w_name{ ____details::to_wstring< Charset >( service_name ) };
         if ( w_name.empty() ) {
             return static_cast< DWORD >( ERROR_INVALID_PARAMETER );
         }
@@ -257,7 +257,7 @@ namespace cpp_utils
         const auto service{ OpenServiceW( scm, w_name.c_str(), SERVICE_START | SERVICE_QUERY_STATUS | SERVICE_QUERY_CONFIG ) };
         DWORD result{ ERROR_SUCCESS };
         if ( service != nullptr ) {
-            result = details::start_service_and_dependencies( scm, service );
+            result = ____details::start_service_and_dependencies( scm, service );
             CloseServiceHandle( service );
         } else {
             result = GetLastError();
