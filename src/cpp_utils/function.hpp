@@ -10,6 +10,7 @@
 #include <typeindex>
 #include <utility>
 #include <vector>
+#include "compiler.hpp"
 #include "type_tools.hpp"
 namespace cpp_utils
 {
