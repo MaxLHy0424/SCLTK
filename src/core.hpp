@@ -165,7 +165,7 @@ namespace core
             const char* self_name;
             const char* shown_name;
             std::vector< item > items;
-            auto& operator[]( const std::string_view self_name ) const noexcept
+            const auto& operator[]( const std::string_view self_name ) const noexcept
             {
                 for ( auto& item : items ) {
                     if ( self_name == item.self_name ) {
@@ -178,6 +178,10 @@ namespace core
                 } else {
                     std::unreachable();
                 }
+            }
+            auto& operator[]( const std::string_view self_name ) noexcept
+            {
+                return const_cast< item& >( std::as_const( *this )[ self_name ] );
             }
             auto operator=( const category& ) -> category& = delete;
             auto operator=( category&& ) -> category&      = delete;
@@ -203,7 +207,7 @@ namespace core
                 { "translucent", "* 半透明" } } },
            { "misc", "杂项", { { "disable_x_option_hot_reload", "** 禁用标 * 选项热重载" } } } }
         };
-        auto& operator[]( const std::string_view self_name ) const noexcept
+        const auto& operator[]( const std::string_view self_name ) const noexcept
         {
             for ( auto& category : categories ) {
                 if ( self_name == category.self_name ) {
@@ -216,6 +220,10 @@ namespace core
             } else {
                 std::unreachable();
             }
+        }
+        auto& operator[]( const std::string_view self_name ) noexcept
+        {
+            return const_cast< category& >( std::as_const( *this )[ self_name ] );
         }
         options() noexcept
           : config_node_impl{ "options" }
