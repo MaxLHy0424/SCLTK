@@ -40,7 +40,7 @@ namespace cpp_utils
             func_args( func_args&& ) noexcept      = default;
             ~func_args() noexcept                  = default;
         };
-        using callback_t = std::function< func_return_t( func_args ) >;
+        using callback_t = std::variant< std::function< func_return_t() >, std::function< func_return_t( func_args ) > >;
       private:
         static inline HANDLE std_input_handle_;
         static inline HANDLE std_output_handle_;
@@ -201,14 +201,31 @@ namespace cpp_utils
                 if ( line != current_event.dwMousePosition ) {
                     continue;
                 }
-                if ( line.func == nullptr ) {
+                bool is_text{ false };
+                line.func.visit( [ & ]( auto&& func )
+                {
+                    if ( func == nullptr ) {
+                        is_text = true;
+                    }
+                } );
+                if ( is_text == true ) {
                     break;
                 }
                 cls_();
                 line.set_attrs( line.default_attrs );
                 show_cursor_( FALSE );
                 edit_console_attrs_( console_attrs_selection_::lock_all );
-                is_exit = line.func( func_args{ *this, i, current_event } );
+                line.func.visit( [ & ]( auto&& func )
+                {
+                    using func_t = std::decay_t< decltype( func ) >;
+                    if constexpr ( std::is_same_v< func_t, std::function< func_return_t() > > ) {
+                        is_exit = func();
+                    } else if constexpr ( std::is_same_v< func_t, std::function< func_return_t( func_args ) > > ) {
+                        is_exit = func( func_args{ *this, i, current_event } );
+                    } else {
+                        static_assert( false, "unknown callback!" );
+                    }
+                } );
                 show_cursor_( FALSE );
                 edit_console_attrs_( console_attrs_selection_::lock_text );
                 init_pos_();
@@ -252,27 +269,33 @@ namespace cpp_utils
             return *this;
         }
         auto& add_front(
-          const std::string_view text, callback_t func = nullptr,
+          const std::string_view text, callback_t func = {},
           const WORD intensity_attrs = console_text::foreground_green | console_text::foreground_blue,
           const WORD default_attrs   = console_text::default_attrs )
         {
-            lines_.emplace_front( text, func, default_attrs, func != nullptr ? intensity_attrs : default_attrs );
+            bool is_func{ false };
+            func.visit( [ & ]( auto&& func ) { is_func = ( func != nullptr ); } );
+            lines_.emplace_front( text, func, default_attrs, is_func ? intensity_attrs : default_attrs );
             return *this;
         }
         auto& add_back(
-          const std::string_view text, callback_t func = nullptr,
+          const std::string_view text, callback_t func = {},
           const WORD intensity_attrs = console_text::foreground_blue | console_text::foreground_green,
           const WORD default_attrs   = console_text::default_attrs )
         {
-            lines_.emplace_back( text, func, default_attrs, func != nullptr ? intensity_attrs : default_attrs );
+            bool is_func{ false };
+            func.visit( [ & ]( auto&& func ) { is_func = ( func != nullptr ); } );
+            lines_.emplace_back( text, func, default_attrs, is_func ? intensity_attrs : default_attrs );
             return *this;
         }
         auto& insert(
-          const size_t index, const std::string_view text, callback_t func = nullptr,
+          const size_t index, const std::string_view text, callback_t func = {},
           const WORD intensity_attrs = console_text::foreground_green | console_text::foreground_blue,
           const WORD default_attrs   = console_text::default_attrs )
         {
-            lines_.emplace( lines_.cbegin() + index, text, func, default_attrs, func != nullptr ? intensity_attrs : default_attrs );
+            bool is_func{ false };
+            func.visit( [ & ]( auto&& func ) { is_func = ( func != nullptr ); } );
+            lines_.emplace( lines_.cbegin() + index, text, func, default_attrs, is_func ? intensity_attrs : default_attrs );
             return *this;
         }
         auto& edit_text( const size_t index, const std::string_view text )
