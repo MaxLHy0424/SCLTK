@@ -153,7 +153,7 @@ namespace core
               , self_name{ src.self_name }
               , shown_name{ src.shown_name }
             { }
-            item( item& src ) noexcept
+            item( item&& src ) noexcept
               : value_{ src }
               , self_name{ src.self_name }
               , shown_name{ src.shown_name }
