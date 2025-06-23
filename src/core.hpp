@@ -158,7 +158,7 @@ namespace core
               , self_name{ src.self_name }
               , shown_name{ src.shown_name }
             { }
-            ~item() = default;
+            ~item() noexcept = default;
         };
         struct category final
         {
