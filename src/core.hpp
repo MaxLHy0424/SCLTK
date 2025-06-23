@@ -369,12 +369,10 @@ namespace core
         {
             return ( std::is_base_of_v< config_node_impl, Ts > && ... );
         }
-        using unknown_config_node_t = void*;
-        constexpr unknown_config_node_t unknown_config_node{ nullptr };
         template < typename... Ts >
         inline consteval auto make_config_node_variant( std::type_identity< std::tuple< Ts... > > )
         {
-            return std::variant< unknown_config_node_t, std::add_pointer_t< Ts >... >{};
+            return std::variant< std::monostate, std::add_pointer_t< Ts >... >{};
         }
     }
     inline std::tuple< options, custom_rules_execs, custom_rules_servs > config_nodes{};
@@ -406,7 +404,7 @@ namespace core
                  && line_view.substr( line_view.size() - sizeof( " ]" ) + 1, line_view.size() ) == " ]" )
             {
                 line_view           = line_view.substr( sizeof( "[ " ) - 1, line_view.size() - sizeof( " ]" ) - 1 );
-                current_config_node = details__::unknown_config_node;
+                current_config_node = std::monostate{};
                 std::apply( [ & ]( auto&&... config_node )
                 {
                     ( [ & ]( auto&& current_node ) noexcept
@@ -420,7 +418,7 @@ namespace core
             }
             current_config_node.visit( [ & ]( const auto node_ptr )
             {
-                if constexpr ( !std::is_same_v< std::decay_t< decltype( node_ptr ) >, details__::unknown_config_node_t > ) {
+                if constexpr ( !std::is_same_v< std::decay_t< decltype( node_ptr ) >, std::monostate > ) {
                     node_ptr->load( is_reload, line );
                 }
             } );
