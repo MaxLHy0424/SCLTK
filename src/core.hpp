@@ -379,10 +379,10 @@ namespace core
     }
     inline std::tuple< options, custom_rules_execs, custom_rules_servs > config_nodes{};
     static_assert( details__::check_config_nodes_validity( std::type_identity< decltype( config_nodes ) >{} ) == true );
-    auto& options_node{ std::get< options >( config_nodes ) };
+    auto& options_set{ std::get< options >( config_nodes ) };
     namespace details__
     {
-        inline const auto& is_disable_x_option_hot_reload{ options_node[ "misc" ][ "disable_x_option_hot_reload" ] };
+        inline const auto& is_disable_x_option_hot_reload{ options_set[ "misc" ][ "disable_x_option_hot_reload" ] };
     }
     inline auto load_config( const bool is_reload = false )
     {
@@ -599,7 +599,7 @@ namespace core
     }
     inline auto set_console_attrs()
     {
-        const auto& window_options{ options_node[ "window" ] };
+        const auto& window_options{ options_set[ "window" ] };
         const auto& is_enable_minimalist_titlebar{ window_options[ "minimalist_titlebar" ] };
         const auto& is_translucent{ window_options[ "translucent" ] };
         auto core_op{ [ & ]
@@ -618,7 +618,7 @@ namespace core
     }
     inline auto keep_window_top()
     {
-        const auto& is_keep_window_top{ options_node[ "window" ][ "keep_window_top" ] };
+        const auto& is_keep_window_top{ options_set[ "window" ][ "keep_window_top" ] };
         if ( details__::is_disable_x_option_hot_reload && !is_keep_window_top ) {
             return;
         }
@@ -645,7 +645,7 @@ namespace core
     {
         using exec_const_ref_t = cpp_utils::add_const_lvalue_reference_t< rule_node::item_t >;
         using serv_const_ref_t = cpp_utils::add_const_lvalue_reference_t< rule_node::item_t >;
-        inline const auto& option_crack_restore{ options_node[ "crack_restore" ] };
+        inline const auto& option_crack_restore{ options_set[ "crack_restore" ] };
         inline const auto& is_hijack_execs{ option_crack_restore[ "hijack_execs" ] };
         inline const auto& is_set_serv_startup_types{ option_crack_restore[ "set_serv_startup_types" ] };
         inline const auto& is_enable_fast_mode{ option_crack_restore[ "fast_mode" ] };
