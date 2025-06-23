@@ -50,108 +50,6 @@ namespace core
             }
         }
     }
-    struct option_set final
-    {
-        struct item final
-        {
-          private:
-            std::atomic< bool > value_{ false };
-          public:
-            const char* self_name;
-            const char* shown_name;
-            auto set( const bool value ) noexcept
-            {
-                value_.store( value, std::memory_order_release );
-            }
-            auto get() const noexcept
-            {
-                return value_.load( std::memory_order_acquire );
-            }
-            operator bool() const noexcept
-            {
-                return get();
-            }
-            auto operator=( const item& ) -> item&     = delete;
-            auto operator=( item&& ) noexcept -> item& = delete;
-            item( const char* const self_name, const char* const shown_name ) noexcept
-              : self_name{ self_name }
-              , shown_name{ shown_name }
-            { }
-            item( const item& src ) noexcept
-              : value_{ src }
-              , self_name{ src.self_name }
-              , shown_name{ src.shown_name }
-            { }
-            item( item& src ) noexcept
-              : value_{ src }
-              , self_name{ src.self_name }
-              , shown_name{ src.shown_name }
-            { }
-            ~item() = default;
-        };
-        struct category final
-        {
-            const char* self_name;
-            const char* shown_name;
-            std::vector< item > items;
-            auto& operator[]( const std::string_view self_name ) const noexcept
-            {
-                for ( auto& item : items ) {
-                    if ( self_name == item.self_name ) {
-                        return item;
-                    }
-                }
-                if constexpr ( cpp_utils::is_debug_build ) {
-                    std::print( "'{}' does not exists.", self_name );
-                    std::terminate();
-                } else {
-                    std::unreachable();
-                }
-            }
-            auto operator=( const category& ) -> category& = delete;
-            auto operator=( category&& ) -> category&      = delete;
-            category( const char* const self_name, const char* const shown_name, std::vector< item > items )
-              : self_name{ self_name }
-              , shown_name{ shown_name }
-              , items{ std::move( items ) }
-            { }
-            category( const category& )     = default;
-            category( category&& ) noexcept = default;
-            ~category()                     = default;
-        };
-        std::vector< category > categories;
-        auto& operator[]( const std::string_view self_name ) const noexcept
-        {
-            for ( auto& category : categories ) {
-                if ( self_name == category.self_name ) {
-                    return category;
-                }
-            }
-            if constexpr ( cpp_utils::is_debug_build ) {
-                std::print( "'{}' does not exists.", self_name );
-                std::terminate();
-            } else {
-                std::unreachable();
-            }
-        }
-        option_set( std::vector< category > categories )
-          : categories{ std::move( categories ) }
-        { }
-    };
-    inline option_set opt_set{
-      { { { "crack_restore",
-            "破解与恢复",
-            { { "hijack_execs", "劫持可执行文件" },
-              { "set_serv_startup_types", "设置服务启动类型" },
-              { "fast_mode", "快速模式" } } },
-          { "window",
-            "窗口显示",
-            { { "keep_window_top", "* 置顶窗口" }, { "minimalist_titlebar", "* 极简标题栏" }, { "translucent", "* 半透明" } } },
-          { "misc", "杂项", { { "disable_x_option_hot_reload", "** 禁用标 * 选项热重载" } } } } } };
-    namespace details__
-    {
-        inline const auto& is_disable_x_option_hot_reload{ opt_set[ "misc" ][ "disable_x_option_hot_reload" ] };
-    }
     struct rule_node final
     {
         using item_t      = std::string;
@@ -224,6 +122,105 @@ namespace core
     class options final : public config_node_impl
     {
         friend config_node_impl;
+      public:
+        struct item final
+        {
+          private:
+            std::atomic< bool > value_{ false };
+          public:
+            const char* self_name;
+            const char* shown_name;
+            auto set( const bool value ) noexcept
+            {
+                value_.store( value, std::memory_order_release );
+            }
+            auto get() const noexcept
+            {
+                return value_.load( std::memory_order_acquire );
+            }
+            operator bool() const noexcept
+            {
+                return get();
+            }
+            auto operator=( const item& ) -> item&     = delete;
+            auto operator=( item&& ) noexcept -> item& = delete;
+            item( const char* const self_name, const char* const shown_name ) noexcept
+              : self_name{ self_name }
+              , shown_name{ shown_name }
+            { }
+            item( const item& src ) noexcept
+              : value_{ src }
+              , self_name{ src.self_name }
+              , shown_name{ src.shown_name }
+            { }
+            item( item& src ) noexcept
+              : value_{ src }
+              , self_name{ src.self_name }
+              , shown_name{ src.shown_name }
+            { }
+            ~item() = default;
+        };
+        struct category final
+        {
+            const char* self_name;
+            const char* shown_name;
+            std::vector< item > items;
+            auto& operator[]( const std::string_view self_name ) const noexcept
+            {
+                for ( auto& item : items ) {
+                    if ( self_name == item.self_name ) {
+                        return item;
+                    }
+                }
+                if constexpr ( cpp_utils::is_debug_build ) {
+                    std::print( "'{}' does not exists.", self_name );
+                    std::terminate();
+                } else {
+                    std::unreachable();
+                }
+            }
+            auto operator=( const category& ) -> category& = delete;
+            auto operator=( category&& ) -> category&      = delete;
+            category( const char* const self_name, const char* const shown_name, std::vector< item > items )
+              : self_name{ self_name }
+              , shown_name{ shown_name }
+              , items{ std::move( items ) }
+            { }
+            category( const category& )     = default;
+            category( category&& ) noexcept = default;
+            ~category()                     = default;
+        };
+        std::vector< category > categories{
+          { { "crack_restore",
+              "破解与恢复",
+              { { "hijack_execs", "劫持可执行文件" },
+                { "set_serv_startup_types", "设置服务启动类型" },
+                { "fast_mode", "快速模式" } } },
+           { "window",
+              "窗口显示",
+              { { "keep_window_top", "* 置顶窗口" },
+                { "minimalist_titlebar", "* 极简标题栏" },
+                { "translucent", "* 半透明" } } },
+           { "misc", "杂项", { { "disable_x_option_hot_reload", "** 禁用标 * 选项热重载" } } } }
+        };
+        auto& operator[]( const std::string_view self_name ) const noexcept
+        {
+            for ( auto& category : categories ) {
+                if ( self_name == category.self_name ) {
+                    return category;
+                }
+            }
+            if constexpr ( cpp_utils::is_debug_build ) {
+                std::print( "'{}' does not exists.", self_name );
+                std::terminate();
+            } else {
+                std::unreachable();
+            }
+        }
+        options() noexcept
+          : config_node_impl{ "options" }
+        { }
+        ~options() noexcept = default;
       private:
         static constexpr auto format_string_{ "{}.{}: {}" };
         static auto make_swith_button_text_( const auto is_enable )
@@ -235,7 +232,7 @@ namespace core
             if ( is_reload ) {
                 return;
             }
-            for ( auto& category : opt_set.categories ) {
+            for ( auto& category : this->categories ) {
                 for ( auto& item : category.items ) {
                     if ( line == std::format( format_string_, category.self_name, item.self_name, true ) ) {
                         item.set( true );
@@ -247,7 +244,7 @@ namespace core
         }
         auto sync_( std::ofstream& out )
         {
-            for ( const auto& category : opt_set.categories ) {
+            for ( const auto& category : this->categories ) {
                 for ( const auto& item : category.items ) {
                     out << std::format( format_string_, category.self_name, item.self_name, item.get() ) << '\n';
                 }
@@ -256,8 +253,8 @@ namespace core
         auto ui_( cpp_utils::console_ui& ui )
         {
             constexpr auto option_ctrl_color{ cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_green };
-            using category_t = option_set::category;
-            using item_t     = option_set::item;
+            using category_t = category;
+            using item_t     = item;
             class option_setter final
             {
               private:
@@ -304,15 +301,10 @@ namespace core
               "     标 * 选项热重载每 {} 自动执行, 可禁用.\n"
               "     标 ** 选项无法热重载. 其余选项可实时热重载.\n",
               default_thread_sleep_time ) );
-            for ( auto& category : opt_set.categories ) {
+            for ( auto& category : this->categories ) {
                 ui.add_back( std::format( " > {} ", category.shown_name ), option_ui{ category }, option_ctrl_color );
             }
         }
-      public:
-        options() noexcept
-          : config_node_impl{ "options" }
-        { }
-        ~options() noexcept = default;
     };
     class custom_rules_execs final : public config_node_impl
     {
@@ -379,6 +371,11 @@ namespace core
     }
     inline std::tuple< options, custom_rules_execs, custom_rules_servs > config_nodes{};
     static_assert( details__::check_config_nodes_validity( std::type_identity< decltype( config_nodes ) >{} ) == true );
+    auto& options_node{ std::get< 0 >( config_nodes ) };
+    namespace details__
+    {
+        inline const auto& is_disable_x_option_hot_reload{ options_node[ "misc" ][ "disable_x_option_hot_reload" ] };
+    }
     inline auto load_config( const bool is_reload = false )
     {
         std::ifstream config_file{ config_file_name, std::ios::in };
@@ -594,7 +591,7 @@ namespace core
     }
     inline auto set_console_attrs()
     {
-        const auto& window_options{ opt_set[ "window" ] };
+        const auto& window_options{ options_node[ "window" ] };
         const auto& is_enable_minimalist_titlebar{ window_options[ "minimalist_titlebar" ] };
         const auto& is_translucent{ window_options[ "translucent" ] };
         auto core_op{ [ & ]
@@ -613,7 +610,7 @@ namespace core
     }
     inline auto keep_window_top()
     {
-        const auto& is_keep_window_top{ opt_set[ "window" ][ "keep_window_top" ] };
+        const auto& is_keep_window_top{ options_node[ "window" ][ "keep_window_top" ] };
         if ( details__::is_disable_x_option_hot_reload && !is_keep_window_top ) {
             return;
         }
@@ -640,7 +637,7 @@ namespace core
     {
         using exec_const_ref_t = cpp_utils::add_const_lvalue_reference_t< rule_node::item_t >;
         using serv_const_ref_t = cpp_utils::add_const_lvalue_reference_t< rule_node::item_t >;
-        inline const auto& option_crack_restore{ opt_set[ "crack_restore" ] };
+        inline const auto& option_crack_restore{ options_node[ "crack_restore" ] };
         inline const auto& is_hijack_execs{ option_crack_restore[ "hijack_execs" ] };
         inline const auto& is_set_serv_startup_types{ option_crack_restore[ "set_serv_startup_types" ] };
         inline const auto& is_enable_fast_mode{ option_crack_restore[ "fast_mode" ] };
