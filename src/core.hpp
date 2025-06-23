@@ -122,7 +122,7 @@ namespace core
     class options final : public config_node_impl
     {
         friend config_node_impl;
-      public:
+      private:
         struct item final
         {
           private:
@@ -207,29 +207,6 @@ namespace core
                 { "translucent", "* 半透明" } } },
            { "misc", "杂项", { { "disable_x_option_hot_reload", "** 禁用标 * 选项热重载" } } } }
         };
-        const auto& operator[]( const std::string_view self_name ) const noexcept
-        {
-            for ( auto& category : categories ) {
-                if ( self_name == category.self_name ) {
-                    return category;
-                }
-            }
-            if constexpr ( cpp_utils::is_debug_build ) {
-                std::print( "'{}' does not exists.", self_name );
-                std::terminate();
-            } else {
-                std::unreachable();
-            }
-        }
-        auto& operator[]( const std::string_view self_name ) noexcept
-        {
-            return const_cast< category& >( std::as_const( *this )[ self_name ] );
-        }
-        options() noexcept
-          : config_node_impl{ "options" }
-        { }
-        ~options() noexcept = default;
-      private:
         static constexpr auto format_string_{ "{}.{}: {}" };
         static auto make_swith_button_text_( const auto is_enable )
         {
@@ -313,6 +290,29 @@ namespace core
                 ui.add_back( std::format( " > {} ", category.shown_name ), option_ui{ category }, option_ctrl_color );
             }
         }
+      public:
+        const auto& operator[]( const std::string_view self_name ) const noexcept
+        {
+            for ( auto& category : categories ) {
+                if ( self_name == category.self_name ) {
+                    return category;
+                }
+            }
+            if constexpr ( cpp_utils::is_debug_build ) {
+                std::print( "'{}' does not exists.", self_name );
+                std::terminate();
+            } else {
+                std::unreachable();
+            }
+        }
+        auto& operator[]( const std::string_view self_name ) noexcept
+        {
+            return const_cast< category& >( std::as_const( *this )[ self_name ] );
+        }
+        options() noexcept
+          : config_node_impl{ "options" }
+        { }
+        ~options() noexcept = default;
     };
     class custom_rules_execs final : public config_node_impl
     {
