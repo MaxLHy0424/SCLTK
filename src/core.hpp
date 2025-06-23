@@ -379,7 +379,7 @@ namespace core
     }
     inline std::tuple< options, custom_rules_execs, custom_rules_servs > config_nodes{};
     static_assert( details__::check_config_nodes_validity( std::type_identity< decltype( config_nodes ) >{} ) == true );
-    auto& options_node{ std::get< 0 >( config_nodes ) };
+    auto& options_node{ std::get< options >( config_nodes ) };
     namespace details__
     {
         inline const auto& is_disable_x_option_hot_reload{ options_node[ "misc" ][ "disable_x_option_hot_reload" ] };
