@@ -26,7 +26,7 @@ namespace cpp_utils
         if ( begin == end ) {
             return;
         }
-        const auto total{ end - begin };
+        const auto total{ std::distance( begin, end ) };
         thread_num = std::min< thread_num_t >( thread_num, total );
         const auto chunk_size{ total / thread_num };
         const auto remainder{ total % thread_num };
