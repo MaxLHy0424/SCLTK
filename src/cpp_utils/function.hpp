@@ -16,54 +16,57 @@ namespace cpp_utils
 {
 #if ( defined( __GNUC__ ) && defined( __GXX_RTTI ) ) || ( defined( _MSC_VER ) && defined( _CPPRTTI ) ) \
   || ( defined( __clang__ ) && __has_feature( cxx_rtti ) )
-    class func_wrapper_impl
+    namespace details__
     {
-      public:
-        virtual ~func_wrapper_impl()                                                 = default;
-        virtual auto empty() const -> bool                                           = 0;
-        virtual auto args_type() const -> const std::vector< std::type_index >&      = 0;
-        virtual auto invoke( const std::vector< std::any >& args ) const -> std::any = 0;
-    };
-    template < typename R, typename... Args >
-    class func_wrapper final : public func_wrapper_impl
-    {
-      private:
-        std::function< R( Args... ) > func_;
-        std::vector< std::type_index > args_type_{ std::type_index{ typeid( Args ) }... };
-        template < size_t... Is >
-        auto invoke_impl_( const std::vector< std::any >& args, std::index_sequence< Is... > ) const -> std::any
+        class func_wrapper_impl
         {
-            if constexpr ( std::is_void_v< R > ) {
-                std::invoke( func_, std::any_cast< Args >( args[ Is ] )... );
-                return {};
-            } else {
-                return std::make_shared< R >( std::invoke( func_, std::any_cast< Args >( args[ Is ] )... ) );
+          public:
+            virtual ~func_wrapper_impl()                                                 = default;
+            virtual auto empty() const -> bool                                           = 0;
+            virtual auto args_type() const -> const std::vector< std::type_index >&      = 0;
+            virtual auto invoke( const std::vector< std::any >& args ) const -> std::any = 0;
+        };
+        template < typename R, typename... Args >
+        class func_wrapper final : public func_wrapper_impl
+        {
+          private:
+            std::function< R( Args... ) > func_;
+            std::vector< std::type_index > args_type_{ std::type_index{ typeid( Args ) }... };
+            template < size_t... Is >
+            auto invoke_impl_( const std::vector< std::any >& args, std::index_sequence< Is... > ) const -> std::any
+            {
+                if constexpr ( std::is_void_v< R > ) {
+                    std::invoke( func_, std::any_cast< Args >( args[ Is ] )... );
+                    return {};
+                } else {
+                    return std::make_shared< R >( std::invoke( func_, std::any_cast< Args >( args[ Is ] )... ) );
+                }
             }
-        }
-      public:
-        virtual auto empty() const noexcept -> bool
-        {
-            return func_ == nullptr;
-        }
-        virtual auto args_type() const -> const std::vector< std::type_index >& override final
-        {
-            return args_type_;
-        }
-        virtual auto invoke( const std::vector< std::any >& args ) const -> std::any override final
-        {
-            if ( sizeof...( Args ) != args.size() ) [[unlikely]] {
-                throw std::invalid_argument{ "arguments error" };
+          public:
+            virtual auto empty() const noexcept -> bool
+            {
+                return func_ == nullptr;
             }
-            return invoke_impl_( args, std::index_sequence_for< Args... >{} );
-        }
-        func_wrapper( std::function< R( Args... ) > func )
-          : func_{ std::move( func ) }
-        { }
-    };
+            virtual auto args_type() const -> const std::vector< std::type_index >& override final
+            {
+                return args_type_;
+            }
+            virtual auto invoke( const std::vector< std::any >& args ) const -> std::any override final
+            {
+                if ( sizeof...( Args ) != args.size() ) [[unlikely]] {
+                    throw std::invalid_argument{ "arguments error" };
+                }
+                return invoke_impl_( args, std::index_sequence_for< Args... >{} );
+            }
+            func_wrapper( std::function< R( Args... ) > func )
+              : func_{ std::move( func ) }
+            { }
+        };
+    }
     class func_container final
     {
       private:
-        std::deque< std::unique_ptr< func_wrapper_impl > > func_nodes_{};
+        std::deque< std::unique_ptr< details__::func_wrapper_impl > > func_nodes_{};
       public:
         auto empty() const noexcept
         {
@@ -103,46 +106,47 @@ namespace cpp_utils
         template < typename R, typename... Args >
         auto& add_front( R ( *func )( Args... ) )
         {
-            func_nodes_.emplace_front( std::make_unique< func_wrapper< R, Args... > >( func ) );
+            func_nodes_.emplace_front( std::make_unique< details__::func_wrapper< R, Args... > >( func ) );
             return *this;
         }
         template < typename R, typename... Args >
         auto& add_front( std::function< R( Args... ) > func )
         {
-            func_nodes_.emplace_front( std::make_unique< func_wrapper< R, Args... > >( std::move( func ) ) );
+            func_nodes_.emplace_front( std::make_unique< details__::func_wrapper< R, Args... > >( std::move( func ) ) );
             return *this;
         }
         template < typename R, typename... Args >
         auto& add_back( R ( *func )( Args... ) )
         {
-            func_nodes_.emplace_back( std::make_unique< func_wrapper< R, Args... > >( func ) );
+            func_nodes_.emplace_back( std::make_unique< details__::func_wrapper< R, Args... > >( func ) );
             return *this;
         }
         template < typename R, typename... Args >
         auto& add_back( std::function< R( Args... ) > func )
         {
-            func_nodes_.emplace_back( std::make_unique< func_wrapper< R, Args... > >( std::move( func ) ) );
+            func_nodes_.emplace_back( std::make_unique< details__::func_wrapper< R, Args... > >( std::move( func ) ) );
             return *this;
         }
         template < typename R, typename... Args >
         auto& insert( const size_t index, R ( *func )( Args... ) )
         {
-            func_nodes_.emplace( func_nodes_.cbegin() + index, std::make_unique< func_wrapper< R, Args... > >( func ) );
+            func_nodes_.emplace( func_nodes_.cbegin() + index, std::make_unique< details__::func_wrapper< R, Args... > >( func ) );
             return *this;
         }
         template < typename R, typename... Args >
         auto& insert( const size_t index, std::function< R( Args... ) > func )
         {
-            func_nodes_.emplace( func_nodes_.cbegin() + index, std::make_unique< func_wrapper< R, Args... > >( std::move( func ) ) );
+            func_nodes_.emplace(
+              func_nodes_.cbegin() + index, std::make_unique< details__::func_wrapper< R, Args... > >( std::move( func ) ) );
             return *this;
         }
         template < typename R, typename... Args >
         auto& edit( const size_t index, R ( *func )( Args... ) )
         {
             if constexpr ( is_debug_build ) {
-                func_nodes_.at( index ) = std::make_unique< func_wrapper< R, Args... > >( func );
+                func_nodes_.at( index ) = std::make_unique< details__::func_wrapper< R, Args... > >( func );
             } else {
-                func_nodes_[ index ] = std::make_unique< func_wrapper< R, Args... > >( func );
+                func_nodes_[ index ] = std::make_unique< details__::func_wrapper< R, Args... > >( func );
             }
             return *this;
         }
@@ -150,9 +154,9 @@ namespace cpp_utils
         auto& edit( const size_t index, std::function< R( Args... ) > func )
         {
             if constexpr ( is_debug_build ) {
-                func_nodes_.at( index ) = std::make_unique< func_wrapper< R, Args... > >( std::move( func ) );
+                func_nodes_.at( index ) = std::make_unique< details__::func_wrapper< R, Args... > >( std::move( func ) );
             } else {
-                func_nodes_[ index ] = std::make_unique< func_wrapper< R, Args... > >( std::move( func ) );
+                func_nodes_[ index ] = std::make_unique< details__::func_wrapper< R, Args... > >( std::move( func ) );
             }
             return *this;
         }
