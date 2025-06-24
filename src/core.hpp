@@ -518,7 +518,7 @@ namespace core
             cpp_utils::enable_window_maximize_ctrl( window_handle, false );
             return func_back;
         } };
-        auto restore_several_disabled_os_components{ [] static
+        auto restore_os_components{ [] static
         {
             std::print(
               "                   [ 工 具 箱 ]\n\n\n"
@@ -587,7 +587,7 @@ namespace core
         ui.add_back( "                   [ 工 具 箱 ]\n\n" )
           .add_back( " < 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
           .add_back( " > 命令提示符 ", launch_cmd )
-          .add_back( " > 恢复部分被禁用的操作系统组件 ", restore_several_disabled_os_components )
+          .add_back( " > 恢复操作系统组件 ", restore_os_components )
           .add_back( "\n[ 常用操作 ]\n" );
         for ( const auto& common_cmd : common_cmds ) {
             ui.add_back( std::format( " > {} ", common_cmd.description ), cmd_executor{ common_cmd } );
