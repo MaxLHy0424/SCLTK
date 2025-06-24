@@ -88,40 +88,43 @@ namespace core
           { "rscheck", "checkrs", "REDAgent", "PerformanceCheck", "edpaper", "Adapter", "repview", "FormatPaper" },
           { "appcheck2", "checkapp2" } } }
     };
-    class config_node_impl
+    namespace details__
     {
-      public:
-        const char* self_name;
-        auto load( this auto&& self, const bool is_reload, std::string& line )
+        class config_node_impl
         {
-            self.load_( is_reload, line );
-        }
-        auto sync( this auto&& self, std::ofstream& out )
-        {
-            self.sync_( out );
-        }
-        auto prepare_reload( this auto&& self )
-        {
-            using child_t = std::decay_t< decltype( self ) >;
-            if constexpr ( requires( child_t obj ) { obj.prepare_reload_(); } ) {
-                self.prepare_reload_();
+          public:
+            const char* self_name;
+            auto load( this auto&& self, const bool is_reload, std::string& line )
+            {
+                self.load_( is_reload, line );
             }
-        }
-        auto ui( this auto&& self, cpp_utils::console_ui& parent_ui )
-        {
-            using child_t = std::decay_t< decltype( self ) >;
-            if constexpr ( requires( child_t obj ) { obj.ui_( parent_ui ); } ) {
-                self.ui_( parent_ui );
+            auto sync( this auto&& self, std::ofstream& out )
+            {
+                self.sync_( out );
             }
-        }
-        config_node_impl( const char* const self_name ) noexcept
-          : self_name{ self_name }
-        { }
-        ~config_node_impl() noexcept = default;
-    };
-    class options final : public config_node_impl
+            auto prepare_reload( this auto&& self )
+            {
+                using child_t = std::decay_t< decltype( self ) >;
+                if constexpr ( requires( child_t obj ) { obj.prepare_reload_(); } ) {
+                    self.prepare_reload_();
+                }
+            }
+            auto ui( this auto&& self, cpp_utils::console_ui& parent_ui )
+            {
+                using child_t = std::decay_t< decltype( self ) >;
+                if constexpr ( requires( child_t obj ) { obj.ui_( parent_ui ); } ) {
+                    self.ui_( parent_ui );
+                }
+            }
+            config_node_impl( const char* const self_name ) noexcept
+              : self_name{ self_name }
+            { }
+            ~config_node_impl() noexcept = default;
+        };
+    }
+    class options final : public details__::config_node_impl
     {
-        friend config_node_impl;
+        friend details__::config_node_impl;
       private:
         struct item final
         {
@@ -314,9 +317,9 @@ namespace core
         { }
         ~options() noexcept = default;
     };
-    class custom_rules_execs final : public config_node_impl
+    class custom_rules_execs final : public details__::config_node_impl
     {
-        friend config_node_impl;
+        friend details__::config_node_impl;
       private:
         auto load_( const bool, std::string& line )
         {
@@ -338,9 +341,9 @@ namespace core
         { }
         ~custom_rules_execs() noexcept = default;
     };
-    class custom_rules_servs final : public config_node_impl
+    class custom_rules_servs final : public details__::config_node_impl
     {
-        friend config_node_impl;
+        friend details__::config_node_impl;
       private:
         auto load_( const bool, std::string& line )
         {
