@@ -32,10 +32,10 @@ else {
 #else
 # define INFO_ARCH "i686"
 #endif
-#if defined( __clang__ )
-# define INFO_COMPILER "clang " TO_STRING( __clang_major__ ) "." TO_STRING( __clang_minor__ ) "." TO_STRING( __clang_patchlevel__ )
-#elif defined( __GNUC__ )
+#if defined( __GNUC__ )
 # define INFO_COMPILER "gcc " TO_STRING( __GNUC__ ) "." TO_STRING( __GNUC_MINOR__ ) "." TO_STRING( __GNUC_PATCHLEVEL__ )
+#elif defined( __clang__ )
+# define INFO_COMPILER "clang " TO_STRING( __clang_major__ ) "." TO_STRING( __clang_minor__ ) "." TO_STRING( __clang_patchlevel__ )
 #elif defined( _MSC_VER )
 # define INFO_COMPILER "msvc " TO_STRING( _MSC_VER )
 #else
