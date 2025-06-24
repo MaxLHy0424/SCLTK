@@ -426,7 +426,7 @@ namespace core
     }
     inline auto config_ui()
     {
-        auto sync{ []() static
+        auto sync{ [] static
         {
             std::print(
               "                    [ 配  置 ]\n\n\n"
@@ -445,7 +445,7 @@ namespace core
             details__::wait();
             return func_back;
         } };
-        auto open_file{ []() static
+        auto open_file{ [] static
         {
             if ( std::ifstream{ config_file_name, std::ios::in }.good() ) {
                 std::print(
@@ -471,7 +471,7 @@ namespace core
     }
     inline auto info()
     {
-        auto visit_repo_webpage{ []() static
+        auto visit_repo_webpage{ [] static
         {
             ShellExecuteA( nullptr, "open", INFO_REPO_URL, nullptr, nullptr, SW_SHOWNORMAL );
             return func_back;
@@ -518,7 +518,7 @@ namespace core
             cpp_utils::enable_window_maximize_ctrl( window_handle, false );
             return func_back;
         } };
-        auto restore_several_disabled_os_components{ []() static
+        auto restore_several_disabled_os_components{ [] static
         {
             std::print(
               "                   [ 工 具 箱 ]\n\n\n"
