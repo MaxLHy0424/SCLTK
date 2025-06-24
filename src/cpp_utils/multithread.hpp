@@ -32,7 +32,7 @@ namespace cpp_utils
         const auto remainder{ total % thread_num };
         std::vector< std::thread > threads;
         threads.reserve( thread_num );
-        for ( const auto i : std::ranges::iota_view{ 0U, thread_num } ) {
+        for ( const auto i : std::ranges::iota_view{ thread_num_t{ 0 }, thread_num } ) {
             const auto chunk_start{ begin + i * chunk_size + std::min< thread_num_t >( i, remainder ) };
             const auto chunk_end{ chunk_start + chunk_size + ( i < remainder ? 1 : 0 ) };
             threads.emplace_back( [ =, &func ]
