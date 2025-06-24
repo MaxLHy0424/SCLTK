@@ -629,7 +629,7 @@ namespace core
             return;
         }
         while ( true ) {
-            if ( !is_keep_window_top ) [[unlikely]] {
+            if ( !is_keep_window_top ) {
                 cpp_utils::cancel_top_window( window_handle );
                 std::this_thread::sleep_for( default_thread_sleep_time );
                 continue;
