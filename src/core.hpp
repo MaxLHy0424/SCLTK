@@ -691,7 +691,7 @@ namespace core
         }
         static auto enable_serv_( details__::serv_const_ref_t serv ) noexcept
         {
-            return cpp_utils::set_service_status< charset_id >( serv.c_str(), cpp_utils::service::disabled_start );
+            return cpp_utils::set_service_status< charset_id >( serv.c_str(), cpp_utils::service::auto_start );
         }
         static auto start_serv_( details__::serv_const_ref_t serv ) noexcept
         {
