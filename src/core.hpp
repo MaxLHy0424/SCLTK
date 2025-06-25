@@ -376,6 +376,7 @@ namespace core
     using config_nodes_types = cpp_utils::type_list< options, custom_rules_execs, custom_rules_servs >;
     inline config_nodes_types::apply< std::tuple > config_nodes{};
     static_assert( config_nodes_types::filter< details__::is_valid_config_node >::size == config_nodes_types::size );
+    static_assert( config_nodes_types::unique::size == config_nodes_types::size );
     auto& options_set{ std::get< options >( config_nodes ) };
     namespace details__
     {
