@@ -1,12 +1,145 @@
 #pragma once
 #include <cstddef>
+#include <tuple>
 #include <type_traits>
+#include <utility>
 namespace cpp_utils
 {
     using size_t    = std::size_t;
     using nullptr_t = std::nullptr_t;
     template < typename T >
-    using type_set = T;
+    using type_alloc = T;
     template < typename T >
     using add_const_lvalue_reference_t = std::add_lvalue_reference_t< std::add_const_t< T > >;
+    template < bool Expr >
+    concept test = Expr;
+    template < typename... Ts >
+    class type_list final
+    {
+      private:
+        template < typename... Us >
+        static consteval auto as_type_list_( std::tuple< Us... > ) -> type_list< Us... >;
+        template < size_t Offset, size_t... Is >
+        static consteval auto offset_sequence_( std::index_sequence< Is... > ) -> std::index_sequence< ( Offset + Is )... >;
+        template < size_t... Is >
+        static consteval auto select_( std::index_sequence< Is... > )
+          -> type_list< std::tuple_element_t< Is, std::tuple< Ts... > >... >;
+        template < size_t... Is >
+        static consteval auto reverse_index_sequence_( std::index_sequence< Is... > )
+          -> std::index_sequence< ( sizeof...( Is ) - 1 - Is )... >;
+        template < typename Result, typename Remaining >
+        struct unique_impl_;
+        template < typename... ResultTs >
+        struct unique_impl_< type_list< ResultTs... >, type_list<> >
+        {
+            using type = type_list< ResultTs... >;
+        };
+        template < typename... ResultTs, typename T, typename... Rest >
+        struct unique_impl_< type_list< ResultTs... >, type_list< T, Rest... > >
+        {
+            static constexpr bool found{ ( std::is_same_v< T, ResultTs > || ... ) };
+            using next = std::conditional_t<
+              found, unique_impl_< type_list< ResultTs... >, type_list< Rest... > >,
+              unique_impl_< type_list< ResultTs..., T >, type_list< Rest... > > >;
+            using type = typename next::type;
+        };
+        template < typename >
+        struct concat_impl_;
+        template < typename... Us >
+        struct concat_impl_< type_list< Us... > >
+        {
+            using type = type_list< Ts..., Us... >;
+        };
+      public:
+        static constexpr auto size{ sizeof...( Ts ) };
+        template < typename U >
+        static constexpr auto contains{ ( std::is_same_v< U, Ts > || ... ) };
+        template < typename U >
+        static constexpr size_t count{ ( ( std::is_same_v< Ts, U > ? 1 : 0 ) + ... ) };
+        template < template < typename > typename Pred >
+        static constexpr size_t count_if{ ( ( Pred< Ts >::value ? 1 : 0 ) + ... ) };
+        template < template < typename > typename Pred >
+        static constexpr auto all_of{ ( Pred< Ts >::value && ... ) };
+        template < template < typename > typename Pred >
+        static constexpr auto any_of{ ( Pred< Ts >::value || ... ) };
+        template < template < typename > typename Pred >
+        static constexpr auto none_of{ ( !Pred< Ts >::value && ... ) };
+        template < size_t N >
+            requires test< ( N < size ) >
+        using at    = std::tuple_element_t< N, std::tuple< Ts... > >;
+        using front = at< 0 >;
+        using back  = at< size - 1 >;
+        template < typename... Us >
+        using prepend = type_list< Us..., Ts... >;
+        template < typename... Us >
+        using append       = type_list< Ts..., Us... >;
+        using remove_front = decltype( select_( offset_sequence_< 1 >( std::make_index_sequence< size - 1 >{} ) ) );
+        using remove_back  = decltype( select_( std::make_index_sequence< size - 1 >{} ) );
+        template < template < typename > typename F >
+        using transform = type_list< typename F< Ts >::type... >;
+        template < template < typename > typename Pred >
+        using filter = decltype( as_type_list_(
+          std::tuple_cat( std::conditional_t< Pred< Ts >::value, std::tuple< Ts >, std::tuple<> >{}... ) ) );
+        template < size_t Offset, size_t Count >
+            requires test< Offset + Count <= size >
+        using slice = decltype( select_( offset_sequence_< Offset >( std::make_index_sequence< Count >{} ) ) );
+        template < typename Other >
+        using concat  = typename concat_impl_< Other >::type;
+        using reverse = decltype( select_( reverse_index_sequence_( std::make_index_sequence< size >{} ) ) );
+        using unique  = typename unique_impl_< type_list<>, type_list< Ts... > >::type;
+        template < template < typename... > typename U >
+        using apply = U< Ts... >;
+    };
+    template <>
+    class type_list<> final
+    {
+      private:
+        template < typename >
+        struct concat_impl_;
+        template < typename... Us >
+        struct concat_impl_< type_list< Us... > >
+        {
+            using type = type_list< Us... >;
+        };
+      public:
+        static constexpr size_t size{ 0 };
+        template < typename >
+        static constexpr bool contains{ false };
+        using remove_front = type_list<>;
+        using remove_back  = type_list<>;
+        template < typename... Us >
+        using prepend = type_list< Us... >;
+        template < typename... Us >
+        using append = type_list< Us... >;
+        template < template < typename > typename >
+        using transform = type_list<>;
+        template < template < typename > typename >
+        using filter = type_list<>;
+        template < typename Other >
+        using concat  = typename concat_impl_< Other >::type;
+        using reverse = type_list<>;
+        using unique  = type_list<>;
+        template < template < typename... > typename U >
+        using apply = U<>;
+    };
+    namespace details__
+    {
+        template < typename T >
+        struct remove_identity;
+        template < typename T >
+        struct remove_identity< std::type_identity< T > >
+        {
+            using type = T;
+        };
+        template < typename T >
+        using remove_identity_t = remove_identity< T >::type;
+        template < typename T, size_t... Is >
+        inline consteval auto make_repeated_type_list_impl( std::index_sequence< Is... > )
+        {
+            auto helper{ []( auto v, size_t ) consteval { return v; } };
+            return type_list< remove_identity_t< decltype( helper( std::type_identity< T >{}, Is ) ) >... >{};
+        }
+    }
+    template < typename T, size_t N >
+    using make_repeated_type_list = decltype( details__::make_repeated_type_list_impl< T >( std::make_index_sequence< N >{} ) );
 }
