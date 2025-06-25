@@ -367,19 +367,15 @@ namespace core
     };
     namespace details__
     {
-        template < typename... Ts >
-        inline consteval auto check_config_nodes_validity( std::type_identity< std::tuple< Ts... > > )
+        template < typename T >
+        struct is_valid_config_node final
         {
-            return ( std::is_base_of_v< config_node_impl, Ts > && ... );
-        }
-        template < typename... Ts >
-        inline consteval auto make_config_node_variant( std::type_identity< std::tuple< Ts... > > )
-        {
-            return std::variant< std::monostate, std::add_pointer_t< Ts >... >{};
-        }
+            static constexpr auto value{ std::is_base_of_v< config_node_impl, T > };
+        };
     }
-    inline std::tuple< options, custom_rules_execs, custom_rules_servs > config_nodes{};
-    static_assert( details__::check_config_nodes_validity( std::type_identity< decltype( config_nodes ) >{} ) == true );
+    using config_nodes_types = cpp_utils::type_list< options, custom_rules_execs, custom_rules_servs >;
+    inline config_nodes_types::apply< std::tuple > config_nodes{};
+    static_assert( config_nodes_types::filter< details__::is_valid_config_node >::size == config_nodes_types::size );
     auto& options_set{ std::get< options >( config_nodes ) };
     namespace details__
     {
@@ -394,7 +390,7 @@ namespace core
         std::apply( []( auto&&... config_node ) { ( config_node.prepare_reload(), ... ); }, config_nodes );
         std::string line;
         std::string_view line_view;
-        auto current_config_node{ details__::make_config_node_variant( std::type_identity< decltype( config_nodes ) >{} ) };
+        config_nodes_types::transform< std::add_pointer >::prepend< std::monostate >::apply< std::variant > current_config_node;
         while ( std::getline( config_file, line ) ) {
             line_view = line;
             if ( line_view.empty() ) {
