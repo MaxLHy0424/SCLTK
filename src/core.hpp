@@ -373,10 +373,10 @@ namespace core
             static constexpr auto value{ std::is_base_of_v< config_node_impl, T > };
         };
     }
-    using config_nodes_types = cpp_utils::type_list< options, custom_rules_execs, custom_rules_servs >;
-    inline config_nodes_types::apply< std::tuple > config_nodes{};
-    static_assert( config_nodes_types::all_of< details__::is_valid_config_node > );
-    static_assert( config_nodes_types::unique::size == config_nodes_types::size );
+    using config_node_types = cpp_utils::type_list< options, custom_rules_execs, custom_rules_servs >;
+    inline config_node_types::apply< std::tuple > config_nodes{};
+    static_assert( config_node_types::all_of< details__::is_valid_config_node > );
+    static_assert( config_node_types::unique::size == config_node_types::size );
     auto& options_set{ std::get< options >( config_nodes ) };
     namespace details__
     {
@@ -391,7 +391,7 @@ namespace core
         std::apply( []( auto&&... config_node ) { ( config_node.prepare_reload(), ... ); }, config_nodes );
         std::string line;
         std::string_view line_view;
-        config_nodes_types::transform< std::add_pointer >::prepend< std::monostate >::apply< std::variant > current_config_node;
+        config_node_types::transform< std::add_pointer >::prepend< std::monostate >::apply< std::variant > current_config_node;
         while ( std::getline( config_file, line ) ) {
             line_view = line;
             if ( line_view.empty() ) {
