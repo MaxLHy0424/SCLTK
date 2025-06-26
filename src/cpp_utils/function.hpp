@@ -11,7 +11,7 @@
 #include <utility>
 #include <vector>
 #include "compiler.hpp"
-#include "meta.hpp"
+#include "meta_base.hpp"
 namespace cpp_utils
 {
 #if ( defined( __GNUC__ ) && defined( __GXX_RTTI ) ) || ( defined( _MSC_VER ) && defined( _CPPRTTI ) ) \
