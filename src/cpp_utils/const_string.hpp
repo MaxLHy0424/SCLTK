@@ -165,7 +165,7 @@ namespace cpp_utils
     using const_u32string = basic_const_string< char32_t, N >;
     template < size_t N, auto C >
         requires character< decltype( C ) >
-    consteval auto make_repeated_const_string() noexcept
+    inline consteval auto make_repeated_const_string() noexcept
     {
         using T = decltype( C );
         std::array< T, N + 1 > str;
