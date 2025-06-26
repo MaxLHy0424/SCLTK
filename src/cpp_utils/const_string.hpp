@@ -163,7 +163,7 @@ namespace cpp_utils
     using const_u16string = basic_const_string< char16_t, N >;
     template < size_t N >
     using const_u32string = basic_const_string< char32_t, N >;
-    template < size_t N, auto C >
+    template < auto C, size_t N >
         requires character< decltype( C ) >
     inline consteval auto make_repeated_const_string() noexcept
     {
