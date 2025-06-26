@@ -191,7 +191,7 @@ namespace cpp_utils
         template < typename T >
         struct remove_identity;
         template < typename T >
-        struct remove_identity< std::type_identity< T > >
+        struct remove_identity< std::type_identity< T > > final
         {
             using type = T;
         };
