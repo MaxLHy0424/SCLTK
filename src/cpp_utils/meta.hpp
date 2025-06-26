@@ -30,12 +30,12 @@ namespace cpp_utils
         template < typename Result, typename Remaining >
         struct unique_impl_;
         template < typename... ResultTs >
-        struct unique_impl_< type_list< ResultTs... >, type_list<> >
+        struct unique_impl_< type_list< ResultTs... >, type_list<> > final
         {
             using type = type_list< ResultTs... >;
         };
         template < typename... ResultTs, typename T, typename... Rest >
-        struct unique_impl_< type_list< ResultTs... >, type_list< T, Rest... > >
+        struct unique_impl_< type_list< ResultTs... >, type_list< T, Rest... > > final
         {
             static constexpr bool found{ ( std::is_same_v< T, ResultTs > || ... ) };
             using next = std::conditional_t<
@@ -46,7 +46,7 @@ namespace cpp_utils
         template < typename >
         struct concat_impl_;
         template < typename... Us >
-        struct concat_impl_< type_list< Us... > >
+        struct concat_impl_< type_list< Us... > > final
         {
             using type = type_list< Ts..., Us... >;
         };
