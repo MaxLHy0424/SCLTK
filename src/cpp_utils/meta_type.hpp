@@ -3,8 +3,6 @@
 #include "meta_base.hpp"
 namespace cpp_utils
 {
-    template < bool Expr >
-    concept test = Expr;
     template < typename... Ts >
     class type_list final
     {
