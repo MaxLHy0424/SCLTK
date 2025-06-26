@@ -104,17 +104,6 @@ namespace cpp_utils
         static constexpr auto any_of{ ( Pred< Ts >::value || ... ) };
         template < template < typename > typename Pred >
         static constexpr auto none_of{ ( !Pred< Ts >::value && ... ) };
-        template < size_t N >
-            requires test< ( N < size ) >
-        using at    = std::tuple_element_t< N, std::tuple< Ts... > >;
-        using front = at< 0 >;
-        using back  = at< size - 1 >;
-        template < typename... Us >
-        using prepend = type_list< Us..., Ts... >;
-        template < typename... Us >
-        using append       = type_list< Ts..., Us... >;
-        using remove_front = decltype( select_( offset_sequence_< 1 >( std::make_index_sequence< size - 1 >{} ) ) );
-        using remove_back  = decltype( select_( std::make_index_sequence< size - 1 >{} ) );
         template < template < typename > typename Pred >
         static constexpr auto find_first_if{ find_first_if_impl_< Pred, 0 >() };
         template < template < typename > typename Pred >
@@ -127,11 +116,17 @@ namespace cpp_utils
         static constexpr auto find_first{ find_first_if< type_is_< U >::template predicate > };
         template < typename U >
         static constexpr auto find_last{ find_last_if< type_is_< U >::template predicate > };
-        template < template < typename > typename F >
-        using transform = type_list< typename F< Ts >::type... >;
-        template < template < typename > typename Pred >
-        using filter = decltype( as_type_list_(
-          std::tuple_cat( std::conditional_t< Pred< Ts >::value, std::tuple< Ts >, std::tuple<> >{}... ) ) );
+        template < size_t I >
+            requires test< ( I < size ) >
+        using at    = std::tuple_element_t< I, std::tuple< Ts... > >;
+        using front = at< 0 >;
+        using back  = at< size - 1 >;
+        template < typename... Us >
+        using prepend = type_list< Us..., Ts... >;
+        template < typename... Us >
+        using append       = type_list< Ts..., Us... >;
+        using remove_front = decltype( select_( offset_sequence_< 1 >( std::make_index_sequence< size - 1 >{} ) ) );
+        using remove_back  = decltype( select_( std::make_index_sequence< size - 1 >{} ) );
         template < size_t Offset, size_t Count >
             requires test< Offset + Count <= size >
         using slice = decltype( select_( offset_sequence_< Offset >( std::make_index_sequence< Count >{} ) ) );
@@ -141,6 +136,11 @@ namespace cpp_utils
         using unique  = typename unique_impl_< type_list<>, type_list< Ts... > >::type;
         template < template < typename... > typename U >
         using apply = U< Ts... >;
+        template < template < typename > typename F >
+        using transform = type_list< typename F< Ts >::type... >;
+        template < template < typename > typename Pred >
+        using filter = decltype( as_type_list_(
+          std::tuple_cat( std::conditional_t< Pred< Ts >::value, std::tuple< Ts >, std::tuple<> >{}... ) ) );
     };
     template <>
     class type_list<> final
@@ -157,12 +157,6 @@ namespace cpp_utils
         static constexpr size_t size{ 0 };
         template < typename >
         static constexpr bool contains{ false };
-        using remove_front = type_list<>;
-        using remove_back  = type_list<>;
-        template < typename... Us >
-        using prepend = type_list< Us... >;
-        template < typename... Us >
-        using append = type_list< Us... >;
         template < template < typename > typename >
         static constexpr size_t find_first_if{ 0 };
         template < template < typename > typename >
@@ -175,16 +169,22 @@ namespace cpp_utils
         static constexpr size_t find_first{ 0 };
         template < typename >
         static constexpr size_t find_last{ 0 };
-        template < template < typename > typename >
-        using transform = type_list<>;
-        template < template < typename > typename >
-        using filter = type_list<>;
+        template < typename... Us >
+        using prepend = type_list< Us... >;
+        template < typename... Us >
+        using append       = type_list< Us... >;
+        using remove_front = type_list<>;
+        using remove_back  = type_list<>;
         template < typename Other >
         using concat  = typename concat_impl_< Other >::type;
         using reverse = type_list<>;
         using unique  = type_list<>;
         template < template < typename... > typename U >
         using apply = U<>;
+        template < template < typename > typename >
+        using transform = type_list<>;
+        template < template < typename > typename >
+        using filter = type_list<>;
     };
     namespace details__
     {
