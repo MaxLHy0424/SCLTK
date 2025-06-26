@@ -216,4 +216,60 @@ namespace cpp_utils
         using class_type  = T;
         using args_type   = type_list< Args... >;
     };
+    template < template < typename... > typename Template, typename T >
+    struct is_specialization_of final : std::false_type
+    { };
+    template < template < typename... > typename Template, typename... Args >
+    struct is_specialization_of< Template, Template< Args... > > final : std::true_type
+    { };
+    template < typename T >
+    struct matcher final
+    {
+        static constexpr bool matches{ false };
+        using result = void;
+    };
+    template < typename Specific, typename Result >
+    struct type_matcher final : matcher< Specific >
+    {
+        template < typename U >
+        static constexpr bool matches{ std::is_same_v< U, Specific > };
+        using result = Result;
+    };
+    template < template < typename... > class Pattern, typename Result >
+    struct template_matcher final
+    {
+        template < typename T >
+        static constexpr bool matches{ is_specialization_of< Pattern, T >::value };
+        using result = Result;
+    };
+    template < typename Result >
+    struct default_matcher final
+    {
+        template < typename T >
+        static constexpr bool matches{ true };
+        using result = Result;
+    };
+    namespace details__
+    {
+        template < typename T, typename... Matchers >
+        struct match_impl;
+        template < typename T >
+        struct match_impl< T > final
+        {
+            static_assert( sizeof( T ) == 0, "No matching pattern found" );
+        };
+        template < typename T, typename Matcher, typename... RestMatchers >
+        struct match_impl< T, Matcher, RestMatchers... > final
+        {
+            using type = std::conditional_t<
+              Matcher::template matches< T >, typename Matcher::result, typename match_impl< T, RestMatchers... >::type >;
+        };
+    }
+    template < typename T, typename... Matchers >
+    struct match final
+    {
+        using type = typename details__::match_impl< T, Matchers... >::type;
+    };
+    template < typename T, typename... Matchers >
+    using match_t = typename match< T, Matchers... >::type;
 }
