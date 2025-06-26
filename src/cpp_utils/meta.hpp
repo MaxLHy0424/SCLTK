@@ -50,6 +50,46 @@ namespace cpp_utils
         {
             using type = type_list< Ts..., Us... >;
         };
+        template < typename U >
+        struct type_is_ final
+        {
+            template < typename T >
+            using predicate = std::is_same< T, U >;
+        };
+        template < template < typename > typename Pred >
+        struct negate_ final
+        {
+            template < typename T >
+            using predicate = std::bool_constant< !Pred< T >::value >;
+        };
+        template < template < typename > typename Pred, size_t I >
+        static consteval size_t find_first_if_impl_()
+        {
+            if constexpr ( I >= size ) {
+                return size;
+            } else {
+                using T = std::tuple_element_t< I, std::tuple< Ts... > >;
+                if constexpr ( Pred< T >::value ) {
+                    return I;
+                } else {
+                    return find_first_if_impl_< Pred, I + 1 >();
+                }
+            }
+        }
+        template < template < typename > typename Pred, size_t I >
+        static consteval size_t find_last_if_impl_()
+        {
+            using T = std::tuple_element_t< I, std::tuple< Ts... > >;
+            if constexpr ( Pred< T >::value ) {
+                return I;
+            } else {
+                if constexpr ( I == 0 ) {
+                    return size;
+                } else {
+                    return find_last_if_impl_< Pred, I - 1 >();
+                }
+            }
+        }
       public:
         static constexpr auto size{ sizeof...( Ts ) };
         template < typename U >
@@ -75,6 +115,18 @@ namespace cpp_utils
         using append       = type_list< Ts..., Us... >;
         using remove_front = decltype( select_( offset_sequence_< 1 >( std::make_index_sequence< size - 1 >{} ) ) );
         using remove_back  = decltype( select_( std::make_index_sequence< size - 1 >{} ) );
+        template < template < typename > typename Pred >
+        static constexpr auto find_first_if{ find_first_if_impl_< Pred, 0 >() };
+        template < template < typename > typename Pred >
+        static constexpr auto find_last_if{ find_last_if_impl_< Pred, size - 1 >() };
+        template < template < typename > typename Pred >
+        static constexpr auto find_first_if_not{ find_first_if< negate_< Pred >::template predicate > };
+        template < template < typename > typename Pred >
+        static constexpr auto find_last_if_not{ find_last_if< negate_< Pred >::template predicate > };
+        template < typename U >
+        static constexpr auto find_first{ find_first_if< type_is_< U >::template predicate > };
+        template < typename U >
+        static constexpr auto find_last{ find_last_if< type_is_< U >::template predicate > };
         template < template < typename > typename F >
         using transform = type_list< typename F< Ts >::type... >;
         template < template < typename > typename Pred >
@@ -97,7 +149,7 @@ namespace cpp_utils
         template < typename >
         struct concat_impl_;
         template < typename... Us >
-        struct concat_impl_< type_list< Us... > >
+        struct concat_impl_< type_list< Us... > > final
         {
             using type = type_list< Us... >;
         };
@@ -111,6 +163,18 @@ namespace cpp_utils
         using prepend = type_list< Us... >;
         template < typename... Us >
         using append = type_list< Us... >;
+        template < template < typename > typename >
+        static constexpr size_t find_first_if{ 0 };
+        template < template < typename > typename >
+        static constexpr size_t find_last_if{ 0 };
+        template < template < typename > typename >
+        static constexpr size_t find_first_if_not{ 0 };
+        template < template < typename > typename >
+        static constexpr size_t find_last_if_not{ 0 };
+        template < typename >
+        static constexpr size_t find_first{ 0 };
+        template < typename >
+        static constexpr size_t find_last{ 0 };
         template < template < typename > typename >
         using transform = type_list<>;
         template < template < typename > typename >
