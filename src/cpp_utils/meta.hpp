@@ -385,28 +385,28 @@ namespace cpp_utils
     template < typename T >
     struct matcher final
     {
-        static constexpr bool matches{ false };
+        static constexpr auto matches{ false };
         using result = void;
     };
     template < typename Specific, typename Result >
     struct type_matcher final : matcher< Specific >
     {
         template < typename U >
-        static constexpr bool matches{ std::is_same_v< U, Specific > };
+        static constexpr auto matches{ std::is_same_v< U, Specific > };
         using result = Result;
     };
     template < template < typename... > typename Pattern, typename Result >
     struct template_matcher final
     {
         template < typename T >
-        static constexpr bool matches{ is_specialization_of< Pattern, T >::value };
+        static constexpr auto matches{ is_specialization_of< Pattern, T >::value };
         using result = Result;
     };
     template < typename Result >
     struct default_matcher final
     {
         template < typename T >
-        static constexpr bool matches{ true };
+        static constexpr auto matches{ true };
         using result = Result;
     };
     namespace details__
