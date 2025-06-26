@@ -131,6 +131,8 @@ namespace cpp_utils
         template < template < typename > typename Pred >
         using filter = decltype( as_type_list_(
           std::tuple_cat( std::conditional_t< Pred< Ts >::value, std::tuple< Ts >, std::tuple<> >{}... ) ) );
+        type_list()  = delete;
+        ~type_list() = delete;
     };
     template <>
     class type_list<> final
@@ -175,6 +177,8 @@ namespace cpp_utils
         using transform = type_list<>;
         template < template < typename > typename >
         using filter = type_list<>;
+        type_list()  = delete;
+        ~type_list() = delete;
     };
     namespace details__
     {
@@ -191,9 +195,10 @@ namespace cpp_utils
         inline consteval auto make_repeated_type_list_impl( std::index_sequence< Is... > )
         {
             auto helper{ []( auto v, size_t ) consteval { return v; } };
-            return type_list< remove_identity_t< decltype( helper( std::type_identity< T >{}, Is ) ) >... >{};
+            return std::type_identity< type_list< remove_identity_t< decltype( helper( std::type_identity< T >{}, Is ) ) >... > >{};
         }
     }
     template < typename T, size_t N >
-    using make_repeated_type_list = decltype( details__::make_repeated_type_list_impl< T >( std::make_index_sequence< N >{} ) );
+    using make_repeated_type_list
+      = details__::remove_identity_t< decltype( details__::make_repeated_type_list_impl< T >( std::make_index_sequence< N >{} ) ) >;
 }
