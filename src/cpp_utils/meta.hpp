@@ -180,6 +180,166 @@ namespace cpp_utils
         type_list()  = delete;
         ~type_list() = delete;
     };
+    template < auto... Vs >
+    class value_list final
+    {
+      private:
+        template < auto V >
+        struct value_holder_ final
+        {
+            static constexpr auto value{ V };
+        };
+        using underlying_type_list_ = type_list< value_holder_< Vs >... >;
+        template < typename >
+        struct to_value_list_impl_;
+        template < typename... Holders >
+        struct to_value_list_impl_< type_list< Holders... > > final
+        {
+            using type = value_list< Holders::value... >;
+        };
+        template < typename TL >
+        using to_value_list_ = typename to_value_list_impl_< TL >::type;
+        template < template < auto > typename Pred >
+        struct predicate_adapter_ final
+        {
+            template < typename T >
+            using predicate = std::bool_constant< Pred< T::value >::value >;
+        };
+        template < typename Holder >
+        struct extract_value_ final
+        {
+            static constexpr auto value{ Holder::value };
+        };
+        template < auto V >
+        struct same_to_ final
+        {
+            template < auto X >
+            using type = std::bool_constant< ( X == V ) >;
+        };
+        template < template < auto > typename F >
+        struct transform_impl_ final
+        {
+            template < typename T >
+            struct apply final
+            {
+                static constexpr auto value{ F< T::value >::value };
+                using type = value_holder_< value >;
+            };
+        };
+      public:
+        static constexpr auto size{ underlying_type_list_::size };
+        template < auto V >
+        static constexpr auto contains{ underlying_type_list_::template contains< value_holder_< V > > };
+        template < auto V >
+        static constexpr auto count{ underlying_type_list_::template count< value_holder_< V > > };
+        template < template < auto > typename Pred >
+        static constexpr auto count_if{ underlying_type_list_::template count_if< predicate_adapter_< Pred >::template predicate > };
+        template < template < auto > typename Pred >
+        static constexpr auto all_of{ underlying_type_list_::template all_of< predicate_adapter_< Pred >::template predicate > };
+        template < template < auto > typename Pred >
+        static constexpr auto any_of{ underlying_type_list_::template any_of< predicate_adapter_< Pred >::template predicate > };
+        template < template < auto > typename Pred >
+        static constexpr auto none_of{ underlying_type_list_::template none_of< predicate_adapter_< Pred >::template predicate > };
+        template < template < auto > typename Pred >
+        static constexpr auto find_first_if{
+          underlying_type_list_::template find_first_if< predicate_adapter_< Pred >::template predicate > };
+        template < template < auto > typename Pred >
+        static constexpr auto find_last_if{
+          underlying_type_list_::template find_last_if< predicate_adapter_< Pred >::template predicate > };
+        template < template < auto > typename Pred >
+        static constexpr auto find_first_if_not{
+          underlying_type_list_::template find_first_if_not< predicate_adapter_< Pred >::template predicate > };
+        template < template < auto > typename Pred >
+        static constexpr auto find_last_if_not{
+          underlying_type_list_::template find_last_if_not< predicate_adapter_< Pred >::template predicate > };
+        template < auto V >
+        static constexpr auto find_first{ find_first_if< same_to_< V >::template type > };
+        template < auto V >
+        static constexpr auto find_last{ find_last_if< same_to_< V >::template type > };
+        template < size_t I >
+        static constexpr auto at{ extract_value_< typename underlying_type_list_::template at< I > >::value };
+        static constexpr auto front{ at< 0 > };
+        static constexpr auto back{ at< size - 1 > };
+        template < auto... Us >
+        using prepend = to_value_list_< typename underlying_type_list_::template prepend< value_holder_< Us >... > >;
+        template < auto... Us >
+        using append       = to_value_list_< typename underlying_type_list_::template append< value_holder_< Us >... > >;
+        using remove_front = to_value_list_< typename underlying_type_list_::remove_front >;
+        using remove_back  = to_value_list_< typename underlying_type_list_::remove_back >;
+        template < size_t Offset, size_t Count >
+        using slice = to_value_list_< typename underlying_type_list_::template slice< Offset, Count > >;
+        template < typename Other >
+        using concat = to_value_list_< typename underlying_type_list_::template concat< typename Other::underlying_type_list_ > >;
+        using reverse = to_value_list_< typename underlying_type_list_::reverse >;
+        using unique  = to_value_list_< typename underlying_type_list_::unique >;
+        template < template < auto... > typename Template >
+        using apply = Template< Vs... >;
+        template < template < auto > typename F >
+        using transform
+          = to_value_list_< typename underlying_type_list_::template transform< transform_impl_< F >::template apply > >;
+        template < template < auto > typename Pred >
+        using filter
+          = to_value_list_< typename underlying_type_list_::template filter< predicate_adapter_< Pred >::template predicate > >;
+        value_list()  = delete;
+        ~value_list() = delete;
+    };
+    template <>
+    class value_list<> final
+    {
+      private:
+        using underlying_type_list_ = type_list<>;
+        template < typename TL >
+        struct to_value_list_impl_ final
+        {
+            using type = value_list<>;
+        };
+        template < typename TL >
+        using to_value_list_ = typename to_value_list_impl_< TL >::type;
+      public:
+        static constexpr size_t size{ 0 };
+        template < auto >
+        static constexpr auto contains{ false };
+        template < auto >
+        static constexpr size_t count{ 0 };
+        template < template < auto > typename >
+        static constexpr size_t count_if{ 0 };
+        template < template < auto > typename >
+        static constexpr auto all_of{ true };
+        template < template < auto > typename >
+        static constexpr auto any_of{ false };
+        template < template < auto > typename >
+        static constexpr auto none_of{ true };
+        template < template < auto > typename >
+        static constexpr size_t find_first_if{ 0 };
+        template < template < auto > typename >
+        static constexpr size_t find_last_if{ 0 };
+        template < template < auto > typename >
+        static constexpr size_t find_first_if_not{ 0 };
+        template < template < auto > typename >
+        static constexpr size_t find_last_if_not{ 0 };
+        template < auto >
+        static constexpr size_t find_first{ 0 };
+        template < auto >
+        static constexpr size_t find_last{ 0 };
+        template < auto... Us >
+        using prepend = value_list< Us... >;
+        template < auto... Us >
+        using append       = value_list< Us... >;
+        using remove_front = value_list<>;
+        using remove_back  = value_list<>;
+        template < typename Other >
+        using concat  = Other;
+        using reverse = value_list<>;
+        using unique  = value_list<>;
+        template < template < auto... > typename Template >
+        using apply = Template<>;
+        template < template < auto > typename F >
+        using transform = value_list<>;
+        template < template < auto > typename Pred >
+        using filter  = value_list<>;
+        value_list()  = delete;
+        ~value_list() = delete;
+    };
     namespace details__
     {
         template < typename T >
@@ -235,7 +395,7 @@ namespace cpp_utils
         static constexpr bool matches{ std::is_same_v< U, Specific > };
         using result = Result;
     };
-    template < template < typename... > class Pattern, typename Result >
+    template < template < typename... > typename Pattern, typename Result >
     struct template_matcher final
     {
         template < typename T >
