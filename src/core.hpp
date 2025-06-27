@@ -656,7 +656,7 @@ namespace core
     }
     class rule_executor final
     {
-        friend auto make_executor_mode_ui_text() -> std::string;
+        friend auto make_executor_mode_ui_text() -> const char*;
         friend auto change_executor_mode( ui_func_args ) -> cpp_utils::console_ui::func_return_t;
       private:
         enum class mode : bool
@@ -852,15 +852,15 @@ namespace core
         ~rule_executor() noexcept                 = default;
     };
     inline rule_executor::mode rule_executor::executor_mode{ rule_executor::mode::crack };
-    inline auto make_executor_mode_ui_text() -> std::string
+    inline auto make_executor_mode_ui_text() -> const char*
     {
-        std::string_view ui_text;
+        const char* ui_text;
         switch ( rule_executor::executor_mode ) {
-            case rule_executor::mode::crack : ui_text = "破解"; break;
-            case rule_executor::mode::restore : ui_text = "恢复"; break;
+            case rule_executor::mode::crack : ui_text = "[ 破解 (点击切换) ]"; break;
+            case rule_executor::mode::restore : ui_text = "[ 恢复 (点击切换) ]"; break;
             default : std::unreachable();
         }
-        return std::format( "[ {} (点击切换) ]", ui_text );
+        return ui_text;
     }
     inline auto change_executor_mode( ui_func_args args ) -> cpp_utils::console_ui::func_return_t
     {
