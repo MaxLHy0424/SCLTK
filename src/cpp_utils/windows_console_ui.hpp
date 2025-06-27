@@ -150,8 +150,8 @@ namespace cpp_utils
         }
         static auto cls_()
         {
-            const auto [ width, height ]{ get_console_size_() };
             set_cursor_( COORD{ 0, 0 } );
+            const auto [ width, height ]{ get_console_size_() };
             std::print( "{}", std::string( static_cast< unsigned int >( width ) * static_cast< unsigned int >( height ), ' ' ) );
             set_cursor_( COORD{ 0, 0 } );
         }
