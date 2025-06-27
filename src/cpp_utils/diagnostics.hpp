@@ -13,7 +13,7 @@ namespace cpp_utils
       const std::stacktrace trace = std::stacktrace::current() )
     {
         return std::format(
-          "{}({}:{}) `{}`: {}\n{}\n", src_location.file_name(), src_location.line(), src_location.column(),
+          "{}({}:{}) {}: {}\n{}\n", src_location.file_name(), src_location.line(), src_location.column(),
           src_location.function_name(), message, trace );
     }
     inline auto dynamic_assert(
