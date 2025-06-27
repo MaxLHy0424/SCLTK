@@ -215,7 +215,7 @@ namespace core
         static constexpr auto format_string_{ "{}.{}: {}" };
         static auto make_swith_button_text_( const auto is_enable )
         {
-            return std::format( " > {}用 ", is_enable ? "禁" : "启" );
+            return is_enable ? " > 禁用 " : " > 启用 ";
         }
         auto load_( const bool is_reload, std::string& line )
         {
