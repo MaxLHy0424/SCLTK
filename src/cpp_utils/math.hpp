@@ -5,7 +5,7 @@
 namespace cpp_utils
 {
     template < std::integral T >
-    inline constexpr auto is_prime( const T n ) noexcept
+    inline constexpr auto is_prime_number( const T n ) noexcept
     {
         if ( n == 2 ) {
             return true;
