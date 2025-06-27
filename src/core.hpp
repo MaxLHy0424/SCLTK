@@ -828,7 +828,7 @@ namespace core
                 return;
             }
             std::print( " -> 正在执行...\n\n" );
-            std::array< void ( core::rule_executor::* )(), 2 > f;
+            std::array< void ( rule_executor::* )(), 2 > f;
             switch ( executor_mode ) {
                 case mode::crack : f = { &rule_executor::default_crack_, &rule_executor::fast_crack_ }; break;
                 case mode::restore : f = { &rule_executor::default_restore_, &rule_executor::fast_restore_ }; break;
