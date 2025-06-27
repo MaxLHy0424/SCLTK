@@ -211,7 +211,7 @@ namespace cpp_utils
             static constexpr auto value{ Holder::value };
         };
         template < auto V >
-        struct same_to_ final
+        struct is_equal_ final
         {
             template < auto X >
             using type = std::bool_constant< ( X == V ) >;
@@ -253,9 +253,9 @@ namespace cpp_utils
         static constexpr auto find_last_if_not{
           underlying_type_list_::template find_last_if_not< predicate_adapter_< Pred >::template predicate > };
         template < auto V >
-        static constexpr auto find_first{ find_first_if< same_to_< V >::template type > };
+        static constexpr auto find_first{ find_first_if< is_equal_< V >::template type > };
         template < auto V >
-        static constexpr auto find_last{ find_last_if< same_to_< V >::template type > };
+        static constexpr auto find_last{ find_last_if< is_equal_< V >::template type > };
         template < size_t I >
         static constexpr auto at{ extract_value_< typename underlying_type_list_::template at< I > >::value };
         static constexpr auto front{ at< 0 > };
