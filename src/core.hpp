@@ -289,7 +289,7 @@ namespace core
               "\n[ 选项 ]\n\n"
               " (i) 选项相关信息可参阅文档.\n"
               "     标 * 选项自动执行热重载, 可禁用.\n"
-              "     标 ** 选项无法热重载. 其余选项可实时热重载.\n", );
+              "     标 ** 选项无法热重载. 其余选项可实时热重载.\n" );
             for ( auto& category : this->categories ) {
                 ui.add_back( std::format( " > {} ", category.shown_name ), option_ui{ category }, option_ctrl_color );
             }
