@@ -31,13 +31,13 @@ namespace cpp_utils
         {
             return data_.max_size();
         }
-        constexpr auto& front() const noexcept
+        constexpr const auto& front() const noexcept
         {
-            return const_cast< const T& >( data_.front() );
+            return data_.front();
         }
-        constexpr auto& back() const noexcept
+        constexpr const auto& back() const noexcept
         {
-            return const_cast< const T& >( data_.back() );
+            return data_.back();
         }
         constexpr auto begin() const noexcept
         {
@@ -57,12 +57,12 @@ namespace cpp_utils
         }
         constexpr const auto& operator[]( const size_t index ) const noexcept
         {
-            return const_cast< const T& >( data_[ index ] );
+            return data_[ index ];
         }
         constexpr const auto& at( const size_t index ) const noexcept
         {
             if constexpr ( is_debug_build ) {
-                return const_cast< const T& >( data_.at( index ) );
+                return data_.at( index );
             } else {
                 return ( *this )[ index ];
             }
