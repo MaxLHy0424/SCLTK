@@ -554,7 +554,7 @@ namespace core
           public:
             auto operator()()
             {
-                auto execute{ [ this ]()
+                auto execute{ [ this ]
                 {
                     std::print(
                       "                   [ 工 具 箱 ]\n\n\n"
