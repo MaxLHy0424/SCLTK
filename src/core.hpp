@@ -127,7 +127,7 @@ namespace core
     {
         friend details__::config_node_impl;
       private:
-        struct item final
+        class item final
         {
           private:
             std::atomic< bool > value_{ false };
@@ -164,8 +164,9 @@ namespace core
             { }
             ~item() noexcept = default;
         };
-        struct category final
+        class category final
         {
+          public:
             const char* self_name;
             const char* shown_name;
             std::vector< item > items;
