@@ -213,8 +213,8 @@ namespace cpp_utils
         template < auto V >
         struct is_equal_ final
         {
-            template < auto X >
-            using type = std::bool_constant< ( X == V ) >;
+            template < auto W >
+            using type = std::bool_constant< ( V == W ) >;
         };
         template < template < auto > typename F >
         struct transform_impl_ final
@@ -227,10 +227,10 @@ namespace cpp_utils
         };
       public:
         static constexpr auto size{ underlying_type_list_::size };
-        template < auto V >
-        static constexpr auto contains{ underlying_type_list_::template contains< value_holder_< V > > };
-        template < auto V >
-        static constexpr auto count{ underlying_type_list_::template count< value_holder_< V > > };
+        template < auto W >
+        static constexpr auto contains{ underlying_type_list_::template contains< value_holder_< W > > };
+        template < auto W >
+        static constexpr auto count{ underlying_type_list_::template count< value_holder_< W > > };
         template < template < auto > typename Pred >
         static constexpr auto count_if{ underlying_type_list_::template count_if< predicate_adapter_< Pred >::template predicate > };
         template < template < auto > typename Pred >
@@ -251,18 +251,18 @@ namespace cpp_utils
         template < template < auto > typename Pred >
         static constexpr auto find_last_if_not{
           underlying_type_list_::template find_last_if_not< predicate_adapter_< Pred >::template predicate > };
-        template < auto V >
-        static constexpr auto find_first{ find_first_if< is_equal_< V >::template type > };
-        template < auto V >
-        static constexpr auto find_last{ find_last_if< is_equal_< V >::template type > };
+        template < auto W >
+        static constexpr auto find_first{ find_first_if< is_equal_< W >::template type > };
+        template < auto W >
+        static constexpr auto find_last{ find_last_if< is_equal_< W >::template type > };
         template < size_t I >
         static constexpr auto at{ extract_value_< typename underlying_type_list_::template at< I > >::value };
         static constexpr auto front{ at< 0 > };
         static constexpr auto back{ at< size - 1 > };
-        template < auto... Us >
-        using prepend = to_value_list_< typename underlying_type_list_::template prepend< value_holder_< Us >... > >;
-        template < auto... Us >
-        using append       = to_value_list_< typename underlying_type_list_::template append< value_holder_< Us >... > >;
+        template < auto... Ws >
+        using prepend = to_value_list_< typename underlying_type_list_::template prepend< value_holder_< Ws >... > >;
+        template < auto... Ws >
+        using append       = to_value_list_< typename underlying_type_list_::template append< value_holder_< Ws >... > >;
         using remove_front = to_value_list_< typename underlying_type_list_::remove_front >;
         using remove_back  = to_value_list_< typename underlying_type_list_::remove_back >;
         template < size_t Offset, size_t Count >
