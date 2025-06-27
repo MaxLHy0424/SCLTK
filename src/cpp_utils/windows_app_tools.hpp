@@ -426,17 +426,9 @@ namespace cpp_utils
     {
         SetConsoleTitleA( title );
     }
-    inline auto set_current_console_title( const std::string& title ) noexcept
-    {
-        SetConsoleTitleA( title.data() );
-    }
     inline auto set_current_console_title( const wchar_t* const title ) noexcept
     {
         SetConsoleTitleW( title );
-    }
-    inline auto set_current_console_title( const std::wstring& title ) noexcept
-    {
-        SetConsoleTitleW( title.data() );
     }
     inline auto set_current_console_charset( const UINT charset_id ) noexcept
     {
