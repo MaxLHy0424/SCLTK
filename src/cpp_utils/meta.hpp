@@ -378,6 +378,12 @@ namespace cpp_utils
         using return_type = R;
         using args_type   = type_list< Args... >;
     };
+    template < typename R, typename... Args >
+    struct function_traits< R ( * )( Args... ) > final
+    {
+        using return_type = R;
+        using args_type   = type_list< Args... >;
+    };
     template < typename R, typename T, typename... Args >
     struct function_traits< R ( T::* )( Args... ) > final
     {
