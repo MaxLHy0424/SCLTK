@@ -222,8 +222,7 @@ namespace cpp_utils
             template < typename T >
             struct apply final
             {
-                static constexpr auto value{ F< T::value >::value };
-                using type = value_holder_< value >;
+                using type = value_holder_< F< T::value >::value >;
             };
         };
       public:
