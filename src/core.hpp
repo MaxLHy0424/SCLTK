@@ -659,13 +659,13 @@ namespace core
         friend auto make_executor_mode_ui_text() -> std::string;
         friend auto change_executor_mode( ui_func_args ) -> cpp_utils::console_ui::func_return_t;
       private:
-        const rule_node& rules_;
         enum class mode : bool
         {
             crack,
             restore
         };
         static mode executor_mode;
+        const rule_node& rules_;
         static auto hijack_exec_( details__::exec_const_ref_t exec ) noexcept
         {
             return cpp_utils::create_registry_key< charset_id >(
