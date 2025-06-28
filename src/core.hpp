@@ -873,15 +873,15 @@ namespace core
     {
         args.parent_ui.set_limits( true, true );
         std::print( " -> 正在准备数据...\n" );
-        rule_node all{ "", {}, {} };
-        all.execs.append_range( custom_rules.execs );
-        all.servs.append_range( custom_rules.servs );
-        for ( const auto& rule : builtin_rules ) {
-            all.execs.append_range( rule.execs );
-            all.servs.append_range( rule.servs );
+        rule_node total{ "", {}, {} };
+        total.execs.append_range( custom_rules.execs );
+        total.servs.append_range( custom_rules.servs );
+        for ( const auto& builtin_rule : builtin_rules ) {
+            total.execs.append_range( builtin_rule.execs );
+            total.servs.append_range( builtin_rule.servs );
         }
         cpp_utils::clear_console( std_output_handle );
-        rule_executor{ all }();
+        rule_executor{ total }();
         return func_back;
     }
 }
