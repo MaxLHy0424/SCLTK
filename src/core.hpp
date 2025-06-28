@@ -878,9 +878,9 @@ namespace core
         rule_node all{ "", {}, {} };
         all.execs.append_range( custom_rules.execs );
         all.servs.append_range( custom_rules.servs );
-        for ( const auto& e : builtin_rules ) {
-            all.execs.append_range( e.execs );
-            all.servs.append_range( e.servs );
+        for ( const auto& rule : builtin_rules ) {
+            all.execs.append_range( rule.execs );
+            all.servs.append_range( rule.servs );
         }
         cpp_utils::clear_console( std_output_handle );
         rule_executor{ all }();
