@@ -317,7 +317,7 @@ namespace core
         { }
         ~options() noexcept = default;
     };
-    class custom_rules_execs final : public details::config_node_impl
+    [[deprecated]] class custom_rules_execs final : public details::config_node_impl
     {
         friend details::config_node_impl;
       private:
@@ -341,7 +341,7 @@ namespace core
         { }
         ~custom_rules_execs() noexcept = default;
     };
-    class custom_rules_servs final : public details::config_node_impl
+    [[deprecated]] class custom_rules_servs final : public details::config_node_impl
     {
         friend details::config_node_impl;
       private:
@@ -365,6 +365,49 @@ namespace core
         { }
         ~custom_rules_servs() noexcept = default;
     };
+    class customized_rules final : public details::config_node_impl
+    {
+        friend details::config_node_impl;
+      private:
+        static constexpr auto suffix_exec{ "exec: "sv };
+        static constexpr auto suffix_serv{ "serv: "sv };
+        static constexpr auto size_of_suffix{ ( suffix_exec.size() + suffix_serv.size() ) / 2 };
+        static_assert( suffix_exec.size() == suffix_serv.size() );
+        static auto load_( const bool, std::string& line )
+        {
+            std::string_view line_view{ line };
+            if ( line_view.size() > size_of_suffix ) {
+                const auto suffix{ line_view.substr( 0, size_of_suffix ) };
+                if ( suffix == suffix_exec ) {
+                    custom_rules.execs.emplace_back( line_view.substr( size_of_suffix ) );
+                    return;
+                }
+                if ( suffix == suffix_serv ) {
+                    custom_rules.servs.emplace_back( line_view.substr( size_of_suffix ) );
+                    return;
+                }
+            }
+        }
+        static auto sync_( std::ofstream& out )
+        {
+            for ( const auto& exec : custom_rules.execs ) {
+                out << suffix_exec << exec << '\n';
+            }
+            for ( const auto& serv : custom_rules.servs ) {
+                out << suffix_serv << serv << '\n';
+            }
+        }
+        static auto prepare_reload_() noexcept
+        {
+            custom_rules.execs.clear();
+            custom_rules.servs.clear();
+        }
+      public:
+        customized_rules() noexcept
+          : config_node_impl{ "customized_rules" }
+        { }
+        ~customized_rules() noexcept = default;
+    };
     namespace details
     {
         template < typename T >
@@ -373,7 +416,7 @@ namespace core
             static constexpr auto value{ std::is_base_of_v< config_node_impl, T > };
         };
     }
-    using config_node_types = cpp_utils::type_list< options, custom_rules_execs, custom_rules_servs >;
+    using config_node_types = cpp_utils::type_list< options, customized_rules >;
     inline config_node_types::apply< std::tuple > config_nodes{};
     static_assert( config_node_types::all_of< details::is_valid_config_node > );
     static_assert( config_node_types::all_of< std::is_default_constructible > );
