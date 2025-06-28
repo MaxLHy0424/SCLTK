@@ -317,7 +317,7 @@ namespace core
         { }
         ~options() noexcept = default;
     };
-    [[deprecated]] class custom_rules_execs final : public details::config_node_impl
+    class [[deprecated]] custom_rules_execs final : public details::config_node_impl
     {
         friend details::config_node_impl;
       private:
@@ -341,7 +341,7 @@ namespace core
         { }
         ~custom_rules_execs() noexcept = default;
     };
-    [[deprecated]] class custom_rules_servs final : public details::config_node_impl
+    class [[deprecated]] custom_rules_servs final : public details::config_node_impl
     {
         friend details::config_node_impl;
       private:
