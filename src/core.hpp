@@ -565,8 +565,8 @@ namespace core
                 cpp_utils::console_ui ui;
                 ui.add_back( "                   [ 工 具 箱 ]\n\n" )
                   .add_back( " (i) 是否继续执行?\n" )
-                  .add_back( " > 是, 继续执行 ", execute, cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_intensity )
-                  .add_back( " > 否, 立即返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
+                  .add_back( " > 是 ", execute, cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_intensity )
+                  .add_back( " > 否 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
                   .show();
                 return func_back;
             }
