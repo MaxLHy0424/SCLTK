@@ -113,34 +113,36 @@ SCLTK 窗口相关选项.
 
 执行自定义规则破解\/恢复时使用的规则.
 
-> [!WARNING]
-> SCLTK 不对自定义规则的正确性进行检测, 一些规则可能导致意想不到的错误. 在修改自定义规则时, 请仔细检查.
+配置文件中标签 `[ customized_rules ]` 到下一个标签的部分.
 
-#### 3.3.1 可执行文件
+一项自定义规则遵循以下格式:
 
-配置文件中标签 `[ custom_rules_execs ]` 到下一个标签的部分, 每个项目不得保留文件扩展名 `.exe`. 所有规则不支持以 `.com` 为文件扩展名的可执行文件.
-
-示例:
-
-```ini
-[ custom_rules_execs ]
-abc_client_gui
-abc_client_server
-abc_protect_server
+```
+[flag]: [item]
 ```
 
-#### 3.3.2 服务
+`[flag]` 有以下选项 (区分大小写):
+- `exec`: 表明该项自定义规则为以 `.exe` 为文件扩展名的可执行文件.
+- `serv`: 表明该项自定义规则为某个 Windows 服务的服务名称 (**不是显示名称**).
 
-配置文件中标签 `[ custom_rules_servs ]` 到下一个标签的部分.
+`[item]` 的值会根据 `[flag]` 而添加到相应的规则列表中.
 
-每项规则为服务名称, 非显示名称.
+如果自定义规则不符合格式 (如 `EXEC abc`), 则会被忽略.
+
+> [!NOTE]
+> 在 SCLTK 中，可执行文件规则和服务规则分开存储.
+
+> [!WARNING]
+> SCLTK 不对自定义规则的正确性进行检测, 一些规则可能导致意想不到的错误. 在修改自定义规则时, 请仔细检查. 特别地, SCLTK 会忽略行尾空格和制表符.
 
 示例:
-
 ```ini
-[ custom_rules_servs ]
-abc_network
-abc_diag_track
+[ customized_rules ]
+exec: abc_client_gui
+exec: abc_client_server
+exec: abc_protect_server
+serv: abc_network
+serv: abc_diag_track
 ```
 
 ## 4 工具箱
