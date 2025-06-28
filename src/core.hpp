@@ -220,7 +220,7 @@ namespace core
             if ( is_reload ) {
                 return;
             }
-            for ( auto& category : this->categories ) {
+            for ( auto& category : categories ) {
                 for ( auto& item : category.items ) {
                     if ( line == std::format( format_string_, category.self_name, item.self_name, true ) ) {
                         item.set( true );
@@ -232,7 +232,7 @@ namespace core
         }
         auto sync_( std::ofstream& out )
         {
-            for ( const auto& category : this->categories ) {
+            for ( const auto& category : categories ) {
                 for ( const auto& item : category.items ) {
                     out << std::format( format_string_, category.self_name, item.self_name, item.get() ) << '\n';
                 }
@@ -289,7 +289,7 @@ namespace core
               "     标 * 选项默认可自动热重载.\n"
               "     标 ** 选项无法热重载.\n"
               "     其余选项可实时热重载.\n" );
-            for ( auto& category : this->categories ) {
+            for ( auto& category : categories ) {
                 ui.add_back( std::format( " > {} ", category.shown_name ), option_ui{ category }, option_ctrl_color );
             }
         }
