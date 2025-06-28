@@ -655,8 +655,8 @@ namespace core
     }
     class rule_executor final
     {
-        friend auto make_executor_mode_ui_text() -> const char*;
-        friend auto change_executor_mode( ui_func_args ) -> cpp_utils::console_ui::func_return_t;
+        friend auto make_executor_mode_ui_text();
+        friend auto change_executor_mode( ui_func_args );
       private:
         enum class mode : bool
         {
@@ -851,7 +851,7 @@ namespace core
         ~rule_executor() noexcept                 = default;
     };
     inline rule_executor::mode rule_executor::executor_mode{ rule_executor::mode::crack };
-    inline auto make_executor_mode_ui_text() -> const char*
+    inline auto make_executor_mode_ui_text()
     {
         const char* ui_text;
         switch ( rule_executor::executor_mode ) {
@@ -861,7 +861,7 @@ namespace core
         }
         return ui_text;
     }
-    inline auto change_executor_mode( ui_func_args args ) -> cpp_utils::console_ui::func_return_t
+    inline auto change_executor_mode( ui_func_args args )
     {
         switch ( rule_executor::executor_mode ) {
             case rule_executor::mode::crack : rule_executor::executor_mode = rule_executor::mode::restore; break;
