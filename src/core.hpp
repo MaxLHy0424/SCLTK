@@ -213,7 +213,7 @@ namespace core
         static constexpr auto format_string_{ "{}.{}: {}" };
         static auto make_swith_button_text_( const auto is_enable )
         {
-            return is_enable ? " > 禁用 " : " > 启用 ";
+            return is_enable ? " > 禁用 "sv : " > 启用 "sv;
         }
         auto load_( const bool is_reload, std::string& line )
         {
@@ -267,7 +267,7 @@ namespace core
                 auto operator()()
                 {
                     cpp_utils::console_ui ui;
-                    ui.add_back( "                    [ 配  置 ]\n\n" )
+                    ui.add_back( "                    [ 配  置 ]\n\n"sv )
                       .add_back(
                         std::format( " < 折叠 {} ", category_.shown_name ), quit,
                         cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity );
@@ -288,7 +288,7 @@ namespace core
               " (i) 选项相关信息可参阅文档.\n"
               "     标 * 选项默认可自动热重载.\n"
               "     标 ** 选项无法热重载.\n"
-              "     其余选项可实时热重载.\n" );
+              "     其余选项可实时热重载.\n"sv );
             for ( auto& category : categories ) {
                 ui.add_back( std::format( " > {} ", category.shown_name ), option_ui{ category }, option_ctrl_color );
             }
@@ -462,10 +462,10 @@ namespace core
             return func_back;
         } };
         cpp_utils::console_ui ui;
-        ui.add_back( "                    [ 配  置 ]\n\n" )
-          .add_back( " < 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
-          .add_back( " > 同步配置 ", sync )
-          .add_back( " > 打开配置文件 ", open_file );
+        ui.add_back( "                    [ 配  置 ]\n\n"sv )
+          .add_back( " < 返回 "sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
+          .add_back( " > 同步配置 "sv, sync )
+          .add_back( " > 打开配置文件 "sv, open_file );
         std::apply( [ & ]( auto&&... config_node ) { ( config_node.ui( ui ), ... ); }, config_nodes );
         ui.show();
         return func_back;
@@ -478,14 +478,14 @@ namespace core
             return func_back;
         } };
         cpp_utils::console_ui ui;
-        ui.add_back( "                    [ 关  于 ]\n\n" )
-          .add_back( " < 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
+        ui.add_back( "                    [ 关  于 ]\n\n"sv )
+          .add_back( " < 返回 "sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
           .add_back(
             "\n[ 名称 ]\n\n " INFO_FULL_NAME " (" INFO_SHORT_NAME ")\n\n[ 版本 ]\n\n " INFO_VERSION
             "\n\n 构建时间: " INFO_BUILD_TIME "\n 编译工具: " INFO_COMPILER " " INFO_ARCH
-            "\n\n[ 许可证与版权 ]\n\n " INFO_LICENSE "\n " INFO_COPYRIGHT "\n\n[ 仓库 ]\n" )
+            "\n\n[ 许可证与版权 ]\n\n " INFO_LICENSE "\n " INFO_COPYRIGHT "\n\n[ 仓库 ]\n"sv )
           .add_back(
-            " " INFO_REPO_URL " ", visit_repo_webpage,
+            " " INFO_REPO_URL " "sv, visit_repo_webpage,
             cpp_utils::console_text::default_attrs | cpp_utils::console_text::foreground_intensity
               | cpp_utils::console_text::lvb_underscore )
           .show();
@@ -563,10 +563,10 @@ namespace core
                     return func_exit;
                 } };
                 cpp_utils::console_ui ui;
-                ui.add_back( "                   [ 工 具 箱 ]\n\n" )
-                  .add_back( " (i) 是否继续执行?\n" )
-                  .add_back( " > 是 ", execute, cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_intensity )
-                  .add_back( " > 否 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
+                ui.add_back( "                   [ 工 具 箱 ]\n\n"sv )
+                  .add_back( " (i) 是否继续执行?\n"sv )
+                  .add_back( " > 是 "sv, execute, cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_intensity )
+                  .add_back( " > 否 "sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
                   .show();
                 return func_back;
             }
@@ -585,11 +585,11 @@ namespace core
            { "恢复 Microsoft Edge 离线游戏", R"(reg.exe delete "HKLM\SOFTWARE\Policies\Microsoft\Edge" /f /v AllowSurfGame)" } }
         };
         cpp_utils::console_ui ui;
-        ui.add_back( "                   [ 工 具 箱 ]\n\n" )
-          .add_back( " < 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
-          .add_back( " > 命令提示符 ", launch_cmd )
-          .add_back( " > 恢复操作系统组件 ", restore_os_components )
-          .add_back( "\n[ 常用操作 ]\n" );
+        ui.add_back( "                   [ 工 具 箱 ]\n\n"sv )
+          .add_back( " < 返回 "sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
+          .add_back( " > 命令提示符 "sv, launch_cmd )
+          .add_back( " > 恢复操作系统组件 "sv, restore_os_components )
+          .add_back( "\n[ 常用操作 ]\n"sv );
         for ( const auto& common_cmd : common_cmds ) {
             ui.add_back( std::format( " > {} ", common_cmd.description ), cmd_executor{ common_cmd } );
         }
@@ -851,10 +851,11 @@ namespace core
     inline rule_executor::mode rule_executor::executor_mode{ rule_executor::mode::crack };
     inline auto make_executor_mode_ui_text()
     {
-        const char* ui_text;
+        using namespace std::string_view_literals;
+        std::string_view ui_text;
         switch ( rule_executor::executor_mode ) {
-            case rule_executor::mode::crack : ui_text = "[ 破解 (点击切换) ]"; break;
-            case rule_executor::mode::restore : ui_text = "[ 恢复 (点击切换) ]"; break;
+            case rule_executor::mode::crack : ui_text = "[ 破解 (点击切换) ]"sv; break;
+            case rule_executor::mode::restore : ui_text = "[ 恢复 (点击切换) ]"sv; break;
             default : std::unreachable();
         }
         return ui_text;
