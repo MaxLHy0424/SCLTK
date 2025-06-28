@@ -238,6 +238,6 @@ SCLTK 不对 Windows Vista 及更早的版本保有任何技术支持. SCLTK 将
 
 # ❤️ 鸣谢
 
-- Bilibili 用户 [lateworker_晚工](https://space.bilibili.com/454920362) 提供界面底层代码 (详见[此处](https://www.bilibili.com/video/BV1X14y1n7S4), 有修改).
-- Bilibili 用户 [痕继痕迹](https://space.bilibili.com/39337803) 指导界面设计.
-- GitHub 用户 [Zhu-Xinrong \(Kendall\)](https://github.com/Zhu-Xinrong) 指导图标设计.
+- Bilibili 用户 [lateworker_晚工](https://space.bilibili.com/454920362) 提供早期版本界面底层代码 (详见[此处](https://www.bilibili.com/video/BV1X14y1n7S4), 有修改).
+- Bilibili 用户 [痕继痕迹](https://space.bilibili.com/39337803) 指导早期版本界面设计.
+- GitHub 用户 [Zhu-Xinrong \(Kendall\)](https://github.com/Zhu-Xinrong) 指导早期版本图标设计.
