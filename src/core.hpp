@@ -395,7 +395,16 @@ namespace core
                 continue;
             }
             for ( auto it{ line.rbegin() }; it != line.rend(); ++it ) {
-                if ( !std::isspace( *it ) ) {
+                bool is_space{ false };
+                switch ( *it ) {
+                    case '\r' :
+                    case '\n' :
+                    case '\f' :
+                    case '\v' :
+                    case '\t' :
+                    case ' ' : is_space = true;
+                }
+                if ( !is_space ) {
                     break;
                 }
                 line.pop_back();
