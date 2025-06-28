@@ -317,54 +317,6 @@ namespace core
         { }
         ~options() noexcept = default;
     };
-    class [[deprecated( "merged into 'customized_rules'" )]] custom_rules_execs final : public details::config_node_impl
-    {
-        friend details::config_node_impl;
-      private:
-        static auto load_( const bool, std::string& line )
-        {
-            custom_rules.execs.emplace_back( std::move( line ) );
-        }
-        static auto sync_( std::ofstream& out )
-        {
-            for ( const auto& exec : custom_rules.execs ) {
-                out << exec << '\n';
-            }
-        }
-        static auto prepare_reload_() noexcept
-        {
-            custom_rules.execs.clear();
-        }
-      public:
-        custom_rules_execs() noexcept
-          : config_node_impl{ "custom_rules_execs" }
-        { }
-        ~custom_rules_execs() noexcept = default;
-    };
-    class [[deprecated( "merged into 'customized_rules'" )]] custom_rules_servs final : public details::config_node_impl
-    {
-        friend details::config_node_impl;
-      private:
-        static auto load_( const bool, std::string& line )
-        {
-            custom_rules.servs.emplace_back( std::move( line ) );
-        }
-        static auto sync_( std::ofstream& out )
-        {
-            for ( const auto& serv : custom_rules.servs ) {
-                out << serv << '\n';
-            }
-        }
-        static auto prepare_reload_() noexcept
-        {
-            custom_rules.servs.clear();
-        }
-      public:
-        custom_rules_servs() noexcept
-          : config_node_impl{ "custom_rules_servs" }
-        { }
-        ~custom_rules_servs() noexcept = default;
-    };
     class customized_rules final : public details::config_node_impl
     {
         friend details::config_node_impl;
