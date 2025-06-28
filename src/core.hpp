@@ -321,17 +321,17 @@ namespace core
     {
         friend details__::config_node_impl;
       private:
-        auto load_( const bool, std::string& line )
+        static auto load_( const bool, std::string& line )
         {
             custom_rules.execs.emplace_back( std::move( line ) );
         }
-        auto sync_( std::ofstream& out )
+        static auto sync_( std::ofstream& out )
         {
             for ( const auto& exec : custom_rules.execs ) {
                 out << exec << '\n';
             }
         }
-        auto prepare_reload_() noexcept
+        static auto prepare_reload_() noexcept
         {
             custom_rules.execs.clear();
         }
@@ -345,17 +345,17 @@ namespace core
     {
         friend details__::config_node_impl;
       private:
-        auto load_( const bool, std::string& line )
+        static auto load_( const bool, std::string& line )
         {
             custom_rules.servs.emplace_back( std::move( line ) );
         }
-        auto sync_( std::ofstream& out )
+        static auto sync_( std::ofstream& out )
         {
             for ( const auto& serv : custom_rules.servs ) {
                 out << serv << '\n';
             }
         }
-        auto prepare_reload_() noexcept
+        static auto prepare_reload_() noexcept
         {
             custom_rules.servs.clear();
         }
