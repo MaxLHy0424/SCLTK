@@ -381,7 +381,7 @@ namespace core
     auto& options_set{ std::get< options >( config_nodes ) };
     namespace details
     {
-        inline const auto& is_disable_x_option_hot_reload{ options_set[ "misc" ][ "disable_x_option_hot_reload" ] };
+        inline const auto& is_disable_x_option_hot_reload{ options_set[ "misc"sv ][ "disable_x_option_hot_reload"sv ] };
     }
     inline auto load_config( const bool is_reload = false )
     {
@@ -599,9 +599,9 @@ namespace core
     }
     inline auto set_console_attrs()
     {
-        const auto& window_options{ options_set[ "window" ] };
-        const auto& is_enable_simplest_titlebar{ window_options[ "simplest_titlebar" ] };
-        const auto& is_translucent{ window_options[ "translucent" ] };
+        const auto& window_options{ options_set[ "window"sv ] };
+        const auto& is_enable_simplest_titlebar{ window_options[ "simplest_titlebar"sv ] };
+        const auto& is_translucent{ window_options[ "translucent"sv ] };
         auto core_op{ [ & ]
         {
             cpp_utils::enable_window_menu( window_handle, !is_enable_simplest_titlebar );
@@ -618,7 +618,7 @@ namespace core
     }
     inline auto keep_window_top()
     {
-        const auto& is_keep_window_top{ options_set[ "window" ][ "keep_window_top" ] };
+        const auto& is_keep_window_top{ options_set[ "window"sv ][ "keep_window_top"sv ] };
         if ( details::is_disable_x_option_hot_reload && !is_keep_window_top ) {
             return;
         }
@@ -645,10 +645,10 @@ namespace core
     {
         using exec_const_ref_t = cpp_utils::add_const_lvalue_reference_t< rule_node::item_t >;
         using serv_const_ref_t = cpp_utils::add_const_lvalue_reference_t< rule_node::item_t >;
-        inline const auto& option_crack_restore{ options_set[ "crack_restore" ] };
-        inline const auto& is_hijack_execs{ option_crack_restore[ "hijack_execs" ] };
-        inline const auto& is_set_serv_startup_types{ option_crack_restore[ "set_serv_startup_types" ] };
-        inline const auto& is_enable_fast_mode{ option_crack_restore[ "fast_mode" ] };
+        inline const auto& option_crack_restore{ options_set[ "crack_restore"sv ] };
+        inline const auto& is_hijack_execs{ option_crack_restore[ "hijack_execs"sv ] };
+        inline const auto& is_set_serv_startup_types{ option_crack_restore[ "set_serv_startup_types"sv ] };
+        inline const auto& is_enable_fast_mode{ option_crack_restore[ "fast_mode"sv ] };
         inline auto make_progress( const size_t now, const size_t total, const size_t digits_of_total ) noexcept
         {
             return std::format( "({}{}/{})", std::string( digits_of_total - cpp_utils::count_digits( now ), ' ' ), now, total );
