@@ -339,7 +339,7 @@ namespace cpp_utils
         value_list()  = delete;
         ~value_list() = delete;
     };
-    namespace details__
+    namespace details
     {
         template < typename T >
         struct remove_identity;
@@ -365,10 +365,10 @@ namespace cpp_utils
     }
     template < typename T, size_t N >
     using make_repeated_type_list
-      = details__::remove_identity_t< decltype( details__::make_repeated_type_list_impl< T >( std::make_index_sequence< N >{} ) ) >;
+      = details::remove_identity_t< decltype( details::make_repeated_type_list_impl< T >( std::make_index_sequence< N >{} ) ) >;
     template < auto V, size_t N >
     using make_repeated_value_list
-      = details__::remove_identity_t< decltype( details__::make_repeated_value_list_impl< V >( std::make_index_sequence< N >{} ) ) >;
+      = details::remove_identity_t< decltype( details::make_repeated_value_list_impl< V >( std::make_index_sequence< N >{} ) ) >;
     template < typename >
     struct function_traits;
     template < typename R, typename... Args >
@@ -423,7 +423,7 @@ namespace cpp_utils
         static constexpr auto matches{ true };
         using result = Result;
     };
-    namespace details__
+    namespace details
     {
         template < typename T, typename... Matchers >
         struct match_impl;
@@ -442,7 +442,7 @@ namespace cpp_utils
     template < typename T, typename... Matchers >
     struct match final
     {
-        using type = typename details__::match_impl< T, Matchers... >::type;
+        using type = typename details::match_impl< T, Matchers... >::type;
     };
     template < typename T, typename... Matchers >
     using match_t = typename match< T, Matchers... >::type;
