@@ -354,6 +354,38 @@ namespace core
             custom_rules.execs.clear();
             custom_rules.servs.clear();
         }
+        static auto ui_( cpp_utils::console_ui& ui )
+        {
+            auto help{ []()
+            {
+                cpp_utils::console_ui ui;
+                ui.add_back( "                    [ 配  置 ]\n\n" )
+                  .add_back( " < 返回 ", quit )
+                  .add_back(
+                    "\n  自定义规则格式为 <flag>: <item>\n"
+                    "  其中, <flag> 可为 exec 或 serv,\n"
+                    "  分别表示以 .exe 为文件扩展名的可执行文件\n"
+                    "  和某个 Windows 服务的服务名称.\n"
+                    "  <item> 的类型由 <flag> 决定.\n"
+                    "  如果自定义规则不符合格式, 则会被忽略.\n"
+                    "  " INFO_SHORT_NAME
+                    " 不对自定义规则的正确性进行检测,\n"
+                    "  在修改自定义规则时, 请仔细检查.\n"
+                    "  特别地, " INFO_SHORT_NAME
+                    " 会忽略每行末尾的空白字符.\n"
+                    "  更多信息请参阅文档.\n\n"
+                    "  使用示例:\n\n"
+                    "  [ customized_rules ]\n"
+                    "  exec: abc_client_gui\n"
+                    "  exec: abc_client_server\n"
+                    "  exec: abc_protect_server\n"
+                    "  serv: abc_network\n"
+                    "  serv: abc_diag_track\n" )
+                  .show();
+                return func_back;
+            } };
+            ui.add_back( "\n[ 自定义规则 ]\n" ).add_back( " > 查看帮助信息 ", help );
+        }
       public:
         customized_rules() noexcept
           : config_node_impl{ "customized_rules" }
