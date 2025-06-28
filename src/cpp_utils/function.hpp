@@ -16,7 +16,7 @@ namespace cpp_utils
 {
 #if ( defined( __GNUC__ ) && defined( __GXX_RTTI ) ) || ( defined( _MSC_VER ) && defined( _CPPRTTI ) ) \
   || ( defined( __clang__ ) && __has_feature( cxx_rtti ) )
-    namespace details__
+    namespace details
     {
         class func_wrapper_impl
         {
@@ -66,7 +66,7 @@ namespace cpp_utils
     class func_container final
     {
       private:
-        std::deque< std::unique_ptr< details__::func_wrapper_impl > > func_nodes_{};
+        std::deque< std::unique_ptr< details::func_wrapper_impl > > func_nodes_{};
       public:
         auto empty() const noexcept
         {
@@ -106,47 +106,47 @@ namespace cpp_utils
         template < typename R, typename... Args >
         auto& add_front( R ( *func )( Args... ) )
         {
-            func_nodes_.emplace_front( std::make_unique< details__::func_wrapper< R, Args... > >( func ) );
+            func_nodes_.emplace_front( std::make_unique< details::func_wrapper< R, Args... > >( func ) );
             return *this;
         }
         template < typename R, typename... Args >
         auto& add_front( std::function< R( Args... ) > func )
         {
-            func_nodes_.emplace_front( std::make_unique< details__::func_wrapper< R, Args... > >( std::move( func ) ) );
+            func_nodes_.emplace_front( std::make_unique< details::func_wrapper< R, Args... > >( std::move( func ) ) );
             return *this;
         }
         template < typename R, typename... Args >
         auto& add_back( R ( *func )( Args... ) )
         {
-            func_nodes_.emplace_back( std::make_unique< details__::func_wrapper< R, Args... > >( func ) );
+            func_nodes_.emplace_back( std::make_unique< details::func_wrapper< R, Args... > >( func ) );
             return *this;
         }
         template < typename R, typename... Args >
         auto& add_back( std::function< R( Args... ) > func )
         {
-            func_nodes_.emplace_back( std::make_unique< details__::func_wrapper< R, Args... > >( std::move( func ) ) );
+            func_nodes_.emplace_back( std::make_unique< details::func_wrapper< R, Args... > >( std::move( func ) ) );
             return *this;
         }
         template < typename R, typename... Args >
         auto& insert( const size_t index, R ( *func )( Args... ) )
         {
-            func_nodes_.emplace( func_nodes_.cbegin() + index, std::make_unique< details__::func_wrapper< R, Args... > >( func ) );
+            func_nodes_.emplace( func_nodes_.cbegin() + index, std::make_unique< details::func_wrapper< R, Args... > >( func ) );
             return *this;
         }
         template < typename R, typename... Args >
         auto& insert( const size_t index, std::function< R( Args... ) > func )
         {
             func_nodes_.emplace(
-              func_nodes_.cbegin() + index, std::make_unique< details__::func_wrapper< R, Args... > >( std::move( func ) ) );
+              func_nodes_.cbegin() + index, std::make_unique< details::func_wrapper< R, Args... > >( std::move( func ) ) );
             return *this;
         }
         template < typename R, typename... Args >
         auto& edit( const size_t index, R ( *func )( Args... ) )
         {
             if constexpr ( is_debugging_build ) {
-                func_nodes_.at( index ) = std::make_unique< details__::func_wrapper< R, Args... > >( func );
+                func_nodes_.at( index ) = std::make_unique< details::func_wrapper< R, Args... > >( func );
             } else {
-                func_nodes_[ index ] = std::make_unique< details__::func_wrapper< R, Args... > >( func );
+                func_nodes_[ index ] = std::make_unique< details::func_wrapper< R, Args... > >( func );
             }
             return *this;
         }
@@ -154,9 +154,9 @@ namespace cpp_utils
         auto& edit( const size_t index, std::function< R( Args... ) > func )
         {
             if constexpr ( is_debugging_build ) {
-                func_nodes_.at( index ) = std::make_unique< details__::func_wrapper< R, Args... > >( std::move( func ) );
+                func_nodes_.at( index ) = std::make_unique< details::func_wrapper< R, Args... > >( std::move( func ) );
             } else {
-                func_nodes_[ index ] = std::make_unique< details__::func_wrapper< R, Args... > >( std::move( func ) );
+                func_nodes_[ index ] = std::make_unique< details::func_wrapper< R, Args... > >( std::move( func ) );
             }
             return *this;
         }
