@@ -743,9 +743,7 @@ namespace core
             const auto& execs{ rules_.execs };
             const auto& servs{ rules_.servs };
             std::vector< std::thread > threads;
-            threads.reserve(
-              2U + static_cast< unsigned >( details__::is_hijack_execs )
-              + static_cast< unsigned >( details__::is_set_serv_startup_types ) );
+            threads.reserve( 4U );
             if ( details__::is_hijack_execs ) {
                 threads.emplace_back( [ & ]
                 { cpp_utils::parallel_for_each( nproc_for_executing, execs.begin(), execs.end(), hijack_exec_ ); } );
