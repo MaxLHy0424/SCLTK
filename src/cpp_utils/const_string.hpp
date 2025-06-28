@@ -61,7 +61,7 @@ namespace cpp_utils
         }
         constexpr const auto& at( const size_t index ) const noexcept
         {
-            if constexpr ( is_debug_build ) {
+            if constexpr ( is_debugging_build ) {
                 return data_.at( index );
             } else {
                 return ( *this )[ index ];

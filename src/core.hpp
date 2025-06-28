@@ -177,7 +177,7 @@ namespace core
                         return item;
                     }
                 }
-                if constexpr ( cpp_utils::is_debug_build ) {
+                if constexpr ( cpp_utils::is_debugging_build ) {
                     std::print( "'{}' does not exists.", self_name );
                     std::terminate();
                 } else {
@@ -301,7 +301,7 @@ namespace core
                     return category;
                 }
             }
-            if constexpr ( cpp_utils::is_debug_build ) {
+            if constexpr ( cpp_utils::is_debugging_build ) {
                 std::print( "'{}' does not exists.", self_name );
                 std::terminate();
             } else {

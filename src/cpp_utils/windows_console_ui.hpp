@@ -301,7 +301,7 @@ namespace cpp_utils
         }
         auto& edit_text( const size_t index, const std::string_view text )
         {
-            if constexpr ( is_debug_build ) {
+            if constexpr ( is_debugging_build ) {
                 lines_.at( index ).text = text;
             } else {
                 lines_[ index ].text = text;
@@ -310,7 +310,7 @@ namespace cpp_utils
         }
         auto& edit_func( const size_t index, callback_t func )
         {
-            if constexpr ( is_debug_build ) {
+            if constexpr ( is_debugging_build ) {
                 lines_.at( index ).func = std::move( func );
             } else {
                 lines_[ index ].func = std::move( func );
@@ -319,7 +319,7 @@ namespace cpp_utils
         }
         auto& edit_intensity_attrs( const size_t index, const WORD intensity_attrs )
         {
-            if constexpr ( is_debug_build ) {
+            if constexpr ( is_debugging_build ) {
                 lines_.at( index ).intensity_attrs = intensity_attrs;
             } else {
                 lines_[ index ].intensity_attrs = intensity_attrs;
@@ -328,7 +328,7 @@ namespace cpp_utils
         }
         auto& edit_default_attrs( const size_t index, const WORD default_attrs )
         {
-            if constexpr ( is_debug_build ) {
+            if constexpr ( is_debugging_build ) {
                 lines_.at( index ).default_attrs = default_attrs;
             } else {
                 lines_[ index ].default_attrs = default_attrs;

@@ -143,7 +143,7 @@ namespace cpp_utils
         template < typename R, typename... Args >
         auto& edit( const size_t index, R ( *func )( Args... ) )
         {
-            if constexpr ( is_debug_build ) {
+            if constexpr ( is_debugging_build ) {
                 func_nodes_.at( index ) = std::make_unique< details__::func_wrapper< R, Args... > >( func );
             } else {
                 func_nodes_[ index ] = std::make_unique< details__::func_wrapper< R, Args... > >( func );
@@ -153,7 +153,7 @@ namespace cpp_utils
         template < typename R, typename... Args >
         auto& edit( const size_t index, std::function< R( Args... ) > func )
         {
-            if constexpr ( is_debug_build ) {
+            if constexpr ( is_debugging_build ) {
                 func_nodes_.at( index ) = std::make_unique< details__::func_wrapper< R, Args... > >( std::move( func ) );
             } else {
                 func_nodes_[ index ] = std::make_unique< details__::func_wrapper< R, Args... > >( std::move( func ) );
@@ -184,13 +184,13 @@ namespace cpp_utils
         decltype( auto ) invoke( const size_t index, Args&&... args ) const
         {
             if constexpr ( std::is_same_v< std::decay_t< R >, void > ) {
-                if constexpr ( is_debug_build ) {
+                if constexpr ( is_debugging_build ) {
                     func_nodes_.at( index )->invoke( make_args( std::forward< Args >( args )... ) );
                 } else {
                     func_nodes_[ index ]->invoke( make_args( std::forward< Args >( args )... ) );
                 }
             } else {
-                if constexpr ( is_debug_build ) {
+                if constexpr ( is_debugging_build ) {
                     return std::move( *std::any_cast< std::shared_ptr< R > >(
                       func_nodes_.at( index )->invoke( make_args( std::forward< Args >( args )... ) ) ) );
                 } else {
@@ -203,13 +203,13 @@ namespace cpp_utils
         decltype( auto ) dynamic_invoke( const size_t index, const std::vector< std::any >& args ) const
         {
             if constexpr ( std::is_same_v< std::decay_t< R >, void > ) {
-                if constexpr ( is_debug_build ) {
+                if constexpr ( is_debugging_build ) {
                     func_nodes_.at( index )->invoke( args );
                 } else {
                     func_nodes_[ index ]->invoke( args );
                 }
             } else {
-                if constexpr ( is_debug_build ) {
+                if constexpr ( is_debugging_build ) {
                     return std::move( *std::any_cast< std::shared_ptr< R > >( func_nodes_.at( index )->invoke( args ) ) );
                 } else {
                     return std::move( *std::any_cast< std::shared_ptr< R > >( func_nodes_[ index ]->invoke( args ) ) );

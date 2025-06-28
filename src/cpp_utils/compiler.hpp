@@ -2,8 +2,8 @@
 namespace cpp_utils
 {
 #ifndef NDEBUG
-    constexpr auto is_debug_build{ true };
+    constexpr auto is_debugging_build{ true };
 #else
-    constexpr auto is_debug_build{ false };
+    constexpr auto is_debugging_build{ false };
 #endif
 }
