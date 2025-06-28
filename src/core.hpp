@@ -434,7 +434,6 @@ namespace core
         }
         std::apply( []( auto&&... config_node ) { ( config_node.prepare_reload(), ... ); }, config_nodes );
         std::string line;
-        std::string_view line_view;
         config_node_types::transform< std::add_pointer >::prepend< std::monostate >::apply< std::variant > current_config_node;
         while ( std::getline( config_file, line ) ) {
             for ( auto it{ line.rbegin() }; it != line.rend(); ++it ) {
@@ -443,7 +442,7 @@ namespace core
                 }
                 line.pop_back();
             }
-            line_view = line;
+            std::string_view line_view{ line };
             if ( line_view.empty() ) {
                 continue;
             }
