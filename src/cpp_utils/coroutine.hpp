@@ -9,7 +9,7 @@ namespace cpp_utils
 {
     template < typename T >
     concept coroutine_func_return_t = requires { typename T::promise_type; };
-    namespace details__
+    namespace details
     {
         template < typename R, template < typename > typename Coroutine >
         struct coroutine_promise final
@@ -187,12 +187,12 @@ namespace cpp_utils
     class coroutine final
     {
       public:
-        using promise_type = details__::coroutine_promise< R, coroutine >;
+        using promise_type = details::coroutine_promise< R, coroutine >;
       private:
         using handle_ = std::coroutine_handle< promise_type >;
         handle_ coroutine_handle_{};
       public:
-        using iterator = details__::coroutine_iterator< handle_ >;
+        using iterator = details::coroutine_iterator< handle_ >;
         auto empty() const noexcept
         {
             return coroutine_handle_ == nullptr;
@@ -300,7 +300,7 @@ namespace cpp_utils
     class coroutine< void > final
     {
       public:
-        using promise_type = details__::coroutine_promise< void, coroutine >;
+        using promise_type = details::coroutine_promise< void, coroutine >;
       private:
         using handle_ = std::coroutine_handle< promise_type >;
         handle_ coroutine_handle_{};
@@ -397,12 +397,12 @@ namespace cpp_utils
     class coroutine_noexcept final
     {
       public:
-        using promise_type = details__::coroutine_promise_noexcept< R, coroutine_noexcept >;
+        using promise_type = details::coroutine_promise_noexcept< R, coroutine_noexcept >;
       private:
         using handle_ = std::coroutine_handle< promise_type >;
         handle_ coroutine_handle_{};
       public:
-        using iterator = details__::coroutine_iterator< handle_ >;
+        using iterator = details::coroutine_iterator< handle_ >;
         auto empty() const noexcept
         {
             return coroutine_handle_ == nullptr;
@@ -495,7 +495,7 @@ namespace cpp_utils
     class coroutine_noexcept< void > final
     {
       public:
-        using promise_type = details__::coroutine_promise_noexcept< void, coroutine_noexcept >;
+        using promise_type = details::coroutine_promise_noexcept< void, coroutine_noexcept >;
       private:
         using handle_ = std::coroutine_handle< promise_type >;
         handle_ coroutine_handle_{};
