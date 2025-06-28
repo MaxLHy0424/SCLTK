@@ -24,7 +24,7 @@ namespace core
     inline constexpr auto func_back{ cpp_utils::console_ui::func_back };
     inline constexpr auto func_exit{ cpp_utils::console_ui::func_exit };
     inline constexpr auto separator_line{ cpp_utils::make_repeated_const_string< '-', console_width >() };
-    inline const auto nproc_for_executing{ std::max< unsigned >( std::thread::hardware_concurrency() / 4, 2 ) };
+    inline const auto nproc_for_executing{ std::max< unsigned >( std::thread::hardware_concurrency(), 4 ) };
     inline const auto window_handle{ GetConsoleWindow() };
     inline const auto std_input_handle{ GetStdHandle( STD_INPUT_HANDLE ) };
     inline const auto std_output_handle{ GetStdHandle( STD_OUTPUT_HANDLE ) };
