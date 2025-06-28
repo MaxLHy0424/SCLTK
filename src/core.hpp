@@ -213,7 +213,7 @@ namespace core
         static constexpr auto format_string_{ "{}.{}: {}" };
         static auto make_swith_button_text_( const auto is_enable )
         {
-            return is_enable ? " > 禁用 "sv : " > 启用 "sv;
+            return is_enable ? " > 禁用 " : " > 启用 ";
         }
         auto load_( const bool is_reload, std::string& line )
         {
@@ -267,7 +267,7 @@ namespace core
                 auto operator()()
                 {
                     cpp_utils::console_ui ui;
-                    ui.add_back( "                    [ 配  置 ]\n\n"sv )
+                    ui.add_back( "                    [ 配  置 ]\n\n" )
                       .add_back(
                         std::format( " < 折叠 {} ", category_.shown_name ), quit,
                         cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity );
@@ -288,7 +288,7 @@ namespace core
               " (i) 选项相关信息可参阅文档.\n"
               "     标 * 选项默认可自动热重载.\n"
               "     标 ** 选项无法热重载.\n"
-              "     其余选项可实时热重载.\n"sv );
+              "     其余选项可实时热重载.\n" );
             for ( auto& category : categories ) {
                 ui.add_back( std::format( " > {} ", category.shown_name ), option_ui{ category }, option_ctrl_color );
             }
@@ -381,7 +381,7 @@ namespace core
     auto& options_set{ std::get< options >( config_nodes ) };
     namespace details
     {
-        inline const auto& is_disable_x_option_hot_reload{ options_set[ "misc"sv ][ "disable_x_option_hot_reload"sv ] };
+        inline const auto& is_disable_x_option_hot_reload{ options_set[ "misc" ][ "disable_x_option_hot_reload" ] };
     }
     inline auto load_config( const bool is_reload = false )
     {
@@ -462,10 +462,10 @@ namespace core
             return func_back;
         } };
         cpp_utils::console_ui ui;
-        ui.add_back( "                    [ 配  置 ]\n\n"sv )
-          .add_back( " < 返回 "sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
-          .add_back( " > 同步配置 "sv, sync )
-          .add_back( " > 打开配置文件 "sv, open_file );
+        ui.add_back( "                    [ 配  置 ]\n\n" )
+          .add_back( " < 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
+          .add_back( " > 同步配置 ", sync )
+          .add_back( " > 打开配置文件 ", open_file );
         std::apply( [ & ]( auto&&... config_node ) { ( config_node.ui( ui ), ... ); }, config_nodes );
         ui.show();
         return func_back;
@@ -478,14 +478,14 @@ namespace core
             return func_back;
         } };
         cpp_utils::console_ui ui;
-        ui.add_back( "                    [ 关  于 ]\n\n"sv )
-          .add_back( " < 返回 "sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
+        ui.add_back( "                    [ 关  于 ]\n\n" )
+          .add_back( " < 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
           .add_back(
             "\n[ 名称 ]\n\n " INFO_FULL_NAME " (" INFO_SHORT_NAME ")\n\n[ 版本 ]\n\n " INFO_VERSION
             "\n\n 构建时间: " INFO_BUILD_TIME "\n 编译工具: " INFO_COMPILER " " INFO_ARCH
-            "\n\n[ 许可证与版权 ]\n\n " INFO_LICENSE "\n " INFO_COPYRIGHT "\n\n[ 仓库 ]\n"sv )
+            "\n\n[ 许可证与版权 ]\n\n " INFO_LICENSE "\n " INFO_COPYRIGHT "\n\n[ 仓库 ]\n" )
           .add_back(
-            " " INFO_REPO_URL " "sv, visit_repo_webpage,
+            " " INFO_REPO_URL " ", visit_repo_webpage,
             cpp_utils::console_text::default_attrs | cpp_utils::console_text::foreground_intensity
               | cpp_utils::console_text::lvb_underscore )
           .show();
@@ -565,9 +565,9 @@ namespace core
                 cpp_utils::console_ui ui;
                 ui.add_back(
                     "                   [ 工 具 箱 ]\n\n\n"
-                    " (i) 是否继续执行?\n"sv )
-                  .add_back( " > 是, 继续 "sv, execute, cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_intensity )
-                  .add_back( " > 否, 返回 "sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
+                    " (i) 是否继续执行?\n" )
+                  .add_back( " > 是, 继续 ", execute, cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_intensity )
+                  .add_back( " > 否, 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
                   .show();
                 return func_back;
             }
@@ -586,11 +586,11 @@ namespace core
            { "恢复 Microsoft Edge 离线游戏", R"(reg.exe delete "HKLM\SOFTWARE\Policies\Microsoft\Edge" /f /v AllowSurfGame)" } }
         };
         cpp_utils::console_ui ui;
-        ui.add_back( "                   [ 工 具 箱 ]\n\n"sv )
-          .add_back( " < 返回 "sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
-          .add_back( " > 命令提示符 "sv, launch_cmd )
-          .add_back( " > 恢复操作系统组件 "sv, restore_os_components )
-          .add_back( "\n[ 常用操作 ]\n"sv );
+        ui.add_back( "                   [ 工 具 箱 ]\n\n" )
+          .add_back( " < 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
+          .add_back( " > 命令提示符 ", launch_cmd )
+          .add_back( " > 恢复操作系统组件 ", restore_os_components )
+          .add_back( "\n[ 常用操作 ]\n" );
         for ( const auto& common_cmd : common_cmds ) {
             ui.add_back( std::format( " > {} ", common_cmd.description ), cmd_executor{ common_cmd } );
         }
@@ -599,9 +599,9 @@ namespace core
     }
     inline auto set_console_attrs()
     {
-        const auto& window_options{ options_set[ "window"sv ] };
-        const auto& is_enable_simplest_titlebar{ window_options[ "simplest_titlebar"sv ] };
-        const auto& is_translucent{ window_options[ "translucent"sv ] };
+        const auto& window_options{ options_set[ "window" ] };
+        const auto& is_enable_simplest_titlebar{ window_options[ "simplest_titlebar" ] };
+        const auto& is_translucent{ window_options[ "translucent" ] };
         auto core_op{ [ & ]
         {
             cpp_utils::enable_window_menu( window_handle, !is_enable_simplest_titlebar );
@@ -618,7 +618,7 @@ namespace core
     }
     inline auto keep_window_top()
     {
-        const auto& is_keep_window_top{ options_set[ "window"sv ][ "keep_window_top"sv ] };
+        const auto& is_keep_window_top{ options_set[ "window" ][ "keep_window_top" ] };
         if ( details::is_disable_x_option_hot_reload && !is_keep_window_top ) {
             return;
         }
@@ -645,10 +645,10 @@ namespace core
     {
         using exec_const_ref_t = cpp_utils::add_const_lvalue_reference_t< rule_node::item_t >;
         using serv_const_ref_t = cpp_utils::add_const_lvalue_reference_t< rule_node::item_t >;
-        inline const auto& option_crack_restore{ options_set[ "crack_restore"sv ] };
-        inline const auto& is_hijack_execs{ option_crack_restore[ "hijack_execs"sv ] };
-        inline const auto& is_set_serv_startup_types{ option_crack_restore[ "set_serv_startup_types"sv ] };
-        inline const auto& is_enable_fast_mode{ option_crack_restore[ "fast_mode"sv ] };
+        inline const auto& option_crack_restore{ options_set[ "crack_restore" ] };
+        inline const auto& is_hijack_execs{ option_crack_restore[ "hijack_execs" ] };
+        inline const auto& is_set_serv_startup_types{ option_crack_restore[ "set_serv_startup_types" ] };
+        inline const auto& is_enable_fast_mode{ option_crack_restore[ "fast_mode" ] };
         inline auto make_progress( const size_t now, const size_t total, const size_t digits_of_total ) noexcept
         {
             return std::format( "({}{}/{})", std::string( digits_of_total - cpp_utils::count_digits( now ), ' ' ), now, total );
@@ -852,11 +852,10 @@ namespace core
     inline rule_executor::mode rule_executor::executor_mode{ rule_executor::mode::crack };
     inline auto make_executor_mode_ui_text()
     {
-        using namespace std::string_view_literals;
         std::string_view ui_text;
         switch ( rule_executor::executor_mode ) {
-            case rule_executor::mode::crack : ui_text = "[ 破解 (点击切换) ]"sv; break;
-            case rule_executor::mode::restore : ui_text = "[ 恢复 (点击切换) ]"sv; break;
+            case rule_executor::mode::crack : ui_text = "[ 破解 (点击切换) ]"; break;
+            case rule_executor::mode::restore : ui_text = "[ 恢复 (点击切换) ]"; break;
             default : std::unreachable();
         }
         return ui_text;
