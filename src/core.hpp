@@ -178,7 +178,7 @@ namespace core
                     }
                 }
                 if constexpr ( cpp_utils::is_debugging_build ) {
-                    std::print( "'{}' does not exists.", self_name );
+                    std::print( "'{}' does not exist.", self_name );
                     std::terminate();
                 } else {
                     std::unreachable();
@@ -302,7 +302,7 @@ namespace core
                 }
             }
             if constexpr ( cpp_utils::is_debugging_build ) {
-                std::print( "'{}' does not exists.", self_name );
+                std::print( "'{}' does not exist.", self_name );
                 std::terminate();
             } else {
                 std::unreachable();
