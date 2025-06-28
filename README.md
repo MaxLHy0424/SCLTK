@@ -38,9 +38,9 @@
 
 ## 1 启动
 
-SCLTK 发行版文件名规则为 `SCLTK-[ arch ]-[ runtime ].exe`, 其中 `[ arch ]` 一般为 `x86_64` 或 `i686`, `[ runtime ]` 一般为 `ucrt` 或 `msvcrt`.
+SCLTK 发行版文件名规则为 `SCLTK-<arch>-<runtime>.exe`, 其中 `<arch>` 一般为 `x86_64` 或 `i686`, `<runtime>` 一般为 `ucrt` 或 `msvcrt`.
 
-`[ arch ]` 和 `[ runtime ]` 的具体信息如下:
+`<arch>` 和 `<runtime>` 的具体信息如下:
 
 - **`x86_64` & `ucrt` \(推荐\)**\
   开发工具链为 msys2 `mingw-w64-ucrt-x86_64-toolchain`, 64 位可执行文件, 运行时库为 Universal C Runtime \(UCRT\), 支持 Windows 10 以上的 Windows OS \(部分 Windows OS 在安装特定更新后可以运行\).
@@ -116,14 +116,14 @@ SCLTK 窗口相关选项.
 一项自定义规则遵循以下格式:
 
 ```
-[flag]: [item]
+<flag>: <item>
 ```
 
-`[flag]` 有以下选项 (区分大小写):
+`<flag>` 有以下选项 (区分大小写):
 - `exec`: 表明该项自定义规则为以 `.exe` 为文件扩展名的可执行文件.
 - `serv`: 表明该项自定义规则为某个 Windows 服务的服务名称 (**不是显示名称**).
 
-`[item]` 的值会根据 `[flag]` 而添加到相应的规则列表中.
+`<item>` 的值会根据 `<flag>` 而添加到相应的规则列表中.
 
 如果自定义规则不符合格式 (如 `EXEC abc`), 则会被忽略.
 
