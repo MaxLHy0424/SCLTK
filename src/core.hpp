@@ -213,7 +213,7 @@ namespace core
         static constexpr auto format_string_{ "{}.{}: {}" };
         static auto make_swith_button_text_( const auto is_enable )
         {
-            return is_enable ? " > 禁用 " : " > 启用 ";
+            return is_enable ? " > 禁用 "sv : " > 启用 "sv;
         }
         auto load_( const bool is_reload, std::string& line )
         {
@@ -854,8 +854,8 @@ namespace core
     {
         std::string_view ui_text;
         switch ( rule_executor::executor_mode ) {
-            case rule_executor::mode::crack : ui_text = "[ 破解 (点击切换) ]"; break;
-            case rule_executor::mode::restore : ui_text = "[ 恢复 (点击切换) ]"; break;
+            case rule_executor::mode::crack : ui_text = "[ 破解 (点击切换) ]"sv; break;
+            case rule_executor::mode::restore : ui_text = "[ 恢复 (点击切换) ]"sv; break;
             default : std::unreachable();
         }
         return ui_text;
