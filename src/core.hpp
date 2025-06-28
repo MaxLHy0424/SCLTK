@@ -437,6 +437,12 @@ namespace core
         std::string_view line_view;
         config_node_types::transform< std::add_pointer >::prepend< std::monostate >::apply< std::variant > current_config_node;
         while ( std::getline( config_file, line ) ) {
+            for ( auto it{ line.rbegin() }; it != line.rend(); ++it ) {
+                if ( !std::isspace( *it ) ) {
+                    break;
+                }
+                line.pop_back();
+            }
             line_view = line;
             if ( line_view.empty() ) {
                 continue;
