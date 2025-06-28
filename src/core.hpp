@@ -436,6 +436,12 @@ namespace core
         std::string line;
         config_node_types::transform< std::add_pointer >::prepend< std::monostate >::apply< std::variant > current_config_node;
         while ( std::getline( config_file, line ) ) {
+            if ( line.empty() ) {
+                continue;
+            }
+            if ( line.front() == '#' ) {
+                continue;
+            }
             for ( auto it{ line.rbegin() }; it != line.rend(); ++it ) {
                 if ( !std::isspace( *it ) ) {
                     break;
@@ -443,12 +449,6 @@ namespace core
                 line.pop_back();
             }
             std::string_view line_view{ line };
-            if ( line_view.empty() ) {
-                continue;
-            }
-            if ( line_view.front() == '#' ) {
-                continue;
-            }
             if ( line_view.size() >= sizeof( "[  ]" ) && line_view.substr( 0, sizeof( "[ " ) - 1 ) == "[ "
                  && line_view.substr( line_view.size() - sizeof( " ]" ) + 1, line_view.size() ) == " ]" )
             {
