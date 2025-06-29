@@ -237,7 +237,6 @@ namespace core
         }
         auto ui_( cpp_utils::console_ui& ui )
         {
-            constexpr auto option_ctrl_color{ cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_green };
             using category_t = category;
             using item_t     = item;
             class option_setter final
@@ -270,7 +269,9 @@ namespace core
                         cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity );
                     for ( auto& item : category_.items ) {
                         ui.add_back( std::format( "\n[ {} ]\n", item.shown_name ) )
-                          .add_back( make_swith_button_text_( item ), option_setter{ item }, option_ctrl_color );
+                          .add_back(
+                            make_swith_button_text_( item ), option_setter{ item },
+                            cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_green );
                     }
                     ui.show();
                     return func_back;
@@ -287,7 +288,9 @@ namespace core
               "     标 ** 选项无法热重载.\n"
               "     其余选项可实时热重载.\n" );
             for ( auto& category : categories ) {
-                ui.add_back( std::format( " > {} ", category.shown_name ), option_ui{ category }, option_ctrl_color );
+                ui.add_back(
+                  std::format( " > {} ", category.shown_name ), option_ui{ category },
+                  cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_green );
             }
         }
       public:
