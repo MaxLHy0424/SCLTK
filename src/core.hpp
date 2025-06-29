@@ -744,8 +744,7 @@ namespace core
             const auto& servs{ rules_.servs };
             size_t finished_count{ 0 };
             const auto total_count{
-              ( details::is_hijack_execs ? execs.size() * 2 : execs.size() )
-              + ( details::is_set_serv_startup_types ? servs.size() * 2 : servs.size() ) };
+              execs.size() * ( details::is_hijack_execs ? 2 : 1 ) + servs.size() * ( details::is_set_serv_startup_types ? 2 : 1 ) };
             const auto digits_of_total{ cpp_utils::count_digits( total_count ) };
             if ( details::is_hijack_execs ) {
                 for ( const auto& exec : execs ) {
@@ -806,8 +805,7 @@ namespace core
             const auto& servs{ rules_.servs };
             size_t finished_count{ 0 };
             const auto total_count{
-              ( details::is_hijack_execs ? execs.size() : 0ULL )
-              + ( details::is_set_serv_startup_types ? servs.size() * 2 : servs.size() ) };
+              ( details::is_hijack_execs ? execs.size() : 0 ) + servs.size() * ( details::is_set_serv_startup_types ? 2 : 1 ) };
             const auto digits_of_total{ cpp_utils::count_digits( total_count ) };
             if ( details::is_hijack_execs ) {
                 for ( const auto& exec : execs ) {
