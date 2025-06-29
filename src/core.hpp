@@ -893,13 +893,11 @@ namespace core
     inline rule_executor::mode rule_executor::executor_mode{ rule_executor::mode::crack };
     inline auto make_executor_mode_ui_text()
     {
-        std::string_view ui_text;
         switch ( rule_executor::executor_mode ) {
-            case rule_executor::mode::crack : ui_text = "[ 破解 (点击切换) ]"sv; break;
-            case rule_executor::mode::restore : ui_text = "[ 恢复 (点击切换) ]"sv; break;
+            case rule_executor::mode::crack : return "[ 破解 (点击切换) ]"sv;
+            case rule_executor::mode::restore : return "[ 恢复 (点击切换) ]"sv;
             default : std::unreachable();
         }
-        return ui_text;
     }
     inline auto change_executor_mode( ui_func_args args )
     {
