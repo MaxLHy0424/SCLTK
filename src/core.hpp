@@ -426,7 +426,7 @@ namespace core
             if ( line.front() == '#' ) {
                 continue;
             }
-            for ( auto it{ line.rbegin() }; it != line.rend(); ++it ) {
+            for ( const auto it : std::ranges::iota_view{ line.rbegin(), line.rend() } ) {
                 bool is_space{ false };
                 switch ( *it ) {
                     case '\r' :
