@@ -360,7 +360,7 @@ namespace core
             {
                 cpp_utils::console_ui ui;
                 ui.add_back( "                    [ 配  置 ]\n\n" )
-                  .add_back( " < 返回 ", quit )
+                  .add_back( " < 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
                   .add_back(
                     "\n  自定义规则格式为 <flag>: <item>\n"
                     "  其中, <flag> 可为 exec 或 serv,\n"
