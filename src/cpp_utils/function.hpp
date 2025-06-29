@@ -68,15 +68,15 @@ namespace cpp_utils
       private:
         std::deque< std::unique_ptr< details::func_wrapper_impl > > func_nodes_{};
       public:
-        auto empty() const noexcept
+        constexpr auto empty() const noexcept
         {
             return func_nodes_.empty();
         }
-        auto size() const noexcept
+        constexpr auto size() const noexcept
         {
             return func_nodes_.size();
         }
-        auto max_size() const noexcept
+        constexpr auto max_size() const noexcept
         {
             return func_nodes_.max_size();
         }
