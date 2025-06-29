@@ -356,7 +356,7 @@ namespace core
         }
         static auto ui_( cpp_utils::console_ui& ui )
         {
-            auto help{ []()
+            auto help{ [] static
             {
                 cpp_utils::console_ui ui;
                 ui.add_back( "                    [ 配  置 ]\n\n" )
