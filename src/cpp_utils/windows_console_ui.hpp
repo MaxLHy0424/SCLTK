@@ -173,11 +173,11 @@ namespace cpp_utils
         auto init_pos_()
         {
             cls_();
-            const auto tail{ &lines_.back() };
+            const auto back_ptr{ &lines_.back() };
             for ( auto& line : lines_ ) {
                 line.position = get_cursor_();
                 line.set_attrs( line.default_attrs );
-                write_( line.text, &line != tail );
+                write_( line.text, &line != back_ptr );
             }
         }
         auto refresh_( const COORD hang_position )
