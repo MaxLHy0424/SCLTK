@@ -234,15 +234,15 @@ namespace cpp_utils
             return is_exit;
         }
       public:
-        auto empty() const noexcept
+        constexpr auto empty() const noexcept
         {
             return lines_.empty();
         }
-        auto size() const noexcept
+        constexpr auto size() const noexcept
         {
             return lines_.size();
         }
-        auto max_size() const noexcept
+        constexpr auto max_size() const noexcept
         {
             return lines_.max_size();
         }
