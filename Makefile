@@ -6,9 +6,10 @@ args_std         = gnu++26
 args_warning     = -Wall -Wextra -Weffc++ -Wpedantic
 args_opt_debug   = -Og
 args_opt_release = -O3 -flto=auto -fno-rtti -fno-exceptions
+args_extra       =
 input_charset    = utf-8
 output_charset   = gbk
-args_base        = -pipe -finput-charset=$(input_charset) -fexec-charset=$(output_charset) -std=$(args_std) $(args_link) $(args_warning) $(args_defines)
+args_base        = -pipe -finput-charset=$(input_charset) -fexec-charset=$(output_charset) -std=$(args_std) $(args_link) $(args_warning) $(args_defines) $(args_extra)
 args_debug       = -g3 -DDEBUG $(args_base) $(args_opt_debug)
 args_release     = -DNDEBUG -static $(args_base) $(args_opt_release)
 .PHONY: toolchain all build debug release clean make_info
