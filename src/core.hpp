@@ -483,7 +483,7 @@ namespace core
             }, config_nodes );
             config_file_stream.flush();
             const auto is_good{ config_file_stream.good() };
-            std::print( "\n ({}) 同步配置{}.", is_good ? 'i' : '!', is_good ? "成功" : "失败" );
+            std::print( "\n (i) 同步配置{}.", is_good ? "成功" : "失败" );
             details::wait();
             return func_back;
         } };
