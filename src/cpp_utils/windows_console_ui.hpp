@@ -180,7 +180,7 @@ namespace cpp_utils
                 write_( line.text, &line != back_ptr );
             }
         }
-        auto refresh_( const COORD hang_position )
+        auto refresh_( const COORD& hang_position )
         {
             for ( auto& line : lines_ ) {
                 if ( line == hang_position && line.last_attrs != line.intensity_attrs ) {
