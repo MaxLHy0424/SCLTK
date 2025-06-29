@@ -35,32 +35,32 @@ make_info:
 src/info.hpp: make_info
 dependencies_debug = src/*
 build/debug/__debug__.exe: $(dependencies_debug) \
-                         make_info \
-                         build/debug/.nothing
+                           make_info \
+                           build/debug/.nothing
 	$(msys2_path)/ucrt64/bin/$(compiler) $(dependencies_debug).cpp $(args_debug) -o $@
 dependencies_release_32bit = build/manifest-i686.o \
                              src/*
 build/release/SCLTK-i686-msvcrt.exe: $(dependencies_release_32bit) \
-                                   make_info \
-                                   build/release/.nothing
+                                     make_info \
+                                     build/release/.nothing
 	$(msys2_path)/mingw32/bin/$(compiler) $(dependencies_release_32bit).cpp $(args_release) -o $@
 dependencies_release_64bit = build/manifest-x86_64.o \
                              src/*
 build/release/SCLTK-x86_64-ucrt.exe: $(dependencies_release_64bit) \
-                                   make_info \
-                                   build/release/.nothing
+                                     make_info \
+                                     build/release/.nothing
 	$(msys2_path)/ucrt64/bin/$(compiler) $(dependencies_release_64bit).cpp $(args_release) -o $@
 dependencies_info = manifest.rc \
                     img/favicon.ico \
 					manifest.xml \
                     src/info.hpp
 build/manifest-i686.o: $(dependencies_info) \
-                 make_info \
-                 build/.nothing
+                       make_info \
+                       build/.nothing
 	$(msys2_path)/usr/bin/windres.exe -i $< -o $@ $(args_defines) -F pe-i386
 build/manifest-x86_64.o: $(dependencies_info) \
-                   make_info \
-                   build/.nothing
+                         make_info \
+                         build/.nothing
 	$(msys2_path)/usr/bin/windres.exe -i $< -o $@ $(args_defines) -F pe-x86-64
 build/.nothing:
 	$(msys2_path)/usr/bin/mkdir.exe build -p
