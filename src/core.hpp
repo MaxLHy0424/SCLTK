@@ -323,21 +323,15 @@ namespace core
       private:
         static constexpr auto suffix_exec{ "exec: "sv };
         static constexpr auto suffix_serv{ "serv: "sv };
-        static constexpr auto size_of_suffix{ ( suffix_exec.size() + suffix_serv.size() ) / 2 };
-        static_assert( suffix_exec.size() == suffix_serv.size() );
-        static auto load_( const bool, std::string& line )
+        static auto load_( const bool, const std::string_view line )
         {
-            std::string_view line_view{ line };
-            if ( line_view.size() > size_of_suffix ) {
-                const auto suffix{ line_view.substr( 0, size_of_suffix ) };
-                if ( suffix == suffix_exec ) {
-                    custom_rules.execs.emplace_back( line_view.substr( size_of_suffix ) );
-                    return;
-                }
-                if ( suffix == suffix_serv ) {
-                    custom_rules.servs.emplace_back( line_view.substr( size_of_suffix ) );
-                    return;
-                }
+            if ( line.starts_with( suffix_exec ) ) {
+                custom_rules.execs.emplace_back( line.substr( suffix_exec.size() ) );
+                return;
+            }
+            if ( line.starts_with( suffix_serv ) ) {
+                custom_rules.servs.emplace_back( line.substr( suffix_serv.size() ) );
+                return;
             }
         }
         static auto sync_( std::ofstream& out )
