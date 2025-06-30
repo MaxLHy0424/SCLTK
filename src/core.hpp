@@ -442,16 +442,16 @@ namespace core
                 line.pop_back();
             }
             std::string_view line_view{ line };
-            if ( line_view.size() >= sizeof( "[  ]" ) && line_view.substr( 0, sizeof( "[ " ) - 1 ) == "[ "
-                 && line_view.substr( line_view.size() - sizeof( " ]" ) + 1, line_view.size() ) == " ]" )
-            {
-                line_view           = line_view.substr( sizeof( "[ " ) - 1, line_view.size() - sizeof( " ]" ) - 1 );
+            if ( line_view.size() < sizeof( "[  ]" ) ) {
+                continue;
+            }
+            if ( line_view.starts_with( "[ " ) && line_view.ends_with( " ]" ) ) {
                 current_config_node = std::monostate{};
                 std::apply( [ & ]( auto&&... config_node )
                 {
                     ( [ & ]( auto&& current_node ) noexcept
                     {
-                        if ( line_view == current_node.self_name ) {
+                        if ( line_view.contains( current_node.self_name ) ) {
                             current_config_node = &current_node;
                         }
                     }( config_node ), ... );
