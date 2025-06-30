@@ -91,7 +91,7 @@ namespace core
         class config_node_impl
         {
           public:
-            const char* self_name;
+            const char* raw_name;
             auto load( this auto&& self, const bool is_reload, std::string& line )
             {
                 self.load_( is_reload, line );
@@ -114,8 +114,8 @@ namespace core
                     self.ui_( parent_ui );
                 }
             }
-            config_node_impl( const char* const self_name ) noexcept
-              : self_name{ self_name }
+            config_node_impl( const char* const raw_name ) noexcept
+              : raw_name{ raw_name }
             { }
             ~config_node_impl() noexcept = default;
         };
@@ -129,7 +129,7 @@ namespace core
           private:
             std::atomic< bool > value_{ false };
           public:
-            const char* self_name;
+            const char* raw_name;
             const char* shown_name;
             auto set( const bool value ) noexcept
             {
@@ -145,18 +145,18 @@ namespace core
             }
             auto operator=( const item& ) -> item&     = delete;
             auto operator=( item&& ) noexcept -> item& = delete;
-            item( const char* const self_name, const char* const shown_name ) noexcept
-              : self_name{ self_name }
+            item( const char* const raw_name, const char* const shown_name ) noexcept
+              : raw_name{ raw_name }
               , shown_name{ shown_name }
             { }
             item( const item& src ) noexcept
               : value_{ src }
-              , self_name{ src.self_name }
+              , raw_name{ src.raw_name }
               , shown_name{ src.shown_name }
             { }
             item( item&& src ) noexcept
               : value_{ src }
-              , self_name{ src.self_name }
+              , raw_name{ src.raw_name }
               , shown_name{ src.shown_name }
             { }
             ~item() noexcept = default;
@@ -164,31 +164,31 @@ namespace core
         class category final
         {
           public:
-            const char* self_name;
+            const char* raw_name;
             const char* shown_name;
             std::vector< item > items;
-            const auto& operator[]( const std::string_view self_name ) const noexcept
+            const auto& operator[]( const std::string_view raw_name ) const noexcept
             {
                 for ( auto& item : items ) {
-                    if ( self_name == item.self_name ) {
+                    if ( raw_name == item.raw_name ) {
                         return item;
                     }
                 }
                 if constexpr ( cpp_utils::is_debugging_build ) {
-                    std::print( "'{}' does not exist.", self_name );
+                    std::print( "'{}' does not exist.", raw_name );
                     std::terminate();
                 } else {
                     std::unreachable();
                 }
             }
-            auto& operator[]( const std::string_view self_name ) noexcept
+            auto& operator[]( const std::string_view raw_name ) noexcept
             {
-                return const_cast< item& >( std::as_const( *this )[ self_name ] );
+                return const_cast< item& >( std::as_const( *this )[ raw_name ] );
             }
             auto operator=( const category& ) -> category& = delete;
             auto operator=( category&& ) -> category&      = delete;
-            category( const char* const self_name, const char* const shown_name, std::vector< item > items )
-              : self_name{ self_name }
+            category( const char* const raw_name, const char* const shown_name, std::vector< item > items )
+              : raw_name{ raw_name }
               , shown_name{ shown_name }
               , items{ std::move( items ) }
             { }
@@ -219,9 +219,9 @@ namespace core
             }
             for ( auto& category : categories ) {
                 for ( auto& item : category.items ) {
-                    if ( line == std::format( format_string_, category.self_name, item.self_name, true ) ) {
+                    if ( line == std::format( format_string_, category.raw_name, item.raw_name, true ) ) {
                         item.set( true );
-                    } else if ( line == std::format( format_string_, category.self_name, item.self_name, false ) ) {
+                    } else if ( line == std::format( format_string_, category.raw_name, item.raw_name, false ) ) {
                         item.set( false );
                     }
                 }
@@ -231,7 +231,7 @@ namespace core
         {
             for ( const auto& category : categories ) {
                 for ( const auto& item : category.items ) {
-                    out << std::format( format_string_, category.self_name, item.self_name, item.get() ) << '\n';
+                    out << std::format( format_string_, category.raw_name, item.raw_name, item.get() ) << '\n';
                 }
             }
         }
@@ -294,23 +294,23 @@ namespace core
             }
         }
       public:
-        const auto& operator[]( const std::string_view self_name ) const noexcept
+        const auto& operator[]( const std::string_view raw_name ) const noexcept
         {
             for ( auto& category : categories ) {
-                if ( self_name == category.self_name ) {
+                if ( raw_name == category.raw_name ) {
                     return category;
                 }
             }
             if constexpr ( cpp_utils::is_debugging_build ) {
-                std::print( "'{}' does not exist.", self_name );
+                std::print( "'{}' does not exist.", raw_name );
                 std::terminate();
             } else {
                 std::unreachable();
             }
         }
-        auto& operator[]( const std::string_view self_name ) noexcept
+        auto& operator[]( const std::string_view raw_name ) noexcept
         {
-            return const_cast< category& >( std::as_const( *this )[ self_name ] );
+            return const_cast< category& >( std::as_const( *this )[ raw_name ] );
         }
         options() noexcept
           : config_node_impl{ "options" }
@@ -449,7 +449,7 @@ namespace core
                 {
                     ( [ & ]( auto&& current_node ) noexcept
                     {
-                        if ( line_view.contains( current_node.self_name ) ) {
+                        if ( line_view.contains( current_node.raw_name ) ) {
                             current_config_node = &current_node;
                         }
                     }( config_node ), ... );
@@ -496,7 +496,7 @@ namespace core
             config_file_stream << "# " INFO_FULL_NAME "\n# " INFO_VERSION "\n";
             std::apply( [ & ]( auto&&... config_node )
             {
-                ( ( config_file_stream << std::format( "[ {} ]\n", config_node.self_name ), config_node.sync( config_file_stream ) ),
+                ( ( config_file_stream << std::format( "[ {} ]\n", config_node.raw_name ), config_node.sync( config_file_stream ) ),
                   ... );
             }, config_nodes );
             config_file_stream.flush();
