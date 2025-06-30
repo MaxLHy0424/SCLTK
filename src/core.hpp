@@ -373,7 +373,7 @@ namespace core
                     "  在修改自定义规则时, 请仔细检查.\n"
                     "  更多信息请参阅文档.\n\n"
                     "  使用示例:\n\n"
-                    "  [ customized_rules ]\n"
+                    "  [customized_rules]\n"
                     "  exec: abc_client_gui\n"
                     "  exec: abc_client_server\n"
                     "  exec: abc_protect_server\n"
@@ -496,7 +496,7 @@ namespace core
             config_file_stream << "# " INFO_FULL_NAME "\n# " INFO_VERSION "\n";
             std::apply( [ & ]( auto&&... config_node )
             {
-                ( ( config_file_stream << std::format( "[ {} ]\n", config_node.raw_name ), config_node.sync( config_file_stream ) ),
+                ( ( config_file_stream << std::format( "[{}]\n", config_node.raw_name ), config_node.sync( config_file_stream ) ),
                   ... );
             }, config_nodes );
             config_file_stream.flush();
