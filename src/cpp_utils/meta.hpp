@@ -1,4 +1,5 @@
 #pragma once
+#include <functional>
 #include <tuple>
 #include "meta_base.hpp"
 namespace cpp_utils
@@ -369,7 +370,7 @@ namespace cpp_utils
     template < auto V, size_t N >
     using make_repeated_value_list
       = details::remove_identity_t< decltype( details::make_repeated_value_list_impl< V >( std::make_index_sequence< N >{} ) ) >;
-    template < typename >
+    template < typename, typename... >
     struct function_traits;
     template < typename R, typename... Args >
     struct function_traits< R( Args... ) > final
@@ -388,6 +389,12 @@ namespace cpp_utils
     {
         using return_type = R;
         using class_type  = T;
+        using args_type   = type_list< Args... >;
+    };
+    template < typename R, typename... Args >
+    struct function_traits< std::function< R( Args... ) > > final
+    {
+        using return_type = R;
         using args_type   = type_list< Args... >;
     };
     template < template < typename... > typename Template, typename T >
