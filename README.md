@@ -2,7 +2,8 @@
 
 ![title](./img/title.png)\
 **Student Computer Lab Toolkit**\
-**轻松破解机房控制, 基于 Modern C++**
+**轻松破解机房控制, 基于 Modern C++**\
+**\(适用于 Microsoft Windows OS\)**
 
 </div>
 
