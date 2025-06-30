@@ -141,7 +141,7 @@ SCLTK 窗口相关选项.
 
 示例:
 ```ini
-[ customized_rules ]
+[customized_rules]
 exec: abc_client_gui
 exec: abc_client_server
 exec: abc_protect_server
