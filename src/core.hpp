@@ -325,11 +325,11 @@ namespace core
         static constexpr auto suffix_serv{ "serv: "sv };
         static auto load_( const bool, const std::string_view line )
         {
-            if ( line.starts_with( suffix_exec ) ) {
+            if ( line.size() > suffix_exec.size() && line.starts_with( suffix_exec ) ) {
                 custom_rules.execs.emplace_back( line.substr( suffix_exec.size() ) );
                 return;
             }
-            if ( line.starts_with( suffix_serv ) ) {
+            if ( line.size() > suffix_serv.size() && line.starts_with( suffix_serv ) ) {
                 custom_rules.servs.emplace_back( line.substr( suffix_serv.size() ) );
                 return;
             }
