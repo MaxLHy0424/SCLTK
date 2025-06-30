@@ -212,7 +212,7 @@ namespace core
         {
             return is_enable ? " > 禁用 "sv : " > 启用 "sv;
         }
-        auto load_( const bool is_reload, std::string& line )
+        auto load_( const bool is_reload, const std::string& line )
         {
             if ( is_reload ) {
                 return;
