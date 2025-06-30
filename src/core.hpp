@@ -356,7 +356,7 @@ namespace core
         }
         static auto ui_( cpp_utils::console_ui& ui )
         {
-            auto help{ [] static
+            auto show_help_info{ [] static
             {
                 cpp_utils::console_ui ui;
                 ui.add_back( "                    [ 配  置 ]\n\n" )
@@ -382,7 +382,7 @@ namespace core
                   .show();
                 return func_back;
             } };
-            ui.add_back( "\n[ 自定义规则 ]\n" ).add_back( " > 查看帮助信息 ", help );
+            ui.add_back( "\n[ 自定义规则 ]\n" ).add_back( " > 查看帮助信息 ", show_help_info );
         }
       public:
         customized_rules() noexcept
@@ -466,7 +466,7 @@ namespace core
     }
     inline auto config_ui()
     {
-        auto view_parsing_rules{ [] static
+        auto show_parsing_rules{ [] static
         {
             cpp_utils::console_ui ui;
             ui.add_back( "                    [ 配  置 ]\n\n" )
@@ -523,7 +523,7 @@ namespace core
         cpp_utils::console_ui ui;
         ui.add_back( "                    [ 配  置 ]\n\n" )
           .add_back( " < 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
-          .add_back( " > 查看解析规则", view_parsing_rules )
+          .add_back( " > 查看解析规则", show_parsing_rules )
           .add_back( " > 同步配置 ", sync )
           .add_back( " > 打开配置文件 ", open_file );
         std::apply( [ & ]( auto&&... config_node ) { ( config_node.ui( ui ), ... ); }, config_nodes );
