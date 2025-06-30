@@ -371,8 +371,6 @@ namespace core
                     "  " INFO_SHORT_NAME
                     " 不对自定义规则的正确性进行检测,\n"
                     "  在修改自定义规则时, 请仔细检查.\n"
-                    "  特别地, " INFO_SHORT_NAME
-                    " 会忽略每行末尾的空白字符.\n"
                     "  更多信息请参阅文档.\n\n"
                     "  使用示例:\n\n"
                     "  [ customized_rules ]\n"
@@ -468,6 +466,26 @@ namespace core
     }
     inline auto config_ui()
     {
+        auto view_parsing_rules{ [] static
+        {
+            cpp_utils::console_ui ui;
+            ui.add_back( "                    [ 配  置 ]\n\n" )
+              .add_back( " < 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
+              .add_back(
+                "\n  配置以行作为单位解析.\n\n"
+                "  以 # 开头的行是注释.\n\n"
+                "  各个配置项在配置文件中由不同标签区分,\n"
+                "  标签的格式为 [<标签名>],\n"
+                "  <标签名> 与中括号间可以有若干空格.\n\n"
+                "  如果匹配不到配置项,\n"
+                "  则当前读取的标签到下一标签之间的内容都将被忽略.\n\n"
+                "  解析时会忽略每行末尾的空白字符.\n"
+                "  不会忽略每行的前导空白字符.\n"
+                "  如果当前行不是标签, 则该行将由上一个标签处理.\n\n"
+                "  更多信息请参阅文档." )
+              .show();
+            return func_back;
+        } };
         auto sync{ [] static
         {
             std::print(
@@ -505,6 +523,7 @@ namespace core
         cpp_utils::console_ui ui;
         ui.add_back( "                    [ 配  置 ]\n\n" )
           .add_back( " < 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
+          .add_back( " > 查看解析规则", view_parsing_rules )
           .add_back( " > 同步配置 ", sync )
           .add_back( " > 打开配置文件 ", open_file );
         std::apply( [ & ]( auto&&... config_node ) { ( config_node.ui( ui ), ... ); }, config_nodes );
