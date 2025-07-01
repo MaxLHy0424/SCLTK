@@ -263,7 +263,7 @@ namespace cpp_utils
         CloseServiceHandle( scm );
         return result;
     }
-    inline auto take_any_key_to_continue( const HANDLE std_input_handle ) noexcept
+    inline auto press_any_key_to_continue( const HANDLE std_input_handle ) noexcept
     {
         DWORD mode;
         GetConsoleMode( std_input_handle, &mode );
@@ -276,9 +276,9 @@ namespace cpp_utils
         } while ( record.EventType != KEY_EVENT || !record.Event.KeyEvent.bKeyDown );
         SetConsoleMode( std_input_handle, mode );
     }
-    inline auto take_any_key_to_continue() noexcept
+    inline auto press_any_key_to_continue() noexcept
     {
-        take_any_key_to_continue( GetStdHandle( STD_INPUT_HANDLE ) );
+        press_any_key_to_continue( GetStdHandle( STD_INPUT_HANDLE ) );
     }
     inline auto is_run_as_admin() noexcept
     {
