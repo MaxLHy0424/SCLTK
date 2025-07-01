@@ -4,7 +4,6 @@
 #include <concepts>
 #include <ranges>
 #include "compiler.hpp"
-#include "meta_base.hpp"
 namespace cpp_utils
 {
     template < typename T >
@@ -12,7 +11,7 @@ namespace cpp_utils
       = std::same_as< std::decay_t< T >, char > || std::same_as< std::decay_t< T >, wchar_t >
      || std::same_as< std::decay_t< T >, char8_t > || std::same_as< std::decay_t< T >, char16_t >
      || std::same_as< std::decay_t< T >, char32_t >;
-    template < character T, size_t N >
+    template < character T, std::size_t N >
         requires( std::same_as< T, std::decay_t< T > > && N > 0 )
     class basic_const_string final
     {
@@ -55,11 +54,11 @@ namespace cpp_utils
         {
             return data_.crend();
         }
-        constexpr const auto& operator[]( const size_t index ) const noexcept
+        constexpr const auto& operator[]( const std::size_t index ) const noexcept
         {
             return data_[ index ];
         }
-        constexpr const auto& at( const size_t index ) const noexcept
+        constexpr const auto& at( const std::size_t index ) const noexcept
         {
             if constexpr ( is_debugging_build ) {
                 return data_.at( index );
@@ -72,7 +71,7 @@ namespace cpp_utils
             if ( src == nullptr ) {
                 return false;
             }
-            size_t src_size{ 0 };
+            std::size_t src_size{ 0 };
             while ( src[ src_size ] != '\0' ) {
                 ++src_size;
             }
@@ -86,7 +85,7 @@ namespace cpp_utils
             }
             return true;
         }
-        template < size_t SrcN >
+        template < std::size_t SrcN >
         constexpr auto compare( const T ( &src )[ SrcN ] ) const noexcept
         {
             if ( SrcN != N ) {
@@ -99,7 +98,7 @@ namespace cpp_utils
             }
             return true;
         }
-        template < size_t SrcN >
+        template < std::size_t SrcN >
         constexpr auto compare( const basic_const_string< T, SrcN >& src ) const noexcept
         {
             if ( SrcN != N ) {
@@ -116,12 +115,12 @@ namespace cpp_utils
         {
             return compare( src );
         }
-        template < size_t SrcN >
+        template < std::size_t SrcN >
         constexpr auto operator==( const T ( &src )[ SrcN ] ) const noexcept
         {
             return compare( src );
         }
-        template < size_t SrcN >
+        template < std::size_t SrcN >
         constexpr auto operator==( const basic_const_string< T, SrcN >& src ) const noexcept
         {
             return compare( src );
@@ -130,12 +129,12 @@ namespace cpp_utils
         {
             return !compare( src );
         }
-        template < size_t SrcN >
+        template < std::size_t SrcN >
         constexpr auto operator!=( const T ( &src )[ SrcN ] ) const noexcept
         {
             return !compare( src );
         }
-        template < size_t SrcN >
+        template < std::size_t SrcN >
         constexpr auto operator!=( const basic_const_string< T, SrcN >& src ) const noexcept
         {
             return !compare( src );
@@ -153,17 +152,17 @@ namespace cpp_utils
         consteval basic_const_string( basic_const_string< T, N >&& ) noexcept = delete;
         ~basic_const_string() noexcept                                        = default;
     };
-    template < size_t N >
+    template < std::size_t N >
     using const_string = basic_const_string< char, N >;
-    template < size_t N >
+    template < std::size_t N >
     using const_wstring = basic_const_string< wchar_t, N >;
-    template < size_t N >
+    template < std::size_t N >
     using const_u8string = basic_const_string< char8_t, N >;
-    template < size_t N >
+    template < std::size_t N >
     using const_u16string = basic_const_string< char16_t, N >;
-    template < size_t N >
+    template < std::size_t N >
     using const_u32string = basic_const_string< char32_t, N >;
-    template < auto C, size_t N >
+    template < auto C, std::size_t N >
         requires character< decltype( C ) >
     inline consteval auto make_repeated_const_string() noexcept
     {
