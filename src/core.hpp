@@ -342,23 +342,23 @@ namespace core
             ui.add_back( "                    [ 配  置 ]\n\n" )
               .add_back( " < 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
               .add_back(
-                "\n  自定义规则格式为 <flag>: <item>\n"
-                "  其中, <flag> 可为 exec 或 serv,\n"
-                "  分别表示以 .exe 为文件扩展名的可执行文件\n"
-                "  和某个 Windows 服务的服务名称.\n"
-                "  <item> 的类型由 <flag> 决定.\n"
-                "  如果 <item> 为空, 该项规则将会被忽略.\n"
-                "  如果自定义规则不符合格式, 则会被忽略.\n"
-                "  本配置项不对自定义规则的正确性进行检测,\n"
-                "  在修改自定义规则时, 请仔细检查.\n"
-                "  更多信息请参阅文档.\n\n"
-                "  使用示例:\n\n"
-                "  [customized_rules]\n"
-                "  exec: abc_client_gui\n"
-                "  exec: abc_client_server\n"
-                "  exec: abc_protect_server\n"
-                "  serv: abc_network\n"
-                "  serv: abc_diag_track\n" )
+                "\n 自定义规则格式为 <flag>: <item>\n"
+                " 其中, <flag> 可为 exec 或 serv,\n"
+                " 分别表示以 .exe 为文件扩展名的可执行文件\n"
+                " 和某个 Windows 服务的服务名称.\n"
+                " <item> 的类型由 <flag> 决定.\n"
+                " 如果 <item> 为空, 该项规则将会被忽略.\n"
+                " 如果自定义规则不符合格式, 则会被忽略.\n"
+                " 本配置项不对自定义规则的正确性进行检测,\n"
+                " 在修改自定义规则时, 请仔细检查.\n"
+                " 更多信息请参阅文档.\n\n"
+                " 使用示例:\n\n"
+                " [customized_rules]\n"
+                " exec: abc_client_gui\n"
+                " exec: abc_client_server\n"
+                " exec: abc_protect_server\n"
+                " serv: abc_network\n"
+                " serv: abc_diag_track\n" )
               .show();
             return func_back;
         }
@@ -464,17 +464,17 @@ namespace core
             ui.add_back( "                    [ 配  置 ]\n\n" )
               .add_back( " < 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
               .add_back(
-                "\n  配置以行作为单位解析.\n\n"
-                "  以 # 开头的行是注释.\n\n"
-                "  各个配置项在配置文件中由不同标签区分,\n"
-                "  标签的格式为 [<标签名>],\n"
-                "  <标签名> 与中括号间可以有若干空格.\n\n"
-                "  如果匹配不到配置项,\n"
-                "  则当前读取的标签到下一标签之间的内容都将被忽略.\n\n"
-                "  解析时会忽略每行末尾的空白字符.\n"
-                "  不会忽略每行的前导空白字符.\n"
-                "  如果当前行不是标签, 则该行将由上一个标签处理.\n\n"
-                "  更多信息请参阅文档." )
+                "\n 配置以行作为单位解析.\n\n"
+                " 以 # 开头的行是注释.\n\n"
+                " 各个配置项在配置文件中由不同标签区分,\n"
+                " 标签的格式为 [<标签名>],\n"
+                " <标签名> 与中括号间可以有若干空格.\n\n"
+                " 如果匹配不到配置项,\n"
+                " 则当前读取的标签到下一标签之间的内容都将被忽略.\n\n"
+                " 解析时会忽略每行末尾的空白字符.\n"
+                " 不会忽略每行的前导空白字符.\n"
+                " 如果当前行不是标签, 则该行将由上一个标签处理.\n\n"
+                " 更多信息请参阅文档." )
               .show();
             return func_back;
         }
