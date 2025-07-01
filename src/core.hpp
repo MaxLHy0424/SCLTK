@@ -235,52 +235,32 @@ namespace core
                 }
             }
         }
+        using category_t = category;
+        using item_t     = item;
+        static auto set_item_value_( item_t& item_, ui_func_args args )
+        {
+            item_.set( !item_.get() );
+            args.parent_ui.edit_text( args.node_index, make_swith_button_text_( item_ ) );
+            return func_back;
+        }
+        static auto make_category_ui_( category_t& category )
+        {
+            cpp_utils::console_ui ui;
+            ui.add_back( "                    [ 配  置 ]\n\n" )
+              .add_back(
+                std::format( " < 折叠 {} ", category.shown_name ), quit,
+                cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity );
+            for ( auto& item : category.items ) {
+                ui.add_back( std::format( "\n[ {} ]\n", item.shown_name ) )
+                  .add_back(
+                    make_swith_button_text_( item ), std::bind_front( set_item_value_, std::ref( item ) ),
+                    cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_green );
+            }
+            ui.show();
+            return func_back;
+        }
         auto ui_( cpp_utils::console_ui& ui )
         {
-            using category_t = category;
-            using item_t     = item;
-            class option_setter final
-            {
-              private:
-                item_t& item_;
-              public:
-                auto operator()( ui_func_args args )
-                {
-                    item_.set( !item_.get() );
-                    args.parent_ui.edit_text( args.node_index, make_swith_button_text_( item_ ) );
-                    return func_back;
-                }
-                option_setter( item_t& item ) noexcept
-                  : item_{ item }
-                { }
-                ~option_setter() noexcept = default;
-            };
-            class option_ui final
-            {
-              private:
-                category_t& category_;
-              public:
-                auto operator()()
-                {
-                    cpp_utils::console_ui ui;
-                    ui.add_back( "                    [ 配  置 ]\n\n" )
-                      .add_back(
-                        std::format( " < 折叠 {} ", category_.shown_name ), quit,
-                        cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity );
-                    for ( auto& item : category_.items ) {
-                        ui.add_back( std::format( "\n[ {} ]\n", item.shown_name ) )
-                          .add_back(
-                            make_swith_button_text_( item ), option_setter{ item },
-                            cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_green );
-                    }
-                    ui.show();
-                    return func_back;
-                }
-                option_ui( category_t& category ) noexcept
-                  : category_{ category }
-                { }
-                ~option_ui() noexcept = default;
-            };
             ui.add_back(
               "\n[ 选项 ]\n\n"
               " (i) 选项相关信息可参阅文档.\n"
@@ -289,7 +269,7 @@ namespace core
               "     其余选项可实时热重载.\n" );
             for ( auto& category : categories_ ) {
                 ui.add_back(
-                  std::format( " > {} ", category.shown_name ), option_ui{ category },
+                  std::format( " > {} ", category.shown_name ), std::bind_front( make_category_ui_, category ),
                   cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_green );
             }
         }
@@ -348,35 +328,35 @@ namespace core
             custom_rules.execs.clear();
             custom_rules.servs.clear();
         }
+        static auto show_help_info_()
+        {
+            cpp_utils::console_ui ui;
+            ui.add_back( "                    [ 配  置 ]\n\n" )
+              .add_back( " < 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
+              .add_back(
+                "\n  自定义规则格式为 <flag>: <item>\n"
+                "  其中, <flag> 可为 exec 或 serv,\n"
+                "  分别表示以 .exe 为文件扩展名的可执行文件\n"
+                "  和某个 Windows 服务的服务名称.\n"
+                "  <item> 的类型由 <flag> 决定.\n"
+                "  如果 <item> 为空, 该项规则将会被忽略.\n"
+                "  如果自定义规则不符合格式, 则会被忽略.\n"
+                "  本配置项不对自定义规则的正确性进行检测,\n"
+                "  在修改自定义规则时, 请仔细检查.\n"
+                "  更多信息请参阅文档.\n\n"
+                "  使用示例:\n\n"
+                "  [customized_rules]\n"
+                "  exec: abc_client_gui\n"
+                "  exec: abc_client_server\n"
+                "  exec: abc_protect_server\n"
+                "  serv: abc_network\n"
+                "  serv: abc_diag_track\n" )
+              .show();
+            return func_back;
+        }
         static auto ui_( cpp_utils::console_ui& ui )
         {
-            auto show_help_info{ [] static
-            {
-                cpp_utils::console_ui ui;
-                ui.add_back( "                    [ 配  置 ]\n\n" )
-                  .add_back( " < 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
-                  .add_back(
-                    "\n  自定义规则格式为 <flag>: <item>\n"
-                    "  其中, <flag> 可为 exec 或 serv,\n"
-                    "  分别表示以 .exe 为文件扩展名的可执行文件\n"
-                    "  和某个 Windows 服务的服务名称.\n"
-                    "  <item> 的类型由 <flag> 决定.\n"
-                    "  如果 <item> 为空, 该项规则将会被忽略.\n"
-                    "  如果自定义规则不符合格式, 则会被忽略.\n"
-                    "  本配置项不对自定义规则的正确性进行检测,\n"
-                    "  在修改自定义规则时, 请仔细检查.\n"
-                    "  更多信息请参阅文档.\n\n"
-                    "  使用示例:\n\n"
-                    "  [customized_rules]\n"
-                    "  exec: abc_client_gui\n"
-                    "  exec: abc_client_server\n"
-                    "  exec: abc_protect_server\n"
-                    "  serv: abc_network\n"
-                    "  serv: abc_diag_track\n" )
-                  .show();
-                return func_back;
-            } };
-            ui.add_back( "\n[ 自定义规则 ]\n" ).add_back( " > 查看帮助信息 ", show_help_info );
+            ui.add_back( "\n[ 自定义规则 ]\n" ).add_back( " > 查看帮助信息 ", show_help_info_ );
         }
       public:
         customized_rules() noexcept
@@ -458,9 +438,9 @@ namespace core
             } );
         }
     }
-    inline auto config_ui()
+    namespace details
     {
-        auto show_parsing_rules{ [] static
+        inline auto show_config_parsing_rules()
         {
             cpp_utils::console_ui ui;
             ui.add_back( "                    [ 配  置 ]\n\n" )
@@ -479,8 +459,8 @@ namespace core
                 "  更多信息请参阅文档." )
               .show();
             return func_back;
-        } };
-        auto sync{ [] static
+        }
+        inline auto sync_config()
         {
             std::print(
               "                    [ 配  置 ]\n\n\n"
@@ -498,8 +478,8 @@ namespace core
             std::print( "\n (i) 同步配置{}.", is_good ? "成功" : "失败" );
             details::wait();
             return func_back;
-        } };
-        auto open_file{ [] static
+        }
+        inline auto open_config_file()
         {
             std::print(
               "                    [ 配  置 ]\n\n\n"
@@ -510,24 +490,30 @@ namespace core
             std::print( " (i) 打开配置文件{}.", is_success ? "成功" : "失败" );
             details::wait();
             return func_back;
-        } };
+        }
+    }
+    inline auto config_ui()
+    {
         cpp_utils::console_ui ui;
         ui.add_back( "                    [ 配  置 ]\n\n" )
           .add_back( " < 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
-          .add_back( " > 查看解析规则", show_parsing_rules )
-          .add_back( " > 同步配置 ", sync )
-          .add_back( " > 打开配置文件 ", open_file );
+          .add_back( " > 查看解析规则", details::show_config_parsing_rules )
+          .add_back( " > 同步配置 ", details::sync_config )
+          .add_back( " > 打开配置文件 ", details::open_config_file );
         std::apply( [ & ]( auto&&... config_node ) { ( config_node.ui( ui ), ... ); }, config_nodes );
         ui.show();
         return func_back;
     }
-    inline auto info()
+    namespace details
     {
-        auto visit_repo_webpage{ [] static
+        inline auto visit_repo_webpage()
         {
             ShellExecuteA( nullptr, "open", INFO_REPO_URL, nullptr, nullptr, SW_SHOWNORMAL );
             return func_back;
-        } };
+        }
+    }
+    inline auto info()
+    {
         cpp_utils::console_ui ui;
         ui.add_back( "                    [ 关  于 ]\n\n" )
           .add_back( " < 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
@@ -536,14 +522,14 @@ namespace core
             "\n\n 构建时间: " INFO_BUILD_TIME "\n 编译工具: " INFO_COMPILER " " INFO_ARCH
             "\n\n[ 许可证与版权 ]\n\n " INFO_LICENSE "\n " INFO_COPYRIGHT "\n\n[ 仓库 ]\n" )
           .add_back(
-            " " INFO_REPO_URL, visit_repo_webpage,
+            " " INFO_REPO_URL, details::visit_repo_webpage,
             cpp_utils::console_text::default_attrs | cpp_utils::console_text::foreground_intensity )
           .show();
         return func_back;
     }
-    inline auto toolkit()
+    namespace details
     {
-        auto launch_cmd{ []( ui_func_args args ) static noexcept
+        inline auto launch_cmd( ui_func_args args )
         {
             cpp_utils::set_current_console_title( INFO_SHORT_NAME " - 命令提示符" );
             cpp_utils::set_console_size( window_handle, std_output_handle, 120, 30 );
@@ -568,8 +554,8 @@ namespace core
             cpp_utils::fix_window_size( window_handle, true );
             cpp_utils::enable_window_maximize_ctrl( window_handle, false );
             return func_back;
-        } };
-        auto restore_os_components{ [] static
+        }
+        inline auto restore_os_components()
         {
             std::print(
               "                   [ 工 具 箱 ]\n\n\n"
@@ -590,45 +576,38 @@ namespace core
             std::print( " (i) 操作已完成." );
             details::wait();
             return func_back;
-        } };
+        }
         struct cmd_item final
         {
             const char* description;
             const char* command;
         };
-        class cmd_executor final
+        inline auto execute_cmd( const cmd_item& item )
         {
-          private:
-            const cmd_item& item_;
-          public:
-            auto operator()()
-            {
-                auto execute{ [ this ]
-                {
-                    std::print(
-                      "                   [ 工 具 箱 ]\n\n\n"
-                      " -> 正在执行操作系统命令...\n\n{}\n\n",
-                      diving_line.data() );
-                    std::system( item_.command );
-                    return func_exit;
-                } };
-                cpp_utils::console_ui ui;
-                ui.add_back(
-                    "                   [ 工 具 箱 ]\n\n\n"
-                    " (i) 是否继续执行?\n" )
-                  .add_back( " > 是, 继续 ", execute, cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_intensity )
-                  .add_back( " > 否, 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
-                  .show();
-                return func_back;
-            }
-            cmd_executor( const cmd_item& item ) noexcept
-              : item_{ item }
-            { }
-            cmd_executor( const cmd_executor& ) noexcept = default;
-            cmd_executor( cmd_executor&& ) noexcept      = default;
-            ~cmd_executor() noexcept                     = default;
-        };
-        constexpr std::array< cmd_item, 5 > common_cmds{
+            std::print(
+              "                   [ 工 具 箱 ]\n\n\n"
+              " -> 正在执行操作系统命令...\n\n{}\n\n",
+              diving_line.data() );
+            std::system( item.command );
+            return func_exit;
+        }
+        inline auto make_cmd_executor_ui( const cmd_item& item )
+        {
+            cpp_utils::console_ui ui;
+            ui.add_back(
+                "                   [ 工 具 箱 ]\n\n\n"
+                " (i) 是否继续执行?\n" )
+              .add_back(
+                " > 是, 继续 ", std::bind_front( execute_cmd, std::cref( item ) ),
+                cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_intensity )
+              .add_back( " > 否, 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
+              .show();
+            return func_back;
+        }
+    }
+    inline auto toolkit()
+    {
+        constexpr std::array< details::cmd_item, 5 > common_cmds{
           { { "重启资源管理器", R"(taskkill.exe /f /im explorer.exe && timeout.exe /t 3 /nobreak && start C:\Windows\explorer.exe)" },
            { "重启至高级选项", "shutdown.exe /r /o /f /t 0" },
            { "恢复 USB 设备访问", R"(reg.exe add "HKLM\SYSTEM\CurrentControlSet\Services\USBSTOR" /f /t reg_dword /v Start /d 3)" },
@@ -638,11 +617,13 @@ namespace core
         cpp_utils::console_ui ui;
         ui.add_back( "                   [ 工 具 箱 ]\n\n" )
           .add_back( " < 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
-          .add_back( " > 命令提示符 ", launch_cmd )
-          .add_back( " > 恢复操作系统组件 ", restore_os_components )
+          .add_back( " > 命令提示符 ", details::launch_cmd )
+          .add_back( " > 恢复操作系统组件 ", details::restore_os_components )
           .add_back( "\n[ 常用操作 ]\n" );
         for ( const auto& common_cmd : common_cmds ) {
-            ui.add_back( std::format( " > {} ", common_cmd.description ), cmd_executor{ common_cmd } );
+            ui.add_back(
+              std::format( " > {} ", common_cmd.description ),
+              std::bind_front( details::make_cmd_executor_ui, std::cref( common_cmd ) ) );
         }
         ui.show();
         return func_back;
@@ -699,61 +680,54 @@ namespace core
         inline const auto& is_hijack_execs{ option_crack_restore[ "hijack_execs" ] };
         inline const auto& is_set_serv_startup_types{ option_crack_restore[ "set_serv_startup_types" ] };
         inline const auto& is_enable_fast_mode{ option_crack_restore[ "fast_mode" ] };
-        inline auto make_progress( const std::size_t now, const std::size_t total, const std::size_t digits_of_total ) noexcept
-        {
-            return std::format( "({}{}/{})", std::string( digits_of_total - cpp_utils::count_digits( now ), ' ' ), now, total );
-        }
-    }
-    class rule_executor final
-    {
-        friend auto make_executor_mode_ui_text();
-        friend auto change_executor_mode( ui_func_args );
-      private:
-        enum class mode : bool
+        enum class rule_executing : bool
         {
             crack,
             restore
         };
-        static mode executor_mode;
-        const rule_node& rules_;
-        static auto hijack_exec_( details::exec_const_ref_t exec ) noexcept
+        inline auto executor_mode{ rule_executing::crack };
+        inline auto make_progress( const std::size_t now, const std::size_t total, const std::size_t digits_of_total ) noexcept
+        {
+            return std::format( "({}{}/{})", std::string( digits_of_total - cpp_utils::count_digits( now ), ' ' ), now, total );
+        }
+        inline auto hijack_exec( details::exec_const_ref_t exec ) noexcept
         {
             return cpp_utils::create_registry_key< charset_id >(
               cpp_utils::registry::local_machine,
               std::format( R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe)", exec ).c_str(),
               "Debugger", cpp_utils::registry::string_type, reinterpret_cast< const BYTE* >( L"nul" ), sizeof( L"nul" ) );
         }
-        static auto disable_serv_( details::serv_const_ref_t serv ) noexcept
+        inline auto disable_serv( details::serv_const_ref_t serv ) noexcept
         {
             return cpp_utils::set_service_status< charset_id >( serv.c_str(), cpp_utils::service::disabled_start );
         }
-        static auto kill_exec_( details::exec_const_ref_t exec ) noexcept
+        inline auto kill_exec( details::exec_const_ref_t exec ) noexcept
         {
             return cpp_utils::kill_process_by_name< charset_id >( std::format( "{}.exe", exec ).c_str() );
         }
-        static auto stop_serv_( details::serv_const_ref_t serv ) noexcept
+        inline auto stop_serv( details::serv_const_ref_t serv ) noexcept
         {
             return cpp_utils::stop_service_with_dependencies< charset_id >( serv.c_str() );
         }
-        static auto undo_hijack_exec_( details::exec_const_ref_t exec ) noexcept
+        inline auto undo_hijack_exec( details::exec_const_ref_t exec ) noexcept
         {
             return cpp_utils::delete_registry_tree< charset_id >(
               cpp_utils::registry::local_machine,
               std::format( R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe)", exec ).c_str() );
         }
-        static auto enable_serv_( details::serv_const_ref_t serv ) noexcept
+        inline auto enable_serv( details::serv_const_ref_t serv ) noexcept
         {
             return cpp_utils::set_service_status< charset_id >( serv.c_str(), cpp_utils::service::auto_start );
         }
-        static auto start_serv_( details::serv_const_ref_t serv ) noexcept
+        inline auto start_serv( details::serv_const_ref_t serv ) noexcept
         {
             return cpp_utils::start_service_with_dependencies< charset_id >( serv.c_str() );
         }
-        auto default_crack_()
+        inline auto default_crack( const rule_node& rules )
         {
             std::print( "{}\n\n", diving_line.data() );
-            const auto& execs{ rules_.execs };
-            const auto& servs{ rules_.servs };
+            const auto& execs{ rules.execs };
+            const auto& servs{ rules.servs };
             std::size_t finished_count{ 0 };
             const auto total_count{
               execs.size() * ( details::is_hijack_execs ? 2 : 1 ) + servs.size() * ( details::is_set_serv_startup_types ? 2 : 1 ) };
@@ -762,7 +736,7 @@ namespace core
                 for ( const auto& exec : execs ) {
                     std::print(
                       "{} 劫持文件 {}.exe (0x{:x}).\n",
-                      details::make_progress( ++finished_count, total_count, digits_of_total ), exec, hijack_exec_( exec ) );
+                      details::make_progress( ++finished_count, total_count, digits_of_total ), exec, hijack_exec( exec ) );
                     std::this_thread::sleep_for( default_execution_sleep_time );
                 }
             }
@@ -770,51 +744,51 @@ namespace core
                 for ( const auto& serv : servs ) {
                     std::print(
                       "{} 禁用服务 {} (0x{:x}).\n", details::make_progress( ++finished_count, total_count, digits_of_total ),
-                      serv, disable_serv_( serv ) );
+                      serv, disable_serv( serv ) );
                     std::this_thread::sleep_for( default_execution_sleep_time );
                 }
             }
             for ( const auto& exec : execs ) {
                 std::print(
                   "{} 终止进程 {}.exe (0x{:x}).\n", details::make_progress( ++finished_count, total_count, digits_of_total ),
-                  exec, kill_exec_( exec ) );
+                  exec, kill_exec( exec ) );
                 std::this_thread::sleep_for( default_execution_sleep_time );
             }
             for ( const auto& serv : servs ) {
                 std::print(
                   "{} 停止服务 {} (0x{:x}).\n", details::make_progress( ++finished_count, total_count, digits_of_total ), serv,
-                  stop_serv_( serv ) );
+                  stop_serv( serv ) );
                 std::this_thread::sleep_for( default_execution_sleep_time );
             }
             std::print( "\n{}\n\n", diving_line.data() );
         }
-        auto fast_crack_()
+        inline auto fast_crack( const rule_node& rules )
         {
-            const auto& execs{ rules_.execs };
-            const auto& servs{ rules_.servs };
+            const auto& execs{ rules.execs };
+            const auto& servs{ rules.servs };
             std::vector< std::thread > threads;
             threads.reserve( 4U );
             if ( details::is_hijack_execs ) {
                 threads.emplace_back( [ & ]
-                { cpp_utils::parallel_for_each( nproc_for_processing, execs.begin(), execs.end(), hijack_exec_ ); } );
+                { cpp_utils::parallel_for_each( nproc_for_processing, execs.begin(), execs.end(), hijack_exec ); } );
             }
             if ( details::is_set_serv_startup_types ) {
                 threads.emplace_back( [ & ]
-                { cpp_utils::parallel_for_each( nproc_for_processing, servs.begin(), servs.end(), disable_serv_ ); } );
+                { cpp_utils::parallel_for_each( nproc_for_processing, servs.begin(), servs.end(), disable_serv ); } );
             }
             threads.emplace_back( [ & ]
-            { cpp_utils::parallel_for_each( nproc_for_processing, execs.begin(), execs.end(), kill_exec_ ); } );
+            { cpp_utils::parallel_for_each( nproc_for_processing, execs.begin(), execs.end(), kill_exec ); } );
             threads.emplace_back( [ & ]
-            { cpp_utils::parallel_for_each( nproc_for_processing, servs.begin(), servs.end(), stop_serv_ ); } );
+            { cpp_utils::parallel_for_each( nproc_for_processing, servs.begin(), servs.end(), stop_serv ); } );
             for ( auto& thread : threads ) {
                 thread.join();
             }
         }
-        auto default_restore_()
+        inline auto default_restore( const rule_node& rules )
         {
             std::print( "{}\n\n", diving_line.data() );
-            const auto& execs{ rules_.execs };
-            const auto& servs{ rules_.servs };
+            const auto& execs{ rules.execs };
+            const auto& servs{ rules.servs };
             std::size_t finished_count{ 0 };
             const auto total_count{
               ( details::is_hijack_execs ? execs.size() : 0 ) + servs.size() * ( details::is_set_serv_startup_types ? 2 : 1 ) };
@@ -822,8 +796,8 @@ namespace core
             if ( details::is_hijack_execs ) {
                 for ( const auto& exec : execs ) {
                     std::print(
-                      "{} 撤销劫持 {}.exe (0x{:x}).\n", details::make_progress( ++finished_count, total_count, digits_of_total ),
-                      exec, undo_hijack_exec_( exec ) );
+                      "{} 撤销劫持 {}.exe (0x{:x}).\n",
+                      details::make_progress( ++finished_count, total_count, digits_of_total ), exec, undo_hijack_exec( exec ) );
                     std::this_thread::sleep_for( default_execution_sleep_time );
                 }
             }
@@ -831,86 +805,73 @@ namespace core
                 for ( const auto& serv : servs ) {
                     std::print(
                       "{} 启用服务 {} (0x{:x}).\n", details::make_progress( ++finished_count, total_count, digits_of_total ),
-                      serv, enable_serv_( serv ) );
+                      serv, enable_serv( serv ) );
                     std::this_thread::sleep_for( default_execution_sleep_time );
                 }
             }
             for ( const auto& serv : servs ) {
                 std::print(
                   "{} 启动服务 {} (0x{:x}).\n", details::make_progress( ++finished_count, total_count, digits_of_total ), serv,
-                  start_serv_( serv ) );
+                  start_serv( serv ) );
                 std::this_thread::sleep_for( default_execution_sleep_time );
             }
             std::print( "\n{}\n\n", diving_line.data() );
         }
-        auto fast_restore_()
+        inline auto fast_restore( const rule_node& rules )
         {
-            const auto& execs{ rules_.execs };
-            const auto& servs{ rules_.servs };
+            const auto& execs{ rules.execs };
+            const auto& servs{ rules.servs };
             if ( details::is_hijack_execs ) {
-                cpp_utils::parallel_for_each( nproc_for_processing, execs.begin(), execs.end(), undo_hijack_exec_ );
+                cpp_utils::parallel_for_each( nproc_for_processing, execs.begin(), execs.end(), undo_hijack_exec );
             }
             if ( details::is_set_serv_startup_types ) {
-                cpp_utils::parallel_for_each( nproc_for_processing, servs.begin(), servs.end(), enable_serv_ );
+                cpp_utils::parallel_for_each( nproc_for_processing, servs.begin(), servs.end(), enable_serv );
             }
-            cpp_utils::parallel_for_each( nproc_for_processing, servs.begin(), servs.end(), start_serv_ );
+            cpp_utils::parallel_for_each( nproc_for_processing, servs.begin(), servs.end(), start_serv );
         }
-      public:
-        auto operator()()
-        {
-            switch ( executor_mode ) {
-                case mode::crack : std::print( "                    [ 破  解 ]\n\n\n" ); break;
-                case mode::restore : std::print( "                    [ 恢  复 ]\n\n\n" ); break;
-                default : std::unreachable();
-            }
-            if ( rules_.empty() ) {
-                std::print( " (i) 规则为空." );
-                details::wait();
-                return;
-            }
-            if ( executor_mode == mode::restore && !details::is_hijack_execs && rules_.servs.empty() ) {
-                std::print( " (!) 当前配置下无可用恢复操作." );
-                details::wait();
-                return;
-            }
-            std::print( " -> 正在执行...\n\n" );
-            std::array< void ( rule_executor::* )(), 2 > f;
-            switch ( executor_mode ) {
-                case mode::crack : f = { &rule_executor::default_crack_, &rule_executor::fast_crack_ }; break;
-                case mode::restore : f = { &rule_executor::default_restore_, &rule_executor::fast_restore_ }; break;
-                default : std::unreachable();
-            }
-            std::invoke( f[ details::is_enable_fast_mode ], *this );
-            std::print( " (i) 操作已完成." );
+    }
+    inline auto execute_rules( const rule_node& rules )
+    {
+        switch ( details::executor_mode ) {
+            case details::rule_executing::crack : std::print( "                    [ 破  解 ]\n\n\n" ); break;
+            case details::rule_executing::restore : std::print( "                    [ 恢  复 ]\n\n\n" ); break;
+            default : std::unreachable();
+        }
+        if ( rules.empty() ) {
+            std::print( " (i) 规则为空." );
             details::wait();
-        }
-        auto operator()( ui_func_args args )
-        {
-            args.parent_ui.set_limits( true, true );
-            ( *this )();
             return func_back;
         }
-        rule_executor( const rule_node& rules )
-          : rules_{ rules }
-        { }
-        rule_executor( const rule_executor& )     = default;
-        rule_executor( rule_executor&& ) noexcept = default;
-        ~rule_executor() noexcept                 = default;
-    };
-    inline rule_executor::mode rule_executor::executor_mode{ rule_executor::mode::crack };
+        if ( details::executor_mode == details::rule_executing::restore && !details::is_hijack_execs && rules.servs.empty() ) {
+            std::print( " (!) 当前配置下无可用恢复操作." );
+            details::wait();
+            return func_back;
+        }
+        std::print( " -> 正在执行...\n\n" );
+        std::array< void ( * )( const rule_node& ), 2 > f;
+        switch ( details::executor_mode ) {
+            case details::rule_executing::crack : f = { details::default_crack, details::fast_crack }; break;
+            case details::rule_executing::restore : f = { details::default_restore, details::fast_restore }; break;
+            default : std::unreachable();
+        }
+        f[ details::is_enable_fast_mode ]( rules );
+        std::print( " (i) 操作已完成." );
+        details::wait();
+        return func_back;
+    }
     inline auto make_executor_mode_ui_text()
     {
-        switch ( rule_executor::executor_mode ) {
-            case rule_executor::mode::crack : return "[ 破解 (点击切换) ]"sv;
-            case rule_executor::mode::restore : return "[ 恢复 (点击切换) ]"sv;
+        switch ( details::executor_mode ) {
+            case details::rule_executing::crack : return "[ 破解 (点击切换) ]"sv;
+            case details::rule_executing::restore : return "[ 恢复 (点击切换) ]"sv;
             default : std::unreachable();
         }
     }
     inline auto change_executor_mode( ui_func_args args )
     {
-        switch ( rule_executor::executor_mode ) {
-            case rule_executor::mode::crack : rule_executor::executor_mode = rule_executor::mode::restore; break;
-            case rule_executor::mode::restore : rule_executor::executor_mode = rule_executor::mode::crack; break;
+        switch ( details::executor_mode ) {
+            case details::rule_executing::crack : details::executor_mode = details::rule_executing::restore; break;
+            case details::rule_executing::restore : details::executor_mode = details::rule_executing::crack; break;
             default : std::unreachable();
         }
         args.parent_ui.edit_text( args.node_index, make_executor_mode_ui_text() );
@@ -928,7 +889,6 @@ namespace core
             total.servs.append_range( builtin_rule.servs );
         }
         cpp_utils::clear_console( std_output_handle );
-        rule_executor{ total }();
-        return func_back;
+        return execute_rules( total );
     }
 }
