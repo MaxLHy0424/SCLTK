@@ -205,7 +205,7 @@ namespace core
            { "window",
               "窗口显示",
               { { "keep_window_top", "* 置顶窗口" }, { "simplest_titlebar", "* 极简标题栏" }, { "translucent", "* 半透明" } } },
-           { "misc", "杂项", { { "disable_x_option_hot_reload", "** 禁用标 * 选项热重载" } } } }
+           { "misc", "杂项", { { "no_optional_hot_reload", "** 禁用标 * 选项热重载" } } } }
         };
         static constexpr auto format_string_{ "{}.{}: {}" };
         static auto make_swith_button_text_( const auto is_enable )
@@ -380,7 +380,7 @@ namespace core
     auto& options_set{ std::get< options >( config_nodes ) };
     namespace details
     {
-        inline const auto& is_disable_x_option_hot_reload{ options_set[ "misc" ][ "disable_x_option_hot_reload" ] };
+        inline const auto& is_no_optional_hot_reload{ options_set[ "misc" ][ "no_optional_hot_reload" ] };
     }
     inline auto load_config( const bool is_reload = false )
     {
@@ -638,7 +638,7 @@ namespace core
             cpp_utils::enable_window_menu( window_handle, !is_enable_simplest_titlebar );
             cpp_utils::set_window_translucency( window_handle, is_translucent ? 230 : 255 );
         } };
-        if ( details::is_disable_x_option_hot_reload ) {
+        if ( details::is_no_optional_hot_reload ) {
             core_op();
             return;
         }
@@ -650,13 +650,13 @@ namespace core
     inline auto keep_window_top()
     {
         const auto& is_keep_window_top{ options_set[ "window" ][ "keep_window_top" ] };
-        if ( details::is_disable_x_option_hot_reload && !is_keep_window_top ) {
+        if ( details::is_no_optional_hot_reload && !is_keep_window_top ) {
             return;
         }
         constexpr auto sleep_time{ 100ms };
         const auto current_thread_id{ GetCurrentThreadId() };
         const auto current_window_thread_process_id{ GetWindowThreadProcessId( window_handle, nullptr ) };
-        if ( details::is_disable_x_option_hot_reload ) {
+        if ( details::is_no_optional_hot_reload ) {
             cpp_utils::loop_keep_window_top( window_handle, current_thread_id, current_window_thread_process_id, sleep_time );
             cpp_utils::cancel_top_window( window_handle );
             return;
