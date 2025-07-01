@@ -674,8 +674,7 @@ namespace core
     }
     namespace details
     {
-        using exec_const_ref_t = cpp_utils::add_const_lvalue_reference_t< rule_node::item_t >;
-        using serv_const_ref_t = cpp_utils::add_const_lvalue_reference_t< rule_node::item_t >;
+        using rule_item_const_ref_t = cpp_utils::add_const_lvalue_reference_t< rule_node::item_t >;
         inline const auto& option_crack_restore{ options_set[ "crack_restore" ] };
         inline const auto& is_hijack_execs{ option_crack_restore[ "hijack_execs" ] };
         inline const auto& is_set_serv_startup_types{ option_crack_restore[ "set_serv_startup_types" ] };
@@ -691,7 +690,7 @@ namespace core
             return std::format( "({}{}/{})", std::string( digits_of_total - cpp_utils::count_digits( now ), ' ' ), now, total );
         }
         template < bool NeedV = true >
-        inline auto hijack_exec( details::exec_const_ref_t exec ) noexcept
+        inline auto hijack_exec( details::rule_item_const_ref_t exec ) noexcept
         {
             const auto result{ cpp_utils::create_registry_key< charset_id >(
               cpp_utils::registry::local_machine,
@@ -704,7 +703,7 @@ namespace core
             }
         }
         template < bool NeedV = true >
-        inline auto disable_serv( details::serv_const_ref_t serv ) noexcept
+        inline auto disable_serv( details::rule_item_const_ref_t serv ) noexcept
         {
             const auto result{ cpp_utils::set_service_status< charset_id >( serv.c_str(), cpp_utils::service::disabled_start ) };
             if constexpr ( NeedV ) {
@@ -714,7 +713,7 @@ namespace core
             }
         }
         template < bool NeedV = true >
-        inline auto kill_exec( details::exec_const_ref_t exec ) noexcept
+        inline auto kill_exec( details::rule_item_const_ref_t exec ) noexcept
         {
             const auto result{ cpp_utils::kill_process_by_name< charset_id >( std::format( "{}.exe", exec ).c_str() ) };
             if constexpr ( NeedV ) {
@@ -724,7 +723,7 @@ namespace core
             }
         }
         template < bool NeedV = true >
-        inline auto stop_serv( details::serv_const_ref_t serv ) noexcept
+        inline auto stop_serv( details::rule_item_const_ref_t serv ) noexcept
         {
             const auto result{ cpp_utils::stop_service_with_dependencies< charset_id >( serv.c_str() ) };
             if constexpr ( NeedV ) {
@@ -734,7 +733,7 @@ namespace core
             }
         }
         template < bool NeedV = true >
-        inline auto undo_hijack_exec( details::exec_const_ref_t exec ) noexcept
+        inline auto undo_hijack_exec( details::rule_item_const_ref_t exec ) noexcept
         {
             const auto result{ cpp_utils::delete_registry_tree< charset_id >(
               cpp_utils::registry::local_machine,
@@ -746,7 +745,7 @@ namespace core
             }
         }
         template < bool NeedV = true >
-        inline auto enable_serv( details::serv_const_ref_t serv ) noexcept
+        inline auto enable_serv( details::rule_item_const_ref_t serv ) noexcept
         {
             const auto result{ cpp_utils::set_service_status< charset_id >( serv.c_str(), cpp_utils::service::auto_start ) };
             if constexpr ( NeedV ) {
@@ -756,7 +755,7 @@ namespace core
             }
         }
         template < bool NeedV = true >
-        inline auto start_serv( details::serv_const_ref_t serv ) noexcept
+        inline auto start_serv( details::rule_item_const_ref_t serv ) noexcept
         {
             const auto result{ cpp_utils::start_service_with_dependencies< charset_id >( serv.c_str() ) };
             if constexpr ( NeedV ) {
