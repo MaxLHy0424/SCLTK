@@ -4,7 +4,6 @@
 #include <format>
 #include <string>
 #include <type_traits>
-#include "meta_base.hpp"
 namespace cpp_utils
 {
     template < typename T >
@@ -54,15 +53,15 @@ namespace cpp_utils
         {
             return *ptr_;
         }
-        auto& operator[]( const size_t n ) const
+        auto& operator[]( const std::size_t n ) const
         {
             return ptr_[ n ];
         }
-        auto operator+( const size_t n ) const noexcept
+        auto operator+( const std::size_t n ) const noexcept
         {
             return raw_pointer_wrapper< T >{ ptr_ + n };
         }
-        auto operator+=( const size_t n ) noexcept -> raw_pointer_wrapper< T >&
+        auto operator+=( const std::size_t n ) noexcept -> raw_pointer_wrapper< T >&
         {
             return ptr_ += n;
         }
@@ -75,11 +74,11 @@ namespace cpp_utils
         {
             return ptr_++;
         }
-        auto operator-( const size_t n ) const noexcept
+        auto operator-( const std::size_t n ) const noexcept
         {
             return raw_pointer_wrapper< T >{ ptr_ - n };
         }
-        auto operator-=( const size_t n ) noexcept -> raw_pointer_wrapper< T >&
+        auto operator-=( const std::size_t n ) noexcept -> raw_pointer_wrapper< T >&
         {
             return ptr_ -= n;
         }

@@ -14,7 +14,6 @@
 #include <thread>
 #include <type_traits>
 #include <utility>
-#include "meta_base.hpp"
 namespace cpp_utils
 {
 #if defined( _WIN32 ) || defined( _WIN64 )

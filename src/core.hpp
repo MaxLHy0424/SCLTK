@@ -11,7 +11,6 @@ namespace core
 {
     using namespace std::chrono_literals;
     using namespace std::string_view_literals;
-    using size_t = cpp_utils::size_t;
     inline constexpr SHORT console_width{ 50 };
     inline constexpr SHORT console_height{ 25 };
     inline constexpr UINT charset_id{ 936 };
@@ -699,7 +698,7 @@ namespace core
         inline const auto& is_hijack_execs{ option_crack_restore[ "hijack_execs" ] };
         inline const auto& is_set_serv_startup_types{ option_crack_restore[ "set_serv_startup_types" ] };
         inline const auto& is_enable_fast_mode{ option_crack_restore[ "fast_mode" ] };
-        inline auto make_progress( const size_t now, const size_t total, const size_t digits_of_total ) noexcept
+        inline auto make_progress( const std::size_t now, const std::size_t total, const std::size_t digits_of_total ) noexcept
         {
             return std::format( "({}{}/{})", std::string( digits_of_total - cpp_utils::count_digits( now ), ' ' ), now, total );
         }
@@ -754,7 +753,7 @@ namespace core
             std::print( "{}\n\n", diving_line.data() );
             const auto& execs{ rules_.execs };
             const auto& servs{ rules_.servs };
-            size_t finished_count{ 0 };
+            std::size_t finished_count{ 0 };
             const auto total_count{
               execs.size() * ( details::is_hijack_execs ? 2 : 1 ) + servs.size() * ( details::is_set_serv_startup_types ? 2 : 1 ) };
             const auto digits_of_total{ cpp_utils::count_digits( total_count ) };
@@ -815,7 +814,7 @@ namespace core
             std::print( "{}\n\n", diving_line.data() );
             const auto& execs{ rules_.execs };
             const auto& servs{ rules_.servs };
-            size_t finished_count{ 0 };
+            std::size_t finished_count{ 0 };
             const auto total_count{
               ( details::is_hijack_execs ? execs.size() : 0 ) + servs.size() * ( details::is_set_serv_startup_types ? 2 : 1 ) };
             const auto digits_of_total{ cpp_utils::count_digits( total_count ) };
