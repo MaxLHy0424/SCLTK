@@ -612,7 +612,7 @@ namespace core
                 "                   [ 工 具 箱 ]\n\n\n"
                 " (i) 是否继续执行?\n" )
               .add_back(
-                " > 是, 继续 ", std::bind_front( execute_cmd, std::ref( item ) ),
+                " > 是, 继续 ", std::bind_front( execute_cmd, std::cref( item ) ),
                 cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_intensity )
               .add_back( " > 否, 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
               .show();
@@ -637,7 +637,7 @@ namespace core
         for ( const auto& common_cmd : common_cmds ) {
             ui.add_back(
               std::format( " > {} ", common_cmd.description ),
-              std::bind_front( details::make_cmd_executor_ui, std::ref( common_cmd ) ) );
+              std::bind_front( details::make_cmd_executor_ui, std::cref( common_cmd ) ) );
         }
         ui.show();
         return func_back;
@@ -829,13 +829,13 @@ namespace core
                   nproc_for_processing, container.get().begin(), container.get().end(), std::forward< F >( func ) );
             } };
             if ( details::is_hijack_execs ) {
-                threads[ 0 ] = thread_t{ for_each, std::ref( execs ), hijack_exec< false > };
+                threads[ 0 ] = thread_t{ for_each, std::cref( execs ), hijack_exec< false > };
             }
             if ( details::is_set_serv_startup_types ) {
-                threads[ 1 ] = thread_t{ for_each, std::ref( servs ), disable_serv< false > };
+                threads[ 1 ] = thread_t{ for_each, std::cref( servs ), disable_serv< false > };
             }
-            threads[ 2 ] = thread_t{ for_each, std::ref( execs ), kill_exec< false > };
-            threads[ 3 ] = thread_t{ for_each, std::ref( servs ), stop_serv< false > };
+            threads[ 2 ] = thread_t{ for_each, std::cref( execs ), kill_exec< false > };
+            threads[ 3 ] = thread_t{ for_each, std::cref( servs ), stop_serv< false > };
             for ( auto& thread : threads ) {
                 if ( thread.joinable() ) {
                     thread.join();
