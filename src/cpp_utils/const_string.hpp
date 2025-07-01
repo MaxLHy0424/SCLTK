@@ -66,24 +66,9 @@ namespace cpp_utils
                 return ( *this )[ index ];
             }
         }
-        constexpr auto compare( const T* const src ) const
+        constexpr auto compare( const std::basic_string_view< T > src ) const
         {
-            if ( src == nullptr ) {
-                return false;
-            }
-            std::size_t src_size{ 0 };
-            while ( src[ src_size ] != '\0' ) {
-                ++src_size;
-            }
-            if ( src_size + 1 != N ) {
-                return false;
-            }
-            for ( const auto i : std::ranges::iota_view{ decltype( N ){ 0 }, N } ) {
-                if ( data_[ i ] != src[ i ] ) {
-                    return false;
-                }
-            }
-            return true;
+            return src == this->data();
         }
         template < std::size_t SrcN >
         constexpr auto compare( const T ( &src )[ SrcN ] ) const noexcept
@@ -111,7 +96,7 @@ namespace cpp_utils
             }
             return true;
         }
-        constexpr auto operator==( const T* const src ) const
+        constexpr auto operator==( const std::basic_string_view< T > src ) const
         {
             return compare( src );
         }
