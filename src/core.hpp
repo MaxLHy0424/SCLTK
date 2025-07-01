@@ -690,38 +690,80 @@ namespace core
         {
             return std::format( "({}{}/{})", std::string( digits_of_total - cpp_utils::count_digits( now ), ' ' ), now, total );
         }
+        template < bool NeedV = true >
         inline auto hijack_exec( details::exec_const_ref_t exec ) noexcept
         {
-            return cpp_utils::create_registry_key< charset_id >(
+            const auto result{ cpp_utils::create_registry_key< charset_id >(
               cpp_utils::registry::local_machine,
               std::format( R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe)", exec ).c_str(),
-              "Debugger", cpp_utils::registry::string_type, reinterpret_cast< const BYTE* >( L"nul" ), sizeof( L"nul" ) );
+              "Debugger", cpp_utils::registry::string_type, reinterpret_cast< const BYTE* >( L"nul" ), sizeof( L"nul" ) ) };
+            if constexpr ( NeedV ) {
+                return result;
+            } else {
+                return;
+            }
         }
+        template < bool NeedV = true >
         inline auto disable_serv( details::serv_const_ref_t serv ) noexcept
         {
-            return cpp_utils::set_service_status< charset_id >( serv.c_str(), cpp_utils::service::disabled_start );
+            const auto result{ cpp_utils::set_service_status< charset_id >( serv.c_str(), cpp_utils::service::disabled_start ) };
+            if constexpr ( NeedV ) {
+                return result;
+            } else {
+                return;
+            }
         }
+        template < bool NeedV = true >
         inline auto kill_exec( details::exec_const_ref_t exec ) noexcept
         {
-            return cpp_utils::kill_process_by_name< charset_id >( std::format( "{}.exe", exec ).c_str() );
+            const auto result{ cpp_utils::kill_process_by_name< charset_id >( std::format( "{}.exe", exec ).c_str() ) };
+            if constexpr ( NeedV ) {
+                return result;
+            } else {
+                return;
+            }
         }
+        template < bool NeedV = true >
         inline auto stop_serv( details::serv_const_ref_t serv ) noexcept
         {
-            return cpp_utils::stop_service_with_dependencies< charset_id >( serv.c_str() );
+            const auto result{ cpp_utils::stop_service_with_dependencies< charset_id >( serv.c_str() ) };
+            if constexpr ( NeedV ) {
+                return result;
+            } else {
+                return;
+            }
         }
+        template < bool NeedV = true >
         inline auto undo_hijack_exec( details::exec_const_ref_t exec ) noexcept
         {
-            return cpp_utils::delete_registry_tree< charset_id >(
+            const auto result{ cpp_utils::delete_registry_tree< charset_id >(
               cpp_utils::registry::local_machine,
-              std::format( R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe)", exec ).c_str() );
+              std::format( R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe)", exec ).c_str() ) };
+            if constexpr ( NeedV ) {
+                return result;
+            } else {
+                return;
+            }
         }
+        template < bool NeedV = true >
         inline auto enable_serv( details::serv_const_ref_t serv ) noexcept
         {
-            return cpp_utils::set_service_status< charset_id >( serv.c_str(), cpp_utils::service::auto_start );
+            const auto result{ cpp_utils::set_service_status< charset_id >( serv.c_str(), cpp_utils::service::auto_start ) };
+            if constexpr ( NeedV ) {
+                return result;
+            } else {
+                return;
+            }
         }
+        template < bool NeedV = true >
         inline auto start_serv( details::serv_const_ref_t serv ) noexcept
         {
-            return cpp_utils::start_service_with_dependencies< charset_id >( serv.c_str() );
+            const auto result{ cpp_utils::start_service_with_dependencies< charset_id >( serv.c_str() ) };
+            if constexpr ( NeedV ) {
+                return result;
+            } else {
+                return;
+            }
         }
         inline auto default_crack( const rule_node& rules )
         {
@@ -770,16 +812,16 @@ namespace core
             std::array< thread_t, 4 > threads;
             if ( details::is_hijack_execs ) {
                 threads[ 0 ] = thread_t{ [ & ]
-                { cpp_utils::parallel_for_each( nproc_for_processing, execs.begin(), execs.end(), hijack_exec ); } };
+                { cpp_utils::parallel_for_each( nproc_for_processing, execs.begin(), execs.end(), hijack_exec< false > ); } };
             }
             if ( details::is_set_serv_startup_types ) {
                 threads[ 1 ] = thread_t{ [ & ]
-                { cpp_utils::parallel_for_each( nproc_for_processing, servs.begin(), servs.end(), disable_serv ); } };
+                { cpp_utils::parallel_for_each( nproc_for_processing, servs.begin(), servs.end(), disable_serv< false > ); } };
             }
             threads[ 2 ] = thread_t{ [ & ]
-            { cpp_utils::parallel_for_each( nproc_for_processing, execs.begin(), execs.end(), kill_exec ); } };
+            { cpp_utils::parallel_for_each( nproc_for_processing, execs.begin(), execs.end(), kill_exec< false > ); } };
             threads[ 3 ] = thread_t{ [ & ]
-            { cpp_utils::parallel_for_each( nproc_for_processing, servs.begin(), servs.end(), stop_serv ); } };
+            { cpp_utils::parallel_for_each( nproc_for_processing, servs.begin(), servs.end(), stop_serv< false > ); } };
             for ( auto& thread : threads ) {
                 thread.join();
             }
@@ -822,12 +864,12 @@ namespace core
             const auto& execs{ rules.execs };
             const auto& servs{ rules.servs };
             if ( details::is_hijack_execs ) {
-                cpp_utils::parallel_for_each( nproc_for_processing, execs.begin(), execs.end(), undo_hijack_exec );
+                cpp_utils::parallel_for_each( nproc_for_processing, execs.begin(), execs.end(), undo_hijack_exec< false > );
             }
             if ( details::is_set_serv_startup_types ) {
-                cpp_utils::parallel_for_each( nproc_for_processing, servs.begin(), servs.end(), enable_serv );
+                cpp_utils::parallel_for_each( nproc_for_processing, servs.begin(), servs.end(), enable_serv< false > );
             }
-            cpp_utils::parallel_for_each( nproc_for_processing, servs.begin(), servs.end(), start_serv );
+            cpp_utils::parallel_for_each( nproc_for_processing, servs.begin(), servs.end(), start_serv< false > );
         }
     }
     inline auto execute_rules( const rule_node& rules )
