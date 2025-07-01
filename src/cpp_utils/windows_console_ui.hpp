@@ -15,9 +15,13 @@ namespace cpp_utils
     class console_ui final
     {
       public:
-        using func_return_t = bool;
-        static inline constexpr func_return_t func_back{ false };
-        static inline constexpr func_return_t func_exit{ true };
+        enum class func_action : bool
+        {
+            back,
+            exit
+        };
+        static inline constexpr auto func_back{ func_action::back };
+        static inline constexpr auto func_exit{ func_action::exit };
         struct func_args final
         {
             console_ui& parent_ui;
@@ -40,7 +44,7 @@ namespace cpp_utils
             func_args( func_args&& ) noexcept      = default;
             ~func_args() noexcept                  = default;
         };
-        using callback_t = std::variant< std::function< func_return_t() >, std::function< func_return_t( func_args ) > >;
+        using callback_t = std::variant< std::function< func_action() >, std::function< func_action( func_args ) > >;
       private:
         static inline HANDLE std_input_handle_;
         static inline HANDLE std_output_handle_;
@@ -217,9 +221,9 @@ namespace cpp_utils
                 line.func.visit( [ & ]( auto&& func )
                 {
                     using func_t = std::decay_t< decltype( func ) >;
-                    if constexpr ( std::is_same_v< func_t, std::function< func_return_t() > > ) {
+                    if constexpr ( std::is_same_v< func_t, std::function< func_action() > > ) {
                         is_exit = func();
-                    } else if constexpr ( std::is_same_v< func_t, std::function< func_return_t( func_args ) > > ) {
+                    } else if constexpr ( std::is_same_v< func_t, std::function< func_action( func_args ) > > ) {
                         is_exit = func( func_args{ *this, i, current_event } );
                     } else {
                         static_assert( false, "unknown callback!" );
