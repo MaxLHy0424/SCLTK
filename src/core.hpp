@@ -196,7 +196,7 @@ namespace core
             ~category()                     = default;
         };
       private:
-        std::vector< category > categories{
+        std::vector< category > categories_{
           { { "crack_restore",
               "破解与恢复",
               { { "hijack_execs", "劫持可执行文件" },
@@ -217,7 +217,7 @@ namespace core
             if ( is_reload ) {
                 return;
             }
-            for ( auto& category : categories ) {
+            for ( auto& category : categories_ ) {
                 for ( auto& item : category.items ) {
                     if ( line == std::format( format_string_, category.raw_name, item.raw_name, true ) ) {
                         item.set( true );
@@ -229,7 +229,7 @@ namespace core
         }
         auto sync_( std::ofstream& out )
         {
-            for ( const auto& category : categories ) {
+            for ( const auto& category : categories_ ) {
                 for ( const auto& item : category.items ) {
                     out << std::format( format_string_, category.raw_name, item.raw_name, item.get() ) << '\n';
                 }
@@ -287,7 +287,7 @@ namespace core
               "     标 * 选项默认可自动热重载.\n"
               "     标 ** 选项无法热重载.\n"
               "     其余选项可实时热重载.\n" );
-            for ( auto& category : categories ) {
+            for ( auto& category : categories_ ) {
                 ui.add_back(
                   std::format( " > {} ", category.shown_name ), option_ui{ category },
                   cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_green );
@@ -296,7 +296,7 @@ namespace core
       public:
         const auto& operator[]( const std::string_view raw_name ) const noexcept
         {
-            for ( auto& category : categories ) {
+            for ( auto& category : categories_ ) {
                 if ( raw_name == category.raw_name ) {
                     return category;
                 }
