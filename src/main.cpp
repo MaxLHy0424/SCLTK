@@ -29,9 +29,9 @@ auto main() -> int
       .add_back( "" )
       .add_back( " > 全部执行 ", core::execute_all_rules )
       .add_back( "" )
-      .add_back( " > 自定义 ", core::rule_executor{ core::custom_rules } );
+      .add_back( " > 自定义 ", std::bind_front( core::execute_rules, core::custom_rules ) );
     for ( const auto& rule : core::builtin_rules ) {
-        ui.add_back( std::format( " > {} ", rule.shown_name ), core::rule_executor{ rule } );
+        ui.add_back( std::format( " > {} ", rule.shown_name ), std::bind_front( core::execute_rules, rule ) );
     }
     ui.show().set_limits( true, true );
     std::print( " -> 正在清理..." );
