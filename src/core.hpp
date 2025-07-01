@@ -393,6 +393,25 @@ namespace core
     namespace details
     {
         inline const auto& is_no_optional_hot_reload{ options_set[ "misc" ][ "no_optional_hot_reload" ] };
+        inline auto get_config_node_raw_name_by_tag( std::string_view str )
+        {
+            str = str.substr( 1, str.size() - 2 );
+            size_t head_space_n{ 0 };
+            for ( const auto it : std::ranges::iota_view{ str.begin(), str.end() } ) {
+                if ( !is_space( *it ) ) {
+                    break;
+                }
+                ++head_space_n;
+            }
+            size_t tail_space_n{ 0 };
+            for ( const auto it : std::ranges::iota_view{ str.rbegin(), str.rend() } ) {
+                if ( !is_space( *it ) ) {
+                    break;
+                }
+                ++tail_space_n;
+            }
+            return str.substr( head_space_n, str.size() - head_space_n - tail_space_n );
+        }
     }
     inline auto load_config( const bool is_reload = false )
     {
@@ -426,7 +445,7 @@ namespace core
                 {
                     ( [ & ]( auto&& current_node ) noexcept
                     {
-                        if ( line_view.contains( current_node.raw_name ) ) {
+                        if ( details::get_config_node_raw_name_by_tag( line_view ) == current_node.raw_name ) {
                             current_config_node = &current_node;
                         }
                     }( config_node ), ... );
