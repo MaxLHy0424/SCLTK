@@ -1,4 +1,5 @@
 #pragma once
+#include <conio.h>
 #include <fstream>
 #include "cpp_utils/const_string.hpp"
 #include "cpp_utils/math.hpp"
@@ -40,11 +41,8 @@ namespace core
     {
         inline auto wait() noexcept
         {
-            std::print( "\n\n" );
-            for ( unsigned short i{ 3 }; i > 0; --i ) {
-                std::print( " {}s 后返回.\r", i );
-                std::this_thread::sleep_for( 1s );
-            }
+            std::print( "\n\n  按任意键继续..." );
+            cpp_utils::take_any_key_to_continue( std_input_handle );
         }
         inline auto is_space( const char ch ) noexcept
         {
