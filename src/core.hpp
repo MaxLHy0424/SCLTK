@@ -394,14 +394,14 @@ namespace core
         inline auto get_config_node_raw_name_by_tag( std::string_view str )
         {
             str = str.substr( 1, str.size() - 2 );
-            size_t head_space_n{ 0 };
+            std::size_t head_space_n{ 0 };
             for ( const auto it : std::ranges::iota_view{ str.begin(), str.end() } ) {
                 if ( !is_space( *it ) ) {
                     break;
                 }
                 ++head_space_n;
             }
-            size_t tail_space_n{ 0 };
+            std::size_t tail_space_n{ 0 };
             for ( const auto it : std::ranges::iota_view{ str.rbegin(), str.rend() } ) {
                 if ( !is_space( *it ) ) {
                     break;
