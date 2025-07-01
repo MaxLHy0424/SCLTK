@@ -13,8 +13,7 @@
 #include "compiler.hpp"
 namespace cpp_utils
 {
-#if ( defined( __GNUC__ ) && defined( __GXX_RTTI ) ) || ( defined( _MSC_VER ) && defined( _CPPRTTI ) ) \
-  || ( defined( __clang__ ) && __has_feature( cxx_rtti ) )
+    static_assert( has_rtti == true, "RTTI must be enabled!" );
     namespace details
     {
         class func_wrapper_impl
@@ -216,7 +215,4 @@ namespace cpp_utils
             }
         }
     };
-#else
-# error "RTTI must be enabled"
-#endif
 }
