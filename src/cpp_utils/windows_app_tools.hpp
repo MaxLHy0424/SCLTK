@@ -272,7 +272,7 @@ namespace cpp_utils
         INPUT_RECORD record;
         DWORD events;
         do {
-            ReadConsoleInput( std_input_handle, &record, 1, &events );
+            ReadConsoleInputW( std_input_handle, &record, 1, &events );
         } while ( record.EventType != KEY_EVENT || !record.Event.KeyEvent.bKeyDown );
         SetConsoleMode( std_input_handle, mode );
     }
