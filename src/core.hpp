@@ -766,20 +766,20 @@ namespace core
         {
             const auto& execs{ rules.execs };
             const auto& servs{ rules.servs };
-            std::vector< std::thread > threads;
-            threads.reserve( 4U );
+            using thread_t = std::thread;
+            std::array< thread_t, 4 > threads;
             if ( details::is_hijack_execs ) {
-                threads.emplace_back( [ & ]
-                { cpp_utils::parallel_for_each( nproc_for_processing, execs.begin(), execs.end(), hijack_exec ); } );
+                threads[ 0 ] = thread_t{ [ & ]
+                { cpp_utils::parallel_for_each( nproc_for_processing, execs.begin(), execs.end(), hijack_exec ); } };
             }
             if ( details::is_set_serv_startup_types ) {
-                threads.emplace_back( [ & ]
-                { cpp_utils::parallel_for_each( nproc_for_processing, servs.begin(), servs.end(), disable_serv ); } );
+                threads[ 1 ] = thread_t{ [ & ]
+                { cpp_utils::parallel_for_each( nproc_for_processing, servs.begin(), servs.end(), disable_serv ); } };
             }
-            threads.emplace_back( [ & ]
-            { cpp_utils::parallel_for_each( nproc_for_processing, execs.begin(), execs.end(), kill_exec ); } );
-            threads.emplace_back( [ & ]
-            { cpp_utils::parallel_for_each( nproc_for_processing, servs.begin(), servs.end(), stop_serv ); } );
+            threads[ 2 ] = thread_t{ [ & ]
+            { cpp_utils::parallel_for_each( nproc_for_processing, execs.begin(), execs.end(), kill_exec ); } };
+            threads[ 3 ] = thread_t{ [ & ]
+            { cpp_utils::parallel_for_each( nproc_for_processing, servs.begin(), servs.end(), stop_serv ); } };
             for ( auto& thread : threads ) {
                 thread.join();
             }
