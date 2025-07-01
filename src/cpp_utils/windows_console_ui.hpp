@@ -33,7 +33,7 @@ namespace cpp_utils
             auto operator=( func_args&& ) noexcept -> func_args&      = default;
             func_args(
               console_ui& parent_ui, const std::size_t node_index,
-              const MOUSE_EVENT_RECORD event = MOUSE_EVENT_RECORD{ {}, mouse::button_left, {}, {} } ) noexcept
+              const MOUSE_EVENT_RECORD event = { {}, mouse::button_left, {}, {} } ) noexcept
               : parent_ui{ parent_ui }
               , node_index{ node_index }
               , button_state{ event.dwButtonState }
