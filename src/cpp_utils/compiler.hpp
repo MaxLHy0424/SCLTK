@@ -12,8 +12,6 @@ namespace cpp_utils
 #else
     constexpr auto has_rtti{ false };
 #endif
-
-// 检测异常
 #if ( defined( __EXCEPTIONS ) && __EXCEPTIONS ) || ( defined( _CPPUNWIND ) && _CPPUNWIND )
     constexpr auto has_exceptions{ true };
 #else
