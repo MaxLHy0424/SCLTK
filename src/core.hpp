@@ -822,7 +822,9 @@ namespace core
             threads[ 3 ] = thread_t{ [ & ]
             { cpp_utils::parallel_for_each( nproc_for_processing, servs.begin(), servs.end(), stop_serv< false > ); } };
             for ( auto& thread : threads ) {
-                thread.join();
+                if ( thread.joinable() ) {
+                    thread.join();
+                }
             }
         }
         inline auto default_restore( const rule_node& rules )
