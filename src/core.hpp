@@ -277,7 +277,7 @@ namespace core
               "     其余选项可实时热重载.\n" );
             for ( auto& category : categories_ ) {
                 ui.add_back(
-                  std::format( " > {} ", category.shown_name ), std::bind_front( make_category_ui_, category ),
+                  std::format( " > {} ", category.shown_name ), std::bind_front( make_category_ui_, std::ref( category ) ),
                   cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_green );
             }
         }
