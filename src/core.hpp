@@ -122,7 +122,7 @@ namespace core
     class options final : public details::config_node_impl
     {
         friend details::config_node_impl;
-      private:
+      public:
         class item final
         {
           private:
@@ -195,6 +195,7 @@ namespace core
             category( category&& ) noexcept = default;
             ~category()                     = default;
         };
+      private:
         std::vector< category > categories{
           { { "crack_restore",
               "破解与恢复",
