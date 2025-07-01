@@ -247,15 +247,13 @@ namespace core
                 }
             }
         }
-        using category_t = category;
-        using item_t     = item;
-        static auto set_item_value_( item_t& item_, ui_func_args args )
+        static auto set_item_value_( item& item, ui_func_args args )
         {
-            item_.set( !item_.get() );
-            args.parent_ui.edit_text( args.node_index, make_swith_button_text_( item_ ) );
+            item.set( !item.get() );
+            args.parent_ui.edit_text( args.node_index, make_swith_button_text_( item ) );
             return func_back;
         }
-        static auto make_category_ui_( category_t& category )
+        static auto make_category_ui_( category& category )
         {
             cpp_utils::console_ui ui;
             ui.add_back( "                    [ 配  置 ]\n\n" )
