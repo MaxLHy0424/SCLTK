@@ -5,6 +5,7 @@
 #  include <tlhelp32.h>
 # endif
 #endif
+#include <bit>
 #include <chrono>
 #include <concepts>
 #include <functional>
@@ -45,7 +46,7 @@ namespace cpp_utils
             DWORD bytes_needed{ 0 };
             if ( !QueryServiceConfigW( service, nullptr, 0, &bytes_needed ) && GetLastError() == ERROR_INSUFFICIENT_BUFFER ) {
                 const auto buffer{ std::make_unique< BYTE[] >( bytes_needed ) };
-                const auto config{ reinterpret_cast< LPQUERY_SERVICE_CONFIGW >( buffer.get() ) };
+                const auto config{ std::bit_cast< LPQUERY_SERVICE_CONFIGW >( buffer.get() ) };
                 if ( QueryServiceConfigW( service, config, bytes_needed, &bytes_needed ) ) {
                     if ( config->lpDependencies != nullptr && *config->lpDependencies != '\0' ) {
                         auto dependency{ config->lpDependencies };
@@ -84,7 +85,7 @@ namespace cpp_utils
             DWORD bytes_needed;
             if ( QueryServiceConfigW( service, nullptr, 0, &bytes_needed ) || GetLastError() == ERROR_INSUFFICIENT_BUFFER ) {
                 const auto buffer{ std::make_unique< BYTE[] >( bytes_needed ) };
-                const auto config{ reinterpret_cast< LPQUERY_SERVICE_CONFIGW >( buffer.get() ) };
+                const auto config{ std::bit_cast< LPQUERY_SERVICE_CONFIGW >( buffer.get() ) };
                 if ( QueryServiceConfigW( service, config, bytes_needed, &bytes_needed ) ) {
                     if ( config->lpDependencies && *config->lpDependencies ) {
                         wchar_t* context{ nullptr };

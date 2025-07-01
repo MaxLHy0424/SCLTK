@@ -1,5 +1,6 @@
 #pragma once
 #include <algorithm>
+#include <bit>
 #include <concepts>
 #include <format>
 #include <string>
@@ -11,24 +12,24 @@ namespace cpp_utils
     template < pointer T >
     inline auto to_universal_pointer( const T ptr ) noexcept
     {
-        return reinterpret_cast< void* >( ptr );
+        return std::bit_cast< void* >( ptr );
     }
     template < pointer T >
     inline auto to_const_universal_pointer( const T ptr ) noexcept
     {
-        return reinterpret_cast< const void* >( ptr );
+        return std::bit_cast< const void* >( ptr );
     }
     template < pointer T >
     inline auto pointer_to_string( const T ptr )
     {
         using namespace std::string_literals;
-        return ptr == nullptr ? "nullptr"s : std::format( "0x{:x}", reinterpret_cast< std::uintptr_t >( ptr ) );
+        return ptr == nullptr ? "nullptr"s : std::format( "0x{:x}", std::bit_cast< std::uintptr_t >( ptr ) );
     }
     template < pointer T >
     inline auto pointer_to_wstring( const T ptr )
     {
         using namespace std::string_literals;
-        return ptr == nullptr ? L"nullptr"s : std::format( L"0x{:x}", reinterpret_cast< std::uintptr_t >( ptr ) );
+        return ptr == nullptr ? L"nullptr"s : std::format( L"0x{:x}", std::bit_cast< std::uintptr_t >( ptr ) );
     }
     template < pointer T >
         requires( !std::is_const_v< T > )
