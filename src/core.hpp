@@ -39,9 +39,9 @@ namespace core
     }
     namespace details
     {
-        inline auto wait() noexcept
+        inline auto take_any_key_to_go_back() noexcept
         {
-            std::print( "\n\n  按任意键继续..." );
+            std::print( "\n\n  按任意键返回..." );
             cpp_utils::take_any_key_to_continue( std_input_handle );
         }
         inline auto is_space( const char ch ) noexcept
@@ -494,7 +494,7 @@ namespace core
             config_file_stream.flush();
             const auto is_good{ config_file_stream.good() };
             std::print( "\n (i) 同步配置{}.", is_good ? "成功" : "失败" );
-            details::wait();
+            details::take_any_key_to_go_back();
             return func_back;
         }
         inline auto open_config_file()
@@ -506,7 +506,7 @@ namespace core
               reinterpret_cast< INT_PTR >( ShellExecuteA( nullptr, "open", config_file_name, nullptr, nullptr, SW_SHOWNORMAL ) )
               > 32 };
             std::print( " (i) 打开配置文件{}.", is_success ? "成功" : "失败" );
-            details::wait();
+            details::take_any_key_to_go_back();
             return func_back;
         }
     }
@@ -592,7 +592,7 @@ namespace core
                   std::format( R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe)", exec ).c_str() );
             }
             std::print( " (i) 操作已完成." );
-            details::wait();
+            details::take_any_key_to_go_back();
             return func_back;
         }
         struct cmd_item final
@@ -901,12 +901,12 @@ namespace core
         }
         if ( rules.empty() ) {
             std::print( " (i) 规则为空." );
-            details::wait();
+            details::take_any_key_to_go_back();
             return func_back;
         }
         if ( details::executor_mode == details::rule_executing::restore && !details::is_hijack_execs && rules.servs.empty() ) {
             std::print( " (!) 当前配置下无可用恢复操作." );
-            details::wait();
+            details::take_any_key_to_go_back();
             return func_back;
         }
         std::print( " -> 正在执行...\n\n" );
@@ -918,7 +918,7 @@ namespace core
         }
         f[ details::is_enable_fast_mode ]( rules );
         std::print( " (i) 操作已完成." );
-        details::wait();
+        details::take_any_key_to_go_back();
         return func_back;
     }
     inline auto make_executor_mode_ui_text()
