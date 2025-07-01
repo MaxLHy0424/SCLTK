@@ -432,9 +432,6 @@ namespace core
                 line.pop_back();
             }
             std::string_view line_view{ line };
-            if ( line_view.size() < sizeof( "[]" ) ) {
-                continue;
-            }
             if ( line_view.front() == '[' && line_view.back() == ']' ) {
                 current_config_node = std::monostate{};
                 std::apply( [ & ]( auto&&... config_node )
