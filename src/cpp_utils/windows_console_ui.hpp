@@ -8,7 +8,6 @@
 #include <thread>
 #include <utility>
 #include "compiler.hpp"
-#include "meta_base.hpp"
 #include "windows_definations.hpp"
 namespace cpp_utils
 {
@@ -22,14 +21,14 @@ namespace cpp_utils
         struct func_args final
         {
             console_ui& parent_ui;
-            const size_t node_index;
+            const std::size_t node_index;
             const DWORD button_state;
             const DWORD ctrl_state;
             const DWORD event_flag;
             auto operator=( const func_args& ) noexcept -> func_args& = default;
             auto operator=( func_args&& ) noexcept -> func_args&      = default;
             func_args(
-              console_ui& parent_ui, const size_t node_index,
+              console_ui& parent_ui, const std::size_t node_index,
               const MOUSE_EVENT_RECORD event = MOUSE_EVENT_RECORD{ {}, mouse::button_left, {}, {} } ) noexcept
               : parent_ui{ parent_ui }
               , node_index{ node_index }
@@ -196,7 +195,7 @@ namespace cpp_utils
         auto invoke_func_( const MOUSE_EVENT_RECORD& current_event )
         {
             auto is_exit{ func_back };
-            for ( const auto i : std::ranges::iota_view{ size_t{ 0 }, lines_.size() } ) {
+            for ( const auto i : std::ranges::iota_view{ std::size_t{ 0 }, lines_.size() } ) {
                 auto& line{ lines_[ i ] };
                 if ( line != current_event.dwMousePosition ) {
                     continue;
@@ -246,7 +245,7 @@ namespace cpp_utils
         {
             return lines_.max_size();
         }
-        auto& resize( const size_t size )
+        auto& resize( const std::size_t size )
         {
             lines_.resize( size );
             return *this;
@@ -289,7 +288,7 @@ namespace cpp_utils
             return *this;
         }
         auto& insert(
-          const size_t index, const std::string_view text, callback_t func = {},
+          const std::size_t index, const std::string_view text, callback_t func = {},
           const WORD intensity_attrs = console_text::foreground_green | console_text::foreground_blue,
           const WORD default_attrs   = console_text::default_attrs )
         {
@@ -298,7 +297,7 @@ namespace cpp_utils
             lines_.emplace( lines_.cbegin() + index, text, func, default_attrs, is_func ? intensity_attrs : default_attrs );
             return *this;
         }
-        auto& edit_text( const size_t index, const std::string_view text )
+        auto& edit_text( const std::size_t index, const std::string_view text )
         {
             if constexpr ( is_debugging_build ) {
                 lines_.at( index ).text = text;
@@ -307,7 +306,7 @@ namespace cpp_utils
             }
             return *this;
         }
-        auto& edit_func( const size_t index, callback_t func )
+        auto& edit_func( const std::size_t index, callback_t func )
         {
             if constexpr ( is_debugging_build ) {
                 lines_.at( index ).func = std::move( func );
@@ -316,7 +315,7 @@ namespace cpp_utils
             }
             return *this;
         }
-        auto& edit_intensity_attrs( const size_t index, const WORD intensity_attrs )
+        auto& edit_intensity_attrs( const std::size_t index, const WORD intensity_attrs )
         {
             if constexpr ( is_debugging_build ) {
                 lines_.at( index ).intensity_attrs = intensity_attrs;
@@ -325,7 +324,7 @@ namespace cpp_utils
             }
             return *this;
         }
-        auto& edit_default_attrs( const size_t index, const WORD default_attrs )
+        auto& edit_default_attrs( const std::size_t index, const WORD default_attrs )
         {
             if constexpr ( is_debugging_build ) {
                 lines_.at( index ).default_attrs = default_attrs;
@@ -344,7 +343,7 @@ namespace cpp_utils
             lines_.pop_back();
             return *this;
         }
-        auto& remove( const size_t begin, const size_t length )
+        auto& remove( const std::size_t begin, const std::size_t length )
         {
             lines_.erase( lines_.cbegin() + begin, lines_.cbegin() + begin + length );
             return *this;

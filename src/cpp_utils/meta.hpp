@@ -1,21 +1,26 @@
 #pragma once
 #include <functional>
 #include <tuple>
-#include "meta_base.hpp"
 namespace cpp_utils
 {
+    template < typename T >
+    using type_alloc = T;
+    template < typename T >
+    using add_const_lvalue_reference_t = std::add_lvalue_reference_t< std::add_const_t< T > >;
+    template < bool Expr >
+    concept test = Expr;
     template < typename... Ts >
     class type_list final
     {
       private:
         template < typename... Us >
         static consteval auto as_type_list_( std::tuple< Us... > ) -> type_list< Us... >;
-        template < size_t Offset, size_t... Is >
+        template < std::size_t Offset, std::size_t... Is >
         static consteval auto offset_sequence_( std::index_sequence< Is... > ) -> std::index_sequence< ( Offset + Is )... >;
-        template < size_t... Is >
+        template < std::size_t... Is >
         static consteval auto select_( std::index_sequence< Is... > )
           -> type_list< std::tuple_element_t< Is, std::tuple< Ts... > >... >;
-        template < size_t... Is >
+        template < std::size_t... Is >
         static consteval auto reverse_index_sequence_( std::index_sequence< Is... > )
           -> std::index_sequence< ( sizeof...( Is ) - 1 - Is )... >;
         template < typename Result, typename Remaining >
@@ -53,8 +58,8 @@ namespace cpp_utils
             template < typename T >
             using predicate = std::bool_constant< !Pred< T >::value >;
         };
-        template < template < typename > typename Pred, size_t I >
-        static consteval size_t find_first_if_impl_()
+        template < template < typename > typename Pred, std::size_t I >
+        static consteval std::size_t find_first_if_impl_()
         {
             if constexpr ( I >= size ) {
                 return size;
@@ -67,8 +72,8 @@ namespace cpp_utils
                 }
             }
         }
-        template < template < typename > typename Pred, size_t I >
-        static consteval size_t find_last_if_impl_()
+        template < template < typename > typename Pred, std::size_t I >
+        static consteval std::size_t find_last_if_impl_()
         {
             using T = std::tuple_element_t< I, std::tuple< Ts... > >;
             if constexpr ( Pred< T >::value ) {
@@ -86,9 +91,9 @@ namespace cpp_utils
         template < typename U >
         static constexpr auto contains{ ( std::is_same_v< U, Ts > || ... ) };
         template < typename U >
-        static constexpr size_t count{ ( ( std::is_same_v< Ts, U > ? 1 : 0 ) + ... ) };
+        static constexpr std::size_t count{ ( ( std::is_same_v< Ts, U > ? 1 : 0 ) + ... ) };
         template < template < typename > typename Pred >
-        static constexpr size_t count_if{ ( ( Pred< Ts >::value ? 1 : 0 ) + ... ) };
+        static constexpr std::size_t count_if{ ( ( Pred< Ts >::value ? 1 : 0 ) + ... ) };
         template < template < typename > typename Pred >
         static constexpr auto all_of{ ( Pred< Ts >::value && ... ) };
         template < template < typename > typename Pred >
@@ -107,7 +112,7 @@ namespace cpp_utils
         static constexpr auto find_first{ find_first_if< type_is_< U >::template predicate > };
         template < typename U >
         static constexpr auto find_last{ find_last_if< type_is_< U >::template predicate > };
-        template < size_t I >
+        template < std::size_t I >
             requires test< ( I < size ) >
         using at    = std::tuple_element_t< I, std::tuple< Ts... > >;
         using front = at< 0 >;
@@ -118,7 +123,7 @@ namespace cpp_utils
         using append       = type_list< Ts..., Us... >;
         using remove_front = decltype( select_( offset_sequence_< 1 >( std::make_index_sequence< size - 1 >{} ) ) );
         using remove_back  = decltype( select_( std::make_index_sequence< size - 1 >{} ) );
-        template < size_t Offset, size_t Count >
+        template < std::size_t Offset, std::size_t Count >
             requires test< Offset + Count <= size >
         using slice = decltype( select_( offset_sequence_< Offset >( std::make_index_sequence< Count >{} ) ) );
         template < typename Other >
@@ -147,21 +152,21 @@ namespace cpp_utils
             using type = type_list< Us... >;
         };
       public:
-        static constexpr size_t size{ 0 };
+        static constexpr std::size_t size{ 0 };
         template < typename >
         static constexpr bool contains{ false };
         template < template < typename > typename >
-        static constexpr size_t find_first_if{ 0 };
+        static constexpr std::size_t find_first_if{ 0 };
         template < template < typename > typename >
-        static constexpr size_t find_last_if{ 0 };
+        static constexpr std::size_t find_last_if{ 0 };
         template < template < typename > typename >
-        static constexpr size_t find_first_if_not{ 0 };
+        static constexpr std::size_t find_first_if_not{ 0 };
         template < template < typename > typename >
-        static constexpr size_t find_last_if_not{ 0 };
+        static constexpr std::size_t find_last_if_not{ 0 };
         template < typename >
-        static constexpr size_t find_first{ 0 };
+        static constexpr std::size_t find_first{ 0 };
         template < typename >
-        static constexpr size_t find_last{ 0 };
+        static constexpr std::size_t find_last{ 0 };
         template < typename... Us >
         using prepend = type_list< Us... >;
         template < typename... Us >
@@ -256,7 +261,7 @@ namespace cpp_utils
         static constexpr auto find_first{ find_first_if< is_equal_< W >::template type > };
         template < auto W >
         static constexpr auto find_last{ find_last_if< is_equal_< W >::template type > };
-        template < size_t I >
+        template < std::size_t I >
         static constexpr auto at{ extract_value_< typename underlying_type_list_::template at< I > >::value };
         static constexpr auto front{ at< 0 > };
         static constexpr auto back{ at< size - 1 > };
@@ -266,7 +271,7 @@ namespace cpp_utils
         using append       = to_value_list_< typename underlying_type_list_::template append< value_holder_< Ws >... > >;
         using remove_front = to_value_list_< typename underlying_type_list_::remove_front >;
         using remove_back  = to_value_list_< typename underlying_type_list_::remove_back >;
-        template < size_t Offset, size_t Count >
+        template < std::size_t Offset, std::size_t Count >
         using slice = to_value_list_< typename underlying_type_list_::template slice< Offset, Count > >;
         template < typename Other >
         using concat = to_value_list_< typename underlying_type_list_::template concat< typename Other::underlying_type_list_ > >;
@@ -296,13 +301,13 @@ namespace cpp_utils
         template < typename TL >
         using to_value_list_ = typename to_value_list_impl_< TL >::type;
       public:
-        static constexpr size_t size{ 0 };
+        static constexpr std::size_t size{ 0 };
         template < auto >
         static constexpr auto contains{ false };
         template < auto >
-        static constexpr size_t count{ 0 };
+        static constexpr std::size_t count{ 0 };
         template < template < auto > typename >
-        static constexpr size_t count_if{ 0 };
+        static constexpr std::size_t count_if{ 0 };
         template < template < auto > typename >
         static constexpr auto all_of{ true };
         template < template < auto > typename >
@@ -310,17 +315,17 @@ namespace cpp_utils
         template < template < auto > typename >
         static constexpr auto none_of{ true };
         template < template < auto > typename >
-        static constexpr size_t find_first_if{ 0 };
+        static constexpr std::size_t find_first_if{ 0 };
         template < template < auto > typename >
-        static constexpr size_t find_last_if{ 0 };
+        static constexpr std::size_t find_last_if{ 0 };
         template < template < auto > typename >
-        static constexpr size_t find_first_if_not{ 0 };
+        static constexpr std::size_t find_first_if_not{ 0 };
         template < template < auto > typename >
-        static constexpr size_t find_last_if_not{ 0 };
+        static constexpr std::size_t find_last_if_not{ 0 };
         template < auto >
-        static constexpr size_t find_first{ 0 };
+        static constexpr std::size_t find_first{ 0 };
         template < auto >
-        static constexpr size_t find_last{ 0 };
+        static constexpr std::size_t find_last{ 0 };
         template < auto... Us >
         using prepend = value_list< Us... >;
         template < auto... Us >
@@ -351,23 +356,23 @@ namespace cpp_utils
         };
         template < typename T >
         using remove_identity_t = remove_identity< T >::type;
-        template < typename T, size_t... Is >
+        template < typename T, std::size_t... Is >
         inline consteval auto make_repeated_type_list_impl( std::index_sequence< Is... > )
         {
             auto helper{ []( auto v, auto ) consteval { return v; } };
             return std::type_identity< type_list< remove_identity_t< decltype( helper( std::type_identity< T >{}, Is ) ) >... > >{};
         }
-        template < auto V, size_t... Is >
+        template < auto V, std::size_t... Is >
         inline consteval auto make_repeated_value_list_impl( std::index_sequence< Is... > )
         {
             auto helper{ []( auto v, auto ) consteval { return v; } };
             return std::type_identity< value_list< helper( V, Is )... > >{};
         }
     }
-    template < typename T, size_t N >
+    template < typename T, std::size_t N >
     using make_repeated_type_list
       = details::remove_identity_t< decltype( details::make_repeated_type_list_impl< T >( std::make_index_sequence< N >{} ) ) >;
-    template < auto V, size_t N >
+    template < auto V, std::size_t N >
     using make_repeated_value_list
       = details::remove_identity_t< decltype( details::make_repeated_value_list_impl< V >( std::make_index_sequence< N >{} ) ) >;
     template < typename, typename... >
