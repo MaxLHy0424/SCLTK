@@ -46,6 +46,18 @@ namespace core
                 std::this_thread::sleep_for( 1s );
             }
         }
+        inline auto is_space( const char ch ) noexcept
+        {
+            switch ( ch ) {
+                case '\r' :
+                case '\n' :
+                case '\f' :
+                case '\v' :
+                case '\t' :
+                case ' ' : return true;
+            }
+            return false;
+        }
     }
     struct rule_node final
     {
@@ -399,16 +411,7 @@ namespace core
                 continue;
             }
             for ( const auto it : std::ranges::iota_view{ line.rbegin(), line.rend() } ) {
-                bool is_space{ false };
-                switch ( *it ) {
-                    case '\r' :
-                    case '\n' :
-                    case '\f' :
-                    case '\v' :
-                    case '\t' :
-                    case ' ' : is_space = true;
-                }
-                if ( !is_space ) {
+                if ( !details::is_space( *it ) ) {
                     break;
                 }
                 line.pop_back();
