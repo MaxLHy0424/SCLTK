@@ -263,6 +263,23 @@ namespace cpp_utils
         CloseServiceHandle( scm );
         return result;
     }
+    inline auto take_any_key_to_continue( const HANDLE std_input_handle ) noexcept
+    {
+        DWORD mode;
+        GetConsoleMode( std_input_handle, &mode );
+        SetConsoleMode( std_input_handle, ENABLE_EXTENDED_FLAGS | ( mode & ~ENABLE_QUICK_EDIT_MODE ) );
+        FlushConsoleInputBuffer( std_input_handle );
+        INPUT_RECORD record;
+        DWORD events;
+        do {
+            ReadConsoleInput( std_input_handle, &record, 1, &events );
+        } while ( record.EventType != KEY_EVENT || !record.Event.KeyEvent.bKeyDown );
+        SetConsoleMode( std_input_handle, mode );
+    }
+    inline auto take_any_key_to_continue() noexcept
+    {
+        take_any_key_to_continue( GetStdHandle( STD_INPUT_HANDLE ) );
+    }
     inline auto is_run_as_admin() noexcept
     {
         BOOL is_admin;
