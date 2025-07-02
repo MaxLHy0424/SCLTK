@@ -431,9 +431,9 @@ namespace core
                 }, config_nodes );
                 continue;
             }
-            current_config_node.visit( [ & ]( const auto node_ptr )
+            current_config_node.visit( [ & ]< typename T >( const T node_ptr )
             {
-                if constexpr ( !std::is_same_v< std::decay_t< decltype( node_ptr ) >, std::monostate > ) {
+                if constexpr ( !std::is_same_v< T, std::monostate > ) {
                     node_ptr->load( is_reload, line );
                 }
             } );
