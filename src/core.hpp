@@ -268,10 +268,8 @@ namespace core
         {
             ui.add_back(
               "\n[ 选项 ]\n\n"
-              " (i) 选项相关信息可参阅文档.\n"
-              "     标 * 选项默认可自动热重载.\n"
-              "     标 ** 选项无法热重载.\n"
-              "     其余选项可实时热重载.\n" );
+              " (i) 选项相关信息可参阅文档. 标 * 选项自动热重载.\n"
+              "     标 ** 选项无法热重载. 其余选项实时热重载.\n" );
             for ( auto& category : categories_ ) {
                 ui.add_back(
                   std::format( " > {} ", category.shown_name ), std::bind_back( make_category_ui_, std::ref( category ) ),
