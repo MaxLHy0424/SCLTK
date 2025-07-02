@@ -242,7 +242,7 @@ namespace core
                 }
             }
         }
-        static auto set_item_value_( item& item, ui_func_args args )
+        static auto set_item_value_( ui_func_args args, item& item )
         {
             item.set( !item.get() );
             args.parent_ui.edit_text( args.node_index, make_swith_button_text_( item ) );
@@ -258,7 +258,7 @@ namespace core
             for ( auto& item : category.items ) {
                 ui.add_back( std::format( "\n[ {} ]\n", item.shown_name ) )
                   .add_back(
-                    make_swith_button_text_( item ), std::bind_front( set_item_value_, std::ref( item ) ),
+                    make_swith_button_text_( item ), std::bind_back( set_item_value_, std::ref( item ) ),
                     cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_green );
             }
             ui.show();
@@ -274,7 +274,7 @@ namespace core
               "     其余选项可实时热重载.\n" );
             for ( auto& category : categories_ ) {
                 ui.add_back(
-                  std::format( " > {} ", category.shown_name ), std::bind_front( make_category_ui_, std::ref( category ) ),
+                  std::format( " > {} ", category.shown_name ), std::bind_back( make_category_ui_, std::ref( category ) ),
                   cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_green );
             }
         }
@@ -594,7 +594,7 @@ namespace core
                 "                   [ 工 具 箱 ]\n\n\n"
                 " (i) 是否继续执行?\n" )
               .add_back(
-                " > 是, 继续 ", std::bind_front( execute_cmd, std::cref( item ) ),
+                " > 是, 继续 ", std::bind_back( execute_cmd, std::cref( item ) ),
                 cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_intensity )
               .add_back( " > 否, 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
               .show();
@@ -619,7 +619,7 @@ namespace core
         for ( const auto& common_cmd : common_cmds ) {
             ui.add_back(
               std::format( " > {} ", common_cmd.description ),
-              std::bind_front( details::make_cmd_executor_ui, std::cref( common_cmd ) ) );
+              std::bind_back( details::make_cmd_executor_ui, std::cref( common_cmd ) ) );
         }
         ui.show();
         return func_back;
