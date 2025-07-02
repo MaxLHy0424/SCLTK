@@ -199,7 +199,7 @@ namespace cpp_utils
         auto invoke_func_( const MOUSE_EVENT_RECORD& current_event )
         {
             auto is_exit{ func_back };
-            for ( const auto i : std::ranges::iota_view{ std::size_t{ 0 }, lines_.size() } ) {
+            for ( std::size_t i{ 0 }; i < lines_.size(); ++i ) {
                 auto& line{ lines_[ i ] };
                 if ( line != current_event.dwMousePosition ) {
                     continue;
