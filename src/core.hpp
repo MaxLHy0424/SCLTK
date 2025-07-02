@@ -171,14 +171,18 @@ namespace core
         };
         class category final
         {
+          private:
+            static auto is_same_raw_name_( const item& item, const std::string_view raw_name )
+            {
+                return raw_name == item.raw_name;
+            }
           public:
             const char* raw_name;
             const char* shown_name;
             std::vector< item > items;
             const auto& operator[]( const std::string_view raw_name ) const noexcept
             {
-                const auto result{ std::ranges::find_if( items, [ & ]( const auto& item )
-                { return raw_name == item.raw_name; } ) };
+                const auto result{ std::ranges::find_if( items, std::bind_back( is_same_raw_name_, raw_name ) ) };
                 if constexpr ( cpp_utils::is_debugging_build ) {
                     if ( result == items.end() ) {
                         std::print( "'{}' does not exist.", raw_name );
@@ -276,11 +280,14 @@ namespace core
                   cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_green );
             }
         }
+        static auto is_same_raw_name_( const category& category, const std::string_view raw_name )
+        {
+            return raw_name == category.raw_name;
+        }
       public:
         const auto& operator[]( const std::string_view raw_name ) const noexcept
         {
-            const auto result{ std::ranges::find_if( categories_, [ & ]( const auto& category )
-            { return raw_name == category.raw_name; } ) };
+            const auto result{ std::ranges::find_if( categories_, std::bind_back( is_same_raw_name_, raw_name ) ) };
             if constexpr ( cpp_utils::is_debugging_build ) {
                 if ( result == categories_.end() ) {
                     std::print( "'{}' does not exist.", raw_name );
