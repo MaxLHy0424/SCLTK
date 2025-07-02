@@ -177,17 +177,15 @@ namespace core
             std::vector< item > items;
             const auto& operator[]( const std::string_view raw_name ) const noexcept
             {
-                for ( auto& item : items ) {
-                    if ( raw_name == item.raw_name ) {
-                        return item;
+                const auto result{ std::ranges::find_if( items, [ & ]( const auto& item )
+                { return raw_name == item.raw_name; } ) };
+                if constexpr ( cpp_utils::is_debugging_build ) {
+                    if ( result == items.end() ) {
+                        std::print( "'{}' does not exist.", raw_name );
+                        std::terminate();
                     }
                 }
-                if constexpr ( cpp_utils::is_debugging_build ) {
-                    std::print( "'{}' does not exist.", raw_name );
-                    std::terminate();
-                } else {
-                    std::unreachable();
-                }
+                return *result;
             }
             auto& operator[]( const std::string_view raw_name ) noexcept
             {
@@ -283,17 +281,15 @@ namespace core
       public:
         const auto& operator[]( const std::string_view raw_name ) const noexcept
         {
-            for ( auto& category : categories_ ) {
-                if ( raw_name == category.raw_name ) {
-                    return category;
+            const auto result{ std::ranges::find_if( categories_, [ & ]( const auto& category )
+            { return raw_name == category.raw_name; } ) };
+            if constexpr ( cpp_utils::is_debugging_build ) {
+                if ( result == categories_.end() ) {
+                    std::print( "'{}' does not exist.", raw_name );
+                    std::terminate();
                 }
             }
-            if constexpr ( cpp_utils::is_debugging_build ) {
-                std::print( "'{}' does not exist.", raw_name );
-                std::terminate();
-            } else {
-                std::unreachable();
-            }
+            return *result;
         }
         auto& operator[]( const std::string_view raw_name ) noexcept
         {
@@ -415,12 +411,7 @@ namespace core
             if ( line.front() == '#' ) {
                 continue;
             }
-            for ( const auto it : std::ranges::iota_view{ line.rbegin(), line.rend() } ) {
-                if ( !details::is_space( *it ) ) {
-                    break;
-                }
-                line.pop_back();
-            }
+            line.erase( std::ranges::find_if_not( line.rbegin(), line.rend(), details::is_space ).base(), line.end() );
             std::string_view line_view{ line };
             if ( line_view.front() == '[' && line_view.back() == ']' && line_view.size() > "[]"sv.size() ) {
                 current_config_node = std::monostate{};
