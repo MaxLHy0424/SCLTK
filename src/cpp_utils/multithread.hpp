@@ -32,12 +32,12 @@ namespace cpp_utils
         const auto remainder{ total % thread_num };
         std::vector< std::thread > threads;
         threads.reserve( thread_num );
-        for ( const auto i : std::ranges::iota_view{ thread_num_t{ 0 }, thread_num } ) {
+        for ( thread_num_t i{ 0 }; i < thread_num; ++i ) {
             const auto chunk_start{ begin + i * chunk_size + std::min< thread_num_t >( i, remainder ) };
             const auto chunk_end{ chunk_start + chunk_size + ( i < remainder ? 1 : 0 ) };
             threads.emplace_back( [ =, &func ]
             {
-                for ( const auto it : std::ranges::iota_view{ chunk_start, chunk_end } ) {
+                for ( auto it{ chunk_start }; it != chunk_end; ++it ) {
                     func( *it );
                 }
             } );
