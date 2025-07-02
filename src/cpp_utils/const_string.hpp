@@ -76,7 +76,7 @@ namespace cpp_utils
             if ( SrcN != N ) {
                 return false;
             }
-            for ( const auto i : std::ranges::iota_view{ decltype( N ){ 0 }, N } ) {
+            for ( decltype( N ) i{ 0 }; i < N; ++i ) {
                 if ( data_[ i ] != src[ i ] ) {
                     return false;
                 }
@@ -89,7 +89,7 @@ namespace cpp_utils
             if ( SrcN != N ) {
                 return false;
             }
-            for ( const auto i : std::ranges::iota_view{ decltype( N ){ 0 }, N } ) {
+            for ( decltype( N ) i{ 0 }; i < N; ++i ) {
                 if ( data_[ i ] != src[ i ] ) {
                     return false;
                 }
