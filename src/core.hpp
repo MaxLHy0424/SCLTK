@@ -797,25 +797,24 @@ namespace core
             }
             std::print( "\n{}\n\n", diving_line.data() );
         }
+        inline auto for_each_wrapper( const rule_node::container_t container, void ( *func )( rule_item_const_ref_t ) )
+        {
+            cpp_utils::parallel_for_each( max_thread_n, container.begin(), container.end(), func );
+        }
         inline auto fast_crack( const rule_node& rules )
         {
             const auto& execs{ rules.execs };
             const auto& servs{ rules.servs };
             using thread_t = std::thread;
             std::array< thread_t, 4 > threads;
-            auto for_each{ []< typename T, typename F >( const std::reference_wrapper< T > container, F&& func ) static
-            {
-                cpp_utils::parallel_for_each(
-                  max_thread_n, container.get().begin(), container.get().end(), std::forward< F >( func ) );
-            } };
             if ( details::is_hijack_execs ) {
-                threads[ 0 ] = thread_t{ for_each, std::cref( execs ), hijack_exec< false > };
+                threads[ 0 ] = thread_t{ for_each_wrapper, std::cref( execs ), hijack_exec< false > };
             }
             if ( details::is_set_serv_startup_types ) {
-                threads[ 1 ] = thread_t{ for_each, std::cref( servs ), disable_serv< false > };
+                threads[ 1 ] = thread_t{ for_each_wrapper, std::cref( servs ), disable_serv< false > };
             }
-            threads[ 2 ] = thread_t{ for_each, std::cref( execs ), kill_exec< false > };
-            threads[ 3 ] = thread_t{ for_each, std::cref( servs ), stop_serv< false > };
+            threads[ 2 ] = thread_t{ for_each_wrapper, std::cref( execs ), kill_exec< false > };
+            threads[ 3 ] = thread_t{ for_each_wrapper, std::cref( servs ), stop_serv< false > };
             for ( auto& thread : threads ) {
                 if ( thread.joinable() ) {
                     thread.join();
