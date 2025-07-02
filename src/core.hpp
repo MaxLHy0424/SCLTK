@@ -213,7 +213,7 @@ namespace core
                 { "fast_mode", "快速模式" } } },
            { "window",
               "窗口显示",
-              { { "keep_window_top", "* 置顶窗口" }, { "simplest_titlebar", "* 极简标题栏" }, { "translucent", "* 半透明" } } },
+              { { "keep_window_top", "* 置顶窗口" }, { "simple_titlebar", "* 极简标题栏" }, { "translucent", "* 半透明" } } },
            { "misc", "杂项", { { "no_optional_hot_reload", "** 禁用标 * 选项热重载" } } } }
         };
         static constexpr auto format_string_{ "{}.{}: {}" };
@@ -649,11 +649,11 @@ namespace core
     inline auto set_console_attrs()
     {
         const auto& window_options{ options_set[ "window" ] };
-        const auto& is_enable_simplest_titlebar{ window_options[ "simplest_titlebar" ] };
+        const auto& is_enable_simple_titlebar{ window_options[ "simple_titlebar" ] };
         const auto& is_translucent{ window_options[ "translucent" ] };
         auto core_op{ [ & ]
         {
-            cpp_utils::enable_window_menu( window_handle, !is_enable_simplest_titlebar );
+            cpp_utils::enable_window_menu( window_handle, !is_enable_simple_titlebar );
             cpp_utils::set_window_translucency( window_handle, is_translucent ? 230 : 255 );
         } };
         if ( details::is_no_optional_hot_reload ) {
