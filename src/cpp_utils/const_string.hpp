@@ -90,7 +90,7 @@ namespace cpp_utils
                 return false;
             }
             for ( const auto i : std::ranges::iota_view{ decltype( N ){ 0 }, N } ) {
-                if ( data_[ i ] != src.data_[ i ] ) {
+                if ( data_[ i ] != src[ i ] ) {
                     return false;
                 }
             }
