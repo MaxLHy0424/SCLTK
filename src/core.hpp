@@ -506,7 +506,7 @@ namespace core
             constexpr auto left_ctrl{ cpp_utils::keyboard::left_ctrl_press };
             constexpr auto right_ctrl{ cpp_utils::keyboard::right_ctrl_press };
             if ( args.ctrl_state == left_ctrl || args.ctrl_state == right_ctrl ) {
-                ShellExecuteA( nullptr, "open", INFO_REPO_URL, nullptr, nullptr, SW_SHOWNORMAL );
+                std::thread{ ShellExecuteA, nullptr, "open", INFO_REPO_URL, nullptr, nullptr, SW_SHOWNORMAL }.detach();
             }
             return func_back;
         }
