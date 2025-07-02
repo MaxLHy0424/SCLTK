@@ -406,7 +406,7 @@ namespace core
         if ( !config_file.good() ) {
             return;
         }
-        std::apply( []( auto&&... config_node ) { ( config_node.prepare_reload(), ... ); }, config_nodes );
+        std::apply( []( auto&... config_node ) { ( config_node.prepare_reload(), ... ); }, config_nodes );
         std::string line;
         config_node_types::transform< std::add_pointer >::prepend< std::monostate >::apply< std::variant > current_config_node;
         while ( std::getline( config_file, line ) ) {
@@ -420,9 +420,9 @@ namespace core
             std::string_view line_view{ line };
             if ( line_view.front() == '[' && line_view.back() == ']' && line_view.size() > "[]"sv.size() ) {
                 current_config_node = std::monostate{};
-                std::apply( [ & ]( auto&&... config_node )
+                std::apply( [ & ]( auto&... config_node )
                 {
-                    ( [ & ]( auto&& current_node ) noexcept
+                    ( [ & ]( auto& current_node ) noexcept
                     {
                         if ( details::get_config_node_raw_name_by_tag( line_view ) == current_node.raw_name ) {
                             current_config_node = &current_node;
@@ -469,7 +469,7 @@ namespace core
             load_config( true );
             std::ofstream config_file_stream{ config_file_name, std::ios::out | std::ios::trunc };
             config_file_stream << "# " INFO_FULL_NAME "\n# " INFO_VERSION "\n";
-            std::apply( [ & ]( auto&&... config_node )
+            std::apply( [ & ]( auto&... config_node )
             {
                 ( ( config_file_stream << std::format( "[{}]\n", config_node.raw_name ), config_node.sync( config_file_stream ) ),
                   ... );
@@ -500,7 +500,7 @@ namespace core
           .add_back( " > 查看解析规则", details::show_config_parsing_rules )
           .add_back( " > 同步配置 ", details::sync_config )
           .add_back( " > 打开配置文件 ", details::open_config_file );
-        std::apply( [ & ]( auto&&... config_node ) { ( config_node.ui( ui ), ... ); }, config_nodes );
+        std::apply( [ & ]( auto&... config_node ) { ( config_node.ui( ui ), ... ); }, config_nodes );
         ui.show();
         return func_back;
     }
