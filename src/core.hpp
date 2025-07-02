@@ -40,7 +40,7 @@ namespace core
     {
         inline auto press_any_key_to_go_back() noexcept
         {
-            std::print( "\n\n  按任意键返回..." );
+            std::print( "\n\n 按任意键返回..." );
             cpp_utils::press_any_key_to_continue( std_input_handle );
         }
         inline auto is_space( const char ch ) noexcept
