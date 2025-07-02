@@ -205,7 +205,7 @@ namespace cpp_utils
                     continue;
                 }
                 bool is_text{ false };
-                line.func.visit( [ & ]( auto&& func )
+                line.func.visit( [ & ]( const auto& func )
                 {
                     if ( func == nullptr ) {
                         is_text = true;
@@ -218,7 +218,7 @@ namespace cpp_utils
                 line.set_attrs( line.default_attrs );
                 show_cursor_( FALSE );
                 edit_console_attrs_( console_attrs_selection_::lock_all );
-                line.func.visit( [ & ]( auto&& func )
+                line.func.visit( [ & ]( auto& func )
                 {
                     using func_t = std::decay_t< decltype( func ) >;
                     if constexpr ( std::is_same_v< func_t, std::function< func_action() > > ) {
@@ -277,7 +277,7 @@ namespace cpp_utils
           const WORD default_attrs   = console_text::default_attrs )
         {
             bool is_func{ false };
-            func.visit( [ & ]( auto&& func ) { is_func = ( func != nullptr ); } );
+            func.visit( [ & ]( const auto& func ) { is_func = ( func != nullptr ); } );
             lines_.emplace_front( text, func, default_attrs, is_func ? intensity_attrs : default_attrs );
             return *this;
         }
@@ -287,7 +287,7 @@ namespace cpp_utils
           const WORD default_attrs   = console_text::default_attrs )
         {
             bool is_func{ false };
-            func.visit( [ & ]( auto&& func ) { is_func = ( func != nullptr ); } );
+            func.visit( [ & ]( const auto& func ) { is_func = ( func != nullptr ); } );
             lines_.emplace_back( text, func, default_attrs, is_func ? intensity_attrs : default_attrs );
             return *this;
         }
@@ -297,7 +297,7 @@ namespace cpp_utils
           const WORD default_attrs   = console_text::default_attrs )
         {
             bool is_func{ false };
-            func.visit( [ & ]( auto&& func ) { is_func = ( func != nullptr ); } );
+            func.visit( [ & ]( const auto& func ) { is_func = ( func != nullptr ); } );
             lines_.emplace( lines_.cbegin() + index, text, func, default_attrs, is_func ? intensity_attrs : default_attrs );
             return *this;
         }
