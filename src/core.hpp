@@ -391,21 +391,12 @@ namespace core
         inline auto get_config_node_raw_name_by_tag( std::string_view str )
         {
             str = str.substr( 1, str.size() - 2 );
-            std::size_t head_space_n{ 0 };
-            for ( const auto it : std::ranges::iota_view{ str.begin(), str.end() } ) {
-                if ( !is_space( *it ) ) {
-                    break;
-                }
-                ++head_space_n;
+            const auto head{ std::ranges::find_if_not( str, is_space ) };
+            const auto tail{ std::ranges::find_if_not( str.rbegin(), str.rend(), is_space ).base() };
+            if ( head >= tail ) {
+                return std::string_view{};
             }
-            std::size_t tail_space_n{ 0 };
-            for ( const auto it : std::ranges::iota_view{ str.rbegin(), str.rend() } ) {
-                if ( !is_space( *it ) ) {
-                    break;
-                }
-                ++tail_space_n;
-            }
-            return str.substr( head_space_n, str.size() - head_space_n - tail_space_n );
+            return std::string_view{ head, tail };
         }
     }
     inline auto load_config( const bool is_reload = false )
