@@ -185,7 +185,7 @@ namespace core
                 const auto result{ std::ranges::find_if( items, std::bind_back( is_same_raw_name_, raw_name ) ) };
                 if constexpr ( cpp_utils::is_debugging_build ) {
                     if ( result == items.end() ) {
-                        std::print( "'{}' does not exist.", raw_name );
+                        std::print( "'{}' does not exist!", raw_name );
                         std::terminate();
                     }
                 }
@@ -290,7 +290,7 @@ namespace core
             const auto result{ std::ranges::find_if( categories_, std::bind_back( is_same_raw_name_, raw_name ) ) };
             if constexpr ( cpp_utils::is_debugging_build ) {
                 if ( result == categories_.end() ) {
-                    std::print( "'{}' does not exist.", raw_name );
+                    std::print( "'{}' does not exist!", raw_name );
                     std::terminate();
                 }
             }
