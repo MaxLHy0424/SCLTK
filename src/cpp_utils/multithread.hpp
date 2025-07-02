@@ -10,14 +10,14 @@
 #include "compiler.hpp"
 namespace cpp_utils
 {
-    using thread_num_t = decltype( std::thread::hardware_concurrency() );
+    using nproc_t = decltype( std::thread::hardware_concurrency() );
     template < std::random_access_iterator It, typename F >
         requires std::invocable< F, decltype( *std::declval< It >() ) >
-    inline auto parallel_for_each( thread_num_t thread_num, It&& begin, It&& end, F&& func )
+    inline auto parallel_for_each( nproc_t nproc, It&& begin, It&& end, F&& func )
     {
-        if ( thread_num == 0 ) {
+        if ( nproc == 0 ) {
             if constexpr ( is_debugging_build ) {
-                std::print( "'thread_num' cannot be zero!\n" );
+                std::print( "'nproc' cannot be zero!\n" );
                 std::terminate();
             } else {
                 std::unreachable();
@@ -27,13 +27,13 @@ namespace cpp_utils
             return;
         }
         const auto total{ std::distance( begin, end ) };
-        thread_num = std::min< thread_num_t >( thread_num, total );
-        const auto chunk_size{ total / thread_num };
-        const auto remainder{ total % thread_num };
+        nproc = std::min< nproc_t >( nproc, total );
+        const auto chunk_size{ total / nproc };
+        const auto remainder{ total % nproc };
         std::vector< std::thread > threads;
-        threads.reserve( thread_num );
-        for ( thread_num_t i{ 0 }; i < thread_num; ++i ) {
-            const auto chunk_start{ begin + i * chunk_size + std::min< thread_num_t >( i, remainder ) };
+        threads.reserve( nproc );
+        for ( nproc_t i{ 0 }; i < nproc; ++i ) {
+            const auto chunk_start{ begin + i * chunk_size + std::min< nproc_t >( i, remainder ) };
             const auto chunk_end{ chunk_start + chunk_size + ( i < remainder ? 1 : 0 ) };
             threads.emplace_back( [ =, &func ]
             {

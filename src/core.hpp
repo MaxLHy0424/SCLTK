@@ -20,7 +20,7 @@ namespace core
     inline constexpr auto func_back{ cpp_utils::console_ui::func_back };
     inline constexpr auto func_exit{ cpp_utils::console_ui::func_exit };
     inline constexpr auto diving_line{ cpp_utils::make_repeated_const_string< '-', console_width >() };
-    inline const auto nproc_for_processing{ std::max< unsigned >( std::thread::hardware_concurrency(), 4 ) };
+    inline const auto max_thread_n{ std::max< unsigned >( std::thread::hardware_concurrency(), 4 ) };
     inline const auto window_handle{ GetConsoleWindow() };
     inline const auto std_input_handle{ GetStdHandle( STD_INPUT_HANDLE ) };
     inline const auto std_output_handle{ GetStdHandle( STD_OUTPUT_HANDLE ) };
@@ -806,7 +806,7 @@ namespace core
             auto for_each{ []< typename T, typename F >( const std::reference_wrapper< T > container, F&& func ) static
             {
                 cpp_utils::parallel_for_each(
-                  nproc_for_processing, container.get().begin(), container.get().end(), std::forward< F >( func ) );
+                  max_thread_n, container.get().begin(), container.get().end(), std::forward< F >( func ) );
             } };
             if ( details::is_hijack_execs ) {
                 threads[ 0 ] = thread_t{ for_each, std::cref( execs ), hijack_exec< false > };
@@ -860,12 +860,12 @@ namespace core
             const auto& execs{ rules.execs };
             const auto& servs{ rules.servs };
             if ( details::is_hijack_execs ) {
-                cpp_utils::parallel_for_each( nproc_for_processing, execs.begin(), execs.end(), undo_hijack_exec< false > );
+                cpp_utils::parallel_for_each( max_thread_n, execs.begin(), execs.end(), undo_hijack_exec< false > );
             }
             if ( details::is_set_serv_startup_types ) {
-                cpp_utils::parallel_for_each( nproc_for_processing, servs.begin(), servs.end(), enable_serv< false > );
+                cpp_utils::parallel_for_each( max_thread_n, servs.begin(), servs.end(), enable_serv< false > );
             }
-            cpp_utils::parallel_for_each( nproc_for_processing, servs.begin(), servs.end(), start_serv< false > );
+            cpp_utils::parallel_for_each( max_thread_n, servs.begin(), servs.end(), start_serv< false > );
         }
     }
     inline auto execute_rules( const rule_node& rules )
