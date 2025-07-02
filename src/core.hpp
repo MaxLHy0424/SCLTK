@@ -382,7 +382,7 @@ namespace core
     namespace details
     {
         inline const auto& is_no_optional_hot_reload{ options_set[ "misc" ][ "no_optional_hot_reload" ] };
-        inline auto get_config_node_raw_name_by_tag( std::string_view str )
+        inline auto get_config_node_raw_name_by_tag( std::string_view str ) noexcept
         {
             str = str.substr( 1, str.size() - 2 );
             const auto head{ std::ranges::find_if_not( str, is_space ) };
