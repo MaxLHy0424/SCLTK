@@ -37,7 +37,7 @@ namespace cpp_utils
             const auto chunk_end{ chunk_start + chunk_size + ( i < remainder ? 1 : 0 ) };
             threads.emplace_back( [ =, &func ]
             {
-                for ( auto it : std::ranges::iota_view{ chunk_start, chunk_end } ) {
+                for ( const auto it : std::ranges::iota_view{ chunk_start, chunk_end } ) {
                     func( *it );
                 }
             } );
