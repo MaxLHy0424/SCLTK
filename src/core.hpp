@@ -859,12 +859,12 @@ namespace core
             const auto& execs{ rules.execs };
             const auto& servs{ rules.servs };
             if ( details::is_hijack_execs ) {
-                cpp_utils::parallel_for_each( max_thread_n, execs.begin(), execs.end(), undo_hijack_exec< false > );
+                for_each_wrapper( execs, undo_hijack_exec< false > );
             }
             if ( details::is_set_serv_startup_types ) {
-                cpp_utils::parallel_for_each( max_thread_n, servs.begin(), servs.end(), enable_serv< false > );
+                for_each_wrapper( servs, enable_serv< false > );
             }
-            cpp_utils::parallel_for_each( max_thread_n, servs.begin(), servs.end(), start_serv< false > );
+            for_each_wrapper( servs, start_serv< false > );
         }
     }
     inline auto execute_rules( const rule_node& rules )
