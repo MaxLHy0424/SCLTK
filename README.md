@@ -2,14 +2,12 @@
 
 ![title](./img/title.png)\
 **Student Computer Lab Toolkit**\
-**轻松破解机房控制, 基于 Modern C++**\
-**\(适用于 Microsoft Windows OS\)**
+**轻松破解机房控制, 基于 Modern C++**
 
 </div>
 
 > [!CAUTION]
-> SCLTK 仅适用于中国大陆地区.\
-> SCLTK's service is limited to the Chinese mainland.
+> SCLTK 仅适用于 Microsoft Windows OS.
 
 > [!NOTE]
 > 从 v6.1.0 起, 原 CRCSN (Computer Room Control Software Nemesis) 正式更名为 SCLTK (Student Computer Lab Toolkit).
