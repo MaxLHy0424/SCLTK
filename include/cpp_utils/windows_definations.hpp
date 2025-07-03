@@ -80,11 +80,11 @@ namespace cpp_utils
     }
     namespace registry
     {
-        inline const auto classes_root{ HKEY_CLASSES_ROOT };
-        inline const auto current_user{ HKEY_CURRENT_USER };
-        inline const auto current_config{ HKEY_CURRENT_CONFIG };
-        inline const auto local_machine{ HKEY_LOCAL_MACHINE };
-        inline const auto users{ HKEY_USERS };
+        inline const auto hkey_classes_root{ HKEY_CLASSES_ROOT };
+        inline const auto hkey_current_user{ HKEY_CURRENT_USER };
+        inline const auto hkey_current_config{ HKEY_CURRENT_CONFIG };
+        inline const auto hkey_local_machine{ HKEY_LOCAL_MACHINE };
+        inline const auto hkey_users{ HKEY_USERS };
         inline constexpr DWORD binary_type{ REG_BINARY };
         inline constexpr DWORD dword_type{ REG_DWORD };
         inline constexpr DWORD dword_big_endian_type{ REG_DWORD_BIG_ENDIAN };

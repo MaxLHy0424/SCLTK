@@ -572,7 +572,7 @@ namespace core
             }
             for ( const auto& exec : execs ) {
                 RegDeleteTreeA(
-                  cpp_utils::registry::local_machine,
+                  cpp_utils::registry::hkey_local_machine,
                   std::format( R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe)", exec ).c_str() );
             }
             std::print( " (i) 操作已完成." );
@@ -699,7 +699,7 @@ namespace core
         inline auto hijack_exec( details::rule_item_const_ref_t exec ) noexcept
         {
             const auto result{ cpp_utils::create_registry_key< charset_id >(
-              cpp_utils::registry::local_machine,
+              cpp_utils::registry::hkey_local_machine,
               std::format( R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe)", exec ).c_str(),
               "Debugger", cpp_utils::registry::string_type, reinterpret_cast< const BYTE* >( L"nul" ), sizeof( L"nul" ) ) };
             if constexpr ( NeedV ) {
@@ -742,7 +742,7 @@ namespace core
         inline auto undo_hijack_exec( details::rule_item_const_ref_t exec ) noexcept
         {
             const auto result{ cpp_utils::delete_registry_tree< charset_id >(
-              cpp_utils::registry::local_machine,
+              cpp_utils::registry::hkey_local_machine,
               std::format( R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe)", exec ).c_str() ) };
             if constexpr ( NeedV ) {
                 return result;
