@@ -36,26 +36,6 @@ namespace core
         cpp_utils::relaunch_as_admin( EXIT_SUCCESS );
         return func_exit;
     }
-    namespace details
-    {
-        inline auto press_any_key_to_go_back() noexcept
-        {
-            std::print( "\n\n 按任意键返回..." );
-            cpp_utils::press_any_key_to_continue( std_input_handle );
-        }
-        inline auto is_space( const char ch ) noexcept
-        {
-            switch ( ch ) {
-                case '\r' :
-                case '\n' :
-                case '\f' :
-                case '\v' :
-                case '\t' :
-                case ' ' : return true;
-            }
-            return false;
-        }
-    }
     struct rule_node final
     {
         using item_t      = std::string;
@@ -388,6 +368,23 @@ namespace core
     auto& options_set{ std::get< options >( config_nodes ) };
     namespace details
     {
+        inline auto press_any_key_to_go_back() noexcept
+        {
+            std::print( "\n\n 按任意键返回..." );
+            cpp_utils::press_any_key_to_continue( std_input_handle );
+        }
+        inline auto is_space( const char ch ) noexcept
+        {
+            switch ( ch ) {
+                case '\r' :
+                case '\n' :
+                case '\f' :
+                case '\v' :
+                case '\t' :
+                case ' ' : return true;
+            }
+            return false;
+        }
         inline const auto& is_no_optional_hot_reload{ options_set[ "misc" ][ "no_optional_hot_reload" ] };
         inline auto get_config_node_raw_name_by_tag( std::string_view str ) noexcept
         {
