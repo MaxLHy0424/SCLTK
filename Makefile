@@ -1,7 +1,7 @@
 include env
 compiler         = g++.exe
 args_defines     = -DANSI -D_ANSI
-args_link        =
+args_link        = -I./include
 args_std         = gnu++26
 args_warning     = -Wall -Wextra -Weffc++ -Wpedantic
 args_opt_debug   = -Og
