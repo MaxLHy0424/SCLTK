@@ -14,12 +14,6 @@
             "compilerArgs": [
                 "-fexec-charset=GBK",
                 "-std=gnu++26",
-                "-Wall",
-                "-Wextra",
-                "-Weffc++",
-                "-pipe",
-                "-static",
-                "-O3",
                 "-flto=auto",
                 "-fno-rtti"
             ],
