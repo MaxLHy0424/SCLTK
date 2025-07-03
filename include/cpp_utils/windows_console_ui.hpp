@@ -8,7 +8,7 @@
 #include <thread>
 #include <utility>
 #include "compiler.hpp"
-#include "windows_definations.hpp"
+#include "windows_definitions.hpp"
 namespace cpp_utils
 {
 #if defined( _WIN32 ) || defined( _WIN64 )
