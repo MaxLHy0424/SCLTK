@@ -314,11 +314,11 @@ namespace core
         static auto load_( const bool, const std::string_view line )
         {
             if ( line.size() > suffix_exec.size() && line.starts_with( suffix_exec ) ) {
-                custom_rules.execs.emplace_back( line.substr( suffix_exec.size() ) );
+                custom_rules.execs.emplace_back( std::ranges::find_if_not( line.substr( suffix_exec.size() ), details::is_space ) );
                 return;
             }
             if ( line.size() > suffix_serv.size() && line.starts_with( suffix_serv ) ) {
-                custom_rules.servs.emplace_back( line.substr( suffix_serv.size() ) );
+                custom_rules.servs.emplace_back( std::ranges::find_if_not( line.substr( suffix_serv.size() ), details::is_space ) );
                 return;
             }
         }
