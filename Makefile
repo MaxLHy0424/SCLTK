@@ -38,18 +38,21 @@ make_info:
 src/info.hpp: make_info
 dependencies_debug = src/*.cpp
 build/debug/__debug__.exe: $(dependencies_testing) \
+                           $(dependencies_debug) \
                            make_info \
                            build/debug/.nothing
 	$(msys2_path)/ucrt64/bin/$(compiler) $(dependencies_debug) $(args_debug) -o $@
 dependencies_release_32bit = build/manifest-i686.o \
                              src/*.cpp
 build/release/SCLTK-i686-msvcrt.exe: $(dependencies_testing) \
+                                     $(dependencies_release_32bit) \
                                      make_info \
                                      build/release/.nothing
 	$(msys2_path)/mingw32/bin/$(compiler) $(dependencies_release_32bit) $(args_release) -o $@
 dependencies_release_64bit = build/manifest-x86_64.o \
                              src/*.cpp
 build/release/SCLTK-x86_64-ucrt.exe: $(dependencies_testing) \
+                                     $(dependencies_release_64bit) \
                                      make_info \
                                      build/release/.nothing
 	$(msys2_path)/ucrt64/bin/$(compiler) $(dependencies_release_64bit) $(args_release) -o $@
