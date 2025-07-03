@@ -524,7 +524,7 @@ namespace core
             "\n\n[ 许可证与版权 ]\n\n " INFO_LICENSE "\n " INFO_COPYRIGHT "\n\n[ 仓库 ]\n" )
           .add_back(
             " " INFO_REPO_URL " ", details::visit_repo_webpage,
-            cpp_utils::console_text::default_attrs | cpp_utils::console_text::foreground_intensity
+            cpp_utils::console_text::foreground_white | cpp_utils::console_text::foreground_intensity
               | cpp_utils::console_text::lvb_underscore )
           .show();
         return func_back;
