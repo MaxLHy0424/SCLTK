@@ -14,6 +14,7 @@ args_base        = -pipe -finput-charset=$(input_charset) -fexec-charset=$(outpu
 args_debug       = -g3 -DDEBUG $(args_base) $(args_opt_debug)
 args_release     = -DNDEBUG -static $(args_base) $(args_opt_release)
 .PHONY: toolchain all build debug release clean make_info
+dependencies_testing = src/* include*
 all: toolchain build
 build: debug release
 toolchain:
@@ -35,23 +36,23 @@ clean:
 make_info:
 	$(pwsh_path) -ExecutionPolicy Bypass -File ./make_info.ps1
 src/info.hpp: make_info
-dependencies_debug = src/*
-build/debug/__debug__.exe: $(dependencies_debug) \
+dependencies_debug = src/*.cpp
+build/debug/__debug__.exe: $(dependencies_testing) \
                            make_info \
                            build/debug/.nothing
-	$(msys2_path)/ucrt64/bin/$(compiler) $(dependencies_debug).cpp $(args_debug) -o $@
+	$(msys2_path)/ucrt64/bin/$(compiler) $(dependencies_debug) $(args_debug) -o $@
 dependencies_release_32bit = build/manifest-i686.o \
-                             src/*
-build/release/SCLTK-i686-msvcrt.exe: $(dependencies_release_32bit) \
+                             src/*.cpp
+build/release/SCLTK-i686-msvcrt.exe: $(dependencies_testing) \
                                      make_info \
                                      build/release/.nothing
-	$(msys2_path)/mingw32/bin/$(compiler) $(dependencies_release_32bit).cpp $(args_release) -o $@
+	$(msys2_path)/mingw32/bin/$(compiler) $(dependencies_release_32bit) $(args_release) -o $@
 dependencies_release_64bit = build/manifest-x86_64.o \
-                             src/*
-build/release/SCLTK-x86_64-ucrt.exe: $(dependencies_release_64bit) \
+                             src/*.cpp
+build/release/SCLTK-x86_64-ucrt.exe: $(dependencies_testing) \
                                      make_info \
                                      build/release/.nothing
-	$(msys2_path)/ucrt64/bin/$(compiler) $(dependencies_release_64bit).cpp $(args_release) -o $@
+	$(msys2_path)/ucrt64/bin/$(compiler) $(dependencies_release_64bit) $(args_release) -o $@
 dependencies_info = manifest.rc \
                     img/favicon.ico \
 					manifest.xml \
