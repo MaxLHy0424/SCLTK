@@ -346,6 +346,7 @@ namespace core
                 " 其中, <flag> 可为 exec 或 serv,\n"
                 " 分别表示以 .exe 为文件扩展名的可执行文件\n"
                 " 和某个 Windows 服务的服务名称.\n"
+                " <flag> 后的冒号与 <item> 间至少有一个空格.\n"
                 " <item> 的类型由 <flag> 决定.\n"
                 " 如果 <item> 为空, 该项规则将会被忽略.\n"
                 " 如果自定义规则不符合格式, 则会被忽略.\n"
