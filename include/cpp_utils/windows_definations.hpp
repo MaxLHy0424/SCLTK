@@ -36,14 +36,15 @@ namespace cpp_utils
     }
     namespace console_text
     {
-        inline constexpr WORD default_attrs{ FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE };
         inline constexpr WORD foreground_red{ FOREGROUND_RED };
         inline constexpr WORD foreground_green{ FOREGROUND_GREEN };
         inline constexpr WORD foreground_blue{ FOREGROUND_BLUE };
+        inline constexpr WORD foreground_white{ FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE };
         inline constexpr WORD foreground_intensity{ FOREGROUND_INTENSITY };
         inline constexpr WORD background_red{ BACKGROUND_RED };
         inline constexpr WORD background_green{ BACKGROUND_GREEN };
         inline constexpr WORD background_blue{ BACKGROUND_BLUE };
+        inline constexpr WORD background_white{ BACKGROUND_RED | BACKGROUND_GREEN | BACKGROUND_BLUE };
         inline constexpr WORD background_intensity{ BACKGROUND_INTENSITY };
         inline constexpr WORD lvb_leading_byte{ COMMON_LVB_LEADING_BYTE };
         inline constexpr WORD lvb_trailing_byte{ COMMON_LVB_TRAILING_BYTE };
