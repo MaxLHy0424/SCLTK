@@ -1,6 +1,6 @@
 #pragma once
 #if defined( _WIN32 ) || defined( _WIN64 )
-# include "windows_definations.hpp"
+# include "windows_definitions.hpp"
 # if true
 #  include <tlhelp32.h>
 # endif
