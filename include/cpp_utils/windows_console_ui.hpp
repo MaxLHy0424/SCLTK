@@ -58,9 +58,9 @@ namespace cpp_utils
         {
             std::string text{};
             callback_t func{};
-            WORD default_attrs{ console_text::default_attrs };
+            WORD default_attrs{ console_text::foreground_white };
             WORD intensity_attrs{ console_text::foreground_green | console_text::foreground_blue };
-            WORD last_attrs{ console_text::default_attrs };
+            WORD last_attrs{ console_text::foreground_white };
             COORD position{};
             auto set_attrs( const WORD current_attrs ) noexcept
             {
@@ -274,7 +274,7 @@ namespace cpp_utils
         auto& add_front(
           const std::string_view text, callback_t func = {},
           const WORD intensity_attrs = console_text::foreground_green | console_text::foreground_blue,
-          const WORD default_attrs   = console_text::default_attrs )
+          const WORD default_attrs   = console_text::foreground_white )
         {
             bool is_func{ false };
             func.visit( [ & ]( const auto& func ) { is_func = ( func != nullptr ); } );
@@ -284,7 +284,7 @@ namespace cpp_utils
         auto& add_back(
           const std::string_view text, callback_t func = {},
           const WORD intensity_attrs = console_text::foreground_blue | console_text::foreground_green,
-          const WORD default_attrs   = console_text::default_attrs )
+          const WORD default_attrs   = console_text::foreground_white )
         {
             bool is_func{ false };
             func.visit( [ & ]( const auto& func ) { is_func = ( func != nullptr ); } );
@@ -294,7 +294,7 @@ namespace cpp_utils
         auto& insert(
           const std::size_t index, const std::string_view text, callback_t func = {},
           const WORD intensity_attrs = console_text::foreground_green | console_text::foreground_blue,
-          const WORD default_attrs   = console_text::default_attrs )
+          const WORD default_attrs   = console_text::foreground_white )
         {
             bool is_func{ false };
             func.visit( [ & ]( const auto& func ) { is_func = ( func != nullptr ); } );
