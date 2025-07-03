@@ -33,11 +33,11 @@ namespace cpp_utils
         std::vector< std::thread > threads;
         threads.reserve( nproc );
         for ( nproc_t i{ 0 }; i < nproc; ++i ) {
-            const auto chunk_start{ begin + i * chunk_size + std::min< nproc_t >( i, remainder ) };
-            const auto chunk_end{ chunk_start + chunk_size + ( i < remainder ? 1 : 0 ) };
-            threads.emplace_back( [ =, &func ]
+            auto chunk_start{ begin + i * chunk_size + std::min< nproc_t >( i, remainder ) };
+            auto chunk_end{ chunk_start + chunk_size + ( i < remainder ? 1 : 0 ) };
+            threads.emplace_back( [ =, &func ] mutable
             {
-                for ( auto it{ chunk_start }; it != chunk_end; ++it ) {
+                for ( auto& it{ chunk_start }; it != chunk_end; ++it ) {
                     func( *it );
                 }
             } );
