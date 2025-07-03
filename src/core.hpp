@@ -1,11 +1,11 @@
 #pragma once
+#include <cpp_utils/const_string.hpp>
+#include <cpp_utils/math.hpp>
+#include <cpp_utils/meta.hpp>
+#include <cpp_utils/multithread.hpp>
+#include <cpp_utils/windows_app_tools.hpp>
+#include <cpp_utils/windows_console_ui.hpp>
 #include <fstream>
-#include "cpp_utils/const_string.hpp"
-#include "cpp_utils/math.hpp"
-#include "cpp_utils/meta.hpp"
-#include "cpp_utils/multithread.hpp"
-#include "cpp_utils/windows_app_tools.hpp"
-#include "cpp_utils/windows_console_ui.hpp"
 #include "info.hpp"
 namespace core
 {
