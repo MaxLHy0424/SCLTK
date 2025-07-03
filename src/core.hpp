@@ -414,14 +414,13 @@ namespace core
                 continue;
             }
             line.erase( std::ranges::find_if_not( line.rbegin(), line.rend(), details::is_space ).base(), line.end() );
-            std::string_view line_view{ line };
-            if ( line_view.front() == '[' && line_view.back() == ']' && line_view.size() > "[]"sv.size() ) {
+            if ( line.front() == '[' && line.back() == ']' && line.size() > "[]"sv.size() ) {
                 current_config_node = std::monostate{};
                 std::apply( [ & ]( auto&... config_node )
                 {
                     ( [ & ]( auto& current_node ) noexcept
                     {
-                        if ( details::get_config_node_raw_name_by_tag( line_view ) == current_node.raw_name ) {
+                        if ( details::get_config_node_raw_name_by_tag( line ) == current_node.raw_name ) {
                             current_config_node = &current_node;
                         }
                     }( config_node ), ... );
