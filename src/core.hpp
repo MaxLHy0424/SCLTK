@@ -691,6 +691,10 @@ namespace core
         {
             return std::format( "({}{}/{})", std::string( digits_of_total - cpp_utils::count_digits( now ), ' ' ), now, total );
         }
+        inline auto for_each_wrapper( const rule_node::container_t container, void ( *func )( rule_item_const_ref_t ) )
+        {
+            cpp_utils::parallel_for_each( max_thread_n, container.begin(), container.end(), func );
+        }
         template < bool NeedV = true >
         inline auto hijack_exec( details::rule_item_const_ref_t exec ) noexcept
         {
@@ -804,10 +808,6 @@ namespace core
                 std::this_thread::sleep_for( default_execution_sleep_time );
             }
             std::print( "\n{}\n\n", diving_line.data() );
-        }
-        inline auto for_each_wrapper( const rule_node::container_t container, void ( *func )( rule_item_const_ref_t ) )
-        {
-            cpp_utils::parallel_for_each( max_thread_n, container.begin(), container.end(), func );
         }
         inline auto fast_crack( const rule_node& rules )
         {
