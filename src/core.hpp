@@ -21,7 +21,6 @@ namespace core
     inline constexpr auto func_back{ cpp_utils::console_ui::func_back };
     inline constexpr auto func_exit{ cpp_utils::console_ui::func_exit };
     inline constexpr auto diving_line{ cpp_utils::make_repeated_const_string< '-', console_width >() };
-    inline const auto max_thread_n{ std::max< unsigned >( std::thread::hardware_concurrency(), 4 ) };
     inline const auto window_handle{ GetConsoleWindow() };
     inline const auto std_input_handle{ GetStdHandle( STD_INPUT_HANDLE ) };
     inline const auto std_output_handle{ GetStdHandle( STD_OUTPUT_HANDLE ) };
@@ -695,7 +694,8 @@ namespace core
         }
         inline auto for_each_wrapper( const rule_node::container_t container, void ( *func )( rule_item_const_ref_t ) )
         {
-            cpp_utils::parallel_for_each( max_thread_n, container.begin(), container.end(), func );
+            cpp_utils::parallel_for_each(
+              std::max< unsigned >( std::thread::hardware_concurrency(), 4 ), container.begin(), container.end(), func );
         }
         template < bool NeedV = true >
         inline auto hijack_exec( details::rule_item_const_ref_t exec ) noexcept
