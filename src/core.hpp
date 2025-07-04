@@ -911,9 +911,8 @@ namespace core
         args.parent_ui.edit_text( args.node_index, make_executor_mode_ui_text() );
         return func_back;
     }
-    inline auto execute_all_rules( ui_func_args args )
+    inline auto execute_all_rules()
     {
-        args.parent_ui.set_limits( true, true );
         std::print( " -> 正在准备数据...\n" );
         rule_node total;
         total.execs.append_range( custom_rules.execs );
