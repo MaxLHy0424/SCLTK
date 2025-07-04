@@ -46,8 +46,6 @@ namespace core
         inline auto is_space( const char ch ) noexcept
         {
             switch ( ch ) {
-                case '\r' :
-                case '\n' :
                 case '\f' :
                 case '\v' :
                 case '\t' :
