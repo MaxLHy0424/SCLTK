@@ -32,6 +32,10 @@ namespace cpp_utils
         }
         constexpr auto max_size() const noexcept
         {
+            return data_.max_size() - 1;
+        }
+        constexpr auto max_capacity() const noexcept
+        {
             return data_.max_size();
         }
         constexpr const auto& front() const noexcept
