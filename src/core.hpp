@@ -611,7 +611,7 @@ namespace core
           .add_back( " < 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
           .add_back( " > 命令提示符 ", details::launch_cmd )
           .add_back( " > 恢复操作系统组件 ", details::restore_os_components )
-          .add_back( "\n[ 常用操作 ]\n" );
+          .add_back( "\n[ 常用命令 ]\n" );
         for ( const auto& common_cmd : common_cmds ) {
             ui.add_back(
               std::format( " > {} ", common_cmd.description ),
