@@ -67,17 +67,6 @@ namespace core
         {
             return execs.empty() && servs.empty();
         }
-        auto operator=( const rule_node& ) -> rule_node& = delete;
-        auto operator=( rule_node&& ) -> rule_node&      = delete;
-        rule_node() noexcept                             = default;
-        rule_node( const char* const shown_name, container_t execs, container_t servs )
-          : shown_name{ shown_name }
-          , execs{ std::move( execs ) }
-          , servs{ std::move( servs ) }
-        { }
-        rule_node( const rule_node& ) = default;
-        rule_node( rule_node&& )      = default;
-        ~rule_node()                  = default;
     };
     inline rule_node custom_rules;
     inline const std::array< rule_node, 4 > builtin_rules{
