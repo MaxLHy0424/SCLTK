@@ -650,7 +650,6 @@ namespace core
         const auto current_window_thread_process_id{ GetWindowThreadProcessId( window_handle, nullptr ) };
         if ( details::is_no_optional_hot_reload ) {
             cpp_utils::loop_keep_window_top( window_handle, current_thread_id, current_window_thread_process_id, sleep_time );
-            cpp_utils::cancel_top_window( window_handle );
             return;
         }
         while ( true ) {
@@ -662,7 +661,6 @@ namespace core
             cpp_utils::keep_window_top( window_handle, current_thread_id, current_window_thread_process_id );
             std::this_thread::sleep_for( sleep_time );
         }
-        cpp_utils::cancel_top_window( window_handle );
     }
     namespace details
     {
