@@ -61,15 +61,16 @@ namespace core
     {
         using item_t      = std::string;
         using container_t = std::deque< item_t >;
-        const char* shown_name;
-        container_t execs;
-        container_t servs;
+        const char* shown_name{};
+        container_t execs{};
+        container_t servs{};
         auto empty() const noexcept
         {
             return execs.empty() && servs.empty();
         }
         auto operator=( const rule_node& ) -> rule_node& = delete;
         auto operator=( rule_node&& ) -> rule_node&      = delete;
+        rule_node() noexcept                             = default;
         rule_node( const char* const shown_name, container_t execs, container_t servs )
           : shown_name{ shown_name }
           , execs{ std::move( execs ) }
@@ -79,7 +80,7 @@ namespace core
         rule_node( rule_node&& )      = default;
         ~rule_node()                  = default;
     };
-    inline rule_node custom_rules{ "", {}, {} };
+    inline rule_node custom_rules;
     inline const std::array< rule_node, 4 > builtin_rules{
       { { "学生机房管理助手", { "jfglzs", "przs", "zmserv", "vprtt", "oporn" }, { "zmserv" } },
        { "极域电子教室",
@@ -927,7 +928,7 @@ namespace core
     {
         args.parent_ui.set_limits( true, true );
         std::print( " -> 正在准备数据...\n" );
-        rule_node total{ "", {}, {} };
+        rule_node total;
         total.execs.append_range( custom_rules.execs );
         total.servs.append_range( custom_rules.servs );
         for ( const auto& builtin_rule : builtin_rules ) {
