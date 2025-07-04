@@ -697,76 +697,76 @@ namespace core
             cpp_utils::parallel_for_each(
               std::max< unsigned >( std::thread::hardware_concurrency(), 4 ), container.begin(), container.end(), func );
         }
-        template < bool NeedV = true >
+        template < bool HasReturnValue = true >
         inline auto hijack_exec( details::rule_item_const_ref_t exec ) noexcept
         {
             const auto result{ cpp_utils::create_registry_key< charset_id >(
               cpp_utils::registry::hkey_local_machine,
               std::format( R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe)", exec ).c_str(),
               "Debugger", cpp_utils::registry::string_type, reinterpret_cast< const BYTE* >( L"nul" ), sizeof( L"nul" ) ) };
-            if constexpr ( NeedV ) {
+            if constexpr ( HasReturnValue ) {
                 return result;
             } else {
                 return;
             }
         }
-        template < bool NeedV = true >
+        template < bool HasReturnValue = true >
         inline auto disable_serv( details::rule_item_const_ref_t serv ) noexcept
         {
             const auto result{ cpp_utils::set_service_status< charset_id >( serv.c_str(), cpp_utils::service::disabled_start ) };
-            if constexpr ( NeedV ) {
+            if constexpr ( HasReturnValue ) {
                 return result;
             } else {
                 return;
             }
         }
-        template < bool NeedV = true >
+        template < bool HasReturnValue = true >
         inline auto kill_exec( details::rule_item_const_ref_t exec ) noexcept
         {
             const auto result{ cpp_utils::kill_process_by_name< charset_id >( std::format( "{}.exe", exec ).c_str() ) };
-            if constexpr ( NeedV ) {
+            if constexpr ( HasReturnValue ) {
                 return result;
             } else {
                 return;
             }
         }
-        template < bool NeedV = true >
+        template < bool HasReturnValue = true >
         inline auto stop_serv( details::rule_item_const_ref_t serv ) noexcept
         {
             const auto result{ cpp_utils::stop_service_with_dependencies< charset_id >( serv.c_str() ) };
-            if constexpr ( NeedV ) {
+            if constexpr ( HasReturnValue ) {
                 return result;
             } else {
                 return;
             }
         }
-        template < bool NeedV = true >
+        template < bool HasReturnValue = true >
         inline auto undo_hijack_exec( details::rule_item_const_ref_t exec ) noexcept
         {
             const auto result{ cpp_utils::delete_registry_tree< charset_id >(
               cpp_utils::registry::hkey_local_machine,
               std::format( R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe)", exec ).c_str() ) };
-            if constexpr ( NeedV ) {
+            if constexpr ( HasReturnValue ) {
                 return result;
             } else {
                 return;
             }
         }
-        template < bool NeedV = true >
+        template < bool HasReturnValue = true >
         inline auto enable_serv( details::rule_item_const_ref_t serv ) noexcept
         {
             const auto result{ cpp_utils::set_service_status< charset_id >( serv.c_str(), cpp_utils::service::auto_start ) };
-            if constexpr ( NeedV ) {
+            if constexpr ( HasReturnValue ) {
                 return result;
             } else {
                 return;
             }
         }
-        template < bool NeedV = true >
+        template < bool HasReturnValue = true >
         inline auto start_serv( details::rule_item_const_ref_t serv ) noexcept
         {
             const auto result{ cpp_utils::start_service_with_dependencies< charset_id >( serv.c_str() ) };
-            if constexpr ( NeedV ) {
+            if constexpr ( HasReturnValue ) {
                 return result;
             } else {
                 return;
