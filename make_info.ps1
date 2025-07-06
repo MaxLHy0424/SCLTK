@@ -39,6 +39,6 @@ else {
 #elif defined( _MSC_VER )
 # define INFO_COMPILER "msvc " TO_STRING( _MSC_VER )
 #else
-# define INFO_COMPILER "unknown"
+# define INFO_COMPILER "unknown compiler"
 #endif
 "@ | Out-File -FilePath "src/info.hpp" -Encoding UTF8 -NoNewline -Force
