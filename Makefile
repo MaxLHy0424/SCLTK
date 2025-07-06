@@ -31,6 +31,7 @@ release: build/release/SCLTK-i686-msvcrt.exe\
          build/release/SCLTK-x86_64-ucrt.exe
 clean:
 	$(msys2_path)/usr/bin/rm.exe -rf build
+	$(msys2_path)/usr/bin/rm.exe -rf src/info.hpp
 	$(msys2_path)/usr/bin/mkdir.exe build
 	$(msys2_path)/usr/bin/touch.exe build/.nothing
 make_info:
