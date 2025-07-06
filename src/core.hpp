@@ -110,10 +110,6 @@ namespace core
                     self.ui_( parent_ui );
                 }
             }
-            config_node_impl( const char* const raw_name ) noexcept
-              : raw_name{ raw_name }
-            { }
-            ~config_node_impl() noexcept = default;
         };
     }
     class options final : public details::config_node_impl
