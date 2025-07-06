@@ -1,4 +1,4 @@
-$is_insider_build = $true
+$is_evaluation_copy = $true
 $software_full_name = "Student Computer Lab Toolkit"
 $software_short_name = "SCLTK"
 $license = "MIT License"
@@ -7,8 +7,8 @@ $repo_url = "https://github.com/MaxLHy0424/SCLTK"
 $git_branch = git branch --show-current
 $git_hash = git rev-parse --short HEAD
 $build_time = Get-Date -AsUTC -Format "yyyy/MM/dd HH:mm:ss"
-if ( $is_insider_build -eq $true ) {
-    $git_tag = "evaluation_copy"  
+if ( $is_evaluation_copy -eq $true ) {
+    $git_tag = "evaluation_copy"
 }
 else {
     $git_tag = git describe --tags --abbrev=0
