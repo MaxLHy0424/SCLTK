@@ -742,16 +742,14 @@ namespace core
         {
             const auto& execs{ rules.execs };
             const auto& servs{ rules.servs };
-            using thread_t = std::thread;
-            std::array< thread_t, 4 > threads;
-            if ( details::is_hijack_execs ) {
-                threads[ 0 ] = thread_t{ for_each_wrapper, std::cref( execs ), hijack_exec };
-            }
-            if ( details::is_set_serv_startup_types ) {
-                threads[ 1 ] = thread_t{ for_each_wrapper, std::cref( servs ), disable_serv };
-            }
-            threads[ 2 ] = thread_t{ for_each_wrapper, std::cref( execs ), kill_exec };
-            threads[ 3 ] = thread_t{ for_each_wrapper, std::cref( servs ), stop_serv };
+            std::array threads{
+              details::is_hijack_execs ? std::thread{ for_each_wrapper, std::cref( execs ), hijack_exec }
+                : std::thread{},
+              details::is_set_serv_startup_types ? std::thread{ for_each_wrapper, std::cref( servs ), disable_serv }
+                : std::thread{},
+              std::thread{ for_each_wrapper, std::cref( execs ), kill_exec },
+              std::thread{ for_each_wrapper, std::cref( servs ), stop_serv }
+            };
             for ( auto& thread : threads ) {
                 if ( thread.joinable() ) {
                     thread.join();
