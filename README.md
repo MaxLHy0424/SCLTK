@@ -151,11 +151,10 @@ SCLTK 窗口相关选项.
 示例:
 ```ini
 [customized_rules]
-exec: abc_client_gui
-exec: abc_client_server
-exec: abc_protect_server
-serv: abc_network
-serv: abc_diag_track
+exec: abc_frontend
+exec: abc_backend
+serv: abc_connect_service
+serv: abc_proc_defender
 ```
 
 ## 4 工具箱
