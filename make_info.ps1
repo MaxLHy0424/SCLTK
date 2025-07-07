@@ -6,7 +6,7 @@ $copyright = "Copyright (C) 2023 - present MaxLHy0424."
 $repo_url = "https://github.com/MaxLHy0424/SCLTK"
 $git_branch = git branch --show-current
 $git_hash = git rev-parse --short HEAD
-$build_time = Get-Date -AsUTC -Format "yyyy/MM/dd HH:mm:ss"
+$build_time = Get-Date -AsUTC -Format "yyyy-MM-ddTHH:mm:ssZ"
 if ( $is_evaluation_copy -eq $true ) {
     $git_tag = "evaluation_copy"
 }
@@ -25,7 +25,7 @@ else {
 #define INFO_GIT_BRANCH "$git_branch"
 #define INFO_GIT_TAG    "$git_tag"
 #define INFO_GIT_HASH   "$git_hash"
-#define INFO_BUILD_TIME "UTC " "$build_time"
+#define INFO_BUILD_TIME "$build_time"
 #define INFO_VERSION    INFO_GIT_TAG " (" INFO_GIT_BRANCH " " INFO_GIT_HASH ")"
 #if defined( __LP64__ ) || defined( _WIN64 )
 # define INFO_ARCH "x86_64"
