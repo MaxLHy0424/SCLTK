@@ -542,10 +542,10 @@ namespace core
               R"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)", R"(Software\Policies\Microsoft\MMC)" };
             constexpr std::array execs{
               "taskkill", "ntsd", "sc", "net", "reg", "cmd", "taskmgr", "perfmon", "regedit", "mmc", "dism", "sfc" };
-            for ( const auto& reg_dir : reg_dirs ) {
+            for ( const auto reg_dir : reg_dirs ) {
                 RegDeleteTreeA( HKEY_CURRENT_USER, reg_dir );
             }
-            for ( const auto& exec : execs ) {
+            for ( const auto exec : execs ) {
                 RegDeleteTreeA(
                   cpp_utils::registry::hkey_local_machine,
                   std::format( R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe)", exec ).c_str() );
