@@ -676,80 +676,38 @@ namespace core
             cpp_utils::parallel_for_each(
               std::max< unsigned >( std::thread::hardware_concurrency(), 4 ), container.begin(), container.end(), func );
         }
-        template < bool HasReturnValue = true >
         inline auto hijack_exec( details::rule_item_const_ref_t exec ) noexcept
         {
-            const auto result{ cpp_utils::create_registry_key< charset_id >(
+            cpp_utils::create_registry_key< charset_id >(
               cpp_utils::registry::hkey_local_machine,
               std::format( R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe)", exec ).c_str(),
-              "Debugger", cpp_utils::registry::string_type, reinterpret_cast< const BYTE* >( L"nul" ), sizeof( L"nul" ) ) };
-            if constexpr ( HasReturnValue ) {
-                return result;
-            } else {
-                return;
-            }
+              "Debugger", cpp_utils::registry::string_type, reinterpret_cast< const BYTE* >( L"nul" ), sizeof( L"nul" ) );
         }
-        template < bool HasReturnValue = true >
         inline auto disable_serv( details::rule_item_const_ref_t serv ) noexcept
         {
-            const auto result{ cpp_utils::set_service_status< charset_id >( serv.c_str(), cpp_utils::service::disabled_start ) };
-            if constexpr ( HasReturnValue ) {
-                return result;
-            } else {
-                return;
-            }
+            cpp_utils::set_service_status< charset_id >( serv.c_str(), cpp_utils::service::disabled_start );
         }
-        template < bool HasReturnValue = true >
         inline auto kill_exec( details::rule_item_const_ref_t exec ) noexcept
         {
-            const auto result{ cpp_utils::kill_process_by_name< charset_id >( std::format( "{}.exe", exec ).c_str() ) };
-            if constexpr ( HasReturnValue ) {
-                return result;
-            } else {
-                return;
-            }
+            cpp_utils::kill_process_by_name< charset_id >( std::format( "{}.exe", exec ).c_str() );
         }
-        template < bool HasReturnValue = true >
         inline auto stop_serv( details::rule_item_const_ref_t serv ) noexcept
         {
-            const auto result{ cpp_utils::stop_service_with_dependencies< charset_id >( serv.c_str() ) };
-            if constexpr ( HasReturnValue ) {
-                return result;
-            } else {
-                return;
-            }
+            cpp_utils::stop_service_with_dependencies< charset_id >( serv.c_str() );
         }
-        template < bool HasReturnValue = true >
         inline auto undo_hijack_exec( details::rule_item_const_ref_t exec ) noexcept
         {
-            const auto result{ cpp_utils::delete_registry_tree< charset_id >(
+            cpp_utils::delete_registry_tree< charset_id >(
               cpp_utils::registry::hkey_local_machine,
-              std::format( R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe)", exec ).c_str() ) };
-            if constexpr ( HasReturnValue ) {
-                return result;
-            } else {
-                return;
-            }
+              std::format( R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe)", exec ).c_str() );
         }
-        template < bool HasReturnValue = true >
         inline auto enable_serv( details::rule_item_const_ref_t serv ) noexcept
         {
-            const auto result{ cpp_utils::set_service_status< charset_id >( serv.c_str(), cpp_utils::service::auto_start ) };
-            if constexpr ( HasReturnValue ) {
-                return result;
-            } else {
-                return;
-            }
+            cpp_utils::set_service_status< charset_id >( serv.c_str(), cpp_utils::service::auto_start );
         }
-        template < bool HasReturnValue = true >
         inline auto start_serv( details::rule_item_const_ref_t serv ) noexcept
         {
-            const auto result{ cpp_utils::start_service_with_dependencies< charset_id >( serv.c_str() ) };
-            if constexpr ( HasReturnValue ) {
-                return result;
-            } else {
-                return;
-            }
+            cpp_utils::start_service_with_dependencies< charset_id >( serv.c_str() );
         }
         inline auto default_crack( const rule_node& rules )
         {
@@ -763,29 +721,26 @@ namespace core
             if ( details::is_hijack_execs ) {
                 for ( const auto& exec : execs ) {
                     std::print(
-                      "{} 劫持文件 {}.exe (0x{:x}).\n",
-                      details::make_progress( ++finished_count, total_count, digits_of_total ), exec, hijack_exec( exec ) );
+                      "{} 劫持文件 {}.exe.\n", details::make_progress( ++finished_count, total_count, digits_of_total ), exec );
+                    hijack_exec( exec );
                     std::this_thread::sleep_for( default_execution_sleep_time );
                 }
             }
             if ( details::is_set_serv_startup_types ) {
                 for ( const auto& serv : servs ) {
-                    std::print(
-                      "{} 禁用服务 {} (0x{:x}).\n", details::make_progress( ++finished_count, total_count, digits_of_total ),
-                      serv, disable_serv( serv ) );
+                    std::print( "{} 禁用服务 {}.\n", details::make_progress( ++finished_count, total_count, digits_of_total ), serv );
+                    disable_serv( serv );
                     std::this_thread::sleep_for( default_execution_sleep_time );
                 }
             }
             for ( const auto& exec : execs ) {
-                std::print(
-                  "{} 终止进程 {}.exe (0x{:x}).\n", details::make_progress( ++finished_count, total_count, digits_of_total ),
-                  exec, kill_exec( exec ) );
+                std::print( "{} 终止进程 {}.exe.\n", details::make_progress( ++finished_count, total_count, digits_of_total ), exec );
+                kill_exec( exec );
                 std::this_thread::sleep_for( default_execution_sleep_time );
             }
             for ( const auto& serv : servs ) {
-                std::print(
-                  "{} 停止服务 {} (0x{:x}).\n", details::make_progress( ++finished_count, total_count, digits_of_total ), serv,
-                  stop_serv( serv ) );
+                std::print( "{} 停止服务 {}.\n", details::make_progress( ++finished_count, total_count, digits_of_total ), serv );
+                stop_serv( serv );
                 std::this_thread::sleep_for( default_execution_sleep_time );
             }
             std::print( "\n{}\n\n", diving_line.data() );
@@ -797,13 +752,13 @@ namespace core
             using thread_t = std::thread;
             std::array< thread_t, 4 > threads;
             if ( details::is_hijack_execs ) {
-                threads[ 0 ] = thread_t{ for_each_wrapper, std::cref( execs ), hijack_exec< false > };
+                threads[ 0 ] = thread_t{ for_each_wrapper, std::cref( execs ), hijack_exec };
             }
             if ( details::is_set_serv_startup_types ) {
-                threads[ 1 ] = thread_t{ for_each_wrapper, std::cref( servs ), disable_serv< false > };
+                threads[ 1 ] = thread_t{ for_each_wrapper, std::cref( servs ), disable_serv };
             }
-            threads[ 2 ] = thread_t{ for_each_wrapper, std::cref( execs ), kill_exec< false > };
-            threads[ 3 ] = thread_t{ for_each_wrapper, std::cref( servs ), stop_serv< false > };
+            threads[ 2 ] = thread_t{ for_each_wrapper, std::cref( execs ), kill_exec };
+            threads[ 3 ] = thread_t{ for_each_wrapper, std::cref( servs ), stop_serv };
             for ( auto& thread : threads ) {
                 if ( thread.joinable() ) {
                     thread.join();
@@ -822,23 +777,21 @@ namespace core
             if ( details::is_hijack_execs ) {
                 for ( const auto& exec : execs ) {
                     std::print(
-                      "{} 撤销劫持 {}.exe (0x{:x}).\n",
-                      details::make_progress( ++finished_count, total_count, digits_of_total ), exec, undo_hijack_exec( exec ) );
+                      "{} 撤销劫持 {}.exe.\n", details::make_progress( ++finished_count, total_count, digits_of_total ), exec );
+                    undo_hijack_exec( exec );
                     std::this_thread::sleep_for( default_execution_sleep_time );
                 }
             }
             if ( details::is_set_serv_startup_types ) {
                 for ( const auto& serv : servs ) {
-                    std::print(
-                      "{} 启用服务 {} (0x{:x}).\n", details::make_progress( ++finished_count, total_count, digits_of_total ),
-                      serv, enable_serv( serv ) );
+                    std::print( "{} 启用服务 {}.\n", details::make_progress( ++finished_count, total_count, digits_of_total ), serv );
+                    enable_serv( serv );
                     std::this_thread::sleep_for( default_execution_sleep_time );
                 }
             }
             for ( const auto& serv : servs ) {
-                std::print(
-                  "{} 启动服务 {} (0x{:x}).\n", details::make_progress( ++finished_count, total_count, digits_of_total ), serv,
-                  start_serv( serv ) );
+                std::print( "{} 启动服务 {}.\n", details::make_progress( ++finished_count, total_count, digits_of_total ), serv );
+                start_serv( serv );
                 std::this_thread::sleep_for( default_execution_sleep_time );
             }
             std::print( "\n{}\n\n", diving_line.data() );
@@ -848,12 +801,12 @@ namespace core
             const auto& execs{ rules.execs };
             const auto& servs{ rules.servs };
             if ( details::is_hijack_execs ) {
-                for_each_wrapper( execs, undo_hijack_exec< false > );
+                for_each_wrapper( execs, undo_hijack_exec );
             }
             if ( details::is_set_serv_startup_types ) {
-                for_each_wrapper( servs, enable_serv< false > );
+                for_each_wrapper( servs, enable_serv );
             }
-            for_each_wrapper( servs, start_serv< false > );
+            for_each_wrapper( servs, start_serv );
         }
     }
     inline auto execute_rules( const rule_node& rules )
