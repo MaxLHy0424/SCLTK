@@ -14,15 +14,14 @@
 
 # 📦 获取
 
-
-| 分支            | 最新发行版                                                                  | 状态       | 生命周期                |
-| --------------- | --------------------------------------------------------------------------- | ---------- | ----------------------- |
-| SCLTK (CRCSN) 1 | [v1.0_Stable](https://github.com/MaxLHy0424/SCLTK/releases/tag/v1.0_Stable) | ❌ 停止维护 | 2023/12/17 - 2023/12/18 |
-| SCLTK (CRCSN) 2 | [v2.5_Stable](https://github.com/MaxLHy0424/SCLTK/releases/tag/v2.5_Stable) | ❌ 停止维护 | 2024/01/01 - 2024/01/07 |
-| SCLTK (CRCSN) 3 | [v3.0.1 \(30174\)](https://github.com/MaxLHy0424/SCLTK/releases/tag/30174)  | ❌ 停止维护 | 2024/02/09 - 2024/02/10 |
-| SCLTK (CRCSN) 4 | [v4.10.7](https://github.com/MaxLHy0424/SCLTK/releases/tag/v4.10.7)         | ❌ 停止维护 | 2024/03/26 - 2024/06/19 |
-| SCLTK (CRCSN) 5 | [v5.11.1](https://github.com/MaxLHy0424/SCLTK/releases/tag/v5.11.1)         | ❌ 停止维护 | 2024/08/25 - 2024/12/23 |
-| SCLTK (CRCSN) 6 | [v6.3.3](https://github.com/MaxLHy0424/SCLTK/releases/tag/v6.3.3)           | ✅ 基线开发 | 2025/01/29 - present    |
+| 分支            | 最新发行版                                                                  | 状态       | 生命周期 (中国标准时间)  |
+| --------------- | --------------------------------------------------------------------------- | ---------- | ------------------------ |
+| SCLTK (CRCSN) 1 | [v1.0_Stable](https://github.com/MaxLHy0424/SCLTK/releases/tag/v1.0_Stable) | ❌ 停止维护 | 2023-12-17 -- 2023-12-18 |
+| SCLTK (CRCSN) 2 | [v2.5_Stable](https://github.com/MaxLHy0424/SCLTK/releases/tag/v2.5_Stable) | ❌ 停止维护 | 2024-01-01 -- 2024-01-07 |
+| SCLTK (CRCSN) 3 | [v3.0.1 \(30174\)](https://github.com/MaxLHy0424/SCLTK/releases/tag/30174)  | ❌ 停止维护 | 2024-02-09 -- 2024-02-10 |
+| SCLTK (CRCSN) 4 | [v4.10.7](https://github.com/MaxLHy0424/SCLTK/releases/tag/v4.10.7)         | ❌ 停止维护 | 2024-03-26 -- 2024-06-19 |
+| SCLTK (CRCSN) 5 | [v5.11.1](https://github.com/MaxLHy0424/SCLTK/releases/tag/v5.11.1)         | ❌ 停止维护 | 2024-08-25 -- 2024-12-23 |
+| SCLTK (CRCSN) 6 | [v6.3.3](https://github.com/MaxLHy0424/SCLTK/releases/tag/v6.3.3)           | ✅ 基线开发 | 2025-01-29 -- ..         |
 
 # 📖 使用指南
 
