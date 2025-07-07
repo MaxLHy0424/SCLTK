@@ -676,36 +676,36 @@ namespace core
             static const auto nproc_for_processing{ std::max< unsigned >( std::thread::hardware_concurrency(), 4 ) };
             cpp_utils::parallel_for_each( nproc_for_processing, container.begin(), container.end(), func );
         }
-        inline auto hijack_exec( details::rule_item_const_ref_t exec ) noexcept
+        inline auto hijack_exec( rule_item_const_ref_t exec ) noexcept
         {
             cpp_utils::create_registry_key< charset_id >(
               cpp_utils::registry::hkey_local_machine,
               std::format( R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe)", exec ).c_str(),
               "Debugger", cpp_utils::registry::string_type, reinterpret_cast< const BYTE* >( L"nul" ), sizeof( L"nul" ) );
         }
-        inline auto disable_serv( details::rule_item_const_ref_t serv ) noexcept
+        inline auto disable_serv( rule_item_const_ref_t serv ) noexcept
         {
             cpp_utils::set_service_status< charset_id >( serv.c_str(), cpp_utils::service::disabled_start );
         }
-        inline auto kill_exec( details::rule_item_const_ref_t exec ) noexcept
+        inline auto kill_exec( rule_item_const_ref_t exec ) noexcept
         {
             cpp_utils::kill_process_by_name< charset_id >( std::format( "{}.exe", exec ).c_str() );
         }
-        inline auto stop_serv( details::rule_item_const_ref_t serv ) noexcept
+        inline auto stop_serv( rule_item_const_ref_t serv ) noexcept
         {
             cpp_utils::stop_service_with_dependencies< charset_id >( serv.c_str() );
         }
-        inline auto undo_hijack_exec( details::rule_item_const_ref_t exec ) noexcept
+        inline auto undo_hijack_exec( rule_item_const_ref_t exec ) noexcept
         {
             cpp_utils::delete_registry_tree< charset_id >(
               cpp_utils::registry::hkey_local_machine,
               std::format( R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe)", exec ).c_str() );
         }
-        inline auto enable_serv( details::rule_item_const_ref_t serv ) noexcept
+        inline auto enable_serv( rule_item_const_ref_t serv ) noexcept
         {
             cpp_utils::set_service_status< charset_id >( serv.c_str(), cpp_utils::service::auto_start );
         }
-        inline auto start_serv( details::rule_item_const_ref_t serv ) noexcept
+        inline auto start_serv( rule_item_const_ref_t serv ) noexcept
         {
             cpp_utils::start_service_with_dependencies< charset_id >( serv.c_str() );
         }
