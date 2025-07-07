@@ -666,8 +666,8 @@ namespace core
         }
         inline auto for_each_wrapper( const rule_node::container_t container, void ( *func )( rule_item_const_ref_t ) )
         {
-            static const auto nproc_for_executing{ std::max< unsigned >( std::thread::hardware_concurrency(), 4 ) };
-            cpp_utils::parallel_for_each( nproc_for_executing, container.begin(), container.end(), func );
+            cpp_utils::parallel_for_each(
+              std::max( std::thread::hardware_concurrency(), 4U ), container.begin(), container.end(), func );
         }
         inline auto hijack_exec( rule_item_const_ref_t exec ) noexcept
         {
