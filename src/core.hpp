@@ -330,11 +330,10 @@ namespace core
                 " 更多信息请参阅文档.\n\n"
                 " 使用示例:\n\n"
                 " [customized_rules]\n"
-                " exec: abc_client_gui\n"
-                " exec: abc_client_server\n"
-                " exec: abc_protect_server\n"
-                " serv: abc_network\n"
-                " serv: abc_diag_track\n" )
+                " exec: abc_frontend\n"
+                " exec: abc_backend\n"
+                " serv: abc_connect\n"
+                " serv: abc_proc_defender" )
               .show();
             return func_back;
         }
