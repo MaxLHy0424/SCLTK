@@ -16,7 +16,6 @@ namespace core
     inline constexpr SHORT console_height{ 25 };
     inline constexpr UINT charset_id{ 936 };
     inline constexpr auto default_thread_sleep_time{ 1s };
-    inline constexpr auto default_execution_sleep_time{ 50ms };
     inline constexpr auto config_file_name{ "config.ini" };
     inline constexpr auto func_back{ cpp_utils::console_ui::func_back };
     inline constexpr auto func_exit{ cpp_utils::console_ui::func_exit };
@@ -25,7 +24,6 @@ namespace core
     inline const auto std_input_handle{ GetStdHandle( STD_INPUT_HANDLE ) };
     inline const auto std_output_handle{ GetStdHandle( STD_OUTPUT_HANDLE ) };
     static_assert( default_thread_sleep_time.count() != 0 );
-    static_assert( default_execution_sleep_time.count() != 0 );
     using ui_func_args = cpp_utils::console_ui::func_args;
     inline auto quit() noexcept
     {
@@ -650,6 +648,8 @@ namespace core
     namespace details
     {
         using rule_item_const_ref_t = cpp_utils::add_const_lvalue_reference_t< rule_node::item_t >;
+        inline constexpr auto default_executing_sleep_time{ 50ms };
+        static_assert( default_executing_sleep_time.count() != 0 );
         inline const auto& option_crack_restore{ options_set[ "crack_restore" ] };
         inline const auto& is_hijack_execs{ option_crack_restore[ "hijack_execs" ] };
         inline const auto& is_set_serv_startup_types{ option_crack_restore[ "set_serv_startup_types" ] };
@@ -666,8 +666,8 @@ namespace core
         }
         inline auto for_each_wrapper( const rule_node::container_t container, void ( *func )( rule_item_const_ref_t ) )
         {
-            static const auto nproc_for_processing{ std::max< unsigned >( std::thread::hardware_concurrency(), 4 ) };
-            cpp_utils::parallel_for_each( nproc_for_processing, container.begin(), container.end(), func );
+            static const auto nproc_for_executing{ std::max< unsigned >( std::thread::hardware_concurrency(), 4 ) };
+            cpp_utils::parallel_for_each( nproc_for_executing, container.begin(), container.end(), func );
         }
         inline auto hijack_exec( rule_item_const_ref_t exec ) noexcept
         {
@@ -716,25 +716,25 @@ namespace core
                     std::print(
                       "{} 劫持文件 {}.exe.\n", details::make_progress( ++finished_count, total_count, digits_of_total ), exec );
                     hijack_exec( exec );
-                    std::this_thread::sleep_for( default_execution_sleep_time );
+                    std::this_thread::sleep_for( default_executing_sleep_time );
                 }
             }
             if ( details::is_set_serv_startup_types ) {
                 for ( const auto& serv : servs ) {
                     std::print( "{} 禁用服务 {}.\n", details::make_progress( ++finished_count, total_count, digits_of_total ), serv );
                     disable_serv( serv );
-                    std::this_thread::sleep_for( default_execution_sleep_time );
+                    std::this_thread::sleep_for( default_executing_sleep_time );
                 }
             }
             for ( const auto& exec : execs ) {
                 std::print( "{} 终止进程 {}.exe.\n", details::make_progress( ++finished_count, total_count, digits_of_total ), exec );
                 kill_exec( exec );
-                std::this_thread::sleep_for( default_execution_sleep_time );
+                std::this_thread::sleep_for( default_executing_sleep_time );
             }
             for ( const auto& serv : servs ) {
                 std::print( "{} 停止服务 {}.\n", details::make_progress( ++finished_count, total_count, digits_of_total ), serv );
                 stop_serv( serv );
-                std::this_thread::sleep_for( default_execution_sleep_time );
+                std::this_thread::sleep_for( default_executing_sleep_time );
             }
             std::print( "\n{}\n\n", diving_line.data() );
         }
@@ -772,20 +772,20 @@ namespace core
                     std::print(
                       "{} 撤销劫持 {}.exe.\n", details::make_progress( ++finished_count, total_count, digits_of_total ), exec );
                     undo_hijack_exec( exec );
-                    std::this_thread::sleep_for( default_execution_sleep_time );
+                    std::this_thread::sleep_for( default_executing_sleep_time );
                 }
             }
             if ( details::is_set_serv_startup_types ) {
                 for ( const auto& serv : servs ) {
                     std::print( "{} 启用服务 {}.\n", details::make_progress( ++finished_count, total_count, digits_of_total ), serv );
                     enable_serv( serv );
-                    std::this_thread::sleep_for( default_execution_sleep_time );
+                    std::this_thread::sleep_for( default_executing_sleep_time );
                 }
             }
             for ( const auto& serv : servs ) {
                 std::print( "{} 启动服务 {}.\n", details::make_progress( ++finished_count, total_count, digits_of_total ), serv );
                 start_serv( serv );
-                std::this_thread::sleep_for( default_execution_sleep_time );
+                std::this_thread::sleep_for( default_executing_sleep_time );
             }
             std::print( "\n{}\n\n", diving_line.data() );
         }
