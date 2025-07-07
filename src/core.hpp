@@ -182,16 +182,6 @@ namespace core
             {
                 return const_cast< item& >( std::as_const( *this )[ raw_name ] );
             }
-            auto operator=( const category& ) -> category& = delete;
-            auto operator=( category&& ) -> category&      = delete;
-            category( const char* const raw_name, const char* const shown_name, std::vector< item > items )
-              : raw_name{ raw_name }
-              , shown_name{ shown_name }
-              , items{ std::move( items ) }
-            { }
-            category( const category& )     = default;
-            category( category&& ) noexcept = default;
-            ~category()                     = default;
         };
       private:
         std::vector< category > categories_{
