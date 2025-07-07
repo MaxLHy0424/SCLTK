@@ -38,10 +38,13 @@ namespace core
     }
     namespace details
     {
-        inline auto press_any_key_to_return() noexcept
+        inline auto wait_to_return() noexcept
         {
-            std::print( "\n\n 按任意键返回..." );
-            cpp_utils::press_any_key_to_continue( std_input_handle );
+            std::print( "\n\n" );
+            for ( unsigned short t{ 3 }; t > 0; --t ) {
+                std::print( " {} 秒后返回...\r", t );
+                std::this_thread::sleep_for( 1s );
+            }
         }
         inline auto is_space( const char ch ) noexcept
         {
@@ -460,7 +463,7 @@ namespace core
             }, config_nodes );
             config_file_stream.flush();
             std::print( "\n (i) 同步配置{}.", config_file_stream.good() ? "成功" : "失败" );
-            details::press_any_key_to_return();
+            details::wait_to_return();
             return func_back;
         }
         inline auto open_config_file()
@@ -471,7 +474,7 @@ namespace core
             const auto is_success{
               std::bit_cast< INT_PTR >( ShellExecuteA( nullptr, "open", config_file_name, nullptr, nullptr, SW_SHOWNORMAL ) ) > 32 };
             std::print( " (i) 打开配置文件{}.", is_success ? "成功" : "失败" );
-            details::press_any_key_to_return();
+            details::wait_to_return();
             return func_back;
         }
     }
@@ -558,7 +561,7 @@ namespace core
                   std::format( R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe)", exec ).c_str() );
             }
             std::print( " (i) 操作已完成." );
-            details::press_any_key_to_return();
+            details::wait_to_return();
             return func_back;
         }
         struct cmd_item final
@@ -818,12 +821,12 @@ namespace core
         }
         if ( rules.empty() ) {
             std::print( " (i) 规则为空." );
-            details::press_any_key_to_return();
+            details::wait_to_return();
             return func_back;
         }
         if ( details::executor_mode == details::rule_executing::restore && !details::is_hijack_execs && rules.servs.empty() ) {
             std::print( " (!) 当前配置下无可用恢复操作." );
-            details::press_any_key_to_return();
+            details::wait_to_return();
             return func_back;
         }
         std::print( " -> 正在执行...\n\n" );
@@ -835,7 +838,7 @@ namespace core
         }
         f[ details::is_enable_fast_mode ]( rules );
         std::print( " (i) 操作已完成." );
-        details::press_any_key_to_return();
+        details::wait_to_return();
         return func_back;
     }
     inline auto make_executor_mode_ui_text()
