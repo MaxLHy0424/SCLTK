@@ -36,13 +36,10 @@ namespace core
     }
     namespace details
     {
-        inline auto wait_to_return() noexcept
+        inline auto press_any_key_to_return() noexcept
         {
-            std::print( "\n\n" );
-            for ( unsigned short t{ 3 }; t > 0; --t ) {
-                std::print( " {} 秒后返回...\r", t );
-                std::this_thread::sleep_for( 1s );
-            }
+            std::print( "\n\n 按任意键返回..." );
+            cpp_utils::press_any_key_to_continue( std_input_handle );
         }
         inline auto is_space( const char ch ) noexcept
         {
@@ -450,7 +447,7 @@ namespace core
             }, config_nodes );
             config_file_stream.flush();
             std::print( "\n (i) 同步配置{}.", config_file_stream.good() ? "成功" : "失败" );
-            details::wait_to_return();
+            details::press_any_key_to_return();
             return func_back;
         }
         inline auto open_config_file()
@@ -461,7 +458,7 @@ namespace core
             const auto is_success{
               std::bit_cast< INT_PTR >( ShellExecuteA( nullptr, "open", config_file_name, nullptr, nullptr, SW_SHOWNORMAL ) ) > 32 };
             std::print( " (i) 打开配置文件{}.", is_success ? "成功" : "失败" );
-            details::wait_to_return();
+            details::press_any_key_to_return();
             return func_back;
         }
     }
@@ -548,7 +545,7 @@ namespace core
                   std::format( R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe)", exec ).c_str() );
             }
             std::print( " (i) 操作已完成." );
-            details::wait_to_return();
+            details::press_any_key_to_return();
             return func_back;
         }
         struct cmd_item final
@@ -701,14 +698,26 @@ namespace core
         {
             cpp_utils::start_service_with_dependencies< charset_id >( serv.c_str() );
         }
-        inline auto default_crack( const rule_node& rules )
+        inline auto get_executing_count( const rule_node& rules )
+        {
+            const auto& execs{ rules.execs };
+            const auto& servs{ rules.servs };
+            switch ( details::executor_mode ) {
+                case details::rule_executing::crack :
+                    return execs.size() * ( details::is_hijack_execs ? 2 : 1 )
+                         + servs.size() * ( details::is_set_serv_startup_types ? 2 : 1 );
+                case details::rule_executing::restore :
+                    return ( details::is_hijack_execs ? execs.size() : 0 )
+                         + servs.size() * ( details::is_set_serv_startup_types ? 2 : 1 );
+                default : std::unreachable();
+            }
+        }
+        inline auto default_crack( const std::size_t total_count, const rule_node& rules )
         {
             std::print( "{}\n\n", diving_line.data() );
             const auto& execs{ rules.execs };
             const auto& servs{ rules.servs };
             std::size_t finished_count{ 0 };
-            const auto total_count{
-              execs.size() * ( details::is_hijack_execs ? 2 : 1 ) + servs.size() * ( details::is_set_serv_startup_types ? 2 : 1 ) };
             const auto digits_of_total{ cpp_utils::count_digits( total_count ) };
             if ( details::is_hijack_execs ) {
                 for ( const auto& exec : execs ) {
@@ -737,7 +746,7 @@ namespace core
             }
             std::print( "\n{}\n\n", diving_line.data() );
         }
-        inline auto fast_crack( const rule_node& rules )
+        inline auto fast_crack( const std::size_t, const rule_node& rules )
         {
             const auto& execs{ rules.execs };
             const auto& servs{ rules.servs };
@@ -755,14 +764,12 @@ namespace core
                 }
             }
         }
-        inline auto default_restore( const rule_node& rules )
+        inline auto default_restore( const std::size_t total_count, const rule_node& rules )
         {
             std::print( "{}\n\n", diving_line.data() );
             const auto& execs{ rules.execs };
             const auto& servs{ rules.servs };
             std::size_t finished_count{ 0 };
-            const auto total_count{
-              ( details::is_hijack_execs ? execs.size() : 0 ) + servs.size() * ( details::is_set_serv_startup_types ? 2 : 1 ) };
             const auto digits_of_total{ cpp_utils::count_digits( total_count ) };
             if ( details::is_hijack_execs ) {
                 for ( const auto& exec : execs ) {
@@ -786,7 +793,7 @@ namespace core
             }
             std::print( "\n{}\n\n", diving_line.data() );
         }
-        inline auto fast_restore( const rule_node& rules )
+        inline auto fast_restore( const std::size_t, const rule_node& rules )
         {
             const auto& execs{ rules.execs };
             const auto& servs{ rules.servs };
@@ -801,6 +808,11 @@ namespace core
     }
     inline auto execute_rules( const rule_node& rules )
     {
+        const auto executing_count{ details::get_executing_count( rules ) };
+        if ( !details::is_enable_fast_mode ) {
+            SetConsoleScreenBufferSize(
+              std_output_handle, { console_width, std::max< SHORT >( console_height, executing_count + 13 ) } );
+        }
         switch ( details::executor_mode ) {
             case details::rule_executing::crack : std::print( "                    [ 破  解 ]\n\n\n" ); break;
             case details::rule_executing::restore : std::print( "                    [ 恢  复 ]\n\n\n" ); break;
@@ -808,24 +820,27 @@ namespace core
         }
         if ( rules.empty() ) {
             std::print( " (i) 规则为空." );
-            details::wait_to_return();
+            details::press_any_key_to_return();
             return func_back;
         }
         if ( details::executor_mode == details::rule_executing::restore && !details::is_hijack_execs && rules.servs.empty() ) {
             std::print( " (!) 当前配置下无可用恢复操作." );
-            details::wait_to_return();
+            details::press_any_key_to_return();
             return func_back;
         }
         std::print( " -> 正在执行...\n\n" );
-        std::array< void ( * )( const rule_node& ), 2 > f;
+        std::array< void ( * )( const std::size_t, const rule_node& ), 2 > f;
         switch ( details::executor_mode ) {
             case details::rule_executing::crack : f = { details::default_crack, details::fast_crack }; break;
             case details::rule_executing::restore : f = { details::default_restore, details::fast_restore }; break;
             default : std::unreachable();
         }
-        f[ details::is_enable_fast_mode ]( rules );
+        f[ details::is_enable_fast_mode ]( executing_count, rules );
         std::print( " (i) 操作已完成." );
-        details::wait_to_return();
+        details::press_any_key_to_return();
+        if ( !details::is_enable_fast_mode ) {
+            cpp_utils::set_console_size( window_handle, std_output_handle, console_width, console_height );
+        }
         return func_back;
     }
     inline auto make_executor_mode_ui_text()
