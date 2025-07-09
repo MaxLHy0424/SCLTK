@@ -661,7 +661,7 @@ namespace core
         inline auto for_each_wrapper( const rule_node::container_t container, void ( *func )( rule_item_const_ref_t ) )
         {
             cpp_utils::parallel_for_each(
-              std::max( std::thread::hardware_concurrency(), 4U ), container.begin(), container.end(), func );
+              std::ranges::max( std::thread::hardware_concurrency(), 4U ), container.begin(), container.end(), func );
         }
         inline auto hijack_exec( rule_item_const_ref_t exec ) noexcept
         {
@@ -809,7 +809,8 @@ namespace core
         const auto executing_count{ details::get_executing_count( rules ) };
         if ( !details::is_enable_fast_mode ) {
             SetConsoleScreenBufferSize(
-              std_output_handle, { console_width, std::max< SHORT >( console_height, executing_count + 13 ) } );
+              std_output_handle,
+              { console_width, std::ranges::max( console_height, static_cast< SHORT >( executing_count + 13 ) ) } );
         }
         switch ( details::executor_mode ) {
             case details::rule_executing::crack : std::print( "                    [ 破  解 ]\n\n\n" ); break;

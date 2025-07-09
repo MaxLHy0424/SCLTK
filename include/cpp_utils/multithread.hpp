@@ -11,9 +11,9 @@
 namespace cpp_utils
 {
     using nproc_t = decltype( std::thread::hardware_concurrency() );
-    template < std::random_access_iterator It, typename F >
+    template < std::random_access_iterator It, std::sentinel_for< It > W, typename F >
         requires std::invocable< F, decltype( *std::declval< It >() ) >
-    inline auto parallel_for_each( nproc_t nproc, It&& begin, It&& end, F&& func )
+    inline auto parallel_for_each( nproc_t nproc, It&& begin, W&& end, F&& func )
     {
         if ( nproc == 0 ) {
             if constexpr ( is_debugging_build ) {
@@ -26,14 +26,14 @@ namespace cpp_utils
         if ( begin == end ) {
             return;
         }
-        const auto total{ std::distance( begin, end ) };
-        nproc = std::min< nproc_t >( nproc, total );
+        const auto total{ static_cast< nproc_t >( std::ranges::distance( begin, end ) ) };
+        nproc = std::ranges::min( nproc, total );
         const auto chunk_size{ total / nproc };
-        const auto remainder{ total % nproc };
+        const auto remainder{ static_cast< nproc_t >( total % nproc ) };
         std::vector< std::thread > threads;
         threads.reserve( nproc );
         for ( nproc_t i{ 0 }; i < nproc; ++i ) {
-            auto chunk_start{ begin + i * chunk_size + std::min< nproc_t >( i, remainder ) };
+            auto chunk_start{ begin + i * chunk_size + std::ranges::min( i, remainder ) };
             auto chunk_end{ chunk_start + chunk_size + ( i < remainder ? 1 : 0 ) };
             threads.emplace_back( [ =, &func ] mutable
             {
@@ -46,12 +46,12 @@ namespace cpp_utils
             thread.join();
         }
     }
-    template < std::random_access_iterator It, typename F >
+    template < std::random_access_iterator It, std::sentinel_for< It > W, typename F >
         requires std::invocable< F, decltype( *std::declval< It >() ) >
-    inline auto parallel_for_each( It&& begin, It&& end, F&& func )
+    inline auto parallel_for_each( It&& begin, W&& end, F&& func )
     {
         parallel_for_each(
-          std::max( std::thread::hardware_concurrency(), 2U ), std::forward< It >( begin ), std::forward< It >( end ),
+          std::ranges::max( std::thread::hardware_concurrency(), 2U ), std::forward< It >( begin ), std::forward< It >( end ),
           std::forward< F >( func ) );
     }
     class thread_manager final
