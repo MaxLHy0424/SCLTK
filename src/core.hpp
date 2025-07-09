@@ -698,7 +698,7 @@ namespace core
         {
             cpp_utils::start_service_with_dependencies< charset_id >( serv.c_str() );
         }
-        inline auto get_executing_count( const rule_node& rules )
+        inline auto get_executing_count( const rule_node& rules ) noexcept
         {
             const auto& execs{ rules.execs };
             const auto& servs{ rules.servs };
