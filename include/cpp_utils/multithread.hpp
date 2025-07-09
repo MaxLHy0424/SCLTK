@@ -26,13 +26,13 @@ namespace cpp_utils
         if ( begin == end ) {
             return;
         }
-        const auto total{ static_cast< nproc_t >( std::ranges::distance( begin, end ) ) };
-        nproc = std::ranges::min( nproc, total );
-        const auto chunk_size{ total / nproc };
-        const auto remainder{ static_cast< nproc_t >( total % nproc ) };
+        const auto total{ std::ranges::distance( begin, end ) };
+        const auto nproc_for_executing{ std::ranges::min( static_cast< std::ptrdiff_t >( nproc ), total ) };
+        const auto chunk_size{ total / nproc_for_executing };
+        const auto remainder{ total % nproc_for_executing };
         std::vector< std::thread > threads;
-        threads.reserve( nproc );
-        for ( nproc_t i{ 0 }; i < nproc; ++i ) {
+        threads.reserve( nproc_for_executing );
+        for ( std::ptrdiff_t i{ 0 }; i < nproc_for_executing; ++i ) {
             auto chunk_start{ begin + i * chunk_size + std::ranges::min( i, remainder ) };
             auto chunk_end{ chunk_start + chunk_size + ( i < remainder ? 1 : 0 ) };
             threads.emplace_back( [ =, &func ] mutable
