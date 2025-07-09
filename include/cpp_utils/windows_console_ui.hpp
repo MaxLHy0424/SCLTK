@@ -98,7 +98,7 @@ namespace cpp_utils
             cursor_data.bVisible = is_show;
             SetConsoleCursorInfo( std_output_handle_, &cursor_data );
         }
-        static auto edit_console_attrs_( const console_attrs_selection_ attrs_selection ) noexcept
+        static auto set_console_attrs_( const console_attrs_selection_ attrs_selection ) noexcept
         {
             DWORD attrs;
             GetConsoleMode( std_input_handle_, &attrs );
@@ -217,7 +217,7 @@ namespace cpp_utils
                 cls_();
                 line.set_attrs( line.default_attrs );
                 show_cursor_( FALSE );
-                edit_console_attrs_( console_attrs_selection_::lock_all );
+                set_console_attrs_( console_attrs_selection_::lock_all );
                 line.func.visit( [ & ]( auto& func )
                 {
                     using func_t = std::decay_t< decltype( func ) >;
@@ -230,7 +230,7 @@ namespace cpp_utils
                     }
                 } );
                 show_cursor_( FALSE );
-                edit_console_attrs_( console_attrs_selection_::lock_text );
+                set_console_attrs_( console_attrs_selection_::lock_text );
                 init_pos_();
                 break;
             }
@@ -364,7 +364,7 @@ namespace cpp_utils
             }
             using namespace std::chrono_literals;
             show_cursor_( FALSE );
-            edit_console_attrs_( console_attrs_selection_::lock_text );
+            set_console_attrs_( console_attrs_selection_::lock_text );
             init_pos_();
             MOUSE_EVENT_RECORD event;
             auto func_return_value{ func_back };
@@ -386,7 +386,7 @@ namespace cpp_utils
         auto& set_limits( const bool is_hide_cursor, const bool is_lock_text ) noexcept
         {
             show_cursor_( static_cast< WINBOOL >( !is_hide_cursor ) );
-            edit_console_attrs_( is_lock_text ? console_attrs_selection_::lock_all : console_attrs_selection_::normal );
+            set_console_attrs_( is_lock_text ? console_attrs_selection_::lock_all : console_attrs_selection_::normal );
             return *this;
         }
         auto operator=( const console_ui& ) noexcept -> console_ui& = default;
