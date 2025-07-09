@@ -13,7 +13,7 @@ namespace cpp_utils
     using nproc_t = decltype( std::thread::hardware_concurrency() );
     template < std::random_access_iterator It, std::sentinel_for< It > W, typename F >
         requires std::invocable< F, decltype( *std::declval< It >() ) >
-    inline auto parallel_for_each( nproc_t nproc, It&& begin, W&& end, F&& func )
+    inline auto parallel_for_each( const nproc_t nproc, It&& begin, W&& end, F&& func )
     {
         if ( nproc == 0 ) {
             if constexpr ( is_debugging_build ) {
