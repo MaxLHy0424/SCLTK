@@ -824,7 +824,7 @@ namespace core
             return func_back;
         }
         if ( executing_count == 0 ) {
-            std::print( " (!) 当前配置下无可用恢复操作." );
+            std::print( " (!) 当前配置下无可用操作." );
             details::press_any_key_to_return();
             return func_back;
         }
