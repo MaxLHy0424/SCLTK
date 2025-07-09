@@ -823,7 +823,7 @@ namespace core
             details::press_any_key_to_return();
             return func_back;
         }
-        if ( details::executor_mode == details::rule_executing::restore && !details::is_hijack_execs && rules.servs.empty() ) {
+        if ( executing_count == 0 ) {
             std::print( " (!) 当前配置下无可用恢复操作." );
             details::press_any_key_to_return();
             return func_back;
