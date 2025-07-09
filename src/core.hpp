@@ -644,7 +644,7 @@ namespace core
     namespace details
     {
         using rule_item_const_ref_t = cpp_utils::add_const_lvalue_reference_t< rule_node::item_t >;
-        inline constexpr auto default_executing_sleep_time{ 50ms };
+        inline constexpr auto default_executing_sleep_time{ 10ms };
         static_assert( default_executing_sleep_time.count() != 0 );
         inline const auto& option_crack_restore{ options_set[ "crack_restore" ] };
         inline const auto& is_hijack_execs{ option_crack_restore[ "hijack_execs" ] };
