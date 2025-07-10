@@ -661,7 +661,7 @@ namespace core
         inline auto for_each_wrapper( const rule_node::container_t container, void ( *func )( rule_item_const_ref_t ) )
         {
             cpp_utils::parallel_for_each(
-              std::ranges::max( std::thread::hardware_concurrency(), 4U ), container.begin(), container.end(), func );
+              std::ranges::max( std::thread::hardware_concurrency(), 4u ), container.begin(), container.end(), func );
         }
         inline auto hijack_exec( rule_item_const_ref_t exec ) noexcept
         {
@@ -715,7 +715,7 @@ namespace core
             std::print( "{}\n\n", diving_line.data() );
             const auto& execs{ rules.execs };
             const auto& servs{ rules.servs };
-            std::size_t finished_count{ 0 };
+            auto finished_count{ 0uz };
             const auto digits_of_total{ cpp_utils::count_digits( total_count ) };
             if ( details::is_hijack_execs ) {
                 for ( const auto& exec : execs ) {
@@ -767,7 +767,7 @@ namespace core
             std::print( "{}\n\n", diving_line.data() );
             const auto& execs{ rules.execs };
             const auto& servs{ rules.servs };
-            std::size_t finished_count{ 0 };
+            auto finished_count{ 0uz };
             const auto digits_of_total{ cpp_utils::count_digits( total_count ) };
             if ( details::is_hijack_execs ) {
                 for ( const auto& exec : execs ) {

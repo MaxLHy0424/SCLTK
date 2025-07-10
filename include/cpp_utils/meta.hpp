@@ -91,9 +91,9 @@ namespace cpp_utils
         template < typename U >
         static constexpr auto contains{ ( std::is_same_v< U, Ts > || ... ) };
         template < typename U >
-        static constexpr std::size_t count{ ( ( std::is_same_v< Ts, U > ? 1 : 0 ) + ... ) };
+        static constexpr auto count{ ( ( std::is_same_v< Ts, U > ? 1uz : 0uz ) + ... ) };
         template < template < typename > typename Pred >
-        static constexpr std::size_t count_if{ ( ( Pred< Ts >::value ? 1 : 0 ) + ... ) };
+        static constexpr auto count_if{ ( ( Pred< Ts >::value ? 1uz : 0uz ) + ... ) };
         template < template < typename > typename Pred >
         static constexpr auto all_of{ ( Pred< Ts >::value && ... ) };
         template < template < typename > typename Pred >
@@ -152,21 +152,21 @@ namespace cpp_utils
             using type = type_list< Us... >;
         };
       public:
-        static constexpr std::size_t size{ 0 };
+        static constexpr auto size{ 0uz };
         template < typename >
-        static constexpr bool contains{ false };
+        static constexpr auto contains{ false };
         template < template < typename > typename >
-        static constexpr std::size_t find_first_if{ 0 };
+        static constexpr auto find_first_if{ 0uz };
         template < template < typename > typename >
-        static constexpr std::size_t find_last_if{ 0 };
+        static constexpr auto find_last_if{ 0uz };
         template < template < typename > typename >
-        static constexpr std::size_t find_first_if_not{ 0 };
+        static constexpr auto find_first_if_not{ 0uz };
         template < template < typename > typename >
-        static constexpr std::size_t find_last_if_not{ 0 };
+        static constexpr auto find_last_if_not{ 0uz };
         template < typename >
-        static constexpr std::size_t find_first{ 0 };
+        static constexpr auto find_first{ 0uz };
         template < typename >
-        static constexpr std::size_t find_last{ 0 };
+        static constexpr auto find_last{ 0 };
         template < typename... Us >
         using prepend = type_list< Us... >;
         template < typename... Us >
@@ -301,13 +301,13 @@ namespace cpp_utils
         template < typename TL >
         using to_value_list_ = typename to_value_list_impl_< TL >::type;
       public:
-        static constexpr std::size_t size{ 0 };
+        static constexpr auto size{ 0uz };
         template < auto >
         static constexpr auto contains{ false };
         template < auto >
-        static constexpr std::size_t count{ 0 };
+        static constexpr auto count{ 0uz };
         template < template < auto > typename >
-        static constexpr std::size_t count_if{ 0 };
+        static constexpr auto count_if{ 0uz };
         template < template < auto > typename >
         static constexpr auto all_of{ true };
         template < template < auto > typename >
@@ -315,17 +315,17 @@ namespace cpp_utils
         template < template < auto > typename >
         static constexpr auto none_of{ true };
         template < template < auto > typename >
-        static constexpr std::size_t find_first_if{ 0 };
+        static constexpr auto find_first_if{ 0uz };
         template < template < auto > typename >
-        static constexpr std::size_t find_last_if{ 0 };
+        static constexpr auto find_last_if{ 0uz };
         template < template < auto > typename >
-        static constexpr std::size_t find_first_if_not{ 0 };
+        static constexpr auto find_first_if_not{ 0uz };
         template < template < auto > typename >
-        static constexpr std::size_t find_last_if_not{ 0 };
+        static constexpr auto find_last_if_not{ 0uz };
         template < auto >
-        static constexpr std::size_t find_first{ 0 };
+        static constexpr auto find_first{ 0uz };
         template < auto >
-        static constexpr std::size_t find_last{ 0 };
+        static constexpr auto find_last{ 0uz };
         template < auto... Us >
         using prepend = value_list< Us... >;
         template < auto... Us >
