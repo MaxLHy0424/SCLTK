@@ -37,19 +37,19 @@ namespace cpp_utils
         static consteval auto reverse_index_sequence_( std::index_sequence< Is... > )
           -> std::index_sequence< ( sizeof...( Is ) - 1 - Is )... >;
         template < typename Result, typename Remaining >
-        struct unique_impl_;
+        struct basic_unique_impl_;
         template < typename... ResultTs >
-        struct unique_impl_< type_list< ResultTs... >, type_list<> > final
+        struct basic_unique_impl_< type_list< ResultTs... >, type_list<> > final
         {
             using type = type_list< ResultTs... >;
         };
         template < typename... ResultTs, typename T, typename... Rest >
-        struct unique_impl_< type_list< ResultTs... >, type_list< T, Rest... > > final
+        struct basic_unique_impl_< type_list< ResultTs... >, type_list< T, Rest... > > final
         {
             static constexpr bool found{ ( std::is_same_v< T, ResultTs > || ... ) };
             using next = std::conditional_t<
-              found, unique_impl_< type_list< ResultTs... >, type_list< Rest... > >,
-              unique_impl_< type_list< ResultTs..., T >, type_list< Rest... > > >;
+              found, basic_unique_impl_< type_list< ResultTs... >, type_list< Rest... > >,
+              basic_unique_impl_< type_list< ResultTs..., T >, type_list< Rest... > > >;
             using type = typename next::type;
         };
         template < typename >
@@ -103,7 +103,7 @@ namespace cpp_utils
             }
         }
         template < std::size_t, bool = empty_ >
-        struct at_impl_
+        struct at_impl_ final
         {
             static_assert( false, "index out of bounds" );
         };
@@ -168,39 +168,39 @@ namespace cpp_utils
             using type = type_list<>;
         };
         template < std::size_t _ = 0uz, bool = empty_ >
-        struct unique_final_impl_;
+        struct unique_impl_;
         template < std::size_t _ >
-        struct unique_final_impl_< _, false >
+        struct unique_impl_< _, false > final
         {
-            using type = typename unique_impl_< type_list<>, type_list< Ts... > >::type;
+            using type = typename basic_unique_impl_< type_list<>, type_list< Ts... > >::type;
         };
         template < std::size_t _ >
-        struct unique_final_impl_< _, true >
+        struct unique_impl_< _, true > final
         {
             using type = type_list<>;
         };
         template < template < typename > typename, bool = empty_ >
         struct transform_impl_;
         template < template < typename > typename F >
-        struct transform_impl_< F, false >
+        struct transform_impl_< F, false > final
         {
             using type = type_list< typename F< Ts >::type... >;
         };
         template < template < typename > typename F >
-        struct transform_impl_< F, true >
+        struct transform_impl_< F, true > final
         {
             using type = type_list<>;
         };
         template < template < typename > typename, bool = empty_ >
         struct filter_impl_;
         template < template < typename > typename Pred >
-        struct filter_impl_< Pred, false >
+        struct filter_impl_< Pred, false > final
         {
             using type = decltype( as_type_list_(
               std::tuple_cat( std::conditional_t< Pred< Ts >::value, std::tuple< Ts >, std::tuple<> >{}... ) ) );
         };
         template < template < typename > typename Pred >
-        struct filter_impl_< Pred, true >
+        struct filter_impl_< Pred, true > final
         {
             using type = type_list<>;
         };
@@ -320,7 +320,7 @@ namespace cpp_utils
         template < typename Other >
         using concat  = typename concat_impl_< Other >::type;
         using reverse = reverse_impl_<>::type;
-        using unique  = unique_final_impl_<>::type;
+        using unique  = unique_impl_<>::type;
         template < template < typename... > typename U >
         using apply = U< Ts... >;
         template < template < typename > typename F >
