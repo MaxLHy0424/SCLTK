@@ -445,7 +445,7 @@ namespace cpp_utils
     };
     namespace details
     {
-        template < typename T, typename... Matchers >
+        template < typename, typename... >
         struct match_impl;
         template < typename T >
         struct match_impl< T > final
