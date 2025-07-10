@@ -40,7 +40,10 @@ namespace cpp_utils
             using type = typename next::type;
         };
         template < typename >
-        struct concat_impl_;
+        struct concat_impl_ final
+        {
+            static_assert( false, "cannot concatenate type_list with non-type_list type" );
+        };
         template < typename... Us >
         struct concat_impl_< type_list< Us... > > final
         {
@@ -145,7 +148,10 @@ namespace cpp_utils
     {
       private:
         template < typename >
-        struct concat_impl_;
+        struct concat_impl_ final
+        {
+            static_assert( false, "cannot concatenate type_list with non-type_list type" );
+        };
         template < typename... Us >
         struct concat_impl_< type_list< Us... > > final
         {
