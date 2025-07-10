@@ -348,16 +348,7 @@ namespace cpp_utils
         };
         template < typename T >
         using remove_identity_t = remove_identity< T >::type;
-        template < typename T, std::size_t... Is >
-        inline consteval auto make_repeated_type_list_impl( std::index_sequence< Is... > )
-        {
-            auto helper{ []( auto v, auto ) consteval { return v; } };
-            return std::type_identity< type_list< remove_identity_t< decltype( helper( std::type_identity< T >{}, Is ) ) >... > >{};
-        }
     }
-    template < typename T, std::size_t N >
-    using make_repeated_type_list
-      = details::remove_identity_t< decltype( details::make_repeated_type_list_impl< T >( std::make_index_sequence< N >{} ) ) >;
     template < typename, typename... >
     struct function_traits;
     template < typename R, typename... Args >
