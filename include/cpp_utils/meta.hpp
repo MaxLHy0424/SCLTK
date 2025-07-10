@@ -6,7 +6,12 @@ namespace cpp_utils
     template < typename T >
     using type_alloc = T;
     template < typename T >
-    using add_const_lvalue_reference_t = std::add_lvalue_reference_t< std::add_const_t< T > >;
+    struct add_const_lvalue_reference final
+    {
+        using type = std::add_lvalue_reference< std::add_const_t< T > >;
+    };
+    template < typename T >
+    using add_const_lvalue_reference_t = add_const_lvalue_reference< T >::type;
     template < bool Expr >
     concept test = Expr;
     template < typename... Ts >
