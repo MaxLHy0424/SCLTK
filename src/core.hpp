@@ -348,14 +348,13 @@ namespace core
         template < typename T >
         struct is_valid_config_node final
         {
-            static constexpr auto value{ std::is_base_of_v< config_node_impl, T > };
+            static constexpr auto value{ std::is_base_of_v< config_node_impl, T > && std::is_default_constructible_v< T > };
         };
     }
     using config_node_types = cpp_utils::type_list< options, customized_rules >;
     inline config_node_types::apply< std::tuple > config_nodes{};
-    static_assert( config_node_types::all_of< details::is_valid_config_node > );
-    static_assert( config_node_types::all_of< std::is_default_constructible > );
-    static_assert( config_node_types::unique::size == config_node_types::size );
+    static_assert( config_node_types::all_of< details::is_valid_config_node >() );
+    static_assert( config_node_types::unique::size() == config_node_types::size() );
     auto& options_set{ std::get< options >( config_nodes ) };
     namespace details
     {
@@ -379,7 +378,7 @@ namespace core
         }
         std::apply( []( auto&... config_node ) { ( config_node.prepare_reload(), ... ); }, config_nodes );
         std::string line;
-        config_node_types::transform< std::add_pointer >::prepend< std::monostate >::apply< std::variant > current_config_node;
+        config_node_types::transform< std::add_pointer >::add_front< std::monostate >::apply< std::variant > current_config_node;
         while ( std::getline( config_file, line ) ) {
             if ( line.empty() ) {
                 continue;
