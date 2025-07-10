@@ -199,7 +199,7 @@ namespace cpp_utils
         auto invoke_func_( const MOUSE_EVENT_RECORD& current_event )
         {
             auto is_exit{ func_back };
-            for ( std::size_t i{ 0 }; i < lines_.size(); ++i ) {
+            for ( auto i{ 0uz }; i < lines_.size(); ++i ) {
                 auto& line{ lines_[ i ] };
                 if ( line != current_event.dwMousePosition ) {
                     continue;
