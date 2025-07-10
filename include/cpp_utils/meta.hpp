@@ -192,16 +192,16 @@ namespace cpp_utils
         type_list()  = delete;
         ~type_list() = delete;
     };
+    template < auto V >
+    struct value_wrapper final
+    {
+        static constexpr auto value{ V };
+    };
     template < auto... Vs >
     class value_list final
     {
       private:
-        template < auto V >
-        struct value_holder_ final
-        {
-            static constexpr auto value{ V };
-        };
-        using underlying_type_list_ = type_list< value_holder_< Vs >... >;
+        using underlying_type_list_ = type_list< value_wrapper< Vs >... >;
         template < typename >
         struct to_value_list_impl_;
         template < typename... Holders >
@@ -234,15 +234,15 @@ namespace cpp_utils
             template < typename T >
             struct apply final
             {
-                using type = value_holder_< F< T::value >::value >;
+                using type = value_wrapper< F< T::value >::value >;
             };
         };
       public:
         static constexpr auto size{ underlying_type_list_::size };
         template < auto W >
-        static constexpr auto contains{ underlying_type_list_::template contains< value_holder_< W > > };
+        static constexpr auto contains{ underlying_type_list_::template contains< value_wrapper< W > > };
         template < auto W >
-        static constexpr auto count{ underlying_type_list_::template count< value_holder_< W > > };
+        static constexpr auto count{ underlying_type_list_::template count< value_wrapper< W > > };
         template < template < auto > typename Pred >
         static constexpr auto count_if{ underlying_type_list_::template count_if< predicate_adapter_< Pred >::template predicate > };
         template < template < auto > typename Pred >
@@ -272,9 +272,9 @@ namespace cpp_utils
         static constexpr auto front{ at< 0 > };
         static constexpr auto back{ at< size - 1 > };
         template < auto... Ws >
-        using prepend = to_value_list_< typename underlying_type_list_::template prepend< value_holder_< Ws >... > >;
+        using prepend = to_value_list_< typename underlying_type_list_::template prepend< value_wrapper< Ws >... > >;
         template < auto... Ws >
-        using append       = to_value_list_< typename underlying_type_list_::template append< value_holder_< Ws >... > >;
+        using append       = to_value_list_< typename underlying_type_list_::template append< value_wrapper< Ws >... > >;
         using remove_front = to_value_list_< typename underlying_type_list_::remove_front >;
         using remove_back  = to_value_list_< typename underlying_type_list_::remove_back >;
         template < std::size_t Offset, std::size_t Count >
