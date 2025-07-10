@@ -51,7 +51,7 @@ namespace cpp_utils
     inline auto parallel_for_each( It&& begin, W&& end, F&& func )
     {
         parallel_for_each(
-          std::ranges::max( std::thread::hardware_concurrency(), 2U ), std::forward< It >( begin ), std::forward< It >( end ),
+          std::ranges::max( std::thread::hardware_concurrency(), 2u ), std::forward< It >( begin ), std::forward< It >( end ),
           std::forward< F >( func ) );
     }
     class thread_manager final
