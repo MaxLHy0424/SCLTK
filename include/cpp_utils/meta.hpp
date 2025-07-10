@@ -450,7 +450,7 @@ namespace cpp_utils
         template < typename T >
         struct match_impl< T > final
         {
-            static_assert( sizeof( T ) == 0, "No matching pattern found" );
+            static_assert( sizeof( T ) == 0, "no matching pattern found" );
         };
         template < typename T, typename Matcher, typename... RestMatchers >
         struct match_impl< T, Matcher, RestMatchers... > final
