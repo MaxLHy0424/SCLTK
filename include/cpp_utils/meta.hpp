@@ -14,6 +14,12 @@ namespace cpp_utils
     using add_const_lvalue_reference_t = add_const_lvalue_reference< T >::type;
     template < bool Expr >
     concept test = Expr;
+    struct error final
+    { };
+    struct undefined final
+    { };
+    template < typename T >
+    concept common_type = !std::same_as< std::decay_t< T >, error > && !std::same_as< std::decay_t< T >, undefined >;
     template < typename... Ts >
     class type_list final
     {
