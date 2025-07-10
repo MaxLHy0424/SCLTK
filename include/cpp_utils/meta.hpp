@@ -196,6 +196,8 @@ namespace cpp_utils
     struct value_wrapper final
     {
         static constexpr auto value{ V };
+        value_wrapper()  = delete;
+        ~value_wrapper() = delete;
     };
     template < auto... Vs >
     class value_list final
