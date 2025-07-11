@@ -213,7 +213,7 @@ namespace cpp_utils
         {
             return empty_;
         }
-        template < typename U >
+        template < common_type U >
         static consteval auto contains()
         {
             if constexpr ( empty() ) {
@@ -222,7 +222,7 @@ namespace cpp_utils
                 return ( std::is_same_v< U, Ts > || ... );
             }
         }
-        template < typename U >
+        template < common_type U >
         static consteval auto count()
         {
             if constexpr ( empty() ) {
@@ -295,12 +295,12 @@ namespace cpp_utils
         {
             return find_last_if< negate_< Pred >::template predicate >();
         }
-        template < typename U >
+        template < common_type U >
         static consteval auto find_first()
         {
             return find_first_if< type_is_< U >::template predicate >();
         }
-        template < typename U >
+        template < common_type U >
         static consteval auto find_last()
         {
             return find_last_if< type_is_< U >::template predicate >();
