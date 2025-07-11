@@ -13,7 +13,6 @@
 #include "compiler.hpp"
 namespace cpp_utils
 {
-    static_assert( has_rtti == true, "RTTI must be enabled!" );
     namespace details
     {
         class func_wrapper_impl
@@ -27,6 +26,7 @@ namespace cpp_utils
         template < typename R, typename... Args >
         class func_wrapper final : public func_wrapper_impl
         {
+            static_assert( has_rtti == true, "RTTI must be enabled!" );
           private:
             std::function< R( Args... ) > func_;
             std::vector< std::type_index > args_type_{ std::type_index{ typeid( Args ) }... };
