@@ -351,6 +351,30 @@ namespace cpp_utils
     };
     template < auto... Vs >
     using make_fake_value_list = type_list< value_wrapper< Vs >... >;
+    namespace details
+    {
+        template < typename T >
+        struct remove_identity;
+        template < typename T >
+        struct remove_identity< std::type_identity< T > > final
+        {
+            using type = T;
+        };
+        template < typename T, std::size_t N, std::array< T, N > Arr >
+        inline consteval auto make_fake_value_list_from_array_impl()
+        {
+            if constexpr ( N == 0 ) {
+                return std::type_identity< type_list<> >{};
+            } else {
+                return [ & ]< std::size_t... Is >( std::index_sequence< Is... > ) consteval
+                { return std::type_identity< type_list< value_wrapper< Arr[ Is ] >... > >{}; }( std::make_index_sequence< N >{} );
+            }
+        }
+    }
+    template < std::array Arr >
+    using make_fake_value_list_from_array = typename details::remove_identity<
+      decltype( details::make_fake_value_list_from_array_impl<
+                std::tuple_element_t< 0, decltype( Arr ) >, std::tuple_size_v< decltype( Arr ) >, Arr >() ) >::type;
     template < typename, typename... >
     struct function_traits;
     template < typename R, typename... Args >
