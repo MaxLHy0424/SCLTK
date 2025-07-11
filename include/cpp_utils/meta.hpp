@@ -360,6 +360,10 @@ namespace cpp_utils
         {
             using type = T;
         };
+        template < typename T, std::size_t N >
+        inline consteval auto get_array_element_t( std::array< T, N > ) -> T;
+        template < typename T, std::size_t N >
+        inline consteval auto get_array_size( std::array< T, N > ) -> std::integral_constant< std::size_t, N >;
         template < typename T, std::size_t N, std::array< T, N > Arr >
         struct make_fake_value_list_from_array_impl final
         {
@@ -374,7 +378,7 @@ namespace cpp_utils
     }
     template < std::array Arr >
     using make_fake_value_list_from_array = details::make_fake_value_list_from_array_impl<
-      std::tuple_element_t< 0, decltype( Arr ) >, std::tuple_size_v< decltype( Arr ) >, Arr >::type;
+      decltype( details::get_array_element_t( Arr ) ), decltype( details::get_array_size( Arr ) )::value, Arr >::type;
     template < typename, typename... >
     struct function_traits;
     template < typename R, typename... Args >
