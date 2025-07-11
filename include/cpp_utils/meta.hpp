@@ -337,18 +337,20 @@ namespace cpp_utils
         value_wrapper()  = delete;
         ~value_wrapper() = delete;
     };
-    namespace details
+    template < auto V >
+    class is_equal_to_value_wrapper final
     {
-        template < typename T >
-        struct remove_identity;
-        template < typename T >
-        struct remove_identity< std::type_identity< T > > final
-        {
-            using type = T;
-        };
-        template < typename T >
-        using remove_identity_t = remove_identity< T >::type;
-    }
+      private:
+        static consteval auto is_equal_( auto ) -> std::false_type;
+        template < auto W >
+            requires( V == W )
+        static consteval auto is_equal_( std::type_identity< value_wrapper< W > > ) -> std::true_type;
+      public:
+        template < typename W >
+        static constexpr auto value{ decltype( is_equal_( std::type_identity< decltype( W ) >{} ) )::value };
+    };
+    template < auto... Vs >
+    using make_fake_value_list = type_list< value_wrapper< Vs >... >;
     template < typename, typename... >
     struct function_traits;
     template < typename R, typename... Args >
