@@ -327,15 +327,11 @@ namespace cpp_utils
         using transform = transform_impl_< F >::type;
         template < template < typename > typename Pred >
         using filter = filter_impl_< Pred >::type;
-        type_list()  = delete;
-        ~type_list() = delete;
     };
     template < auto V >
     struct value_wrapper final
     {
         static constexpr auto value{ V };
-        value_wrapper()  = delete;
-        ~value_wrapper() = delete;
     };
     template < auto V >
     class is_equal_to_value_wrapper final
@@ -344,10 +340,10 @@ namespace cpp_utils
         static consteval auto is_equal_( auto ) -> std::false_type;
         template < auto W >
             requires( V == W )
-        static consteval auto is_equal_( std::type_identity< value_wrapper< W > > ) -> std::true_type;
+        static consteval auto is_equal_( value_wrapper< W > ) -> std::true_type;
       public:
         template < typename W >
-        static constexpr auto value{ decltype( is_equal_( std::type_identity< W >{} ) )::value };
+        static constexpr auto value{ decltype( is_equal_( W{} ) )::value };
     };
     template < auto... Vs >
     using make_fake_value_list = type_list< value_wrapper< Vs >... >;
@@ -367,8 +363,8 @@ namespace cpp_utils
         template < typename T, std::size_t N, std::array< T, N > Arr >
         struct make_fake_value_list_from_array_impl final
         {
-            using type = remove_identity< decltype( []< std::size_t... Is >( std::index_sequence< Is... > ) consteval
-            { return std::type_identity< type_list< value_wrapper< Arr[ Is ] >... > >{}; }( std::make_index_sequence< N >{} ) ) >::type;
+            using type = decltype( []< std::size_t... Is >( std::index_sequence< Is... > ) consteval
+            { return type_list< value_wrapper< Arr[ Is ] >... >{}; }( std::make_index_sequence< N >{} ) );
         };
         template < typename T, std::array< T, 0 > Arr >
         struct make_fake_value_list_from_array_impl< T, 0, Arr > final
