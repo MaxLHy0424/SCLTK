@@ -213,7 +213,7 @@ namespace cpp_utils
         {
             return empty_;
         }
-        template < common_type U >
+        template < typename U >
         static consteval auto contains()
         {
             if constexpr ( empty() ) {
@@ -222,7 +222,7 @@ namespace cpp_utils
                 return ( std::is_same_v< U, Ts > || ... );
             }
         }
-        template < common_type U >
+        template < typename U >
         static consteval auto count()
         {
             if constexpr ( empty() ) {
@@ -295,12 +295,12 @@ namespace cpp_utils
         {
             return find_last_if< negate_< Pred >::template predicate >();
         }
-        template < common_type U >
+        template < typename U >
         static consteval auto find_first()
         {
             return find_first_if< type_is_< U >::template predicate >();
         }
-        template < common_type U >
+        template < typename U >
         static consteval auto find_last()
         {
             return find_last_if< type_is_< U >::template predicate >();
@@ -347,7 +347,7 @@ namespace cpp_utils
         static consteval auto is_equal_( std::type_identity< value_wrapper< W > > ) -> std::true_type;
       public:
         template < typename W >
-        static constexpr auto value{ decltype( is_equal_( std::type_identity< decltype( W ) >{} ) )::value };
+        static constexpr auto value{ decltype( is_equal_( std::type_identity< W >{} ) )::value };
     };
     template < auto... Vs >
     using make_fake_value_list = type_list< value_wrapper< Vs >... >;
@@ -357,14 +357,12 @@ namespace cpp_utils
     struct function_traits< R( Args... ) > final
     {
         using return_type = R;
-        using class_type  = undefined;
         using args_type   = type_list< Args... >;
     };
     template < typename R, typename... Args >
     struct function_traits< R ( * )( Args... ) > final
     {
         using return_type = R;
-        using class_type  = undefined;
         using args_type   = type_list< Args... >;
     };
     template < typename R, typename T, typename... Args >
@@ -378,7 +376,6 @@ namespace cpp_utils
     struct function_traits< std::function< R( Args... ) > > final
     {
         using return_type = R;
-        using class_type  = undefined;
         using args_type   = type_list< Args... >;
     };
     template < template < typename... > typename Template, typename T >
