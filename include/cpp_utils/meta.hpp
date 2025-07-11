@@ -376,7 +376,12 @@ namespace cpp_utils
     using make_fake_value_list_from_array = details::make_fake_value_list_from_array_impl<
       decltype( details::get_array_element_t( Arr ) ), decltype( details::get_array_size( Arr ) )::value, Arr >::type;
     template < typename, typename... >
-    struct function_traits;
+    struct function_traits final
+    {
+        using return_type = undefined;
+        using class_type  = undefined;
+        using args_type   = undefined;
+    };
     template < typename R, typename... Args >
     struct function_traits< R( Args... ) > final
     {
