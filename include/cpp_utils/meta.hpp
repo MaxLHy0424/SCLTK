@@ -357,12 +357,14 @@ namespace cpp_utils
     struct function_traits< R( Args... ) > final
     {
         using return_type = R;
+        using class_type  = undefined;
         using args_type   = type_list< Args... >;
     };
     template < typename R, typename... Args >
     struct function_traits< R ( * )( Args... ) > final
     {
         using return_type = R;
+        using class_type  = undefined;
         using args_type   = type_list< Args... >;
     };
     template < typename R, typename T, typename... Args >
@@ -376,6 +378,7 @@ namespace cpp_utils
     struct function_traits< std::function< R( Args... ) > > final
     {
         using return_type = R;
+        using class_type  = undefined;
         using args_type   = type_list< Args... >;
     };
     template < template < typename... > typename Template, typename T >
