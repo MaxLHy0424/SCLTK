@@ -361,20 +361,20 @@ namespace cpp_utils
             using type = T;
         };
         template < typename T, std::size_t N, std::array< T, N > Arr >
-        inline consteval auto make_fake_value_list_from_array_impl()
+        struct make_fake_value_list_from_array_impl final
         {
-            if constexpr ( N == 0 ) {
-                return std::type_identity< type_list<> >{};
-            } else {
-                return [ & ]< std::size_t... Is >( std::index_sequence< Is... > ) consteval
-                { return std::type_identity< type_list< value_wrapper< Arr[ Is ] >... > >{}; }( std::make_index_sequence< N >{} );
-            }
-        }
+            using type = remove_identity< decltype( []< std::size_t... Is >( std::index_sequence< Is... > ) consteval
+            { return std::type_identity< type_list< value_wrapper< Arr[ Is ] >... > >{}; }( std::make_index_sequence< N >{} ) ) >::type;
+        };
+        template < typename T, std::array< T, 0 > Arr >
+        struct make_fake_value_list_from_array_impl< T, 0, Arr > final
+        {
+            using type = type_list<>;
+        };
     }
     template < std::array Arr >
-    using make_fake_value_list_from_array = typename details::remove_identity<
-      decltype( details::make_fake_value_list_from_array_impl<
-                std::tuple_element_t< 0, decltype( Arr ) >, std::tuple_size_v< decltype( Arr ) >, Arr >() ) >::type;
+    using make_fake_value_list_from_array = details::make_fake_value_list_from_array_impl<
+      std::tuple_element_t< 0, decltype( Arr ) >, std::tuple_size_v< decltype( Arr ) >, Arr >::type;
     template < typename, typename... >
     struct function_traits;
     template < typename R, typename... Args >
