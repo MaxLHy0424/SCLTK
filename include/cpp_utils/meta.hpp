@@ -143,15 +143,15 @@ namespace cpp_utils
             using type = type_list<>;
         };
         template < std::size_t, std::size_t, bool = empty_ >
-        struct slice_impl_;
+        struct sub_list_impl_;
         template < std::size_t Offset, std::size_t Count >
             requires test< Offset + Count <= size_ >
-        struct slice_impl_< Offset, Count, false > final
+        struct sub_list_impl_< Offset, Count, false > final
         {
             using type = decltype( select_( offset_sequence_< Offset >( std::make_index_sequence< Count >{} ) ) );
         };
         template < std::size_t Offset, std::size_t Count >
-        struct slice_impl_< Offset, Count, true > final
+        struct sub_list_impl_< Offset, Count, true > final
         {
             using type = type_list<>;
         };
@@ -316,7 +316,7 @@ namespace cpp_utils
         using remove_front = remove_front_impl_<>::type;
         using remove_back  = remove_back_impl_<>::type;
         template < std::size_t Offset, std::size_t Count >
-        using slice = slice_impl_< Offset, Count >::type;
+        using sub_list = sub_list_impl_< Offset, Count >::type;
         template < typename Other >
         using concat  = typename concat_impl_< Other >::type;
         using reverse = reverse_impl_<>::type;
