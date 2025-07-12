@@ -601,17 +601,14 @@ namespace core
         const auto& window_options{ options_set[ "window" ] };
         const auto& is_enable_simple_titlebar{ window_options[ "simple_titlebar" ] };
         const auto& is_translucent{ window_options[ "translucent" ] };
-        auto core_op{ [ & ]
-        {
+        if ( details::is_no_optional_hot_reload ) {
             cpp_utils::enable_window_menu( window_handle, !is_enable_simple_titlebar );
             cpp_utils::set_window_translucency( window_handle, is_translucent ? 230 : 255 );
-        } };
-        if ( details::is_no_optional_hot_reload ) {
-            core_op();
             return;
         }
         while ( true ) {
-            core_op();
+            cpp_utils::enable_window_menu( window_handle, !is_enable_simple_titlebar );
+            cpp_utils::set_window_translucency( window_handle, is_translucent ? 230 : 255 );
             std::this_thread::sleep_for( default_thread_sleep_time );
         }
     }
