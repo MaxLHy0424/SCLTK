@@ -106,6 +106,7 @@ namespace cpp_utils
         struct at_impl_ final
         {
             static_assert( false, "index out of bounds" );
+            using type = error;
         };
         template < std::size_t I >
             requires test< ( I < size_ ) >
