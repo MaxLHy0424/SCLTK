@@ -806,7 +806,12 @@ namespace core
         if ( !details::is_enable_fast_mode ) {
             SetConsoleScreenBufferSize(
               std_output_handle,
-              { console_width, std::ranges::max( console_height, static_cast< SHORT >( executing_count + 13 ) ) } );
+              { console_width,
+                std::ranges::max(
+                  console_height,
+                  executing_count + 13 > std::numeric_limits< SHORT >::max()
+                    ? std::numeric_limits< SHORT >::max()
+                    : static_cast< SHORT >( executing_count + 13 ) ) } );
         }
         switch ( details::executor_mode ) {
             case details::rule_executing::crack : std::print( "                    [ 破  解 ]\n\n\n" ); break;
