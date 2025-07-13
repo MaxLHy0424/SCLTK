@@ -59,10 +59,6 @@ namespace core
         const char* shown_name{};
         container_t execs{};
         container_t servs{};
-        auto empty() const noexcept
-        {
-            return execs.empty() && servs.empty();
-        }
     };
     inline rule_node custom_rules;
     inline const std::array< rule_node, 4 > builtin_rules{
@@ -818,13 +814,8 @@ namespace core
             case details::rule_executing::restore : std::print( "                    [ 恢  复 ]\n\n\n" ); break;
             default : std::unreachable();
         }
-        if ( rules.empty() ) {
-            std::print( " (i) 规则为空." );
-            details::press_any_key_to_return();
-            return func_back;
-        }
         if ( executing_count == 0 ) {
-            std::print( " (!) 当前配置下无可用操作." );
+            std::print( " (i) 无可用操作." );
             details::press_any_key_to_return();
             return func_back;
         }
