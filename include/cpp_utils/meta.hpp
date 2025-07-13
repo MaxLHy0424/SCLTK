@@ -20,16 +20,6 @@ namespace cpp_utils
     { };
     template < typename T >
     concept common_type = !std::same_as< std::decay_t< T >, error > && !std::same_as< std::decay_t< T >, undefined >;
-    template < typename T >
-    struct type_wrapper final
-    {
-        using type = T;
-    };
-    template < auto V >
-    struct value_wrapper final
-    {
-        static constexpr auto value{ V };
-    };
     template < common_type... Ts >
     class type_list final
     {
@@ -338,6 +328,11 @@ namespace cpp_utils
         using transform = transform_impl_< F >::type;
         template < template < typename > typename Pred >
         using filter = filter_impl_< Pred >::type;
+    };
+    template < auto V >
+    struct value_wrapper final
+    {
+        static constexpr auto value{ V };
     };
     template < auto V >
     class is_equal_to_value_wrapper final
