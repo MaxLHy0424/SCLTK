@@ -4,7 +4,7 @@ args_defines     = -DANSI -D_ANSI
 args_std         = gnu++26
 args_warning     = -Wall -Wextra -Weffc++ -Wpedantic
 args_opt_debug   = -Og
-args_opt_release = -O3 -flto=auto -fno-rtti -fno-exceptions
+args_opt_release = -O3 -flto=auto -fno-rtti -fno-exceptions -s
 args_include     = -I./include
 args_library     =
 args_extra       =
