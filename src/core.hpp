@@ -385,9 +385,9 @@ namespace core
             line.erase( std::ranges::find_if_not( line.rbegin(), line.rend(), details::is_space ).base(), line.end() );
             if ( line.front() == '[' && line.back() == ']' && line.size() > "[]"sv.size() ) {
                 current_config_node = std::monostate{};
-                const auto current_raw_name{ details::get_config_node_raw_name_by_tag( line ) };
                 std::apply( [ & ]( auto&... config_node )
                 {
+                    const auto current_raw_name{ details::get_config_node_raw_name_by_tag( line ) };
                     ( [ & ]( auto& current_node ) noexcept
                     {
                         if ( current_raw_name == current_node.raw_name ) {
