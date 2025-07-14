@@ -54,7 +54,7 @@ namespace cpp_utils
           std::ranges::max( std::thread::hardware_concurrency(), 2u ), std::forward< It >( begin ), std::forward< It >( end ),
           std::forward< F >( func ) );
     }
-    class thread_manager final
+    class [[deprecated( "use STL container instead" )]] thread_manager final
     {
       private:
         std::deque< std::jthread > threads_{};
