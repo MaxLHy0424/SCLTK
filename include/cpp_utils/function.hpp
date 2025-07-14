@@ -61,7 +61,7 @@ namespace cpp_utils
             { }
         };
     }
-    class [[deprecated( "ineffective and useless" )]] func_container final
+    class func_container final
     {
       private:
         std::deque< std::unique_ptr< details::func_wrapper_impl > > func_nodes_{};
