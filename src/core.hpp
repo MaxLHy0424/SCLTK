@@ -7,6 +7,7 @@
 #include <cpp_utils/windows_console_ui.hpp>
 #include <fstream>
 #include <limits>
+#include <numeric>
 #include "info.hpp"
 namespace core
 {
@@ -806,9 +807,9 @@ namespace core
               { console_width,
                 std::ranges::max(
                   console_height,
-                  executing_count + 13 > std::numeric_limits< SHORT >::max()
+                  std::add_sat< std::size_t >( executing_count, 13 ) > std::numeric_limits< SHORT >::max()
                     ? std::numeric_limits< SHORT >::max()
-                    : static_cast< SHORT >( executing_count + 13 ) ) } );
+                    : static_cast< SHORT >( std::add_sat< std::size_t >( executing_count, 13 ) ) ) } );
         }
         switch ( details::executor_mode ) {
             case details::rule_executing::crack : std::print( "                    [ 破  解 ]\n\n\n" ); break;
