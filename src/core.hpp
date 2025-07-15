@@ -802,14 +802,12 @@ namespace core
     {
         const auto executing_count{ details::get_executing_count( rules ) };
         if ( !details::is_enable_fast_mode ) {
-            SetConsoleScreenBufferSize(
-              std_output_handle,
-              { console_width,
-                std::ranges::max(
-                  console_height,
-                  std::add_sat< std::size_t >( executing_count, 13 ) > std::numeric_limits< SHORT >::max()
-                    ? std::numeric_limits< SHORT >::max()
-                    : static_cast< SHORT >( std::add_sat< std::size_t >( executing_count, 13 ) ) ) } );
+            const auto raw_height{ std::add_sat< std::size_t >( executing_count, 13 ) };
+            const auto buffer_height{
+              raw_height > static_cast< std::size_t >( std::numeric_limits< SHORT >::max() )
+                ? std::numeric_limits< SHORT >::max()
+                : static_cast< SHORT >( raw_height ) };
+            SetConsoleScreenBufferSize( std_output_handle, { console_width, std::ranges::max( console_height, buffer_height ) } );
         }
         switch ( details::executor_mode ) {
             case details::rule_executing::crack : std::print( "                    [ 破  解 ]\n\n\n" ); break;
