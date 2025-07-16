@@ -553,7 +553,7 @@ namespace core
             std::print(
               "                   [ 工 具 箱 ]\n\n\n"
               " -> 正在执行操作系统命令...\n\n{}\n\n",
-              diving_line.data() );
+              diving_line.c_str() );
             std::system( item.command );
             return func_exit;
         }
@@ -706,7 +706,7 @@ namespace core
         }
         inline auto default_crack( const std::size_t total_count, const rule_node& rules )
         {
-            std::print( "{}\n\n", diving_line.data() );
+            std::print( "{}\n\n", diving_line.c_str() );
             const auto& execs{ rules.execs };
             const auto& servs{ rules.servs };
             auto finished_count{ 0uz };
@@ -736,7 +736,7 @@ namespace core
                 stop_serv( serv );
                 std::this_thread::sleep_for( default_executing_sleep_time );
             }
-            std::print( "\n{}\n\n", diving_line.data() );
+            std::print( "\n{}\n\n", diving_line.c_str() );
         }
         inline auto fast_crack( const std::size_t, const rule_node& rules )
         {
@@ -758,7 +758,7 @@ namespace core
         }
         inline auto default_restore( const std::size_t total_count, const rule_node& rules )
         {
-            std::print( "{}\n\n", diving_line.data() );
+            std::print( "{}\n\n", diving_line.c_str() );
             const auto& execs{ rules.execs };
             const auto& servs{ rules.servs };
             auto finished_count{ 0uz };
@@ -783,7 +783,7 @@ namespace core
                 start_serv( serv );
                 std::this_thread::sleep_for( default_executing_sleep_time );
             }
-            std::print( "\n{}\n\n", diving_line.data() );
+            std::print( "\n{}\n\n", diving_line.c_str() );
         }
         inline auto fast_restore( const std::size_t, const rule_node& rules )
         {
