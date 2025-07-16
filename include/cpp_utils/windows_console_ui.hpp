@@ -48,7 +48,7 @@ namespace cpp_utils
       private:
         static inline HANDLE std_input_handle_;
         static inline HANDLE std_output_handle_;
-        enum class console_attrs_selection_ : char
+        enum class console_attrs_selection_ : bool
         {
             normal,
             locked
