@@ -51,8 +51,7 @@ namespace cpp_utils
         enum class console_attrs_selection_ : char
         {
             normal,
-            lock_text,
-            lock_all
+            locked
         };
         struct line_node_ final
         {
@@ -108,15 +107,10 @@ namespace cpp_utils
                     attrs |= ENABLE_INSERT_MODE;
                     attrs |= ENABLE_MOUSE_INPUT;
                     break;
-                case console_attrs_selection_::lock_text :
+                case console_attrs_selection_::locked :
                     attrs &= ~ENABLE_QUICK_EDIT_MODE;
                     attrs &= ~ENABLE_INSERT_MODE;
                     attrs |= ENABLE_MOUSE_INPUT;
-                    break;
-                case console_attrs_selection_::lock_all :
-                    attrs &= ~ENABLE_QUICK_EDIT_MODE;
-                    attrs &= ~ENABLE_INSERT_MODE;
-                    attrs &= ~ENABLE_MOUSE_INPUT;
                     break;
                 default : std::unreachable();
             }
@@ -217,7 +211,7 @@ namespace cpp_utils
                 cls_();
                 line.set_attrs( line.default_attrs );
                 show_cursor_( FALSE );
-                set_console_attrs_( console_attrs_selection_::lock_all );
+                set_console_attrs_( console_attrs_selection_::locked );
                 line.func.visit( [ & ]( auto& func )
                 {
                     using func_t = std::decay_t< decltype( func ) >;
@@ -230,7 +224,7 @@ namespace cpp_utils
                     }
                 } );
                 show_cursor_( FALSE );
-                set_console_attrs_( console_attrs_selection_::lock_text );
+                set_console_attrs_( console_attrs_selection_::locked );
                 init_pos_();
                 break;
             }
@@ -364,7 +358,7 @@ namespace cpp_utils
             }
             using namespace std::chrono_literals;
             show_cursor_( FALSE );
-            set_console_attrs_( console_attrs_selection_::lock_text );
+            set_console_attrs_( console_attrs_selection_::locked );
             init_pos_();
             MOUSE_EVENT_RECORD event;
             auto func_return_value{ func_back };
@@ -386,7 +380,7 @@ namespace cpp_utils
         auto& set_constraints( const bool is_hide_cursor, const bool is_lock_text ) noexcept
         {
             show_cursor_( static_cast< WINBOOL >( !is_hide_cursor ) );
-            set_console_attrs_( is_lock_text ? console_attrs_selection_::lock_all : console_attrs_selection_::normal );
+            set_console_attrs_( is_lock_text ? console_attrs_selection_::locked : console_attrs_selection_::normal );
             return *this;
         }
         auto operator=( const console_ui& ) noexcept -> console_ui& = default;
