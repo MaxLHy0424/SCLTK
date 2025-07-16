@@ -215,7 +215,7 @@ namespace core
                 }
             }
         }
-        static auto set_item_value_( ui_func_args args, item& item )
+        static auto set_item_value_( const ui_func_args args, item& item )
         {
             item.set( !item.get() );
             args.parent_ui.edit_text( args.node_index, make_swith_button_text_( item ) );
@@ -495,7 +495,7 @@ namespace core
     }
     namespace details
     {
-        inline auto launch_cmd( ui_func_args args )
+        inline auto launch_cmd( const ui_func_args args )
         {
             cpp_utils::set_current_console_title( INFO_SHORT_NAME " - 命令提示符" );
             cpp_utils::set_console_size( window_handle, std_output_handle, 120, 30 );
@@ -840,7 +840,7 @@ namespace core
             default : std::unreachable();
         }
     }
-    inline auto change_executor_mode( ui_func_args args )
+    inline auto change_executor_mode( const ui_func_args args )
     {
         switch ( details::executor_mode ) {
             case details::rule_executing::crack : details::executor_mode = details::rule_executing::restore; break;
