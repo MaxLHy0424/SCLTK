@@ -33,7 +33,7 @@ auto main() -> int
     for ( const auto& rule : core::builtin_rules ) {
         ui.add_back( std::format( " > {} ", rule.shown_name ), std::bind_back( core::execute_rules, std::cref( rule ) ) );
     }
-    ui.show().set_limits( true, true );
+    ui.show();
     std::print( " -> 正在清理..." );
     return EXIT_SUCCESS;
 }
