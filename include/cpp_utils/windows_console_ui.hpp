@@ -383,7 +383,7 @@ namespace cpp_utils
             cls_();
             return *this;
         }
-        auto& set_limits( const bool is_hide_cursor, const bool is_lock_text ) noexcept
+        auto& set_constraints( const bool is_hide_cursor, const bool is_lock_text ) noexcept
         {
             show_cursor_( static_cast< WINBOOL >( !is_hide_cursor ) );
             set_console_attrs_( is_lock_text ? console_attrs_selection_::lock_all : console_attrs_selection_::normal );

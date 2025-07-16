@@ -11,7 +11,7 @@ auto main() -> int
     cpp_utils::enable_window_minimize_ctrl( core::window_handle, false );
     cpp_utils::enable_window_close_ctrl( core::window_handle, false );
     cpp_utils::console_ui ui{ core::std_input_handle, core::std_output_handle };
-    ui.set_limits( true, true );
+    ui.set_constraints( true, true );
     std::print( " -> 准备就绪..." );
     core::load_config();
     std::thread{ core::set_console_attrs }.detach();
