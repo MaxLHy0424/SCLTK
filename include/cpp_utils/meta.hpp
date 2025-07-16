@@ -206,110 +206,71 @@ namespace cpp_utils
             using type = type_list<>;
         };
       public:
-        static consteval auto size()
-        {
-            return size_;
-        }
-        static consteval auto empty()
-        {
-            return empty_;
-        }
+        static constexpr auto size{ size_ };
+        static constexpr auto empty{ empty_ };
         template < typename U >
-        static consteval auto contains()
-        {
-            if constexpr ( empty() ) {
-                return false;
-            } else {
-                return ( std::is_same_v< U, Ts > || ... );
-            }
-        }
+        static constexpr auto contains{ ( std::is_same_v< U, Ts > || ... ) };
         template < typename U >
-        static consteval auto count()
+        static constexpr auto count{ [] consteval
         {
-            if constexpr ( empty() ) {
+            if constexpr ( empty ) {
                 return 0uz;
             } else {
                 return ( ( std::is_same_v< Ts, U > ? 1uz : 0uz ) + ... );
             }
-        }
+        }() };
         template < template < typename > typename Pred >
-        static consteval auto count_if()
+        static constexpr auto count_if{ [] consteval
         {
-            if constexpr ( empty() ) {
+            if constexpr ( empty ) {
                 return 0uz;
             } else {
                 return ( ( Pred< Ts >::value ? 1uz : 0uz ) + ... );
             }
-        }
+        }() };
         template < template < typename > typename Pred >
-        static consteval auto all_of()
+        static constexpr auto all_of{ [] consteval
         {
-            if constexpr ( empty() ) {
+            if constexpr ( empty ) {
                 return false;
             } else {
                 return ( Pred< Ts >::value && ... );
             }
-        }
+        }() };
         template < template < typename > typename Pred >
-        static consteval auto any_of()
-        {
-            if constexpr ( empty() ) {
-                return false;
-            } else {
-                return ( Pred< Ts >::value || ... );
-            }
-        }
+        static constexpr auto any_of{ ( Pred< Ts >::value || ... ) };
         template < template < typename > typename Pred >
-        static consteval auto none_of()
-        {
-            if constexpr ( empty() ) {
-                return true;
-            } else {
-                return ( !Pred< Ts >::value && ... );
-            }
-        }
+        static constexpr auto none_of{ ( !Pred< Ts >::value && ... ) };
         template < template < typename > typename Pred >
-        static consteval auto find_first_if()
+        static constexpr auto find_first_if{ [] consteval
         {
-            if constexpr ( empty() ) {
-                return size();
+            if constexpr ( empty ) {
+                return size;
             } else {
                 return find_first_if_impl_< Pred, 0 >();
             }
-        }
+        }() };
         template < template < typename > typename Pred >
-        static consteval auto find_last_if()
+        static constexpr auto find_last_if{ [] consteval
         {
-            if constexpr ( empty() ) {
-                return size();
+            if constexpr ( empty ) {
+                return size;
             } else {
-                return find_last_if_impl_< Pred, size() - 1 >();
+                return find_last_if_impl_< Pred, size - 1 >();
             }
-        }
+        }() };
         template < template < typename > typename Pred >
-        static consteval auto find_first_if_not()
-        {
-            return find_first_if< negate_< Pred >::template predicate >();
-        }
+        static constexpr auto find_first_if_not{ find_first_if< negate_< Pred >::template predicate > };
         template < template < typename > typename Pred >
-        static consteval auto find_last_if_not()
-        {
-            return find_last_if< negate_< Pred >::template predicate >();
-        }
+        static constexpr auto find_last_if_not{ find_last_if< negate_< Pred >::template predicate > };
         template < typename U >
-        static consteval auto find_first()
-        {
-            return find_first_if< type_is_< U >::template predicate >();
-        }
+        static constexpr auto find_first{ find_first_if< type_is_< U >::template predicate > };
         template < typename U >
-        static consteval auto find_last()
-        {
-            return find_last_if< type_is_< U >::template predicate >();
-        }
+        static constexpr auto find_last{ find_last_if< type_is_< U >::template predicate > };
         template < std::size_t I >
         using at    = at_impl_< I >::type;
         using front = at< 0 >;
-        using back  = at< size() - 1 >;
+        using back  = at< size - 1 >;
         template < common_type... Us >
         using add_front = type_list< Us..., Ts... >;
         template < common_type... Us >
