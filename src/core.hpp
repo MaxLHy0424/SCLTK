@@ -501,7 +501,7 @@ namespace core
             cpp_utils::set_console_size( window_handle, std_output_handle, 120, 30 );
             cpp_utils::fix_window_size( window_handle, false );
             cpp_utils::enable_window_maximize_ctrl( window_handle, true );
-            args.parent_ui.set_limits( false, false );
+            args.parent_ui.set_constraints( false, false );
             SetConsoleScreenBufferSize( std_output_handle, COORD{ 120, std::numeric_limits< SHORT >::max() - 1 } );
             STARTUPINFOA startup_info{};
             startup_info.cb = sizeof( startup_info );
