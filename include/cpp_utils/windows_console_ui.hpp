@@ -25,10 +25,10 @@ namespace cpp_utils
         struct func_args final
         {
             console_ui& parent_ui;
-            const std::size_t node_index;
-            const DWORD button_state;
-            const DWORD ctrl_state;
-            const DWORD event_flag;
+            std::size_t node_index;
+            DWORD button_state;
+            DWORD ctrl_state;
+            DWORD event_flag;
             auto operator=( const func_args& ) noexcept -> func_args& = default;
             auto operator=( func_args&& ) noexcept -> func_args&      = default;
             func_args(
