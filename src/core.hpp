@@ -620,16 +620,16 @@ namespace core
         const auto current_thread_id{ GetCurrentThreadId() };
         const auto current_window_thread_process_id{ GetWindowThreadProcessId( window_handle, nullptr ) };
         if ( details::is_no_optional_hot_reload ) {
-            cpp_utils::loop_keep_window_top( window_handle, current_thread_id, current_window_thread_process_id, sleep_time );
+            cpp_utils::force_show_window_forever( window_handle, current_thread_id, current_window_thread_process_id, sleep_time );
             return;
         }
         while ( true ) {
             if ( !is_keep_window_top ) {
-                cpp_utils::cancel_top_window( window_handle );
+                cpp_utils::cancel_force_show_window( window_handle );
                 std::this_thread::sleep_for( default_thread_sleep_time );
                 continue;
             }
-            cpp_utils::keep_window_top( window_handle, current_thread_id, current_window_thread_process_id );
+            cpp_utils::force_show_window( window_handle, current_thread_id, current_window_thread_process_id );
             std::this_thread::sleep_for( sleep_time );
         }
     }

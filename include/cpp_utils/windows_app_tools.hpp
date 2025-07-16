@@ -343,20 +343,15 @@ namespace cpp_utils
     {
         set_window_state( get_current_window_handle(), state );
     }
-    inline auto keep_window_top( const HWND window_handle, const DWORD thread_id, const DWORD window_thread_process_id ) noexcept
+    inline auto force_show_window( const HWND window_handle, const DWORD thread_id, const DWORD window_thread_process_id ) noexcept
     {
         AttachThreadInput( thread_id, window_thread_process_id, TRUE );
         SetForegroundWindow( window_handle );
         SetWindowPos( window_handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
         AttachThreadInput( thread_id, window_thread_process_id, FALSE );
     }
-    inline auto keep_current_window_top() noexcept
-    {
-        auto window_handle{ get_current_window_handle() };
-        keep_window_top( window_handle, GetCurrentThreadId(), GetWindowThreadProcessId( window_handle, nullptr ) );
-    }
     template < typename ChronoRep, typename ChronoPeriod >
-    inline auto loop_keep_window_top(
+    inline auto force_show_window_forever(
       const HWND window_handle, const DWORD thread_id, const DWORD window_thread_process_id,
       const std::chrono::duration< ChronoRep, ChronoPeriod > sleep_time )
     {
@@ -370,7 +365,7 @@ namespace cpp_utils
     }
     template < typename ChronoRep, typename ChronoPeriod, typename F >
         requires std::invocable< F >
-    inline auto loop_keep_window_top(
+    inline auto force_show_window_until_not(
       const HWND window_handle, const DWORD thread_id, const DWORD window_thread_process_id,
       const std::chrono::duration< ChronoRep, ChronoPeriod > sleep_time, F&& condition_checker )
     {
@@ -382,29 +377,35 @@ namespace cpp_utils
             std::this_thread::sleep_for( sleep_time );
         }
     }
+    inline auto force_show_current_window() noexcept
+    {
+        auto window_handle{ get_current_window_handle() };
+        force_show_window( window_handle, GetCurrentThreadId(), GetWindowThreadProcessId( window_handle, nullptr ) );
+    }
     template < typename ChronoRep, typename ChronoPeriod >
-    inline auto loop_keep_current_window_top( const std::chrono::duration< ChronoRep, ChronoPeriod > sleep_time )
+    inline auto force_show_current_window_forever( const std::chrono::duration< ChronoRep, ChronoPeriod > sleep_time )
     {
         const auto window_handle{ get_current_window_handle() };
-        loop_keep_window_top( window_handle, GetCurrentThreadId(), GetWindowThreadProcessId( window_handle, nullptr ), sleep_time );
+        force_show_window_forever(
+          window_handle, GetCurrentThreadId(), GetWindowThreadProcessId( window_handle, nullptr ), sleep_time );
     }
     template < typename ChronoRep, typename ChronoPeriod, typename F >
         requires std::invocable< F >
     inline auto
-      loop_keep_current_window_top( const std::chrono::duration< ChronoRep, ChronoPeriod > sleep_time, F&& condition_checker )
+      force_show_current_window_until_not( const std::chrono::duration< ChronoRep, ChronoPeriod > sleep_time, F&& condition_checker )
     {
         const auto window_handle{ get_current_window_handle() };
-        loop_keep_window_top(
+        force_show_window_until_not(
           window_handle, GetCurrentThreadId(), GetWindowThreadProcessId( window_handle, nullptr ), sleep_time,
           std::forward< F >( condition_checker ) );
     }
-    inline auto cancel_top_window( const HWND window_handle ) noexcept
+    inline auto cancel_force_show_window( const HWND window_handle ) noexcept
     {
         SetWindowPos( window_handle, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
     }
-    inline auto cancel_top_current_window() noexcept
+    inline auto cancel_force_show_current_window() noexcept
     {
-        cancel_top_window( get_current_window_handle() );
+        cancel_force_show_window( get_current_window_handle() );
     }
     inline auto ignore_current_console_exit_signal( const bool is_ignore ) noexcept
     {
