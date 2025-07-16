@@ -184,7 +184,7 @@ namespace core
                 { "fast_mode", "快速模式" } } },
            { "window",
               "窗口显示",
-              { { "keep_window_top", "* 置顶窗口" }, { "simple_titlebar", "* 极简标题栏" }, { "translucent", "* 半透明" } } },
+              { { "force_show", "* 置顶窗口" }, { "simple_titlebar", "* 极简标题栏" }, { "translucent", "* 半透明" } } },
            { "misc", "杂项", { { "no_optional_hot_reload", "** 禁用标 * 选项热重载" } } } }
         };
         static constexpr auto format_string_{ "{}.{}: {}" };
@@ -610,10 +610,10 @@ namespace core
             std::this_thread::sleep_for( default_thread_sleep_time );
         }
     }
-    inline auto keep_window_top()
+    inline auto force_show()
     {
-        const auto& is_keep_window_top{ options_set[ "window" ][ "keep_window_top" ] };
-        if ( details::is_no_optional_hot_reload && !is_keep_window_top ) {
+        const auto& is_force_show{ options_set[ "window" ][ "force_show" ] };
+        if ( details::is_no_optional_hot_reload && !is_force_show ) {
             return;
         }
         constexpr auto sleep_time{ 100ms };
@@ -624,7 +624,7 @@ namespace core
             return;
         }
         while ( true ) {
-            if ( !is_keep_window_top ) {
+            if ( !is_force_show ) {
                 cpp_utils::cancel_force_show_window( window_handle );
                 std::this_thread::sleep_for( default_thread_sleep_time );
                 continue;
