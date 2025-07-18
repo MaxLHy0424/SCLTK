@@ -83,7 +83,7 @@ namespace core
         {
           public:
             const char* raw_name;
-            auto load( this auto&& self, const bool is_reload, std::string& line )
+            auto load( this auto&& self, const bool is_reload, const std::string_view line )
             {
                 self.load_( is_reload, line );
             }
@@ -192,7 +192,7 @@ namespace core
         {
             return is_enable ? " > 禁用 "sv : " > 启用 "sv;
         }
-        auto load_( const bool is_reload, const std::string& line )
+        auto load_( const bool is_reload, const std::string_view line )
         {
             if ( is_reload ) {
                 return;
@@ -377,18 +377,20 @@ namespace core
         std::string line;
         config_node_types::transform< std::add_pointer >::add_front< std::monostate >::apply< std::variant > current_config_node;
         while ( std::getline( config_file, line ) ) {
-            if ( line.empty() ) {
+            std::string_view parsed_line_view{
+              std::ranges::find_if_not( line, details::is_space ),
+              std::ranges::find_if_not( line | std::views::reverse, details::is_space ).base() };
+            if ( parsed_line_view.empty() ) {
                 continue;
             }
-            if ( line.front() == '#' ) {
+            if ( parsed_line_view.front() == '#' ) {
                 continue;
             }
-            line.erase( std::ranges::find_if_not( line.rbegin(), line.rend(), details::is_space ).base(), line.end() );
-            if ( line.front() == '[' && line.back() == ']' && line.size() > "[]"sv.size() ) {
+            if ( parsed_line_view.front() == '[' && parsed_line_view.back() == ']' && parsed_line_view.size() > "[]"sv.size() ) {
                 current_config_node = std::monostate{};
                 std::apply( [ & ]( auto&... config_node )
                 {
-                    const auto current_raw_name{ details::get_config_node_raw_name_by_tag( line ) };
+                    const auto current_raw_name{ details::get_config_node_raw_name_by_tag( parsed_line_view ) };
                     ( [ & ]( auto& current_node ) noexcept
                     {
                         if ( current_raw_name == current_node.raw_name ) {
@@ -401,7 +403,7 @@ namespace core
             current_config_node.visit( [ & ]< typename T >( const T node_ptr )
             {
                 if constexpr ( !std::is_same_v< T, std::monostate > ) {
-                    node_ptr->load( is_reload, line );
+                    node_ptr->load( is_reload, parsed_line_view );
                 }
             } );
         }
@@ -421,8 +423,7 @@ namespace core
                 " <标签名> 与中括号间可以有若干空格.\n\n"
                 " 如果匹配不到配置项,\n"
                 " 则当前读取的标签到下一标签之间的内容都将被忽略.\n\n"
-                " 解析时会忽略每行末尾的空白字符.\n"
-                " 不会忽略每行的前导空白字符.\n"
+                " 解析时会忽略每行前导和末尾的空白字符.\n"
                 " 如果当前行不是标签, 则该行将由上一个标签处理." )
               .show();
             return func_back;
