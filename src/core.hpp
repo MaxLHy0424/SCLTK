@@ -360,7 +360,7 @@ namespace core
         {
             str = str.substr( 1, str.size() - 2 );
             const auto head{ std::ranges::find_if_not( str, is_space ) };
-            const auto tail{ std::ranges::find_if_not( str.rbegin(), str.rend(), is_space ).base() };
+            const auto tail{ std::ranges::find_if_not( str | std::views::reverse, is_space ).base() };
             if ( head >= tail ) {
                 return std::string_view{};
             }
