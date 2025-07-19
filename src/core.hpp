@@ -42,7 +42,7 @@ namespace core
             std::print( "\n\n 按任意键返回..." );
             cpp_utils::press_any_key_to_continue( std_input_handle );
         }
-        inline auto is_space( const char ch ) noexcept
+        inline constexpr auto is_space( const char ch ) noexcept
         {
             switch ( ch ) {
                 case '\f' :
@@ -280,13 +280,15 @@ namespace core
       private:
         static constexpr auto suffix_exec{ "exec: "sv };
         static constexpr auto suffix_serv{ "serv: "sv };
+        static_assert( details::is_space( suffix_exec.back() ) );
+        static_assert( details::is_space( suffix_serv.back() ) );
         static auto load_( const bool, const std::string_view line )
         {
-            if ( line.size() > suffix_exec.size() && line.starts_with( suffix_exec ) ) {
+            if ( line.starts_with( suffix_exec ) ) {
                 custom_rules.execs.emplace_back( std::ranges::find_if_not( line.substr( suffix_exec.size() ), details::is_space ) );
                 return;
             }
-            if ( line.size() > suffix_serv.size() && line.starts_with( suffix_serv ) ) {
+            if ( line.starts_with( suffix_serv ) ) {
                 custom_rules.servs.emplace_back( std::ranges::find_if_not( line.substr( suffix_serv.size() ), details::is_space ) );
                 return;
             }
