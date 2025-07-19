@@ -42,7 +42,7 @@ namespace core
             std::print( "\n\n 按任意键返回..." );
             cpp_utils::press_any_key_to_continue( std_input_handle );
         }
-        inline constexpr auto is_space( const char ch ) noexcept
+        inline constexpr auto is_whitespace( const char ch ) noexcept
         {
             switch ( ch ) {
                 case '\f' :
@@ -280,16 +280,18 @@ namespace core
       private:
         static constexpr auto suffix_exec{ "exec: "sv };
         static constexpr auto suffix_serv{ "serv: "sv };
-        static_assert( details::is_space( suffix_exec.back() ) );
-        static_assert( details::is_space( suffix_serv.back() ) );
+        static_assert( details::is_whitespace( suffix_exec.back() ) );
+        static_assert( details::is_whitespace( suffix_serv.back() ) );
         static auto load_( const bool, const std::string_view line )
         {
             if ( line.starts_with( suffix_exec ) ) {
-                custom_rules.execs.emplace_back( std::ranges::find_if_not( line.substr( suffix_exec.size() ), details::is_space ) );
+                custom_rules.execs.emplace_back(
+                  std::ranges::find_if_not( line.substr( suffix_exec.size() ), details::is_whitespace ) );
                 return;
             }
             if ( line.starts_with( suffix_serv ) ) {
-                custom_rules.servs.emplace_back( std::ranges::find_if_not( line.substr( suffix_serv.size() ), details::is_space ) );
+                custom_rules.servs.emplace_back(
+                  std::ranges::find_if_not( line.substr( suffix_serv.size() ), details::is_whitespace ) );
                 return;
             }
         }
@@ -361,8 +363,8 @@ namespace core
         inline auto get_config_node_raw_name_by_tag( std::string_view str ) noexcept
         {
             str = str.substr( 1, str.size() - 2 );
-            const auto head{ std::ranges::find_if_not( str, is_space ) };
-            const auto tail{ std::ranges::find_if_not( str | std::views::reverse, is_space ).base() };
+            const auto head{ std::ranges::find_if_not( str, is_whitespace ) };
+            const auto tail{ std::ranges::find_if_not( str | std::views::reverse, is_whitespace ).base() };
             if ( head >= tail ) {
                 return std::string_view{};
             }
@@ -379,8 +381,8 @@ namespace core
         std::string line;
         config_node_types::transform< std::add_pointer >::add_front< std::monostate >::apply< std::variant > current_config_node;
         while ( std::getline( config_file, line ) ) {
-            const auto parsed_begin{ std::ranges::find_if_not( line, details::is_space ) };
-            const auto parsed_end{ std::ranges::find_if_not( line | std::views::reverse, details::is_space ).base() };
+            const auto parsed_begin{ std::ranges::find_if_not( line, details::is_whitespace ) };
+            const auto parsed_end{ std::ranges::find_if_not( line | std::views::reverse, details::is_whitespace ).base() };
             if ( parsed_begin >= parsed_end ) {
                 continue;
             }
