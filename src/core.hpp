@@ -377,12 +377,12 @@ namespace core
         std::string line;
         config_node_types::transform< std::add_pointer >::add_front< std::monostate >::apply< std::variant > current_config_node;
         while ( std::getline( config_file, line ) ) {
-            std::string_view parsed_line_view{
-              std::ranges::find_if_not( line, details::is_space ),
-              std::ranges::find_if_not( line | std::views::reverse, details::is_space ).base() };
-            if ( parsed_line_view.empty() ) {
+            const auto parsed_begin{ std::ranges::find_if_not( line, details::is_space ) };
+            const auto parsed_end{ std::ranges::find_if_not( line | std::views::reverse, details::is_space ).base() };
+            if ( parsed_begin >= parsed_end ) {
                 continue;
             }
+            const std::string_view parsed_line_view{ parsed_begin, parsed_end };
             if ( parsed_line_view.front() == '#' ) {
                 continue;
             }
