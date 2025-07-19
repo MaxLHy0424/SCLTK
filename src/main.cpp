@@ -24,7 +24,7 @@ auto main() -> int
       .add_back( " > 工具箱 ", core::toolkit )
       .add_back( "" )
       .add_back(
-        core::make_executor_mode_ui_text(), core::change_executor_mode,
+        core::make_executor_mode_ui_text(), core::flip_executor_mode,
         cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_green )
       .add_back( "" )
       .add_back( " > 全部执行 ", core::execute_all_rules )
