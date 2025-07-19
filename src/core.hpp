@@ -215,7 +215,7 @@ namespace core
                 }
             }
         }
-        static auto set_item_value_( const ui_func_args args, item& item )
+        static auto flip_item_value_( const ui_func_args args, item& item )
         {
             item.set( !item.get() );
             args.parent_ui.edit_text( args.node_index, make_swith_button_text_( item ) );
@@ -231,7 +231,7 @@ namespace core
             for ( auto& item : category.items ) {
                 ui.add_back( std::format( "\n[ {} ]\n", item.shown_name ) )
                   .add_back(
-                    make_swith_button_text_( item ), std::bind_back( set_item_value_, std::ref( item ) ),
+                    make_swith_button_text_( item ), std::bind_back( flip_item_value_, std::ref( item ) ),
                     cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_green );
             }
             ui.show();
@@ -841,7 +841,7 @@ namespace core
             default : std::unreachable();
         }
     }
-    inline auto change_executor_mode( const ui_func_args args )
+    inline auto flip_executor_mode( const ui_func_args args )
     {
         switch ( details::executor_mode ) {
             case details::rule_executing::crack : details::executor_mode = details::rule_executing::restore; break;
