@@ -185,7 +185,7 @@ namespace core
            { "window",
               "窗口显示",
               { { "force_show", "* 置顶窗口" }, { "simple_titlebar", "* 极简标题栏" }, { "translucent", "* 半透明" } } },
-           { "misc", "杂项", { { "no_optional_hot_reload", "** 禁用标 * 选项热重载" } } } }
+           { "misc", "杂项", { { "no_optional_hot_reload", "禁用标 * 选项热重载 (不可热重载)" } } } }
         };
         static constexpr auto format_string_{ "{}.{}: {}" };
         static auto make_swith_button_text_( const auto is_enable )
@@ -239,10 +239,7 @@ namespace core
         }
         auto edit_ui_( cpp_utils::console_ui& ui )
         {
-            ui.add_back(
-              "\n[ 选项 ]\n\n"
-              " (i) 选项相关信息可参阅文档. 标 * 选项自动热重载.\n"
-              "     标 ** 选项无法热重载. 其余选项实时热重载.\n" );
+            ui.add_back( "\n[ 选项 ]\n" );
             for ( auto& category : categories_ ) {
                 ui.add_back(
                   std::format( " > {} ", category.shown_name ), std::bind_back( make_category_ui_, std::ref( category ) ),
