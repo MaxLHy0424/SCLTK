@@ -442,7 +442,7 @@ namespace core
                   ... );
             }, config_nodes );
             config_file_stream.flush();
-            std::print( "\n (i) 同步配置{}.", config_file_stream.good() ? "成功" : "失败" );
+            std::print( "\n ({}) 同步配置{}.", config_file_stream.good() ? 'i' : '!', config_file_stream.good() ? "成功" : "失败" );
             details::press_any_key_to_return();
             return func_back;
         }
