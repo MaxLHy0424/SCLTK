@@ -230,6 +230,12 @@ make toolchain
 make pack
 ```
 
+> [!NOTE]
+> 如果想要构建后立马打包, 可使用:
+> ```bash
+> make build -j && make pack
+> ```
+
 # ❓ 常见问题
 
 ## 无法执行包含非 ASCII 字符的自定义规则
