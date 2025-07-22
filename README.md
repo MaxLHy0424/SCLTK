@@ -224,6 +224,12 @@ make release
 make toolchain
 ```
 
+打包 `build/release` 下的可执行文件和 `LICENSE`, 可使用:
+
+```bash
+make pack
+```
+
 # ❓ 常见问题
 
 ## 无法执行包含非 ASCII 字符的自定义规则
