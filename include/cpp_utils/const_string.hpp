@@ -78,12 +78,12 @@ namespace cpp_utils
                 return ( *this )[ index ];
             }
         }
-        constexpr auto compare( const std::basic_string_view< T > src ) const
+        constexpr auto is_equal( const std::basic_string_view< T > src ) const
         {
             return src == this->data();
         }
         template < std::size_t SrcN >
-        constexpr auto compare( const T ( &src )[ SrcN ] ) const noexcept
+        constexpr auto is_equal( const T ( &src )[ SrcN ] ) const noexcept
         {
             if ( SrcN != N ) {
                 return false;
@@ -96,7 +96,7 @@ namespace cpp_utils
             return true;
         }
         template < std::size_t SrcN >
-        constexpr auto compare( const basic_const_string< T, SrcN >& src ) const noexcept
+        constexpr auto is_equal( const basic_const_string< T, SrcN >& src ) const noexcept
         {
             if ( SrcN != N ) {
                 return false;
@@ -110,31 +110,31 @@ namespace cpp_utils
         }
         constexpr auto operator==( const std::basic_string_view< T > src ) const
         {
-            return compare( src );
+            return is_equal( src );
         }
         template < std::size_t SrcN >
         constexpr auto operator==( const T ( &src )[ SrcN ] ) const noexcept
         {
-            return compare( src );
+            return is_equal( src );
         }
         template < std::size_t SrcN >
         constexpr auto operator==( const basic_const_string< T, SrcN >& src ) const noexcept
         {
-            return compare( src );
+            return is_equal( src );
         }
         constexpr auto operator!=( const T* const src ) const noexcept
         {
-            return !compare( src );
+            return !is_equal( src );
         }
         template < std::size_t SrcN >
         constexpr auto operator!=( const T ( &src )[ SrcN ] ) const noexcept
         {
-            return !compare( src );
+            return !is_equal( src );
         }
         template < std::size_t SrcN >
         constexpr auto operator!=( const basic_const_string< T, SrcN >& src ) const noexcept
         {
-            return !compare( src );
+            return !is_equal( src );
         }
         consteval auto operator=( const basic_const_string< T, N >& ) -> basic_const_string< T, N >& = default;
         auto operator=( basic_const_string< T, N >&& ) -> basic_const_string< T, N >&                = delete;
