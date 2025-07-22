@@ -5,7 +5,7 @@ args_std         = gnu++26
 args_warning     = -Wall -Wextra -Weffc++ -Wpedantic
 args_opt_debug   = -Og
 args_opt_release = -O3 -flto=auto
-args_include     = -I./include
+args_include     = -I include
 args_library     =
 args_extra       =
 input_charset    = utf-8
@@ -15,13 +15,21 @@ args_debug       = -g3 -DDEBUG $(args_base) $(args_opt_debug)
 args_release     = -DNDEBUG -s -static -fno-rtti -fno-exceptions $(args_base) $(args_opt_release)
 .PHONY: toolchain all build debug release clean make_info
 dependencies_testing = src/* include*
-all: toolchain build
+all: toolchain build pack
 build: debug release
+pack:
+	$(msys2_path)/usr/bin/rm.exe -rf build/SCLTK.7z
+	$(msys2_path)/usr/bin/mkdir.exe build/temp -p
+	$(msys2_path)/usr/bin/cp.exe build/release/*.exe build/temp/
+	$(msys2_path)/usr/bin/cp.exe LICENSE build/temp/
+	$(msys2_path)/ucrt64/bin/7z.exe a -mx=9 build/SCLTK.7z ./build/temp/*
+	$(msys2_path)/usr/bin/rm.exe -rf build/temp
 toolchain:
 	$(msys2_path)/usr/bin/pacman.exe -Sy --noconfirm --needed\
      mingw-w64-i686-toolchain\
      mingw-w64-ucrt-x86_64-toolchain\
      make\
+	 mingw-w64-ucrt-x86_64-7zip\
      git\
      base\
      base-devel\
@@ -35,7 +43,7 @@ clean:
 	$(msys2_path)/usr/bin/mkdir.exe build
 	$(msys2_path)/usr/bin/touch.exe build/.nothing
 make_info:
-	$(pwsh_path) -ExecutionPolicy Bypass -File ./make_info.ps1
+	$(pwsh_path) -ExecutionPolicy Bypass -File make_info.ps1
 src/info.hpp: make_info
 dependencies_debug = src/*.cpp
 build/debug/__debug__.exe: $(dependencies_testing) \
