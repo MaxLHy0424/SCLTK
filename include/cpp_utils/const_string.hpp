@@ -16,15 +16,15 @@ namespace cpp_utils
     class basic_const_string final
     {
       private:
-        std::array< T, N > base_storage_{};
+        std::array< T, N > storage_{};
       public:
         constexpr const auto& data() const noexcept
         {
-            return base_storage_;
+            return storage_;
         }
         constexpr auto c_str() const noexcept
         {
-            return const_cast< const T* >( base_storage_.data() );
+            return const_cast< const T* >( storage_.data() );
         }
         constexpr auto size() const noexcept
         {
@@ -36,44 +36,44 @@ namespace cpp_utils
         }
         constexpr auto max_size() const noexcept
         {
-            return base_storage_.max_size() - 1;
+            return storage_.max_size() - 1;
         }
         constexpr auto max_capacity() const noexcept
         {
-            return base_storage_.max_size();
+            return storage_.max_size();
         }
         constexpr const auto& front() const noexcept
         {
-            return base_storage_.front();
+            return storage_.front();
         }
         constexpr const auto& back() const noexcept
         {
-            return base_storage_.back();
+            return storage_.back();
         }
         constexpr auto begin() const noexcept
         {
-            return base_storage_.cbegin();
+            return storage_.cbegin();
         }
         constexpr auto rbegin() const noexcept
         {
-            return base_storage_.crbegin();
+            return storage_.crbegin();
         }
         constexpr auto end() const noexcept
         {
-            return base_storage_.cend();
+            return storage_.cend();
         }
         constexpr auto rend() const noexcept
         {
-            return base_storage_.crend();
+            return storage_.crend();
         }
         constexpr const auto& operator[]( const std::size_t index ) const noexcept
         {
-            return base_storage_[ index ];
+            return storage_[ index ];
         }
         constexpr const auto& at( const std::size_t index ) const noexcept
         {
             if constexpr ( is_debugging_build ) {
-                return base_storage_.at( index );
+                return storage_.at( index );
             } else {
                 return ( *this )[ index ];
             }
@@ -89,7 +89,7 @@ namespace cpp_utils
                 return false;
             }
             for ( decltype( N ) i{ 0 }; i < N; ++i ) {
-                if ( base_storage_[ i ] != src[ i ] ) {
+                if ( storage_[ i ] != src[ i ] ) {
                     return false;
                 }
             }
@@ -102,7 +102,7 @@ namespace cpp_utils
                 return false;
             }
             for ( decltype( N ) i{ 0 }; i < N; ++i ) {
-                if ( base_storage_[ i ] != src[ i ] ) {
+                if ( storage_[ i ] != src[ i ] ) {
                     return false;
                 }
             }
@@ -140,10 +140,10 @@ namespace cpp_utils
         auto operator=( basic_const_string< T, N >&& ) -> basic_const_string< T, N >&                = delete;
         consteval basic_const_string( const T ( &str )[ N ] ) noexcept
         {
-            std::ranges::copy( str, base_storage_.data() );
+            std::ranges::copy( str, storage_.data() );
         }
         consteval basic_const_string( const std::array< T, N >& str ) noexcept
-          : base_storage_{ str }
+          : storage_{ str }
         { }
         consteval basic_const_string( const basic_const_string< T, N >& )     = default;
         consteval basic_const_string( basic_const_string< T, N >&& ) noexcept = delete;
