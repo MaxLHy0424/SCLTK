@@ -19,11 +19,11 @@ all: toolchain build pack
 build: debug release
 pack:
 	$(msys2_path)/usr/bin/rm.exe -rf build/SCLTK.7z
-	$(msys2_path)/usr/bin/mkdir.exe build/temp -p
-	$(msys2_path)/usr/bin/cp.exe build/release/*.exe build/temp/
-	$(msys2_path)/usr/bin/cp.exe LICENSE build/temp/
-	$(msys2_path)/ucrt64/bin/7z.exe a -mx=9 build/SCLTK.7z ./build/temp/*
-	$(msys2_path)/usr/bin/rm.exe -rf build/temp
+	$(msys2_path)/usr/bin/mkdir.exe build/__temp__ -p
+	$(msys2_path)/usr/bin/cp.exe build/release/*.exe build/__temp__/
+	$(msys2_path)/usr/bin/cp.exe LICENSE build/__temp__/
+	$(msys2_path)/ucrt64/bin/7z.exe a -mx=9 build/SCLTK.7z ./build/__temp__/*
+	$(msys2_path)/usr/bin/rm.exe -rf build/__temp__
 toolchain:
 	$(msys2_path)/usr/bin/pacman.exe -Sy --noconfirm --needed\
      mingw-w64-i686-toolchain\
