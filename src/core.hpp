@@ -276,18 +276,16 @@ namespace core
     {
         friend details::config_node_impl;
       private:
-        static constexpr auto suffix_exec{ "exec: "sv };
-        static constexpr auto suffix_serv{ "serv: "sv };
-        static_assert( details::is_whitespace( suffix_exec.back() ) );
-        static_assert( details::is_whitespace( suffix_serv.back() ) );
+        static constexpr auto suffix_exec{ "exec:"sv };
+        static constexpr auto suffix_serv{ "serv:"sv };
         static auto load_( const bool, const std::string_view line )
         {
-            if ( line.starts_with( suffix_exec ) ) {
+            if ( line.size() > suffix_exec.size() && line.starts_with( suffix_exec ) ) {
                 custom_rules.execs.emplace_back(
                   std::ranges::find_if_not( line.substr( suffix_exec.size() ), details::is_whitespace ) );
                 return;
             }
-            if ( line.starts_with( suffix_serv ) ) {
+            if ( line.size() > suffix_serv.size() && line.starts_with( suffix_serv ) ) {
                 custom_rules.servs.emplace_back(
                   std::ranges::find_if_not( line.substr( suffix_serv.size() ), details::is_whitespace ) );
                 return;
@@ -296,10 +294,10 @@ namespace core
         static auto sync_( std::ofstream& out )
         {
             for ( const auto& exec : custom_rules.execs ) {
-                out << suffix_exec << exec << '\n';
+                out << suffix_exec << ' ' << exec << '\n';
             }
             for ( const auto& serv : custom_rules.servs ) {
-                out << suffix_serv << serv << '\n';
+                out << suffix_serv << ' ' << serv << '\n';
             }
         }
         static auto prepare_reload_() noexcept
@@ -317,7 +315,7 @@ namespace core
                 " 其中, <flag> 可为 exec 或 serv,\n"
                 " 分别表示以 .exe 为文件扩展名的可执行文件\n"
                 " 和某个 Windows 服务的服务名称.\n"
-                " <flag> 后的冒号与 <item> 间至少有一个空格.\n"
+                " <flag> 后的冒号与 <item> 之间可以有若干个空白字符.\n"
                 " <item> 的类型由 <flag> 决定.\n"
                 " 如果 <item> 为空, 该项规则将会被忽略.\n"
                 " 如果自定义规则不符合格式, 则会被忽略.\n"
