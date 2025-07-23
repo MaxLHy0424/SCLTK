@@ -78,64 +78,6 @@ namespace cpp_utils
                 return ( *this )[ index ];
             }
         }
-        constexpr auto is_equal_to( const std::basic_string_view< T > src ) const
-        {
-            return src == this->data();
-        }
-        template < std::size_t SrcN >
-        constexpr auto is_equal_to( const T ( &src )[ SrcN ] ) const noexcept
-        {
-            if ( SrcN != N ) {
-                return false;
-            }
-            for ( decltype( N ) i{ 0 }; i < N; ++i ) {
-                if ( storage_[ i ] != src[ i ] ) {
-                    return false;
-                }
-            }
-            return true;
-        }
-        template < std::size_t SrcN >
-        constexpr auto is_equal_to( const basic_const_string< T, SrcN >& src ) const noexcept
-        {
-            if ( SrcN != N ) {
-                return false;
-            }
-            for ( decltype( N ) i{ 0 }; i < N; ++i ) {
-                if ( storage_[ i ] != src[ i ] ) {
-                    return false;
-                }
-            }
-            return true;
-        }
-        constexpr auto operator==( const std::basic_string_view< T > src ) const
-        {
-            return is_equal_to( src );
-        }
-        template < std::size_t SrcN >
-        constexpr auto operator==( const T ( &src )[ SrcN ] ) const noexcept
-        {
-            return is_equal_to( src );
-        }
-        template < std::size_t SrcN >
-        constexpr auto operator==( const basic_const_string< T, SrcN >& src ) const noexcept
-        {
-            return is_equal_to( src );
-        }
-        constexpr auto operator!=( const T* const src ) const noexcept
-        {
-            return !is_equal_to( src );
-        }
-        template < std::size_t SrcN >
-        constexpr auto operator!=( const T ( &src )[ SrcN ] ) const noexcept
-        {
-            return !is_equal_to( src );
-        }
-        template < std::size_t SrcN >
-        constexpr auto operator!=( const basic_const_string< T, SrcN >& src ) const noexcept
-        {
-            return !is_equal_to( src );
-        }
         consteval auto operator=( const basic_const_string< T, N >& ) -> basic_const_string< T, N >& = default;
         auto operator=( basic_const_string< T, N >&& ) -> basic_const_string< T, N >&                = delete;
         consteval basic_const_string( const T ( &str )[ N ] ) noexcept
