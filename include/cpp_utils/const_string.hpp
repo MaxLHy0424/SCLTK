@@ -78,6 +78,10 @@ namespace cpp_utils
                 return ( *this )[ index ];
             }
         }
+        constexpr operator std::basic_string_view< T >() const noexcept
+        {
+            return std::basic_string_view< T >{ c_str(), size() };
+        }
         consteval auto operator=( const basic_const_string< T, N >& ) -> basic_const_string< T, N >& = default;
         auto operator=( basic_const_string< T, N >&& ) -> basic_const_string< T, N >&                = delete;
         consteval basic_const_string( const T ( &str )[ N ] ) noexcept
