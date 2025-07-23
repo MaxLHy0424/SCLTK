@@ -747,16 +747,18 @@ namespace core
         }
         inline auto fast_crack( const std::size_t, const rule_node& rules )
         {
-            const auto& execs{ rules.execs };
-            const auto& servs{ rules.servs };
-            std::array threads{
-              details::is_hijack_execs ? std::thread{ for_each_wrapper, std::cref( execs ), hijack_exec }
-                : std::thread{},
-              details::is_set_serv_startup_types ? std::thread{ for_each_wrapper, std::cref( servs ), disable_serv }
-                : std::thread{},
-              std::thread{ for_each_wrapper, std::cref( execs ), kill_exec },
-              std::thread{ for_each_wrapper, std::cref( servs ), stop_serv }
-            };
+            const auto execs{ std::cref( rules.execs ) };
+            const auto servs{ std::cref( rules.servs ) };
+            using thread_t = std::thread;
+            std::array< thread_t, 4 > threads;
+            if ( details::is_hijack_execs ) {
+                threads[ 0 ] = thread_t{ for_each_wrapper, execs, hijack_exec };
+            }
+            if ( details::is_set_serv_startup_types ) {
+                threads[ 1 ] = std::thread{ for_each_wrapper, servs, disable_serv };
+            }
+            threads[ 2 ] = thread_t{ for_each_wrapper, execs, kill_exec };
+            threads[ 3 ] = thread_t{ for_each_wrapper, servs, stop_serv };
             for ( auto& thread : threads ) {
                 if ( thread.joinable() ) {
                     thread.join();
