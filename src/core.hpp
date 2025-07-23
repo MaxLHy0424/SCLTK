@@ -396,7 +396,7 @@ namespace core
                     ( [ & ]( auto& current_node ) noexcept
                     {
                         if ( current_raw_name == current_node.raw_name ) {
-                            current_config_node = &current_node;
+                            current_config_node = std::addressof( current_node );
                         }
                     }( config_node ), ... );
                 }, config_nodes );
