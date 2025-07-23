@@ -52,15 +52,6 @@ namespace core
             }
             return false;
         }
-        inline constexpr auto is_no_whitespace( const std::string_view str ) noexcept
-        {
-            for ( const auto ch : str ) {
-                if ( is_whitespace( ch ) ) {
-                    return false;
-                }
-            }
-            return true;
-        }
     }
     struct rule_node final
     {
@@ -287,8 +278,10 @@ namespace core
       private:
         static constexpr auto suffix_exec{ "exec:"sv };
         static constexpr auto suffix_serv{ "serv:"sv };
-        static_assert( details::is_no_whitespace( suffix_exec ) );
-        static_assert( details::is_no_whitespace( suffix_serv ) );
+        static_assert( []( auto... strings ) constexpr
+        {
+            return ( ( std::ranges::find_if( strings, details::is_whitespace ) == strings.end() ) && ... );
+        }( suffix_exec, suffix_serv ) );
         static auto load_( const bool, const std::string_view line )
         {
             if ( line.size() > suffix_exec.size() && line.starts_with( suffix_exec ) ) {
