@@ -9,8 +9,21 @@
 > [!CAUTION]
 > SCLTK 仅适用于 Microsoft Windows OS.
 
+# 📢 新闻
+
 > [!NOTE]
-> 从 v6.1.0 起, 原 CRCSN (Computer Room Control Software Nemesis) 正式更名为 SCLTK (Student Computer Lab Toolkit).
+> 此处有关时间的描述为中国标准时间.
+
+**\[2025-07-23\]** SCLTK v6.4.0 公众测试版将于 8 月上旬发布!
+
+<details>
+
+<summary>所有新闻</summary>
+
+**\[2025-02-18\]**
+从 v6.1.0 起, 原 CRCSN (Computer Room Control Software Nemesis) 正式更名为 SCLTK (Student Computer Lab Toolkit).
+
+</details>
 
 # 📦 获取
 
