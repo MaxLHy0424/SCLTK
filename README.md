@@ -18,7 +18,7 @@
 
 <details>
 
-<summary>所有新闻</summary>
+<summary>更多新闻</summary>
 
 **\[2025-02-18\]**
 从 v6.1.0 起, 原 CRCSN (Computer Room Control Software Nemesis) 正式更名为 SCLTK (Student Computer Lab Toolkit).
