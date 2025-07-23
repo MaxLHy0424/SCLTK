@@ -347,13 +347,17 @@ namespace core
         template < typename T >
         struct is_valid_config_node final
         {
-            static constexpr auto value{ std::is_base_of_v< config_node_impl, T > && std::is_default_constructible_v< T > };
+            static constexpr auto value{ std::is_base_of_v< config_node_impl, T > };
+            is_valid_config_node()  = delete;
+            ~is_valid_config_node() = delete;
         };
     }
     using config_node_types = cpp_utils::type_list< options, customized_rules >;
     inline config_node_types::apply< std::tuple > config_nodes{};
     static_assert( config_node_types::all_of< details::is_valid_config_node > );
+    static_assert( config_node_types::all_of< std::is_default_constructible > );
     static_assert( config_node_types::unique::size == config_node_types::size );
+    static_assert( std::is_same_v< config_node_types::transform< std::decay >, config_node_types > );
     auto& options_set{ std::get< options >( config_nodes ) };
     namespace details
     {
