@@ -276,32 +276,32 @@ namespace core
     {
         friend details::config_node_impl;
       private:
-        static constexpr auto suffix_exec{ "exec:"sv };
-        static constexpr auto suffix_serv{ "serv:"sv };
+        static constexpr auto flag_exec{ "exec:"sv };
+        static constexpr auto flag_serv{ "serv:"sv };
         static_assert( []( auto... strings ) constexpr
         {
             return ( ( std::ranges::find_if( strings, details::is_whitespace ) == strings.end() ) && ... );
-        }( suffix_exec, suffix_serv ) );
+        }( flag_exec, flag_serv ) );
         static auto load_( const bool, const std::string_view line )
         {
-            if ( line.size() > suffix_exec.size() && line.starts_with( suffix_exec ) ) {
+            if ( line.size() > flag_exec.size() && line.starts_with( flag_exec ) ) {
                 custom_rules.execs.emplace_back(
-                  std::ranges::find_if_not( line.substr( suffix_exec.size() ), details::is_whitespace ) );
+                  std::ranges::find_if_not( line.substr( flag_exec.size() ), details::is_whitespace ) );
                 return;
             }
-            if ( line.size() > suffix_serv.size() && line.starts_with( suffix_serv ) ) {
+            if ( line.size() > flag_serv.size() && line.starts_with( flag_serv ) ) {
                 custom_rules.servs.emplace_back(
-                  std::ranges::find_if_not( line.substr( suffix_serv.size() ), details::is_whitespace ) );
+                  std::ranges::find_if_not( line.substr( flag_serv.size() ), details::is_whitespace ) );
                 return;
             }
         }
         static auto sync_( std::ofstream& out )
         {
             for ( const auto& exec : custom_rules.execs ) {
-                out << suffix_exec << ' ' << exec << '\n';
+                out << flag_exec << ' ' << exec << '\n';
             }
             for ( const auto& serv : custom_rules.servs ) {
-                out << suffix_serv << ' ' << serv << '\n';
+                out << flag_serv << ' ' << serv << '\n';
             }
         }
         static auto prepare_reload_() noexcept
