@@ -132,7 +132,7 @@ namespace cpp_utils
             INPUT_RECORD record;
             DWORD reg;
             while ( true ) {
-                std::this_thread::sleep_for( 50ms );
+                std::this_thread::sleep_for( 20ms );
                 ReadConsoleInputW( std_input_handle_, &record, 1, &reg );
                 if ( record.EventType == MOUSE_EVENT && ( is_move || record.Event.MouseEvent.dwEventFlags != mouse::move ) ) {
                     return record.Event.MouseEvent;
