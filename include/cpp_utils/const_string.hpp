@@ -52,10 +52,10 @@ namespace cpp_utils
         }
         constexpr const auto& back() const noexcept
         {
-            if constexpr ( N == 1 ) {
+            if constexpr ( empty() ) {
                 return storage_.back();
             } else {
-                return *( &storage_.back() - 1 );
+                return storage_[ size() - 1 ];
             }
         }
         constexpr auto begin() const noexcept
