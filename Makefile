@@ -1,4 +1,5 @@
 include env
+name             = SCLTK
 compiler         = g++.exe
 args_defines     = -DANSI -D_ANSI
 args_std         = gnu++26
@@ -18,11 +19,11 @@ dependencies_testing = src/* include*
 all: toolchain build pack
 build: debug release
 pack:
-	$(msys2_path)/usr/bin/rm.exe -rf build/SCLTK.7z
+	$(msys2_path)/usr/bin/rm.exe -rf build/$(name).7z
 	$(msys2_path)/usr/bin/mkdir.exe build/__temp__ -p
 	$(msys2_path)/usr/bin/cp.exe build/release/*.exe build/__temp__/
 	$(msys2_path)/usr/bin/cp.exe LICENSE build/__temp__/
-	$(msys2_path)/ucrt64/bin/7z.exe a -mx=9 build/SCLTK.7z ./build/__temp__/*
+	$(msys2_path)/ucrt64/bin/7z.exe a -mx=9 build/$(name).7z ./build/__temp__/*
 	$(msys2_path)/usr/bin/rm.exe -rf build/__temp__
 toolchain:
 	$(msys2_path)/usr/bin/pacman.exe -Sy --noconfirm --needed\
@@ -35,8 +36,8 @@ toolchain:
      base-devel\
      binutils
 debug: build/debug/__debug__.exe
-release: build/release/SCLTK-i686-msvcrt.exe\
-         build/release/SCLTK-x86_64-ucrt.exe
+release: build/release/$(name)-i686-msvcrt.exe\
+         build/release/$(name)-x86_64-ucrt.exe
 clean:
 	$(msys2_path)/usr/bin/rm.exe -rf build
 	$(msys2_path)/usr/bin/rm.exe -rf src/info.hpp
@@ -53,14 +54,14 @@ build/debug/__debug__.exe: $(dependencies_testing) \
 	$(msys2_path)/ucrt64/bin/$(compiler) $(dependencies_debug) $(args_debug) -o $@
 dependencies_release_32bit = build/manifest-i686.o \
                              src/*.cpp
-build/release/SCLTK-i686-msvcrt.exe: $(dependencies_testing) \
+build/release/$(name)-i686-msvcrt.exe: $(dependencies_testing) \
                                      $(dependencies_release_32bit) \
                                      make_info \
                                      build/release/.nothing
 	$(msys2_path)/mingw32/bin/$(compiler) $(dependencies_release_32bit) $(args_release) -o $@
 dependencies_release_64bit = build/manifest-x86_64.o \
                              src/*.cpp
-build/release/SCLTK-x86_64-ucrt.exe: $(dependencies_testing) \
+build/release/$(name)-x86_64-ucrt.exe: $(dependencies_testing) \
                                      $(dependencies_release_64bit) \
                                      make_info \
                                      build/release/.nothing
