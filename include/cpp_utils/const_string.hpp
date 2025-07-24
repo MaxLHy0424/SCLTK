@@ -26,6 +26,10 @@ namespace cpp_utils
         {
             return const_cast< const T* >( storage_.data() );
         }
+        constexpr auto empty() const noexcept
+        {
+            return N == 1;
+        }
         constexpr auto size() const noexcept
         {
             return N - 1;
