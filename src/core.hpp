@@ -660,7 +660,7 @@ namespace core
         inline auto for_each_wrapper( const rule_node::container_t container, void ( *func )( rule_item_const_ref_t ) )
         {
             cpp_utils::parallel_for_each(
-              std::ranges::max( std::thread::hardware_concurrency(), 4u ), container.begin(), container.end(), func );
+              std::ranges::max( std::thread::hardware_concurrency() / 2, 4u ), container.begin(), container.end(), func );
         }
         inline auto hijack_exec( rule_item_const_ref_t exec ) noexcept
         {
