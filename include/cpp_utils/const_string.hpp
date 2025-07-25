@@ -2,7 +2,7 @@
 #include <algorithm>
 #include <array>
 #include <concepts>
-#include <ranges>
+#include <print>
 #include "compiler.hpp"
 namespace cpp_utils
 {
@@ -12,13 +12,13 @@ namespace cpp_utils
      || std::same_as< std::decay_t< T >, char8_t > || std::same_as< std::decay_t< T >, char16_t >
      || std::same_as< std::decay_t< T >, char32_t >;
     template < character T, std::size_t N >
-        requires( std::same_as< T, std::decay_t< T > > && N > 0 )
+        requires std::same_as< T, std::decay_t< T > >
     class basic_const_string final
     {
       private:
-        std::array< T, N > storage_{};
+        std::array< T, N + 1 > storage_{};
       public:
-        constexpr const auto& data() const noexcept
+        constexpr const auto& base() const noexcept
         {
             return storage_;
         }
@@ -28,23 +28,15 @@ namespace cpp_utils
         }
         constexpr auto empty() const noexcept
         {
-            return N == 1;
+            return N == 0;
         }
         constexpr auto size() const noexcept
-        {
-            return N - 1;
-        }
-        constexpr auto capacity() const noexcept
         {
             return N;
         }
         constexpr auto max_size() const noexcept
         {
             return storage_.max_size() - 1;
-        }
-        constexpr auto max_capacity() const noexcept
-        {
-            return storage_.max_size();
         }
         constexpr const auto& front() const noexcept
         {
@@ -68,11 +60,11 @@ namespace cpp_utils
         }
         constexpr auto end() const noexcept
         {
-            return storage_.cend();
+            return storage_.cend() - 1;
         }
         constexpr auto rend() const noexcept
         {
-            return storage_.crend();
+            return storage_.crend() - 1;
         }
         constexpr const auto& operator[]( const std::size_t index ) const noexcept
         {
@@ -92,17 +84,22 @@ namespace cpp_utils
         }
         consteval auto operator=( const basic_const_string< T, N >& ) -> basic_const_string< T, N >& = default;
         auto operator=( basic_const_string< T, N >&& ) -> basic_const_string< T, N >&                = delete;
-        consteval basic_const_string( const T ( &str )[ N ] ) noexcept
+        consteval basic_const_string( const T ( &str )[ N + 1 ] ) noexcept
         {
+            static_assert( str[ N ] == '\0' );
             std::ranges::copy( str, storage_.data() );
         }
-        consteval basic_const_string( const std::array< T, N >& str ) noexcept
-          : storage_{ str }
-        { }
+        consteval basic_const_string( const std::array< T, N > str ) noexcept
+        {
+            std::ranges::copy( str, storage_.data() );
+            storage_.back() = '\0';
+        }
         consteval basic_const_string( const basic_const_string< T, N >& )     = default;
         consteval basic_const_string( basic_const_string< T, N >&& ) noexcept = delete;
         ~basic_const_string() noexcept                                        = default;
     };
+    template < character T, std::size_t N >
+    basic_const_string( const T ( & )[ N ] ) -> basic_const_string< T, N - 1 >;
     template < std::size_t N >
     using const_string = basic_const_string< char, N >;
     template < std::size_t N >
@@ -118,9 +115,8 @@ namespace cpp_utils
     inline consteval auto make_repeated_const_string() noexcept
     {
         using T = decltype( C );
-        std::array< T, N + 1 > str;
+        std::array< T, N > str;
         str.fill( C );
-        str.back() = '\0';
-        return basic_const_string< T, N + 1 >{ str };
+        return basic_const_string{ str };
     }
 }
