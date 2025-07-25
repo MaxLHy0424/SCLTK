@@ -249,6 +249,9 @@ make pack
 > make build -j && make pack
 > ```
 
+> [!WARNING]
+> SCLTK 仓库下所有非二进制文件均以 UTF-8 编码保存, 请勿使用其他文本编码进行保存, 否则可能导致非 ASCII 字符变成乱码.
+
 # ❓ 常见问题
 
 ## 无法执行包含非 ASCII 字符的自定义规则
