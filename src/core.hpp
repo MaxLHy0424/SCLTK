@@ -197,9 +197,9 @@ namespace core
             }
             for ( auto& category : categories_ ) {
                 for ( auto& item : category.items ) {
-                    if ( line == std::format( format_string_, category.raw_name, item.raw_name, true ) ) {
+                    if ( line == std::format( format_string_, category.raw_name, item.raw_name, "enabled" ) ) {
                         item.set( true );
-                    } else if ( line == std::format( format_string_, category.raw_name, item.raw_name, false ) ) {
+                    } else if ( line == std::format( format_string_, category.raw_name, item.raw_name, "disabled" ) ) {
                         item.set( false );
                     }
                 }
@@ -209,7 +209,8 @@ namespace core
         {
             for ( const auto& category : categories_ ) {
                 for ( const auto& item : category.items ) {
-                    out << std::format( format_string_, category.raw_name, item.raw_name, item.get() ) << '\n';
+                    out << std::format( format_string_, category.raw_name, item.raw_name, item.get() ? "enabled" : "disabled" )
+                        << '\n';
                 }
             }
         }
