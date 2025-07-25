@@ -185,9 +185,11 @@ namespace core
               { { "force_show", "* 置顶窗口" }, { "simple_titlebar", "* 极简标题栏" }, { "translucent", "* 半透明" } } },
            { "misc", "杂项", { { "no_optional_hot_reload", "禁用标 * 选项热重载 (不可热重载)" } } } }
         };
-        static constexpr auto format_string_{ "{}.{}: {}" };
-        static constexpr auto value_of_enabled{ "enabled" };
-        static constexpr auto value_of_disabled{ "disabled" };
+        static constexpr auto total_format_style_{ "{}.{}: {}" };
+        static constexpr auto item_format_style_{ "{}.{}" };
+        static constexpr auto item_and_value_format_style_{ "{}: {}" };
+        static constexpr auto value_of_enabled{ "enabled"sv };
+        static constexpr auto value_of_disabled{ "disabled"sv };
         static auto make_swith_button_text_( const auto is_enable )
         {
             return is_enable ? " > 禁用 "sv : " > 启用 "sv;
@@ -199,10 +201,14 @@ namespace core
             }
             for ( auto& category : categories_ ) {
                 for ( auto& item : category.items ) {
-                    if ( line == std::format( format_string_, category.raw_name, item.raw_name, value_of_enabled ) ) {
+                    const auto current_item{ std::format( item_format_style_, category.raw_name, item.raw_name ) };
+                    if ( line == std::format( item_and_value_format_style_, current_item, value_of_enabled ) ) {
                         item.set( true );
-                    } else if ( line == std::format( format_string_, category.raw_name, item.raw_name, value_of_disabled ) ) {
+                        return;
+                    }
+                    if ( line == std::format( item_and_value_format_style_, current_item, value_of_disabled ) ) {
                         item.set( false );
+                        return;
                     }
                 }
             }
@@ -212,7 +218,7 @@ namespace core
             for ( const auto& category : categories_ ) {
                 for ( const auto& item : category.items ) {
                     out << std::format(
-                      format_string_, category.raw_name, item.raw_name, item.get() ? value_of_enabled : value_of_disabled )
+                      total_format_style_, category.raw_name, item.raw_name, item.get() ? value_of_enabled : value_of_disabled )
                         << '\n';
                 }
             }
