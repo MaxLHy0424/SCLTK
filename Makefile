@@ -73,11 +73,11 @@ dependencies_info = manifest.rc \
 build/manifest-i686.o: $(dependencies_info) \
                        make_info \
                        build/.nothing
-	$(msys2_path)/usr/bin/windres.exe -i $< -o $@ $(args_defines) -F pe-i386
+	$(msys2_path)/usr/bin/windres.exe -i $< -o $@ $(args_defines) -c 65001 -F pe-i386
 build/manifest-x86_64.o: $(dependencies_info) \
                          make_info \
                          build/.nothing
-	$(msys2_path)/usr/bin/windres.exe -i $< -o $@ $(args_defines) -F pe-x86-64
+	$(msys2_path)/usr/bin/windres.exe -i $< -o $@ $(args_defines) -c 65001 -F pe-x86-64
 build/.nothing:
 	$(msys2_path)/usr/bin/mkdir.exe build -p
 	$(msys2_path)/usr/bin/touch.exe $@
