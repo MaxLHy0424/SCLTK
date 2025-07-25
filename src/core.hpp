@@ -244,10 +244,6 @@ namespace core
                   cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_green );
             }
         }
-        static auto is_same_raw_name_( const category& category, const std::string_view raw_name )
-        {
-            return raw_name == category.raw_name;
-        }
       public:
         const auto& operator[]( const std::string_view raw_name ) const noexcept
         {
