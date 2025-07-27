@@ -262,13 +262,13 @@ namespace core
             ~basic_option_like_config_node()                                                = default;
         };
     }
-    class crack_restore final
+    class crack_restore_config final
       : public details::config_node_impl
       , public details::basic_option_like_config_node< false >
     {
       public:
         using basic_option_like_config_node::operator[];
-        crack_restore()
+        crack_restore_config()
           : config_node_impl{ "crack_restore" },
             basic_option_like_config_node{
               "破解与恢复",
@@ -277,15 +277,15 @@ namespace core
                 { "fast_mode", "快速模式" } }
             }
         { }
-        ~crack_restore() = default;
+        ~crack_restore_config() = default;
     };
-    class window final
+    class window_config final
       : public details::config_node_impl
       , public details::basic_option_like_config_node< true >
     {
       public:
         using basic_option_like_config_node::operator[];
-        window()
+        window_config()
           : config_node_impl{ "window" },
             basic_option_like_config_node{
               "窗口设置",
@@ -295,9 +295,9 @@ namespace core
                 { "~no_hot_reload", "禁用以上选项热重载 (下次启动时生效)" } }
             }
         { }
-        ~window() = default;
+        ~window_config() = default;
     };
-    class customized_rules final : public details::config_node_impl
+    class custom_rules_config final : public details::config_node_impl
     {
         friend details::config_node_impl;
       private:
@@ -351,7 +351,7 @@ namespace core
                 " 本配置项不对自定义规则的正确性进行检测,\n"
                 " 在修改自定义规则时, 请仔细检查.\n\n"
                 " 使用示例:\n\n"
-                " [customized_rules]\n"
+                " [custom_rules]\n"
                 " exec: abc_frontend\n"
                 " exec: abc_backend\n"
                 " serv: abc_connect\n"
@@ -364,10 +364,10 @@ namespace core
             ui.add_back( "\n[ 自定义规则 ]\n" ).add_back( " > 查看帮助信息 ", show_help_info_ );
         }
       public:
-        customized_rules() noexcept
-          : config_node_impl{ "customized_rules" }
+        custom_rules_config() noexcept
+          : config_node_impl{ "custom_rules" }
         { }
-        ~customized_rules() noexcept = default;
+        ~custom_rules_config() noexcept = default;
     };
     namespace details
     {
@@ -381,7 +381,7 @@ namespace core
             ~is_valid_config_node() = delete;
         };
     }
-    using config_node_types = cpp_utils::type_list< crack_restore, window, customized_rules >;
+    using config_node_types = cpp_utils::type_list< crack_restore_config, window_config, custom_rules_config >;
     static_assert( config_node_types::all_of< details::is_valid_config_node > );
     static_assert( config_node_types::unique::size == config_node_types::size );
     inline config_node_types::apply< std::tuple > config_nodes{};
@@ -628,7 +628,7 @@ namespace core
     }
     inline auto set_console_attrs()
     {
-        const auto& window_options{ std::get< window >( config_nodes ) };
+        const auto& window_options{ std::get< window_config >( config_nodes ) };
         const auto& is_enable_simple_titlebar{ window_options[ "simple_titlebar" ] };
         const auto& is_translucent{ window_options[ "translucent" ] };
         const auto& is_no_hot_reload{ window_options[ "~no_hot_reload" ] };
@@ -645,7 +645,7 @@ namespace core
     }
     inline auto force_show()
     {
-        const auto& window_options{ std::get< window >( config_nodes ) };
+        const auto& window_options{ std::get< window_config >( config_nodes ) };
         const auto& is_no_hot_reload{ window_options[ "~no_hot_reload" ] };
         const auto& is_force_show{ window_options[ "force_show" ] };
         if ( is_no_hot_reload && !is_force_show ) {
@@ -723,7 +723,7 @@ namespace core
         }
         inline auto get_executing_count( const rule_node& rules ) noexcept
         {
-            const auto& options{ std::get< crack_restore >( config_nodes ) };
+            const auto& options{ std::get< crack_restore_config >( config_nodes ) };
             const auto& execs{ rules.execs };
             const auto& servs{ rules.servs };
             switch ( details::executor_mode ) {
@@ -739,7 +739,7 @@ namespace core
         inline auto default_crack( const std::size_t total_count, const rule_node& rules )
         {
             std::print( "{}\n\n", diving_line.c_str() );
-            const auto& options{ std::get< crack_restore >( config_nodes ) };
+            const auto& options{ std::get< crack_restore_config >( config_nodes ) };
             const auto& execs{ rules.execs };
             const auto& servs{ rules.servs };
             auto finished_count{ 0uz };
@@ -773,7 +773,7 @@ namespace core
         }
         inline auto fast_crack( const std::size_t, const rule_node& rules )
         {
-            const auto& options{ std::get< crack_restore >( config_nodes ) };
+            const auto& options{ std::get< crack_restore_config >( config_nodes ) };
             const auto execs{ std::cref( rules.execs ) };
             const auto servs{ std::cref( rules.servs ) };
             using thread_t = std::thread;
@@ -795,7 +795,7 @@ namespace core
         inline auto default_restore( const std::size_t total_count, const rule_node& rules )
         {
             std::print( "{}\n\n", diving_line.c_str() );
-            const auto& options{ std::get< crack_restore >( config_nodes ) };
+            const auto& options{ std::get< crack_restore_config >( config_nodes ) };
             const auto& execs{ rules.execs };
             const auto& servs{ rules.servs };
             auto finished_count{ 0uz };
@@ -824,7 +824,7 @@ namespace core
         }
         inline auto fast_restore( const std::size_t, const rule_node& rules )
         {
-            const auto& options{ std::get< crack_restore >( config_nodes ) };
+            const auto& options{ std::get< crack_restore_config >( config_nodes ) };
             const auto& execs{ rules.execs };
             const auto& servs{ rules.servs };
             if ( options[ "hijack_execs" ] ) {
@@ -839,7 +839,7 @@ namespace core
     inline auto execute_rules( const rule_node& rules )
     {
         const auto executing_count{ details::get_executing_count( rules ) };
-        const auto is_enable_fast_mode{ std::get< crack_restore >( config_nodes )[ "fast_mode" ].get() };
+        const auto is_enable_fast_mode{ std::get< crack_restore_config >( config_nodes )[ "fast_mode" ].get() };
         if ( !is_enable_fast_mode ) {
             constexpr auto max_value{ std::numeric_limits< SHORT >::max() };
             const auto raw_height{ std::add_sat< std::size_t >( executing_count, 13 ) };
