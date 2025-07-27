@@ -269,7 +269,7 @@ namespace core
       public:
         using basic_option_like_config_node::operator[];
         crack_restore()
-          : config_node_impl{"crack_restore"},
+          : config_node_impl{ "crack_restore" },
             basic_option_like_config_node{
               "破解与恢复",
               { { "hijack_execs", "劫持可执行文件" },
@@ -286,7 +286,7 @@ namespace core
       public:
         using basic_option_like_config_node::operator[];
         window()
-          : config_node_impl{"window"},
+          : config_node_impl{ "window" },
             basic_option_like_config_node{
               "窗口设置",
               { { "force_show", "置顶窗口" },
