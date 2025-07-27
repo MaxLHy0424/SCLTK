@@ -289,10 +289,10 @@ namespace core
           : config_node_impl{"window"},
             basic_option_like_config_node{
               "窗口设置",
-              { { "force_show", "* 置顶窗口" },
-                { "simple_titlebar", "* 极简标题栏" },
-                { "translucent", "* 半透明" },
-                { "no_hot_reload", "禁用标 * 选项热重载 (下次启动时生效)" } }
+              { { "force_show", "置顶窗口" },
+                { "simple_titlebar", "极简标题栏" },
+                { "translucent", "半透明" },
+                { "~no_hot_reload", "禁用以上选项热重载 (下次启动时生效)" } }
             }
         { }
         ~window() = default;
@@ -631,7 +631,7 @@ namespace core
         const auto& window_options{ std::get< window >( config_nodes ) };
         const auto& is_enable_simple_titlebar{ window_options[ "simple_titlebar" ] };
         const auto& is_translucent{ window_options[ "translucent" ] };
-        const auto& is_no_hot_reload{ window_options[ "no_hot_reload" ] };
+        const auto& is_no_hot_reload{ window_options[ "~no_hot_reload" ] };
         if ( is_no_hot_reload ) {
             cpp_utils::enable_window_menu( window_handle, !is_enable_simple_titlebar );
             cpp_utils::set_window_translucency( window_handle, is_translucent ? 230 : 255 );
@@ -646,7 +646,7 @@ namespace core
     inline auto force_show()
     {
         const auto& window_options{ std::get< window >( config_nodes ) };
-        const auto& is_no_hot_reload{ window_options[ "no_hot_reload" ] };
+        const auto& is_no_hot_reload{ window_options[ "~no_hot_reload" ] };
         const auto& is_force_show{ window_options[ "force_show" ] };
         if ( is_no_hot_reload && !is_force_show ) {
             return;
