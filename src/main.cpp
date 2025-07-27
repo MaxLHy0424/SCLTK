@@ -14,8 +14,7 @@ auto main() -> int
     ui.set_constraints( true, true );
     std::print( " -> 准备就绪..." );
     core::load_config();
-    std::thread{ core::set_console_attrs }.detach();
-    std::thread{ core::force_show }.detach();
+    core::start_threads();
     ui.add_back( "                    [ 主  页 ]\n\n" )
       .add_back( " < 退出 ", core::quit, cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_intensity )
       .add_back( " < 重启 ", core::relaunch, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
