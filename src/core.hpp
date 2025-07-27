@@ -288,7 +288,7 @@ namespace core
         window()
           : config_node_impl{"window"},
             basic_option_like_config_node{
-              "窗口设定",
+              "窗口设置",
               { { "force_show", "* 置顶窗口" },
                 { "simple_titlebar", "* 极简标题栏" },
                 { "translucent", "* 半透明" },
