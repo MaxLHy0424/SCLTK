@@ -448,7 +448,7 @@ namespace core
               .add_back( " < 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
               .add_back(
                 "\n 配置以行作为单位解析.\n\n"
-                " 以 # 开头的行是注释.\n\n"
+                " 以 # 开头的行是注释, 不进行解析\n\n"
                 " 各个配置项在配置文件中由不同标签区分,\n"
                 " 标签的格式为 [<标签名>],\n"
                 " <标签名> 与中括号间可以有若干空格.\n\n"
