@@ -129,7 +129,7 @@ SCLTK 窗口相关选项.
 
 执行自定义规则破解\/恢复时使用的规则.
 
-配置文件中标签 `[ customized_rules ]` 到下一个标签的部分.
+配置文件中标签 `[ custom_rules ]` 到下一个标签的部分.
 
 一项自定义规则遵循以下格式:
 
@@ -157,7 +157,7 @@ SCLTK 窗口相关选项.
 
 示例:
 ```ini
-[customized_rules]
+[custom_rules]
 exec: abc_frontend
 exec: abc_backend
 serv: abc_connect_service
