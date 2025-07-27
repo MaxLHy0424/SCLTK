@@ -238,17 +238,11 @@ namespace core
           public:
             const auto& operator[]( const key_t_ key ) const noexcept
             {
-                if constexpr ( cpp_utils::is_debugging_build ) {
-                    if ( !options_.contains( key ) ) {
-                        std::print( "cannot find '{}'!\n", key );
-                        std::terminate();
-                    }
-                }
                 return options_.at( key );
             }
             auto& operator[]( const key_t_ key ) noexcept
             {
-                return const_cast< value_t_& >( std::as_const( *this )[ key ] );
+                return options_.at( key );
             }
             auto operator=( const basic_option_like_config_node< Atomic >& ) -> basic_option_like_config_node< Atomic >& = delete;
             auto operator=( basic_option_like_config_node< Atomic >&& ) -> basic_option_like_config_node< Atomic >& = delete;
