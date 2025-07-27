@@ -108,7 +108,7 @@ namespace core
             }
         };
         template < bool Atomic >
-        class basic_option_like_config_node
+        class basic_option_like_config_node : public config_node_impl
         {
             friend config_node_impl;
           private:
@@ -253,8 +253,9 @@ namespace core
             }
             auto operator=( const basic_option_like_config_node< Atomic >& ) -> basic_option_like_config_node< Atomic >& = delete;
             auto operator=( basic_option_like_config_node< Atomic >&& ) -> basic_option_like_config_node< Atomic >& = delete;
-            basic_option_like_config_node( const char* const shown_name, map_t_ options )
-              : shown_name_{ shown_name }
+            basic_option_like_config_node( const char* const self_name, const char* const shown_name, map_t_ options )
+              : config_node_impl{ self_name }
+              , shown_name_{ shown_name }
               , options_{ std::move( options ) }
             { }
             basic_option_like_config_node( const basic_option_like_config_node< Atomic >& ) = delete;
@@ -262,38 +263,34 @@ namespace core
             ~basic_option_like_config_node()                                                = default;
         };
     }
-    class crack_restore_config final
-      : public details::config_node_impl
-      , public details::basic_option_like_config_node< false >
+    class crack_restore_config final : public details::basic_option_like_config_node< false >
     {
       public:
         using basic_option_like_config_node::operator[];
         crack_restore_config()
-          : config_node_impl{ "crack_restore" },
-            basic_option_like_config_node{
+          : basic_option_like_config_node{
+              "crack_restore",
               "破解与恢复",
               { { "hijack_execs", "劫持可执行文件" },
                 { "set_serv_startup_types", "设置服务启动类型" },
                 { "fast_mode", "快速模式" } }
-            }
+        }
         { }
         ~crack_restore_config() = default;
     };
-    class window_config final
-      : public details::config_node_impl
-      , public details::basic_option_like_config_node< true >
+    class window_config final : public details::basic_option_like_config_node< true >
     {
       public:
         using basic_option_like_config_node::operator[];
         window_config()
-          : config_node_impl{ "window" },
-            basic_option_like_config_node{
+          : basic_option_like_config_node{
+              "window",
               "窗口设置",
               { { "force_show", "置顶窗口" },
                 { "simple_titlebar", "极简标题栏" },
                 { "translucent", "半透明" },
                 { "~no_hot_reload", "禁用以上选项热重载 (下次启动时生效)" } }
-            }
+        }
         { }
         ~window_config() = default;
     };
