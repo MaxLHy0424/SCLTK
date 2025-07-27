@@ -626,46 +626,57 @@ namespace core
         ui.show();
         return func_back;
     }
-    inline auto set_console_attrs()
+    namespace details
     {
-        const auto& window_options{ std::get< window_config >( config_nodes ) };
-        const auto& is_enable_simple_titlebar{ window_options[ "simple_titlebar" ] };
-        const auto& is_translucent{ window_options[ "translucent" ] };
-        const auto& is_no_hot_reload{ window_options[ "~no_hot_reload" ] };
-        if ( is_no_hot_reload ) {
-            cpp_utils::enable_window_menu( window_handle, !is_enable_simple_titlebar );
-            cpp_utils::set_window_translucency( window_handle, is_translucent ? 230 : 255 );
-            return;
-        }
-        while ( true ) {
-            cpp_utils::enable_window_menu( window_handle, !is_enable_simple_titlebar );
-            cpp_utils::set_window_translucency( window_handle, is_translucent ? 230 : 255 );
-            std::this_thread::sleep_for( default_thread_sleep_time );
-        }
-    }
-    inline auto force_show()
-    {
-        const auto& window_options{ std::get< window_config >( config_nodes ) };
-        const auto& is_no_hot_reload{ window_options[ "~no_hot_reload" ] };
-        const auto& is_force_show{ window_options[ "force_show" ] };
-        if ( is_no_hot_reload && !is_force_show ) {
-            return;
-        }
-        constexpr auto sleep_time{ 100ms };
-        const auto current_thread_id{ GetCurrentThreadId() };
-        const auto current_window_thread_process_id{ GetWindowThreadProcessId( window_handle, nullptr ) };
-        if ( is_no_hot_reload ) {
-            cpp_utils::force_show_window_forever( window_handle, current_thread_id, current_window_thread_process_id, sleep_time );
-            return;
-        }
-        while ( true ) {
-            if ( !is_force_show ) {
-                cpp_utils::cancel_force_show_window( window_handle );
-                std::this_thread::sleep_for( default_thread_sleep_time );
-                continue;
+        inline auto set_console_attrs()
+        {
+            const auto& window_options{ std::get< window_config >( config_nodes ) };
+            const auto& is_enable_simple_titlebar{ window_options[ "simple_titlebar" ] };
+            const auto& is_translucent{ window_options[ "translucent" ] };
+            const auto& is_no_hot_reload{ window_options[ "~no_hot_reload" ] };
+            if ( is_no_hot_reload ) {
+                cpp_utils::enable_window_menu( window_handle, !is_enable_simple_titlebar );
+                cpp_utils::set_window_translucency( window_handle, is_translucent ? 230 : 255 );
+                return;
             }
-            cpp_utils::force_show_window( window_handle, current_thread_id, current_window_thread_process_id );
-            std::this_thread::sleep_for( sleep_time );
+            while ( true ) {
+                cpp_utils::enable_window_menu( window_handle, !is_enable_simple_titlebar );
+                cpp_utils::set_window_translucency( window_handle, is_translucent ? 230 : 255 );
+                std::this_thread::sleep_for( default_thread_sleep_time );
+            }
+        }
+        inline auto force_show()
+        {
+            const auto& window_options{ std::get< window_config >( config_nodes ) };
+            const auto& is_no_hot_reload{ window_options[ "~no_hot_reload" ] };
+            const auto& is_force_show{ window_options[ "force_show" ] };
+            if ( is_no_hot_reload && !is_force_show ) {
+                return;
+            }
+            constexpr auto sleep_time{ 100ms };
+            const auto current_thread_id{ GetCurrentThreadId() };
+            const auto current_window_thread_process_id{ GetWindowThreadProcessId( window_handle, nullptr ) };
+            if ( is_no_hot_reload ) {
+                cpp_utils::force_show_window_forever(
+                  window_handle, current_thread_id, current_window_thread_process_id, sleep_time );
+                return;
+            }
+            while ( true ) {
+                if ( !is_force_show ) {
+                    cpp_utils::cancel_force_show_window( window_handle );
+                    std::this_thread::sleep_for( default_thread_sleep_time );
+                    continue;
+                }
+                cpp_utils::force_show_window( window_handle, current_thread_id, current_window_thread_process_id );
+                std::this_thread::sleep_for( sleep_time );
+            }
+        }
+        constexpr std::array threads_func{ details::set_console_attrs, details::force_show };
+    }
+    inline auto start_threads() noexcept
+    {
+        for ( const auto func : details::threads_func ) {
+            std::thread{ func }.detach();
         }
     }
     namespace details
