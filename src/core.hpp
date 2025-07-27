@@ -112,7 +112,6 @@ namespace core
         {
             friend config_node_impl;
           private:
-            using item_value_t_ = std::conditional_t< Atomic, std::atomic< bool >, bool >;
             class item_ final
             {
               private:
@@ -124,7 +123,7 @@ namespace core
                         return value;
                     }
                 }
-                item_value_t_ value_{ false };
+                std::conditional_t< Atomic, std::atomic< bool >, bool > value_{ false };
               public:
                 const char* description{ nullptr };
                 auto get() const noexcept
@@ -246,11 +245,11 @@ namespace core
                         std::terminate();
                     }
                 }
-                return options_.at( key ).value;
+                return options_.at( key );
             }
             auto& operator[]( const key_t_ key ) noexcept
             {
-                return const_cast< item_value_t_& >( std::as_const( *this )[ key ] );
+                return const_cast< value_t_& >( std::as_const( *this )[ key ] );
             }
             auto operator=( const basic_option_like_config_node< Atomic >& ) -> basic_option_like_config_node< Atomic >& = delete;
             auto operator=( basic_option_like_config_node< Atomic >&& ) -> basic_option_like_config_node< Atomic >& = delete;
@@ -297,177 +296,6 @@ namespace core
             }
         { }
         ~window() = default;
-    };
-    class options final : public details::config_node_impl
-    {
-        friend details::config_node_impl;
-      public:
-        class item final
-        {
-          private:
-            std::atomic< bool > value_{ false };
-          public:
-            const char* raw_name;
-            const char* shown_name;
-            auto set( const bool value ) noexcept
-            {
-                value_.store( value, std::memory_order_release );
-            }
-            auto get() const noexcept
-            {
-                return value_.load( std::memory_order_acquire );
-            }
-            operator bool() const noexcept
-            {
-                return get();
-            }
-            auto operator=( const item& ) -> item&     = delete;
-            auto operator=( item&& ) noexcept -> item& = delete;
-            item( const char* const raw_name, const char* const shown_name ) noexcept
-              : raw_name{ raw_name }
-              , shown_name{ shown_name }
-            { }
-            item( const item& src ) noexcept
-              : value_{ src }
-              , raw_name{ src.raw_name }
-              , shown_name{ src.shown_name }
-            { }
-            item( item&& src ) noexcept
-              : value_{ src }
-              , raw_name{ src.raw_name }
-              , shown_name{ src.shown_name }
-            { }
-            ~item() noexcept = default;
-        };
-        class category final
-        {
-          public:
-            const char* raw_name;
-            const char* shown_name;
-            std::vector< item > items;
-            const auto& operator[]( const std::string_view raw_name ) const noexcept
-            {
-                for ( const auto& item : items ) {
-                    if ( raw_name == item.raw_name ) {
-                        return item;
-                    }
-                }
-                if constexpr ( cpp_utils::is_debugging_build ) {
-                    std::print( "'{}' does not exist!", raw_name );
-                    std::terminate();
-                } else {
-                    std::unreachable();
-                }
-            }
-            auto& operator[]( const std::string_view raw_name ) noexcept
-            {
-                return const_cast< item& >( std::as_const( *this )[ raw_name ] );
-            }
-        };
-      private:
-        std::vector< category > categories_{
-          { { "crack_restore",
-              "破解与恢复",
-              { { "hijack_execs", "劫持可执行文件" },
-                { "set_serv_startup_types", "设置服务启动类型" },
-                { "fast_mode", "快速模式" } } },
-           { "window",
-              "窗口显示",
-              { { "force_show", "* 置顶窗口" }, { "simple_titlebar", "* 极简标题栏" }, { "translucent", "* 半透明" } } },
-           { "misc", "杂项", { { "no_optional_hot_reload", "禁用标 * 选项热重载 (不可热重载)" } } } }
-        };
-        static constexpr auto total_format_style_{ "{}.{}: {}" };
-        static constexpr auto item_format_style_{ "{}.{}" };
-        static constexpr auto item_and_value_format_style_{ "{}: {}" };
-        static constexpr auto value_of_enabled{ "enabled"sv };
-        static constexpr auto value_of_disabled{ "disabled"sv };
-        static auto make_swith_button_text_( const auto is_enable )
-        {
-            return is_enable ? " > 禁用 "sv : " > 启用 "sv;
-        }
-        auto load_( const bool is_reload, const std::string_view line )
-        {
-            if ( is_reload ) {
-                return;
-            }
-            for ( auto& category : categories_ ) {
-                for ( auto& item : category.items ) {
-                    const auto current_item{ std::format( item_format_style_, category.raw_name, item.raw_name ) };
-                    if ( line == std::format( item_and_value_format_style_, current_item, value_of_enabled ) ) {
-                        item.set( true );
-                        return;
-                    }
-                    if ( line == std::format( item_and_value_format_style_, current_item, value_of_disabled ) ) {
-                        item.set( false );
-                        return;
-                    }
-                }
-            }
-        }
-        auto sync_( std::ofstream& out )
-        {
-            for ( const auto& category : categories_ ) {
-                for ( const auto& item : category.items ) {
-                    out << std::format(
-                      total_format_style_, category.raw_name, item.raw_name, item.get() ? value_of_enabled : value_of_disabled )
-                        << '\n';
-                }
-            }
-        }
-        static auto flip_item_value_( const ui_func_args args, item& item )
-        {
-            item.set( !item.get() );
-            args.parent_ui.edit_text( args.node_index, make_swith_button_text_( item ) );
-            return func_back;
-        }
-        static auto make_category_ui_( category& category )
-        {
-            cpp_utils::console_ui ui;
-            ui.add_back( "                    [ 配  置 ]\n\n" )
-              .add_back(
-                std::format( " < 折叠 {} ", category.shown_name ), quit,
-                cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity );
-            for ( auto& item : category.items ) {
-                ui.add_back( std::format( "\n[ {} ]\n", item.shown_name ) )
-                  .add_back(
-                    make_swith_button_text_( item ), std::bind_back( flip_item_value_, std::ref( item ) ),
-                    cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_green );
-            }
-            ui.show();
-            return func_back;
-        }
-        auto edit_ui_( cpp_utils::console_ui& ui )
-        {
-            ui.add_back( "\n[ 选项 ]\n" );
-            for ( auto& category : categories_ ) {
-                ui.add_back(
-                  std::format( " > {} ", category.shown_name ), std::bind_back( make_category_ui_, std::ref( category ) ),
-                  cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_green );
-            }
-        }
-      public:
-        const auto& operator[]( const std::string_view raw_name ) const noexcept
-        {
-            for ( const auto& category : categories_ ) {
-                if ( raw_name == category.raw_name ) {
-                    return category;
-                }
-            }
-            if constexpr ( cpp_utils::is_debugging_build ) {
-                std::print( "'{}' does not exist!", raw_name );
-                std::terminate();
-            } else {
-                std::unreachable();
-            }
-        }
-        auto& operator[]( const std::string_view raw_name ) noexcept
-        {
-            return const_cast< category& >( std::as_const( *this )[ raw_name ] );
-        }
-        options() noexcept
-          : config_node_impl{ "options" }
-        { }
-        ~options() noexcept = default;
     };
     class customized_rules final : public details::config_node_impl
     {
@@ -553,14 +381,12 @@ namespace core
             ~is_valid_config_node() = delete;
         };
     }
-    using config_node_types = cpp_utils::type_list< crack_restore, window, options, customized_rules >;
+    using config_node_types = cpp_utils::type_list< crack_restore, window, customized_rules >;
     static_assert( config_node_types::all_of< details::is_valid_config_node > );
     static_assert( config_node_types::unique::size == config_node_types::size );
     inline config_node_types::apply< std::tuple > config_nodes{};
-    auto& options_set{ std::get< options >( config_nodes ) };
     namespace details
     {
-        inline const auto& is_no_optional_hot_reload{ options_set[ "misc" ][ "no_optional_hot_reload" ] };
         inline auto get_config_node_raw_name_by_tag( std::string_view str ) noexcept
         {
             str = str.substr( 1, str.size() - 2 );
@@ -802,10 +628,11 @@ namespace core
     }
     inline auto set_console_attrs()
     {
-        const auto& window_options{ options_set[ "window" ] };
+        const auto& window_options{ std::get< window >( config_nodes ) };
         const auto& is_enable_simple_titlebar{ window_options[ "simple_titlebar" ] };
         const auto& is_translucent{ window_options[ "translucent" ] };
-        if ( details::is_no_optional_hot_reload ) {
+        const auto& is_no_hot_reload{ window_options[ "no_hot_reload" ] };
+        if ( is_no_hot_reload ) {
             cpp_utils::enable_window_menu( window_handle, !is_enable_simple_titlebar );
             cpp_utils::set_window_translucency( window_handle, is_translucent ? 230 : 255 );
             return;
@@ -818,14 +645,16 @@ namespace core
     }
     inline auto force_show()
     {
-        const auto& is_force_show{ options_set[ "window" ][ "force_show" ] };
-        if ( details::is_no_optional_hot_reload && !is_force_show ) {
+        const auto& window_options{ std::get< window >( config_nodes ) };
+        const auto& is_no_hot_reload{ window_options[ "no_hot_reload" ] };
+        const auto& is_force_show{ window_options[ "force_show" ] };
+        if ( is_no_hot_reload && !is_force_show ) {
             return;
         }
         constexpr auto sleep_time{ 100ms };
         const auto current_thread_id{ GetCurrentThreadId() };
         const auto current_window_thread_process_id{ GetWindowThreadProcessId( window_handle, nullptr ) };
-        if ( details::is_no_optional_hot_reload ) {
+        if ( is_no_hot_reload ) {
             cpp_utils::force_show_window_forever( window_handle, current_thread_id, current_window_thread_process_id, sleep_time );
             return;
         }
@@ -844,10 +673,6 @@ namespace core
         using rule_item_const_ref_t = cpp_utils::add_const_lvalue_reference_t< rule_node::item_t >;
         inline constexpr auto default_executing_sleep_time{ 10ms };
         static_assert( default_executing_sleep_time.count() != 0 );
-        inline const auto& option_crack_restore{ options_set[ "crack_restore" ] };
-        inline const auto& is_hijack_execs{ option_crack_restore[ "hijack_execs" ] };
-        inline const auto& is_set_serv_startup_types{ option_crack_restore[ "set_serv_startup_types" ] };
-        inline const auto& is_enable_fast_mode{ option_crack_restore[ "fast_mode" ] };
         enum class rule_executing : bool
         {
             crack,
@@ -898,26 +723,28 @@ namespace core
         }
         inline auto get_executing_count( const rule_node& rules ) noexcept
         {
+            const auto& options{ std::get< crack_restore >( config_nodes ) };
             const auto& execs{ rules.execs };
             const auto& servs{ rules.servs };
             switch ( details::executor_mode ) {
                 case details::rule_executing::crack :
-                    return execs.size() * ( details::is_hijack_execs ? 2 : 1 )
-                         + servs.size() * ( details::is_set_serv_startup_types ? 2 : 1 );
+                    return execs.size() * ( options[ "hijack_execs" ] ? 2 : 1 )
+                         + servs.size() * ( options[ "set_serv_startup_types" ] ? 2 : 1 );
                 case details::rule_executing::restore :
-                    return ( details::is_hijack_execs ? execs.size() : 0 )
-                         + servs.size() * ( details::is_set_serv_startup_types ? 2 : 1 );
+                    return ( options[ "hijack_execs" ] ? execs.size() : 0 )
+                         + servs.size() * ( options[ "set_serv_startup_types" ] ? 2 : 1 );
                 default : std::unreachable();
             }
         }
         inline auto default_crack( const std::size_t total_count, const rule_node& rules )
         {
             std::print( "{}\n\n", diving_line.c_str() );
+            const auto& options{ std::get< crack_restore >( config_nodes ) };
             const auto& execs{ rules.execs };
             const auto& servs{ rules.servs };
             auto finished_count{ 0uz };
             const auto digits_of_total{ cpp_utils::count_digits( total_count ) };
-            if ( details::is_hijack_execs ) {
+            if ( options[ "hijack_execs" ] ) {
                 for ( const auto& exec : execs ) {
                     std::print(
                       "{} 劫持文件 {}.exe.\n", details::make_progress( ++finished_count, total_count, digits_of_total ), exec );
@@ -925,7 +752,7 @@ namespace core
                     std::this_thread::sleep_for( default_executing_sleep_time );
                 }
             }
-            if ( details::is_set_serv_startup_types ) {
+            if ( options[ "set_serv_startup_types" ] ) {
                 for ( const auto& serv : servs ) {
                     std::print( "{} 禁用服务 {}.\n", details::make_progress( ++finished_count, total_count, digits_of_total ), serv );
                     disable_serv( serv );
@@ -946,14 +773,15 @@ namespace core
         }
         inline auto fast_crack( const std::size_t, const rule_node& rules )
         {
+            const auto& options{ std::get< crack_restore >( config_nodes ) };
             const auto execs{ std::cref( rules.execs ) };
             const auto servs{ std::cref( rules.servs ) };
             using thread_t = std::thread;
             std::array< thread_t, 4 > threads;
-            if ( details::is_hijack_execs ) {
+            if ( options[ "hijack_execs" ] ) {
                 threads[ 0 ] = thread_t{ for_each_wrapper, execs, hijack_exec };
             }
-            if ( details::is_set_serv_startup_types ) {
+            if ( options[ "set_serv_startup_types" ] ) {
                 threads[ 1 ] = std::thread{ for_each_wrapper, servs, disable_serv };
             }
             threads[ 2 ] = thread_t{ for_each_wrapper, execs, kill_exec };
@@ -967,11 +795,12 @@ namespace core
         inline auto default_restore( const std::size_t total_count, const rule_node& rules )
         {
             std::print( "{}\n\n", diving_line.c_str() );
+            const auto& options{ std::get< crack_restore >( config_nodes ) };
             const auto& execs{ rules.execs };
             const auto& servs{ rules.servs };
             auto finished_count{ 0uz };
             const auto digits_of_total{ cpp_utils::count_digits( total_count ) };
-            if ( details::is_hijack_execs ) {
+            if ( options[ "hijack_execs" ] ) {
                 for ( const auto& exec : execs ) {
                     std::print(
                       "{} 撤销劫持 {}.exe.\n", details::make_progress( ++finished_count, total_count, digits_of_total ), exec );
@@ -979,7 +808,7 @@ namespace core
                     std::this_thread::sleep_for( default_executing_sleep_time );
                 }
             }
-            if ( details::is_set_serv_startup_types ) {
+            if ( options[ "set_serv_startup_types" ] ) {
                 for ( const auto& serv : servs ) {
                     std::print( "{} 启用服务 {}.\n", details::make_progress( ++finished_count, total_count, digits_of_total ), serv );
                     enable_serv( serv );
@@ -995,12 +824,13 @@ namespace core
         }
         inline auto fast_restore( const std::size_t, const rule_node& rules )
         {
+            const auto& options{ std::get< crack_restore >( config_nodes ) };
             const auto& execs{ rules.execs };
             const auto& servs{ rules.servs };
-            if ( details::is_hijack_execs ) {
+            if ( options[ "hijack_execs" ] ) {
                 for_each_wrapper( execs, undo_hijack_exec );
             }
-            if ( details::is_set_serv_startup_types ) {
+            if ( options[ "set_serv_startup_types" ] ) {
                 for_each_wrapper( servs, enable_serv );
             }
             for_each_wrapper( servs, start_serv );
@@ -1009,7 +839,8 @@ namespace core
     inline auto execute_rules( const rule_node& rules )
     {
         const auto executing_count{ details::get_executing_count( rules ) };
-        if ( !details::is_enable_fast_mode ) {
+        const auto is_enable_fast_mode{ std::get< crack_restore >( config_nodes )[ "fast_mode" ].get() };
+        if ( !is_enable_fast_mode ) {
             constexpr auto max_value{ std::numeric_limits< SHORT >::max() };
             const auto raw_height{ std::add_sat< std::size_t >( executing_count, 13 ) };
             const auto buffer_height{ raw_height > max_value ? max_value : static_cast< SHORT >( raw_height ) };
@@ -1032,10 +863,10 @@ namespace core
             case details::rule_executing::restore : f = { details::default_restore, details::fast_restore }; break;
             default : std::unreachable();
         }
-        f[ details::is_enable_fast_mode ]( executing_count, rules );
+        f[ is_enable_fast_mode ]( executing_count, rules );
         std::print( " (i) 操作已完成." );
         details::press_any_key_to_return();
-        if ( !details::is_enable_fast_mode ) {
+        if ( !is_enable_fast_mode ) {
             cpp_utils::set_console_size( window_handle, std_output_handle, console_width, console_height );
         }
         return func_back;
