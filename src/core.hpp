@@ -17,7 +17,7 @@ namespace core
     inline constexpr SHORT console_width{ 50 };
     inline constexpr SHORT console_height{ 25 };
     inline constexpr UINT charset_id{ 936 };
-    inline constexpr auto default_thread_sleep_time{ 500ms };
+    inline constexpr auto default_thread_sleep_time{ 200ms };
     inline constexpr auto config_file_name{ "config.ini" };
     inline constexpr auto func_back{ cpp_utils::console_ui::func_back };
     inline constexpr auto func_exit{ cpp_utils::console_ui::func_exit };
