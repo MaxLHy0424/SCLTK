@@ -196,7 +196,7 @@ namespace core
                     value = false;
                 }
                 if ( options_.contains( key ) ) {
-                    options_[ key ].set( value );
+                    options_.at( key ).set( value );
                 }
             }
             auto sync_( std::ofstream& out )
@@ -221,11 +221,10 @@ namespace core
                 ui.add_back( "                    [ 配  置 ]\n\n" )
                   .add_back(
                     " < 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity );
-                for ( const auto& [ _, item ] : options ) {
+                for ( auto&& [ _, item ] : options ) {
                     ui.add_back( std::format( "\n[ {} ]\n", item.description ) )
                       .add_back(
-                        make_swith_button_text_( item ),
-                        std::bind_back( flip_item_value_, std::ref( const_cast< decltype( item )& >( item ) ) ),
+                        make_swith_button_text_( item ), std::bind_back( flip_item_value_, std::ref( item ) ),
                         cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_green );
                 }
                 ui.show();
