@@ -5,6 +5,7 @@
 #include <cpp_utils/multithread.hpp>
 #include <cpp_utils/windows_app_tools.hpp>
 #include <cpp_utils/windows_console_ui.hpp>
+#include <flat_map>
 #include <fstream>
 #include <limits>
 #include <numeric>
@@ -106,7 +107,197 @@ namespace core
                 }
             }
         };
+        template < bool Atomic >
+        class basic_option_like_config_node
+        {
+            friend config_node_impl;
+          private:
+            using item_value_t_ = std::conditional_t< Atomic, std::atomic< bool >, bool >;
+            class item_ final
+            {
+              private:
+                static auto get_value_( const auto& value ) noexcept
+                {
+                    if constexpr ( Atomic ) {
+                        return value.load( std::memory_order_acquire );
+                    } else {
+                        return value;
+                    }
+                }
+                item_value_t_ value_{ false };
+              public:
+                const char* description{ nullptr };
+                auto get() const noexcept
+                {
+                    return get_value_( value_ );
+                }
+                auto set( const bool value ) noexcept
+                {
+                    if constexpr ( Atomic ) {
+                        value_.store( value, std::memory_order_release );
+                    } else {
+                        value_ = value;
+                    }
+                }
+                operator bool() const noexcept
+                {
+                    return get();
+                }
+                auto& operator=( const item_& src )
+                {
+                    description = src.description;
+                    value_      = get_value_( src.value_ );
+                    return *this;
+                }
+                auto& operator=( item_&& src )
+                {
+                    description     = src.description;
+                    value_          = get_value_( src.value_ );
+                    src.description = {};
+                    src.value_      = {};
+                    return *this;
+                }
+                item_() = default;
+                item_( const char* const description )
+                  : description{ description }
+                { }
+                item_( const item_& src )
+                  : value_{ get_value_( src.value_ ) }
+                  , description{ src.description }
+                { }
+                item_( item_&& src )
+                  : value_{ get_value_( src.value_ ) }
+                  , description{ src.description }
+                {
+                    src.description = {};
+                    src.value_      = {};
+                }
+                ~item_() = default;
+            };
+            using key_t_   = std::string_view;
+            using value_t_ = item_;
+            using map_t_   = std::flat_map< key_t_, value_t_ >;
+            const char* shown_name_;
+            map_t_ options_;
+            static constexpr auto str_of_the_enabled{ ": enabled"sv };
+            static constexpr auto str_of_the_disabled{ ": disabled"sv };
+            auto load_( const bool is_reload, const std::string_view line )
+            {
+                if ( is_reload ) {
+                    return;
+                }
+                key_t_ key;
+                bool value;
+                if ( line.ends_with( str_of_the_enabled ) ) {
+                    key   = line.substr( 0, line.size() - str_of_the_enabled.size() );
+                    value = true;
+                }
+                if ( line.ends_with( str_of_the_disabled ) ) {
+                    key   = line.substr( 0, line.size() - str_of_the_disabled.size() );
+                    value = false;
+                }
+                if ( options_.contains( key ) ) {
+                    options_[ key ].set( value );
+                }
+            }
+            auto sync_( std::ofstream& out )
+            {
+                for ( const auto& [ key, item ] : options_ ) {
+                    out << key << ( item.get() == true ? str_of_the_enabled : str_of_the_disabled ) << '\n';
+                }
+            }
+            static auto make_swith_button_text_( const value_t_& item )
+            {
+                return item.get() == true ? " > 禁用 "sv : " > 启用 "sv;
+            }
+            static auto flip_item_value_( const ui_func_args args, value_t_& item )
+            {
+                item.set( !item.get() );
+                args.parent_ui.edit_text( args.node_index, make_swith_button_text_( item ) );
+                return func_back;
+            }
+            static auto make_option_editor_ui_( map_t_& options )
+            {
+                cpp_utils::console_ui ui;
+                ui.add_back( "                    [ 配  置 ]\n\n" )
+                  .add_back(
+                    " < 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity );
+                for ( const auto& [ _, item ] : options ) {
+                    ui.add_back( std::format( "\n[ {} ]\n", item.description ) )
+                      .add_back(
+                        make_swith_button_text_( item ),
+                        std::bind_back( flip_item_value_, std::ref( const_cast< decltype( item )& >( item ) ) ),
+                        cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_green );
+                }
+                ui.show();
+                return func_back;
+            }
+            auto edit_ui_( cpp_utils::console_ui& ui )
+            {
+                ui.add_back( std::format( "\n[ {} ]\n", shown_name_ ) )
+                  .add_back( " > 修改设定 ", std::bind_back( make_option_editor_ui_, std::ref( options_ ) ) );
+            }
+          public:
+            const auto& operator[]( const key_t_ key ) const noexcept
+            {
+                if constexpr ( cpp_utils::is_debugging_build ) {
+                    if ( !options_.contains( key ) ) {
+                        std::print( "cannot find '{}'!\n", key );
+                        std::terminate();
+                    }
+                }
+                return options_.at( key ).value;
+            }
+            auto& operator[]( const key_t_ key ) noexcept
+            {
+                return const_cast< item_value_t_& >( std::as_const( *this )[ key ] );
+            }
+            auto operator=( const basic_option_like_config_node< Atomic >& ) -> basic_option_like_config_node< Atomic >& = delete;
+            auto operator=( basic_option_like_config_node< Atomic >&& ) -> basic_option_like_config_node< Atomic >& = delete;
+            basic_option_like_config_node( const char* const shown_name, map_t_ options )
+              : shown_name_{ shown_name }
+              , options_{ std::move( options ) }
+            { }
+            basic_option_like_config_node( const basic_option_like_config_node< Atomic >& ) = delete;
+            basic_option_like_config_node( basic_option_like_config_node< Atomic >&& )      = delete;
+            ~basic_option_like_config_node()                                                = default;
+        };
     }
+    class crack_restore final
+      : public details::config_node_impl
+      , public details::basic_option_like_config_node< false >
+    {
+      public:
+        using basic_option_like_config_node::operator[];
+        crack_restore()
+          : config_node_impl{"crack_restore"},
+            basic_option_like_config_node{
+              "破解与恢复",
+              { { "hijack_execs", "劫持可执行文件" },
+                { "set_serv_startup_types", "设置服务启动类型" },
+                { "fast_mode", "快速模式" } }
+            }
+        { }
+        ~crack_restore() = default;
+    };
+    class window final
+      : public details::config_node_impl
+      , public details::basic_option_like_config_node< true >
+    {
+      public:
+        using basic_option_like_config_node::operator[];
+        window()
+          : config_node_impl{"window"},
+            basic_option_like_config_node{
+              "窗口设定",
+              { { "force_show", "* 置顶窗口" },
+                { "simple_titlebar", "* 极简标题栏" },
+                { "translucent", "* 半透明" },
+                { "no_hot_reload", "禁用标 * 选项热重载 (下次启动时生效)" } }
+            }
+        { }
+        ~window() = default;
+    };
     class options final : public details::config_node_impl
     {
         friend details::config_node_impl;
@@ -362,7 +553,7 @@ namespace core
             ~is_valid_config_node() = delete;
         };
     }
-    using config_node_types = cpp_utils::type_list< options, customized_rules >;
+    using config_node_types = cpp_utils::type_list< crack_restore, window, options, customized_rules >;
     static_assert( config_node_types::all_of< details::is_valid_config_node > );
     static_assert( config_node_types::unique::size == config_node_types::size );
     inline config_node_types::apply< std::tuple > config_nodes{};
