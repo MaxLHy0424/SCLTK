@@ -259,7 +259,6 @@ namespace core
     class crack_restore_config final : public details::basic_option_like_config_node< false >
     {
       public:
-        using basic_option_like_config_node::operator[];
         crack_restore_config()
           : basic_option_like_config_node{
               "crack_restore",
@@ -274,7 +273,6 @@ namespace core
     class window_config final : public details::basic_option_like_config_node< true >
     {
       public:
-        using basic_option_like_config_node::operator[];
         window_config()
           : basic_option_like_config_node{
               "window",
