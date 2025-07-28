@@ -54,6 +54,10 @@ namespace cpp_utils
         {
             return data_ <=> src.data_;
         }
+        constexpr auto operator<=>( const T n ) const noexcept
+        {
+            return data_ <=> data_;
+        }
         constexpr auto operator+( const sat_num< T > src ) const noexcept
         {
             return sat_num< T >{ std::add_sat( data_, src.data_ ) };
@@ -88,6 +92,47 @@ namespace cpp_utils
         constexpr auto& operator/=( const sat_num< T > src ) noexcept
         {
             data_ = std::div_sat( data_, src.data_ );
+            return *this;
+        }
+        constexpr auto& operator=( const sat_num< T >& src ) noexcept
+        {
+            data_ = src.data_;
+            return *this;
+        }
+        constexpr auto operator+( const T n ) const noexcept
+        {
+            return sat_num< T >{ std::add_sat( data_, n ) };
+        }
+        constexpr auto operator-( const T n ) const noexcept
+        {
+            return sat_num< T >{ std::sub_sat( data_, n ) };
+        }
+        constexpr auto operator*( const T n ) const noexcept
+        {
+            return sat_num< T >{ std::mul_sat( data_, n ) };
+        }
+        constexpr auto operator/( const T n ) const noexcept
+        {
+            return sat_num< T >{ std::div_sat( data_, n ) };
+        }
+        constexpr auto& operator+=( const T n ) noexcept
+        {
+            data_ = std::add_sat( data_, n );
+            return *this;
+        }
+        constexpr auto& operator-=( const T n ) noexcept
+        {
+            data_ = std::sub_sat( data_, n );
+            return *this;
+        }
+        constexpr auto& operator*=( const T n ) noexcept
+        {
+            data_ = std::mul_sat( data_, n );
+            return *this;
+        }
+        constexpr auto& operator/=( const T n ) noexcept
+        {
+            data_ = std::div_sat( data_, n );
             return *this;
         }
         constexpr auto& operator=( const sat_num< T >& src ) noexcept
