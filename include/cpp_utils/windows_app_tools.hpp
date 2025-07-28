@@ -423,16 +423,24 @@ namespace cpp_utils
     {
         enable_virtual_terminal_processing( GetStdHandle( STD_OUTPUT_HANDLE ), is_enable );
     }
-    inline auto clear_console( const HANDLE std_output_handle ) noexcept
+    inline auto clear_console_fast( const HANDLE std_output_handle )
     {
-        enable_virtual_terminal_processing( std_output_handle, true );
-        std::print( "\033[H\033[2J" );
         CONSOLE_SCREEN_BUFFER_INFO console_data;
         GetConsoleScreenBufferInfo( std_output_handle, &console_data );
         const auto [ x, y ]{ console_data.dwSize };
         SetConsoleCursorPosition( std_output_handle, { 0, 0 } );
         std::print( "{}", std::string( std::mul_sat< unsigned >( x, y ), ' ' ) );
         SetConsoleCursorPosition( std_output_handle, { 0, 0 } );
+    }
+    inline auto clear_current_console_fast()
+    {
+        clear_console_fast( GetStdHandle( STD_OUTPUT_HANDLE ) );
+    }
+    inline auto clear_console( const HANDLE std_output_handle ) noexcept
+    {
+        enable_virtual_terminal_processing( std_output_handle, true );
+        std::print( "\033[H\033[2J" );
+        clear_console_fast( std_output_handle );
     }
     inline auto clear_current_console() noexcept
     {
