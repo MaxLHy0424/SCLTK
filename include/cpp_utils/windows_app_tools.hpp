@@ -10,6 +10,7 @@
 #include <concepts>
 #include <functional>
 #include <memory>
+#include <numeric>
 #include <print>
 #include <string>
 #include <thread>
@@ -429,7 +430,7 @@ namespace cpp_utils
         CONSOLE_SCREEN_BUFFER_INFO console_data;
         GetConsoleScreenBufferInfo( std_output_handle, &console_data );
         const auto [ x, y ]{ console_data.dwSize };
-        std::print( "{}", std::string( x * y, ' ' ) );
+        std::print( "{}", std::string( std::mul_sat< unsigned >( x, y ), ' ' ) );
     }
     inline auto clear_current_console() noexcept
     {
