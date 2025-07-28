@@ -46,6 +46,10 @@ namespace cpp_utils
         {
             return data_;
         }
+        constexpr operator T() const noexcept
+        {
+            return data_;
+        }
         constexpr auto operator<=>( const sat_num< T >& src ) const noexcept
         {
             return data_ <=> src.data_;
