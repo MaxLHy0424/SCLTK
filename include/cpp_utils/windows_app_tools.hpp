@@ -430,7 +430,9 @@ namespace cpp_utils
         CONSOLE_SCREEN_BUFFER_INFO console_data;
         GetConsoleScreenBufferInfo( std_output_handle, &console_data );
         const auto [ x, y ]{ console_data.dwSize };
+        SetConsoleCursorPosition( std_output_handle, { 0, 0 } );
         std::print( "{}", std::string( std::mul_sat< unsigned >( x, y ), ' ' ) );
+        SetConsoleCursorPosition( std_output_handle, { 0, 0 } );
     }
     inline auto clear_current_console() noexcept
     {

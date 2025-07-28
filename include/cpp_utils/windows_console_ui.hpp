@@ -122,7 +122,7 @@ namespace cpp_utils
             GetConsoleScreenBufferInfo( std_output_handle_, &console_data );
             return console_data.dwCursorPosition;
         }
-        static auto set_cursor_( const COORD cursor_position ) noexcept
+        static auto set_cursor( const COORD cursor_position ) noexcept
         {
             SetConsoleCursorPosition( std_output_handle_, cursor_position );
         }
@@ -139,12 +139,6 @@ namespace cpp_utils
                 }
             }
         }
-        static auto cls_()
-        {
-            set_cursor_( COORD{ 0, 0 } );
-            clear_console( std_output_handle_ );
-            set_cursor_( COORD{ 0, 0 } );
-        }
         static auto write_( const std::string& text, const bool is_endl = false )
         {
             std::print( "{}", text );
@@ -154,15 +148,15 @@ namespace cpp_utils
         }
         static auto rewrite_( const COORD cursor_position, const std::string& text )
         {
-            set_cursor_( COORD{ 0, cursor_position.Y } );
+            SetConsoleCursorPosition( std_output_handle_, { 0, cursor_position.Y } );
             write_( std::string( cursor_position.X, ' ' ) );
-            set_cursor_( COORD{ 0, cursor_position.Y } );
+            SetConsoleCursorPosition( std_output_handle_, { 0, cursor_position.Y } );
             write_( text );
-            set_cursor_( COORD{ 0, cursor_position.Y } );
+            SetConsoleCursorPosition( std_output_handle_, { 0, cursor_position.Y } );
         }
         auto init_pos_()
         {
-            cls_();
+            clear_console( std_output_handle_ );
             const auto back_ptr{ &lines_.back() };
             for ( auto& line : lines_ ) {
                 line.position = get_cursor_();
@@ -201,7 +195,7 @@ namespace cpp_utils
                 if ( is_text == true ) {
                     break;
                 }
-                cls_();
+                clear_console( std_output_handle_ );
                 line.set_attrs( line.default_attrs );
                 show_cursor_( FALSE );
                 set_console_attrs_( console_attrs_selection_::locked );
@@ -367,7 +361,7 @@ namespace cpp_utils
                     }
                 }
             }
-            cls_();
+            clear_console( std_output_handle_ );
             return *this;
         }
         auto& set_constraints( const bool is_hide_cursor, const bool is_lock_text ) noexcept
