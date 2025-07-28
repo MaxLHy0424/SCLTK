@@ -363,7 +363,7 @@ namespace core
         struct is_valid_config_node final
         {
             static constexpr auto value{
-              std::is_base_of_v< config_node_impl, T > && std::is_default_constructible_v< T >
+              std::is_base_of_v< config_node_impl, T > && std::is_default_constructible_v< T > && std::is_final_v< T >
               && std::is_same_v< std::decay_t< T >, T > };
             is_valid_config_node()  = delete;
             ~is_valid_config_node() = delete;
