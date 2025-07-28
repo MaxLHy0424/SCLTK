@@ -139,17 +139,10 @@ namespace cpp_utils
                 }
             }
         }
-        static auto get_console_size_() noexcept
-        {
-            CONSOLE_SCREEN_BUFFER_INFO console_data;
-            GetConsoleScreenBufferInfo( std_output_handle_, &console_data );
-            return console_data.dwSize;
-        }
         static auto cls_()
         {
             set_cursor_( COORD{ 0, 0 } );
-            const auto [ width, height ]{ get_console_size_() };
-            std::print( "{}", std::string( static_cast< unsigned int >( width ) * static_cast< unsigned int >( height ), ' ' ) );
+            clear_console( std_output_handle_ );
             set_cursor_( COORD{ 0, 0 } );
         }
         static auto write_( const std::string& text, const bool is_endl = false )
