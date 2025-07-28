@@ -36,7 +36,8 @@ namespace cpp_utils
         return count;
     }
     template < typename T >
-        requires std::integral< T > || std::floating_point< T > || std::same_as< T, std::decay< T > >
+    concept number = std::integral< T > || std::floating_point< T > || std::same_as< T, std::decay< T > >;
+    template < number T >
     class sat_num final
     {
       private:
@@ -50,89 +51,110 @@ namespace cpp_utils
         {
             return data_;
         }
-        constexpr auto operator<=>( const sat_num< T >& src ) const noexcept
+        template < number U >
+        constexpr auto operator<=>( const sat_num< U >& src ) const noexcept
         {
-            return data_ <=> src.data_;
+            if constexpr ( std::is_floating_point_v< U > ) {
+                return data_ <=> static_cast< T >( src.base() );
+            } else {
+                return data_ <=> std::saturate_cast< T >( src.base() );
+            }
         }
-        constexpr auto operator<=>( const T n ) const noexcept
+        template < number U >
+        constexpr auto operator<=>( const U n ) const noexcept
         {
-            return data_ <=> data_;
+            if constexpr ( std::is_floating_point_v< U > ) {
+                return data_ <=> static_cast< T >( n );
+            } else {
+                return data_ <=> std::saturate_cast< T >( n );
+            }
         }
-        constexpr auto operator+( const sat_num< T > src ) const noexcept
+        template < number U >
+        constexpr auto operator+( const sat_num< U > src ) const noexcept
         {
-            return sat_num< T >{ std::add_sat( data_, src.data_ ) };
+            return sat_num< T >{ std::add_sat< T >( data_, src.base() ) };
         }
-        constexpr auto operator-( const sat_num< T > src ) const noexcept
+        template < number U >
+        constexpr auto operator-( const sat_num< U > src ) const noexcept
         {
-            return sat_num< T >{ std::sub_sat( data_, src.data_ ) };
+            return sat_num< T >{ std::sub_sat< T >( data_, src.base() ) };
         }
-        constexpr auto operator*( const sat_num< T > src ) const noexcept
+        template < number U >
+        constexpr auto operator*( const sat_num< U > src ) const noexcept
         {
-            return sat_num< T >{ std::mul_sat( data_, src.data_ ) };
+            return sat_num< T >{ std::mul_sat< T >( data_, src.base() ) };
         }
-        constexpr auto operator/( const sat_num< T > src ) const noexcept
+        template < number U >
+        constexpr auto operator/( const sat_num< U > src ) const noexcept
         {
-            return sat_num< T >{ std::div_sat( data_, src.data_ ) };
+            return sat_num< T >{ std::div_sat< T >( data_, src.base() ) };
         }
-        constexpr auto& operator+=( const sat_num< T > src ) noexcept
+        template < number U >
+        constexpr auto& operator+=( const sat_num< U > src ) noexcept
         {
-            data_ = std::add_sat( data_, src.data_ );
+            data_ = std::add_sat< T >( data_, src.base() );
             return *this;
         }
-        constexpr auto& operator-=( const sat_num< T > src ) noexcept
+        template < number U >
+        constexpr auto& operator-=( const sat_num< U > src ) noexcept
         {
-            data_ = std::sub_sat( data_, src.data_ );
+            data_ = std::sub_sat< T >( data_, src.base() );
             return *this;
         }
-        constexpr auto& operator*=( const sat_num< T > src ) noexcept
+        template < number U >
+        constexpr auto& operator*=( const sat_num< U > src ) noexcept
         {
-            data_ = std::mul_sat( data_, src.data_ );
+            data_ = std::mul_sat< T >( data_, src.base() );
             return *this;
         }
-        constexpr auto& operator/=( const sat_num< T > src ) noexcept
+        template < number U >
+        constexpr auto& operator/=( const sat_num< U > src ) noexcept
         {
-            data_ = std::div_sat( data_, src.data_ );
+            data_ = std::div_sat< T >( data_, src.base() );
             return *this;
         }
-        constexpr auto& operator=( const sat_num< T >& src ) noexcept
+        template < number U >
+        constexpr auto operator+( const U n ) const noexcept
         {
-            data_ = src.data_;
+            return sat_num< T >{ std::add_sat< T >( data_, n ) };
+        }
+        template < number U >
+        constexpr auto operator-( const U n ) const noexcept
+        {
+            return sat_num< T >{ std::sub_sat< T >( data_, n ) };
+        }
+        template < number U >
+        constexpr auto operator*( const U n ) const noexcept
+        {
+            return sat_num< T >{ std::mul_sat< T >( data_, n ) };
+        }
+        template < number U >
+        constexpr auto operator/( const U n ) const noexcept
+        {
+            return sat_num< T >{ std::div_sat< T >( data_, n ) };
+        }
+        template < number U >
+        constexpr auto& operator+=( const U n ) noexcept
+        {
+            data_ = std::add_sat< T >( data_, n );
             return *this;
         }
-        constexpr auto operator+( const T n ) const noexcept
+        template < number U >
+        constexpr auto& operator-=( const U n ) noexcept
         {
-            return sat_num< T >{ std::add_sat( data_, n ) };
-        }
-        constexpr auto operator-( const T n ) const noexcept
-        {
-            return sat_num< T >{ std::sub_sat( data_, n ) };
-        }
-        constexpr auto operator*( const T n ) const noexcept
-        {
-            return sat_num< T >{ std::mul_sat( data_, n ) };
-        }
-        constexpr auto operator/( const T n ) const noexcept
-        {
-            return sat_num< T >{ std::div_sat( data_, n ) };
-        }
-        constexpr auto& operator+=( const T n ) noexcept
-        {
-            data_ = std::add_sat( data_, n );
+            data_ = std::sub_sat< T >( data_, n );
             return *this;
         }
-        constexpr auto& operator-=( const T n ) noexcept
+        template < number U >
+        constexpr auto& operator*=( const U n ) noexcept
         {
-            data_ = std::sub_sat( data_, n );
+            data_ = std::mul_sat< T >( data_, n );
             return *this;
         }
-        constexpr auto& operator*=( const T n ) noexcept
+        template < number U >
+        constexpr auto& operator/=( const U n ) noexcept
         {
-            data_ = std::mul_sat( data_, n );
-            return *this;
-        }
-        constexpr auto& operator/=( const T n ) noexcept
-        {
-            data_ = std::div_sat( data_, n );
+            data_ = std::div_sat< T >( data_, n );
             return *this;
         }
         constexpr auto& operator=( const sat_num< T >& src ) noexcept
