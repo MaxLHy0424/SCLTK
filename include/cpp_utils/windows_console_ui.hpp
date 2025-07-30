@@ -165,7 +165,7 @@ namespace cpp_utils
                 write_( line.text, &line != back_ptr );
             }
         }
-        auto refresh_( const COORD& hang_position )
+        auto refresh_( const COORD hang_position )
         {
             for ( auto& line : lines_ ) {
                 if ( line == hang_position && line.last_attrs != line.intensity_attrs ) {
@@ -178,7 +178,7 @@ namespace cpp_utils
                 }
             }
         }
-        auto invoke_func_( const MOUSE_EVENT_RECORD& current_event )
+        auto invoke_func_( const MOUSE_EVENT_RECORD current_event )
         {
             auto is_exit{ func_back };
             for ( auto i{ 0uz }; i < lines_.size(); ++i ) {
