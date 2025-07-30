@@ -247,8 +247,8 @@ namespace core
             }
             auto operator=( const basic_option_like_config_node< Atomic >& ) -> basic_option_like_config_node< Atomic >& = delete;
             auto operator=( basic_option_like_config_node< Atomic >&& ) -> basic_option_like_config_node< Atomic >& = delete;
-            basic_option_like_config_node( const char* const self_name, const char* const shown_name, map_t_ options )
-              : config_node_impl{ self_name }
+            basic_option_like_config_node( const char* const raw_name, const char* const shown_name, map_t_ options )
+              : config_node_impl{ raw_name }
               , shown_name_{ shown_name }
               , options_{ std::move( options ) }
             { }
