@@ -90,6 +90,7 @@ namespace core
             }
             auto sync( this auto&& self, std::ofstream& out )
             {
+                out << std::format( "[{}]\n", self.raw_name );
                 self.sync_( out );
             }
             auto prepare_reload( this auto&& self )
@@ -455,11 +456,7 @@ namespace core
             load_config( true );
             std::ofstream config_file_stream{ config_file_name, std::ios::out | std::ios::trunc };
             config_file_stream << "# " INFO_FULL_NAME "\n# " INFO_VERSION "\n";
-            std::apply( [ & ]( auto&... config_node )
-            {
-                ( ( config_file_stream << std::format( "[{}]\n", config_node.raw_name ), config_node.sync( config_file_stream ) ),
-                  ... );
-            }, config_nodes );
+            std::apply( [ & ]( auto&... config_node ) { ( config_node.sync( config_file_stream ), ... ); }, config_nodes );
             config_file_stream.flush();
             std::print( "\n ({}) 同步配置{}.", config_file_stream.good() ? 'i' : '!', config_file_stream.good() ? "成功" : "失败" );
             details::press_any_key_to_return();
