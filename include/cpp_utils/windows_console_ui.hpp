@@ -148,11 +148,12 @@ namespace cpp_utils
         }
         static auto rewrite_( const COORD cursor_position, const std::string& text )
         {
-            SetConsoleCursorPosition( std_output_handle_, { 0, cursor_position.Y } );
-            write_( std::string( cursor_position.X, ' ' ) );
-            SetConsoleCursorPosition( std_output_handle_, { 0, cursor_position.Y } );
+            const auto [ console_width, console_height ]{ cursor_position };
+            SetConsoleCursorPosition( std_output_handle_, { 0, console_height } );
+            write_( std::string( console_width, ' ' ) );
+            SetConsoleCursorPosition( std_output_handle_, { 0, console_height } );
             write_( text );
-            SetConsoleCursorPosition( std_output_handle_, { 0, cursor_position.Y } );
+            SetConsoleCursorPosition( std_output_handle_, { 0, console_height } );
         }
         auto init_pos_()
         {
