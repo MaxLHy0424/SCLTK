@@ -679,7 +679,7 @@ namespace core
         {
             return std::format( "({}{}/{})", std::string( digits_of_total - cpp_utils::count_digits( now ), ' ' ), now, total );
         }
-        inline auto for_each_wrapper( const rule_node::container_t container, void ( *func )( rule_item_const_ref_t ) )
+        inline auto for_each_wrapper( const rule_node::container_t& container, void ( *func )( rule_item_const_ref_t ) )
         {
             cpp_utils::parallel_for_each(
               std::ranges::max( std::thread::hardware_concurrency() / 2, 4u ), container.begin(), container.end(), func );
