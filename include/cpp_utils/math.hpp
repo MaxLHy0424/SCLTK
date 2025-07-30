@@ -182,6 +182,6 @@ namespace cpp_utils
         ~sat_num() = default;
     };
     template < typename T >
-        requires std::integral< T > || std::floating_point< T > || std::same_as< T, std::decay< T > >
-    sat_num( T ) -> sat_num< T >;
+        requires std::integral< T > || std::floating_point< T >
+    sat_num( T ) -> sat_num< std::decay_t< T > >;
 }
