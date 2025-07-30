@@ -834,11 +834,11 @@ namespace core
     }
     inline auto execute_rules( const rule_node& rules )
     {
-        const auto executing_count{ details::get_executing_count( rules ) };
+        const cpp_utils::sat_num executing_count{ details::get_executing_count( rules ) };
         const auto is_enable_fast_mode{ std::get< crack_restore_config >( config_nodes )[ "fast_mode" ].get() };
         if ( !is_enable_fast_mode ) {
             constexpr auto max_value{ std::numeric_limits< SHORT >::max() };
-            const auto raw_height{ cpp_utils::sat_num{ executing_count } + 13 };
+            const auto raw_height{ executing_count + 13 };
             const auto buffer_height{ raw_height > max_value ? max_value : static_cast< SHORT >( raw_height ) };
             SetConsoleScreenBufferSize( std_output_handle, { console_width, std::ranges::max( console_height, buffer_height ) } );
         }
