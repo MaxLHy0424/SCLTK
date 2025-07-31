@@ -5,7 +5,7 @@ args_defines     = -DANSI -D_ANSI
 args_std         = gnu++26
 args_warning     = -Wall -Wextra -Weffc++ -Wpedantic
 args_opt_debug   = -Og
-args_opt_release = -O3 -flto=auto
+args_opt_release = -O3 -flto=auto -s -fno-rtti -fno-exceptions -ffunction-sections -fdata-sections -Wl,--gc-sections
 args_include     = -I include
 args_library     =
 args_extra       =
@@ -13,7 +13,7 @@ input_charset    = utf-8
 output_charset   = gbk
 args_base        = -pipe -finput-charset=$(input_charset) -fexec-charset=$(output_charset) -std=$(args_std) $(args_warning) $(args_defines) $(args_include) $(args_library) $ $(args_extra)
 args_debug       = -g3 -DDEBUG $(args_base) $(args_opt_debug)
-args_release     = -DNDEBUG -s -static -fno-rtti -fno-exceptions $(args_base) $(args_opt_release)
+args_release     = -DNDEBUG -static $(args_base) $(args_opt_release)
 .PHONY: toolchain all build debug release pack clean make_info
 dependencies_testing = src/* include*
 all: toolchain build pack
