@@ -180,43 +180,43 @@ namespace cpp_utils
         }
         auto invoke_func_( const MOUSE_EVENT_RECORD current_event )
         {
-            auto is_exit{ func_back };
-            for ( auto i{ 0uz }; i < lines_.size(); ++i ) {
-                auto& line{ lines_[ i ] };
-                if ( line != current_event.dwMousePosition ) {
-                    continue;
-                }
-                bool is_text{ false };
-                line.func.visit( [ & ]( const auto& func )
-                {
-                    if ( func == nullptr ) {
-                        is_text = true;
-                    }
-                } );
-                if ( is_text == true ) {
+            line_node_* target{ nullptr };
+            auto index{ 0uz };
+            for ( auto& line : lines_ ) {
+                if ( line == current_event.dwMousePosition ) {
+                    target = &line;
                     break;
                 }
-                clear_console_fast( std_output_handle_ );
-                line.set_attrs( line.default_attrs );
-                show_cursor_( FALSE );
-                set_console_attrs_( console_attrs_selection_::locked );
-                line.func.visit( [ & ]( auto& func )
-                {
-                    using func_t = std::decay_t< decltype( func ) >;
-                    if constexpr ( std::is_same_v< func_t, std::function< func_action() > > ) {
-                        is_exit = func();
-                    } else if constexpr ( std::is_same_v< func_t, std::function< func_action( func_args ) > > ) {
-                        is_exit = func( func_args{ *this, i, current_event } );
-                    } else {
-                        static_assert( false, "unknown callback!" );
-                    }
-                } );
-                show_cursor_( FALSE );
-                set_console_attrs_( console_attrs_selection_::locked );
-                init_pos_();
-                break;
+                ++index;
             }
-            return is_exit;
+            if ( target == nullptr ) {
+                return func_back;
+            }
+            auto is_text{ false };
+            target->func.visit( [ & ]( const auto& func ) { is_text = ( func == nullptr ); } );
+            if ( is_text ) {
+                return func_back;
+            }
+            clear_console_fast( std_output_handle_ );
+            target->set_attrs( target->default_attrs );
+            show_cursor_( FALSE );
+            set_console_attrs_( console_attrs_selection_::locked );
+            func_action value;
+            target->func.visit( [ & ]( auto& func )
+            {
+                using func_t = std::decay_t< decltype( func ) >;
+                if constexpr ( std::is_same_v< func_t, std::function< func_action() > > ) {
+                    value = func();
+                } else if constexpr ( std::is_same_v< func_t, std::function< func_action( func_args ) > > ) {
+                    value = func( func_args{ *this, index, current_event } );
+                } else {
+                    static_assert( false, "unknown callback!" );
+                }
+            } );
+            show_cursor_( FALSE );
+            set_console_attrs_( console_attrs_selection_::locked );
+            init_pos_();
+            return value;
         }
       public:
         constexpr auto empty() const noexcept
