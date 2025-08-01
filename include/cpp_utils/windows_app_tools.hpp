@@ -439,7 +439,7 @@ namespace cpp_utils
     inline auto clear_console( const HANDLE std_output_handle ) noexcept
     {
         enable_virtual_terminal_processing( std_output_handle, true );
-        std::print( "\033[H\033[2J" );
+        std::print( "\x1b[2J\x1b[1;1H" );
         clear_console_fast( std_output_handle );
     }
     inline auto clear_current_console() noexcept
