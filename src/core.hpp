@@ -895,7 +895,7 @@ namespace core
             total.execs.append_range( builtin_rule.execs );
             total.servs.append_range( builtin_rule.servs );
         }
-        cpp_utils::clear_console_fast( std_output_handle );
+        cpp_utils::clear_console_traditional( std_output_handle );
         return execute_rules( total );
     }
 }
