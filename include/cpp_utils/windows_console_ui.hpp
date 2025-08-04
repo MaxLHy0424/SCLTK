@@ -157,7 +157,7 @@ namespace cpp_utils
         }
         auto init_pos_()
         {
-            clear_console_fast( std_output_handle_ );
+            clear_console_traditional( std_output_handle_ );
             const auto back_ptr{ &lines_.back() };
             for ( auto& line : lines_ ) {
                 line.position = get_cursor_();
@@ -197,7 +197,7 @@ namespace cpp_utils
             if ( is_text ) {
                 return func_back;
             }
-            clear_console_fast( std_output_handle_ );
+            clear_console_traditional( std_output_handle_ );
             target->set_attrs( target->default_attrs );
             show_cursor_( FALSE );
             set_console_attrs_( console_attrs_selection_::locked );
@@ -362,7 +362,7 @@ namespace cpp_utils
                     }
                 }
             }
-            clear_console_fast( std_output_handle_ );
+            clear_console_traditional( std_output_handle_ );
             return *this;
         }
         auto& set_constraints( const bool is_hide_cursor, const bool is_lock_text ) noexcept

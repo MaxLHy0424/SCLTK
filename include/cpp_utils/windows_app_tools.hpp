@@ -423,7 +423,7 @@ namespace cpp_utils
     {
         enable_virtual_terminal_processing( GetStdHandle( STD_OUTPUT_HANDLE ), is_enable );
     }
-    inline auto clear_console_fast( const HANDLE std_output_handle )
+    inline auto clear_console_traditional( const HANDLE std_output_handle )
     {
         CONSOLE_SCREEN_BUFFER_INFO console_data;
         GetConsoleScreenBufferInfo( std_output_handle, &console_data );
@@ -432,19 +432,27 @@ namespace cpp_utils
         std::print( "{}", std::string( std::mul_sat< unsigned >( x, y ), ' ' ) );
         SetConsoleCursorPosition( std_output_handle, { 0, 0 } );
     }
-    inline auto clear_current_console_fast()
+    inline auto clear_current_console_traditional()
     {
-        clear_console_fast( GetStdHandle( STD_OUTPUT_HANDLE ) );
+        clear_console_traditional( GetStdHandle( STD_OUTPUT_HANDLE ) );
     }
-    inline auto clear_console( const HANDLE std_output_handle ) noexcept
+    inline auto clear_console_fast( const HANDLE std_output_handle ) noexcept
     {
         enable_virtual_terminal_processing( std_output_handle, true );
         std::print( "\x1b[2J\x1b[1;1H" );
-        clear_console_fast( std_output_handle );
     }
-    inline auto clear_current_console() noexcept
+    inline auto clear_current_console_fast() noexcept
     {
-        clear_console( GetStdHandle( STD_OUTPUT_HANDLE ) );
+        clear_console_fast( GetStdHandle( STD_OUTPUT_HANDLE ) );
+    }
+    inline auto clear_console_full( const HANDLE std_output_handle ) noexcept
+    {
+        clear_console_fast( std_output_handle );
+        clear_console_traditional( std_output_handle );
+    }
+    inline auto clear_current_console_full() noexcept
+    {
+        clear_console_full( GetStdHandle( STD_OUTPUT_HANDLE ) );
     }
     inline auto set_current_console_title( const char* const title ) noexcept
     {
@@ -468,7 +476,7 @@ namespace cpp_utils
         SetConsoleWindowInfo( std_output_handle, TRUE, &wrt );
         SetConsoleScreenBufferSize( std_output_handle, { width, height } );
         SetConsoleWindowInfo( std_output_handle, TRUE, &wrt );
-        clear_console( std_output_handle );
+        clear_console_full( std_output_handle );
     }
     inline auto set_current_console_size( const SHORT width, const SHORT height ) noexcept
     {
