@@ -234,7 +234,7 @@ namespace core
             auto set_ui_( cpp_utils::console_ui& ui )
             {
                 ui.add_back( std::format( "\n[ {} ]\n", shown_name_ ) )
-                  .add_back( " > 修改设定 ", std::bind_back( make_option_editor_ui_, std::ref( options_ ) ) );
+                  .add_back( " > 修改设置 ", std::bind_back( make_option_editor_ui_, std::ref( options_ ) ) );
             }
           public:
             const auto& operator[]( const key_t_ key ) const noexcept
