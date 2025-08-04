@@ -296,14 +296,14 @@ namespace cpp_utils
         }
         return static_cast< bool >( is_admin );
     }
-    inline auto relaunch( const int exit_code ) noexcept
+    [[noreturn]] inline auto relaunch( const int exit_code ) noexcept
     {
         std::array< wchar_t, MAX_PATH > file_path;
         GetModuleFileNameW( nullptr, file_path.data(), MAX_PATH );
         ShellExecuteW( nullptr, L"open", file_path.data(), nullptr, nullptr, SW_SHOWNORMAL );
         std::exit( exit_code );
     }
-    inline auto relaunch_as_admin( const int exit_code ) noexcept
+    [[noreturn]] inline auto relaunch_as_admin( const int exit_code ) noexcept
     {
         std::array< wchar_t, MAX_PATH > file_path;
         GetModuleFileNameW( nullptr, file_path.data(), MAX_PATH );
