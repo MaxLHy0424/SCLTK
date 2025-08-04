@@ -778,7 +778,7 @@ namespace core
                 threads[ 0 ] = thread_t{ for_each_wrapper, execs, hijack_exec };
             }
             if ( options[ "set_serv_startup_types" ] ) {
-                threads[ 1 ] = std::thread{ for_each_wrapper, servs, disable_serv };
+                threads[ 1 ] = thread_t{ for_each_wrapper, servs, disable_serv };
             }
             threads[ 2 ] = thread_t{ for_each_wrapper, execs, kill_exec };
             threads[ 3 ] = thread_t{ for_each_wrapper, servs, stop_serv };
