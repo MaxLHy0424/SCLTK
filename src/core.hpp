@@ -100,11 +100,11 @@ namespace core
                     self.prepare_reload_();
                 }
             }
-            auto edit_ui( this auto&& self, cpp_utils::console_ui& parent_ui )
+            auto set_ui( this auto&& self, cpp_utils::console_ui& parent_ui )
             {
                 using child_t = std::decay_t< decltype( self ) >;
-                if constexpr ( requires( child_t obj ) { obj.edit_ui_( parent_ui ); } ) {
-                    self.edit_ui_( parent_ui );
+                if constexpr ( requires( child_t obj ) { obj.set_ui_( parent_ui ); } ) {
+                    self.set_ui_( parent_ui );
                 }
             }
         };
@@ -231,7 +231,7 @@ namespace core
                 ui.show();
                 return func_back;
             }
-            auto edit_ui_( cpp_utils::console_ui& ui )
+            auto set_ui_( cpp_utils::console_ui& ui )
             {
                 ui.add_back( std::format( "\n[ {} ]\n", shown_name_ ) )
                   .add_back( " > 修改设定 ", std::bind_back( make_option_editor_ui_, std::ref( options_ ) ) );
@@ -348,7 +348,7 @@ namespace core
               .show();
             return func_back;
         }
-        static auto edit_ui_( cpp_utils::console_ui& ui )
+        static auto set_ui_( cpp_utils::console_ui& ui )
         {
             ui.add_back( "\n[ 自定义规则 ]\n" ).add_back( " > 查看帮助信息 ", show_help_info_ );
         }
@@ -482,7 +482,7 @@ namespace core
           .add_back( " > 查看解析规则", details::show_config_parsing_rules )
           .add_back( " > 同步配置 ", details::sync_config )
           .add_back( " > 打开配置文件 ", details::open_config_file );
-        std::apply( [ & ]( auto&... config_node ) { ( config_node.edit_ui( ui ), ... ); }, config_nodes );
+        std::apply( [ & ]( auto&... config_node ) { ( config_node.set_ui( ui ), ... ); }, config_nodes );
         ui.show();
         return func_back;
     }
