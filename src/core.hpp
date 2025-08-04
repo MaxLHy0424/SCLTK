@@ -658,7 +658,7 @@ namespace core
         }
         constexpr std::array threads_func{ details::set_console_attrs, details::force_show };
     }
-    inline auto start_threads() noexcept
+    inline auto create_threads() noexcept
     {
         for ( const auto func : details::threads_func ) {
             std::thread{ func }.detach();
