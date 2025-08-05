@@ -116,20 +116,16 @@ namespace core
             class item_ final
             {
               private:
-                static auto get_value_( const auto& value ) noexcept
-                {
-                    if constexpr ( Atomic ) {
-                        return value.load( std::memory_order_acquire );
-                    } else {
-                        return value;
-                    }
-                }
                 std::conditional_t< Atomic, std::atomic< bool >, bool > value_{ false };
               public:
                 const char* description{ nullptr };
                 auto get() const noexcept
                 {
-                    return get_value_( value_ );
+                    if constexpr ( Atomic ) {
+                        return value_.load( std::memory_order_acquire );
+                    } else {
+                        return value_;
+                    }
                 }
                 auto set( const bool value ) noexcept
                 {
@@ -146,13 +142,13 @@ namespace core
                 auto& operator=( const item_& src )
                 {
                     description = src.description;
-                    value_      = get_value_( src.value_ );
+                    value_      = src.get();
                     return *this;
                 }
                 auto& operator=( item_&& src )
                 {
                     description     = src.description;
-                    value_          = get_value_( src.value_ );
+                    value_          = src.get();
                     src.description = {};
                     src.value_      = {};
                     return *this;
@@ -162,11 +158,11 @@ namespace core
                   : description{ description }
                 { }
                 item_( const item_& src )
-                  : value_{ get_value_( src.value_ ) }
+                  : value_{ src.get() }
                   , description{ src.description }
                 { }
                 item_( item_&& src )
-                  : value_{ get_value_( src.value_ ) }
+                  : value_{ src.get() }
                   , description{ src.description }
                 {
                     src.description = {};
