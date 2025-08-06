@@ -652,7 +652,7 @@ namespace core
                 std::this_thread::sleep_for( sleep_time );
             }
         }
-        constexpr std::array threads_func{ details::set_console_attrs, details::force_show };
+        constexpr std::array threads_func{ set_console_attrs, force_show };
     }
     inline auto create_threads() noexcept
     {
