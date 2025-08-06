@@ -455,7 +455,7 @@ namespace core
             std::apply( [ & ]( auto&... config_node ) { ( config_node.sync( config_file_stream ), ... ); }, config_nodes );
             config_file_stream.flush();
             std::print( "\n ({}) 同步配置{}.", config_file_stream.good() ? 'i' : '!', config_file_stream.good() ? "成功" : "失败" );
-            details::press_any_key_to_return();
+            press_any_key_to_return();
             return func_back;
         }
         inline auto open_config_file()
@@ -466,7 +466,7 @@ namespace core
             const auto is_success{
               std::bit_cast< INT_PTR >( ShellExecuteA( nullptr, "open", config_file_name, nullptr, nullptr, SW_SHOWNORMAL ) ) > 32 };
             std::print( " (i) 打开配置文件{}.", is_success ? "成功" : "失败" );
-            details::press_any_key_to_return();
+            press_any_key_to_return();
             return func_back;
         }
     }
