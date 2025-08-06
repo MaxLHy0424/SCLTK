@@ -634,7 +634,7 @@ namespace core
             if ( is_no_hot_reload && !is_force_show ) {
                 return;
             }
-            constexpr auto sleep_time{ 100ms };
+            constexpr auto sleep_time{ 50ms };
             const auto current_thread_id{ GetCurrentThreadId() };
             const auto current_window_thread_process_id{ GetWindowThreadProcessId( window_handle, nullptr ) };
             if ( is_no_hot_reload ) {
