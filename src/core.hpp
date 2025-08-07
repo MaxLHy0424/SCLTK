@@ -518,14 +518,13 @@ namespace core
             SetConsoleScreenBufferSize( std_output_handle, COORD{ 120, std::numeric_limits< SHORT >::max() - 1 } );
             STARTUPINFOA startup_info{};
             startup_info.cb = sizeof( startup_info );
-            PROCESS_INFORMATION process_info;
-            if ( CreateProcessA(
-                   nullptr, const_cast< LPSTR >( "cmd.exe" ), nullptr, nullptr, FALSE, 0, nullptr, nullptr, &startup_info,
-                   &process_info ) )
+            PROCESS_INFORMATION proc_info;
+            char proc_name[]{ "cmd.exe" };
+            if ( CreateProcessA( nullptr, proc_name, nullptr, nullptr, FALSE, 0, nullptr, nullptr, &startup_info, &proc_info ) )
             {
-                WaitForSingleObject( process_info.hProcess, INFINITE );
-                CloseHandle( process_info.hProcess );
-                CloseHandle( process_info.hThread );
+                WaitForSingleObject( proc_info.hProcess, INFINITE );
+                CloseHandle( proc_info.hProcess );
+                CloseHandle( proc_info.hThread );
             }
             cpp_utils::set_current_console_charset( charset_id );
             cpp_utils::set_current_console_title( INFO_SHORT_NAME );
