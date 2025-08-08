@@ -192,27 +192,24 @@ namespace cpp_utils
             if ( target == nullptr ) {
                 return func_back;
             }
-            auto is_text{ false };
-            target->func.visit( [ & ]( const auto& func ) { is_text = ( func == nullptr ); } );
-            if ( is_text ) {
+            if ( target->func.visit< bool >( []( const auto& func ) { return func == nullptr; } ) ) {
                 return func_back;
             }
             clear_console_traditional( std_output_handle_ );
             target->set_attrs( target->default_attrs );
             show_cursor_( FALSE );
             set_console_attrs_( console_attrs_selection_::locked );
-            func_action value;
-            target->func.visit( [ & ]( auto& func )
+            const auto value{ target->func.visit< func_action >( [ & ]( auto& func )
             {
                 using func_t = std::decay_t< decltype( func ) >;
                 if constexpr ( std::is_same_v< func_t, std::function< func_action() > > ) {
-                    value = func();
+                    return func();
                 } else if constexpr ( std::is_same_v< func_t, std::function< func_action( func_args ) > > ) {
-                    value = func( func_args{ *this, index, current_event } );
+                    return func( func_args{ *this, index, current_event } );
                 } else {
                     static_assert( false, "unknown callback!" );
                 }
-            } );
+            } ) };
             show_cursor_( FALSE );
             set_console_attrs_( console_attrs_selection_::locked );
             init_pos_();
@@ -258,9 +255,9 @@ namespace cpp_utils
           const WORD intensity_attrs = console_text::foreground_green | console_text::foreground_blue,
           const WORD default_attrs   = console_text::foreground_white )
         {
-            bool is_func{ false };
-            func.visit( [ & ]( const auto& func ) { is_func = ( func != nullptr ); } );
-            lines_.emplace_front( text, func, default_attrs, is_func ? intensity_attrs : default_attrs );
+            lines_.emplace_front(
+              text, func, default_attrs,
+              func.visit< bool >( [ & ]( const auto& func ) { return func != nullptr; } ) ? intensity_attrs : default_attrs );
             return *this;
         }
         auto& add_back(
@@ -268,9 +265,9 @@ namespace cpp_utils
           const WORD intensity_attrs = console_text::foreground_blue | console_text::foreground_green,
           const WORD default_attrs   = console_text::foreground_white )
         {
-            bool is_func{ false };
-            func.visit( [ & ]( const auto& func ) { is_func = ( func != nullptr ); } );
-            lines_.emplace_back( text, func, default_attrs, is_func ? intensity_attrs : default_attrs );
+            lines_.emplace_back(
+              text, func, default_attrs,
+              func.visit< bool >( [ & ]( const auto& func ) { return func != nullptr; } ) ? intensity_attrs : default_attrs );
             return *this;
         }
         auto& insert(
@@ -278,9 +275,9 @@ namespace cpp_utils
           const WORD intensity_attrs = console_text::foreground_green | console_text::foreground_blue,
           const WORD default_attrs   = console_text::foreground_white )
         {
-            bool is_func{ false };
-            func.visit( [ & ]( const auto& func ) { is_func = ( func != nullptr ); } );
-            lines_.emplace( lines_.cbegin() + index, text, func, default_attrs, is_func ? intensity_attrs : default_attrs );
+            lines_.emplace(
+              lines_.cbegin() + index, text, func, default_attrs,
+              func.visit< bool >( [ & ]( const auto& func ) { return func != nullptr; } ) ? intensity_attrs : default_attrs );
             return *this;
         }
         auto& edit_text( const std::size_t index, const std::string_view text )
