@@ -199,12 +199,12 @@ namespace core
             auto sync_( std::ofstream& out )
             {
                 for ( const auto& [ key, item ] : options_ ) {
-                    out << key << ( item.get() == true ? str_of_the_enabled : str_of_the_disabled ) << '\n';
+                    out << key << ( item == true ? str_of_the_enabled : str_of_the_disabled ) << '\n';
                 }
             }
             static auto make_swith_button_text_( const value_t_& item )
             {
-                return item.get() == true ? " > 禁用 "sv : " > 启用 "sv;
+                return item == true ? " > 禁用 "sv : " > 启用 "sv;
             }
             static auto flip_item_value_( const ui_func_args args, value_t_& item )
             {
