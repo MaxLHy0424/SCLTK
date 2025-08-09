@@ -288,7 +288,7 @@ namespace core
       private:
         static constexpr auto flag_exec{ "exec:"sv };
         static constexpr auto flag_serv{ "serv:"sv };
-        static_assert( []( auto... strings ) constexpr
+        static_assert( []( auto... strings ) consteval
         {
             return ( ( std::ranges::find_if( strings, details::is_whitespace ) == strings.end() ) && ... );
         }( flag_exec, flag_serv ) );
