@@ -274,7 +274,7 @@ namespace core
         window_config()
           : basic_option_like_config_node{
               "window",
-              "窗口设置",
+              "窗口显示",
               { { "force_show", "置顶窗口 (非实时)" },
                 { "simple_titlebar", "极简标题栏 (非实时)" },
                 { "translucent", "半透明 (非实时)" } }
