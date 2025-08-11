@@ -289,7 +289,7 @@ namespace core
           : basic_option_like_config_node{
               "performance",
               "性能",
-              { { "memory_useage_optimization", "内存占用优化 (下次启动时生效)" },
+              { { "memory_compression", "内存压缩 (下次启动时生效)" },
                 { "no_hot_reload", "禁用非实时热重载 (下次启动时生效)" } }
         }
         { }
@@ -663,9 +663,9 @@ namespace core
                 std::this_thread::sleep_for( sleep_time );
             }
         }
-        inline auto optimize_memory_useage() noexcept
+        inline auto compact_memory() noexcept
         {
-            if ( std::get< performance_config >( config_nodes )[ "memory_useage_optimization" ] == false ) {
+            if ( std::get< performance_config >( config_nodes )[ "memory_compression" ] == false ) {
                 return;
             }
             const auto heap{ GetProcessHeap() };
@@ -677,7 +677,7 @@ namespace core
                 EmptyWorkingSet( process );
             }
         }
-        constexpr std::array threads_func{ set_console_attrs, force_show, optimize_memory_useage };
+        constexpr std::array threads_func{ set_console_attrs, force_show, compact_memory };
     }
     inline auto create_threads() noexcept
     {
