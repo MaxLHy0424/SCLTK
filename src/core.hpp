@@ -5,6 +5,7 @@
 #include <cpp_utils/multithread.hpp>
 #include <cpp_utils/windows_app_tools.hpp>
 #include <cpp_utils/windows_console_ui.hpp>
+#include <psapi.h>
 #include <flat_map>
 #include <fstream>
 #include <limits>
@@ -282,6 +283,15 @@ namespace core
         { }
         ~window_config() = default;
     };
+    class performance_config final : public details::basic_option_like_config_node< false >
+    {
+      public:
+        performance_config()
+          : basic_option_like_config_node{
+              "performance", "性能", { { "memory_useage_optimization", "内存占用优化 (下次启动时生效)" } } }
+        { }
+        ~performance_config() = default;
+    };
     class custom_rules_config final : public details::config_node_impl
     {
         friend details::config_node_impl;
@@ -366,7 +376,7 @@ namespace core
             ~is_valid_config_node() = delete;
         };
     }
-    using config_node_types = cpp_utils::type_list< crack_restore_config, window_config, custom_rules_config >;
+    using config_node_types = cpp_utils::type_list< crack_restore_config, window_config, performance_config, custom_rules_config >;
     static_assert( config_node_types::all_of< details::is_valid_config_node > );
     static_assert( config_node_types::unique::size == config_node_types::size );
     inline config_node_types::apply< std::tuple > config_nodes{};
@@ -608,7 +618,7 @@ namespace core
     }
     namespace details
     {
-        inline auto set_console_attrs()
+        inline auto set_console_attrs() noexcept
         {
             const auto& window_options{ std::get< window_config >( config_nodes ) };
             const auto& is_enable_simple_titlebar{ window_options[ "simple_titlebar" ] };
@@ -625,7 +635,7 @@ namespace core
                 std::this_thread::sleep_for( default_thread_sleep_time );
             }
         }
-        inline auto force_show()
+        inline auto force_show() noexcept
         {
             const auto& window_options{ std::get< window_config >( config_nodes ) };
             const auto& is_no_hot_reload{ window_options[ "~no_hot_reload" ] };
@@ -651,7 +661,21 @@ namespace core
                 std::this_thread::sleep_for( sleep_time );
             }
         }
-        constexpr std::array threads_func{ set_console_attrs, force_show };
+        inline auto optimize_memory_useage() noexcept
+        {
+            if ( std::get< performance_config >( config_nodes )[ "memory_useage_optimization" ] == false ) {
+                return;
+            }
+            const auto heap{ GetProcessHeap() };
+            const auto process{ GetCurrentProcess() };
+            SetProcessWorkingSetSize( process, -1, -1 );
+            while ( true ) {
+                std::this_thread::sleep_for( 5s );
+                HeapCompact( heap, 0 );
+                EmptyWorkingSet( process );
+            }
+        }
+        constexpr std::array threads_func{ set_console_attrs, force_show, optimize_memory_useage };
     }
     inline auto create_threads() noexcept
     {
