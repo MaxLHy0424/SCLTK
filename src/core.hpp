@@ -275,10 +275,9 @@ namespace core
           : basic_option_like_config_node{
               "window",
               "窗口设置",
-              { { "force_show", "置顶窗口" },
-                { "simple_titlebar", "极简标题栏" },
-                { "translucent", "半透明" },
-                { "~no_hot_reload", "禁用以上选项热重载 (下次启动时生效)" } }
+              { { "force_show", "置顶窗口 (非实时)" },
+                { "simple_titlebar", "极简标题栏 (非实时)" },
+                { "translucent", "半透明 (非实时)" } }
         }
         { }
         ~window_config() = default;
@@ -288,7 +287,11 @@ namespace core
       public:
         performance_config()
           : basic_option_like_config_node{
-              "performance", "性能", { { "memory_useage_optimization", "内存占用优化 (下次启动时生效)" } } }
+              "performance",
+              "性能",
+              { { "memory_useage_optimization", "内存占用优化 (下次启动时生效)" },
+                { "no_hot_reload", "禁用非实时热重载 (下次启动时生效)" } }
+        }
         { }
         ~performance_config() = default;
     };
@@ -623,7 +626,7 @@ namespace core
             const auto& window_options{ std::get< window_config >( config_nodes ) };
             const auto& is_enable_simple_titlebar{ window_options[ "simple_titlebar" ] };
             const auto& is_translucent{ window_options[ "translucent" ] };
-            const auto& is_no_hot_reload{ window_options[ "~no_hot_reload" ] };
+            const auto& is_no_hot_reload{ std::get< performance_config >( config_nodes )[ "no_hot_reload" ] };
             if ( is_no_hot_reload ) {
                 cpp_utils::enable_window_menu( window_handle, !is_enable_simple_titlebar );
                 cpp_utils::set_window_translucency( window_handle, is_translucent ? 230 : 255 );
@@ -637,9 +640,8 @@ namespace core
         }
         inline auto force_show() noexcept
         {
-            const auto& window_options{ std::get< window_config >( config_nodes ) };
-            const auto& is_no_hot_reload{ window_options[ "~no_hot_reload" ] };
-            const auto& is_force_show{ window_options[ "force_show" ] };
+            const auto& is_no_hot_reload{ std::get< performance_config >( config_nodes )[ "no_hot_reload" ] };
+            const auto& is_force_show{ std::get< window_config >( config_nodes )[ "force_show" ] };
             if ( is_no_hot_reload && !is_force_show ) {
                 return;
             }
