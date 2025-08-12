@@ -230,8 +230,10 @@ namespace core
             }
             auto set_ui_( cpp_utils::console_ui& ui )
             {
-                ui.add_back( std::format( "\n[ {} ]\n", shown_name_ ) )
-                  .add_back( " > 修改设置 ", std::bind_back( make_option_editor_ui_, std::ref( options_ ) ) );
+                if ( !ui.contains_text( "\n[ 选项 ]\n" ) ) {
+                    ui.add_back( "\n[ 选项 ]\n" );
+                }
+                ui.add_back( std::format( " > {} ", shown_name_ ), std::bind_back( make_option_editor_ui_, std::ref( options_ ) ) );
             }
           public:
             const auto& operator[]( const key_t_ key ) const noexcept
