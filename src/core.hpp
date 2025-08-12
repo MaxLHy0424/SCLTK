@@ -302,9 +302,7 @@ namespace core
         static constexpr auto flag_exec{ "exec:"sv };
         static constexpr auto flag_serv{ "serv:"sv };
         static_assert( []( auto... strings ) consteval
-        {
-            return ( ( std::ranges::find_if( strings, details::is_whitespace ) == strings.end() ) && ... );
-        }( flag_exec, flag_serv ) );
+        { return ( std::ranges::none_of( strings, details::is_whitespace ) && ... ); }( flag_exec, flag_serv ) );
         static auto load_( const bool, const std::string_view line )
         {
             if ( line.size() > flag_exec.size() && line.starts_with( flag_exec ) ) {
