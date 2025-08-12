@@ -206,12 +206,11 @@ namespace cpp_utils
             target->set_attrs( target->default_attrs );
             show_cursor_( FALSE );
             set_console_attrs_( console_attrs_selection_::locked );
-            const auto value{ target->func.visit< func_action >( [ & ]( auto& func )
+            const auto value{ target->func.visit< func_action >( [ & ]< typename F >( F& func )
             {
-                using func_t = std::decay_t< decltype( func ) >;
-                if constexpr ( std::is_same_v< func_t, std::function< func_action() > > ) {
+                if constexpr ( std::is_same_v< F, std::function< func_action() > > ) {
                     return func();
-                } else if constexpr ( std::is_same_v< func_t, std::function< func_action( func_args ) > > ) {
+                } else if constexpr ( std::is_same_v< F, std::function< func_action( func_args ) > > ) {
                     return func( func_args{ *this, index, current_event } );
                 } else {
                     static_assert( false, "unknown callback!" );
