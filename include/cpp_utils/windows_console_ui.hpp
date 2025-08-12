@@ -51,8 +51,7 @@ namespace cpp_utils
         enum class console_attrs_selection_ : char
         {
             normal,
-            locked,
-            for_ui
+            locked
         };
         struct line_node_ final
         {
@@ -106,21 +105,15 @@ namespace cpp_utils
                 case console_attrs_selection_::normal :
                     attrs |= ENABLE_QUICK_EDIT_MODE;
                     attrs |= ENABLE_INSERT_MODE;
-                    attrs |= ENABLE_LINE_INPUT;
                     break;
                 case console_attrs_selection_::locked :
                     attrs &= ~ENABLE_QUICK_EDIT_MODE;
                     attrs &= ~ENABLE_INSERT_MODE;
-                    attrs |= ENABLE_LINE_INPUT;
-                    break;
-                case console_attrs_selection_::for_ui :
-                    attrs &= ~ENABLE_QUICK_EDIT_MODE;
-                    attrs &= ~ENABLE_INSERT_MODE;
-                    attrs &= ~ENABLE_LINE_INPUT;
                     break;
                 default : std::unreachable();
             }
             attrs |= ENABLE_MOUSE_INPUT;
+            attrs |= ENABLE_LINE_INPUT;
             SetConsoleMode( std_input_handle_, attrs );
         }
         static auto get_cursor_() noexcept
@@ -217,7 +210,7 @@ namespace cpp_utils
                 }
             } ) };
             show_cursor_( FALSE );
-            set_console_attrs_( console_attrs_selection_::for_ui );
+            set_console_attrs_( console_attrs_selection_::locked );
             init_pos_();
             return value;
         }
@@ -349,7 +342,7 @@ namespace cpp_utils
             }
             using namespace std::chrono_literals;
             show_cursor_( FALSE );
-            set_console_attrs_( console_attrs_selection_::for_ui );
+            set_console_attrs_( console_attrs_selection_::locked );
             init_pos_();
             MOUSE_EVENT_RECORD event;
             auto func_return_value{ func_back };
