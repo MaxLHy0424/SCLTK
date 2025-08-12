@@ -257,15 +257,6 @@ namespace cpp_utils
             lines_.swap( src.lines_ );
             return *this;
         }
-        auto contains_text( const std::string_view text ) noexcept
-        {
-            for ( const auto& line : lines_ ) {
-                if ( line.text == text ) {
-                    return true;
-                }
-            }
-            return false;
-        }
         auto& add_front(
           const std::string_view text, callback_t func = {},
           const WORD intensity_attrs = console_text::foreground_green | console_text::foreground_blue,
