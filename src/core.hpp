@@ -81,23 +81,36 @@ namespace core
     };
     namespace details
     {
+        template < typename >
+        struct is_reserved_config_node final
+        {
+            static constexpr auto value{ false };
+        };
+        template < typename T >
+        constexpr auto is_reserved_config_node_v{ is_reserved_config_node< std::decay_t< T > >::value };
         class config_node_impl
         {
           public:
             const char* raw_name;
             auto load( this auto&& self, const bool is_reload, const std::string_view line )
             {
-                self.load_( is_reload, line );
+                using child_t = std::decay_t< decltype( self ) >;
+                if constexpr ( !is_reserved_config_node_v< child_t > ) {
+                    self.load_( is_reload, line );
+                }
             }
             auto sync( this auto&& self, std::ofstream& out )
             {
-                out << std::format( "[{}]\n", self.raw_name );
-                self.sync_( out );
+                using child_t = std::decay_t< decltype( self ) >;
+                if constexpr ( !is_reserved_config_node_v< child_t > ) {
+                    out << std::format( "[{}]\n", self.raw_name );
+                    self.sync_( out );
+                }
             }
             auto prepare_reload( this auto&& self )
             {
                 using child_t = std::decay_t< decltype( self ) >;
-                if constexpr ( requires( child_t obj ) { obj.prepare_reload_(); } ) {
+                if constexpr ( !is_reserved_config_node_v< child_t > && requires( child_t obj ) { obj.prepare_reload_(); } ) {
                     self.prepare_reload_();
                 }
             }
@@ -230,9 +243,6 @@ namespace core
             }
             auto set_ui_( cpp_utils::console_ui& ui )
             {
-                if ( !ui.contains_text( "\n[ 选项 ]\n" ) ) {
-                    ui.add_back( "\n[ 选项 ]\n" );
-                }
                 ui.add_back( std::format( " > {} ", shown_name_ ), std::bind_back( make_option_editor_ui_, std::ref( options_ ) ) );
             }
           public:
@@ -256,6 +266,24 @@ namespace core
             ~basic_option_like_config_node()                                                = default;
         };
     }
+    class reversed_for_options;
+    template <>
+    struct details::is_reserved_config_node< reversed_for_options > final
+    {
+        static constexpr auto value{ true };
+    };
+    class reversed_for_options final : public details::config_node_impl
+    {
+        friend details::config_node_impl;
+      private:
+        static auto set_ui_( cpp_utils::console_ui& ui )
+        {
+            ui.add_back( "\n[ 选项 ]\n" );
+        }
+      public:
+        reversed_for_options() noexcept  = default;
+        ~reversed_for_options() noexcept = default;
+    };
     class crack_restore_config final : public details::basic_option_like_config_node< false >
     {
       public:
@@ -379,7 +407,8 @@ namespace core
             ~is_valid_config_node() = delete;
         };
     }
-    using config_node_types = cpp_utils::type_list< crack_restore_config, window_config, performance_config, custom_rules_config >;
+    using config_node_types
+      = cpp_utils::type_list< reversed_for_options, crack_restore_config, window_config, performance_config, custom_rules_config >;
     static_assert( config_node_types::all_of< details::is_valid_config_node > );
     static_assert( config_node_types::unique::size == config_node_types::size );
     inline config_node_types::apply< std::tuple > config_nodes{};
@@ -420,10 +449,12 @@ namespace core
                 std::apply( [ & ]( auto&... config_node )
                 {
                     const auto current_raw_name{ details::get_config_node_raw_name_by_tag( parsed_line_view ) };
-                    ( [ & ]( auto& current_node ) noexcept
+                    ( [ & ]< typename T >( T& current_node ) noexcept
                     {
-                        if ( current_raw_name == current_node.raw_name ) {
-                            current_config_node = std::addressof( current_node );
+                        if constexpr ( !details::is_reserved_config_node_v< T > ) {
+                            if ( current_raw_name == current_node.raw_name ) {
+                                current_config_node = std::addressof( current_node );
+                            }
                         }
                     }( config_node ), ... );
                 }, config_nodes );
