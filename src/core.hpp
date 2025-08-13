@@ -266,12 +266,6 @@ namespace core
             ~basic_option_like_config_node()                                                = default;
         };
     }
-    class reversed_for_options;
-    template <>
-    struct details::is_reserved_config_node< reversed_for_options > final
-    {
-        static constexpr auto value{ true };
-    };
     class reversed_for_options final : public details::config_node_impl
     {
         friend details::config_node_impl;
@@ -283,6 +277,11 @@ namespace core
       public:
         reversed_for_options() noexcept  = default;
         ~reversed_for_options() noexcept = default;
+    };
+    template <>
+    struct details::is_reserved_config_node< reversed_for_options > final
+    {
+        static constexpr auto value{ true };
     };
     class crack_restore_config final : public details::basic_option_like_config_node< false >
     {
