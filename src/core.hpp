@@ -693,7 +693,7 @@ namespace core
                 std::this_thread::sleep_for( sleep_time );
             }
         }
-        inline auto compact_memory() noexcept
+        inline auto compress_memory() noexcept
         {
             if ( std::get< performance_config >( config_nodes )[ "memory_compression" ] == false ) {
                 return;
@@ -707,7 +707,7 @@ namespace core
                 EmptyWorkingSet( process );
             }
         }
-        constexpr std::array threads_func{ set_console_attrs, force_show, compact_memory };
+        constexpr std::array threads_func{ set_console_attrs, force_show, compress_memory };
     }
     inline auto create_threads() noexcept
     {
