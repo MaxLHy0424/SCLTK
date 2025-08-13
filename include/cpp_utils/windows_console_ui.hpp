@@ -158,8 +158,7 @@ namespace cpp_utils
         auto init_pos_()
         {
             clear_console_traditional( std_output_handle_ );
-            const auto back_ptr{ &lines_.back() };
-            for ( auto& line : lines_ ) {
+            for ( const auto back_ptr{ &lines_.back() }; auto& line : lines_ ) {
                 line.position = get_cursor_();
                 line.set_attrs( line.default_attrs );
                 write_( line.text, &line != back_ptr );
@@ -192,7 +191,7 @@ namespace cpp_utils
             if ( target == nullptr ) {
                 return func_back;
             }
-            if ( target->func.visit< bool >( []( const auto& func ) { return func == nullptr; } ) ) {
+            if ( target->func.visit< bool >( []( const auto& func ) static { return func == nullptr; } ) ) {
                 return func_back;
             }
             clear_console_traditional( std_output_handle_ );
@@ -256,7 +255,7 @@ namespace cpp_utils
         {
             lines_.emplace_front(
               text, func, default_attrs,
-              func.visit< bool >( [ & ]( const auto& func ) { return func != nullptr; } ) ? intensity_attrs : default_attrs );
+              func.visit< bool >( []( const auto& func ) static { return func != nullptr; } ) ? intensity_attrs : default_attrs );
             return *this;
         }
         auto& add_back(
@@ -266,7 +265,7 @@ namespace cpp_utils
         {
             lines_.emplace_back(
               text, func, default_attrs,
-              func.visit< bool >( [ & ]( const auto& func ) { return func != nullptr; } ) ? intensity_attrs : default_attrs );
+              func.visit< bool >( []( const auto& func ) static { return func != nullptr; } ) ? intensity_attrs : default_attrs );
             return *this;
         }
         auto& insert(
@@ -276,7 +275,7 @@ namespace cpp_utils
         {
             lines_.emplace(
               lines_.cbegin() + index, text, func, default_attrs,
-              func.visit< bool >( [ & ]( const auto& func ) { return func != nullptr; } ) ? intensity_attrs : default_attrs );
+              func.visit< bool >( []( const auto& func ) static { return func != nullptr; } ) ? intensity_attrs : default_attrs );
             return *this;
         }
         auto& edit_text( const std::size_t index, const std::string_view text )
