@@ -87,7 +87,7 @@ namespace core
             static constexpr auto value{ false };
         };
         template < typename T >
-        constexpr auto is_reserved_config_node_v{ is_reserved_config_node< std::decay_t< T > >::value };
+        constexpr auto is_reserved_config_node_v{ is_reserved_config_node< T >::value };
         class config_node_impl
         {
           public:
