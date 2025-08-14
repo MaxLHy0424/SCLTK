@@ -81,13 +81,8 @@ namespace core
     };
     namespace details
     {
-        template < typename >
-        struct is_reserved_config_node final
-        {
-            static constexpr auto value{ false };
-        };
-        template < typename T >
-        constexpr auto is_reserved_config_node_v{ is_reserved_config_node< std::decay_t< T > >::value };
+        struct reserved_config_node
+        { };
         class config_node_impl
         {
           public:
@@ -95,14 +90,14 @@ namespace core
             auto load( this auto&& self, const bool is_reload, const std::string_view line )
             {
                 using child_t = std::decay_t< decltype( self ) >;
-                if constexpr ( !is_reserved_config_node_v< child_t > ) {
+                if constexpr ( !std::is_base_of_v< reserved_config_node, child_t > ) {
                     self.load_( is_reload, line );
                 }
             }
             auto sync( this auto&& self, std::ofstream& out )
             {
                 using child_t = std::decay_t< decltype( self ) >;
-                if constexpr ( !is_reserved_config_node_v< child_t > ) {
+                if constexpr ( !std::is_base_of_v< reserved_config_node, child_t > ) {
                     out << std::format( "[{}]\n", self.raw_name );
                     self.sync_( out );
                 }
@@ -110,7 +105,9 @@ namespace core
             auto prepare_reload( this auto&& self )
             {
                 using child_t = std::decay_t< decltype( self ) >;
-                if constexpr ( !is_reserved_config_node_v< child_t > && requires( child_t obj ) { obj.prepare_reload_(); } ) {
+                if constexpr ( !std::is_base_of_v< reserved_config_node, child_t >
+                               && requires( child_t obj ) { obj.prepare_reload_(); } )
+                {
                     self.prepare_reload_();
                 }
             }
@@ -266,7 +263,9 @@ namespace core
             ~basic_option_like_config_node()                                                = default;
         };
     }
-    class reversed_for_options final : public details::config_node_impl
+    class reversed_for_options final
+      : public details::config_node_impl
+      , public details::reserved_config_node
     {
         friend details::config_node_impl;
       private:
@@ -277,11 +276,6 @@ namespace core
       public:
         reversed_for_options() noexcept  = default;
         ~reversed_for_options() noexcept = default;
-    };
-    template <>
-    struct details::is_reserved_config_node< reversed_for_options > final
-    {
-        static constexpr auto value{ true };
     };
     class crack_restore_config final : public details::basic_option_like_config_node< false >
     {
@@ -450,7 +444,7 @@ namespace core
                     const auto current_raw_name{ details::get_config_node_raw_name_by_tag( parsed_line_view ) };
                     ( [ & ]< typename T >( T& current_node ) noexcept
                     {
-                        if constexpr ( !details::is_reserved_config_node_v< T > ) {
+                        if constexpr ( !std::is_base_of_v< details::reserved_config_node, T > ) {
                             if ( current_raw_name == current_node.raw_name ) {
                                 current_config_node = std::addressof( current_node );
                             }
