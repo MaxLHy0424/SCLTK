@@ -9,7 +9,6 @@
 #include <flat_map>
 #include <fstream>
 #include <limits>
-#include <numeric>
 #include "info.hpp"
 namespace core
 {
