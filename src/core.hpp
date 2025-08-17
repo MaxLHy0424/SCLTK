@@ -5,8 +5,6 @@
 #include <cpp_utils/multithread.hpp>
 #include <cpp_utils/windows_app_tools.hpp>
 #include <cpp_utils/windows_console_ui.hpp>
-#include <psapi.h>
-#include <flat_map>
 #include <fstream>
 #include <limits>
 #include "info.hpp"
