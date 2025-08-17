@@ -81,7 +81,11 @@ namespace core
     namespace details
     {
         struct reserved_config_node
-        { };
+        {
+          protected:
+            reserved_config_node()  = default;
+            ~reserved_config_node() = default;
+        };
         class config_node_impl
         {
           public:
