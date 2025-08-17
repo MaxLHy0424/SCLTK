@@ -500,9 +500,11 @@ namespace core
             std::print(
               "                    [ 配  置 ]\n\n\n"
               " -> 正在尝试打开配置文件...\n\n" );
-            const auto is_success{
-              std::bit_cast< INT_PTR >( ShellExecuteA( nullptr, "open", config_file_name, nullptr, nullptr, SW_SHOWNORMAL ) ) > 32 };
-            std::print( " (i) 打开配置文件{}.", is_success ? "成功" : "失败" );
+            std::print(
+              " (i) 打开配置文件{}.",
+              std::bit_cast< INT_PTR >( ShellExecuteA( nullptr, "open", config_file_name, nullptr, nullptr, SW_SHOWNORMAL ) ) > 32
+                ? "成功"
+                : "失败" );
             press_any_key_to_return();
             return func_back;
         }
