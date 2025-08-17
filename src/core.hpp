@@ -512,7 +512,7 @@ namespace core
         cpp_utils::console_ui ui;
         ui.add_back( "                    [ 配  置 ]\n\n" )
           .add_back( " < 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
-          .add_back( " > 查看解析规则", details::show_config_parsing_rules )
+          .add_back( " > 查看解析规则 ", details::show_config_parsing_rules )
           .add_back( " > 同步配置 ", details::sync_config )
           .add_back( " > 打开配置文件 ", details::open_config_file );
         std::apply( [ & ]( auto&... config_node ) { ( config_node.set_ui( ui ), ... ); }, config_nodes );
@@ -915,8 +915,8 @@ namespace core
     inline auto make_executor_mode_ui_text()
     {
         switch ( details::executor_mode ) {
-            case details::rule_executing::crack : return "[ 破解 (点击切换) ]"sv;
-            case details::rule_executing::restore : return "[ 恢复 (点击切换) ]"sv;
+            case details::rule_executing::crack : return "[ 破解 (点击切换) ] "sv;
+            case details::rule_executing::restore : return "[ 恢复 (点击切换) ] "sv;
             default : std::unreachable();
         }
     }
