@@ -1,12 +1,12 @@
 include env
 name             = SCLTK
 compiler         = g++.exe
-args_defines     = -DANSI -D_ANSI
+args_defines     = -D{ANSI,D_ANSI}
 args_std         = gnu++26
-args_warning     = -Wall -Wextra -Weffc++ -Wpedantic
+args_warning     = -W{all,extra,effc++,pedantic}
 args_opt_debug   = -Og
 args_opt_release = -O3 -flto=auto -s -fno-rtti -fno-exceptions -ffunction-sections -fdata-sections -Wl,--gc-sections
-args_include     = -I include
+args_include     = -I./include
 args_library     =
 args_extra       =
 input_charset    = utf-8
