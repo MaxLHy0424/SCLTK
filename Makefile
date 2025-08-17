@@ -1,7 +1,7 @@
 include env
 name             = SCLTK
 compiler         = g++.exe
-args_defines     = -D{ANSI,D_ANSI}
+args_defines     = -D{ANSI,_ANSI}
 args_std         = gnu++26
 args_warning     = -W{all,extra,effc++,pedantic}
 args_opt_debug   = -Og
