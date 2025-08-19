@@ -78,11 +78,11 @@ namespace core
     };
     namespace details
     {
-        struct reserved_config_node
+        struct reserved_config_node_flag
         {
           protected:
-            reserved_config_node()  = default;
-            ~reserved_config_node() = default;
+            reserved_config_node_flag()  = default;
+            ~reserved_config_node_flag() = default;
         };
         class config_node_impl
         {
@@ -91,14 +91,14 @@ namespace core
             auto load( this auto&& self, const bool is_reload, const std::string_view line )
             {
                 using child_t = std::decay_t< decltype( self ) >;
-                if constexpr ( !std::is_base_of_v< reserved_config_node, child_t > ) {
+                if constexpr ( !std::is_base_of_v< reserved_config_node_flag, child_t > ) {
                     self.load_( is_reload, line );
                 }
             }
             auto sync( this auto&& self, std::ofstream& out )
             {
                 using child_t = std::decay_t< decltype( self ) >;
-                if constexpr ( !std::is_base_of_v< reserved_config_node, child_t > ) {
+                if constexpr ( !std::is_base_of_v< reserved_config_node_flag, child_t > ) {
                     out << std::format( "[{}]\n", self.raw_name );
                     self.sync_( out );
                 }
@@ -106,7 +106,7 @@ namespace core
             auto prepare_reload( this auto&& self )
             {
                 using child_t = std::decay_t< decltype( self ) >;
-                if constexpr ( !std::is_base_of_v< reserved_config_node, child_t >
+                if constexpr ( !std::is_base_of_v< reserved_config_node_flag, child_t >
                                && requires( child_t obj ) { obj.prepare_reload_(); } )
                 {
                     self.prepare_reload_();
@@ -266,7 +266,7 @@ namespace core
     }
     class reversed_for_options final
       : public details::config_node_impl
-      , public details::reserved_config_node
+      , public details::reserved_config_node_flag
     {
         friend details::config_node_impl;
       private:
@@ -445,7 +445,7 @@ namespace core
                     const auto current_raw_name{ details::get_config_node_raw_name_by_tag( parsed_line_view ) };
                     ( [ & ]< typename T >( T& current_node ) noexcept
                     {
-                        if constexpr ( !std::is_base_of_v< details::reserved_config_node, T > ) {
+                        if constexpr ( !std::is_base_of_v< details::reserved_config_node_flag, T > ) {
                             if ( current_raw_name == current_node.raw_name ) {
                                 current_config_node = std::addressof( current_node );
                             }
