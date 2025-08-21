@@ -44,9 +44,9 @@ namespace core
         inline constexpr auto is_whitespace( const char ch ) noexcept
         {
             switch ( ch ) {
-                case '\f' :
-                case '\v' :
                 case '\t' :
+                case '\v' :
+                case '\f' :
                 case ' ' : return true;
             }
             return false;
