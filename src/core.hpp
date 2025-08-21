@@ -146,6 +146,7 @@ namespace core
                     } else {
                         value_ = value;
                     }
+                    return *this;
                 }
                 operator bool() const noexcept
                 {
@@ -220,8 +221,7 @@ namespace core
             }
             static auto flip_item_value_( const ui_func_args args, value_t_& item )
             {
-                item.set( !item.get() );
-                args.parent_ui.edit_text( args.node_index, make_swith_button_text_( item ) );
+                args.parent_ui.edit_text( args.node_index, make_swith_button_text_( item.set( !item.get() ) ) );
                 return func_back;
             }
             static auto make_option_editor_ui_( map_t_& options )
