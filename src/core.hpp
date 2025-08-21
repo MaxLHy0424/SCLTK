@@ -215,13 +215,13 @@ namespace core
                     out << key << ( item == true ? str_of_the_enabled : str_of_the_disabled ) << '\n';
                 }
             }
-            static auto make_swith_button_text_( const value_t_& item )
+            static auto make_flip_button_text_( const value_t_& item )
             {
                 return item == true ? " > 禁用 "sv : " > 启用 "sv;
             }
             static auto flip_item_value_( const ui_func_args args, value_t_& item )
             {
-                args.parent_ui.edit_text( args.node_index, make_swith_button_text_( item.set( !item.get() ) ) );
+                args.parent_ui.edit_text( args.node_index, make_flip_button_text_( item.set( !item.get() ) ) );
                 return func_back;
             }
             static auto make_option_editor_ui_( map_t_& options )
@@ -233,7 +233,7 @@ namespace core
                 for ( auto&& [ _, item ] : options ) {
                     ui.add_back( std::format( "\n[ {} ]\n", item.description ) )
                       .add_back(
-                        make_swith_button_text_( item ), std::bind_back( flip_item_value_, std::ref( item ) ),
+                        make_flip_button_text_( item ), std::bind_back( flip_item_value_, std::ref( item ) ),
                         cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_green );
                 }
                 ui.show();
