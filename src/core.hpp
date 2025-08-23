@@ -38,7 +38,7 @@ namespace core
     {
         inline auto press_any_key_to_return() noexcept
         {
-            std::print( "\n\n 请按键盘上的任意键返回..." );
+            std::print( "\n\n 按任意键返回..." );
             cpp_utils::press_any_key_to_continue( std_input_handle );
         }
         inline constexpr auto is_whitespace( const char ch ) noexcept
