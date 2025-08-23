@@ -13,7 +13,17 @@
             "externalConsole": true,
             "internalConsoleOptions": "openOnSessionStart",
             "MIMode": "gdb",
-            "preLaunchTask": "debug"
+            "preLaunchTask": "debug",
+            "setupCommands": [
+                {
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                }
+            ]
         }
     ]
 }
