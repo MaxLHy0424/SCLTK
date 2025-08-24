@@ -915,7 +915,7 @@ namespace core
         }
         return func_back;
     }
-    inline auto make_executor_mode_ui_text()
+    inline auto make_executor_mode_ui_text() noexcept
     {
         switch ( details::executor_mode ) {
             case details::rule_executing::crack : return "[ 破解 (点击切换) ]\n"sv;
