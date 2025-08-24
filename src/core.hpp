@@ -437,7 +437,9 @@ namespace core
         std::apply( []( auto&... config_node ) { ( config_node.prepare_reload(), ... ); }, config_nodes );
         std::string line;
         using usable_config_node_types = config_node_types::filter< details::is_not_reserved_config_node >;
-        usable_config_node_types::transform< std::add_pointer >::add_front< std::monostate >::apply< std::variant > current_config_node;
+        using transformed_config_node_recorder
+          = usable_config_node_types::transform< std::add_pointer >::add_front< std::monostate >::apply< std::variant >;
+        transformed_config_node_recorder current_config_node;
         while ( std::getline( config_file, line ) ) {
             const auto parsed_begin{ std::ranges::find_if_not( line, details::is_whitespace ) };
             const auto parsed_end{ std::ranges::find_if_not( line | std::views::reverse, details::is_whitespace ).base() };
@@ -455,7 +457,7 @@ namespace core
                     const auto current_raw_name{ details::get_config_node_raw_name_by_tag( parsed_line_view ) };
                     ( [ & ]< typename T >( T& current_node ) noexcept
                     {
-                        if constexpr ( details::is_not_reserved_config_node< T >::value ) {
+                        if constexpr ( usable_config_node_types::contains< T > ) {
                             if ( current_raw_name == current_node.raw_name ) {
                                 current_config_node = std::addressof( current_node );
                             }
