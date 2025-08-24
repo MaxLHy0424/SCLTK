@@ -402,6 +402,13 @@ namespace core
             is_valid_config_node()  = delete;
             ~is_valid_config_node() = delete;
         };
+        template < typename T >
+        struct is_not_reserved_config_node final
+        {
+            static constexpr auto value{ !std::is_base_of_v< reserved_config_node_flag, T > };
+            is_not_reserved_config_node()  = delete;
+            ~is_not_reserved_config_node() = delete;
+        };
     }
     using config_node_types
       = cpp_utils::type_list< reversed_for_options, crack_restore_config, window_config, performance_config, custom_rules_config >;
@@ -429,7 +436,8 @@ namespace core
         }
         std::apply( []( auto&... config_node ) { ( config_node.prepare_reload(), ... ); }, config_nodes );
         std::string line;
-        config_node_types::transform< std::add_pointer >::add_front< std::monostate >::apply< std::variant > current_config_node;
+        using usable_config_node_types = config_node_types::filter< details::is_not_reserved_config_node >;
+        usable_config_node_types::transform< std::add_pointer >::add_front< std::monostate >::apply< std::variant > current_config_node;
         while ( std::getline( config_file, line ) ) {
             const auto parsed_begin{ std::ranges::find_if_not( line, details::is_whitespace ) };
             const auto parsed_end{ std::ranges::find_if_not( line | std::views::reverse, details::is_whitespace ).base() };
@@ -447,7 +455,7 @@ namespace core
                     const auto current_raw_name{ details::get_config_node_raw_name_by_tag( parsed_line_view ) };
                     ( [ & ]< typename T >( T& current_node ) noexcept
                     {
-                        if constexpr ( !std::is_base_of_v< details::reserved_config_node_flag, T > ) {
+                        if constexpr ( details::is_not_reserved_config_node< T >::value ) {
                             if ( current_raw_name == current_node.raw_name ) {
                                 current_config_node = std::addressof( current_node );
                             }
