@@ -266,7 +266,7 @@ namespace core
     }
     class reversed_for_options final
       : public details::config_node_impl
-      , public details::reserved_config_node_flag
+      , private details::reserved_config_node_flag
     {
         friend details::config_node_impl;
       private:
