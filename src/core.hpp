@@ -121,7 +121,7 @@ namespace core
             }
         };
         template < bool Atomic >
-        class basic_option_like_config_node : public config_node_impl
+        class basic_options_config_node : public config_node_impl
         {
             friend config_node_impl;
           private:
@@ -252,16 +252,16 @@ namespace core
             {
                 return options_.at( key );
             }
-            auto operator=( const basic_option_like_config_node< Atomic >& ) -> basic_option_like_config_node< Atomic >& = delete;
-            auto operator=( basic_option_like_config_node< Atomic >&& ) -> basic_option_like_config_node< Atomic >& = delete;
-            basic_option_like_config_node( const char* const raw_name, const char* const shown_name, map_t_ options )
+            auto operator=( const basic_options_config_node< Atomic >& ) -> basic_options_config_node< Atomic >& = delete;
+            auto operator=( basic_options_config_node< Atomic >&& ) -> basic_options_config_node< Atomic >&      = delete;
+            basic_options_config_node( const char* const raw_name, const char* const shown_name, map_t_ options )
               : config_node_impl{ raw_name }
               , shown_name_{ shown_name }
               , options_{ std::move( options ) }
             { }
-            basic_option_like_config_node( const basic_option_like_config_node< Atomic >& ) = delete;
-            basic_option_like_config_node( basic_option_like_config_node< Atomic >&& )      = delete;
-            ~basic_option_like_config_node()                                                = default;
+            basic_options_config_node( const basic_options_config_node< Atomic >& ) = delete;
+            basic_options_config_node( basic_options_config_node< Atomic >&& )      = delete;
+            ~basic_options_config_node()                                            = default;
         };
     }
     class reversed_for_options final
@@ -278,11 +278,11 @@ namespace core
         reversed_for_options() noexcept  = default;
         ~reversed_for_options() noexcept = default;
     };
-    class crack_restore_config final : public details::basic_option_like_config_node< false >
+    class crack_restore_config final : public details::basic_options_config_node< false >
     {
       public:
         crack_restore_config()
-          : basic_option_like_config_node{
+          : basic_options_config_node{
               "crack_restore",
               "破解与恢复",
               { { "hijack_execs", "劫持可执行文件" },
@@ -292,11 +292,11 @@ namespace core
         { }
         ~crack_restore_config() = default;
     };
-    class window_config final : public details::basic_option_like_config_node< true >
+    class window_config final : public details::basic_options_config_node< true >
     {
       public:
         window_config()
-          : basic_option_like_config_node{
+          : basic_options_config_node{
               "window",
               "窗口显示",
               { { "force_show", "置顶窗口 (非实时)" },
@@ -306,11 +306,11 @@ namespace core
         { }
         ~window_config() = default;
     };
-    class performance_config final : public details::basic_option_like_config_node< false >
+    class performance_config final : public details::basic_options_config_node< false >
     {
       public:
         performance_config()
-          : basic_option_like_config_node{
+          : basic_options_config_node{
               "performance",
               "性能",
               { { "memory_compression", "内存压缩 (下次启动时生效)" },
