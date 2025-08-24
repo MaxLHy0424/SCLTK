@@ -1,6 +1,8 @@
 #pragma once
 #include <functional>
 #include <tuple>
+#include <type_traits>
+#include <utility>
 namespace cpp_utils
 {
     template < typename T >
