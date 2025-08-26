@@ -86,8 +86,8 @@ namespace cpp_utils
         auto operator=( basic_const_string< T, N >&& ) -> basic_const_string< T, N >&                = delete;
         consteval basic_const_string( const T ( &str )[ N + 1 ] ) noexcept
         {
-            static_assert( str[ N ] == '\0' );
             std::ranges::copy( str, storage_.data() );
+            storage_.back() = '\0';
         }
         consteval basic_const_string( const std::array< T, N > str ) noexcept
         {
@@ -118,5 +118,13 @@ namespace cpp_utils
         std::array< T, N > str;
         str.fill( C );
         return basic_const_string{ str };
+    }
+    template < character T, std::size_t L1, std::size_t L2 >
+    inline consteval auto concat_const_string( basic_const_string< T, L1 > lhs, basic_const_string< T, L2 > rhs ) noexcept
+    {
+        std::array< T, L1 + L2 > storage;
+        std::ranges::copy( lhs.c_str(), lhs.c_str() + L1, storage.data() );
+        std::ranges::copy( rhs.c_str(), rhs.c_str() + L2, storage.data() + L1 );
+        return basic_const_string{ storage };
     }
 }
