@@ -726,18 +726,12 @@ namespace core
     namespace details
     {
         using rule_item_const_ref_t = cpp_utils::add_const_lvalue_reference_t< rule_node::item_t >;
-        inline constexpr auto default_executing_sleep_time{ 1ms };
-        static_assert( default_executing_sleep_time.count() != 0 );
         enum class rule_executing : bool
         {
             crack,
             restore
         };
         inline auto executor_mode{ rule_executing::crack };
-        inline auto make_progress( const std::size_t now, const std::size_t total, const std::size_t digits_of_total ) noexcept
-        {
-            return std::format( "({}{}/{})", std::string( digits_of_total - cpp_utils::count_digits( now ), ' ' ), now, total );
-        }
         inline auto for_each_wrapper( const rule_node::container_t& container, void ( *func )( rule_item_const_ref_t ) )
         {
             cpp_utils::parallel_for_each(
@@ -791,42 +785,35 @@ namespace core
                 default : std::unreachable();
             }
         }
-        inline auto default_crack( const std::size_t total_count, const rule_node& rules )
+        inline auto default_crack( const rule_node& rules )
         {
-            std::print( "{}\n\n", diving_line.c_str() );
             const auto& options{ std::get< crack_restore_config >( config_nodes ) };
             const auto& execs{ rules.execs };
             const auto& servs{ rules.servs };
+            const auto total_op_count{ 2 + options[ "hijack_execs" ] + options[ "set_serv_startup_types" ] };
             auto finished_count{ 0uz };
-            const auto digits_of_total{ cpp_utils::count_digits( total_count ) };
             if ( options[ "hijack_execs" ] ) {
+                std::print( " ({}/{}) 劫持文件.\n", ++finished_count, total_op_count );
                 for ( const auto& exec : execs ) {
-                    std::print(
-                      "{} 劫持文件 {}.exe.\n", details::make_progress( ++finished_count, total_count, digits_of_total ), exec );
                     hijack_exec( exec );
-                    std::this_thread::sleep_for( default_executing_sleep_time );
                 }
             }
             if ( options[ "set_serv_startup_types" ] ) {
+                std::print( " ({}/{}) 禁用服务.\n", ++finished_count, total_op_count );
                 for ( const auto& serv : servs ) {
-                    std::print( "{} 禁用服务 {}.\n", details::make_progress( ++finished_count, total_count, digits_of_total ), serv );
                     disable_serv( serv );
-                    std::this_thread::sleep_for( default_executing_sleep_time );
                 }
             }
+            std::print( " ({}/{}) 终止进程.\n", ++finished_count, total_op_count );
             for ( const auto& exec : execs ) {
-                std::print( "{} 终止进程 {}.exe.\n", details::make_progress( ++finished_count, total_count, digits_of_total ), exec );
                 kill_exec( exec );
-                std::this_thread::sleep_for( default_executing_sleep_time );
             }
+            std::print( " ({}/{}) 停止服务.\n", ++finished_count, total_op_count );
             for ( const auto& serv : servs ) {
-                std::print( "{} 停止服务 {}.\n", details::make_progress( ++finished_count, total_count, digits_of_total ), serv );
                 stop_serv( serv );
-                std::this_thread::sleep_for( default_executing_sleep_time );
             }
-            std::print( "\n{}\n\n", diving_line.c_str() );
         }
-        inline auto fast_crack( const std::size_t, const rule_node& rules )
+        inline auto fast_crack( const rule_node& rules )
         {
             const auto& options{ std::get< crack_restore_config >( config_nodes ) };
             const auto execs{ std::cref( rules.execs ) };
@@ -847,37 +834,31 @@ namespace core
                 }
             }
         }
-        inline auto default_restore( const std::size_t total_count, const rule_node& rules )
+        inline auto default_restore( const rule_node& rules )
         {
-            std::print( "{}\n\n", diving_line.c_str() );
             const auto& options{ std::get< crack_restore_config >( config_nodes ) };
             const auto& execs{ rules.execs };
             const auto& servs{ rules.servs };
+            const auto total_op_count{ 1 + options[ "hijack_execs" ] + options[ "set_serv_startup_types" ] };
             auto finished_count{ 0uz };
-            const auto digits_of_total{ cpp_utils::count_digits( total_count ) };
             if ( options[ "hijack_execs" ] ) {
+                std::print( " ({}/{}) 撤销劫持.\n", ++finished_count, total_op_count );
                 for ( const auto& exec : execs ) {
-                    std::print(
-                      "{} 撤销劫持 {}.exe.\n", details::make_progress( ++finished_count, total_count, digits_of_total ), exec );
                     undo_hijack_exec( exec );
-                    std::this_thread::sleep_for( default_executing_sleep_time );
                 }
             }
             if ( options[ "set_serv_startup_types" ] ) {
+                std::print( " ({}/{}) 启用服务.\n", ++finished_count, total_op_count );
                 for ( const auto& serv : servs ) {
-                    std::print( "{} 启用服务 {}.\n", details::make_progress( ++finished_count, total_count, digits_of_total ), serv );
                     enable_serv( serv );
-                    std::this_thread::sleep_for( default_executing_sleep_time );
                 }
             }
+            std::print( " ({}/{}) 启动服务.\n", ++finished_count, total_op_count );
             for ( const auto& serv : servs ) {
-                std::print( "{} 启动服务 {}.\n", details::make_progress( ++finished_count, total_count, digits_of_total ), serv );
                 start_serv( serv );
-                std::this_thread::sleep_for( default_executing_sleep_time );
             }
-            std::print( "\n{}\n\n", diving_line.c_str() );
         }
-        inline auto fast_restore( const std::size_t, const rule_node& rules )
+        inline auto fast_restore( const rule_node& rules )
         {
             const auto& options{ std::get< crack_restore_config >( config_nodes ) };
             const auto& execs{ rules.execs };
@@ -895,12 +876,6 @@ namespace core
     {
         const cpp_utils::sat_num executing_count{ details::get_executing_count( rules ) };
         const auto is_enable_fast_mode{ std::get< crack_restore_config >( config_nodes )[ "fast_mode" ].get() };
-        if ( !is_enable_fast_mode ) {
-            constexpr auto max_value{ std::numeric_limits< SHORT >::max() };
-            const auto raw_height{ executing_count + 13 };
-            const auto buffer_height{ raw_height > max_value ? max_value : static_cast< SHORT >( raw_height ) };
-            SetConsoleScreenBufferSize( std_output_handle, { console_width, std::ranges::max( console_height, buffer_height ) } );
-        }
         switch ( details::executor_mode ) {
             case details::rule_executing::crack : std::print( "                    [ 破  解 ]\n\n\n" ); break;
             case details::rule_executing::restore : std::print( "                    [ 恢  复 ]\n\n\n" ); break;
@@ -912,18 +887,15 @@ namespace core
             return func_back;
         }
         std::print( " -> 正在执行...\n\n" );
-        std::array< void ( * )( const std::size_t, const rule_node& ), 2 > f;
+        std::array< void ( * )( const rule_node& ), 2 > f;
         switch ( details::executor_mode ) {
             case details::rule_executing::crack : f = { details::default_crack, details::fast_crack }; break;
             case details::rule_executing::restore : f = { details::default_restore, details::fast_restore }; break;
             default : std::unreachable();
         }
-        f[ is_enable_fast_mode ]( executing_count, rules );
+        f[ is_enable_fast_mode ]( rules );
         std::print( " (i) 操作已完成." );
         details::press_any_key_to_return();
-        if ( !is_enable_fast_mode ) {
-            cpp_utils::set_console_size( window_handle, std_output_handle, console_width, console_height );
-        }
         return func_back;
     }
     inline auto make_executor_mode_ui_text() noexcept
