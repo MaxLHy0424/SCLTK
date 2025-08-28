@@ -787,18 +787,20 @@ namespace core
         }
         inline auto default_crack( const rule_node& rules )
         {
-            const auto& options{ std::get< crack_restore_config >( config_nodes ) };
             const auto& execs{ rules.execs };
             const auto& servs{ rules.servs };
-            const auto total_op_count{ 2 + options[ "hijack_execs" ] + options[ "set_serv_startup_types" ] };
+            const auto& options{ std::get< crack_restore_config >( config_nodes ) };
+            const auto can_hijack_execs{ options[ "hijack_execs" ] };
+            const auto can_set_serv_startup_types{ options[ "set_serv_startup_types" ] };
+            const auto total_op_count{ 2 + can_hijack_execs + can_set_serv_startup_types };
             int finished_count{ 0 };
-            if ( options[ "hijack_execs" ] ) {
+            if ( can_hijack_execs ) {
                 std::print( " ({}/{}) 劫持文件.\n", ++finished_count, total_op_count );
                 for ( const auto& exec : execs ) {
                     hijack_exec( exec );
                 }
             }
-            if ( options[ "set_serv_startup_types" ] ) {
+            if ( can_set_serv_startup_types ) {
                 std::print( " ({}/{}) 禁用服务.\n", ++finished_count, total_op_count );
                 for ( const auto& serv : servs ) {
                     disable_serv( serv );
@@ -836,18 +838,20 @@ namespace core
         }
         inline auto default_restore( const rule_node& rules )
         {
-            const auto& options{ std::get< crack_restore_config >( config_nodes ) };
             const auto& execs{ rules.execs };
             const auto& servs{ rules.servs };
-            const auto total_op_count{ 1 + options[ "hijack_execs" ] + options[ "set_serv_startup_types" ] };
+            const auto& options{ std::get< crack_restore_config >( config_nodes ) };
+            const auto can_hijack_execs{ options[ "hijack_execs" ] };
+            const auto can_set_serv_startup_types{ options[ "set_serv_startup_types" ] };
+            const auto total_op_count{ 1 + can_hijack_execs + can_set_serv_startup_types };
             int finished_count{ 0 };
-            if ( options[ "hijack_execs" ] ) {
+            if ( can_hijack_execs ) {
                 std::print( " ({}/{}) 撤销劫持.\n", ++finished_count, total_op_count );
                 for ( const auto& exec : execs ) {
                     undo_hijack_exec( exec );
                 }
             }
-            if ( options[ "set_serv_startup_types" ] ) {
+            if ( can_set_serv_startup_types ) {
                 std::print( " ({}/{}) 启用服务.\n", ++finished_count, total_op_count );
                 for ( const auto& serv : servs ) {
                     enable_serv( serv );
