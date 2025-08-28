@@ -725,7 +725,7 @@ namespace core
     }
     namespace details
     {
-        using rule_item_const_ref_t = cpp_utils::add_const_lvalue_reference_t< rule_node::item_t >;
+        using rule_item_const_ref_t = const rule_node::item_t&;
         enum class rule_executing : bool
         {
             crack,
