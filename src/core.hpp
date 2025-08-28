@@ -791,7 +791,7 @@ namespace core
             const auto& execs{ rules.execs };
             const auto& servs{ rules.servs };
             const auto total_op_count{ 2 + options[ "hijack_execs" ] + options[ "set_serv_startup_types" ] };
-            auto finished_count{ 0uz };
+            int finished_count{ 0 };
             if ( options[ "hijack_execs" ] ) {
                 std::print( " ({}/{}) 劫持文件.\n", ++finished_count, total_op_count );
                 for ( const auto& exec : execs ) {
@@ -840,7 +840,7 @@ namespace core
             const auto& execs{ rules.execs };
             const auto& servs{ rules.servs };
             const auto total_op_count{ 1 + options[ "hijack_execs" ] + options[ "set_serv_startup_types" ] };
-            auto finished_count{ 0uz };
+            int finished_count{ 0 };
             if ( options[ "hijack_execs" ] ) {
                 std::print( " ({}/{}) 撤销劫持.\n", ++finished_count, total_op_count );
                 for ( const auto& exec : execs ) {
