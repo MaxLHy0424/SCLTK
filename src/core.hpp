@@ -810,7 +810,7 @@ namespace core
             for ( const auto& exec : execs ) {
                 kill_exec( exec );
             }
-            std::print( " ({}/{}) 停止服务.\n", ++finished_count, total_op_count );
+            std::print( " ({}/{}) 停止服务.\n\n", ++finished_count, total_op_count );
             for ( const auto& serv : servs ) {
                 stop_serv( serv );
             }
@@ -857,7 +857,7 @@ namespace core
                     enable_serv( serv );
                 }
             }
-            std::print( " ({}/{}) 启动服务.\n", ++finished_count, total_op_count );
+            std::print( " ({}/{}) 启动服务.\n\n", ++finished_count, total_op_count );
             for ( const auto& serv : servs ) {
                 start_serv( serv );
             }
