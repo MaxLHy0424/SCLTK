@@ -55,7 +55,7 @@ namespace core
     struct rule_node final
     {
         using item_t      = std::string;
-        using container_t = std::deque< item_t >;
+        using container_t = std::vector< item_t >;
         const char* shown_name{};
         container_t execs{};
         container_t servs{};
@@ -386,7 +386,10 @@ namespace core
       public:
         custom_rules_config() noexcept
           : config_node_impl{ "custom_rules" }
-        { }
+        {
+            custom_rules.execs.reserve( 6 );
+            custom_rules.servs.reserve( 2 );
+        }
         ~custom_rules_config() noexcept = default;
     };
     namespace details
@@ -923,6 +926,16 @@ namespace core
     {
         std::print( " -> 正在准备数据...\n" );
         rule_node total;
+        auto execs_size{ 0uz };
+        auto servs_size{ 0uz };
+        execs_size += custom_rules.execs.size();
+        servs_size += custom_rules.servs.size();
+        for ( const auto& builtin_rule : builtin_rules ) {
+            execs_size += builtin_rule.execs.size();
+            servs_size += builtin_rule.servs.size();
+        }
+        total.execs.reserve( execs_size );
+        total.servs.reserve( servs_size );
         total.execs.append_range( custom_rules.execs );
         total.servs.append_range( custom_rules.servs );
         for ( const auto& builtin_rule : builtin_rules ) {
