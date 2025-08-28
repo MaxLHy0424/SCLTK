@@ -2,8 +2,9 @@
 #include <algorithm>
 #include <array>
 #include <concepts>
-#include <print>
+#include <string_view>
 #include "compiler.hpp"
+#include "meta.hpp"
 namespace cpp_utils
 {
     template < typename T >
@@ -119,12 +120,16 @@ namespace cpp_utils
         str.fill( C );
         return basic_const_string{ str };
     }
-    template < character T, std::size_t L1, std::size_t L2 >
-    inline consteval auto concat_const_string( basic_const_string< T, L1 > lhs, basic_const_string< T, L2 > rhs ) noexcept
+    template < character T, std::size_t... Ns >
+    inline consteval auto concat_const_string( const basic_const_string< T, Ns >... strings ) noexcept
     {
-        std::array< T, L1 + L2 > storage;
-        std::ranges::copy( lhs.c_str(), lhs.c_str() + L1, storage.data() );
-        std::ranges::copy( rhs.c_str(), rhs.c_str() + L2, storage.data() + L1 );
+        std::array< T, ( Ns + ... ) > storage;
+        auto begin{ storage.data() };
+        ( [ & ]< std::size_t N >( basic_const_string< T, N > string ) consteval
+        {
+            std::ranges::copy( string.c_str(), string.c_str() + N, begin );
+            begin += N;
+        }( strings ), ... );
         return basic_const_string{ storage };
     }
 }
