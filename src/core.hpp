@@ -790,8 +790,8 @@ namespace core
             const auto& execs{ rules.execs };
             const auto& servs{ rules.servs };
             const auto& options{ std::get< crack_restore_config >( config_nodes ) };
-            const auto can_hijack_execs{ options[ "hijack_execs" ] };
-            const auto can_set_serv_startup_types{ options[ "set_serv_startup_types" ] };
+            const auto can_hijack_execs{ options[ "hijack_execs" ].get() };
+            const auto can_set_serv_startup_types{ options[ "set_serv_startup_types" ].get() };
             const auto total_op_count{ 2 + can_hijack_execs + can_set_serv_startup_types };
             int finished_count{ 0 };
             if ( can_hijack_execs ) {
@@ -841,8 +841,8 @@ namespace core
             const auto& execs{ rules.execs };
             const auto& servs{ rules.servs };
             const auto& options{ std::get< crack_restore_config >( config_nodes ) };
-            const auto can_hijack_execs{ options[ "hijack_execs" ] };
-            const auto can_set_serv_startup_types{ options[ "set_serv_startup_types" ] };
+            const auto can_hijack_execs{ options[ "hijack_execs" ].get() };
+            const auto can_set_serv_startup_types{ options[ "set_serv_startup_types" ].get() };
             const auto total_op_count{ 1 + can_hijack_execs + can_set_serv_startup_types };
             int finished_count{ 0 };
             if ( can_hijack_execs ) {
@@ -879,7 +879,6 @@ namespace core
     inline auto execute_rules( const rule_node& rules )
     {
         const cpp_utils::sat_num executing_count{ details::get_executing_count( rules ) };
-        const auto is_enable_fast_mode{ std::get< crack_restore_config >( config_nodes )[ "fast_mode" ].get() };
         switch ( details::executor_mode ) {
             case details::rule_executing::crack : std::print( "                    [ 破  解 ]\n\n\n" ); break;
             case details::rule_executing::restore : std::print( "                    [ 恢  复 ]\n\n\n" ); break;
@@ -897,7 +896,7 @@ namespace core
             case details::rule_executing::restore : f = { details::default_restore, details::fast_restore }; break;
             default : std::unreachable();
         }
-        f[ is_enable_fast_mode ]( rules );
+        f[ std::get< crack_restore_config >( config_nodes )[ "fast_mode" ].get() ]( rules );
         std::print( " (i) 操作已完成." );
         details::press_any_key_to_return();
         return func_back;
