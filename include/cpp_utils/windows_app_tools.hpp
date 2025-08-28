@@ -75,7 +75,7 @@ namespace cpp_utils
                     if ( status.dwCurrentState != SERVICE_STOP_PENDING ) {
                         break;
                     }
-                    std::this_thread::sleep_for( 5ms );
+                    std::this_thread::sleep_for( 1ms );
                 }
                 if ( status.dwCurrentState != SERVICE_STOPPED ) {
                     result = ERROR_SERVICE_REQUEST_TIMEOUT;
