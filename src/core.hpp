@@ -52,16 +52,17 @@ namespace core
             return false;
         }
     }
+    template < typename ItemType >
     struct rule_node final
     {
-        using item_t      = std::string;
+        using item_t      = ItemType;
         using container_t = std::vector< item_t >;
         const char* shown_name{};
         container_t execs{};
         container_t servs{};
     };
-    inline rule_node custom_rules;
-    inline const std::array< rule_node, 4 > builtin_rules{
+    inline rule_node< std::string > custom_rules;
+    inline const std::array< rule_node< const char* >, 4 > builtin_rules{
       { { "学生机房管理助手", { "jfglzs", "przs", "zmserv", "vprtt", "oporn" }, { "zmserv" } },
        { "极域电子教室",
           { "StudentMain", "DispcapHelper", "VRCwPlayer", "InstHelpApp", "InstHelpApp64", "TDOvrSet", "GATESRV", "ProcHelper64",
@@ -728,52 +729,78 @@ namespace core
     }
     namespace details
     {
-        using rule_item_const_ref_t = const rule_node::item_t&;
+        template < typename T >
+        using ref_switch = std::conditional_t< std::is_pointer_v< T >, const T, const T& >;
         enum class rule_executing : bool
         {
             crack,
             restore
         };
         inline auto executor_mode{ rule_executing::crack };
-        inline auto for_each_wrapper( const rule_node::container_t& container, void ( *func )( rule_item_const_ref_t ) )
+        template < typename T >
+        inline auto for_each_wrapper( const typename rule_node< T >::container_t& container, void ( *func )( ref_switch< T > ) )
         {
             cpp_utils::parallel_for_each(
               std::ranges::max( std::thread::hardware_concurrency() / 2, 2u ), container.begin(), container.end(), func );
         }
-        inline auto hijack_exec( rule_item_const_ref_t exec ) noexcept
+        template < typename T >
+        inline auto hijack_exec( ref_switch< T > exec ) noexcept
         {
             cpp_utils::create_registry_key< charset_id >(
               cpp_utils::registry::hkey_local_machine,
               std::format( R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe)", exec ).c_str(),
               "Debugger", cpp_utils::registry::string_type, reinterpret_cast< const BYTE* >( L"nul" ), sizeof( L"nul" ) );
         }
-        inline auto disable_serv( rule_item_const_ref_t serv ) noexcept
+        template < typename T >
+        inline auto disable_serv( ref_switch< T > serv ) noexcept
         {
-            cpp_utils::set_service_status< charset_id >( serv.c_str(), cpp_utils::service::disabled_start );
+            if constexpr ( requires( T t ) { t.c_str(); } ) {
+                cpp_utils::set_service_status< charset_id >( serv.c_str(), cpp_utils::service::disabled_start );
+            } else {
+                cpp_utils::set_service_status< charset_id >( serv, cpp_utils::service::disabled_start );
+            }
         }
-        inline auto kill_exec( rule_item_const_ref_t exec ) noexcept
+        template < typename T >
+        inline auto kill_exec( ref_switch< T > exec ) noexcept
         {
             cpp_utils::kill_process_by_name< charset_id >( std::format( "{}.exe", exec ).c_str() );
         }
-        inline auto stop_serv( rule_item_const_ref_t serv ) noexcept
+        template < typename T >
+        inline auto stop_serv( ref_switch< T > serv ) noexcept
         {
-            cpp_utils::stop_service_with_dependencies< charset_id >( serv.c_str() );
+            if constexpr ( requires( T t ) { t.c_str(); } ) {
+                cpp_utils::stop_service_with_dependencies< charset_id >( serv.c_str() );
+            } else {
+                cpp_utils::stop_service_with_dependencies< charset_id >( serv );
+            }
         }
-        inline auto undo_hijack_exec( rule_item_const_ref_t exec ) noexcept
+        template < typename T >
+        inline auto undo_hijack_exec( ref_switch< T > exec ) noexcept
         {
             cpp_utils::delete_registry_tree< charset_id >(
               cpp_utils::registry::hkey_local_machine,
               std::format( R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe)", exec ).c_str() );
         }
-        inline auto enable_serv( rule_item_const_ref_t serv ) noexcept
+        template < typename T >
+        inline auto enable_serv( ref_switch< T > serv ) noexcept
         {
-            cpp_utils::set_service_status< charset_id >( serv.c_str(), cpp_utils::service::auto_start );
+            if constexpr ( requires( T t ) { t.c_str(); } ) {
+                cpp_utils::set_service_status< charset_id >( serv.c_str(), cpp_utils::service::auto_start );
+            } else {
+                cpp_utils::set_service_status< charset_id >( serv, cpp_utils::service::auto_start );
+            }
         }
-        inline auto start_serv( rule_item_const_ref_t serv ) noexcept
+        template < typename T >
+        inline auto start_serv( ref_switch< T > serv ) noexcept
         {
-            cpp_utils::start_service_with_dependencies< charset_id >( serv.c_str() );
+            if constexpr ( requires( T t ) { t.c_str(); } ) {
+                cpp_utils::start_service_with_dependencies< charset_id >( serv.c_str() );
+            } else {
+                cpp_utils::start_service_with_dependencies< charset_id >( serv );
+            }
         }
-        inline auto get_executing_count( const rule_node& rules ) noexcept
+        template < typename T >
+        inline auto get_executing_count( const rule_node< T >& rules ) noexcept
         {
             const auto& options{ std::get< crack_restore_config >( config_nodes ) };
             const auto& execs{ rules.execs };
@@ -788,7 +815,8 @@ namespace core
                 default : std::unreachable();
             }
         }
-        inline auto default_crack( const rule_node& rules )
+        template < typename T >
+        inline auto default_crack( const rule_node< T >& rules )
         {
             const auto& execs{ rules.execs };
             const auto& servs{ rules.servs };
@@ -800,25 +828,26 @@ namespace core
             if ( can_hijack_execs ) {
                 std::print( " ({}/{}) 劫持文件.\n", ++finished_count, total_op_count );
                 for ( const auto& exec : execs ) {
-                    hijack_exec( exec );
+                    hijack_exec< T >( exec );
                 }
             }
             if ( can_set_serv_startup_types ) {
                 std::print( " ({}/{}) 禁用服务.\n", ++finished_count, total_op_count );
                 for ( const auto& serv : servs ) {
-                    disable_serv( serv );
+                    disable_serv< T >( serv );
                 }
             }
             std::print( " ({}/{}) 终止进程.\n", ++finished_count, total_op_count );
             for ( const auto& exec : execs ) {
-                kill_exec( exec );
+                kill_exec< T >( exec );
             }
             std::print( " ({}/{}) 停止服务.\n\n", ++finished_count, total_op_count );
             for ( const auto& serv : servs ) {
-                stop_serv( serv );
+                stop_serv< T >( serv );
             }
         }
-        inline auto fast_crack( const rule_node& rules )
+        template < typename T >
+        inline auto fast_crack( const rule_node< T >& rules )
         {
             const auto& options{ std::get< crack_restore_config >( config_nodes ) };
             const auto execs{ std::cref( rules.execs ) };
@@ -826,20 +855,21 @@ namespace core
             using thread_t = std::thread;
             std::array< thread_t, 4 > threads;
             if ( options[ "hijack_execs" ] ) {
-                threads[ 0 ] = thread_t{ for_each_wrapper, execs, hijack_exec };
+                threads[ 0 ] = thread_t{ for_each_wrapper< T >, execs, hijack_exec< T > };
             }
             if ( options[ "set_serv_startup_types" ] ) {
-                threads[ 1 ] = thread_t{ for_each_wrapper, servs, disable_serv };
+                threads[ 1 ] = thread_t{ for_each_wrapper< T >, servs, disable_serv< T > };
             }
-            threads[ 2 ] = thread_t{ for_each_wrapper, execs, kill_exec };
-            threads[ 3 ] = thread_t{ for_each_wrapper, servs, stop_serv };
+            threads[ 2 ] = thread_t{ for_each_wrapper< T >, execs, kill_exec< T > };
+            threads[ 3 ] = thread_t{ for_each_wrapper< T >, servs, stop_serv< T > };
             for ( auto& thread : threads ) {
                 if ( thread.joinable() ) {
                     thread.join();
                 }
             }
         }
-        inline auto default_restore( const rule_node& rules )
+        template < typename T >
+        inline auto default_restore( const rule_node< T >& rules )
         {
             const auto& execs{ rules.execs };
             const auto& servs{ rules.servs };
@@ -851,52 +881,53 @@ namespace core
             if ( can_hijack_execs ) {
                 std::print( " ({}/{}) 撤销劫持.\n", ++finished_count, total_op_count );
                 for ( const auto& exec : execs ) {
-                    undo_hijack_exec( exec );
+                    undo_hijack_exec< T >( exec );
                 }
             }
             if ( can_set_serv_startup_types ) {
                 std::print( " ({}/{}) 启用服务.\n", ++finished_count, total_op_count );
                 for ( const auto& serv : servs ) {
-                    enable_serv( serv );
+                    enable_serv< T >( serv );
                 }
             }
             std::print( " ({}/{}) 启动服务.\n\n", ++finished_count, total_op_count );
             for ( const auto& serv : servs ) {
-                start_serv( serv );
+                start_serv< T >( serv );
             }
         }
-        inline auto fast_restore( const rule_node& rules )
+        template < typename T >
+        inline auto fast_restore( const rule_node< T >& rules )
         {
             const auto& options{ std::get< crack_restore_config >( config_nodes ) };
             const auto& execs{ rules.execs };
             const auto& servs{ rules.servs };
             if ( options[ "hijack_execs" ] ) {
-                for_each_wrapper( execs, undo_hijack_exec );
+                for_each_wrapper< T >( execs, undo_hijack_exec< T > );
             }
             if ( options[ "set_serv_startup_types" ] ) {
-                for_each_wrapper( servs, enable_serv );
+                for_each_wrapper< T >( servs, enable_serv< T > );
             }
-            for_each_wrapper( servs, start_serv );
+            for_each_wrapper< T >( servs, start_serv< T > );
         }
     }
-    inline auto execute_rules( const rule_node& rules )
+    template < typename T >
+    inline auto execute_rules( const rule_node< T >& rules )
     {
-        const cpp_utils::sat_num executing_count{ details::get_executing_count( rules ) };
         switch ( details::executor_mode ) {
             case details::rule_executing::crack : std::print( "                    [ 破  解 ]\n\n\n" ); break;
             case details::rule_executing::restore : std::print( "                    [ 恢  复 ]\n\n\n" ); break;
             default : std::unreachable();
         }
-        if ( executing_count == 0 ) {
+        if ( details::get_executing_count( rules ) == 0 ) {
             std::print( " (i) 无可用操作." );
             details::press_any_key_to_return();
             return func_back;
         }
         std::print( " -> 正在执行...\n\n" );
-        std::array< void ( * )( const rule_node& ), 2 > f;
+        std::array< void ( * )( const rule_node< T >& ), 2 > f;
         switch ( details::executor_mode ) {
-            case details::rule_executing::crack : f = { details::default_crack, details::fast_crack }; break;
-            case details::rule_executing::restore : f = { details::default_restore, details::fast_restore }; break;
+            case details::rule_executing::crack : f = { details::default_crack< T >, details::fast_crack< T > }; break;
+            case details::rule_executing::restore : f = { details::default_restore< T >, details::fast_restore< T > }; break;
             default : std::unreachable();
         }
         f[ std::get< crack_restore_config >( config_nodes )[ "fast_mode" ].get() ]( rules );
@@ -925,7 +956,7 @@ namespace core
     inline auto execute_all_rules()
     {
         std::print( " -> 正在准备数据...\n" );
-        rule_node total;
+        rule_node< const char* > total;
         auto execs_size{ 0uz };
         auto servs_size{ 0uz };
         execs_size += custom_rules.execs.size();
@@ -936,8 +967,12 @@ namespace core
         }
         total.execs.reserve( execs_size );
         total.servs.reserve( servs_size );
-        total.execs.append_range( custom_rules.execs );
-        total.servs.append_range( custom_rules.servs );
+        for ( const auto& item : custom_rules.execs ) {
+            total.execs.emplace_back( item.c_str() );
+        }
+        for ( const auto& item : custom_rules.servs ) {
+            total.servs.emplace_back( item.c_str() );
+        }
         for ( const auto& builtin_rule : builtin_rules ) {
             total.execs.append_range( builtin_rule.execs );
             total.servs.append_range( builtin_rule.servs );
