@@ -26,9 +26,14 @@ auto main() -> int
         core::make_executor_mode_ui_text(), core::flip_executor_mode,
         cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_green )
       .add_back( " > 全部执行\n", core::execute_all_rules )
-      .add_back( " > 自定义 ", std::bind_back( core::execute_rules, std::cref( core::custom_rules ) ) );
+      .add_back(
+        " > 自定义 ",
+        std::bind_back(
+          core::execute_rules< std::decay_t< decltype( core::custom_rules ) >::item_t >, std::cref( core::custom_rules ) ) );
     for ( const auto& rule : core::builtin_rules ) {
-        ui.add_back( std::format( " > {} ", rule.shown_name ), std::bind_back( core::execute_rules, std::cref( rule ) ) );
+        ui.add_back(
+          std::format( " > {} ", rule.shown_name ),
+          std::bind_back( core::execute_rules< std::decay_t< decltype( rule ) >::item_t >, std::cref( rule ) ) );
     }
     ui.show();
     return EXIT_SUCCESS;
