@@ -730,7 +730,7 @@ namespace core
     namespace details
     {
         template < typename T >
-        using ref_switch = std::conditional_t< std::is_pointer_v< T >, const T, const T& >;
+        using smart_ref = std::conditional_t< std::is_pointer_v< T >, const T, const T& >;
         enum class rule_executing : bool
         {
             crack,
@@ -738,13 +738,22 @@ namespace core
         };
         inline auto executor_mode{ rule_executing::crack };
         template < typename T >
-        inline auto for_each_wrapper( const typename rule_node< T >::container_t& container, void ( *func )( ref_switch< T > ) )
+        inline auto for_each_wrapper( const typename rule_node< T >::container_t& container, void ( *func )( smart_ref< T > ) )
         {
             cpp_utils::parallel_for_each(
               std::ranges::max( std::thread::hardware_concurrency() / 2, 2u ), container.begin(), container.end(), func );
         }
         template < typename T >
-        inline auto hijack_exec( ref_switch< T > exec ) noexcept
+        inline auto to_cstr( smart_ref< T > str )
+        {
+            if constexpr ( requires( T t ) { t.c_str(); } ) {
+                return str.c_str();
+            } else {
+                return str;
+            }
+        }
+        template < typename T >
+        inline auto hijack_exec( smart_ref< T > exec ) noexcept
         {
             cpp_utils::create_registry_key< charset_id >(
               cpp_utils::registry::hkey_local_machine,
@@ -752,52 +761,36 @@ namespace core
               "Debugger", cpp_utils::registry::string_type, reinterpret_cast< const BYTE* >( L"nul" ), sizeof( L"nul" ) );
         }
         template < typename T >
-        inline auto disable_serv( ref_switch< T > serv ) noexcept
+        inline auto disable_serv( smart_ref< T > serv ) noexcept
         {
-            if constexpr ( requires( T t ) { t.c_str(); } ) {
-                cpp_utils::set_service_status< charset_id >( serv.c_str(), cpp_utils::service::disabled_start );
-            } else {
-                cpp_utils::set_service_status< charset_id >( serv, cpp_utils::service::disabled_start );
-            }
+            cpp_utils::set_service_status< charset_id >( to_cstr< T >( serv ), cpp_utils::service::disabled_start );
         }
         template < typename T >
-        inline auto kill_exec( ref_switch< T > exec ) noexcept
+        inline auto kill_exec( smart_ref< T > exec ) noexcept
         {
             cpp_utils::kill_process_by_name< charset_id >( std::format( "{}.exe", exec ).c_str() );
         }
         template < typename T >
-        inline auto stop_serv( ref_switch< T > serv ) noexcept
+        inline auto stop_serv( smart_ref< T > serv ) noexcept
         {
-            if constexpr ( requires( T t ) { t.c_str(); } ) {
-                cpp_utils::stop_service_with_dependencies< charset_id >( serv.c_str() );
-            } else {
-                cpp_utils::stop_service_with_dependencies< charset_id >( serv );
-            }
+            cpp_utils::stop_service_with_dependencies< charset_id >( to_cstr< T >( serv ) );
         }
         template < typename T >
-        inline auto undo_hijack_exec( ref_switch< T > exec ) noexcept
+        inline auto undo_hijack_exec( smart_ref< T > exec ) noexcept
         {
             cpp_utils::delete_registry_tree< charset_id >(
               cpp_utils::registry::hkey_local_machine,
               std::format( R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe)", exec ).c_str() );
         }
         template < typename T >
-        inline auto enable_serv( ref_switch< T > serv ) noexcept
+        inline auto enable_serv( smart_ref< T > serv ) noexcept
         {
-            if constexpr ( requires( T t ) { t.c_str(); } ) {
-                cpp_utils::set_service_status< charset_id >( serv.c_str(), cpp_utils::service::auto_start );
-            } else {
-                cpp_utils::set_service_status< charset_id >( serv, cpp_utils::service::auto_start );
-            }
+            cpp_utils::set_service_status< charset_id >( to_cstr< T >( serv ), cpp_utils::service::auto_start );
         }
         template < typename T >
-        inline auto start_serv( ref_switch< T > serv ) noexcept
+        inline auto start_serv( smart_ref< T > serv ) noexcept
         {
-            if constexpr ( requires( T t ) { t.c_str(); } ) {
-                cpp_utils::start_service_with_dependencies< charset_id >( serv.c_str() );
-            } else {
-                cpp_utils::start_service_with_dependencies< charset_id >( serv );
-            }
+            cpp_utils::start_service_with_dependencies< charset_id >( to_cstr< T >( serv ) );
         }
         template < typename T >
         inline auto get_executing_count( const rule_node< T >& rules ) noexcept
