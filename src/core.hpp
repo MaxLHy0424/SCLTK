@@ -960,12 +960,8 @@ namespace core
         }
         total.execs.reserve( execs_size );
         total.servs.reserve( servs_size );
-        for ( const auto& item : custom_rules.execs ) {
-            total.execs.emplace_back( item.c_str() );
-        }
-        for ( const auto& item : custom_rules.servs ) {
-            total.servs.emplace_back( item.c_str() );
-        }
+        total.execs.append_range( custom_rules.execs | std::views::transform( details::to_cstr< std::string > ) );
+        total.servs.append_range( custom_rules.servs | std::views::transform( details::to_cstr< std::string > ) );
         for ( const auto& builtin_rule : builtin_rules ) {
             total.execs.append_range( builtin_rule.execs );
             total.servs.append_range( builtin_rule.servs );
