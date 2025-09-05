@@ -15,14 +15,13 @@ namespace cpp_utils
         requires std::invocable< F, decltype( *std::declval< It >() ) >
     inline auto parallel_for_each( const nproc_t nproc, It&& begin, W&& end, F&& func )
     {
-        if ( nproc == 0 ) {
-            if constexpr ( is_debugging_build ) {
+        if constexpr ( is_debugging_build ) {
+            if ( nproc == 0 ) {
                 std::print( "'nproc' cannot be zero!\n" );
                 std::terminate();
-            } else {
-                std::unreachable();
             }
         }
+        [[assume( nproc != 0 )]];
         if ( begin == end ) {
             return;
         }
