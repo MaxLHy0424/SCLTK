@@ -79,11 +79,11 @@ namespace core
     };
     namespace details
     {
-        struct reserved_config_node_flag
+        struct initing_ui_only
         {
           protected:
-            reserved_config_node_flag()  = default;
-            ~reserved_config_node_flag() = default;
+            initing_ui_only()  = default;
+            ~initing_ui_only() = default;
         };
         class config_node_impl
         {
@@ -92,14 +92,14 @@ namespace core
             auto load( this auto&& self, const bool is_reload, const std::string_view line )
             {
                 using child_t = std::decay_t< decltype( self ) >;
-                if constexpr ( !std::is_base_of_v< reserved_config_node_flag, child_t > ) {
+                if constexpr ( !std::is_base_of_v< initing_ui_only, child_t > ) {
                     self.load_( is_reload, line );
                 }
             }
             auto sync( this auto&& self, std::ofstream& out )
             {
                 using child_t = std::decay_t< decltype( self ) >;
-                if constexpr ( !std::is_base_of_v< reserved_config_node_flag, child_t > ) {
+                if constexpr ( !std::is_base_of_v< initing_ui_only, child_t > ) {
                     out << std::format( "[{}]\n", self.raw_name );
                     self.sync_( out );
                 }
@@ -107,7 +107,7 @@ namespace core
             auto prepare_reload( this auto&& self )
             {
                 using child_t = std::decay_t< decltype( self ) >;
-                if constexpr ( !std::is_base_of_v< reserved_config_node_flag, child_t >
+                if constexpr ( !std::is_base_of_v< initing_ui_only, child_t >
                                && requires( child_t obj ) { obj.prepare_reload_(); } )
                 {
                     self.prepare_reload_();
@@ -265,9 +265,9 @@ namespace core
             ~basic_options_config_node()                                            = default;
         };
     }
-    class reversed_for_options final
+    class options_title_ui final
       : public details::config_node_impl
-      , private details::reserved_config_node_flag
+      , private details::initing_ui_only
     {
         friend details::config_node_impl;
       private:
@@ -276,8 +276,8 @@ namespace core
             ui.add_back( "\n[ 选项 ]\n" );
         }
       public:
-        reversed_for_options() noexcept  = default;
-        ~reversed_for_options() noexcept = default;
+        options_title_ui() noexcept  = default;
+        ~options_title_ui() noexcept = default;
     };
     class crack_restore_config final : public details::basic_options_config_node< false >
     {
@@ -410,15 +410,15 @@ namespace core
             ~is_valid_config_node() = delete;
         };
         template < typename T >
-        struct is_not_reserved_config_node final
+        struct is_not_initing_ui_only final
         {
-            static constexpr auto value{ !std::is_base_of_v< reserved_config_node_flag, T > };
-            is_not_reserved_config_node()  = delete;
-            ~is_not_reserved_config_node() = delete;
+            static constexpr auto value{ !std::is_base_of_v< initing_ui_only, T > };
+            is_not_initing_ui_only()  = delete;
+            ~is_not_initing_ui_only() = delete;
         };
     }
     using config_node_types
-      = cpp_utils::type_list< reversed_for_options, crack_restore_config, window_config, performance_config, custom_rules_config >;
+      = cpp_utils::type_list< options_title_ui, crack_restore_config, window_config, performance_config, custom_rules_config >;
     static_assert( config_node_types::all_of< details::is_valid_config_node > );
     static_assert( config_node_types::unique::size == config_node_types::size );
     inline config_node_types::apply< std::tuple > config_nodes{};
@@ -443,7 +443,7 @@ namespace core
         }
         std::apply( []( auto&... config_node ) { ( config_node.prepare_reload(), ... ); }, config_nodes );
         std::string line;
-        using usable_config_node_types = config_node_types::filter< details::is_not_reserved_config_node >;
+        using usable_config_node_types = config_node_types::filter< details::is_not_initing_ui_only >;
         using transformed_config_node_recorder
           = usable_config_node_types::transform< std::add_pointer >::add_front< std::monostate >::apply< std::variant >;
         transformed_config_node_recorder current_config_node;
