@@ -28,8 +28,7 @@ auto main() -> int
       .add_back( " > 全部执行\n", core::execute_all_rules )
       .add_back(
         " > 自定义 ",
-        std::bind_back(
-          core::execute_rules< std::decay_t< decltype( core::custom_rules ) >::item_t >, std::cref( core::custom_rules ) ) );
+        std::bind_back( core::execute_rules< decltype( core::custom_rules )::item_t >, std::cref( core::custom_rules ) ) );
     for ( const auto& rule : core::builtin_rules ) {
         ui.add_back(
           std::format( " > {} ", rule.shown_name ),
