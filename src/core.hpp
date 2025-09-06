@@ -331,11 +331,17 @@ namespace core
         static auto load_( const bool, const std::string_view line )
         {
             if ( line.size() > flag_exec.size() && line.starts_with( flag_exec ) ) {
+                if ( custom_rules.execs.capacity() < 6 ) [[unlikely]] {
+                    custom_rules.execs.reserve( 6 );
+                }
                 custom_rules.execs.emplace_back(
                   std::ranges::find_if_not( line.substr( flag_exec.size() ), details::is_whitespace ) );
                 return;
             }
             if ( line.size() > flag_serv.size() && line.starts_with( flag_serv ) ) {
+                if ( custom_rules.servs.capacity() < 2 ) [[unlikely]] {
+                    custom_rules.servs.reserve( 2 );
+                }
                 custom_rules.servs.emplace_back(
                   std::ranges::find_if_not( line.substr( flag_serv.size() ), details::is_whitespace ) );
                 return;
@@ -387,10 +393,7 @@ namespace core
       public:
         custom_rules_config() noexcept
           : config_node_impl{ "custom_rules" }
-        {
-            custom_rules.execs.reserve( 6 );
-            custom_rules.servs.reserve( 2 );
-        }
+        { }
         ~custom_rules_config() noexcept = default;
     };
     namespace details
