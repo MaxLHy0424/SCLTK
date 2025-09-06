@@ -21,7 +21,7 @@ auto main() -> int
       .add_back( " > 关于 ", core::info )
       .add_back( " > 配置 ", core::config_ui )
       .add_back( " > 工具箱 ", core::toolkit )
-      .add_back( "\n (i) 请合理使用, 切勿扰乱课堂纪律!\n" )
+      .add_back( "" )
       .add_back(
         core::make_executor_mode_ui_text(), core::flip_executor_mode,
         cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_green )
