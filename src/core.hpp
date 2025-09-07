@@ -822,7 +822,7 @@ namespace core
             const auto can_hijack_execs{ options[ "hijack_execs" ].get() };
             const auto can_set_serv_startup_types{ options[ "set_serv_startup_types" ].get() };
             const auto total_op_count{ 2 + can_hijack_execs + can_set_serv_startup_types };
-            int finished_count{ 0 };
+            unsigned finished_count{ 0 };
             if ( can_hijack_execs ) {
                 std::print( " ({}/{}) 劫持文件.\n", ++finished_count, total_op_count );
                 for ( const auto& exec : execs ) {
@@ -875,7 +875,7 @@ namespace core
             const auto can_hijack_execs{ options[ "hijack_execs" ].get() };
             const auto can_set_serv_startup_types{ options[ "set_serv_startup_types" ].get() };
             const auto total_op_count{ 1 + can_hijack_execs + can_set_serv_startup_types };
-            int finished_count{ 0 };
+            unsigned finished_count{ 0 };
             if ( can_hijack_execs ) {
                 std::print( " ({}/{}) 撤销劫持.\n", ++finished_count, total_op_count );
                 for ( const auto& exec : execs ) {
