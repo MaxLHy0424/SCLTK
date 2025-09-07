@@ -347,11 +347,11 @@ namespace core
       private:
         static constexpr auto flag_exec{ "exec:"sv };
         static constexpr auto flag_serv{ "serv:"sv };
-        static inline std::vector< std::string > execs{};
-        static inline std::vector< std::string > servs{};
+        std::vector< std::string > execs{};
+        std::vector< std::string > servs{};
         static_assert( []( auto... strings ) consteval
         { return ( std::ranges::none_of( strings, details::is_whitespace ) && ... ); }( flag_exec, flag_serv ) );
-        static auto load_( const std::string_view line )
+        auto load_( const std::string_view line )
         {
             if ( line.size() > flag_exec.size() && line.starts_with( flag_exec ) ) {
                 if ( execs.capacity() < 6 ) [[unlikely]] {
@@ -368,7 +368,7 @@ namespace core
                 return;
             }
         }
-        static auto sync_( std::ofstream& out )
+        auto sync_( std::ofstream& out )
         {
             for ( const auto& exec : execs ) {
                 out << flag_exec << ' ' << exec << '\n';
@@ -377,7 +377,7 @@ namespace core
                 out << flag_serv << ' ' << serv << '\n';
             }
         }
-        static auto before_load_() noexcept
+        auto before_load_() noexcept
         {
             execs.clear();
             servs.clear();
@@ -388,7 +388,7 @@ namespace core
         {
             return str.c_str();
         }
-        static auto after_load_() noexcept
+        auto after_load_() noexcept
         {
             custom_rules.execs.append_range( execs | std::views::transform( to_cstr ) );
             custom_rules.servs.append_range( servs | std::views::transform( to_cstr ) );
