@@ -370,13 +370,14 @@ namespace core
             {
                 if ( str.size() < sso_size ) {
                     std::array< char, sso_size > sso;
-                    sso.fill( '\0' );
                     std::ranges::copy( str, sso.data() );
-                    storage_ = sso;
+                    sso[ str.size() ] = '\0';
+                    storage_          = sso;
                 } else {
-                    std::unique_ptr< char[] > on_heap{ new char[ str.size() + 1 ]{} };
+                    std::unique_ptr< char[] > on_heap{ new char[ str.size() + 1 ] };
                     std::ranges::copy( str, on_heap.get() );
-                    storage_ = std::move( on_heap );
+                    on_heap[ str.size() ] = '\0';
+                    storage_              = std::move( on_heap );
                 }
             }
             simple_string( const simple_string& ) = delete;
