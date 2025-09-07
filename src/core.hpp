@@ -347,8 +347,44 @@ namespace core
       private:
         static constexpr auto flag_exec{ "exec:"sv };
         static constexpr auto flag_serv{ "serv:"sv };
-        std::vector< std::string > execs{};
-        std::vector< std::string > servs{};
+        class simple_string final
+        {
+          private:
+            static constexpr auto sso_size{ 16uz };
+            std::variant< std::unique_ptr< char[] >, std::array< char, sso_size > > storage_{};
+          public:
+            auto c_str() const noexcept
+            {
+                return storage_.visit< const char* >( []< typename T >( const T& str )
+                {
+                    if constexpr ( std::is_same_v< T, std::unique_ptr< char[] > > ) {
+                        return str.get();
+                    } else if constexpr ( std::is_same_v< T, std::array< char, sso_size > > ) {
+                        return str.data();
+                    } else {
+                        static_assert( false );
+                    }
+                } );
+            }
+            simple_string( std::string_view str )
+            {
+                if ( str.size() < sso_size ) {
+                    std::array< char, sso_size > sso;
+                    sso.fill( '\0' );
+                    std::ranges::copy( str, sso.data() );
+                    storage_ = sso;
+                } else {
+                    std::unique_ptr< char[] > on_heap{ new char[ str.size() + 1 ]{} };
+                    std::ranges::copy( str, on_heap.get() );
+                    storage_ = std::move( on_heap );
+                }
+            }
+            simple_string( const simple_string& ) = delete;
+            simple_string( simple_string&& )      = default;
+            ~simple_string()                      = default;
+        };
+        std::vector< simple_string > execs{};
+        std::vector< simple_string > servs{};
         static_assert( []( auto... strings ) consteval
         { return ( std::ranges::none_of( strings, details::is_whitespace ) && ... ); }( flag_exec, flag_serv ) );
         auto load_( const std::string_view line )
@@ -371,10 +407,10 @@ namespace core
         auto sync_( std::ofstream& out )
         {
             for ( const auto& exec : execs ) {
-                out << flag_exec << ' ' << exec << '\n';
+                out << flag_exec << ' ' << exec.c_str() << '\n';
             }
             for ( const auto& serv : servs ) {
-                out << flag_serv << ' ' << serv << '\n';
+                out << flag_serv << ' ' << serv.c_str() << '\n';
             }
         }
         auto before_load_() noexcept
@@ -384,7 +420,7 @@ namespace core
             custom_rules.execs.clear();
             custom_rules.servs.clear();
         }
-        static auto to_cstr( const std::string& str ) noexcept
+        static auto to_cstr( const simple_string& str ) noexcept
         {
             return str.c_str();
         }
