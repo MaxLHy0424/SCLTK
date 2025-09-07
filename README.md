@@ -14,7 +14,7 @@
 > [!NOTE]
 > 此处有关时间的描述为中国标准时间.
 
-**\[2025-08-28\]** SCLTK v6.4.0 将于 9 月上旬发布!
+**\[2025-09-07\]** SCLTK v6.4.0 进入功能冻结阶段!
 
 <details>
 
@@ -274,6 +274,7 @@ SCLTK 不对 Windows Vista 及更早的版本保有任何技术支持. SCLTK 将
 
 # ❤️ 鸣谢
 
-- Bilibili 用户 [lateworker_晚工](https://space.bilibili.com/454920362) 提供早期版本界面底层代码 (详见[此处](https://www.bilibili.com/video/BV1X14y1n7S4), 有修改).
-- Bilibili 用户 [痕继痕迹](https://space.bilibili.com/39337803) 指导早期版本界面设计.
-- GitHub 用户 [Zhu-Xinrong \(Kendall\)](https://github.com/Zhu-Xinrong) 指导早期版本图标设计.
+- [lateworker_晚工](https://space.bilibili.com/454920362) 提供早期版本界面底层代码 (详见[此处](https://www.bilibili.com/video/BV1X14y1n7S4), 有修改).
+- [痕继痕迹](https://space.bilibili.com/39337803) 指导早期版本界面设计.
+- [Zhu-Xinrong \(Kendall\)](https://github.com/Zhu-Xinrong) 指导早期版本图标设计.
+- [fengliteam](https://github.com/fengliteam) 提供大量改进建议, 开发姊妹项目 [SCA](https://github.com/fengliteam/SCA).
