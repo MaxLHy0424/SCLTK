@@ -107,7 +107,7 @@ namespace core
             auto reload( this auto&& self, const std::string_view line )
             {
                 using child_t = std::decay_t< decltype( self ) >;
-                if constexpr ( is_not_initing_ui_only_v< child_t > && requires( child_t obj ) { obj.reload_(); } ) {
+                if constexpr ( is_not_initing_ui_only_v< child_t > && requires( child_t obj ) { obj.reload_( line ); } ) {
                     self.reload_( line );
                 } else {
                     self.load( line );
