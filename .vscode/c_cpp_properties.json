@@ -12,14 +12,11 @@
                 "_ANSI"
             ],
             "compilerArgs": [
-                "-fexec-charset=GBK",
-                "-std=gnu++26",
-                "-flto=auto",
-                "-fno-rtti"
+                "-fexec-charset=GBK"
             ],
             "intelliSenseMode": "windows-gcc-x64",
             "cStandard": "gnu23",
-            "cppStandard": "gnu++23",
+            "cppStandard": "gnu++26",
             "mergeConfigurations": false,
             "configurationProvider": "ms-vscode.makefile-tools"
         }
