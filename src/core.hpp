@@ -85,32 +85,55 @@ namespace core
             initing_ui_only()  = default;
             ~initing_ui_only() = default;
         };
+        template < typename T >
+        struct is_not_initing_ui_only final
+        {
+            static constexpr auto value{ !std::is_base_of_v< initing_ui_only, T > };
+            is_not_initing_ui_only()  = delete;
+            ~is_not_initing_ui_only() = delete;
+        };
+        template < typename T >
+        constexpr auto is_not_initing_ui_only_v{ is_not_initing_ui_only< T >::value };
         class config_node_impl
         {
           public:
             const char* raw_name;
-            auto load( this auto&& self, const bool is_reload, const std::string_view line )
+            auto load( this auto&& self, const std::string_view line )
             {
                 using child_t = std::decay_t< decltype( self ) >;
-                if constexpr ( !std::is_base_of_v< initing_ui_only, child_t > ) {
-                    self.load_( is_reload, line );
+                if constexpr ( is_not_initing_ui_only_v< child_t > ) {
+                    self.load_( line );
+                }
+            }
+            auto reload( this auto&& self, const std::string_view line )
+            {
+                using child_t = std::decay_t< decltype( self ) >;
+                if constexpr ( is_not_initing_ui_only_v< child_t > && requires( child_t obj ) { obj.reload_(); } ) {
+                    self.reload_( line );
+                } else {
+                    self.load( line );
                 }
             }
             auto sync( this auto&& self, std::ofstream& out )
             {
                 using child_t = std::decay_t< decltype( self ) >;
-                if constexpr ( !std::is_base_of_v< initing_ui_only, child_t > ) {
+                if constexpr ( is_not_initing_ui_only_v< child_t > ) {
                     out << std::format( "[{}]\n", self.raw_name );
                     self.sync_( out );
                 }
             }
-            auto prepare_reload( this auto&& self )
+            auto before_load( this auto&& self )
             {
                 using child_t = std::decay_t< decltype( self ) >;
-                if constexpr ( !std::is_base_of_v< initing_ui_only, child_t >
-                               && requires( child_t obj ) { obj.prepare_reload_(); } )
-                {
-                    self.prepare_reload_();
+                if constexpr ( is_not_initing_ui_only_v< child_t > && requires( child_t obj ) { obj.before_load_(); } ) {
+                    self.before_load_();
+                }
+            }
+            auto after_load( this auto&& self )
+            {
+                using child_t = std::decay_t< decltype( self ) >;
+                if constexpr ( is_not_initing_ui_only_v< child_t > && requires( child_t obj ) { obj.after_load_(); } ) {
+                    self.after_load_();
                 }
             }
             auto init_ui( this auto&& self, cpp_utils::console_ui& parent_ui )
@@ -191,11 +214,8 @@ namespace core
             map_t_ options_;
             static constexpr auto str_of_the_enabled{ ": enabled"sv };
             static constexpr auto str_of_the_disabled{ ": disabled"sv };
-            auto load_( const bool is_reload, const std::string_view line )
+            auto load_( const std::string_view line )
             {
-                if ( is_reload ) {
-                    return;
-                }
                 key_t_ key;
                 bool value;
                 if ( line.ends_with( str_of_the_enabled ) ) {
@@ -210,6 +230,8 @@ namespace core
                     options_.at( key ).set( value );
                 }
             }
+            static auto reload_( const std::string_view ) noexcept
+            { }
             auto sync_( std::ofstream& out )
             {
                 for ( const auto& [ key, item ] : options_ ) {
@@ -328,7 +350,7 @@ namespace core
         static constexpr auto flag_serv{ "serv:"sv };
         static_assert( []( auto... strings ) consteval
         { return ( std::ranges::none_of( strings, details::is_whitespace ) && ... ); }( flag_exec, flag_serv ) );
-        static auto load_( const bool, const std::string_view line )
+        static auto load_( const std::string_view line )
         {
             if ( line.size() > flag_exec.size() && line.starts_with( flag_exec ) ) {
                 if ( custom_rules.execs.capacity() < 6 ) [[unlikely]] {
@@ -356,7 +378,7 @@ namespace core
                 out << flag_serv << ' ' << serv << '\n';
             }
         }
-        static auto prepare_reload_() noexcept
+        static auto before_load_() noexcept
         {
             custom_rules.execs.clear();
             custom_rules.servs.clear();
@@ -409,13 +431,6 @@ namespace core
             is_valid_config_node()  = delete;
             ~is_valid_config_node() = delete;
         };
-        template < typename T >
-        struct is_not_initing_ui_only final
-        {
-            static constexpr auto value{ !std::is_base_of_v< initing_ui_only, T > };
-            is_not_initing_ui_only()  = delete;
-            ~is_not_initing_ui_only() = delete;
-        };
     }
     using config_node_types
       = cpp_utils::type_list< options_title_ui, crack_restore_config, window_config, performance_config, custom_rules_config >;
@@ -441,7 +456,7 @@ namespace core
         if ( !config_file.good() ) {
             return;
         }
-        std::apply( []( auto&... config_node ) { ( config_node.prepare_reload(), ... ); }, config_nodes );
+        std::apply( []( auto&... config_node ) { ( config_node.before_load(), ... ); }, config_nodes );
         std::string line;
         using usable_config_node_types = config_node_types::filter< details::is_not_initing_ui_only >;
         using transformed_config_node_recorder
@@ -476,10 +491,15 @@ namespace core
             current_config_node.visit( [ & ]< typename T >( const T node_ptr )
             {
                 if constexpr ( !std::is_same_v< T, std::monostate > ) {
-                    node_ptr->load( is_reload, parsed_line_view );
+                    if ( is_reload ) {
+                        node_ptr->reload( parsed_line_view );
+                    } else {
+                        node_ptr->load( parsed_line_view );
+                    }
                 }
             } );
         }
+        std::apply( []( auto&... config_node ) { ( config_node.after_load(), ... ); }, config_nodes );
     }
     namespace details
     {
