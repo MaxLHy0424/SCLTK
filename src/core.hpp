@@ -425,7 +425,7 @@ namespace core
         {
             return str.c_str();
         }
-        auto after_load_() noexcept
+        auto after_load_()
         {
             custom_rules.execs.append_range( execs | std::views::transform( to_cstr ) );
             custom_rules.servs.append_range( servs | std::views::transform( to_cstr ) );
