@@ -87,7 +87,7 @@ namespace core
         template < typename T >
         struct is_not_initing_ui_only final
         {
-            static constexpr auto value{ !std::is_base_of_v< initing_ui_only, T > };
+            static inline constexpr auto value{ !std::is_base_of_v< initing_ui_only, T > };
             is_not_initing_ui_only()  = delete;
             ~is_not_initing_ui_only() = delete;
         };
@@ -345,12 +345,12 @@ namespace core
     {
         friend details::config_node_impl;
       private:
-        static constexpr auto flag_exec{ "exec:"sv };
-        static constexpr auto flag_serv{ "serv:"sv };
+        static inline constexpr auto flag_exec{ "exec:"sv };
+        static inline constexpr auto flag_serv{ "serv:"sv };
         class simple_string final
         {
           private:
-            static constexpr auto sso_size{ 16uz };
+            static inline constexpr auto sso_size{ 16uz };
             std::variant< std::unique_ptr< char[] >, std::array< char, sso_size > > storage_{};
           public:
             auto c_str() const noexcept
@@ -471,10 +471,11 @@ namespace core
         struct is_valid_config_node final
         {
           private:
-            static constexpr auto is_valid_type{ std::is_final_v< T > && std::is_same_v< std::decay_t< T >, T > };
-            static constexpr auto has_key_traits{ std::is_base_of_v< config_node_impl, T > && std::is_default_constructible_v< T > };
+            static inline constexpr auto is_valid_type{ std::is_final_v< T > && std::is_same_v< std::decay_t< T >, T > };
+            static inline constexpr auto has_key_traits{
+              std::is_base_of_v< config_node_impl, T > && std::is_default_constructible_v< T > };
           public:
-            static constexpr auto value{ is_valid_type && has_key_traits };
+            static inline constexpr auto value{ is_valid_type && has_key_traits };
             is_valid_config_node()  = delete;
             ~is_valid_config_node() = delete;
         };
@@ -791,7 +792,7 @@ namespace core
                 EmptyWorkingSet( process );
             }
         }
-        constexpr std::array threads_func{ set_console_attrs, force_show, compress_memory };
+        inline constexpr std::array threads_func{ set_console_attrs, force_show, compress_memory };
     }
     inline auto create_threads() noexcept
     {
