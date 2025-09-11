@@ -17,8 +17,8 @@ namespace cpp_utils
     class type_list final
     {
       private:
-        static constexpr auto size_{ sizeof...( Ts ) };
-        static constexpr auto empty_{ size_ == 0uz };
+        static inline constexpr auto size_{ sizeof...( Ts ) };
+        static inline constexpr auto empty_{ size_ == 0uz };
         template < typename... Us >
         static consteval auto as_type_list_( std::tuple< Us... > ) -> type_list< Us... >;
         template < std::size_t Offset, std::size_t... Is >
@@ -199,12 +199,12 @@ namespace cpp_utils
             using type = type_list<>;
         };
       public:
-        static constexpr auto size{ size_ };
-        static constexpr auto empty{ empty_ };
+        static inline constexpr auto size{ size_ };
+        static inline constexpr auto empty{ empty_ };
         template < typename U >
-        static constexpr auto contains{ ( std::is_same_v< U, Ts > || ... ) };
+        static inline constexpr auto contains{ ( std::is_same_v< U, Ts > || ... ) };
         template < typename U >
-        static constexpr auto count{ [] consteval
+        static inline constexpr auto count{ [] consteval
         {
             if constexpr ( empty ) {
                 return 0uz;
@@ -213,7 +213,7 @@ namespace cpp_utils
             }
         }() };
         template < template < typename > typename Pred >
-        static constexpr auto count_if{ [] consteval
+        static inline constexpr auto count_if{ [] consteval
         {
             if constexpr ( empty ) {
                 return 0uz;
@@ -222,7 +222,7 @@ namespace cpp_utils
             }
         }() };
         template < template < typename > typename Pred >
-        static constexpr auto all_of{ [] consteval
+        static inline constexpr auto all_of{ [] consteval
         {
             if constexpr ( empty ) {
                 return false;
@@ -231,11 +231,11 @@ namespace cpp_utils
             }
         }() };
         template < template < typename > typename Pred >
-        static constexpr auto any_of{ ( Pred< Ts >::value || ... ) };
+        static inline constexpr auto any_of{ ( Pred< Ts >::value || ... ) };
         template < template < typename > typename Pred >
-        static constexpr auto none_of{ ( !Pred< Ts >::value && ... ) };
+        static inline constexpr auto none_of{ ( !Pred< Ts >::value && ... ) };
         template < template < typename > typename Pred >
-        static constexpr auto find_first_if{ [] consteval
+        static inline constexpr auto find_first_if{ [] consteval
         {
             if constexpr ( empty ) {
                 return size;
@@ -244,7 +244,7 @@ namespace cpp_utils
             }
         }() };
         template < template < typename > typename Pred >
-        static constexpr auto find_last_if{ [] consteval
+        static inline constexpr auto find_last_if{ [] consteval
         {
             if constexpr ( empty ) {
                 return size;
@@ -253,13 +253,13 @@ namespace cpp_utils
             }
         }() };
         template < template < typename > typename Pred >
-        static constexpr auto find_first_if_not{ find_first_if< negate_< Pred >::template predicate > };
+        static inline constexpr auto find_first_if_not{ find_first_if< negate_< Pred >::template predicate > };
         template < template < typename > typename Pred >
-        static constexpr auto find_last_if_not{ find_last_if< negate_< Pred >::template predicate > };
+        static inline constexpr auto find_last_if_not{ find_last_if< negate_< Pred >::template predicate > };
         template < typename U >
-        static constexpr auto find_first{ find_first_if< type_is_< U >::template predicate > };
+        static inline constexpr auto find_first{ find_first_if< type_is_< U >::template predicate > };
         template < typename U >
-        static constexpr auto find_last{ find_last_if< type_is_< U >::template predicate > };
+        static inline constexpr auto find_last{ find_last_if< type_is_< U >::template predicate > };
         template < std::size_t I >
         using at    = at_impl_< I >::type;
         using front = at< 0 >;
@@ -286,7 +286,7 @@ namespace cpp_utils
     template < auto V >
     struct value_wrapper final
     {
-        static constexpr auto value{ V };
+        static inline constexpr auto value{ V };
     };
     template < auto V >
     class is_equal_to_value_wrapper final
@@ -298,7 +298,7 @@ namespace cpp_utils
         static consteval auto is_equal_( value_wrapper< W > ) -> std::true_type;
       public:
         template < typename W >
-        static constexpr auto value{ decltype( is_equal_( W{} ) )::value };
+        static inline constexpr auto value{ decltype( is_equal_( W{} ) )::value };
     };
     template < auto... Vs >
     using make_fake_value_list = type_list< value_wrapper< Vs >... >;
@@ -374,28 +374,28 @@ namespace cpp_utils
     template < typename T >
     struct matcher final
     {
-        static constexpr auto matches{ false };
+        static inline constexpr auto matches{ false };
         using result = void;
     };
     template < typename Specific, typename Result >
     struct type_matcher final : matcher< Specific >
     {
         template < typename U >
-        static constexpr auto matches{ std::is_same_v< U, Specific > };
+        static inline constexpr auto matches{ std::is_same_v< U, Specific > };
         using result = Result;
     };
     template < template < typename... > typename Pattern, typename Result >
     struct template_matcher final
     {
         template < typename T >
-        static constexpr auto matches{ is_specialization_of< Pattern, T >::value };
+        static inline constexpr auto matches{ is_specialization_of< Pattern, T >::value };
         using result = Result;
     };
     template < typename Result >
     struct default_matcher final
     {
         template < typename T >
-        static constexpr auto matches{ true };
+        static inline constexpr auto matches{ true };
         using result = Result;
     };
     namespace details
