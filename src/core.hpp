@@ -92,7 +92,7 @@ namespace core
             ~is_not_initing_ui_only() = delete;
         };
         template < typename T >
-        constexpr auto is_not_initing_ui_only_v{ is_not_initing_ui_only< T >::value };
+        inline constexpr auto is_not_initing_ui_only_v{ is_not_initing_ui_only< T >::value };
         class config_node_impl
         {
           public:
