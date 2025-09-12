@@ -12,7 +12,9 @@
                 "_ANSI"
             ],
             "compilerArgs": [
-                "-fexec-charset=GBK"
+                "-fexec-charset=GBK",
+                "-fno-rtti",
+                "-fno-exceptions"
             ],
             "intelliSenseMode": "windows-gcc-x64",
             "cStandard": "gnu23",
