@@ -521,7 +521,7 @@ namespace core
             }
             if ( parsed_line_view.front() == '[' && parsed_line_view.back() == ']' && parsed_line_view.size() > "[]"sv.size() ) {
                 current_config_node = std::monostate{};
-                std::apply( [ & ]( auto&... config_node )
+                std::apply( [ & ]( auto&... config_node ) noexcept
                 {
                     const auto current_raw_name{ details::get_config_node_raw_name_by_tag( parsed_line_view ) };
                     ( [ & ]< typename T >( T& current_node ) noexcept
