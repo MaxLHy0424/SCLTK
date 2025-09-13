@@ -503,7 +503,7 @@ namespace core
         if ( !config_file.good() ) {
             return;
         }
-        std::apply( []( auto&... config_node ) { ( config_node.before_load(), ... ); }, config_nodes );
+        std::apply( []< typename... Ts >( Ts&... config_node ) static { ( config_node.before_load(), ... ); }, config_nodes );
         std::string line;
         using usable_config_node_types = config_node_types::filter< details::is_not_initing_ui_only >;
         using transformed_config_node_recorder
@@ -546,7 +546,7 @@ namespace core
                 }
             } );
         }
-        std::apply( []( auto&... config_node ) { ( config_node.after_load(), ... ); }, config_nodes );
+        std::apply( []< typename... Ts >( Ts&... config_node ) static { ( config_node.after_load(), ... ); }, config_nodes );
     }
     namespace details
     {
