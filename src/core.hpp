@@ -608,14 +608,6 @@ namespace core
         ui.show();
         return func_back;
     }
-    namespace details
-    {
-        inline auto visit_repo_webpage()
-        {
-            std::thread{ ShellExecuteA, nullptr, "open", INFO_REPO_URL, nullptr, nullptr, SW_SHOWNORMAL }.detach();
-            return func_back;
-        }
-    }
     inline auto info()
     {
         cpp_utils::console_ui ui;
@@ -624,11 +616,7 @@ namespace core
           .add_back(
             "\n[ 名称 ]\n\n " INFO_FULL_NAME " (" INFO_SHORT_NAME ")\n\n[ 版本 ]\n\n " INFO_VERSION
             "\n\n 构建时间: " INFO_BUILD_TIME "\n 编译工具: " INFO_COMPILER " " INFO_ARCH
-            "\n\n[ 许可证与版权 ]\n\n " INFO_LICENSE "\n " INFO_COPYRIGHT "\n\n[ 仓库 ]\n" )
-          .add_back(
-            " " INFO_REPO_URL " ", details::visit_repo_webpage,
-            cpp_utils::console_text::foreground_white | cpp_utils::console_text::foreground_intensity
-              | cpp_utils::console_text::lvb_underscore )
+            "\n\n[ 许可证与版权 ]\n\n " INFO_LICENSE "\n " INFO_COPYRIGHT "\n\n[ 仓库 ]\n\n " INFO_REPO_URL )
           .show();
         return func_back;
     }
