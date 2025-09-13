@@ -675,12 +675,12 @@ namespace core
         };
         inline auto execute_cmd( const cmd_item& item )
         {
-            constexpr auto _{ cpp_utils::concat_const_string(
+            constexpr auto output{ cpp_utils::concat_const_string(
               cpp_utils::const_string{
                 "                   [ 工 具 箱 ]\n\n\n"
                 " -> 正在执行操作系统命令...\n\n" },
               cpp_utils::make_repeated_const_string< '-', console_width >(), cpp_utils::const_string{ "\n\n" } ) };
-            std::print( "{}", _.c_str() );
+            std::print( "{}", output.c_str() );
             std::system( item.command );
             return func_exit;
         }
