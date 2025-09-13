@@ -432,9 +432,8 @@ namespace cpp_utils
     {
         CONSOLE_SCREEN_BUFFER_INFO info;
         GetConsoleScreenBufferInfo( std_output_handle, &info );
-        const auto [ width, height ]{ info.dwSize };
         SetConsoleCursorPosition( std_output_handle, { 0, 0 } );
-        std::print( "{}", std::string( static_cast< unsigned >( width ) * static_cast< unsigned >( height ), ' ' ) );
+        std::print( "{}", std::string( static_cast< unsigned >( info.dwSize.X ) * static_cast< unsigned >( info.dwSize.Y ), ' ' ) );
         SetConsoleCursorPosition( std_output_handle, { 0, 0 } );
     }
     inline auto clear_current_console()
