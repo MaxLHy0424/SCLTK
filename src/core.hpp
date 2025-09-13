@@ -19,7 +19,6 @@ namespace core
     inline constexpr auto config_file_name{ "config.ini" };
     inline constexpr auto func_back{ cpp_utils::console_ui::func_back };
     inline constexpr auto func_exit{ cpp_utils::console_ui::func_exit };
-    inline constexpr auto diving_line{ cpp_utils::make_repeated_const_string< '-', console_width >() };
     inline const auto window_handle{ GetConsoleWindow() };
     inline const auto std_input_handle{ GetStdHandle( STD_INPUT_HANDLE ) };
     inline const auto std_output_handle{ GetStdHandle( STD_OUTPUT_HANDLE ) };
@@ -692,7 +691,7 @@ namespace core
               cpp_utils::const_string{
                 "                   [ 工 具 箱 ]\n\n\n"
                 " -> 正在执行操作系统命令...\n\n" },
-              diving_line, cpp_utils::const_string{ "\n\n" } ) };
+              cpp_utils::make_repeated_const_string< '-', console_width >(), cpp_utils::const_string{ "\n\n" } ) };
             std::print( "{}", _.c_str() );
             std::system( item.command );
             return func_exit;
