@@ -952,13 +952,18 @@ namespace core
             return func_back;
         }
         std::print( " -> 正在执行...\n\n" );
-        std::array< void ( * )( const rule_node& ), 2 > f;
+        const auto is_enable_fast_mode{ std::get< crack_restore_config >( config_nodes )[ "fast_mode" ].get() };
+        void ( *f )( const rule_node& );
         switch ( details::executor_mode ) {
-            case details::rule_executing::crack : f = { details::default_crack, details::fast_crack }; break;
-            case details::rule_executing::restore : f = { details::default_restore, details::fast_restore }; break;
+            case details::rule_executing::crack :
+                f = ( is_enable_fast_mode ? details::fast_crack : details::default_crack );
+                break;
+            case details::rule_executing::restore :
+                f = ( is_enable_fast_mode ? details::fast_restore : details::default_restore );
+                break;
             default : std::unreachable();
         }
-        f[ std::get< crack_restore_config >( config_nodes )[ "fast_mode" ].get() ]( rules );
+        f( rules );
         std::print( " (i) 操作已完成." );
         details::press_any_key_to_return();
         return func_back;
