@@ -373,7 +373,7 @@ namespace core
                     sso[ str.size() ] = '\0';
                     storage_          = sso;
                 } else {
-                    std::unique_ptr< char[] > on_heap{ new char[ str.size() + 1 ] };
+                    auto on_heap{ std::make_unique_for_overwrite< char[] >( str.size() + 1 ) };
                     std::ranges::copy( str, on_heap.get() );
                     on_heap[ str.size() ] = '\0';
                     storage_              = std::move( on_heap );
