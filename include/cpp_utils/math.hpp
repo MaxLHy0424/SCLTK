@@ -36,7 +36,7 @@ namespace cpp_utils
         return count;
     }
     template < typename T >
-    concept number = std::integral< T > || std::floating_point< T > || std::same_as< T, std::decay< T > >;
+    concept number = std::integral< T > || std::floating_point< T > || std::same_as< T, std::decay_t< T > >;
     template < number T >
     class sat_num final
     {
