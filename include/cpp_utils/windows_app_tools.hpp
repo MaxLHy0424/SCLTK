@@ -93,7 +93,7 @@ namespace cpp_utils
                 const auto buffer{ std::make_unique< BYTE[] >( bytes_needed ) };
                 const auto config{ std::bit_cast< LPQUERY_SERVICE_CONFIGW >( buffer.get() ) };
                 if ( QueryServiceConfigW( service, config, bytes_needed, &bytes_needed ) ) {
-                    if ( config->lpDependencies && *config->lpDependencies ) {
+                    if ( config->lpDependencies != nullptr && *config->lpDependencies != '\0' ) {
                         wchar_t* context{ nullptr };
                         auto dependency{ wcstok_s( config->lpDependencies, L"\0", &context ) };
                         while ( dependency != nullptr ) {
@@ -123,6 +123,7 @@ namespace cpp_utils
             }
             return result;
         }
+        // 这段代码中 std::make_unique 是否可以换成 std::make_unique_for_overwrite?
     }
     template < UINT Charset >
     inline auto kill_process_by_name( const char* const process_name ) noexcept
