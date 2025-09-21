@@ -123,7 +123,6 @@ namespace cpp_utils
             }
             return result;
         }
-        // 这段代码中 std::make_unique 是否可以换成 std::make_unique_for_overwrite?
     }
     template < UINT Charset >
     inline auto kill_process_by_name( const char* const process_name ) noexcept
