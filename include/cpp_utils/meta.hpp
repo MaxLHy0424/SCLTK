@@ -294,7 +294,7 @@ namespace cpp_utils
       private:
         static consteval auto is_equal_( auto ) -> std::false_type;
         template < auto W >
-            requires( V == W )
+            requires test< V == W >
         static consteval auto is_equal_( value_wrapper< W > ) -> std::true_type;
       public:
         template < typename W >
