@@ -59,7 +59,9 @@ namespace cpp_utils
         for ( auto& thread :
               create_parallel_task( nproc, std::forward< It >( begin ), std::forward< W >( end ), std::forward< F >( func ) ) )
         {
-            thread.join();
+            if ( thread.joinable() ) {
+                thread.join();
+            }
         }
     }
     template < std::random_access_iterator It, std::sentinel_for< It > W, typename F >
