@@ -24,7 +24,7 @@ namespace cpp_utils
     inline constexpr auto count_digits( const T n ) noexcept
     {
         using result_t = unsigned short;
-        T abs_n{ n < 0 ? -n : n };
+        auto abs_n{ std::abs( n ) };
         if ( abs_n == 0 ) {
             return static_cast< result_t >( 1 );
         }
