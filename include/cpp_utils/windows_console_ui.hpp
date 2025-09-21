@@ -122,10 +122,6 @@ namespace cpp_utils
             GetConsoleScreenBufferInfo( std_output_handle_, &console_data );
             return console_data.dwCursorPosition;
         }
-        static auto set_cursor( const COORD cursor_position ) noexcept
-        {
-            SetConsoleCursorPosition( std_output_handle_, cursor_position );
-        }
         static auto get_event_( const bool is_move = true ) noexcept
         {
             using namespace std::chrono_literals;
