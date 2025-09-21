@@ -79,7 +79,7 @@ namespace cpp_utils
                 return ( *this )[ index ];
             }
         }
-        constexpr operator std::basic_string_view< T >() const noexcept
+        constexpr auto view() const noexcept
         {
             return std::basic_string_view< T >{ c_str(), size() };
         }
