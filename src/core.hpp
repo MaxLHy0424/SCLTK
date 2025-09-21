@@ -795,11 +795,6 @@ namespace core
             restore
         };
         inline auto executor_mode{ rule_executing::crack };
-        inline auto for_each_wrapper( const rule_node::container_t& container, void ( *func )( const char* const ) )
-        {
-            cpp_utils::parallel_for_each(
-              std::ranges::max( std::thread::hardware_concurrency() / 2, 2u ), container.begin(), container.end(), func );
-        }
         inline auto hijack_exec( const char* const exec ) noexcept
         {
             cpp_utils::create_registry_key< charset_id >(
@@ -881,21 +876,24 @@ namespace core
         inline auto fast_crack( const rule_node& rules )
         {
             const auto& options{ std::get< crack_restore_config >( config_nodes ) };
-            const auto execs{ std::cref( rules.execs ) };
-            const auto servs{ std::cref( rules.servs ) };
+            const auto execs{ rules.execs };
+            const auto servs{ rules.servs };
+            const auto nproc{ std::ranges::max( std::thread::hardware_concurrency() / 2, 2u ) };
             using thread_t = std::thread;
-            std::array< thread_t, 4 > threads;
+            std::array< std::vector< thread_t >, 4 > tasks;
             if ( options[ "hijack_execs" ] ) {
-                threads[ 0 ] = thread_t{ for_each_wrapper, execs, hijack_exec };
+                tasks[ 0 ] = cpp_utils::create_parallel_task( nproc, execs.begin(), execs.end(), hijack_exec );
             }
             if ( options[ "set_serv_startup_types" ] ) {
-                threads[ 1 ] = thread_t{ for_each_wrapper, servs, disable_serv };
+                tasks[ 1 ] = cpp_utils::create_parallel_task( nproc, servs.begin(), servs.end(), disable_serv );
             }
-            threads[ 2 ] = thread_t{ for_each_wrapper, execs, kill_exec };
-            threads[ 3 ] = thread_t{ for_each_wrapper, servs, stop_serv };
-            for ( auto& thread : threads ) {
-                if ( thread.joinable() ) {
-                    thread.join();
+            tasks[ 2 ] = cpp_utils::create_parallel_task( nproc, execs.begin(), execs.end(), kill_exec );
+            tasks[ 3 ] = cpp_utils::create_parallel_task( nproc, servs.begin(), servs.end(), stop_serv );
+            for ( auto& task : tasks ) {
+                for ( auto& thread : task ) {
+                    if ( thread.joinable() ) {
+                        thread.join();
+                    }
                 }
             }
         }
@@ -930,13 +928,27 @@ namespace core
             const auto& options{ std::get< crack_restore_config >( config_nodes ) };
             const auto& execs{ rules.execs };
             const auto& servs{ rules.servs };
+            const auto nproc{ std::ranges::max( std::thread::hardware_concurrency() / 2, 2u ) };
+            using thread_t = std::thread;
+            std::array< std::vector< thread_t >, 2 > tasks;
             if ( options[ "hijack_execs" ] ) {
-                for_each_wrapper( execs, undo_hijack_exec );
+                tasks[ 0 ] = cpp_utils::create_parallel_task( nproc, execs.begin(), execs.end(), undo_hijack_exec );
             }
             if ( options[ "set_serv_startup_types" ] ) {
-                for_each_wrapper( servs, enable_serv );
+                tasks[ 1 ] = cpp_utils::create_parallel_task( nproc, servs.begin(), servs.end(), enable_serv );
             }
-            for_each_wrapper( servs, start_serv );
+            for ( auto& task : tasks ) {
+                for ( auto& thread : task ) {
+                    if ( thread.joinable() ) {
+                        thread.join();
+                    }
+                }
+            }
+            for ( auto& thread : cpp_utils::create_parallel_task( nproc, servs.begin(), servs.end(), start_serv ) ) {
+                if ( thread.joinable() ) {
+                    thread.join();
+                }
+            }
         }
     }
     inline auto execute_rules( const rule_node& rules )
