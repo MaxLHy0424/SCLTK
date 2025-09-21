@@ -13,7 +13,7 @@ namespace cpp_utils
     using nproc_t = decltype( std::thread::hardware_concurrency() );
     template < std::random_access_iterator It, std::sentinel_for< It > W, typename F >
         requires std::invocable< F, decltype( *std::declval< It >() ) >
-    inline auto parallel_for_each( const nproc_t nproc, It&& begin, W&& end, F&& func )
+    inline auto create_parallel_task( const nproc_t nproc, It&& begin, W&& end, F&& func )
     {
         if constexpr ( is_debugging_build ) {
             if ( nproc == 0 ) {
@@ -22,14 +22,15 @@ namespace cpp_utils
             }
         }
         [[assume( nproc != 0 )]];
+        using result_t = std::vector< std::thread >;
         if ( begin == end ) {
-            return;
+            return result_t{};
         }
         const auto total{ std::ranges::distance( begin, end ) };
         const auto nproc_for_executing{ std::ranges::min( static_cast< std::ptrdiff_t >( nproc ), total ) };
         const auto chunk_size{ total / nproc_for_executing };
         const auto remainder{ total % nproc_for_executing };
-        std::vector< std::thread > threads;
+        result_t threads;
         threads.reserve( nproc_for_executing );
         for ( std::ptrdiff_t i{ 0 }; i < nproc_for_executing; ++i ) {
             auto chunk_start{ begin + i * chunk_size + std::ranges::min( i, remainder ) };
@@ -41,7 +42,23 @@ namespace cpp_utils
                 }
             } );
         }
-        for ( auto& thread : threads ) {
+        return threads;
+    }
+    template < std::random_access_iterator It, std::sentinel_for< It > W, typename F >
+        requires std::invocable< F, decltype( *std::declval< It >() ) >
+    inline auto create_parallel_task( It&& begin, W&& end, F&& func )
+    {
+        return create_parallel_task(
+          std::ranges::max( std::thread::hardware_concurrency(), 2u ), std::forward< It >( begin ), std::forward< It >( end ),
+          std::forward< F >( func ) );
+    }
+    template < std::random_access_iterator It, std::sentinel_for< It > W, typename F >
+        requires std::invocable< F, decltype( *std::declval< It >() ) >
+    inline auto parallel_for_each( const nproc_t nproc, It&& begin, W&& end, F&& func )
+    {
+        for ( auto& thread :
+              create_parallel_task( nproc, std::forward< It >( begin ), std::forward< W >( end ), std::forward< F >( func ) ) )
+        {
             thread.join();
         }
     }
