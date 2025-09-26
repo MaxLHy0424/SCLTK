@@ -879,16 +879,15 @@ namespace core
             const auto execs{ rules.execs };
             const auto servs{ rules.servs };
             const auto nproc{ std::ranges::max( std::thread::hardware_concurrency() / 2, 2u ) };
-            using thread_t = std::thread;
-            std::array< std::vector< thread_t >, 4 > tasks;
-            if ( options[ "hijack_execs" ] ) {
-                tasks[ 0 ] = cpp_utils::create_parallel_task( nproc, execs.begin(), execs.end(), hijack_exec );
-            }
-            if ( options[ "set_serv_startup_types" ] ) {
-                tasks[ 1 ] = cpp_utils::create_parallel_task( nproc, servs.begin(), servs.end(), disable_serv );
-            }
-            tasks[ 2 ] = cpp_utils::create_parallel_task( nproc, execs.begin(), execs.end(), kill_exec );
-            tasks[ 3 ] = cpp_utils::create_parallel_task( nproc, servs.begin(), servs.end(), stop_serv );
+            std::array tasks{
+              options[ "hijack_execs" ]
+                ? cpp_utils::create_parallel_task( nproc, execs.begin(), execs.end(), hijack_exec )
+                : std::vector< std::thread >{},
+              options[ "set_serv_startup_types" ]
+                ? cpp_utils::create_parallel_task( nproc, servs.begin(), servs.end(), disable_serv )
+                : std::vector< std::thread >{},
+              cpp_utils::create_parallel_task( nproc, execs.begin(), execs.end(), kill_exec ),
+              cpp_utils::create_parallel_task( nproc, servs.begin(), servs.end(), stop_serv ) };
             for ( auto& task : tasks ) {
                 for ( auto& thread : task ) {
                     if ( thread.joinable() ) {
@@ -930,13 +929,13 @@ namespace core
             const auto& servs{ rules.servs };
             const auto nproc{ std::ranges::max( std::thread::hardware_concurrency() / 2, 2u ) };
             using thread_t = std::thread;
-            std::array< std::vector< thread_t >, 2 > tasks;
-            if ( options[ "hijack_execs" ] ) {
-                tasks[ 0 ] = cpp_utils::create_parallel_task( nproc, execs.begin(), execs.end(), undo_hijack_exec );
-            }
-            if ( options[ "set_serv_startup_types" ] ) {
-                tasks[ 1 ] = cpp_utils::create_parallel_task( nproc, servs.begin(), servs.end(), enable_serv );
-            }
+            std::array tasks{
+              options[ "hijack_execs" ]
+                ? cpp_utils::create_parallel_task( nproc, execs.begin(), execs.end(), undo_hijack_exec )
+                : std::vector< std::thread >{},
+              options[ "set_serv_startup_types" ]
+                ? cpp_utils::create_parallel_task( nproc, servs.begin(), servs.end(), enable_serv )
+                : std::vector< std::thread >{} };
             for ( auto& task : tasks ) {
                 for ( auto& thread : task ) {
                     if ( thread.joinable() ) {
