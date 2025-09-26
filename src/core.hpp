@@ -624,26 +624,26 @@ namespace core
     {
         inline auto launch_cmd( const ui_func_args args )
         {
-            cpp_utils::set_current_console_title( INFO_SHORT_NAME " - 命令提示符" );
-            cpp_utils::set_console_size( window_handle, std_output_handle, 120, 30 );
-            cpp_utils::fix_window_size( window_handle, false );
-            cpp_utils::enable_window_maximize_ctrl( window_handle, true );
-            args.parent_ui.set_constraints( false, false );
-            SetConsoleScreenBufferSize( std_output_handle, COORD{ 120, std::numeric_limits< SHORT >::max() - 1 } );
             STARTUPINFOA startup{};
             PROCESS_INFORMATION proc;
             char name[]{ "cmd.exe" };
             startup.cb = sizeof( startup );
             if ( CreateProcessA( nullptr, name, nullptr, nullptr, FALSE, 0, nullptr, nullptr, &startup, &proc ) ) {
+                cpp_utils::set_current_console_title( INFO_SHORT_NAME " - 命令提示符" );
+                cpp_utils::set_console_size( window_handle, std_output_handle, 120, 30 );
+                cpp_utils::fix_window_size( window_handle, false );
+                cpp_utils::enable_window_maximize_ctrl( window_handle, true );
+                args.parent_ui.set_constraints( false, false );
+                SetConsoleScreenBufferSize( std_output_handle, COORD{ 120, std::numeric_limits< SHORT >::max() - 1 } );
                 WaitForSingleObject( proc.hProcess, INFINITE );
                 CloseHandle( proc.hProcess );
                 CloseHandle( proc.hThread );
+                cpp_utils::set_current_console_charset( charset_id );
+                cpp_utils::set_current_console_title( INFO_SHORT_NAME );
+                cpp_utils::set_console_size( window_handle, std_output_handle, console_width, console_height );
+                cpp_utils::fix_window_size( window_handle, true );
+                cpp_utils::enable_window_maximize_ctrl( window_handle, false );
             }
-            cpp_utils::set_current_console_charset( charset_id );
-            cpp_utils::set_current_console_title( INFO_SHORT_NAME );
-            cpp_utils::set_console_size( window_handle, std_output_handle, console_width, console_height );
-            cpp_utils::fix_window_size( window_handle, true );
-            cpp_utils::enable_window_maximize_ctrl( window_handle, false );
             return func_back;
         }
         inline auto restore_os_components()
