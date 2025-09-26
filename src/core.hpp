@@ -928,7 +928,6 @@ namespace core
             const auto& execs{ rules.execs };
             const auto& servs{ rules.servs };
             const auto nproc{ std::ranges::max( std::thread::hardware_concurrency() / 3, 2u ) };
-            using thread_t = std::thread;
             std::array tasks{
               options[ "hijack_execs" ]
                 ? cpp_utils::create_parallel_task( nproc, execs.begin(), execs.end(), undo_hijack_exec )
