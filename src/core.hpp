@@ -515,15 +515,15 @@ namespace core
             if ( parsed_begin >= parsed_end ) {
                 continue;
             }
-            const std::string_view parsed_line_view{ parsed_begin, parsed_end };
-            if ( parsed_line_view.front() == '#' ) {
+            const std::string_view parsed_line{ parsed_begin, parsed_end };
+            if ( parsed_line.front() == '#' ) {
                 continue;
             }
-            if ( parsed_line_view.front() == '[' && parsed_line_view.back() == ']' && parsed_line_view.size() > "[]"sv.size() ) {
+            if ( parsed_line.front() == '[' && parsed_line.back() == ']' && parsed_line.size() > "[]"sv.size() ) {
                 current_config_node = std::monostate{};
                 std::apply( [ & ]( auto&... config_node ) noexcept
                 {
-                    const auto current_raw_name{ details::get_config_node_raw_name_by_tag( parsed_line_view ) };
+                    const auto current_raw_name{ details::get_config_node_raw_name_by_tag( parsed_line ) };
                     ( [ & ]< typename T >( T& current_node ) noexcept
                     {
                         if constexpr ( usable_config_node_types::contains< T > ) {
@@ -539,9 +539,9 @@ namespace core
             {
                 if constexpr ( !std::is_same_v< T, std::monostate > ) {
                     if ( is_reload ) {
-                        node_ptr->reload( parsed_line_view );
+                        node_ptr->reload( parsed_line );
                     } else {
-                        node_ptr->load( parsed_line_view );
+                        node_ptr->load( parsed_line );
                     }
                 }
             } );
