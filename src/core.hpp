@@ -878,7 +878,7 @@ namespace core
             const auto& options{ std::get< crack_restore_config >( config_nodes ) };
             const auto execs{ rules.execs };
             const auto servs{ rules.servs };
-            const auto nproc{ std::ranges::max( std::thread::hardware_concurrency() / 2, 2u ) };
+            const auto nproc{ std::ranges::max( std::thread::hardware_concurrency() / 3, 2u ) };
             std::array tasks{
               options[ "hijack_execs" ]
                 ? cpp_utils::create_parallel_task( nproc, execs.begin(), execs.end(), hijack_exec )
@@ -927,7 +927,7 @@ namespace core
             const auto& options{ std::get< crack_restore_config >( config_nodes ) };
             const auto& execs{ rules.execs };
             const auto& servs{ rules.servs };
-            const auto nproc{ std::ranges::max( std::thread::hardware_concurrency() / 2, 2u ) };
+            const auto nproc{ std::ranges::max( std::thread::hardware_concurrency() / 3, 2u ) };
             using thread_t = std::thread;
             std::array tasks{
               options[ "hijack_execs" ]
