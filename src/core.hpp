@@ -578,7 +578,7 @@ namespace core
             config_file_stream << "# " INFO_FULL_NAME "\n# " INFO_VERSION "\n";
             std::apply( [ & ]( auto&... config_node ) { ( config_node.sync( config_file_stream ), ... ); }, config_nodes );
             config_file_stream.flush();
-            std::print( "\n ({}) 同步配置{}.", config_file_stream.good() ? 'i' : '!', config_file_stream.good() ? "成功" : "失败" );
+            std::print( "\n (i) 同步配置{}.", config_file_stream.good() ? "成功" : "失败" );
             press_any_key_to_return();
             return func_back;
         }
