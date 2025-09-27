@@ -596,7 +596,7 @@ namespace core
     inline auto config_ui()
     {
         cpp_utils::console_ui ui;
-        ui.reserve( 5 + config_node_types::size )
+        ui.reserve( 5 + config_node_types::size + config_node_types::size / 2 )
           .add_back( "                    [ 配  置 ]\n\n" )
           .add_back( " < 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
           .add_back( " > 查看解析规则 ", details::show_config_parsing_rules )
