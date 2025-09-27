@@ -248,7 +248,8 @@ namespace core
             static auto make_option_editor_ui_( map_t_& options )
             {
                 cpp_utils::console_ui ui;
-                ui.add_back( "                    [ 配  置 ]\n\n" )
+                ui.reserve( 2 + options.size() * 2 )
+                  .add_back( "                    [ 配  置 ]\n\n" )
                   .add_back(
                     " < 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity );
                 for ( auto&& [ _, item ] : options ) {
@@ -426,7 +427,8 @@ namespace core
         static auto show_help_info_()
         {
             cpp_utils::console_ui ui;
-            ui.add_back( "                    [ 配  置 ]\n\n" )
+            ui.reserve( 3 )
+              .add_back( "                    [ 配  置 ]\n\n" )
               .add_back( " < 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
               .add_back(
                 "\n 自定义规则格式为 <flag>: <item>\n"
@@ -547,7 +549,8 @@ namespace core
         inline auto show_config_parsing_rules()
         {
             cpp_utils::console_ui ui;
-            ui.add_back( "                    [ 配  置 ]\n\n" )
+            ui.reserve( 3 )
+              .add_back( "                    [ 配  置 ]\n\n" )
               .add_back( " < 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
               .add_back(
                 "\n 配置以行作为单位解析.\n\n"
@@ -593,7 +596,8 @@ namespace core
     inline auto config_ui()
     {
         cpp_utils::console_ui ui;
-        ui.add_back( "                    [ 配  置 ]\n\n" )
+        ui.reserve( 5 + config_node_types::size )
+          .add_back( "                    [ 配  置 ]\n\n" )
           .add_back( " < 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
           .add_back( " > 查看解析规则 ", details::show_config_parsing_rules )
           .add_back( " > 同步配置 ", details::sync_config )
@@ -605,7 +609,8 @@ namespace core
     inline auto info()
     {
         cpp_utils::console_ui ui;
-        ui.add_back( "                    [ 关  于 ]\n\n" )
+        ui.reserve( 3 )
+          .add_back( "                    [ 关  于 ]\n\n" )
           .add_back( " < 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
           .add_back(
             "\n[ 名称 ]\n\n " INFO_FULL_NAME " (" INFO_SHORT_NAME ")\n\n[ 版本 ]\n\n " INFO_VERSION
@@ -681,7 +686,8 @@ namespace core
         inline auto make_cmd_executor_ui( const cmd_item& item )
         {
             cpp_utils::console_ui ui;
-            ui.add_back(
+            ui.reserve( 3 )
+              .add_back(
                 "                   [ 工 具 箱 ]\n\n\n"
                 " (i) 是否继续执行?\n" )
               .add_back(
@@ -702,7 +708,8 @@ namespace core
            { "重置 Microsoft Edge 管理策略", R"(reg.exe delete "HKLM\SOFTWARE\Policies\Microsoft\Edge" /f)" } }
         };
         cpp_utils::console_ui ui;
-        ui.add_back( "                   [ 工 具 箱 ]\n\n" )
+        ui.reserve( 5 + common_cmds.size() )
+          .add_back( "                   [ 工 具 箱 ]\n\n" )
           .add_back( " < 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
           .add_back( " > 命令提示符 ", details::launch_cmd )
           .add_back( " > 恢复操作系统组件 ", details::restore_os_components )
