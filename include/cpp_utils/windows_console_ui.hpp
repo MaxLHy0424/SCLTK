@@ -1,6 +1,5 @@
 #pragma once
 #include <chrono>
-#include <deque>
 #include <functional>
 #include <print>
 #include <ranges>
@@ -89,7 +88,7 @@ namespace cpp_utils
             line_node_( line_node_&& ) noexcept = default;
             ~line_node_() noexcept              = default;
         };
-        std::deque< line_node_ > lines_{};
+        std::vector< line_node_ > lines_{};
         static auto show_cursor_( const WINBOOL is_show ) noexcept
         {
             CONSOLE_CURSOR_INFO cursor_data;
@@ -222,9 +221,9 @@ namespace cpp_utils
         {
             return lines_.max_size();
         }
-        auto& resize( const std::size_t size )
+        auto& reserve( const std::size_t size )
         {
-            lines_.resize( size );
+            lines_.reserve( size );
             return *this;
         }
         auto& optimize_storage() noexcept
@@ -249,8 +248,8 @@ namespace cpp_utils
           const WORD intensity_attrs = console_text::foreground_green | console_text::foreground_blue,
           const WORD default_attrs   = console_text::foreground_white )
         {
-            lines_.emplace_front(
-              text, func, default_attrs,
+            lines_.emplace(
+              lines_.cbegin(), text, func, default_attrs,
               func.visit< bool >( []( const auto& func ) static { return func != nullptr; } ) ? intensity_attrs : default_attrs );
             return *this;
         }
@@ -312,7 +311,7 @@ namespace cpp_utils
         }
         auto& remove_front() noexcept
         {
-            lines_.pop_front();
+            lines_.erase( lines_.cbegin() );
             return *this;
         }
         auto& remove_back() noexcept
