@@ -15,7 +15,8 @@ auto main() -> int
     std::print( " -> 准备就绪..." );
     core::load_config();
     core::create_threads();
-    ui.add_back( "                    [ 主  页 ]\n\n" )
+    ui.reserve( 10 + core::builtin_rules.size() )
+      .add_back( "                    [ 主  页 ]\n\n" )
       .add_back( " < 退出 ", core::quit, cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_intensity )
       .add_back( " < 重启 ", core::relaunch, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
       .add_back( " > 关于 ", core::info )
