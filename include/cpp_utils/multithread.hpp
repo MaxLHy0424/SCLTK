@@ -1,6 +1,5 @@
 #pragma once
 #include <algorithm>
-#include <deque>
 #include <iterator>
 #include <print>
 #include <ranges>
@@ -75,7 +74,7 @@ namespace cpp_utils
     class [[deprecated( "use STL container instead" )]] thread_manager final
     {
       private:
-        std::deque< std::jthread > threads_{};
+        std::vector< std::jthread > threads_{};
       public:
         constexpr auto empty() const noexcept
         {
@@ -88,6 +87,11 @@ namespace cpp_utils
         constexpr auto max_size() const noexcept
         {
             return threads_.max_size();
+        }
+        auto& reserve( const std::size_t size ) noexcept
+        {
+            threads_.reserve( size );
+            return *this;
         }
         auto& optimize_storage() noexcept
         {
