@@ -520,11 +520,16 @@ namespace core
                 std::apply( [ & ]( auto&... config_node ) noexcept
                 {
                     const auto current_raw_name{ details::get_config_node_raw_name_by_tag( parsed_line ) };
+                    bool is_found{ false };
                     ( [ & ]< typename T >( T& current_node ) noexcept
                     {
                         if constexpr ( active_config_node_types::contains< T > ) {
+                            if ( is_found ) {
+                                return;
+                            }
                             if ( current_raw_name == current_node.raw_name ) {
                                 current_config_node = std::addressof( current_node );
+                                is_found            = true;
                             }
                         }
                     }( config_node ), ... );
