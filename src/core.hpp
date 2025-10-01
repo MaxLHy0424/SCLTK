@@ -536,16 +536,21 @@ namespace core
                 }, config_nodes );
                 continue;
             }
-            current_config_node.visit( [ & ]< typename T >( const T node_ptr )
-            {
-                if constexpr ( !std::is_same_v< T, std::monostate > ) {
-                    if ( is_reload ) {
+            if ( is_reload ) {
+                current_config_node.visit( [ & ]< typename T >( const T node_ptr )
+                {
+                    if constexpr ( !std::is_same_v< T, std::monostate > ) {
                         node_ptr->reload( parsed_line );
-                    } else {
+                    }
+                } );
+            } else {
+                current_config_node.visit( [ & ]< typename T >( const T node_ptr )
+                {
+                    if constexpr ( !std::is_same_v< T, std::monostate > ) {
                         node_ptr->load( parsed_line );
                     }
-                }
-            } );
+                } );
+            }
         }
         std::apply( []< typename... Ts >( Ts&... config_node ) static { ( config_node.after_load(), ... ); }, config_nodes );
     }
