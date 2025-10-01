@@ -19,7 +19,7 @@ namespace cpp_utils
       private:
         std::array< T, N + 1 > storage_{};
       public:
-        constexpr const auto& base() const noexcept
+        constexpr const auto& data() const noexcept
         {
             return storage_;
         }
