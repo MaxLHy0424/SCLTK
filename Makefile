@@ -1,4 +1,4 @@
-include env
+include env.mk
 project_name     = SCLTK
 compiler         = g++.exe
 args_defines     = -D{ANSI,_ANSI}
