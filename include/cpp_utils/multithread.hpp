@@ -25,7 +25,7 @@ namespace cpp_utils
         if ( begin == end ) {
             return result_t{};
         }
-        const auto total{ std::ranges::distance( begin, end ) };
+        const auto total{ static_cast< std::ptrdiff_t >( std::ranges::distance( begin, end ) ) };
         const auto nproc_for_executing{ std::ranges::min( static_cast< std::ptrdiff_t >( nproc ), total ) };
         const auto chunk_size{ total / nproc_for_executing };
         const auto remainder{ total % nproc_for_executing };
