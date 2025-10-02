@@ -196,7 +196,7 @@ serv: abc_proc_defender
 
 首先，请确保您已经安装了 [msys2](https://www.msys2.org)，并在 [msys2](https://www.msys2.org) 已安装软件包 `make` 和 `git`。
 
-然后，使用 git 克隆本仓库到本地，在仓库本地目录下运行 `.\make_env.ps1`，这将会创建 `env` 文件，文件内容如下：
+然后，使用 git 克隆本仓库到本地，在仓库本地目录下运行 `.\make_env.ps1`，这将会创建 `env.mk` 文件，文件内容如下：
 
 ```makefile
 msys2_path = /path/to/msys2
