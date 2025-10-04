@@ -11,17 +11,13 @@
 
 # 📢 公告
 
-> [!NOTE]
-> 此处有关时间的描述为中国标准时间。
-
-**\[2025-09-07\]** SCLTK v6.4.0 进入功能冻结阶段！
+**2025-09-07（UTC+08:00）** SCLTK v6.4.0 进入功能冻结阶段！
 
 <details>
 
 <summary>更多公告</summary>
 
-**\[2025-02-18\]**
-从 v6.1.0 起，原 CRCSN（Computer Room Control Software Nemesis）正式更名为 SCLTK（Student Computer Lab Toolkit）。
+**2025-02-18（UTC+08:00）** 从 v6.1.0 起，原 CRCSN（Computer Room Control Software Nemesis）正式更名为 SCLTK（Student Computer Lab Toolkit）。
 
 </details>
 
