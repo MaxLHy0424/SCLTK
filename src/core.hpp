@@ -362,7 +362,7 @@ namespace core
                     } else if constexpr ( std::is_same_v< T, std::array< char, sso_size > > ) {
                         return str.data();
                     } else {
-                        static_assert( false );
+                        static_assert( false, "unkown type!" );
                     }
                 } );
             }
