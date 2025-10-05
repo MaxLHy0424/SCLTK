@@ -432,9 +432,13 @@ namespace cpp_utils
     {
         CONSOLE_SCREEN_BUFFER_INFO info;
         GetConsoleScreenBufferInfo( std_output_handle, &info );
-        SetConsoleCursorPosition( std_output_handle, { 0, 0 } );
-        std::print( "{}", std::string( static_cast< unsigned >( info.dwSize.X ) * static_cast< unsigned >( info.dwSize.Y ), ' ' ) );
-        SetConsoleCursorPosition( std_output_handle, { 0, 0 } );
+        constexpr COORD top_left{ 0, 0 };
+        const auto area{ info.dwSize.X * info.dwSize.Y };
+        DWORD written;
+        SetConsoleCursorPosition( std_output_handle, top_left );
+        std::print( "{}", std::string( area, ' ' ) );
+        FillConsoleOutputAttribute( std_output_handle, info.wAttributes, area, top_left, &written );
+        SetConsoleCursorPosition( std_output_handle, top_left );
     }
     inline auto clear_current_console()
     {
