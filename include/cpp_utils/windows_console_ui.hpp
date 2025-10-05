@@ -134,20 +134,13 @@ namespace cpp_utils
                 }
             }
         }
-        static auto write_( const std::string& text, const bool is_endl = false )
-        {
-            std::print( "{}", text );
-            if ( is_endl ) {
-                std::print( "\n" );
-            }
-        }
         static auto rewrite_( const COORD cursor_position, const std::string& text )
         {
             const auto [ console_width, console_height ]{ cursor_position };
             SetConsoleCursorPosition( std_output_handle_, { 0, console_height } );
-            write_( std::string( console_width, ' ' ) );
+            std::print( "{}", std::string( console_width, ' ' ) );
             SetConsoleCursorPosition( std_output_handle_, { 0, console_height } );
-            write_( text );
+            std::print( "{}", text );
             SetConsoleCursorPosition( std_output_handle_, { 0, console_height } );
         }
         auto init_pos_()
@@ -156,7 +149,10 @@ namespace cpp_utils
             for ( const auto back_ptr{ &lines_.back() }; auto& line : lines_ ) {
                 line.position = get_cursor_();
                 line.set_attrs( line.default_attrs );
-                write_( line.text, &line != back_ptr );
+                std::print( "{}", line.text );
+                if ( &line != back_ptr ) {
+                    std::print( "\n" );
+                }
             }
         }
         auto refresh_( const COORD hang_position )
