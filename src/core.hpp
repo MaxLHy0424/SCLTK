@@ -332,12 +332,7 @@ namespace core
     {
       public:
         performance_config()
-          : basic_options_config_node{
-              "performance",
-              "性能",
-              { { "memory_compression", "内存压缩 (下次启动时生效)" },
-                { "no_hot_reload", "禁用非实时热重载 (下次启动时生效)" } }
-        }
+          : basic_options_config_node{ "performance", "性能", { { "no_hot_reload", "禁用非实时热重载 (下次启动时生效)" } } }
         { }
         ~performance_config() = default;
     };
@@ -787,7 +782,7 @@ namespace core
                 EmptyWorkingSet( process );
             }
         }
-        inline constexpr std::array threads_func{ set_console_attrs, force_show, compress_memory };
+        inline constexpr std::array threads_func{ set_console_attrs, force_show };
     }
     inline auto create_threads() noexcept
     {
