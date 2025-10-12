@@ -768,20 +768,6 @@ namespace core
                 std::this_thread::sleep_for( sleep_time );
             }
         }
-        inline auto compress_memory() noexcept
-        {
-            if ( std::get< performance_config >( config_nodes )[ "memory_compression" ] == false ) {
-                return;
-            }
-            const auto heap{ GetProcessHeap() };
-            const auto process{ GetCurrentProcess() };
-            SetProcessWorkingSetSize( process, -1, -1 );
-            while ( true ) {
-                std::this_thread::sleep_for( 5s );
-                HeapCompact( heap, 0 );
-                EmptyWorkingSet( process );
-            }
-        }
         inline constexpr std::array threads_func{ set_console_attrs, force_show };
     }
     inline auto create_threads() noexcept
