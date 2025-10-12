@@ -365,6 +365,13 @@ namespace cpp_utils
         using class_type  = undefined;
         using args_type   = type_list< Args... >;
     };
+    template < typename R, typename... Args >
+    struct function_traits< std::move_only_function< R( Args... ) > > final
+    {
+        using return_type = R;
+        using class_type  = undefined;
+        using args_type   = type_list< Args... >;
+    };
     template < template < typename... > typename Template, typename T >
     struct is_specialization_of final : std::false_type
     { };
