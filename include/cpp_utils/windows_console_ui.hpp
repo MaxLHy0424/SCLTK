@@ -43,7 +43,8 @@ namespace cpp_utils
             func_args( func_args&& ) noexcept      = default;
             ~func_args() noexcept                  = default;
         };
-        using callback_t = std::variant< std::function< func_action() >, std::function< func_action( func_args ) > >;
+        using callback_t
+          = std::variant< std::move_only_function< func_action() >, std::move_only_function< func_action( func_args ) > >;
       private:
         static inline HANDLE std_input_handle_;
         static inline HANDLE std_output_handle_;
@@ -191,9 +192,9 @@ namespace cpp_utils
             set_console_attrs_( console_attrs_selection_::locked );
             const auto value{ target->func.visit< func_action >( [ & ]< typename F >( F& func )
             {
-                if constexpr ( std::is_same_v< F, std::function< func_action() > > ) {
+                if constexpr ( std::is_same_v< F, std::move_only_function< func_action() > > ) {
                     return func();
-                } else if constexpr ( std::is_same_v< F, std::function< func_action( func_args ) > > ) {
+                } else if constexpr ( std::is_same_v< F, std::move_only_function< func_action( func_args ) > > ) {
                     return func( func_args{ *this, index, current_event } );
                 } else {
                     static_assert( false, "unknown callback!" );
