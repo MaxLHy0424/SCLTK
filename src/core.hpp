@@ -415,12 +415,9 @@ namespace core
             custom_rules.execs.clear();
             custom_rules.servs.clear();
         }
-        static auto to_cstr( const simple_string& str ) noexcept
-        {
-            return str.c_str();
-        }
         auto after_load_()
         {
+            constexpr auto to_cstr{ []( const simple_string& str ) static noexcept { return str.c_str(); } };
             custom_rules.execs.append_range( execs | std::views::transform( to_cstr ) );
             custom_rules.servs.append_range( servs | std::views::transform( to_cstr ) );
         }
