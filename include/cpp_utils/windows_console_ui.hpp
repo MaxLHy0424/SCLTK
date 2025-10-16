@@ -44,7 +44,7 @@ namespace cpp_utils
             func_args( func_args&& ) noexcept      = default;
             ~func_args() noexcept                  = default;
         };
-        using callback_t
+        using function_t
           = std::variant< std::move_only_function< func_action() >, std::move_only_function< func_action( func_args ) > >;
       private:
         static inline HANDLE std_input_handle_;
@@ -57,7 +57,7 @@ namespace cpp_utils
         struct line_node_ final
         {
             std::string text{};
-            callback_t func{};
+            function_t func{};
             WORD default_attrs{ console_text::foreground_white };
             WORD intensity_attrs{ console_text::foreground_green | console_text::foreground_blue };
             WORD last_attrs{ console_text::foreground_white };
@@ -79,7 +79,7 @@ namespace cpp_utils
             auto operator=( const line_node_& ) noexcept -> line_node_& = default;
             auto operator=( line_node_&& ) noexcept -> line_node_&      = default;
             line_node_() noexcept                                       = default;
-            line_node_( const std::string_view text, callback_t& func, const WORD default_attrs, const WORD intensity_attrs ) noexcept
+            line_node_( const std::string_view text, function_t& func, const WORD default_attrs, const WORD intensity_attrs ) noexcept
               : text{ text }
               , func{ std::move( func ) }
               , default_attrs{ default_attrs }
@@ -242,7 +242,7 @@ namespace cpp_utils
             return *this;
         }
         auto& add_front(
-          const std::string_view text, callback_t func = {},
+          const std::string_view text, function_t func = {},
           const WORD intensity_attrs = console_text::foreground_green | console_text::foreground_blue,
           const WORD default_attrs   = console_text::foreground_white )
         {
@@ -252,7 +252,7 @@ namespace cpp_utils
             return *this;
         }
         auto& add_back(
-          const std::string_view text, callback_t func = {},
+          const std::string_view text, function_t func = {},
           const WORD intensity_attrs = console_text::foreground_blue | console_text::foreground_green,
           const WORD default_attrs   = console_text::foreground_white )
         {
@@ -262,7 +262,7 @@ namespace cpp_utils
             return *this;
         }
         auto& insert(
-          const std::size_t index, const std::string_view text, callback_t func = {},
+          const std::size_t index, const std::string_view text, function_t func = {},
           const WORD intensity_attrs = console_text::foreground_green | console_text::foreground_blue,
           const WORD default_attrs   = console_text::foreground_white )
         {
@@ -280,7 +280,7 @@ namespace cpp_utils
             }
             return *this;
         }
-        auto& edit_func( const std::size_t index, callback_t func )
+        auto& edit_func( const std::size_t index, function_t func )
         {
             if constexpr ( is_debugging_build ) {
                 lines_.at( index ).func = std::move( func );
