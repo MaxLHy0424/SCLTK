@@ -44,6 +44,7 @@ namespace cpp_utils
             func_args( func_args&& ) noexcept      = default;
             ~func_args() noexcept                  = default;
         };
+        using text_t = std::variant< std::string_view, std::string >;
         using function_t
           = std::variant< std::move_only_function< func_action() >, std::move_only_function< func_action( func_args ) > >;
       private:
@@ -56,12 +57,16 @@ namespace cpp_utils
         };
         struct line_node_ final
         {
-            std::string text{};
+            text_t text{};
             function_t func{};
             WORD default_attrs{ console_text::foreground_white };
             WORD intensity_attrs{ console_text::foreground_green | console_text::foreground_blue };
             WORD last_attrs{ console_text::foreground_white };
             COORD position{};
+            auto print_text() const
+            {
+                text.visit( []( const auto& line_text ) static { std::print( "{}", line_text ); } );
+            }
             auto set_attrs( const WORD current_attrs ) noexcept
             {
                 SetConsoleTextAttribute( std_output_handle_, current_attrs );
@@ -69,8 +74,9 @@ namespace cpp_utils
             }
             auto operator==( const COORD current_position ) const noexcept
             {
+                const auto text_size{ text.visit< std::size_t >( []( const auto& line_text ) { return line_text.size(); } ) };
                 return position.Y == current_position.Y && position.X <= current_position.X
-                    && current_position.X < position.X + static_cast< SHORT >( text.size() );
+                    && current_position.X < position.X + static_cast< SHORT >( text_size );
             }
             auto operator!=( const COORD current_position ) const noexcept
             {
@@ -79,8 +85,8 @@ namespace cpp_utils
             auto operator=( const line_node_& ) noexcept -> line_node_& = default;
             auto operator=( line_node_&& ) noexcept -> line_node_&      = default;
             line_node_() noexcept                                       = default;
-            line_node_( const std::string_view text, function_t& func, const WORD default_attrs, const WORD intensity_attrs ) noexcept
-              : text{ text }
+            line_node_( text_t text, function_t& func, const WORD default_attrs, const WORD intensity_attrs ) noexcept
+              : text{ std::move( text ) }
               , func{ std::move( func ) }
               , default_attrs{ default_attrs }
               , intensity_attrs{ intensity_attrs }
@@ -136,13 +142,13 @@ namespace cpp_utils
                 }
             }
         }
-        static auto rewrite_( const COORD cursor_position, const std::string& text )
+        static auto rewrite_( const COORD cursor_position, const line_node_& line )
         {
             const auto [ console_width, console_height ]{ cursor_position };
             SetConsoleCursorPosition( std_output_handle_, { 0, console_height } );
             std::print( "{}", std::string( console_width, ' ' ) );
             SetConsoleCursorPosition( std_output_handle_, { 0, console_height } );
-            std::print( "{}", text );
+            line.print_text();
             SetConsoleCursorPosition( std_output_handle_, { 0, console_height } );
         }
         auto init_pos_()
@@ -151,7 +157,7 @@ namespace cpp_utils
             for ( const auto back_ptr{ &lines_.back() }; auto& line : lines_ ) {
                 line.position = get_cursor_();
                 line.set_attrs( line.default_attrs );
-                std::print( "{}", line.text );
+                line.print_text();
                 if ( &line != back_ptr ) {
                     std::print( "\n" );
                 }
@@ -162,11 +168,11 @@ namespace cpp_utils
             for ( auto& line : lines_ ) {
                 if ( line == hang_position && line.last_attrs != line.intensity_attrs ) {
                     line.set_attrs( line.intensity_attrs );
-                    rewrite_( line.position, line.text );
+                    rewrite_( line.position, line );
                 }
                 if ( line != hang_position && line.last_attrs != line.default_attrs ) {
                     line.set_attrs( line.default_attrs );
-                    rewrite_( line.position, line.text );
+                    rewrite_( line.position, line );
                 }
             }
         }
@@ -228,9 +234,11 @@ namespace cpp_utils
         {
             constexpr auto default_capacity{ std::string{}.capacity() };
             for ( auto& line : lines_ ) {
-                auto& text{ line.text };
-                if ( text.capacity() > text.size() && text.capacity() != default_capacity ) {
-                    text.shrink_to_fit();
+                auto text{ std::get_if< std::string >( &line.text ) };
+                if ( text != nullptr ) {
+                    if ( text->capacity() > text->size() && text->capacity() != default_capacity ) {
+                        text->shrink_to_fit();
+                    }
                 }
             }
             lines_.shrink_to_fit();
@@ -242,7 +250,7 @@ namespace cpp_utils
             return *this;
         }
         auto& add_front(
-          const std::string_view text, function_t func = {},
+          text_t text, function_t func = {},
           const WORD intensity_attrs = console_text::foreground_green | console_text::foreground_blue,
           const WORD default_attrs   = console_text::foreground_white )
         {
@@ -252,7 +260,7 @@ namespace cpp_utils
             return *this;
         }
         auto& add_back(
-          const std::string_view text, function_t func = {},
+          text_t text, function_t func = {},
           const WORD intensity_attrs = console_text::foreground_blue | console_text::foreground_green,
           const WORD default_attrs   = console_text::foreground_white )
         {
@@ -262,7 +270,7 @@ namespace cpp_utils
             return *this;
         }
         auto& insert(
-          const std::size_t index, const std::string_view text, function_t func = {},
+          const std::size_t index, text_t text, function_t func = {},
           const WORD intensity_attrs = console_text::foreground_green | console_text::foreground_blue,
           const WORD default_attrs   = console_text::foreground_white )
         {
@@ -271,7 +279,7 @@ namespace cpp_utils
               func.visit< bool >( []( const auto& func ) static { return func != nullptr; } ) ? intensity_attrs : default_attrs );
             return *this;
         }
-        auto& edit_text( const std::size_t index, const std::string_view text )
+        auto& edit_text( const std::size_t index, text_t text )
         {
             if constexpr ( is_debugging_build ) {
                 lines_.at( index ).text = text;
