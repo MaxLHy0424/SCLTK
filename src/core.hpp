@@ -249,9 +249,9 @@ namespace core
             {
                 cpp_utils::console_ui ui;
                 ui.reserve( 2 + options.size() * 2 )
-                  .add_back( "                    [ 配  置 ]\n\n" )
+                  .add_back( "                    [ 配  置 ]\n\n"sv )
                   .add_back(
-                    " < 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity );
+                    " < 返回 "sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity );
                 for ( auto&& [ _, item ] : options ) {
                     ui.add_back( std::format( "\n[ {} ]\n", item.description ) )
                       .add_back(
@@ -294,7 +294,7 @@ namespace core
       private:
         static auto init_ui_( cpp_utils::console_ui& ui )
         {
-            ui.add_back( "\n[ 选项 ]\n" );
+            ui.add_back( "\n[ 选项 ]\n"sv );
         }
       public:
         options_title_ui() noexcept  = default;
@@ -420,8 +420,8 @@ namespace core
         {
             cpp_utils::console_ui ui;
             ui.reserve( 3 )
-              .add_back( "                    [ 配  置 ]\n\n" )
-              .add_back( " < 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
+              .add_back( "                    [ 配  置 ]\n\n"sv )
+              .add_back( " < 返回 "sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
               .add_back(
                 "\n 自定义规则格式为 <flag>: <item>\n"
                 " 其中, <flag> 可为 exec 或 serv,\n"
@@ -438,13 +438,13 @@ namespace core
                 " exec: abc_frontend\n"
                 " exec: abc_backend\n"
                 " serv: abc_connect\n"
-                " serv: abc_proc_defender" )
+                " serv: abc_proc_defender"sv )
               .show();
             return func_back;
         }
         static auto init_ui_( cpp_utils::console_ui& ui )
         {
-            ui.add_back( "\n[ 自定义规则 ]\n" ).add_back( " > 查看帮助信息 ", show_help_info_ );
+            ui.add_back( "\n[ 自定义规则 ]\n"sv ).add_back( " > 查看帮助信息 "sv, show_help_info_ );
         }
       public:
         custom_rules_config() noexcept
@@ -552,8 +552,8 @@ namespace core
         {
             cpp_utils::console_ui ui;
             ui.reserve( 3 )
-              .add_back( "                    [ 配  置 ]\n\n" )
-              .add_back( " < 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
+              .add_back( "                    [ 配  置 ]\n\n"sv )
+              .add_back( " < 返回 "sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
               .add_back(
                 "\n 配置以行作为单位解析.\n\n"
                 " 以 # 开头的行是注释, 不进行解析\n\n"
@@ -563,7 +563,7 @@ namespace core
                 " 如果匹配不到配置项,\n"
                 " 则当前读取的标签到下一标签之间的内容都将被忽略.\n\n"
                 " 解析时会忽略每行前导和末尾的空白字符.\n"
-                " 如果当前行不是标签, 则该行将由上一个标签处理." )
+                " 如果当前行不是标签, 则该行将由上一个标签处理."sv )
               .show();
             return func_back;
         }
@@ -599,11 +599,11 @@ namespace core
     {
         cpp_utils::console_ui ui;
         ui.reserve( 5 + config_node_types::size + config_node_types::size / 2 )
-          .add_back( "                    [ 配  置 ]\n\n" )
-          .add_back( " < 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
-          .add_back( " > 查看解析规则 ", details::show_config_parsing_rules )
-          .add_back( " > 同步配置 ", details::sync_config )
-          .add_back( " > 打开配置文件 ", details::open_config_file );
+          .add_back( "                    [ 配  置 ]\n\n"sv )
+          .add_back( " < 返回 "sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
+          .add_back( " > 查看解析规则 "sv, details::show_config_parsing_rules )
+          .add_back( " > 同步配置 "sv, details::sync_config )
+          .add_back( " > 打开配置文件 "sv, details::open_config_file );
         std::apply( [ & ]( auto&... config_node ) { ( config_node.init_ui( ui ), ... ); }, config_nodes );
         ui.show();
         return func_back;
@@ -612,12 +612,12 @@ namespace core
     {
         cpp_utils::console_ui ui;
         ui.reserve( 3 )
-          .add_back( "                    [ 关  于 ]\n\n" )
-          .add_back( " < 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
+          .add_back( "                    [ 关  于 ]\n\n"sv )
+          .add_back( " < 返回 "sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
           .add_back(
             "\n[ 名称 ]\n\n " INFO_FULL_NAME " (" INFO_SHORT_NAME ")\n\n[ 版本 ]\n\n " INFO_VERSION
             "\n\n 构建时间: " INFO_BUILD_TIME "\n 编译工具: " INFO_COMPILER " " INFO_ARCH
-            "\n\n[ 许可证与版权 ]\n\n " INFO_LICENSE "\n " INFO_COPYRIGHT "\n\n[ 仓库 ]\n\n " INFO_REPO_URL )
+            "\n\n[ 许可证与版权 ]\n\n " INFO_LICENSE "\n " INFO_COPYRIGHT "\n\n[ 仓库 ]\n\n " INFO_REPO_URL ""sv )
           .show();
         return func_back;
     }
@@ -691,11 +691,11 @@ namespace core
             ui.reserve( 3 )
               .add_back(
                 "                   [ 工 具 箱 ]\n\n\n"
-                " (i) 是否继续执行?\n" )
+                " (i) 是否继续执行?\n"sv )
               .add_back(
-                " > 是, 继续 ", std::bind_back( execute_cmd, std::cref( item ) ),
+                " > 是, 继续 "sv, std::bind_back( execute_cmd, std::cref( item ) ),
                 cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_intensity )
-              .add_back( " > 否, 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
+              .add_back( " > 否, 返回 "sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
               .show();
             return func_back;
         }
@@ -711,11 +711,11 @@ namespace core
         };
         cpp_utils::console_ui ui;
         ui.reserve( 5 + common_cmds.size() )
-          .add_back( "                   [ 工 具 箱 ]\n\n" )
-          .add_back( " < 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
-          .add_back( " > 命令提示符 ", details::launch_cmd )
-          .add_back( " > 恢复操作系统组件 ", details::restore_os_components )
-          .add_back( "\n[ 常用命令 ]\n" );
+          .add_back( "                   [ 工 具 箱 ]\n\n"sv )
+          .add_back( " < 返回 "sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
+          .add_back( " > 命令提示符 "sv, details::launch_cmd )
+          .add_back( " > 恢复操作系统组件 "sv, details::restore_os_components )
+          .add_back( "\n[ 常用命令 ]\n"sv );
         for ( const auto& common_cmd : common_cmds ) {
             ui.add_back(
               std::format( " > {} ", common_cmd.description ),
