@@ -11,11 +11,7 @@
                 "ANSI",
                 "_ANSI"
             ],
-            "compilerArgs": [
-                "-fexec-charset=GBK",
-                "-fno-rtti",
-                "-fno-exceptions"
-            ],
+            "compilerArgs": [],
             "intelliSenseMode": "windows-gcc-x64",
             "cStandard": "gnu23",
             "cppStandard": "gnu++26",
