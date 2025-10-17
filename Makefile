@@ -5,7 +5,7 @@ args_defines     = -D{ANSI,_ANSI}
 args_std         = gnu++26
 args_warning     = -W{all,extra,effc++,pedantic}
 args_opt_debug   = -Og
-args_opt_release = -Ofast -flto=auto -fuse-linker-plugin -s -fno-rtti -fno-exceptions -fno-unwind-tables -fno-asynchronous-unwind-tables -fno-common -ffunction-sections -fdata-sections -Wl,--gc-sections,--strip-all,--as-needed
+args_opt_release = -Ofast -flto=auto -fuse-linker-plugin -s -fvisibility=hidden -fdelete-null-pointer-checks -fno-stack-protector -fno-rtti -fno-exceptions -fno-unwind-tables -fno-asynchronous-unwind-tables -fno-common -ffunction-sections -fdata-sections -Wl,--gc-sections,--strip-all,--as-needed
 args_include     = -I./include
 args_library     =
 args_extra       =
