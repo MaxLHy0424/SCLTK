@@ -85,7 +85,7 @@ namespace cpp_utils
             auto operator=( const line_node_& ) noexcept -> line_node_& = default;
             auto operator=( line_node_&& ) noexcept -> line_node_&      = default;
             line_node_() noexcept                                       = default;
-            line_node_( text_t text, function_t& func, const WORD default_attrs, const WORD intensity_attrs ) noexcept
+            line_node_( text_t& text, function_t& func, const WORD default_attrs, const WORD intensity_attrs ) noexcept
               : text{ std::move( text ) }
               , func{ std::move( func ) }
               , default_attrs{ default_attrs }
