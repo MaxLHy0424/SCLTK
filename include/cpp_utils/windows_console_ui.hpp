@@ -279,7 +279,7 @@ namespace cpp_utils
               func.visit< bool >( []( const auto& func ) static { return func != nullptr; } ) ? intensity_attrs : default_attrs );
             return *this;
         }
-        auto& edit_text( const std::size_t index, text_t text )
+        auto& set_text( const std::size_t index, text_t text )
         {
             if constexpr ( is_debugging_build ) {
                 lines_.at( index ).text = text;
@@ -288,7 +288,7 @@ namespace cpp_utils
             }
             return *this;
         }
-        auto& edit_func( const std::size_t index, function_t func )
+        auto& set_func( const std::size_t index, function_t func )
         {
             if constexpr ( is_debugging_build ) {
                 lines_.at( index ).func = std::move( func );
@@ -297,7 +297,7 @@ namespace cpp_utils
             }
             return *this;
         }
-        auto& edit_intensity_attrs( const std::size_t index, const WORD intensity_attrs )
+        auto& set_intensity_attrs( const std::size_t index, const WORD intensity_attrs )
         {
             if constexpr ( is_debugging_build ) {
                 lines_.at( index ).intensity_attrs = intensity_attrs;
@@ -306,7 +306,7 @@ namespace cpp_utils
             }
             return *this;
         }
-        auto& edit_default_attrs( const std::size_t index, const WORD default_attrs )
+        auto& set_default_attrs( const std::size_t index, const WORD default_attrs )
         {
             if constexpr ( is_debugging_build ) {
                 lines_.at( index ).default_attrs = default_attrs;
