@@ -74,7 +74,7 @@ namespace cpp_utils
             }
             auto operator==( const COORD current_position ) const noexcept
             {
-                const auto text_size{ text.visit< std::size_t >( []( const auto& line_text ) { return line_text.size(); } ) };
+                const auto text_size{ text.visit< std::size_t >( []( const auto& txt ) static noexcept { return txt.size(); } ) };
                 return position.Y == current_position.Y && position.X <= current_position.X
                     && current_position.X < position.X + static_cast< SHORT >( text_size );
             }
