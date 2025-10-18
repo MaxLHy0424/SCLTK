@@ -202,11 +202,11 @@ namespace cpp_utils
             return value;
         }
       public:
-        constexpr auto empty() const noexcept
+        auto empty() const noexcept
         {
             return lines_.empty();
         }
-        constexpr auto size() const noexcept
+        auto size() const noexcept
         {
             return lines_.size();
         }
