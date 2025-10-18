@@ -78,10 +78,6 @@ namespace cpp_utils
                 return position.Y == current_position.Y && position.X <= current_position.X
                     && current_position.X < position.X + static_cast< SHORT >( text_size );
             }
-            auto operator!=( const COORD current_position ) const noexcept
-            {
-                return !( *this == current_position );
-            }
             auto operator=( const line_node_& ) noexcept -> line_node_& = default;
             auto operator=( line_node_&& ) noexcept -> line_node_&      = default;
             line_node_() noexcept                                       = default;
