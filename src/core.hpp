@@ -291,7 +291,7 @@ namespace core
             static inline constexpr auto sso_size{ 16uz };
             std::variant< std::unique_ptr< char[] >, std::array< char, sso_size > > storage_{};
           public:
-            auto c_str() const noexcept
+            constexpr auto c_str() const noexcept
             {
                 return storage_.visit< const char* >( []< typename T >( const T& str )
                 {
@@ -304,7 +304,7 @@ namespace core
                     }
                 } );
             }
-            simple_string( std::string_view str )
+            constexpr simple_string( std::string_view str )
             {
                 if ( str.size() < sso_size ) {
                     std::array< char, sso_size > sso;
@@ -318,9 +318,9 @@ namespace core
                     storage_              = std::move( on_heap );
                 }
             }
-            simple_string( const simple_string& ) = delete;
-            simple_string( simple_string&& )      = default;
-            ~simple_string()                      = default;
+            constexpr simple_string( const simple_string& ) = delete;
+            constexpr simple_string( simple_string&& )      = default;
+            ~simple_string()                                = default;
         };
     }
     class options_title_ui final
