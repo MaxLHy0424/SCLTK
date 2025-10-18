@@ -282,9 +282,9 @@ namespace cpp_utils
         auto& set_text( const std::size_t index, text_t text )
         {
             if constexpr ( is_debugging_build ) {
-                lines_.at( index ).text = text;
+                lines_.at( index ).text = std::move( text );
             } else {
-                lines_[ index ].text = text;
+                lines_[ index ].text = std::move( text );
             }
             return *this;
         }
