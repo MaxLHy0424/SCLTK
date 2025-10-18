@@ -178,19 +178,12 @@ namespace cpp_utils
         }
         auto invoke_func_( const MOUSE_EVENT_RECORD current_event )
         {
-            line_node_* target{ nullptr };
-            auto index{ 0uz };
-            for ( auto& line : lines_ ) {
-                if ( line == current_event.dwMousePosition ) {
-                    target = &line;
-                    break;
-                }
-                ++index;
-            }
-            if ( target == nullptr ) {
+            auto target{ std::ranges::find_if( lines_, [ & ]( const line_node_& line ) noexcept
+            { return line == current_event.dwMousePosition; } ) };
+            if ( target == lines_.end() ) {
                 return func_back;
             }
-            if ( target->func.visit< bool >( []( const auto& func ) static { return func == nullptr; } ) ) {
+            if ( target->func.visit< bool >( []( const auto& func ) static noexcept { return func == nullptr; } ) ) {
                 return func_back;
             }
             clear_console( std_output_handle_ );
@@ -202,7 +195,7 @@ namespace cpp_utils
                 if constexpr ( std::is_same_v< F, std::move_only_function< func_action() > > ) {
                     return func();
                 } else if constexpr ( std::is_same_v< F, std::move_only_function< func_action( func_args ) > > ) {
-                    return func( func_args{ *this, index, current_event } );
+                    return func( func_args{ *this, static_cast< std::size_t >( target - lines_.begin() ), current_event } );
                 } else {
                     static_assert( false, "unknown callback!" );
                 }
