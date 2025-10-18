@@ -221,11 +221,11 @@ namespace cpp_utils
         }
         auto& optimize_storage() noexcept
         {
-            constexpr auto default_capacity{ std::string{}.capacity() };
+            constexpr auto default_text_capacity{ std::string{}.capacity() };
             for ( auto& line : lines_ ) {
                 auto text{ std::get_if< std::string >( &line.text ) };
                 if ( text != nullptr ) {
-                    if ( text->capacity() > text->size() && text->capacity() != default_capacity ) {
+                    if ( text->capacity() != default_text_capacity && text->capacity() > text->size() ) {
                         text->shrink_to_fit();
                     }
                 }
