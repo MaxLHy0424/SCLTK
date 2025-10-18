@@ -285,6 +285,43 @@ namespace core
             basic_options_config_node( basic_options_config_node< Atomic >&& )      = delete;
             ~basic_options_config_node()                                            = default;
         };
+        class simple_string final
+        {
+          private:
+            static inline constexpr auto sso_size{ 16uz };
+            std::variant< std::unique_ptr< char[] >, std::array< char, sso_size > > storage_{};
+          public:
+            auto c_str() const noexcept
+            {
+                return storage_.visit< const char* >( []< typename T >( const T& str )
+                {
+                    if constexpr ( std::is_same_v< T, std::unique_ptr< char[] > > ) {
+                        return str.get();
+                    } else if constexpr ( std::is_same_v< T, std::array< char, sso_size > > ) {
+                        return str.data();
+                    } else {
+                        static_assert( false, "unkown type!" );
+                    }
+                } );
+            }
+            simple_string( std::string_view str )
+            {
+                if ( str.size() < sso_size ) {
+                    std::array< char, sso_size > sso;
+                    std::ranges::copy( str, sso.data() );
+                    sso[ str.size() ] = '\0';
+                    storage_          = sso;
+                } else {
+                    auto on_heap{ std::make_unique_for_overwrite< char[] >( str.size() + 1 ) };
+                    std::ranges::copy( str, on_heap.get() );
+                    on_heap[ str.size() ] = '\0';
+                    storage_              = std::move( on_heap );
+                }
+            }
+            simple_string( const simple_string& ) = delete;
+            simple_string( simple_string&& )      = default;
+            ~simple_string()                      = default;
+        };
     }
     class options_title_ui final
       : public details::config_node_impl
@@ -342,45 +379,8 @@ namespace core
       private:
         static inline constexpr auto flag_exec{ "exec:"sv };
         static inline constexpr auto flag_serv{ "serv:"sv };
-        class simple_string final
-        {
-          private:
-            static inline constexpr auto sso_size{ 16uz };
-            std::variant< std::unique_ptr< char[] >, std::array< char, sso_size > > storage_{};
-          public:
-            auto c_str() const noexcept
-            {
-                return storage_.visit< const char* >( []< typename T >( const T& str )
-                {
-                    if constexpr ( std::is_same_v< T, std::unique_ptr< char[] > > ) {
-                        return str.get();
-                    } else if constexpr ( std::is_same_v< T, std::array< char, sso_size > > ) {
-                        return str.data();
-                    } else {
-                        static_assert( false, "unkown type!" );
-                    }
-                } );
-            }
-            simple_string( std::string_view str )
-            {
-                if ( str.size() < sso_size ) {
-                    std::array< char, sso_size > sso;
-                    std::ranges::copy( str, sso.data() );
-                    sso[ str.size() ] = '\0';
-                    storage_          = sso;
-                } else {
-                    auto on_heap{ std::make_unique_for_overwrite< char[] >( str.size() + 1 ) };
-                    std::ranges::copy( str, on_heap.get() );
-                    on_heap[ str.size() ] = '\0';
-                    storage_              = std::move( on_heap );
-                }
-            }
-            simple_string( const simple_string& ) = delete;
-            simple_string( simple_string&& )      = default;
-            ~simple_string()                      = default;
-        };
-        std::vector< simple_string > execs{};
-        std::vector< simple_string > servs{};
+        std::vector< details::simple_string > execs{};
+        std::vector< details::simple_string > servs{};
         static_assert( []( auto... strings ) consteval
         { return ( std::ranges::none_of( strings, details::is_whitespace ) && ... ); }( flag_exec, flag_serv ) );
         auto load_( const std::string_view line )
@@ -412,7 +412,7 @@ namespace core
         }
         auto after_load_()
         {
-            constexpr auto to_cstr{ []( const simple_string& str ) static noexcept { return str.c_str(); } };
+            constexpr auto to_cstr{ []( const details::simple_string& str ) static noexcept { return str.c_str(); } };
             custom_rules.execs.append_range( execs | std::views::transform( to_cstr ) );
             custom_rules.servs.append_range( servs | std::views::transform( to_cstr ) );
         }
