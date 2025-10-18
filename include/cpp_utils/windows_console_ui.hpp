@@ -174,7 +174,7 @@ namespace cpp_utils
         }
         auto invoke_func_( const MOUSE_EVENT_RECORD current_event )
         {
-            auto target{ std::ranges::find_if( lines_, [ & ]( const line_node_& line ) noexcept
+            const auto target{ std::ranges::find_if( lines_, [ & ]( const line_node_& line ) noexcept
             { return line == current_event.dwMousePosition; } ) };
             if ( target == lines_.end() ) {
                 return func_back;
