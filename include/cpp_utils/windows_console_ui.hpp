@@ -48,8 +48,6 @@ namespace cpp_utils
         using function_t
           = std::variant< std::move_only_function< func_action() >, std::move_only_function< func_action( func_args ) > >;
       private:
-        static inline HANDLE std_input_handle_;
-        static inline HANDLE std_output_handle_;
         enum class console_attrs_selection_ : char
         {
             normal,
@@ -66,11 +64,6 @@ namespace cpp_utils
             auto print_text() const
             {
                 text.visit( []( const auto& line_text ) static { std::print( "{}", line_text ); } );
-            }
-            auto set_attrs( const WORD current_attrs ) noexcept
-            {
-                SetConsoleTextAttribute( std_output_handle_, current_attrs );
-                last_attrs = current_attrs;
             }
             auto operator==( const COORD current_position ) const noexcept
             {
@@ -93,17 +86,23 @@ namespace cpp_utils
             ~line_node_() noexcept              = default;
         };
         std::vector< line_node_ > lines_{};
-        static auto show_cursor_( const WINBOOL is_show ) noexcept
+        console& con;
+        auto set_line_attrs_( line_node_& self, const WORD current_attrs ) noexcept
+        {
+            SetConsoleTextAttribute( con.std_output_handle, current_attrs );
+            self.last_attrs = current_attrs;
+        }
+        auto show_cursor_( const WINBOOL is_show ) noexcept
         {
             CONSOLE_CURSOR_INFO cursor_data;
-            GetConsoleCursorInfo( std_output_handle_, &cursor_data );
+            GetConsoleCursorInfo( con.std_output_handle, &cursor_data );
             cursor_data.bVisible = is_show;
-            SetConsoleCursorInfo( std_output_handle_, &cursor_data );
+            SetConsoleCursorInfo( con.std_output_handle, &cursor_data );
         }
-        static auto set_console_attrs_( const console_attrs_selection_ attrs_selection ) noexcept
+        auto set_console_attrs_( const console_attrs_selection_ attrs_selection ) noexcept
         {
             DWORD attrs;
-            GetConsoleMode( std_input_handle_, &attrs );
+            GetConsoleMode( con.std_input_handle, &attrs );
             switch ( attrs_selection ) {
                 case console_attrs_selection_::normal :
                     attrs |= ENABLE_QUICK_EDIT_MODE;
@@ -117,42 +116,42 @@ namespace cpp_utils
             }
             attrs |= ENABLE_MOUSE_INPUT;
             attrs |= ENABLE_LINE_INPUT;
-            SetConsoleMode( std_input_handle_, attrs );
+            SetConsoleMode( con.std_input_handle, attrs );
         }
-        static auto get_cursor_() noexcept
+        auto get_cursor_() noexcept
         {
             CONSOLE_SCREEN_BUFFER_INFO console_data;
-            GetConsoleScreenBufferInfo( std_output_handle_, &console_data );
+            GetConsoleScreenBufferInfo( con.std_output_handle, &console_data );
             return console_data.dwCursorPosition;
         }
-        static auto get_event_( const bool is_move = true ) noexcept
+        auto get_event_( const bool is_move = true ) noexcept
         {
             using namespace std::chrono_literals;
             INPUT_RECORD record;
             DWORD reg;
             while ( true ) {
                 std::this_thread::sleep_for( 20ms );
-                ReadConsoleInputW( std_input_handle_, &record, 1, &reg );
+                ReadConsoleInputW( con.std_input_handle, &record, 1, &reg );
                 if ( record.EventType == MOUSE_EVENT && ( is_move || record.Event.MouseEvent.dwEventFlags != mouse::move ) ) {
                     return record.Event.MouseEvent;
                 }
             }
         }
-        static auto rewrite_( const COORD cursor_position, const line_node_& line )
+        auto rewrite_( const COORD cursor_position, const line_node_& line )
         {
             const auto [ console_width, console_height ]{ cursor_position };
-            SetConsoleCursorPosition( std_output_handle_, { 0, console_height } );
+            SetConsoleCursorPosition( con.std_output_handle, { 0, console_height } );
             std::print( "{}", std::string( console_width, ' ' ) );
-            SetConsoleCursorPosition( std_output_handle_, { 0, console_height } );
+            SetConsoleCursorPosition( con.std_output_handle, { 0, console_height } );
             line.print_text();
-            SetConsoleCursorPosition( std_output_handle_, { 0, console_height } );
+            SetConsoleCursorPosition( con.std_output_handle, { 0, console_height } );
         }
         auto init_pos_()
         {
-            clear_console( std_output_handle_ );
+            con.clear();
             for ( const auto back_ptr{ &lines_.back() }; auto& line : lines_ ) {
                 line.position = get_cursor_();
-                line.set_attrs( line.default_attrs );
+                set_line_attrs_( line, line.default_attrs );
                 line.print_text();
                 if ( &line != back_ptr ) {
                     std::print( "\n" );
@@ -163,11 +162,11 @@ namespace cpp_utils
         {
             for ( auto& line : lines_ ) {
                 if ( line == hang_position && line.last_attrs != line.intensity_attrs ) {
-                    line.set_attrs( line.intensity_attrs );
+                    set_line_attrs_( line, line.intensity_attrs );
                     rewrite_( line.position, line );
                 }
                 if ( line != hang_position && line.last_attrs != line.default_attrs ) {
-                    line.set_attrs( line.default_attrs );
+                    set_line_attrs_( line, line.default_attrs );
                     rewrite_( line.position, line );
                 }
             }
@@ -182,8 +181,8 @@ namespace cpp_utils
             if ( target->func.visit< bool >( []( const auto& func ) static noexcept { return func == nullptr; } ) ) {
                 return func_back;
             }
-            clear_console( std_output_handle_ );
-            target->set_attrs( target->default_attrs );
+            con.clear();
+            set_line_attrs_( *target, target->default_attrs );
             show_cursor_( FALSE );
             set_console_attrs_( console_attrs_selection_::locked );
             const auto value{ target->func.visit< func_action >( [ & ]< typename F >( F& func )
@@ -347,7 +346,7 @@ namespace cpp_utils
                     }
                 }
             }
-            clear_console( std_output_handle_ );
+            con.clear();
             return *this;
         }
         auto& set_constraints( const bool is_hide_cursor, const bool is_lock_text ) noexcept
@@ -358,20 +357,9 @@ namespace cpp_utils
         }
         auto operator=( const console_ui& ) noexcept -> console_ui& = default;
         auto operator=( console_ui&& ) noexcept -> console_ui&      = default;
-        console_ui() noexcept
-        {
-            if ( std_input_handle_ == nullptr ) [[unlikely]] {
-                std_input_handle_ = GetStdHandle( console_handle_flag::std_input );
-            }
-            if ( std_output_handle_ == nullptr ) [[unlikely]] {
-                std_output_handle_ = GetStdHandle( console_handle_flag::std_output );
-            }
-        }
-        console_ui( const HANDLE std_input_handle, const HANDLE std_output_handle ) noexcept
-        {
-            std_input_handle_  = std_input_handle;
-            std_output_handle_ = std_output_handle;
-        }
+        console_ui( console& con ) noexcept
+          : con{ con }
+        { }
         console_ui( const console_ui& ) noexcept = default;
         console_ui( console_ui&& ) noexcept      = default;
         ~console_ui() noexcept                   = default;
