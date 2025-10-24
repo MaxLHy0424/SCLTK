@@ -19,9 +19,7 @@ namespace core
     inline constexpr auto config_file_name{ "config.ini" };
     inline constexpr auto func_back{ cpp_utils::console_ui::func_back };
     inline constexpr auto func_exit{ cpp_utils::console_ui::func_exit };
-    inline const auto window_handle{ GetConsoleWindow() };
-    inline const auto std_input_handle{ GetStdHandle( STD_INPUT_HANDLE ) };
-    inline const auto std_output_handle{ GetStdHandle( STD_OUTPUT_HANDLE ) };
+    inline cpp_utils::console con;
     static_assert( default_thread_sleep_time.count() != 0 );
     using ui_func_args = cpp_utils::console_ui::func_args;
     inline auto quit() noexcept
@@ -38,7 +36,7 @@ namespace core
         inline auto press_any_key_to_return() noexcept
         {
             std::print( "\n\n 按任意键返回..." );
-            cpp_utils::press_any_key_to_continue( std_input_handle );
+            con.press_any_key_to_continue();
         }
         inline constexpr auto is_whitespace( const char ch ) noexcept
         {
@@ -247,7 +245,7 @@ namespace core
             }
             static auto make_option_editor_ui_( map_t_& options )
             {
-                cpp_utils::console_ui ui;
+                cpp_utils::console_ui ui{ con };
                 ui.reserve( 2 + options.size() * 2 )
                   .add_back( "                    [ 配  置 ]\n\n"sv )
                   .add_back(
@@ -418,7 +416,7 @@ namespace core
         }
         static auto show_help_info_()
         {
-            cpp_utils::console_ui ui;
+            cpp_utils::console_ui ui{ con };
             ui.reserve( 3 )
               .add_back( "                    [ 配  置 ]\n\n"sv )
               .add_back( " < 返回 "sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
@@ -550,7 +548,7 @@ namespace core
     {
         inline auto show_config_parsing_rules()
         {
-            cpp_utils::console_ui ui;
+            cpp_utils::console_ui ui{ con };
             ui.reserve( 3 )
               .add_back( "                    [ 配  置 ]\n\n"sv )
               .add_back( " < 返回 "sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
@@ -597,7 +595,7 @@ namespace core
     }
     inline auto config_ui()
     {
-        cpp_utils::console_ui ui;
+        cpp_utils::console_ui ui{ con };
         ui.reserve( 5 + config_node_types::size + config_node_types::size / 2 )
           .add_back( "                    [ 配  置 ]\n\n"sv )
           .add_back( " < 返回 "sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
@@ -610,7 +608,7 @@ namespace core
     }
     inline auto info()
     {
-        cpp_utils::console_ui ui;
+        cpp_utils::console_ui ui{ con };
         ui.reserve( 3 )
           .add_back( "                    [ 关  于 ]\n\n"sv )
           .add_back( " < 返回 "sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
@@ -630,20 +628,20 @@ namespace core
             char name[]{ "cmd.exe" };
             startup.cb = sizeof( startup );
             if ( CreateProcessA( nullptr, name, nullptr, nullptr, FALSE, 0, nullptr, nullptr, &startup, &proc ) ) {
-                cpp_utils::set_current_console_title( INFO_SHORT_NAME " - 命令提示符" );
-                cpp_utils::set_console_size( window_handle, std_output_handle, 120, 30 );
-                cpp_utils::fix_window_size( window_handle, false );
-                cpp_utils::enable_window_maximize_ctrl( window_handle, true );
+                con.set_title( INFO_SHORT_NAME " - 命令提示符" );
+                con.set_size( 120, 30 );
+                con.fix_size( false );
+                con.enable_window_maximize_ctrl( true );
                 args.parent_ui.set_constraints( false, false );
-                SetConsoleScreenBufferSize( std_output_handle, { 120, std::numeric_limits< SHORT >::max() - 1 } );
+                SetConsoleScreenBufferSize( con.std_output_handle, { 120, std::numeric_limits< SHORT >::max() - 1 } );
                 WaitForSingleObject( proc.hProcess, INFINITE );
                 CloseHandle( proc.hProcess );
                 CloseHandle( proc.hThread );
-                cpp_utils::set_current_console_charset( charset_id );
-                cpp_utils::set_current_console_title( INFO_SHORT_NAME );
-                cpp_utils::set_console_size( window_handle, std_output_handle, console_width, console_height );
-                cpp_utils::fix_window_size( window_handle, true );
-                cpp_utils::enable_window_maximize_ctrl( window_handle, false );
+                con.set_charset( charset_id );
+                con.set_title( INFO_SHORT_NAME );
+                con.set_size( console_width, console_height );
+                con.fix_size( true );
+                con.enable_window_maximize_ctrl( false );
             }
             return func_back;
         }
@@ -662,7 +660,7 @@ namespace core
             }
             for ( const auto exec : execs ) {
                 RegDeleteTreeA(
-                  cpp_utils::registry::hkey_local_machine,
+                  cpp_utils::registry_flag::hkey_local_machine,
                   std::format( R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe)", exec ).c_str() );
             }
             std::print( " (i) 操作已完成." );
@@ -687,7 +685,7 @@ namespace core
         }
         inline auto make_cmd_executor_ui( const cmd_item& item )
         {
-            cpp_utils::console_ui ui;
+            cpp_utils::console_ui ui{ con };
             ui.reserve( 3 )
               .add_back(
                 "                   [ 工 具 箱 ]\n\n\n"
@@ -709,7 +707,7 @@ namespace core
            { "重置 Google Chrome 管理策略", R"(reg.exe delete "HKLM\SOFTWARE\Policies\Google\Chrome" /f)" },
            { "重置 Microsoft Edge 管理策略", R"(reg.exe delete "HKLM\SOFTWARE\Policies\Microsoft\Edge" /f)" } }
         };
-        cpp_utils::console_ui ui;
+        cpp_utils::console_ui ui{ con };
         ui.reserve( 5 + common_cmds.size() )
           .add_back( "                   [ 工 具 箱 ]\n\n"sv )
           .add_back( " < 返回 "sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
@@ -733,13 +731,13 @@ namespace core
             const auto& is_translucent{ window_options[ "translucent" ] };
             const auto& is_no_hot_reload{ std::get< performance_config >( config_nodes )[ "no_hot_reload" ] };
             if ( is_no_hot_reload ) {
-                cpp_utils::enable_window_menu( window_handle, !is_enable_simple_titlebar );
-                cpp_utils::set_window_translucency( window_handle, is_translucent ? 230 : 255 );
+                con.enable_context_menu( !is_enable_simple_titlebar );
+                con.set_translucency( is_translucent ? 230 : 255 );
                 return;
             }
             while ( true ) {
-                cpp_utils::enable_window_menu( window_handle, !is_enable_simple_titlebar );
-                cpp_utils::set_window_translucency( window_handle, is_translucent ? 230 : 255 );
+                con.enable_context_menu( !is_enable_simple_titlebar );
+                con.set_translucency( is_translucent ? 230 : 255 );
                 std::this_thread::sleep_for( default_thread_sleep_time );
             }
         }
@@ -751,20 +749,17 @@ namespace core
                 return;
             }
             constexpr auto sleep_time{ 50ms };
-            const auto current_thread_id{ GetCurrentThreadId() };
-            const auto current_window_thread_process_id{ GetWindowThreadProcessId( window_handle, nullptr ) };
             if ( is_no_hot_reload ) {
-                cpp_utils::force_show_window_forever(
-                  window_handle, current_thread_id, current_window_thread_process_id, sleep_time );
+                con.force_show_forever( sleep_time );
                 return;
             }
             while ( true ) {
                 if ( !is_force_show ) {
-                    cpp_utils::cancel_force_show_window( window_handle );
+                    con.cancel_force_show();
                     std::this_thread::sleep_for( default_thread_sleep_time );
                     continue;
                 }
-                cpp_utils::force_show_window( window_handle, current_thread_id, current_window_thread_process_id );
+                con.force_show();
                 std::this_thread::sleep_for( sleep_time );
             }
         }
@@ -787,13 +782,13 @@ namespace core
         inline auto hijack_exec( const char* const exec ) noexcept
         {
             cpp_utils::create_registry_key< charset_id >(
-              cpp_utils::registry::hkey_local_machine,
+              cpp_utils::registry_flag::hkey_local_machine,
               std::format( R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe)", exec ).c_str(),
-              "Debugger", cpp_utils::registry::string_type, reinterpret_cast< const BYTE* >( L"nul" ), sizeof( L"nul" ) );
+              "Debugger", cpp_utils::registry_flag::string_type, reinterpret_cast< const BYTE* >( L"nul" ), sizeof( L"nul" ) );
         }
         inline auto disable_serv( const char* const serv ) noexcept
         {
-            cpp_utils::set_service_status< charset_id >( serv, cpp_utils::service::disabled_start );
+            cpp_utils::set_service_status< charset_id >( serv, cpp_utils::service_flag::disabled_start );
         }
         inline auto kill_exec( const char* const exec ) noexcept
         {
@@ -806,12 +801,12 @@ namespace core
         inline auto undo_hijack_exec( const char* const exec ) noexcept
         {
             cpp_utils::delete_registry_tree< charset_id >(
-              cpp_utils::registry::hkey_local_machine,
+              cpp_utils::registry_flag::hkey_local_machine,
               std::format( R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe)", exec ).c_str() );
         }
         inline auto enable_serv( const char* const serv ) noexcept
         {
-            cpp_utils::set_service_status< charset_id >( serv, cpp_utils::service::auto_start );
+            cpp_utils::set_service_status< charset_id >( serv, cpp_utils::service_flag::auto_start );
         }
         inline auto start_serv( const char* const serv ) noexcept
         {
@@ -1005,7 +1000,7 @@ namespace core
             total.execs.append_range( builtin_rule.execs );
             total.servs.append_range( builtin_rule.servs );
         }
-        cpp_utils::clear_console( std_output_handle );
+        con.clear();
         return execute_rules( total );
     }
 }

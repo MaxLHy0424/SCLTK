@@ -70,7 +70,7 @@ namespace cpp_utils
         inline constexpr UINT maximize{ SW_SHOWMAXIMIZED };
         inline constexpr UINT restore{ SW_RESTORE };
     }
-    namespace service
+    namespace service_flag
     {
         inline constexpr DWORD auto_start{ SERVICE_AUTO_START };
         inline constexpr DWORD boot_start{ SERVICE_BOOT_START };
@@ -78,7 +78,7 @@ namespace cpp_utils
         inline constexpr DWORD system_start{ SERVICE_SYSTEM_START };
         inline constexpr DWORD disabled_start{ SERVICE_DISABLED };
     }
-    namespace registry
+    namespace registry_flag
     {
         inline const auto hkey_classes_root{ HKEY_CLASSES_ROOT };
         inline const auto hkey_current_user{ HKEY_CURRENT_USER };
