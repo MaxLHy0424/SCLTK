@@ -23,15 +23,15 @@
 
 # 📦 获取
 
-| 分支     | 最新发行版                                                                  | 状态       | 生命周期（UTC+08:00）  |
-| -------- | --------------------------------------------------------------------------- | ---------- | ---------------------- |
-| SCLTK v1 | [v1.0_Stable](https://github.com/MaxLHy0424/SCLTK/releases/tag/v1.0_Stable) | ❌ 停止维护 | 2023-12-17/2023-12-18  |
-| SCLTK v2 | [v2.5_Stable](https://github.com/MaxLHy0424/SCLTK/releases/tag/v2.5_Stable) | ❌ 停止维护 | 2024-01-01/2024-01-07  |
-| SCLTK v3 | [v3.0.1](https://github.com/MaxLHy0424/SCLTK/releases/tag/30174)            | ❌ 停止维护 | 2024-02-09/2024-02-10  |
-| SCLTK v4 | [v4.10.7](https://github.com/MaxLHy0424/SCLTK/releases/tag/v4.10.7)         | ❌ 停止维护 | 2024-03-26/2024-06-19  |
-| SCLTK v5 | [v5.11.1](https://github.com/MaxLHy0424/SCLTK/releases/tag/v5.11.1)         | ❌ 停止维护 | 2024-08-25/2024-12-23  |
-| SCLTK v6 | [v6.3.3](https://github.com/MaxLHy0424/SCLTK/releases/tag/v6.3.3)           | ⚠️ 即将弃用 | 2025-01-29/..          |
-| SCLTK v7 | ⌛ 即将推出                                                                  | 🛠️ 正在开发 | 预计于 2025 年冬季发布 |
+| 分支     | 最新发行版                                                                  | 状态       | 生命周期（UTC+08:00）    |
+| -------- | --------------------------------------------------------------------------- | ---------- | ------------------------ |
+| SCLTK v1 | [v1.0_Stable](https://github.com/MaxLHy0424/SCLTK/releases/tag/v1.0_Stable) | ❌ 停止维护 | 2023-12-17/2023-12-18    |
+| SCLTK v2 | [v2.5_Stable](https://github.com/MaxLHy0424/SCLTK/releases/tag/v2.5_Stable) | ❌ 停止维护 | 2024-01-01/2024-01-07    |
+| SCLTK v3 | [v3.0.1](https://github.com/MaxLHy0424/SCLTK/releases/tag/30174)            | ❌ 停止维护 | 2024-02-09/2024-02-10    |
+| SCLTK v4 | [v4.10.7](https://github.com/MaxLHy0424/SCLTK/releases/tag/v4.10.7)         | ❌ 停止维护 | 2024-03-26/2024-06-19    |
+| SCLTK v5 | [v5.11.1](https://github.com/MaxLHy0424/SCLTK/releases/tag/v5.11.1)         | ❌ 停止维护 | 2024-08-25/2024-12-23    |
+| SCLTK v6 | [v6.3.3](https://github.com/MaxLHy0424/SCLTK/releases/tag/v6.3.3)           | ⚠️ 即将弃用 | 2025-01-29/..            |
+| SCLTK v7 | ⌛ 即将推出                                                                  | 🛠️ 正在开发 | 🕑 预计于 2025 年冬季发布 |
 
 # 📖 使用指南
 
