@@ -406,12 +406,12 @@ namespace cpp_utils
     }
     class window final : public details::basic_window< window >
     {
-        auto operator=( const window& ) -> window& = default;
+        auto operator=( const window& ) noexcept -> window& = default;
         window() noexcept
           : details::basic_window< window >{ .window_handle{ GetForegroundWindow() } }
         { }
-        window( const window& ) = default;
-        ~window()               = default;
+        window( const window& ) noexcept = default;
+        ~window() noexcept               = default;
     };
     class console final : public details::basic_window< console >
     {
@@ -496,14 +496,14 @@ namespace cpp_utils
             SetLayeredWindowAttributes( window_handle, RGB( 0, 0, 0 ), value, LWA_ALPHA );
             return *this;
         }
-        auto operator=( const console& ) -> console& = default;
+        auto operator=( const console& ) noexcept -> console& = default;
         console() noexcept
           : details::basic_window< console >{ .window_handle{ GetConsoleWindow() } }
           , std_input_handle{ GetStdHandle( STD_INPUT_HANDLE ) }
           , std_output_handle{ GetStdHandle( STD_OUTPUT_HANDLE ) }
         { }
-        console( const console& ) = default;
-        ~console()                = default;
+        console( const console& ) noexcept = default;
+        ~console() noexcept                = default;
     };
 #else
 # error "must be compiled on the windows os"
