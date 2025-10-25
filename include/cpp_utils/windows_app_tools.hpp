@@ -100,7 +100,7 @@ namespace cpp_utils
                             if ( *dependency != L'@' ) {
                                 const auto dependency_service{
                                   OpenServiceW( scm, dependency, SERVICE_START | SERVICE_QUERY_STATUS ) };
-                                if ( dependency_service ) {
+                                if ( dependency_service != nullptr ) {
                                     SERVICE_STATUS status;
                                     if ( !QueryServiceStatus( dependency_service, &status )
                                          || ( status.dwCurrentState != SERVICE_RUNNING && status.dwCurrentState != SERVICE_START_PENDING ) )
