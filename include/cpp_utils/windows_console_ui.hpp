@@ -86,7 +86,7 @@ namespace cpp_utils
             ~line_node_() noexcept              = default;
         };
         std::vector< line_node_ > lines_{};
-        console& con;
+        const console& con;
         auto set_line_attrs_( line_node_& self, const WORD current_attrs ) noexcept
         {
             SetConsoleTextAttribute( con.std_output_handle, current_attrs );
@@ -357,9 +357,10 @@ namespace cpp_utils
         }
         auto operator=( const console_ui& ) noexcept -> console_ui& = default;
         auto operator=( console_ui&& ) noexcept -> console_ui&      = default;
-        console_ui( console& con ) noexcept
+        console_ui( const console& con ) noexcept
           : con{ con }
         { }
+        console_ui( console&& ) noexcept         = delete;
         console_ui( const console_ui& ) noexcept = default;
         console_ui( console_ui&& ) noexcept      = default;
         ~console_ui() noexcept                   = default;
