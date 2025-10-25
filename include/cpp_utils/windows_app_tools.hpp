@@ -458,6 +458,23 @@ namespace cpp_utils
             SetConsoleCursorPosition( std_output_handle, top_left );
             return *this;
         }
+        auto get_size() const noexcept
+        {
+            CONSOLE_SCREEN_BUFFER_INFO info;
+            GetConsoleScreenBufferInfo( std_output_handle, &info );
+            return info.dwSize;
+        }
+        auto& set_size( const SHORT width, const SHORT height ) const
+        {
+            SMALL_RECT wrt{ 0, 0, static_cast< SHORT >( width - 1 ), static_cast< SHORT >( height - 1 ) };
+            ShowWindow( window_handle, SW_SHOWNORMAL );
+            SetConsoleScreenBufferSize( std_output_handle, { width, height } );
+            SetConsoleWindowInfo( std_output_handle, TRUE, &wrt );
+            SetConsoleScreenBufferSize( std_output_handle, { width, height } );
+            SetConsoleWindowInfo( std_output_handle, TRUE, &wrt );
+            clear();
+            return *this;
+        }
         auto& set_title( const char* const title ) const noexcept
         {
             SetConsoleTitleA( title );
@@ -472,17 +489,6 @@ namespace cpp_utils
         {
             SetConsoleOutputCP( charset_id );
             SetConsoleCP( charset_id );
-            return *this;
-        }
-        auto& set_size( const SHORT width, const SHORT height ) const
-        {
-            SMALL_RECT wrt{ 0, 0, static_cast< SHORT >( width - 1 ), static_cast< SHORT >( height - 1 ) };
-            ShowWindow( window_handle, SW_SHOWNORMAL );
-            SetConsoleScreenBufferSize( std_output_handle, { width, height } );
-            SetConsoleWindowInfo( std_output_handle, TRUE, &wrt );
-            SetConsoleScreenBufferSize( std_output_handle, { width, height } );
-            SetConsoleWindowInfo( std_output_handle, TRUE, &wrt );
-            clear();
             return *this;
         }
         auto& set_translucency( const BYTE value ) const noexcept
