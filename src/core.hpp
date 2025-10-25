@@ -19,7 +19,7 @@ namespace core
     inline constexpr auto config_file_name{ "config.ini" };
     inline constexpr auto func_back{ cpp_utils::console_ui::func_back };
     inline constexpr auto func_exit{ cpp_utils::console_ui::func_exit };
-    inline cpp_utils::console con;
+    inline const cpp_utils::console con;
     static_assert( default_thread_sleep_time.count() != 0 );
     using ui_func_args = cpp_utils::console_ui::func_args;
     inline auto quit() noexcept
