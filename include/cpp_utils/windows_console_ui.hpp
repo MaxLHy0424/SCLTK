@@ -1,6 +1,7 @@
 #pragma once
 #include <chrono>
 #include <functional>
+#include <memory_resource>
 #include <print>
 #include <ranges>
 #include <string>
@@ -85,7 +86,7 @@ namespace cpp_utils
             line_node_( line_node_&& ) noexcept = default;
             ~line_node_() noexcept              = default;
         };
-        std::vector< line_node_ > lines_{};
+        std::pmr::vector< line_node_ > lines_;
         const console& con;
         auto set_line_attrs_( line_node_& self, const WORD current_attrs ) noexcept
         {
@@ -148,7 +149,7 @@ namespace cpp_utils
         }
         auto init_pos_()
         {
-            con.clear();
+            con.clear( lines_.get_allocator().resource() );
             for ( const auto back_ptr{ &lines_.back() }; auto& line : lines_ ) {
                 line.position = get_cursor_();
                 set_line_attrs_( line, line.default_attrs );
@@ -181,7 +182,7 @@ namespace cpp_utils
             if ( target->func.visit< bool >( []( const auto& func ) static noexcept { return func == nullptr; } ) ) {
                 return func_back;
             }
-            con.clear();
+            con.clear( lines_.get_allocator().resource() );
             set_line_attrs_( *target, target->default_attrs );
             show_cursor_( FALSE );
             set_console_attrs_( console_attrs_selection_::locked );
@@ -346,7 +347,7 @@ namespace cpp_utils
                     }
                 }
             }
-            con.clear();
+            con.clear( lines_.get_allocator().resource() );
             return *this;
         }
         auto& set_constraints( const bool is_hide_cursor, const bool is_lock_text ) noexcept
@@ -357,13 +358,14 @@ namespace cpp_utils
         }
         auto operator=( const console_ui& ) noexcept -> console_ui& = default;
         auto operator=( console_ui&& ) noexcept -> console_ui&      = default;
-        console_ui( const console& con ) noexcept
-          : con{ con }
+        console_ui( const console& con, std::pmr::memory_resource* const resource = std::pmr::get_default_resource() ) noexcept
+          : lines_{ resource }
+          , con{ con }
         { }
-        console_ui( console&& ) noexcept         = delete;
-        console_ui( const console_ui& ) noexcept = default;
-        console_ui( console_ui&& ) noexcept      = default;
-        ~console_ui() noexcept                   = default;
+        console_ui( console&&, std::pmr::memory_resource* const = std::pmr::get_default_resource() ) noexcept = delete;
+        console_ui( const console_ui& ) noexcept                                                              = default;
+        console_ui( console_ui&& ) noexcept                                                                   = default;
+        ~console_ui() noexcept                                                                                = default;
     };
 #else
 # error "must be compiled on the windows os"

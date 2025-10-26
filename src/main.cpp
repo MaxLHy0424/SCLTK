@@ -6,12 +6,12 @@ auto main() -> int
       .fix_size( true )
       .set_charset( core::charset_id )
       .set_title( INFO_SHORT_NAME )
-      .set_size( core::console_width, core::console_height )
+      .set_size( core::console_width, core::console_height, core::unsynced_mem_pool )
       .set_translucency( 255 )
       .enable_window_maximize_ctrl( false )
       .enable_window_minimize_ctrl( false )
       .enable_window_close_ctrl( false );
-    cpp_utils::console_ui ui{ core::con };
+    cpp_utils::console_ui ui{ core::con, core::unsynced_mem_pool };
     ui.set_constraints( true, true );
     std::print( " -> 准备就绪..." );
     core::load_config();

@@ -15,6 +15,7 @@
 #include <flat_map>
 #include <functional>
 #include <memory>
+#include <memory_resource>
 #include <numeric>
 #include <print>
 #include <string>
@@ -27,20 +28,20 @@ namespace cpp_utils
     namespace details
     {
         template < UINT Charset >
-        inline auto to_wstring( const char* const str ) noexcept
+        inline auto to_wstring( const char* const str, std::pmr::memory_resource* const resource ) noexcept
         {
             using namespace std::string_literals;
             if ( str == nullptr ) {
-                return L""s;
+                return std::pmr::wstring{ resource };
             }
             if ( str[ 0 ] == '\0' ) {
-                return L""s;
+                return std::pmr::wstring{ resource };
             }
             const auto size_needed{ MultiByteToWideChar( Charset, 0, str, -1, nullptr, 0 ) };
             if ( size_needed <= 0 ) {
-                return L""s;
+                return std::pmr::wstring{ resource };
             }
-            std::wstring result( size_needed, '\0' );
+            std::pmr::wstring result( size_needed, '\0', resource );
             MultiByteToWideChar( Charset, 0, str, -1, result.data(), size_needed );
             return result;
         }
@@ -125,9 +126,10 @@ namespace cpp_utils
         }
     }
     template < UINT Charset >
-    inline auto kill_process_by_name( const char* const process_name ) noexcept
+    inline auto kill_process_by_name(
+      const char* const process_name, std::pmr::memory_resource* const resource = std::pmr::get_default_resource() ) noexcept
     {
-        const auto w_name{ details::to_wstring< Charset >( process_name ) };
+        const auto w_name{ details::to_wstring< Charset >( process_name, resource ) };
         if ( w_name.empty() ) {
             return static_cast< DWORD >( ERROR_INVALID_PARAMETER );
         }
@@ -163,11 +165,12 @@ namespace cpp_utils
     template < UINT Charset >
     inline auto create_registry_key(
       const HKEY main_key, const char* const sub_key, const char* const value_name, const DWORD type, const BYTE* const data,
-      const DWORD data_size ) noexcept
+      const DWORD data_size, std::pmr::memory_resource* const resource = std::pmr::get_default_resource() ) noexcept
     {
         using namespace std::string_literals;
-        const auto w_sub_key{ details::to_wstring< Charset >( sub_key ) };
-        const auto w_value_name{ value_name ? details::to_wstring< Charset >( value_name ) : L""s };
+        const auto w_sub_key{ details::to_wstring< Charset >( sub_key, resource ) };
+        const auto w_value_name{
+          value_name ? details::to_wstring< Charset >( value_name, resource ) : std::pmr::wstring{ resource } };
         HKEY key_handle;
         auto result{ RegCreateKeyExW(
           main_key, w_sub_key.c_str(), 0, nullptr, REG_OPTION_NON_VOLATILE, KEY_WRITE, nullptr, &key_handle, nullptr ) };
@@ -179,11 +182,14 @@ namespace cpp_utils
         return result;
     }
     template < UINT Charset >
-    inline auto delete_registry_key( const HKEY main_key, const char* const sub_key, const char* const value_name ) noexcept
+    inline auto delete_registry_key(
+      const HKEY main_key, const char* const sub_key, const char* const value_name,
+      std::pmr::memory_resource* const resource = std::pmr::get_default_resource() ) noexcept
     {
         using namespace std::string_literals;
-        const auto w_sub_key{ details::to_wstring< Charset >( sub_key ) };
-        const auto w_value_name{ value_name ? details::to_wstring< Charset >( value_name ) : L""s };
+        const auto w_sub_key{ details::to_wstring< Charset >( sub_key, resource ) };
+        const auto w_value_name{
+          value_name ? details::to_wstring< Charset >( value_name, resource ) : std::pmr::wstring{ resource } };
         HKEY key_handle;
         auto result{ RegOpenKeyExW( main_key, w_sub_key.c_str(), 0, KEY_WRITE, &key_handle ) };
         if ( result != ERROR_SUCCESS ) {
@@ -194,14 +200,18 @@ namespace cpp_utils
         return result;
     }
     template < UINT Charset >
-    inline auto delete_registry_tree( const HKEY main_key, const char* const sub_key ) noexcept
+    inline auto delete_registry_tree(
+      const HKEY main_key, const char* const sub_key,
+      std::pmr::memory_resource* const resource = std::pmr::get_default_resource() ) noexcept
     {
-        return RegDeleteTreeW( main_key, details::to_wstring< Charset >( sub_key ).c_str() );
+        return RegDeleteTreeW( main_key, details::to_wstring< Charset >( sub_key, resource ).c_str() );
     }
     template < UINT Charset >
-    inline auto set_service_status( const char* const service_name, const DWORD status_type ) noexcept
+    inline auto set_service_status(
+      const char* const service_name, const DWORD status_type,
+      std::pmr::memory_resource* const resource = std::pmr::get_default_resource() ) noexcept
     {
-        const auto w_name{ details::to_wstring< Charset >( service_name ) };
+        const auto w_name{ details::to_wstring< Charset >( service_name, resource ) };
         if ( w_name.empty() ) {
             return static_cast< DWORD >( ERROR_INVALID_PARAMETER );
         }
@@ -226,9 +236,10 @@ namespace cpp_utils
         return result;
     }
     template < UINT Charset >
-    inline auto stop_service_with_dependencies( const char* const service_name ) noexcept
+    inline auto stop_service_with_dependencies(
+      const char* const service_name, std::pmr::memory_resource* const resource = std::pmr::get_default_resource() ) noexcept
     {
-        const auto w_name{ details::to_wstring< Charset >( service_name ) };
+        const auto w_name{ details::to_wstring< Charset >( service_name, resource ) };
         if ( w_name.empty() ) {
             return static_cast< DWORD >( ERROR_INVALID_PARAMETER );
         }
@@ -249,9 +260,10 @@ namespace cpp_utils
         return result;
     }
     template < UINT Charset >
-    inline auto start_service_with_dependencies( const char* const service_name ) noexcept
+    inline auto start_service_with_dependencies(
+      const char* const service_name, std::pmr::memory_resource* const resource = std::pmr::get_default_resource() ) noexcept
     {
-        const auto w_name{ details::to_wstring< Charset >( service_name ) };
+        const auto w_name{ details::to_wstring< Charset >( service_name, resource ) };
         if ( w_name.empty() ) {
             return static_cast< DWORD >( ERROR_INVALID_PARAMETER );
         }
@@ -445,7 +457,7 @@ namespace cpp_utils
             SetConsoleMode( std_output_handle, mode );
             return *this;
         }
-        auto& clear() const
+        auto& clear( std::pmr::memory_resource* const resource = std::pmr::get_default_resource() ) const
         {
             CONSOLE_SCREEN_BUFFER_INFO info;
             GetConsoleScreenBufferInfo( std_output_handle, &info );
@@ -453,7 +465,7 @@ namespace cpp_utils
             const auto area{ info.dwSize.X * info.dwSize.Y };
             DWORD written;
             SetConsoleCursorPosition( std_output_handle, top_left );
-            std::print( "{}", std::string( area, ' ' ) );
+            std::print( "{}", std::pmr::string( area, ' ', resource ) );
             FillConsoleOutputAttribute( std_output_handle, info.wAttributes, area, top_left, &written );
             SetConsoleCursorPosition( std_output_handle, top_left );
             return *this;
@@ -464,7 +476,8 @@ namespace cpp_utils
             GetConsoleScreenBufferInfo( std_output_handle, &info );
             return info.dwSize;
         }
-        auto& set_size( const SHORT width, const SHORT height ) const
+        auto& set_size(
+          const SHORT width, const SHORT height, std::pmr::memory_resource* const resource = std::pmr::get_default_resource() ) const
         {
             SMALL_RECT wrt{ 0, 0, static_cast< SHORT >( width - 1 ), static_cast< SHORT >( height - 1 ) };
             ShowWindow( window_handle, SW_SHOWNORMAL );
@@ -472,7 +485,7 @@ namespace cpp_utils
             SetConsoleWindowInfo( std_output_handle, TRUE, &wrt );
             SetConsoleScreenBufferSize( std_output_handle, { width, height } );
             SetConsoleWindowInfo( std_output_handle, TRUE, &wrt );
-            clear();
+            clear( resource );
             return *this;
         }
         auto& set_title( const char* const title ) const noexcept
