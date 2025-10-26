@@ -1,6 +1,7 @@
 #pragma once
 #include <exception>
 #include <format>
+#include <memory_resource>
 #include <print>
 #include <source_location>
 #include <stacktrace>
@@ -10,7 +11,7 @@ namespace cpp_utils
 {
     inline auto make_log(
       const std::string_view message, const std::source_location src_location = std::source_location::current(),
-      const std::stacktrace trace = std::stacktrace::current() )
+      const std::pmr::stacktrace trace = std::pmr::stacktrace::current() )
     {
         return std::format(
           "{}({}:{}) {}: {}\n{}\n", src_location.file_name(), src_location.line(), src_location.column(),
@@ -19,7 +20,7 @@ namespace cpp_utils
     inline auto dynamic_assert(
       const bool expression, const std::string_view failed_message = "assertion failid!",
       const std::source_location src_location = std::source_location::current(),
-      std::stacktrace trace                   = std::stacktrace::current() ) noexcept
+      std::pmr::stacktrace trace              = std::pmr::stacktrace::current() ) noexcept
     {
         if ( expression == false ) {
             std::print( "{}", make_log( failed_message, src_location, std::move( trace ) ) );
@@ -30,7 +31,7 @@ namespace cpp_utils
     inline auto dynamic_assert_if(
       const bool expression, const std::string_view failed_message = "assertion failid!",
       const std::source_location src_location = std::source_location::current(),
-      std::stacktrace trace                   = std::stacktrace::current() ) noexcept
+      std::pmr::stacktrace trace              = std::pmr::stacktrace::current() ) noexcept
     {
         if constexpr ( Cond == true ) {
             dynamic_assert( expression, failed_message, src_location, std::move( trace ) );
