@@ -32,6 +32,12 @@ auto main() -> int
     for ( const auto& rule : core::builtin_rules ) {
         ui.add_back( std::format( " > {} ", rule.shown_name ), std::bind_back( core::execute_rules, std::cref( rule ) ) );
     }
+    {
+        auto proc{ GetCurrentProcess() };
+        SetProcessWorkingSetSize( proc, -1, -1 );
+        EmptyWorkingSet( proc );
+        HeapCompact( GetProcessHeap(), 0 );
+    }
     ui.show();
     return EXIT_SUCCESS;
 }
