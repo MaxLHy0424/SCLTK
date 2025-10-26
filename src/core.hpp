@@ -491,9 +491,9 @@ namespace core
         }
         std::apply( []< typename... Ts >( Ts&... config_node ) static { ( config_node.before_load(), ... ); }, config_nodes );
         std::string line;
-        using active_config_node_types = config_node_types::filter< details::is_not_initing_ui_only >;
+        using parsable_config_node_types = config_node_types::filter< details::is_not_initing_ui_only >;
         using config_node_recorder
-          = active_config_node_types::transform< std::add_pointer >::add_front< std::monostate >::apply< std::variant >;
+          = parsable_config_node_types::transform< std::add_pointer >::add_front< std::monostate >::apply< std::variant >;
         config_node_recorder current_config_node;
         while ( std::getline( config_file, line ) ) {
             const auto parsed_begin{ std::ranges::find_if_not( line, details::is_whitespace ) };
@@ -513,7 +513,7 @@ namespace core
                     bool is_found{ false };
                     ( [ & ]< typename T >( T& current_node ) noexcept
                     {
-                        if constexpr ( active_config_node_types::contains< T > ) {
+                        if constexpr ( parsable_config_node_types::contains< T > ) {
                             if ( is_found ) {
                                 return;
                             }
@@ -660,7 +660,7 @@ namespace core
             }
             for ( const auto exec : execs ) {
                 RegDeleteTreeA(
-                  cpp_utils::registry_flag::hkey_local_machine,
+                  HKEY_LOCAL_MACHINE,
                   std::format( R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe)", exec ).c_str() );
             }
             std::print( " (i) 操作已完成." );
