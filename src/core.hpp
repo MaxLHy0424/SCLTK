@@ -305,9 +305,7 @@ namespace core
           : basic_options_config_node{
               "crack_restore",
               "破解与恢复",
-              { { "hijack_execs", "劫持可执行文件" },
-                { "set_serv_startup_types", "设置服务启动类型" },
-                { "fast_mode", "快速模式" } }
+              { { "hijack_execs", "劫持可执行文件" }, { "set_serv_startup_types", "设置服务启动类型" } }
         }
         { }
         ~crack_restore_config() = default;
@@ -790,7 +788,7 @@ namespace core
                 default : std::unreachable();
             }
         }
-        inline auto default_crack( const rule_node& rules )
+        inline auto crack( const rule_node& rules )
         {
             const auto& execs{ rules.execs };
             const auto& servs{ rules.servs };
@@ -813,35 +811,12 @@ namespace core
             for ( const auto exec : execs ) {
                 kill_exec( exec );
             }
-            std::print( " - 停止服务.\n\n" );
+            std::print( " - 停止服务.\n" );
             for ( const auto serv : servs ) {
                 stop_serv( serv );
             }
         }
-        inline auto fast_crack( const rule_node& rules )
-        {
-            const auto& options{ std::get< crack_restore_config >( config_nodes ) };
-            const auto execs{ rules.execs };
-            const auto servs{ rules.servs };
-            const auto nproc{ std::ranges::max( std::thread::hardware_concurrency() / 3, 2u ) };
-            std::array tasks{
-              options[ "hijack_execs" ]
-                ? cpp_utils::create_parallel_task( nproc, execs.begin(), execs.end(), hijack_exec )
-                : std::vector< std::thread >{},
-              options[ "set_serv_startup_types" ]
-                ? cpp_utils::create_parallel_task( nproc, servs.begin(), servs.end(), disable_serv )
-                : std::vector< std::thread >{},
-              cpp_utils::create_parallel_task( nproc, execs.begin(), execs.end(), kill_exec ),
-              cpp_utils::create_parallel_task( nproc, servs.begin(), servs.end(), stop_serv ) };
-            for ( auto& task : tasks ) {
-                for ( auto& thread : task ) {
-                    if ( thread.joinable() ) {
-                        thread.join();
-                    }
-                }
-            }
-        }
-        inline auto default_restore( const rule_node& rules )
+        inline auto restore( const rule_node& rules )
         {
             const auto& execs{ rules.execs };
             const auto& servs{ rules.servs };
@@ -860,35 +835,9 @@ namespace core
                     enable_serv( serv );
                 }
             }
-            std::print( " - 启动服务.\n\n" );
+            std::print( " - 启动服务.\n" );
             for ( const auto serv : servs ) {
                 start_serv( serv );
-            }
-        }
-        inline auto fast_restore( const rule_node& rules )
-        {
-            const auto& options{ std::get< crack_restore_config >( config_nodes ) };
-            const auto& execs{ rules.execs };
-            const auto& servs{ rules.servs };
-            const auto nproc{ std::ranges::max( std::thread::hardware_concurrency() / 3, 2u ) };
-            std::array tasks{
-              options[ "hijack_execs" ]
-                ? cpp_utils::create_parallel_task( nproc, execs.begin(), execs.end(), undo_hijack_exec )
-                : std::vector< std::thread >{},
-              options[ "set_serv_startup_types" ]
-                ? cpp_utils::create_parallel_task( nproc, servs.begin(), servs.end(), enable_serv )
-                : std::vector< std::thread >{} };
-            for ( auto& task : tasks ) {
-                for ( auto& thread : task ) {
-                    if ( thread.joinable() ) {
-                        thread.join();
-                    }
-                }
-            }
-            for ( auto& thread : cpp_utils::create_parallel_task( nproc, servs.begin(), servs.end(), start_serv ) ) {
-                if ( thread.joinable() ) {
-                    thread.join();
-                }
             }
         }
     }
@@ -905,19 +854,12 @@ namespace core
             return func_back;
         }
         std::print( " -> 正在执行...\n\n" );
-        const auto is_enable_fast_mode{ std::get< crack_restore_config >( config_nodes )[ "fast_mode" ].get() };
-        void ( *f )( const rule_node& );
         switch ( details::executor_mode ) {
-            case details::rule_executing::crack :
-                f = ( is_enable_fast_mode ? details::fast_crack : details::default_crack );
-                break;
-            case details::rule_executing::restore :
-                f = ( is_enable_fast_mode ? details::fast_restore : details::default_restore );
-                break;
+            case details::rule_executing::crack : details::crack( rules ); break;
+            case details::rule_executing::restore : details::restore( rules ); break;
             default : std::unreachable();
         }
-        f( rules );
-        std::print( " (i) 操作已完成." );
+        std::print( "\n (i) 操作已完成." );
         details::press_any_key_to_return();
         return func_back;
     }
