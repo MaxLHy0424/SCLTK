@@ -45,7 +45,21 @@ namespace cpp_utils
             func_args( func_args&& ) noexcept      = default;
             ~func_args() noexcept                  = default;
         };
-        using text_t = std::variant< std::string_view, std::string >;
+        using basic_text_t = std::variant< std::string_view, std::pmr::string >;
+        struct text_t final : basic_text_t
+        {
+            using basic_text_t::variant;
+            using basic_text_t::operator=;
+            auto operator=( std::string s ) noexcept -> text_t&
+            {
+                basic_text_t::operator=( std::pmr::string{ std::move( s ) } );
+                return *this;
+            }
+            text_t( std::string s ) noexcept
+              : basic_text_t{ std::pmr::string{ std::move( s ) } }
+            { }
+            ~text_t() noexcept = default;
+        };
         using function_t
           = std::variant< std::move_only_function< func_action() >, std::move_only_function< func_action( func_args ) > >;
       private:
@@ -223,7 +237,7 @@ namespace cpp_utils
         {
             constexpr auto default_text_capacity{ std::string{}.capacity() };
             for ( auto& line : lines_ ) {
-                auto text{ std::get_if< std::string >( &line.text ) };
+                auto text{ std::get_if< std::pmr::string >( &line.text ) };
                 if ( text != nullptr ) {
                     if ( text->capacity() != default_text_capacity && text->capacity() > text->size() ) {
                         text->shrink_to_fit();
