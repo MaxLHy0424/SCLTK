@@ -8,6 +8,7 @@
 #include <thread>
 #include <utility>
 #include "compiler.hpp"
+#include "meta.hpp"
 #include "windows_app_tools.hpp"
 #include "windows_definitions.hpp"
 namespace cpp_utils
@@ -45,21 +46,9 @@ namespace cpp_utils
             func_args( func_args&& ) noexcept      = default;
             ~func_args() noexcept                  = default;
         };
-        using basic_text_t = std::variant< std::string_view, std::pmr::string >;
-        struct text_t final : basic_text_t
-        {
-            using basic_text_t::variant;
-            using basic_text_t::operator=;
-            auto operator=( std::string s ) noexcept -> text_t&
-            {
-                basic_text_t::operator=( std::pmr::string{ std::move( s ) } );
-                return *this;
-            }
-            text_t( std::string s ) noexcept
-              : basic_text_t{ std::pmr::string{ std::move( s ) } }
-            { }
-            ~text_t() noexcept = default;
-        };
+        using supported_text_ts = type_list< std::string_view, std::pmr::string, std::string >;
+        using basic_text_t      = supported_text_ts::remove_back::apply< std::variant >;
+        using text_t            = supported_text_ts::apply< std::variant >;
         using function_t
           = std::variant< std::move_only_function< func_action() >, std::move_only_function< func_action( func_args ) > >;
       private:
@@ -70,7 +59,7 @@ namespace cpp_utils
         };
         struct line_node_ final
         {
-            text_t text{};
+            basic_text_t text{};
             function_t func{};
             WORD default_attrs{ console_text::foreground_white };
             WORD intensity_attrs{ console_text::foreground_green | console_text::foreground_blue };
@@ -89,7 +78,7 @@ namespace cpp_utils
             auto operator=( const line_node_& ) noexcept -> line_node_& = default;
             auto operator=( line_node_&& ) noexcept -> line_node_&      = default;
             line_node_() noexcept                                       = default;
-            line_node_( text_t& text, function_t& func, const WORD default_attrs, const WORD intensity_attrs ) noexcept
+            line_node_( basic_text_t&& text, function_t& func, const WORD default_attrs, const WORD intensity_attrs ) noexcept
               : text{ std::move( text ) }
               , func{ std::move( func ) }
               , default_attrs{ default_attrs }
@@ -215,6 +204,17 @@ namespace cpp_utils
             init_pos_();
             return value;
         }
+        auto to_basic_text( text_t& text ) noexcept
+        {
+            return text.visit< basic_text_t >( [ this ]< typename T >( T& string ) noexcept
+            {
+                if constexpr ( std::is_same_v< T, std::string > ) {
+                    return std::pmr::string{ std::move( string ), lines_.get_allocator().resource() };
+                } else {
+                    return std::move( string );
+                }
+            } );
+        }
       public:
         auto empty() const noexcept
         {
@@ -258,7 +258,7 @@ namespace cpp_utils
           const WORD default_attrs   = console_text::foreground_white )
         {
             lines_.emplace(
-              lines_.cbegin(), text, func, default_attrs,
+              lines_.cbegin(), to_basic_text( text ), func, default_attrs,
               func.visit< bool >( []( const auto& func ) static { return func != nullptr; } ) ? intensity_attrs : default_attrs );
             return *this;
         }
@@ -268,7 +268,7 @@ namespace cpp_utils
           const WORD default_attrs   = console_text::foreground_white )
         {
             lines_.emplace_back(
-              text, func, default_attrs,
+              to_basic_text( text ), func, default_attrs,
               func.visit< bool >( []( const auto& func ) static { return func != nullptr; } ) ? intensity_attrs : default_attrs );
             return *this;
         }
@@ -278,16 +278,16 @@ namespace cpp_utils
           const WORD default_attrs   = console_text::foreground_white )
         {
             lines_.emplace(
-              lines_.cbegin() + index, text, func, default_attrs,
+              lines_.cbegin() + index, to_basic_text( text ), func, default_attrs,
               func.visit< bool >( []( const auto& func ) static { return func != nullptr; } ) ? intensity_attrs : default_attrs );
             return *this;
         }
         auto& set_text( const std::size_t index, text_t text )
         {
             if constexpr ( is_debugging_build ) {
-                lines_.at( index ).text = std::move( text );
+                lines_.at( index ).text = to_basic_text( text );
             } else {
-                lines_[ index ].text = std::move( text );
+                lines_[ index ].text = to_basic_text( text );
             }
             return *this;
         }
