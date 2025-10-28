@@ -46,28 +46,29 @@ namespace cpp_utils
             MultiByteToWideChar( Charset, 0, str, -1, result.data(), size_needed );
             return result;
         }
-        inline auto stop_service_and_dependencies( const SC_HANDLE scm, const SC_HANDLE service ) noexcept -> DWORD
+        inline auto stop_service_and_dependencies(
+          const SC_HANDLE scm, const SC_HANDLE service, std::pmr::memory_resource* const resource ) noexcept -> DWORD
         {
             using namespace std::chrono_literals;
             DWORD result{ ERROR_SUCCESS };
             SERVICE_STATUS status;
             DWORD bytes_needed{ 0 };
             if ( !QueryServiceConfigW( service, nullptr, 0, &bytes_needed ) && GetLastError() == ERROR_INSUFFICIENT_BUFFER ) {
-                const auto buffer{ std::make_unique< BYTE[] >( bytes_needed ) };
-                const auto config{ std::bit_cast< LPQUERY_SERVICE_CONFIGW >( buffer.get() ) };
+                std::pmr::vector< BYTE > buffer( bytes_needed, resource );
+                const auto config{ std::bit_cast< LPQUERY_SERVICE_CONFIGW >( buffer.data() ) };
                 if ( QueryServiceConfigW( service, config, bytes_needed, &bytes_needed ) ) {
                     if ( config->lpDependencies != nullptr && *config->lpDependencies != '\0' ) {
                         auto dependency{ config->lpDependencies };
                         while ( *dependency != L'\0' ) {
                             const auto dependency_service{ OpenServiceW( scm, dependency, SERVICE_STOP | SERVICE_QUERY_STATUS ) };
                             if ( dependency_service != nullptr ) {
-                                const auto dependency_result{ stop_service_and_dependencies( scm, dependency_service ) };
+                                const auto dependency_result{ stop_service_and_dependencies( scm, dependency_service, resource ) };
                                 if ( dependency_result != ERROR_SUCCESS ) {
                                     result = dependency_result;
                                 }
                                 CloseServiceHandle( dependency_service );
                             }
-                            dependency += wcslen( dependency ) + 1;
+                            dependency += std::wcslen( dependency ) + 1;
                         }
                     }
                 }
@@ -77,7 +78,7 @@ namespace cpp_utils
                     if ( status.dwCurrentState != SERVICE_STOP_PENDING ) {
                         break;
                     }
-                    std::this_thread::sleep_for( 1ms );
+                    std::this_thread::sleep_for( 5ms );
                 }
                 if ( status.dwCurrentState != SERVICE_STOPPED ) {
                     result = ERROR_SERVICE_REQUEST_TIMEOUT;
@@ -87,13 +88,14 @@ namespace cpp_utils
             }
             return result;
         }
-        inline auto start_service_and_dependencies( const SC_HANDLE scm, const SC_HANDLE service ) noexcept -> DWORD
+        inline auto start_service_and_dependencies(
+          const SC_HANDLE scm, const SC_HANDLE service, std::pmr::memory_resource* const resource ) noexcept -> DWORD
         {
             DWORD result{ ERROR_SUCCESS };
             DWORD bytes_needed;
             if ( QueryServiceConfigW( service, nullptr, 0, &bytes_needed ) || GetLastError() == ERROR_INSUFFICIENT_BUFFER ) {
-                const auto buffer{ std::make_unique< BYTE[] >( bytes_needed ) };
-                const auto config{ std::bit_cast< LPQUERY_SERVICE_CONFIGW >( buffer.get() ) };
+                std::pmr::vector< BYTE > buffer( bytes_needed, resource );
+                const auto config{ std::bit_cast< LPQUERY_SERVICE_CONFIGW >( buffer.data() ) };
                 if ( QueryServiceConfigW( service, config, bytes_needed, &bytes_needed ) ) {
                     if ( config->lpDependencies != nullptr && *config->lpDependencies != '\0' ) {
                         wchar_t* context{ nullptr };
@@ -107,7 +109,7 @@ namespace cpp_utils
                                     if ( !QueryServiceStatus( dependency_service, &status )
                                          || ( status.dwCurrentState != SERVICE_RUNNING && status.dwCurrentState != SERVICE_START_PENDING ) )
                                     {
-                                        result = start_service_and_dependencies( scm, dependency_service );
+                                        result = start_service_and_dependencies( scm, dependency_service, resource );
                                     }
                                     CloseServiceHandle( dependency_service );
                                 }
@@ -252,7 +254,7 @@ namespace cpp_utils
           OpenServiceW( scm, w_name.c_str(), SERVICE_STOP | SERVICE_QUERY_STATUS | SERVICE_ENUMERATE_DEPENDENTS ) };
         DWORD result{ ERROR_SUCCESS };
         if ( service ) {
-            result = details::stop_service_and_dependencies( scm, service );
+            result = details::stop_service_and_dependencies( scm, service, resource );
             CloseServiceHandle( service );
         } else {
             result = GetLastError();
@@ -275,7 +277,7 @@ namespace cpp_utils
         const auto service{ OpenServiceW( scm, w_name.c_str(), SERVICE_START | SERVICE_QUERY_STATUS | SERVICE_QUERY_CONFIG ) };
         DWORD result{ ERROR_SUCCESS };
         if ( service != nullptr ) {
-            result = details::start_service_and_dependencies( scm, service );
+            result = details::start_service_and_dependencies( scm, service, resource );
             CloseServiceHandle( service );
         } else {
             result = GetLastError();
