@@ -33,7 +33,7 @@ auto main() -> int
         ui.add_back( std::format( " > {} ", rule.shown_name ), std::bind_back( core::execute_rules, std::cref( rule ) ) );
     }
     {
-        auto proc{ GetCurrentProcess() };
+        const auto proc{ GetCurrentProcess() };
         SetProcessWorkingSetSize( proc, -1, -1 );
         EmptyWorkingSet( proc );
         HeapCompact( GetProcessHeap(), 0 );
