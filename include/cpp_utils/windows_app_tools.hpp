@@ -31,18 +31,17 @@ namespace cpp_utils
         inline auto to_wstring( const char* const str, std::pmr::memory_resource* const resource ) noexcept
         {
             using namespace std::string_literals;
-            if ( str == nullptr ) {
+            if ( str == nullptr || str[ 0 ] == '\0' ) {
                 return std::pmr::wstring{ resource };
             }
-            if ( str[ 0 ] == '\0' ) {
-                return std::pmr::wstring{ resource };
-            }
-            const auto size_needed{ MultiByteToWideChar( Charset, 0, str, -1, nullptr, 0 ) };
+            const int size_needed{ MultiByteToWideChar( Charset, 0, str, -1, nullptr, 0 ) };
             if ( size_needed <= 0 ) {
                 return std::pmr::wstring{ resource };
             }
-            std::pmr::wstring result{ static_cast< std::size_t >( size_needed - 1 ), '\0', resource };
-            MultiByteToWideChar( Charset, 0, str, -1, result.data(), size_needed );
+            std::pmr::wstring result{ static_cast< std::size_t >( size_needed - 1 ), L'\0', resource };
+            if ( !MultiByteToWideChar( Charset, 0, str, -1, result.data(), size_needed ) ) {
+                return std::pmr::wstring{ resource };
+            }
             return result;
         }
         inline auto stop_service_and_dependencies(
@@ -50,20 +49,20 @@ namespace cpp_utils
         {
             using namespace std::chrono_literals;
             DWORD result{ ERROR_SUCCESS };
-            SERVICE_STATUS status;
+            SERVICE_STATUS status{};
             DWORD bytes_needed{ 0 };
             if ( !QueryServiceConfigW( service, nullptr, 0, &bytes_needed ) && GetLastError() == ERROR_INSUFFICIENT_BUFFER ) {
                 std::pmr::vector< BYTE > buffer( bytes_needed, resource );
-                const auto config{ std::bit_cast< LPQUERY_SERVICE_CONFIGW >( buffer.data() ) };
+                auto config{ std::bit_cast< LPQUERY_SERVICE_CONFIGW >( buffer.data() ) };
                 if ( QueryServiceConfigW( service, config, bytes_needed, &bytes_needed ) ) {
-                    if ( config->lpDependencies != nullptr && *config->lpDependencies != '\0' ) {
-                        auto dependency{ config->lpDependencies };
+                    if ( config->lpDependencies != nullptr && *config->lpDependencies != L'\0' ) {
+                        auto dependency = config->lpDependencies;
                         while ( *dependency != L'\0' ) {
-                            const auto dependency_service{ OpenServiceW( scm, dependency, SERVICE_STOP | SERVICE_QUERY_STATUS ) };
+                            const auto dependency_service = OpenServiceW( scm, dependency, SERVICE_STOP | SERVICE_QUERY_STATUS );
                             if ( dependency_service != nullptr ) {
-                                const auto dependency_result{ stop_service_and_dependencies( scm, dependency_service, resource ) };
-                                if ( dependency_result != ERROR_SUCCESS ) {
-                                    result = dependency_result;
+                                const auto dep_result = stop_service_and_dependencies( scm, dependency_service, resource );
+                                if ( dep_result != ERROR_SUCCESS && result == ERROR_SUCCESS ) {
+                                    result = dep_result;
                                 }
                                 CloseServiceHandle( dependency_service );
                             }
@@ -73,13 +72,12 @@ namespace cpp_utils
                 }
             }
             if ( ControlService( service, SERVICE_CONTROL_STOP, &status ) ) {
-                while ( QueryServiceStatus( service, &status ) ) {
-                    if ( status.dwCurrentState != SERVICE_STOP_PENDING ) {
-                        break;
-                    }
+                bool query_success{ true };
+                while ( query_success && status.dwCurrentState == SERVICE_STOP_PENDING ) {
+                    query_success = QueryServiceStatus( service, &status );
                     std::this_thread::sleep_for( 5ms );
                 }
-                if ( status.dwCurrentState != SERVICE_STOPPED ) {
+                if ( !query_success || status.dwCurrentState != SERVICE_STOPPED ) {
                     result = ERROR_SERVICE_REQUEST_TIMEOUT;
                 }
             } else if ( GetLastError() != ERROR_SERVICE_NOT_ACTIVE ) {
@@ -91,36 +89,37 @@ namespace cpp_utils
           const SC_HANDLE scm, const SC_HANDLE service, std::pmr::memory_resource* const resource ) noexcept -> DWORD
         {
             DWORD result{ ERROR_SUCCESS };
-            DWORD bytes_needed;
-            if ( QueryServiceConfigW( service, nullptr, 0, &bytes_needed ) || GetLastError() == ERROR_INSUFFICIENT_BUFFER ) {
+            DWORD bytes_needed{ 0 };
+            if ( !QueryServiceConfigW( service, nullptr, 0, &bytes_needed ) && GetLastError() == ERROR_INSUFFICIENT_BUFFER ) {
                 std::pmr::vector< BYTE > buffer( bytes_needed, resource );
-                const auto config{ std::bit_cast< LPQUERY_SERVICE_CONFIGW >( buffer.data() ) };
+                auto config{ std::bit_cast< LPQUERY_SERVICE_CONFIGW >( buffer.data() ) };
                 if ( QueryServiceConfigW( service, config, bytes_needed, &bytes_needed ) ) {
-                    if ( config->lpDependencies != nullptr && *config->lpDependencies != '\0' ) {
-                        wchar_t* context{ nullptr };
-                        auto dependency{ wcstok_s( config->lpDependencies, L"\0", &context ) };
-                        while ( dependency != nullptr ) {
+                    if ( config->lpDependencies != nullptr && *config->lpDependencies != L'\0' ) {
+                        auto dependency{ config->lpDependencies };
+                        while ( *dependency != L'\0' ) {
                             if ( *dependency != L'@' ) {
                                 const auto dependency_service{
                                   OpenServiceW( scm, dependency, SERVICE_START | SERVICE_QUERY_STATUS ) };
                                 if ( dependency_service != nullptr ) {
-                                    SERVICE_STATUS status;
+                                    SERVICE_STATUS status{};
                                     if ( !QueryServiceStatus( dependency_service, &status )
                                          || ( status.dwCurrentState != SERVICE_RUNNING && status.dwCurrentState != SERVICE_START_PENDING ) )
                                     {
-                                        result = start_service_and_dependencies( scm, dependency_service, resource );
+                                        const auto dep_result{ start_service_and_dependencies( scm, dependency_service, resource ) };
+                                        if ( dep_result != ERROR_SUCCESS && result == ERROR_SUCCESS ) {
+                                            result = dep_result;
+                                        }
                                     }
                                     CloseServiceHandle( dependency_service );
                                 }
                             }
-                            dependency = wcstok_s( nullptr, L"\0", &context );
+                            dependency += std::wcslen( dependency ) + 1;
                         }
                     }
                 }
             }
             if ( result == ERROR_SUCCESS && !StartServiceW( service, 0, nullptr ) ) {
-                const auto err{ GetLastError() };
-                if ( err != ERROR_SERVICE_ALREADY_RUNNING ) {
+                if ( const auto err{ GetLastError() }; err != ERROR_SERVICE_ALREADY_RUNNING ) {
                     result = err;
                 }
             }
@@ -467,7 +466,7 @@ namespace cpp_utils
             const auto area{ info.dwSize.X * info.dwSize.Y };
             DWORD written;
             SetConsoleCursorPosition( std_output_handle, top_left );
-            std::print( "{}", std::pmr::string( area, ' ', resource ) );
+            std::print( "{}", std::pmr::string{ static_cast< std::size_t >( area ), ' ', resource } );
             FillConsoleOutputAttribute( std_output_handle, info.wAttributes, area, top_left, &written );
             SetConsoleCursorPosition( std_output_handle, top_left );
             return *this;
