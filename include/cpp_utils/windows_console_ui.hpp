@@ -145,7 +145,7 @@ namespace cpp_utils
         {
             const auto [ console_width, console_height ]{ cursor_position };
             SetConsoleCursorPosition( con.std_output_handle, { 0, console_height } );
-            std::print( "{}", std::pmr::string( console_width, ' ', lines_.get_allocator().resource() ) );
+            std::print( "{}", std::pmr::string{ console_width, ' ', lines_.get_allocator().resource() } );
             SetConsoleCursorPosition( con.std_output_handle, { 0, console_height } );
             line.print_text();
             SetConsoleCursorPosition( con.std_output_handle, { 0, console_height } );
