@@ -41,7 +41,7 @@ namespace cpp_utils
             if ( size_needed <= 0 ) {
                 return std::pmr::wstring{ resource };
             }
-            std::pmr::wstring result{ size_needed - 1, '\0', resource };
+            std::pmr::wstring result{ static_cast< std::size_t >( size_needed - 1 ), '\0', resource };
             MultiByteToWideChar( Charset, 0, str, -1, result.data(), size_needed );
             return result;
         }
