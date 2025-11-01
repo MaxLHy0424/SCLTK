@@ -283,6 +283,41 @@ namespace cpp_utils
         CloseServiceHandle( scm );
         return result;
     }
+    template < UINT Charset >
+    inline auto reset_service_failure_action(
+      const char* const service_name, std::pmr::memory_resource* const resource = std::pmr::get_default_resource() ) noexcept
+    {
+        if ( service_name == nullptr || service_name[ 0 ] == '\0' ) {
+            return false;
+        }
+        auto w_service_name{ details::to_wstring< Charset >( service_name, resource ) };
+        if ( w_service_name.empty() ) {
+            return false;
+        }
+        using scm_handle = std::unique_ptr< std::remove_pointer_t< SC_HANDLE >, decltype( []( SC_HANDLE h ) static noexcept
+        {
+            if ( h != nullptr ) {
+                CloseServiceHandle( h );
+            }
+        } ) >;
+        scm_handle scm{ OpenSCManagerW( nullptr, nullptr, SC_MANAGER_CONNECT ) };
+        if ( !scm ) {
+            return false;
+        }
+        scm_handle service{ OpenServiceW( scm.get(), w_service_name.c_str(), SERVICE_CHANGE_CONFIG ) };
+        if ( !service ) {
+            return false;
+        }
+        constexpr DWORD actions_count{ 3 };
+        constexpr SC_ACTION non_action{ .Type{ SC_ACTION_NONE }, .Delay{ 0 } };
+        SC_ACTION actions[ actions_count ]{ non_action, non_action, non_action };
+        SERVICE_FAILURE_ACTIONSW service_fail_actions{
+          .dwResetPeriod{ 0 }, .lpRebootMsg{ nullptr }, .lpCommand{ nullptr }, .cActions{ actions_count }, .lpsaActions{ actions } };
+        if ( !ChangeServiceConfig2W( service.get(), SERVICE_CONFIG_FAILURE_ACTIONS, &service_fail_actions ) ) {
+            return false;
+        }
+        return true;
+    }
     inline auto is_run_as_admin() noexcept
     {
         BOOL is_admin;
