@@ -176,11 +176,11 @@ namespace cpp_utils
         auto result{ RegCreateKeyExW(
           main_key, w_sub_key.c_str(), 0, nullptr, REG_OPTION_NON_VOLATILE, KEY_WRITE, nullptr, &key_handle, nullptr ) };
         if ( result != ERROR_SUCCESS ) {
-            return result;
+            return static_cast< DWORD >( result );
         }
         result = RegSetValueExW( key_handle, w_value_name.empty() ? nullptr : w_value_name.c_str(), 0, type, data, data_size );
         RegCloseKey( key_handle );
-        return result;
+        return static_cast< DWORD >( result );
     }
     template < UINT Charset >
     inline auto delete_registry_key(
@@ -198,14 +198,14 @@ namespace cpp_utils
         }
         result = RegDeleteValueW( key_handle, w_value_name.empty() ? nullptr : w_value_name.c_str() );
         RegCloseKey( key_handle );
-        return result;
+        return static_cast< DWORD >( result );
     }
     template < UINT Charset >
     inline auto delete_registry_tree(
       const HKEY main_key, const char* const sub_key,
       std::pmr::memory_resource* const resource = std::pmr::get_default_resource() ) noexcept
     {
-        return RegDeleteTreeW( main_key, details::to_wstring< Charset >( sub_key, resource ).c_str() );
+        return static_cast< DWORD >( RegDeleteTreeW( main_key, details::to_wstring< Charset >( sub_key, resource ).c_str() ) );
     }
     template < UINT Charset >
     inline auto set_service_status(
@@ -288,11 +288,11 @@ namespace cpp_utils
       const char* const service_name, std::pmr::memory_resource* const resource = std::pmr::get_default_resource() ) noexcept
     {
         if ( service_name == nullptr || service_name[ 0 ] == '\0' ) {
-            return false;
+            return static_cast< DWORD >( ERROR_INVALID_PARAMETER );
         }
         auto w_service_name{ details::to_wstring< Charset >( service_name, resource ) };
         if ( w_service_name.empty() ) {
-            return false;
+            return static_cast< DWORD >( ERROR_INVALID_PARAMETER );
         }
         using scm_handle = std::unique_ptr< std::remove_pointer_t< SC_HANDLE >, decltype( []( SC_HANDLE h ) static noexcept
         {
@@ -302,11 +302,11 @@ namespace cpp_utils
         } ) >;
         scm_handle scm{ OpenSCManagerW( nullptr, nullptr, SC_MANAGER_CONNECT ) };
         if ( !scm ) {
-            return false;
+            return GetLastError();
         }
         scm_handle service{ OpenServiceW( scm.get(), w_service_name.c_str(), SERVICE_CHANGE_CONFIG ) };
         if ( !service ) {
-            return false;
+            return GetLastError();
         }
         constexpr DWORD actions_count{ 3 };
         constexpr SC_ACTION non_action{ .Type{ SC_ACTION_NONE }, .Delay{ 0 } };
@@ -314,9 +314,9 @@ namespace cpp_utils
         SERVICE_FAILURE_ACTIONSW service_fail_actions{
           .dwResetPeriod{ 0 }, .lpRebootMsg{ nullptr }, .lpCommand{ nullptr }, .cActions{ actions_count }, .lpsaActions{ actions } };
         if ( !ChangeServiceConfig2W( service.get(), SERVICE_CONFIG_FAILURE_ACTIONS, &service_fail_actions ) ) {
-            return false;
+            return GetLastError();
         }
-        return true;
+        return static_cast< DWORD >( ERROR_SUCCESS );
     }
     inline auto is_run_as_admin() noexcept
     {
