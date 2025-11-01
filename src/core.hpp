@@ -214,10 +214,10 @@ namespace core
                 }
                 ~item_() = default;
             };
-            using key_t_   = std::string_view;
-            using value_t_ = item_;
+            using key_t_    = std::string_view;
+            using mapped_t_ = item_;
             using map_t_
-              = std::flat_map< key_t_, value_t_, std::less< key_t_ >, std::pmr::vector< key_t_ >, std::pmr::vector< value_t_ > >;
+              = std::flat_map< key_t_, mapped_t_, std::less< key_t_ >, std::pmr::vector< key_t_ >, std::pmr::vector< mapped_t_ > >;
             const char* shown_name_;
             map_t_ options_;
             static constexpr auto str_of_the_enabled{ ": enabled"sv };
@@ -246,11 +246,11 @@ namespace core
                     out << key << ( item == true ? str_of_the_enabled : str_of_the_disabled ) << '\n';
                 }
             }
-            static auto make_flip_button_text_( const value_t_& item )
+            static auto make_flip_button_text_( const mapped_t_& item )
             {
                 return item == true ? " > 禁用 "sv : " > 启用 "sv;
             }
-            static auto flip_item_value_( const ui_func_args args, value_t_& item )
+            static auto flip_item_value_( const ui_func_args args, mapped_t_& item )
             {
                 args.parent_ui.set_text( args.node_index, make_flip_button_text_( item.set( !item.get() ) ) );
                 return func_back;
