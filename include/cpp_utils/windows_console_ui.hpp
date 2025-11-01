@@ -46,9 +46,7 @@ namespace cpp_utils
             func_args( func_args&& ) noexcept      = default;
             ~func_args() noexcept                  = default;
         };
-        using supported_text_ts = type_list< std::string_view, std::pmr::string, std::string >;
-        using basic_text_t      = supported_text_ts::remove_back::apply< std::variant >;
-        using text_t            = supported_text_ts::apply< std::variant >;
+        using text_t = std::variant< std::string_view, std::pmr::string, std::string >;
         using function_t
           = std::variant< std::move_only_function< func_action() >, std::move_only_function< func_action( func_args ) > >;
       private:
@@ -59,7 +57,7 @@ namespace cpp_utils
         };
         struct line_node_ final
         {
-            basic_text_t text{};
+            text_t text{};
             function_t func{};
             WORD default_attrs{ console_text::foreground_white };
             WORD intensity_attrs{ console_text::foreground_green | console_text::foreground_blue };
@@ -78,7 +76,7 @@ namespace cpp_utils
             auto operator=( const line_node_& ) noexcept -> line_node_& = default;
             auto operator=( line_node_&& ) noexcept -> line_node_&      = default;
             line_node_() noexcept                                       = default;
-            line_node_( basic_text_t&& text, function_t& func, const WORD default_attrs, const WORD intensity_attrs ) noexcept
+            line_node_( text_t& text, function_t& func, const WORD default_attrs, const WORD intensity_attrs ) noexcept
               : text{ std::move( text ) }
               , func{ std::move( func ) }
               , default_attrs{ default_attrs }
@@ -205,17 +203,6 @@ namespace cpp_utils
             init_pos_();
             return value;
         }
-        auto to_basic_text( text_t& text ) noexcept
-        {
-            return text.visit< basic_text_t >( [ this ]< typename T >( T& string ) noexcept
-            {
-                if constexpr ( std::is_same_v< T, std::string > ) {
-                    return std::pmr::string{ std::move( string ), lines_.get_allocator().resource() };
-                } else {
-                    return std::move( string );
-                }
-            } );
-        }
       public:
         auto empty() const noexcept
         {
@@ -259,7 +246,7 @@ namespace cpp_utils
           const WORD default_attrs   = console_text::foreground_white )
         {
             lines_.emplace(
-              lines_.cbegin(), to_basic_text( text ), func, default_attrs,
+              lines_.cbegin(), text, func, default_attrs,
               func.visit< bool >( []( const auto& func ) static { return func != nullptr; } ) ? intensity_attrs : default_attrs );
             return *this;
         }
@@ -269,7 +256,7 @@ namespace cpp_utils
           const WORD default_attrs   = console_text::foreground_white )
         {
             lines_.emplace_back(
-              to_basic_text( text ), func, default_attrs,
+              text, func, default_attrs,
               func.visit< bool >( []( const auto& func ) static { return func != nullptr; } ) ? intensity_attrs : default_attrs );
             return *this;
         }
@@ -279,16 +266,16 @@ namespace cpp_utils
           const WORD default_attrs   = console_text::foreground_white )
         {
             lines_.emplace(
-              lines_.cbegin() + index, to_basic_text( text ), func, default_attrs,
+              lines_.cbegin() + index, text, func, default_attrs,
               func.visit< bool >( []( const auto& func ) static { return func != nullptr; } ) ? intensity_attrs : default_attrs );
             return *this;
         }
         auto& set_text( const std::size_t index, text_t text )
         {
             if constexpr ( is_debugging_build ) {
-                lines_.at( index ).text = to_basic_text( text );
+                lines_.at( index ).text = std::move( text );
             } else {
-                lines_[ index ].text = to_basic_text( text );
+                lines_[ index ].text = std::move( text );
             }
             return *this;
         }
