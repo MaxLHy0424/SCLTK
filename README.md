@@ -265,6 +265,10 @@ make pack
 
 SCLTK 不对 Windows Vista 及更早的版本保有任何技术支持。SCLTK 将会持续支持对当前受 Microsoft 支持的 Windows OS。针对于 Windows 7/8/8.1，我们将开始进行兼容性改进，确保在 2027 年前保留对 Windows 7/8/8.1 的支持。
 
+## SCLTK 的破解不起作用
+
+请尝试使用最新版本的 SCLTK 进行破解，如果仍然不行，可能由于内建规则已失效。此时可以使用自定义规则应急，并且尽快提交 Issue 告知开发者。
+
 # ❤️ 鸣谢
 
 - [Zhu-Xinrong（Kendall）](https://github.com/Zhu-Xinrong) 指导早期版本图标设计。
