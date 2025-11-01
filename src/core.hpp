@@ -68,13 +68,13 @@ namespace core
     inline rule_node custom_rules;
     inline const std::array< rule_node, 4 > builtin_rules{
       { { "学生机房管理助手",
-          { "yz", "abcut", "jfglzs", "jfglzsn", "prozs", "uninstal1", "sct", "zmserv", "ljqmp", "SppExtComObj", "vprtt",
+          { "yz", "abcut", "jfglzs", "jfglzsn", "prozs", "przs", "uninstal1", "sct", "zmserv", "ljqmp", "SppExtComObj", "vprtt",
             "oporn" },
           { "zmserv" } },
        { "极域电子教室",
           { "StudentMain", "DispcapHelper", "VRCwPlayer", "InstHelpApp", "InstHelpApp64", "TDOvrSet", "GATESRV", "ProcHelper64",
             "MasterHelper" },
-          { "TDNetFilter", "TDFileFilter", "STUDSRV" } },
+          { "STUDSRV" } },
        { "联想智能云教室",
           { "vncviewer", "tvnserver32", "WfbsPnpInstall", "WFBSMon", "WFBSMlogon", "WFBSSvrLogShow", "ResetIp", "FuncForWIN64",
             "CertMgr", "Fireware", "BCDBootCopy", "refreship", "lenovoLockScreen", "PortControl64", "DesktopCheck",
@@ -318,8 +318,8 @@ namespace core
               "crack_restore",
               "破解与恢复",
               { { "hijack_execs", "劫持可执行文件" },
-                { "set_serv_startup_types", "设置服务启动类型" },
-                { "reset_serv_failure_action", "重置服务失败行为" } }
+                { "reset_serv_failure_action", "重置服务失败行为" },
+                { "set_serv_startup_types", "设置服务启动类型" } }
         }
         { }
         ~crack_restore_config() = default;
