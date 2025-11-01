@@ -56,11 +56,11 @@ namespace cpp_utils
                 auto config{ std::bit_cast< LPQUERY_SERVICE_CONFIGW >( buffer.data() ) };
                 if ( QueryServiceConfigW( service, config, bytes_needed, &bytes_needed ) ) {
                     if ( config->lpDependencies != nullptr && *config->lpDependencies != L'\0' ) {
-                        auto dependency = config->lpDependencies;
+                        auto dependency{ config->lpDependencies };
                         while ( *dependency != L'\0' ) {
-                            const auto dependency_service = OpenServiceW( scm, dependency, SERVICE_STOP | SERVICE_QUERY_STATUS );
+                            const auto dependency_service{ OpenServiceW( scm, dependency, SERVICE_STOP | SERVICE_QUERY_STATUS ) };
                             if ( dependency_service != nullptr ) {
-                                const auto dep_result = stop_service_and_dependencies( scm, dependency_service, resource );
+                                const auto dep_result{ stop_service_and_dependencies( scm, dependency_service, resource ) };
                                 if ( dep_result != ERROR_SUCCESS && result == ERROR_SUCCESS ) {
                                     result = dep_result;
                                 }
