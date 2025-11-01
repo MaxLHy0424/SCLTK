@@ -317,9 +317,7 @@ namespace core
           : basic_options_config_node{
               "crack_restore",
               "破解与恢复",
-              { { "hijack_execs", "劫持可执行文件" },
-                { "reset_serv_failure_action", "重置服务失败行为" },
-                { "set_serv_startup_types", "设置服务启动类型" } }
+              { { "hijack_execs", "劫持可执行文件" }, { "set_serv_startup_types", "设置服务启动类型" } }
         }
         { }
         ~crack_restore_config() = default;
@@ -779,7 +777,6 @@ namespace core
         {
             cpp_utils::set_service_status( serv, cpp_utils::service_flag::disabled_start );
         }
-        inline constexpr auto reset_serv_failure_action{ cpp_utils::reset_service_failure_action };
         inline auto kill_exec( const std::pmr::wstring& exec ) noexcept
         {
             cpp_utils::kill_process_by_name( std::format( L"{}.exe", exec ) );
@@ -824,7 +821,6 @@ namespace core
             const auto& options{ std::get< crack_restore_config >( config_nodes ) };
             const auto can_hijack_execs{ options[ "hijack_execs" ].get() };
             const auto can_set_serv_startup_types{ options[ "set_serv_startup_types" ].get() };
-            const auto can_reset_serv_failure_action{ options[ "reset_serv_failure_action" ].get() };
             if ( can_hijack_execs ) {
                 std::print( " - 劫持文件.\n" );
                 for ( const auto& exec : execs ) {
@@ -835,12 +831,6 @@ namespace core
                 std::print( " - 禁用服务.\n" );
                 for ( const auto& serv : servs ) {
                     disable_serv( serv );
-                }
-            }
-            if ( can_reset_serv_failure_action ) {
-                std::print( " - 重置服务失败操作.\n" );
-                for ( const auto& serv : servs ) {
-                    reset_serv_failure_action( serv );
                 }
             }
             std::print( " - 停止服务.\n" );
