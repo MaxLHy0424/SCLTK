@@ -25,25 +25,26 @@
 namespace cpp_utils
 {
 #if defined( _WIN32 ) || defined( _WIN64 )
+    inline auto to_wstring(
+      const std::string_view str, const UINT charset,
+      std::pmr::memory_resource* const resource = std::pmr::get_default_resource() ) noexcept
+    {
+        using namespace std::string_literals;
+        if ( str.empty() ) {
+            return std::pmr::wstring{ resource };
+        }
+        const int size_needed{ MultiByteToWideChar( charset, 0, str.data(), -1, nullptr, 0 ) };
+        if ( size_needed <= 0 ) {
+            return std::pmr::wstring{ resource };
+        }
+        std::pmr::wstring result{ static_cast< std::size_t >( size_needed - 1 ), L'\0', resource };
+        if ( !MultiByteToWideChar( charset, 0, str.data(), -1, result.data(), size_needed ) ) {
+            return std::pmr::wstring{ resource };
+        }
+        return result;
+    }
     namespace details
     {
-        template < UINT Charset >
-        inline auto to_wstring( const char* const str, std::pmr::memory_resource* const resource ) noexcept
-        {
-            using namespace std::string_literals;
-            if ( str == nullptr || str[ 0 ] == '\0' ) {
-                return std::pmr::wstring{ resource };
-            }
-            const int size_needed{ MultiByteToWideChar( Charset, 0, str, -1, nullptr, 0 ) };
-            if ( size_needed <= 0 ) {
-                return std::pmr::wstring{ resource };
-            }
-            std::pmr::wstring result{ static_cast< std::size_t >( size_needed - 1 ), L'\0', resource };
-            if ( !MultiByteToWideChar( Charset, 0, str, -1, result.data(), size_needed ) ) {
-                return std::pmr::wstring{ resource };
-            }
-            return result;
-        }
         inline auto stop_service_and_dependencies(
           const SC_HANDLE scm, const SC_HANDLE service, std::pmr::memory_resource* const resource ) noexcept -> DWORD
         {
@@ -126,12 +127,9 @@ namespace cpp_utils
             return result;
         }
     }
-    template < UINT Charset >
-    inline auto kill_process_by_name(
-      const char* const process_name, std::pmr::memory_resource* const resource = std::pmr::get_default_resource() ) noexcept
+    inline auto kill_process_by_name( const std::wstring_view process_name ) noexcept
     {
-        const auto w_name{ details::to_wstring< Charset >( process_name, resource ) };
-        if ( w_name.empty() ) {
+        if ( process_name.empty() ) {
             return static_cast< DWORD >( ERROR_INVALID_PARAMETER );
         }
         const auto process_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ) };
@@ -144,7 +142,7 @@ namespace cpp_utils
         bool is_found{ false };
         if ( Process32FirstW( process_snapshot, &process_entry ) ) {
             do {
-                if ( _wcsicmp( process_entry.szExeFile, w_name.c_str() ) == 0 ) {
+                if ( _wcsicmp( process_entry.szExeFile, process_name.data() ) == 0 ) {
                     is_found = true;
                     const auto process_handle{ OpenProcess( PROCESS_TERMINATE, FALSE, process_entry.th32ProcessID ) };
                     if ( process_handle ) {
@@ -163,64 +161,45 @@ namespace cpp_utils
         CloseHandle( process_snapshot );
         return is_found ? result : ERROR_NOT_FOUND;
     }
-    template < UINT Charset >
     inline auto create_registry_key(
-      const HKEY main_key, const char* const sub_key, const char* const value_name, const DWORD type, const BYTE* const data,
-      const DWORD data_size, std::pmr::memory_resource* const resource = std::pmr::get_default_resource() ) noexcept
+      const HKEY main_key, const std::wstring_view sub_key, const std::wstring_view value_name, const DWORD type,
+      const BYTE* const data, const DWORD data_size ) noexcept
     {
-        using namespace std::string_literals;
-        const auto w_sub_key{ details::to_wstring< Charset >( sub_key, resource ) };
-        const auto w_value_name{
-          value_name ? details::to_wstring< Charset >( value_name, resource ) : std::pmr::wstring{ resource } };
         HKEY key_handle;
         auto result{ RegCreateKeyExW(
-          main_key, w_sub_key.c_str(), 0, nullptr, REG_OPTION_NON_VOLATILE, KEY_WRITE, nullptr, &key_handle, nullptr ) };
+          main_key, sub_key.data(), 0, nullptr, REG_OPTION_NON_VOLATILE, KEY_WRITE, nullptr, &key_handle, nullptr ) };
         if ( result != ERROR_SUCCESS ) {
             return static_cast< DWORD >( result );
         }
-        result = RegSetValueExW( key_handle, w_value_name.empty() ? nullptr : w_value_name.c_str(), 0, type, data, data_size );
+        result = RegSetValueExW( key_handle, value_name.empty() ? nullptr : value_name.data(), 0, type, data, data_size );
         RegCloseKey( key_handle );
         return static_cast< DWORD >( result );
     }
-    template < UINT Charset >
-    inline auto delete_registry_key(
-      const HKEY main_key, const char* const sub_key, const char* const value_name,
-      std::pmr::memory_resource* const resource = std::pmr::get_default_resource() ) noexcept
+    inline auto delete_registry_key( const HKEY main_key, const std::wstring_view sub_key, const std::wstring_view value_name ) noexcept
     {
-        using namespace std::string_literals;
-        const auto w_sub_key{ details::to_wstring< Charset >( sub_key, resource ) };
-        const auto w_value_name{
-          value_name ? details::to_wstring< Charset >( value_name, resource ) : std::pmr::wstring{ resource } };
         HKEY key_handle;
-        auto result{ RegOpenKeyExW( main_key, w_sub_key.c_str(), 0, KEY_WRITE, &key_handle ) };
+        auto result{ RegOpenKeyExW( main_key, sub_key.data(), 0, KEY_WRITE, &key_handle ) };
         if ( result != ERROR_SUCCESS ) {
-            return result;
+            return static_cast< DWORD >( result );
         }
-        result = RegDeleteValueW( key_handle, w_value_name.empty() ? nullptr : w_value_name.c_str() );
+        result = RegDeleteValueW( key_handle, value_name.empty() ? nullptr : value_name.data() );
         RegCloseKey( key_handle );
         return static_cast< DWORD >( result );
     }
-    template < UINT Charset >
-    inline auto delete_registry_tree(
-      const HKEY main_key, const char* const sub_key,
-      std::pmr::memory_resource* const resource = std::pmr::get_default_resource() ) noexcept
+    inline auto delete_registry_tree( const HKEY main_key, const std::wstring_view sub_key ) noexcept
     {
-        return static_cast< DWORD >( RegDeleteTreeW( main_key, details::to_wstring< Charset >( sub_key, resource ).c_str() ) );
+        return static_cast< DWORD >( RegDeleteTreeW( main_key, sub_key.data() ) );
     }
-    template < UINT Charset >
-    inline auto set_service_status(
-      const char* const service_name, const DWORD status_type,
-      std::pmr::memory_resource* const resource = std::pmr::get_default_resource() ) noexcept
+    inline auto set_service_status( const std::wstring_view service_name, const DWORD status_type ) noexcept
     {
-        const auto w_name{ details::to_wstring< Charset >( service_name, resource ) };
-        if ( w_name.empty() ) {
+        if ( service_name.empty() ) {
             return static_cast< DWORD >( ERROR_INVALID_PARAMETER );
         }
         const auto scm{ OpenSCManagerW( nullptr, nullptr, SC_MANAGER_CONNECT ) };
         if ( scm == nullptr ) {
             return GetLastError();
         }
-        const auto service{ OpenServiceW( scm, w_name.c_str(), SERVICE_CHANGE_CONFIG ) };
+        const auto service{ OpenServiceW( scm, service_name.data(), SERVICE_CHANGE_CONFIG ) };
         DWORD result{ ERROR_SUCCESS };
         if ( service != nullptr ) {
             if ( !ChangeServiceConfigW(
@@ -236,12 +215,10 @@ namespace cpp_utils
         CloseServiceHandle( scm );
         return result;
     }
-    template < UINT Charset >
     inline auto stop_service_with_dependencies(
-      const char* const service_name, std::pmr::memory_resource* const resource = std::pmr::get_default_resource() ) noexcept
+      const std::wstring_view service_name, std::pmr::memory_resource* const resource = std::pmr::get_default_resource() ) noexcept
     {
-        const auto w_name{ details::to_wstring< Charset >( service_name, resource ) };
-        if ( w_name.empty() ) {
+        if ( service_name.empty() ) {
             return static_cast< DWORD >( ERROR_INVALID_PARAMETER );
         }
         const auto scm{ OpenSCManagerW( nullptr, nullptr, SC_MANAGER_CONNECT | SC_MANAGER_ENUMERATE_SERVICE ) };
@@ -249,7 +226,7 @@ namespace cpp_utils
             return GetLastError();
         }
         const auto service{
-          OpenServiceW( scm, w_name.c_str(), SERVICE_STOP | SERVICE_QUERY_STATUS | SERVICE_ENUMERATE_DEPENDENTS ) };
+          OpenServiceW( scm, service_name.data(), SERVICE_STOP | SERVICE_QUERY_STATUS | SERVICE_ENUMERATE_DEPENDENTS ) };
         DWORD result{ ERROR_SUCCESS };
         if ( service ) {
             result = details::stop_service_and_dependencies( scm, service, resource );
@@ -260,19 +237,17 @@ namespace cpp_utils
         CloseServiceHandle( scm );
         return result;
     }
-    template < UINT Charset >
     inline auto start_service_with_dependencies(
-      const char* const service_name, std::pmr::memory_resource* const resource = std::pmr::get_default_resource() ) noexcept
+      const std::wstring_view service_name, std::pmr::memory_resource* const resource = std::pmr::get_default_resource() ) noexcept
     {
-        const auto w_name{ details::to_wstring< Charset >( service_name, resource ) };
-        if ( w_name.empty() ) {
+        if ( service_name.empty() ) {
             return static_cast< DWORD >( ERROR_INVALID_PARAMETER );
         }
         const auto scm{ OpenSCManagerW( nullptr, nullptr, SC_MANAGER_CONNECT ) };
         if ( scm == nullptr ) {
             return GetLastError();
         }
-        const auto service{ OpenServiceW( scm, w_name.c_str(), SERVICE_START | SERVICE_QUERY_STATUS | SERVICE_QUERY_CONFIG ) };
+        const auto service{ OpenServiceW( scm, service_name.data(), SERVICE_START | SERVICE_QUERY_STATUS | SERVICE_QUERY_CONFIG ) };
         DWORD result{ ERROR_SUCCESS };
         if ( service != nullptr ) {
             result = details::start_service_and_dependencies( scm, service, resource );
@@ -283,15 +258,9 @@ namespace cpp_utils
         CloseServiceHandle( scm );
         return result;
     }
-    template < UINT Charset >
-    inline auto reset_service_failure_action(
-      const char* const service_name, std::pmr::memory_resource* const resource = std::pmr::get_default_resource() ) noexcept
+    inline auto reset_service_failure_action( const std::wstring_view service_name ) noexcept
     {
-        if ( service_name == nullptr || service_name[ 0 ] == '\0' ) {
-            return static_cast< DWORD >( ERROR_INVALID_PARAMETER );
-        }
-        auto w_service_name{ details::to_wstring< Charset >( service_name, resource ) };
-        if ( w_service_name.empty() ) {
+        if ( service_name.empty() ) {
             return static_cast< DWORD >( ERROR_INVALID_PARAMETER );
         }
         using scm_handle = std::unique_ptr< std::remove_pointer_t< SC_HANDLE >, decltype( []( SC_HANDLE h ) static noexcept
@@ -304,7 +273,7 @@ namespace cpp_utils
         if ( !scm ) {
             return GetLastError();
         }
-        scm_handle service{ OpenServiceW( scm.get(), w_service_name.c_str(), SERVICE_CHANGE_CONFIG ) };
+        scm_handle service{ OpenServiceW( scm.get(), service_name.data(), SERVICE_CHANGE_CONFIG ) };
         if ( !service ) {
             return GetLastError();
         }
