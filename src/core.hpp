@@ -835,13 +835,13 @@ namespace core
                     reset_serv_failure_action( serv );
                 }
             }
-            std::print( " - 终止进程.\n" );
-            for ( const auto exec : execs ) {
-                kill_exec( exec );
-            }
             std::print( " - 停止服务.\n" );
             for ( const auto serv : servs ) {
                 stop_serv( serv );
+            }
+            std::print( " - 终止进程.\n" );
+            for ( const auto exec : execs ) {
+                kill_exec( exec );
             }
         }
         inline auto restore( const rule_node& rules )
