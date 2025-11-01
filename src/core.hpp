@@ -758,44 +758,49 @@ namespace core
             restore
         };
         inline auto executor_mode{ rule_executing::crack };
-        inline auto hijack_exec( const char* const exec ) noexcept
+        inline auto to_wstring_vec( const std::pmr::vector< const char* >& vec )
         {
-            cpp_utils::create_registry_key< charset_id >(
+            std::pmr::vector< std::pmr::wstring > result;
+            result.reserve( vec.size() );
+            for ( const auto& e : vec ) {
+                result.emplace_back( cpp_utils::to_wstring( e, charset_id, unsynced_mem_pool ) );
+            }
+            return result;
+        }
+        inline auto hijack_exec( const std::pmr::wstring& exec ) noexcept
+        {
+            constexpr auto&& data{ L"nul" };
+            cpp_utils::create_registry_key(
               cpp_utils::registry_flag::hkey_local_machine,
-              std::format( R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe)", exec ).c_str(),
-              "Debugger", cpp_utils::registry_flag::string_type, reinterpret_cast< const BYTE* >( L"nul" ), sizeof( L"nul" ),
-              unsynced_mem_pool );
+              std::format( LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe)", exec ),
+              L"Debugger", cpp_utils::registry_flag::string_type, std::bit_cast< const BYTE* >( +data ), sizeof( data ) );
         }
-        inline auto disable_serv( const char* const serv ) noexcept
+        inline auto disable_serv( const std::pmr::wstring& serv ) noexcept
         {
-            cpp_utils::set_service_status< charset_id >( serv, cpp_utils::service_flag::disabled_start, unsynced_mem_pool );
+            cpp_utils::set_service_status( serv, cpp_utils::service_flag::disabled_start );
         }
-        inline auto reset_serv_failure_action( const char* const serv ) noexcept
+        inline constexpr auto reset_serv_failure_action{ cpp_utils::reset_service_failure_action };
+        inline auto kill_exec( const std::pmr::wstring& exec ) noexcept
         {
-            cpp_utils::reset_service_failure_action< charset_id >( serv, unsynced_mem_pool );
+            cpp_utils::kill_process_by_name( std::format( L"{}.exe", exec ) );
         }
-        inline auto kill_exec( const char* const exec ) noexcept
+        inline auto stop_serv( const std::pmr::wstring& serv ) noexcept
         {
-            cpp_utils::kill_process_by_name< charset_id >( std::format( "{}.exe", exec ).c_str(), unsynced_mem_pool );
+            cpp_utils::stop_service_with_dependencies( serv, unsynced_mem_pool );
         }
-        inline auto stop_serv( const char* const serv ) noexcept
+        inline auto undo_hijack_exec( const std::pmr::wstring& exec ) noexcept
         {
-            cpp_utils::stop_service_with_dependencies< charset_id >( serv, unsynced_mem_pool );
-        }
-        inline auto undo_hijack_exec( const char* const exec ) noexcept
-        {
-            cpp_utils::delete_registry_tree< charset_id >(
+            cpp_utils::delete_registry_tree(
               cpp_utils::registry_flag::hkey_local_machine,
-              std::format( R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe)", exec ).c_str(),
-              unsynced_mem_pool );
+              std::format( LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe)", exec ) );
         }
-        inline auto enable_serv( const char* const serv ) noexcept
+        inline auto enable_serv( const std::pmr::wstring& serv ) noexcept
         {
-            cpp_utils::set_service_status< charset_id >( serv, cpp_utils::service_flag::auto_start, unsynced_mem_pool );
+            cpp_utils::set_service_status( serv, cpp_utils::service_flag::auto_start );
         }
-        inline auto start_serv( const char* const serv ) noexcept
+        inline auto start_serv( const std::pmr::wstring& serv ) noexcept
         {
-            cpp_utils::start_service_with_dependencies< charset_id >( serv, unsynced_mem_pool );
+            cpp_utils::start_service_with_dependencies( serv, unsynced_mem_pool );
         }
         inline auto get_executing_count( const rule_node& rules ) noexcept
         {
@@ -814,60 +819,60 @@ namespace core
         }
         inline auto crack( const rule_node& rules )
         {
-            const auto& execs{ rules.execs };
-            const auto& servs{ rules.servs };
+            const auto execs{ to_wstring_vec( rules.execs ) };
+            const auto servs{ to_wstring_vec( rules.servs ) };
             const auto& options{ std::get< crack_restore_config >( config_nodes ) };
             const auto can_hijack_execs{ options[ "hijack_execs" ].get() };
             const auto can_set_serv_startup_types{ options[ "set_serv_startup_types" ].get() };
             const auto can_reset_serv_failure_action{ options[ "reset_serv_failure_action" ].get() };
             if ( can_hijack_execs ) {
                 std::print( " - 劫持文件.\n" );
-                for ( const auto exec : execs ) {
+                for ( const auto& exec : execs ) {
                     hijack_exec( exec );
                 }
             }
             if ( can_set_serv_startup_types ) {
                 std::print( " - 禁用服务.\n" );
-                for ( const auto serv : servs ) {
+                for ( const auto& serv : servs ) {
                     disable_serv( serv );
                 }
             }
             if ( can_reset_serv_failure_action ) {
                 std::print( " - 重置服务失败操作.\n" );
-                for ( const auto serv : servs ) {
+                for ( const auto& serv : servs ) {
                     reset_serv_failure_action( serv );
                 }
             }
             std::print( " - 停止服务.\n" );
-            for ( const auto serv : servs ) {
+            for ( const auto& serv : servs ) {
                 stop_serv( serv );
             }
             std::print( " - 终止进程.\n" );
-            for ( const auto exec : execs ) {
+            for ( const auto& exec : execs ) {
                 kill_exec( exec );
             }
         }
         inline auto restore( const rule_node& rules )
         {
-            const auto& execs{ rules.execs };
-            const auto& servs{ rules.servs };
+            const auto& execs{ to_wstring_vec( rules.execs ) };
+            const auto& servs{ to_wstring_vec( rules.servs ) };
             const auto& options{ std::get< crack_restore_config >( config_nodes ) };
             const auto can_hijack_execs{ options[ "hijack_execs" ].get() };
             const auto can_set_serv_startup_types{ options[ "set_serv_startup_types" ].get() };
             if ( can_hijack_execs ) {
                 std::print( " - 撤销劫持.\n" );
-                for ( const auto exec : execs ) {
+                for ( const auto& exec : execs ) {
                     undo_hijack_exec( exec );
                 }
             }
             if ( can_set_serv_startup_types ) {
                 std::print( " - 启用服务.\n" );
-                for ( const auto serv : servs ) {
+                for ( const auto& serv : servs ) {
                     enable_serv( serv );
                 }
             }
             std::print( " - 启动服务.\n" );
-            for ( const auto serv : servs ) {
+            for ( const auto& serv : servs ) {
                 start_serv( serv );
             }
         }
