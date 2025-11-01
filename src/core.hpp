@@ -629,8 +629,10 @@ namespace core
               R"(Software\Policies\Microsoft\Windows\System)", R"(Software\Microsoft\Windows\CurrentVersion\Policies\System)",
               R"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)", R"(Software\Policies\Microsoft\MMC)" };
             constexpr std::array execs{
-              "tasklist", "taskkill", "ntsd",    "sc",  "net",  "reg", "cmd",
-              "taskmgr",  "perfmon",  "regedit", "mmc", "dism", "sfc" };
+              "tasklist", "taskkill", "ntsd",    "sc",          "net",         "reg",       "cmd",
+              "taskmgr",  "perfmon",  "regedit", "mmc",         "dism",        "sfc",       "sethc",
+              "sidebar",  "shvlzm",   "winmine", "bckgzm",      "Chess",       "chkrzm",    "FreeCell",
+              "Hearts",   "Magnify",  "Mahjong", "Minesweeper", "PurblePlace", "Solitaire", "SpiderSolitaire" };
             for ( const auto reg_dir : reg_dirs ) {
                 RegDeleteTreeA( HKEY_CURRENT_USER, reg_dir );
             }
