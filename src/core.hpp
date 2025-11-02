@@ -640,6 +640,46 @@ namespace core
             details::press_any_key_to_return();
             return func_back;
         }
+        inline auto kill_jfglzs_daemon()
+        {
+            std::print(
+              "                   [ 工 具 箱 ]\n\n\n"
+              " -> 正在查找进程...\n\n" );
+            constexpr auto is_even{ []( const std::wstring_view process_name ) static noexcept
+            {
+                if ( process_name.size() != "xxxxx.exe"sv.size() ) {
+                    return false;
+                }
+                constexpr std::array system_process{ L"csrss.exe"sv, L"lsass.exe"sv };
+                if ( std::ranges::contains( system_process, process_name ) ) {
+                    return false;
+                }
+                constexpr auto is_in_range{ []( const wchar_t ch ) static noexcept { return ch >= L'a' && ch <= L'z'; } };
+                return std::ranges::count_if( process_name.substr( 0, 5 ), is_in_range ) == 5;
+            } };
+            const auto process_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ) };
+            PROCESSENTRY32W process_entry{};
+            if ( process_snapshot == INVALID_HANDLE_VALUE ) {
+                goto END;
+            }
+            process_entry.dwSize = sizeof( process_entry );
+            if ( Process32FirstW( process_snapshot, &process_entry ) ) {
+                do {
+                    if ( is_even( process_entry.szExeFile ) ) {
+                        const auto process_handle{ OpenProcess( PROCESS_TERMINATE, FALSE, process_entry.th32ProcessID ) };
+                        if ( process_handle ) {
+                            TerminateProcess( process_handle, 1 );
+                            CloseHandle( process_handle );
+                        }
+                    }
+                } while ( Process32NextW( process_snapshot, &process_entry ) );
+            }
+        END:
+            CloseHandle( process_snapshot );
+            std::print( " (i) 操作已完成." );
+            details::press_any_key_to_return();
+            return func_back;
+        }
         struct cmd_item final
         {
             const char* description;
@@ -687,6 +727,7 @@ namespace core
           .add_back( " < 返回 "sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
           .add_back( " > 命令提示符 "sv, details::launch_cmd )
           .add_back( " > 恢复操作系统组件 "sv, details::restore_os_components )
+          .add_back( " > 终止 “学生机房管理助手” 守护进程 "sv, details::kill_jfglzs_daemon )
           .add_back( "\n[ 常用命令 ]\n"sv );
         for ( const auto& common_cmd : common_cmds ) {
             ui.add_back(
