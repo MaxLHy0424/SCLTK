@@ -705,7 +705,7 @@ namespace core
     }
     inline auto toolkit()
     {
-        constexpr std::array< details::cmd_item, 6 > common_cmds{
+        constexpr std::array< details::cmd_item, 5 > common_cmds{
           { { "重启资源管理器", R"(taskkill.exe /f /im explorer.exe && timeout.exe /t 3 /nobreak && start explorer.exe)" },
            { "解除极域电子教室网络限制与文件限制", "sc.exe stop TDNetFilter && sc.exe stop TDFileFilter" },
            { "恢复 USB 设备访问", R"(reg.exe add "HKLM\SYSTEM\CurrentControlSet\Services\USBSTOR" /f /t reg_dword /v Start /d 3)" },
