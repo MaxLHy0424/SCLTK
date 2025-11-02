@@ -767,7 +767,7 @@ namespace core
         }
         inline auto hijack_exec( const std::pmr::wstring& exec ) noexcept
         {
-            constexpr auto&& data{ L"nul" };
+            constexpr const wchar_t data[]{ L"nul" };
             cpp_utils::create_registry_key(
               cpp_utils::registry_flag::hkey_local_machine,
               std::format( LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe)", exec ),
