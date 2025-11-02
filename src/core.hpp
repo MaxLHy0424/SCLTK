@@ -696,20 +696,6 @@ namespace core
             std::system( item.command );
             return func_exit;
         }
-        inline auto make_cmd_executor_ui( const cmd_item& item )
-        {
-            cpp_utils::console_ui ui{ con, unsynced_mem_pool };
-            ui.reserve( 3 )
-              .add_back(
-                "                   [ 工 具 箱 ]\n\n\n"
-                " (i) 是否继续执行?\n"sv )
-              .add_back(
-                " > 是, 继续 "sv, std::bind_back( execute_cmd, std::cref( item ) ),
-                cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_intensity )
-              .add_back( " > 否, 返回 "sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
-              .show();
-            return func_back;
-        }
     }
     inline auto toolkit()
     {
@@ -731,8 +717,7 @@ namespace core
           .add_back( "\n[ 常用命令 ]\n"sv );
         for ( const auto& common_cmd : common_cmds ) {
             ui.add_back(
-              std::format( " > {} ", common_cmd.description ),
-              std::bind_back( details::make_cmd_executor_ui, std::cref( common_cmd ) ) );
+              std::format( " > {} ", common_cmd.description ), std::bind_back( details::execute_cmd, std::cref( common_cmd ) ) );
         }
         ui.show();
         return func_back;
