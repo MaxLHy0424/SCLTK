@@ -715,8 +715,8 @@ namespace core
         cpp_utils::console_ui ui{ con, unsynced_mem_pool };
         ui.reserve( 5 + common_cmds.size() )
           .add_back( "                   [ 工 具 箱 ]\n\n"sv )
-          .add_back( " < 返回 "sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
-          .add_back( " > 命令提示符 "sv, details::launch_cmd )
+          .add_back( " < 返回 \n"sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
+          .add_back( " > 启动命令提示符 "sv, details::launch_cmd )
           .add_back( " > 恢复操作系统组件 "sv, details::restore_os_components )
           .add_back( " > 终止 \"学生机房管理助手\" 守护进程 "sv, details::kill_jfglzs_daemon )
           .add_back( "\n[ 快捷命令 ]\n"sv );
