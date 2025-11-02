@@ -685,7 +685,7 @@ namespace core
             const char* description;
             const char* command;
         };
-        inline auto execute_cmd( const cmd_item& item )
+        inline auto execute_cmd( const char* const command )
         {
             constexpr cpp_utils::const_string end_line{ "\n" };
             constexpr auto dividing_line{ cpp_utils::make_repeated_const_string< '-', console_width >() };
@@ -697,7 +697,7 @@ namespace core
             constexpr auto after{
               cpp_utils::concat_const_string( end_line, dividing_line, cpp_utils::const_string{ "\n\n (i) 操作已完成." } ) };
             std::print( "{}", before.c_str() );
-            std::system( item.command );
+            std::system( command );
             std::print( "{}", after.c_str() );
             details::press_any_key_to_return();
             return func_exit;
@@ -721,9 +721,8 @@ namespace core
           .add_back( " > 恢复操作系统组件 "sv, details::restore_os_components )
           .add_back( " > 终止 “学生机房管理助手” 守护进程 "sv, details::kill_jfglzs_daemon )
           .add_back( "\n[ 快捷命令 ]\n"sv );
-        for ( const auto& common_cmd : common_cmds ) {
-            ui.add_back(
-              std::format( " > {} ", common_cmd.description ), std::bind_back( details::execute_cmd, std::cref( common_cmd ) ) );
+        for ( const auto [ description, command ] : common_cmds ) {
+            ui.add_back( std::format( " > {} ", description ), std::bind_back( details::execute_cmd, command ) );
         }
         ui.show();
         return func_back;
