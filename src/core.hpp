@@ -758,7 +758,7 @@ namespace core
         inline auto executor_mode{ rule_executing::crack };
         inline auto to_wstring_vec( const std::pmr::vector< const char* >& vec )
         {
-            std::pmr::vector< std::pmr::wstring > result;
+            std::pmr::vector< std::pmr::wstring > result{ unsynced_mem_pool };
             result.reserve( vec.size() );
             for ( const auto& e : vec ) {
                 result.emplace_back( cpp_utils::to_wstring( e, charset_id, unsynced_mem_pool ) );
