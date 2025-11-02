@@ -67,10 +67,7 @@ namespace core
     };
     inline rule_node custom_rules;
     inline const std::array< rule_node, 4 > builtin_rules{
-      { { "学生机房管理助手",
-          { "yz", "abcut", "jfglzs", "jfglzsn", "prozs", "przs", "uninstal1", "sct", "zmserv", "zmsrv", "ljqmp", "SppExtComObj",
-            "vprtt", "oporn" },
-          { "zmserv" } },
+      { { "学生机房管理助手", { "yz", "abcut", "jfglzs", "jfglzsn", "prozs", "przs", "uninstal1", "sct", "zmserv", "zmsrv" }, { "zmserv" } },
        { "极域电子教室",
           { "StudentMain", "DispcapHelper", "VRCwPlayer", "InstHelpApp", "InstHelpApp64", "TDOvrSet", "GATESRV", "ProcHelper64",
             "MasterHelper" },
