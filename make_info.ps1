@@ -8,7 +8,7 @@ $git_branch = git branch --show-current
 $git_hash = git rev-parse --short HEAD
 $build_time = Get-Date -AsUTC -Format "yyyy-MM-ddTHH:mm:ssK"
 if ( $is_evaluation_copy -eq $true ) {
-    $git_tag = "evaluation_copy"
+    $git_tag = "insider_preview"
 }
 else {
     $git_tag = git describe --tags --abbrev=0
