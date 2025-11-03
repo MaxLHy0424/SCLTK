@@ -650,12 +650,14 @@ namespace core
                 if ( process_name.size() != "xxxxx.exe"sv.size() ) {
                     return false;
                 }
-                constexpr std::array system_process{ L"csrss.exe"sv, L"lsass.exe"sv };
-                if ( std::ranges::contains( system_process, process_name ) ) {
-                    return false;
-                }
-                constexpr auto is_in_range{ []( const wchar_t ch ) static noexcept { return ch >= L'a' && ch <= L'z'; } };
-                return std::ranges::count_if( process_name.substr( 0, 5 ), is_in_range ) == 5;
+                constexpr auto is_lower_case{ []( const wchar_t ch ) static noexcept { return ch >= L'a' && ch <= L'z'; } };
+                return std::ranges::count_if( process_name.substr( 0, 5 ), is_lower_case ) == 5;
+            } };
+            constexpr auto contains_needle{ []( const std::wstring_view str ) static noexcept
+            {
+                constexpr auto needle{ L"Program Files"sv };
+                return std::search( str.begin(), str.end(), std::boyer_moore_horspool_searcher{ needle.begin(), needle.end() } )
+                    != str.end();
             } };
             const auto process_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ) };
             PROCESSENTRY32W process_entry{};
@@ -666,9 +668,15 @@ namespace core
             if ( Process32FirstW( process_snapshot, &process_entry ) ) {
                 do {
                     if ( is_even( process_entry.szExeFile ) ) {
-                        const auto process_handle{ OpenProcess( PROCESS_TERMINATE, FALSE, process_entry.th32ProcessID ) };
+                        const auto process_handle{
+                          OpenProcess( PROCESS_TERMINATE | PROCESS_QUERY_INFORMATION, FALSE, process_entry.th32ProcessID ) };
                         if ( process_handle ) {
-                            TerminateProcess( process_handle, 1 );
+                            wchar_t path_buf[ MAX_PATH ]{};
+                            DWORD path_len{ MAX_PATH };
+                            const auto is_succeed{ QueryFullProcessImageNameW( process_handle, 0, path_buf, &path_len ) == TRUE };
+                            if ( is_succeed && contains_needle( path_buf ) ) {
+                                TerminateProcess( process_handle, 1 );
+                            }
                             CloseHandle( process_handle );
                         }
                     }
