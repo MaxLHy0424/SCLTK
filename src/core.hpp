@@ -791,7 +791,7 @@ namespace core
             restore
         };
         inline auto executor_mode{ rule_executing::crack };
-        inline auto to_wstring_vec( const std::pmr::vector< const char* >& vec )
+        inline auto to_wstring_vec( const rule_node::container_t& vec )
         {
             std::pmr::vector< std::pmr::wstring > result{ unsynced_mem_pool };
             result.reserve( vec.size() );
