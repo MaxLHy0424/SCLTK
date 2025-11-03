@@ -708,7 +708,7 @@ namespace core
             std::system( command );
             std::print( "{}", after.c_str() );
             details::press_any_key_to_return();
-            return func_exit;
+            return func_back;
         }
     }
     inline auto toolkit()
