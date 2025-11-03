@@ -226,8 +226,7 @@ namespace core
                 if ( line.ends_with( str_of_the_enabled ) ) {
                     key   = line.substr( 0, line.size() - str_of_the_enabled.size() );
                     value = true;
-                }
-                if ( line.ends_with( str_of_the_disabled ) ) {
+                } else if ( line.ends_with( str_of_the_disabled ) ) {
                     key   = line.substr( 0, line.size() - str_of_the_disabled.size() );
                     value = false;
                 }
