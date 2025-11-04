@@ -4,6 +4,7 @@
 #include <cpp_utils/meta.hpp>
 #include <cpp_utils/windows_app_tools.hpp>
 #include <cpp_utils/windows_console_ui.hpp>
+#include <experimental/scope>
 #include <fstream>
 #include <limits>
 #include "info.hpp"
@@ -652,10 +653,11 @@ namespace core
                     != str.end();
             } };
             const auto process_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ) };
-            PROCESSENTRY32W process_entry{};
+            std::experimental::scope_exit _{ [ & ] { CloseHandle( process_snapshot ); } };
             if ( process_snapshot == INVALID_HANDLE_VALUE ) {
-                goto END;
+                return;
             }
+            PROCESSENTRY32W process_entry{};
             process_entry.dwSize = sizeof( process_entry );
             if ( Process32FirstW( process_snapshot, &process_entry ) ) {
                 do {
@@ -674,8 +676,6 @@ namespace core
                     }
                 } while ( Process32NextW( process_snapshot, &process_entry ) );
             }
-        END:
-            CloseHandle( process_snapshot );
         }
         struct tool_item final
         {
