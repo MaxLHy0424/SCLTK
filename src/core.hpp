@@ -808,7 +808,7 @@ namespace core
         ui.reserve( 5 + cmds.size() )
           .add_back( "                   [ 工 具 箱 ]\n\n"sv )
           .add_back( " < 返回 "sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
-          .add_back( "\n[ 特色功能 ]\n"sv )
+          .add_back( "\n[ 高级工具 ]\n"sv )
           .add_back( " > 启动命令提示符 "sv, details::launch_cmd );
         for ( const auto [ description, function ] : tools ) {
             ui.add_back( std::format( " > {} ", description ), std::bind_back( details::execute_tools, function ) );
