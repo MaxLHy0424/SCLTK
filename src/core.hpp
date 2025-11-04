@@ -614,11 +614,9 @@ namespace core
             }
             return func_back;
         }
-        inline auto restore_os_components()
+        inline auto restore_os_components() noexcept
         {
-            std::print(
-              "                   [ 工 具 箱 ]\n\n\n"
-              " -> 正在尝试恢复...\n\n" );
+            std::print( " -> 正在尝试恢复...\n\n" );
             constexpr std::array reg_dirs{
               R"(Software\Policies\Microsoft\Windows\System)", R"(Software\Microsoft\Windows\CurrentVersion\Policies\System)",
               R"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)", R"(Software\Policies\Microsoft\MMC)" };
@@ -635,15 +633,10 @@ namespace core
                   HKEY_LOCAL_MACHINE,
                   std::format( R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe)", exec ).c_str() );
             }
-            std::print( " (i) 操作已完成." );
-            details::press_any_key_to_return();
-            return func_back;
         }
-        inline auto kill_jfglzs_daemon()
+        inline auto kill_jfglzs_daemon() noexcept
         {
-            std::print(
-              "                   [ 工 具 箱 ]\n\n\n"
-              " -> 正在查找进程...\n\n" );
+            std::print( " -> 正在查找进程...\n\n" );
             constexpr auto is_even{ []( const std::wstring_view process_name ) static noexcept
             {
                 if ( process_name.size() != "xxxxx.exe"sv.size() ) {
@@ -683,6 +676,16 @@ namespace core
             }
         END:
             CloseHandle( process_snapshot );
+        }
+        struct tool_item final
+        {
+            const char* description;
+            void ( *function )() noexcept;
+        };
+        inline auto execute_tools( void ( *function )() noexcept ) noexcept
+        {
+            std::print( "                   [ 工 具 箱 ]\n\n\n" );
+            function();
             std::print( " (i) 操作已完成." );
             details::press_any_key_to_return();
             return func_back;
@@ -692,7 +695,7 @@ namespace core
             const char* description;
             const char* command;
         };
-        inline auto execute_cmd( const char* const command )
+        inline auto execute_cmd( const char* const command ) noexcept
         {
             constexpr cpp_utils::const_string end_line{ "\n" };
             constexpr auto dividing_line{ cpp_utils::make_repeated_const_string< '-', console_width >() };
@@ -712,7 +715,11 @@ namespace core
     }
     inline auto toolkit()
     {
-        constexpr std::array< details::cmd_item, 5 > common_cmds{
+        constexpr std::array< details::tool_item, 2 > tools{
+          { { "恢复操作系统组件", details::restore_os_components },
+           { "终止 \"学生机房管理助手\" 守护进程", details::kill_jfglzs_daemon } }
+        };
+        constexpr std::array< details::cmd_item, 5 > cmds{
           { { "重启资源管理器", R"(taskkill.exe /f /im explorer.exe && timeout.exe /t 3 /nobreak && start explorer.exe)" },
            { "解除极域电子教室网络限制与文件限制", "sc.exe stop TDNetFilter && sc.exe stop TDFileFilter" },
            { "恢复 USB 设备访问", R"(reg.exe add "HKLM\SYSTEM\CurrentControlSet\Services\USBSTOR" /f /t reg_dword /v Start /d 3)" },
@@ -720,14 +727,16 @@ namespace core
            { "重置 Microsoft Edge 管理策略", R"(reg.exe delete "HKLM\SOFTWARE\Policies\Microsoft\Edge" /f)" } }
         };
         cpp_utils::console_ui ui{ con, unsynced_mem_pool };
-        ui.reserve( 5 + common_cmds.size() )
+        ui.reserve( 5 + cmds.size() )
           .add_back( "                   [ 工 具 箱 ]\n\n"sv )
-          .add_back( " < 返回 \n"sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
-          .add_back( " > 启动命令提示符 "sv, details::launch_cmd )
-          .add_back( " > 恢复操作系统组件 "sv, details::restore_os_components )
-          .add_back( " > 终止 \"学生机房管理助手\" 守护进程 "sv, details::kill_jfglzs_daemon )
-          .add_back( "\n[ 快捷命令 ]\n"sv );
-        for ( const auto [ description, command ] : common_cmds ) {
+          .add_back( " < 返回 "sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
+          .add_back( "\n[ 特色功能 ]\n"sv )
+          .add_back( " > 启动命令提示符 "sv, details::launch_cmd );
+        for ( const auto [ description, function ] : tools ) {
+            ui.add_back( std::format( " > {} ", description ), std::bind_back( details::execute_tools, function ) );
+        }
+        ui.add_back( "\n[ 快捷命令 ]\n"sv );
+        for ( const auto [ description, command ] : cmds ) {
             ui.add_back( std::format( " > {} ", description ), std::bind_back( details::execute_cmd, command ) );
         }
         ui.show();
