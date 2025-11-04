@@ -805,7 +805,7 @@ namespace core
            { "重置 Microsoft Edge 管理策略", R"(reg.exe delete "HKLM\SOFTWARE\Policies\Microsoft\Edge" /f)" } }
         };
         cpp_utils::console_ui ui{ con, unsynced_mem_pool };
-        ui.reserve( 5 + cmds.size() )
+        ui.reserve( 5 + tools.size() + cmds.size() )
           .add_back( "                   [ 工 具 箱 ]\n\n"sv )
           .add_back( " < 返回 "sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
           .add_back( "\n[ 高级工具 ]\n"sv )
