@@ -5,6 +5,7 @@
 #include <cpp_utils/windows_app_tools.hpp>
 #include <cpp_utils/windows_console_ui.hpp>
 #include <experimental/scope>
+#include <filesystem>
 #include <fstream>
 #include <limits>
 #include "info.hpp"
@@ -617,7 +618,7 @@ namespace core
         }
         inline auto restore_os_components() noexcept
         {
-            std::print( " -> 正在尝试恢复...\n\n" );
+            std::print( " -> 正在尝试恢复...\n" );
             constexpr std::array reg_dirs{
               R"(Software\Policies\Microsoft\Windows\System)", R"(Software\Microsoft\Windows\CurrentVersion\Policies\System)",
               R"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)", R"(Software\Policies\Microsoft\MMC)" };
@@ -635,9 +636,85 @@ namespace core
                   std::format( R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe)", exec ).c_str() );
             }
         }
+        inline auto reset_hosts() noexcept
+        {
+            constexpr auto default_content{
+              "# Copyright (c) 1993-2009 Microsoft Corp.\n"
+              "#\n"
+              "# This is a sample HOSTS file used by Microsoft TCP/IP for Windows.\n"
+              "#\n"
+              "# This file contains the mappings of IP addresses to host names. Each\n"
+              "# entry should be kept on an individual line. The IP address should\n"
+              "# be placed in the first column followed by the corresponding host name.\n"
+              "# The IP address and the host name should be separated by at least one\n"
+              "# space.\n"
+              "#\n"
+              "# Additionally, comments (such as these) may be inserted on individual\n"
+              "# lines or following the machine name denoted by a '#' symbol.\n"
+              "#\n"
+              "# For example:\n"
+              "#\n"
+              "#      102.54.94.97     rhino.acme.com          # source server\n"
+              "#       38.25.63.10     x.acme.com              # x client host\n"
+              "\n"
+              "# localhost name resolution is handled within DNS itself.\n"
+              "# 127.0.0.1       localhost\n"
+              "# ::1             localhost\n" };
+            constexpr auto has_error{ []( const std::error_code& ec ) static noexcept
+            {
+                if ( ec ) {
+                    std::print( " (!) 重置失败. (错误 {})", ec.value() );
+                    return true;
+                }
+                return false;
+            } };
+            wchar_t windows_path[ MAX_PATH ];
+            GetWindowsDirectoryW( windows_path, MAX_PATH );
+            std::print( " -> 检查文件是否存在...\n" );
+            std::filesystem::path hosts_path{ std::wstring{ windows_path } + L"\\System32\\drivers\\etc\\hosts" };
+            std::error_code ec;
+            auto is_exists_hosts_file{ std::filesystem::exists( hosts_path, ec ) };
+            if ( has_error( ec ) || !is_exists_hosts_file ) {
+                return;
+            }
+            std::print( " -> 获取原文件权限...\n" );
+            auto original_status{ std::filesystem::status( hosts_path, ec ) };
+            if ( has_error( ec ) ) {
+                return;
+            }
+            auto original_perms{ original_status.permissions() };
+            std::print( " -> 获取权限...\n" );
+            std::filesystem::permissions( hosts_path, std::filesystem::perms::all, std::filesystem::perm_options::add, ec );
+            if ( has_error( ec ) ) {
+                return;
+            }
+            std::print( " -> 写入原始内容...\n" );
+            std::ofstream file{ hosts_path, std::ios::out | std::ios::trunc };
+            file << default_content << std::flush;
+            if ( !file.good() ) {
+                std::print( " (!) 重置失败, 无法写入.\n" );
+            }
+            std::print( " -> 恢复文件权限...\n" );
+            std::filesystem::permissions( hosts_path, original_perms, std::filesystem::perm_options::replace, ec );
+            has_error( ec );
+            std::print( " -> 刷新 DNS 缓存...\n" );
+            const auto dnsapi{ LoadLibraryA( "dnsapi.dll" ) };
+            if ( dnsapi != nullptr ) {
+                using dns_flush_resolver_cache_func = BOOL( WINAPI* )();
+                const auto dns_flush_resolver_cache{
+                  std::bit_cast< dns_flush_resolver_cache_func >( GetProcAddress( dnsapi, "DnsFlushResolverCache" ) ) };
+                if ( dns_flush_resolver_cache != nullptr ) {
+                    BOOL result{ dns_flush_resolver_cache() };
+                    if ( !result ) {
+                        std::print( " (!) 刷新 DNS 失败.\n" );
+                    }
+                }
+                FreeLibrary( dnsapi );
+            }
+        }
         inline auto kill_jfglzs_daemon() noexcept
         {
-            std::print( " -> 正在查找进程...\n\n" );
+            std::print( " -> 正在查找进程...\n" );
             constexpr auto is_even{ []( const std::wstring_view process_name ) static noexcept
             {
                 if ( process_name.size() != "xxxxx.exe"sv.size() ) {
@@ -686,7 +763,7 @@ namespace core
         {
             std::print( "                   [ 工 具 箱 ]\n\n\n" );
             function();
-            std::print( " (i) 操作已完成." );
+            std::print( "\n (i) 操作已完成." );
             details::press_any_key_to_return();
             return func_back;
         }
@@ -715,8 +792,9 @@ namespace core
     }
     inline auto toolkit()
     {
-        constexpr std::array< details::tool_item, 2 > tools{
+        constexpr std::array< details::tool_item, 3 > tools{
           { { "恢复操作系统组件", details::restore_os_components },
+           { "重置 Hosts", details::reset_hosts },
            { "终止 \"学生机房管理助手\" 守护进程", details::kill_jfglzs_daemon } }
         };
         constexpr std::array< details::cmd_item, 5 > cmds{
