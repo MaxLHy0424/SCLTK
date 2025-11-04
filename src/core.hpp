@@ -222,7 +222,7 @@ namespace core
             auto load_( const std::string_view line )
             {
                 key_t_ key;
-                bool value;
+                bool value{ false };
                 if ( line.ends_with( str_of_the_enabled ) ) {
                     key   = line.substr( 0, line.size() - str_of_the_enabled.size() );
                     value = true;
