@@ -671,7 +671,10 @@ namespace core
             wchar_t windows_path[ MAX_PATH ];
             GetWindowsDirectoryW( windows_path, MAX_PATH );
             std::print( " -> 检查文件是否存在...\n" );
-            std::filesystem::path hosts_path{ std::wstring{ windows_path } + L"\\System32\\drivers\\etc\\hosts" };
+            std::filesystem::path hosts_path{
+              std::pmr::wstring{ windows_path, unsynced_mem_pool }
+              + L"\\System32\\drivers\\etc\\hosts"
+            };
             std::error_code ec;
             auto is_exists_hosts_file{ std::filesystem::exists( hosts_path, ec ) };
             if ( has_error( ec ) || !is_exists_hosts_file ) {
