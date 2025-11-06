@@ -698,11 +698,11 @@ namespace core
                 return;
             }
             std::print( " -> 获取原文件权限...\n" );
-            auto original_status{ std::filesystem::status( hosts_path, ec ) };
+            const auto original_status{ std::filesystem::status( hosts_path, ec ) };
             if ( has_error( ec ) ) {
                 return;
             }
-            auto original_perms{ original_status.permissions() };
+            const auto original_perms{ original_status.permissions() };
             std::print( " -> 获取权限...\n" );
             std::filesystem::permissions( hosts_path, std::filesystem::perms::all, std::filesystem::perm_options::add, ec );
             if ( has_error( ec ) ) {
