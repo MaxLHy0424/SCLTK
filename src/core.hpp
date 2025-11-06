@@ -685,7 +685,7 @@ namespace core
                 return false;
             } };
             std::print( " -> 检查文件是否存在...\n" );
-            auto hosts_path{ []() static noexcept
+            auto hosts_path{ [] static noexcept
             {
                 std::array< wchar_t, MAX_PATH > result;
                 GetWindowsDirectoryW( result.data(), MAX_PATH );
