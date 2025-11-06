@@ -37,7 +37,7 @@ namespace cpp_utils
         if ( size_needed == 0 ) {
             return std::pmr::string{ resource };
         }
-        std::pmr::string result{ size_needed, '\0', resource };
+        std::pmr::string result{ static_cast< std::size_t >( size_needed - 1 ), '\0', resource };
         WideCharToMultiByte( charset, 0, str.data(), static_cast< int >( str.size() ), result.data(), size_needed, nullptr, nullptr );
         return result;
     }
@@ -49,7 +49,7 @@ namespace cpp_utils
         if ( str.empty() ) {
             return std::pmr::wstring{ resource };
         }
-        const int size_needed{ MultiByteToWideChar( charset, 0, str.data(), -1, nullptr, 0 ) };
+        const auto size_needed{ MultiByteToWideChar( charset, 0, str.data(), -1, nullptr, 0 ) };
         if ( size_needed <= 0 ) {
             return std::pmr::wstring{ resource };
         }
