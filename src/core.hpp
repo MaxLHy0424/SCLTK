@@ -668,13 +668,14 @@ namespace core
                 }
                 return false;
             } };
-            wchar_t windows_path[ MAX_PATH ];
-            GetWindowsDirectoryW( windows_path, MAX_PATH );
             std::print( " -> 检查文件是否存在...\n" );
-            std::filesystem::path hosts_path{
-              std::pmr::wstring{ windows_path, unsynced_mem_pool }
-              + L"\\System32\\drivers\\etc\\hosts"
-            };
+            auto hosts_path{ []() static noexcept
+            {
+                std::array< wchar_t, MAX_PATH > result;
+                GetWindowsDirectoryW( result.data(), MAX_PATH );
+                std::ranges::copy( LR"(\System32\drivers\etc\hosts)", std::ranges::find( result, L'\0' ) );
+                return std::filesystem::path{ result.data() };
+            }() };
             std::error_code ec;
             auto is_exists_hosts_file{ std::filesystem::exists( hosts_path, ec ) };
             if ( has_error( ec ) || !is_exists_hosts_file ) {
