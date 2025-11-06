@@ -58,10 +58,20 @@ namespace core
             }
             return false;
         }
+        inline constexpr auto is_whitespace_w( const wchar_t ch ) noexcept
+        {
+            switch ( ch ) {
+                case L'\t' :
+                case L'\v' :
+                case L'\f' :
+                case L' ' : return true;
+            }
+            return false;
+        }
     }
     struct rule_node final
     {
-        using item_t      = const char*;
+        using item_t      = const wchar_t*;
         using container_t = std::pmr::vector< item_t >;
         const char* shown_name{};
         container_t execs{};
@@ -69,19 +79,21 @@ namespace core
     };
     inline rule_node custom_rules;
     inline const std::array< rule_node, 4 > builtin_rules{
-      { { "学生机房管理助手", { "yz", "abcut", "jfglzs", "jfglzsn", "prozs", "przs", "uninstal1", "sct", "zmserv", "zmsrv" }, { "zmserv" } },
+      { { "学生机房管理助手",
+          { L"yz", L"abcut", L"jfglzs", L"jfglzsn", L"prozs", L"przs", L"uninstal1", L"sct", L"zmserv", L"zmsrv" },
+          { L"zmserv" } },
        { "极域电子教室",
-          { "StudentMain", "DispcapHelper", "VRCwPlayer", "InstHelpApp", "InstHelpApp64", "TDOvrSet", "GATESRV", "ProcHelper64",
-            "MasterHelper" },
-          { "STUDSRV" } },
+          { L"StudentMain", L"DispcapHelper", L"VRCwPlayer", L"InstHelpApp", L"InstHelpApp64", L"TDOvrSet", L"GATESRV",
+            L"ProcHelper64", L"MasterHelper" },
+          { L"STUDSRV" } },
        { "联想智能云教室",
-          { "vncviewer", "tvnserver32", "WfbsPnpInstall", "WFBSMon", "WFBSMlogon", "WFBSSvrLogShow", "ResetIp", "FuncForWIN64",
-            "CertMgr", "Fireware", "BCDBootCopy", "refreship", "lenovoLockScreen", "PortControl64", "DesktopCheck",
-            "DeploymentManager", "DeploymentAgent", "XYNTService" },
-          { "BSAgentSvr", "tvnserver", "WFBSMlogon" } },
+          { L"vncviewer", L"tvnserver32", L"WfbsPnpInstall", L"WFBSMon", L"WFBSMlogon", L"WFBSSvrLogShow", L"ResetIp",
+            L"FuncForWIN64", L"CertMgr", L"Fireware", L"BCDBootCopy", L"refreship", L"lenovoLockScreen", L"PortControl64",
+            L"DesktopCheck", L"DeploymentManager", L"DeploymentAgent", L"XYNTService" },
+          { L"BSAgentSvr", L"tvnserver", L"WFBSMlogon" } },
        { "红蜘蛛多媒体网络教室",
-          { "rscheck", "checkrs", "REDAgent", "PerformanceCheck", "edpaper", "Adapter", "repview", "FormatPaper" },
-          { "appcheck2", "checkapp2" } } }
+          { L"rscheck", L"checkrs", L"REDAgent", L"PerformanceCheck", L"edpaper", L"Adapter", L"repview", L"FormatPaper" },
+          { L"appcheck2", L"checkapp2" } } }
     };
     namespace details
     {
@@ -346,30 +358,34 @@ namespace core
     {
         friend details::config_node_impl;
       private:
-        static inline constexpr auto flag_exec{ "exec:"sv };
-        static inline constexpr auto flag_serv{ "serv:"sv };
-        std::pmr::vector< std::pmr::string > execs{};
-        std::pmr::vector< std::pmr::string > servs{};
+        static inline constexpr auto flag_exec{ L"exec:"sv };
+        static inline constexpr auto flag_serv{ L"serv:"sv };
+        std::pmr::vector< std::pmr::wstring > execs{};
+        std::pmr::vector< std::pmr::wstring > servs{};
         static_assert( []( auto... strings ) consteval
-        { return ( std::ranges::none_of( strings, details::is_whitespace ) && ... ); }( flag_exec, flag_serv ) );
+        { return ( std::ranges::none_of( strings, details::is_whitespace_w ) && ... ); }( flag_exec, flag_serv ) );
         auto load_( const std::string_view line )
         {
-            if ( line.size() > flag_exec.size() && line.starts_with( flag_exec ) ) {
-                execs.emplace_back( std::ranges::find_if_not( line.substr( flag_exec.size() ), details::is_whitespace ) );
+            auto w_line{ cpp_utils::to_wstring( line, charset_id ) };
+            const std::wstring_view w_line_v{ w_line };
+            if ( w_line_v.size() > flag_exec.size() && w_line_v.starts_with( flag_exec ) ) {
+                execs.emplace_back( std::ranges::find_if_not( w_line_v.substr( flag_exec.size() ), details::is_whitespace_w ) );
                 return;
             }
-            if ( line.size() > flag_serv.size() && line.starts_with( flag_serv ) ) {
-                servs.emplace_back( std::ranges::find_if_not( line.substr( flag_serv.size() ), details::is_whitespace ) );
+            if ( w_line_v.size() > flag_serv.size() && w_line_v.starts_with( flag_serv ) ) {
+                servs.emplace_back( std::ranges::find_if_not( w_line_v.substr( flag_serv.size() ), details::is_whitespace_w ) );
                 return;
             }
         }
         auto sync_( std::ofstream& out )
         {
+            auto flag_exec_ansi{ cpp_utils::to_string( flag_exec, charset_id ) };
+            auto flag_serv_ansi{ cpp_utils::to_string( flag_serv, charset_id ) };
             for ( const auto& exec : execs ) {
-                out << flag_exec << ' ' << exec.c_str() << '\n';
+                out << flag_exec_ansi << ' ' << cpp_utils::to_string( exec, charset_id ) << '\n';
             }
             for ( const auto& serv : servs ) {
-                out << flag_serv << ' ' << serv.c_str() << '\n';
+                out << flag_serv_ansi << ' ' << cpp_utils::to_string( serv, charset_id ) << '\n';
             }
         }
         auto before_load_() noexcept
@@ -381,7 +397,7 @@ namespace core
         }
         auto after_load_()
         {
-            constexpr auto to_cstr{ []( const std::pmr::string& str ) static noexcept { return str.c_str(); } };
+            constexpr auto to_cstr{ []( const std::pmr::wstring& str ) static noexcept { return str.c_str(); } };
             custom_rules.execs.append_range( execs | std::views::transform( to_cstr ) );
             custom_rules.servs.append_range( servs | std::views::transform( to_cstr ) );
         }
@@ -881,15 +897,6 @@ namespace core
             restore
         };
         inline auto executor_mode{ rule_executing::crack };
-        inline auto to_wstring_vec( const rule_node::container_t& vec )
-        {
-            std::pmr::vector< std::pmr::wstring > result{ unsynced_mem_pool };
-            result.reserve( vec.size() );
-            for ( const auto& e : vec ) {
-                result.emplace_back( cpp_utils::to_wstring( e, charset_id, unsynced_mem_pool ) );
-            }
-            return result;
-        }
         inline auto hijack_exec( const std::pmr::wstring& exec ) noexcept
         {
             constexpr const wchar_t data[]{ L"nul" };
@@ -941,8 +948,8 @@ namespace core
         }
         inline auto crack( const rule_node& rules )
         {
-            const auto execs{ to_wstring_vec( rules.execs ) };
-            const auto servs{ to_wstring_vec( rules.servs ) };
+            const auto execs{ rules.execs };
+            const auto servs{ rules.servs };
             const auto& options{ std::get< crack_restore_config >( config_nodes ) };
             const auto can_hijack_execs{ options[ "hijack_execs" ].get() };
             const auto can_set_serv_startup_types{ options[ "set_serv_startup_types" ].get() };
@@ -969,8 +976,8 @@ namespace core
         }
         inline auto restore( const rule_node& rules )
         {
-            const auto& execs{ to_wstring_vec( rules.execs ) };
-            const auto& servs{ to_wstring_vec( rules.servs ) };
+            const auto& execs{ rules.execs };
+            const auto& servs{ rules.servs };
             const auto& options{ std::get< crack_restore_config >( config_nodes ) };
             const auto can_hijack_execs{ options[ "hijack_execs" ].get() };
             const auto can_set_serv_startup_types{ options[ "set_serv_startup_types" ].get() };
