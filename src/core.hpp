@@ -236,13 +236,15 @@ namespace core
             auto load_( const std::string_view line )
             {
                 key_t_ key;
-                bool value{ false };
+                bool value;
                 if ( line.ends_with( str_of_the_enabled ) ) {
                     key   = line.substr( 0, line.size() - str_of_the_enabled.size() );
                     value = true;
                 } else if ( line.ends_with( str_of_the_disabled ) ) {
                     key   = line.substr( 0, line.size() - str_of_the_disabled.size() );
                     value = false;
+                } else {
+                    return;
                 }
                 if ( auto it{ options_.find( key ) }; it != options_.end() ) {
                     it->second.set( value );
