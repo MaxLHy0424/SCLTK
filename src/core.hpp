@@ -676,7 +676,7 @@ namespace core
               "# localhost name resolution is handled within DNS itself.\n"
               "# 127.0.0.1       localhost\n"
               "# ::1             localhost\n" };
-            constexpr auto has_error{ []( const std::error_code& ec ) static noexcept
+            constexpr auto has_error{ []( const std::error_code& ec ) static
             {
                 if ( ec ) {
                     std::print( " (!) 重置失败. (错误 {})", ec.value() );
@@ -685,7 +685,7 @@ namespace core
                 return false;
             } };
             std::print( " -> 检查文件是否存在...\n" );
-            auto hosts_path{ [] static noexcept
+            auto hosts_path{ [] static
             {
                 std::array< wchar_t, MAX_PATH > result;
                 GetWindowsDirectoryW( result.data(), MAX_PATH );
