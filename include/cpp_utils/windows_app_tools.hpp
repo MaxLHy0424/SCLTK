@@ -295,9 +295,13 @@ namespace cpp_utils
         }
         constexpr DWORD actions_count{ 3 };
         constexpr SC_ACTION non_action{ .Type{ SC_ACTION_NONE }, .Delay{ 0 } };
-        SC_ACTION actions[ actions_count ]{ non_action, non_action, non_action };
+        std::array< SC_ACTION, actions_count > actions{ non_action, non_action, non_action };
         SERVICE_FAILURE_ACTIONSW service_fail_actions{
-          .dwResetPeriod{ 0 }, .lpRebootMsg{ nullptr }, .lpCommand{ nullptr }, .cActions{ actions_count }, .lpsaActions{ actions } };
+          .dwResetPeriod{ 0 },
+          .lpRebootMsg{ nullptr },
+          .lpCommand{ nullptr },
+          .cActions{ actions_count },
+          .lpsaActions{ actions.data() } };
         if ( !ChangeServiceConfig2W( service.get(), SERVICE_CONFIG_FAILURE_ACTIONS, &service_fail_actions ) ) {
             return GetLastError();
         }

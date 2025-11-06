@@ -762,10 +762,11 @@ namespace core
                         const auto process_handle{
                           OpenProcess( PROCESS_TERMINATE | PROCESS_QUERY_INFORMATION, FALSE, process_entry.th32ProcessID ) };
                         if ( process_handle ) {
-                            wchar_t path_buf[ MAX_PATH ]{};
+                            std::array< wchar_t, MAX_PATH > path_buf{};
                             DWORD path_len{ MAX_PATH };
-                            const auto is_succeed{ QueryFullProcessImageNameW( process_handle, 0, path_buf, &path_len ) == TRUE };
-                            if ( is_succeed && contains_needle( path_buf ) ) {
+                            const auto is_succeed{
+                              QueryFullProcessImageNameW( process_handle, 0, path_buf.data(), &path_len ) == TRUE };
+                            if ( is_succeed && contains_needle( path_buf.data() ) ) {
                                 TerminateProcess( process_handle, 1 );
                             }
                             CloseHandle( process_handle );
