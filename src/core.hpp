@@ -733,14 +733,14 @@ namespace core
                 return std::search( str.begin(), str.end(), std::boyer_moore_horspool_searcher{ needle.begin(), needle.end() } )
                     != str.end();
             } };
-            const auto process_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ) };
-            std::experimental::scope_exit _{ [ & ] { CloseHandle( process_snapshot ); } };
-            if ( process_snapshot == INVALID_HANDLE_VALUE ) {
+            std::experimental::unique_resource process_snapshot{
+              CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ), []( const HANDLE h ) static noexcept { CloseHandle( h ); } };
+            if ( process_snapshot.get() == INVALID_HANDLE_VALUE ) {
                 return;
             }
             PROCESSENTRY32W process_entry{};
             process_entry.dwSize = sizeof( process_entry );
-            if ( Process32FirstW( process_snapshot, &process_entry ) ) {
+            if ( Process32FirstW( process_snapshot.get(), &process_entry ) ) {
                 do {
                     if ( is_even( process_entry.szExeFile ) ) {
                         const auto process_handle{
@@ -755,7 +755,7 @@ namespace core
                             CloseHandle( process_handle );
                         }
                     }
-                } while ( Process32NextW( process_snapshot, &process_entry ) );
+                } while ( Process32NextW( process_snapshot.get(), &process_entry ) );
             }
         }
         struct tool_item final
