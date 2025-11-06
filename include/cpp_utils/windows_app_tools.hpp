@@ -25,6 +25,22 @@
 namespace cpp_utils
 {
 #if defined( _WIN32 ) || defined( _WIN64 )
+    inline auto to_string(
+      const std::wstring_view str, const UINT charset,
+      std::pmr::memory_resource* const resource = std::pmr::get_default_resource() ) noexcept
+    {
+        if ( str.empty() ) {
+            return std::pmr::string{ resource };
+        }
+        const auto size_needed{
+          WideCharToMultiByte( charset, 0, str.data(), static_cast< int >( str.size() ), nullptr, 0, nullptr, nullptr ) };
+        if ( size_needed == 0 ) {
+            return std::pmr::string{ resource };
+        }
+        std::pmr::string result{ size_needed, '\0', resource };
+        WideCharToMultiByte( charset, 0, str.data(), static_cast< int >( str.size() ), result.data(), size_needed, nullptr, nullptr );
+        return result;
+    }
     inline auto to_wstring(
       const std::string_view str, const UINT charset,
       std::pmr::memory_resource* const resource = std::pmr::get_default_resource() ) noexcept
