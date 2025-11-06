@@ -244,8 +244,8 @@ namespace core
                     key   = line.substr( 0, line.size() - str_of_the_disabled.size() );
                     value = false;
                 }
-                if ( options_.contains( key ) ) {
-                    options_.at( key ).set( value );
+                if ( auto it{ options_.find( key ) }; it != options_.end() ) {
+                    it->second.set( value );
                 }
             }
             static auto reload_( const std::string_view ) noexcept
