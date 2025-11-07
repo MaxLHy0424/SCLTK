@@ -743,34 +743,38 @@ namespace core
             if ( title_length == 0 ) {
                 return TRUE;
             }
-            const auto found_window{ std::bit_cast< HWND* >( param ) };
+            auto& found_window{ *std::bit_cast< std::pmr::vector< HWND >* >( param ) };
             std::pmr::wstring title_buffer{ static_cast< std::size_t >( title_length ), L'\0', unsynced_mem_pool };
             GetWindowTextW( window, title_buffer.data(), title_length + 1 );
-            if ( title_buffer == L"bianhao" ) {
-                *found_window = window;
+            if ( title_buffer == L"bianhao"sv ) {
+                found_window.emplace_back( window );
                 return TRUE;
             }
             return TRUE;
         }
         inline auto kill_jfglzs_daemon() noexcept
         {
-            std::print( " -> 正在执行...\n" );
-            HWND found_window{ nullptr };
-            if ( !EnumWindows( enum_window_proc, std::bit_cast< LPARAM >( &found_window ) ) ) {
-                if ( found_window != nullptr ) {
-                    DWORD process_id;
-                    GetWindowThreadProcessId( found_window, &process_id );
-                    if ( process_id == 0 ) {
-                        return;
+            std::print( " -> 正在查找窗口...\n" );
+            std::pmr::vector< HWND > found_windows{ unsynced_mem_pool };
+            found_windows.reserve( 1 );
+            if ( EnumWindows( enum_window_proc, std::bit_cast< LPARAM >( &found_windows ) ) ) {
+                for ( const auto found_window : found_windows ) {
+                    if ( found_window != nullptr ) {
+                        DWORD process_id;
+                        GetWindowThreadProcessId( found_window, &process_id );
+                        if ( GetLastError() != ERROR_SUCCESS ) {
+                            continue;
+                        }
+                        const auto proc{ OpenProcess( PROCESS_TERMINATE, FALSE, process_id ) };
+                        if ( proc == nullptr ) {
+                            continue;
+                        }
+                        if ( !TerminateProcess( proc, 0 ) ) {
+                            CloseHandle( proc );
+                            continue;
+                        }
+                        CloseHandle( proc );
                     }
-                    const auto proc{ OpenProcess( PROCESS_TERMINATE, FALSE, process_id ) };
-                    if ( proc == INVALID_HANDLE_VALUE ) {
-                        return;
-                    }
-                    if ( !TerminateProcess( proc, 0 ) ) {
-                        return;
-                    }
-                    CloseHandle( proc );
                 }
             }
         }
