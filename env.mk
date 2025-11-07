@@ -1,2 +1,2 @@
-msys2_path = C:/software/msys2
-pwsh_path  = "C:/Program Files/PowerShell/7-preview/pwsh.exe"
+msys2_path = D:\MSYS2
+pwsh_path  = D:\pwsh\7\pwsh.exe
