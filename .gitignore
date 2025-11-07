@@ -4,3 +4,5 @@
 /.vs
 /env.mk
 /src/info.hpp
+/.vs
+/CppProperties.json

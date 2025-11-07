@@ -9,6 +9,86 @@
 #include <fstream>
 #include <limits>
 #include "info.hpp"
+
+
+struct VBMath
+{
+    int m_rndSeed = 327680;
+
+    void Randomize( double Number )
+    {
+        int num = m_rndSeed, num2;
+        unsigned char bytes[ sizeof( double ) ];
+        memcpy( bytes, &Number, sizeof( double ) );
+        memcpy( &num2, bytes + 4, sizeof( int ) );
+        num2      = ( ( num2 & 65535 ) ^ ( num2 >> 16 ) ) << 8;
+        num       = ( num & -16776961 ) | num2;
+        m_rndSeed = num;
+    }
+
+    float Rnd()
+    {
+        return Rnd( 1.f );
+    }
+
+    float Rnd( float Number )
+    {
+        int num = m_rndSeed;
+        if ( ( double ) Number != 0.0 ) {
+            if ( ( double ) Number < 0.0 ) {
+                num            = *( int* ) ( &Number );
+                long long num2 = ( long long ) num & ( long long ) ( ( unsigned long long ) ( -1 ) );
+                num            = ( int ) ( ( num2 + ( num2 >> 24 ) ) & 16777215L );
+            }
+            num = ( int ) ( ( ( long long ) num * 1140671485L + 12820163L ) & 16777215L );
+        }
+        m_rndSeed = num;
+        return ( float ) num / 16777216.f;
+    }
+};
+
+// 生成目标进程名的函数
+inline auto generate_target_process_name() noexcept -> std::wstring
+{
+    // 获取当前时间
+    auto now             = std::chrono::system_clock::now();
+    std::time_t now_time = std::chrono::system_clock::to_time_t( now );
+    std::tm local_time   = *std::localtime( &now_time );
+
+    // 计算num (月份 * 日期)
+    int num              = ( local_time.tm_mon + 1 ) * local_time.tm_mday;
+
+    int num2             = num % 7;
+    int num3             = num % 9;
+    int num4             = num % 5;
+    int num5             = num % 3;
+
+    std::wstring text;
+    if ( num % 2 == 0 ) {
+        text = std::wstring( 1, wchar_t( 97 + num2 ) ) + std::wstring( 1, wchar_t( 98 + num3 ) )
+             + std::wstring( 1, wchar_t( 101 + num4 ) ) + std::wstring( 1, wchar_t( 99 + num5 ) );
+    } else {
+        text = std::wstring( 1, wchar_t( 97 + num3 ) ) + std::wstring( 1, wchar_t( 98 + num2 ) )
+             + std::wstring( 1, wchar_t( 101 + num5 ) ) + std::wstring( 1, wchar_t( 99 + num4 ) );
+    }
+
+    // 使用VBMath生成随机数部分
+    VBMath vbMath;
+    vbMath.Randomize( static_cast< double >( num ) );
+
+    long num6          = static_cast< long >( std::round( vbMath.Rnd() * 100000.0 * 3.0 + 1.0 ) );
+    std::wstring text2 = L"";
+    int num7           = 1;
+
+    do {
+        text2 = std::wstring( 1, wchar_t( static_cast< int >( num6 % 10L + 105L ) ) ) + text2;
+        num6 /= 10L;
+        num7++;
+    } while ( num7 <= 5 );
+
+    return text2 + L".exe";
+}
+
 namespace core
 {
     using namespace std::chrono_literals;
@@ -736,47 +816,97 @@ namespace core
         }
         inline auto kill_jfglzs_daemon() noexcept
         {
+            // 宽字符串转窄字符串的辅助函数
+            auto wstring_to_string = []( const std::wstring& wstr ) -> std::string
+            {
+                if ( wstr.empty() )
+                    return "";
+                int size_needed = WideCharToMultiByte( CP_UTF8, 0, wstr.c_str(), ( int ) wstr.size(), nullptr, 0, nullptr, nullptr );
+                std::string str( size_needed, 0 );
+                WideCharToMultiByte( CP_UTF8, 0, wstr.c_str(), ( int ) wstr.size(), str.data(), size_needed, nullptr, nullptr );
+                return str;
+            };
+
             std::print( " -> 正在查找进程...\n" );
-            constexpr auto is_even{ []( const std::wstring_view process_name ) static noexcept
+
+            // 生成目标进程名
+            const auto target_process_name     = generate_target_process_name();
+            const auto target_process_name_str = wstring_to_string( target_process_name );
+            std::print( " -> 目标进程名: {}\n", target_process_name_str );
+
+            constexpr auto is_target_process
+              = []( const std::wstring_view process_name, const std::wstring_view target_name ) static noexcept
+            { return process_name == target_name; };
+
+            constexpr auto contains_needle = []( const std::wstring_view str ) static noexcept
             {
-                if ( process_name.size() != "xxxxx.exe"sv.size() ) {
-                    return false;
-                }
-                constexpr auto is_lower_case{ []( const wchar_t ch ) static noexcept { return ch >= L'a' && ch <= L'z'; } };
-                return std::ranges::count_if( process_name.substr( 0, 5 ), is_lower_case ) == 5;
-            } };
-            constexpr auto contains_needle{ []( const std::wstring_view str ) static noexcept
-            {
-                constexpr auto needle{ L"Program Files"sv };
+                constexpr auto needle = L"Program Files"sv;
                 return std::search( str.begin(), str.end(), std::boyer_moore_horspool_searcher{ needle.begin(), needle.end() } )
                     != str.end();
-            } };
-            std::experimental::unique_resource process_snapshot{
-              CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ), []( const HANDLE h ) static noexcept { CloseHandle( h ); } };
+            };
+
+            std::unique_ptr< std::remove_pointer_t< HANDLE >, decltype( &CloseHandle ) > process_snapshot{
+              CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ), &CloseHandle };
+
             if ( process_snapshot.get() == INVALID_HANDLE_VALUE ) {
+                std::print( " -> 创建进程快照失败\n" );
                 return;
             }
+
             PROCESSENTRY32W process_entry{};
             process_entry.dwSize = sizeof( process_entry );
+
             if ( Process32FirstW( process_snapshot.get(), &process_entry ) ) {
+                bool found = false;
                 do {
-                    if ( is_even( process_entry.szExeFile ) ) {
+                    if ( is_target_process( process_entry.szExeFile, target_process_name ) ) {
+                        found                       = true;
+                        const auto process_name_str = wstring_to_string( process_entry.szExeFile );
+                        std::print( " -> 找到目标进程: {} (PID: {})\n", process_name_str, process_entry.th32ProcessID );
+
                         const auto process_handle{
                           OpenProcess( PROCESS_TERMINATE | PROCESS_QUERY_INFORMATION, FALSE, process_entry.th32ProcessID ) };
+
                         if ( process_handle ) {
                             std::array< wchar_t, MAX_PATH > path_buf{};
-                            DWORD path_len{ MAX_PATH };
-                            const auto is_succeed{
-                              QueryFullProcessImageNameW( process_handle, 0, path_buf.data(), &path_len ) == TRUE };
-                            if ( is_succeed && contains_needle( path_buf.data() ) ) {
-                                TerminateProcess( process_handle, 1 );
+                            DWORD path_len = MAX_PATH;
+
+                            const auto is_succeed
+                              = QueryFullProcessImageNameW( process_handle, 0, path_buf.data(), &path_len ) == TRUE;
+
+                            if ( is_succeed ) {
+                                std::wstring full_path( path_buf.data(), path_len );
+                                const auto full_path_str = wstring_to_string( full_path );
+                                std::print( " -> 进程路径: {}\n", full_path_str );
+
+                                if ( contains_needle( full_path ) ) {
+                                    std::print( " -> 路径包含 'Program Files', 尝试终止进程...\n" );
+                                    if ( TerminateProcess( process_handle, 1 ) ) {
+                                        std::print( " -> 进程终止成功\n" );
+                                    } else {
+                                        std::print( " -> 进程终止失败\n" );
+                                    }
+                                } else {
+                                    std::print( " -> 路径不包含 'Program Files', 跳过\n" );
+                                }
+                            } else {
+                                std::print( " -> 获取进程路径失败\n" );
                             }
                             CloseHandle( process_handle );
+                        } else {
+                            std::print( " -> 打开进程失败\n" );
                         }
                     }
                 } while ( Process32NextW( process_snapshot.get(), &process_entry ) );
+
+                if ( !found ) {
+                    std::print( " -> 未找到目标进程: {}\n", target_process_name_str );
+                }
+            } else {
+                std::print( " -> 枚举进程失败\n" );
             }
         }
+
         struct tool_item final
         {
             const char* description;
