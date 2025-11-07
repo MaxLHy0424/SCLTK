@@ -161,6 +161,6 @@ namespace cpp_utils
         thread_manager() noexcept                                  = default;
         thread_manager( const thread_manager& )                    = delete;
         thread_manager( thread_manager&& ) noexcept                = default;
-        ~thread_manager()                                          = default;
+        ~thread_manager() noexcept                                 = default;
     };
 }
