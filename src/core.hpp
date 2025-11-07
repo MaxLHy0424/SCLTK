@@ -757,24 +757,23 @@ namespace core
             std::print( " -> 正在查找窗口...\n" );
             std::pmr::vector< HWND > found_windows{ unsynced_mem_pool };
             found_windows.reserve( 1 );
-            if ( EnumWindows( enum_window_proc, std::bit_cast< LPARAM >( &found_windows ) ) ) {
-                for ( const auto found_window : found_windows ) {
-                    if ( found_window != nullptr ) {
-                        DWORD process_id;
-                        GetWindowThreadProcessId( found_window, &process_id );
-                        if ( GetLastError() != ERROR_SUCCESS ) {
-                            continue;
-                        }
-                        const auto proc{ OpenProcess( PROCESS_TERMINATE, FALSE, process_id ) };
-                        if ( proc == nullptr ) {
-                            continue;
-                        }
-                        if ( !TerminateProcess( proc, 0 ) ) {
-                            CloseHandle( proc );
-                            continue;
-                        }
-                        CloseHandle( proc );
+            EnumWindows( enum_window_proc, std::bit_cast< LPARAM >( &found_windows ) );
+            for ( const auto found_window : found_windows ) {
+                if ( found_window != nullptr ) {
+                    DWORD process_id;
+                    GetWindowThreadProcessId( found_window, &process_id );
+                    if ( GetLastError() != ERROR_SUCCESS ) {
+                        continue;
                     }
+                    const auto proc{ OpenProcess( PROCESS_TERMINATE, FALSE, process_id ) };
+                    if ( proc == nullptr ) {
+                        continue;
+                    }
+                    if ( !TerminateProcess( proc, 0 ) ) {
+                        CloseHandle( proc );
+                        continue;
+                    }
+                    CloseHandle( proc );
                 }
             }
         }
