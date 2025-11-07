@@ -914,7 +914,7 @@ namespace core
         }
         inline auto kill_exec( const std::pmr::wstring& exec ) noexcept
         {
-            cpp_utils::kill_process_by_name( std::format( L"{}.exe", exec ) );
+            cpp_utils::terminate_process_by_name( std::format( L"{}.exe", exec ) );
         }
         inline auto stop_serv( const std::pmr::wstring& serv ) noexcept
         {
