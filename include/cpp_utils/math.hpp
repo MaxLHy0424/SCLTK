@@ -179,7 +179,7 @@ namespace cpp_utils
         {
             src.data_ = {};
         }
-        ~sat_num() = default;
+        ~sat_num() noexcept = default;
     };
     template < typename T >
         requires std::integral< T > || std::floating_point< T >

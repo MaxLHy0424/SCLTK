@@ -100,15 +100,15 @@ namespace core
         struct initing_ui_only
         {
           protected:
-            initing_ui_only()  = default;
-            ~initing_ui_only() = default;
+            initing_ui_only() noexcept  = default;
+            ~initing_ui_only() noexcept = default;
         };
         template < typename T >
         struct is_not_initing_ui_only final
         {
             static inline constexpr auto value{ !std::is_base_of_v< initing_ui_only, T > };
-            is_not_initing_ui_only()  = delete;
-            ~is_not_initing_ui_only() = delete;
+            is_not_initing_ui_only() noexcept  = delete;
+            ~is_not_initing_ui_only() noexcept = delete;
         };
         template < typename T >
         inline constexpr auto is_not_initing_ui_only_v{ is_not_initing_ui_only< T >::value };
@@ -208,22 +208,22 @@ namespace core
                     src.value_      = {};
                     return *this;
                 }
-                item_() = default;
-                item_( const char* const description )
+                item_() noexcept = default;
+                item_( const char* const description ) noexcept
                   : description{ description }
                 { }
-                item_( const item_& src )
+                item_( const item_& src ) noexcept
                   : value_{ src.get() }
                   , description{ src.description }
                 { }
-                item_( item_&& src )
+                item_( item_&& src ) noexcept
                   : value_{ src.get() }
                   , description{ src.description }
                 {
                     src.description = {};
                     src.value_      = {};
                 }
-                ~item_() = default;
+                ~item_() noexcept = default;
             };
             using key_t_    = std::string_view;
             using mapped_t_ = item_;
@@ -303,9 +303,9 @@ namespace core
               , shown_name_{ shown_name }
               , options_{ std::move( options ) }
             { }
-            basic_options_config_node( const basic_options_config_node< Atomic >& ) = delete;
-            basic_options_config_node( basic_options_config_node< Atomic >&& )      = delete;
-            ~basic_options_config_node()                                            = default;
+            basic_options_config_node( const basic_options_config_node< Atomic >& )     = delete;
+            basic_options_config_node( basic_options_config_node< Atomic >&& ) noexcept = delete;
+            ~basic_options_config_node() noexcept                                       = default;
         };
     }
     class options_title_ui final
@@ -332,7 +332,7 @@ namespace core
               { { "hijack_execs", "劫持可执行文件" }, { "set_serv_startup_types", "设置服务启动类型" } }
         }
         { }
-        ~crack_restore_config() = default;
+        ~crack_restore_config() noexcept = default;
     };
     class window_config final : public details::basic_options_config_node< true >
     {
@@ -346,7 +346,7 @@ namespace core
                 { "translucent", "半透明 (非实时)" } }
         }
         { }
-        ~window_config() = default;
+        ~window_config() noexcept = default;
     };
     class performance_config final : public details::basic_options_config_node< false >
     {
@@ -354,7 +354,7 @@ namespace core
         performance_config()
           : basic_options_config_node{ "performance", "性能", { { "no_hot_reload", "禁用非实时热重载 (下次启动时生效)" } } }
         { }
-        ~performance_config() = default;
+        ~performance_config() noexcept = default;
     };
     class custom_rules_config final : public details::config_node_impl
     {
@@ -450,8 +450,8 @@ namespace core
               std::is_base_of_v< config_node_impl, T > && std::is_default_constructible_v< T > };
           public:
             static inline constexpr auto value{ is_valid_type && has_key_traits };
-            is_valid_config_node()  = delete;
-            ~is_valid_config_node() = delete;
+            is_valid_config_node()           = delete;
+            ~is_valid_config_node() noexcept = delete;
         };
     }
     using config_node_types
@@ -914,7 +914,7 @@ namespace core
         }
         inline auto kill_exec( const std::pmr::wstring& exec ) noexcept
         {
-            cpp_utils::kill_process_by_name( std::format( L"{}.exe", exec ) );
+            cpp_utils::terminate_process_by_name( std::format( L"{}.exe", exec ) );
         }
         inline auto stop_serv( const std::pmr::wstring& serv ) noexcept
         {

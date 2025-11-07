@@ -2,3 +2,5 @@
 /env
 /src/info.hpp
 /.vs
+/env.mk
+/src/info.hpp

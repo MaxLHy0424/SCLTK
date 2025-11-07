@@ -143,7 +143,7 @@ namespace cpp_utils
             return result;
         }
     }
-    inline auto kill_process_by_name( const std::wstring_view process_name ) noexcept
+    inline auto terminate_process_by_name( const std::wstring_view process_name ) noexcept
     {
         if ( process_name.empty() ) {
             return static_cast< DWORD >( ERROR_INVALID_PARAMETER );
