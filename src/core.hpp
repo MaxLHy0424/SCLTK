@@ -734,7 +734,7 @@ namespace core
                 FreeLibrary( dnsapi );
             }
         }
-        inline auto CALLBACK enum_window_proc( HWND window, LPARAM param )
+        inline auto CALLBACK enum_window_proc( HWND window, LPARAM param ) noexcept
         {
             if ( window == nullptr ) {
                 return TRUE;
