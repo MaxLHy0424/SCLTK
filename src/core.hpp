@@ -36,11 +36,6 @@ namespace core
     {
         return func_exit;
     }
-    inline auto relaunch() noexcept
-    {
-        cpp_utils::relaunch_as_admin( EXIT_SUCCESS );
-        return func_exit;
-    }
     namespace details
     {
         inline auto press_any_key_to_return() noexcept
