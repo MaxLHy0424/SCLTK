@@ -194,13 +194,13 @@ namespace core
                 {
                     return get();
                 }
-                auto& operator=( const item_& src )
+                auto& operator=( const item_& src ) noexcept
                 {
                     description = src.description;
                     value_      = src.get();
                     return *this;
                 }
-                auto& operator=( item_&& src )
+                auto& operator=( item_&& src ) noexcept
                 {
                     description     = src.description;
                     value_          = src.get();
@@ -296,8 +296,8 @@ namespace core
             {
                 return options_.at( key );
             }
-            auto operator=( const basic_options_config_node< Atomic >& ) -> basic_options_config_node< Atomic >& = delete;
-            auto operator=( basic_options_config_node< Atomic >&& ) -> basic_options_config_node< Atomic >&      = delete;
+            auto operator=( const basic_options_config_node< Atomic >& ) -> basic_options_config_node< Atomic >&     = delete;
+            auto operator=( basic_options_config_node< Atomic >&& ) noexcept -> basic_options_config_node< Atomic >& = delete;
             basic_options_config_node( const char* const raw_name, const char* const shown_name, map_t_ options )
               : config_node_impl{ raw_name }
               , shown_name_{ shown_name }
