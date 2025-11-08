@@ -156,11 +156,11 @@ namespace cpp_utils
             }
             return *this;
         }
-        auto operator=( const thread_manager& ) -> thread_manager& = delete;
-        auto operator=( thread_manager&& ) -> thread_manager&      = default;
-        thread_manager() noexcept                                  = default;
-        thread_manager( const thread_manager& )                    = delete;
-        thread_manager( thread_manager&& ) noexcept                = default;
-        ~thread_manager() noexcept                                 = default;
+        auto operator=( const thread_manager& ) -> thread_manager&     = delete;
+        auto operator=( thread_manager&& ) noexcept -> thread_manager& = default;
+        thread_manager() noexcept                                      = default;
+        thread_manager( const thread_manager& )                        = delete;
+        thread_manager( thread_manager&& ) noexcept                    = default;
+        ~thread_manager() noexcept                                     = default;
     };
 }

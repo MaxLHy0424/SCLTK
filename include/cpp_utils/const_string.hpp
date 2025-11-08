@@ -83,8 +83,8 @@ namespace cpp_utils
         {
             return std::basic_string_view< T >{ c_str(), size() };
         }
-        consteval auto operator=( const basic_const_string< T, N >& ) -> basic_const_string< T, N >& = default;
-        auto operator=( basic_const_string< T, N >&& ) -> basic_const_string< T, N >&                = delete;
+        consteval auto operator=( const basic_const_string< T, N >& ) noexcept -> basic_const_string< T, N >& = default;
+        auto operator=( basic_const_string< T, N >&& ) noexcept -> basic_const_string< T, N >&                = delete;
         consteval basic_const_string( const T ( &str )[ N + 1 ] ) noexcept
         {
             std::ranges::copy( str, storage_.data() );
