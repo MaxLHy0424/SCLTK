@@ -224,7 +224,7 @@ msys2_path = /path/to/msys2
 pwsh_path  = /path/to/pwsh
 ```
 
-其中 `/path/to/msys2` 为 msys2 的安装路径（以 `/` 作为路径分隔符，若路径中存在空格，需要先将路径用英文半角引号引起来，如 `"C:/dev tools/msys2"`，下同），`/path/to/pwsh` 为 PowerShell（仅支持 PowerShell 7 及以上版本）的安装路径（可通过命令 `where.exe powershell.exe` 或 `where.exe pwsh.exe` 查询）。
+其中 `/path/to/msys2` 为 msys2 的安装路径（以 `/` 作为路径分隔符，若路径中存在空格，需要先将路径用英文半角引号引起来，如 `"C:/dev tools/msys2"`，下同），`/path/to/pwsh` 为 PowerShell（仅支持 PowerShell 7 及以上版本）的安装路径（可通过命令 `where.exe pwsh.exe` 查询）。
 
 接下来，在仓库本地目录下打开终端，执行：
 
