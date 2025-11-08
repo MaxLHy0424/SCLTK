@@ -16,13 +16,12 @@ auto main() -> int
     std::print( " -> 准备就绪..." );
     core::load_config();
     core::create_threads();
-    ui.reserve( 10 + core::builtin_rules.size() )
+    ui.reserve( 8 + core::builtin_rules.size() )
       .add_back( "                    [ 主  页 ]\n\n"sv )
       .add_back( " < 退出\n"sv, core::quit, cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_intensity )
       .add_back( " > 关于 "sv, core::info )
       .add_back( " > 配置 "sv, core::config_ui )
-      .add_back( " > 工具箱 "sv, core::toolkit )
-      .add_back( ""sv )
+      .add_back( " > 工具箱\n"sv, core::toolkit )
       .add_back(
         core::make_executor_mode_ui_text(), core::flip_executor_mode,
         cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_green )
