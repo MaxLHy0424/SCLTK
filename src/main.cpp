@@ -31,5 +31,4 @@ auto main() -> int
         ui.add_back( std::format( " > {} ", rule.shown_name ), std::bind_back( core::execute_rules, std::cref( rule ) ) );
     }
     ui.show();
-    return EXIT_SUCCESS;
 }
