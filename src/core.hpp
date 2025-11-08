@@ -752,7 +752,7 @@ namespace core
             }
             return TRUE;
         }
-        inline auto kill_jfglzs_daemon() noexcept
+        inline auto terminate_jfglzs_daemon() noexcept
         {
             std::print( " -> 正在查找窗口...\n" );
             std::pmr::vector< HWND > found_windows{ unsynced_mem_pool };
@@ -818,7 +818,7 @@ namespace core
         constexpr std::array< details::tool_item, 3 > tools{
           { { "恢复操作系统组件", details::restore_os_components },
            { "重置 Hosts", details::reset_hosts },
-           { "终止 \"学生机房管理助手\" 守护进程", details::kill_jfglzs_daemon } }
+           { "终止 \"学生机房管理助手\" 守护进程", details::terminate_jfglzs_daemon } }
         };
         constexpr std::array< details::cmd_item, 5 > cmds{
           { { "重启资源管理器", R"(taskkill.exe /f /im explorer.exe && timeout.exe /t 3 /nobreak && start explorer.exe)" },
