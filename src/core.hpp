@@ -587,7 +587,7 @@ namespace core
         cpp_utils::console_ui ui{ con, unsynced_mem_pool };
         ui.reserve( 5 + config_node_types::size + config_node_types::size / 2 )
           .add_back( "                    [ 配  置 ]\n\n"sv )
-          .add_back( " < 返回 \n"sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
+          .add_back( " < 返回\n"sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
           .add_back( " > 查看解析规则 "sv, details::show_config_parsing_rules )
           .add_back( " > 同步配置 "sv, details::sync_config )
           .add_back( " > 打开配置文件 "sv, details::open_config_file );

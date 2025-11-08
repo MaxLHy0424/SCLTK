@@ -19,7 +19,7 @@ auto main() -> int
     ui.reserve( 10 + core::builtin_rules.size() )
       .add_back( "                    [ 主  页 ]\n\n"sv )
       .add_back( " < 退出 "sv, core::quit, cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_intensity )
-      .add_back( " < 重启 \n"sv, core::relaunch, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
+      .add_back( " < 重启\n"sv, core::relaunch, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
       .add_back( " > 关于 "sv, core::info )
       .add_back( " > 配置 "sv, core::config_ui )
       .add_back( " > 工具箱 "sv, core::toolkit )
