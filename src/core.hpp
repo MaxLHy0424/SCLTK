@@ -283,13 +283,9 @@ namespace core
                 ui.add_back( std::format( " > {} ", shown_name_ ), std::bind_back( make_option_editor_ui_, std::ref( options_ ) ) );
             }
           public:
-            const auto& operator[]( const key_t_ key ) const noexcept
+            auto&& operator[]( this auto&& self, const key_t_ key ) noexcept
             {
-                return options_.at( key );
-            }
-            auto& operator[]( const key_t_ key ) noexcept
-            {
-                return options_.at( key );
+                return self.options_.at( key );
             }
             auto operator=( const basic_options_config_node< Atomic >& ) -> basic_options_config_node< Atomic >&     = delete;
             auto operator=( basic_options_config_node< Atomic >&& ) noexcept -> basic_options_config_node< Atomic >& = delete;
