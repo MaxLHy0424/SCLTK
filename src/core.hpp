@@ -24,7 +24,7 @@ namespace core
     inline const auto unsynced_mem_pool{ [] static noexcept
     {
         static std::pmr::unsynchronized_pool_resource pool{
-          std::pmr::pool_options{ .max_blocks_per_chunk{ 1024 }, .largest_required_pool_block{ 2048 } },
+          std::pmr::pool_options{ .max_blocks_per_chunk{ 1024 }, .largest_required_pool_block{ 4096 } },
           std::pmr::new_delete_resource()
         };
         std::pmr::set_default_resource( &pool );
