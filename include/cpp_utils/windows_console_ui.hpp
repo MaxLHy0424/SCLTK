@@ -73,9 +73,9 @@ namespace cpp_utils
                 return position.Y == current_position.Y && position.X <= current_position.X
                     && current_position.X < position.X + static_cast< SHORT >( text_size );
             }
-            auto operator=( const line_node_& ) noexcept -> line_node_& = default;
-            auto operator=( line_node_&& ) noexcept -> line_node_&      = default;
-            line_node_() noexcept                                       = default;
+            auto operator=( const line_node_& ) -> line_node_&     = delete;
+            auto operator=( line_node_&& ) noexcept -> line_node_& = default;
+            line_node_() noexcept                                  = default;
             line_node_( text_t& text, function_t& func, const WORD default_attrs, const WORD intensity_attrs ) noexcept
               : text{ std::move( text ) }
               , func{ std::move( func ) }
