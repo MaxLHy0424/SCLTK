@@ -900,40 +900,6 @@ namespace core
             restore
         };
         inline auto executor_mode{ rule_executing::crack };
-        inline auto hijack_exec( const std::pmr::wstring& exec ) noexcept
-        {
-            constexpr const wchar_t data[]{ L"nul" };
-            cpp_utils::create_registry_key(
-              cpp_utils::registry_flag::hkey_local_machine,
-              std::format( LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe)", exec ),
-              L"Debugger", cpp_utils::registry_flag::string_type, std::bit_cast< const BYTE* >( +data ), sizeof( data ) );
-        }
-        inline auto disable_serv( const std::pmr::wstring& serv ) noexcept
-        {
-            cpp_utils::set_service_status( serv, cpp_utils::service_flag::disabled_start );
-        }
-        inline auto kill_exec( const std::pmr::wstring& exec ) noexcept
-        {
-            cpp_utils::terminate_process_by_name( std::format( L"{}.exe", exec ) );
-        }
-        inline auto stop_serv( const std::pmr::wstring& serv ) noexcept
-        {
-            cpp_utils::stop_service_with_dependencies( serv, unsynced_mem_pool );
-        }
-        inline auto undo_hijack_exec( const std::pmr::wstring& exec ) noexcept
-        {
-            cpp_utils::delete_registry_tree(
-              cpp_utils::registry_flag::hkey_local_machine,
-              std::format( LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe)", exec ) );
-        }
-        inline auto enable_serv( const std::pmr::wstring& serv ) noexcept
-        {
-            cpp_utils::set_service_status( serv, cpp_utils::service_flag::auto_start );
-        }
-        inline auto start_serv( const std::pmr::wstring& serv ) noexcept
-        {
-            cpp_utils::start_service_with_dependencies( serv, unsynced_mem_pool );
-        }
         inline auto get_executing_count( const rule_node& rules ) noexcept
         {
             const auto& options{ std::get< crack_restore_config >( config_nodes ) };
@@ -959,22 +925,26 @@ namespace core
             if ( can_hijack_execs ) {
                 std::print( " - 劫持文件.\n" );
                 for ( const auto& exec : execs ) {
-                    hijack_exec( exec );
+                    constexpr const wchar_t data[]{ L"nul" };
+                    cpp_utils::create_registry_key(
+                      cpp_utils::registry_flag::hkey_local_machine,
+                      std::format( LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe)", exec ),
+                      L"Debugger", cpp_utils::registry_flag::string_type, std::bit_cast< const BYTE* >( +data ), sizeof( data ) );
                 }
             }
             if ( can_set_serv_startup_types ) {
                 std::print( " - 禁用服务.\n" );
                 for ( const auto& serv : servs ) {
-                    disable_serv( serv );
+                    cpp_utils::set_service_status( serv, cpp_utils::service_flag::disabled_start );
                 }
             }
             std::print( " - 停止服务.\n" );
             for ( const auto& serv : servs ) {
-                stop_serv( serv );
+                cpp_utils::stop_service_with_dependencies( serv, unsynced_mem_pool );
             }
             std::print( " - 终止进程.\n" );
             for ( const auto& exec : execs ) {
-                kill_exec( exec );
+                cpp_utils::terminate_process_by_name( std::format( L"{}.exe", exec ) );
             }
         }
         inline auto restore( const rule_node& rules )
@@ -987,18 +957,20 @@ namespace core
             if ( can_hijack_execs ) {
                 std::print( " - 撤销劫持.\n" );
                 for ( const auto& exec : execs ) {
-                    undo_hijack_exec( exec );
+                    cpp_utils::delete_registry_tree(
+                      cpp_utils::registry_flag::hkey_local_machine,
+                      std::format( LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe)", exec ) );
                 }
             }
             if ( can_set_serv_startup_types ) {
                 std::print( " - 启用服务.\n" );
                 for ( const auto& serv : servs ) {
-                    enable_serv( serv );
+                    cpp_utils::set_service_status( serv, cpp_utils::service_flag::auto_start );
                 }
             }
             std::print( " - 启动服务.\n" );
             for ( const auto& serv : servs ) {
-                start_serv( serv );
+                cpp_utils::start_service_with_dependencies( serv, unsynced_mem_pool );
             }
         }
     }
