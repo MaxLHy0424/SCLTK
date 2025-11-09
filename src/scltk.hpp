@@ -9,7 +9,7 @@
 #include <fstream>
 #include <limits>
 #include "info.hpp"
-namespace core
+namespace scltk
 {
     using namespace std::chrono_literals;
     using namespace std::string_view_literals;
