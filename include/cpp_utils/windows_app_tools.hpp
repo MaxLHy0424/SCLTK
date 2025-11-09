@@ -286,11 +286,11 @@ namespace cpp_utils
             }
         } ) >;
         scm_handle scm{ OpenSCManagerW( nullptr, nullptr, SC_MANAGER_CONNECT ) };
-        if ( !scm ) {
+        if ( scm.get() == nullptr ) {
             return GetLastError();
         }
         scm_handle service{ OpenServiceW( scm.get(), service_name.data(), SERVICE_CHANGE_CONFIG ) };
-        if ( !service ) {
+        if ( service.get() == nullptr ) {
             return GetLastError();
         }
         constexpr DWORD actions_count{ 3 };
