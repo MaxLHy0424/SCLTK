@@ -156,6 +156,18 @@ namespace scltk
                     self.init_ui_( parent_ui );
                 }
             }
+            consteval auto request_ui_count( this auto&& self ) noexcept
+            {
+                using child_t = std::decay_t< decltype( self ) >;
+                if constexpr ( requires( child_t obj ) {
+                                   { decltype( obj.request_ui_count_() )::value } -> std::same_as< std::size_t >;
+                               } )
+                {
+                    return self.request_ui_count_();
+                } else {
+                    return std::integral_constant< std::size_t, 0uz >{};
+                }
+            }
         };
         template < bool Atomic >
         class basic_options_config_node : public config_node_impl
@@ -282,6 +294,10 @@ namespace scltk
             {
                 ui.add_back( std::format( " > {} ", shown_name_ ), std::bind_back( make_option_editor_ui_, std::ref( options_ ) ) );
             }
+            static consteval auto request_ui_count_() noexcept
+            {
+                return std::integral_constant< std::size_t, 1uz >{};
+            }
           public:
             auto&& operator[]( this auto&& self, const key_t_ key ) noexcept
             {
@@ -308,6 +324,10 @@ namespace scltk
         static auto init_ui_( cpp_utils::console_ui& ui )
         {
             ui.add_back( "\n[ 选项 ]\n"sv );
+        }
+        static consteval auto request_ui_count_() noexcept
+        {
+            return std::integral_constant< std::size_t, 1uz >{};
         }
       public:
         options_title_ui() noexcept  = default;
@@ -423,6 +443,10 @@ namespace scltk
         static auto init_ui_( cpp_utils::console_ui& ui )
         {
             ui.add_back( "\n[ 自定义规则 ]\n"sv ).add_back( " > 查看帮助信息 "sv, show_help_info_ );
+        }
+        static consteval auto request_ui_count_() noexcept
+        {
+            return std::integral_constant< std::size_t, 2uz >{};
         }
       public:
         custom_rules_config() noexcept
@@ -576,8 +600,12 @@ namespace scltk
     inline auto config_ui()
     {
         cpp_utils::console_ui ui{ con, unsynced_mem_pool };
-        ui.reserve( 5 + config_node_types::size + config_node_types::size / 2 )
-          .add_back( "                    [ 配  置 ]\n\n"sv )
+        std::apply( [ & ]( auto&... nodes ) noexcept
+        {
+            constexpr auto reserved_size{ 5 + ( decltype( nodes.request_ui_count() )::value + ... ) };
+            ui.reserve( reserved_size );
+        }, config_nodes );
+        ui.add_back( "                    [ 配  置 ]\n\n"sv )
           .add_back( " < 返回\n"sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
           .add_back( " > 查看解析规则 "sv, details::show_config_parsing_rules )
           .add_back( " > 同步配置 "sv, details::sync_config )
