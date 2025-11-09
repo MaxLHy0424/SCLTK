@@ -1,4 +1,4 @@
-$is_insider_build = $true
+$is_insider_build = $false
 $software_full_name = "Student Computer Lab Toolkit"
 $software_short_name = "SCLTK"
 $license = "MIT License"
