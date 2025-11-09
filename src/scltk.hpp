@@ -92,21 +92,21 @@ namespace scltk
     };
     namespace details
     {
-        struct unparsable
+        struct unparsable_config_node
         {
           protected:
-            unparsable() noexcept  = default;
-            ~unparsable() noexcept = default;
+            unparsable_config_node() noexcept  = default;
+            ~unparsable_config_node() noexcept = default;
         };
         template < typename T >
-        struct is_parsable final
+        struct is_parsable_config_node final
         {
-            static inline constexpr auto value{ !std::is_base_of_v< unparsable, T > };
-            is_parsable() noexcept  = delete;
-            ~is_parsable() noexcept = delete;
+            static inline constexpr auto value{ !std::is_base_of_v< unparsable_config_node, T > };
+            is_parsable_config_node() noexcept  = delete;
+            ~is_parsable_config_node() noexcept = delete;
         };
         template < typename T >
-        inline constexpr auto is_parsable_v{ is_parsable< T >::value };
+        inline constexpr auto is_parsable_config_node_v{ is_parsable_config_node< T >::value };
         class config_node_impl
         {
           public:
@@ -114,14 +114,14 @@ namespace scltk
             auto load( this auto&& self, const std::string_view line )
             {
                 using child_t = std::decay_t< decltype( self ) >;
-                if constexpr ( is_parsable_v< child_t > ) {
+                if constexpr ( is_parsable_config_node_v< child_t > ) {
                     self.load_( line );
                 }
             }
             auto reload( this auto&& self, const std::string_view line )
             {
                 using child_t = std::decay_t< decltype( self ) >;
-                if constexpr ( is_parsable_v< child_t > && requires( child_t obj ) { obj.reload_( line ); } ) {
+                if constexpr ( is_parsable_config_node_v< child_t > && requires( child_t obj ) { obj.reload_( line ); } ) {
                     self.reload_( line );
                 } else {
                     self.load( line );
@@ -130,7 +130,7 @@ namespace scltk
             auto sync( this auto&& self, std::ofstream& out )
             {
                 using child_t = std::decay_t< decltype( self ) >;
-                if constexpr ( is_parsable_v< child_t > ) {
+                if constexpr ( is_parsable_config_node_v< child_t > ) {
                     out << std::format( "[{}]\n", self.raw_name );
                     self.sync_( out );
                 }
@@ -138,14 +138,14 @@ namespace scltk
             auto before_load( this auto&& self )
             {
                 using child_t = std::decay_t< decltype( self ) >;
-                if constexpr ( is_parsable_v< child_t > && requires( child_t obj ) { obj.before_load_(); } ) {
+                if constexpr ( is_parsable_config_node_v< child_t > && requires( child_t obj ) { obj.before_load_(); } ) {
                     self.before_load_();
                 }
             }
             auto after_load( this auto&& self )
             {
                 using child_t = std::decay_t< decltype( self ) >;
-                if constexpr ( is_parsable_v< child_t > && requires( child_t obj ) { obj.after_load_(); } ) {
+                if constexpr ( is_parsable_config_node_v< child_t > && requires( child_t obj ) { obj.after_load_(); } ) {
                     self.after_load_();
                 }
             }
@@ -301,7 +301,7 @@ namespace scltk
     }
     class options_title_ui final
       : public details::config_node_impl
-      , private details::unparsable
+      , private details::unparsable_config_node
     {
         friend details::config_node_impl;
       private:
@@ -471,7 +471,7 @@ namespace scltk
         }
         std::apply( []< typename... Ts >( Ts&... config_node ) static { ( config_node.before_load(), ... ); }, config_nodes );
         std::pmr::string line;
-        using parsable_config_node_types = config_node_types::filter< details::is_parsable >;
+        using parsable_config_node_types = config_node_types::filter< details::is_parsable_config_node >;
         using config_node_recorder
           = parsable_config_node_types::transform< std::add_pointer >::add_front< std::monostate >::apply< std::variant >;
         config_node_recorder current_config_node;
