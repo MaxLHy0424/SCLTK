@@ -359,8 +359,8 @@ namespace scltk
         { return ( std::ranges::none_of( strings, details::is_whitespace_w ) && ... ); }( flag_exec, flag_serv ) );
         auto load_( const std::string_view unconverted_line )
         {
-            const auto w_line{ cpp_utils::to_wstring( unconverted_line, charset_id ) };
-            const std::wstring_view line{ w_line };
+            const auto converted_line{ cpp_utils::to_wstring( unconverted_line, charset_id ) };
+            const std::wstring_view line{ converted_line };
             if ( line.size() > flag_exec.size() && line.starts_with( flag_exec ) ) {
                 execs.emplace_back( std::ranges::find_if_not( line.substr( flag_exec.size() ), details::is_whitespace_w ) );
                 return;
