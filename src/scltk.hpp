@@ -357,16 +357,16 @@ namespace scltk
         std::pmr::vector< std::pmr::wstring > servs{};
         static_assert( []( auto... strings ) consteval
         { return ( std::ranges::none_of( strings, details::is_whitespace_w ) && ... ); }( flag_exec, flag_serv ) );
-        auto load_( const std::string_view line )
+        auto load_( const std::string_view unconverted_line )
         {
-            const auto w_line{ cpp_utils::to_wstring( line, charset_id ) };
-            const std::wstring_view w_line_v{ w_line };
-            if ( w_line_v.size() > flag_exec.size() && w_line_v.starts_with( flag_exec ) ) {
-                execs.emplace_back( std::ranges::find_if_not( w_line_v.substr( flag_exec.size() ), details::is_whitespace_w ) );
+            const auto w_line{ cpp_utils::to_wstring( unconverted_line, charset_id ) };
+            const std::wstring_view line{ w_line };
+            if ( line.size() > flag_exec.size() && line.starts_with( flag_exec ) ) {
+                execs.emplace_back( std::ranges::find_if_not( line.substr( flag_exec.size() ), details::is_whitespace_w ) );
                 return;
             }
-            if ( w_line_v.size() > flag_serv.size() && w_line_v.starts_with( flag_serv ) ) {
-                servs.emplace_back( std::ranges::find_if_not( w_line_v.substr( flag_serv.size() ), details::is_whitespace_w ) );
+            if ( line.size() > flag_serv.size() && line.starts_with( flag_serv ) ) {
+                servs.emplace_back( std::ranges::find_if_not( line.substr( flag_serv.size() ), details::is_whitespace_w ) );
                 return;
             }
         }
