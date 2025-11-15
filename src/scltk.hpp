@@ -43,7 +43,7 @@ namespace scltk
             std::print( "\n\n 按任意键返回..." );
             con.press_any_key_to_continue();
         }
-        template < typename CharT = char >
+        template < cpp_utils::character CharT = char >
         inline constexpr auto is_whitespace( const CharT ch ) noexcept
         {
             switch ( ch ) {
