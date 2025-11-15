@@ -505,19 +505,16 @@ namespace scltk
                 std::apply( [ & ]( auto&... config_node ) noexcept
                 {
                     const auto current_raw_name{ details::get_config_node_raw_name_by_tag( parsed_line ) };
-                    bool is_found{ false };
                     ( [ & ]< typename T >( T& current_node ) noexcept
                     {
                         if constexpr ( parsable_config_node_types::contains< T > ) {
-                            if ( is_found ) {
-                                return;
-                            }
                             if ( current_raw_name == current_node.raw_name ) {
                                 current_config_node = std::addressof( current_node );
-                                is_found            = true;
+                                return true;
                             }
                         }
-                    }( config_node ), ... );
+                        return false;
+                    }( config_node ) || ... );
                 }, config_nodes );
                 continue;
             }
