@@ -805,7 +805,7 @@ namespace scltk
             std::print( "                   [ 工 具 箱 ]\n\n\n" );
             function();
             std::print( "\n (i) 操作已完成." );
-            details::press_any_key_to_return();
+            press_any_key_to_return();
             return func_back;
         }
         struct cmd_item final
@@ -827,7 +827,7 @@ namespace scltk
             std::print( "{}", before.c_str() );
             std::system( command );
             std::print( "{}", after.c_str() );
-            details::press_any_key_to_return();
+            press_any_key_to_return();
             return func_back;
         }
     }
@@ -923,11 +923,11 @@ namespace scltk
             const auto& options{ std::get< crack_restore_config >( config_nodes ) };
             const auto& execs{ rules.execs };
             const auto& servs{ rules.servs };
-            switch ( details::executor_mode ) {
-                case details::rule_executing::crack :
+            switch ( executor_mode ) {
+                case rule_executing::crack :
                     return execs.size() * ( options[ "hijack_execs" ] ? 2 : 1 )
                          + servs.size() * ( options[ "set_serv_startup_types" ] ? 2 : 1 );
-                case details::rule_executing::restore :
+                case rule_executing::restore :
                     return ( options[ "hijack_execs" ] ? execs.size() : 0 )
                          + servs.size() * ( options[ "set_serv_startup_types" ] ? 2 : 1 );
                 default : std::unreachable();
