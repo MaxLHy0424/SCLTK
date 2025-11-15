@@ -43,23 +43,14 @@ namespace scltk
             std::print( "\n\n 按任意键返回..." );
             con.press_any_key_to_continue();
         }
-        inline constexpr auto is_whitespace( const char ch ) noexcept
+        template < typename CharT = char >
+        inline constexpr auto is_whitespace( const CharT ch ) noexcept
         {
             switch ( ch ) {
-                case '\t' :
-                case '\v' :
-                case '\f' :
-                case ' ' : return true;
-            }
-            return false;
-        }
-        inline constexpr auto is_whitespace_w( const wchar_t ch ) noexcept
-        {
-            switch ( ch ) {
-                case L'\t' :
-                case L'\v' :
-                case L'\f' :
-                case L' ' : return true;
+                case static_cast< CharT >( '\t' ) :
+                case static_cast< CharT >( '\v' ) :
+                case static_cast< CharT >( '\f' ) :
+                case static_cast< CharT >( ' ' ) : return true;
             }
             return false;
         }
@@ -376,17 +367,17 @@ namespace scltk
         std::pmr::vector< std::pmr::wstring > execs{};
         std::pmr::vector< std::pmr::wstring > servs{};
         static_assert( []( auto... strings ) consteval
-        { return ( std::ranges::none_of( strings, details::is_whitespace_w ) && ... ); }( flag_exec, flag_serv ) );
+        { return ( std::ranges::none_of( strings, details::is_whitespace< wchar_t > ) && ... ); }( flag_exec, flag_serv ) );
         auto load_( const std::string_view unconverted_line )
         {
             const auto converted_line{ cpp_utils::to_wstring( unconverted_line, charset_id ) };
             const std::wstring_view line{ converted_line };
             if ( line.size() > flag_exec.size() && line.starts_with( flag_exec ) ) {
-                execs.emplace_back( std::ranges::find_if_not( line.substr( flag_exec.size() ), details::is_whitespace_w ) );
+                execs.emplace_back( std::ranges::find_if_not( line.substr( flag_exec.size() ), details::is_whitespace< wchar_t > ) );
                 return;
             }
             if ( line.size() > flag_serv.size() && line.starts_with( flag_serv ) ) {
-                servs.emplace_back( std::ranges::find_if_not( line.substr( flag_serv.size() ), details::is_whitespace_w ) );
+                servs.emplace_back( std::ranges::find_if_not( line.substr( flag_serv.size() ), details::is_whitespace< wchar_t > ) );
                 return;
             }
         }
@@ -479,8 +470,8 @@ namespace scltk
         inline auto get_config_node_raw_name_by_tag( std::string_view str ) noexcept
         {
             str = str.substr( 1, str.size() - 2 );
-            const auto head{ std::ranges::find_if_not( str, is_whitespace ) };
-            const auto tail{ std::ranges::find_if_not( str | std::views::reverse, is_whitespace ).base() };
+            const auto head{ std::ranges::find_if_not( str, is_whitespace< char > ) };
+            const auto tail{ std::ranges::find_if_not( str | std::views::reverse, is_whitespace< char > ).base() };
             if ( head >= tail ) {
                 return std::string_view{};
             }
@@ -500,8 +491,8 @@ namespace scltk
           = parsable_config_node_types::transform< std::add_pointer >::add_front< std::monostate >::apply< std::variant >;
         config_node_recorder current_config_node;
         while ( std::getline( config_file, line ) ) {
-            const auto parsed_begin{ std::ranges::find_if_not( line, details::is_whitespace ) };
-            const auto parsed_end{ std::ranges::find_if_not( line | std::views::reverse, details::is_whitespace ).base() };
+            const auto parsed_begin{ std::ranges::find_if_not( line, details::is_whitespace< char > ) };
+            const auto parsed_end{ std::ranges::find_if_not( line | std::views::reverse, details::is_whitespace< char > ).base() };
             if ( parsed_begin >= parsed_end ) {
                 continue;
             }
