@@ -744,7 +744,7 @@ namespace scltk
                 const auto dns_flush_resolver_cache{
                   std::bit_cast< BOOL( WINAPI* )() >( GetProcAddress( dnsapi, "DnsFlushResolverCache" ) ) };
                 if ( dns_flush_resolver_cache != nullptr ) {
-                    BOOL result{ dns_flush_resolver_cache() };
+                    const auto result{ dns_flush_resolver_cache() };
                     if ( !result ) {
                         std::print( " (!) 刷新 DNS 失败.\n" );
                     }
