@@ -806,7 +806,7 @@ namespace scltk
               cpp_utils::const_string{
                 "                   [ 工 具 箱 ]\n\n\n"
                 " -> 正在执行操作系统命令...\n\n" },
-              dividing_line, end_line ) };
+              dividing_line, end_line, end_line ) };
             constexpr auto after{
               cpp_utils::concat_const_string( end_line, dividing_line, cpp_utils::const_string{ "\n\n (i) 操作已完成." } ) };
             std::print( "{}", before.c_str() );
