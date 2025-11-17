@@ -207,8 +207,8 @@ namespace scltk
                     return *this;
                 }
                 item_() noexcept = default;
-                item_( const char* const description ) noexcept
-                  : description{ description }
+                item_( const char* const item_description ) noexcept
+                  : description{ item_description }
                 { }
                 item_( const item_& src ) noexcept
                   : value_{ src.get() }
@@ -296,8 +296,8 @@ namespace scltk
             }
             auto operator=( const basic_options_config_node< Atomic >& ) -> basic_options_config_node< Atomic >&     = delete;
             auto operator=( basic_options_config_node< Atomic >&& ) noexcept -> basic_options_config_node< Atomic >& = delete;
-            basic_options_config_node( const char* const raw_name, const char* const shown_name, map_t_ options )
-              : config_node_impl{ raw_name }
+            basic_options_config_node( const char* const node_raw_name, const char* const shown_name, map_t_ options )
+              : config_node_impl{ node_raw_name }
               , shown_name_{ shown_name }
               , options_{ std::move( options ) }
             { }
