@@ -27,9 +27,9 @@ args_base        = -pipe -finput-charset=$(input_charset) -fexec-charset=$(outpu
                    $(args_library) $(args_extra)
 args_debug       = -g3 -DDEBUG $(args_base) $(args_opt_debug) -fstack-protector-strong
 args_release     = -DNDEBUG -static $(args_base) $(args_opt_release) $(args_lto)
-args_ld_common   = -Wl,--gc-sections,--strip-all,--as-needed,--no-insert-timestamp
-args_ld_i686     = $(args_ld_common) -Wl,--pic-executable,--dynamicbase,--nxcompat
-args_ld_x86_64   = $(args_ld_common) -Wl,--pic-executable,--dynamicbase,--nxcompat
+args_ld_base     = -Wl,--gc-sections,--strip-all,--as-needed,--no-insert-timestamp,--pic-executable,--dynamicbase,--nxcompat
+args_ld_i686     = $(args_ld_base)
+args_ld_x86_64   = $(args_ld_base)
 .PHONY: toolchain all build debug release pack clean make_info
 dependencies_testing = src/* include*
 all: toolchain build pack
