@@ -34,10 +34,10 @@ namespace cpp_utils
             auto operator=( const func_args& ) noexcept -> func_args& = default;
             auto operator=( func_args&& ) noexcept -> func_args&      = default;
             func_args(
-              console_ui& parent_ui, const std::size_t node_index,
+              console_ui& parent_ui_ref, const std::size_t node_index_in_parent_ui,
               const MOUSE_EVENT_RECORD event = { {}, mouse::button_left, {}, {} } ) noexcept
-              : parent_ui{ parent_ui }
-              , node_index{ node_index }
+              : parent_ui{ parent_ui_ref }
+              , node_index{ node_index_in_parent_ui }
               , button_state{ event.dwButtonState }
               , ctrl_state{ event.dwControlKeyState }
               , event_flag{ event.dwEventFlags }
@@ -76,12 +76,12 @@ namespace cpp_utils
             auto operator=( const line_node_& ) -> line_node_&     = delete;
             auto operator=( line_node_&& ) noexcept -> line_node_& = default;
             line_node_() noexcept                                  = default;
-            line_node_( text_t& text, function_t& func, const WORD default_attrs, const WORD intensity_attrs ) noexcept
-              : text{ std::move( text ) }
-              , func{ std::move( func ) }
-              , default_attrs{ default_attrs }
-              , intensity_attrs{ intensity_attrs }
-              , last_attrs{ default_attrs }
+            line_node_( text_t& text_ref, function_t& func_ref, const WORD default_text_attrs, const WORD intensity_text_attrs ) noexcept
+              : text{ std::move( text_ref ) }
+              , func{ std::move( func_ref ) }
+              , default_attrs{ default_text_attrs }
+              , intensity_attrs{ intensity_text_attrs }
+              , last_attrs{ default_text_attrs }
             { }
             line_node_( const line_node_& )     = default;
             line_node_( line_node_&& ) noexcept = default;
@@ -247,7 +247,9 @@ namespace cpp_utils
         {
             lines_.emplace(
               lines_.cbegin(), text, func, default_attrs,
-              func.visit< bool >( []( const auto& func ) static { return func != nullptr; } ) ? intensity_attrs : default_attrs );
+              func.visit< bool >( []( const auto& variant_func ) static { return variant_func != nullptr; } )
+                ? intensity_attrs
+                : default_attrs );
             return *this;
         }
         auto& add_back(
@@ -257,7 +259,9 @@ namespace cpp_utils
         {
             lines_.emplace_back(
               text, func, default_attrs,
-              func.visit< bool >( []( const auto& func ) static { return func != nullptr; } ) ? intensity_attrs : default_attrs );
+              func.visit< bool >( []( const auto& variant_func ) static { return variant_func != nullptr; } )
+                ? intensity_attrs
+                : default_attrs );
             return *this;
         }
         auto& insert(
@@ -267,7 +271,9 @@ namespace cpp_utils
         {
             lines_.emplace(
               lines_.cbegin() + index, text, func, default_attrs,
-              func.visit< bool >( []( const auto& func ) static { return func != nullptr; } ) ? intensity_attrs : default_attrs );
+              func.visit< bool >( []( const auto& variant_func ) static { return variant_func != nullptr; } )
+                ? intensity_attrs
+                : default_attrs );
             return *this;
         }
         auto& set_text( const std::size_t index, text_t text )
@@ -360,9 +366,9 @@ namespace cpp_utils
         }
         auto operator=( const console_ui& ) noexcept -> console_ui& = default;
         auto operator=( console_ui&& ) noexcept -> console_ui&      = default;
-        console_ui( const console& con, std::pmr::memory_resource* const resource = std::pmr::get_default_resource() ) noexcept
+        console_ui( const console& console_info, std::pmr::memory_resource* const resource = std::pmr::get_default_resource() ) noexcept
           : lines_{ resource }
-          , con{ con }
+          , con{ console_info }
         { }
         console_ui( console&&, std::pmr::memory_resource* const = std::pmr::get_default_resource() ) noexcept = delete;
         console_ui( const console_ui& ) noexcept                                                              = default;
