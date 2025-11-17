@@ -693,6 +693,7 @@ namespace scltk
                 }
                 return false;
             } };
+            std::error_code ec;
             std::print( " -> 检查文件是否存在...\n" );
             const auto hosts_path{ [] static
             {
@@ -701,17 +702,15 @@ namespace scltk
                 std::ranges::copy( LR"(\System32\drivers\etc\hosts)", std::ranges::find( result, L'\0' ) );
                 return std::filesystem::path{ result.data() };
             }() };
-            std::error_code ec;
-            auto is_exists_hosts_file{ std::filesystem::exists( hosts_path, ec ) };
+            const auto is_exists_hosts_file{ std::filesystem::exists( hosts_path, ec ) };
             if ( has_error( ec ) || !is_exists_hosts_file ) {
                 return;
             }
             std::print( " -> 获取原文件权限...\n" );
-            const auto original_status{ std::filesystem::status( hosts_path, ec ) };
+            const auto original_perms{ std::filesystem::status( hosts_path, ec ).permissions() };
             if ( has_error( ec ) ) {
                 return;
             }
-            const auto original_perms{ original_status.permissions() };
             std::print( " -> 获取权限...\n" );
             std::filesystem::permissions( hosts_path, std::filesystem::perms::all, std::filesystem::perm_options::add, ec );
             if ( has_error( ec ) ) {
