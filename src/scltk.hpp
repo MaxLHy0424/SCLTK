@@ -748,12 +748,10 @@ namespace scltk
             if ( title_length == 0 ) {
                 return TRUE;
             }
-            auto& found_window{ *std::bit_cast< std::pmr::vector< HWND >* >( param ) };
             std::pmr::wstring title_buffer{ static_cast< std::size_t >( title_length ), L'\0', unsynced_mem_pool };
             GetWindowTextW( window, title_buffer.data(), title_length + 1 );
             if ( title_buffer == L"bianhao"sv ) {
-                found_window.emplace_back( window );
-                return TRUE;
+                std::bit_cast< std::pmr::vector< HWND >* >( param )->emplace_back( window );
             }
             return TRUE;
         }
