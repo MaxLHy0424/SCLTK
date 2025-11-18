@@ -7,7 +7,7 @@ args_defines     = -D{ANSI,_ANSI,_WIN32_WINNT=0x0601}
 args_std         = gnu++26
 args_warning     = -W{all,extra,effc++,pedantic,cast-align,logical-op,redundant-decls,shadow,strict-null-sentinel}
 args_opt_debug   = -Og -fno-omit-frame-pointer
-args_opt_release = -Ofast -flto=auto -fuse-linker-plugin -s \
+args_opt_release = -Ofast -flto=auto -fuse-linker-plugin -fwhole-program -s \
                    -fvisibility=hidden -fvisibility-inlines-hidden \
                    -fno-rtti -fno-exceptions -fno-unwind-tables \
                    -fno-asynchronous-unwind-tables -fno-common \
@@ -15,8 +15,6 @@ args_opt_release = -Ofast -flto=auto -fuse-linker-plugin -s \
                    -fno-semantic-interposition -fdevirtualize-at-ltrans \
                    -fipa-pta -fipa-ra -fipa-icf \
                    -fomit-frame-pointer -fno-plt
-args_lto         = -flto=auto -fuse-linker-plugin -fdevirtualize-at-ltrans \
-                   -fwhole-program -fno-semantic-interposition
 args_include     = -I./include
 args_library     =
 args_extra       =
@@ -26,7 +24,7 @@ args_base        = -pipe -finput-charset=$(input_charset) -fexec-charset=$(outpu
                    -std=$(args_std) $(args_warning) $(args_defines) $(args_include) \
                    $(args_library) $(args_extra)
 args_debug       = -g3 -DDEBUG $(args_base) $(args_opt_debug) -fstack-protector-strong
-args_release     = -DNDEBUG -static $(args_base) $(args_opt_release) $(args_lto)
+args_release     = -DNDEBUG -static $(args_base) $(args_opt_release)
 args_ld_base     = -Wl,--gc-sections,--strip-all,--as-needed,--no-insert-timestamp,--pic-executable,--dynamicbase,--nxcompat
 args_ld_i686     = $(args_ld_base)
 args_ld_x86_64   = $(args_ld_base)
