@@ -582,19 +582,19 @@ namespace scltk
     }
     inline auto config_ui()
     {
-        cpp_utils::console_ui ui{ con, unsynced_mem_pool };
-        std::apply( [ & ]( auto&... nodes ) noexcept
+        std::apply( []( auto&... nodes ) static
         {
+            cpp_utils::console_ui ui{ con, unsynced_mem_pool };
             constexpr auto reserved_size{ 5 + ( decltype( nodes.request_ui_count() )::value + ... ) };
-            ui.reserve( reserved_size );
+            ui.reserve( reserved_size )
+              .add_back( "                    [ 配  置 ]\n\n"sv )
+              .add_back( " < 返回\n"sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
+              .add_back( " > 查看解析规则 "sv, details::show_config_parsing_rules )
+              .add_back( " > 同步配置 "sv, details::sync_config )
+              .add_back( " > 打开配置文件 "sv, details::open_config_file );
+            ( nodes.init_ui( ui ), ... );
+            ui.show();
         }, config_nodes );
-        ui.add_back( "                    [ 配  置 ]\n\n"sv )
-          .add_back( " < 返回\n"sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
-          .add_back( " > 查看解析规则 "sv, details::show_config_parsing_rules )
-          .add_back( " > 同步配置 "sv, details::sync_config )
-          .add_back( " > 打开配置文件 "sv, details::open_config_file );
-        std::apply( [ & ]( auto&... config_node ) { ( config_node.init_ui( ui ), ... ); }, config_nodes );
-        ui.show();
         return func_back;
     }
     inline auto info()
