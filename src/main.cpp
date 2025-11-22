@@ -5,7 +5,7 @@ auto main() -> int
     scltk::con.ignore_exit_signal( true )
       .fix_size( true )
       .set_charset( scltk::charset_id )
-      .set_title( INFO_SHORT_NAME )
+      .set_title( L"" INFO_SHORT_NAME )
       .set_size( scltk::console_width, scltk::console_height, scltk::unsynced_mem_pool )
       .set_translucency( 255 )
       .enable_window_maximize_ctrl( false )
