@@ -683,7 +683,7 @@ namespace scltk
             constexpr auto has_error{ []( const std::error_code& ec ) static
             {
                 if ( ec ) {
-                    std::print( " (!) 重置失败. (错误 {})", ec.value() );
+                    std::print( " (!) 重置失败." );
                     return true;
                 }
                 return false;
