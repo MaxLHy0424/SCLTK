@@ -619,7 +619,7 @@ namespace scltk
             char name[]{ "cmd.exe" };
             startup.cb = sizeof( startup );
             if ( CreateProcessA( nullptr, name, nullptr, nullptr, FALSE, 0, nullptr, nullptr, &startup, &proc ) ) {
-                con.set_title( INFO_SHORT_NAME " - 命令提示符" );
+                con.set_title( L"" INFO_SHORT_NAME " - 命令提示符" );
                 con.set_size( 120, 30, unsynced_mem_pool );
                 con.fix_size( false );
                 con.enable_window_maximize_ctrl( true );
@@ -629,7 +629,7 @@ namespace scltk
                 CloseHandle( proc.hProcess );
                 CloseHandle( proc.hThread );
                 con.set_charset( charset_id );
-                con.set_title( INFO_SHORT_NAME );
+                con.set_title( L"" INFO_SHORT_NAME );
                 con.set_size( console_width, console_height, unsynced_mem_pool );
                 con.fix_size( true );
                 con.enable_window_maximize_ctrl( false );
