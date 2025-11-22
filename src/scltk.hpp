@@ -780,7 +780,7 @@ namespace scltk
             const char* description;
             void ( *function )() noexcept;
         };
-        inline auto execute_tools( void ( *function )() noexcept ) noexcept
+        inline auto execute_tool( void ( *function )() noexcept ) noexcept
         {
             std::print( "                   [ 工 具 箱 ]\n\n\n" );
             function();
@@ -832,7 +832,7 @@ namespace scltk
           .add_back( "\n[ 高级工具 ]\n"sv )
           .add_back( " > 启动命令提示符 "sv, details::launch_cmd );
         for ( const auto [ description, function ] : tools ) {
-            ui.add_back( std::format( " > {} ", description ), std::bind_back( details::execute_tools, function ) );
+            ui.add_back( std::format( " > {} ", description ), std::bind_back( details::execute_tool, function ) );
         }
         ui.add_back( "\n[ 快捷命令 ]\n"sv );
         for ( const auto [ description, command ] : cmds ) {
