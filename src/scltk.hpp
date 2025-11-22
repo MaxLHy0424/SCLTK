@@ -734,7 +734,7 @@ namespace scltk
                 FreeLibrary( dnsapi );
             }
         }
-        inline auto CALLBACK enum_window_proc( HWND window, LPARAM param ) noexcept
+        inline auto CALLBACK enum_window_proc( const HWND window, const LPARAM param ) noexcept
         {
             if ( window == nullptr ) {
                 return TRUE;
