@@ -28,7 +28,7 @@ namespace scltk
           std::pmr::new_delete_resource()
         };
         std::pmr::set_default_resource( &pool );
-        return &pool;
+        return static_cast< std::pmr::memory_resource* >( &pool );
     }() };
     static_assert( default_thread_sleep_time.count() != 0 );
     using ui_func_args = cpp_utils::console_ui::func_args;
