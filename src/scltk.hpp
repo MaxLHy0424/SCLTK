@@ -679,7 +679,7 @@ namespace scltk
               "\n"
               "# localhost name resolution is handled within DNS itself.\n"
               "# 127.0.0.1       localhost\n"
-              "# ::1             localhost\n" };
+              "# ::1             localhost\n"sv };
             constexpr auto has_error{ []( const std::error_code& ec ) static
             {
                 if ( ec ) {
@@ -713,7 +713,7 @@ namespace scltk
             }
             std::print( " -> 写入原始内容...\n" );
             std::ofstream file{ hosts_path.string(), std::ios::out | std::ios::trunc | std::ios::binary };
-            file.write( default_content, std::char_traits< char >::length( default_content ) ).flush();
+            file.write( default_content.data(), default_content.size() ).flush();
             if ( !file.good() ) {
                 std::print( " (!) 重置失败, 无法写入.\n" );
             }
