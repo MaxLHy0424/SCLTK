@@ -898,21 +898,6 @@ namespace scltk
             restore
         };
         inline auto executor_mode{ rule_executing::crack };
-        inline auto get_executing_count( const rule_node& rules ) noexcept
-        {
-            const auto& options{ std::get< crack_restore_config >( config_nodes ) };
-            const auto& execs{ rules.execs };
-            const auto& servs{ rules.servs };
-            switch ( executor_mode ) {
-                case rule_executing::crack :
-                    return execs.size() * ( options[ "hijack_execs" ] ? 2 : 1 )
-                         + servs.size() * ( options[ "set_serv_startup_types" ] ? 2 : 1 );
-                case rule_executing::restore :
-                    return ( options[ "hijack_execs" ] ? execs.size() : 0 )
-                         + servs.size() * ( options[ "set_serv_startup_types" ] ? 2 : 1 );
-                default : std::unreachable();
-            }
-        }
         inline auto crack( const rule_node& rules )
         {
             const auto execs{ rules.execs };
@@ -978,11 +963,6 @@ namespace scltk
             case details::rule_executing::crack : std::print( "                    [ 破  解 ]\n\n\n" ); break;
             case details::rule_executing::restore : std::print( "                    [ 恢  复 ]\n\n\n" ); break;
             default : std::unreachable();
-        }
-        if ( details::get_executing_count( rules ) == 0 ) {
-            std::print( " (i) 无可用操作." );
-            details::press_any_key_to_return();
-            return func_back;
         }
         std::print( " -> 正在执行...\n\n" );
         switch ( details::executor_mode ) {
