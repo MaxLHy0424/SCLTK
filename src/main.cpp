@@ -2,7 +2,7 @@
 auto main() -> int
 {
     using namespace std::string_view_literals;
-    scltk::con.ignore_exit_signal( true )
+    scltk::console.ignore_exit_signal( true )
       .fix_size( true )
       .set_charset( scltk::charset_id )
       .set_title( L"" INFO_SHORT_NAME )
@@ -11,7 +11,7 @@ auto main() -> int
       .enable_window_maximize_ctrl( false )
       .enable_window_minimize_ctrl( false )
       .enable_window_close_ctrl( false );
-    cpp_utils::console_ui ui{ scltk::con, scltk::unsynced_mem_pool };
+    cpp_utils::console_ui ui{ scltk::console, scltk::unsynced_mem_pool };
     ui.set_constraints( true, true );
     std::print( " -> 准备就绪..." );
     scltk::load_config();
