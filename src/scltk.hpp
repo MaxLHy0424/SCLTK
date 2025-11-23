@@ -795,18 +795,13 @@ namespace scltk
         };
         inline auto execute_cmd( const char* const command ) noexcept
         {
-            constexpr cpp_utils::const_string end_line{ "\n" };
             constexpr auto dividing_line{ cpp_utils::make_repeated_const_string< '-', console_width >() };
-            constexpr auto before{ cpp_utils::concat_const_string(
-              cpp_utils::const_string{
-                "                   [ 工 具 箱 ]\n\n\n"
-                " -> 正在执行操作系统命令...\n\n" },
-              dividing_line, end_line, end_line ) };
-            constexpr auto after{
-              cpp_utils::concat_const_string( end_line, dividing_line, cpp_utils::const_string{ "\n\n (i) 操作已完成." } ) };
-            std::print( "{}", before.c_str() );
+            std::print(
+              "                   [ 工 具 箱 ]\n\n\n"
+              " -> 正在执行操作系统命令...\n\n{}\n\n",
+              dividing_line.c_str() );
             std::system( command );
-            std::print( "{}", after.c_str() );
+            std::print( "\n{}\n\n (i) 操作已完成.", dividing_line.c_str() );
             press_any_key_to_return();
             return func_back;
         }
