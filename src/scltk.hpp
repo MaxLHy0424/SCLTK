@@ -59,7 +59,7 @@ namespace scltk
     {
         using item_t      = const wchar_t*;
         using container_t = std::pmr::vector< item_t >;
-        const char* shown_name{};
+        const char* display_name{};
         container_t execs{};
         container_t servs{};
     };
@@ -227,7 +227,7 @@ namespace scltk
             using mapped_t_ = item_;
             using map_t_
               = std::flat_map< key_t_, mapped_t_, std::less< key_t_ >, std::pmr::vector< key_t_ >, std::pmr::vector< mapped_t_ > >;
-            const char* shown_name_;
+            const char* display_name_;
             map_t_ options_;
             static constexpr auto str_of_the_enabled{ ": enabled"sv };
             static constexpr auto str_of_the_disabled{ ": disabled"sv };
@@ -283,7 +283,8 @@ namespace scltk
             }
             auto init_ui_( cpp_utils::console_ui& ui )
             {
-                ui.add_back( std::format( " > {} ", shown_name_ ), std::bind_back( make_option_editor_ui_, std::ref( options_ ) ) );
+                ui.add_back(
+                  std::format( " > {} ", display_name_ ), std::bind_back( make_option_editor_ui_, std::ref( options_ ) ) );
             }
             static consteval auto request_ui_count_() noexcept
             {
@@ -296,9 +297,9 @@ namespace scltk
             }
             auto operator=( const basic_options_config_node< Atomic >& ) -> basic_options_config_node< Atomic >&     = delete;
             auto operator=( basic_options_config_node< Atomic >&& ) noexcept -> basic_options_config_node< Atomic >& = delete;
-            basic_options_config_node( const char* const node_raw_name, const char* const shown_name, map_t_ options )
+            basic_options_config_node( const char* const node_raw_name, const char* const display_name, map_t_ options )
               : config_node_impl{ node_raw_name }
-              , shown_name_{ shown_name }
+              , display_name_{ display_name }
               , options_{ std::move( options ) }
             { }
             basic_options_config_node( const basic_options_config_node< Atomic >& )     = delete;
@@ -989,7 +990,7 @@ namespace scltk
     inline auto execute_all_rules()
     {
         std::print( " -> 正在准备数据...\n" );
-        rule_node total{ .shown_name{ nullptr }, .execs{ unsynced_mem_pool }, .servs{ unsynced_mem_pool } };
+        rule_node total{ .display_name{ nullptr }, .execs{ unsynced_mem_pool }, .servs{ unsynced_mem_pool } };
         auto execs_size{ 0uz };
         auto servs_size{ 0uz };
         execs_size += custom_rules.execs.size();

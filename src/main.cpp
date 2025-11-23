@@ -28,7 +28,7 @@ auto main() -> int
       .add_back( " > 全部执行\n"sv, scltk::execute_all_rules )
       .add_back( " > 自定义 "sv, std::bind_back( scltk::execute_rules, std::cref( scltk::custom_rules ) ) );
     for ( const auto& rule : scltk::builtin_rules ) {
-        ui.add_back( std::format( " > {} ", rule.shown_name ), std::bind_back( scltk::execute_rules, std::cref( rule ) ) );
+        ui.add_back( std::format( " > {} ", rule.display_name ), std::bind_back( scltk::execute_rules, std::cref( rule ) ) );
     }
     ui.show();
 }
