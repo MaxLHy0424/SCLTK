@@ -20,7 +20,7 @@ namespace scltk
     inline constexpr auto config_file_name{ "config.ini" };
     inline constexpr auto func_back{ cpp_utils::console_ui::func_back };
     inline constexpr auto func_exit{ cpp_utils::console_ui::func_exit };
-    inline const cpp_utils::console con;
+    inline const cpp_utils::console console;
     inline const auto unsynced_mem_pool{ [] static noexcept
     {
         static std::pmr::unsynchronized_pool_resource pool{
@@ -41,7 +41,7 @@ namespace scltk
         inline auto press_any_key_to_return() noexcept
         {
             std::print( "\n\n 按任意键返回..." );
-            con.press_any_key_to_continue();
+            console.press_any_key_to_continue();
         }
         template < cpp_utils::character CharT = char >
         inline constexpr auto is_whitespace( const CharT ch ) noexcept
@@ -267,7 +267,7 @@ namespace scltk
             }
             static auto make_option_editor_ui_( map_t_& options )
             {
-                cpp_utils::console_ui ui{ con, unsynced_mem_pool };
+                cpp_utils::console_ui ui{ console, unsynced_mem_pool };
                 ui.reserve( 2 + options.size() * 2 )
                   .add_back( "                    [ 配  置 ]\n\n"sv )
                   .add_back(
@@ -408,7 +408,7 @@ namespace scltk
         }
         static auto show_help_info_()
         {
-            cpp_utils::console_ui ui{ con, unsynced_mem_pool };
+            cpp_utils::console_ui ui{ console, unsynced_mem_pool };
             ui.reserve( 3 )
               .add_back( "                    [ 配  置 ]\n\n"sv )
               .add_back( " < 返回 "sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
@@ -536,7 +536,7 @@ namespace scltk
     {
         inline auto show_config_parsing_rules()
         {
-            cpp_utils::console_ui ui{ con, unsynced_mem_pool };
+            cpp_utils::console_ui ui{ console, unsynced_mem_pool };
             ui.reserve( 3 )
               .add_back( "                    [ 配  置 ]\n\n"sv )
               .add_back( " < 返回 "sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
@@ -585,7 +585,7 @@ namespace scltk
     {
         std::apply( []( auto&... nodes ) static
         {
-            cpp_utils::console_ui ui{ con, unsynced_mem_pool };
+            cpp_utils::console_ui ui{ console, unsynced_mem_pool };
             constexpr auto reserved_size{ 5 + ( decltype( nodes.request_ui_count() )::value + ... ) };
             ui.reserve( reserved_size )
               .add_back( "                    [ 配  置 ]\n\n"sv )
@@ -600,7 +600,7 @@ namespace scltk
     }
     inline auto info()
     {
-        cpp_utils::console_ui ui{ con, unsynced_mem_pool };
+        cpp_utils::console_ui ui{ console, unsynced_mem_pool };
         ui.reserve( 3 )
           .add_back( "                    [ 关  于 ]\n\n"sv )
           .add_back( " < 返回 "sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
@@ -620,20 +620,20 @@ namespace scltk
             char name[]{ "cmd.exe" };
             startup.cb = sizeof( startup );
             if ( CreateProcessA( nullptr, name, nullptr, nullptr, FALSE, 0, nullptr, nullptr, &startup, &proc ) ) {
-                con.set_title( L"" INFO_SHORT_NAME " - 命令提示符" );
-                con.set_size( 120, 30, unsynced_mem_pool );
-                con.fix_size( false );
-                con.enable_window_maximize_ctrl( true );
+                console.set_title( L"" INFO_SHORT_NAME " - 命令提示符" );
+                console.set_size( 120, 30, unsynced_mem_pool );
+                console.fix_size( false );
+                console.enable_window_maximize_ctrl( true );
                 args.parent_ui.set_constraints( false, false );
-                SetConsoleScreenBufferSize( con.std_output_handle, { 120, std::numeric_limits< SHORT >::max() - 1 } );
+                SetConsoleScreenBufferSize( console.std_output_handle, { 120, std::numeric_limits< SHORT >::max() - 1 } );
                 WaitForSingleObject( proc.hProcess, INFINITE );
                 CloseHandle( proc.hProcess );
                 CloseHandle( proc.hThread );
-                con.set_charset( charset_id );
-                con.set_title( L"" INFO_SHORT_NAME );
-                con.set_size( console_width, console_height, unsynced_mem_pool );
-                con.fix_size( true );
-                con.enable_window_maximize_ctrl( false );
+                console.set_charset( charset_id );
+                console.set_title( L"" INFO_SHORT_NAME );
+                console.set_size( console_width, console_height, unsynced_mem_pool );
+                console.fix_size( true );
+                console.enable_window_maximize_ctrl( false );
             }
             return func_back;
         }
@@ -821,7 +821,7 @@ namespace scltk
            { "重置 Google Chrome 管理策略", R"(reg.exe delete "HKLM\SOFTWARE\Policies\Google\Chrome" /f)" },
            { "重置 Microsoft Edge 管理策略", R"(reg.exe delete "HKLM\SOFTWARE\Policies\Microsoft\Edge" /f)" } }
         };
-        cpp_utils::console_ui ui{ con, unsynced_mem_pool };
+        cpp_utils::console_ui ui{ console, unsynced_mem_pool };
         ui.reserve( 5 + tools.size() + cmds.size() )
           .add_back( "                   [ 工 具 箱 ]\n\n"sv )
           .add_back( " < 返回 "sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
@@ -846,13 +846,13 @@ namespace scltk
             const auto& is_translucent{ window_options[ "translucent" ] };
             const auto& is_no_hot_reload{ std::get< performance_config >( config_nodes )[ "no_hot_reload" ] };
             if ( is_no_hot_reload ) {
-                con.enable_context_menu( !is_enable_simple_titlebar );
-                con.set_translucency( is_translucent ? 230 : 255 );
+                console.enable_context_menu( !is_enable_simple_titlebar );
+                console.set_translucency( is_translucent ? 230 : 255 );
                 return;
             }
             while ( true ) {
-                con.enable_context_menu( !is_enable_simple_titlebar );
-                con.set_translucency( is_translucent ? 230 : 255 );
+                console.enable_context_menu( !is_enable_simple_titlebar );
+                console.set_translucency( is_translucent ? 230 : 255 );
                 std::this_thread::sleep_for( default_thread_sleep_time );
             }
         }
@@ -865,15 +865,15 @@ namespace scltk
             }
             constexpr auto sleep_time{ 50ms };
             if ( is_no_hot_reload ) {
-                con.force_show_forever( sleep_time );
+                console.force_show_forever( sleep_time );
             }
             while ( true ) {
                 if ( !is_force_show ) {
-                    con.cancel_force_show();
+                    console.cancel_force_show();
                     std::this_thread::sleep_for( default_thread_sleep_time );
                     continue;
                 }
-                con.force_show();
+                console.force_show();
                 std::this_thread::sleep_for( sleep_time );
             }
         }
@@ -1007,7 +1007,7 @@ namespace scltk
             total.execs.append_range( builtin_rule.execs );
             total.servs.append_range( builtin_rule.servs );
         }
-        con.clear( unsynced_mem_pool );
+        console.clear( unsynced_mem_pool );
         return execute_rules( total );
     }
 }
