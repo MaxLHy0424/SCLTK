@@ -1,6 +1,7 @@
 include env.mk
 project_name     = SCLTK
-compiler         = g++.exe
+x86_64_compiler  = $(msys2_path)/ucrt64/bin/g++.exe
+i686_compiler    = $(msys2_path)/mingw32/bin/g++.exe
 args_arch_i686   = -march=pentium4 -mtune=generic -msse2 -mfpmath=sse
 args_arch_x86_64 = -march=x86-64 -mtune=generic -msse3 -mfpmath=sse
 args_defines     = -D{ANSI,_ANSI,_WIN32_WINNT=0x0601}
@@ -65,23 +66,21 @@ build/debug/__debug__.exe: $(dependencies_testing) \
                            $(dependencies_debug) \
                            make_info \
                            build/debug/.nothing
-	$(msys2_path)/ucrt64/bin/$(compiler) $(dependencies_debug) $(args_debug) -o $@
+	$(x86_64_compiler) $(dependencies_debug) $(args_debug) -o $@
 dependencies_release_32bit = build/manifest-i686.o \
                              src/*.cpp
 build/release/$(project_name)-i686-msvcrt.exe: $(dependencies_testing) \
                                                $(dependencies_release_32bit) \
                                                make_info \
                                                build/release/.nothing
-	$(msys2_path)/mingw32/bin/$(compiler) $(dependencies_release_32bit) \
-	$(args_release) $(args_arch_i686) $(args_ld_i686) -o $@
+	$(i686_compiler) $(dependencies_release_32bit) $(args_release) $(args_arch_i686) $(args_ld_i686) -o $@
 dependencies_release_64bit = build/manifest-x86_64.o \
                              src/*.cpp
 build/release/$(project_name)-x86_64-ucrt.exe: $(dependencies_testing) \
                                                $(dependencies_release_64bit) \
                                                make_info \
                                                build/release/.nothing
-	$(msys2_path)/ucrt64/bin/$(compiler) $(dependencies_release_64bit) \
-	$(args_release) $(args_arch_x86_64) $(args_ld_x86_64) -o $@
+	$(x86_64_compiler) $(dependencies_release_64bit) $(args_release) $(args_arch_x86_64) $(args_ld_x86_64) -o $@
 dependencies_info = manifest.rc \
                     img/favicon.ico \
 					manifest.xml \
