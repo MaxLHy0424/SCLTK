@@ -1015,7 +1015,7 @@ namespace scltk
     inline auto execute_all_rules()
     {
         std::print( " -> 正在准备数据...\n" );
-        rule_node total;
+        rule_node total{ .shown_name{ nullptr }, .execs{ unsynced_mem_pool }, .servs{ unsynced_mem_pool } };
         auto execs_size{ 0uz };
         auto servs_size{ 0uz };
         execs_size += custom_rules.execs.size();
