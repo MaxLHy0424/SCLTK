@@ -4,7 +4,7 @@ x86_64_compiler  = $(msys2_path)/ucrt64/bin/g++.exe
 i686_compiler    = $(msys2_path)/mingw32/bin/g++.exe
 args_arch_i686   = -march=pentium4 -mtune=generic -msse2 -mfpmath=sse
 args_arch_x86_64 = -march=x86-64 -mtune=generic -msse3 -mfpmath=sse
-args_defines     = -D{ANSI,_ANSI,_WIN32_WINNT=0x0601}
+args_defines     = -D{ANSI,_ANSI}
 args_std         = gnu++26
 args_warning     = -W{all,extra,effc++,pedantic,cast-align,logical-op,redundant-decls,shadow,strict-null-sentinel}
 args_opt_debug   = -Og -fno-omit-frame-pointer
