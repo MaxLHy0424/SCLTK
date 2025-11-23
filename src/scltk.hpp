@@ -865,7 +865,6 @@ namespace scltk
             constexpr auto sleep_time{ 50ms };
             if ( is_no_hot_reload ) {
                 con.force_show_forever( sleep_time );
-                return;
             }
             while ( true ) {
                 if ( !is_force_show ) {
