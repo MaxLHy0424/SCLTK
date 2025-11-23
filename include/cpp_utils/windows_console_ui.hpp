@@ -88,23 +88,23 @@ namespace cpp_utils
             ~line_node_() noexcept              = default;
         };
         std::pmr::vector< line_node_ > lines_;
-        const console& con;
+        const console& console_;
         auto set_line_attrs_( line_node_& self, const WORD current_attrs ) noexcept
         {
-            SetConsoleTextAttribute( con.std_output_handle, current_attrs );
+            SetConsoleTextAttribute( console_.std_output_handle, current_attrs );
             self.last_attrs = current_attrs;
         }
         auto show_cursor_( const WINBOOL is_show ) noexcept
         {
             CONSOLE_CURSOR_INFO cursor_data;
-            GetConsoleCursorInfo( con.std_output_handle, &cursor_data );
+            GetConsoleCursorInfo( console_.std_output_handle, &cursor_data );
             cursor_data.bVisible = is_show;
-            SetConsoleCursorInfo( con.std_output_handle, &cursor_data );
+            SetConsoleCursorInfo( console_.std_output_handle, &cursor_data );
         }
         auto set_console_attrs_( const console_attrs_selection_ attrs_selection ) noexcept
         {
             DWORD attrs;
-            GetConsoleMode( con.std_input_handle, &attrs );
+            GetConsoleMode( console_.std_input_handle, &attrs );
             switch ( attrs_selection ) {
                 case console_attrs_selection_::normal :
                     attrs |= ENABLE_QUICK_EDIT_MODE;
@@ -118,12 +118,12 @@ namespace cpp_utils
             }
             attrs |= ENABLE_MOUSE_INPUT;
             attrs |= ENABLE_LINE_INPUT;
-            SetConsoleMode( con.std_input_handle, attrs );
+            SetConsoleMode( console_.std_input_handle, attrs );
         }
         auto get_cursor_() noexcept
         {
             CONSOLE_SCREEN_BUFFER_INFO console_data;
-            GetConsoleScreenBufferInfo( con.std_output_handle, &console_data );
+            GetConsoleScreenBufferInfo( console_.std_output_handle, &console_data );
             return console_data.dwCursorPosition;
         }
         auto get_event_( const bool is_move = true ) noexcept
@@ -133,7 +133,7 @@ namespace cpp_utils
             DWORD reg;
             while ( true ) {
                 std::this_thread::sleep_for( 20ms );
-                ReadConsoleInputW( con.std_input_handle, &record, 1, &reg );
+                ReadConsoleInputW( console_.std_input_handle, &record, 1, &reg );
                 if ( record.EventType == MOUSE_EVENT && ( is_move || record.Event.MouseEvent.dwEventFlags != mouse::move ) ) {
                     return record.Event.MouseEvent;
                 }
@@ -142,16 +142,16 @@ namespace cpp_utils
         auto rewrite_( const COORD cursor_position, const line_node_& line )
         {
             const auto [ console_width, console_height ]{ cursor_position };
-            SetConsoleCursorPosition( con.std_output_handle, { 0, console_height } );
+            SetConsoleCursorPosition( console_.std_output_handle, { 0, console_height } );
             std::print(
               "{}", std::pmr::string{ static_cast< std::size_t >( console_width ), ' ', lines_.get_allocator().resource() } );
-            SetConsoleCursorPosition( con.std_output_handle, { 0, console_height } );
+            SetConsoleCursorPosition( console_.std_output_handle, { 0, console_height } );
             line.print_text();
-            SetConsoleCursorPosition( con.std_output_handle, { 0, console_height } );
+            SetConsoleCursorPosition( console_.std_output_handle, { 0, console_height } );
         }
         auto init_pos_()
         {
-            con.clear( lines_.get_allocator().resource() );
+            console_.clear( lines_.get_allocator().resource() );
             for ( const auto back_ptr{ &lines_.back() }; auto& line : lines_ ) {
                 line.position = get_cursor_();
                 set_line_attrs_( line, line.default_attrs );
@@ -188,7 +188,7 @@ namespace cpp_utils
             if ( is_empty_function( target->func ) ) {
                 return func_back;
             }
-            con.clear( lines_.get_allocator().resource() );
+            console_.clear( lines_.get_allocator().resource() );
             set_line_attrs_( *target, target->default_attrs );
             show_cursor_( FALSE );
             set_console_attrs_( console_attrs_selection_::locked );
@@ -348,7 +348,7 @@ namespace cpp_utils
                     }
                 }
             }
-            con.clear( lines_.get_allocator().resource() );
+            console_.clear( lines_.get_allocator().resource() );
             return *this;
         }
         auto& set_constraints( const bool is_hide_cursor, const bool is_lock_text ) noexcept
@@ -361,7 +361,7 @@ namespace cpp_utils
         auto operator=( console_ui&& ) noexcept -> console_ui&      = default;
         console_ui( const console& console_info, std::pmr::memory_resource* const resource = std::pmr::get_default_resource() ) noexcept
           : lines_{ resource }
-          , con{ console_info }
+          , console_{ console_info }
         { }
         console_ui( console&&, std::pmr::memory_resource* const = std::pmr::get_default_resource() ) noexcept = delete;
         console_ui( const console_ui& ) noexcept                                                              = default;
