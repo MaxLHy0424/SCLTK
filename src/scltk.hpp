@@ -707,12 +707,12 @@ namespace scltk
             if ( has_error( ec ) ) {
                 return;
             }
-            std::print( " -> 获取权限...\n" );
+            std::print( " -> 设置文件权限...\n" );
             std::filesystem::permissions( hosts_path, std::filesystem::perms::all, std::filesystem::perm_options::add, ec );
             if ( has_error( ec ) ) {
                 return;
             }
-            std::print( " -> 写入原始内容...\n" );
+            std::print( " -> 重置文件...\n" );
             std::ofstream file{ hosts_path.string(), std::ios::out | std::ios::trunc | std::ios::binary };
             file.write( default_content.data(), default_content.size() ).flush();
             if ( !file.good() ) {
