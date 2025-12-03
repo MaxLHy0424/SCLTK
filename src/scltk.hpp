@@ -244,7 +244,7 @@ namespace scltk
                 } else {
                     return;
                 }
-                if ( auto it{ options_.find( key ) }; it != options_.end() ) {
+                if ( const auto it{ options_.find( key ) }; it != options_.end() ) {
                     it->second.set( value );
                 }
             }
