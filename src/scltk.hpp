@@ -905,7 +905,7 @@ namespace scltk
                 for ( const auto& exec : execs ) {
                     constexpr const wchar_t data[]{ L"nul" };
                     cpp_utils::create_registry_key(
-                      cpp_utils::registry_flag::hkey_local_machine,
+                      HKEY_LOCAL_MACHINE,
                       std::format( LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe)", exec ),
                       L"Debugger", cpp_utils::registry_flag::string_type, std::bit_cast< const BYTE* >( +data ), sizeof( data ) );
                 }
@@ -936,7 +936,7 @@ namespace scltk
                 std::print( " - 撤销劫持.\n" );
                 for ( const auto& exec : execs ) {
                     cpp_utils::delete_registry_tree(
-                      cpp_utils::registry_flag::hkey_local_machine,
+                      HKEY_LOCAL_MACHINE,
                       std::format( LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe)", exec ) );
                 }
             }
