@@ -7,26 +7,26 @@ namespace cpp_utils
 {
     template < bool Expr >
     concept test = Expr;
-    struct error final
+    struct error_type final
     {
-        auto operator=( const error& ) -> error&     = delete;
-        auto operator=( error&& ) noexcept -> error& = delete;
-        error()                                      = delete;
-        error( const error& )                        = delete;
-        error( error&& ) noexcept                    = delete;
-        ~error() noexcept                            = delete;
+        auto operator=( const error_type& ) -> error_type&     = delete;
+        auto operator=( error_type&& ) noexcept -> error_type& = delete;
+        error_type()                                           = delete;
+        error_type( const error_type& )                        = delete;
+        error_type( error_type&& ) noexcept                    = delete;
+        ~error_type() noexcept                                 = delete;
     };
-    struct undefined final
+    struct undefined_type final
     {
-        auto operator=( const undefined& ) -> undefined&     = delete;
-        auto operator=( undefined&& ) noexcept -> undefined& = delete;
-        undefined()                                          = delete;
-        undefined( const undefined& )                        = delete;
-        undefined( undefined&& ) noexcept                    = delete;
-        ~undefined() noexcept                                = delete;
+        auto operator=( const undefined_type& ) -> undefined_type&     = delete;
+        auto operator=( undefined_type&& ) noexcept -> undefined_type& = delete;
+        undefined_type()                                               = delete;
+        undefined_type( const undefined_type& )                        = delete;
+        undefined_type( undefined_type&& ) noexcept                    = delete;
+        ~undefined_type() noexcept                                     = delete;
     };
     template < typename T >
-    concept common_type = !std::same_as< std::decay_t< T >, error > && !std::same_as< std::decay_t< T >, undefined >;
+    concept common_type = !std::same_as< std::decay_t< T >, error_type > && !std::same_as< std::decay_t< T >, undefined_type >;
     template < common_type... Ts >
     class type_list final
     {
@@ -113,7 +113,7 @@ namespace cpp_utils
         struct at_impl_ final
         {
             static_assert( false, "index out of bounds" );
-            using type = error;
+            using type = error_type;
         };
         template < std::size_t I >
             requires test< ( I < size_ ) >
@@ -124,7 +124,7 @@ namespace cpp_utils
         template < std::size_t I >
         struct at_impl_< I, true > final
         {
-            using type = error;
+            using type = error_type;
         };
         template < std::size_t = 0uz, bool = empty_ >
         struct remove_front_impl_;
@@ -343,22 +343,22 @@ namespace cpp_utils
     template < typename, typename... >
     struct function_traits final
     {
-        using return_type = undefined;
-        using class_type  = undefined;
-        using args_type   = undefined;
+        using return_type = undefined_type;
+        using class_type  = undefined_type;
+        using args_type   = undefined_type;
     };
     template < typename R, typename... Args >
     struct function_traits< R( Args... ) > final
     {
         using return_type = R;
-        using class_type  = undefined;
+        using class_type  = undefined_type;
         using args_type   = type_list< Args... >;
     };
     template < typename R, typename... Args >
     struct function_traits< R ( * )( Args... ) > final
     {
         using return_type = R;
-        using class_type  = undefined;
+        using class_type  = undefined_type;
         using args_type   = type_list< Args... >;
     };
     template < typename R, typename T, typename... Args >
@@ -372,14 +372,14 @@ namespace cpp_utils
     struct function_traits< std::function< R( Args... ) > > final
     {
         using return_type = R;
-        using class_type  = undefined;
+        using class_type  = undefined_type;
         using args_type   = type_list< Args... >;
     };
     template < typename R, typename... Args >
     struct function_traits< std::move_only_function< R( Args... ) > > final
     {
         using return_type = R;
-        using class_type  = undefined;
+        using class_type  = undefined_type;
         using args_type   = type_list< Args... >;
     };
     template < template < typename... > typename Template, typename T >
