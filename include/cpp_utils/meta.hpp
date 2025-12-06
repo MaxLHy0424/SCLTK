@@ -70,13 +70,13 @@ namespace cpp_utils
             using type = type_list< Ts..., Us... >;
         };
         template < typename U >
-        struct type_is_ final
+        struct is_same_type_ final
         {
             template < typename T >
             using predicate = std::is_same< T, U >;
         };
         template < template < typename > typename Pred >
-        struct negate_ final
+        struct negate_pred_ final
         {
             template < typename T >
             using predicate = std::bool_constant< !Pred< T >::value >;
@@ -269,13 +269,13 @@ namespace cpp_utils
             }
         }() };
         template < template < typename > typename Pred >
-        static inline constexpr auto find_first_if_not{ find_first_if< negate_< Pred >::template predicate > };
+        static inline constexpr auto find_first_if_not{ find_first_if< negate_pred_< Pred >::template predicate > };
         template < template < typename > typename Pred >
-        static inline constexpr auto find_last_if_not{ find_last_if< negate_< Pred >::template predicate > };
+        static inline constexpr auto find_last_if_not{ find_last_if< negate_pred_< Pred >::template predicate > };
         template < typename U >
-        static inline constexpr auto find_first{ find_first_if< type_is_< U >::template predicate > };
+        static inline constexpr auto find_first{ find_first_if< is_same_type_< U >::template predicate > };
         template < typename U >
-        static inline constexpr auto find_last{ find_last_if< type_is_< U >::template predicate > };
+        static inline constexpr auto find_last{ find_last_if< is_same_type_< U >::template predicate > };
         template < std::size_t I >
         using at    = at_impl_< I >::type;
         using front = at< 0 >;
