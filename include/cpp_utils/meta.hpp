@@ -313,49 +313,6 @@ namespace cpp_utils
     }
     template < typename T, typename U >
     using type_list_concat = typename details::type_list_concat_impl_< T, U >::type;
-    template < auto V >
-    struct value_wrapper final
-    {
-        static inline constexpr auto value{ V };
-    };
-    template < auto V >
-    class is_equal_to_value_wrapper final
-    {
-      private:
-        static consteval auto is_equal_( auto ) -> std::false_type;
-        template < auto W >
-            requires test< ( V == W ) >
-        static consteval auto is_equal_( value_wrapper< W > ) -> std::true_type;
-      public:
-        template < typename W >
-        static inline constexpr auto value{ decltype( is_equal_( W{} ) )::value };
-    };
-    template < auto... Vs >
-    using make_fake_value_list = type_list< value_wrapper< Vs >... >;
-    namespace details
-    {
-        template < typename T >
-        struct remove_identity;
-        template < typename T >
-        struct remove_identity< std::type_identity< T > > final
-        {
-            using type = T;
-        };
-        template < typename T, std::size_t N, std::array< T, N > Arr >
-        struct make_fake_value_list_from_array_impl final
-        {
-            using type = decltype( []< std::size_t... Is >( std::index_sequence< Is... > ) consteval
-            { return type_list< value_wrapper< Arr[ Is ] >... >{}; }( std::make_index_sequence< N >{} ) );
-        };
-        template < typename T, std::array< T, 0 > Arr >
-        struct make_fake_value_list_from_array_impl< T, 0, Arr > final
-        {
-            using type = type_list<>;
-        };
-    }
-    template < std::array Arr >
-    using make_fake_value_list_from_array
-      = details::make_fake_value_list_from_array_impl< decltype( Arr )::value_type, std::tuple_size_v< decltype( Arr ) >, Arr >::type;
     template < typename, typename... >
     struct function_traits final
     {
