@@ -713,7 +713,7 @@ namespace scltk
                 return;
             }
             std::print( " -> 重置文件...\n" );
-            std::ofstream file{ hosts_path.string(), std::ios::out | std::ios::trunc | std::ios::binary };
+            std::ofstream file{ hosts_path, std::ios::out | std::ios::trunc | std::ios::binary };
             file.write( default_content.data(), default_content.size() ).flush();
             if ( !file.good() ) {
                 std::print( "\n (!) 重置失败, 无法写入.\n\n" );
