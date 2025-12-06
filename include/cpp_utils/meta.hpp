@@ -153,7 +153,7 @@ namespace cpp_utils
         template < std::size_t, std::size_t, bool = empty_ >
         struct sub_list_impl_;
         template < std::size_t Offset, std::size_t Count >
-            requires test< Offset + Count <= size_ >
+            requires test< ( Offset + Count <= size_ ) >
         struct sub_list_impl_< Offset, Count, false > final
         {
             using type = decltype( select_( offset_sequence_< Offset >( std::make_index_sequence< Count >{} ) ) );
