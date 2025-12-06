@@ -64,7 +64,7 @@ namespace scltk
         container_t servs{};
     };
     inline rule_node custom_rules;
-    inline const std::array< rule_node, 4 > builtin_rules{
+    inline const std::array< rule_node, 5 > builtin_rules{
       { { "学生机房管理助手",
           { L"yz", L"abcut", L"jfglzs", L"jfglzsn", L"prozs", L"przs", L"uninstal1", L"sct", L"zmserv", L"zmsrv" },
           { L"zmserv" } },
@@ -79,7 +79,8 @@ namespace scltk
           { L"BSAgentSvr", L"tvnserver", L"WFBSMlogon" } },
        { "红蜘蛛多媒体网络教室",
           { L"rscheck", L"checkrs", L"REDAgent", L"PerformanceCheck", L"edpaper", L"Adapter", L"repview", L"FormatPaper" },
-          { L"appcheck2", L"checkapp2" } } }
+          { L"appcheck2", L"checkapp2" } },
+       { "市一中伊金霍洛校区机房管理程序", { L"ComputerClassroom_Client", L"MonitorProcess", L"00 PowerRun_x64", L"PowerRun" }, {} } }
     };
     namespace details
     {
