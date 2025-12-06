@@ -53,7 +53,7 @@ namespace cpp_utils
         template < typename... ResultTs, typename T, typename... Rest >
         struct basic_unique_impl_< type_list< ResultTs... >, type_list< T, Rest... > > final
         {
-            static constexpr bool found{ ( std::is_same_v< T, ResultTs > || ... ) };
+            static inline constexpr auto found{ ( std::is_same_v< T, ResultTs > || ... ) };
             using next = std::conditional_t<
               found, basic_unique_impl_< type_list< ResultTs... >, type_list< Rest... > >,
               basic_unique_impl_< type_list< ResultTs..., T >, type_list< Rest... > > >;
@@ -155,7 +155,7 @@ namespace cpp_utils
         template < std::size_t Offset, std::size_t Count >
         struct sub_list_impl_< Offset, Count, false > final
         {
-            static constexpr auto is_valid{ Offset + Count <= size_ };
+            static inline constexpr auto is_valid{ Offset + Count <= size_ };
             static_assert( is_valid, "sub_list range out of bounds" );
             using type = std::conditional_t<
               is_valid, decltype( select_( offset_sequence_< Offset >( std::make_index_sequence< Count >{} ) ) ), error_type >;
