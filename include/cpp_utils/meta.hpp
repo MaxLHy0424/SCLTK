@@ -8,9 +8,23 @@ namespace cpp_utils
     template < bool Expr >
     concept test = Expr;
     struct error final
-    { };
+    {
+        auto operator=( const error& ) -> error&     = delete;
+        auto operator=( error&& ) noexcept -> error& = delete;
+        error()                                      = delete;
+        error( const error& )                        = delete;
+        error( error&& ) noexcept                    = delete;
+        ~error() noexcept                            = delete;
+    };
     struct undefined final
-    { };
+    {
+        auto operator=( const undefined& ) -> undefined&     = delete;
+        auto operator=( undefined&& ) noexcept -> undefined& = delete;
+        undefined()                                          = delete;
+        undefined( const undefined& )                        = delete;
+        undefined( undefined&& ) noexcept                    = delete;
+        ~undefined() noexcept                                = delete;
+    };
     template < typename T >
     concept common_type = !std::same_as< std::decay_t< T >, error > && !std::same_as< std::decay_t< T >, undefined >;
     template < common_type... Ts >
