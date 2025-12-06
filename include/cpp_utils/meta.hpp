@@ -153,10 +153,12 @@ namespace cpp_utils
         template < std::size_t, std::size_t, bool = empty_ >
         struct sub_list_impl_;
         template < std::size_t Offset, std::size_t Count >
-            requires test< ( Offset + Count <= size_ ) >
         struct sub_list_impl_< Offset, Count, false > final
         {
-            using type = decltype( select_( offset_sequence_< Offset >( std::make_index_sequence< Count >{} ) ) );
+            static constexpr auto is_valid{ Offset + Count <= size_ };
+            static_assert( is_valid, "sub_list range out of bounds" );
+            using type = std::conditional_t<
+              is_valid, decltype( select_( offset_sequence_< Offset >( std::make_index_sequence< Count >{} ) ) ), error_type >;
         };
         template < std::size_t Offset, std::size_t Count >
         struct sub_list_impl_< Offset, Count, true > final
