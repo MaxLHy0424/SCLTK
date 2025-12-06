@@ -716,7 +716,7 @@ namespace scltk
             std::ofstream file{ hosts_path.string(), std::ios::out | std::ios::trunc | std::ios::binary };
             file.write( default_content.data(), default_content.size() ).flush();
             if ( !file.good() ) {
-                std::print( " (!) 重置失败, 无法写入.\n" );
+                std::print( "\n (!) 重置失败, 无法写入.\n\n" );
             }
             std::print( " -> 恢复文件权限...\n" );
             std::filesystem::permissions( hosts_path, original_perms, std::filesystem::perm_options::replace, ec );
@@ -724,7 +724,7 @@ namespace scltk
             std::print( " -> 刷新 DNS 缓存...\n" );
             const auto dnsapi{ LoadLibraryW( L"dnsapi.dll" ) };
             if ( dnsapi == nullptr ) {
-                std::print( " (!) 刷新 DNS 失败.\n" );
+                std::print( "\n (!) 刷新 DNS 失败.\n\n" );
                 return;
             }
             const auto dns_flush_resolver_cache{
@@ -732,7 +732,7 @@ namespace scltk
             if ( dns_flush_resolver_cache != nullptr ) {
                 const auto result{ dns_flush_resolver_cache() };
                 if ( !result ) {
-                    std::print( " (!) 刷新 DNS 失败.\n" );
+                    std::print( "\n (!) 刷新 DNS 失败.\n\n" );
                 }
             }
             FreeLibrary( dnsapi );
