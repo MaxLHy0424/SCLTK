@@ -723,17 +723,19 @@ namespace scltk
             has_error( ec );
             std::print( " -> 刷新 DNS 缓存...\n" );
             const auto dnsapi{ LoadLibraryA( "dnsapi.dll" ) };
-            if ( dnsapi != nullptr ) {
-                const auto dns_flush_resolver_cache{
-                  std::bit_cast< BOOL( WINAPI* )() >( GetProcAddress( dnsapi, "DnsFlushResolverCache" ) ) };
-                if ( dns_flush_resolver_cache != nullptr ) {
-                    const auto result{ dns_flush_resolver_cache() };
-                    if ( !result ) {
-                        std::print( " (!) 刷新 DNS 失败.\n" );
-                    }
-                }
-                FreeLibrary( dnsapi );
+            if ( dnsapi == nullptr ) {
+                std::print( " (!) 刷新 DNS 失败.\n" );
+                return;
             }
+            const auto dns_flush_resolver_cache{
+              std::bit_cast< BOOL( WINAPI* )() >( GetProcAddress( dnsapi, "DnsFlushResolverCache" ) ) };
+            if ( dns_flush_resolver_cache != nullptr ) {
+                const auto result{ dns_flush_resolver_cache() };
+                if ( !result ) {
+                    std::print( " (!) 刷新 DNS 失败.\n" );
+                }
+            }
+            FreeLibrary( dnsapi );
         }
         inline auto CALLBACK enum_window_proc( const HWND window, const LPARAM param ) noexcept
         {
