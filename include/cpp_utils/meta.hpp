@@ -286,10 +286,8 @@ namespace cpp_utils
         using remove_back  = remove_back_impl_<>::type;
         template < std::size_t Offset, std::size_t Count >
         using sub_list = sub_list_impl_< Offset, Count >::type;
-        template < typename Other >
-        using concat  = typename concat_impl_< Other >::type;
-        using reverse = reverse_impl_<>::type;
-        using unique  = unique_impl_<>::type;
+        using reverse  = reverse_impl_<>::type;
+        using unique   = unique_impl_<>::type;
         template < template < typename... > typename U >
         using apply = U< Ts... >;
         template < template < typename > typename F >
@@ -297,6 +295,22 @@ namespace cpp_utils
         template < template < typename > typename Pred >
         using filter = filter_impl_< Pred >::type;
     };
+    namespace details
+    {
+        template < typename, typename >
+        struct type_list_concat_impl_ final
+        {
+            static_assert( false, "can only concatenate type_list types" );
+            using type = error_type;
+        };
+        template < typename... Ts, typename... Us >
+        struct type_list_concat_impl_< type_list< Ts... >, type_list< Us... > > final
+        {
+            using type = type_list< Ts..., Us... >;
+        };
+    }
+    template < typename T, typename U >
+    using type_list_concat = typename details::type_list_concat_impl_< T, U >::type;
     template < auto V >
     struct value_wrapper final
     {
