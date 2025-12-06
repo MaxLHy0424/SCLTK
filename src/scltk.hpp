@@ -708,7 +708,7 @@ namespace scltk
                 return;
             }
             std::print( " -> 设置文件权限...\n" );
-            std::filesystem::permissions( hosts_path, std::filesystem::perms::all, std::filesystem::perm_options::add, ec );
+            std::filesystem::permissions( hosts_path, std::filesystem::perms::all, std::filesystem::perm_options::replace, ec );
             if ( has_error( ec ) ) {
                 return;
             }
