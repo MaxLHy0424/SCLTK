@@ -17,7 +17,7 @@ namespace scltk
     inline constexpr SHORT console_height{ 25 };
     inline constexpr UINT charset_id{ 936 };
     inline constexpr auto default_thread_sleep_time{ 200ms };
-    inline constexpr auto config_file_name{ "config.ini" };
+    inline constexpr auto config_file_name{ L"config.ini" };
     inline constexpr auto func_back{ cpp_utils::console_ui::func_back };
     inline constexpr auto func_exit{ cpp_utils::console_ui::func_exit };
     inline const cpp_utils::console console;
@@ -574,7 +574,7 @@ namespace scltk
               " -> 正在尝试打开配置文件...\n\n" );
             std::print(
               " (i) 打开配置文件{}.",
-              std::bit_cast< INT_PTR >( ShellExecuteA( nullptr, "open", config_file_name, nullptr, nullptr, SW_SHOWNORMAL ) ) > 32
+              std::bit_cast< INT_PTR >( ShellExecuteW( nullptr, L"open", config_file_name, nullptr, nullptr, SW_SHOWNORMAL ) ) > 32
                 ? "成功"
                 : "失败" );
             press_any_key_to_return();
@@ -615,11 +615,11 @@ namespace scltk
     {
         inline auto launch_cmd( const ui_func_args args )
         {
-            STARTUPINFOA startup{};
+            STARTUPINFOW startup{};
             PROCESS_INFORMATION proc;
-            char name[]{ "cmd.exe" };
+            wchar_t name[]{ L"cmd.exe" };
             startup.cb = sizeof( startup );
-            if ( CreateProcessA( nullptr, name, nullptr, nullptr, FALSE, 0, nullptr, nullptr, &startup, &proc ) ) {
+            if ( CreateProcessW( nullptr, name, nullptr, nullptr, FALSE, 0, nullptr, nullptr, &startup, &proc ) ) {
                 console.set_title( L"" INFO_SHORT_NAME " - 命令提示符" );
                 console.set_size( 120, 30, unsynced_mem_pool );
                 console.fix_size( false );
@@ -641,20 +641,20 @@ namespace scltk
         {
             std::print( " -> 正在尝试恢复...\n" );
             constexpr std::array reg_dirs{
-              R"(Software\Policies\Microsoft\Windows\System)", R"(Software\Microsoft\Windows\CurrentVersion\Policies\System)",
-              R"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)", R"(Software\Policies\Microsoft\MMC)" };
+              LR"(Software\Policies\Microsoft\Windows\System)", LR"(Software\Microsoft\Windows\CurrentVersion\Policies\System)",
+              LR"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)", LR"(Software\Policies\Microsoft\MMC)" };
             constexpr std::array execs{
-              "tasklist", "taskkill", "ntsd",    "sc",          "net",         "reg",       "cmd",
-              "taskmgr",  "perfmon",  "regedit", "mmc",         "dism",        "sfc",       "sethc",
-              "sidebar",  "shvlzm",   "winmine", "bckgzm",      "Chess",       "chkrzm",    "FreeCell",
-              "Hearts",   "Magnify",  "Mahjong", "Minesweeper", "PurblePlace", "Solitaire", "SpiderSolitaire" };
+              L"tasklist", L"taskkill", L"ntsd",    L"sc",          L"net",         L"reg",       L"cmd",
+              L"taskmgr",  L"perfmon",  L"regedit", L"mmc",         L"dism",        L"sfc",       L"sethc",
+              L"sidebar",  L"shvlzm",   L"winmine", L"bckgzm",      L"Chess",       L"chkrzm",    L"FreeCell",
+              L"Hearts",   L"Magnify",  L"Mahjong", L"Minesweeper", L"PurblePlace", L"Solitaire", L"SpiderSolitaire" };
             for ( const auto reg_dir : reg_dirs ) {
-                RegDeleteTreeA( HKEY_CURRENT_USER, reg_dir );
+                RegDeleteTreeW( HKEY_CURRENT_USER, reg_dir );
             }
             for ( const auto exec : execs ) {
-                RegDeleteTreeA(
+                RegDeleteTreeW(
                   HKEY_LOCAL_MACHINE,
-                  std::format( R"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe)", exec ).c_str() );
+                  std::format( LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe)", exec ).c_str() );
             }
         }
         inline auto reset_hosts() noexcept
@@ -722,7 +722,7 @@ namespace scltk
             std::filesystem::permissions( hosts_path, original_perms, std::filesystem::perm_options::replace, ec );
             has_error( ec );
             std::print( " -> 刷新 DNS 缓存...\n" );
-            const auto dnsapi{ LoadLibraryA( "dnsapi.dll" ) };
+            const auto dnsapi{ LoadLibraryW( L"dnsapi.dll" ) };
             if ( dnsapi == nullptr ) {
                 std::print( " (!) 刷新 DNS 失败.\n" );
                 return;
