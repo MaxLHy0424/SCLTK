@@ -327,6 +327,15 @@ namespace cpp_utils
         using return_type = R;
         using class_type  = undefined_type;
         using args_type   = type_list< Args... >;
+        static inline constexpr auto is_noexcept{ false };
+    };
+    template < typename R, typename... Args >
+    struct function_traits< R( Args... ) noexcept > final
+    {
+        using return_type = R;
+        using class_type  = undefined_type;
+        using args_type   = type_list< Args... >;
+        static inline constexpr auto is_noexcept{ true };
     };
     template < typename R, typename... Args >
     struct function_traits< R ( * )( Args... ) > final
@@ -334,6 +343,15 @@ namespace cpp_utils
         using return_type = R;
         using class_type  = undefined_type;
         using args_type   = type_list< Args... >;
+        static inline constexpr auto is_noexcept{ false };
+    };
+    template < typename R, typename... Args >
+    struct function_traits< R ( * )( Args... ) noexcept > final
+    {
+        using return_type = R;
+        using class_type  = undefined_type;
+        using args_type   = type_list< Args... >;
+        static inline constexpr auto is_noexcept{ true };
     };
     template < typename R, typename T, typename... Args >
     struct function_traits< R ( T::* )( Args... ) > final
@@ -341,6 +359,15 @@ namespace cpp_utils
         using return_type = R;
         using class_type  = T;
         using args_type   = type_list< Args... >;
+        static inline constexpr auto is_noexcept{ false };
+    };
+    template < typename R, typename T, typename... Args >
+    struct function_traits< R ( T::* )( Args... ) noexcept > final
+    {
+        using return_type = R;
+        using class_type  = T;
+        using args_type   = type_list< Args... >;
+        static inline constexpr auto is_noexcept{ true };
     };
     template < typename R, typename... Args >
     struct function_traits< std::function< R( Args... ) > > final
@@ -348,12 +375,6 @@ namespace cpp_utils
         using return_type = R;
         using class_type  = undefined_type;
         using args_type   = type_list< Args... >;
-    };
-    template < typename R, typename... Args >
-    struct function_traits< std::move_only_function< R( Args... ) > > final
-    {
-        using return_type = R;
-        using class_type  = undefined_type;
-        using args_type   = type_list< Args... >;
+        static inline constexpr auto is_noexcept{ false };
     };
 }
