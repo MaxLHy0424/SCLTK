@@ -1,4 +1,3 @@
-$is_insider_build = $false
 $software_full_name = "Student Computer Lab Toolkit"
 $software_short_name = "SCLTK"
 $license = "MIT License"
@@ -7,7 +6,7 @@ $repo_url = "https://github.com/MaxLHy0424/SCLTK"
 $git_branch = git branch --show-current
 $git_hash = git rev-parse --short HEAD
 $build_time = Get-Date -AsUTC -Format "yyyy-MM-ddTHH:mm:ssK"
-if ( $is_insider_build -eq $true ) {
+if ( $git_branch -ne "main" ) {
     $git_tag = "insider_preview"
 }
 else {
