@@ -471,7 +471,8 @@ namespace scltk
     {
         inline auto get_config_node_raw_name_by_tag( std::string_view str ) noexcept
         {
-            str = str.substr( 1, str.size() - 2 );
+            str.remove_prefix( 1 );
+            str.remove_suffix( 1 );
             const auto head{ std::ranges::find_if_not( str, is_whitespace< char > ) };
             const auto tail{ std::ranges::find_if_not( str | std::views::reverse, is_whitespace< char > ).base() };
             if ( head >= tail ) {
