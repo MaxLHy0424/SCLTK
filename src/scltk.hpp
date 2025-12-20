@@ -1,4 +1,7 @@
 #pragma once
+#define WINVER       0x0601
+#define _WIN32_WINNT 0x0601
+#define NOCOMM
 #include <cpp_utils/const_string.hpp>
 #include <cpp_utils/math.hpp>
 #include <cpp_utils/meta.hpp>
