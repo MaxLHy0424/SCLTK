@@ -152,7 +152,7 @@ namespace scltk
             {
                 using child_t = std::decay_t< decltype( self ) >;
                 if constexpr ( requires( child_t obj ) {
-                                   { decltype( obj.request_ui_count_() )::value } -> std::same_as< std::size_t >;
+                                   { decltype( obj.request_ui_count_() )::value } -> std::convertible_to< std::size_t >;
                                } )
                 {
                     return self.request_ui_count_();
@@ -589,6 +589,7 @@ namespace scltk
         {
             cpp_utils::console_ui ui{ con, unsynced_mem_pool };
             constexpr auto reserved_size{ 5 + ( decltype( nodes.request_ui_count() )::value + ... ) };
+            static_assert( reserved_size > 5 );
             ui.reserve( reserved_size )
               .add_back( "                    [ 配  置 ]\n\n"sv )
               .add_back( " < 返回\n"sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
