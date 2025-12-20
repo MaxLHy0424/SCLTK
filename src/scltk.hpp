@@ -152,10 +152,10 @@ namespace scltk
             {
                 using child_t = std::decay_t< decltype( self ) >;
                 if constexpr ( requires( child_t obj ) {
-                                   { decltype( obj.request_ui_count_() )::value } -> std::convertible_to< std::size_t >;
+                                   { child_t::ui_count_ } -> std::convertible_to< std::size_t >;
                                } )
                 {
-                    return self.request_ui_count_();
+                    return std::integral_constant< std::size_t, child_t::ui_count_ >{};
                 } else {
                     return std::integral_constant< std::size_t, 0uz >{};
                 }
@@ -287,10 +287,7 @@ namespace scltk
                 ui.add_back(
                   std::format( " > {} ", display_name_ ), std::bind_back( make_option_editor_ui_, std::ref( options_ ) ) );
             }
-            static consteval auto request_ui_count_() noexcept
-            {
-                return std::integral_constant< std::size_t, 1uz >{};
-            }
+            static inline constexpr auto ui_count_{ 1uz };
           public:
             auto&& operator[]( this auto&& self, const key_t_ key ) noexcept
             {
@@ -318,10 +315,7 @@ namespace scltk
         {
             ui.add_back( "\n[ 选项 ]\n"sv );
         }
-        static consteval auto request_ui_count_() noexcept
-        {
-            return std::integral_constant< std::size_t, 1uz >{};
-        }
+        static inline constexpr auto ui_count_{ 1uz };
       public:
         options_title_ui() noexcept  = default;
         ~options_title_ui() noexcept = default;
@@ -437,10 +431,7 @@ namespace scltk
         {
             ui.add_back( "\n[ 自定义规则 ]\n"sv ).add_back( " > 查看帮助信息 "sv, show_help_info_ );
         }
-        static consteval auto request_ui_count_() noexcept
-        {
-            return std::integral_constant< std::size_t, 2uz >{};
-        }
+        static inline constexpr auto ui_count_{ 2uz };
       public:
         custom_rules_config() noexcept
           : config_node_impl{ "custom_rules" }
@@ -589,7 +580,6 @@ namespace scltk
         {
             cpp_utils::console_ui ui{ con, unsynced_mem_pool };
             constexpr auto reserved_size{ 5 + ( decltype( nodes.request_ui_count() )::value + ... ) };
-            static_assert( reserved_size > 5 );
             ui.reserve( reserved_size )
               .add_back( "                    [ 配  置 ]\n\n"sv )
               .add_back( " < 返回\n"sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
