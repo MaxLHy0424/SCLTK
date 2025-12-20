@@ -68,7 +68,7 @@ namespace scltk
     };
     inline rule_node custom_rules;
     inline const std::array< rule_node, 5 > builtin_rules{
-      { { "学生机房管理助手",
+      { { "机房管理助手",
           { L"yz", L"abcut", L"jfglzs", L"jfglzsn", L"prozs", L"przs", L"uninstal1", L"sct", L"zmserv", L"zmsrv" },
           { L"zmserv" } },
        { "极域电子教室",
@@ -814,7 +814,7 @@ namespace scltk
         constexpr std::array< details::tool_item, 3 > tools{
           { { "恢复操作系统组件", details::restore_os_components },
            { "重置 Hosts", details::reset_hosts },
-           { "终止 \"学生机房管理助手\" 守护进程", details::terminate_jfglzs_daemon } }
+           { "终止 \"机房管理助手\" 守护进程", details::terminate_jfglzs_daemon } }
         };
         constexpr std::array< details::cmd_item, 5 > cmds{
           { { "重启资源管理器", R"(taskkill.exe /f /im explorer.exe && timeout.exe /t 3 /nobreak && start explorer.exe)" },
