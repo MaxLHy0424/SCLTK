@@ -280,8 +280,8 @@ namespace cpp_utils
         using sub_list = sub_list_impl_< Offset, Count >::type;
         using reverse  = reverse_impl_<>::type;
         using unique   = unique_impl_<>::type;
-        template < template < typename... > typename U >
-        using apply = U< Ts... >;
+        template < template < typename... > typename Template >
+        using apply = Template< Ts... >;
         template < template < typename > typename F >
         using transform = transform_impl_< F >::type;
         template < template < typename > typename Pred >
@@ -301,6 +301,35 @@ namespace cpp_utils
             using type = type_list< Ts..., Us... >;
         };
     }
-    template < typename T, typename U >
-    using type_list_concat = typename details::type_list_concat_impl_< T, U >::type;
+    template < typename List1, typename List2 >
+    using type_list_concat = typename details::type_list_concat_impl_< List1, List2 >::type;
+    namespace details
+    {
+        template < typename List >
+        struct is_in_type_list
+        {
+            template < typename T >
+            using predicate = std::bool_constant< List::template contains< T > >;
+        };
+        template < typename List >
+        struct is_not_in_type_list
+        {
+            template < typename T >
+            using predicate = std::bool_constant< !List::template contains< T > >;
+        };
+        template < typename List1, typename List2 >
+        struct type_list_intersection_impl_
+        {
+            using type = typename List1::template filter< is_in_type_list< List2 >::template predicate >::unique;
+        };
+        template < typename List1, typename List2 >
+        struct type_list_difference_impl_
+        {
+            using type = typename List1::template filter< is_not_in_type_list< List2 >::template predicate >::unique;
+        };
+    }
+    template < typename List1, typename List2 >
+    using type_list_intersection = typename details::type_list_intersection_impl_< List1, List2 >::type;
+    template < typename List1, typename List2 >
+    using type_list_difference = typename details::type_list_difference_impl_< List1, List2 >::type;
 }
