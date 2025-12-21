@@ -320,48 +320,48 @@ namespace cpp_utils
     namespace details
     {
         template < typename, typename >
-        struct type_list_concat_impl_ final
+        struct type_list_concat_impl final
         {
             static_assert( false, "can only concatenate type_list types" );
             using type = error_type;
         };
         template < typename... Ts, typename... Us >
-        struct type_list_concat_impl_< type_list< Ts... >, type_list< Us... > > final
+        struct type_list_concat_impl< type_list< Ts... >, type_list< Us... > > final
         {
             using type = type_list< Ts..., Us... >;
         };
     }
     template < typename List1, typename List2 >
-    using type_list_concat = typename details::type_list_concat_impl_< List1, List2 >::type;
+    using type_list_concat = typename details::type_list_concat_impl< List1, List2 >::type;
     namespace details
     {
         template < typename List >
-        struct is_in_type_list
+        struct is_in_type_list final
         {
             template < typename T >
             using predicate = std::bool_constant< List::template contains< T > >;
         };
         template < typename List >
-        struct is_not_in_type_list
+        struct is_not_in_type_list final
         {
             template < typename T >
             using predicate = std::bool_constant< !List::template contains< T > >;
         };
         template < typename List1, typename List2 >
-        struct type_list_intersection_impl_
+        struct type_list_intersection_impl final
         {
             using type = typename List1::template filter< is_in_type_list< List2 >::template predicate >::unique;
         };
         template < typename List1, typename List2 >
-        struct type_list_difference_impl_
+        struct type_list_difference_impl final
         {
             using type = typename List1::template filter< is_not_in_type_list< List2 >::template predicate >::unique;
         };
     }
     template < typename List1, typename List2 >
-    using type_list_intersection = typename details::type_list_intersection_impl_< List1, List2 >::type;
+    using type_list_intersection = typename details::type_list_intersection_impl< List1, List2 >::type;
     template < typename List1, typename List2 >
-    using type_list_difference = typename details::type_list_difference_impl_< List1, List2 >::type;
+    using type_list_difference = typename details::type_list_difference_impl< List1, List2 >::type;
     template < typename List1, typename List2 >
     using type_list_symmetric_difference
       = type_list_concat< type_list_difference< List1, List2 >, type_list_difference< List2, List1 > >::unique;
