@@ -59,16 +59,6 @@ namespace cpp_utils
               basic_unique_impl_< type_list< ResultTs..., T >, type_list< Rest... > > >;
             using type = typename next::type;
         };
-        template < typename >
-        struct concat_impl_ final
-        {
-            static_assert( false, "cannot concatenate type_list with non-type_list type" );
-        };
-        template < typename... Us >
-        struct concat_impl_< type_list< Us... > > final
-        {
-            using type = type_list< Ts..., Us... >;
-        };
         template < typename U >
         struct is_same_type_ final
         {
