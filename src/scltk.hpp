@@ -394,13 +394,9 @@ namespace scltk
         auto before_load_() noexcept
         {
             execs.clear();
-            execs.shrink_to_fit();
             servs.clear();
-            servs.shrink_to_fit();
             custom_rules.execs.clear();
-            custom_rules.execs.shrink_to_fit();
             custom_rules.servs.clear();
-            custom_rules.servs.shrink_to_fit();
         }
         auto after_load_()
         {
