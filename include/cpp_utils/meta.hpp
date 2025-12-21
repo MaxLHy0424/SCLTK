@@ -5,6 +5,11 @@
 #include <utility>
 namespace cpp_utils
 {
+    template < typename... Fs >
+    struct overloads final : public Fs...
+    {
+        using Fs::operator()...;
+    };
     template < bool Expr >
     concept test = Expr;
     struct error_type final
