@@ -332,4 +332,7 @@ namespace cpp_utils
     using type_list_intersection = typename details::type_list_intersection_impl_< List1, List2 >::type;
     template < typename List1, typename List2 >
     using type_list_difference = typename details::type_list_difference_impl_< List1, List2 >::type;
+    template < typename List1, typename List2 >
+    using type_list_symmetric_difference
+      = type_list_concat< type_list_difference< List1, List2 >, type_list_difference< List2, List1 > >::unique;
 }
