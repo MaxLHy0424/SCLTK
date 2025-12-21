@@ -27,6 +27,36 @@ namespace cpp_utils
     };
     template < typename T >
     concept common_type = !std::same_as< std::decay_t< T >, error_type > && !std::same_as< std::decay_t< T >, undefined_type >;
+    template < typename T >
+    class type_identity final
+    {
+      public:
+        using type = T;
+        template < typename U >
+        consteval auto operator==( const type_identity< U > ) const noexcept
+        {
+            return std::is_same_v< T, U >;
+        }
+        template < typename U >
+        consteval auto operator!=( const type_identity< U > ) const noexcept
+        {
+            return !std::is_same_v< T, U >;
+        }
+        template < template < typename > typename Pred >
+            requires requires {
+                { Pred< T >::value } -> std::convertible_to< bool >;
+            }
+        static inline constexpr auto test{ Pred< T >::value };
+        template < template < typename > typename F >
+            requires requires { typename F< T >::type; }
+        using transform = type_identity< typename F< T >::type >;
+        template < template < typename > typename Pred, template < typename > typename F >
+            requires requires {
+                { Pred< T >::value } -> std::convertible_to< bool >;
+                typename F< T >::type;
+            }
+        using transform_if = type_identity< std::conditional_t< Pred< T >::value, typename F< T >::type, T > >;
+    };
     template < common_type... Ts >
     class type_list final
     {
