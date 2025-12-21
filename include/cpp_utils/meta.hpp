@@ -366,7 +366,7 @@ namespace cpp_utils
     using type_list_symmetric_difference
       = type_list_concat< type_list_difference< List1, List2 >, type_list_difference< List2, List1 > >::unique;
     template < common_type... Ts, template < typename > typename F >
-    constexpr auto type_list_for_each( type_list< Ts... > )
+    inline constexpr auto type_list_for_each( type_list< Ts... > )
     {
         ( F< Ts >{}, ... );
     }
