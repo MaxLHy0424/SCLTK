@@ -330,11 +330,6 @@ namespace cpp_utils
         {
             using type = type_list< Ts..., Us... >;
         };
-    }
-    template < typename List1, typename List2 >
-    using type_list_concat = typename details::type_list_concat_impl< List1, List2 >::type;
-    namespace details
-    {
         template < typename List >
         struct is_in_type_list final
         {
@@ -358,6 +353,8 @@ namespace cpp_utils
             using type = typename List1::template filter< is_not_in_type_list< List2 >::template predicate >::unique;
         };
     }
+    template < typename List1, typename List2 >
+    using type_list_concat = typename details::type_list_concat_impl< List1, List2 >::type;
     template < typename List1, typename List2 >
     using type_list_intersection = typename details::type_list_intersection_impl< List1, List2 >::type;
     template < typename List1, typename List2 >
