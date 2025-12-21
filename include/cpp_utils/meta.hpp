@@ -10,6 +10,8 @@ namespace cpp_utils
     {
         using Fs::operator()...;
     };
+    template < typename... Fs >
+    overloads( Fs... ) -> overloads< Fs... >;
     template < bool Expr >
     concept test = Expr;
     struct error_type final
