@@ -16,9 +16,8 @@ namespace cpp_utils
         requires std::same_as< T, std::decay_t< T > >
     class basic_const_string final
     {
-      private:
-        std::array< T, N + 1 > storage_{};
       public:
+        std::array< T, N + 1 > storage_{};
         constexpr const auto& data() const noexcept
         {
             return storage_;
