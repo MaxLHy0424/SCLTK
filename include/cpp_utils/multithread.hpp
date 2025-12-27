@@ -100,7 +100,7 @@ namespace cpp_utils
             threads_.reserve( size );
             return *this;
         }
-        auto& optimize_storage() noexcept
+        auto& shrink_to_fit() noexcept
         {
             threads_.shrink_to_fit();
             return *this;
