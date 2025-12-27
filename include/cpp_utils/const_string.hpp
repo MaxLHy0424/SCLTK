@@ -130,4 +130,21 @@ namespace cpp_utils
         }( strings ), ... );
         return basic_const_string{ storage };
     }
+    namespace details
+    {
+        template < basic_const_string S >
+        struct make_char_list_from_const_string_impl
+        {
+          private:
+            template < std::size_t... Is >
+            static consteval auto impl_( std::index_sequence< Is... > )
+            {
+                return type_list< std::integral_constant< typename decltype( S )::char_type, S[ Is ] >... >{};
+            }
+          public:
+            using type = decltype( impl_( std::make_index_sequence< S.size() >{} ) );
+        };
+    }
+    template < basic_const_string S >
+    using make_char_list_from_const_string = typename details::make_char_list_from_const_string_impl< S >::type;
 }
