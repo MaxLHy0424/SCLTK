@@ -154,6 +154,40 @@ namespace cpp_utils
             using type = error_type;
         };
         template < std::size_t = 0uz, bool = empty_ >
+        struct front_impl_;
+        template < std::size_t _ >
+        struct front_impl_< _, false > final
+        {
+            using type = typename at_impl_< 0 >::type;
+        };
+        template < std::size_t _ >
+        struct front_impl_< _, true > final
+        {
+            using type = error_type;
+        };
+        template < std::size_t = 0uz, bool = empty_ >
+        struct back_impl_;
+        template < std::size_t _ >
+        struct back_impl_< _, false > final
+        {
+            using type = typename at_impl_< size_ - 1 >::type;
+        };
+        template < std::size_t _ >
+        struct back_impl_< _, true > final
+        {
+            using type = error_type;
+        };
+        template < typename... Us >
+        struct add_front_impl_ final
+        {
+            using type = type_list< Us..., Ts... >;
+        };
+        template < typename... Us >
+        struct add_back_impl_ final
+        {
+            using type = type_list< Ts..., Us... >;
+        };
+        template < std::size_t = 0uz, bool = empty_ >
         struct remove_front_impl_;
         template < std::size_t _ >
         struct remove_front_impl_< _, false > final
@@ -239,6 +273,11 @@ namespace cpp_utils
             static consteval auto construct_swapped( std::index_sequence< Is... > ) -> type_list< get_swapped_type< Is >... >;
             using type = decltype( construct_swapped( std::make_index_sequence< size_ >{} ) );
         };
+        template < template < typename... > typename Template >
+        struct apply_impl_ final
+        {
+            using type = Template< Ts... >;
+        };
         template < template < typename > typename F >
         struct transform_impl_ final
         {
@@ -320,13 +359,13 @@ namespace cpp_utils
         template < typename U >
         static inline constexpr auto find_last{ find_last_if< is_same_type_< U >::template predicate > };
         template < std::size_t I >
-        using at    = at_impl_< I >::type;
-        using front = at< 0 >;
-        using back  = at< size - 1 >;
+        using at    = typename at_impl_< I >::type;
+        using front = typename front_impl_<>::type;
+        using back  = typename back_impl_<>::type;
         template < common_type... Us >
-        using add_front = type_list< Us..., Ts... >;
+        using add_front = typename add_front_impl_< Us... >::type;
         template < common_type... Us >
-        using add_back     = type_list< Ts..., Us... >;
+        using add_back     = typename add_back_impl_< Us... >::type;
         using remove_front = remove_front_impl_<>::type;
         using remove_back  = remove_back_impl_<>::type;
         template < std::size_t Offset, std::size_t Count >
@@ -336,7 +375,7 @@ namespace cpp_utils
         template < std::size_t I1, std::size_t I2 >
         using swap = typename swap_impl_< I1, I2 >::type;
         template < template < typename... > typename Template >
-        using apply = Template< Ts... >;
+        using apply = typename apply_impl_< Template >::type;
         template < template < typename > typename F >
         using transform = transform_impl_< F >::type;
         template < template < typename > typename Pred >
