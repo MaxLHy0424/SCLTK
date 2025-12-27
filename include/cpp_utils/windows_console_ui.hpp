@@ -225,7 +225,7 @@ namespace cpp_utils
             lines_.reserve( size );
             return *this;
         }
-        auto& optimize_storage() noexcept
+        auto& shrink_to_fit() noexcept
         {
             for ( auto& line : lines_ ) {
                 line.text.visit( []< typename T >( T& line_text ) static
