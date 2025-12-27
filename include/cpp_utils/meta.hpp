@@ -216,6 +216,29 @@ namespace cpp_utils
         {
             using type = type_list<>;
         };
+        template < std::size_t I1, std::size_t I2, bool = empty_ >
+        struct swap_impl_;
+        template < std::size_t I1, std::size_t I2 >
+        struct swap_impl_< I1, I2, true > final
+        {
+            static_assert( false, "swap index out of bounds" );
+            using type = error_type;
+        };
+        template < std::size_t I1, std::size_t I2 >
+        struct swap_impl_< I1, I2, false > final
+        {
+            static_assert( I1 < size_, "swap first index out of bounds" );
+            static_assert( I2 < size_, "swap second index out of bounds" );
+            using type_at_i1 = std::tuple_element_t< I1, std::tuple< Ts... > >;
+            using type_at_i2 = std::tuple_element_t< I2, std::tuple< Ts... > >;
+            template < std::size_t Index >
+            using get_swapped_type = std::conditional_t<
+              Index == I1, type_at_i2,
+              std::conditional_t< Index == I2, type_at_i1, std::tuple_element_t< Index, std::tuple< Ts... > > > >;
+            template < std::size_t... Is >
+            static consteval auto construct_swapped( std::index_sequence< Is... > ) -> type_list< get_swapped_type< Is >... >;
+            using type = decltype( construct_swapped( std::make_index_sequence< size_ >{} ) );
+        };
         template < template < typename > typename F >
         struct transform_impl_ final
         {
@@ -310,6 +333,8 @@ namespace cpp_utils
         using sub_list = sub_list_impl_< Offset, Count >::type;
         using reverse  = reverse_impl_<>::type;
         using unique   = unique_impl_<>::type;
+        template < std::size_t I1, std::size_t I2 >
+        using swap = typename swap_impl_< I1, I2 >::type;
         template < template < typename... > typename Template >
         using apply = Template< Ts... >;
         template < template < typename > typename F >
