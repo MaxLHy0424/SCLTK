@@ -14,9 +14,8 @@ namespace cpp_utils
      || std::same_as< std::decay_t< T >, char32_t >;
     template < character T, std::size_t N >
         requires std::same_as< T, std::decay_t< T > >
-    class basic_const_string final
+    struct basic_const_string final
     {
-      public:
         std::array< T, N + 1 > storage_{};
         constexpr const auto& data() const noexcept
         {
