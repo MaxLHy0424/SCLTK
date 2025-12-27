@@ -216,17 +216,10 @@ namespace cpp_utils
         {
             using type = type_list<>;
         };
-        template < template < typename > typename, bool = empty_ >
-        struct transform_impl_;
         template < template < typename > typename F >
-        struct transform_impl_< F, false > final
+        struct transform_impl_ final
         {
             using type = type_list< typename F< Ts >::type... >;
-        };
-        template < template < typename > typename F >
-        struct transform_impl_< F, true > final
-        {
-            using type = type_list<>;
         };
         template < template < typename > typename, bool = empty_ >
         struct filter_impl_;
