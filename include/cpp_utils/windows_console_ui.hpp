@@ -227,14 +227,16 @@ namespace cpp_utils
         }
         auto& optimize_storage() noexcept
         {
-            constexpr auto default_text_capacity{ std::string{}.capacity() };
             for ( auto& line : lines_ ) {
-                auto text{ std::get_if< std::pmr::string >( &line.text ) };
-                if ( text != nullptr ) {
-                    if ( text->capacity() != default_text_capacity && text->capacity() > text->size() ) {
-                        text->shrink_to_fit();
+                line.text.visit( []< typename T >( T& line_text ) static
+                {
+                    constexpr auto default_text_capacity{ std::string{}.capacity() };
+                    if constexpr ( std::is_same_v< T, std::string > || std::is_same_v< T, std::pmr::string > ) {
+                        if ( line_text.capacity() != default_text_capacity && line_text.capacity() > line_text.size() ) {
+                            line_text.shrink_to_fit();
+                        }
                     }
-                }
+                } );
             }
             lines_.shrink_to_fit();
             return *this;
