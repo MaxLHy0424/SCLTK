@@ -345,7 +345,7 @@ namespace cpp_utils
         static inline constexpr auto size{ size_ };
         static inline constexpr auto empty{ empty_ };
         template < typename U >
-        static inline constexpr auto contains{ std::disjunction_v< std::is_same_v< U, Ts >... > };
+        static inline constexpr auto contains{ std::disjunction_v< std::is_same< U, Ts >... > };
         template < typename U >
         static inline constexpr auto count{ [] consteval
         {
