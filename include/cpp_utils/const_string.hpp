@@ -139,7 +139,7 @@ namespace cpp_utils
             template < std::size_t... Is >
             static consteval auto impl_( std::index_sequence< Is... > )
             {
-                return type_list< std::integral_constant< typename decltype( S )::char_type, S[ Is ] >... >{};
+                return type_list< value_identity< S[ Is ] >... >{};
             }
           public:
             using type = decltype( impl_( std::make_index_sequence< S.size() >{} ) );
