@@ -133,7 +133,7 @@ namespace cpp_utils
     namespace details
     {
         template < basic_const_string S >
-        struct make_char_list_from_const_string_impl
+        struct split_const_string_impl
         {
           private:
             template < std::size_t... Is >
@@ -146,5 +146,5 @@ namespace cpp_utils
         };
     }
     template < basic_const_string S >
-    using make_char_list_from_const_string = typename details::make_char_list_from_const_string_impl< S >::type;
+    using split_const_string = typename details::split_const_string_impl< S >::type;
 }
