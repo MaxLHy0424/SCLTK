@@ -96,7 +96,7 @@ namespace cpp_utils
         template < typename... ResultTs, typename T, typename... Rest >
         struct basic_unique_impl_< type_list< ResultTs... >, type_list< T, Rest... > > final
         {
-            static inline constexpr auto found{ ( std::is_same_v< T, ResultTs > || ... ) };
+            static inline constexpr auto found{ std::disjunction_v< std::is_same< T, ResultTs >... > };
             using next = std::conditional_t<
               found, basic_unique_impl_< type_list< ResultTs... >, type_list< Rest... > >,
               basic_unique_impl_< type_list< ResultTs..., T >, type_list< Rest... > > >;
@@ -109,7 +109,7 @@ namespace cpp_utils
             using predicate = std::is_same< T, U >;
         };
         template < template < typename > typename Pred >
-        struct negate_pred_ final
+        struct negate_pred_
         {
             template < typename T >
             using predicate = std::bool_constant< !Pred< T >::value >;
@@ -345,7 +345,7 @@ namespace cpp_utils
         static inline constexpr auto size{ size_ };
         static inline constexpr auto empty{ empty_ };
         template < typename U >
-        static inline constexpr auto contains{ ( std::is_same_v< U, Ts > || ... ) };
+        static inline constexpr auto contains{ std::disjunction_v< std::is_same_v< U, Ts >... > };
         template < typename U >
         static inline constexpr auto count{ [] consteval
         {
@@ -367,16 +367,34 @@ namespace cpp_utils
         template < template < typename > typename Pred >
         static inline constexpr auto all_of{ [] consteval
         {
-            if constexpr ( empty ) {
-                return false;
-            } else {
+            if constexpr ( std::disjunction_v< std::is_final< Pred< Ts > >... > ) {
                 return ( Pred< Ts >::value && ... );
+            } else {
+                return std::conjunction_v< Pred< Ts >... >;
             }
         }() };
         template < template < typename > typename Pred >
-        static inline constexpr auto any_of{ ( Pred< Ts >::value || ... ) };
+        static inline constexpr auto any_of{ [] consteval
+        {
+            if ( empty_ ) {
+                return true;
+            } else {
+                if constexpr ( std::disjunction_v< std::is_final< Pred< Ts > >... > ) {
+                    return ( Pred< Ts >::value || ... );
+                } else {
+                    return std::disjunction_v< Pred< Ts >... >;
+                }
+            }
+        }() };
         template < template < typename > typename Pred >
-        static inline constexpr auto none_of{ ( !Pred< Ts >::value && ... ) };
+        static inline constexpr auto none_of{ [] consteval
+        {
+            if constexpr ( std::disjunction_v< std::is_final< Pred< Ts > >... > ) {
+                return ( !Pred< Ts >::value && ... );
+            } else {
+                return std::conjunction_v< negate_pred_< Pred >::template predicate< Ts >... >;
+            }
+        }() };
         template < template < typename > typename Pred >
         static inline constexpr auto find_first_if{ [] consteval
         {
