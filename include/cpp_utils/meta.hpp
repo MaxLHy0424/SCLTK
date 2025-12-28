@@ -64,6 +64,12 @@ namespace cpp_utils
             }
         using transform_if = type_identity< std::conditional_t< Pred< T >::value, typename F< T >::type, T > >;
     };
+    template < auto V >
+    struct value_identity final
+    {
+        static inline constexpr auto value{ V };
+        using value_type = decltype( value );
+    };
     template < common_type... Ts >
     class type_list final
     {
