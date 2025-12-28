@@ -392,7 +392,7 @@ namespace cpp_utils
             if constexpr ( std::disjunction_v< std::is_final< Pred< Ts > >... > ) {
                 return ( !Pred< Ts >::value && ... );
             } else {
-                return std::conjunction_v< negate_pred_< Pred >::template predicate< Ts >... >;
+                return std::conjunction_v< std::bool_constant< !Pred< Ts >::value >... >;
             }
         }() };
         template < template < typename > typename Pred >
