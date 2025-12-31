@@ -23,17 +23,8 @@ namespace cpp_utils
         error_type( error_type&& ) noexcept                    = delete;
         ~error_type() noexcept                                 = delete;
     };
-    struct undefined_type final
-    {
-        auto operator=( const undefined_type& ) -> undefined_type&     = delete;
-        auto operator=( undefined_type&& ) noexcept -> undefined_type& = delete;
-        undefined_type()                                               = delete;
-        undefined_type( const undefined_type& )                        = delete;
-        undefined_type( undefined_type&& ) noexcept                    = delete;
-        ~undefined_type() noexcept                                     = delete;
-    };
     template < typename T >
-    concept common_type = !std::same_as< std::decay_t< T >, error_type > && !std::same_as< std::decay_t< T >, undefined_type >;
+    concept common_type = !std::same_as< std::decay_t< T >, error_type >;
     template < typename T >
     class type_identity final
     {
@@ -429,12 +420,12 @@ namespace cpp_utils
         using add_front = typename add_front_impl_< Us... >::type;
         template < common_type... Us >
         using add_back     = typename add_back_impl_< Us... >::type;
-        using remove_front = remove_front_impl_<>::type;
-        using remove_back  = remove_back_impl_<>::type;
+        using remove_front = typename remove_front_impl_<>::type;
+        using remove_back  = typename remove_back_impl_<>::type;
         template < std::size_t Offset, std::size_t Count >
-        using sub_list = sub_list_impl_< Offset, Count >::type;
-        using reverse  = reverse_impl_<>::type;
-        using unique   = unique_impl_<>::type;
+        using sub_list = typename sub_list_impl_< Offset, Count >::type;
+        using reverse  = typename reverse_impl_<>::type;
+        using unique   = typename unique_impl_<>::type;
         template < std::size_t I1, std::size_t I2 >
         using swap = typename swap_impl_< I1, I2 >::type;
         template < template < typename, typename > typename Pred >
@@ -442,9 +433,9 @@ namespace cpp_utils
         template < template < typename... > typename Template >
         using apply = typename apply_impl_< Template >::type;
         template < template < typename > typename F >
-        using transform = transform_impl_< F >::type;
+        using transform = typename transform_impl_< F >::type;
         template < template < typename > typename Pred >
-        using filter = filter_impl_< Pred >::type;
+        using filter = typename filter_impl_< Pred >::type;
     };
     namespace details
     {
