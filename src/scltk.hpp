@@ -68,9 +68,7 @@ namespace scltk
     };
     inline rule_node custom_rules;
     inline const std::array< rule_node, 5 > builtin_rules{
-      { { "机房管理助手",
-          { L"yz", L"abcut", L"jfglzs", L"jfglzsn", L"prozs", L"przs", L"uninstal1", L"sct", L"zmserv", L"zmsrv" },
-          { L"zmserv" } },
+      { { "机房管理助手", { L"yz", L"jfglzs", L"jfglzsn", L"jfglzsp", L"przs", L"zmserv", L"zmsrv" }, { L"zmserv" } },
        { "极域电子教室",
           { L"StudentMain", L"DispcapHelper", L"VRCwPlayer", L"InstHelpApp", L"InstHelpApp64", L"TDOvrSet", L"GATESRV",
             L"ProcHelper64", L"MasterHelper" },
