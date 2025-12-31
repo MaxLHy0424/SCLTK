@@ -9,9 +9,9 @@ namespace cpp_utils
 {
     template < typename T >
     concept character
-      = std::same_as< std::decay_t< T >, char > || std::same_as< std::decay_t< T >, wchar_t >
-     || std::same_as< std::decay_t< T >, char8_t > || std::same_as< std::decay_t< T >, char16_t >
-     || std::same_as< std::decay_t< T >, char32_t >;
+      = std::same_as< std::remove_cv_t< T >, char > || std::same_as< std::remove_cv_t< T >, wchar_t >
+     || std::same_as< std::remove_cv_t< T >, char8_t > || std::same_as< std::remove_cv_t< T >, char16_t >
+     || std::same_as< std::remove_cv_t< T >, char32_t >;
     template < character T, std::size_t N >
         requires std::same_as< T, std::decay_t< T > >
     struct basic_const_string final
