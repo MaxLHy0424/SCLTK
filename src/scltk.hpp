@@ -731,45 +731,43 @@ namespace scltk
             }
             FreeLibrary( dnsapi );
         }
-        inline auto CALLBACK enum_window_proc( const HWND window, const LPARAM param ) noexcept
-        {
-            if ( window == nullptr ) {
-                return TRUE;
-            }
-            const auto title_length{ GetWindowTextLengthW( window ) };
-            if ( title_length == 0 ) {
-                return TRUE;
-            }
-            std::pmr::wstring title_buffer{ static_cast< std::size_t >( title_length ), L'\0', unsynced_mem_pool };
-            GetWindowTextW( window, title_buffer.data(), title_length + 1 );
-            if ( title_buffer == L"bianhao"sv ) {
-                std::bit_cast< std::pmr::vector< HWND >* >( param )->emplace_back( window );
-            }
-            return TRUE;
-        }
         inline auto terminate_jfglzs_daemon() noexcept
         {
-            std::print( " -> 正在查找窗口...\n" );
-            std::pmr::vector< HWND > found_windows{ unsynced_mem_pool };
-            found_windows.reserve( 2 );
-            EnumWindows( enum_window_proc, std::bit_cast< LPARAM >( &found_windows ) );
-            for ( const auto found_window : found_windows ) {
-                if ( found_window != nullptr ) {
-                    DWORD process_id;
-                    GetWindowThreadProcessId( found_window, &process_id );
-                    if ( GetLastError() != ERROR_SUCCESS ) {
+            std::print( " -> 正在查找进程...\n" );
+            constexpr auto close_handle{ []( const HANDLE handle ) static noexcept { CloseHandle( handle ); } };
+            using raii_handle = std::unique_ptr< std::remove_pointer_t< HANDLE >, decltype( close_handle ) >;
+            raii_handle process_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ), close_handle };
+            if ( process_snapshot.get() == INVALID_HANDLE_VALUE ) {
+                return;
+            }
+            constexpr auto is_lower_case{ []( const wchar_t ch ) static noexcept { return ch >= L'a' && ch <= L'z'; } };
+            constexpr auto needle{ L"Program Files"sv };
+            const std::boyer_moore_horspool_searcher searcher{ needle.begin(), needle.end() };
+            PROCESSENTRY32W process_entry{};
+            process_entry.dwSize = sizeof( process_entry );
+            if ( Process32FirstW( process_snapshot.get(), &process_entry ) ) {
+                do {
+                    std::wstring_view name{ process_entry.szExeFile };
+                    if ( name.size() != L"xxxxx.exe"sv.size() ) {
                         continue;
                     }
-                    const auto proc{ OpenProcess( PROCESS_TERMINATE, FALSE, process_id ) };
-                    if ( proc == nullptr ) {
-                        continue;
+                    name.remove_suffix( L".exe"sv.size() );
+                    if ( std::ranges::all_of( name, is_lower_case ) ) {
+                        raii_handle process_handle{
+                          OpenProcess( PROCESS_TERMINATE | PROCESS_QUERY_LIMITED_INFORMATION, FALSE, process_entry.th32ProcessID ),
+                          close_handle };
+                        if ( process_handle.get() == nullptr ) {
+                            continue;
+                        }
+                        DWORD size{ MAX_PATH };
+                        std::array< wchar_t, MAX_PATH > buffer{};
+                        QueryFullProcessImageNameW( process_handle.get(), 0, buffer.data(), &size );
+                        if ( std::search( buffer.begin(), buffer.end(), searcher ) == buffer.end() ) {
+                            continue;
+                        }
+                        TerminateProcess( process_handle.get(), 1 );
                     }
-                    if ( !TerminateProcess( proc, 0 ) ) {
-                        CloseHandle( proc );
-                        continue;
-                    }
-                    CloseHandle( proc );
-                }
+                } while ( Process32NextW( process_snapshot.get(), &process_entry ) );
             }
         }
         struct tool_item final
