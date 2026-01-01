@@ -735,7 +735,7 @@ namespace scltk
         {
             std::print( " -> 正在查找进程...\n" );
             constexpr auto close_handle{ []( const HANDLE handle ) static noexcept { CloseHandle( handle ); } };
-            using raii_handle = std::unique_ptr< std::remove_pointer_t< HANDLE >, decltype( close_handle ) >;
+            using raii_handle = const std::unique_ptr< std::remove_pointer_t< HANDLE >, decltype( close_handle ) >;
             raii_handle process_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ), close_handle };
             if ( process_snapshot.get() == INVALID_HANDLE_VALUE ) {
                 return;
