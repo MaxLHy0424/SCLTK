@@ -174,7 +174,7 @@ namespace cpp_utils
                 }
             }
         }
-        static auto is_empty_function( const function_t& func ) noexcept
+        static auto is_empty_function_( const function_t& func ) noexcept
         {
             return func.visit< bool >( []( const auto& various_func ) static noexcept { return various_func == nullptr; } );
         }
@@ -185,7 +185,7 @@ namespace cpp_utils
             if ( target == lines_.end() ) {
                 return func_back;
             }
-            if ( is_empty_function( target->func ) ) {
+            if ( is_empty_function_( target->func ) ) {
                 return func_back;
             }
             console_.clear( lines_.get_allocator().resource() );
@@ -251,7 +251,8 @@ namespace cpp_utils
           const WORD intensity_attrs = console_text::foreground_green | console_text::foreground_blue,
           const WORD default_attrs   = console_text::foreground_white )
         {
-            lines_.emplace( lines_.cbegin(), text, func, default_attrs, is_empty_function( func ) ? default_attrs : intensity_attrs );
+            lines_.emplace(
+              lines_.cbegin(), text, func, default_attrs, is_empty_function_( func ) ? default_attrs : intensity_attrs );
             return *this;
         }
         auto& add_back(
@@ -259,7 +260,7 @@ namespace cpp_utils
           const WORD intensity_attrs = console_text::foreground_blue | console_text::foreground_green,
           const WORD default_attrs   = console_text::foreground_white )
         {
-            lines_.emplace_back( text, func, default_attrs, is_empty_function( func ) ? default_attrs : intensity_attrs );
+            lines_.emplace_back( text, func, default_attrs, is_empty_function_( func ) ? default_attrs : intensity_attrs );
             return *this;
         }
         auto& insert(
@@ -268,7 +269,7 @@ namespace cpp_utils
           const WORD default_attrs   = console_text::foreground_white )
         {
             lines_.emplace(
-              lines_.cbegin() + index, text, func, default_attrs, is_empty_function( func ) ? default_attrs : intensity_attrs );
+              lines_.cbegin() + index, text, func, default_attrs, is_empty_function_( func ) ? default_attrs : intensity_attrs );
             return *this;
         }
         auto& set_text( const std::size_t index, text_t text )
