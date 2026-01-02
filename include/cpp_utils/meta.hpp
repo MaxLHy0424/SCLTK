@@ -13,7 +13,7 @@ namespace cpp_utils
     template < typename... Fs >
     overloads( Fs... ) -> overloads< Fs... >;
     template < bool Expr >
-    concept test = Expr;
+    concept as_concept = Expr;
     struct error_type final
     {
         auto operator=( const error_type& ) -> error_type&     = delete;
@@ -153,7 +153,7 @@ namespace cpp_utils
             using type = error_type;
         };
         template < std::size_t I >
-            requires test< ( I < size_ ) >
+            requires as_concept< ( I < size_ ) >
         struct at_impl_< I, false > final
         {
             using type = std::tuple_element_t< I, std::tuple< Ts... > >;
