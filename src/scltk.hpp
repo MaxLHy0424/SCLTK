@@ -186,23 +186,23 @@ namespace scltk
                 } else {
                     return;
                 }
-                [ & ]< std::size_t... Is >( std::index_sequence< Is... > )
+                [ & ]< std::size_t... Is >( const std::index_sequence< Is... > ) noexcept
                 {
-                    ( [ & ]< std::size_t I >( cpp_utils::value_identity< I > )
+                    ( [ & ]< std::size_t I >( const cpp_utils::value_identity< I > ) noexcept
                     {
                         if ( item_list_::template at< I * 2 >::value.view() == key ) {
                             std::get< I >( data_ ) = value;
                             return true;
                         }
                         return false;
-                    }( cpp_utils::value_identity< Is >{} ), ... );
+                    }( cpp_utils::value_identity< Is >{} ) || ... );
                 }( std::make_index_sequence< sizeof...( Items ) / 2 >{} );
             }
             static auto reload_( const std::string_view ) noexcept
             { }
             auto sync_( std::ofstream& out )
             {
-                [ & ]< std::size_t... Is >( std::index_sequence< Is... > )
+                [ & ]< std::size_t... Is >( const std::index_sequence< Is... > )
                 {
                     ( ( out << item_list_::template at< Is * 2 >::value.c_str()
                             << ( std::get< Is >( data_ ) == true ? str_of_the_enabled : str_of_the_disabled ) << '\n' ),
@@ -242,13 +242,13 @@ namespace scltk
                   .add_back( "                    [ 配  置 ]\n\n"sv )
                   .add_back(
                     " < 返回 "sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity );
-                [ & ]< std::size_t... Is >( std::index_sequence< Is... > )
+                [ & ]< std::size_t... Is >( const std::index_sequence< Is... > )
                 {
-                    ( ( ui.add_back( std::format( "\n[ {} ]\n", item_list_::template at< Is * 2 + 1 >::value.c_str() ) )
-                          .add_back(
-                            make_flip_button_text_( std::get< Is >( data_ ) ),
-                            std::bind_back( flip_item_value_, std::ref( std::get< Is >( data_ ) ) ),
-                            cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_green ) ),
+                    ( ui.add_back( std::format( "\n[ {} ]\n", item_list_::template at< Is * 2 + 1 >::value.c_str() ) )
+                        .add_back(
+                          make_flip_button_text_( std::get< Is >( data_ ) ),
+                          std::bind_back( flip_item_value_, std::ref( std::get< Is >( data_ ) ) ),
+                          cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_green ),
                       ... );
                 }( std::make_index_sequence< sizeof...( Items ) / 2 >{} );
                 ui.show();
