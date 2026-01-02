@@ -89,6 +89,13 @@ namespace cpp_utils
         static inline constexpr auto value{ V };
         using value_type = decltype( value );
     };
+
+    template < template < typename > typename Pred >
+    struct negate_pred
+    {
+        template < typename T >
+        using predicate = std::bool_constant< !Pred< T >::value >;
+    };
     template < common_type... Ts >
     class type_list final
     {
@@ -110,12 +117,6 @@ namespace cpp_utils
         {
             template < typename T >
             using predicate = std::is_same< T, U >;
-        };
-        template < template < typename > typename Pred >
-        struct negate_pred_
-        {
-            template < typename T >
-            using predicate = std::bool_constant< !Pred< T >::value >;
         };
         template < template < typename > typename Pred, std::size_t I >
         static consteval auto find_first_if_impl_()
@@ -433,9 +434,9 @@ namespace cpp_utils
             }
         }() };
         template < template < typename > typename Pred >
-        static inline constexpr auto find_first_if_not{ find_first_if< negate_pred_< Pred >::template predicate > };
+        static inline constexpr auto find_first_if_not{ find_first_if< negate_pred< Pred >::template predicate > };
         template < template < typename > typename Pred >
-        static inline constexpr auto find_last_if_not{ find_last_if< negate_pred_< Pred >::template predicate > };
+        static inline constexpr auto find_last_if_not{ find_last_if< negate_pred< Pred >::template predicate > };
         template < typename U >
         static inline constexpr auto find_first{ find_first_if< is_same_type_< U >::template predicate > };
         template < typename U >
@@ -456,7 +457,7 @@ namespace cpp_utils
         using unique   = typename unique_impl_<>::type;
         template < std::size_t I1, std::size_t I2 >
         using swap = typename swap_impl_< I1, I2 >::type;
-        template < template < typename, typename > typename Pred >
+        template < template < common_type, common_type > typename Pred >
         using sort = typename basic_sort_impl_< type_list< Ts... >, Pred >::type;
         template < template < typename... > typename Template >
         using apply = typename apply_impl_< Template >::type;
@@ -515,4 +516,121 @@ namespace cpp_utils
     {
         ( F< Ts >{}, ... );
     }
+    template < common_type T, common_type U >
+    struct type_pair final
+    {
+        using key    = T;
+        using mapped = U;
+    };
+    template < typename T >
+    concept same_as_type_pair = requires {
+        { T{} } -> std::same_as< type_pair< typename T::key, typename T::mapped > >;
+    };
+    template < same_as_type_pair... Pairs >
+    class type_map final
+    {
+      private:
+        using to_type_list_ = type_list< Pairs... >;
+        template < same_as_type_pair Pair1 >
+        struct is_same_key_ final
+        {
+            template < same_as_type_pair Pair2 >
+            struct test : std::is_same< typename Pair1::key, typename Pair2::key >
+            { };
+        };
+        static inline constexpr auto empty_{ sizeof...( Pairs ) == 0uz };
+        template < common_type Key >
+        static inline constexpr auto contains_{
+          to_type_list_::template any_of< is_same_key_< type_pair< Key, void > >::template test > };
+        template < typename AccumulatedList, typename RemainingList >
+        struct unique_helper_;
+        template < typename... AccumPairs >
+        struct unique_helper_< type_list< AccumPairs... >, type_list<> > final
+        {
+            using type = type_list< AccumPairs... >;
+        };
+        template < typename... AccumPairs, typename CurrentPair, typename... RestPairs >
+        struct unique_helper_< type_list< AccumPairs... >, type_list< CurrentPair, RestPairs... > > final
+        {
+            static inline constexpr auto key_exists{
+              ( std::is_same_v< typename CurrentPair::key, typename AccumPairs::key > || ... ) };
+            using next_accumulator
+              = std::conditional_t< key_exists, type_list< AccumPairs... >, type_list< AccumPairs..., CurrentPair > >;
+            using type = typename unique_helper_< next_accumulator, type_list< RestPairs... > >::type;
+        };
+        template < common_type Key >
+        struct at_impl_ final
+        {
+            static_assert( contains_< Key >, "key doesn't exist" );
+            using type = typename type_list< typename Pairs::mapped... >::template at<
+              type_list< typename Pairs::key... >::template find_first< Key > >;
+        };
+        template < common_type Key, common_type Mapped >
+        struct add_impl_ final
+        {
+            using pair_to_add = type_pair< Key, Mapped >;
+            using type        = type_map< Pairs..., pair_to_add >::unique;
+        };
+        template < common_type Key, common_type Mapped >
+        struct add_or_update_impl_ final
+        {
+            using pair_to_add = type_pair< Key, Mapped >;
+            using type        = type_map< pair_to_add, Pairs... >::unique;
+        };
+        template < common_type Key >
+        struct remove_impl_ final
+        {
+            using type = to_type_list_::template filter< negate_pred<
+              is_same_key_< type_pair< Key, void > >::template test >::template predicate >::template apply< type_map >::unique;
+        };
+        template < typename... >
+        struct merge_impl_;
+        template < typename... OtherPairs >
+        struct merge_impl_< type_map< OtherPairs... > > final
+        {
+            using type = type_map< Pairs..., OtherPairs... >::unique;
+        };
+        template < typename... >
+        struct merge_and_update_impl_;
+        template < typename... OtherPairs >
+        struct merge_and_update_impl_< type_map< OtherPairs... > > final
+        {
+            using base = type_list_concat<
+              typename type_map< Pairs... >::unique::to_type_list_, typename type_map< OtherPairs... >::unique::to_type_list_ >;
+            using type =
+              typename base::reverse::template apply< type_map >::unique::to_type_list_::reverse::template apply< type_map >;
+        };
+        template < template < common_type, common_type > typename Pred >
+        struct sort_impl_ final
+        {
+            struct PredWrapper final
+            {
+                template < typename Pair1, typename Pair2 >
+                struct compare : std::bool_constant< Pred< typename Pair1::key, typename Pair2::key >::value >
+                { };
+            };
+            using type = typename to_type_list_::template sort< PredWrapper::template compare >::template apply< type_map >;
+        };
+      public:
+        using unique = typename unique_helper_< type_list<>, to_type_list_ >::type::template apply< type_map >;
+        static inline constexpr auto original_size{ sizeof...( Pairs ) };
+        static inline constexpr auto size{ unique::original_size };
+        static inline constexpr auto empty{ empty_ };
+        template < common_type Key >
+        static inline constexpr auto contains{ contains_< Key > };
+        template < common_type Key >
+        using at = typename at_impl_< Key >::type;
+        template < common_type Key, common_type Mapped >
+        using add = typename add_impl_< Key, Mapped >::type;
+        template < common_type Key, common_type Mapped >
+        using add_or_update = typename add_or_update_impl_< Key, Mapped >::type;
+        template < common_type Key >
+        using remove = typename remove_impl_< Key >::type;
+        template < typename Other >
+        using merge = typename merge_impl_< Other >::type;
+        template < typename Other >
+        using merge_and_update = typename merge_and_update_impl_< Other >::type;
+        template < template < common_type, common_type > typename Pred >
+        using sort = typename sort_impl_< Pred >::type;
+    };
 }
