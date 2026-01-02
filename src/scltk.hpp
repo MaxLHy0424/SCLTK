@@ -209,13 +209,30 @@ namespace scltk
                       ... );
                 }( std::make_index_sequence< sizeof...( Items ) / 2 >{} );
             }
-            static auto make_flip_button_text_( const value_t_& item )
+            static auto get_value( const value_t_& value )
             {
-                return item == true ? " > 禁用 "sv : " > 启用 "sv;
+                if constexpr ( std::is_same_v< value_t_, std::atomic< bool > > ) {
+                    return value.load( std::memory_order_acquire );
+                } else {
+                    return value;
+                }
             }
-            static auto flip_item_value_( const ui_func_args args, value_t_& item )
+            static auto& set_value( value_t_& obj, bool val )
             {
-                args.parent_ui.set_text( args.node_index, make_flip_button_text_( item = !item ) );
+                if constexpr ( std::is_same_v< value_t_, std::atomic< bool > > ) {
+                    obj.store( val, std::memory_order_release );
+                    return obj;
+                } else {
+                    return obj = val;
+                }
+            }
+            static auto make_flip_button_text_( const value_t_& value )
+            {
+                return get_value( value ) == true ? " > 禁用 "sv : " > 启用 "sv;
+            }
+            static auto flip_item_value_( const ui_func_args args, value_t_& value )
+            {
+                args.parent_ui.set_text( args.node_index, make_flip_button_text_( set_value( value, !get_value( value ) ) ) );
                 return func_back;
             }
             static auto make_option_editor_ui_( std::array< value_t_, sizeof...( Items ) / 2 >& data_ )
