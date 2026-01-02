@@ -511,6 +511,8 @@ namespace cpp_utils
     template < same_as_type_pair... Pairs >
     class type_map final
     {
+      public:
+        using as_type_list = type_list< Pairs... >;
       private:
         template < same_as_type_pair Pair1 >
         struct is_same_key_ final
@@ -539,6 +541,9 @@ namespace cpp_utils
               = std::conditional_t< key_exists, type_list< AccumPairs... >, type_list< AccumPairs..., CurrentPair > >;
             using type = typename unique_helper_< next_accumulator, type_list< RestPairs... > >::type;
         };
+      public:
+        using unique = typename unique_helper_< type_list<>, as_type_list >::type::template apply< type_map >;
+      private:
         template < common_type Key >
         struct at_impl_ final
         {
@@ -593,8 +598,6 @@ namespace cpp_utils
             using type = typename as_type_list::template sort< PredWrapper::template compare >::template apply< type_map >;
         };
       public:
-        using as_type_list = type_list< Pairs... >;
-        using unique       = typename unique_helper_< type_list<>, as_type_list >::type::template apply< type_map >;
         static inline constexpr auto original_size{ sizeof...( Pairs ) };
         static inline constexpr auto size{ unique::original_size };
         static inline constexpr auto empty{ empty_ };
