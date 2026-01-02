@@ -105,22 +105,6 @@ namespace cpp_utils
         template < std::size_t... Is >
         static consteval auto reverse_index_sequence_( std::index_sequence< Is... > )
           -> std::index_sequence< ( sizeof...( Is ) - 1 - Is )... >;
-        template < typename Result, typename Remaining >
-        struct basic_unique_impl_;
-        template < typename... ResultTs >
-        struct basic_unique_impl_< type_list< ResultTs... >, type_list<> > final
-        {
-            using type = type_list< ResultTs... >;
-        };
-        template < typename... ResultTs, typename T, typename... Rest >
-        struct basic_unique_impl_< type_list< ResultTs... >, type_list< T, Rest... > > final
-        {
-            static inline constexpr auto found{ std::disjunction_v< std::is_same< T, ResultTs >... > };
-            using next = std::conditional_t<
-              found, basic_unique_impl_< type_list< ResultTs... >, type_list< Rest... > >,
-              basic_unique_impl_< type_list< ResultTs..., T >, type_list< Rest... > > >;
-            using type = typename next::type;
-        };
         template < typename U >
         struct is_same_type_ final
         {
@@ -262,6 +246,22 @@ namespace cpp_utils
         struct reverse_impl_< _, true > final
         {
             using type = type_list<>;
+        };
+        template < typename Result, typename Remaining >
+        struct basic_unique_impl_;
+        template < typename... ResultTs >
+        struct basic_unique_impl_< type_list< ResultTs... >, type_list<> > final
+        {
+            using type = type_list< ResultTs... >;
+        };
+        template < typename... ResultTs, typename T, typename... Rest >
+        struct basic_unique_impl_< type_list< ResultTs... >, type_list< T, Rest... > > final
+        {
+            static inline constexpr auto found{ std::disjunction_v< std::is_same< T, ResultTs >... > };
+            using next = std::conditional_t<
+              found, basic_unique_impl_< type_list< ResultTs... >, type_list< Rest... > >,
+              basic_unique_impl_< type_list< ResultTs..., T >, type_list< Rest... > > >;
+            using type = typename next::type;
         };
         template < std::size_t _ = 0uz, bool = empty_ >
         struct unique_impl_;
