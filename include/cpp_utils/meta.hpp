@@ -512,7 +512,6 @@ namespace cpp_utils
     class type_map final
     {
       private:
-        using to_type_list_ = type_list< Pairs... >;
         template < same_as_type_pair Pair1 >
         struct is_same_key_ final
         {
@@ -523,7 +522,7 @@ namespace cpp_utils
         static inline constexpr auto empty_{ sizeof...( Pairs ) == 0uz };
         template < common_type Key >
         static inline constexpr auto contains_{
-          to_type_list_::template any_of< is_same_key_< type_pair< Key, void > >::template test > };
+          as_type_list::template any_of< is_same_key_< type_pair< Key, void > >::template test > };
         template < typename AccumulatedList, typename RemainingList >
         struct unique_helper_;
         template < typename... AccumPairs >
@@ -562,7 +561,7 @@ namespace cpp_utils
         template < common_type Key >
         struct remove_impl_ final
         {
-            using type = to_type_list_::template filter< negate_pred<
+            using type = as_type_list::template filter< negate_pred<
               is_same_key_< type_pair< Key, void > >::template test >::template predicate >::template apply< type_map >::unique;
         };
         template < typename... >
@@ -578,9 +577,9 @@ namespace cpp_utils
         struct merge_and_update_impl_< type_map< OtherPairs... > > final
         {
             using base = type_list_concat<
-              typename type_map< Pairs... >::unique::to_type_list_, typename type_map< OtherPairs... >::unique::to_type_list_ >;
+              typename type_map< Pairs... >::unique::as_type_list, typename type_map< OtherPairs... >::unique::as_type_list >;
             using type =
-              typename base::reverse::template apply< type_map >::unique::to_type_list_::reverse::template apply< type_map >;
+              typename base::reverse::template apply< type_map >::unique::as_type_list::reverse::template apply< type_map >;
         };
         template < template < common_type, common_type > typename Pred >
         struct sort_impl_ final
@@ -591,10 +590,11 @@ namespace cpp_utils
                 struct compare : std::bool_constant< Pred< typename Pair1::key, typename Pair2::key >::value >
                 { };
             };
-            using type = typename to_type_list_::template sort< PredWrapper::template compare >::template apply< type_map >;
+            using type = typename as_type_list::template sort< PredWrapper::template compare >::template apply< type_map >;
         };
       public:
-        using unique = typename unique_helper_< type_list<>, to_type_list_ >::type::template apply< type_map >;
+        using as_type_list = type_list< Pairs... >;
+        using unique       = typename unique_helper_< type_list<>, as_type_list >::type::template apply< type_map >;
         static inline constexpr auto original_size{ sizeof...( Pairs ) };
         static inline constexpr auto size{ unique::original_size };
         static inline constexpr auto empty{ empty_ };
