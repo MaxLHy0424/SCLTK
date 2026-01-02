@@ -385,36 +385,18 @@ namespace cpp_utils
             }
         }() };
         template < template < typename > typename Pred >
-        static inline constexpr auto all_of{ [] consteval
-        {
-            if constexpr ( std::disjunction_v< std::is_final< Pred< Ts > >... > ) {
-                return ( Pred< Ts >::value && ... );
-            } else {
-                return std::conjunction_v< Pred< Ts >... >;
-            }
-        }() };
+        static inline constexpr auto all_of{ ( Pred< Ts >::value && ... ) };
         template < template < typename > typename Pred >
         static inline constexpr auto any_of{ [] consteval
         {
             if ( empty_ ) {
                 return true;
             } else {
-                if constexpr ( std::disjunction_v< std::is_final< Pred< Ts > >... > ) {
-                    return ( Pred< Ts >::value || ... );
-                } else {
-                    return std::disjunction_v< Pred< Ts >... >;
-                }
+                return ( Pred< Ts >::value || ... );
             }
         }() };
         template < template < typename > typename Pred >
-        static inline constexpr auto none_of{ [] consteval
-        {
-            if constexpr ( std::disjunction_v< std::is_final< Pred< Ts > >... > ) {
-                return ( !Pred< Ts >::value && ... );
-            } else {
-                return std::conjunction_v< std::bool_constant< !Pred< Ts >::value >... >;
-            }
-        }() };
+        static inline constexpr auto none_of{ ( !Pred< Ts >::value && ... ) };
         template < template < typename > typename Pred >
         static inline constexpr auto find_first_if{ [] consteval
         {
