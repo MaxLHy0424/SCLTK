@@ -86,10 +86,11 @@ namespace cpp_utils
     template < auto V >
     struct value_identity final
     {
+        using value_type = decltype( V );
         static inline constexpr auto value{ V };
-        using value_type = decltype( value );
+        constexpr auto operator<=>( const value_identity< V >& ) const        = default;
+        constexpr auto operator==( const value_identity< V >& ) const -> bool = default;
     };
-
     template < template < typename > typename Pred >
     struct negate_pred
     {

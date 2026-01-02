@@ -83,7 +83,7 @@ namespace cpp_utils
             return std::basic_string_view< T >{ c_str(), size() };
         }
         template < character OtherCharT, std::size_t OtherN >
-        constexpr auto operator==( const basic_const_string< OtherCharT, OtherN >& other )
+        constexpr auto operator==( const basic_const_string< OtherCharT, OtherN >& other ) const noexcept
         {
             if constexpr ( !std::is_same_v< T, OtherCharT > || N != OtherN ) {
                 return false;
