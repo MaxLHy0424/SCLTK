@@ -547,7 +547,7 @@ namespace cpp_utils
               type_list< typename Pairs::key... >::template find_first< Key > >;
         };
         template < common_type Key, common_type Mapped >
-        struct add_impl_ final
+        struct add_or_ignore_impl_ final
         {
             using pair_to_add = type_pair< Key, Mapped >;
             using type        = type_map< Pairs..., pair_to_add >::unique;
@@ -603,7 +603,7 @@ namespace cpp_utils
         template < common_type Key >
         using at = typename at_impl_< Key >::type;
         template < common_type Key, common_type Mapped >
-        using add = typename add_impl_< Key, Mapped >::type;
+        using add_or_ignore = typename add_or_ignore_impl_< Key, Mapped >::type;
         template < common_type Key, common_type Mapped >
         using add_or_update = typename add_or_update_impl_< Key, Mapped >::type;
         template < common_type Key >
