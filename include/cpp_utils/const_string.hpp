@@ -82,6 +82,15 @@ namespace cpp_utils
         {
             return std::basic_string_view< T >{ c_str(), size() };
         }
+        template < character OtherCharT, std::size_t OtherN >
+        constexpr auto operator==( const basic_const_string< OtherCharT, OtherN >& other )
+        {
+            if constexpr ( !std::is_same_v< T, OtherCharT > || N != OtherN ) {
+                return false;
+            } else {
+                return other.view() == this->view();
+            }
+        }
         consteval auto operator=( const basic_const_string< T, N >& ) noexcept -> basic_const_string< T, N >& = default;
         auto operator=( basic_const_string< T, N >&& ) noexcept -> basic_const_string< T, N >&                = delete;
         consteval basic_const_string( const T ( &str )[ N + 1 ] ) noexcept
