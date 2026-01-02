@@ -105,7 +105,7 @@ namespace cpp_utils
         }
         consteval basic_const_string( const basic_const_string< T, N >& )     = default;
         consteval basic_const_string( basic_const_string< T, N >&& ) noexcept = delete;
-        ~basic_const_string() noexcept                                        = default;
+        constexpr ~basic_const_string() noexcept                              = default;
     };
     template < character T, std::size_t N >
     basic_const_string( const T ( & )[ N ] ) -> basic_const_string< T, N - 1 >;
