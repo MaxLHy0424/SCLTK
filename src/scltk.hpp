@@ -162,80 +162,20 @@ namespace scltk
                 }
             }
         };
-        template < bool Atomic >
+        template < bool Atomic, cpp_utils::const_string RawName, cpp_utils::const_string DisplayName, cpp_utils::const_string... Items >
+            requires( sizeof...( Items ) % 2 == 0 )
         class basic_options_config_node : public config_node_impl
         {
             friend config_node_impl;
           private:
-            class item_ final
-            {
-              private:
-                std::conditional_t< Atomic, std::atomic< bool >, bool > value_{ false };
-              public:
-                const char* description{ nullptr };
-                auto get() const noexcept
-                {
-                    if constexpr ( Atomic ) {
-                        return value_.load( std::memory_order_acquire );
-                    } else {
-                        return value_;
-                    }
-                }
-                auto set( const bool value ) noexcept
-                {
-                    if constexpr ( Atomic ) {
-                        value_.store( value, std::memory_order_release );
-                    } else {
-                        value_ = value;
-                    }
-                    return *this;
-                }
-                operator bool() const noexcept
-                {
-                    return get();
-                }
-                auto& operator=( const item_& src ) noexcept
-                {
-                    description = src.description;
-                    value_      = src.get();
-                    return *this;
-                }
-                auto& operator=( item_&& src ) noexcept
-                {
-                    description     = src.description;
-                    value_          = src.get();
-                    src.description = {};
-                    src.value_      = {};
-                    return *this;
-                }
-                item_() noexcept = default;
-                item_( const char* const item_description ) noexcept
-                  : description{ item_description }
-                { }
-                item_( const item_& src ) noexcept
-                  : value_{ src.get() }
-                  , description{ src.description }
-                { }
-                item_( item_&& src ) noexcept
-                  : value_{ src.get() }
-                  , description{ src.description }
-                {
-                    src.description = {};
-                    src.value_      = {};
-                }
-                ~item_() noexcept = default;
-            };
-            using key_t_    = std::string_view;
-            using mapped_t_ = item_;
-            using map_t_
-              = std::flat_map< key_t_, mapped_t_, std::less< key_t_ >, std::pmr::vector< key_t_ >, std::pmr::vector< mapped_t_ > >;
-            const char* display_name_;
-            map_t_ options_;
+            using item_list_ = cpp_utils::type_list< cpp_utils::value_identity< Items >... >;
+            using value_t_   = std::conditional_t< Atomic, std::atomic< bool >, bool >;
+            std::array< value_t_, sizeof...( Items ) / 2 > data_{};
             static constexpr auto str_of_the_enabled{ ": enabled"sv };
             static constexpr auto str_of_the_disabled{ ": disabled"sv };
             auto load_( const std::string_view line )
             {
-                key_t_ key;
+                std::string_view key;
                 bool value;
                 if ( line.ends_with( str_of_the_enabled ) ) {
                     key   = line.substr( 0, line.size() - str_of_the_enabled.size() );
@@ -246,64 +186,77 @@ namespace scltk
                 } else {
                     return;
                 }
-                if ( const auto it{ options_.find( key ) }; it != options_.end() ) {
-                    it->second.set( value );
-                }
+                [ & ]< std::size_t... Is >( std::index_sequence< Is... > )
+                {
+                    ( [ & ]< std::size_t I >( cpp_utils::value_identity< I > )
+                    {
+                        if ( item_list_::template at< I * 2 >::value.view() == key ) {
+                            std::get< I >( data_ ) = value;
+                            return true;
+                        }
+                        return false;
+                    }( cpp_utils::value_identity< Is >{} ), ... );
+                }( std::make_index_sequence< sizeof...( Items ) / 2 >{} );
             }
             static auto reload_( const std::string_view ) noexcept
             { }
             auto sync_( std::ofstream& out )
             {
-                for ( const auto& [ key, item ] : options_ ) {
-                    out << key << ( item == true ? str_of_the_enabled : str_of_the_disabled ) << '\n';
-                }
+                [ & ]< std::size_t... Is >( std::index_sequence< Is... > )
+                {
+                    ( ( out << item_list_::template at< Is * 2 >::value.c_str()
+                            << ( std::get< Is >( data_ ) == true ? str_of_the_enabled : str_of_the_disabled ) << '\n' ),
+                      ... );
+                }( std::make_index_sequence< sizeof...( Items ) / 2 >{} );
             }
-            static auto make_flip_button_text_( const mapped_t_& item )
+            static auto make_flip_button_text_( const value_t_& item )
             {
                 return item == true ? " > 禁用 "sv : " > 启用 "sv;
             }
-            static auto flip_item_value_( const ui_func_args args, mapped_t_& item )
+            static auto flip_item_value_( const ui_func_args args, value_t_& item )
             {
-                args.parent_ui.set_text( args.node_index, make_flip_button_text_( item.set( !item.get() ) ) );
+                args.parent_ui.set_text( args.node_index, make_flip_button_text_( item = !item ) );
                 return func_back;
             }
-            static auto make_option_editor_ui_( map_t_& options )
+            static auto make_option_editor_ui_( std::array< value_t_, sizeof...( Items ) / 2 >& data_ )
             {
                 cpp_utils::console_ui ui{ con, unsynced_mem_pool };
-                ui.reserve( 2 + options.size() * 2 )
+                ui.reserve( 2 + data_.size() * 2 )
                   .add_back( "                    [ 配  置 ]\n\n"sv )
                   .add_back(
                     " < 返回 "sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity );
-                for ( auto&& [ _, item ] : options ) {
-                    ui.add_back( std::format( "\n[ {} ]\n", item.description ) )
-                      .add_back(
-                        make_flip_button_text_( item ), std::bind_back( flip_item_value_, std::ref( item ) ),
-                        cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_green );
-                }
+                [ & ]< std::size_t... Is >( std::index_sequence< Is... > )
+                {
+                    ( ( ui.add_back( std::format( "\n[ {} ]\n", item_list_::template at< Is * 2 + 1 >::value.c_str() ) )
+                          .add_back(
+                            make_flip_button_text_( std::get< Is >( data_ ) ),
+                            std::bind_back( flip_item_value_, std::ref( std::get< Is >( data_ ) ) ),
+                            cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_green ) ),
+                      ... );
+                }( std::make_index_sequence< sizeof...( Items ) / 2 >{} );
                 ui.show();
                 return func_back;
             }
             auto init_ui_( cpp_utils::console_ui& ui )
             {
                 ui.add_back(
-                  std::format( " > {} ", display_name_ ), std::bind_back( make_option_editor_ui_, std::ref( options_ ) ) );
+                  std::format( " > {} ", DisplayName.c_str() ), std::bind_back( make_option_editor_ui_, std::ref( data_ ) ) );
             }
             static inline constexpr auto ui_count_{ 1uz };
           public:
-            auto&& operator[]( this auto&& self, const key_t_ key ) noexcept
+            template < cpp_utils::const_string Key >
+            auto&& at( this auto&& self ) noexcept
             {
-                return self.options_.at( key );
+                return std::get< item_list_::template find_first< cpp_utils::value_identity< Key > > / 2 >( self.data_ );
             }
-            auto operator=( const basic_options_config_node< Atomic >& ) -> basic_options_config_node< Atomic >&     = delete;
-            auto operator=( basic_options_config_node< Atomic >&& ) noexcept -> basic_options_config_node< Atomic >& = delete;
-            basic_options_config_node( const char* const node_raw_name, const char* const display_name, map_t_ options )
-              : config_node_impl{ node_raw_name }
-              , display_name_{ display_name }
-              , options_{ std::move( options ) }
+            auto operator=( const basic_options_config_node& ) -> basic_options_config_node&     = delete;
+            auto operator=( basic_options_config_node&& ) noexcept -> basic_options_config_node& = delete;
+            basic_options_config_node()
+              : config_node_impl{ RawName.c_str() }
             { }
-            basic_options_config_node( const basic_options_config_node< Atomic >& )     = delete;
-            basic_options_config_node( basic_options_config_node< Atomic >&& ) noexcept = delete;
-            ~basic_options_config_node() noexcept                                       = default;
+            basic_options_config_node( const basic_options_config_node& )     = delete;
+            basic_options_config_node( basic_options_config_node&& ) noexcept = delete;
+            ~basic_options_config_node() noexcept                             = default;
         };
     }
     class options_title_ui final
@@ -321,40 +274,19 @@ namespace scltk
         options_title_ui() noexcept  = default;
         ~options_title_ui() noexcept = default;
     };
-    class crack_restore_config final : public details::basic_options_config_node< false >
-    {
-      public:
-        crack_restore_config()
-          : basic_options_config_node{
-              "crack_restore",
-              "破解与恢复",
-              { { "hijack_execs", "劫持可执行文件" }, { "set_serv_startup_types", "设置服务启动类型" } }
-        }
-        { }
-        ~crack_restore_config() noexcept = default;
-    };
-    class window_config final : public details::basic_options_config_node< true >
-    {
-      public:
-        window_config()
-          : basic_options_config_node{
-              "window",
-              "窗口显示",
-              { { "force_show", "置顶窗口 (非实时)" },
-                { "simple_titlebar", "极简标题栏 (非实时)" },
-                { "translucent", "半透明 (非实时)" } }
-        }
-        { }
-        ~window_config() noexcept = default;
-    };
-    class performance_config final : public details::basic_options_config_node< false >
-    {
-      public:
-        performance_config()
-          : basic_options_config_node{ "performance", "性能", { { "no_hot_reload", "禁用非实时热重载 (下次启动时生效)" } } }
-        { }
-        ~performance_config() noexcept = default;
-    };
+    class crack_restore_config final
+      : public details::basic_options_config_node<
+          false, "crack_restore", "破解与恢复", "hijack_execs", "劫持可执行文件", "set_serv_startup_types", "设置服务启动类型" >
+    { };
+    class window_config final
+      : public details::basic_options_config_node<
+          true, "window", "窗口显示", "force_show", "置顶窗口 (非实时)", "simple_titlebar", "极简标题栏 (非实时)",
+          "translucent", "半透明 (非实时)" >
+    { };
+    class performance_config final
+      : public details::basic_options_config_node<
+          false, "performance", "性能", "no_hot_reload", "禁用非实时热重载 (下次启动时生效)" >
+    { };
     class custom_rules_config final : public details::config_node_impl
     {
         friend details::config_node_impl;
@@ -836,25 +768,25 @@ namespace scltk
         inline auto set_console_attrs() noexcept
         {
             const auto& window_options{ std::get< window_config >( config_nodes ) };
-            const auto& is_enable_simple_titlebar{ window_options[ "simple_titlebar" ] };
-            const auto& is_translucent{ window_options[ "translucent" ] };
-            const auto& is_no_hot_reload{ std::get< performance_config >( config_nodes )[ "no_hot_reload" ] };
+            const auto& is_enable_simple_titlebar{ window_options.at< "simple_titlebar" >() };
+            const auto& is_translucent{ window_options.at< "translucent" >() };
+            const auto& is_no_hot_reload{ std::get< performance_config >( config_nodes ).at< "no_hot_reload" >() };
             if ( is_no_hot_reload ) {
-                con.enable_context_menu( !is_enable_simple_titlebar );
-                con.set_translucency( is_translucent ? 230 : 255 );
+                con.enable_context_menu( !is_enable_simple_titlebar.load( std::memory_order_acquire ) );
+                con.set_translucency( is_translucent.load( std::memory_order_acquire ) ? 230 : 255 );
                 return;
             }
             while ( true ) {
-                con.enable_context_menu( !is_enable_simple_titlebar );
-                con.set_translucency( is_translucent ? 230 : 255 );
+                con.enable_context_menu( !is_enable_simple_titlebar.load( std::memory_order_acquire ) );
+                con.set_translucency( is_translucent.load( std::memory_order_acquire ) ? 230 : 255 );
                 std::this_thread::sleep_for( default_thread_sleep_time );
             }
         }
         inline auto force_show() noexcept
         {
-            const auto& is_no_hot_reload{ std::get< performance_config >( config_nodes )[ "no_hot_reload" ] };
-            const auto& is_force_show{ std::get< window_config >( config_nodes )[ "force_show" ] };
-            if ( is_no_hot_reload && !is_force_show ) {
+            const auto& is_no_hot_reload{ std::get< performance_config >( config_nodes ).at< "no_hot_reload" >() };
+            const auto& is_force_show{ std::get< window_config >( config_nodes ).at< "force_show" >() };
+            if ( is_no_hot_reload && !is_force_show.load( std::memory_order_acquire ) ) {
                 return;
             }
             constexpr auto sleep_time{ 50ms };
@@ -862,7 +794,7 @@ namespace scltk
                 con.force_show_forever( sleep_time );
             }
             while ( true ) {
-                if ( !is_force_show ) {
+                if ( !is_force_show.load( std::memory_order_acquire ) ) {
                     con.cancel_force_show();
                     std::this_thread::sleep_for( default_thread_sleep_time );
                     continue;
@@ -892,8 +824,8 @@ namespace scltk
             const auto execs{ rules.execs };
             const auto servs{ rules.servs };
             const auto& options{ std::get< crack_restore_config >( config_nodes ) };
-            const auto can_hijack_execs{ options[ "hijack_execs" ].get() };
-            const auto can_set_serv_startup_types{ options[ "set_serv_startup_types" ].get() };
+            const auto can_hijack_execs{ options.at< "hijack_execs" >() };
+            const auto can_set_serv_startup_types{ options.at< "set_serv_startup_types" >() };
             if ( can_hijack_execs ) {
                 std::print( " - 劫持文件.\n" );
                 for ( const auto& exec : execs ) {
@@ -924,8 +856,8 @@ namespace scltk
             const auto& execs{ rules.execs };
             const auto& servs{ rules.servs };
             const auto& options{ std::get< crack_restore_config >( config_nodes ) };
-            const auto can_hijack_execs{ options[ "hijack_execs" ].get() };
-            const auto can_set_serv_startup_types{ options[ "set_serv_startup_types" ].get() };
+            const auto can_hijack_execs{ options.at< "hijack_execs" >() };
+            const auto can_set_serv_startup_types{ options.at< "set_serv_startup_types" >() };
             if ( can_hijack_execs ) {
                 std::print( " - 撤销劫持.\n" );
                 for ( const auto& exec : execs ) {
