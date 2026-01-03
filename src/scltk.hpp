@@ -67,7 +67,7 @@ namespace scltk
         container_t servs{};
     };
     inline rule_node custom_rules;
-    inline const std::array< rule_node, 5 > builtin_rules{
+    inline const std::array< rule_node, 6 > builtin_rules{
       { { "机房管理助手", { L"yz", L"jfglzs", L"jfglzsn", L"jfglzsp", L"przs", L"zmserv", L"zmsrv" }, { L"zmserv" } },
        { "极域电子教室",
           { L"StudentMain", L"DispcapHelper", L"VRCwPlayer", L"InstHelpApp", L"InstHelpApp64", L"TDOvrSet", L"GATESRV",
@@ -81,7 +81,11 @@ namespace scltk
        { "红蜘蛛多媒体网络教室",
           { L"rscheck", L"checkrs", L"REDAgent", L"PerformanceCheck", L"edpaper", L"Adapter", L"repview", L"FormatPaper" },
           { L"appcheck2", L"checkapp2" } },
-       { "市一中伊金霍洛校区机房管理程序", { L"ComputerClassroom_Client", L"MonitorProcess", L"00 PowerRun_x64", L"PowerRun" }, {} } }
+       { "市一中伊金霍洛校区机房管理程序", { L"ComputerClassroom_Client", L"MonitorProcess", L"00 PowerRun_x64", L"PowerRun" }, {} },
+       { "Veyon",
+          { L"veyon-worker", L"veyon-configurator", L"veyon-server", L"veyon-cli", L"veyon-wcli", L"veyon-master",
+            L"veyon-service" },
+          { L"VeyonService" } } }
     };
     namespace details
     {
