@@ -85,25 +85,26 @@ namespace scltk
     };
     namespace details
     {
-        struct unparsable_config_node
+        template < cpp_utils::const_string RawName >
+        struct config_node_raw_name
         {
-          protected:
-            unparsable_config_node() noexcept  = default;
-            ~unparsable_config_node() noexcept = default;
+            static inline constexpr auto raw_name{ RawName };
         };
+        class config_node_impl;
         template < typename T >
         struct is_parsable_config_node final
         {
-            static inline constexpr auto value{ !std::is_base_of_v< unparsable_config_node, T > };
-            is_parsable_config_node() noexcept  = delete;
-            ~is_parsable_config_node() noexcept = delete;
+            static consteval auto impl() noexcept
+            {
+                return std::is_base_of_v< config_node_impl, T > && requires { T::raw_name; };
+            }
+            static inline constexpr auto value{ impl() };
         };
         template < typename T >
         inline constexpr auto is_parsable_config_node_v{ is_parsable_config_node< T >::value };
         class config_node_impl
         {
           public:
-            const char* raw_name;
             auto load( this auto&& self, const std::string_view line )
             {
                 using child_t = std::decay_t< decltype( self ) >;
@@ -124,7 +125,8 @@ namespace scltk
             {
                 using child_t = std::decay_t< decltype( self ) >;
                 if constexpr ( is_parsable_config_node_v< child_t > ) {
-                    out << std::format( "[{}]\n", self.raw_name );
+                    out << cpp_utils::value_identity< cpp_utils::concat_const_string(
+                      cpp_utils::const_string{ "[" }, child_t::raw_name, cpp_utils::const_string{ "]\n" } ) >::value.view();
                     self.sync_( out );
                 }
             }
@@ -164,7 +166,9 @@ namespace scltk
         };
         template < cpp_utils::const_string RawName, cpp_utils::const_string DisplayName, bool Atomic, cpp_utils::const_string... Items >
             requires( sizeof...( Items ) % 2 == 0 )
-        class basic_options_config_node : public config_node_impl
+        class basic_options_config_node
+          : public config_node_impl
+          , public config_node_raw_name< RawName >
         {
             friend config_node_impl;
           private:
@@ -269,21 +273,18 @@ namespace scltk
             template < cpp_utils::const_string Key >
             auto&& at( this auto&& self ) noexcept
             {
+                static_assert( item_list_::template contains< cpp_utils::value_identity< Key > > );
                 return std::get< item_list_::template find_first< cpp_utils::value_identity< Key > > / 2 >( self.data_ );
             }
             auto operator=( const basic_options_config_node& ) -> basic_options_config_node&     = delete;
             auto operator=( basic_options_config_node&& ) noexcept -> basic_options_config_node& = delete;
-            basic_options_config_node()
-              : config_node_impl{ RawName.c_str() }
-            { }
-            basic_options_config_node( const basic_options_config_node& )     = delete;
-            basic_options_config_node( basic_options_config_node&& ) noexcept = delete;
-            ~basic_options_config_node() noexcept                             = default;
+            basic_options_config_node() noexcept                                                 = default;
+            basic_options_config_node( const basic_options_config_node& )                        = delete;
+            basic_options_config_node( basic_options_config_node&& ) noexcept                    = delete;
+            ~basic_options_config_node() noexcept                                                = default;
         };
     }
-    class options_title_ui final
-      : public details::config_node_impl
-      , private details::unparsable_config_node
+    class options_title_ui final : public details::config_node_impl
     {
         friend details::config_node_impl;
       private:
@@ -309,7 +310,9 @@ namespace scltk
       : public details::basic_options_config_node<
           "performance", "性能", false, "no_hot_reload", "禁用非实时热重载 (下次启动时生效)" >
     { };
-    class custom_rules_config final : public details::config_node_impl
+    class custom_rules_config final
+      : public details::config_node_impl
+      , public details::config_node_raw_name< "custom_rules" >
     {
         friend details::config_node_impl;
       private:
@@ -388,9 +391,7 @@ namespace scltk
         }
         static inline constexpr auto ui_count_{ 2uz };
       public:
-        custom_rules_config() noexcept
-          : config_node_impl{ "custom_rules" }
-        { }
+        custom_rules_config() noexcept  = default;
         ~custom_rules_config() noexcept = default;
     };
     namespace details
@@ -398,12 +399,9 @@ namespace scltk
         template < typename T >
         struct is_valid_config_node final
         {
-          private:
-            static inline constexpr auto is_valid_type{ std::is_final_v< T > && std::is_same_v< std::decay_t< T >, T > };
-            static inline constexpr auto has_key_traits{
-              std::is_base_of_v< config_node_impl, T > && std::is_default_constructible_v< T > };
-          public:
-            static inline constexpr auto value{ is_valid_type && has_key_traits };
+            static inline constexpr auto value{
+              std::is_final_v< T > && std::is_same_v< std::decay_t< T >, T > && std::is_base_of_v< config_node_impl, T >
+              && std::is_default_constructible_v< T > };
             is_valid_config_node()           = delete;
             ~is_valid_config_node() noexcept = delete;
         };
@@ -457,7 +455,7 @@ namespace scltk
                     ( [ & ]< typename T >( T& current_node ) noexcept
                     {
                         if constexpr ( parsable_config_node_types::contains< T > ) {
-                            if ( current_raw_name == current_node.raw_name ) {
+                            if ( current_node.raw_name.view() == current_raw_name ) {
                                 current_config_node = std::addressof( current_node );
                                 return true;
                             }
