@@ -244,7 +244,10 @@ namespace scltk
                     " < 返回 "sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity );
                 [ & ]< std::size_t... Is >( const std::index_sequence< Is... > )
                 {
-                    ( ui.add_back( std::format( "\n[ {} ]\n", item_list_::template at< Is * 2 + 1 >::value.c_str() ) )
+                    ( ui.add_back(
+                          cpp_utils::value_identity< cpp_utils::concat_const_string(
+                            cpp_utils::const_string{ "\n[ " }, item_list_::template at< Is * 2 + 1 >::value,
+                            cpp_utils::const_string{ "]\n" } ) >::value.view() )
                         .add_back(
                           make_flip_button_text_( std::get< Is >( data_ ) ),
                           std::bind_back( flip_item_value_, std::ref( std::get< Is >( data_ ) ) ),
@@ -257,7 +260,9 @@ namespace scltk
             auto init_ui_( cpp_utils::console_ui& ui )
             {
                 ui.add_back(
-                  std::format( " > {} ", DisplayName.c_str() ), std::bind_back( make_option_editor_ui_, std::ref( data_ ) ) );
+                  cpp_utils::value_identity< cpp_utils::concat_const_string(
+                    cpp_utils::const_string{ " > " }, DisplayName, cpp_utils::const_string{ " " } ) >::value.view(),
+                  std::bind_back( make_option_editor_ui_, std::ref( data_ ) ) );
             }
             static inline constexpr auto ui_count_{ 1uz };
           public:
@@ -741,11 +746,15 @@ namespace scltk
         {
             constexpr auto dividing_line{ cpp_utils::make_repeated_const_string< '-', console_width >() };
             std::print(
-              "                   [ 工 具 箱 ]\n\n\n"
-              " -> 正在执行操作系统命令...\n\n{}\n\n",
-              dividing_line.c_str() );
+              cpp_utils::value_identity< cpp_utils::concat_const_string(
+                cpp_utils::const_string{
+                  "                   [ 工 具 箱 ]\n\n\n"
+                  " -> 正在执行操作系统命令...\n\n" },
+                dividing_line, cpp_utils::const_string{ "\n\n" } ) >::value.view() );
             std::system( command );
-            std::print( "\n{}\n\n (i) 操作已完成.", dividing_line.c_str() );
+            std::print(
+              cpp_utils::value_identity< cpp_utils::concat_const_string(
+                cpp_utils::const_string{ "\n" }, dividing_line, cpp_utils::const_string{ "\n\n (i) 操作已完成." } ) >::value.view() );
             press_any_key_to_return();
             return func_back;
         }
