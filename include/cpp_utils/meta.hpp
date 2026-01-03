@@ -227,10 +227,8 @@ namespace cpp_utils
         template < std::size_t Offset, std::size_t Count >
         struct sub_list_impl_< Offset, Count, false > final
         {
-            static inline constexpr auto is_valid{ Offset + Count <= size_ };
-            static_assert( is_valid, "sub_list range out of bounds" );
-            using type = std::conditional_t<
-              is_valid, decltype( select_( offset_sequence_< Offset >( std::make_index_sequence< Count >{} ) ) ), error_type >;
+            using type = decltype( select_( offset_sequence_< Offset >(
+              std::make_index_sequence< ( Offset + Count <= size_ ? Offset + Count : size_ ) - Offset >{} ) ) );
         };
         template < std::size_t Offset, std::size_t Count >
         struct sub_list_impl_< Offset, Count, true > final
@@ -344,6 +342,14 @@ namespace cpp_utils
         {
             using type = Template< Ts... >;
         };
+        template < std::size_t Start >
+        struct enumerate_impl_ final
+        {
+            template < std::size_t... Is >
+            static consteval auto helper( const std::index_sequence< Is... > )
+              -> type_list< type_list< value_identity< Start + Is >, Ts >... >;
+            using type = decltype( helper( std::index_sequence_for< Ts... >{} ) );
+        };
         template < template < typename > typename F >
         struct transform_impl_ final
         {
@@ -359,6 +365,18 @@ namespace cpp_utils
         };
         template < template < typename > typename Pred >
         struct filter_impl_< Pred, true > final
+        {
+            using type = type_list<>;
+        };
+        template < template < typename > typename, bool = empty_ >
+        struct remove_if_impl_;
+        template < template < typename > typename Pred >
+        struct remove_if_impl_< Pred, false > final
+        {
+            using type = typename filter_impl_< negate_pred< Pred >::template predicate >::type;
+        };
+        template < template < typename > typename Pred >
+        struct remove_if_impl_< Pred, true > final
         {
             using type = type_list<>;
         };
@@ -436,18 +454,28 @@ namespace cpp_utils
         using remove_back  = typename remove_back_impl_<>::type;
         template < std::size_t Offset, std::size_t Count >
         using sub_list = typename sub_list_impl_< Offset, Count >::type;
-        using reverse  = typename reverse_impl_<>::type;
-        using unique   = typename unique_impl_<>::type;
+        template < std::size_t Count >
+        using take = sub_list< 0, Count >;
+        template < std::size_t Count >
+        using drop = sub_list< Count, size - Count >;
         template < std::size_t I1, std::size_t I2 >
-        using swap = typename swap_impl_< I1, I2 >::type;
+        using swap    = typename swap_impl_< I1, I2 >::type;
+        using reverse = typename reverse_impl_<>::type;
+        using unique  = typename unique_impl_<>::type;
         template < template < common_type, common_type > typename Pred >
         using sort = typename basic_sort_impl_< type_list< Ts... >, Pred >::type;
         template < template < typename... > typename Template >
         using apply = typename apply_impl_< Template >::type;
+        template < std::size_t Start >
+        using enumerate = typename enumerate_impl_< Start >::type;
         template < template < typename > typename F >
         using transform = typename transform_impl_< F >::type;
         template < template < typename > typename Pred >
         using filter = typename filter_impl_< Pred >::type;
+        template < template < typename > typename Pred >
+        using filter_not = typename remove_if_impl_< Pred >::type;
+        template < template < typename > typename Pred >
+        using partition = type_list< filter< Pred >, filter_not< Pred > >;
     };
     namespace details
     {
@@ -484,6 +512,13 @@ namespace cpp_utils
         {
             using type = typename List1::template filter< is_not_in_type_list< List2 >::template predicate >::unique;
         };
+        template < typename T, std::size_t N >
+        struct make_repeated_type_list_impl final
+        {
+            static consteval auto to_identity( const std::size_t ) -> type_identity< T >;
+            using type = decltype( []< std::size_t... Is >( const std::index_sequence< Is... > ) consteval static noexcept
+            { return type_list< typename decltype( to_identity( Is ) )::type... >{}; }( std::make_index_sequence< N >{} ) );
+        };
     }
     template < typename List1, typename List2 >
     using type_list_concat = typename details::type_list_concat_impl< List1, List2 >::type;
@@ -494,6 +529,8 @@ namespace cpp_utils
     template < typename List1, typename List2 >
     using type_list_symmetric_difference
       = type_list_concat< type_list_difference< List1, List2 >, type_list_difference< List2, List1 > >::unique;
+    template < typename T, std::size_t N >
+    using make_repeated_type_list = typename details::make_repeated_type_list_impl< T, N >::type;
     template < template < typename > typename F, common_type... Ts >
     inline constexpr auto type_list_for_each( const type_list< Ts... > )
     {
