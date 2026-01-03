@@ -162,7 +162,7 @@ namespace scltk
                 }
             }
         };
-        template < bool Atomic, cpp_utils::const_string RawName, cpp_utils::const_string DisplayName, cpp_utils::const_string... Items >
+        template < cpp_utils::const_string RawName, cpp_utils::const_string DisplayName, bool Atomic, cpp_utils::const_string... Items >
             requires( sizeof...( Items ) % 2 == 0 )
         class basic_options_config_node : public config_node_impl
         {
@@ -298,16 +298,16 @@ namespace scltk
     };
     class crack_restore_config final
       : public details::basic_options_config_node<
-          false, "crack_restore", "破解与恢复", "hijack_execs", "劫持可执行文件", "set_serv_startup_types", "设置服务启动类型" >
+          "crack_restore", "破解与恢复", false, "hijack_execs", "劫持可执行文件", "set_serv_startup_types", "设置服务启动类型" >
     { };
     class window_config final
       : public details::basic_options_config_node<
-          true, "window", "窗口显示", "force_show", "置顶窗口 (非实时)", "simple_titlebar", "极简标题栏 (非实时)",
+          "window", "窗口显示", true, "force_show", "置顶窗口 (非实时)", "simple_titlebar", "极简标题栏 (非实时)",
           "translucent", "半透明 (非实时)" >
     { };
     class performance_config final
       : public details::basic_options_config_node<
-          false, "performance", "性能", "no_hot_reload", "禁用非实时热重载 (下次启动时生效)" >
+          "performance", "性能", false, "no_hot_reload", "禁用非实时热重载 (下次启动时生效)" >
     { };
     class custom_rules_config final : public details::config_node_impl
     {
