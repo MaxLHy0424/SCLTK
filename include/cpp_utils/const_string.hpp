@@ -146,7 +146,7 @@ namespace cpp_utils
         {
           private:
             template < std::size_t... Is >
-            static consteval auto impl_( std::index_sequence< Is... > )
+            static consteval auto impl_( const std::index_sequence< Is... > )
             {
                 return type_list< value_identity< S[ Is ] >... >{};
             }

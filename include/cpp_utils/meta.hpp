@@ -106,12 +106,12 @@ namespace cpp_utils
         template < typename... Us >
         static consteval auto as_type_list_( std::tuple< Us... > ) -> type_list< Us... >;
         template < std::size_t Offset, std::size_t... Is >
-        static consteval auto offset_sequence_( std::index_sequence< Is... > ) -> std::index_sequence< ( Offset + Is )... >;
+        static consteval auto offset_sequence_( const std::index_sequence< Is... > ) -> std::index_sequence< ( Offset + Is )... >;
         template < std::size_t... Is >
-        static consteval auto select_( std::index_sequence< Is... > )
+        static consteval auto select_( const std::index_sequence< Is... > )
           -> type_list< std::tuple_element_t< Is, std::tuple< Ts... > >... >;
         template < std::size_t... Is >
-        static consteval auto reverse_index_sequence_( std::index_sequence< Is... > )
+        static consteval auto reverse_index_sequence_( const std::index_sequence< Is... > )
           -> std::index_sequence< ( sizeof...( Is ) - 1 - Is )... >;
         template < typename U >
         struct is_same_type_ final
@@ -297,7 +297,7 @@ namespace cpp_utils
               Index == I1, type_at_i2,
               std::conditional_t< Index == I2, type_at_i1, std::tuple_element_t< Index, std::tuple< Ts... > > > >;
             template < std::size_t... Is >
-            static consteval auto construct_swapped( std::index_sequence< Is... > ) -> type_list< get_swapped_type< Is >... >;
+            static consteval auto construct_swapped( const std::index_sequence< Is... > ) -> type_list< get_swapped_type< Is >... >;
             using type = decltype( construct_swapped( std::make_index_sequence< size_ >{} ) );
         };
         template < typename, typename >
