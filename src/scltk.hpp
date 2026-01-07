@@ -196,14 +196,16 @@ namespace scltk
                 }
                 [ & ]< std::size_t... Is >( const std::index_sequence< Is... > ) noexcept
                 {
-                    ( [ & ]< std::size_t I >( const cpp_utils::value_identity< I > ) noexcept
+                    (
+                      [ & ]< std::size_t I >() noexcept
                     {
                         if ( item_list_::template at< I * 2 >::value.view() == key ) {
                             std::get< I >( data_ ) = value;
                             return true;
                         }
                         return false;
-                    }( cpp_utils::value_identity< Is >{} ) || ... );
+                    }.template operator()< Is >()
+                      || ... );
                 }( std::make_index_sequence< sizeof...( Items ) / 2 >{} );
             }
             static auto reload_( const std::string_view ) noexcept
