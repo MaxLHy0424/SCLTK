@@ -169,7 +169,7 @@ namespace scltk
             }
         };
         template < cpp_utils::const_string RawName, cpp_utils::const_string DisplayName, bool Atomic, cpp_utils::const_string... Items >
-            requires( sizeof...( Items ) % 2 == 0 )
+            requires( sizeof...( Items ) % 2 == 0 && sizeof...( Items ) != 0 )
         class basic_options_config_node
           : public config_node_impl
           , public config_node_raw_name< RawName >
