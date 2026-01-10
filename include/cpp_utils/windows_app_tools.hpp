@@ -145,9 +145,6 @@ namespace cpp_utils
     }
     inline auto terminate_process_by_name( const std::wstring_view process_name ) noexcept
     {
-        if ( process_name.empty() ) {
-            return static_cast< DWORD >( ERROR_INVALID_PARAMETER );
-        }
         const auto process_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ) };
         if ( process_snapshot == INVALID_HANDLE_VALUE ) {
             return GetLastError();
@@ -187,7 +184,7 @@ namespace cpp_utils
         if ( result != ERROR_SUCCESS ) {
             return static_cast< DWORD >( result );
         }
-        result = RegSetValueExW( key_handle, value_name.empty() ? nullptr : value_name.data(), 0, type, data, data_size );
+        result = RegSetValueExW( key_handle, value_name.data(), 0, type, data, data_size );
         RegCloseKey( key_handle );
         return static_cast< DWORD >( result );
     }
@@ -198,7 +195,7 @@ namespace cpp_utils
         if ( result != ERROR_SUCCESS ) {
             return static_cast< DWORD >( result );
         }
-        result = RegDeleteValueW( key_handle, value_name.empty() ? nullptr : value_name.data() );
+        result = RegDeleteValueW( key_handle, value_name.data() );
         RegCloseKey( key_handle );
         return static_cast< DWORD >( result );
     }
@@ -208,9 +205,6 @@ namespace cpp_utils
     }
     inline auto set_service_status( const std::wstring_view service_name, const DWORD status_type ) noexcept
     {
-        if ( service_name.empty() ) {
-            return static_cast< DWORD >( ERROR_INVALID_PARAMETER );
-        }
         const auto scm{ OpenSCManagerW( nullptr, nullptr, SC_MANAGER_CONNECT ) };
         if ( scm == nullptr ) {
             return GetLastError();
@@ -234,9 +228,6 @@ namespace cpp_utils
     inline auto stop_service_with_dependencies(
       const std::wstring_view service_name, std::pmr::memory_resource* const resource = std::pmr::get_default_resource() ) noexcept
     {
-        if ( service_name.empty() ) {
-            return static_cast< DWORD >( ERROR_INVALID_PARAMETER );
-        }
         const auto scm{ OpenSCManagerW( nullptr, nullptr, SC_MANAGER_CONNECT | SC_MANAGER_ENUMERATE_SERVICE ) };
         if ( scm == nullptr ) {
             return GetLastError();
@@ -256,9 +247,6 @@ namespace cpp_utils
     inline auto start_service_with_dependencies(
       const std::wstring_view service_name, std::pmr::memory_resource* const resource = std::pmr::get_default_resource() ) noexcept
     {
-        if ( service_name.empty() ) {
-            return static_cast< DWORD >( ERROR_INVALID_PARAMETER );
-        }
         const auto scm{ OpenSCManagerW( nullptr, nullptr, SC_MANAGER_CONNECT ) };
         if ( scm == nullptr ) {
             return GetLastError();
@@ -276,9 +264,6 @@ namespace cpp_utils
     }
     inline auto reset_service_failure_action( const std::wstring_view service_name ) noexcept
     {
-        if ( service_name.empty() ) {
-            return static_cast< DWORD >( ERROR_INVALID_PARAMETER );
-        }
         using scm_handle = std::unique_ptr< std::remove_pointer_t< SC_HANDLE >, decltype( []( SC_HANDLE h ) static noexcept
         {
             if ( h != nullptr ) {
