@@ -7,7 +7,6 @@
 #include <cpp_utils/meta.hpp>
 #include <cpp_utils/windows_app_tools.hpp>
 #include <cpp_utils/windows_console_ui.hpp>
-#include <experimental/scope>
 #include <filesystem>
 #include <fstream>
 #include <limits>
