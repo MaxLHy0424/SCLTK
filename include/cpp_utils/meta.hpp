@@ -497,6 +497,10 @@ namespace cpp_utils
     template < typename... Ts >
     struct is_type_list< type_list< Ts... > > final : std::true_type
     { };
+    template < typename T >
+    inline constexpr auto is_type_list_v{ is_type_list< T >::value };
+    template < typename T >
+    concept type_sequence = is_type_list_v< T >;
     namespace details
     {
         template < typename, typename >
