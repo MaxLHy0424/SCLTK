@@ -5,6 +5,19 @@
 #include <utility>
 namespace cpp_utils
 {
+    template < std::regular_invocable auto Func >
+        requires requires {
+            { Func().size() } -> std::convertible_to< std::size_t >;
+            { Func()[ 0 ] } -> std::convertible_to< typename decltype( Func() )::value_type >;
+        }
+    inline consteval auto invoke_to_array() noexcept
+    {
+        using value_type = typename decltype( Func() )::value_type;
+        constexpr auto len{ Func().size() };
+        auto temp{ Func() };
+        return [ & ]< std::size_t... Is >( const std::index_sequence< Is... > )
+        { return std::array< value_type, len >{ temp[ Is ]... }; }( std::make_index_sequence< len >{} );
+    }
     template < typename... Fs >
     struct overloads final : public Fs...
     {
