@@ -544,16 +544,16 @@ namespace cpp_utils
             { return type_list< typename decltype( to_identity( Is ) )::type... >{}; }( std::make_index_sequence< N >{} ) );
         };
     }
-    template < typename List1, typename List2 >
+    template < type_sequence List1, type_sequence List2 >
     using type_list_concat = typename details::type_list_concat_impl< List1, List2 >::type;
-    template < typename List1, typename List2 >
+    template < type_sequence List1, type_sequence List2 >
     using type_list_intersection = typename details::type_list_intersection_impl< List1, List2 >::type;
-    template < typename List1, typename List2 >
+    template < type_sequence List1, type_sequence List2 >
     using type_list_difference = typename details::type_list_difference_impl< List1, List2 >::type;
-    template < typename List1, typename List2 >
+    template < type_sequence List1, type_sequence List2 >
     using type_list_symmetric_difference
       = type_list_concat< type_list_difference< List1, List2 >, type_list_difference< List2, List1 > >::unique;
-    template < typename T, std::size_t N >
+    template < type_sequence T, std::size_t N >
     using make_repeated_type_list = typename details::make_repeated_type_list_impl< T, N >::type;
     template < template < typename > typename F, common_type... Ts >
     inline constexpr auto type_list_for_each( const type_list< Ts... > )
