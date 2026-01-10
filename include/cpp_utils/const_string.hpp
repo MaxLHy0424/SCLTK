@@ -24,7 +24,7 @@ namespace cpp_utils
         }
         constexpr auto c_str() const noexcept
         {
-            return const_cast< const T* >( storage_.data() );
+            return static_cast< const T* >( storage_.data() );
         }
         constexpr auto empty() const noexcept
         {
