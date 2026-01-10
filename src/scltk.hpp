@@ -461,7 +461,7 @@ namespace scltk
                     ( [ & ]< typename T >( T& current_node ) noexcept
                     {
                         if constexpr ( parsable_config_node_types::contains< T > ) {
-                            if ( current_node.raw_name.view() == current_raw_name ) {
+                            if ( T::raw_name.view() == current_raw_name ) {
                                 current_config_node = std::addressof( current_node );
                                 return true;
                             }
