@@ -589,25 +589,29 @@ namespace scltk
             }
             return func_back;
         }
+        template < cpp_utils::const_wstring... Items >
+        using make_const_wstring_list = cpp_utils::type_list< cpp_utils::value_identity< Items >... >;
         inline auto restore_os_components() noexcept
         {
             std::print( " -> 正在尝试恢复...\n" );
-            constexpr std::array reg_dirs{
+            using reg_dirs = make_const_wstring_list<
               LR"(Software\Policies\Microsoft\Windows\System)", LR"(Software\Microsoft\Windows\CurrentVersion\Policies\System)",
-              LR"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)", LR"(Software\Policies\Microsoft\MMC)" };
-            constexpr std::array execs{
-              L"tasklist", L"taskkill", L"ntsd",    L"sc",          L"net",         L"reg",       L"cmd",
-              L"taskmgr",  L"perfmon",  L"regedit", L"mmc",         L"dism",        L"sfc",       L"sethc",
-              L"sidebar",  L"shvlzm",   L"winmine", L"bckgzm",      L"Chess",       L"chkrzm",    L"FreeCell",
-              L"Hearts",   L"Magnify",  L"Mahjong", L"Minesweeper", L"PurblePlace", L"Solitaire", L"SpiderSolitaire" };
-            for ( const auto reg_dir : reg_dirs ) {
-                RegDeleteTreeW( HKEY_CURRENT_USER, reg_dir );
-            }
-            for ( const auto exec : execs ) {
-                RegDeleteTreeW(
-                  HKEY_LOCAL_MACHINE,
-                  std::format( LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe)", exec ).c_str() );
-            }
+              LR"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)", LR"(Software\Policies\Microsoft\MMC)" >;
+            using execs = make_const_wstring_list<
+              L"tasklist", L"taskkill", L"ntsd", L"sc", L"net", L"reg", L"cmd", L"taskmgr", L"perfmon", L"regedit", L"mmc",
+              L"dism", L"sfc", L"sethc", L"sidebar", L"shvlzm", L"winmine", L"bckgzm", L"Chess", L"chkrzm", L"FreeCell",
+              L"Hearts", L"Magnify", L"Mahjong", L"Minesweeper", L"PurblePlace", L"Solitaire", L"SpiderSolitaire" >;
+            []< cpp_utils::const_wstring... Items >( const cpp_utils::type_list< cpp_utils::value_identity< Items >... > ) static noexcept
+            { ( RegDeleteTreeW( HKEY_CURRENT_USER, Items.c_str() ), ... ); }( reg_dirs{} );
+            []< cpp_utils::const_wstring... Items >( const cpp_utils::type_list< cpp_utils::value_identity< Items >... > ) static noexcept
+            {
+                ( RegDeleteTreeW(
+                    HKEY_CURRENT_USER,
+                    cpp_utils::value_identity< cpp_utils::concat_const_string(
+                      cpp_utils::const_wstring{ LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\)" },
+                      Items, cpp_utils::const_wstring{ L".exe" } ) >::value.c_str() ),
+                  ... );
+            }( execs{} );
         }
         inline auto reset_hosts() noexcept
         {
