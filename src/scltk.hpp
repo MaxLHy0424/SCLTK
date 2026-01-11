@@ -1041,6 +1041,58 @@ namespace scltk
                 }( typename CompileTimeRuleNode::servs{} );
             }
         };
+        struct runtime_rule_executor_backend
+        {
+            const runtime_rule_node& node;
+            auto hijack_execs()
+            {
+                constexpr const wchar_t data[]{ L"nul" };
+                for ( const auto& exec : node.execs ) {
+                    cpp_utils::create_registry_key(
+                      HKEY_LOCAL_MACHINE,
+                      std::format( LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{})", exec ),
+                      L"Debugger", cpp_utils::registry_flag::string_type, std::bit_cast< const BYTE* >( +data ), sizeof( data ) );
+                }
+            }
+            auto disable_servs()
+            {
+                for ( const auto& serv : node.servs ) {
+                    cpp_utils::set_service_status( serv, cpp_utils::service_flag::disabled_start );
+                }
+            }
+            auto stop_servs()
+            {
+                for ( const auto& serv : node.servs ) {
+                    cpp_utils::stop_service_with_dependencies( serv, unsynced_mem_pool );
+                }
+            }
+            auto kill_execs()
+            {
+                for ( const auto& exec : node.execs ) {
+                    cpp_utils::terminate_process_by_name( exec );
+                }
+            }
+            auto undo_hijack_execs()
+            {
+                for ( const auto& exec : node.execs ) {
+                    cpp_utils::delete_registry_tree(
+                      HKEY_LOCAL_MACHINE,
+                      std::format( LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{})", exec ) );
+                }
+            }
+            auto enable_servs()
+            {
+                for ( const auto& serv : node.servs ) {
+                    cpp_utils::set_service_status( serv, cpp_utils::service_flag::auto_start );
+                }
+            }
+            auto start_servs()
+            {
+                for ( const auto& serv : node.servs ) {
+                    cpp_utils::start_service_with_dependencies( serv, unsynced_mem_pool );
+                }
+            }
+        };
     }
     inline auto execute_rules( const rule_node& rules )
     {
