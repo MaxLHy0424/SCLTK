@@ -66,10 +66,8 @@ namespace scltk
         using execs = Execs;
         using servs = Servs;
     };
-    template < cpp_utils::const_string DisplayName >
     struct runtime_rule_node final
     {
-        static inline constexpr auto display_name{ DisplayName.view() };
         std::pmr::vector< std::pmr::wstring > execs;
         std::pmr::vector< std::pmr::wstring > servs;
     };
