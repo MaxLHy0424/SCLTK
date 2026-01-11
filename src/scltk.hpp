@@ -910,6 +910,61 @@ namespace scltk
                 cpp_utils::start_service_with_dependencies( serv, unsynced_mem_pool );
             }
         }
+        template < typename Backend >
+        struct rule_executor final : Backend
+        {
+            auto crack()
+            {
+                const auto& options{ std::get< crack_restore_config >( config_nodes ) };
+                const auto can_hijack_execs{ options.at< "hijack_execs" >() };
+                const auto can_set_serv_startup_types{ options.at< "set_serv_startup_types" >() };
+                if ( can_hijack_execs ) {
+                    std::print( " - 劫持文件.\n" );
+                    Backend::hijack_execs();
+                }
+                if ( can_set_serv_startup_types ) {
+                    std::print( " - 禁用服务.\n" );
+                    Backend::disable_servs();
+                }
+                std::print( " - 停止服务.\n" );
+                Backend::stop_servs();
+                std::print( " - 终止进程.\n" );
+                Backend::kill_execs();
+            }
+            auto restore()
+            {
+                const auto& options{ std::get< crack_restore_config >( config_nodes ) };
+                const auto can_hijack_execs{ options.at< "hijack_execs" >() };
+                const auto can_set_serv_startup_types{ options.at< "set_serv_startup_types" >() };
+                if ( can_hijack_execs ) {
+                    std::print( " - 撤销劫持.\n" );
+                    Backend::undo_hijack_execs();
+                }
+                if ( can_set_serv_startup_types ) {
+                    std::print( " - 启用服务.\n" );
+                    Backend::enable_servs();
+                }
+                std::print( " - 启动服务.\n" );
+                Backend::start_servs();
+            }
+            auto execute()
+            {
+                switch ( current_rule_executor_mode ) {
+                    case rule_executor_mode::crack : std::print( "                    [ 破  解 ]\n\n\n" ); break;
+                    case rule_executor_mode::restore : std::print( "                    [ 恢  复 ]\n\n\n" ); break;
+                    default : std::unreachable();
+                }
+                std::print( " -> 正在执行...\n\n" );
+                switch ( current_rule_executor_mode ) {
+                    case rule_executor_mode::crack : crack(); break;
+                    case rule_executor_mode::restore : restore(); break;
+                    default : std::unreachable();
+                }
+                std::print( "\n (i) 操作已完成." );
+                details::press_any_key_to_return();
+                return func_back;
+            }
+        };
     }
     inline auto execute_rules( const rule_node& rules )
     {
