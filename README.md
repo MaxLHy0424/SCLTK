@@ -118,7 +118,7 @@ SCLTK 窗口相关选项。位于 `[ 选项 ]` 下。
 ```
 
 `<flag>` 有以下选项（区分大小写）：
-- `exec`：表明该项自定义规则为以 `.exe` 为文件扩展名的可执行文件。
+- `exec`：表明该项自定义规则为可执行文件名称。
 - `serv`：表明该项自定义规则为某个 Windows 服务的服务名称（**不是显示名称**）。
 
 `<flag>` 后的冒号与 `<item>` 之间可以有若干个空白字符。
@@ -138,9 +138,9 @@ SCLTK 窗口相关选项。位于 `[ 选项 ]` 下。
 示例:
 ```ini
 [custom_rules]
-exec: abc_frontend
-exec: abc_backend
-serv: abc_connect_service
+exec: abc_frontend.exe
+exec: abc_backend.exe
+serv: abc_connect_service.exe
 serv: abc_proc_defender
 ```
 

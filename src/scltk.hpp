@@ -386,8 +386,7 @@ namespace scltk
               .add_back(
                 "\n 自定义规则格式为 <flag>: <item>\n"
                 " 其中, <flag> 可为 exec 或 serv,\n"
-                " 分别表示以 .exe 为文件扩展名的可执行文件\n"
-                " 和某个 Windows 服务的服务名称.\n"
+                " 分别表示可执行文件名称和某个 Windows 服务的服务名称.\n"
                 " <flag> 后的冒号与 <item> 之间可以有若干空白字符.\n"
                 " <item> 的类型由 <flag> 决定.\n"
                 " 如果 <item> 为空, 该项规则将会被忽略.\n"
@@ -396,9 +395,9 @@ namespace scltk
                 " 在修改自定义规则时, 请仔细检查.\n\n"
                 " 使用示例:\n\n"
                 " [custom_rules]\n"
-                " exec: abc_frontend\n"
-                " exec: abc_backend\n"
-                " serv: abc_connect\n"
+                " exec: abc_frontend.exe\n"
+                " exec: abc_backend.exe\n"
+                " serv: abc_connect.exe\n"
                 " serv: abc_proc_defender"sv )
               .show();
             return func_back;
