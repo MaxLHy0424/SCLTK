@@ -71,6 +71,42 @@ namespace scltk
         std::pmr::vector< std::pmr::wstring > execs;
         std::pmr::vector< std::pmr::wstring > servs;
     };
+    using _builtin_rules = cpp_utils::type_list<
+      compile_time_rule_node<
+        "机房管理助手",
+        details::make_const_wstring_list<
+          L"yz.exe", L"jfglzs.exe", L"jfglzsn.exe", L"jfglzsp.exe", L"przs.exe", L"zmserv.exe", L"zmsrv.exe" >,
+        details::make_const_wstring_list< L"zmserv" > >,
+      compile_time_rule_node<
+        "极域电子教室",
+        details::make_const_wstring_list<
+          L"StudentMain.exe", L"DispcapHelper.exe", L"VRCwPlayer.exe", L"InstHelpApp.exe", L"InstHelpApp64.exe",
+          L"TDOvrSet.exe", L"GATESRV.exe", L"ProcHelper64.exe", L"MasterHelper.exe" >,
+        details::make_const_wstring_list< L"STUDSRV" > >,
+      compile_time_rule_node<
+        "联想智能云教室",
+        details::make_const_wstring_list<
+          L"vncviewer.exe", L"tvnserver32.exe", L"WfbsPnpInstall.exe", L"WFBSMon.exe", L"WFBSMlogon.exe", L"WFBSSvrLogShow.exe",
+          L"ResetIp.exe", L"FuncForWIN64.exe", L"CertMgr.exe", L"Fireware.exe", L"BCDBootCopy.exe", L"refreship.exe",
+          L"lenovoLockScreen.exe", L"PortControl64.exe", L"DesktopCheck.exe", L"DeploymentManager.exe", L"DeploymentAgent.exe",
+          L"XYNTService.exe" >,
+        details::make_const_wstring_list< L"BSAgentSvr", L"tvnserver", L"WFBSMlogon" > >,
+      compile_time_rule_node<
+        "红蜘蛛多媒体网络教室",
+        details::make_const_wstring_list< L"rscheck.exe", L"checkrs.exe", L"REDAgent.exe", L"PerformanceCheck.exe",
+                                          L"edpaper.exe", L"Adapter.exe", L"repview.exe", L"FormatPaper.exe" >,
+        details::make_const_wstring_list< L"appcheck2", L"checkapp2" > >,
+      compile_time_rule_node<
+        "市一中伊金霍洛校区机房管理程序",
+        details::make_const_wstring_list<
+          L"ComputerClassroom_Client.exe", L"MonitorProcess.exe", L"00 PowerRun_x64.exe", L"PowerRun.exe" >,
+        details::make_const_wstring_list<> >,
+      compile_time_rule_node<
+        "Veyon",
+        details::make_const_wstring_list< L"veyon-worker.exe", L"veyon-configurator.exe", L"veyon-server.exe", L"veyon-cli.exe",
+                                          L"veyon-wcli.exe", L"veyon-master.exe", L"veyon-service.exe" >,
+        details::make_const_wstring_list< L"VeyonService" > > >;
+    runtime_rule_node _custom_rules;
     struct rule_node final
     {
         using item_t      = const wchar_t*;
