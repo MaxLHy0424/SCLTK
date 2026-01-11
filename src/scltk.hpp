@@ -277,7 +277,7 @@ namespace scltk
                     ( ui.add_back(
                           cpp_utils::value_identity< cpp_utils::concat_const_string(
                             cpp_utils::const_string{ "\n[ " }, item_list_::template at< Is * 2 + 1 >::value,
-                            cpp_utils::const_string{ "]\n" } ) >::value.view() )
+                            cpp_utils::const_string{ " ]\n" } ) >::value.view() )
                         .add_back(
                           make_flip_button_text_( std::get< Is >( data_ ) ),
                           std::bind_back( flip_item_value_, std::ref( std::get< Is >( data_ ) ) ),
