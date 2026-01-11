@@ -16,7 +16,7 @@ auto main() -> int
     std::print( " -> 准备就绪..." );
     scltk::load_config();
     scltk::create_threads();
-    ui.reserve( 8 + scltk::builtin_rules.size() )
+    ui.reserve( 8 + scltk::builtin_rules::size )
       .add_back( "                    [ 主  页 ]\n\n"sv )
       .add_back( " < 退出\n"sv, scltk::quit, cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_intensity )
       .add_back( " > 关于 "sv, scltk::info )
@@ -25,10 +25,14 @@ auto main() -> int
       .add_back(
         scltk::make_executor_mode_ui_text(), scltk::flip_executor_mode,
         cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_green )
-      .add_back( " > 全部执行\n"sv, scltk::execute_all_rules )
-      .add_back( " > 自定义 "sv, std::bind_back( scltk::execute_rules, std::cref( scltk::custom_rules ) ) );
-    for ( const auto& rule : scltk::builtin_rules ) {
-        ui.add_back( std::format( " > {} ", rule.display_name ), std::bind_back( scltk::execute_rules, std::cref( rule ) ) );
-    }
+      .add_back( " > 自定义 "sv, scltk::rule_executor< scltk::runtime_rule_executor_backend >{ scltk::custom_rules } );
+    [ & ]< typename... Nodes >( const cpp_utils::type_list< Nodes... > )
+    {
+        ( ui.add_back(
+            cpp_utils::value_identity< cpp_utils::concat_const_string(
+              cpp_utils::const_string{ " > " }, Nodes::display_name, cpp_utils::const_string{ " " } ) >::value.view(),
+            scltk::rule_executor< scltk::compile_time_rule_executor_backend< Nodes > >{} ),
+          ... );
+    }( scltk::builtin_rules{} );
     ui.show();
 }
