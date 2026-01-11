@@ -846,12 +846,12 @@ namespace scltk
     }
     namespace details
     {
-        enum class rule_executing : bool
+        enum class rule_executor_mode : bool
         {
             crack,
             restore
         };
-        inline auto executor_mode{ rule_executing::crack };
+        inline auto current_rule_executor_mode{ rule_executor_mode::crack };
         inline auto crack( const rule_node& rules )
         {
             const auto execs{ rules.execs };
@@ -913,15 +913,15 @@ namespace scltk
     }
     inline auto execute_rules( const rule_node& rules )
     {
-        switch ( details::executor_mode ) {
-            case details::rule_executing::crack : std::print( "                    [ 破  解 ]\n\n\n" ); break;
-            case details::rule_executing::restore : std::print( "                    [ 恢  复 ]\n\n\n" ); break;
+        switch ( details::current_rule_executor_mode ) {
+            case details::rule_executor_mode::crack : std::print( "                    [ 破  解 ]\n\n\n" ); break;
+            case details::rule_executor_mode::restore : std::print( "                    [ 恢  复 ]\n\n\n" ); break;
             default : std::unreachable();
         }
         std::print( " -> 正在执行...\n\n" );
-        switch ( details::executor_mode ) {
-            case details::rule_executing::crack : details::crack( rules ); break;
-            case details::rule_executing::restore : details::restore( rules ); break;
+        switch ( details::current_rule_executor_mode ) {
+            case details::rule_executor_mode::crack : details::crack( rules ); break;
+            case details::rule_executor_mode::restore : details::restore( rules ); break;
             default : std::unreachable();
         }
         std::print( "\n (i) 操作已完成." );
@@ -930,17 +930,21 @@ namespace scltk
     }
     inline auto make_executor_mode_ui_text() noexcept
     {
-        switch ( details::executor_mode ) {
-            case details::rule_executing::crack : return "[ 破解 (点击切换) ]\n"sv;
-            case details::rule_executing::restore : return "[ 恢复 (点击切换) ]\n"sv;
+        switch ( details::current_rule_executor_mode ) {
+            case details::rule_executor_mode::crack : return "[ 破解 (点击切换) ]\n"sv;
+            case details::rule_executor_mode::restore : return "[ 恢复 (点击切换) ]\n"sv;
             default : std::unreachable();
         }
     }
     inline auto flip_executor_mode( const ui_func_args args )
     {
-        switch ( details::executor_mode ) {
-            case details::rule_executing::crack : details::executor_mode = details::rule_executing::restore; break;
-            case details::rule_executing::restore : details::executor_mode = details::rule_executing::crack; break;
+        switch ( details::current_rule_executor_mode ) {
+            case details::rule_executor_mode::crack :
+                details::current_rule_executor_mode = details::rule_executor_mode::restore;
+                break;
+            case details::rule_executor_mode::restore :
+                details::current_rule_executor_mode = details::rule_executor_mode::crack;
+                break;
             default : std::unreachable();
         }
         args.parent_ui.set_text( args.node_index, make_executor_mode_ui_text() );
