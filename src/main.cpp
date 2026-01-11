@@ -25,13 +25,13 @@ auto main() -> int
       .add_back(
         scltk::make_executor_mode_ui_text(), scltk::flip_executor_mode,
         cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_green )
-      .add_back( " > 自定义 "sv, scltk::rule_executor< scltk::runtime_rule_executor_backend >{ scltk::custom_rules } );
+      .add_back( " > 自定义\n"sv, scltk::rule_executor< scltk::custom_rule_executor_backend >{} );
     [ & ]< typename... Nodes >( const cpp_utils::type_list< Nodes... > )
     {
         ( ui.add_back(
             cpp_utils::value_identity< cpp_utils::concat_const_string(
               cpp_utils::const_string{ " > " }, Nodes::display_name, cpp_utils::const_string{ " " } ) >::value.view(),
-            scltk::rule_executor< scltk::compile_time_rule_executor_backend< Nodes > >{} ),
+            scltk::rule_executor< scltk::builtin_rules_executor_backend< Nodes > >{} ),
           ... );
     }( scltk::builtin_rules{} );
     ui.show();

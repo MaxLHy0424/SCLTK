@@ -921,7 +921,7 @@ namespace scltk
         using Backend::Backend;
     };
     template < typename CompileTimeRuleNode >
-    struct compile_time_rule_executor_backend
+    struct builtin_rules_executor_backend
     {
         static auto hijack_execs()
         {
@@ -983,61 +983,56 @@ namespace scltk
             }( typename CompileTimeRuleNode::servs{} );
         }
     };
-    struct runtime_rule_executor_backend
+    struct custom_rule_executor_backend
     {
-        const runtime_rule_node& node;
-        auto hijack_execs()
+        static auto hijack_execs()
         {
             constexpr const wchar_t data[]{ L"nul" };
-            for ( const auto& exec : node.execs ) {
+            for ( const auto& exec : custom_rules.execs ) {
                 cpp_utils::create_registry_key(
                   HKEY_LOCAL_MACHINE,
                   std::format( LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{})", exec ),
                   L"Debugger", cpp_utils::registry_flag::string_type, std::bit_cast< const BYTE* >( +data ), sizeof( data ) );
             }
         }
-        auto disable_servs()
+        static auto disable_servs()
         {
-            for ( const auto& serv : node.servs ) {
+            for ( const auto& serv : custom_rules.servs ) {
                 cpp_utils::set_service_status( serv, cpp_utils::service_flag::disabled_start );
             }
         }
-        auto stop_servs()
+        static auto stop_servs()
         {
-            for ( const auto& serv : node.servs ) {
+            for ( const auto& serv : custom_rules.servs ) {
                 cpp_utils::stop_service_with_dependencies( serv, unsynced_mem_pool );
             }
         }
-        auto kill_execs()
+        static auto kill_execs()
         {
-            for ( const auto& exec : node.execs ) {
+            for ( const auto& exec : custom_rules.execs ) {
                 cpp_utils::terminate_process_by_name( exec );
             }
         }
-        auto undo_hijack_execs()
+        static auto undo_hijack_execs()
         {
-            for ( const auto& exec : node.execs ) {
+            for ( const auto& exec : custom_rules.execs ) {
                 cpp_utils::delete_registry_tree(
                   HKEY_LOCAL_MACHINE,
                   std::format( LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{})", exec ) );
             }
         }
-        auto enable_servs()
+        static auto enable_servs()
         {
-            for ( const auto& serv : node.servs ) {
+            for ( const auto& serv : custom_rules.servs ) {
                 cpp_utils::set_service_status( serv, cpp_utils::service_flag::auto_start );
             }
         }
-        auto start_servs()
+        static auto start_servs()
         {
-            for ( const auto& serv : node.servs ) {
+            for ( const auto& serv : custom_rules.servs ) {
                 cpp_utils::start_service_with_dependencies( serv, unsynced_mem_pool );
             }
         }
-        runtime_rule_executor_backend( const runtime_rule_node& node_cref ) noexcept
-          : node{ node_cref }
-        { }
-        ~runtime_rule_executor_backend() noexcept = default;
     };
     inline auto make_executor_mode_ui_text() noexcept
     {
