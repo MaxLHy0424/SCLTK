@@ -56,7 +56,23 @@ namespace scltk
             }
             return false;
         }
+        template < cpp_utils::const_wstring... Items >
+        using make_const_wstring_list = cpp_utils::type_list< cpp_utils::value_identity< Items >... >;
     }
+    template < cpp_utils::const_string DisplayName, cpp_utils::type_sequence Execs, cpp_utils::type_sequence Servs >
+    struct compile_time_rule_node final
+    {
+        static inline constexpr auto display_name{ DisplayName.view() };
+        using execs = Execs;
+        using servs = Servs;
+    };
+    template < cpp_utils::const_string DisplayName >
+    struct runtime_rule_node final
+    {
+        static inline constexpr auto display_name{ DisplayName.view() };
+        std::pmr::vector< std::pmr::wstring > execs;
+        std::pmr::vector< std::pmr::wstring > servs;
+    };
     struct rule_node final
     {
         using item_t      = const wchar_t*;
@@ -588,8 +604,6 @@ namespace scltk
             }
             return func_back;
         }
-        template < cpp_utils::const_wstring... Items >
-        using make_const_wstring_list = cpp_utils::type_list< cpp_utils::value_identity< Items >... >;
         inline auto restore_os_components() noexcept
         {
             std::print( " -> 正在尝试恢复...\n" );
@@ -963,6 +977,70 @@ namespace scltk
                 std::print( "\n (i) 操作已完成." );
                 details::press_any_key_to_return();
                 return func_back;
+            }
+            using Backend::Backend;
+        };
+        template < typename CompileTimeRuleNode >
+        struct compile_time_rule_executor_backend
+        {
+            static auto hijack_execs()
+            {
+                []< cpp_utils::const_wstring... Execs >( const cpp_utils::type_list< cpp_utils::value_identity< Execs >... > ) static
+                {
+                    constexpr const wchar_t data[]{ L"nul" };
+                    ( cpp_utils::create_registry_key(
+                        HKEY_LOCAL_MACHINE,
+                        cpp_utils::value_identity< cpp_utils::concat_const_string(
+                          cpp_utils::const_wstring{ LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\)" },
+                          Execs ) >::value.view(),
+                        L"Debugger", cpp_utils::registry_flag::string_type, std::bit_cast< const BYTE* >( +data ), sizeof( data ) ),
+                      ... );
+                }( typename CompileTimeRuleNode::execs{} );
+            }
+            static auto disable_servs()
+            {
+                []< cpp_utils::const_wstring... Servs >( const cpp_utils::type_list< cpp_utils::value_identity< Servs >... > ) static
+                {
+                    ( cpp_utils::set_service_status( Servs.view(), cpp_utils::service_flag::disabled_start ), ... );
+                }( typename CompileTimeRuleNode::servs{} );
+            }
+            static auto stop_servs()
+            {
+                []< cpp_utils::const_wstring... Servs >( const cpp_utils::type_list< cpp_utils::value_identity< Servs >... > ) static
+                {
+                    ( cpp_utils::stop_service_with_dependencies( Servs.view(), unsynced_mem_pool ), ... );
+                }( typename CompileTimeRuleNode::servs{} );
+            }
+            static auto kill_execs()
+            {
+                []< cpp_utils::const_wstring... Execs >( const cpp_utils::type_list< cpp_utils::value_identity< Execs >... > ) static
+                { ( cpp_utils::terminate_process_by_name( Execs.view() ), ... ); }( typename CompileTimeRuleNode::execs{} );
+            }
+            static auto undo_hijack_execs()
+            {
+                []< cpp_utils::const_wstring... Execs >( const cpp_utils::type_list< cpp_utils::value_identity< Execs >... > ) static
+                {
+                    ( cpp_utils::delete_registry_tree(
+                        HKEY_LOCAL_MACHINE,
+                        cpp_utils::value_identity< cpp_utils::concat_const_string(
+                          cpp_utils::const_wstring{ LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\)" },
+                          Execs ) >::value.view() ),
+                      ... );
+                }( typename CompileTimeRuleNode::execs{} );
+            }
+            static auto enable_servs()
+            {
+                []< cpp_utils::const_wstring... Servs >( const cpp_utils::type_list< cpp_utils::value_identity< Servs >... > ) static
+                {
+                    ( cpp_utils::set_service_status( Servs.view(), cpp_utils::service_flag::auto_start ), ... );
+                }( typename CompileTimeRuleNode::servs{} );
+            }
+            static auto start_servs()
+            {
+                []< cpp_utils::const_wstring... Servs >( const cpp_utils::type_list< cpp_utils::value_identity< Servs >... > ) static
+                {
+                    ( cpp_utils::start_service_with_dependencies( Servs.view(), unsynced_mem_pool ), ... );
+                }( typename CompileTimeRuleNode::servs{} );
             }
         };
     }
