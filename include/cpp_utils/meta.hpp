@@ -1,5 +1,7 @@
 #pragma once
+#include <concepts>
 #include <functional>
+#include <iterator>
 #include <tuple>
 #include <type_traits>
 #include <utility>
@@ -7,8 +9,9 @@ namespace cpp_utils
 {
     template < std::regular_invocable auto Func >
         requires requires {
+            { Func().begin() } -> std::forward_iterator;
             { Func().size() } -> std::convertible_to< std::size_t >;
-            { Func()[ 0 ] } -> std::convertible_to< typename decltype( Func() )::value_type >;
+            { *Func().begin() } -> std::convertible_to< typename decltype( Func() )::value_type >;
         }
     inline consteval auto invoke_to_array() noexcept
     {
@@ -16,7 +19,7 @@ namespace cpp_utils
         constexpr auto len{ Func().size() };
         auto temp{ Func() };
         return [ & ]< std::size_t... Is >( const std::index_sequence< Is... > )
-        { return std::array< value_type, len >{ temp[ Is ]... }; }( std::make_index_sequence< len >{} );
+        { return std::array< value_type, len >{ *std::next( temp.begin(), Is )... }; }( std::make_index_sequence< len >{} );
     }
     template < typename... Fs >
     struct overloads final : public Fs...
