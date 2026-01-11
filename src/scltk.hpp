@@ -865,9 +865,18 @@ namespace scltk
         inline auto current_rule_executor_mode{ rule_executor_mode::crack };
     }
     template < typename Backend >
+        requires requires {
+            Backend::hijack_execs();
+            Backend::disable_servs();
+            Backend::stop_servs();
+            Backend::kill_execs();
+            Backend::undo_hijack_execs();
+            Backend::enable_servs();
+            Backend::start_servs();
+        }
     struct rule_executor final : Backend
     {
-        auto crack()
+        static auto crack()
         {
             const auto& options{ std::get< crack_restore_config >( config_nodes ) };
             const auto can_hijack_execs{ options.at< "hijack_execs" >() };
@@ -885,7 +894,7 @@ namespace scltk
             std::print( " - 终止进程.\n" );
             Backend::kill_execs();
         }
-        auto restore()
+        static auto restore()
         {
             const auto& options{ std::get< crack_restore_config >( config_nodes ) };
             const auto can_hijack_execs{ options.at< "hijack_execs" >() };
@@ -901,7 +910,7 @@ namespace scltk
             std::print( " - 启动服务.\n" );
             Backend::start_servs();
         }
-        auto operator()()
+        static auto operator()()
         {
             switch ( details::current_rule_executor_mode ) {
                 case details::rule_executor_mode::crack : std::print( "                    [ 破  解 ]\n\n\n" ); break;
@@ -918,7 +927,6 @@ namespace scltk
             details::press_any_key_to_return();
             return func_back;
         }
-        using Backend::Backend;
     };
     template < typename CompileTimeRuleNode >
     struct builtin_rules_executor_backend
