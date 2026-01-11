@@ -373,46 +373,38 @@ namespace scltk
       private:
         static inline constexpr auto flag_exec{ L"exec:"sv };
         static inline constexpr auto flag_serv{ L"serv:"sv };
-        std::pmr::vector< std::pmr::wstring > execs{};
-        std::pmr::vector< std::pmr::wstring > servs{};
         static_assert( []( auto... strings ) consteval
         { return ( std::ranges::none_of( strings, details::is_whitespace< wchar_t > ) && ... ); }( flag_exec, flag_serv ) );
-        auto load_( const std::string_view unconverted_line )
+        static auto load_( const std::string_view unconverted_line )
         {
             const auto converted_line{ cpp_utils::to_wstring( unconverted_line, charset_id ) };
             const std::wstring_view line{ converted_line };
             if ( line.size() > flag_exec.size() && line.starts_with( flag_exec ) ) {
-                execs.emplace_back( std::ranges::find_if_not( line.substr( flag_exec.size() ), details::is_whitespace< wchar_t > ) );
+                _custom_rules.execs.emplace_back(
+                  std::ranges::find_if_not( line.substr( flag_exec.size() ), details::is_whitespace< wchar_t > ) );
                 return;
             }
             if ( line.size() > flag_serv.size() && line.starts_with( flag_serv ) ) {
-                servs.emplace_back( std::ranges::find_if_not( line.substr( flag_serv.size() ), details::is_whitespace< wchar_t > ) );
+                _custom_rules.servs.emplace_back(
+                  std::ranges::find_if_not( line.substr( flag_serv.size() ), details::is_whitespace< wchar_t > ) );
                 return;
             }
         }
-        auto sync_( std::ofstream& out )
+        static auto sync_( std::ofstream& out )
         {
             const auto flag_exec_ansi{ cpp_utils::to_string( flag_exec, charset_id, unsynced_mem_pool ) };
             const auto flag_serv_ansi{ cpp_utils::to_string( flag_serv, charset_id, unsynced_mem_pool ) };
-            for ( const auto& exec : execs ) {
+            for ( const auto& exec : _custom_rules.execs ) {
                 out << flag_exec_ansi << ' ' << cpp_utils::to_string( exec, charset_id, unsynced_mem_pool ) << '\n';
             }
-            for ( const auto& serv : servs ) {
+            for ( const auto& serv : _custom_rules.servs ) {
                 out << flag_serv_ansi << ' ' << cpp_utils::to_string( serv, charset_id, unsynced_mem_pool ) << '\n';
             }
         }
-        auto before_load_() noexcept
+        static auto before_load_() noexcept
         {
-            execs.clear();
-            servs.clear();
-            custom_rules.execs.clear();
-            custom_rules.servs.clear();
-        }
-        auto after_load_()
-        {
-            constexpr auto to_cstr{ []( const std::pmr::wstring& str ) static noexcept { return str.c_str(); } };
-            custom_rules.execs.append_range( execs | std::views::transform( to_cstr ) );
-            custom_rules.servs.append_range( servs | std::views::transform( to_cstr ) );
+            _custom_rules.execs.clear();
+            _custom_rules.servs.clear();
         }
         static auto show_help_info_()
         {
