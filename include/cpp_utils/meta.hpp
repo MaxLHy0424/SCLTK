@@ -498,8 +498,7 @@ namespace cpp_utils
         using partition = type_list< filter< Pred >, filter_not< Pred > >;
     };
     template < typename T >
-    struct is_type_list final
-      : std::conditional_t< std::is_same_v< std::remove_cv_t< T >, T >, std::false_type, apply_type< is_type_list, std::remove_cv_t< T > > >
+    struct is_type_list final : std::false_type
     { };
     template < typename... Ts >
     struct is_type_list< type_list< Ts... > > final : std::true_type
