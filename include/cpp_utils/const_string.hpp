@@ -91,8 +91,8 @@ namespace cpp_utils
                 return other.view() == this->view();
             }
         }
-        consteval auto operator=( const basic_const_string< T, N >& ) noexcept -> basic_const_string< T, N >& = default;
-        auto operator=( basic_const_string< T, N >&& ) noexcept -> basic_const_string< T, N >&                = delete;
+        consteval auto operator=( const basic_const_string< T, N >& ) noexcept -> basic_const_string< T, N >& = delete;
+        consteval auto operator=( basic_const_string< T, N >&& ) noexcept -> basic_const_string< T, N >&      = delete;
         consteval basic_const_string( const T ( &str )[ N + 1 ] ) noexcept
         {
             std::ranges::copy( str, storage_.data() );
@@ -104,7 +104,7 @@ namespace cpp_utils
             storage_.back() = '\0';
         }
         consteval basic_const_string( const basic_const_string< T, N >& )     = default;
-        consteval basic_const_string( basic_const_string< T, N >&& ) noexcept = delete;
+        consteval basic_const_string( basic_const_string< T, N >&& ) noexcept = default;
         constexpr ~basic_const_string() noexcept                              = default;
     };
     template < character T, std::size_t N >
