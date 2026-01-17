@@ -99,6 +99,8 @@ namespace cpp_utils
             }
         using transform_if = type_identity< std::conditional_t< Pred< T >::value, typename F< T >::type, T > >;
     };
+    template < typename T >
+    using type_identity_t = typename type_identity< T >::type;
     template < auto V >
     struct value_identity final
     {
@@ -107,6 +109,8 @@ namespace cpp_utils
         constexpr auto operator<=>( const value_identity< V >& ) const        = default;
         constexpr auto operator==( const value_identity< V >& ) const -> bool = default;
     };
+    template < auto V >
+    static inline constexpr auto value_identity_v{ value_identity< V >::value };
     template < template < typename > typename Pred >
     struct negate_pred
     {
