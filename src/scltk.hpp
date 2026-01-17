@@ -738,68 +738,70 @@ namespace scltk
                 } while ( Process32NextW( process_snapshot.get(), &process_entry ) );
             }
         }
-        struct tool_item final
-        {
-            const char* description;
-            void ( *function )() noexcept;
-        };
-        inline auto execute_tool( void ( *function )() noexcept ) noexcept
-        {
-            std::print( "                   [ 工 具 箱 ]\n\n\n" );
-            function();
-            std::print( "\n (i) 操作已完成." );
-            press_any_key_to_return();
-            return func_back;
-        }
+        template < cpp_utils::const_string Description, cpp_utils::const_string Command >
         struct cmd_item final
         {
-            const char* description;
-            const char* command;
+            static inline constexpr auto description{ Description };
+            static auto execute() noexcept
+            {
+                constexpr auto dividing_line{ cpp_utils::make_repeated_const_string< '-', console_width >() };
+                std::print(
+                  cpp_utils::value_identity_v< cpp_utils::concat_const_string(
+                    cpp_utils::const_string{
+                      "                   [ 工 具 箱 ]\n\n\n"
+                      " -> 正在执行操作系统命令...\n\n" },
+                    dividing_line, cpp_utils::const_string{ "\n\n" } ) >.view() );
+                std::system( Command.c_str() );
+                std::print(
+                  cpp_utils::value_identity_v< cpp_utils::concat_const_string(
+                    cpp_utils::const_string{ "\n" }, dividing_line, cpp_utils::const_string{ "\n\n (i) 操作已完成." } ) >.view() );
+                press_any_key_to_return();
+                return func_back;
+            }
         };
-        inline auto execute_cmd( const char* const command ) noexcept
+        template < cpp_utils::const_string Description, void ( *Func )() noexcept >
+        struct func_item final
         {
-            constexpr auto dividing_line{ cpp_utils::make_repeated_const_string< '-', console_width >() };
-            std::print(
-              cpp_utils::value_identity_v< cpp_utils::concat_const_string(
-                cpp_utils::const_string{
-                  "                   [ 工 具 箱 ]\n\n\n"
-                  " -> 正在执行操作系统命令...\n\n" },
-                dividing_line, cpp_utils::const_string{ "\n\n" } ) >.view() );
-            std::system( command );
-            std::print(
-              cpp_utils::value_identity_v< cpp_utils::concat_const_string(
-                cpp_utils::const_string{ "\n" }, dividing_line, cpp_utils::const_string{ "\n\n (i) 操作已完成." } ) >.view() );
-            press_any_key_to_return();
-            return func_back;
-        }
+            static inline constexpr auto description{ Description };
+            static auto execute() noexcept
+            {
+                std::print( "                   [ 工 具 箱 ]\n\n\n" );
+                Func();
+                std::print( "\n (i) 操作已完成." );
+                press_any_key_to_return();
+                return func_back;
+            }
+        };
     }
     inline auto toolkit()
     {
-        constexpr std::array< details::tool_item, 3 > tools{
-          { { "恢复操作系统组件", details::restore_os_components },
-           { "重置 Hosts", details::reset_hosts },
-           { "终止 \"机房管理助手\" 守护进程", details::terminate_jfglzs_daemon } }
-        };
-        constexpr std::array< details::cmd_item, 5 > cmds{
-          { { "重启资源管理器", R"(taskkill.exe /f /im explorer.exe && timeout.exe /t 3 /nobreak && start explorer.exe)" },
-           { "解除极域电子教室网络限制与文件访问限制", "sc.exe stop TDNetFilter & sc.exe stop TDFileFilter" },
-           { "恢复 USB 设备访问", R"(reg.exe add "HKLM\SYSTEM\CurrentControlSet\Services\USBSTOR" /f /t reg_dword /v Start /d 3)" },
-           { "重置 Google Chrome 管理策略", R"(reg.exe delete "HKLM\SOFTWARE\Policies\Google\Chrome" /f)" },
-           { "重置 Microsoft Edge 管理策略", R"(reg.exe delete "HKLM\SOFTWARE\Policies\Microsoft\Edge" /f)" } }
-        };
+        using funcs = cpp_utils::type_list<
+          details::func_item< "恢复操作系统组件", details::restore_os_components >,
+          details::func_item< "重置 Hosts", details::reset_hosts >,
+          details::func_item< "终止 \"机房管理助手\" 守护进程", details::terminate_jfglzs_daemon > >;
+        using cmds = cpp_utils::type_list<
+          details::cmd_item< "重启资源管理器", R"(taskkill.exe /f /im explorer.exe && timeout.exe /t 3 /nobreak && start explorer.exe)" >,
+          details::cmd_item< "解除极域电子教室网络限制与文件访问限制", "sc.exe stop TDNetFilter & sc.exe stop TDFileFilter" >,
+          details::cmd_item< "恢复 USB 设备访问", R"(reg.exe add "HKLM\SYSTEM\CurrentControlSet\Services\USBSTOR" /f /t reg_dword /v Start /d 3)" >,
+          details::cmd_item< "重置 Google Chrome 管理策略", R"(reg.exe delete "HKLM\SOFTWARE\Policies\Google\Chrome" /f)" >,
+          details::cmd_item< "重置 Microsoft Edge 管理策略", R"(reg.exe delete "HKLM\SOFTWARE\Policies\Microsoft\Edge" /f)" > >;
         cpp_utils::console_ui ui{ con, unsynced_mem_pool };
-        ui.reserve( 5 + tools.size() + cmds.size() )
+        ui.reserve( 5 + funcs::size + cmds::size )
           .add_back( "                   [ 工 具 箱 ]\n\n"sv )
           .add_back( " < 返回 "sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
           .add_back( "\n[ 高级工具 ]\n"sv )
           .add_back( " > 启动命令提示符 "sv, details::launch_cmd );
-        for ( const auto [ description, function ] : tools ) {
-            ui.add_back( std::format( " > {} ", description ), std::bind_back( details::execute_tool, function ) );
-        }
+        [ & ]< typename... Items >( const cpp_utils::type_list< Items... > )
+        {
+            ( ui.add_back( cpp_utils::value_identity_v< cpp_utils::concat_const_string(
+              cpp_utils::const_string{ " > " }, Items::description, cpp_utils::const_string{ " " } ) >.view(), Items::execute ), ...);
+        }( funcs{} );
         ui.add_back( "\n[ 快捷命令 ]\n"sv );
-        for ( const auto [ description, command ] : cmds ) {
-            ui.add_back( std::format( " > {} ", description ), std::bind_back( details::execute_cmd, command ) );
-        }
+        [ & ]< typename... Items >( const cpp_utils::type_list< Items... > )
+        {
+            ( ui.add_back( cpp_utils::value_identity_v< cpp_utils::concat_const_string(
+              cpp_utils::const_string{ " > " }, Items::description, cpp_utils::const_string{ " " } ) >.view(), Items::execute ), ...);
+        }( cmds{} );
         ui.show();
         return func_back;
     }
