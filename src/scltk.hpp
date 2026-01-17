@@ -149,8 +149,8 @@ namespace scltk
             {
                 using child_t = std::decay_t< decltype( self ) >;
                 if constexpr ( is_parsable_config_node_v< child_t > ) {
-                    out << cpp_utils::value_identity< cpp_utils::concat_const_string(
-                      cpp_utils::const_string{ "[" }, child_t::raw_name, cpp_utils::const_string{ "]\n" } ) >::value.view();
+                    out << cpp_utils::value_identity_v< cpp_utils::concat_const_string(
+                      cpp_utils::const_string{ "[" }, child_t::raw_name, cpp_utils::const_string{ "]\n" } ) >.view();
                     self.sync_( out );
                 }
             }
@@ -275,9 +275,9 @@ namespace scltk
                 [ & ]< std::size_t... Is >( const std::index_sequence< Is... > )
                 {
                     ( ui.add_back(
-                          cpp_utils::value_identity< cpp_utils::concat_const_string(
+                          cpp_utils::value_identity_v< cpp_utils::concat_const_string(
                             cpp_utils::const_string{ "\n[ " }, item_list_::template at< Is * 2 + 1 >::value,
-                            cpp_utils::const_string{ " ]\n" } ) >::value.view() )
+                            cpp_utils::const_string{ " ]\n" } ) >.view() )
                         .add_back(
                           make_flip_button_text_( std::get< Is >( data_ ) ),
                           std::bind_back( flip_item_value_, std::ref( std::get< Is >( data_ ) ) ),
@@ -290,8 +290,8 @@ namespace scltk
             auto init_ui_( cpp_utils::console_ui& ui )
             {
                 ui.add_back(
-                  cpp_utils::value_identity< cpp_utils::concat_const_string(
-                    cpp_utils::const_string{ " > " }, DisplayName, cpp_utils::const_string{ " " } ) >::value.view(),
+                  cpp_utils::value_identity_v< cpp_utils::concat_const_string(
+                    cpp_utils::const_string{ " > " }, DisplayName, cpp_utils::const_string{ " " } ) >.view(),
                   std::bind_back( make_option_editor_ui_, std::ref( data_ ) ) );
             }
             static inline constexpr auto ui_count_{ 1uz };
@@ -616,9 +616,9 @@ namespace scltk
             {
                 ( RegDeleteTreeW(
                     HKEY_CURRENT_USER,
-                    cpp_utils::value_identity< cpp_utils::concat_const_string(
+                    cpp_utils::value_identity_v< cpp_utils::concat_const_string(
                       cpp_utils::const_wstring{ LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\)" },
-                      Items, cpp_utils::const_wstring{ L".exe" } ) >::value.c_str() ),
+                      Items, cpp_utils::const_wstring{ L".exe" } ) >.c_str() ),
                   ... );
             }( execs{} );
         }
@@ -763,15 +763,15 @@ namespace scltk
         {
             constexpr auto dividing_line{ cpp_utils::make_repeated_const_string< '-', console_width >() };
             std::print(
-              cpp_utils::value_identity< cpp_utils::concat_const_string(
+              cpp_utils::value_identity_v< cpp_utils::concat_const_string(
                 cpp_utils::const_string{
                   "                   [ 工 具 箱 ]\n\n\n"
                   " -> 正在执行操作系统命令...\n\n" },
-                dividing_line, cpp_utils::const_string{ "\n\n" } ) >::value.view() );
+                dividing_line, cpp_utils::const_string{ "\n\n" } ) >.view() );
             std::system( command );
             std::print(
-              cpp_utils::value_identity< cpp_utils::concat_const_string(
-                cpp_utils::const_string{ "\n" }, dividing_line, cpp_utils::const_string{ "\n\n (i) 操作已完成." } ) >::value.view() );
+              cpp_utils::value_identity_v< cpp_utils::concat_const_string(
+                cpp_utils::const_string{ "\n" }, dividing_line, cpp_utils::const_string{ "\n\n (i) 操作已完成." } ) >.view() );
             press_any_key_to_return();
             return func_back;
         }
@@ -937,9 +937,9 @@ namespace scltk
                 constexpr const wchar_t data[]{ L"nul" };
                 ( cpp_utils::create_registry_key(
                     HKEY_LOCAL_MACHINE,
-                    cpp_utils::value_identity< cpp_utils::concat_const_string(
+                    cpp_utils::value_identity_v< cpp_utils::concat_const_string(
                       cpp_utils::const_wstring{ LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\)" },
-                      Execs ) >::value.view(),
+                      Execs ) >.view(),
                     L"Debugger", cpp_utils::registry_flag::string_type, std::bit_cast< const BYTE* >( +data ), sizeof( data ) ),
                   ... );
             }( typename CompileTimeRuleNode::execs{} );
@@ -969,9 +969,9 @@ namespace scltk
             {
                 ( cpp_utils::delete_registry_tree(
                     HKEY_LOCAL_MACHINE,
-                    cpp_utils::value_identity< cpp_utils::concat_const_string(
+                    cpp_utils::value_identity_v< cpp_utils::concat_const_string(
                       cpp_utils::const_wstring{ LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\)" },
-                      Execs ) >::value.view() ),
+                      Execs ) >.view() ),
                   ... );
             }( typename CompileTimeRuleNode::execs{} );
         }

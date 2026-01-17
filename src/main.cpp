@@ -29,8 +29,8 @@ auto main() -> int
     [ & ]< typename... Nodes >( const cpp_utils::type_list< Nodes... > )
     {
         ( ui.add_back(
-            cpp_utils::value_identity< cpp_utils::concat_const_string(
-              cpp_utils::const_string{ " > " }, Nodes::display_name, cpp_utils::const_string{ " " } ) >::value.view(),
+            cpp_utils::value_identity_v< cpp_utils::concat_const_string(
+              cpp_utils::const_string{ " > " }, Nodes::display_name, cpp_utils::const_string{ " " } ) >.view(),
             scltk::rule_executor< scltk::builtin_rules_executor_backend< Nodes > >{} ),
           ... );
     }( scltk::builtin_rules{} );
