@@ -872,7 +872,7 @@ namespace scltk
             Backend::enable_servs();
             Backend::start_servs();
         }
-    struct rule_executor final : Backend
+    struct rule_executor final
     {
         static auto crack()
         {
