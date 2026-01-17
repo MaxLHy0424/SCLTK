@@ -74,37 +74,33 @@ namespace scltk
     using builtin_rules = cpp_utils::type_list<
       compile_time_rule_node<
         "机房管理助手",
-        details::make_const_wstring_list<
-          L"yz.exe", L"jfglzs.exe", L"jfglzsn.exe", L"jfglzsp.exe", L"przs.exe", L"zmserv.exe", L"zmsrv.exe" >,
+        details::make_const_wstring_list< L"yz", L"jfglzs", L"jfglzsn", L"jfglzsp", L"przs", L"zmserv", L"zmsrv" >,
         details::make_const_wstring_list< L"zmserv" > >,
       compile_time_rule_node<
         "极域电子教室",
-        details::make_const_wstring_list<
-          L"StudentMain.exe", L"DispcapHelper.exe", L"VRCwPlayer.exe", L"InstHelpApp.exe", L"InstHelpApp64.exe",
-          L"TDOvrSet.exe", L"GATESRV.exe", L"ProcHelper64.exe", L"MasterHelper.exe" >,
+        details::make_const_wstring_list< L"StudentMain", L"DispcapHelper", L"VRCwPlayer", L"InstHelpApp", L"InstHelpApp64",
+                                          L"TDOvrSet", L"GATESRV", L"ProcHelper64", L"MasterHelper" >,
         details::make_const_wstring_list< L"STUDSRV" > >,
       compile_time_rule_node<
         "联想智能云教室",
         details::make_const_wstring_list<
-          L"vncviewer.exe", L"tvnserver32.exe", L"WfbsPnpInstall.exe", L"WFBSMon.exe", L"WFBSMlogon.exe", L"WFBSSvrLogShow.exe",
-          L"ResetIp.exe", L"FuncForWIN64.exe", L"CertMgr.exe", L"Fireware.exe", L"BCDBootCopy.exe", L"refreship.exe",
-          L"lenovoLockScreen.exe", L"PortControl64.exe", L"DesktopCheck.exe", L"DeploymentManager.exe", L"DeploymentAgent.exe",
-          L"XYNTService.exe" >,
+          L"vncviewer", L"tvnserver32", L"WfbsPnpInstall", L"WFBSMon", L"WFBSMlogon", L"WFBSSvrLogShow", L"ResetIp",
+          L"FuncForWIN64", L"CertMgr", L"Fireware", L"BCDBootCopy", L"refreship", L"lenovoLockScreen", L"PortControl64",
+          L"DesktopCheck", L"DeploymentManager", L"DeploymentAgent", L"XYNTService" >,
         details::make_const_wstring_list< L"BSAgentSvr", L"tvnserver", L"WFBSMlogon" > >,
       compile_time_rule_node<
         "红蜘蛛多媒体网络教室",
-        details::make_const_wstring_list< L"rscheck.exe", L"checkrs.exe", L"REDAgent.exe", L"PerformanceCheck.exe",
-                                          L"edpaper.exe", L"Adapter.exe", L"repview.exe", L"FormatPaper.exe" >,
+        details::make_const_wstring_list<
+          L"rscheck", L"checkrs", L"REDAgent", L"PerformanceCheck", L"edpaper", L"Adapter", L"repview", L"FormatPaper" >,
         details::make_const_wstring_list< L"appcheck2", L"checkapp2" > >,
       compile_time_rule_node<
         "市一中伊金霍洛校区机房管理程序",
-        details::make_const_wstring_list<
-          L"ComputerClassroom_Client.exe", L"MonitorProcess.exe", L"00 PowerRun_x64.exe", L"PowerRun.exe" >,
+        details::make_const_wstring_list< L"ComputerClassroom_Client", L"MonitorProcess", L"00 PowerRun_x64", L"PowerRun" >,
         details::make_const_wstring_list<> >,
       compile_time_rule_node<
         "Veyon",
-        details::make_const_wstring_list< L"veyon-worker.exe", L"veyon-configurator.exe", L"veyon-server.exe", L"veyon-cli.exe",
-                                          L"veyon-wcli.exe", L"veyon-master.exe", L"veyon-service.exe" >,
+        details::make_const_wstring_list< L"veyon-worker", L"veyon-configurator", L"veyon-server", L"veyon-cli", L"veyon-wcli",
+                                          L"veyon-master", L"veyon-service" >,
         details::make_const_wstring_list< L"VeyonService" > > >;
     runtime_rule_node custom_rules;
     namespace details
@@ -386,7 +382,8 @@ namespace scltk
               .add_back(
                 "\n 自定义规则格式为 <flag>: <item>\n"
                 " 其中, <flag> 可为 exec 或 serv,\n"
-                " 分别表示可执行文件名称和某个 Windows 服务的服务名称.\n"
+                " 分别表示以 .exe 为文件扩展名的可执行文件的名称\n"
+                " 和某个 Windows 服务的服务名称.\n"
                 " <flag> 后的冒号与 <item> 之间可以有若干空白字符.\n"
                 " <item> 的类型由 <flag> 决定.\n"
                 " 如果 <item> 为空, 该项规则将会被忽略.\n"
@@ -395,9 +392,9 @@ namespace scltk
                 " 在修改自定义规则时, 请仔细检查.\n\n"
                 " 使用示例:\n\n"
                 " [custom_rules]\n"
-                " exec: abc_frontend.exe\n"
-                " exec: abc_backend.exe\n"
-                " serv: abc_connect.exe\n"
+                " exec: abc_frontend\n"
+                " exec: abc_backend\n"
+                " serv: abc_connect\n"
                 " serv: abc_proc_defender"sv )
               .show();
             return func_back;
@@ -939,7 +936,7 @@ namespace scltk
                     HKEY_LOCAL_MACHINE,
                     cpp_utils::value_identity_v< cpp_utils::concat_const_string(
                       cpp_utils::const_wstring{ LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\)" },
-                      Execs ) >.view(),
+                      Execs, cpp_utils::const_wstring{ L".exe" } ) >.view(),
                     L"Debugger", cpp_utils::registry_flag::string_type, std::bit_cast< const BYTE* >( +data ), sizeof( data ) ),
                   ... );
             }( typename CompileTimeRuleNode::execs{} );
@@ -961,7 +958,9 @@ namespace scltk
         static auto kill_execs()
         {
             []< cpp_utils::const_wstring... Execs >( const cpp_utils::type_list< cpp_utils::value_identity< Execs >... > ) static
-            { ( cpp_utils::terminate_process_by_name( Execs.view() ), ... ); }( typename CompileTimeRuleNode::execs{} );
+            {
+                ( cpp_utils::terminate_process_by_name( cpp_utils::value_identity_v< cpp_utils::concat_const_string( Execs, cpp_utils::const_wstring{ L".exe" } ) >.view() ), ... );
+            }( typename CompileTimeRuleNode::execs{} );
         }
         static auto undo_hijack_execs()
         {
@@ -971,7 +970,7 @@ namespace scltk
                     HKEY_LOCAL_MACHINE,
                     cpp_utils::value_identity_v< cpp_utils::concat_const_string(
                       cpp_utils::const_wstring{ LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\)" },
-                      Execs ) >.view() ),
+                      Execs, cpp_utils::const_wstring{ L".exe" }) >.view() ),
                   ... );
             }( typename CompileTimeRuleNode::execs{} );
         }
@@ -998,7 +997,7 @@ namespace scltk
             for ( const auto& exec : custom_rules.execs ) {
                 cpp_utils::create_registry_key(
                   HKEY_LOCAL_MACHINE,
-                  std::format( LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{})", exec ),
+                  std::format( LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe)", exec ),
                   L"Debugger", cpp_utils::registry_flag::string_type, std::bit_cast< const BYTE* >( +data ), sizeof( data ) );
             }
         }
@@ -1017,7 +1016,7 @@ namespace scltk
         static auto kill_execs()
         {
             for ( const auto& exec : custom_rules.execs ) {
-                cpp_utils::terminate_process_by_name( exec );
+                cpp_utils::terminate_process_by_name( std::format( L"{}.exe", exec ) );
             }
         }
         static auto undo_hijack_execs()
@@ -1025,7 +1024,7 @@ namespace scltk
             for ( const auto& exec : custom_rules.execs ) {
                 cpp_utils::delete_registry_tree(
                   HKEY_LOCAL_MACHINE,
-                  std::format( LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{})", exec ) );
+                  std::format( LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe)", exec ) );
             }
         }
         static auto enable_servs()
