@@ -13,7 +13,7 @@ args_opt_release = -Ofast -flto=auto -fuse-linker-plugin -fwhole-program -s \
                    -fno-rtti -fno-exceptions -fno-unwind-tables \
                    -fno-asynchronous-unwind-tables -fno-common \
                    -ffunction-sections -fdata-sections \
-                   -fno-semantic-interposition -fdevirtualize-at-ltrans \
+                   -fno-semantic-interposition -fdevirtualize-at-ltrans -fdevirtualize-speculatively \
                    -fipa-pta -fipa-ra -fipa-icf \
                    -fomit-frame-pointer -fno-plt
 args_include     = -I./include
