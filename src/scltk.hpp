@@ -42,6 +42,9 @@ namespace scltk
     inline constexpr auto make_title_text{ cpp_utils::concat_const_string(
       cpp_utils::make_repeated_const_string< ' ', ( static_cast< std::size_t >( console_width ) - Title.size() ) / 2 >(), Title,
       cpp_utils::make_repeated_const_string< '\n', NewLineCount >() ) };
+    template < cpp_utils::const_string Text >
+    inline constexpr auto make_button_text{
+      cpp_utils::concat_const_string( cpp_utils::const_string{ " > " }, Text, cpp_utils::const_string{ " " } ) };
     namespace details
     {
         inline auto press_any_key_to_return() noexcept
@@ -289,10 +292,7 @@ namespace scltk
             }
             auto init_ui_( cpp_utils::console_ui& ui )
             {
-                ui.add_back(
-                  cpp_utils::value_identity_v< cpp_utils::concat_const_string(
-                    cpp_utils::const_string{ " > " }, DisplayName, cpp_utils::const_string{ " " } ) >.view(),
-                  std::bind_back( make_option_editor_ui_, std::ref( data_ ) ) );
+                ui.add_back( make_button_text< DisplayName >.view(), std::bind_back( make_option_editor_ui_, std::ref( data_ ) ) );
             }
             static inline constexpr auto ui_count_{ 1uz };
           public:
@@ -796,16 +796,10 @@ namespace scltk
           .add_back( "\n[ 高级工具 ]\n"sv )
           .add_back( " > 启动命令提示符 "sv, details::launch_cmd );
         [ & ]< typename... Items >( const cpp_utils::type_list< Items... > )
-        {
-            ( ui.add_back( cpp_utils::value_identity_v< cpp_utils::concat_const_string(
-              cpp_utils::const_string{ " > " }, Items::description, cpp_utils::const_string{ " " } ) >.view(), Items::execute ), ...);
-        }( funcs{} );
+        { ( ui.add_back( make_button_text< Items::description >.view(), Items::execute ), ... ); }( funcs{} );
         ui.add_back( "\n[ 快捷命令 ]\n"sv );
         [ & ]< typename... Items >( const cpp_utils::type_list< Items... > )
-        {
-            ( ui.add_back( cpp_utils::value_identity_v< cpp_utils::concat_const_string(
-              cpp_utils::const_string{ " > " }, Items::description, cpp_utils::const_string{ " " } ) >.view(), Items::execute ), ...);
-        }( cmds{} );
+        { ( ui.add_back( make_button_text< Items::description >.view(), Items::execute ), ... ); }( cmds{} );
         ui.show();
         return func_back;
     }
