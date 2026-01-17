@@ -498,15 +498,15 @@ namespace cpp_utils
         using partition = type_list< filter< Pred >, filter_not< Pred > >;
     };
     template < typename T >
-    struct is_type_list final : std::false_type
+    struct is_same_as_type_list final : std::false_type
     { };
     template < typename... Ts >
-    struct is_type_list< type_list< Ts... > > final : std::true_type
+    struct is_same_as_type_list< type_list< Ts... > > final : std::true_type
     { };
     template < typename T >
-    inline constexpr auto is_type_list_v{ is_type_list< T >::value };
+    inline constexpr auto is_same_as_type_list_v{ is_same_as_type_list< T >::value };
     template < typename T >
-    concept type_sequence = is_type_list_v< T >;
+    concept same_as_type_list = is_same_as_type_list_v< T >;
     namespace details
     {
         template < typename, typename >
@@ -557,33 +557,33 @@ namespace cpp_utils
             { return type_list< typename decltype( to_identity( Is ) )::type... >{}; }( std::make_index_sequence< N >{} ) );
         };
     }
-    template < type_sequence List1, type_sequence List2 >
+    template < same_as_type_list List1, same_as_type_list List2 >
     struct type_list_concat final
     {
         using type = typename details::type_list_concat_impl< List1, List2 >::type;
     };
-    template < type_sequence List1, type_sequence List2 >
+    template < same_as_type_list List1, same_as_type_list List2 >
     using type_list_concat_t = typename type_list_concat< List1, List2 >::type;
-    template < type_sequence List1, type_sequence List2 >
+    template < same_as_type_list List1, same_as_type_list List2 >
     struct type_list_intersection final
     {
         using type = typename details::type_list_intersection_impl< List1, List2 >::type;
     };
-    template < type_sequence List1, type_sequence List2 >
+    template < same_as_type_list List1, same_as_type_list List2 >
     using type_list_intersection_t = typename type_list_intersection< List1, List2 >::type;
-    template < type_sequence List1, type_sequence List2 >
+    template < same_as_type_list List1, same_as_type_list List2 >
     struct type_list_difference final
     {
         using type = typename details::type_list_difference_impl< List1, List2 >::type;
     };
-    template < type_sequence List1, type_sequence List2 >
+    template < same_as_type_list List1, same_as_type_list List2 >
     using type_list_difference_t = typename type_list_difference< List1, List2 >::type;
-    template < type_sequence List1, type_sequence List2 >
+    template < same_as_type_list List1, same_as_type_list List2 >
     struct type_list_symmetric_difference final
     {
         using type = typename details::type_list_symmetric_difference_impl< List1, List2 >::type;
     };
-    template < type_sequence List1, type_sequence List2 >
+    template < same_as_type_list List1, same_as_type_list List2 >
     using type_list_symmetric_difference_t = typename type_list_symmetric_difference< List1, List2 >::type;
     template < common_type T, std::size_t N >
     struct make_repeated_type_list final

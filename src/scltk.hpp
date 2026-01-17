@@ -59,7 +59,7 @@ namespace scltk
         template < cpp_utils::const_wstring... Items >
         using make_const_wstring_list = cpp_utils::type_list< cpp_utils::value_identity< Items >... >;
     }
-    template < cpp_utils::const_string DisplayName, cpp_utils::type_sequence Execs, cpp_utils::type_sequence Servs >
+    template < cpp_utils::const_string DisplayName, cpp_utils::same_as_type_list Execs, cpp_utils::same_as_type_list Servs >
     struct compile_time_rule_node final
     {
         static inline constexpr auto display_name{ DisplayName };
