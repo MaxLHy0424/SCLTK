@@ -17,7 +17,7 @@ auto main() -> int
     scltk::load_config();
     scltk::create_threads();
     ui.reserve( 8 + scltk::builtin_rules::size )
-      .add_back( "                    [ 主  页 ]\n\n"sv )
+      .add_back( scltk::make_title_text< "[ 主  页 ]", 2 >.view() )
       .add_back( " < 退出\n"sv, scltk::quit, cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_intensity )
       .add_back( " > 关于 "sv, scltk::info )
       .add_back( " > 配置 "sv, scltk::config_ui )

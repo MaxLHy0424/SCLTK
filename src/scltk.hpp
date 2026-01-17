@@ -38,6 +38,10 @@ namespace scltk
     {
         return func_exit;
     }
+    template < cpp_utils::const_string Title, std::size_t NewLineCount >
+    inline constexpr auto make_title_text{ cpp_utils::concat_const_string(
+      cpp_utils::make_repeated_const_string< ' ', ( static_cast< std::size_t >( console_width ) - Title.size() ) / 2 >(), Title,
+      cpp_utils::make_repeated_const_string< '\n', NewLineCount >() ) };
     namespace details
     {
         inline auto press_any_key_to_return() noexcept
@@ -265,7 +269,7 @@ namespace scltk
             {
                 cpp_utils::console_ui ui{ con, unsynced_mem_pool };
                 ui.reserve( 2 + data_.size() * 2 )
-                  .add_back( "                    [ 配  置 ]\n\n"sv )
+                  .add_back( scltk::make_title_text< "[ 配  置 ]", 2 >.view() )
                   .add_back(
                     " < 返回 "sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity );
                 [ & ]< std::size_t... Is >( const std::index_sequence< Is... > )
@@ -377,7 +381,7 @@ namespace scltk
         {
             cpp_utils::console_ui ui{ con, unsynced_mem_pool };
             ui.reserve( 3 )
-              .add_back( "                    [ 配  置 ]\n\n"sv )
+              .add_back( scltk::make_title_text< "[ 配  置 ]", 2 >.view() )
               .add_back( " < 返回 "sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
               .add_back(
                 "\n 自定义规则格式为 <flag>: <item>\n"
@@ -498,7 +502,7 @@ namespace scltk
         {
             cpp_utils::console_ui ui{ con, unsynced_mem_pool };
             ui.reserve( 3 )
-              .add_back( "                    [ 配  置 ]\n\n"sv )
+              .add_back( scltk::make_title_text< "[ 配  置 ]", 2 >.view() )
               .add_back( " < 返回 "sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
               .add_back(
                 "\n 配置以行作为单位解析.\n\n"
@@ -548,7 +552,7 @@ namespace scltk
             cpp_utils::console_ui ui{ con, unsynced_mem_pool };
             constexpr auto reserved_size{ 5 + ( decltype( nodes.request_ui_count() )::value + ... ) };
             ui.reserve( reserved_size )
-              .add_back( "                    [ 配  置 ]\n\n"sv )
+              .add_back( scltk::make_title_text< "[ 配  置 ]", 2 >.view() )
               .add_back( " < 返回\n"sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
               .add_back( " > 查看解析规则 "sv, details::show_config_parsing_rules )
               .add_back( " > 同步配置 "sv, details::sync_config )
@@ -562,7 +566,7 @@ namespace scltk
     {
         cpp_utils::console_ui ui{ con, unsynced_mem_pool };
         ui.reserve( 3 )
-          .add_back( "                    [ 关  于 ]\n\n"sv )
+          .add_back( scltk::make_title_text< "[ 关  于 ]", 2 >.view() )
           .add_back( " < 返回 "sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
           .add_back(
             "\n[ 名称 ]\n\n " INFO_FULL_NAME " (" INFO_SHORT_NAME ")\n\n[ 版本 ]\n\n " INFO_VERSION
@@ -787,7 +791,7 @@ namespace scltk
           details::cmd_item< "重置 Microsoft Edge 管理策略", R"(reg.exe delete "HKLM\SOFTWARE\Policies\Microsoft\Edge" /f)" > >;
         cpp_utils::console_ui ui{ con, unsynced_mem_pool };
         ui.reserve( 5 + funcs::size + cmds::size )
-          .add_back( "                   [ 工 具 箱 ]\n\n"sv )
+          .add_back( scltk::make_title_text< "[ 工 具 箱 ]", 2 >.view() )
           .add_back( " < 返回 "sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
           .add_back( "\n[ 高级工具 ]\n"sv )
           .add_back( " > 启动命令提示符 "sv, details::launch_cmd );
