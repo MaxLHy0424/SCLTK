@@ -40,7 +40,7 @@ args_base        = -pipe -finput-charset=$(input_charset) -fexec-charset=$(outpu
                    $(args_library) $(args_extra)
 args_debug       = -g3 -fuse-ld=lld -DDEBUG $(args_base) $(args_opt_debug) -fstack-protector-strong
 args_release     = -DNDEBUG -static $(args_base) $(args_opt_release)
-args_ld_base     = -fuse-ld=lld -Wl,-O3,--lto-O3,--lto-CGO3,--gc-sections,--strip-all,--as-needed,--no-insert-timestamp,--no-seh,--disable-runtime-pseudo-reloc,--disable-auto-import,--pic-executable,--dynamicbase,--nxcompat,--high-entropy-va,--tsaware,--icf=all
+args_ld_base     = -fuse-ld=lld -Wl,-O3,--lto-O3,--lto-CGO3,--gc-sections,--strip-all,--as-needed,--no-insert-timestamp,--no-seh,--disable-runtime-pseudo-reloc,--disable-auto-import,--dynamicbase,--nxcompat,--high-entropy-va,--tsaware,--icf=all
 args_ld_i686     = $(args_ld_base)
 args_ld_x86_64   = $(args_ld_base)
 .PHONY: toolchain all build debug release pack clean make_info
