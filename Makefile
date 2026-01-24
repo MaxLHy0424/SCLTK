@@ -43,6 +43,7 @@ args_release     = -DNDEBUG -static $(args_base) $(args_opt_release)
 args_ld_base     = -fuse-ld=lld -Wl,-O3,--lto-O3,--lto-CGO3,--gc-sections,--strip-all,--as-needed,--no-insert-timestamp,--no-seh,--disable-runtime-pseudo-reloc,--disable-auto-import,--dynamicbase,--nxcompat,--high-entropy-va,--tsaware,--icf=all
 args_ld_i686     = $(args_ld_base)
 args_ld_x86_64   = $(args_ld_base)
+args_upx         = --lzma --best --8-bit --no-align --ultra-brute --no-progress
 .PHONY: toolchain all build debug release pack clean make_info
 dependencies_testing = src/* include*
 all: toolchain build pack
@@ -60,8 +61,9 @@ toolchain:
      mingw-w64-ucrt-x86_64-toolchain\
      mingw-w64-ucrt-x86_64-lld\
      mingw-w64-i686-lld\
-     make\
      mingw-w64-ucrt-x86_64-7zip\
+	 mingw-w64-ucrt-x86_64-upx\
+     make\
      git\
      base\
      base-devel\
@@ -90,6 +92,7 @@ build/release/$(project_name)-i686-msvcrt.exe: $(dependencies_testing) \
                                                make_info \
                                                build/release/.nothing
 	$(i686_compiler) $(dependencies_release_32bit) $(args_release) $(args_arch_i686) $(args_ld_i686) -o $@
+	$(msys2_path)/ucrt64/bin/upx.exe $@ $(args_upx)
 dependencies_release_64bit = build/manifest-x86_64.o \
                              src/*.cpp
 build/release/$(project_name)-x86_64-ucrt.exe: $(dependencies_testing) \
@@ -97,6 +100,7 @@ build/release/$(project_name)-x86_64-ucrt.exe: $(dependencies_testing) \
                                                make_info \
                                                build/release/.nothing
 	$(x86_64_compiler) $(dependencies_release_64bit) $(args_release) $(args_arch_x86_64) $(args_ld_x86_64) -o $@
+	$(msys2_path)/ucrt64/bin/upx.exe $@ $(args_upx)
 dependencies_info = manifest.rc \
                     img/favicon.ico \
                     manifest.xml \
