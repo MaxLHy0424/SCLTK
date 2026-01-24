@@ -53,7 +53,7 @@ pack:
 	$(msys2_path)/usr/bin/mkdir.exe build/__temp__ -p
 	$(msys2_path)/usr/bin/cp.exe build/release/*.exe build/__temp__/
 	$(msys2_path)/usr/bin/cp.exe LICENSE build/__temp__/
-	$(msys2_path)/ucrt64/bin/7z.exe a -t7z -m0=LZMA2 -mx=9 -md=1024m -ms=on -mf=BCJ2 build/$(project_name).7z ./build/__temp__/*
+	$(msys2_path)/ucrt64/bin/7z.exe a -mx9 -m0=LZMA2 -md=64m -mfb=64 -ms=16g -mmt=16 build/$(project_name).7z ./build/__temp__/*
 	$(msys2_path)/usr/bin/rm.exe -rf build/__temp__
 toolchain:
 	$(msys2_path)/usr/bin/pacman.exe -Sy --noconfirm --needed\
