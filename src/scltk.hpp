@@ -871,17 +871,18 @@ namespace scltk
         };
         inline auto current_rule_executor_mode{ rule_executor_mode::crack };
     }
-    template < typename Backend >
+    template < typename... Backends >
         requires requires {
-            Backend::hijack_execs();
-            Backend::disable_servs();
-            Backend::stop_servs();
-            Backend::kill_execs();
-            Backend::crack_helper();
-            Backend::undo_hijack_execs();
-            Backend::enable_servs();
-            Backend::start_servs();
-            Backend::restore_helper();
+            requires cpp_utils::as_concept< ( sizeof...( Backends ) != 0 ) >;
+            ( Backends::hijack_execs(), ... );
+            ( Backends::disable_servs(), ... );
+            ( Backends::stop_servs(), ... );
+            ( Backends::kill_execs(), ... );
+            ( Backends::crack_helper(), ... );
+            ( Backends::undo_hijack_execs(), ... );
+            ( Backends::enable_servs(), ... );
+            ( Backends::start_servs(), ... );
+            ( Backends::restore_helper(), ... );
         }
     struct rule_executor final
     {
@@ -892,18 +893,18 @@ namespace scltk
             const auto can_set_serv_startup_types{ options.at< "set_serv_startup_types" >() };
             if ( can_hijack_execs ) {
                 std::print( " - 劫持文件.\n" );
-                Backend::hijack_execs();
+                ( Backends::hijack_execs(), ... );
             }
             if ( can_set_serv_startup_types ) {
                 std::print( " - 禁用服务.\n" );
-                Backend::disable_servs();
+                ( Backends::disable_servs(), ... );
             }
             std::print( " - 停止服务.\n" );
-            Backend::stop_servs();
+            ( Backends::stop_servs(), ... );
             std::print( " - 终止进程.\n" );
-            Backend::kill_execs();
+            ( Backends::kill_execs(), ... );
             std::print( " - 执行扩展操作.\n" );
-            Backend::crack_helper();
+            ( Backends::crack_helper(), ... );
         }
         static auto restore()
         {
@@ -912,16 +913,16 @@ namespace scltk
             const auto can_set_serv_startup_types{ options.at< "set_serv_startup_types" >() };
             if ( can_hijack_execs ) {
                 std::print( " - 撤销劫持.\n" );
-                Backend::undo_hijack_execs();
+                ( Backends::undo_hijack_execs(), ... );
             }
             if ( can_set_serv_startup_types ) {
                 std::print( " - 启用服务.\n" );
-                Backend::enable_servs();
+                ( Backends::enable_servs(), ... );
             }
             std::print( " - 启动服务.\n" );
-            Backend::start_servs();
+            ( Backends::start_servs(), ... );
             std::print( " - 执行扩展操作.\n" );
-            Backend::restore_helper();
+            ( Backends::restore_helper(), ... );
         }
         static auto operator()()
         {
