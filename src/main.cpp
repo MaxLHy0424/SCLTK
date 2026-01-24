@@ -25,7 +25,8 @@ auto main() -> int
       .add_back(
         scltk::make_executor_mode_ui_text(), scltk::flip_executor_mode,
         cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_green )
-      .add_back( " > 自定义\n"sv, scltk::rule_executor< scltk::custom_rule_executor_backend >{} );
+      .add_back( " > 全部执行\n"sv, scltk::execute_all_rules() )
+      .add_back( " > 自定义 "sv, scltk::rule_executor< scltk::custom_rule_executor_backend >{} );
     [ & ]< typename... Nodes >( const cpp_utils::type_list< Nodes... > )
     {
         ( ui.add_back(

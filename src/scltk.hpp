@@ -1070,6 +1070,12 @@ namespace scltk
         static auto restore_helper() noexcept
         { }
     };
+    inline consteval auto execute_all_rules() noexcept
+    {
+        return decltype( []< typename... Nodes >( const cpp_utils::type_list< Nodes... > ) {
+            return rule_executor< custom_rule_executor_backend, builtin_rules_executor_backend< Nodes >... >{};
+        }( builtin_rules{} ) ){};
+    }
     inline auto make_executor_mode_ui_text() noexcept
     {
         switch ( details::current_rule_executor_mode ) {
