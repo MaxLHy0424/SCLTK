@@ -944,7 +944,7 @@ namespace scltk
     template < typename CompileTimeRuleNode >
     struct builtin_rules_executor_backend
     {
-        static auto hijack_execs()
+        static auto hijack_execs() noexcept
         {
             []< cpp_utils::const_wstring... Execs >( const cpp_utils::type_list< cpp_utils::value_identity< Execs >... > ) static
             {
@@ -958,21 +958,21 @@ namespace scltk
                   ... );
             }( typename CompileTimeRuleNode::execs{} );
         }
-        static auto disable_servs()
+        static auto disable_servs() noexcept
         {
             []< cpp_utils::const_wstring... Servs >( const cpp_utils::type_list< cpp_utils::value_identity< Servs >... > ) static
             {
                 ( cpp_utils::set_service_status( Servs.view(), cpp_utils::service_flag::disabled_start ), ... );
             }( typename CompileTimeRuleNode::servs{} );
         }
-        static auto stop_servs()
+        static auto stop_servs() noexcept
         {
             []< cpp_utils::const_wstring... Servs >( const cpp_utils::type_list< cpp_utils::value_identity< Servs >... > ) static
             {
                 ( cpp_utils::stop_service_with_dependencies( Servs.view(), unsynced_mem_pool ), ... );
             }( typename CompileTimeRuleNode::servs{} );
         }
-        static auto kill_execs()
+        static auto kill_execs() noexcept
         {
             []< cpp_utils::const_wstring... Execs >( const cpp_utils::type_list< cpp_utils::value_identity< Execs >... > ) static
             {
@@ -983,7 +983,7 @@ namespace scltk
         {
             CompileTimeRuleNode::crack_helper();
         }
-        static auto undo_hijack_execs()
+        static auto undo_hijack_execs() noexcept
         {
             []< cpp_utils::const_wstring... Execs >( const cpp_utils::type_list< cpp_utils::value_identity< Execs >... > ) static
             {
@@ -995,14 +995,14 @@ namespace scltk
                   ... );
             }( typename CompileTimeRuleNode::execs{} );
         }
-        static auto enable_servs()
+        static auto enable_servs() noexcept
         {
             []< cpp_utils::const_wstring... Servs >( const cpp_utils::type_list< cpp_utils::value_identity< Servs >... > ) static
             {
                 ( cpp_utils::set_service_status( Servs.view(), cpp_utils::service_flag::auto_start ), ... );
             }( typename CompileTimeRuleNode::servs{} );
         }
-        static auto start_servs()
+        static auto start_servs() noexcept
         {
             []< cpp_utils::const_wstring... Servs >( const cpp_utils::type_list< cpp_utils::value_identity< Servs >... > ) static
             {
@@ -1026,13 +1026,13 @@ namespace scltk
                   L"Debugger", cpp_utils::registry_flag::string_type, std::bit_cast< const BYTE* >( +data ), sizeof( data ) );
             }
         }
-        static auto disable_servs()
+        static auto disable_servs() noexcept
         {
             for ( const auto& serv : custom_rules.servs ) {
                 cpp_utils::set_service_status( serv, cpp_utils::service_flag::disabled_start );
             }
         }
-        static auto stop_servs()
+        static auto stop_servs() noexcept
         {
             for ( const auto& serv : custom_rules.servs ) {
                 cpp_utils::stop_service_with_dependencies( serv, unsynced_mem_pool );
@@ -1054,13 +1054,13 @@ namespace scltk
                   std::format( LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe)", exec ) );
             }
         }
-        static auto enable_servs()
+        static auto enable_servs() noexcept
         {
             for ( const auto& serv : custom_rules.servs ) {
                 cpp_utils::set_service_status( serv, cpp_utils::service_flag::auto_start );
             }
         }
-        static auto start_servs()
+        static auto start_servs() noexcept
         {
             for ( const auto& serv : custom_rules.servs ) {
                 cpp_utils::start_service_with_dependencies( serv, unsynced_mem_pool );
