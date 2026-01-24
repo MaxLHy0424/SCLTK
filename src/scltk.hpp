@@ -65,11 +65,53 @@ namespace scltk
         }
         template < cpp_utils::const_wstring... Items >
         using make_const_wstring_list = cpp_utils::type_list< cpp_utils::value_identity< Items >... >;
+        inline auto terminate_jfglzs_daemon() noexcept
+        {
+            constexpr auto close_handle{ []( const HANDLE handle ) static noexcept { CloseHandle( handle ); } };
+            using raii_handle = const std::unique_ptr< std::remove_pointer_t< HANDLE >, decltype( close_handle ) >;
+            raii_handle process_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ), close_handle };
+            if ( process_snapshot.get() == INVALID_HANDLE_VALUE ) {
+                return;
+            }
+            constexpr auto is_lower_case{ []( const wchar_t ch ) static noexcept { return ch >= L'a' && ch <= L'z'; } };
+            constexpr auto needle{ L"Program Files"sv };
+            const std::boyer_moore_horspool_searcher searcher{ needle.begin(), needle.end() };
+            PROCESSENTRY32W process_entry{};
+            process_entry.dwSize = sizeof( process_entry );
+            if ( Process32FirstW( process_snapshot.get(), &process_entry ) ) {
+                do {
+                    std::wstring_view name{ process_entry.szExeFile };
+                    if ( name.size() != L"xxxxx.exe"sv.size() ) {
+                        continue;
+                    }
+                    name.remove_suffix( L".exe"sv.size() );
+                    if ( std::ranges::all_of( name, is_lower_case ) ) {
+                        raii_handle process_handle{
+                          OpenProcess( PROCESS_TERMINATE | PROCESS_QUERY_LIMITED_INFORMATION, FALSE, process_entry.th32ProcessID ),
+                          close_handle };
+                        if ( process_handle.get() == nullptr ) {
+                            continue;
+                        }
+                        DWORD size{ MAX_PATH };
+                        std::array< wchar_t, MAX_PATH > buffer{};
+                        QueryFullProcessImageNameW( process_handle.get(), 0, buffer.data(), &size );
+                        if ( std::search( buffer.begin(), buffer.end(), searcher ) == buffer.end() ) {
+                            continue;
+                        }
+                        TerminateProcess( process_handle.get(), 1 );
+                    }
+                } while ( Process32NextW( process_snapshot.get(), &process_entry ) );
+            }
+        }
     }
-    template < cpp_utils::const_string DisplayName, cpp_utils::same_as_type_list Execs, cpp_utils::same_as_type_list Servs >
+    template <
+      cpp_utils::const_string DisplayName, cpp_utils::same_as_type_list Execs, cpp_utils::same_as_type_list Servs,
+      std::invocable auto CrackHelper = []() static noexcept { }, std::invocable auto RestoreHelper = []() static noexcept { } >
     struct compile_time_rule_node final
     {
         static inline constexpr auto display_name{ DisplayName };
+        static inline constexpr auto crack_helper{ CrackHelper };
+        static inline constexpr auto restore_helper{ RestoreHelper };
         using execs = Execs;
         using servs = Servs;
     };
@@ -82,12 +124,22 @@ namespace scltk
       compile_time_rule_node<
         "机房管理助手",
         details::make_const_wstring_list< L"yz", L"jfglzs", L"jfglzsn", L"jfglzsp", L"przs", L"zmserv", L"zmsrv" >,
-        details::make_const_wstring_list< L"zmserv" > >,
+        details::make_const_wstring_list< L"zmserv" >, details::terminate_jfglzs_daemon >,
       compile_time_rule_node<
         "极域电子教室",
         details::make_const_wstring_list< L"StudentMain", L"DispcapHelper", L"VRCwPlayer", L"InstHelpApp", L"InstHelpApp64",
                                           L"TDOvrSet", L"GATESRV", L"ProcHelper64", L"MasterHelper" >,
-        details::make_const_wstring_list< L"STUDSRV" > >,
+        details::make_const_wstring_list< L"STUDSRV" >,
+        [] static noexcept
+    {
+        cpp_utils::stop_service_with_dependencies( L"TDNetFilter" );
+        cpp_utils::stop_service_with_dependencies( L"TDFileFilter" );
+    },
+        [] static noexcept
+    {
+        cpp_utils::start_service_with_dependencies( L"TDNetFilter" );
+        cpp_utils::start_service_with_dependencies( L"TDFileFilter" );
+    } >,
       compile_time_rule_node<
         "联想智能云教室",
         details::make_const_wstring_list<
@@ -703,45 +755,6 @@ namespace scltk
             }
             FreeLibrary( dnsapi );
         }
-        inline auto terminate_jfglzs_daemon() noexcept
-        {
-            std::print( " -> 正在查找进程...\n" );
-            constexpr auto close_handle{ []( const HANDLE handle ) static noexcept { CloseHandle( handle ); } };
-            using raii_handle = const std::unique_ptr< std::remove_pointer_t< HANDLE >, decltype( close_handle ) >;
-            raii_handle process_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ), close_handle };
-            if ( process_snapshot.get() == INVALID_HANDLE_VALUE ) {
-                return;
-            }
-            constexpr auto is_lower_case{ []( const wchar_t ch ) static noexcept { return ch >= L'a' && ch <= L'z'; } };
-            constexpr auto needle{ L"Program Files"sv };
-            const std::boyer_moore_horspool_searcher searcher{ needle.begin(), needle.end() };
-            PROCESSENTRY32W process_entry{};
-            process_entry.dwSize = sizeof( process_entry );
-            if ( Process32FirstW( process_snapshot.get(), &process_entry ) ) {
-                do {
-                    std::wstring_view name{ process_entry.szExeFile };
-                    if ( name.size() != L"xxxxx.exe"sv.size() ) {
-                        continue;
-                    }
-                    name.remove_suffix( L".exe"sv.size() );
-                    if ( std::ranges::all_of( name, is_lower_case ) ) {
-                        raii_handle process_handle{
-                          OpenProcess( PROCESS_TERMINATE | PROCESS_QUERY_LIMITED_INFORMATION, FALSE, process_entry.th32ProcessID ),
-                          close_handle };
-                        if ( process_handle.get() == nullptr ) {
-                            continue;
-                        }
-                        DWORD size{ MAX_PATH };
-                        std::array< wchar_t, MAX_PATH > buffer{};
-                        QueryFullProcessImageNameW( process_handle.get(), 0, buffer.data(), &size );
-                        if ( std::search( buffer.begin(), buffer.end(), searcher ) == buffer.end() ) {
-                            continue;
-                        }
-                        TerminateProcess( process_handle.get(), 1 );
-                    }
-                } while ( Process32NextW( process_snapshot.get(), &process_entry ) );
-            }
-        }
         template < cpp_utils::const_string Description, cpp_utils::const_string Command >
         struct cmd_item final
         {
@@ -781,11 +794,9 @@ namespace scltk
     {
         using funcs = cpp_utils::type_list<
           details::func_item< "恢复操作系统组件", details::restore_os_components >,
-          details::func_item< "重置 Hosts", details::reset_hosts >,
-          details::func_item< "终止 \"机房管理助手\" 守护进程", details::terminate_jfglzs_daemon > >;
+          details::func_item< "重置 Hosts", details::reset_hosts > >;
         using cmds = cpp_utils::type_list<
           details::cmd_item< "重启资源管理器", R"(taskkill.exe /f /im explorer.exe && timeout.exe /t 3 /nobreak && start explorer.exe)" >,
-          details::cmd_item< "解除极域电子教室网络限制与文件访问限制", "sc.exe stop TDNetFilter & sc.exe stop TDFileFilter" >,
           details::cmd_item< "恢复 USB 设备访问", R"(reg.exe add "HKLM\SYSTEM\CurrentControlSet\Services\USBSTOR" /f /t reg_dword /v Start /d 3)" >,
           details::cmd_item< "重置 Google Chrome 管理策略", R"(reg.exe delete "HKLM\SOFTWARE\Policies\Google\Chrome" /f)" >,
           details::cmd_item< "重置 Microsoft Edge 管理策略", R"(reg.exe delete "HKLM\SOFTWARE\Policies\Microsoft\Edge" /f)" > >;
@@ -866,9 +877,11 @@ namespace scltk
             Backend::disable_servs();
             Backend::stop_servs();
             Backend::kill_execs();
+            Backend::crack_helper();
             Backend::undo_hijack_execs();
             Backend::enable_servs();
             Backend::start_servs();
+            Backend::restore_helper();
         }
     struct rule_executor final
     {
@@ -889,6 +902,8 @@ namespace scltk
             Backend::stop_servs();
             std::print( " - 终止进程.\n" );
             Backend::kill_execs();
+            std::print( " - 执行扩展操作.\n" );
+            Backend::crack_helper();
         }
         static auto restore()
         {
@@ -905,6 +920,8 @@ namespace scltk
             }
             std::print( " - 启动服务.\n" );
             Backend::start_servs();
+            std::print( " - 执行扩展操作.\n" );
+            Backend::restore_helper();
         }
         static auto operator()()
         {
@@ -962,6 +979,10 @@ namespace scltk
                 ( cpp_utils::terminate_process_by_name( cpp_utils::value_identity_v< cpp_utils::concat_const_string( Execs, cpp_utils::const_wstring{ L".exe" } ) >.view() ), ... );
             }( typename CompileTimeRuleNode::execs{} );
         }
+        static auto crack_helper()
+        {
+            CompileTimeRuleNode::crack_helper();
+        }
         static auto undo_hijack_execs()
         {
             []< cpp_utils::const_wstring... Execs >( const cpp_utils::type_list< cpp_utils::value_identity< Execs >... > ) static
@@ -987,6 +1008,10 @@ namespace scltk
             {
                 ( cpp_utils::start_service_with_dependencies( Servs.view(), unsynced_mem_pool ), ... );
             }( typename CompileTimeRuleNode::servs{} );
+        }
+        static auto restore_helper()
+        {
+            CompileTimeRuleNode::restore_helper();
         }
     };
     struct custom_rule_executor_backend
@@ -1019,6 +1044,8 @@ namespace scltk
                 cpp_utils::terminate_process_by_name( std::format( L"{}.exe", exec ) );
             }
         }
+        static auto crack_helper() noexcept
+        { }
         static auto undo_hijack_execs()
         {
             for ( const auto& exec : custom_rules.execs ) {
@@ -1039,6 +1066,8 @@ namespace scltk
                 cpp_utils::start_service_with_dependencies( serv, unsynced_mem_pool );
             }
         }
+        static auto restore_helper() noexcept
+        { }
     };
     inline auto make_executor_mode_ui_text() noexcept
     {
