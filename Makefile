@@ -62,7 +62,7 @@ toolchain:
      mingw-w64-ucrt-x86_64-lld\
      mingw-w64-i686-lld\
      mingw-w64-ucrt-x86_64-7zip\
-	 mingw-w64-ucrt-x86_64-upx\
+     mingw-w64-ucrt-x86_64-upx\
      make\
      git\
      base\
