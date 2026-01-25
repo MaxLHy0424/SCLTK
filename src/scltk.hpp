@@ -1087,9 +1087,8 @@ namespace scltk
     };
     inline consteval auto execute_all_rules() noexcept
     {
-        return decltype( []< typename... Nodes >( const cpp_utils::type_list< Nodes... > ) static noexcept {
-            return rule_executor< custom_rule_executor_backend, builtin_rules_executor_backend< Nodes >... >{};
-        }( builtin_rules{} ) ){};
+        using builtin_rules_executor_backends = builtin_rules::apply_each< builtin_rules_executor_backend >;
+        return builtin_rules_executor_backends::add_front< custom_rule_executor_backend >::apply< rule_executor >{};
     }
     inline auto make_executor_mode_ui_text() noexcept
     {
