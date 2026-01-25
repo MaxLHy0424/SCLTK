@@ -49,7 +49,7 @@ namespace scltk
     {
         inline auto press_any_key_to_return() noexcept
         {
-            std::print( "\n\n 按任意键返回..." );
+            std::print( "\n\n 请按任意键返回." );
             con.press_any_key_to_continue();
         }
         template < cpp_utils::character CharT >
@@ -573,7 +573,7 @@ namespace scltk
         {
             std::print(
               "                    [ 配  置 ]\n\n\n"
-              " -> 正在同步配置...\n" );
+              " -> 同步配置.\n" );
             load_config( true );
             std::ofstream config_file_stream{ config_file_name, std::ios::out | std::ios::trunc };
             config_file_stream << "# " INFO_FULL_NAME "\n# " INFO_VERSION "\n";
@@ -587,7 +587,7 @@ namespace scltk
         {
             std::print(
               "                    [ 配  置 ]\n\n\n"
-              " -> 正在尝试打开配置文件...\n\n" );
+              " -> 尝试打开配置文件.\n\n" );
             std::print(
               " (i) 打开配置文件{}.",
               std::bit_cast< INT_PTR >( ShellExecuteW( nullptr, L"open", config_file_name, nullptr, nullptr, SW_SHOWNORMAL ) ) > 32
@@ -655,7 +655,7 @@ namespace scltk
         }
         inline auto restore_os_components() noexcept
         {
-            std::print( " -> 正在尝试恢复...\n" );
+            std::print( " -> 尝试恢复.\n" );
             using reg_dirs = make_const_wstring_list<
               LR"(Software\Policies\Microsoft\Windows\System)", LR"(Software\Microsoft\Windows\CurrentVersion\Policies\System)",
               LR"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)", LR"(Software\Policies\Microsoft\MMC)" >;
@@ -702,13 +702,13 @@ namespace scltk
             constexpr auto has_error{ []( const std::error_code& ec ) static
             {
                 if ( ec ) {
-                    std::print( " (!) 重置失败." );
+                    std::print( "\n (!) 重置失败.\n\n" );
                     return true;
                 }
                 return false;
             } };
             std::error_code ec;
-            std::print( " -> 检查文件是否存在...\n" );
+            std::print( " -> 检查文件是否存在.\n" );
             const auto hosts_path{ [] static
             {
                 std::array< wchar_t, MAX_PATH > result;
@@ -720,26 +720,26 @@ namespace scltk
             if ( has_error( ec ) || !is_exists_hosts_file ) {
                 return;
             }
-            std::print( " -> 获取原文件权限...\n" );
+            std::print( " -> 获取原文件权限.\n" );
             const auto original_perms{ std::filesystem::status( hosts_path, ec ).permissions() };
             if ( has_error( ec ) ) {
                 return;
             }
-            std::print( " -> 设置文件权限...\n" );
+            std::print( " -> 设置文件权限.\n" );
             std::filesystem::permissions( hosts_path, std::filesystem::perms::all, std::filesystem::perm_options::replace, ec );
             if ( has_error( ec ) ) {
                 return;
             }
-            std::print( " -> 重置文件...\n" );
+            std::print( " -> 重置文件.\n" );
             std::ofstream file{ hosts_path, std::ios::out | std::ios::trunc | std::ios::binary };
             file.write( default_content.data(), default_content.size() ).flush();
             if ( !file.good() ) {
                 std::print( "\n (!) 重置失败, 无法写入.\n\n" );
             }
-            std::print( " -> 恢复文件权限...\n" );
+            std::print( " -> 恢复文件权限.\n" );
             std::filesystem::permissions( hosts_path, original_perms, std::filesystem::perm_options::replace, ec );
             has_error( ec );
-            std::print( " -> 刷新 DNS 缓存...\n" );
+            std::print( " -> 刷新 DNS 缓存.\n" );
             const auto dnsapi{ LoadLibraryW( L"dnsapi.dll" ) };
             if ( dnsapi == nullptr ) {
                 std::print( "\n (!) 刷新 DNS 失败.\n\n" );
@@ -783,7 +783,7 @@ namespace scltk
                   cpp_utils::value_identity_v< cpp_utils::concat_const_string(
                     cpp_utils::const_string{
                       "                   [ 工 具 箱 ]\n\n\n"
-                      " -> 正在执行操作系统命令...\n\n" },
+                      " -> 执行操作系统命令.\n\n" },
                     dividing_line, cpp_utils::const_string{ "\n\n" } ) >.view() );
                 std::system( Command.c_str() );
                 std::print(
@@ -910,18 +910,18 @@ namespace scltk
             const auto can_hijack_execs{ options.at< "hijack_execs" >() };
             const auto can_set_serv_startup_types{ options.at< "set_serv_startup_types" >() };
             if ( can_hijack_execs ) {
-                std::print( " - 劫持文件.\n" );
+                std::print( " -> 劫持文件.\n" );
                 ( Backends::hijack_execs(), ... );
             }
             if ( can_set_serv_startup_types ) {
-                std::print( " - 禁用服务.\n" );
+                std::print( " -> 禁用服务.\n" );
                 ( Backends::disable_servs(), ... );
             }
-            std::print( " - 停止服务.\n" );
+            std::print( " -> 停止服务.\n" );
             ( Backends::stop_servs(), ... );
-            std::print( " - 终止进程.\n" );
+            std::print( " -> 终止进程.\n" );
             ( Backends::kill_execs(), ... );
-            std::print( " - 执行扩展操作.\n" );
+            std::print( " -> 执行扩展操作.\n" );
             ( Backends::crack_helper(), ... );
         }
         static auto restore()
@@ -930,16 +930,16 @@ namespace scltk
             const auto can_hijack_execs{ options.at< "hijack_execs" >() };
             const auto can_set_serv_startup_types{ options.at< "set_serv_startup_types" >() };
             if ( can_hijack_execs ) {
-                std::print( " - 撤销劫持.\n" );
+                std::print( " -> 撤销劫持.\n" );
                 ( Backends::undo_hijack_execs(), ... );
             }
             if ( can_set_serv_startup_types ) {
-                std::print( " - 启用服务.\n" );
+                std::print( " -> 启用服务.\n" );
                 ( Backends::enable_servs(), ... );
             }
-            std::print( " - 启动服务.\n" );
+            std::print( " -> 启动服务.\n" );
             ( Backends::start_servs(), ... );
-            std::print( " - 执行扩展操作.\n" );
+            std::print( " -> 执行扩展操作.\n" );
             ( Backends::restore_helper(), ... );
         }
         static auto operator()()
@@ -949,7 +949,6 @@ namespace scltk
                 case details::rule_executor_mode::restore : std::print( "                    [ 恢  复 ]\n\n\n" ); break;
                 default : std::unreachable();
             }
-            std::print( " -> 正在执行...\n\n" );
             switch ( details::current_rule_executor_mode ) {
                 case details::rule_executor_mode::crack : crack(); break;
                 case details::rule_executor_mode::restore : restore(); break;

@@ -13,7 +13,7 @@ auto main() -> int
       .enable_window_close_ctrl( false );
     cpp_utils::console_ui ui{ scltk::con, scltk::unsynced_mem_pool };
     ui.set_constraints( true, true );
-    std::print( " -> 准备就绪..." );
+    std::print( " -> 准备就绪." );
     scltk::load_config();
     scltk::create_threads();
     ui.reserve( 8 + scltk::builtin_rules::size )
