@@ -362,6 +362,11 @@ namespace cpp_utils
         {
             using type = Template< Ts... >;
         };
+        template < template < typename > typename Template >
+        struct apply_each_impl_ final
+        {
+            using type = type_list< Template< Ts >... >;
+        };
         template < std::size_t Start >
         struct enumerate_impl_ final
         {
@@ -486,10 +491,12 @@ namespace cpp_utils
         using sort = typename basic_sort_impl_< type_list< Ts... >, Pred >::type;
         template < template < typename... > typename Template >
         using apply = typename apply_impl_< Template >::type;
-        template < std::size_t Start >
-        using enumerate = typename enumerate_impl_< Start >::type;
+        template < template < typename > typename Template >
+        using apply_each = typename apply_each_impl_< Template >::type;
         template < template < typename > typename F >
         using transform = typename transform_impl_< F >::type;
+        template < std::size_t Start >
+        using enumerate = typename enumerate_impl_< Start >::type;
         template < template < typename > typename Pred >
         using filter = typename filter_impl_< Pred >::type;
         template < template < typename > typename Pred >
