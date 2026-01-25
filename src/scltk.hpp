@@ -324,7 +324,7 @@ namespace scltk
             {
                 cpp_utils::console_ui ui{ con, unsynced_mem_pool };
                 ui.reserve( 2 + data_.size() * 2 )
-                  .add_back( scltk::make_title_text< "[ 配  置 ]", 2 >.view() )
+                  .add_back( make_title_text< "[ 配  置 ]", 2 >.view() )
                   .add_back(
                     " < 返回 "sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity );
                 [ & ]< std::size_t... Is >( const std::index_sequence< Is... > )
@@ -433,7 +433,7 @@ namespace scltk
         {
             cpp_utils::console_ui ui{ con, unsynced_mem_pool };
             ui.reserve( 3 )
-              .add_back( scltk::make_title_text< "[ 配  置 ]", 2 >.view() )
+              .add_back( make_title_text< "[ 配  置 ]", 2 >.view() )
               .add_back( " < 返回 "sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
               .add_back(
                 "\n 自定义规则格式为 <flag>: <item>\n"
@@ -554,7 +554,7 @@ namespace scltk
         {
             cpp_utils::console_ui ui{ con, unsynced_mem_pool };
             ui.reserve( 3 )
-              .add_back( scltk::make_title_text< "[ 配  置 ]", 2 >.view() )
+              .add_back( make_title_text< "[ 配  置 ]", 2 >.view() )
               .add_back( " < 返回 "sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
               .add_back(
                 "\n 配置以行作为单位解析.\n\n"
@@ -572,22 +572,22 @@ namespace scltk
         inline auto sync_config()
         {
             std::print(
-              "                    [ 配  置 ]\n\n\n"
-              " -> 同步配置.\n" );
+              cpp_utils::value_identity_v< cpp_utils::concat_const_string(
+                make_title_text< "[ 配  置 ]", 3 >, cpp_utils::const_string{ " -> 同步配置.\n\n" } ) >.view() );
             load_config( true );
             std::ofstream config_file_stream{ config_file_name, std::ios::out | std::ios::trunc };
             config_file_stream << "# " INFO_FULL_NAME "\n# " INFO_VERSION "\n";
             std::apply( [ & ]( auto&... config_node ) { ( config_node.sync( config_file_stream ), ... ); }, config_nodes );
             config_file_stream.flush();
-            std::print( "\n (i) 同步配置{}.", config_file_stream.good() ? "成功" : "失败" );
+            std::print( " (i) 同步配置{}.", config_file_stream.good() ? "成功" : "失败" );
             press_any_key_to_return();
             return func_back;
         }
         inline auto open_config_file()
         {
             std::print(
-              "                    [ 配  置 ]\n\n\n"
-              " -> 尝试打开配置文件.\n\n" );
+              cpp_utils::value_identity_v< cpp_utils::concat_const_string(
+                make_title_text< "[ 配  置 ]", 3 >, cpp_utils::const_string{ " -> 尝试打开配置文件.\n\n" } ) >.view() );
             std::print(
               " (i) 打开配置文件{}.",
               std::bit_cast< INT_PTR >( ShellExecuteW( nullptr, L"open", config_file_name, nullptr, nullptr, SW_SHOWNORMAL ) ) > 32
@@ -604,7 +604,7 @@ namespace scltk
             cpp_utils::console_ui ui{ con, unsynced_mem_pool };
             constexpr auto reserved_size{ 5 + ( decltype( nodes.request_ui_count() )::value + ... ) };
             ui.reserve( reserved_size )
-              .add_back( scltk::make_title_text< "[ 配  置 ]", 2 >.view() )
+              .add_back( make_title_text< "[ 配  置 ]", 2 >.view() )
               .add_back( " < 返回\n"sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
               .add_back( " > 查看解析规则 "sv, details::show_config_parsing_rules )
               .add_back( " > 同步配置 "sv, details::sync_config )
@@ -618,7 +618,7 @@ namespace scltk
     {
         cpp_utils::console_ui ui{ con, unsynced_mem_pool };
         ui.reserve( 3 )
-          .add_back( scltk::make_title_text< "[ 关  于 ]", 2 >.view() )
+          .add_back( make_title_text< "[ 关  于 ]", 2 >.view() )
           .add_back( " < 返回 "sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
           .add_back(
             "\n[ 名称 ]\n\n " INFO_FULL_NAME " (" INFO_SHORT_NAME ")\n\n[ 版本 ]\n\n " INFO_VERSION
@@ -781,9 +781,7 @@ namespace scltk
                 constexpr auto dividing_line{ cpp_utils::make_repeated_const_string< '-', console_width >() };
                 std::print(
                   cpp_utils::value_identity_v< cpp_utils::concat_const_string(
-                    cpp_utils::const_string{
-                      "                   [ 工 具 箱 ]\n\n\n"
-                      " -> 执行操作系统命令.\n\n" },
+                    make_title_text< "[ 工 具 箱 ]", 3 >, cpp_utils::const_string{ " -> 执行操作系统命令.\n\n" },
                     dividing_line, cpp_utils::const_string{ "\n\n" } ) >.view() );
                 std::system( Command.c_str() );
                 std::print(
@@ -799,7 +797,7 @@ namespace scltk
             static inline constexpr auto description{ Description };
             static auto execute() noexcept
             {
-                std::print( "                   [ 工 具 箱 ]\n\n\n" );
+                std::print( make_title_text< "[ 工 具 箱 ]", 3 >.view() );
                 Func();
                 std::print( "\n (i) 操作已完成." );
                 press_any_key_to_return();
@@ -820,7 +818,7 @@ namespace scltk
           details::cmd_item< "重置 Microsoft Edge 管理策略", R"(reg.exe delete "HKLM\SOFTWARE\Policies\Microsoft\Edge" /f)" > >;
         cpp_utils::console_ui ui{ con, unsynced_mem_pool };
         ui.reserve( 5 + funcs::size + cmds::size )
-          .add_back( scltk::make_title_text< "[ 工 具 箱 ]", 2 >.view() )
+          .add_back( make_title_text< "[ 工 具 箱 ]", 2 >.view() )
           .add_back( " < 返回 "sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
           .add_back( "\n[ 高级工具 ]\n"sv )
           .add_back( " > 启动命令提示符 "sv, details::launch_cmd );
