@@ -962,7 +962,7 @@ namespace scltk
     {
         static auto hijack_execs() noexcept
         {
-            []< cpp_utils::const_wstring... Execs >( const cpp_utils::type_list< cpp_utils::value_identity< Execs >... > ) static
+            []< cpp_utils::const_wstring... Execs >( const cpp_utils::type_list< cpp_utils::value_identity< Execs >... > ) static noexcept
             {
                 constexpr const wchar_t data[]{ L"nul" };
                 ( cpp_utils::create_registry_key(
@@ -976,21 +976,21 @@ namespace scltk
         }
         static auto disable_servs() noexcept
         {
-            []< cpp_utils::const_wstring... Servs >( const cpp_utils::type_list< cpp_utils::value_identity< Servs >... > ) static
+            []< cpp_utils::const_wstring... Servs >( const cpp_utils::type_list< cpp_utils::value_identity< Servs >... > ) static noexcept
             {
                 ( cpp_utils::set_service_status( Servs.view(), cpp_utils::service_flag::disabled_start ), ... );
             }( typename BuiltinRuleNode::servs{} );
         }
         static auto stop_servs() noexcept
         {
-            []< cpp_utils::const_wstring... Servs >( const cpp_utils::type_list< cpp_utils::value_identity< Servs >... > ) static
+            []< cpp_utils::const_wstring... Servs >( const cpp_utils::type_list< cpp_utils::value_identity< Servs >... > ) static noexcept
             {
                 ( cpp_utils::stop_service_with_dependencies( Servs.view(), unsynced_mem_pool ), ... );
             }( typename BuiltinRuleNode::servs{} );
         }
         static auto kill_execs() noexcept
         {
-            []< cpp_utils::const_wstring... Execs >( const cpp_utils::type_list< cpp_utils::value_identity< Execs >... > ) static
+            []< cpp_utils::const_wstring... Execs >( const cpp_utils::type_list< cpp_utils::value_identity< Execs >... > ) static noexcept
             {
                 ( cpp_utils::terminate_process_by_name( cpp_utils::value_identity_v< cpp_utils::concat_const_string( Execs, cpp_utils::const_wstring{ L".exe" } ) >.view() ), ... );
             }( typename BuiltinRuleNode::execs{} );
@@ -1001,7 +1001,7 @@ namespace scltk
         }
         static auto undo_hijack_execs() noexcept
         {
-            []< cpp_utils::const_wstring... Execs >( const cpp_utils::type_list< cpp_utils::value_identity< Execs >... > ) static
+            []< cpp_utils::const_wstring... Execs >( const cpp_utils::type_list< cpp_utils::value_identity< Execs >... > ) static noexcept
             {
                 ( cpp_utils::delete_registry_tree(
                     HKEY_LOCAL_MACHINE,
@@ -1013,14 +1013,14 @@ namespace scltk
         }
         static auto enable_servs() noexcept
         {
-            []< cpp_utils::const_wstring... Servs >( const cpp_utils::type_list< cpp_utils::value_identity< Servs >... > ) static
+            []< cpp_utils::const_wstring... Servs >( const cpp_utils::type_list< cpp_utils::value_identity< Servs >... > ) static noexcept
             {
                 ( cpp_utils::set_service_status( Servs.view(), cpp_utils::service_flag::auto_start ), ... );
             }( typename BuiltinRuleNode::servs{} );
         }
         static auto start_servs() noexcept
         {
-            []< cpp_utils::const_wstring... Servs >( const cpp_utils::type_list< cpp_utils::value_identity< Servs >... > ) static
+            []< cpp_utils::const_wstring... Servs >( const cpp_utils::type_list< cpp_utils::value_identity< Servs >... > ) static noexcept
             {
                 ( cpp_utils::start_service_with_dependencies( Servs.view(), unsynced_mem_pool ), ... );
             }( typename BuiltinRuleNode::servs{} );
