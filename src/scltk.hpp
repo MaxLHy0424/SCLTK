@@ -958,7 +958,7 @@ namespace scltk
         }
     };
     template < typename BuiltinRuleNode >
-    struct builtin_rules_executor_backend
+    struct builtin_rules_executor_backend final
     {
         static auto hijack_execs() noexcept
         {
@@ -1030,7 +1030,7 @@ namespace scltk
             BuiltinRuleNode::restore_helper();
         }
     };
-    struct custom_rule_executor_backend
+    struct custom_rule_executor_backend final
     {
         static auto hijack_execs()
         {
