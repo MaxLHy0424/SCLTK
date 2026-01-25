@@ -755,6 +755,23 @@ namespace scltk
             }
             FreeLibrary( dnsapi );
         }
+        inline auto reset_jfglzs_config() noexcept
+        {
+            std::print(
+              " (i) 请破解 \"机房管理助手\" 后使用此功能.\n\n"
+              " -> 删除密码.\n" );
+            cpp_utils::delete_registry_key( HKEY_CURRENT_USER, L"Software"sv, L"n"sv );
+            std::print( " -> 删除配置.\n" );
+            cpp_utils::delete_registry_tree( HKEY_CURRENT_USER, LR"(Software\jfglzs)"sv );
+            std::print( " -> 删除自启动项.\n" );
+            using autorun_items = make_const_wstring_list< L"jfglzs", L"jfglzsn", L"jfglzsp", L"prozs", L"przs" >;
+            []< cpp_utils::const_wstring... Items >( const cpp_utils::type_list< cpp_utils::value_identity< Items >... > ) static noexcept
+            {
+                ( cpp_utils::delete_registry_key(
+                    HKEY_LOCAL_MACHINE, LR"(SOFTWARE\Microsoft\Windows\CurrentVersion\Run)", Items.view() ),
+                  ... );
+            }( autorun_items{} );
+        }
         template < cpp_utils::const_string Description, cpp_utils::const_string Command >
         struct cmd_item final
         {
@@ -794,7 +811,8 @@ namespace scltk
     {
         using funcs = cpp_utils::type_list<
           details::func_item< "恢复操作系统组件", details::restore_os_components >,
-          details::func_item< "重置 Hosts", details::reset_hosts > >;
+          details::func_item< "重置 Hosts", details::reset_hosts >,
+          details::func_item< R"(重置 "机房管理助手" 配置)", details::reset_jfglzs_config > >;
         using cmds = cpp_utils::type_list<
           details::cmd_item< "重启资源管理器", R"(taskkill.exe /f /im explorer.exe && timeout.exe /t 3 /nobreak && start explorer.exe)" >,
           details::cmd_item< "恢复 USB 设备访问", R"(reg.exe add "HKLM\SYSTEM\CurrentControlSet\Services\USBSTOR" /f /t reg_dword /v Start /d 3)" >,
