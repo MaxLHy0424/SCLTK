@@ -942,7 +942,7 @@ namespace scltk
             return func_back;
         }
     };
-    template < typename CompileTimeRuleNode >
+    template < typename BuiltinRuleNode >
     struct builtin_rules_executor_backend
     {
         static auto hijack_execs() noexcept
@@ -957,32 +957,32 @@ namespace scltk
                       Execs, cpp_utils::const_wstring{ L".exe" } ) >.view(),
                     L"Debugger", cpp_utils::registry_flag::string_type, std::bit_cast< const BYTE* >( +data ), sizeof( data ) ),
                   ... );
-            }( typename CompileTimeRuleNode::execs{} );
+            }( typename BuiltinRuleNode::execs{} );
         }
         static auto disable_servs() noexcept
         {
             []< cpp_utils::const_wstring... Servs >( const cpp_utils::type_list< cpp_utils::value_identity< Servs >... > ) static
             {
                 ( cpp_utils::set_service_status( Servs.view(), cpp_utils::service_flag::disabled_start ), ... );
-            }( typename CompileTimeRuleNode::servs{} );
+            }( typename BuiltinRuleNode::servs{} );
         }
         static auto stop_servs() noexcept
         {
             []< cpp_utils::const_wstring... Servs >( const cpp_utils::type_list< cpp_utils::value_identity< Servs >... > ) static
             {
                 ( cpp_utils::stop_service_with_dependencies( Servs.view(), unsynced_mem_pool ), ... );
-            }( typename CompileTimeRuleNode::servs{} );
+            }( typename BuiltinRuleNode::servs{} );
         }
         static auto kill_execs() noexcept
         {
             []< cpp_utils::const_wstring... Execs >( const cpp_utils::type_list< cpp_utils::value_identity< Execs >... > ) static
             {
                 ( cpp_utils::terminate_process_by_name( cpp_utils::value_identity_v< cpp_utils::concat_const_string( Execs, cpp_utils::const_wstring{ L".exe" } ) >.view() ), ... );
-            }( typename CompileTimeRuleNode::execs{} );
+            }( typename BuiltinRuleNode::execs{} );
         }
         static auto crack_helper()
         {
-            CompileTimeRuleNode::crack_helper();
+            BuiltinRuleNode::crack_helper();
         }
         static auto undo_hijack_execs() noexcept
         {
@@ -994,25 +994,25 @@ namespace scltk
                       cpp_utils::const_wstring{ LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\)" },
                       Execs, cpp_utils::const_wstring{ L".exe" }) >.view() ),
                   ... );
-            }( typename CompileTimeRuleNode::execs{} );
+            }( typename BuiltinRuleNode::execs{} );
         }
         static auto enable_servs() noexcept
         {
             []< cpp_utils::const_wstring... Servs >( const cpp_utils::type_list< cpp_utils::value_identity< Servs >... > ) static
             {
                 ( cpp_utils::set_service_status( Servs.view(), cpp_utils::service_flag::auto_start ), ... );
-            }( typename CompileTimeRuleNode::servs{} );
+            }( typename BuiltinRuleNode::servs{} );
         }
         static auto start_servs() noexcept
         {
             []< cpp_utils::const_wstring... Servs >( const cpp_utils::type_list< cpp_utils::value_identity< Servs >... > ) static
             {
                 ( cpp_utils::start_service_with_dependencies( Servs.view(), unsynced_mem_pool ), ... );
-            }( typename CompileTimeRuleNode::servs{} );
+            }( typename BuiltinRuleNode::servs{} );
         }
         static auto restore_helper()
         {
-            CompileTimeRuleNode::restore_helper();
+            BuiltinRuleNode::restore_helper();
         }
     };
     struct custom_rule_executor_backend
