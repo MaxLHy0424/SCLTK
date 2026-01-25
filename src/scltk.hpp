@@ -1099,7 +1099,7 @@ namespace scltk
             default : std::unreachable();
         }
     }
-    inline auto flip_executor_mode( const ui_func_args args )
+    inline auto flip_executor_mode( const ui_func_args args ) noexcept
     {
         switch ( details::current_rule_executor_mode ) {
             case details::rule_executor_mode::crack :
