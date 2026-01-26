@@ -40,8 +40,8 @@ namespace scltk
     }
     template < cpp_utils::const_string Title, std::size_t NewLineCount >
     inline constexpr auto make_title_text{ cpp_utils::concat_const_string(
-      cpp_utils::make_repeated_const_string< ' ', ( static_cast< std::size_t >( console_width ) - Title.size() ) / 2 >(), Title,
-      cpp_utils::make_repeated_const_string< '\n', NewLineCount >() ) };
+      cpp_utils::make_repeated_const_string< ' ', ( static_cast< std::size_t >( console_width ) - Title.size() + 1 ) / 2 >(),
+      Title, cpp_utils::make_repeated_const_string< '\n', NewLineCount >() ) };
     template < cpp_utils::const_string Text >
     inline constexpr auto make_button_text{
       cpp_utils::concat_const_string( cpp_utils::const_string{ " > " }, Text, cpp_utils::const_string{ " " } ) };
