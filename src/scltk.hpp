@@ -636,20 +636,20 @@ namespace scltk
             wchar_t name[]{ L"cmd.exe" };
             startup.cb = sizeof( startup );
             if ( CreateProcessW( nullptr, name, nullptr, nullptr, FALSE, 0, nullptr, nullptr, &startup, &proc ) ) {
-                con.set_title( L"" INFO_SHORT_NAME " - 命令提示符" );
-                con.set_size( 120, 30, unsynced_mem_pool );
-                con.fix_size( false );
-                con.enable_window_maximize_ctrl( true );
+                con.set_title( L"" INFO_SHORT_NAME " - 命令提示符" )
+                  .set_size( 120, 30, unsynced_mem_pool )
+                  .fix_size( false )
+                  .enable_window_maximize_ctrl( true );
                 args.parent_ui.set_constraints( false, false );
                 SetConsoleScreenBufferSize( con.std_output_handle, { 120, std::numeric_limits< SHORT >::max() - 1 } );
                 WaitForSingleObject( proc.hProcess, INFINITE );
                 CloseHandle( proc.hProcess );
                 CloseHandle( proc.hThread );
-                con.set_charset( charset_id );
-                con.set_title( L"" INFO_SHORT_NAME );
-                con.set_size( console_width, console_height, unsynced_mem_pool );
-                con.fix_size( true );
-                con.enable_window_maximize_ctrl( false );
+                con.set_charset( charset_id )
+                  .set_title( L"" INFO_SHORT_NAME )
+                  .set_size( console_width, console_height, unsynced_mem_pool )
+                  .fix_size( true )
+                  .enable_window_maximize_ctrl( false );
             }
             return func_back;
         }
