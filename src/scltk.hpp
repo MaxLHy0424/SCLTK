@@ -1076,6 +1076,9 @@ namespace scltk
         }
         static auto execute_helpers_( const std::pmr::vector< std::pmr::wstring >& helpers )
         {
+            if ( helpers.empty() ) {
+                return;
+            }
             const auto self_path{ std::filesystem::current_path() };
             std::error_code ec;
             for ( const auto& helper : helpers ) {
