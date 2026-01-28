@@ -119,6 +119,8 @@ namespace scltk
     {
         std::pmr::vector< std::pmr::wstring > execs{ unsynced_mem_pool };
         std::pmr::vector< std::pmr::wstring > servs{ unsynced_mem_pool };
+        std::pmr::vector< std::pmr::wstring > crack_helpers{ unsynced_mem_pool };
+        std::pmr::vector< std::pmr::wstring > restore_helpers{ unsynced_mem_pool };
     };
     using builtin_rules = cpp_utils::type_list<
       compile_time_rule_node<
@@ -396,6 +398,8 @@ namespace scltk
       private:
         static inline constexpr auto flag_exec{ L"exec:"sv };
         static inline constexpr auto flag_serv{ L"serv:"sv };
+        static inline constexpr auto flag_crack_helper{ L"crack_helper:"sv };
+        static inline constexpr auto flag_restore_helper{ L"restore_helper:"sv };
         static_assert( []( auto... strings ) consteval
         { return ( std::ranges::none_of( strings, details::is_whitespace< wchar_t > ) && ... ); }( flag_exec, flag_serv ) );
         static auto load_( const std::string_view unconverted_line )
@@ -410,6 +414,16 @@ namespace scltk
             if ( line.size() > flag_serv.size() && line.starts_with( flag_serv ) ) {
                 custom_rules.servs.emplace_back(
                   std::ranges::find_if_not( line.substr( flag_serv.size() ), details::is_whitespace< wchar_t > ) );
+                return;
+            }
+            if ( line.size() > flag_crack_helper.size() && line.starts_with( flag_crack_helper ) ) {
+                custom_rules.crack_helpers.emplace_back(
+                  std::ranges::find_if_not( line.substr( flag_crack_helper.size() ), details::is_whitespace< wchar_t > ) );
+                return;
+            }
+            if ( line.size() > flag_restore_helper.size() && line.starts_with( flag_restore_helper ) ) {
+                custom_rules.restore_helpers.emplace_back(
+                  std::ranges::find_if_not( line.substr( flag_restore_helper.size() ), details::is_whitespace< wchar_t > ) );
                 return;
             }
         }
@@ -1060,8 +1074,30 @@ namespace scltk
                 cpp_utils::terminate_process_by_name( std::format( L"{}.exe", exec ) );
             }
         }
+        static auto execute_helpers_( const std::pmr::vector< std::pmr::wstring >& helpers )
+        {
+            const auto self_path{ std::filesystem::current_path() };
+            std::error_code ec;
+            for ( const auto& helper : helpers ) {
+                const auto path{ self_path / helper };
+                if ( !std::filesystem::exists( path, ec ) ) {
+                    continue;
+                }
+                STARTUPINFOW startup{};
+                startup.cb = sizeof( startup );
+                PROCESS_INFORMATION proc{};
+                auto name{ std::format( L"\"{}\"", std::pmr::wstring{ path.c_str(), unsynced_mem_pool } ) };
+                if ( CreateProcessW( nullptr, name.data(), nullptr, nullptr, FALSE, 0, nullptr, nullptr, &startup, &proc ) ) {
+                    WaitForSingleObject( proc.hProcess, INFINITE );
+                    CloseHandle( proc.hProcess );
+                    CloseHandle( proc.hThread );
+                }
+            }
+        }
         static auto crack_helper() noexcept
-        { }
+        {
+            execute_helpers_( custom_rules.crack_helpers );
+        }
         static auto undo_hijack_execs()
         {
             for ( const auto& exec : custom_rules.execs ) {
@@ -1083,7 +1119,9 @@ namespace scltk
             }
         }
         static auto restore_helper() noexcept
-        { }
+        {
+            execute_helpers_( custom_rules.restore_helpers );
+        }
     };
     inline consteval auto execute_all_rules() noexcept
     {
