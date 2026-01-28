@@ -349,7 +349,7 @@ namespace scltk
             static inline constexpr auto ui_count_{ 1uz };
           public:
             template < cpp_utils::const_string Key >
-            auto&& at( this auto&& self ) noexcept
+            constexpr auto&& at( this auto&& self ) noexcept
             {
                 static_assert( item_list_::template contains< cpp_utils::value_identity< Key > > );
                 return std::get< item_list_::template find_first< cpp_utils::value_identity< Key > > / 2 >( self.data_ );
@@ -834,10 +834,10 @@ namespace scltk
     {
         inline auto set_console_attrs() noexcept
         {
-            const auto& window_options{ std::get< window_config >( config_nodes ) };
-            const auto& is_enable_simple_titlebar{ window_options.at< "simple_titlebar" >() };
-            const auto& is_translucent{ window_options.at< "translucent" >() };
-            const auto& is_no_hot_reload{ std::get< performance_config >( config_nodes ).at< "no_hot_reload" >() };
+            constexpr const auto& window_options{ std::get< window_config >( config_nodes ) };
+            constexpr const auto& is_enable_simple_titlebar{ window_options.at< "simple_titlebar" >() };
+            constexpr const auto& is_translucent{ window_options.at< "translucent" >() };
+            constexpr const auto& is_no_hot_reload{ std::get< performance_config >( config_nodes ).at< "no_hot_reload" >() };
             if ( is_no_hot_reload ) {
                 con.enable_context_menu( !is_enable_simple_titlebar.load( std::memory_order_acquire ) );
                 con.set_translucency( is_translucent.load( std::memory_order_acquire ) ? 230 : 255 );
@@ -851,8 +851,8 @@ namespace scltk
         }
         inline auto force_show() noexcept
         {
-            const auto& is_no_hot_reload{ std::get< performance_config >( config_nodes ).at< "no_hot_reload" >() };
-            const auto& is_force_show{ std::get< window_config >( config_nodes ).at< "force_show" >() };
+            constexpr const auto& is_no_hot_reload{ std::get< performance_config >( config_nodes ).at< "no_hot_reload" >() };
+            constexpr const auto& is_force_show{ std::get< window_config >( config_nodes ).at< "force_show" >() };
             if ( is_no_hot_reload && !is_force_show.load( std::memory_order_acquire ) ) {
                 return;
             }
@@ -904,7 +904,7 @@ namespace scltk
     {
         static auto crack()
         {
-            const auto& options{ std::get< crack_restore_config >( config_nodes ) };
+            constexpr const auto& options{ std::get< crack_restore_config >( config_nodes ) };
             const auto can_hijack_execs{ options.at< "hijack_execs" >() };
             const auto can_set_serv_startup_types{ options.at< "set_serv_startup_types" >() };
             if ( can_hijack_execs ) {
@@ -924,7 +924,7 @@ namespace scltk
         }
         static auto restore()
         {
-            const auto& options{ std::get< crack_restore_config >( config_nodes ) };
+            constexpr const auto& options{ std::get< crack_restore_config >( config_nodes ) };
             const auto can_hijack_execs{ options.at< "hijack_execs" >() };
             const auto can_set_serv_startup_types{ options.at< "set_serv_startup_types" >() };
             if ( can_hijack_execs ) {
