@@ -761,11 +761,11 @@ namespace scltk
             }
             const auto dns_flush_resolver_cache{
               std::bit_cast< BOOL( WINAPI* )() noexcept >( GetProcAddress( dnsapi, "DnsFlushResolverCache" ) ) };
-            if ( dns_flush_resolver_cache != nullptr ) {
-                const auto result{ dns_flush_resolver_cache() };
-                if ( !result ) {
-                    std::print( "\n (!) 刷新 DNS 失败.\n\n" );
-                }
+            if ( dns_flush_resolver_cache == nullptr ) {
+                std::print( "\n (!) 刷新 DNS 失败.\n\n" );
+            }
+            if ( !dns_flush_resolver_cache() ) {
+                std::print( "\n (!) 刷新 DNS 失败.\n\n" );
             }
             FreeLibrary( dnsapi );
         }
