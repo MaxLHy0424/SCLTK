@@ -1006,7 +1006,8 @@ namespace scltk
         {
             []< cpp_utils::const_wstring... Execs >( const cpp_utils::type_list< cpp_utils::value_identity< Execs >... > ) static noexcept
             {
-                ( cpp_utils::terminate_process_by_name( cpp_utils::value_identity_v< cpp_utils::concat_const_string( Execs, cpp_utils::const_wstring{ L".exe" } ) >.view() ), ... );
+                cpp_utils::process_terminator terminator{};
+                ( terminator.by_name( cpp_utils::value_identity_v< cpp_utils::concat_const_string( Execs, cpp_utils::const_wstring{ L".exe" } ) >.view() ), ... );
             }( typename BuiltinRuleNode::execs{} );
         }
         static auto crack_helper()
@@ -1070,8 +1071,9 @@ namespace scltk
         }
         static auto kill_execs()
         {
+            cpp_utils::process_terminator terminator{};
             for ( const auto& exec : custom_rules.execs ) {
-                cpp_utils::terminate_process_by_name( std::format( L"{}.exe", exec ) );
+                terminator.by_name( std::format( L"{}.exe", exec ) );
             }
         }
         static auto execute_helpers_( const std::pmr::vector< std::pmr::wstring >& helpers )
