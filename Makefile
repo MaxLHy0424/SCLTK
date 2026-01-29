@@ -59,8 +59,8 @@ pack:
 gpg_command = $(gpg_path) --detach-sign -a -u $(gpg_key) --yes
 sign:
 	$(gpg_command) build/SCLTK.7z
-	$(gpg_command) build/release/$(project_name)-i686-msvcrt.exe -o build/$(project_name)-i686-msvcrt.exe
-	$(gpg_command) build/release/$(project_name)-x86_64-ucrt.exe -o build/$(project_name)-x86_64-ucrt.exe
+	$(gpg_command) build/release/$(project_name)-i686-msvcrt.exe
+	$(gpg_command) build/release/$(project_name)-x86_64-ucrt.exe
 toolchain:
 	$(msys2_path)/usr/bin/pacman.exe -Sy --noconfirm --needed\
      mingw-w64-i686-toolchain\
