@@ -45,6 +45,7 @@ args_ld_i686     = $(args_ld_base)
 args_ld_x86_64   = $(args_ld_base)
 args_upx         = --lzma --best --8-bit --no-align --ultra-brute --overlay=strip -qq
 .PHONY: toolchain all build debug release pack clean make_info
+.NOTPARALLEL: all
 dependencies_testing = src/* include*
 all: toolchain build pack sign
 build: debug release
