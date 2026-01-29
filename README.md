@@ -280,9 +280,9 @@ make sign
 ```
 
 > [!NOTE]
-> 如果想要构建后立马打包，可使用：
+> 发布时，推荐使用如下命令：
 > ```bash
-> make build -j && make pack
+> make build -j && make pack && make sign
 > ```
 
 > [!WARNING]
