@@ -46,7 +46,7 @@ args_ld_x86_64   = $(args_ld_base)
 args_upx         = --lzma --best --8-bit --no-align --ultra-brute --overlay=strip -qq
 .PHONY: toolchain all build debug release pack clean make_info
 dependencies_testing = src/* include*
-all: toolchain build pack
+all: toolchain build pack sign
 build: debug release
 pack:
 	$(msys2_path)/usr/bin/rm.exe -rf build/$(project_name).7z
@@ -55,6 +55,11 @@ pack:
 	$(msys2_path)/usr/bin/cp.exe LICENSE build/__temp__/
 	$(msys2_path)/ucrt64/bin/7z.exe a -mx9 -m0=LZMA2 -md=64m -mfb=64 -ms=16g -mmt=16 build/$(project_name).7z ./build/__temp__/*
 	$(msys2_path)/usr/bin/rm.exe -rf build/__temp__
+gpg_command = $(gpg_path) --detach-sign -a -u $(gpg_key) --yes
+sign:
+	$(gpg_command) build/SCLTK.7z
+	$(gpg_command) build/release/$(project_name)-i686-msvcrt.exe -o build/$(project_name)-i686-msvcrt.exe
+	$(gpg_command) build/release/$(project_name)-x86_64-ucrt.exe -o build/$(project_name)-x86_64-ucrt.exe
 toolchain:
 	$(msys2_path)/usr/bin/pacman.exe -Sy --noconfirm --needed\
      mingw-w64-i686-toolchain\
@@ -69,7 +74,7 @@ toolchain:
      base-devel\
      binutils
 debug: build/debug/__debug__.exe
-release: build/release/$(project_name)-i686-msvcrt.exe\
+release: build/release/$(project_name)-i686-msvcrt.exe \
          build/release/$(project_name)-x86_64-ucrt.exe
 clean:
 	$(msys2_path)/usr/bin/rm.exe -rf build
