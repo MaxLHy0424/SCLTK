@@ -138,7 +138,7 @@ namespace cpp_utils
         using T = const void*;
         T ptr_{};
       public:
-        auto reset( void* const src ) noexcept
+        auto reset( const void* const src ) noexcept
         {
             ptr_ = src;
         }
