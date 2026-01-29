@@ -13,7 +13,7 @@ namespace cpp_utils
     using nproc_t = decltype( std::thread::hardware_concurrency() );
     template < std::random_access_iterator It, std::sentinel_for< It > W, typename F >
         requires std::invocable< F, decltype( *std::declval< It >() ) >
-    inline auto create_parallel_task(
+    [[nodiscard]] inline auto create_parallel_task(
       const nproc_t nproc, It&& begin, W&& end, F&& func,
       std::pmr::memory_resource* const resource = std::pmr::get_default_resource() )
     {
@@ -48,7 +48,7 @@ namespace cpp_utils
     }
     template < std::random_access_iterator It, std::sentinel_for< It > W, typename F >
         requires std::invocable< F, decltype( *std::declval< It >() ) >
-    inline auto create_parallel_task(
+    [[nodiscard]] inline auto create_parallel_task(
       It&& begin, W&& end, F&& func, std::pmr::memory_resource* const resource = std::pmr::get_default_resource() )
     {
         return create_parallel_task(
@@ -83,15 +83,15 @@ namespace cpp_utils
       private:
         std::pmr::vector< std::jthread > threads_{};
       public:
-        constexpr auto empty() const noexcept
+        [[nodiscard]] constexpr auto empty() const noexcept
         {
             return threads_.empty();
         }
-        constexpr auto size() const noexcept
+        [[nodiscard]] constexpr auto size() const noexcept
         {
             return threads_.size();
         }
-        constexpr auto max_size() const noexcept
+        [[nodiscard]] constexpr auto max_size() const noexcept
         {
             return threads_.max_size();
         }

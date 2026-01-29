@@ -9,7 +9,7 @@
 #include <utility>
 namespace cpp_utils
 {
-    inline auto make_log(
+    [[nodiscard]] inline auto make_log(
       const std::string_view message, const std::source_location src_location = std::source_location::current(),
       const std::pmr::stacktrace trace = std::pmr::stacktrace::current() )
     {

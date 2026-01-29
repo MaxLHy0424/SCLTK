@@ -25,7 +25,7 @@
 namespace cpp_utils
 {
 #if defined( _WIN32 ) || defined( _WIN64 )
-    inline auto to_string(
+    [[nodiscard]] inline auto to_string(
       const std::wstring_view str, const UINT charset,
       std::pmr::memory_resource* const resource = std::pmr::get_default_resource() ) noexcept
     {
@@ -41,7 +41,7 @@ namespace cpp_utils
         WideCharToMultiByte( charset, 0, str.data(), static_cast< int >( str.size() ), result.data(), size_needed, nullptr, nullptr );
         return result;
     }
-    inline auto to_wstring(
+    [[nodiscard]] inline auto to_wstring(
       const std::string_view str, const UINT charset,
       std::pmr::memory_resource* const resource = std::pmr::get_default_resource() ) noexcept
     {
@@ -61,7 +61,7 @@ namespace cpp_utils
     }
     namespace details
     {
-        inline auto stop_service_and_dependencies(
+        [[nodiscard]] inline auto stop_service_and_dependencies(
           const SC_HANDLE scm, const SC_HANDLE service, std::pmr::memory_resource* const resource ) noexcept -> DWORD
         {
             using namespace std::chrono_literals;
@@ -102,7 +102,7 @@ namespace cpp_utils
             }
             return result;
         }
-        inline auto start_service_and_dependencies(
+        [[nodiscard]] inline auto start_service_and_dependencies(
           const SC_HANDLE scm, const SC_HANDLE service, std::pmr::memory_resource* const resource ) noexcept -> DWORD
         {
             DWORD result{ ERROR_SUCCESS };
@@ -143,7 +143,7 @@ namespace cpp_utils
             return result;
         }
     }
-    inline auto elevate_privilege() noexcept
+    [[nodiscard]] inline auto elevate_privilege() noexcept
     {
         HANDLE token{ nullptr };
         if ( !OpenProcessToken( GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, &token ) ) {
@@ -160,11 +160,11 @@ namespace cpp_utils
         CloseHandle( token );
         return result != FALSE && GetLastError() != ERROR_NOT_ALL_ASSIGNED;
     }
-    inline auto terminate_process_by_handle( const HANDLE handle ) noexcept
+    [[nodiscard]] inline auto terminate_process_by_handle( const HANDLE handle ) noexcept
     {
         return TerminateProcess( handle, 1 );
     }
-    inline auto terminate_process_by_pid( const DWORD pid ) noexcept
+    [[nodiscard]] inline auto terminate_process_by_pid( const DWORD pid ) noexcept
     {
         const auto process_handle{ OpenProcess( PROCESS_TERMINATE, FALSE, pid ) };
         if ( process_handle == nullptr ) {
@@ -174,7 +174,7 @@ namespace cpp_utils
         CloseHandle( process_handle );
         return status;
     }
-    inline auto terminate_process_by_name( const std::wstring_view process_name ) noexcept
+    [[nodiscard]] inline auto terminate_process_by_name( const std::wstring_view process_name ) noexcept
     {
         const auto process_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ) };
         if ( process_snapshot == INVALID_HANDLE_VALUE ) {
@@ -197,7 +197,7 @@ namespace cpp_utils
         CloseHandle( process_snapshot );
         return is_found ? ( status == ERROR_SUCCESS ? ERROR_SUCCESS : ERROR_ACCESS_DENIED ) : ERROR_NOT_FOUND;
     }
-    inline auto create_registry_key(
+    [[nodiscard]] inline auto create_registry_key(
       const HKEY main_key, const std::wstring_view sub_key, const std::wstring_view value_name, const DWORD type,
       const BYTE* const data, const DWORD data_size ) noexcept
     {
@@ -211,7 +211,8 @@ namespace cpp_utils
         RegCloseKey( key_handle );
         return static_cast< DWORD >( result );
     }
-    inline auto delete_registry_key( const HKEY main_key, const std::wstring_view sub_key, const std::wstring_view value_name ) noexcept
+    [[nodiscard]] inline auto
+      delete_registry_key( const HKEY main_key, const std::wstring_view sub_key, const std::wstring_view value_name ) noexcept
     {
         HKEY key_handle;
         auto result{ RegOpenKeyExW( main_key, sub_key.data(), 0, KEY_WRITE, &key_handle ) };
@@ -222,11 +223,11 @@ namespace cpp_utils
         RegCloseKey( key_handle );
         return static_cast< DWORD >( result );
     }
-    inline auto delete_registry_tree( const HKEY main_key, const std::wstring_view sub_key ) noexcept
+    [[nodiscard]] inline auto delete_registry_tree( const HKEY main_key, const std::wstring_view sub_key ) noexcept
     {
         return static_cast< DWORD >( RegDeleteTreeW( main_key, sub_key.data() ) );
     }
-    inline auto set_service_status( const std::wstring_view service_name, const DWORD status_type ) noexcept
+    [[nodiscard]] inline auto set_service_status( const std::wstring_view service_name, const DWORD status_type ) noexcept
     {
         const auto scm{ OpenSCManagerW( nullptr, nullptr, SC_MANAGER_CONNECT ) };
         if ( scm == nullptr ) {
@@ -248,7 +249,7 @@ namespace cpp_utils
         CloseServiceHandle( scm );
         return result;
     }
-    inline auto stop_service_with_dependencies(
+    [[nodiscard]] inline auto stop_service_with_dependencies(
       const std::wstring_view service_name, std::pmr::memory_resource* const resource = std::pmr::get_default_resource() ) noexcept
     {
         const auto scm{ OpenSCManagerW( nullptr, nullptr, SC_MANAGER_CONNECT | SC_MANAGER_ENUMERATE_SERVICE ) };
@@ -267,7 +268,7 @@ namespace cpp_utils
         CloseServiceHandle( scm );
         return result;
     }
-    inline auto start_service_with_dependencies(
+    [[nodiscard]] inline auto start_service_with_dependencies(
       const std::wstring_view service_name, std::pmr::memory_resource* const resource = std::pmr::get_default_resource() ) noexcept
     {
         const auto scm{ OpenSCManagerW( nullptr, nullptr, SC_MANAGER_CONNECT ) };
@@ -285,7 +286,7 @@ namespace cpp_utils
         CloseServiceHandle( scm );
         return result;
     }
-    inline auto reset_service_failure_action( const std::wstring_view service_name ) noexcept
+    [[nodiscard]] inline auto reset_service_failure_action( const std::wstring_view service_name ) noexcept
     {
         using scm_handle = std::unique_ptr< std::remove_pointer_t< SC_HANDLE >, decltype( []( SC_HANDLE h ) static noexcept
         {
@@ -315,7 +316,7 @@ namespace cpp_utils
         }
         return static_cast< DWORD >( ERROR_SUCCESS );
     }
-    inline auto is_run_as_admin() noexcept
+    [[nodiscard]] inline auto is_run_as_admin() noexcept
     {
         BOOL is_admin;
         PSID admins_group;
@@ -349,7 +350,7 @@ namespace cpp_utils
         {
           public:
             HWND window_handle;
-            auto get_state() noexcept
+            [[nodiscard]] auto get_state() noexcept
             {
                 WINDOWPLACEMENT wp;
                 wp.length = sizeof( WINDOWPLACEMENT );
@@ -504,7 +505,7 @@ namespace cpp_utils
             SetConsoleCursorPosition( self.std_output_handle, top_left );
             return self;
         }
-        auto get_size() const noexcept
+        [[nodiscard]] auto get_size() const noexcept
         {
             CONSOLE_SCREEN_BUFFER_INFO info;
             GetConsoleScreenBufferInfo( std_output_handle, &info );

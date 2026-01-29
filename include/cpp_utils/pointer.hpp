@@ -10,23 +10,23 @@ namespace cpp_utils
     template < typename T >
     concept pointer = std::is_pointer_v< T >;
     template < pointer T >
-    inline auto to_universal_pointer( const T ptr ) noexcept
+    [[nodiscard]] inline auto to_universal_pointer( const T ptr ) noexcept
     {
         return std::bit_cast< void* >( ptr );
     }
     template < pointer T >
-    inline auto to_const_universal_pointer( const T ptr ) noexcept
+    [[nodiscard]] inline auto to_const_universal_pointer( const T ptr ) noexcept
     {
         return std::bit_cast< const void* >( ptr );
     }
     template < pointer T >
-    inline auto pointer_to_string( const T ptr )
+    [[nodiscard]] inline auto pointer_to_string( const T ptr )
     {
         using namespace std::string_literals;
         return ptr == nullptr ? "nullptr"s : std::format( "0x{:x}", std::bit_cast< const void* >( ptr ) );
     }
     template < pointer T >
-    inline auto pointer_to_wstring( const T ptr )
+    [[nodiscard]] inline auto pointer_to_wstring( const T ptr )
     {
         using namespace std::string_literals;
         return ptr == nullptr ? L"nullptr"s : std::format( L"0x{:x}", std::bit_cast< const void* >( ptr ) );
@@ -42,23 +42,23 @@ namespace cpp_utils
         {
             ptr_ = src;
         }
-        auto get() const noexcept
+        [[nodiscard]] auto get() const noexcept
         {
             return ptr_;
         }
-        operator T() const noexcept
+        [[nodiscard]] operator T() const noexcept
         {
             return ptr_;
         }
-        auto& operator*() const
+        [[nodiscard]] auto& operator*() const
         {
             return *ptr_;
         }
-        auto& operator[]( const std::size_t n ) const
+        [[nodiscard]] auto& operator[]( const std::size_t n ) const
         {
             return ptr_[ n ];
         }
-        auto operator+( const std::size_t n ) const noexcept
+        [[nodiscard]] auto operator+( const std::size_t n ) const noexcept
         {
             return raw_pointer_wrapper< T >{ ptr_ + n };
         }
@@ -75,7 +75,7 @@ namespace cpp_utils
         {
             return ptr_++;
         }
-        auto operator-( const std::size_t n ) const noexcept
+        [[nodiscard]] auto operator-( const std::size_t n ) const noexcept
         {
             return raw_pointer_wrapper< T >{ ptr_ - n };
         }
@@ -113,7 +113,7 @@ namespace cpp_utils
         {
             ptr_ = src;
         }
-        auto get() const noexcept
+        [[nodiscard]] auto get() const noexcept
         {
             return ptr_;
         }
@@ -142,7 +142,7 @@ namespace cpp_utils
         {
             ptr_ = src;
         }
-        auto get() const noexcept
+        [[nodiscard]] auto get() const noexcept
         {
             return ptr_;
         }

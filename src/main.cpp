@@ -14,7 +14,7 @@ auto main() -> int
     cpp_utils::console_ui ui{ scltk::con, scltk::unsynced_mem_pool };
     ui.set_constraints( true, true );
     std::print( " -> 准备就绪." );
-    cpp_utils::elevate_privilege();
+    ( void ) cpp_utils::elevate_privilege();
     scltk::load_config();
     scltk::create_threads();
     ui.reserve( 8 + scltk::builtin_rules::size )

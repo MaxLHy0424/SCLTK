@@ -134,13 +134,13 @@ namespace scltk
         details::make_const_wstring_list< L"STUDSRV" >,
         [] static noexcept
     {
-        cpp_utils::stop_service_with_dependencies( L"TDNetFilter" );
-        cpp_utils::stop_service_with_dependencies( L"TDFileFilter" );
+        ( void ) cpp_utils::stop_service_with_dependencies( L"TDNetFilter" );
+        ( void ) cpp_utils::stop_service_with_dependencies( L"TDFileFilter" );
     },
         [] static noexcept
     {
-        cpp_utils::start_service_with_dependencies( L"TDNetFilter" );
-        cpp_utils::start_service_with_dependencies( L"TDFileFilter" );
+        ( void ) cpp_utils::start_service_with_dependencies( L"TDNetFilter" );
+        ( void ) cpp_utils::start_service_with_dependencies( L"TDFileFilter" );
     } >,
       compile_time_rule_node<
         "联想智能云教室",
@@ -774,14 +774,14 @@ namespace scltk
             std::print(
               " (i) 请破解 \"机房管理助手\" 后使用此功能.\n\n"
               " -> 删除密码.\n" );
-            cpp_utils::delete_registry_key( HKEY_CURRENT_USER, L"Software"sv, L"n"sv );
+            ( void ) cpp_utils::delete_registry_key( HKEY_CURRENT_USER, L"Software"sv, L"n"sv );
             std::print( " -> 删除配置.\n" );
-            cpp_utils::delete_registry_tree( HKEY_CURRENT_USER, LR"(Software\jfglzs)"sv );
+            ( void ) cpp_utils::delete_registry_tree( HKEY_CURRENT_USER, LR"(Software\jfglzs)"sv );
             std::print( " -> 删除自启动项.\n" );
             using autorun_items = make_const_wstring_list< L"jfglzs", L"jfglzsn", L"jfglzsp", L"prozs", L"przs" >;
             []< cpp_utils::const_wstring... Items >( const cpp_utils::type_list< cpp_utils::value_identity< Items >... > ) static noexcept
             {
-                ( cpp_utils::delete_registry_key(
+                ( ( void ) cpp_utils::delete_registry_key(
                     HKEY_LOCAL_MACHINE, LR"(SOFTWARE\Microsoft\Windows\CurrentVersion\Run)", Items.view() ),
                   ... );
             }( autorun_items{} );
@@ -979,7 +979,7 @@ namespace scltk
             []< cpp_utils::const_wstring... Execs >( const cpp_utils::type_list< cpp_utils::value_identity< Execs >... > ) static noexcept
             {
                 constexpr const wchar_t data[]{ L"nul" };
-                ( cpp_utils::create_registry_key(
+                ( ( void ) cpp_utils::create_registry_key(
                     HKEY_LOCAL_MACHINE,
                     cpp_utils::value_identity_v< cpp_utils::concat_const_string(
                       cpp_utils::const_wstring{ LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\)" },
@@ -992,21 +992,21 @@ namespace scltk
         {
             []< cpp_utils::const_wstring... Servs >( const cpp_utils::type_list< cpp_utils::value_identity< Servs >... > ) static noexcept
             {
-                ( cpp_utils::set_service_status( Servs.view(), cpp_utils::service_flag::disabled_start ), ... );
+                ( ( void ) cpp_utils::set_service_status( Servs.view(), cpp_utils::service_flag::disabled_start ), ... );
             }( typename BuiltinRuleNode::servs{} );
         }
         static auto stop_servs() noexcept
         {
             []< cpp_utils::const_wstring... Servs >( const cpp_utils::type_list< cpp_utils::value_identity< Servs >... > ) static noexcept
             {
-                ( cpp_utils::stop_service_with_dependencies( Servs.view(), unsynced_mem_pool ), ... );
+                ( ( void ) cpp_utils::stop_service_with_dependencies( Servs.view(), unsynced_mem_pool ), ... );
             }( typename BuiltinRuleNode::servs{} );
         }
         static auto kill_execs() noexcept
         {
             []< cpp_utils::const_wstring... Execs >( const cpp_utils::type_list< cpp_utils::value_identity< Execs >... > ) static noexcept
             {
-                ( cpp_utils::terminate_process_by_name( cpp_utils::value_identity_v< cpp_utils::concat_const_string( Execs, cpp_utils::const_wstring{ L".exe" } ) >.view() ), ... );
+                ( ( void ) cpp_utils::terminate_process_by_name( cpp_utils::value_identity_v< cpp_utils::concat_const_string( Execs, cpp_utils::const_wstring{ L".exe" } ) >.view() ), ... );
             }( typename BuiltinRuleNode::execs{} );
         }
         static auto crack_helper()
@@ -1017,7 +1017,7 @@ namespace scltk
         {
             []< cpp_utils::const_wstring... Execs >( const cpp_utils::type_list< cpp_utils::value_identity< Execs >... > ) static noexcept
             {
-                ( cpp_utils::delete_registry_tree(
+                ( ( void )( void )cpp_utils::delete_registry_tree(
                     HKEY_LOCAL_MACHINE,
                     cpp_utils::value_identity_v< cpp_utils::concat_const_string(
                       cpp_utils::const_wstring{ LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\)" },
@@ -1029,14 +1029,14 @@ namespace scltk
         {
             []< cpp_utils::const_wstring... Servs >( const cpp_utils::type_list< cpp_utils::value_identity< Servs >... > ) static noexcept
             {
-                ( cpp_utils::set_service_status( Servs.view(), cpp_utils::service_flag::auto_start ), ... );
+                ( ( void ) cpp_utils::set_service_status( Servs.view(), cpp_utils::service_flag::auto_start ), ... );
             }( typename BuiltinRuleNode::servs{} );
         }
         static auto start_servs() noexcept
         {
             []< cpp_utils::const_wstring... Servs >( const cpp_utils::type_list< cpp_utils::value_identity< Servs >... > ) static noexcept
             {
-                ( cpp_utils::start_service_with_dependencies( Servs.view(), unsynced_mem_pool ), ... );
+                ( ( void ) cpp_utils::start_service_with_dependencies( Servs.view(), unsynced_mem_pool ), ... );
             }( typename BuiltinRuleNode::servs{} );
         }
         static auto restore_helper()
@@ -1050,7 +1050,7 @@ namespace scltk
         {
             constexpr const wchar_t data[]{ L"nul" };
             for ( const auto& exec : custom_rules.execs ) {
-                cpp_utils::create_registry_key(
+                ( void ) cpp_utils::create_registry_key(
                   HKEY_LOCAL_MACHINE,
                   std::format( LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe)", exec ),
                   L"Debugger", cpp_utils::registry_flag::string_type, std::bit_cast< const BYTE* >( +data ), sizeof( data ) );
@@ -1059,19 +1059,19 @@ namespace scltk
         static auto disable_servs() noexcept
         {
             for ( const auto& serv : custom_rules.servs ) {
-                cpp_utils::set_service_status( serv, cpp_utils::service_flag::disabled_start );
+                ( void ) cpp_utils::set_service_status( serv, cpp_utils::service_flag::disabled_start );
             }
         }
         static auto stop_servs() noexcept
         {
             for ( const auto& serv : custom_rules.servs ) {
-                cpp_utils::stop_service_with_dependencies( serv, unsynced_mem_pool );
+                ( void ) cpp_utils::stop_service_with_dependencies( serv, unsynced_mem_pool );
             }
         }
         static auto kill_execs()
         {
             for ( const auto& exec : custom_rules.execs ) {
-                cpp_utils::terminate_process_by_name( std::format( L"{}.exe", exec ) );
+                ( void ) cpp_utils::terminate_process_by_name( std::format( L"{}.exe", exec ) );
             }
         }
         static auto execute_helpers_( const std::pmr::vector< std::pmr::wstring >& helpers )
@@ -1104,7 +1104,7 @@ namespace scltk
         static auto undo_hijack_execs()
         {
             for ( const auto& exec : custom_rules.execs ) {
-                cpp_utils::delete_registry_tree(
+                ( void ) cpp_utils::delete_registry_tree(
                   HKEY_LOCAL_MACHINE,
                   std::format( LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{}.exe)", exec ) );
             }
@@ -1112,13 +1112,13 @@ namespace scltk
         static auto enable_servs() noexcept
         {
             for ( const auto& serv : custom_rules.servs ) {
-                cpp_utils::set_service_status( serv, cpp_utils::service_flag::auto_start );
+                ( void ) cpp_utils::set_service_status( serv, cpp_utils::service_flag::auto_start );
             }
         }
         static auto start_servs() noexcept
         {
             for ( const auto& serv : custom_rules.servs ) {
-                cpp_utils::start_service_with_dependencies( serv, unsynced_mem_pool );
+                ( void ) cpp_utils::start_service_with_dependencies( serv, unsynced_mem_pool );
             }
         }
         static auto restore_helper() noexcept

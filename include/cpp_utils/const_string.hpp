@@ -18,31 +18,31 @@ namespace cpp_utils
     {
         using char_type = T;
         std::array< T, N + 1 > storage_{};
-        constexpr const auto& data() const noexcept
+        [[nodiscard]] constexpr const auto& data() const noexcept
         {
             return storage_;
         }
-        constexpr auto c_str() const noexcept
+        [[nodiscard]] constexpr auto c_str() const noexcept
         {
             return static_cast< const T* >( storage_.data() );
         }
-        constexpr auto empty() const noexcept
+        [[nodiscard]] constexpr auto empty() const noexcept
         {
             return N == 0;
         }
-        constexpr auto size() const noexcept
+        [[nodiscard]] constexpr auto size() const noexcept
         {
             return N;
         }
-        constexpr auto max_size() const noexcept
+        [[nodiscard]] constexpr auto max_size() const noexcept
         {
             return storage_.max_size() - 1;
         }
-        constexpr const auto& front() const noexcept
+        [[nodiscard]] constexpr const auto& front() const noexcept
         {
             return storage_.front();
         }
-        constexpr const auto& back() const noexcept
+        [[nodiscard]] constexpr const auto& back() const noexcept
         {
             if constexpr ( empty() ) {
                 return storage_.back();
@@ -50,27 +50,27 @@ namespace cpp_utils
                 return storage_[ size() - 1 ];
             }
         }
-        constexpr auto begin() const noexcept
+        [[nodiscard]] constexpr auto begin() const noexcept
         {
             return storage_.cbegin();
         }
-        constexpr auto rbegin() const noexcept
+        [[nodiscard]] constexpr auto rbegin() const noexcept
         {
             return storage_.crbegin();
         }
-        constexpr auto end() const noexcept
+        [[nodiscard]] constexpr auto end() const noexcept
         {
             return storage_.cend() - 1;
         }
-        constexpr auto rend() const noexcept
+        [[nodiscard]] constexpr auto rend() const noexcept
         {
             return storage_.crend() - 1;
         }
-        constexpr const auto& operator[]( const std::size_t index ) const noexcept
+        [[nodiscard]] constexpr const auto& operator[]( const std::size_t index ) const noexcept
         {
             return storage_[ index ];
         }
-        constexpr const auto& at( const std::size_t index ) const noexcept
+        [[nodiscard]] constexpr const auto& at( const std::size_t index ) const noexcept
         {
             if constexpr ( is_debugging_build ) {
                 return storage_.at( index );
@@ -78,12 +78,12 @@ namespace cpp_utils
                 return ( *this )[ index ];
             }
         }
-        constexpr auto view() const noexcept
+        [[nodiscard]] constexpr auto view() const noexcept
         {
             return std::basic_string_view< T >{ c_str(), size() };
         }
         template < character OtherCharT, std::size_t OtherN >
-        constexpr auto operator==( const basic_const_string< OtherCharT, OtherN >& other ) const noexcept
+        [[nodiscard]] constexpr auto operator==( const basic_const_string< OtherCharT, OtherN >& other ) const noexcept
         {
             if constexpr ( !std::is_same_v< T, OtherCharT > || N != OtherN ) {
                 return false;
@@ -120,7 +120,7 @@ namespace cpp_utils
     template < std::size_t N >
     using const_u32string = basic_const_string< char32_t, N >;
     template < character auto C, std::size_t N >
-    inline consteval auto make_repeated_const_string() noexcept
+    [[nodiscard]] inline consteval auto make_repeated_const_string() noexcept
     {
         using T = decltype( C );
         std::array< T, N > str;
@@ -128,7 +128,7 @@ namespace cpp_utils
         return basic_const_string{ str };
     }
     template < character T, std::size_t... Ns >
-    inline consteval auto concat_const_string( const basic_const_string< T, Ns >... strings ) noexcept
+    [[nodiscard]] inline consteval auto concat_const_string( const basic_const_string< T, Ns >... strings ) noexcept
     {
         std::array< T, ( Ns + ... ) > storage;
         auto begin{ storage.data() };

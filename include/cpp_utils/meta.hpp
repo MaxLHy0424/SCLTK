@@ -13,7 +13,7 @@ namespace cpp_utils
             { Func().size() } -> std::convertible_to< std::size_t >;
             { *Func().begin() } -> std::convertible_to< typename decltype( Func() )::value_type >;
         }
-    inline consteval auto invoke_to_array() noexcept
+    [[nodiscard]] inline consteval auto invoke_to_array() noexcept
     {
         using value_type = typename decltype( Func() )::value_type;
         constexpr auto len{ Func().size() };

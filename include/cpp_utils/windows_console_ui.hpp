@@ -208,15 +208,15 @@ namespace cpp_utils
             return value;
         }
       public:
-        auto empty() const noexcept
+        [[nodiscard]] auto empty() const noexcept
         {
             return lines_.empty();
         }
-        auto size() const noexcept
+        [[nodiscard]] auto size() const noexcept
         {
             return lines_.size();
         }
-        constexpr auto max_size() const noexcept
+        [[nodiscard]] constexpr auto max_size() const noexcept
         {
             return lines_.max_size();
         }
