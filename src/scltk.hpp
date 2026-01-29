@@ -23,7 +23,6 @@ namespace scltk
     inline constexpr auto func_back{ cpp_utils::console_ui::func_back };
     inline constexpr auto func_exit{ cpp_utils::console_ui::func_exit };
     inline const cpp_utils::console con;
-    inline const cpp_utils::process_terminator proc_terminator{};
     inline const auto unsynced_mem_pool{ [] static noexcept
     {
         static std::pmr::unsynchronized_pool_resource pool{
@@ -1007,7 +1006,7 @@ namespace scltk
         {
             []< cpp_utils::const_wstring... Execs >( const cpp_utils::type_list< cpp_utils::value_identity< Execs >... > ) static noexcept
             {
-                ( proc_terminator.by_name( cpp_utils::value_identity_v< cpp_utils::concat_const_string( Execs, cpp_utils::const_wstring{ L".exe" } ) >.view() ), ... );
+                ( cpp_utils::terminate_process_by_name( cpp_utils::value_identity_v< cpp_utils::concat_const_string( Execs, cpp_utils::const_wstring{ L".exe" } ) >.view() ), ... );
             }( typename BuiltinRuleNode::execs{} );
         }
         static auto crack_helper()
@@ -1072,7 +1071,7 @@ namespace scltk
         static auto kill_execs()
         {
             for ( const auto& exec : custom_rules.execs ) {
-                proc_terminator.by_name( std::format( L"{}.exe", exec ) );
+                cpp_utils::terminate_process_by_name( std::format( L"{}.exe", exec ) );
             }
         }
         static auto execute_helpers_( const std::pmr::vector< std::pmr::wstring >& helpers )

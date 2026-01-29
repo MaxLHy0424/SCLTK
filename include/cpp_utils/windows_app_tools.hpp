@@ -5,7 +5,6 @@
 #  include <tlhelp32.h>
 # endif
 #endif
-#include <ntstatus.h>
 #include <pdh.h>
 #include <pdhmsg.h>
 #include <psapi.h>
@@ -144,88 +143,60 @@ namespace cpp_utils
             return result;
         }
     }
-    class process_terminator final
+    inline auto elevate_privilege() noexcept
     {
-      private:
-        using p_zw_terminate_process_ = NTSTATUS( WINAPI* )( HANDLE, NTSTATUS );
-        p_zw_terminate_process_ zw_terminate_process_{ nullptr };
-        auto elevate_privilege_() const noexcept
-        {
-            HANDLE token{ nullptr };
-            if ( !OpenProcessToken( GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, &token ) ) {
-                return false;
-            }
-            TOKEN_PRIVILEGES tp{};
-            tp.PrivilegeCount = 1;
-            if ( !LookupPrivilegeValueW( nullptr, L"" SE_DEBUG_NAME, &tp.Privileges[ 0 ].Luid ) ) {
-                CloseHandle( token );
-                return false;
-            }
-            tp.Privileges[ 0 ].Attributes = SE_PRIVILEGE_ENABLED;
-            const auto result{ AdjustTokenPrivileges( token, FALSE, &tp, sizeof( tp ), nullptr, nullptr ) };
+        HANDLE token{ nullptr };
+        if ( !OpenProcessToken( GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, &token ) ) {
+            return false;
+        }
+        TOKEN_PRIVILEGES tp{};
+        tp.PrivilegeCount = 1;
+        if ( !LookupPrivilegeValueW( nullptr, L"" SE_DEBUG_NAME, &tp.Privileges[ 0 ].Luid ) ) {
             CloseHandle( token );
-            return result != FALSE && GetLastError() != ERROR_NOT_ALL_ASSIGNED;
+            return false;
         }
-        auto init_zw_terminate_process_() noexcept
-        {
-            zw_terminate_process_ = std::bit_cast< p_zw_terminate_process_ >(
-              GetProcAddress( GetModuleHandleW( L"ntdll.dll" ), "ZwTerminateProcess" ) );
+        tp.Privileges[ 0 ].Attributes = SE_PRIVILEGE_ENABLED;
+        const auto result{ AdjustTokenPrivileges( token, FALSE, &tp, sizeof( tp ), nullptr, nullptr ) };
+        CloseHandle( token );
+        return result != FALSE && GetLastError() != ERROR_NOT_ALL_ASSIGNED;
+    }
+    inline auto terminate_process_by_handle( const HANDLE handle ) noexcept
+    {
+        return TerminateProcess( handle, 1 );
+    }
+    inline auto terminate_process_by_pid( const DWORD pid ) noexcept
+    {
+        const auto process_handle{ OpenProcess( PROCESS_TERMINATE, FALSE, pid ) };
+        if ( process_handle == nullptr ) {
+            return ERROR_ACCESS_DENIED;
         }
-      public:
-        auto by_handle( const HANDLE handle ) const noexcept
-        {
-            if ( zw_terminate_process_ == nullptr || handle == nullptr || handle == INVALID_HANDLE_VALUE ) {
-                return STATUS_INVALID_PARAMETER;
-            }
-            return zw_terminate_process_( handle, STATUS_SUCCESS );
+        NTSTATUS status{ terminate_process_by_handle( process_handle ) };
+        CloseHandle( process_handle );
+        return status;
+    }
+    inline auto terminate_process_by_name( const std::wstring_view process_name ) noexcept
+    {
+        const auto process_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ) };
+        if ( process_snapshot == INVALID_HANDLE_VALUE ) {
+            return ERROR_NOT_FOUND;
         }
-        auto by_pid( const DWORD pid ) const noexcept
-        {
-            const auto process_handle{ OpenProcess( PROCESS_TERMINATE, FALSE, pid ) };
-            if ( process_handle == nullptr ) {
-                return STATUS_ACCESS_DENIED;
-            }
-            NTSTATUS status{ by_handle( process_handle ) };
-            CloseHandle( process_handle );
-            return status;
-        }
-        auto by_name( const std::wstring_view process_name ) const noexcept
-        {
-            if ( zw_terminate_process_ == nullptr ) {
-                return STATUS_UNSUCCESSFUL;
-            }
-            const auto process_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ) };
-            if ( process_snapshot == INVALID_HANDLE_VALUE ) {
-                return STATUS_NOT_FOUND;
-            }
-            PROCESSENTRY32W process_entry{};
-            process_entry.dwSize = sizeof( PROCESSENTRY32W );
-            bool is_found{ false };
-            NTSTATUS status{ STATUS_NOT_FOUND };
-            if ( Process32FirstW( process_snapshot, &process_entry ) ) {
-                do {
-                    if ( _wcsicmp( process_entry.szExeFile, process_name.data() ) == 0 ) {
-                        is_found = true;
-                        if ( by_pid( process_entry.th32ProcessID ) == STATUS_SUCCESS ) {
-                            status = STATUS_SUCCESS;
-                        }
+        PROCESSENTRY32W process_entry{};
+        process_entry.dwSize = sizeof( PROCESSENTRY32W );
+        bool is_found{ false };
+        NTSTATUS status{ ERROR_NOT_FOUND };
+        if ( Process32FirstW( process_snapshot, &process_entry ) ) {
+            do {
+                if ( _wcsicmp( process_entry.szExeFile, process_name.data() ) == 0 ) {
+                    is_found = true;
+                    if ( terminate_process_by_pid( process_entry.th32ProcessID ) == ERROR_SUCCESS ) {
+                        status = ERROR_SUCCESS;
                     }
-                } while ( Process32NextW( process_snapshot, &process_entry ) );
-            }
-            CloseHandle( process_snapshot );
-            return is_found ? ( status == STATUS_SUCCESS ? STATUS_SUCCESS : STATUS_ACCESS_DENIED ) : STATUS_NOT_FOUND;
+                }
+            } while ( Process32NextW( process_snapshot, &process_entry ) );
         }
-        auto operator=( const process_terminator& ) -> process_terminator&     = delete;
-        auto operator=( process_terminator&& ) noexcept -> process_terminator& = delete;
-        process_terminator() noexcept
-        {
-            elevate_privilege_();
-            init_zw_terminate_process_();
-        }
-        process_terminator( const process_terminator& )     = delete;
-        process_terminator( process_terminator&& ) noexcept = delete;
-        ~process_terminator() noexcept                      = default;
-    };
+        CloseHandle( process_snapshot );
+        return is_found ? ( status == ERROR_SUCCESS ? ERROR_SUCCESS : ERROR_ACCESS_DENIED ) : ERROR_NOT_FOUND;
+    }
     inline auto create_registry_key(
       const HKEY main_key, const std::wstring_view sub_key, const std::wstring_view value_name, const DWORD type,
       const BYTE* const data, const DWORD data_size ) noexcept
