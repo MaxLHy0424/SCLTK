@@ -400,8 +400,9 @@ namespace scltk
         static inline constexpr auto flag_serv_{ L"serv:"sv };
         static inline constexpr auto flag_crack_helper_{ L"crack_helper:"sv };
         static inline constexpr auto flag_restore_helper_{ L"restore_helper:"sv };
-        static_assert( []( auto... strings ) consteval
-        { return ( std::ranges::none_of( strings, details::is_whitespace< wchar_t > ) && ... ); }( flag_exec_, flag_serv_ ) );
+        static_assert( []( auto... strings ) static consteval noexcept {
+            return ( std::ranges::none_of( strings, details::is_whitespace< wchar_t > ) && ... );
+        }( flag_exec_, flag_serv_, flag_crack_helper_, flag_restore_helper_ ) );
         static auto load_( const std::string_view unconverted_line )
         {
             const auto converted_line{ cpp_utils::to_wstring( unconverted_line, charset_id ) };
