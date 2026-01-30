@@ -645,25 +645,6 @@ namespace scltk
     }
     namespace details
     {
-        template < cpp_utils::const_string Description, cpp_utils::const_string Command >
-        struct cmd_item final
-        {
-            static inline constexpr auto description{ Description };
-            static auto execute() noexcept
-            {
-                constexpr auto dividing_line{ cpp_utils::make_repeated_const_string< '-', console_width >() };
-                std::print(
-                  cpp_utils::value_identity_v< cpp_utils::concat_const_string(
-                    make_title_text< "[ 工 具 箱 ]", 3 >, cpp_utils::const_string{ " -> 执行操作系统命令.\n\n" },
-                    dividing_line, cpp_utils::const_string{ "\n\n" } ) >.view() );
-                std::system( Command.c_str() );
-                std::print(
-                  cpp_utils::value_identity_v< cpp_utils::concat_const_string(
-                    cpp_utils::const_string{ "\n" }, dividing_line, cpp_utils::const_string{ "\n\n (i) 操作已完成." } ) >.view() );
-                press_any_key_to_return();
-                return func_back;
-            }
-        };
         template < cpp_utils::const_string Description, void ( *Func )() noexcept >
         struct func_item final
         {
@@ -820,29 +801,52 @@ namespace scltk
                   ... );
             }( autorun_items{} );
         }
+        inline auto relaunch_explorer() noexcept
+        {
+            std::print( " -> 终止进程.\n" );
+            ( void ) cpp_utils::terminate_process_by_name( L"explorer.exe"sv );
+            std::print( " -> 等待继续执行.\n" );
+            std::this_thread::sleep_for( 3s );
+            std::print( " -> 启动进程.\n" );
+            ShellExecuteW( nullptr, L"open", L"explorer.exe", nullptr, nullptr, SW_SHOWNORMAL );
+        }
+        inline auto restore_usb_device_access() noexcept
+        {
+            std::print( " -> 写入注册表.\n" );
+            constexpr DWORD start_type{ 3 };
+            ( void ) cpp_utils::create_registry_key(
+              HKEY_LOCAL_MACHINE, LR"(SYSTEM\CurrentControlSet\Services\USBSTOR)"sv, L"Start"sv,
+              cpp_utils::registry_flag::dword_type, std::bit_cast< const BYTE* >( &start_type ), sizeof( start_type ) );
+        }
+        inline auto reset_google_chrome_policy() noexcept
+        {
+            std::print( " -> 删除注册表.\n" );
+            ( void ) cpp_utils::delete_registry_tree( HKEY_LOCAL_MACHINE, LR"(SOFTWARE\Policies\Google\Chrome)"sv );
+        }
+        inline auto reset_microsoft_edge_policy() noexcept
+        {
+            std::print( " -> 删除注册表.\n" );
+            ( void ) cpp_utils::delete_registry_tree( HKEY_LOCAL_MACHINE, LR"(SOFTWARE\Policies\Microsoft\Edge)"sv );
+        }
     }
     inline auto toolkit()
     {
         using funcs = cpp_utils::type_list<
+          details::func_item< "重启资源管理器", details::relaunch_explorer >,
           details::func_item< "恢复操作系统组件", details::restore_os_components >,
           details::func_item< "重置 Hosts", details::reset_hosts >,
-          details::func_item< R"(重置 "机房管理助手" 配置)", details::reset_jfglzs_config > >;
-        using cmds = cpp_utils::type_list<
-          details::cmd_item< "重启资源管理器", R"(taskkill.exe /f /im explorer.exe && timeout.exe /t 3 /nobreak && start explorer.exe)" >,
-          details::cmd_item< "恢复 USB 设备访问", R"(reg.exe add "HKLM\SYSTEM\CurrentControlSet\Services\USBSTOR" /f /t reg_dword /v Start /d 3)" >,
-          details::cmd_item< "重置 Google Chrome 管理策略", R"(reg.exe delete "HKLM\SOFTWARE\Policies\Google\Chrome" /f)" >,
-          details::cmd_item< "重置 Microsoft Edge 管理策略", R"(reg.exe delete "HKLM\SOFTWARE\Policies\Microsoft\Edge" /f)" > >;
+          details::func_item< "恢复 USB 存储设备访问", details::restore_usb_device_access >,
+          details::func_item< R"(重置 "机房管理助手" 配置)", details::reset_jfglzs_config >,
+          details::func_item< "重置 Google Chrome 管理策略", details::reset_google_chrome_policy >,
+          details::func_item< "重置 Microsoft Edge 管理策略", details::reset_microsoft_edge_policy > >;
         cpp_utils::console_ui ui{ con, unsynced_mem_pool };
-        ui.reserve( 5 + funcs::size + cmds::size )
+        ui.reserve( 4 + funcs::size )
           .add_back( make_title_text< "[ 工 具 箱 ]", 2 >.view() )
           .add_back( " < 返回 "sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
-          .add_back( "\n[ 高级工具 ]\n"sv )
+          .add_back( "\n[ 快捷工具 ]\n"sv )
           .add_back( " > 启动命令提示符 "sv, details::launch_cmd );
         [ & ]< typename... Items >( const cpp_utils::type_list< Items... > )
         { ( ui.add_back( make_button_text< Items::description >.view(), Items::execute ), ... ); }( funcs{} );
-        ui.add_back( "\n[ 快捷命令 ]\n"sv );
-        [ & ]< typename... Items >( const cpp_utils::type_list< Items... > )
-        { ( ui.add_back( make_button_text< Items::description >.view(), Items::execute ), ... ); }( cmds{} );
         ui.show();
         return func_back;
     }
