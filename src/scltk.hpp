@@ -179,11 +179,7 @@ namespace scltk
         template < typename T >
         struct is_parsable_config_node final
         {
-            static consteval auto impl() noexcept
-            {
-                return std::is_base_of_v< config_node_impl, T > && requires { T::raw_name; };
-            }
-            static inline constexpr auto value{ impl() };
+            static inline constexpr auto value{ ( std::is_base_of_v< config_node_impl, T > && requires { T::raw_name; } ) };
         };
         template < typename T >
         inline constexpr auto is_parsable_config_node_v{ is_parsable_config_node< T >::value };
