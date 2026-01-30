@@ -645,6 +645,38 @@ namespace scltk
     }
     namespace details
     {
+        template < cpp_utils::const_string Description, cpp_utils::const_string Command >
+        struct cmd_item final
+        {
+            static inline constexpr auto description{ Description };
+            static auto execute() noexcept
+            {
+                constexpr auto dividing_line{ cpp_utils::make_repeated_const_string< '-', console_width >() };
+                std::print(
+                  cpp_utils::value_identity_v< cpp_utils::concat_const_string(
+                    make_title_text< "[ 工 具 箱 ]", 3 >, cpp_utils::const_string{ " -> 执行操作系统命令.\n\n" },
+                    dividing_line, cpp_utils::const_string{ "\n\n" } ) >.view() );
+                std::system( Command.c_str() );
+                std::print(
+                  cpp_utils::value_identity_v< cpp_utils::concat_const_string(
+                    cpp_utils::const_string{ "\n" }, dividing_line, cpp_utils::const_string{ "\n\n (i) 操作已完成." } ) >.view() );
+                press_any_key_to_return();
+                return func_back;
+            }
+        };
+        template < cpp_utils::const_string Description, void ( *Func )() noexcept >
+        struct func_item final
+        {
+            static inline constexpr auto description{ Description };
+            static auto execute() noexcept
+            {
+                std::print( make_title_text< "[ 工 具 箱 ]", 3 >.view() );
+                Func();
+                std::print( "\n (i) 操作已完成." );
+                press_any_key_to_return();
+                return func_back;
+            }
+        };
         inline auto launch_cmd( const ui_func_args args )
         {
             STARTUPINFOW startup{};
@@ -788,38 +820,6 @@ namespace scltk
                   ... );
             }( autorun_items{} );
         }
-        template < cpp_utils::const_string Description, cpp_utils::const_string Command >
-        struct cmd_item final
-        {
-            static inline constexpr auto description{ Description };
-            static auto execute() noexcept
-            {
-                constexpr auto dividing_line{ cpp_utils::make_repeated_const_string< '-', console_width >() };
-                std::print(
-                  cpp_utils::value_identity_v< cpp_utils::concat_const_string(
-                    make_title_text< "[ 工 具 箱 ]", 3 >, cpp_utils::const_string{ " -> 执行操作系统命令.\n\n" },
-                    dividing_line, cpp_utils::const_string{ "\n\n" } ) >.view() );
-                std::system( Command.c_str() );
-                std::print(
-                  cpp_utils::value_identity_v< cpp_utils::concat_const_string(
-                    cpp_utils::const_string{ "\n" }, dividing_line, cpp_utils::const_string{ "\n\n (i) 操作已完成." } ) >.view() );
-                press_any_key_to_return();
-                return func_back;
-            }
-        };
-        template < cpp_utils::const_string Description, void ( *Func )() noexcept >
-        struct func_item final
-        {
-            static inline constexpr auto description{ Description };
-            static auto execute() noexcept
-            {
-                std::print( make_title_text< "[ 工 具 箱 ]", 3 >.view() );
-                Func();
-                std::print( "\n (i) 操作已完成." );
-                press_any_key_to_return();
-                return func_back;
-            }
-        };
     }
     inline auto toolkit()
     {
