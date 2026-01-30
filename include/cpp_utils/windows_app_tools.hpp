@@ -18,6 +18,7 @@
 #include <memory_resource>
 #include <numeric>
 #include <print>
+#include <ranges>
 #include <string>
 #include <thread>
 #include <type_traits>
@@ -196,6 +197,39 @@ namespace cpp_utils
         }
         CloseHandle( process_snapshot );
         return is_found ? ( status == ERROR_SUCCESS ? ERROR_SUCCESS : ERROR_ACCESS_DENIED ) : ERROR_NOT_FOUND;
+    }
+    template < typename Range >
+        requires requires( const Range& range ) {
+            { *range.begin() } -> std::convertible_to< std::wstring_view >;
+            range.begin() != range.end();
+            range.empty();
+        }
+    [[nodiscard]] inline auto terminate_process_by_names( const Range& names ) noexcept
+    {
+        if ( names.empty() ) {
+            return ERROR_SUCCESS;
+        }
+        const auto process_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ) };
+        if ( process_snapshot == INVALID_HANDLE_VALUE ) {
+            return ERROR_NOT_FOUND;
+        }
+        PROCESSENTRY32W process_entry{};
+        process_entry.dwSize = sizeof( PROCESSENTRY32W );
+        NTSTATUS status{ ERROR_NOT_FOUND };
+        if ( Process32FirstW( process_snapshot, &process_entry ) ) {
+            do {
+                for ( const auto& name : names ) {
+                    if ( _wcsicmp( process_entry.szExeFile, name.data() ) == 0 ) {
+                        if ( terminate_process_by_pid( process_entry.th32ProcessID ) == ERROR_SUCCESS ) {
+                            status = ERROR_SUCCESS;
+                        }
+                        break;
+                    }
+                }
+            } while ( Process32NextW( process_snapshot, &process_entry ) );
+        }
+        CloseHandle( process_snapshot );
+        return status == ERROR_SUCCESS ? ERROR_SUCCESS : ERROR_ACCESS_DENIED;
     }
     [[nodiscard]] inline auto create_registry_key(
       const HKEY main_key, const std::wstring_view sub_key, const std::wstring_view value_name, const DWORD type,
