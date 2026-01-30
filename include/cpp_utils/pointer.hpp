@@ -31,8 +31,8 @@ namespace cpp_utils
         using namespace std::string_literals;
         return ptr == nullptr ? L"nullptr"s : std::format( L"0x{:x}", std::bit_cast< const void* >( ptr ) );
     }
-    template < pointer T >
-        requires( !std::is_const_v< T > )
+    template < typename T >
+        requires( !std::is_const_v< T > && pointer< T > )
     class raw_pointer_wrapper final
     {
       private:
@@ -51,44 +51,54 @@ namespace cpp_utils
             return ptr_;
         }
         [[nodiscard]] auto& operator*() const
+            requires( !std::same_as< std::remove_cv_t< std::remove_pointer_t< T > >, void > )
         {
             return *ptr_;
         }
         [[nodiscard]] auto& operator[]( const std::size_t n ) const
+            requires( !std::same_as< std::remove_cv_t< std::remove_pointer_t< T > >, void > )
         {
             return ptr_[ n ];
         }
         [[nodiscard]] auto operator+( const std::size_t n ) const noexcept
+            requires( !std::same_as< std::remove_cv_t< std::remove_pointer_t< T > >, void > )
         {
             return raw_pointer_wrapper< T >{ ptr_ + n };
         }
         auto operator+=( const std::size_t n ) noexcept -> raw_pointer_wrapper< T >&
+            requires( !std::same_as< std::remove_cv_t< std::remove_pointer_t< T > >, void > )
         {
             return ptr_ += n;
         }
         auto operator++() noexcept -> raw_pointer_wrapper< T >&
+            requires( !std::same_as< std::remove_cv_t< std::remove_pointer_t< T > >, void > )
         {
             ++ptr_;
             return *this;
         }
         auto operator++( int ) noexcept -> raw_pointer_wrapper< T >
+            requires( !std::same_as< std::remove_cv_t< std::remove_pointer_t< T > >, void > )
         {
             return ptr_++;
         }
         [[nodiscard]] auto operator-( const std::size_t n ) const noexcept
+            requires( !std::same_as< std::remove_cv_t< std::remove_pointer_t< T > >, void > )
         {
             return raw_pointer_wrapper< T >{ ptr_ - n };
         }
         auto operator-=( const std::size_t n ) noexcept -> raw_pointer_wrapper< T >&
+            requires( !std::same_as< std::remove_cv_t< std::remove_pointer_t< T > >, void > )
         {
             return ptr_ -= n;
         }
         auto operator--() noexcept -> raw_pointer_wrapper< T >&
+            requires( !std::same_as< std::remove_cv_t< std::remove_pointer_t< T > >, void > )
         {
             --ptr_;
             return *this;
         }
         auto operator--( int ) noexcept -> raw_pointer_wrapper< T >
+            requires( !std::same_as< std::remove_cv_t< std::remove_pointer_t< T > >, void > )
         {
             return ptr_--;
         }
@@ -96,64 +106,6 @@ namespace cpp_utils
         constexpr auto operator=( raw_pointer_wrapper< T >&& ) noexcept -> raw_pointer_wrapper< T >&      = default;
         constexpr raw_pointer_wrapper() noexcept                                                          = default;
         constexpr raw_pointer_wrapper( T ptr ) noexcept
-          : ptr_{ ptr }
-        { }
-        constexpr raw_pointer_wrapper( const raw_pointer_wrapper< T >& ) noexcept = default;
-        constexpr raw_pointer_wrapper( raw_pointer_wrapper< T >&& ) noexcept      = default;
-        ~raw_pointer_wrapper() noexcept                                           = default;
-    };
-    template <>
-    class raw_pointer_wrapper< void* > final
-    {
-      private:
-        using T = void*;
-        T ptr_{};
-      public:
-        auto reset( void* const src ) noexcept
-        {
-            ptr_ = src;
-        }
-        [[nodiscard]] auto get() const noexcept
-        {
-            return ptr_;
-        }
-        operator T() const noexcept
-        {
-            return ptr_;
-        }
-        constexpr auto operator=( const raw_pointer_wrapper< T >& ) noexcept -> raw_pointer_wrapper< T >& = default;
-        constexpr auto operator=( raw_pointer_wrapper< T >&& ) noexcept -> raw_pointer_wrapper< T >&      = default;
-        constexpr raw_pointer_wrapper() noexcept                                                          = default;
-        constexpr raw_pointer_wrapper( const T ptr ) noexcept
-          : ptr_{ ptr }
-        { }
-        constexpr raw_pointer_wrapper( const raw_pointer_wrapper< T >& ) noexcept = default;
-        constexpr raw_pointer_wrapper( raw_pointer_wrapper< T >&& ) noexcept      = default;
-        ~raw_pointer_wrapper() noexcept                                           = default;
-    };
-    template <>
-    class raw_pointer_wrapper< const void* > final
-    {
-      private:
-        using T = const void*;
-        T ptr_{};
-      public:
-        auto reset( const void* const src ) noexcept
-        {
-            ptr_ = src;
-        }
-        [[nodiscard]] auto get() const noexcept
-        {
-            return ptr_;
-        }
-        operator T() const noexcept
-        {
-            return ptr_;
-        }
-        constexpr auto operator=( const raw_pointer_wrapper< T >& ) noexcept -> raw_pointer_wrapper< T >& = default;
-        constexpr auto operator=( raw_pointer_wrapper< T >&& ) noexcept -> raw_pointer_wrapper< T >&      = default;
-        constexpr raw_pointer_wrapper() noexcept                                                          = default;
-        constexpr raw_pointer_wrapper( const T ptr ) noexcept
           : ptr_{ ptr }
         { }
         constexpr raw_pointer_wrapper( const raw_pointer_wrapper< T >& ) noexcept = default;
