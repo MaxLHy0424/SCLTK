@@ -684,7 +684,6 @@ namespace scltk
         }
         inline auto restore_os_components() noexcept
         {
-            std::print( " -> 尝试恢复.\n" );
             using reg_dirs = make_const_wstring_list<
               LR"(Software\Policies\Microsoft\Windows\System)", LR"(Software\Microsoft\Windows\CurrentVersion\Policies\System)",
               LR"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)", LR"(Software\Policies\Microsoft\MMC)" >;
@@ -692,8 +691,12 @@ namespace scltk
               L"tasklist", L"taskkill", L"ntsd", L"sc", L"net", L"reg", L"cmd", L"taskmgr", L"perfmon", L"regedit", L"mmc",
               L"dism", L"sfc", L"sethc", L"sidebar", L"shvlzm", L"winmine", L"bckgzm", L"Chess", L"chkrzm", L"FreeCell",
               L"Hearts", L"Magnify", L"Mahjong", L"Minesweeper", L"PurblePlace", L"Solitaire", L"SpiderSolitaire" >;
+            std::print( " -> 撤销功能禁用.\n" );
             []< cpp_utils::const_wstring... Items >( const cpp_utils::type_list< cpp_utils::value_identity< Items >... > ) static noexcept
             { ( ( void ) RegDeleteTreeW( HKEY_CURRENT_USER, Items.c_str() ), ... ); }( reg_dirs{} );
+            ( void ) cpp_utils::delete_registry_key(
+              HKEY_LOCAL_MACHINE, LR"(SOFTWARE\Policies\Microsoft\Windows NT\SystemRestore)"sv, L"DisableSR"sv );
+            std::print( " -> 撤销文件劫持.\n" );
             []< cpp_utils::const_wstring... Items >( const cpp_utils::type_list< cpp_utils::value_identity< Items >... > ) static noexcept
             {
                 ( ( void ) RegDeleteTreeW(
@@ -703,8 +706,6 @@ namespace scltk
                       Items, cpp_utils::const_wstring{ L".exe" } ) >.c_str() ),
                   ... );
             }( execs{} );
-            ( void ) cpp_utils::delete_registry_key(
-              HKEY_LOCAL_MACHINE, LR"(SOFTWARE\Policies\Microsoft\Windows NT\SystemRestore)"sv, L"DisableSR"sv );
         }
         inline auto reset_hosts() noexcept
         {
