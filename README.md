@@ -46,6 +46,8 @@ SCLTK 发行版文件名规则为 `SCLTK-<arch>-<runtime>.exe`，其中 `<arch>`
 
 - **退出 SCLTK**\
   `< 退出`
+- **重启 SCLTK**\
+  `< 重启`
 - **查看 SCLTK 信息**\
   `> 关于`
 
