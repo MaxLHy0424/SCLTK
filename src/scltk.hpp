@@ -1134,11 +1134,8 @@ namespace scltk
             execute_helpers_( custom_rules.restore_helpers );
         }
     };
-    inline consteval auto execute_all_rules() noexcept
-    {
-        using builtin_rules_executor_backends = builtin_rules::apply_each< builtin_rules_executor_backend >;
-        return builtin_rules_executor_backends::add_front< custom_rule_executor_backend >::apply< rule_executor >{};
-    }
+    using all_rules
+      = builtin_rules::apply_each< builtin_rules_executor_backend >::add_front< custom_rule_executor_backend >::apply< rule_executor >;
     inline auto make_executor_mode_ui_text() noexcept
     {
         switch ( details::current_rule_executor_mode ) {
