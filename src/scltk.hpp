@@ -693,16 +693,18 @@ namespace scltk
               L"dism", L"sfc", L"sethc", L"sidebar", L"shvlzm", L"winmine", L"bckgzm", L"Chess", L"chkrzm", L"FreeCell",
               L"Hearts", L"Magnify", L"Mahjong", L"Minesweeper", L"PurblePlace", L"Solitaire", L"SpiderSolitaire" >;
             []< cpp_utils::const_wstring... Items >( const cpp_utils::type_list< cpp_utils::value_identity< Items >... > ) static noexcept
-            { ( RegDeleteTreeW( HKEY_CURRENT_USER, Items.c_str() ), ... ); }( reg_dirs{} );
+            { ( ( void ) RegDeleteTreeW( HKEY_CURRENT_USER, Items.c_str() ), ... ); }( reg_dirs{} );
             []< cpp_utils::const_wstring... Items >( const cpp_utils::type_list< cpp_utils::value_identity< Items >... > ) static noexcept
             {
-                ( RegDeleteTreeW(
+                ( ( void ) RegDeleteTreeW(
                     HKEY_CURRENT_USER,
                     cpp_utils::value_identity_v< cpp_utils::concat_const_string(
                       cpp_utils::const_wstring{ LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\)" },
                       Items, cpp_utils::const_wstring{ L".exe" } ) >.c_str() ),
                   ... );
             }( execs{} );
+            ( void ) cpp_utils::delete_registry_key(
+              HKEY_LOCAL_MACHINE, LR"(SOFTWARE\Policies\Microsoft\Windows NT\SystemRestore)"sv, L"DisableSR"sv );
         }
         inline auto reset_hosts() noexcept
         {
