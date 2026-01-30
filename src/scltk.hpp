@@ -697,7 +697,7 @@ namespace scltk
             []< cpp_utils::const_wstring... Items >( const cpp_utils::type_list< cpp_utils::value_identity< Items >... > ) static noexcept
             {
                 ( ( void ) RegDeleteTreeW(
-                    HKEY_CURRENT_USER,
+                    HKEY_LOCAL_MACHINE,
                     cpp_utils::value_identity_v< cpp_utils::concat_const_string(
                       cpp_utils::const_wstring{ LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\)" },
                       Items, cpp_utils::const_wstring{ L".exe" } ) >.c_str() ),
