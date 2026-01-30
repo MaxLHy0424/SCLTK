@@ -16,7 +16,7 @@ namespace cpp_utils
         requires std::same_as< T, std::decay_t< T > >
     struct basic_const_string final
     {
-        using char_type = T;
+        using char_t = T;
         std::array< T, N + 1 > storage_{};
         [[nodiscard]] constexpr const auto& data() const noexcept
         {
@@ -122,8 +122,7 @@ namespace cpp_utils
     template < character auto C, std::size_t N >
     [[nodiscard]] inline consteval auto make_repeated_const_string() noexcept
     {
-        using T = decltype( C );
-        std::array< T, N > str;
+        std::array< decltype( C ), N > str;
         str.fill( C );
         return basic_const_string{ str };
     }
@@ -155,5 +154,5 @@ namespace cpp_utils
         };
     }
     template < basic_const_string S >
-    using split_const_string = typename details::split_const_string_impl< S >::type;
+    using split_const_string_t = typename details::split_const_string_impl< S >::type;
 }

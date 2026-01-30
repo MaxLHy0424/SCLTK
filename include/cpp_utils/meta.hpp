@@ -15,11 +15,11 @@ namespace cpp_utils
         }
     [[nodiscard]] inline consteval auto invoke_to_array() noexcept
     {
-        using value_type = typename decltype( Func() )::value_type;
+        using value_t = typename decltype( Func() )::value_type;
         constexpr auto len{ Func().size() };
         auto temp{ Func() };
         return [ & ]< std::size_t... Is >( const std::index_sequence< Is... > )
-        { return std::array< value_type, len >{ *std::next( temp.begin(), Is )... }; }( std::make_index_sequence< len >{} );
+        { return std::array< value_t, len >{ *std::next( temp.begin(), Is )... }; }( std::make_index_sequence< len >{} );
     }
     template < typename... Fs >
     struct overloads final : public Fs...
@@ -40,32 +40,32 @@ namespace cpp_utils
         ~error_type() noexcept                                 = delete;
     };
     template < template < typename... > typename F, typename... Ts >
-    using apply_type = typename F< Ts... >::type;
+    using apply_type_t = typename F< Ts... >::type;
     template < template < auto... > typename F, auto... Vs >
-    inline constexpr auto apply_value{ F< Vs... >::value };
+    inline constexpr auto apply_value_v{ F< Vs... >::value };
     template < template < typename... > typename F, typename... Ts >
     struct bind_front_type final
     {
         template < typename... Us >
-        using type = apply_type< F, Ts..., Us... >;
+        using type = apply_type_t< F, Ts..., Us... >;
     };
     template < template < auto... > typename F, auto... Vs >
     struct bind_front_value final
     {
         template < auto... Ws >
-        static constexpr auto value{ apply_value< F, Vs..., Ws... > };
+        static constexpr auto value{ apply_value_v< F, Vs..., Ws... > };
     };
     template < template < typename... > typename F, typename... Ts >
     struct bind_back_type final
     {
         template < typename... Us >
-        using type = apply_type< F, Us..., Ts... >;
+        using type = apply_type_t< F, Us..., Ts... >;
     };
     template < template < auto... > typename F, auto... Vs >
     struct bind_back_value final
     {
         template < auto... Ws >
-        static constexpr auto value{ apply_value< F, Ws..., Vs... > };
+        static constexpr auto value{ apply_value_v< F, Ws..., Vs... > };
     };
     template < typename T >
     concept common_type = !std::same_as< std::decay_t< T >, error_type >;
@@ -104,7 +104,7 @@ namespace cpp_utils
     template < auto V >
     struct value_identity final
     {
-        using value_type = decltype( V );
+        using value_t = decltype( V );
         static inline constexpr auto value{ V };
         constexpr auto operator<=>( const value_identity< V >& ) const        = default;
         constexpr auto operator==( const value_identity< V >& ) const -> bool = default;
@@ -145,8 +145,7 @@ namespace cpp_utils
             if constexpr ( I >= size_ ) {
                 return size_;
             } else {
-                using T = std::tuple_element_t< I, std::tuple< Ts... > >;
-                if constexpr ( Pred< T >::value ) {
+                if constexpr ( Pred< std::tuple_element_t< I, std::tuple< Ts... > > >::value ) {
                     return I;
                 } else {
                     return find_first_if_impl_< Pred, I + 1 >();
