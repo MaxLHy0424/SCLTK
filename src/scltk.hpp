@@ -1073,7 +1073,7 @@ namespace scltk
                 ( void ) cpp_utils::terminate_process_by_name( std::format( L"{}.exe", exec ) );
             }
         }
-        static auto execute_helpers_( const std::pmr::vector< std::pmr::wstring >& helpers )
+        static auto execute_helpers_( const std::pmr::vector< std::pmr::wstring >& helpers ) noexcept
         {
             if ( helpers.empty() ) {
                 return;
