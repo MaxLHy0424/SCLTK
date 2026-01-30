@@ -156,7 +156,7 @@ namespace cpp_utils
     template < basic_const_string S >
     struct split_const_string final
     {
-        using type = typename details::split_const_string_impl< S >::type
+        using type = typename details::split_const_string_impl< S >::type;
     };
     template < basic_const_string S >
     using split_const_string_t = typename split_const_string< S >::type;
