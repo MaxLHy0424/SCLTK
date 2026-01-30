@@ -396,41 +396,41 @@ namespace scltk
     {
         friend details::config_node_impl;
       private:
-        static inline constexpr auto flag_exec{ L"exec:"sv };
-        static inline constexpr auto flag_serv{ L"serv:"sv };
-        static inline constexpr auto flag_crack_helper{ L"crack_helper:"sv };
-        static inline constexpr auto flag_restore_helper{ L"restore_helper:"sv };
+        static inline constexpr auto flag_exec_{ L"exec:"sv };
+        static inline constexpr auto flag_serv_{ L"serv:"sv };
+        static inline constexpr auto flag_crack_helper_{ L"crack_helper:"sv };
+        static inline constexpr auto flag_restore_helper_{ L"restore_helper:"sv };
         static_assert( []( auto... strings ) consteval
-        { return ( std::ranges::none_of( strings, details::is_whitespace< wchar_t > ) && ... ); }( flag_exec, flag_serv ) );
+        { return ( std::ranges::none_of( strings, details::is_whitespace< wchar_t > ) && ... ); }( flag_exec_, flag_serv_ ) );
         static auto load_( const std::string_view unconverted_line )
         {
             const auto converted_line{ cpp_utils::to_wstring( unconverted_line, charset_id ) };
             const std::wstring_view line{ converted_line };
-            if ( line.size() > flag_exec.size() && line.starts_with( flag_exec ) ) {
+            if ( line.size() > flag_exec_.size() && line.starts_with( flag_exec_ ) ) {
                 custom_rules.execs.emplace_back(
-                  std::ranges::find_if_not( line.substr( flag_exec.size() ), details::is_whitespace< wchar_t > ) );
+                  std::ranges::find_if_not( line.substr( flag_exec_.size() ), details::is_whitespace< wchar_t > ) );
                 return;
             }
-            if ( line.size() > flag_serv.size() && line.starts_with( flag_serv ) ) {
+            if ( line.size() > flag_serv_.size() && line.starts_with( flag_serv_ ) ) {
                 custom_rules.servs.emplace_back(
-                  std::ranges::find_if_not( line.substr( flag_serv.size() ), details::is_whitespace< wchar_t > ) );
+                  std::ranges::find_if_not( line.substr( flag_serv_.size() ), details::is_whitespace< wchar_t > ) );
                 return;
             }
-            if ( line.size() > flag_crack_helper.size() && line.starts_with( flag_crack_helper ) ) {
+            if ( line.size() > flag_crack_helper_.size() && line.starts_with( flag_crack_helper_ ) ) {
                 custom_rules.crack_helpers.emplace_back(
-                  std::ranges::find_if_not( line.substr( flag_crack_helper.size() ), details::is_whitespace< wchar_t > ) );
+                  std::ranges::find_if_not( line.substr( flag_crack_helper_.size() ), details::is_whitespace< wchar_t > ) );
                 return;
             }
-            if ( line.size() > flag_restore_helper.size() && line.starts_with( flag_restore_helper ) ) {
+            if ( line.size() > flag_restore_helper_.size() && line.starts_with( flag_restore_helper_ ) ) {
                 custom_rules.restore_helpers.emplace_back(
-                  std::ranges::find_if_not( line.substr( flag_restore_helper.size() ), details::is_whitespace< wchar_t > ) );
+                  std::ranges::find_if_not( line.substr( flag_restore_helper_.size() ), details::is_whitespace< wchar_t > ) );
                 return;
             }
         }
         static auto sync_( std::ofstream& out )
         {
-            const auto flag_exec_ansi{ cpp_utils::to_string( flag_exec, charset_id, unsynced_mem_pool ) };
-            const auto flag_serv_ansi{ cpp_utils::to_string( flag_serv, charset_id, unsynced_mem_pool ) };
+            const auto flag_exec_ansi{ cpp_utils::to_string( flag_exec_, charset_id, unsynced_mem_pool ) };
+            const auto flag_serv_ansi{ cpp_utils::to_string( flag_serv_, charset_id, unsynced_mem_pool ) };
             for ( const auto& exec : custom_rules.execs ) {
                 out << flag_exec_ansi << ' ' << cpp_utils::to_string( exec, charset_id, unsynced_mem_pool ) << '\n';
             }
