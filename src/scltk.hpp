@@ -921,8 +921,8 @@ namespace scltk
         static auto crack()
         {
             constexpr const auto& options{ std::get< crack_restore_config >( config_nodes ) };
-            const auto can_hijack_execs{ options.at< "hijack_execs" >() };
-            const auto can_set_serv_startup_types{ options.at< "set_serv_startup_types" >() };
+            constexpr const auto& can_hijack_execs{ options.at< "hijack_execs" >() };
+            constexpr const auto& can_set_serv_startup_types{ options.at< "set_serv_startup_types" >() };
             if ( can_hijack_execs ) {
                 std::print( " -> 劫持文件.\n" );
                 ( Backends::hijack_execs(), ... );
