@@ -320,36 +320,6 @@ namespace cpp_utils
         CloseServiceHandle( scm );
         return result;
     }
-    [[nodiscard]] inline auto reset_service_failure_action( const std::wstring_view service_name ) noexcept
-    {
-        using scm_handle = std::unique_ptr< std::remove_pointer_t< SC_HANDLE >, decltype( []( SC_HANDLE h ) static noexcept
-        {
-            if ( h != nullptr ) {
-                CloseServiceHandle( h );
-            }
-        } ) >;
-        scm_handle scm{ OpenSCManagerW( nullptr, nullptr, SC_MANAGER_CONNECT ) };
-        if ( scm.get() == nullptr ) {
-            return GetLastError();
-        }
-        scm_handle service{ OpenServiceW( scm.get(), service_name.data(), SERVICE_CHANGE_CONFIG ) };
-        if ( service.get() == nullptr ) {
-            return GetLastError();
-        }
-        constexpr DWORD actions_count{ 3 };
-        constexpr SC_ACTION non_action{ .Type{ SC_ACTION_NONE }, .Delay{ 0 } };
-        std::array< SC_ACTION, actions_count > actions{ non_action, non_action, non_action };
-        SERVICE_FAILURE_ACTIONSW service_fail_actions{
-          .dwResetPeriod{ 0 },
-          .lpRebootMsg{ nullptr },
-          .lpCommand{ nullptr },
-          .cActions{ actions_count },
-          .lpsaActions{ actions.data() } };
-        if ( !ChangeServiceConfig2W( service.get(), SERVICE_CONFIG_FAILURE_ACTIONS, &service_fail_actions ) ) {
-            return GetLastError();
-        }
-        return static_cast< DWORD >( ERROR_SUCCESS );
-    }
     [[nodiscard]] inline auto is_run_as_admin() noexcept
     {
         BOOL is_admin;
