@@ -53,7 +53,7 @@ namespace cpp_utils
     struct bind_front_value final
     {
         template < auto... Ws >
-        static constexpr auto value{ apply_value_v< F, Vs..., Ws... > };
+        static inline constexpr auto value{ apply_value_v< F, Vs..., Ws... > };
     };
     template < template < typename... > typename F, typename... Ts >
     struct bind_back_type final
@@ -65,7 +65,7 @@ namespace cpp_utils
     struct bind_back_value final
     {
         template < auto... Ws >
-        static constexpr auto value{ apply_value_v< F, Ws..., Vs... > };
+        static inline constexpr auto value{ apply_value_v< F, Ws..., Vs... > };
     };
     template < typename T >
     concept common_type = !std::same_as< std::decay_t< T >, error_type >;

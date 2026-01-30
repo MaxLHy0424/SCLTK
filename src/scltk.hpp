@@ -256,8 +256,8 @@ namespace scltk
             using item_list_t_ = cpp_utils::type_list< cpp_utils::value_identity< Items >... >;
             using value_t_     = std::conditional_t< Atomic, std::atomic< bool >, bool >;
             std::array< value_t_, sizeof...( Items ) / 2 > data_{};
-            static constexpr auto str_of_the_enabled{ ": enabled"sv };
-            static constexpr auto str_of_the_disabled{ ": disabled"sv };
+            static inline constexpr auto str_of_the_enabled{ ": enabled"sv };
+            static inline constexpr auto str_of_the_disabled{ ": disabled"sv };
             auto load_( const std::string_view line )
             {
                 std::string_view key;
