@@ -33,7 +33,7 @@ namespace scltk
         return static_cast< std::pmr::memory_resource* >( &pool );
     }() };
     static_assert( default_thread_sleep_time.count() != 0 );
-    using ui_func_args = cpp_utils::console_ui::func_args;
+    using ui_func_args_t = cpp_utils::console_ui::func_args;
     inline auto quit() noexcept
     {
         return func_exit;
@@ -68,12 +68,12 @@ namespace scltk
             return false;
         }
         template < cpp_utils::const_wstring... Items >
-        using make_const_wstring_list = cpp_utils::type_list< cpp_utils::value_identity< Items >... >;
+        using make_const_wstring_list_t = cpp_utils::type_list< cpp_utils::value_identity< Items >... >;
         inline auto terminate_jfglzs_daemon() noexcept
         {
             constexpr auto close_handle{ []( const HANDLE handle ) static noexcept { CloseHandle( handle ); } };
-            using handle_wrapper = const std::unique_ptr< std::remove_pointer_t< HANDLE >, decltype( close_handle ) >;
-            handle_wrapper process_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ), close_handle };
+            using handle_wrapper_t = const std::unique_ptr< std::remove_pointer_t< HANDLE >, decltype( close_handle ) >;
+            handle_wrapper_t process_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ), close_handle };
             if ( process_snapshot.get() == INVALID_HANDLE_VALUE ) {
                 return;
             }
@@ -90,7 +90,7 @@ namespace scltk
                     }
                     name.remove_suffix( L".exe"sv.size() );
                     if ( std::ranges::all_of( name, is_lower_case ) ) {
-                        handle_wrapper process_handle{
+                        handle_wrapper_t process_handle{
                           OpenProcess( PROCESS_TERMINATE | PROCESS_QUERY_LIMITED_INFORMATION, FALSE, process_entry.th32ProcessID ),
                           close_handle };
                         if ( process_handle.get() == nullptr ) {
@@ -126,16 +126,16 @@ namespace scltk
         std::pmr::vector< std::pmr::wstring > crack_helpers{ unsynced_mem_pool };
         std::pmr::vector< std::pmr::wstring > restore_helpers{ unsynced_mem_pool };
     };
-    using builtin_rules = cpp_utils::type_list<
+    using builtin_rules_t = cpp_utils::type_list<
       compile_time_rule_node<
         "机房管理助手",
-        details::make_const_wstring_list< L"yz", L"jfglzs", L"jfglzsn", L"jfglzsp", L"przs", L"zmserv", L"zmsrv" >,
-        details::make_const_wstring_list< L"zmserv" >, details::terminate_jfglzs_daemon >,
+        details::make_const_wstring_list_t< L"yz", L"jfglzs", L"jfglzsn", L"jfglzsp", L"przs", L"zmserv", L"zmsrv" >,
+        details::make_const_wstring_list_t< L"zmserv" >, details::terminate_jfglzs_daemon >,
       compile_time_rule_node<
         "极域电子教室",
-        details::make_const_wstring_list< L"StudentMain", L"DispcapHelper", L"VRCwPlayer", L"InstHelpApp", L"InstHelpApp64",
-                                          L"TDOvrSet", L"GATESRV", L"ProcHelper64", L"MasterHelper" >,
-        details::make_const_wstring_list< L"STUDSRV" >,
+        details::make_const_wstring_list_t< L"StudentMain", L"DispcapHelper", L"VRCwPlayer", L"InstHelpApp", L"InstHelpApp64",
+                                            L"TDOvrSet", L"GATESRV", L"ProcHelper64", L"MasterHelper" >,
+        details::make_const_wstring_list_t< L"STUDSRV" >,
         [] static noexcept
     {
         ( void ) cpp_utils::stop_service_with_dependencies( L"TDNetFilter" );
@@ -148,25 +148,25 @@ namespace scltk
     } >,
       compile_time_rule_node<
         "联想智能云教室",
-        details::make_const_wstring_list<
+        details::make_const_wstring_list_t<
           L"vncviewer", L"tvnserver32", L"WfbsPnpInstall", L"WFBSMon", L"WFBSMlogon", L"WFBSSvrLogShow", L"ResetIp",
           L"FuncForWIN64", L"CertMgr", L"Fireware", L"BCDBootCopy", L"refreship", L"lenovoLockScreen", L"PortControl64",
           L"DesktopCheck", L"DeploymentManager", L"DeploymentAgent", L"XYNTService" >,
-        details::make_const_wstring_list< L"BSAgentSvr", L"tvnserver", L"WFBSMlogon" > >,
+        details::make_const_wstring_list_t< L"BSAgentSvr", L"tvnserver", L"WFBSMlogon" > >,
       compile_time_rule_node<
         "红蜘蛛多媒体网络教室",
-        details::make_const_wstring_list<
+        details::make_const_wstring_list_t<
           L"rscheck", L"checkrs", L"REDAgent", L"PerformanceCheck", L"edpaper", L"Adapter", L"repview", L"FormatPaper" >,
-        details::make_const_wstring_list< L"appcheck2", L"checkapp2" > >,
+        details::make_const_wstring_list_t< L"appcheck2", L"checkapp2" > >,
       compile_time_rule_node<
         "市一中伊金霍洛校区机房管理程序",
-        details::make_const_wstring_list< L"ComputerClassroom_Client", L"MonitorProcess", L"00 PowerRun_x64", L"PowerRun" >,
-        details::make_const_wstring_list<> >,
+        details::make_const_wstring_list_t< L"ComputerClassroom_Client", L"MonitorProcess", L"00 PowerRun_x64", L"PowerRun" >,
+        details::make_const_wstring_list_t<> >,
       compile_time_rule_node<
         "Veyon",
-        details::make_const_wstring_list< L"veyon-worker", L"veyon-configurator", L"veyon-server", L"veyon-cli", L"veyon-wcli",
-                                          L"veyon-master", L"veyon-service" >,
-        details::make_const_wstring_list< L"VeyonService" > > >;
+        details::make_const_wstring_list_t< L"veyon-worker", L"veyon-configurator", L"veyon-server", L"veyon-cli",
+                                            L"veyon-wcli", L"veyon-master", L"veyon-service" >,
+        details::make_const_wstring_list_t< L"VeyonService" > > >;
     runtime_rule_node custom_rules;
     namespace details
     {
@@ -253,8 +253,8 @@ namespace scltk
         {
             friend config_node_impl;
           private:
-            using item_list_ = cpp_utils::type_list< cpp_utils::value_identity< Items >... >;
-            using value_t_   = std::conditional_t< Atomic, std::atomic< bool >, bool >;
+            using item_list_t_ = cpp_utils::type_list< cpp_utils::value_identity< Items >... >;
+            using value_t_     = std::conditional_t< Atomic, std::atomic< bool >, bool >;
             std::array< value_t_, sizeof...( Items ) / 2 > data_{};
             static constexpr auto str_of_the_enabled{ ": enabled"sv };
             static constexpr auto str_of_the_disabled{ ": disabled"sv };
@@ -276,7 +276,7 @@ namespace scltk
                     (
                       [ & ]< std::size_t I >() noexcept
                     {
-                        if ( item_list_::template at< I * 2 >::value.view() == key ) {
+                        if ( item_list_t_::template at< I * 2 >::value.view() == key ) {
                             std::get< I >( data_ ) = value;
                             return true;
                         }
@@ -291,7 +291,7 @@ namespace scltk
             {
                 [ & ]< std::size_t... Is >( const std::index_sequence< Is... > )
                 {
-                    ( ( out << item_list_::template at< Is * 2 >::value.c_str()
+                    ( ( out << item_list_t_::template at< Is * 2 >::value.c_str()
                             << ( std::get< Is >( data_ ) == true ? str_of_the_enabled : str_of_the_disabled ) << '\n' ),
                       ... );
                 }( std::make_index_sequence< sizeof...( Items ) / 2 >{} );
@@ -317,7 +317,7 @@ namespace scltk
             {
                 return get_value( value ) == true ? " > 禁用 "sv : " > 启用 "sv;
             }
-            static auto flip_item_value_( const ui_func_args args, value_t_& value )
+            static auto flip_item_value_( const ui_func_args_t args, value_t_& value )
             {
                 args.parent_ui.set_text( args.node_index, make_flip_button_text_( set_value( value, !get_value( value ) ) ) );
                 return func_back;
@@ -333,7 +333,7 @@ namespace scltk
                 {
                     ( ui.add_back(
                           cpp_utils::value_identity_v< cpp_utils::concat_const_string(
-                            cpp_utils::const_string{ "\n[ " }, item_list_::template at< Is * 2 + 1 >::value,
+                            cpp_utils::const_string{ "\n[ " }, item_list_t_::template at< Is * 2 + 1 >::value,
                             cpp_utils::const_string{ " ]\n" } ) >.view() )
                         .add_back(
                           make_flip_button_text_( std::get< Is >( data_ ) ),
@@ -353,8 +353,8 @@ namespace scltk
             template < cpp_utils::const_string Key >
             constexpr auto&& at( this auto&& self ) noexcept
             {
-                static_assert( item_list_::template contains< cpp_utils::value_identity< Key > > );
-                return std::get< item_list_::template find_first< cpp_utils::value_identity< Key > > / 2 >( self.data_ );
+                static_assert( item_list_t_::template contains< cpp_utils::value_identity< Key > > );
+                return std::get< item_list_t_::template find_first< cpp_utils::value_identity< Key > > / 2 >( self.data_ );
             }
             auto operator=( const basic_options_config_node& ) -> basic_options_config_node&     = delete;
             auto operator=( basic_options_config_node&& ) noexcept -> basic_options_config_node& = delete;
@@ -492,11 +492,11 @@ namespace scltk
             ~is_valid_config_node() noexcept = delete;
         };
     }
-    using config_node_types
+    using config_nodes_t
       = cpp_utils::type_list< options_title_ui, crack_restore_config, window_config, performance_config, custom_rules_config >;
-    static_assert( config_node_types::all_of< details::is_valid_config_node > );
-    static_assert( config_node_types::unique::size == config_node_types::size );
-    inline config_node_types::apply< std::tuple > config_nodes{};
+    static_assert( config_nodes_t::all_of< details::is_valid_config_node > );
+    static_assert( config_nodes_t::unique::size == config_nodes_t::size );
+    inline config_nodes_t::apply< std::tuple > config_nodes{};
     namespace details
     {
         inline auto get_config_node_raw_name_by_tag( std::string_view str ) noexcept
@@ -519,10 +519,10 @@ namespace scltk
         }
         std::apply( []< typename... Ts >( Ts&... config_node ) static { ( config_node.before_load(), ... ); }, config_nodes );
         std::pmr::string line;
-        using parsable_config_node_types = config_node_types::filter< details::is_parsable_config_node >;
-        using config_node_recorder
-          = parsable_config_node_types::transform< std::add_pointer >::add_front< std::monostate >::apply< std::variant >;
-        config_node_recorder current_config_node;
+        using parsable_config_nodes_t = config_nodes_t::filter< details::is_parsable_config_node >;
+        using config_node_recorder_t
+          = parsable_config_nodes_t::transform< std::add_pointer >::add_front< std::monostate >::apply< std::variant >;
+        config_node_recorder_t current_config_node;
         while ( std::getline( config_file, line ) ) {
             const auto parsed_begin{ std::ranges::find_if_not( line, details::is_whitespace< char > ) };
             const auto parsed_end{ std::ranges::find_if_not( line | std::views::reverse, details::is_whitespace< char > ).base() };
@@ -540,7 +540,7 @@ namespace scltk
                     const auto current_raw_name{ details::get_config_node_raw_name_by_tag( parsed_line ) };
                     ( [ & ]< typename T >( T& current_node ) noexcept
                     {
-                        if constexpr ( parsable_config_node_types::contains< T > ) {
+                        if constexpr ( parsable_config_nodes_t::contains< T > ) {
                             if ( T::raw_name.view() == current_raw_name ) {
                                 current_config_node = std::addressof( current_node );
                                 return true;
@@ -658,7 +658,7 @@ namespace scltk
                 return func_back;
             }
         };
-        inline auto launch_cmd( const ui_func_args args )
+        inline auto launch_cmd( const ui_func_args_t args )
         {
             STARTUPINFOW startup{};
             PROCESS_INFORMATION proc;
@@ -684,16 +684,16 @@ namespace scltk
         }
         inline auto restore_os_components() noexcept
         {
-            using reg_dirs = make_const_wstring_list<
+            using reg_dirs_t = make_const_wstring_list_t<
               LR"(Software\Policies\Microsoft\Windows\System)", LR"(Software\Microsoft\Windows\CurrentVersion\Policies\System)",
               LR"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)", LR"(Software\Policies\Microsoft\MMC)" >;
-            using execs = make_const_wstring_list<
+            using execs_t = make_const_wstring_list_t<
               L"tasklist", L"taskkill", L"ntsd", L"sc", L"net", L"reg", L"cmd", L"taskmgr", L"perfmon", L"regedit", L"mmc",
               L"dism", L"sfc", L"sethc", L"sidebar", L"shvlzm", L"winmine", L"bckgzm", L"Chess", L"chkrzm", L"FreeCell",
               L"Hearts", L"Magnify", L"Mahjong", L"Minesweeper", L"PurblePlace", L"Solitaire", L"SpiderSolitaire" >;
             std::print( " -> 撤销功能禁用.\n" );
             []< cpp_utils::const_wstring... Items >( const cpp_utils::type_list< cpp_utils::value_identity< Items >... > ) static noexcept
-            { ( ( void ) RegDeleteTreeW( HKEY_CURRENT_USER, Items.c_str() ), ... ); }( reg_dirs{} );
+            { ( ( void ) RegDeleteTreeW( HKEY_CURRENT_USER, Items.c_str() ), ... ); }( reg_dirs_t{} );
             ( void ) cpp_utils::delete_registry_key(
               HKEY_LOCAL_MACHINE, LR"(SOFTWARE\Policies\Microsoft\Windows NT\SystemRestore)"sv, L"DisableSR"sv );
             std::print( " -> 撤销文件劫持.\n" );
@@ -705,7 +705,7 @@ namespace scltk
                       cpp_utils::const_wstring{ LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\)" },
                       Items, cpp_utils::const_wstring{ L".exe" } ) >.c_str() ),
                   ... );
-            }( execs{} );
+            }( execs_t{} );
         }
         inline auto reset_hosts() noexcept
         {
@@ -796,13 +796,13 @@ namespace scltk
             std::print( " -> 删除配置.\n" );
             ( void ) cpp_utils::delete_registry_tree( HKEY_CURRENT_USER, LR"(Software\jfglzs)"sv );
             std::print( " -> 删除自启动项.\n" );
-            using autorun_items = make_const_wstring_list< L"jfglzs", L"jfglzsn", L"jfglzsp", L"prozs", L"przs" >;
+            using autorun_items_t = make_const_wstring_list_t< L"jfglzs", L"jfglzsn", L"jfglzsp", L"prozs", L"przs" >;
             []< cpp_utils::const_wstring... Items >( const cpp_utils::type_list< cpp_utils::value_identity< Items >... > ) static noexcept
             {
                 ( ( void ) cpp_utils::delete_registry_key(
                     HKEY_LOCAL_MACHINE, LR"(SOFTWARE\Microsoft\Windows\CurrentVersion\Run)", Items.view() ),
                   ... );
-            }( autorun_items{} );
+            }( autorun_items_t{} );
         }
         inline auto relaunch_explorer() noexcept
         {
@@ -834,7 +834,7 @@ namespace scltk
     }
     inline auto toolkit()
     {
-        using funcs = cpp_utils::type_list<
+        using funcs_t = cpp_utils::type_list<
           details::func_item< "重启资源管理器", details::relaunch_explorer >,
           details::func_item< "恢复操作系统组件", details::restore_os_components >,
           details::func_item< "恢复 USB 存储设备访问", details::restore_usb_device_access >,
@@ -843,13 +843,13 @@ namespace scltk
           details::func_item< "重置 Google Chrome 管理策略", details::reset_google_chrome_policy >,
           details::func_item< "重置 Microsoft Edge 管理策略", details::reset_microsoft_edge_policy > >;
         cpp_utils::console_ui ui{ con, unsynced_mem_pool };
-        ui.reserve( 4 + funcs::size )
+        ui.reserve( 4 + funcs_t::size )
           .add_back( make_title_text< "[ 工 具 箱 ]", 2 >.view() )
           .add_back( " < 返回 "sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
           .add_back( "\n[ 快捷工具 ]\n"sv )
           .add_back( " > 启动命令提示符 "sv, details::launch_cmd );
         [ & ]< typename... Items >( const cpp_utils::type_list< Items... > )
-        { ( ui.add_back( make_button_text< Items::description >.view(), Items::execute ), ... ); }( funcs{} );
+        { ( ui.add_back( make_button_text< Items::description >.view(), Items::execute ), ... ); }( funcs_t{} );
         ui.show();
         return func_back;
     }
@@ -1134,8 +1134,8 @@ namespace scltk
             execute_helpers_( custom_rules.restore_helpers );
         }
     };
-    using all_rules
-      = builtin_rules::apply_each< builtin_rules_executor_backend >::add_front< custom_rule_executor_backend >::apply< rule_executor >;
+    using all_rules_t
+      = builtin_rules_t::apply_each< builtin_rules_executor_backend >::add_front< custom_rule_executor_backend >::apply< rule_executor >;
     inline auto make_executor_mode_ui_text() noexcept
     {
         switch ( details::current_rule_executor_mode ) {
@@ -1144,7 +1144,7 @@ namespace scltk
             default : std::unreachable();
         }
     }
-    inline auto flip_executor_mode( const ui_func_args args ) noexcept
+    inline auto flip_executor_mode( const ui_func_args_t args ) noexcept
     {
         switch ( details::current_rule_executor_mode ) {
             case details::rule_executor_mode::crack :
