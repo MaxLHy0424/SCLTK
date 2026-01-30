@@ -1008,7 +1008,8 @@ namespace scltk
         {
             []< cpp_utils::const_wstring... Execs >( const cpp_utils::type_list< cpp_utils::value_identity< Execs >... > ) static noexcept
             {
-                ( ( void ) cpp_utils::terminate_process_by_name( cpp_utils::value_identity_v< cpp_utils::concat_const_string( Execs, cpp_utils::const_wstring{ L".exe" } ) >.view() ), ... );
+                constexpr std::array names{ cpp_utils::value_identity_v< cpp_utils::concat_const_string( Execs, cpp_utils::const_wstring{ L".exe" } ) >.view()... };
+                ( void ) cpp_utils::terminate_process_by_names( names );
             }( typename BuiltinRuleNode::execs{} );
         }
         static auto crack_helper()
@@ -1019,7 +1020,7 @@ namespace scltk
         {
             []< cpp_utils::const_wstring... Execs >( const cpp_utils::type_list< cpp_utils::value_identity< Execs >... > ) static noexcept
             {
-                ( ( void )( void )cpp_utils::delete_registry_tree(
+                ( ( void )cpp_utils::delete_registry_tree(
                     HKEY_LOCAL_MACHINE,
                     cpp_utils::value_identity_v< cpp_utils::concat_const_string(
                       cpp_utils::const_wstring{ LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\)" },
@@ -1072,9 +1073,7 @@ namespace scltk
         }
         static auto kill_execs()
         {
-            for ( const auto& exec : custom_rules.execs ) {
-                ( void ) cpp_utils::terminate_process_by_name( std::format( L"{}.exe", exec ) );
-            }
+            ( void ) cpp_utils::terminate_process_by_names( custom_rules.execs );
         }
         static auto execute_helpers_( const std::pmr::vector< std::pmr::wstring >& helpers ) noexcept
         {
