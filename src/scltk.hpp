@@ -304,7 +304,7 @@ namespace scltk
                     return value;
                 }
             }
-            static auto& set_value( value_t_& obj, bool val )
+            static auto& set_value( value_t_& obj, const bool val )
             {
                 if constexpr ( std::is_same_v< value_t_, std::atomic< bool > > ) {
                     obj.store( val, std::memory_order_release );
