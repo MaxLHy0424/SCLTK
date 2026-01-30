@@ -103,10 +103,10 @@ namespace scltk
                 } while ( Process32NextW( process_snapshot.get(), &process_entry ) );
             }
         }
+        inline constexpr auto empty_lambda{ [] static noexcept { } };
     }
-    template <
-      cpp_utils::const_string DisplayName, cpp_utils::same_as_type_list Execs, cpp_utils::same_as_type_list Servs,
-      std::invocable auto CrackHelper = []() static noexcept { }, std::invocable auto RestoreHelper = []() static noexcept { } >
+    template < cpp_utils::const_string DisplayName, cpp_utils::same_as_type_list Execs, cpp_utils::same_as_type_list Servs,
+               std::invocable auto CrackHelper = details::empty_lambda, std::invocable auto RestoreHelper = details::empty_lambda >
     struct compile_time_rule_node final
     {
         static inline constexpr auto display_name{ DisplayName };
