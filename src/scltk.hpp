@@ -38,6 +38,10 @@ namespace scltk
     {
         return func_exit;
     }
+    [[noreturn]] inline auto relaunch() noexcept -> cpp_utils::console_ui::func_action
+    {
+        cpp_utils::relaunch( 0 );
+    }
     template < cpp_utils::const_string Title, std::size_t NewLineCount >
     inline constexpr auto make_title_text{ cpp_utils::concat_const_string(
       cpp_utils::make_repeated_const_string< ' ', ( static_cast< std::size_t >( console_width ) - Title.size() + 1 ) / 2 >(),
