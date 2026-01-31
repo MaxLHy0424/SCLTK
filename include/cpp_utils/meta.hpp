@@ -324,37 +324,37 @@ namespace cpp_utils
         {
             using type = type_list< Ts1..., Ts2... >;
         };
-        template < typename T, typename SortedList, template < typename, typename > typename Pred >
+        template < typename T, typename SortedList, template < typename, typename > typename Comp >
         struct basic_insert_sorted_impl_;
-        template < typename T, template < typename, typename > typename Pred >
-        struct basic_insert_sorted_impl_< T, type_list<>, Pred > final
+        template < typename T, template < typename, typename > typename Comp >
+        struct basic_insert_sorted_impl_< T, type_list<>, Comp > final
         {
             using type = type_list< T >;
         };
-        template < typename T, typename U, typename... Us, template < typename, typename > typename Pred >
-        struct basic_insert_sorted_impl_< T, type_list< U, Us... >, Pred > final
+        template < typename T, typename U, typename... Us, template < typename, typename > typename Comp >
+        struct basic_insert_sorted_impl_< T, type_list< U, Us... >, Comp > final
         {
             using type = std::conditional_t<
-              Pred< T, U >::value, type_list< T, U, Us... >,
-              typename concat_impl_< type_list< U >, typename basic_insert_sorted_impl_< T, type_list< Us... >, Pred >::type >::type >;
+              Comp< T, U >::value, type_list< T, U, Us... >,
+              typename concat_impl_< type_list< U >, typename basic_insert_sorted_impl_< T, type_list< Us... >, Comp >::type >::type >;
         };
-        template < typename List, template < typename, typename > typename Pred >
-        struct basic_sort_impl_;
-        template < template < typename, typename > typename Pred >
-        struct basic_sort_impl_< type_list<>, Pred > final
+        template < typename List, template < typename, typename > typename Comp >
+        struct sort_impl_;
+        template < template < typename, typename > typename Comp >
+        struct sort_impl_< type_list<>, Comp > final
         {
             using type = type_list<>;
         };
-        template < typename T, template < typename, typename > typename Pred >
-        struct basic_sort_impl_< type_list< T >, Pred > final
+        template < typename T, template < typename, typename > typename Comp >
+        struct sort_impl_< type_list< T >, Comp > final
         {
             using type = type_list< T >;
         };
-        template < typename Head, typename... Rest, template < typename, typename > typename Pred >
-        struct basic_sort_impl_< type_list< Head, Rest... >, Pred > final
+        template < typename Head, typename... Rest, template < typename, typename > typename Comp >
+        struct sort_impl_< type_list< Head, Rest... >, Comp > final
         {
-            using sorted_rest = typename basic_sort_impl_< type_list< Rest... >, Pred >::type;
-            using type        = typename basic_insert_sorted_impl_< Head, sorted_rest, Pred >::type;
+            using sorted_rest = typename sort_impl_< type_list< Rest... >, Comp >::type;
+            using type        = typename basic_insert_sorted_impl_< Head, sorted_rest, Comp >::type;
         };
         template < template < typename... > typename Template >
         struct apply_impl_ final
@@ -486,8 +486,8 @@ namespace cpp_utils
         using swap    = typename swap_impl_< I1, I2 >::type;
         using reverse = typename reverse_impl_<>::type;
         using unique  = typename unique_impl_<>::type;
-        template < template < common_type, common_type > typename Pred >
-        using sort = typename basic_sort_impl_< type_list< Ts... >, Pred >::type;
+        template < template < common_type, common_type > typename Comp >
+        using sort = typename sort_impl_< type_list< Ts... >, Comp >::type;
         template < template < typename... > typename Template >
         using apply = typename apply_impl_< Template >::type;
         template < template < typename > typename Template >
