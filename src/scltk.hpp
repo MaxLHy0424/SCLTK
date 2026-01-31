@@ -130,10 +130,11 @@ namespace scltk
     };
     struct runtime_rule_node final
     {
-        std::pmr::vector< std::pmr::wstring > execs{ unsynced_mem_pool };
-        std::pmr::vector< std::pmr::wstring > servs{ unsynced_mem_pool };
-        std::pmr::vector< std::pmr::wstring > crack_helpers{ unsynced_mem_pool };
-        std::pmr::vector< std::pmr::wstring > restore_helpers{ unsynced_mem_pool };
+        using item_t = std::pmr::vector< std::pmr::wstring >;
+        item_t execs{ unsynced_mem_pool };
+        item_t servs{ unsynced_mem_pool };
+        item_t crack_helpers{ unsynced_mem_pool };
+        item_t restore_helpers{ unsynced_mem_pool };
     };
     using builtin_rules_t = cpp_utils::type_list<
       compile_time_rule_node<
