@@ -693,17 +693,17 @@ namespace scltk
               L"Hearts", L"Magnify", L"Mahjong", L"Minesweeper", L"PurblePlace", L"Solitaire", L"SpiderSolitaire" >;
             std::print( " -> 撤销功能禁用.\n" );
             []< cpp_utils::const_wstring... Items >( const cpp_utils::type_list< cpp_utils::value_identity< Items >... > ) static noexcept
-            { ( ( void ) RegDeleteTreeW( HKEY_CURRENT_USER, Items.c_str() ), ... ); }( reg_dirs_t{} );
+            { ( ( void ) cpp_utils::delete_registry_tree( HKEY_CURRENT_USER, Items.view() ), ... ); }( reg_dirs_t{} );
             ( void ) cpp_utils::delete_registry_key(
               HKEY_LOCAL_MACHINE, LR"(SOFTWARE\Policies\Microsoft\Windows NT\SystemRestore)"sv, L"DisableSR"sv );
             std::print( " -> 撤销文件劫持.\n" );
             []< cpp_utils::const_wstring... Items >( const cpp_utils::type_list< cpp_utils::value_identity< Items >... > ) static noexcept
             {
-                ( ( void ) RegDeleteTreeW(
+                ( ( void ) cpp_utils::delete_registry_tree(
                     HKEY_LOCAL_MACHINE,
                     cpp_utils::value_identity_v< cpp_utils::concat_const_string(
                       cpp_utils::const_wstring{ LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\)" },
-                      Items, cpp_utils::const_wstring{ L".exe" } ) >.c_str() ),
+                      Items, cpp_utils::const_wstring{ L".exe" } ) >.view() ),
                   ... );
             }( execs_t{} );
         }
