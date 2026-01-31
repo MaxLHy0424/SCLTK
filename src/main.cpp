@@ -17,7 +17,7 @@ auto main() -> int
     ( void ) cpp_utils::elevate_privilege();
     scltk::load_config();
     scltk::create_threads();
-    ui.reserve( 8 + scltk::builtin_rules_t::size )
+    ui.reserve( 9 + scltk::builtin_rules_t::size )
       .add_back( scltk::make_title_text< "[ 主  页 ]", 2 >.view() )
       .add_back( " < 退出 "sv, scltk::quit, cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_intensity )
       .add_back( " < 重启\n"sv, scltk::relaunch, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
