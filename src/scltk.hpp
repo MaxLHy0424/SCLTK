@@ -859,7 +859,7 @@ namespace scltk
           .add_back( make_title_text< "[ 工 具 箱 ]", 2 >.view() )
           .add_back( " < 返回 "sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
           .add_back( "\n[ 快捷工具 ]\n"sv )
-          .add_back( " > 启动命令提示符 "sv, details::launch_cmd );
+          .add_back( " > 启动命令提示符\n"sv, details::launch_cmd );
         [ & ]< typename... Items >( const cpp_utils::type_list< Items... > )
         { ( ui.add_back( make_button_text< Items::description >.view(), Items::execute ), ... ); }( funcs_t{} );
         ui.show();
