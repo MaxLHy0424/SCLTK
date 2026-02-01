@@ -18,7 +18,7 @@ if ($contains_uncommitted_changes -eq $true ) {
     $git_hash = git rev-parse --short HEAD
 }
 else {
-    $git_hash = "- work in progress"
+    $git_hash = "<work in progress>"
 }
 @"
 #pragma once
