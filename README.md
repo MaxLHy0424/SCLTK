@@ -266,22 +266,16 @@ make release
 make toolchain
 ```
 
-打包 `build/release` 下的可执行文件和 `LICENSE`，可使用：
+打包 `build/release` 下的可执行文件和 `LICENSE` 并签名，可使用：
 
 ```bash
-make pack
-```
-
-使用 GnuPG 生成签名文件，可使用：
-
-```bash
-make sign
+make pack_and_sign
 ```
 
 > [!NOTE]
 > 发布时，推荐使用如下命令：
 > ```bash
-> make build -j && make pack && make sign
+> make build -j && make pack_and_sign
 > ```
 
 > [!WARNING]
