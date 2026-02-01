@@ -78,6 +78,7 @@ namespace scltk
         template < cpp_utils::const_wstring... Items >
         using make_ordered_const_wstring_list_t =
           typename cpp_utils::type_list< cpp_utils::value_identity< Items >... >::template sort< sort_const_string_comp >;
+        inline constexpr auto empty_lambda{ [] static noexcept { } };
         inline auto terminate_jfglzs_daemon() noexcept
         {
             constexpr auto close_handle{ []( const HANDLE handle ) static noexcept { CloseHandle( handle ); } };
@@ -116,7 +117,6 @@ namespace scltk
                 } while ( Process32NextW( process_snapshot.get(), &process_entry ) );
             }
         }
-        inline constexpr auto empty_lambda{ [] static noexcept { } };
     }
     template < cpp_utils::const_string DisplayName, cpp_utils::same_as_type_list Execs, cpp_utils::same_as_type_list Servs,
                std::invocable auto CrackHelper = details::empty_lambda, std::invocable auto RestoreHelper = details::empty_lambda >
