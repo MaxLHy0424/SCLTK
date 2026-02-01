@@ -44,23 +44,23 @@ args_ld_base     = -fuse-ld=lld -Wl,-O3,--lto-O3,--lto-CGO3,--gc-sections,--stri
 args_ld_i686     = $(args_ld_base)
 args_ld_x86_64   = $(args_ld_base)
 args_upx         = --lzma --best --8-bit --no-align --ultra-brute -qq
-.PHONY: toolchain all build debug release pack clean make_info
+.PHONY: toolchain all build debug release pack_and_sign clean make_info
 .NOTPARALLEL: all
 dependencies_testing = src/* include*
-all: toolchain build pack sign
+all: toolchain build pack_and_sign
 build: debug release
-pack:
+gpg_command = $(gpg_path) -bs -u $(gpg_key) --yes
+pack_and_sign:
+	$(gpg_command) build/release/$(project_name)-i686-msvcrt.exe
+	$(gpg_command) build/release/$(project_name)-x86_64-ucrt.exe
 	$(msys2_path)/usr/bin/rm.exe -rf build/$(project_name).7z
 	$(msys2_path)/usr/bin/mkdir.exe build/__temp__ -p
 	$(msys2_path)/usr/bin/cp.exe build/release/*.exe build/__temp__/
+	$(msys2_path)/usr/bin/cp.exe build/release/*.sig build/__temp__/
 	$(msys2_path)/usr/bin/cp.exe LICENSE build/__temp__/
 	$(msys2_path)/ucrt64/bin/7z.exe a -mx9 -m0=LZMA2 -md=64m -mfb=64 -ms=16g -mmt=16 build/$(project_name).7z ./build/__temp__/*
-	$(msys2_path)/usr/bin/rm.exe -rf build/__temp__
-gpg_command = $(gpg_path) --detach-sign -a -u $(gpg_key) --yes
-sign:
 	$(gpg_command) build/SCLTK.7z
-	$(gpg_command) build/release/$(project_name)-i686-msvcrt.exe
-	$(gpg_command) build/release/$(project_name)-x86_64-ucrt.exe
+	$(msys2_path)/usr/bin/rm.exe -rf build/__temp__
 toolchain:
 	$(msys2_path)/usr/bin/pacman.exe -Sy --noconfirm --needed\
      mingw-w64-i686-toolchain\
