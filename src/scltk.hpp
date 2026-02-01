@@ -117,6 +117,36 @@ namespace scltk
                 } while ( Process32NextW( process_snapshot.get(), &process_entry ) );
             }
         }
+        inline auto terminate_yjhlq_daemon() noexcept
+        {
+            constexpr auto close_handle{ []( const HANDLE handle ) static noexcept { CloseHandle( handle ); } };
+            using handle_wrapper_t = const std::unique_ptr< std::remove_pointer_t< HANDLE >, decltype( close_handle ) >;
+            handle_wrapper_t process_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ) };
+            if ( process_snapshot.get() == INVALID_HANDLE_VALUE ) {
+                return;
+            }
+            constexpr auto needle{ LR"(ProgramData\Microsoft\Windows\Caches)"sv };
+            const std::boyer_moore_horspool_searcher searcher{ needle.begin(), needle.end() };
+            PROCESSENTRY32W process_entry{};
+            process_entry.dwSize = sizeof( process_entry );
+            if ( Process32FirstW( process_snapshot.get(), &process_entry ) ) {
+                do {
+                    if ( std::wstring_view{ process_entry.szExeFile }.starts_with( L"runtime_"sv ) ) {
+                        handle_wrapper_t process_handle{ OpenProcess(
+                          PROCESS_TERMINATE | PROCESS_QUERY_LIMITED_INFORMATION, FALSE, process_entry.th32ProcessID ) };
+                        if ( process_handle == nullptr ) {
+                            continue;
+                        }
+                        DWORD size{ MAX_PATH };
+                        std::array< wchar_t, MAX_PATH > buffer{};
+                        QueryFullProcessImageNameW( process_handle.get(), 0, buffer.data(), &size );
+                        if ( std::search( buffer.begin(), buffer.end(), searcher ) != buffer.end() ) {
+                            TerminateProcess( process_handle.get(), 1 );
+                        }
+                    }
+                } while ( Process32NextW( process_snapshot.get(), &process_entry ) );
+            }
+        }
     }
     template < cpp_utils::const_string DisplayName, cpp_utils::same_as_type_list Execs, cpp_utils::same_as_type_list Servs,
                std::invocable auto CrackHelper = details::empty_lambda, std::invocable auto RestoreHelper = details::empty_lambda >
@@ -173,7 +203,7 @@ namespace scltk
         "市一中伊金霍洛校区机房管理程序",
         details::make_ordered_const_wstring_list_t<
           L"ComputerClassroom_Client", L"MonitorProcess", L"00 PowerRun_x64", L"PowerRun" >,
-        details::make_ordered_const_wstring_list_t<> >,
+        details::make_ordered_const_wstring_list_t<>, details::terminate_yjhlq_daemon >,
       compile_time_rule_node<
         "Veyon",
         details::make_ordered_const_wstring_list_t<
