@@ -29,7 +29,7 @@
 
 **请勿使用 SCLTK 扰乱课堂纪律，造成的后果与开发者无关。**
 
-**SCLTK 以 [MIT License](./LICENSE) 开源，详细内容请自行阅读。**
+**SCLTK 以 [MIT License](./LICENSE.txt) 开源，详细内容请自行阅读。**
 
 ## 1 启动
 
@@ -266,7 +266,7 @@ make release
 make toolchain
 ```
 
-打包 `build/release` 下的可执行文件和 `LICENSE` 并签名，可使用：
+打包 `build/release` 下的可执行文件和 `LICENSE.txt` 并签名，可使用：
 
 ```bash
 make pack_and_sign

@@ -57,7 +57,7 @@ pack_and_sign:
 	$(msys2_path)/usr/bin/mkdir.exe build/__temp__ -p
 	$(msys2_path)/usr/bin/cp.exe build/release/*.exe build/__temp__/
 	$(msys2_path)/usr/bin/cp.exe build/release/*.sig build/__temp__/
-	$(msys2_path)/usr/bin/cp.exe LICENSE build/__temp__/
+	$(msys2_path)/usr/bin/cp.exe LICENSE.txt build/__temp__/
 	$(msys2_path)/ucrt64/bin/7z.exe a -mx9 -m0=LZMA2 -md=64m -mfb=64 -ms=16g -mmt=16 build/$(project_name).7z ./build/__temp__/*
 	$(gpg_command) build/SCLTK.7z
 	$(msys2_path)/usr/bin/rm.exe -rf build/__temp__
