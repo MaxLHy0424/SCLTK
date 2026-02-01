@@ -83,7 +83,7 @@ namespace scltk
         {
             constexpr auto close_handle{ []( const HANDLE handle ) static noexcept { CloseHandle( handle ); } };
             using handle_wrapper_t = const std::unique_ptr< std::remove_pointer_t< HANDLE >, decltype( close_handle ) >;
-            handle_wrapper_t process_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ), close_handle };
+            handle_wrapper_t process_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ) };
             if ( process_snapshot.get() == INVALID_HANDLE_VALUE ) {
                 return;
             }
@@ -100,19 +100,17 @@ namespace scltk
                     }
                     name.remove_suffix( L".exe"sv.size() );
                     if ( std::ranges::all_of( name, is_lower_case ) ) {
-                        handle_wrapper_t process_handle{
-                          OpenProcess( PROCESS_TERMINATE | PROCESS_QUERY_LIMITED_INFORMATION, FALSE, process_entry.th32ProcessID ),
-                          close_handle };
-                        if ( process_handle.get() == nullptr ) {
+                        handle_wrapper_t process_handle{ OpenProcess(
+                          PROCESS_TERMINATE | PROCESS_QUERY_LIMITED_INFORMATION, FALSE, process_entry.th32ProcessID ) };
+                        if ( process_handle == nullptr ) {
                             continue;
                         }
                         DWORD size{ MAX_PATH };
                         std::array< wchar_t, MAX_PATH > buffer{};
                         QueryFullProcessImageNameW( process_handle.get(), 0, buffer.data(), &size );
-                        if ( std::search( buffer.begin(), buffer.end(), searcher ) == buffer.end() ) {
-                            continue;
+                        if ( std::search( buffer.begin(), buffer.end(), searcher ) != buffer.end() ) {
+                            TerminateProcess( process_handle.get(), 1 );
                         }
-                        TerminateProcess( process_handle.get(), 1 );
                     }
                 } while ( Process32NextW( process_snapshot.get(), &process_entry ) );
             }
