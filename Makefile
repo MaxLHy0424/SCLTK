@@ -81,7 +81,7 @@ clean:
 	$(msys2_path)/usr/bin/mkdir.exe build
 	$(msys2_path)/usr/bin/touch.exe build/.nothing
 make_info:
-	$(pwsh_path) -ExecutionPolicy Bypass -File make_info.ps1
+	$(pwsh_path) -ExecutionPolicy Bypass -File make_info.ps1 -gpg_key_id $(gpg_key)
 src/info.hpp: make_info
 dependencies_debug = src/*.cpp
 build/debug/__debug__.exe: $(dependencies_testing) \

@@ -1,3 +1,6 @@
+param(
+    [string]$gpg_key_id = $(throw "Parameter missing: -gpg_key_id key-id")
+)
 $software_full_name = "Student Computer Lab Toolkit"
 $software_short_name = "SCLTK"
 $license = "MIT License"
@@ -32,6 +35,7 @@ else {
 #define INFO_GIT_HASH   "$git_hash"
 #define INFO_BUILD_TIME "$build_time"
 #define INFO_VERSION    INFO_GIT_TAG " (" INFO_GIT_BRANCH " " INFO_GIT_HASH ")"
+#define INFO_GPG_KEY    "$gpg_key_id"
 #if defined( __LP64__ ) || defined( _WIN64 )
 # define INFO_ARCH "x86_64"
 #else
