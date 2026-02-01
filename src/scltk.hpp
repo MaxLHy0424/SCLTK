@@ -71,7 +71,7 @@ namespace scltk
         struct sort_const_string_comp;
         template < cpp_utils::basic_const_string A, cpp_utils::basic_const_string B >
             requires std::same_as< typename decltype( A )::char_t, typename decltype( B )::char_t >
-        struct sort_const_string_comp< cpp_utils::value_identity< A >, cpp_utils::value_identity< B > >
+        struct sort_const_string_comp< cpp_utils::value_identity< A >, cpp_utils::value_identity< B > > final
         {
             static inline constexpr auto value{ A.view() < B.view() };
         };
