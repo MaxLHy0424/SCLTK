@@ -163,7 +163,7 @@ namespace cpp_utils
     }
     [[nodiscard]] inline auto terminate_process_by_handle( const HANDLE handle ) noexcept
     {
-        return TerminateProcess( handle, 1 );
+        return static_cast< LONG >( TerminateProcess( handle, 1 ) );
     }
     [[nodiscard]] inline auto terminate_process_by_pid( const DWORD pid ) noexcept
     {
@@ -171,7 +171,7 @@ namespace cpp_utils
         if ( process_handle == nullptr ) {
             return ERROR_ACCESS_DENIED;
         }
-        NTSTATUS status{ terminate_process_by_handle( process_handle ) };
+        const LONG status{ terminate_process_by_handle( process_handle ) };
         CloseHandle( process_handle );
         return status;
     }
