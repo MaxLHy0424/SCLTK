@@ -713,9 +713,9 @@ namespace scltk
         {
             STARTUPINFOW startup{};
             PROCESS_INFORMATION proc;
-            wchar_t cmd_line[]{ L"cmd.exe" };
+            wchar_t cmd[]{ L"cmd.exe" };
             startup.cb = sizeof( startup );
-            if ( CreateProcessW( nullptr, cmd_line, nullptr, nullptr, FALSE, 0, nullptr, nullptr, &startup, &proc ) ) {
+            if ( CreateProcessW( nullptr, cmd, nullptr, nullptr, FALSE, 0, nullptr, nullptr, &startup, &proc ) ) {
                 con.set_title( L"" INFO_SHORT_NAME " - 命令提示符" )
                   .set_size( 120, 30, unsynced_mem_pool )
                   .fix_size( false )
@@ -774,9 +774,9 @@ namespace scltk
             si.hStdInput  = GetStdHandle( STD_INPUT_HANDLE );
             si.hStdOutput = nul_file_handle;
             si.hStdError  = nul_file_handle;
-            wchar_t cmd_line[]{ L"netsh.exe advfirewall reset" };
+            wchar_t cmd[]{ L"netsh.exe advfirewall reset" };
             const auto has_created_process_successfully{ CreateProcessW(
-              nullptr, cmd_line, nullptr, nullptr, TRUE, CREATE_NO_WINDOW | CREATE_UNICODE_ENVIRONMENT, nullptr, nullptr, &si,
+              nullptr, cmd, nullptr, nullptr, TRUE, CREATE_NO_WINDOW | CREATE_UNICODE_ENVIRONMENT, nullptr, nullptr, &si,
               &proc_info ) };
             CloseHandle( nul_file_handle );
             if ( has_created_process_successfully ) {
@@ -1171,15 +1171,11 @@ namespace scltk
         {
             std::error_code ec;
             for ( const auto& helper : helpers ) {
-                if ( !std::filesystem::exists( helper, ec ) ) {
-                    continue;
-                }
                 STARTUPINFOW startup{};
                 startup.cb = sizeof( startup );
                 PROCESS_INFORMATION proc{};
-                auto cmd_line{ std::format( L"\"{}\"", std::pmr::wstring{ helper.c_str(), unsynced_mem_pool } ) };
-                if ( CreateProcessW( nullptr, cmd_line.data(), nullptr, nullptr, FALSE, 0, nullptr, nullptr, &startup, &proc ) )
-                {
+                std::pmr::wstring cmd{ helper, unsynced_mem_pool };
+                if ( CreateProcessW( nullptr, cmd.data(), nullptr, nullptr, FALSE, 0, nullptr, nullptr, &startup, &proc ) ) {
                     WaitForSingleObject( proc.hProcess, INFINITE );
                     CloseHandle( proc.hProcess );
                     CloseHandle( proc.hThread );
