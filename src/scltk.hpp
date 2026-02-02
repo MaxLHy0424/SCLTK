@@ -782,7 +782,6 @@ namespace scltk
                 }
                 return false;
             } };
-            std::error_code ec;
             const auto hosts_path{ [] static
             {
                 std::array< wchar_t, MAX_PATH > result;
@@ -790,6 +789,7 @@ namespace scltk
                 std::ranges::copy( LR"(\System32\drivers\etc\hosts)", std::ranges::find( result, L'\0' ) );
                 return std::filesystem::path{ result.data() };
             }() };
+            std::error_code ec;
             if ( !std::filesystem::exists( hosts_path, ec ) ) {
                 return;
             }
@@ -808,6 +808,9 @@ namespace scltk
             }
             std::filesystem::permissions( hosts_path, original_perms, std::filesystem::perm_options::replace, ec );
             reset_hosts_error_check( ec );
+        }
+        inline auto flush_dns() noexcept
+        {
             constexpr auto flush_dns_error_message{ "\n (!) 刷新 DNS 失败.\n\n" };
             std::print( " -> 刷新 DNS 缓存.\n" );
             const auto dnsapi{ LoadLibraryW( L"dnsapi.dll" ) };
