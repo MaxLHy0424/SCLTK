@@ -473,11 +473,19 @@ namespace scltk
         {
             const auto flag_exec_ansi{ cpp_utils::to_string( flag_exec_, charset_id, unsynced_mem_pool ) };
             const auto flag_serv_ansi{ cpp_utils::to_string( flag_serv_, charset_id, unsynced_mem_pool ) };
+            const auto flag_crack_helper_ansi{ cpp_utils::to_string( flag_crack_helper_, charset_id, unsynced_mem_pool ) };
+            const auto flag_restore_helper_ansi{ cpp_utils::to_string( flag_restore_helper_, charset_id, unsynced_mem_pool ) };
             for ( const auto& exec : custom_rules.execs ) {
                 out << flag_exec_ansi << ' ' << cpp_utils::to_string( exec, charset_id, unsynced_mem_pool ) << '\n';
             }
             for ( const auto& serv : custom_rules.servs ) {
                 out << flag_serv_ansi << ' ' << cpp_utils::to_string( serv, charset_id, unsynced_mem_pool ) << '\n';
+            }
+            for ( const auto& helper : custom_rules.crack_helpers ) {
+                out << flag_crack_helper_ansi << ' ' << cpp_utils::to_string( helper, charset_id, unsynced_mem_pool ) << '\n';
+            }
+            for ( const auto& helper : custom_rules.restore_helpers ) {
+                out << flag_restore_helper_ansi << ' ' << cpp_utils::to_string( helper, charset_id, unsynced_mem_pool ) << '\n';
             }
         }
         static auto before_load_() noexcept
