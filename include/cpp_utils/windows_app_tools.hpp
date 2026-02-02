@@ -334,19 +334,17 @@ namespace cpp_utils
         }
         return static_cast< bool >( is_admin );
     }
-    [[noreturn]] inline auto relaunch( const int exit_code ) noexcept
+    inline auto clone_self() noexcept
     {
         std::array< wchar_t, MAX_PATH > file_path;
         GetModuleFileNameW( nullptr, file_path.data(), MAX_PATH );
         ShellExecuteW( nullptr, L"open", file_path.data(), nullptr, nullptr, SW_SHOWNORMAL );
-        std::exit( exit_code );
     }
-    [[noreturn]] inline auto relaunch_as_admin( const int exit_code ) noexcept
+    inline auto clone_self_as_admin() noexcept
     {
         std::array< wchar_t, MAX_PATH > file_path;
         GetModuleFileNameW( nullptr, file_path.data(), MAX_PATH );
         ShellExecuteW( nullptr, L"runas", file_path.data(), nullptr, nullptr, SW_SHOWNORMAL );
-        std::exit( exit_code );
     }
     namespace details
     {
