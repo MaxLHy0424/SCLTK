@@ -748,6 +748,31 @@ namespace scltk
                   ... );
             }( execs_t{} );
         }
+        inline auto reset_firewall_rules() noexcept
+        {
+            std::print( " -> 重置防火墙规则.\n" );
+            STARTUPINFOW si{};
+            si.cb = sizeof( si );
+            PROCESS_INFORMATION proc_info{};
+            SECURITY_ATTRIBUTES sec_attrib{ sizeof( sec_attrib ), nullptr, TRUE };
+            const auto nul_file_handle{
+              CreateFileW( L"NUL", GENERIC_WRITE, FILE_SHARE_WRITE, &sec_attrib, OPEN_EXISTING, 0, nullptr ) };
+            if ( nul_file_handle == INVALID_HANDLE_VALUE ) {
+                return;
+            }
+            si.dwFlags    = STARTF_USESTDHANDLES;
+            si.hStdInput  = GetStdHandle( STD_INPUT_HANDLE );
+            si.hStdOutput = nul_file_handle;
+            si.hStdError  = nul_file_handle;
+            wchar_t cmd[]{ L"netsh.exe advfirewall reset" };
+            CreateProcessW(
+              nullptr, cmd, nullptr, nullptr, TRUE, CREATE_NO_WINDOW | CREATE_UNICODE_ENVIRONMENT, nullptr, nullptr, &si,
+              &proc_info );
+            CloseHandle( nul_file_handle );
+            WaitForSingleObject( proc_info.hProcess, INFINITE );
+            CloseHandle( proc_info.hProcess );
+            CloseHandle( proc_info.hThread );
+        }
         inline auto reset_hosts() noexcept
         {
             std::print( " -> 重置 Hosts.\n" );
