@@ -293,7 +293,7 @@ namespace cpp_utils
         const auto service{
           OpenServiceW( scm, service_name.data(), SERVICE_STOP | SERVICE_QUERY_STATUS | SERVICE_ENUMERATE_DEPENDENTS ) };
         DWORD result{ ERROR_SUCCESS };
-        if ( service ) {
+        if ( service != nullptr ) {
             result = details::stop_service_and_dependencies( scm, service, resource );
             CloseServiceHandle( service );
         } else {
