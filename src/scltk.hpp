@@ -1169,9 +1169,6 @@ namespace scltk
         }
         static auto execute_helpers_( const std::pmr::vector< std::pmr::wstring >& helpers ) noexcept
         {
-            if ( helpers.empty() ) {
-                return;
-            }
             std::error_code ec;
             for ( const auto& helper : helpers ) {
                 if ( !std::filesystem::exists( helper, ec ) ) {
