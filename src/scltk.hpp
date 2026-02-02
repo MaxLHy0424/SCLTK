@@ -492,6 +492,8 @@ namespace scltk
         {
             custom_rules.execs.clear();
             custom_rules.servs.clear();
+            custom_rules.crack_helpers.clear();
+            custom_rules.restore_helpers.clear();
         }
         static auto show_help_info_()
         {
