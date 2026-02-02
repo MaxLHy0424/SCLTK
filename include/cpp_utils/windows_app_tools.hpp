@@ -341,6 +341,19 @@ namespace cpp_utils
         ShellExecuteW( nullptr, L"open", file_path.data(), nullptr, nullptr, SW_SHOWNORMAL );
         std::exit( exit_code );
     }
+    [[noreturn]] inline auto relaunch_in_place( const int exit_code ) noexcept
+    {
+        std::array< wchar_t, MAX_PATH > file_path;
+        GetModuleFileNameW( nullptr, file_path.data(), MAX_PATH );
+        STARTUPINFOW startup{};
+        PROCESS_INFORMATION proc;
+        startup.cb = sizeof( startup );
+        if ( CreateProcessW( file_path.data(), nullptr, nullptr, nullptr, FALSE, 0, nullptr, nullptr, &startup, &proc ) ) {
+            CloseHandle( proc.hProcess );
+            CloseHandle( proc.hThread );
+        }
+        std::exit( exit_code );
+    }
     [[noreturn]] inline auto relaunch_as_admin( const int exit_code ) noexcept
     {
         std::array< wchar_t, MAX_PATH > file_path;
