@@ -854,6 +854,12 @@ namespace scltk
             }
             FreeLibrary( dnsapi );
         }
+        inline auto reset_partial_network_settings() noexcept
+        {
+            reset_firewall_rules();
+            reset_firewall_rules();
+            flush_dns();
+        }
         inline auto reset_jfglzs_config() noexcept
         {
             std::print(
@@ -905,6 +911,7 @@ namespace scltk
           details::func_item< "重启资源管理器", details::relaunch_explorer >,
           details::func_item< "恢复操作系统组件", details::restore_os_components >,
           details::func_item< "恢复 USB 存储设备访问", details::restore_usb_device_access >,
+          details::func_item< "重置部分网络设置", details::reset_partial_network_settings >,
           details::func_item< "重置 \"机房管理助手\" 配置", details::reset_jfglzs_config >,
           details::func_item< "重置 Google Chrome 管理策略", details::reset_google_chrome_policy >,
           details::func_item< "重置 Microsoft Edge 管理策略", details::reset_microsoft_edge_policy > >;
