@@ -1162,17 +1162,15 @@ namespace scltk
             if ( helpers.empty() ) {
                 return;
             }
-            const auto self_path{ std::filesystem::current_path() };
             std::error_code ec;
             for ( const auto& helper : helpers ) {
-                const auto path{ self_path / helper };
-                if ( !std::filesystem::exists( path, ec ) ) {
+                if ( !std::filesystem::exists( helper, ec ) ) {
                     continue;
                 }
                 STARTUPINFOW startup{};
                 startup.cb = sizeof( startup );
                 PROCESS_INFORMATION proc{};
-                auto cmd_line{ std::format( L"\"{}\"", std::pmr::wstring{ path.c_str(), unsynced_mem_pool } ) };
+                auto cmd_line{ std::format( L"\"{}\"", std::pmr::wstring{ helper.c_str(), unsynced_mem_pool } ) };
                 if ( CreateProcessW( nullptr, cmd_line.data(), nullptr, nullptr, FALSE, 0, nullptr, nullptr, &startup, &proc ) )
                 {
                     WaitForSingleObject( proc.hProcess, INFINITE );
