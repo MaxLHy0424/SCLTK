@@ -1179,26 +1179,13 @@ namespace scltk
                 }
                 STARTUPINFOW startup{};
                 startup.cb = sizeof( startup );
-                PROCESS_INFORMATION proc_info{};
-                SECURITY_ATTRIBUTES sec_attrib{ sizeof( sec_attrib ), nullptr, TRUE };
-                const auto nul_file_handle{
-                  CreateFileW( L"NUL", GENERIC_WRITE, FILE_SHARE_WRITE, &sec_attrib, OPEN_EXISTING, 0, nullptr ) };
-                if ( nul_file_handle == INVALID_HANDLE_VALUE ) {
-                    return;
-                }
-                startup.dwFlags    = STARTF_USESTDHANDLES;
-                startup.hStdInput  = nul_file_handle;
-                startup.hStdOutput = con.std_output_handle;
-                startup.hStdError  = con.std_error_handle;
+                PROCESS_INFORMATION proc{};
                 auto cmd_line{ std::format( L"\"{}\"", std::pmr::wstring{ helper.c_str(), unsynced_mem_pool } ) };
-                const auto has_created_process_successfully{ CreateProcessW(
-                  nullptr, cmd_line.data(), nullptr, nullptr, TRUE, CREATE_NO_WINDOW | CREATE_UNICODE_ENVIRONMENT, nullptr,
-                  nullptr, &startup, &proc_info ) };
-                CloseHandle( nul_file_handle );
-                if ( has_created_process_successfully ) {
-                    WaitForSingleObject( proc_info.hProcess, INFINITE );
-                    CloseHandle( proc_info.hProcess );
-                    CloseHandle( proc_info.hThread );
+                if ( CreateProcessW( nullptr, cmd_line.data(), nullptr, nullptr, FALSE, 0, nullptr, nullptr, &startup, &proc ) )
+                {
+                    WaitForSingleObject( proc.hProcess, INFINITE );
+                    CloseHandle( proc.hProcess );
+                    CloseHandle( proc.hThread );
                 }
             }
         }
