@@ -857,7 +857,7 @@ namespace scltk
         inline auto reset_partial_network_settings() noexcept
         {
             reset_firewall_rules();
-            reset_firewall_rules();
+            reset_hosts();
             flush_dns();
         }
         inline auto reset_jfglzs_config() noexcept
