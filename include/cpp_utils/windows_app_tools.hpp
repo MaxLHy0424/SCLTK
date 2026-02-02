@@ -469,6 +469,7 @@ namespace cpp_utils
       public:
         HANDLE std_input_handle;
         HANDLE std_output_handle;
+        HANDLE std_error_handle;
         auto&& press_any_key_to_continue( this auto&& self ) noexcept
         {
             DWORD mode;
@@ -554,6 +555,7 @@ namespace cpp_utils
           : details::basic_window{ .window_handle{ GetConsoleWindow() } }
           , std_input_handle{ GetStdHandle( STD_INPUT_HANDLE ) }
           , std_output_handle{ GetStdHandle( STD_OUTPUT_HANDLE ) }
+          , std_error_handle{ GetStdHandle( STD_ERROR_HANDLE ) }
         { }
         console( const console& ) noexcept = default;
         ~console() noexcept                = default;
