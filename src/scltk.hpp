@@ -509,16 +509,16 @@ namespace scltk
                 " 其中, <flag> 有如下选项:\n"
                 " exec - 以 .exe 为文件扩展名的可执行文件的名称\n"
                 " serv - Windows 服务的服务名称.\n"
-                " crack_helper - 破解时执行的程序的相对路径.\n"
-                " restore_helper - 恢复时执行的程序的相对路径.\n\n"
+                " crack_helper - 破解时执行的程序的命令行.\n"
+                " restore_helper - 恢复时执行的程序的命令行.\n\n"
                 " 使用示例:\n"
                 " [custom_rules]\n"
                 " exec: abc_frontend\n"
                 " exec: abc_backend\n"
                 " serv: abc_connect\n"
                 " serv: abc_proc_defender\n"
-                " crack_helper: helpers\\crack_abc.exe\n"
-                " restore_helper: helpers\\restore_abc.exe"sv )
+                " crack_helper: \"abc helper.exe\" crack\n"
+                " restore_helper: \"abc helper.exe\" restore"sv )
               .show();
             return func_back;
         }

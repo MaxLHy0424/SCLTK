@@ -122,8 +122,8 @@ SCLTK 窗口相关选项。位于 `[ 选项 ]` 下。
 `<flag>` 有以下选项（区分大小写）：
 - `exec`：表明该项自定义规则为以 `.exe` 为文件扩展名的可执行文件的名称。
 - `serv`：表明该项自定义规则为某个 Windows 服务的服务名称（**不是显示名称**）。
-- `crack_helper`：破解时执行的程序的相对路径（**不支持绝对路径，不支持传参，路径分隔符推荐使用反斜杠**）。
-- `restore_helper`：恢复时执行的程序的相对路径（**不支持绝对路径，不支持传参，路径分隔符推荐使用反斜杠**）。
+- `crack_helper`：破解时执行的程序的命令行。
+- `restore_helper`：恢复时执行的程序的命令行。
 
 `<flag>` 后的冒号与 `<item>` 之间可以有若干个空白字符。
 
@@ -146,8 +146,8 @@ exec: abc_frontend.exe
 exec: abc_backend.exe
 serv: abc_connect_service.exe
 serv: abc_proc_defender
-crack_helper: helpers\crack_abc.exe
-restore_helper: helpers\restore_abc.exe
+crack_helper: "abc helper.exe" crack
+restore_helper: "abc helper.exe" restore
 ```
 
 ## 4 工具箱
