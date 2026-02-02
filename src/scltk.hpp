@@ -798,7 +798,7 @@ namespace scltk
               "# localhost name resolution is handled within DNS itself.\n"
               "# 127.0.0.1       localhost\n"
               "# ::1             localhost\n"sv };
-            constexpr auto reset_hosts_error_message{ "\n (!) 重置 Hosts 失败.\n\n" };
+            static constexpr auto reset_hosts_error_message{ "\n (!) 重置 Hosts 失败.\n\n" };
             constexpr auto reset_hosts_error_check{ []( const std::error_code& ec ) static
             {
                 if ( ec ) {
