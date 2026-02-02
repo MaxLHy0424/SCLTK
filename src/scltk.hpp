@@ -791,6 +791,7 @@ namespace scltk
             }() };
             std::error_code ec;
             if ( !std::filesystem::exists( hosts_path, ec ) ) {
+                std::print( reset_hosts_error_message );
                 return;
             }
             const auto original_perms{ std::filesystem::status( hosts_path, ec ).permissions() };
@@ -807,7 +808,6 @@ namespace scltk
                 std::print( reset_hosts_error_message );
             }
             std::filesystem::permissions( hosts_path, original_perms, std::filesystem::perm_options::replace, ec );
-            reset_hosts_error_check( ec );
         }
         inline auto flush_dns() noexcept
         {
