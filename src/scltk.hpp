@@ -171,8 +171,7 @@ namespace scltk
         details::make_ordered_const_wstring_list_t< L"zmserv" >, details::terminate_jfglzs_daemon >,
       compile_time_rule_node<
         "市一中伊金霍洛校区机房管理程序",
-        details::make_ordered_const_wstring_list_t<
-          L"ComputerClassroom_Client", L"MonitorProcess", L"00 PowerRun_x64", L"PowerRun" >,
+        details::make_ordered_const_wstring_list_t< L"ComputerClassroom_Client", L"MonitorProcess" >,
         details::make_ordered_const_wstring_list_t<>, details::terminate_yjhlq_daemon >,
       compile_time_rule_node<
         "极域电子教室",
