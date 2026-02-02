@@ -38,9 +38,10 @@ namespace scltk
     {
         return func_exit;
     }
-    [[noreturn]] inline auto relaunch() noexcept -> cpp_utils::console_ui::func_action
+    inline auto relaunch() noexcept
     {
-        cpp_utils::relaunch( 0 );
+        cpp_utils::clone_self();
+        return func_exit;
     }
     template < cpp_utils::const_string Title, std::size_t NewLineCount >
     inline constexpr auto make_title_text{ cpp_utils::concat_const_string(
