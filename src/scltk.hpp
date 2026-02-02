@@ -765,13 +765,15 @@ namespace scltk
             si.hStdOutput = nul_file_handle;
             si.hStdError  = nul_file_handle;
             wchar_t cmd[]{ L"netsh.exe advfirewall reset" };
-            CreateProcessW(
+            const auto has_created_process_successfully{ CreateProcessW(
               nullptr, cmd, nullptr, nullptr, TRUE, CREATE_NO_WINDOW | CREATE_UNICODE_ENVIRONMENT, nullptr, nullptr, &si,
-              &proc_info );
+              &proc_info ) };
             CloseHandle( nul_file_handle );
-            WaitForSingleObject( proc_info.hProcess, INFINITE );
-            CloseHandle( proc_info.hProcess );
-            CloseHandle( proc_info.hThread );
+            if ( has_created_process_successfully ) {
+                WaitForSingleObject( proc_info.hProcess, INFINITE );
+                CloseHandle( proc_info.hProcess );
+                CloseHandle( proc_info.hThread );
+            }
         }
         inline auto reset_hosts() noexcept
         {
