@@ -750,6 +750,7 @@ namespace scltk
         }
         inline auto reset_hosts() noexcept
         {
+            std::print( " -> 重置 Hosts.\n" );
             constexpr auto default_content{
               "# Copyright (c) 1993-2009 Microsoft Corp.\n"
               "#\n"
@@ -772,16 +773,16 @@ namespace scltk
               "# localhost name resolution is handled within DNS itself.\n"
               "# 127.0.0.1       localhost\n"
               "# ::1             localhost\n"sv };
-            constexpr auto has_error{ []( const std::error_code& ec ) static
+            constexpr auto reset_hosts_error_message{ "\n (!) 重置 Hosts 失败.\n\n" };
+            constexpr auto reset_hosts_error_check{ []( const std::error_code& ec ) static
             {
                 if ( ec ) {
-                    std::print( "\n (!) 重置失败.\n\n" );
+                    std::print( reset_hosts_error_message );
                     return true;
                 }
                 return false;
             } };
             std::error_code ec;
-            std::print( " -> 检查文件是否存在.\n" );
             const auto hosts_path{ [] static
             {
                 std::array< wchar_t, MAX_PATH > result;
@@ -789,42 +790,39 @@ namespace scltk
                 std::ranges::copy( LR"(\System32\drivers\etc\hosts)", std::ranges::find( result, L'\0' ) );
                 return std::filesystem::path{ result.data() };
             }() };
-            const auto is_exists_hosts_file{ std::filesystem::exists( hosts_path, ec ) };
-            if ( has_error( ec ) || !is_exists_hosts_file ) {
+            if ( !std::filesystem::exists( hosts_path, ec ) ) {
                 return;
             }
-            std::print( " -> 获取原文件权限.\n" );
             const auto original_perms{ std::filesystem::status( hosts_path, ec ).permissions() };
-            if ( has_error( ec ) ) {
+            if ( reset_hosts_error_check( ec ) ) {
                 return;
             }
-            std::print( " -> 设置文件权限.\n" );
             std::filesystem::permissions( hosts_path, std::filesystem::perms::all, std::filesystem::perm_options::replace, ec );
-            if ( has_error( ec ) ) {
+            if ( reset_hosts_error_check( ec ) ) {
                 return;
             }
-            std::print( " -> 重置文件.\n" );
             std::ofstream file{ hosts_path, std::ios::out | std::ios::trunc | std::ios::binary };
             file.write( default_content.data(), default_content.size() ).flush();
             if ( !file.good() ) {
-                std::print( "\n (!) 重置失败, 无法写入.\n\n" );
+                std::print( reset_hosts_error_message );
             }
-            std::print( " -> 恢复文件权限.\n" );
             std::filesystem::permissions( hosts_path, original_perms, std::filesystem::perm_options::replace, ec );
-            has_error( ec );
+            reset_hosts_error_check( ec );
+            constexpr auto flush_dns_error_message{ "\n (!) 刷新 DNS 失败.\n\n" };
             std::print( " -> 刷新 DNS 缓存.\n" );
             const auto dnsapi{ LoadLibraryW( L"dnsapi.dll" ) };
             if ( dnsapi == nullptr ) {
-                std::print( "\n (!) 刷新 DNS 失败.\n\n" );
+                std::print( flush_dns_error_message );
                 return;
             }
             const auto dns_flush_resolver_cache{
               std::bit_cast< BOOL( WINAPI* )() noexcept >( GetProcAddress( dnsapi, "DnsFlushResolverCache" ) ) };
             if ( dns_flush_resolver_cache == nullptr ) {
-                std::print( "\n (!) 刷新 DNS 失败.\n\n" );
+                std::print( flush_dns_error_message );
+                return;
             }
             if ( !dns_flush_resolver_cache() ) {
-                std::print( "\n (!) 刷新 DNS 失败.\n\n" );
+                std::print( flush_dns_error_message );
             }
             FreeLibrary( dnsapi );
         }
