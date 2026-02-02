@@ -895,7 +895,13 @@ namespace scltk
             std::print( " -> 等待继续执行.\n" );
             std::this_thread::sleep_for( 3s );
             std::print( " -> 启动进程.\n" );
-            ShellExecuteW( nullptr, L"open", L"explorer.exe", nullptr, nullptr, SW_SHOWNORMAL );
+            STARTUPINFOW startup{};
+            PROCESS_INFORMATION proc;
+            startup.cb = sizeof( startup );
+            if ( CreateProcessW( L"explorer.exe", nullptr, nullptr, nullptr, FALSE, 0, nullptr, nullptr, &startup, &proc ) ) {
+                CloseHandle( proc.hProcess );
+                CloseHandle( proc.hThread );
+            }
         }
         inline auto restore_usb_device_access() noexcept
         {
