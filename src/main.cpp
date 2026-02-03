@@ -15,7 +15,7 @@ auto main() -> int
     ui.set_constraints( true, true );
     std::print( " -> 准备就绪." );
     ( void ) cpp_utils::elevate_privilege();
-    scltk::load_config();
+    scltk::load_config( false );
     scltk::create_threads();
     ui.reserve( 9 + scltk::builtin_rules_t::size )
       .add_back( scltk::make_title_text< "[ 主  页 ]", 2 >.view() )

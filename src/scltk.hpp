@@ -562,7 +562,7 @@ namespace scltk
             return std::string_view{ head, tail };
         }
     }
-    inline auto load_config( const bool is_reload = false )
+    inline auto load_config( const bool is_reload )
     {
         std::ifstream config_file{ config_file_name, std::ios::in };
         if ( !config_file.good() ) {
@@ -602,16 +602,21 @@ namespace scltk
                 }, config_nodes );
                 continue;
             }
-            current_config_node.visit( [ & ]< typename T >( const T node_ptr )
-            {
-                if constexpr ( !std::is_same_v< T, std::monostate > ) {
-                    if ( is_reload ) {
+            if ( is_reload ) {
+                current_config_node.visit( [ & ]< typename T >( const T node_ptr )
+                {
+                    if constexpr ( !std::is_same_v< T, std::monostate > ) {
                         node_ptr->reload( parsed_line );
-                    } else {
+                    }
+                } );
+            } else {
+                current_config_node.visit( [ & ]< typename T >( const T node_ptr )
+                {
+                    if constexpr ( !std::is_same_v< T, std::monostate > ) {
                         node_ptr->load( parsed_line );
                     }
-                }
-            } );
+                } );
+            }
         }
         std::apply( []< typename... Ts >( Ts&... config_node ) static { ( config_node.after_load(), ... ); }, config_nodes );
     }
