@@ -1056,8 +1056,8 @@ namespace scltk
         static auto operator()()
         {
             switch ( details::current_rule_executor_mode ) {
-                case details::rule_executor_mode::crack : std::print( "                    [ 破  解 ]\n\n\n" ); break;
-                case details::rule_executor_mode::restore : std::print( "                    [ 恢  复 ]\n\n\n" ); break;
+                case details::rule_executor_mode::crack : std::print( make_title_text< "[ 破  解 ]", 3 >.view() ); break;
+                case details::rule_executor_mode::restore : std::print( make_title_text< "[ 恢  复 ]", 3 >.view() ); break;
                 default : std::unreachable();
             }
             switch ( details::current_rule_executor_mode ) {
