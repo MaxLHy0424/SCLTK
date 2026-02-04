@@ -209,7 +209,7 @@ namespace scltk
                               details::make_ordered_const_wstring_list_t< L"Smsvc" > >,
       compile_time_rule_node<
         "凌波网络教室", details::make_ordered_const_wstring_list_t< L"sbkup.exe", L"wsf.exe", L"NCStu.exe", L"NCCmn.dll" >,
-        details::make_ordered_const_wstring_list_t<> >,
+        details::make_ordered_const_wstring_list_t< L"Windows Application and Components Data Backup Support Service" > >,
       compile_time_rule_node<
         "Veyon",
         details::make_ordered_const_wstring_list_t<
