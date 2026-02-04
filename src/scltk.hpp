@@ -1082,7 +1082,7 @@ namespace scltk
                     HKEY_LOCAL_MACHINE,
                     cpp_utils::value_identity_v< cpp_utils::concat_const_string(
                       cpp_utils::const_wstring{ LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\)" },
-                      Execs, cpp_utils::const_wstring{ L".exe" } ) >.view(),
+                      Execs ) >.view(),
                     L"Debugger", cpp_utils::registry_flag::string_type, std::bit_cast< const BYTE* >( +data ), sizeof( data ) ),
                   ... );
             }( typename BuiltinRuleNode::execs{} );
@@ -1105,7 +1105,7 @@ namespace scltk
         {
             []< cpp_utils::const_wstring... Execs >( const cpp_utils::type_list< cpp_utils::value_identity< Execs >... > ) static noexcept
             {
-                constexpr std::array names{ cpp_utils::value_identity_v< cpp_utils::concat_const_string( Execs, cpp_utils::const_wstring{ L".exe" } ) >.view()... };
+                constexpr std::array names{ cpp_utils::value_identity_v< cpp_utils::concat_const_string( Execs ) >.view()... };
                 ( void ) cpp_utils::terminate_process_by_names( names );
             }( typename BuiltinRuleNode::execs{} );
         }
@@ -1121,7 +1121,7 @@ namespace scltk
                     HKEY_LOCAL_MACHINE,
                     cpp_utils::value_identity_v< cpp_utils::concat_const_string(
                       cpp_utils::const_wstring{ LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\)" },
-                      Execs, cpp_utils::const_wstring{ L".exe" }) >.view() ),
+                      Execs ) >.view() ),
                   ... );
             }( typename BuiltinRuleNode::execs{} );
         }
