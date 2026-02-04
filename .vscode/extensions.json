@@ -4,8 +4,6 @@
         "ms-vscode.hexeditor",
         "ms-vscode.makefile-tools",
         "ms-vscode.powershell",
-        "github.copilot",
-        "github.copilot-chat",
         "github.remotehub",
         "github.vscode-pull-request-github",
         "streetsidesoftware.code-spell-checker",
