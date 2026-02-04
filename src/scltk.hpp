@@ -147,20 +147,20 @@ namespace scltk
             }
         }
     }
-    template < cpp_utils::const_string DisplayName, cpp_utils::same_as_type_list Execs, cpp_utils::same_as_type_list Servs,
+    template < cpp_utils::const_string DisplayName, cpp_utils::same_as_type_list Procs, cpp_utils::same_as_type_list Servs,
                std::invocable auto CrackHelper = details::empty_lambda, std::invocable auto RestoreHelper = details::empty_lambda >
     struct compile_time_rule_node final
     {
         static inline constexpr auto display_name{ DisplayName };
         static inline constexpr auto crack_helper{ CrackHelper };
         static inline constexpr auto restore_helper{ RestoreHelper };
-        using execs = Execs;
+        using procs = Procs;
         using servs = Servs;
     };
     struct runtime_rule_node final
     {
         using item_t = std::pmr::vector< std::pmr::wstring >;
-        item_t execs{ unsynced_mem_pool };
+        item_t procs{ unsynced_mem_pool };
         item_t servs{ unsynced_mem_pool };
         item_t crack_helpers{ unsynced_mem_pool };
         item_t restore_helpers{ unsynced_mem_pool };
@@ -423,7 +423,7 @@ namespace scltk
     };
     class crack_restore_config final
       : public details::basic_options_config_node<
-          "crack_restore", "破解与恢复", false, "hijack_execs", "劫持可执行文件", "set_serv_startup_types", "设置服务启动类型" >
+          "crack_restore", "破解与恢复", false, "hijack_procs", "劫持可执行文件", "set_serv_startup_types", "设置服务启动类型" >
     { };
     class window_config final
       : public details::basic_options_config_node<
@@ -440,20 +440,20 @@ namespace scltk
     {
         friend details::config_node_impl;
       private:
-        static inline constexpr auto flag_exec_{ L"exec:"sv };
+        static inline constexpr auto flag_proc_{ L"proc:"sv };
         static inline constexpr auto flag_serv_{ L"serv:"sv };
         static inline constexpr auto flag_crack_helper_{ L"crack_helper:"sv };
         static inline constexpr auto flag_restore_helper_{ L"restore_helper:"sv };
         static_assert( []( auto... strings ) static consteval noexcept {
             return ( std::ranges::none_of( strings, details::is_whitespace< wchar_t > ) && ... );
-        }( flag_exec_, flag_serv_, flag_crack_helper_, flag_restore_helper_ ) );
+        }( flag_proc_, flag_serv_, flag_crack_helper_, flag_restore_helper_ ) );
         static auto load_( const std::string_view unconverted_line )
         {
             const auto converted_line{ cpp_utils::to_wstring( unconverted_line, charset_id ) };
             const std::wstring_view line{ converted_line };
-            if ( line.size() > flag_exec_.size() && line.starts_with( flag_exec_ ) ) {
-                custom_rules.execs.emplace_back(
-                  std::ranges::find_if_not( line.substr( flag_exec_.size() ), details::is_whitespace< wchar_t > ) );
+            if ( line.size() > flag_proc_.size() && line.starts_with( flag_proc_ ) ) {
+                custom_rules.procs.emplace_back(
+                  std::ranges::find_if_not( line.substr( flag_proc_.size() ), details::is_whitespace< wchar_t > ) );
                 return;
             }
             if ( line.size() > flag_serv_.size() && line.starts_with( flag_serv_ ) ) {
@@ -474,12 +474,12 @@ namespace scltk
         }
         static auto sync_( std::ofstream& out )
         {
-            const auto flag_exec_ansi{ cpp_utils::to_string( flag_exec_, charset_id, unsynced_mem_pool ) };
+            const auto flag_proc_ansi{ cpp_utils::to_string( flag_proc_, charset_id, unsynced_mem_pool ) };
             const auto flag_serv_ansi{ cpp_utils::to_string( flag_serv_, charset_id, unsynced_mem_pool ) };
             const auto flag_crack_helper_ansi{ cpp_utils::to_string( flag_crack_helper_, charset_id, unsynced_mem_pool ) };
             const auto flag_restore_helper_ansi{ cpp_utils::to_string( flag_restore_helper_, charset_id, unsynced_mem_pool ) };
-            for ( const auto& exec : custom_rules.execs ) {
-                out << flag_exec_ansi << ' ' << cpp_utils::to_string( exec, charset_id, unsynced_mem_pool ) << '\n';
+            for ( const auto& proc : custom_rules.procs ) {
+                out << flag_proc_ansi << ' ' << cpp_utils::to_string( proc, charset_id, unsynced_mem_pool ) << '\n';
             }
             for ( const auto& serv : custom_rules.servs ) {
                 out << flag_serv_ansi << ' ' << cpp_utils::to_string( serv, charset_id, unsynced_mem_pool ) << '\n';
@@ -493,7 +493,7 @@ namespace scltk
         }
         static auto before_load_() noexcept
         {
-            custom_rules.execs.clear();
+            custom_rules.procs.clear();
             custom_rules.servs.clear();
             custom_rules.crack_helpers.clear();
             custom_rules.restore_helpers.clear();
@@ -510,14 +510,14 @@ namespace scltk
                 " 不符合格式的规则将会被忽略.\n"
                 " <item> 的类型由 <flag> 决定.\n"
                 " 其中, <flag> 有如下选项:\n"
-                " exec - 以 .exe 为文件扩展名的可执行文件的名称\n"
+                " proc - 以 .exe 为文件扩展名的可执行文件的名称\n"
                 " serv - Windows 服务的服务名称.\n"
                 " crack_helper - 破解时执行的程序的命令行.\n"
                 " restore_helper - 恢复时执行的程序的命令行.\n\n"
                 " 使用示例:\n"
                 " [custom_rules]\n"
-                " exec: abc_frontend\n"
-                " exec: abc_backend\n"
+                " proc: abc_frontend\n"
+                " proc: abc_backend\n"
                 " serv: abc_connect\n"
                 " serv: abc_proc_defender\n"
                 " crack_helper: \"abc helper.exe\" crack\n"
@@ -746,7 +746,7 @@ namespace scltk
             using reg_dirs_t = make_ordered_const_wstring_list_t<
               LR"(Software\Policies\Microsoft\Windows\System)", LR"(Software\Microsoft\Windows\CurrentVersion\Policies\System)",
               LR"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)", LR"(Software\Policies\Microsoft\MMC)" >;
-            using execs_t = make_ordered_const_wstring_list_t<
+            using procs_t = make_ordered_const_wstring_list_t<
               L"tasklist", L"taskkill", L"ntsd", L"sc", L"net", L"reg", L"cmd", L"taskmgr", L"perfmon", L"regedit", L"mmc",
               L"dism", L"sfc", L"netsh", L"sethc", L"sidebar", L"shvlzm", L"winmine", L"bckgzm", L"Chess", L"chkrzm",
               L"FreeCell", L"Hearts", L"Magnify", L"Mahjong", L"Minesweeper", L"PurblePlace", L"Solitaire", L"SpiderSolitaire" >;
@@ -764,7 +764,7 @@ namespace scltk
                       cpp_utils::const_wstring{ LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\)" },
                       Items, cpp_utils::const_wstring{ L".exe" } ) >.view() ),
                   ... );
-            }( execs_t{} );
+            }( procs_t{} );
         }
         inline auto reset_firewall_rules() noexcept
         {
@@ -1006,12 +1006,12 @@ namespace scltk
     template < typename... Backends >
         requires requires {
             requires cpp_utils::as_concept< ( sizeof...( Backends ) != 0 ) >;
-            ( Backends::hijack_execs(), ... );
+            ( Backends::hijack_procs(), ... );
             ( Backends::disable_servs(), ... );
             ( Backends::stop_servs(), ... );
-            ( Backends::kill_execs(), ... );
+            ( Backends::kill_procs(), ... );
             ( Backends::crack_helper(), ... );
-            ( Backends::undo_hijack_execs(), ... );
+            ( Backends::undo_hijack_procs(), ... );
             ( Backends::enable_servs(), ... );
             ( Backends::start_servs(), ... );
             ( Backends::restore_helper(), ... );
@@ -1021,11 +1021,11 @@ namespace scltk
         static auto crack()
         {
             constexpr const auto& options{ std::get< crack_restore_config >( config_nodes ) };
-            constexpr const auto& can_hijack_execs{ options.at< "hijack_execs" >() };
+            constexpr const auto& can_hijack_procs{ options.at< "hijack_procs" >() };
             constexpr const auto& can_set_serv_startup_types{ options.at< "set_serv_startup_types" >() };
-            if ( can_hijack_execs ) {
+            if ( can_hijack_procs ) {
                 std::print( " -> 劫持文件.\n" );
-                ( Backends::hijack_execs(), ... );
+                ( Backends::hijack_procs(), ... );
             }
             if ( can_set_serv_startup_types ) {
                 std::print( " -> 禁用服务.\n" );
@@ -1034,18 +1034,18 @@ namespace scltk
             std::print( " -> 停止服务.\n" );
             ( Backends::stop_servs(), ... );
             std::print( " -> 终止进程.\n" );
-            ( Backends::kill_execs(), ... );
+            ( Backends::kill_procs(), ... );
             std::print( " -> 执行扩展操作.\n" );
             ( Backends::crack_helper(), ... );
         }
         static auto restore()
         {
             constexpr const auto& options{ std::get< crack_restore_config >( config_nodes ) };
-            constexpr const auto& can_hijack_execs{ options.at< "hijack_execs" >() };
+            constexpr const auto& can_hijack_procs{ options.at< "hijack_procs" >() };
             constexpr const auto& can_set_serv_startup_types{ options.at< "set_serv_startup_types" >() };
-            if ( can_hijack_execs ) {
+            if ( can_hijack_procs ) {
                 std::print( " -> 撤销劫持.\n" );
-                ( Backends::undo_hijack_execs(), ... );
+                ( Backends::undo_hijack_procs(), ... );
             }
             if ( can_set_serv_startup_types ) {
                 std::print( " -> 启用服务.\n" );
@@ -1076,19 +1076,19 @@ namespace scltk
     template < typename BuiltinRuleNode >
     struct builtin_rules_executor_backend final
     {
-        static auto hijack_execs() noexcept
+        static auto hijack_procs() noexcept
         {
-            []< cpp_utils::const_wstring... Execs >( const cpp_utils::type_list< cpp_utils::value_identity< Execs >... > ) static noexcept
+            []< cpp_utils::const_wstring... Procs >( const cpp_utils::type_list< cpp_utils::value_identity< Procs >... > ) static noexcept
             {
                 constexpr const wchar_t data[]{ L"nul" };
                 ( ( void ) cpp_utils::create_registry_key(
                     HKEY_LOCAL_MACHINE,
                     cpp_utils::value_identity_v< cpp_utils::concat_const_string(
                       cpp_utils::const_wstring{ LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\)" },
-                      Execs ) >.view(),
+                      Procs ) >.view(),
                     L"Debugger", cpp_utils::registry_flag::string_type, std::bit_cast< const BYTE* >( +data ), sizeof( data ) ),
                   ... );
-            }( typename BuiltinRuleNode::execs{} );
+            }( typename BuiltinRuleNode::procs{} );
         }
         static auto disable_servs() noexcept
         {
@@ -1104,29 +1104,29 @@ namespace scltk
                 ( ( void ) cpp_utils::stop_service_with_dependencies( Servs.view(), unsynced_mem_pool ), ... );
             }( typename BuiltinRuleNode::servs{} );
         }
-        static auto kill_execs() noexcept
+        static auto kill_procs() noexcept
         {
-            []< cpp_utils::const_wstring... Execs >( const cpp_utils::type_list< cpp_utils::value_identity< Execs >... > ) static noexcept
+            []< cpp_utils::const_wstring... Procs >( const cpp_utils::type_list< cpp_utils::value_identity< Procs >... > ) static noexcept
             {
-                constexpr std::array names{ cpp_utils::value_identity_v< cpp_utils::concat_const_string( Execs ) >.view()... };
+                constexpr std::array names{ cpp_utils::value_identity_v< cpp_utils::concat_const_string( Procs ) >.view()... };
                 ( void ) cpp_utils::terminate_process_by_names( names );
-            }( typename BuiltinRuleNode::execs{} );
+            }( typename BuiltinRuleNode::procs{} );
         }
         static auto crack_helper()
         {
             BuiltinRuleNode::crack_helper();
         }
-        static auto undo_hijack_execs() noexcept
+        static auto undo_hijack_procs() noexcept
         {
-            []< cpp_utils::const_wstring... Execs >( const cpp_utils::type_list< cpp_utils::value_identity< Execs >... > ) static noexcept
+            []< cpp_utils::const_wstring... Procs >( const cpp_utils::type_list< cpp_utils::value_identity< Procs >... > ) static noexcept
             {
                 ( ( void ) cpp_utils::delete_registry_tree(
                     HKEY_LOCAL_MACHINE,
                     cpp_utils::value_identity_v< cpp_utils::concat_const_string(
                       cpp_utils::const_wstring{ LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\)" },
-                      Execs ) >.view() ),
+                      Procs ) >.view() ),
                   ... );
-            }( typename BuiltinRuleNode::execs{} );
+            }( typename BuiltinRuleNode::procs{} );
         }
         static auto enable_servs() noexcept
         {
@@ -1149,13 +1149,13 @@ namespace scltk
     };
     struct custom_rule_executor_backend final
     {
-        static auto hijack_execs()
+        static auto hijack_procs()
         {
             constexpr const wchar_t data[]{ L"nul" };
-            for ( const auto& exec : custom_rules.execs ) {
+            for ( const auto& proc : custom_rules.procs ) {
                 ( void ) cpp_utils::create_registry_key(
                   HKEY_LOCAL_MACHINE,
-                  std::format( LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{})", exec ),
+                  std::format( LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{})", proc ),
                   L"Debugger", cpp_utils::registry_flag::string_type, std::bit_cast< const BYTE* >( +data ), sizeof( data ) );
             }
         }
@@ -1171,9 +1171,9 @@ namespace scltk
                 ( void ) cpp_utils::stop_service_with_dependencies( serv, unsynced_mem_pool );
             }
         }
-        static auto kill_execs()
+        static auto kill_procs()
         {
-            ( void ) cpp_utils::terminate_process_by_names( custom_rules.execs );
+            ( void ) cpp_utils::terminate_process_by_names( custom_rules.procs );
         }
         static auto execute_helpers_( const std::pmr::vector< std::pmr::wstring >& helpers ) noexcept
         {
@@ -1194,12 +1194,12 @@ namespace scltk
         {
             execute_helpers_( custom_rules.crack_helpers );
         }
-        static auto undo_hijack_execs()
+        static auto undo_hijack_procs()
         {
-            for ( const auto& exec : custom_rules.execs ) {
+            for ( const auto& proc : custom_rules.procs ) {
                 ( void ) cpp_utils::delete_registry_tree(
                   HKEY_LOCAL_MACHINE,
-                  std::format( LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{})", exec ) );
+                  std::format( LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{})", proc ) );
             }
         }
         static auto enable_servs() noexcept
