@@ -205,6 +205,11 @@ namespace scltk
           L"rscheck.exe", L"checkrs.exe", L"REDAgent.exe", L"PerformanceCheck.exe", L"edpaper.exe", L"Adapter.exe",
           L"repview.exe", L"FormatPaper.exe" >,
         details::make_ordered_const_wstring_list_t< L"appcheck2", L"checkapp2" > >,
+      compile_time_rule_node< "伽卡他卡电子教室", details::make_ordered_const_wstring_list_t< L"Student.exe", L"Smonitor.exe" >,
+                              details::make_ordered_const_wstring_list_t< L"Smsvc" > >,
+      compile_time_rule_node<
+        "凌波网络教室", details::make_ordered_const_wstring_list_t< L"sbkup.exe", L"wsf.exe", L"NCStu.exe", L"NCCmn.dll" >,
+        details::make_ordered_const_wstring_list_t<> >,
       compile_time_rule_node<
         "Veyon",
         details::make_ordered_const_wstring_list_t<
