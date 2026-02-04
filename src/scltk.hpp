@@ -168,17 +168,18 @@ namespace scltk
     using builtin_rules_t = cpp_utils::type_list<
       compile_time_rule_node<
         "机房管理助手",
-        details::make_ordered_const_wstring_list_t< L"yz", L"jfglzs", L"jfglzsn", L"jfglzsp", L"przs", L"zmserv", L"zmsrv" >,
+        details::make_ordered_const_wstring_list_t<
+          L"yz.exe", L"jfglzs.exe", L"jfglzsn.exe", L"jfglzsp.exe", L"przs.exe", L"zmserv.exe", L"zmsrv.exe" >,
         details::make_ordered_const_wstring_list_t< L"zmserv" >, details::terminate_jfglzs_daemon >,
       compile_time_rule_node<
         "市一中伊金霍洛校区机房管理程序",
-        details::make_ordered_const_wstring_list_t< L"ComputerClassroom_Client", L"MonitorProcess" >,
+        details::make_ordered_const_wstring_list_t< L"ComputerClassroom_Client.exe", L"MonitorProcess.exe" >,
         details::make_ordered_const_wstring_list_t<>, details::terminate_yjhlq_daemon >,
       compile_time_rule_node<
         "极域电子教室",
         details::make_ordered_const_wstring_list_t<
-          L"StudentMain", L"DispcapHelper", L"VRCwPlayer", L"InstHelpApp", L"InstHelpApp64", L"TDOvrSet", L"GATESRV",
-          L"ProcHelper64", L"MasterHelper" >,
+          L"StudentMain.exe", L"DispcapHelper.exe", L"VRCwPlayer.exe", L"InstHelpApp.exe", L"InstHelpApp64.exe",
+          L"TDOvrSet.exe", L"GATESRV.exe", L"ProcHelper64.exe", L"MasterHelper.exe" >,
         details::make_ordered_const_wstring_list_t< L"STUDSRV" >,
         [] static noexcept
     {
@@ -193,20 +194,22 @@ namespace scltk
       compile_time_rule_node<
         "联想智能云教室",
         details::make_ordered_const_wstring_list_t<
-          L"vncviewer", L"tvnserver32", L"WfbsPnpInstall", L"WFBSMon", L"WFBSMlogon", L"WFBSSvrLogShow", L"ResetIp",
-          L"FuncForWIN64", L"CertMgr", L"Fireware", L"BCDBootCopy", L"refreship", L"lenovoLockScreen", L"PortControl64",
-          L"DesktopCheck", L"DeploymentManager", L"DeploymentAgent", L"XYNTService" >,
+          L"vncviewer.exe", L"tvnserver32.exe", L"WfbsPnpInstall.exe", L"WFBSMon.exe", L"WFBSMlogon.exe", L"WFBSSvrLogShow.exe",
+          L"ResetIp.exe", L"FuncForWIN64.exe", L"CertMgr.exe", L"Fireware.exe", L"BCDBootCopy.exe", L"refreship.exe",
+          L"lenovoLockScreen.exe", L"PortControl64.exe", L"DesktopCheck.exe", L"DeploymentManager.exe", L"DeploymentAgent.exe",
+          L"XYNTService.exe" >,
         details::make_ordered_const_wstring_list_t< L"BSAgentSvr", L"tvnserver", L"WFBSMlogon" > >,
       compile_time_rule_node<
         "红蜘蛛多媒体网络教室",
         details::make_ordered_const_wstring_list_t<
-          L"rscheck", L"checkrs", L"REDAgent", L"PerformanceCheck", L"edpaper", L"Adapter", L"repview", L"FormatPaper" >,
+          L"rscheck.exe", L"checkrs.exe", L"REDAgent.exe", L"PerformanceCheck.exe", L"edpaper.exe", L"Adapter.exe",
+          L"repview.exe", L"FormatPaper.exe" >,
         details::make_ordered_const_wstring_list_t< L"appcheck2", L"checkapp2" > >,
       compile_time_rule_node<
         "Veyon",
         details::make_ordered_const_wstring_list_t<
-          L"veyon-worker", L"veyon-configurator", L"veyon-server", L"veyon-cli", L"veyon-wcli", L"veyon-master",
-          L"veyon-service" >,
+          L"veyon-worker.exe", L"veyon-configurator.exe", L"veyon-server.exe", L"veyon-cli.exe", L"veyon-wcli.exe",
+          L"veyon-master.exe", L"veyon-service.exe" >,
         details::make_ordered_const_wstring_list_t< L"VeyonService" > > >;
     runtime_rule_node custom_rules;
     namespace details
