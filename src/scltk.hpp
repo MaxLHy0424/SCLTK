@@ -909,7 +909,7 @@ namespace scltk
             std::print( " -> 等待继续执行.\n" );
             std::this_thread::sleep_for( 3s );
             std::print( " -> 启动进程.\n" );
-            ShellExecuteW( nullptr, L"open", L"explorer.exe", nullptr, nullptr, SW_SHOWNORMAL );
+            ShellExecuteW( nullptr, L"open", L"explorer.exe", nullptr, nullptr, SW_HIDE );
         }
         inline auto restore_usb_device_access() noexcept
         {
