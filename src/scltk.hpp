@@ -824,7 +824,7 @@ namespace scltk
               "# 127.0.0.1       localhost\n"
               "# ::1             localhost\n"sv };
             static constexpr auto reset_hosts_error_message{ "\n (!) 重置 Hosts 失败.\n\n" };
-            constexpr auto reset_hosts_error_check{ []( const std::error_code& ec ) static
+            constexpr auto has_error{ []( const std::error_code& ec ) static
             {
                 if ( ec ) {
                     std::print( reset_hosts_error_message );
@@ -840,18 +840,12 @@ namespace scltk
                 return std::filesystem::path{ result.data() };
             }() };
             std::error_code ec;
-            if ( !std::filesystem::exists( hosts_path, ec ) ) {
-                std::print( reset_hosts_error_message );
-                return;
-            }
             const auto original_perms{ std::filesystem::status( hosts_path, ec ).permissions() };
-            if ( reset_hosts_error_check( ec ) ) {
+            if ( has_error( ec ) ) {
                 return;
             }
             std::filesystem::permissions( hosts_path, std::filesystem::perms::all, std::filesystem::perm_options::replace, ec );
-            if ( reset_hosts_error_check( ec ) ) {
-                return;
-            }
+            std::filesystem::remove( hosts_path, ec );
             std::ofstream file{ hosts_path, std::ios::out | std::ios::trunc | std::ios::binary };
             file.write( default_content.data(), default_content.size() ).flush();
             if ( !file.good() ) {
