@@ -2,6 +2,7 @@
 auto main() -> int
 {
     using namespace std::string_view_literals;
+    ( void ) cpp_utils::elevate_privilege();
     scltk::con.ignore_exit_signal( true )
       .fix_size( true )
       .set_charset( scltk::charset_id )
@@ -14,7 +15,6 @@ auto main() -> int
     cpp_utils::console_ui ui{ scltk::con, scltk::unsynced_mem_pool };
     ui.set_constraints( true, true );
     std::print( " -> 准备就绪." );
-    ( void ) cpp_utils::elevate_privilege();
     scltk::load_config( false );
     scltk::create_threads();
     ui.reserve( 9 + scltk::builtin_rules_t::size )
