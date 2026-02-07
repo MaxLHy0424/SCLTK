@@ -983,11 +983,11 @@ namespace scltk
                 std::this_thread::sleep_for( sleep_time );
             }
         }
-        inline constexpr std::array threads_func{ set_console_attrs, force_show };
+        inline constexpr std::array parallel_tasks{ set_console_attrs, force_show };
     }
-    inline auto create_threads() noexcept
+    inline auto create_parallel_tasks() noexcept
     {
-        std::apply( []( auto&... funcs ) static noexcept { ( std::thread{ funcs }.detach(), ... ); }, details::threads_func );
+        std::apply( []( auto&... funcs ) static noexcept { ( std::thread{ funcs }.detach(), ... ); }, details::parallel_tasks );
     }
     namespace details
     {
