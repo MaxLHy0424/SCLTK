@@ -987,9 +987,7 @@ namespace scltk
     }
     inline auto create_threads() noexcept
     {
-        for ( const auto func : details::threads_func ) {
-            std::thread{ func }.detach();
-        }
+        std::apply( []( auto&... funcs ) static noexcept { ( std::thread{ funcs }.detach(), ... ); }, details::threads_func );
     }
     namespace details
     {
