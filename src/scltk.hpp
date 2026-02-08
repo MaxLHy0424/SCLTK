@@ -293,30 +293,67 @@ namespace scltk
                 }
             }
         };
-        template < cpp_utils::const_string RawName, cpp_utils::const_string DisplayName, bool Atomic, cpp_utils::const_string... Items >
-            requires( sizeof...( Items ) % 2 == 0 && sizeof...( Items ) != 0
-                      && cpp_utils::type_list< cpp_utils::value_identity< Items >... >::unique::size
-                           == cpp_utils::type_list< cpp_utils::value_identity< Items >... >::size )
+        template < cpp_utils::const_string RawName, cpp_utils::const_string DisplayName >
+        struct option_info final
+        {
+            static inline constexpr auto raw_name{ RawName };
+            static inline constexpr auto display_name{ DisplayName };
+        };
+        template < typename >
+        struct is_option_info final : std::false_type
+        { };
+        template < cpp_utils::const_string RawName, cpp_utils::const_string DisplayName >
+        struct is_option_info< option_info< RawName, DisplayName > > final : std::true_type
+        { };
+        template < typename... Options >
+            requires( is_option_info< Options >::value && ... )
+        struct options_info_table final
+        {
+            using base_t      = cpp_utils::type_list< Options... >;
+            using raw_names_t = cpp_utils::type_list< cpp_utils::value_identity< Options::raw_name >... >;
+            static consteval auto is_valid()
+            {
+                return raw_names_t::unique::size == raw_names_t::size;
+            }
+            template < cpp_utils::const_string RawName >
+            static consteval auto contains()
+            {
+                return raw_names_t::template contains< cpp_utils::value_identity< RawName > >;
+            }
+            template < cpp_utils::const_string RawName >
+            static consteval auto index_of()
+            {
+                return raw_names_t::template find_first< cpp_utils::value_identity< RawName > >;
+            }
+        };
+        template < typename >
+        struct is_valid_options_info_table final : std::false_type
+        { };
+        template < typename... Options >
+        struct is_valid_options_info_table< options_info_table< Options... > > final
+          : std::conditional_t< options_info_table< Options... >::is_valid(), std::true_type, std::false_type >
+        { };
+        template < cpp_utils::const_string RawName, cpp_utils::const_string DisplayName, bool Atomic, typename OptionsInfoTable >
+            requires( is_valid_options_info_table< OptionsInfoTable >::value == true )
         class basic_options_config_node
-          : public config_node_impl
-          , public config_node_raw_name< RawName >
+          : public config_node_raw_name< RawName >
+          , public config_node_impl
         {
             friend config_node_impl;
           private:
-            using item_list_t_ = cpp_utils::type_list< cpp_utils::value_identity< Items >... >;
-            using value_t_     = std::conditional_t< Atomic, std::atomic< bool >, bool >;
-            std::array< value_t_, sizeof...( Items ) / 2 > data_{};
-            static inline constexpr auto str_of_the_enabled{ ": enabled"sv };
-            static inline constexpr auto str_of_the_disabled{ ": disabled"sv };
-            auto load_( const std::string_view line )
+            using info_table_base_t_ = typename OptionsInfoTable::base_t;
+            using value_t_           = std::conditional_t< Atomic, std::atomic< bool >, bool >;
+            std::array< value_t_, info_table_base_t_::size > data_{};
+            static inline constexpr auto str_enabled_{ ": enabled"sv };
+            static inline constexpr auto str_disabled_{ ": disabled"sv };
+            auto load_( std::string_view line )
             {
-                std::string_view key;
                 bool value;
-                if ( line.ends_with( str_of_the_enabled ) ) {
-                    key   = line.substr( 0, line.size() - str_of_the_enabled.size() );
+                if ( line.size() > str_enabled_.size() && line.ends_with( str_enabled_ ) ) {
+                    line.remove_suffix( str_enabled_.size() );
                     value = true;
-                } else if ( line.ends_with( str_of_the_disabled ) ) {
-                    key   = line.substr( 0, line.size() - str_of_the_disabled.size() );
+                } else if ( line.size() > str_disabled_.size() && line.ends_with( str_disabled_ ) ) {
+                    line.remove_suffix( str_disabled_.size() );
                     value = false;
                 } else {
                     return;
@@ -326,14 +363,14 @@ namespace scltk
                     (
                       [ & ]< std::size_t I > noexcept
                     {
-                        if ( item_list_t_::template at< I * 2 >::value.view() == key ) {
+                        if ( info_table_base_t_::template at< I >::raw_name.view() == line ) {
                             std::get< I >( data_ ) = value;
                             return true;
                         }
                         return false;
                     }.template operator()< Is >()
                       || ... );
-                }( std::make_index_sequence< sizeof...( Items ) / 2 >{} );
+                }( std::make_index_sequence< info_table_base_t_::size >{} );
             }
             static auto reload_( const std::string_view ) noexcept
             { }
@@ -341,12 +378,12 @@ namespace scltk
             {
                 [ & ]< std::size_t... Is >( const std::index_sequence< Is... > )
                 {
-                    ( ( out << item_list_t_::template at< Is * 2 >::value.c_str()
-                            << ( std::get< Is >( data_ ) == true ? str_of_the_enabled : str_of_the_disabled ) << '\n' ),
+                    ( ( out << info_table_base_t_::template at< Is >::raw_name.view()
+                            << ( std::get< Is >( data_ ) == true ? str_enabled_ : str_disabled_ ) << '\n' ),
                       ... );
-                }( std::make_index_sequence< sizeof...( Items ) / 2 >{} );
+                }( std::make_index_sequence< info_table_base_t_::size >{} );
             }
-            static auto get_value( const value_t_& value )
+            static auto get_value_( const value_t_& value )
             {
                 if constexpr ( std::is_same_v< value_t_, std::atomic< bool > > ) {
                     return value.load( std::memory_order_acquire );
@@ -354,7 +391,7 @@ namespace scltk
                     return value;
                 }
             }
-            static auto& set_value( value_t_& obj, const bool val )
+            static auto& set_value_( value_t_& obj, const bool val )
             {
                 if constexpr ( std::is_same_v< value_t_, std::atomic< bool > > ) {
                     obj.store( val, std::memory_order_release );
@@ -365,14 +402,14 @@ namespace scltk
             }
             static auto make_flip_button_text_( const value_t_& value )
             {
-                return get_value( value ) == true ? " > 禁用 "sv : " > 启用 "sv;
+                return get_value_( value ) == true ? " > 禁用 "sv : " > 启用 "sv;
             }
             static auto flip_item_value_( const ui_func_args_t args, value_t_& value )
             {
-                args.parent_ui.set_text( args.node_index, make_flip_button_text_( set_value( value, !get_value( value ) ) ) );
+                args.parent_ui.set_text( args.node_index, make_flip_button_text_( set_value_( value, !get_value_( value ) ) ) );
                 return func_back;
             }
-            static auto make_option_editor_ui_( std::array< value_t_, sizeof...( Items ) / 2 >& data_ )
+            static auto make_option_editor_ui_( std::array< value_t_, info_table_base_t_::size >& data_ )
             {
                 cpp_utils::console_ui ui{ con, unsynced_mem_pool };
                 ui.reserve( 2 + data_.size() * 2 )
@@ -383,14 +420,14 @@ namespace scltk
                 {
                     ( ui.add_back(
                           cpp_utils::value_identity_v< cpp_utils::concat_const_string(
-                            cpp_utils::const_string{ "\n[ " }, item_list_t_::template at< Is * 2 + 1 >::value,
+                            cpp_utils::const_string{ "\n[ " }, info_table_base_t_::template at< Is >::display_name,
                             cpp_utils::const_string{ " ]\n" } ) >.view() )
                         .add_back(
                           make_flip_button_text_( std::get< Is >( data_ ) ),
                           std::bind_back( flip_item_value_, std::ref( std::get< Is >( data_ ) ) ),
                           cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_green ),
                       ... );
-                }( std::make_index_sequence< sizeof...( Items ) / 2 >{} );
+                }( std::make_index_sequence< info_table_base_t_::size >{} );
                 ui.show();
                 return func_back;
             }
@@ -400,11 +437,11 @@ namespace scltk
             }
             static inline constexpr auto ui_count_{ 1uz };
           public:
-            template < cpp_utils::const_string Key >
+            template < cpp_utils::const_string OptionRawName >
+                requires( OptionsInfoTable::template contains< OptionRawName >() )
             constexpr auto&& at( this auto&& self ) noexcept
             {
-                static_assert( item_list_t_::template contains< cpp_utils::value_identity< Key > > );
-                return std::get< item_list_t_::template find_first< cpp_utils::value_identity< Key > > / 2 >( self.data_ );
+                return std::get< OptionsInfoTable::template index_of< OptionRawName >() >( self.data_ );
             }
             auto operator=( const basic_options_config_node& ) -> basic_options_config_node&     = delete;
             auto operator=( basic_options_config_node&& ) noexcept -> basic_options_config_node& = delete;
@@ -429,16 +466,22 @@ namespace scltk
     };
     class crack_restore_config final
       : public details::basic_options_config_node<
-          "crack_restore", "破解与恢复", false, "hijack_procs", "劫持进程", "set_servs_start_type", "设置服务启动类型" >
+          "crack_restore", "破解与恢复", false,
+          details::options_info_table< details::option_info< "hijack_procs", "劫持进程" >,
+                                       details::option_info< "set_servs_start_type", "设置服务启动类型" > > >
     { };
     class window_config final
       : public details::basic_options_config_node<
-          "window", "窗口显示", true, "force_show", "置顶窗口 (非实时)", "simple_titlebar", "极简标题栏 (非实时)",
-          "translucent", "半透明 (非实时)" >
+          "window", "窗口显示", true,
+          details::options_info_table<
+            details::option_info< "force_show", "置顶窗口 (非实时)" >,
+            details::option_info< "simple_titlebar", "极简标题栏 (非实时)" >,
+            details::option_info< "translucent", "半透明 (非实时)" > > >
     { };
     class performance_config final
       : public details::basic_options_config_node<
-          "performance", "性能", false, "no_hot_reload", "禁用非实时热重载 (下次启动时生效)" >
+          "performance", "性能", false,
+          details::options_info_table< details::option_info< "no_hot_reload", "禁用非实时热重载 (下次启动时生效)" > > >
     { };
     class custom_rules_config final
       : public details::config_node_impl
