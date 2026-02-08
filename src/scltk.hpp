@@ -324,10 +324,10 @@ namespace scltk
                 [ & ]< std::size_t... Is >( const std::index_sequence< Is... > ) noexcept
                 {
                     (
-                      [ & ]< std::size_t Index > noexcept
+                      [ & ]< std::size_t I > noexcept
                     {
-                        if ( item_list_t_::template at< Index * 2 >::value.view() == key ) {
-                            std::get< Index >( data_ ) = value;
+                        if ( item_list_t_::template at< I * 2 >::value.view() == key ) {
+                            std::get< I >( data_ ) = value;
                             return true;
                         }
                         return false;

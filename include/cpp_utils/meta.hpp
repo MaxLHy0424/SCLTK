@@ -97,8 +97,8 @@ namespace cpp_utils
         static inline constexpr auto empty_{ size_ == 0uz };
         template < typename... Us >
         static consteval auto as_type_list_( std::tuple< Us... > ) -> type_list< Us... >;
-        template < std::size_t Index, std::size_t... Is >
-        static consteval auto index_sequence_( const std::index_sequence< Is... > ) -> std::index_sequence< ( Index + Is )... >;
+        template < std::size_t I, std::size_t... Is >
+        static consteval auto index_sequence_( const std::index_sequence< Is... > ) -> std::index_sequence< ( I + Is )... >;
         template < std::size_t... Is >
         static consteval auto select_( const std::index_sequence< Is... > )
           -> type_list< std::tuple_element_t< Is, std::tuple< Ts... > >... >;
@@ -111,30 +111,30 @@ namespace cpp_utils
             template < typename T >
             using predicate = std::is_same< T, U >;
         };
-        template < template < typename > typename Pred, std::size_t Index >
+        template < template < typename > typename Pred, std::size_t I >
         static consteval auto find_first_if_impl_()
         {
-            if constexpr ( Index >= size_ ) {
+            if constexpr ( I >= size_ ) {
                 return size_;
             } else {
-                if constexpr ( Pred< std::tuple_element_t< Index, std::tuple< Ts... > > >::value ) {
-                    return Index;
+                if constexpr ( Pred< std::tuple_element_t< I, std::tuple< Ts... > > >::value ) {
+                    return I;
                 } else {
-                    return find_first_if_impl_< Pred, Index + 1 >();
+                    return find_first_if_impl_< Pred, I + 1 >();
                 }
             }
         }
-        template < template < typename > typename Pred, std::size_t Index >
+        template < template < typename > typename Pred, std::size_t I >
         static consteval auto find_last_if_impl_()
         {
-            using T = std::tuple_element_t< Index, std::tuple< Ts... > >;
+            using T = std::tuple_element_t< I, std::tuple< Ts... > >;
             if constexpr ( Pred< T >::value ) {
-                return Index;
+                return I;
             } else {
-                if constexpr ( Index == 0 ) {
+                if constexpr ( I == 0 ) {
                     return size_;
                 } else {
-                    return find_last_if_impl_< Pred, Index - 1 >();
+                    return find_last_if_impl_< Pred, I - 1 >();
                 }
             }
         }
@@ -144,14 +144,14 @@ namespace cpp_utils
             static_assert( false, "index out of bounds" );
             using type = error_type;
         };
-        template < std::size_t Index >
-            requires as_concept< ( Index < size_ ) >
-        struct at_impl_< Index, false > final
+        template < std::size_t I >
+            requires as_concept< ( I < size_ ) >
+        struct at_impl_< I, false > final
         {
-            using type = std::tuple_element_t< Index, std::tuple< Ts... > >;
+            using type = std::tuple_element_t< I, std::tuple< Ts... > >;
         };
-        template < std::size_t Index >
-        struct at_impl_< Index, true > final
+        template < std::size_t I >
+        struct at_impl_< I, true > final
         {
             using type = error_type;
         };
@@ -215,14 +215,14 @@ namespace cpp_utils
         };
         template < std::size_t, std::size_t, bool = empty_ >
         struct sub_list_impl_;
-        template < std::size_t Index, std::size_t Count >
-        struct sub_list_impl_< Index, Count, false > final
+        template < std::size_t I, std::size_t N >
+        struct sub_list_impl_< I, N, false > final
         {
-            using type = decltype( select_( index_sequence_< Index >(
-              std::make_index_sequence< ( Index + Count <= size_ ? Index + Count : size_ ) - Index >{} ) ) );
+            using type = decltype( select_(
+              index_sequence_< I >( std::make_index_sequence< ( I + N <= size_ ? I + N : size_ ) - I >{} ) ) );
         };
-        template < std::size_t Index, std::size_t Count >
-        struct sub_list_impl_< Index, Count, true > final
+        template < std::size_t I, std::size_t N >
+        struct sub_list_impl_< I, N, true > final
         {
             using type = type_list<>;
         };
@@ -281,10 +281,9 @@ namespace cpp_utils
             static_assert( I2 < size_, "swap second index out of bounds" );
             using type_at_i1 = std::tuple_element_t< I1, std::tuple< Ts... > >;
             using type_at_i2 = std::tuple_element_t< I2, std::tuple< Ts... > >;
-            template < std::size_t Index >
+            template < std::size_t I >
             using get_swapped_type = std::conditional_t<
-              Index == I1, type_at_i2,
-              std::conditional_t< Index == I2, type_at_i1, std::tuple_element_t< Index, std::tuple< Ts... > > > >;
+              I == I1, type_at_i2, std::conditional_t< I == I2, type_at_i1, std::tuple_element_t< I, std::tuple< Ts... > > > >;
             template < std::size_t... Is >
             static consteval auto construct_swapped( const std::index_sequence< Is... > ) -> type_list< get_swapped_type< Is >... >;
             using type = decltype( construct_swapped( std::make_index_sequence< size_ >{} ) );
@@ -438,8 +437,8 @@ namespace cpp_utils
         static inline constexpr auto find_first{ find_first_if< is_same_type_< U >::template predicate > };
         template < typename U >
         static inline constexpr auto find_last{ find_last_if< is_same_type_< U >::template predicate > };
-        template < std::size_t Index >
-        using at    = typename at_impl_< Index >::type;
+        template < std::size_t I >
+        using at    = typename at_impl_< I >::type;
         using front = typename front_impl_<>::type;
         using back  = typename back_impl_<>::type;
         template < common_type... Us >
@@ -448,12 +447,12 @@ namespace cpp_utils
         using add_back     = typename add_back_impl_< Us... >::type;
         using remove_front = typename remove_front_impl_<>::type;
         using remove_back  = typename remove_back_impl_<>::type;
-        template < std::size_t Index, std::size_t Count >
-        using sub_list = typename sub_list_impl_< Index, Count >::type;
-        template < std::size_t Count >
-        using take = sub_list< 0, Count >;
-        template < std::size_t Count >
-        using drop = sub_list< Count, size - Count >;
+        template < std::size_t I, std::size_t N >
+        using sub_list = typename sub_list_impl_< I, N >::type;
+        template < std::size_t N >
+        using take = sub_list< 0, N >;
+        template < std::size_t N >
+        using drop = sub_list< N, size - N >;
         template < std::size_t I1, std::size_t I2 >
         using swap    = typename swap_impl_< I1, I2 >::type;
         using reverse = typename reverse_impl_<>::type;
