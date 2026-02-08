@@ -335,7 +335,7 @@ namespace scltk
         { };
         template < cpp_utils::const_string RawName, cpp_utils::const_string DisplayName, bool Atomic, typename OptionsInfoTable >
             requires( is_valid_options_info_table< OptionsInfoTable >::value == true )
-        class basic_options_config_node final
+        class options_config_node final
           : public config_node_raw_name< RawName >
           , public config_node_impl
         {
@@ -443,12 +443,12 @@ namespace scltk
             {
                 return std::get< OptionsInfoTable::template index_of< OptionRawName >() >( self.data_ );
             }
-            auto operator=( const basic_options_config_node& ) -> basic_options_config_node&     = delete;
-            auto operator=( basic_options_config_node&& ) noexcept -> basic_options_config_node& = delete;
-            basic_options_config_node() noexcept                                                 = default;
-            basic_options_config_node( const basic_options_config_node& )                        = delete;
-            basic_options_config_node( basic_options_config_node&& ) noexcept                    = delete;
-            ~basic_options_config_node() noexcept                                                = default;
+            auto operator=( const options_config_node& ) -> options_config_node&     = delete;
+            auto operator=( options_config_node&& ) noexcept -> options_config_node& = delete;
+            options_config_node() noexcept                                           = default;
+            options_config_node( const options_config_node& )                        = delete;
+            options_config_node( options_config_node&& ) noexcept                    = delete;
+            ~options_config_node() noexcept                                          = default;
         };
     }
     class options_title_ui final : public details::config_node_impl
@@ -464,18 +464,18 @@ namespace scltk
         options_title_ui() noexcept  = default;
         ~options_title_ui() noexcept = default;
     };
-    using crack_restore_config = details::basic_options_config_node<
+    using crack_restore_config = details::options_config_node<
       "crack_restore", "破解与恢复", false,
       details::options_info_table<
         details::option_info< "hijack_procs", "劫持进程" >,
         details::option_info< "set_servs_start_type", "设置服务启动类型" > > >;
-    using window_config = details::basic_options_config_node<
+    using window_config = details::options_config_node<
       "window", "窗口显示", true,
       details::options_info_table<
         details::option_info< "force_show", "置顶窗口 (非实时)" >,
         details::option_info< "simple_titlebar", "极简标题栏 (非实时)" >,
         details::option_info< "translucent", "半透明 (非实时)" > > >;
-    using performance_config = details::basic_options_config_node<
+    using performance_config = details::options_config_node<
       "performance", "性能", false,
       details::options_info_table< details::option_info< "no_hot_reload", "禁用非实时热重载 (下次启动时生效)" > > >;
     class custom_rules_config final
