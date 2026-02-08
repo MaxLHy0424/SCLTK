@@ -800,7 +800,7 @@ namespace scltk
             { ( ( void ) cpp_utils::delete_registry_tree( HKEY_CURRENT_USER, Items.view() ), ... ); }( reg_dirs_t{} );
             ( void ) cpp_utils::delete_registry_key(
               HKEY_LOCAL_MACHINE, LR"(SOFTWARE\Policies\Microsoft\Windows NT\SystemRestore)"sv, L"DisableSR"sv );
-            std::print( " -> 撤销文件劫持.\n" );
+            std::print( " -> 撤销映像劫持.\n" );
             []< cpp_utils::const_wstring... Items >( const cpp_utils::type_list< cpp_utils::value_identity< Items >... > ) static noexcept
             {
                 ( ( void ) cpp_utils::delete_registry_tree(
@@ -1059,7 +1059,7 @@ namespace scltk
             constexpr const auto& can_hijack_procs{ options.at< "hijack_procs" >() };
             constexpr const auto& can_set_serv_startup_types{ options.at< "set_servs_start_type" >() };
             if ( can_hijack_procs ) {
-                std::print( " -> 劫持文件.\n" );
+                std::print( " -> 劫持进程.\n" );
                 ( Backends::hijack_procs(), ... );
             }
             if ( can_set_serv_startup_types ) {
