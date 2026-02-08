@@ -39,34 +39,6 @@ namespace cpp_utils
         error_type( error_type&& ) noexcept                    = delete;
         ~error_type() noexcept                                 = delete;
     };
-    template < template < typename... > typename F, typename... Ts >
-    using apply_type_t = typename F< Ts... >::type;
-    template < template < auto... > typename F, auto... Vs >
-    inline constexpr auto apply_value_v{ F< Vs... >::value };
-    template < template < typename... > typename F, typename... Ts >
-    struct bind_front_type final
-    {
-        template < typename... Us >
-        using type = apply_type_t< F, Ts..., Us... >;
-    };
-    template < template < auto... > typename F, auto... Vs >
-    struct bind_front_value final
-    {
-        template < auto... Ws >
-        static inline constexpr auto value{ apply_value_v< F, Vs..., Ws... > };
-    };
-    template < template < typename... > typename F, typename... Ts >
-    struct bind_back_type final
-    {
-        template < typename... Us >
-        using type = apply_type_t< F, Us..., Ts... >;
-    };
-    template < template < auto... > typename F, auto... Vs >
-    struct bind_back_value final
-    {
-        template < auto... Ws >
-        static inline constexpr auto value{ apply_value_v< F, Ws..., Vs... > };
-    };
     template < typename T >
     concept common_type = !std::same_as< std::decay_t< T >, error_type >;
     template < typename T >
