@@ -335,7 +335,7 @@ namespace scltk
         { };
         template < cpp_utils::const_string RawName, cpp_utils::const_string DisplayName, bool Atomic, typename OptionsInfoTable >
             requires( is_valid_options_info_table< OptionsInfoTable >::value == true )
-        class basic_options_config_node
+        class basic_options_config_node final
           : public config_node_raw_name< RawName >
           , public config_node_impl
         {
