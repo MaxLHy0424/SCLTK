@@ -111,30 +111,30 @@ namespace cpp_utils
             template < typename T >
             using predicate = std::is_same< T, U >;
         };
-        template < template < typename > typename Pred, std::size_t I >
+        template < template < typename > typename Pred, std::size_t Index >
         static consteval auto find_first_if_impl_()
         {
-            if constexpr ( I >= size_ ) {
+            if constexpr ( Index >= size_ ) {
                 return size_;
             } else {
-                if constexpr ( Pred< std::tuple_element_t< I, std::tuple< Ts... > > >::value ) {
-                    return I;
+                if constexpr ( Pred< std::tuple_element_t< Index, std::tuple< Ts... > > >::value ) {
+                    return Index;
                 } else {
-                    return find_first_if_impl_< Pred, I + 1 >();
+                    return find_first_if_impl_< Pred, Index + 1 >();
                 }
             }
         }
-        template < template < typename > typename Pred, std::size_t I >
+        template < template < typename > typename Pred, std::size_t Index >
         static consteval auto find_last_if_impl_()
         {
-            using T = std::tuple_element_t< I, std::tuple< Ts... > >;
+            using T = std::tuple_element_t< Index, std::tuple< Ts... > >;
             if constexpr ( Pred< T >::value ) {
-                return I;
+                return Index;
             } else {
-                if constexpr ( I == 0 ) {
+                if constexpr ( Index == 0 ) {
                     return size_;
                 } else {
-                    return find_last_if_impl_< Pred, I - 1 >();
+                    return find_last_if_impl_< Pred, Index - 1 >();
                 }
             }
         }
@@ -144,14 +144,14 @@ namespace cpp_utils
             static_assert( false, "index out of bounds" );
             using type = error_type;
         };
-        template < std::size_t I >
-            requires as_concept< ( I < size_ ) >
-        struct at_impl_< I, false > final
+        template < std::size_t Index >
+            requires as_concept< ( Index < size_ ) >
+        struct at_impl_< Index, false > final
         {
-            using type = std::tuple_element_t< I, std::tuple< Ts... > >;
+            using type = std::tuple_element_t< Index, std::tuple< Ts... > >;
         };
-        template < std::size_t I >
-        struct at_impl_< I, true > final
+        template < std::size_t Index >
+        struct at_impl_< Index, true > final
         {
             using type = error_type;
         };
@@ -438,8 +438,8 @@ namespace cpp_utils
         static inline constexpr auto find_first{ find_first_if< is_same_type_< U >::template predicate > };
         template < typename U >
         static inline constexpr auto find_last{ find_last_if< is_same_type_< U >::template predicate > };
-        template < std::size_t I >
-        using at    = typename at_impl_< I >::type;
+        template < std::size_t Index >
+        using at    = typename at_impl_< Index >::type;
         using front = typename front_impl_<>::type;
         using back  = typename back_impl_<>::type;
         template < common_type... Us >
