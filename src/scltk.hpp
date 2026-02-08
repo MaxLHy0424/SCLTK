@@ -429,7 +429,7 @@ namespace scltk
     };
     class crack_restore_config final
       : public details::basic_options_config_node<
-          "crack_restore", "破解与恢复", false, "hijack_procs", "劫持进程", "set_serv_startup_types", "设置服务启动类型" >
+          "crack_restore", "破解与恢复", false, "hijack_procs", "劫持进程", "set_servs_start_type", "设置服务启动类型" >
     { };
     class window_config final
       : public details::basic_options_config_node<
@@ -1018,7 +1018,7 @@ namespace scltk
         {
             constexpr const auto& options{ std::get< crack_restore_config >( config_nodes ) };
             constexpr const auto& can_hijack_procs{ options.at< "hijack_procs" >() };
-            constexpr const auto& can_set_serv_startup_types{ options.at< "set_serv_startup_types" >() };
+            constexpr const auto& can_set_serv_startup_types{ options.at< "set_servs_start_type" >() };
             if ( can_hijack_procs ) {
                 std::print( " -> 劫持文件.\n" );
                 ( Backends::hijack_procs(), ... );
@@ -1038,7 +1038,7 @@ namespace scltk
         {
             constexpr const auto& options{ std::get< crack_restore_config >( config_nodes ) };
             constexpr const auto& can_hijack_procs{ options.at< "hijack_procs" >() };
-            constexpr const auto& can_set_serv_startup_types{ options.at< "set_serv_startup_types" >() };
+            constexpr const auto& can_set_serv_startup_types{ options.at< "set_servs_start_type" >() };
             if ( can_hijack_procs ) {
                 std::print( " -> 撤销劫持.\n" );
                 ( Backends::undo_hijack_procs(), ... );
