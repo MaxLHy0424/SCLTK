@@ -1090,7 +1090,7 @@ namespace scltk
         {
             []< cpp_utils::const_wstring... Servs >( const cpp_utils::type_list< cpp_utils::value_identity< Servs >... > ) static noexcept
             {
-                ( ( void ) cpp_utils::set_service_status( Servs.view(), cpp_utils::service_flag::disabled_start ), ... );
+                ( ( void ) cpp_utils::set_service_start_type( Servs.view(), cpp_utils::service_flag::disabled_start ), ... );
             }( typename BuiltinRuleNode::servs{} );
         }
         static auto stop_servs() noexcept
@@ -1128,7 +1128,7 @@ namespace scltk
         {
             []< cpp_utils::const_wstring... Servs >( const cpp_utils::type_list< cpp_utils::value_identity< Servs >... > ) static noexcept
             {
-                ( ( void ) cpp_utils::set_service_status( Servs.view(), cpp_utils::service_flag::auto_start ), ... );
+                ( ( void ) cpp_utils::set_service_start_type( Servs.view(), cpp_utils::service_flag::auto_start ), ... );
             }( typename BuiltinRuleNode::servs{} );
         }
         static auto start_servs() noexcept
@@ -1158,7 +1158,7 @@ namespace scltk
         static auto disable_servs() noexcept
         {
             for ( const auto& serv : custom_rules.servs ) {
-                ( void ) cpp_utils::set_service_status( serv, cpp_utils::service_flag::disabled_start );
+                ( void ) cpp_utils::set_service_start_type( serv, cpp_utils::service_flag::disabled_start );
             }
         }
         static auto stop_servs() noexcept
@@ -1201,7 +1201,7 @@ namespace scltk
         static auto enable_servs() noexcept
         {
             for ( const auto& serv : custom_rules.servs ) {
-                ( void ) cpp_utils::set_service_status( serv, cpp_utils::service_flag::auto_start );
+                ( void ) cpp_utils::set_service_start_type( serv, cpp_utils::service_flag::auto_start );
             }
         }
         static auto start_servs() noexcept

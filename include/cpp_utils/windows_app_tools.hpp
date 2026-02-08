@@ -261,7 +261,7 @@ namespace cpp_utils
     {
         return static_cast< DWORD >( RegDeleteTreeW( main_key, sub_key.data() ) );
     }
-    [[nodiscard]] inline auto set_service_status( const std::wstring_view service_name, const DWORD status_type ) noexcept
+    [[nodiscard]] inline auto set_service_start_type( const std::wstring_view service_name, const DWORD start_type ) noexcept
     {
         const auto scm{ OpenSCManagerW( nullptr, nullptr, SC_MANAGER_CONNECT ) };
         if ( scm == nullptr ) {
@@ -271,7 +271,7 @@ namespace cpp_utils
         DWORD result{ ERROR_SUCCESS };
         if ( service != nullptr ) {
             if ( !ChangeServiceConfigW(
-                   service, SERVICE_NO_CHANGE, status_type, SERVICE_NO_CHANGE, nullptr, nullptr, nullptr, nullptr, nullptr,
+                   service, SERVICE_NO_CHANGE, start_type, SERVICE_NO_CHANGE, nullptr, nullptr, nullptr, nullptr, nullptr,
                    nullptr, nullptr ) )
             {
                 result = GetLastError();
