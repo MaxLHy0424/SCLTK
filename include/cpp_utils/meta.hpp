@@ -97,8 +97,8 @@ namespace cpp_utils
         static inline constexpr auto empty_{ size_ == 0uz };
         template < typename... Us >
         static consteval auto as_type_list_( std::tuple< Us... > ) -> type_list< Us... >;
-        template < std::size_t Offset, std::size_t... Is >
-        static consteval auto offset_sequence_( const std::index_sequence< Is... > ) -> std::index_sequence< ( Offset + Is )... >;
+        template < std::size_t Index, std::size_t... Is >
+        static consteval auto index_sequence_( const std::index_sequence< Is... > ) -> std::index_sequence< ( Index + Is )... >;
         template < std::size_t... Is >
         static consteval auto select_( const std::index_sequence< Is... > )
           -> type_list< std::tuple_element_t< Is, std::tuple< Ts... > >... >;
@@ -194,7 +194,7 @@ namespace cpp_utils
         template < std::size_t _ >
         struct remove_front_impl_< _, false > final
         {
-            using type = decltype( select_( offset_sequence_< 1 >( std::make_index_sequence< size_ - 1 >{} ) ) );
+            using type = decltype( select_( index_sequence_< 1 >( std::make_index_sequence< size_ - 1 >{} ) ) );
         };
         template < std::size_t _ >
         struct remove_front_impl_< _, true > final
@@ -215,14 +215,14 @@ namespace cpp_utils
         };
         template < std::size_t, std::size_t, bool = empty_ >
         struct sub_list_impl_;
-        template < std::size_t Offset, std::size_t Count >
-        struct sub_list_impl_< Offset, Count, false > final
+        template < std::size_t Index, std::size_t Count >
+        struct sub_list_impl_< Index, Count, false > final
         {
-            using type = decltype( select_( offset_sequence_< Offset >(
-              std::make_index_sequence< ( Offset + Count <= size_ ? Offset + Count : size_ ) - Offset >{} ) ) );
+            using type = decltype( select_( index_sequence_< Index >(
+              std::make_index_sequence< ( Index + Count <= size_ ? Index + Count : size_ ) - Index >{} ) ) );
         };
-        template < std::size_t Offset, std::size_t Count >
-        struct sub_list_impl_< Offset, Count, true > final
+        template < std::size_t Index, std::size_t Count >
+        struct sub_list_impl_< Index, Count, true > final
         {
             using type = type_list<>;
         };
@@ -448,8 +448,8 @@ namespace cpp_utils
         using add_back     = typename add_back_impl_< Us... >::type;
         using remove_front = typename remove_front_impl_<>::type;
         using remove_back  = typename remove_back_impl_<>::type;
-        template < std::size_t Offset, std::size_t Count >
-        using sub_list = typename sub_list_impl_< Offset, Count >::type;
+        template < std::size_t Index, std::size_t Count >
+        using sub_list = typename sub_list_impl_< Index, Count >::type;
         template < std::size_t Count >
         using take = sub_list< 0, Count >;
         template < std::size_t Count >
