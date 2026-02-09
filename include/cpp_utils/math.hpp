@@ -168,13 +168,13 @@ namespace cpp_utils
             src.data_ = {};
             return *this;
         }
-        constexpr sat_num( const T n )
+        constexpr sat_num( const T n ) noexcept
           : data_{ n }
         { }
-        constexpr sat_num( const sat_num< T >& src )
+        constexpr sat_num( const sat_num< T >& src ) noexcept
           : data_{ src.data_ }
         { }
-        constexpr sat_num( sat_num< T >&& src )
+        constexpr sat_num( sat_num< T >&& src ) noexcept
           : data_{ src.data_ }
         {
             src.data_ = {};

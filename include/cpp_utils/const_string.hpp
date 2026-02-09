@@ -103,9 +103,9 @@ namespace cpp_utils
             std::ranges::copy( str, storage_.data() );
             storage_.back() = '\0';
         }
-        consteval basic_const_string( const basic_const_string< T, N >& )     = default;
-        consteval basic_const_string( basic_const_string< T, N >&& ) noexcept = default;
-        constexpr ~basic_const_string() noexcept                              = default;
+        consteval basic_const_string( const basic_const_string< T, N >& ) noexcept = default;
+        consteval basic_const_string( basic_const_string< T, N >&& ) noexcept      = default;
+        constexpr ~basic_const_string() noexcept                                   = default;
     };
     template < character T, std::size_t N >
     basic_const_string( const T ( & )[ N ] ) -> basic_const_string< T, N - 1 >;
@@ -145,7 +145,7 @@ namespace cpp_utils
         {
           private:
             template < std::size_t... Is >
-            static consteval auto impl_( const std::index_sequence< Is... > )
+            static consteval auto impl_( const std::index_sequence< Is... > ) noexcept
             {
                 return type_list< value_identity< S[ Is ] >... >{};
             }

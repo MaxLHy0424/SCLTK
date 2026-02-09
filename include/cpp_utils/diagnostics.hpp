@@ -20,7 +20,7 @@ namespace cpp_utils
     inline auto dynamic_assert(
       const bool expression, const std::string_view failed_message = "assertion failid!",
       const std::source_location src_location = std::source_location::current(),
-      std::pmr::stacktrace trace              = std::pmr::stacktrace::current() ) noexcept
+      std::pmr::stacktrace trace              = std::pmr::stacktrace::current() )
     {
         if ( expression == false ) {
             std::print( "{}", make_log( failed_message, src_location, std::move( trace ) ) );
@@ -31,7 +31,7 @@ namespace cpp_utils
     inline auto dynamic_assert_if(
       const bool expression, const std::string_view failed_message = "assertion failid!",
       const std::source_location src_location = std::source_location::current(),
-      std::pmr::stacktrace trace              = std::pmr::stacktrace::current() ) noexcept
+      std::pmr::stacktrace trace              = std::pmr::stacktrace::current() )
     {
         if constexpr ( Cond == true ) {
             dynamic_assert( expression, failed_message, src_location, std::move( trace ) );

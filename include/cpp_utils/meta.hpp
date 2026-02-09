@@ -78,8 +78,8 @@ namespace cpp_utils
     {
         using value_t = decltype( V );
         static inline constexpr auto value{ V };
-        constexpr auto operator<=>( const value_identity< V >& ) const        = default;
-        constexpr auto operator==( const value_identity< V >& ) const -> bool = default;
+        constexpr auto operator<=>( const value_identity< V >& ) const noexcept        = default;
+        constexpr auto operator==( const value_identity< V >& ) const noexcept -> bool = default;
     };
     template < auto V >
     static inline constexpr auto value_identity_v{ value_identity< V >::value };
@@ -96,14 +96,15 @@ namespace cpp_utils
         static inline constexpr auto size_{ sizeof...( Ts ) };
         static inline constexpr auto empty_{ size_ == 0uz };
         template < typename... Us >
-        static consteval auto as_type_list_( std::tuple< Us... > ) -> type_list< Us... >;
+        static consteval auto as_type_list_( std::tuple< Us... > ) noexcept -> type_list< Us... >;
         template < std::size_t I, std::size_t... Is >
-        static consteval auto index_sequence_( const std::index_sequence< Is... > ) -> std::index_sequence< ( I + Is )... >;
+        static consteval auto index_sequence_( const std::index_sequence< Is... > ) noexcept
+          -> std::index_sequence< ( I + Is )... >;
         template < std::size_t... Is >
-        static consteval auto select_( const std::index_sequence< Is... > )
+        static consteval auto select_( const std::index_sequence< Is... > ) noexcept
           -> type_list< std::tuple_element_t< Is, std::tuple< Ts... > >... >;
         template < std::size_t... Is >
-        static consteval auto reverse_index_sequence_( const std::index_sequence< Is... > )
+        static consteval auto reverse_index_sequence_( const std::index_sequence< Is... > ) noexcept
           -> std::index_sequence< ( sizeof...( Is ) - 1 - Is )... >;
         template < typename U >
         struct is_same_type_ final
@@ -112,7 +113,7 @@ namespace cpp_utils
             using predicate = std::is_same< T, U >;
         };
         template < template < typename > typename Pred, std::size_t I >
-        static consteval auto find_first_if_impl_()
+        static consteval auto find_first_if_impl_() noexcept
         {
             if constexpr ( I >= size_ ) {
                 return size_;
@@ -125,7 +126,7 @@ namespace cpp_utils
             }
         }
         template < template < typename > typename Pred, std::size_t I >
-        static consteval auto find_last_if_impl_()
+        static consteval auto find_last_if_impl_() noexcept
         {
             using T = std::tuple_element_t< I, std::tuple< Ts... > >;
             if constexpr ( Pred< T >::value ) {
@@ -341,7 +342,7 @@ namespace cpp_utils
         struct enumerate_impl_ final
         {
             template < std::size_t... Is >
-            static consteval auto helper( const std::index_sequence< Is... > )
+            static consteval auto helper( const std::index_sequence< Is... > ) noexcept
               -> type_list< type_list< value_identity< Start + Is >, Ts >... >;
             using type = decltype( helper( std::index_sequence_for< Ts... >{} ) );
         };
@@ -381,7 +382,7 @@ namespace cpp_utils
         template < typename U >
         static inline constexpr auto contains{ std::disjunction_v< std::is_same< U, Ts >... > };
         template < typename U >
-        static inline constexpr auto count{ [] consteval
+        static inline constexpr auto count{ [] static consteval noexcept
         {
             if constexpr ( empty ) {
                 return 0uz;
@@ -390,7 +391,7 @@ namespace cpp_utils
             }
         }() };
         template < template < typename > typename Pred >
-        static inline constexpr auto count_if{ [] consteval
+        static inline constexpr auto count_if{ [] static consteval noexcept
         {
             if constexpr ( empty ) {
                 return 0uz;
@@ -401,7 +402,7 @@ namespace cpp_utils
         template < template < typename > typename Pred >
         static inline constexpr auto all_of{ ( Pred< Ts >::value && ... ) };
         template < template < typename > typename Pred >
-        static inline constexpr auto any_of{ [] consteval
+        static inline constexpr auto any_of{ [] static consteval noexcept
         {
             if ( empty_ ) {
                 return true;
@@ -412,7 +413,7 @@ namespace cpp_utils
         template < template < typename > typename Pred >
         static inline constexpr auto none_of{ ( !Pred< Ts >::value && ... ) };
         template < template < typename > typename Pred >
-        static inline constexpr auto find_first_if{ [] consteval
+        static inline constexpr auto find_first_if{ [] static consteval noexcept
         {
             if constexpr ( empty ) {
                 return size;
@@ -421,7 +422,7 @@ namespace cpp_utils
             }
         }() };
         template < template < typename > typename Pred >
-        static inline constexpr auto find_last_if{ [] consteval
+        static inline constexpr auto find_last_if{ [] static consteval noexcept
         {
             if constexpr ( empty ) {
                 return size;
@@ -529,7 +530,7 @@ namespace cpp_utils
         template < typename T, std::size_t N >
         struct make_repeated_type_list_impl final
         {
-            static consteval auto to_identity( const std::size_t ) -> type_identity< T >;
+            static consteval auto to_identity( const std::size_t ) noexcept -> type_identity< T >;
             using type = decltype( []< std::size_t... Is >( const std::index_sequence< Is... > ) consteval static noexcept
             { return type_list< typename decltype( to_identity( Is ) )::type... >{}; }( std::make_index_sequence< N >{} ) );
         };

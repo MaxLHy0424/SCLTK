@@ -50,12 +50,12 @@ namespace cpp_utils
         {
             return ptr_;
         }
-        [[nodiscard]] constexpr auto&& operator*() const
+        [[nodiscard]] constexpr auto&& operator*() const noexcept
             requires( !std::same_as< std::remove_cv_t< std::remove_pointer_t< T > >, void > )
         {
             return *ptr_;
         }
-        [[nodiscard]] constexpr auto&& operator[]( const std::size_t n ) const
+        [[nodiscard]] constexpr auto&& operator[]( const std::size_t n ) const noexcept
             requires( !std::same_as< std::remove_cv_t< std::remove_pointer_t< T > >, void > )
         {
             return ptr_[ n ];
