@@ -231,7 +231,7 @@ namespace cpp_utils
                 line.text.visit( []< typename T >( T& line_text ) static
                 {
                     constexpr auto default_text_capacity{ std::string{}.capacity() };
-                    if constexpr ( std::is_same_v< T, std::string > || std::is_same_v< T, std::pmr::string > ) {
+                    if constexpr ( requires( T& t ) { t.shrink_to_fit(); } ) {
                         if ( line_text.capacity() != default_text_capacity && line_text.capacity() > line_text.size() ) {
                             line_text.shrink_to_fit();
                         }
