@@ -67,17 +67,8 @@ namespace scltk
             }
             return false;
         }
-        template < typename, typename >
-        struct sort_const_string_comp;
-        template < cpp_utils::basic_const_string A, cpp_utils::basic_const_string B >
-            requires std::same_as< typename decltype( A )::char_t, typename decltype( B )::char_t >
-        struct sort_const_string_comp< cpp_utils::value_identity< A >, cpp_utils::value_identity< B > > final
-        {
-            static inline constexpr auto value{ A.view() < B.view() };
-        };
         template < cpp_utils::const_wstring... Items >
-        using make_ordered_const_wstring_list_t =
-          typename cpp_utils::type_list< cpp_utils::value_identity< Items >... >::template sort< sort_const_string_comp >;
+        using make_const_wstring_list_t = typename cpp_utils::type_list< cpp_utils::value_identity< Items >... >;
         inline constexpr auto empty_lambda{ [] static noexcept { } };
         inline auto terminate_jfglzs_daemon() noexcept
         {
@@ -137,15 +128,15 @@ namespace scltk
     using builtin_rules_t = cpp_utils::type_list<
       compile_time_rule_node<
         "机房管理助手",
-        details::make_ordered_const_wstring_list_t<
+        details::make_const_wstring_list_t<
           L"yz.exe", L"jfglzs.exe", L"jfglzsn.exe", L"jfglzsp.exe", L"przs.exe", L"zmserv.exe", L"zmsrv.exe" >,
-        details::make_ordered_const_wstring_list_t< L"zmserv" >, details::terminate_jfglzs_daemon >,
+        details::make_const_wstring_list_t< L"zmserv" >, details::terminate_jfglzs_daemon >,
       compile_time_rule_node<
         "极域电子教室",
-        details::make_ordered_const_wstring_list_t<
+        details::make_const_wstring_list_t<
           L"StudentMain.exe", L"DispcapHelper.exe", L"VRCwPlayer.exe", L"InstHelpApp.exe", L"InstHelpApp64.exe",
           L"TDOvrSet.exe", L"GATESRV.exe", L"ProcHelper64.exe", L"MasterHelper.exe" >,
-        details::make_ordered_const_wstring_list_t< L"STUDSRV" >,
+        details::make_const_wstring_list_t< L"STUDSRV" >,
         [] static noexcept
     {
         ( void ) cpp_utils::stop_service_with_dependencies( L"TDNetFilter" );
@@ -158,28 +149,26 @@ namespace scltk
     } >,
       compile_time_rule_node<
         "联想智能云教室",
-        details::make_ordered_const_wstring_list_t<
+        details::make_const_wstring_list_t<
           L"WfbsPnpInstall.exe", L"WFBSMon.exe", L"WFBSMlogon.exe", L"WFBSSvrLogShow.exe", L"ResetIp.exe", L"FuncForWIN64.exe",
           L"Fireware.exe", L"BCDBootCopy.exe", L"refreship.exe", L"WFDeskShow.exe", L"lenovoLockScreen.exe",
           L"PortControl64.exe", L"DesktopCheck.exe", L"DeploymentManager.exe", L"DeploymentAgent.exe", L"XYNTService.exe" >,
-        details::make_ordered_const_wstring_list_t< L"BSAgentSvr", L"tvnserver", L"WFBSMlogon" > >,
+        details::make_const_wstring_list_t< L"BSAgentSvr", L"tvnserver", L"WFBSMlogon" > >,
       compile_time_rule_node<
         "红蜘蛛多媒体网络教室",
-        details::make_ordered_const_wstring_list_t<
-          L"rscheck.exe", L"checkrs.exe", L"REDAgent.exe", L"PerformanceCheck.exe", L"edpaper.exe", L"Adapter.exe",
-          L"repview.exe", L"FormatPaper.exe" >,
-        details::make_ordered_const_wstring_list_t< L"appcheck2", L"checkapp2" > >,
-      compile_time_rule_node< "伽卡他卡电子教室", details::make_ordered_const_wstring_list_t< L"Student.exe", L"Smonitor.exe" >,
-                              details::make_ordered_const_wstring_list_t< L"Smsvc" > >,
+        details::make_const_wstring_list_t< L"rscheck.exe", L"checkrs.exe", L"REDAgent.exe", L"PerformanceCheck.exe",
+                                            L"edpaper.exe", L"Adapter.exe", L"repview.exe", L"FormatPaper.exe" >,
+        details::make_const_wstring_list_t< L"appcheck2", L"checkapp2" > >,
+      compile_time_rule_node< "伽卡他卡电子教室", details::make_const_wstring_list_t< L"Student.exe", L"Smonitor.exe" >,
+                              details::make_const_wstring_list_t< L"Smsvc" > >,
       compile_time_rule_node<
-        "凌波网络教室", details::make_ordered_const_wstring_list_t< L"sbkup.exe", L"wsf.exe", L"NCStu.exe", L"NCCmn.dll" >,
-        details::make_ordered_const_wstring_list_t< L"Windows Application and Components Data Backup Support Service" > >,
+        "凌波网络教室", details::make_const_wstring_list_t< L"sbkup.exe", L"wsf.exe", L"NCStu.exe", L"NCCmn.dll" >,
+        details::make_const_wstring_list_t< L"Windows Application and Components Data Backup Support Service" > >,
       compile_time_rule_node<
         "Veyon",
-        details::make_ordered_const_wstring_list_t<
-          L"veyon-worker.exe", L"veyon-configurator.exe", L"veyon-server.exe", L"veyon-cli.exe", L"veyon-wcli.exe",
-          L"veyon-master.exe", L"veyon-service.exe" >,
-        details::make_ordered_const_wstring_list_t< L"VeyonService" > > >;
+        details::make_const_wstring_list_t< L"veyon-worker.exe", L"veyon-configurator.exe", L"veyon-server.exe",
+                                            L"veyon-cli.exe", L"veyon-wcli.exe", L"veyon-master.exe", L"veyon-service.exe" >,
+        details::make_const_wstring_list_t< L"VeyonService" > > >;
     runtime_rule_node custom_rules;
     namespace details
     {
@@ -753,10 +742,10 @@ namespace scltk
         }
         inline auto restore_os_components() noexcept
         {
-            using reg_dirs_t = make_ordered_const_wstring_list_t<
+            using reg_dirs_t = make_const_wstring_list_t<
               LR"(Software\Policies\Microsoft\Windows\System)", LR"(Software\Microsoft\Windows\CurrentVersion\Policies\System)",
               LR"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)", LR"(Software\Policies\Microsoft\MMC)" >;
-            using procs_t = make_ordered_const_wstring_list_t<
+            using procs_t = make_const_wstring_list_t<
               L"tasklist", L"taskkill", L"ntsd", L"sc", L"net", L"reg", L"cmd", L"taskmgr", L"perfmon", L"regedit", L"mmc",
               L"dism", L"sfc", L"netsh", L"sethc", L"sidebar", L"shvlzm", L"winmine", L"bckgzm", L"Chess", L"chkrzm",
               L"FreeCell", L"Hearts", L"Magnify", L"Mahjong", L"Minesweeper", L"PurblePlace", L"Solitaire", L"SpiderSolitaire" >;
@@ -893,7 +882,7 @@ namespace scltk
             std::print( " -> 删除配置.\n" );
             ( void ) cpp_utils::delete_registry_tree( HKEY_CURRENT_USER, LR"(Software\jfglzs)"sv );
             std::print( " -> 删除自启动项.\n" );
-            using autorun_items_t = make_ordered_const_wstring_list_t< L"jfglzs", L"jfglzsn", L"jfglzsp", L"prozs", L"przs" >;
+            using autorun_items_t = make_const_wstring_list_t< L"jfglzs", L"jfglzsn", L"jfglzsp", L"prozs", L"przs" >;
             []< cpp_utils::const_wstring... Items >( const cpp_utils::type_list< cpp_utils::value_identity< Items >... > ) static noexcept
             {
                 ( ( void ) cpp_utils::delete_registry_key(
