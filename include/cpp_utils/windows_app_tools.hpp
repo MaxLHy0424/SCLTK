@@ -548,6 +548,33 @@ namespace cpp_utils
             SetLayeredWindowAttributes( self.window_handle, RGB( 0, 0, 0 ), value, LWA_ALPHA );
             return self;
         }
+        auto&& show_cursor( this auto&& self, const bool is_shown ) noexcept
+        {
+            CONSOLE_CURSOR_INFO cursor_data;
+            GetConsoleCursorInfo( self.std_output_handle, &cursor_data );
+            cursor_data.bVisible = static_cast< WINBOOL >( is_shown );
+            SetConsoleCursorInfo( self.std_output_handle, &cursor_data );
+            return self;
+        }
+        auto&& lock_text( this auto&& self, const bool is_locked ) noexcept
+        {
+            DWORD attrs;
+            GetConsoleMode( self.std_input_handle, &attrs );
+            switch ( is_locked ) {
+                case false :
+                    attrs |= ENABLE_QUICK_EDIT_MODE;
+                    attrs |= ENABLE_INSERT_MODE;
+                    break;
+                case true :
+                    attrs &= ~ENABLE_QUICK_EDIT_MODE;
+                    attrs &= ~ENABLE_INSERT_MODE;
+                    break;
+            }
+            attrs |= ENABLE_MOUSE_INPUT;
+            attrs |= ENABLE_LINE_INPUT;
+            SetConsoleMode( self.std_input_handle, attrs );
+            return self;
+        }
         auto operator=( const console& ) noexcept -> console& = default;
         console() noexcept
           : details::basic_window{ .window_handle{ GetConsoleWindow() } }
