@@ -1167,7 +1167,6 @@ namespace scltk
         }
         static auto execute_helpers_( const std::pmr::vector< std::pmr::wstring >& helpers ) noexcept
         {
-            std::error_code ec;
             for ( const auto& helper : helpers ) {
                 STARTUPINFOW startup{};
                 startup.cb = sizeof( startup );
