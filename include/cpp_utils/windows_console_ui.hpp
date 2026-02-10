@@ -50,11 +50,6 @@ namespace cpp_utils
         using function_t
           = std::variant< std::move_only_function< func_action() >, std::move_only_function< func_action( func_args ) > >;
       private:
-        enum class console_attrs_selection_ : char
-        {
-            normal,
-            locked
-        };
         struct line_node_ final
         {
             text_t text{};
@@ -93,32 +88,6 @@ namespace cpp_utils
         {
             SetConsoleTextAttribute( console_.std_output_handle, current_attrs );
             self.last_attrs = current_attrs;
-        }
-        auto show_cursor_( const WINBOOL is_show ) noexcept
-        {
-            CONSOLE_CURSOR_INFO cursor_data;
-            GetConsoleCursorInfo( console_.std_output_handle, &cursor_data );
-            cursor_data.bVisible = is_show;
-            SetConsoleCursorInfo( console_.std_output_handle, &cursor_data );
-        }
-        auto set_console_attrs_( const console_attrs_selection_ attrs_selection ) noexcept
-        {
-            DWORD attrs;
-            GetConsoleMode( console_.std_input_handle, &attrs );
-            switch ( attrs_selection ) {
-                case console_attrs_selection_::normal :
-                    attrs |= ENABLE_QUICK_EDIT_MODE;
-                    attrs |= ENABLE_INSERT_MODE;
-                    break;
-                case console_attrs_selection_::locked :
-                    attrs &= ~ENABLE_QUICK_EDIT_MODE;
-                    attrs &= ~ENABLE_INSERT_MODE;
-                    break;
-                default : std::unreachable();
-            }
-            attrs |= ENABLE_MOUSE_INPUT;
-            attrs |= ENABLE_LINE_INPUT;
-            SetConsoleMode( console_.std_input_handle, attrs );
         }
         auto get_cursor_() noexcept
         {
@@ -190,8 +159,8 @@ namespace cpp_utils
             }
             console_.clear( lines_.get_allocator().resource() );
             set_line_attrs_( *target, target->default_attrs );
-            show_cursor_( FALSE );
-            set_console_attrs_( console_attrs_selection_::locked );
+            console_.show_cursor( false );
+            console_.lock_text( true );
             const auto value{ target->func.visit< func_action >( [ & ]< typename F >( F& func )
             {
                 if constexpr ( std::is_same_v< F, std::move_only_function< func_action() > > ) {
@@ -202,8 +171,8 @@ namespace cpp_utils
                     static_assert( false, "unknown callback!" );
                 }
             } ) };
-            show_cursor_( FALSE );
-            set_console_attrs_( console_attrs_selection_::locked );
+            console_.show_cursor( false );
+            console_.lock_text( true );
             init_pos_();
             return value;
         }
@@ -334,8 +303,8 @@ namespace cpp_utils
                 return *this;
             }
             using namespace std::chrono_literals;
-            show_cursor_( FALSE );
-            set_console_attrs_( console_attrs_selection_::locked );
+            console_.show_cursor( false );
+            console_.lock_text( true );
             init_pos_();
             MOUSE_EVENT_RECORD event;
             auto func_return_value{ func_back };
@@ -352,12 +321,6 @@ namespace cpp_utils
                 }
             }
             console_.clear( lines_.get_allocator().resource() );
-            return *this;
-        }
-        auto& set_constraints( const bool is_hide_cursor, const bool is_lock_text ) noexcept
-        {
-            show_cursor_( static_cast< WINBOOL >( !is_hide_cursor ) );
-            set_console_attrs_( is_lock_text ? console_attrs_selection_::locked : console_attrs_selection_::normal );
             return *this;
         }
         auto operator=( const console_ui& ) noexcept -> console_ui& = default;
