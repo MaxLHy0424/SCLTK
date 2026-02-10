@@ -11,9 +11,10 @@ auto main() -> int
       .set_translucency( 255 )
       .enable_window_maximize_ctrl( false )
       .enable_window_minimize_ctrl( false )
-      .enable_window_close_ctrl( false );
+      .enable_window_close_ctrl( false )
+      .show_cursor( false )
+      .lock_text( true );
     cpp_utils::console_ui ui{ scltk::con, scltk::unsynced_mem_pool };
-    ui.set_constraints( true, true );
     std::print( " -> 准备就绪." );
     scltk::load_config( false );
     scltk::create_parallel_tasks();

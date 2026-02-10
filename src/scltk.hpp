@@ -716,7 +716,7 @@ namespace scltk
                 return func_back;
             }
         };
-        inline auto launch_cmd( const ui_func_args_t args )
+        inline auto launch_cmd()
         {
             STARTUPINFOW startup{};
             PROCESS_INFORMATION proc;
@@ -726,8 +726,9 @@ namespace scltk
                 con.set_title( L"" INFO_SHORT_NAME " - 命令提示符" )
                   .set_size( 120, 30, unsynced_mem_pool )
                   .fix_size( false )
-                  .enable_window_maximize_ctrl( true );
-                args.parent_ui.set_constraints( false, false );
+                  .enable_window_maximize_ctrl( true )
+                  .show_cursor( false )
+                  .lock_text( false );
                 SetConsoleScreenBufferSize( con.std_output_handle, { 120, std::numeric_limits< SHORT >::max() - 1 } );
                 WaitForSingleObject( proc.hProcess, INFINITE );
                 CloseHandle( proc.hProcess );
