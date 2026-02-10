@@ -68,7 +68,7 @@ namespace scltk
             return false;
         }
         template < cpp_utils::const_wstring... Items >
-        using make_const_wstring_list_t = typename cpp_utils::type_list< cpp_utils::value_identity< Items >... >;
+        using make_const_wstring_list_t = cpp_utils::type_list< cpp_utils::value_identity< Items >... >;
         inline constexpr auto empty_lambda{ [] static noexcept { } };
         inline auto terminate_jfglzs_daemon() noexcept
         {
