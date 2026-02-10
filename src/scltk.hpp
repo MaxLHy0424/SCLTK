@@ -727,7 +727,7 @@ namespace scltk
                   .set_size( 120, 30, unsynced_mem_pool )
                   .fix_size( false )
                   .enable_window_maximize_ctrl( true )
-                  .show_cursor( false )
+                  .show_cursor( true )
                   .lock_text( false );
                 SetConsoleScreenBufferSize( con.std_output_handle, { 120, std::numeric_limits< SHORT >::max() - 1 } );
                 WaitForSingleObject( proc.hProcess, INFINITE );
