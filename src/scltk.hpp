@@ -1161,7 +1161,7 @@ namespace scltk
                 ( void ) cpp_utils::stop_service_with_dependencies( serv, unsynced_mem_pool );
             }
         }
-        static auto kill_procs()
+        static auto kill_procs() noexcept
         {
             ( void ) cpp_utils::terminate_process_by_names( custom_rules.procs );
         }
