@@ -144,7 +144,7 @@ namespace cpp_utils
             return result;
         }
     }
-    [[nodiscard]] inline auto set_privilege( HANDLE proc, const LPCTSTR privilege, const bool is_enabled ) noexcept
+    [[nodiscard]] inline auto set_privilege( const HANDLE proc, const wchar_t* const privilege, const bool is_enabled ) noexcept
     {
         HANDLE token{ nullptr };
         TOKEN_PRIVILEGES tp{};
@@ -155,7 +155,7 @@ namespace cpp_utils
             result = GetLastError();
             goto Cleanup;
         }
-        if ( !LookupPrivilegeValue( NULL, privilege, &local_uid ) ) {
+        if ( !LookupPrivilegeValueW( NULL, privilege, &local_uid ) ) {
             result = GetLastError();
             goto Cleanup;
         }
