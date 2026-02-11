@@ -8,8 +8,8 @@
                 "${workspaceFolder}/include/*"
             ],
             "defines": [
-                "ANSI",
-                "_ANSI"
+                "UNICODE",
+                "_UNICODE"
             ],
             "compilerArgs": [],
             "intelliSenseMode": "windows-gcc-x64",
