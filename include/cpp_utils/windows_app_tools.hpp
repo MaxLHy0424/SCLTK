@@ -161,6 +161,34 @@ namespace cpp_utils
         CloseHandle( token );
         return result != FALSE && GetLastError() != ERROR_NOT_ALL_ASSIGNED;
     }
+    [[nodiscard]] inline auto set_privilege( HANDLE proc, const LPCTSTR privilege, const bool is_enabled ) noexcept
+    {
+        HANDLE token{ nullptr };
+        TOKEN_PRIVILEGES tp{};
+        tp.PrivilegeCount = 0;
+        LUID local_uid;
+        DWORD result{ ERROR_SUCCESS };
+        if ( !OpenProcessToken( proc, TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, &token ) ) {
+            result = GetLastError();
+            goto Cleanup;
+        }
+        if ( !LookupPrivilegeValue( NULL, privilege, &local_uid ) ) {
+            result = GetLastError();
+            goto Cleanup;
+        }
+        tp.PrivilegeCount             = 1;
+        tp.Privileges[ 0 ].Luid       = local_uid;
+        tp.Privileges[ 0 ].Attributes = is_enabled ? SE_PRIVILEGE_ENABLED : 0;
+        if ( !AdjustTokenPrivileges( token, FALSE, &tp, sizeof( TOKEN_PRIVILEGES ), nullptr, nullptr ) ) {
+            result = GetLastError();
+            goto Cleanup;
+        }
+    Cleanup:
+        if ( token != nullptr ) {
+            CloseHandle( token );
+        }
+        return result;
+    }
     [[nodiscard]] inline auto terminate_process_by_handle( const HANDLE handle ) noexcept
     {
         return static_cast< LONG >( TerminateProcess( handle, 1 ) );
