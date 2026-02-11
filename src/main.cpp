@@ -2,7 +2,6 @@
 auto main() -> int
 {
     using namespace std::string_view_literals;
-    ( void ) cpp_utils::elevate_privilege();
     scltk::con.ignore_exit_signal( true )
       .fix_size( true )
       .set_charset( scltk::charset_id )
