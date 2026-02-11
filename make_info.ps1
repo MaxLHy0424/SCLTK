@@ -1,6 +1,3 @@
-param(
-    [string]$gpg_key_id = $(throw "Parameter missing: -gpg_key_id key-id")
-)
 $software_full_name = "Student Computer Lab Toolkit"
 $software_short_name = "SCLTK"
 $license = "MIT License"
@@ -20,7 +17,6 @@ if ($contains_uncommitted_changes -eq $true ) {
 else {
     $git_hash = "<work in progress>"
 }
-$pretty_gpg_key_id = [regex]::Replace($gpg_key_id, '.{1,5}', { param($m) $m.Value + ' ' }).Trim()
 @"
 #pragma once
 #define INFO_FULL_NAME  "$software_full_name"
@@ -32,5 +28,4 @@ $pretty_gpg_key_id = [regex]::Replace($gpg_key_id, '.{1,5}', { param($m) $m.Valu
 #define INFO_GIT_TAG    "$git_tag"
 #define INFO_GIT_HASH   "$git_hash"
 #define INFO_VERSION    INFO_GIT_TAG " (" INFO_GIT_BRANCH " " INFO_GIT_HASH ")"
-#define INFO_GPG_KEY    "$pretty_gpg_key_id"
 "@ | Out-File -FilePath "src/info.hpp" -Encoding UTF8 -NoNewline -Force

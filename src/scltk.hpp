@@ -707,8 +707,7 @@ namespace scltk
           .add_back( " < 返回 "sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
           .add_back(
             "\n[ 名称 ]\n\n " INFO_FULL_NAME " (" INFO_SHORT_NAME ")\n\n[ 版本 ]\n\n " INFO_VERSION
-            "\n\n[ 许可证与开发者 ]\n\n " INFO_LICENSE "\n " INFO_COPYRIGHT "\n\n 开源仓库:\n " INFO_REPO_URL
-            "\n\n 开发者 GnuPG 公钥指纹:\n " INFO_GPG_KEY ""sv )
+            "\n\n[ 许可证与开发者 ]\n\n " INFO_LICENSE "\n " INFO_COPYRIGHT "\n\n 开源仓库:\n " INFO_REPO_URL ""sv )
           .show();
         return func_back;
     }
