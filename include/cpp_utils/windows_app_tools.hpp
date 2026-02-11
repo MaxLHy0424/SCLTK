@@ -144,23 +144,6 @@ namespace cpp_utils
             return result;
         }
     }
-    [[nodiscard]] inline auto elevate_privilege() noexcept
-    {
-        HANDLE token{ nullptr };
-        if ( !OpenProcessToken( GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, &token ) ) {
-            return false;
-        }
-        TOKEN_PRIVILEGES tp{};
-        tp.PrivilegeCount = 1;
-        if ( !LookupPrivilegeValueW( nullptr, L"" SE_DEBUG_NAME, &tp.Privileges[ 0 ].Luid ) ) {
-            CloseHandle( token );
-            return false;
-        }
-        tp.Privileges[ 0 ].Attributes = SE_PRIVILEGE_ENABLED;
-        const auto result{ AdjustTokenPrivileges( token, FALSE, &tp, sizeof( tp ), nullptr, nullptr ) };
-        CloseHandle( token );
-        return result != FALSE && GetLastError() != ERROR_NOT_ALL_ASSIGNED;
-    }
     [[nodiscard]] inline auto set_privilege( HANDLE proc, const LPCTSTR privilege, const bool is_enabled ) noexcept
     {
         HANDLE token{ nullptr };
