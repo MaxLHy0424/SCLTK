@@ -570,9 +570,4 @@ namespace cpp_utils
     };
     template < common_type T, std::size_t N >
     using make_repeated_type_list_t = typename make_repeated_type_list< T, N >::type;
-    template < template < typename > typename F, common_type... Ts >
-    inline constexpr auto type_list_for_each( const type_list< Ts... > )
-    {
-        ( F< Ts >{}, ... );
-    }
 }
