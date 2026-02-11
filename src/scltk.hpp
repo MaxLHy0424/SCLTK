@@ -706,8 +706,8 @@ namespace scltk
           .add_back( make_title_text< "[ 关  于 ]", 2 >.view() )
           .add_back( " < 返回 "sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
           .add_back(
-            "\n[ 名称 ]\n\n " INFO_FULL_NAME " (" INFO_SHORT_NAME ")\n\n[ 版本 ]\n\n " INFO_VERSION
-            "\n\n[ 许可证与开发者 ]\n\n " INFO_LICENSE "\n " INFO_COPYRIGHT "\n\n 开源仓库:\n " INFO_REPO_URL ""sv )
+            "\n[ 软件名 ]\n\n " INFO_FULL_NAME " (" INFO_SHORT_NAME ")\n\n[ 软件版本 ]\n\n " INFO_VERSION
+            "\n\n[ 许可证与版权 ]\n\n " INFO_LICENSE "\n " INFO_COPYRIGHT "\n\n[ 开源仓库 ]\n\n " INFO_REPO_URL ""sv )
           .show();
         return func_back;
     }
