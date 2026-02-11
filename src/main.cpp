@@ -15,6 +15,7 @@ auto main() -> int
       .lock_text( true );
     cpp_utils::console_ui ui{ scltk::con, scltk::unsynced_mem_pool };
     std::print( " -> 准备就绪." );
+    scltk::elevate_privilege();
     scltk::load_config( false );
     scltk::create_parallel_tasks();
     ui.reserve( 9 + scltk::builtin_rules_t::size )
