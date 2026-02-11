@@ -307,10 +307,29 @@ namespace scltk
             friend config_node_impl;
           private:
             using info_table_base_t_ = typename OptionsInfoTable::base_t;
-            using value_t_           = std::conditional_t< Atomic, std::atomic< bool >, bool >;
+            using value_t_           = std::conditional_t< Atomic, std::atomic_flag, bool >;
             std::array< value_t_, info_table_base_t_::size > data_{};
             static inline constexpr auto str_enabled_{ ": enabled"sv };
             static inline constexpr auto str_disabled_{ ": disabled"sv };
+            static auto get_value_( const value_t_& value )
+            {
+                if constexpr ( std::is_same_v< value_t_, std::atomic_flag > ) {
+                    return value.test( std::memory_order_acquire );
+                } else {
+                    return value;
+                }
+            }
+            static auto set_value_( value_t_& obj, const bool val )
+            {
+                if constexpr ( std::is_same_v< value_t_, std::atomic_flag > ) {
+                    switch ( val ) {
+                        case false : obj.clear( std::memory_order_release ); break;
+                        case true : ( void ) obj.test_and_set( std::memory_order_release ); break;
+                    }
+                } else {
+                    obj = val;
+                }
+            }
             auto load_( std::string_view line )
             {
                 bool value;
@@ -329,7 +348,7 @@ namespace scltk
                       [ & ]< std::size_t I > noexcept
                     {
                         if ( info_table_base_t_::template at< I >::raw_name.view() == line ) {
-                            std::get< I >( data_ ) = value;
+                            set_value_( std::get< I >( data_ ), value );
                             return true;
                         }
                         return false;
@@ -344,26 +363,9 @@ namespace scltk
                 [ & ]< std::size_t... Is >( const std::index_sequence< Is... > )
                 {
                     ( ( out << info_table_base_t_::template at< Is >::raw_name.view()
-                            << ( std::get< Is >( data_ ) == true ? str_enabled_ : str_disabled_ ) << '\n' ),
+                            << ( get_value_( std::get< Is >( data_ ) ) == true ? str_enabled_ : str_disabled_ ) << '\n' ),
                       ... );
                 }( std::make_index_sequence< info_table_base_t_::size >{} );
-            }
-            static auto get_value_( const value_t_& value )
-            {
-                if constexpr ( std::is_same_v< value_t_, std::atomic< bool > > ) {
-                    return value.load( std::memory_order_acquire );
-                } else {
-                    return value;
-                }
-            }
-            static auto& set_value_( value_t_& obj, const bool val )
-            {
-                if constexpr ( std::is_same_v< value_t_, std::atomic< bool > > ) {
-                    obj.store( val, std::memory_order_release );
-                    return obj;
-                } else {
-                    return obj = val;
-                }
             }
             static auto make_flip_button_text_( const value_t_& value )
             {
@@ -371,7 +373,8 @@ namespace scltk
             }
             static auto flip_item_value_( const ui_func_args_t args, value_t_& value )
             {
-                args.parent_ui.set_text( args.node_index, make_flip_button_text_( set_value_( value, !get_value_( value ) ) ) );
+                set_value_( value, !get_value_( value ) );
+                args.parent_ui.set_text( args.node_index, make_flip_button_text_( value ) );
                 return func_back;
             }
             static auto make_option_editor_ui_( std::array< value_t_, info_table_base_t_::size >& data_ )
@@ -957,13 +960,13 @@ namespace scltk
             constexpr const auto& is_translucent{ window_options.at< "translucent" >() };
             constexpr const auto& is_no_hot_reload{ std::get< performance_config >( config_nodes ).at< "no_hot_reload" >() };
             if ( is_no_hot_reload ) {
-                con.enable_context_menu( !is_enable_simple_titlebar.load( std::memory_order_acquire ) );
-                con.set_translucency( is_translucent.load( std::memory_order_acquire ) ? 230 : 255 );
+                con.enable_context_menu( !is_enable_simple_titlebar.test( std::memory_order_acquire ) );
+                con.set_translucency( is_translucent.test( std::memory_order_acquire ) ? 230 : 255 );
                 return;
             }
             while ( true ) {
-                con.enable_context_menu( !is_enable_simple_titlebar.load( std::memory_order_acquire ) );
-                con.set_translucency( is_translucent.load( std::memory_order_acquire ) ? 230 : 255 );
+                con.enable_context_menu( !is_enable_simple_titlebar.test( std::memory_order_acquire ) );
+                con.set_translucency( is_translucent.test( std::memory_order_acquire ) ? 230 : 255 );
                 std::this_thread::sleep_for( default_thread_sleep_time );
             }
         }
@@ -971,7 +974,7 @@ namespace scltk
         {
             constexpr const auto& is_no_hot_reload{ std::get< performance_config >( config_nodes ).at< "no_hot_reload" >() };
             constexpr const auto& is_force_show{ std::get< window_config >( config_nodes ).at< "force_show" >() };
-            if ( is_no_hot_reload && !is_force_show.load( std::memory_order_acquire ) ) {
+            if ( is_no_hot_reload && !is_force_show.test( std::memory_order_acquire ) ) {
                 return;
             }
             constexpr auto sleep_time{ 50ms };
@@ -979,7 +982,7 @@ namespace scltk
                 con.force_show_forever( sleep_time );
             }
             while ( true ) {
-                if ( !is_force_show.load( std::memory_order_acquire ) ) {
+                if ( !is_force_show.test( std::memory_order_acquire ) ) {
                     con.cancel_force_show();
                     std::this_thread::sleep_for( default_thread_sleep_time );
                     continue;
