@@ -989,11 +989,11 @@ namespace scltk
             constexpr const auto& is_no_hot_reload{ std::get< performance_config >( config_nodes ).at< "no_hot_reload" >() };
             constexpr const auto& is_translucent{ std::get< window_config >( config_nodes ).at< "translucent" >() };
             if ( is_no_hot_reload ) {
-                con.set_translucency( is_translucent.test( std::memory_order_acquire ) ? 230 : 255 );
+                con.set_translucency( is_translucent.test( std::memory_order_acquire ) ? 217 : 255 );
             }
             while ( true ) {
                 is_translucent.wait( false, std::memory_order_acquire );
-                con.set_translucency( 230 );
+                con.set_translucency( 217 );
                 is_translucent.wait( true, std::memory_order_acquire );
                 con.set_translucency( 255 );
             }
