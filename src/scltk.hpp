@@ -399,7 +399,7 @@ namespace scltk
                             cpp_utils::const_string{ "\n[ " }, info_table_base_t_::template at< Is >::display_name,
                             cpp_utils::const_string{ " ]\n" } ) >.view() )
                         .add_back(
-                          make_flip_button_text_( std::get< Is >( data_ ) ),
+                          make_flip_button_text_( get_value_( std::get< Is >( data_ ) ) ),
                           std::bind_back( flip_item_value_, std::ref( std::get< Is >( data_ ) ) ),
                           cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_green ),
                       ... );
@@ -961,21 +961,33 @@ namespace scltk
     }
     namespace details
     {
-        inline auto set_console_attrs() noexcept
+        inline auto enable_simple_titlebar() noexcept
         {
-            constexpr const auto& window_options{ std::get< window_config >( config_nodes ) };
-            constexpr const auto& is_enable_simple_titlebar{ window_options.at< "simple_titlebar" >() };
-            constexpr const auto& is_translucent{ window_options.at< "translucent" >() };
             constexpr const auto& is_no_hot_reload{ std::get< performance_config >( config_nodes ).at< "no_hot_reload" >() };
+            constexpr const auto& is_enable_simple_titlebar{
+              std::get< window_config >( config_nodes ).at< "simple_titlebar" >() };
             if ( is_no_hot_reload ) {
                 con.enable_context_menu( !is_enable_simple_titlebar.test( std::memory_order_acquire ) );
-                con.set_translucency( is_translucent.test( std::memory_order_acquire ) ? 230 : 255 );
-                return;
             }
             while ( true ) {
-                con.enable_context_menu( !is_enable_simple_titlebar.test( std::memory_order_acquire ) );
+                is_enable_simple_titlebar.wait( false, std::memory_order_acquire );
+                con.enable_context_menu( false );
+                is_enable_simple_titlebar.wait( true, std::memory_order_acquire );
+                con.enable_context_menu( true );
+            }
+        }
+        inline auto enable_translucent() noexcept
+        {
+            constexpr const auto& is_no_hot_reload{ std::get< performance_config >( config_nodes ).at< "no_hot_reload" >() };
+            constexpr const auto& is_translucent{ std::get< window_config >( config_nodes ).at< "translucent" >() };
+            if ( is_no_hot_reload ) {
                 con.set_translucency( is_translucent.test( std::memory_order_acquire ) ? 230 : 255 );
-                std::this_thread::sleep_for( default_thread_sleep_time );
+            }
+            while ( true ) {
+                is_translucent.wait( false, std::memory_order_acquire );
+                con.set_translucency( 230 );
+                is_translucent.wait( true, std::memory_order_acquire );
+                con.set_translucency( 255 );
             }
         }
         inline auto force_show() noexcept
@@ -990,16 +1002,15 @@ namespace scltk
                 con.force_show_forever( sleep_time );
             }
             while ( true ) {
-                if ( !is_force_show.test( std::memory_order_acquire ) ) {
-                    con.cancel_force_show();
-                    std::this_thread::sleep_for( default_thread_sleep_time );
-                    continue;
+                is_force_show.wait( false, std::memory_order_acquire );
+                while ( is_force_show.test( std::memory_order_acquire ) == true ) {
+                    con.force_show();
+                    std::this_thread::sleep_for( sleep_time );
                 }
-                con.force_show();
-                std::this_thread::sleep_for( sleep_time );
+                con.cancel_force_show();
             }
         }
-        inline constexpr std::array parallel_tasks{ set_console_attrs, force_show };
+        inline constexpr std::array parallel_tasks{ enable_simple_titlebar, enable_translucent, force_show };
     }
     inline auto create_parallel_tasks() noexcept
     {
