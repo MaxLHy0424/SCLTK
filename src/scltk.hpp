@@ -1030,7 +1030,7 @@ namespace scltk
             ( Backends::hijack_procs(), ... );
             ( Backends::disable_servs(), ... );
             ( Backends::stop_servs(), ... );
-            ( Backends::kill_procs(), ... );
+            ( Backends::terminate_procs(), ... );
             ( Backends::crack_helper(), ... );
             ( Backends::undo_hijack_procs(), ... );
             ( Backends::enable_servs(), ... );
@@ -1055,7 +1055,7 @@ namespace scltk
             std::print( " -> 停止服务.\n" );
             ( Backends::stop_servs(), ... );
             std::print( " -> 终止进程.\n" );
-            ( Backends::kill_procs(), ... );
+            ( Backends::terminate_procs(), ... );
             std::print( " -> 执行扩展操作.\n" );
             ( Backends::crack_helper(), ... );
         }
@@ -1125,7 +1125,7 @@ namespace scltk
                 ( ( void ) cpp_utils::stop_service_with_dependencies( Servs.view(), unsynced_mem_pool ), ... );
             }( typename BuiltinRuleNode::servs{} );
         }
-        static auto kill_procs() noexcept
+        static auto terminate_procs() noexcept
         {
             []< cpp_utils::const_wstring... Procs >( const cpp_utils::type_list< cpp_utils::value_identity< Procs >... > ) static noexcept
             {
@@ -1192,7 +1192,7 @@ namespace scltk
                 ( void ) cpp_utils::stop_service_with_dependencies( serv, unsynced_mem_pool );
             }
         }
-        static auto kill_procs() noexcept
+        static auto terminate_procs() noexcept
         {
             ( void ) cpp_utils::terminate_process_by_names( custom_rules.procs );
         }
