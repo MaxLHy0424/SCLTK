@@ -17,7 +17,6 @@ namespace scltk
     inline constexpr SHORT console_width{ 50 };
     inline constexpr SHORT console_height{ 25 };
     inline constexpr UINT charset_id{ 936 };
-    inline constexpr auto default_thread_sleep_time{ 200ms };
     inline constexpr auto config_file_name{ L"config.ini" };
     inline constexpr auto func_back{ cpp_utils::console_ui::func_back };
     inline constexpr auto func_exit{ cpp_utils::console_ui::func_exit };
@@ -31,7 +30,6 @@ namespace scltk
         std::pmr::set_default_resource( &pool );
         return static_cast< std::pmr::memory_resource* >( &pool );
     }() };
-    static_assert( default_thread_sleep_time.count() != 0 );
     using ui_func_args_t = cpp_utils::console_ui::func_args;
     inline auto quit() noexcept
     {
