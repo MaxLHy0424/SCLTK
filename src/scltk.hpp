@@ -330,6 +330,13 @@ namespace scltk
                     obj = val;
                 }
             }
+            static auto set_value_then_notify_all_( value_t_& obj, const bool val )
+            {
+                set_value_( obj, val );
+                if constexpr ( std::is_same_v< value_t_, std::atomic_flag > ) {
+                    obj.notify_all();
+                }
+            }
             auto load_( std::string_view line )
             {
                 bool value;
