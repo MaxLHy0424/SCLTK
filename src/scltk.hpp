@@ -9,6 +9,7 @@
 #include <cpp_utils/windows_console_ui.hpp>
 #include <filesystem>
 #include <fstream>
+#include <limits>
 #include "info.hpp"
 namespace scltk
 {
@@ -276,7 +277,16 @@ namespace scltk
             using raw_names_t = cpp_utils::type_list< cpp_utils::value_identity< Options::raw_name >... >;
             static consteval auto is_valid()
             {
-                return raw_names_t::unique::size == raw_names_t::size;
+                return raw_names_t::unique::size == raw_names_t::size
+                    && []< cpp_utils::const_string... Items >(
+                         const cpp_utils::type_list< cpp_utils::value_identity< Items >... > ) static constexpr noexcept
+                {
+                    return ( std::ranges::all_of( Items.view(), []( const char ch ) static constexpr noexcept
+                    {
+                        using limits = std::numeric_limits< char >;
+                        return limits::min() <= ch && ch <= limits::max();
+                    } ) && ... );
+                }( raw_names_t{} );
             }
             template < cpp_utils::const_string RawName >
             static consteval auto contains()
