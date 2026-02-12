@@ -466,7 +466,7 @@ namespace scltk
         }( flag_proc_, flag_serv_, flag_crack_helper_, flag_restore_helper_ ) );
         static auto load_( const std::string_view unconverted_line )
         {
-            const auto converted_line{ cpp_utils::to_wstring( unconverted_line, charset_id ) };
+            const auto converted_line{ cpp_utils::to_wstring( unconverted_line, CP_UTF8, unsynced_mem_pool ) };
             const std::wstring_view line{ converted_line };
             if ( line.size() > flag_proc_.size() && line.starts_with( flag_proc_ ) ) {
                 custom_rules.procs.emplace_back(
@@ -491,21 +491,21 @@ namespace scltk
         }
         static auto sync_( std::ofstream& out )
         {
-            const auto flag_proc{ cpp_utils::to_string( flag_proc_, charset_id, unsynced_mem_pool ) };
-            const auto flag_serv{ cpp_utils::to_string( flag_serv_, charset_id, unsynced_mem_pool ) };
-            const auto flag_crack_helper{ cpp_utils::to_string( flag_crack_helper_, charset_id, unsynced_mem_pool ) };
-            const auto flag_restore_helper{ cpp_utils::to_string( flag_restore_helper_, charset_id, unsynced_mem_pool ) };
+            const auto flag_proc{ cpp_utils::to_string( flag_proc_, CP_UTF8, unsynced_mem_pool ) };
+            const auto flag_serv{ cpp_utils::to_string( flag_serv_, CP_UTF8, unsynced_mem_pool ) };
+            const auto flag_crack_helper{ cpp_utils::to_string( flag_crack_helper_, CP_UTF8, unsynced_mem_pool ) };
+            const auto flag_restore_helper{ cpp_utils::to_string( flag_restore_helper_, CP_UTF8, unsynced_mem_pool ) };
             for ( const auto& proc : custom_rules.procs ) {
-                out << flag_proc << ' ' << cpp_utils::to_string( proc, charset_id, unsynced_mem_pool ) << '\n';
+                out << flag_proc << ' ' << cpp_utils::to_string( proc, CP_UTF8, unsynced_mem_pool ) << '\n';
             }
             for ( const auto& serv : custom_rules.servs ) {
-                out << flag_serv << ' ' << cpp_utils::to_string( serv, charset_id, unsynced_mem_pool ) << '\n';
+                out << flag_serv << ' ' << cpp_utils::to_string( serv, CP_UTF8, unsynced_mem_pool ) << '\n';
             }
             for ( const auto& crack_helper : custom_rules.crack_helpers ) {
-                out << flag_crack_helper << ' ' << cpp_utils::to_string( crack_helper, charset_id, unsynced_mem_pool ) << '\n';
+                out << flag_crack_helper << ' ' << cpp_utils::to_string( crack_helper, CP_UTF8, unsynced_mem_pool ) << '\n';
             }
             for ( const auto& restore_helper : custom_rules.restore_helpers ) {
-                out << flag_restore_helper << ' ' << cpp_utils::to_string( restore_helper, charset_id, unsynced_mem_pool ) << '\n';
+                out << flag_restore_helper << ' ' << cpp_utils::to_string( restore_helper, CP_UTF8, unsynced_mem_pool ) << '\n';
             }
         }
         static auto before_load_() noexcept
