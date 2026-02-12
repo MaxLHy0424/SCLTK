@@ -172,17 +172,13 @@ namespace cpp_utils
         }
         return result;
     }
-    [[nodiscard]] inline auto terminate_process_by_handle( const HANDLE handle ) noexcept
-    {
-        return static_cast< LONG >( TerminateProcess( handle, 1 ) );
-    }
     [[nodiscard]] inline auto terminate_process_by_pid( const DWORD pid ) noexcept
     {
         const auto process_handle{ OpenProcess( PROCESS_TERMINATE, FALSE, pid ) };
         if ( process_handle == nullptr ) {
             return ERROR_ACCESS_DENIED;
         }
-        const LONG status{ terminate_process_by_handle( process_handle ) };
+        const LONG status{ TerminateProcess( process_handle, 1 ) };
         CloseHandle( process_handle );
         return status;
     }
