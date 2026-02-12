@@ -211,9 +211,9 @@ namespace cpp_utils
             range.begin() != range.end();
             range.empty();
         }
-    [[nodiscard]] inline auto terminate_process_by_names( const Range& names ) noexcept
+    [[nodiscard]] inline auto terminate_process_by_names( const Range& process_names ) noexcept
     {
-        if ( names.empty() ) {
+        if ( process_names.empty() ) {
             return ERROR_SUCCESS;
         }
         const auto process_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ) };
@@ -225,8 +225,8 @@ namespace cpp_utils
         LONG status{ ERROR_NOT_FOUND };
         if ( Process32FirstW( process_snapshot, &process_entry ) ) {
             do {
-                for ( const auto& name : names ) {
-                    if ( _wcsicmp( process_entry.szExeFile, name.data() ) == 0 ) {
+                for ( const auto& process_name : process_names ) {
+                    if ( _wcsicmp( process_entry.szExeFile, process_name.data() ) == 0 ) {
                         if ( terminate_process_by_pid( process_entry.th32ProcessID ) == ERROR_SUCCESS ) {
                             status = ERROR_SUCCESS;
                         }
@@ -238,6 +238,184 @@ namespace cpp_utils
         CloseHandle( process_snapshot );
         return status == ERROR_SUCCESS ? ERROR_SUCCESS : ERROR_ACCESS_DENIED;
     }
+    [[nodiscard]] inline auto suspend_process_by_pid( const DWORD pid ) noexcept
+    {
+        using nt_suspend_process = LONG( NTAPI* )( HANDLE );
+        const auto process_handle{ OpenProcess( PROCESS_SUSPEND_RESUME, FALSE, pid ) };
+        if ( process_handle == nullptr ) {
+            return static_cast< LONG >( ERROR_ACCESS_DENIED );
+        }
+        const auto pfn{
+          std::bit_cast< nt_suspend_process >( GetProcAddress( GetModuleHandleW( L"ntdll.dll" ), "NtSuspendProcess" ) ) };
+        if ( pfn == nullptr ) {
+            return static_cast< LONG >( ERROR_ACCESS_DENIED );
+        }
+        const auto result{ pfn( process_handle ) };
+        CloseHandle( process_handle );
+        return result;
+    }
+    [[nodiscard]] inline auto resume_process_by_pid( const DWORD pid ) noexcept
+    {
+        using nt_resume_process = LONG( NTAPI* )( HANDLE );
+        const auto process_handle{ OpenProcess( PROCESS_SUSPEND_RESUME, FALSE, pid ) };
+        if ( process_handle == nullptr ) {
+            return static_cast< LONG >( ERROR_ACCESS_DENIED );
+        }
+        const auto pfn{
+          std::bit_cast< nt_resume_process >( GetProcAddress( GetModuleHandleW( L"ntdll.dll" ), "NtResumeProcess" ) ) };
+        if ( pfn == nullptr ) {
+            return static_cast< LONG >( ERROR_ACCESS_DENIED );
+        }
+        const auto result{ pfn( process_handle ) };
+        CloseHandle( process_handle );
+        return result;
+    }
+    [[nodiscard]] inline auto suspend_process_by_name( const std::wstring_view process_name ) noexcept
+    {
+        const auto process_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ) };
+        if ( process_snapshot == INVALID_HANDLE_VALUE ) {
+            return static_cast< LONG >( ERROR_NOT_FOUND );
+        }
+        using nt_suspend_process = LONG( NTAPI* )( HANDLE ) noexcept;
+        const auto pfn{
+          std::bit_cast< nt_suspend_process >( GetProcAddress( GetModuleHandleW( L"ntdll.dll" ), "NtSuspendProcess" ) ) };
+        if ( pfn == nullptr ) {
+            return static_cast< LONG >( ERROR_ACCESS_DENIED );
+        }
+        PROCESSENTRY32W process_entry{};
+        process_entry.dwSize = sizeof( PROCESSENTRY32W );
+        bool is_found{ false };
+        LONG status{ ERROR_NOT_FOUND };
+        if ( Process32FirstW( process_snapshot, &process_entry ) ) {
+            do {
+                if ( _wcsicmp( process_entry.szExeFile, process_name.data() ) == 0 ) {
+                    is_found = true;
+                    const auto process_handle{ OpenProcess( PROCESS_SUSPEND_RESUME, FALSE, process_entry.th32ProcessID ) };
+                    if ( process_handle == nullptr ) {
+                        status = ERROR_ACCESS_DENIED;
+                    }
+                    status = pfn( process_handle );
+                    CloseHandle( process_handle );
+                }
+            } while ( Process32NextW( process_snapshot, &process_entry ) );
+        }
+        CloseHandle( process_snapshot );
+        return is_found ? ( status == ERROR_SUCCESS ? ERROR_SUCCESS : ERROR_ACCESS_DENIED ) : ERROR_NOT_FOUND;
+    }
+    [[nodiscard]] inline auto resume_process_by_name( const std::wstring_view process_name ) noexcept
+    {
+        const auto process_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ) };
+        if ( process_snapshot == INVALID_HANDLE_VALUE ) {
+            return static_cast< LONG >( ERROR_NOT_FOUND );
+        }
+        using nt_resume_process = LONG( NTAPI* )( HANDLE ) noexcept;
+        const auto pfn{
+          std::bit_cast< nt_resume_process >( GetProcAddress( GetModuleHandleW( L"ntdll.dll" ), "NtResumeProcess" ) ) };
+        if ( pfn == nullptr ) {
+            return static_cast< LONG >( ERROR_ACCESS_DENIED );
+        }
+        PROCESSENTRY32W process_entry{};
+        process_entry.dwSize = sizeof( PROCESSENTRY32W );
+        bool is_found{ false };
+        LONG status{ ERROR_NOT_FOUND };
+        if ( Process32FirstW( process_snapshot, &process_entry ) ) {
+            do {
+                if ( _wcsicmp( process_entry.szExeFile, process_name.data() ) == 0 ) {
+                    is_found = true;
+                    const auto process_handle{ OpenProcess( PROCESS_SUSPEND_RESUME, FALSE, process_entry.th32ProcessID ) };
+                    if ( process_handle == nullptr ) {
+                        status = ERROR_ACCESS_DENIED;
+                    }
+                    status = pfn( process_handle );
+                    CloseHandle( process_handle );
+                }
+            } while ( Process32NextW( process_snapshot, &process_entry ) );
+        }
+        CloseHandle( process_snapshot );
+        return is_found ? ( status == ERROR_SUCCESS ? ERROR_SUCCESS : ERROR_ACCESS_DENIED ) : ERROR_NOT_FOUND;
+    }
+
+    template < typename Range >
+        requires requires( const Range& range ) {
+            { *range.begin() } -> std::convertible_to< std::wstring_view >;
+            range.begin() != range.end();
+            range.empty();
+        }
+    [[nodiscard]] inline auto suspend_process_by_names( const Range& process_names ) noexcept
+    {
+        const auto process_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ) };
+        if ( process_snapshot == INVALID_HANDLE_VALUE ) {
+            return static_cast< LONG >( ERROR_NOT_FOUND );
+        }
+        using nt_suspend_process = LONG( NTAPI* )( HANDLE ) noexcept;
+        const auto pfn{
+          std::bit_cast< nt_suspend_process >( GetProcAddress( GetModuleHandleW( L"ntdll.dll" ), "NtSuspendProcess" ) ) };
+        if ( pfn == nullptr ) {
+            return static_cast< LONG >( ERROR_ACCESS_DENIED );
+        }
+        PROCESSENTRY32W process_entry{};
+        process_entry.dwSize = sizeof( PROCESSENTRY32W );
+        bool is_found{ false };
+        LONG status{ ERROR_NOT_FOUND };
+        if ( Process32FirstW( process_snapshot, &process_entry ) ) {
+            do {
+                for ( const auto& process_name : process_names ) {
+                    if ( _wcsicmp( process_entry.szExeFile, process_name.data() ) == 0 ) {
+                        is_found = true;
+                        const auto process_handle{ OpenProcess( PROCESS_SUSPEND_RESUME, FALSE, process_entry.th32ProcessID ) };
+                        if ( process_handle == nullptr ) {
+                            status = ERROR_ACCESS_DENIED;
+                        }
+                        status = pfn( process_handle );
+                        CloseHandle( process_handle );
+                    }
+                }
+            } while ( Process32NextW( process_snapshot, &process_entry ) );
+        }
+        CloseHandle( process_snapshot );
+        return is_found ? ( status == ERROR_SUCCESS ? ERROR_SUCCESS : ERROR_ACCESS_DENIED ) : ERROR_NOT_FOUND;
+    }
+    template < typename Range >
+        requires requires( const Range& range ) {
+            { *range.begin() } -> std::convertible_to< std::wstring_view >;
+            range.begin() != range.end();
+            range.empty();
+        }
+    [[nodiscard]] inline auto resume_process_by_names( const Range& process_names ) noexcept
+    {
+        const auto process_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ) };
+        if ( process_snapshot == INVALID_HANDLE_VALUE ) {
+            return static_cast< LONG >( ERROR_NOT_FOUND );
+        }
+        using nt_resume_process = LONG( NTAPI* )( HANDLE ) noexcept;
+        const auto pfn{
+          std::bit_cast< nt_resume_process >( GetProcAddress( GetModuleHandleW( L"ntdll.dll" ), "NtResumeProcess" ) ) };
+        if ( pfn == nullptr ) {
+            return static_cast< LONG >( ERROR_ACCESS_DENIED );
+        }
+        PROCESSENTRY32W process_entry{};
+        process_entry.dwSize = sizeof( PROCESSENTRY32W );
+        bool is_found{ false };
+        LONG status{ ERROR_NOT_FOUND };
+        if ( Process32FirstW( process_snapshot, &process_entry ) ) {
+            do {
+                for ( const auto& process_name : process_names ) {
+                    if ( _wcsicmp( process_entry.szExeFile, process_name.data() ) == 0 ) {
+                        is_found = true;
+                        const auto process_handle{ OpenProcess( PROCESS_SUSPEND_RESUME, FALSE, process_entry.th32ProcessID ) };
+                        if ( process_handle == nullptr ) {
+                            status = ERROR_ACCESS_DENIED;
+                        }
+                        status = pfn( process_handle );
+                        CloseHandle( process_handle );
+                    }
+                }
+            } while ( Process32NextW( process_snapshot, &process_entry ) );
+        }
+        CloseHandle( process_snapshot );
+        return is_found ? ( status == ERROR_SUCCESS ? ERROR_SUCCESS : ERROR_ACCESS_DENIED ) : ERROR_NOT_FOUND;
+    }
+
     [[nodiscard]] inline auto create_registry_key(
       const HKEY main_key, const std::wstring_view sub_key, const std::wstring_view value_name, const DWORD type,
       const BYTE* const data, const DWORD data_size ) noexcept
