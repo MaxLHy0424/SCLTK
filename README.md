@@ -191,12 +191,9 @@ restore_helper: "abc helper.exe" restore
 
 # ❓ 常见问题
 
-## 无法执行包含非 ASCII 字符的自定义规则
+## 自定义规则乱码
 
-请尝试将配置文件 `config.ini` 使用 GBK 编码重新保存后重新启动 SCLTK。
-
-> [!NOTE]
-> 由于 Microsoft Windows OS 历史遗留问题，GBK 编码为 Windows 语言设置为简体中文时的默认文本编码。此方法仅能支持自定义规则中的大部分中文字符，部分日文和韩文字符。
+请尝试将配置文件 `config.ini` 使用 UTF-8 编码重新保存后重新启动 SCLTK。
 
 ## 有时 SCLTK 窗口内的项目无法点击
 
