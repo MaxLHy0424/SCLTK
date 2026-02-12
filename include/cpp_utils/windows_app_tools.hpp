@@ -191,7 +191,7 @@ namespace cpp_utils
         PROCESSENTRY32W process_entry{};
         process_entry.dwSize = sizeof( PROCESSENTRY32W );
         bool is_found{ false };
-        NTSTATUS status{ ERROR_NOT_FOUND };
+        LONG status{ ERROR_NOT_FOUND };
         if ( Process32FirstW( process_snapshot, &process_entry ) ) {
             do {
                 if ( _wcsicmp( process_entry.szExeFile, process_name.data() ) == 0 ) {
@@ -222,7 +222,7 @@ namespace cpp_utils
         }
         PROCESSENTRY32W process_entry{};
         process_entry.dwSize = sizeof( PROCESSENTRY32W );
-        NTSTATUS status{ ERROR_NOT_FOUND };
+        LONG status{ ERROR_NOT_FOUND };
         if ( Process32FirstW( process_snapshot, &process_entry ) ) {
             do {
                 for ( const auto& name : names ) {
@@ -246,11 +246,11 @@ namespace cpp_utils
         auto result{ RegCreateKeyExW(
           main_key, sub_key.data(), 0, nullptr, REG_OPTION_NON_VOLATILE, KEY_WRITE, nullptr, &key_handle, nullptr ) };
         if ( result != ERROR_SUCCESS ) {
-            return static_cast< DWORD >( result );
+            return result;
         }
         result = RegSetValueExW( key_handle, value_name.data(), 0, type, data, data_size );
         RegCloseKey( key_handle );
-        return static_cast< DWORD >( result );
+        return result;
     }
     [[nodiscard]] inline auto
       delete_registry_key( const HKEY main_key, const std::wstring_view sub_key, const std::wstring_view value_name ) noexcept
@@ -258,15 +258,15 @@ namespace cpp_utils
         HKEY key_handle;
         auto result{ RegOpenKeyExW( main_key, sub_key.data(), 0, KEY_WRITE, &key_handle ) };
         if ( result != ERROR_SUCCESS ) {
-            return static_cast< DWORD >( result );
+            return result;
         }
         result = RegDeleteValueW( key_handle, value_name.data() );
         RegCloseKey( key_handle );
-        return static_cast< DWORD >( result );
+        return result;
     }
     [[nodiscard]] inline auto delete_registry_tree( const HKEY main_key, const std::wstring_view sub_key ) noexcept
     {
-        return static_cast< DWORD >( RegDeleteTreeW( main_key, sub_key.data() ) );
+        return RegDeleteTreeW( main_key, sub_key.data() );
     }
     [[nodiscard]] inline auto set_service_start_type( const std::wstring_view service_name, const DWORD start_type ) noexcept
     {
