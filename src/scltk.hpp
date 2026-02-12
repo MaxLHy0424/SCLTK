@@ -374,14 +374,15 @@ namespace scltk
                       ... );
                 }( std::make_index_sequence< info_table_base_t_::size >{} );
             }
-            static auto make_flip_button_text_( const value_t_& value )
+            static auto make_flip_button_text_( const bool current_value )
             {
-                return get_value_( value ) == true ? " > 禁用 "sv : " > 启用 "sv;
+                return current_value == true ? " > 禁用 "sv : " > 启用 "sv;
             }
             static auto flip_item_value_( const ui_func_args_t args, value_t_& value )
             {
-                set_value_( value, !get_value_( value ) );
-                args.parent_ui.set_text( args.node_index, make_flip_button_text_( value ) );
+                const auto value_to_set{ !get_value_( value ) };
+                set_value_then_notify_all_( value, value_to_set );
+                args.parent_ui.set_text( args.node_index, make_flip_button_text_( value_to_set ) );
                 return func_back;
             }
             static auto make_option_editor_ui_( std::array< value_t_, info_table_base_t_::size >& data_ )
