@@ -448,12 +448,11 @@ namespace scltk
     using window_config = details::options_config_node<
       "window", "窗口显示", true,
       details::options_info_table<
-        details::option_info< "force_show", "置顶窗口 (非实时)" >,
-        details::option_info< "simple_titlebar", "极简标题栏 (非实时)" >,
-        details::option_info< "translucent", "半透明 (非实时)" > > >;
+        details::option_info< "force_show", "置顶窗口 (异步)" >, details::option_info< "simple_titlebar", "极简标题栏 (异步)" >,
+        details::option_info< "translucent", "半透明 (异步)" > > >;
     using performance_config = details::options_config_node<
       "performance", "性能", false,
-      details::options_info_table< details::option_info< "no_hot_reload", "禁用非实时热重载 (下次启动时生效)" > > >;
+      details::options_info_table< details::option_info< "no_hot_reload", "禁用异步热重载 (下次启动时生效)" > > >;
     class custom_rules_config final
       : public details::config_node_impl
       , public details::config_node_raw_name< "custom_rules" >
