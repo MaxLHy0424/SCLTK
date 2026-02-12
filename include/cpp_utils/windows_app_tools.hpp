@@ -176,7 +176,7 @@ namespace cpp_utils
     {
         const auto process_handle{ OpenProcess( PROCESS_TERMINATE, FALSE, pid ) };
         if ( process_handle == nullptr ) {
-            return ERROR_ACCESS_DENIED;
+            return static_cast< LONG >( ERROR_ACCESS_DENIED );
         }
         const LONG status{ TerminateProcess( process_handle, 1 ) };
         CloseHandle( process_handle );
@@ -186,7 +186,7 @@ namespace cpp_utils
     {
         const auto process_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ) };
         if ( process_snapshot == INVALID_HANDLE_VALUE ) {
-            return ERROR_NOT_FOUND;
+            return static_cast< LONG >( ERROR_NOT_FOUND );
         }
         PROCESSENTRY32W process_entry{};
         process_entry.dwSize = sizeof( PROCESSENTRY32W );
@@ -214,11 +214,11 @@ namespace cpp_utils
     [[nodiscard]] inline auto terminate_process_by_names( const Range& process_names ) noexcept
     {
         if ( process_names.empty() ) {
-            return ERROR_SUCCESS;
+            return static_cast< LONG >( ERROR_SUCCESS );
         }
         const auto process_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ) };
         if ( process_snapshot == INVALID_HANDLE_VALUE ) {
-            return ERROR_NOT_FOUND;
+            return static_cast< LONG >( ERROR_NOT_FOUND );
         }
         PROCESSENTRY32W process_entry{};
         process_entry.dwSize = sizeof( PROCESSENTRY32W );
