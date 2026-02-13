@@ -1036,14 +1036,14 @@ namespace scltk
     template < typename... Backends >
         requires requires {
             requires cpp_utils::as_concept< ( sizeof...( Backends ) != 0 ) >;
-            ( Backends::hijack_procs(), ... );
+            ( Backends::enable_servs(), ... );
             ( Backends::disable_servs(), ... );
+            ( Backends::start_servs(), ... );
             ( Backends::stop_servs(), ... );
+            ( Backends::hijack_procs(), ... );
+            ( Backends::undo_hijack_procs(), ... );
             ( Backends::terminate_procs(), ... );
             ( Backends::crack_helper(), ... );
-            ( Backends::undo_hijack_procs(), ... );
-            ( Backends::enable_servs(), ... );
-            ( Backends::start_servs(), ... );
             ( Backends::restore_helper(), ... );
         }
     struct rule_executor final
