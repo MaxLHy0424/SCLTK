@@ -177,7 +177,7 @@ namespace scltk
       compile_time_rule_node<
         "Veyon",
         details::make_const_wstring_list_t< L"veyon-worker.exe", L"veyon-configurator.exe", L"veyon-server.exe",
-                                            L"veyon-cli.exe", L"veyon-wcli.exe", L"veyon-master.exe", L"veyon-service.exe" >,
+                                            L"veyon-cli.exe", L"veyon-wcli.exe", L"veyon-service.exe" >,
         details::make_const_wstring_list_t< L"VeyonService" > > >;
     runtime_rule_node custom_rules;
     namespace details
