@@ -10,7 +10,6 @@ auto main() -> int
       .fix_size( true )
       .lock_text( true )
       .set_size( scltk::console_width, scltk::console_height, scltk::unsynced_mem_pool )
-      .set_translucency( 255 )
       .enable_window_maximize_ctrl( false )
       .enable_window_minimize_ctrl( false )
       .enable_window_close_ctrl( false );
