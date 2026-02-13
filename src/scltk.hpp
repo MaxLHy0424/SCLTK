@@ -680,7 +680,7 @@ namespace scltk
             load_config( true );
             std::ofstream config_file_stream{ config_file_name, std::ios::out | std::ios::trunc };
             config_file_stream
-              << std::bit_cast< const char* >( +u8"# " INFO_FULL_NAME "\n# " INFO_VERSION "\n# 请以 UTF-8 编码保存本文件.\n" );
+              << std::bit_cast< const char* >( +u8"# " INFO_FULL_NAME "\n# " INFO_VERSION "\n# 请以 UTF-8 编码保存本文件。\n" );
             std::apply( [ & ]( auto&... config_node ) { ( config_node.sync( config_file_stream ), ... ); }, config_nodes );
             config_file_stream.flush();
             std::print( " (i) 同步配置{}.", config_file_stream.good() ? "成功" : "失败" );
