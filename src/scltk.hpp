@@ -969,6 +969,20 @@ namespace scltk
     }
     namespace details
     {
+        inline auto enable_translucent() noexcept
+        {
+            constexpr const auto& is_no_hot_reload{ std::get< performance_config >( config_nodes ).at< "no_hot_reload" >() };
+            constexpr const auto& is_translucent{ std::get< window_config >( config_nodes ).at< "translucent" >() };
+            if ( is_no_hot_reload ) {
+                con.set_translucency( is_translucent.test( std::memory_order_acquire ) ? 217 : 255 );
+            }
+            while ( true ) {
+                is_translucent.wait( false, std::memory_order_acquire );
+                con.set_translucency( 217 );
+                is_translucent.wait( true, std::memory_order_acquire );
+                con.set_translucency( 255 );
+            }
+        }
         inline auto enable_simple_titlebar() noexcept
         {
             constexpr const auto& is_no_hot_reload{ std::get< performance_config >( config_nodes ).at< "no_hot_reload" >() };
@@ -982,20 +996,6 @@ namespace scltk
                 con.enable_context_menu( false );
                 is_enable_simple_titlebar.wait( true, std::memory_order_acquire );
                 con.enable_context_menu( true );
-            }
-        }
-        inline auto enable_translucent() noexcept
-        {
-            constexpr const auto& is_no_hot_reload{ std::get< performance_config >( config_nodes ).at< "no_hot_reload" >() };
-            constexpr const auto& is_translucent{ std::get< window_config >( config_nodes ).at< "translucent" >() };
-            if ( is_no_hot_reload ) {
-                con.set_translucency( is_translucent.test( std::memory_order_acquire ) ? 217 : 255 );
-            }
-            while ( true ) {
-                is_translucent.wait( false, std::memory_order_acquire );
-                con.set_translucency( 217 );
-                is_translucent.wait( true, std::memory_order_acquire );
-                con.set_translucency( 255 );
             }
         }
         inline auto force_show() noexcept
@@ -1018,7 +1018,7 @@ namespace scltk
                 con.cancel_force_show();
             }
         }
-        inline constexpr std::array parallel_tasks{ enable_simple_titlebar, enable_translucent, force_show };
+        inline constexpr std::array parallel_tasks{ enable_translucent, enable_simple_titlebar, force_show };
     }
     inline auto create_parallel_tasks() noexcept
     {
