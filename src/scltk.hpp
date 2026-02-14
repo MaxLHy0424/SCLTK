@@ -1006,15 +1006,15 @@ namespace scltk
             if ( is_no_hot_reload && !is_force_show.test( std::memory_order_acquire ) ) {
                 return;
             }
-            constexpr auto sleep_time{ 50ms };
+            constexpr auto sleep_duration{ 50ms };
             if ( is_no_hot_reload ) {
-                con.force_show_forever( sleep_time );
+                con.force_show_forever( sleep_duration );
             }
             while ( true ) {
                 is_force_show.wait( false, std::memory_order_acquire );
                 while ( is_force_show.test( std::memory_order_acquire ) == true ) {
                     con.force_show();
-                    std::this_thread::sleep_for( sleep_time );
+                    std::this_thread::sleep_for( sleep_duration );
                 }
                 con.cancel_force_show();
             }

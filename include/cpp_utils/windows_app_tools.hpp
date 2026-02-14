@@ -561,7 +561,7 @@ namespace cpp_utils
             }
             template < typename ChronoRep, typename ChronoPeriod >
             [[noreturn]] auto
-              force_show_forever( this auto&& self, const std::chrono::duration< ChronoRep, ChronoPeriod > sleep_time ) noexcept
+              force_show_forever( this auto&& self, const std::chrono::duration< ChronoRep, ChronoPeriod > sleep_duration ) noexcept
             {
                 const auto thread_id{ GetCurrentThreadId() };
                 const auto window_thread_process_id{ GetWindowThreadProcessId( self.window_handle, nullptr ) };
@@ -570,12 +570,12 @@ namespace cpp_utils
                     SetWindowPos( self.window_handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
                     SetForegroundWindow( self.window_handle );
                     AttachThreadInput( thread_id, window_thread_process_id, FALSE );
-                    std::this_thread::sleep_for( sleep_time );
+                    std::this_thread::sleep_for( sleep_duration );
                 }
             }
             template < typename ChronoRep, typename ChronoPeriod, std::invocable F >
             auto&& force_show_until(
-              this auto&& self, const std::chrono::duration< ChronoRep, ChronoPeriod > sleep_time, F&& condition_checker ) noexcept
+              this auto&& self, const std::chrono::duration< ChronoRep, ChronoPeriod > sleep_duration, F&& condition_checker ) noexcept
             {
                 const auto thread_id{ GetCurrentThreadId() };
                 const auto window_thread_process_id{ GetWindowThreadProcessId( self.window_handle, nullptr ) };
@@ -584,7 +584,7 @@ namespace cpp_utils
                     SetWindowPos( self.window_handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
                     SetForegroundWindow( self.window_handle );
                     AttachThreadInput( thread_id, window_thread_process_id, FALSE );
-                    std::this_thread::sleep_for( sleep_time );
+                    std::this_thread::sleep_for( sleep_duration );
                 }
                 return self;
             }
