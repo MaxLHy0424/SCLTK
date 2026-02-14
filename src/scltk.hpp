@@ -1010,14 +1010,15 @@ namespace scltk
             if ( is_no_hot_reload ) {
                 con.force_show_forever( sleep_duration );
             }
-            while ( true ) {
-                is_force_show.wait( false, std::memory_order_acquire );
-                while ( is_force_show.test( std::memory_order_acquire ) == true ) {
-                    con.force_show();
-                    std::this_thread::sleep_for( sleep_duration );
+            constexpr auto condition_checker{ [] static noexcept
+            {
+                if ( is_force_show.test( std::memory_order_acquire ) == false ) {
+                    con.cancel_force_show();
+                    is_force_show.wait( false, std::memory_order_acquire );
                 }
-                con.cancel_force_show();
-            }
+                return false;
+            } };
+            con.force_show_until( sleep_duration, condition_checker );
         }
         inline constexpr std::array parallel_tasks{ enable_translucent, enable_simple_titlebar, force_show };
     }
