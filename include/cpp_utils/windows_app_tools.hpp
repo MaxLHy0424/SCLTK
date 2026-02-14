@@ -50,12 +50,12 @@ namespace cpp_utils
         if ( str.empty() ) {
             return std::pmr::wstring{ resource };
         }
-        const auto size_needed{ MultiByteToWideChar( charset, 0, str.data(), -1, nullptr, 0 ) };
+        const auto size_needed{ MultiByteToWideChar( charset, 0, str.data(), static_cast< int >( str.size() ), nullptr, 0 ) };
         if ( size_needed <= 0 ) {
             return std::pmr::wstring{ resource };
         }
         std::pmr::wstring result{ static_cast< std::size_t >( size_needed ), L'\0', resource };
-        if ( !MultiByteToWideChar( charset, 0, str.data(), -1, result.data(), size_needed ) ) {
+        if ( !MultiByteToWideChar( charset, 0, str.data(), static_cast< int >( str.size() ), result.data(), size_needed ) ) {
             return std::pmr::wstring{ resource };
         }
         return result;
