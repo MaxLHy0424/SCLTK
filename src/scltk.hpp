@@ -458,8 +458,8 @@ namespace scltk
       details::options_info_table<
         details::option_info< "force_show", "置顶窗口 (异步)" >, details::option_info< "simple_titlebar", "极简标题栏 (异步)" >,
         details::option_info< "translucent", "半透明 (异步)" > > >;
-    using performance_config = details::options_config_node<
-      "performance", "性能", false,
+    using perf_config = details::options_config_node<
+      "perf", "性能", false,
       details::options_info_table< details::option_info< "no_async_hot_reload", "禁用异步热重载 (下次启动时生效)" > > >;
     class custom_rules_config final
       : public details::config_node_impl
@@ -575,7 +575,7 @@ namespace scltk
         };
     }
     using config_nodes_t
-      = cpp_utils::type_list< options_title_ui, crack_restore_config, window_config, performance_config, custom_rules_config >;
+      = cpp_utils::type_list< options_title_ui, crack_restore_config, window_config, perf_config, custom_rules_config >;
     static_assert( config_nodes_t::all_of< details::is_valid_config_node > );
     static_assert( config_nodes_t::unique::size == config_nodes_t::size );
     inline config_nodes_t::apply< std::tuple > config_nodes{};
@@ -973,7 +973,7 @@ namespace scltk
         inline auto enable_translucent() noexcept
         {
             constexpr const auto& is_no_async_hot_reload{
-              std::get< performance_config >( config_nodes ).at< "no_async_hot_reload" >() };
+              std::get< perf_config >( config_nodes ).at< "no_async_hot_reload" >() };
             constexpr const auto& is_translucent{ std::get< window_config >( config_nodes ).at< "translucent" >() };
             if ( is_no_async_hot_reload ) {
                 con.set_translucency( is_translucent.test( std::memory_order_acquire ) ? 217 : 255 );
@@ -988,7 +988,7 @@ namespace scltk
         inline auto enable_simple_titlebar() noexcept
         {
             constexpr const auto& is_no_async_hot_reload{
-              std::get< performance_config >( config_nodes ).at< "no_async_hot_reload" >() };
+              std::get< perf_config >( config_nodes ).at< "no_async_hot_reload" >() };
             constexpr const auto& is_enable_simple_titlebar{
               std::get< window_config >( config_nodes ).at< "simple_titlebar" >() };
             if ( is_no_async_hot_reload ) {
@@ -1004,7 +1004,7 @@ namespace scltk
         inline auto force_show() noexcept
         {
             constexpr const auto& is_no_async_hot_reload{
-              std::get< performance_config >( config_nodes ).at< "no_async_hot_reload" >() };
+              std::get< perf_config >( config_nodes ).at< "no_async_hot_reload" >() };
             constexpr const auto& is_force_show{ std::get< window_config >( config_nodes ).at< "force_show" >() };
             if ( is_no_async_hot_reload && !is_force_show.test( std::memory_order_acquire ) ) {
                 return;
