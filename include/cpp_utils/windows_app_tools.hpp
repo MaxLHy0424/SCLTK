@@ -33,29 +33,59 @@ namespace cpp_utils
         if ( str.empty() ) {
             return std::pmr::string{ resource };
         }
-        const auto size_needed{
-          WideCharToMultiByte( charset, 0, str.data(), static_cast< int >( str.size() ), nullptr, 0, nullptr, nullptr ) };
+        const auto str_len{ [ & ] noexcept
+        {
+            if ( str.size() > static_cast< size_t >( INT_MAX ) ) {
+                return 0;
+            }
+            return static_cast< int >( str.size() );
+        }() };
+        if ( str_len == 0 ) {
+            return std::pmr::string{ resource };
+        }
+        DWORD flags{ 0 };
+        if ( charset == CP_UTF8 ) {
+            flags = WC_ERR_INVALID_CHARS;
+        }
+        const auto size_needed{ WideCharToMultiByte( charset, flags, str.data(), str_len, nullptr, 0, nullptr, nullptr ) };
         if ( size_needed == 0 ) {
             return std::pmr::string{ resource };
         }
         std::pmr::string result{ static_cast< std::size_t >( size_needed ), '\0', resource };
-        WideCharToMultiByte( charset, 0, str.data(), static_cast< int >( str.size() ), result.data(), size_needed, nullptr, nullptr );
+        const auto converted{
+          WideCharToMultiByte( charset, flags, str.data(), str_len, result.data(), size_needed, nullptr, nullptr ) };
+        if ( converted == 0 || converted != size_needed ) {
+            return std::pmr::string{ resource };
+        }
         return result;
     }
     [[nodiscard]] inline auto to_wstring(
       const std::string_view str, const UINT charset,
       std::pmr::memory_resource* const resource = std::pmr::get_default_resource() ) noexcept
     {
-        using namespace std::string_literals;
         if ( str.empty() ) {
             return std::pmr::wstring{ resource };
         }
-        const auto size_needed{ MultiByteToWideChar( charset, 0, str.data(), static_cast< int >( str.size() ), nullptr, 0 ) };
+        const auto str_len{ [ & ] noexcept
+        {
+            if ( str.size() > static_cast< size_t >( INT_MAX ) ) {
+                return 0;
+            }
+            return static_cast< int >( str.size() );
+        }() };
+        if ( str_len == 0 ) {
+            return std::pmr::wstring{ resource };
+        }
+        DWORD flags{ 0 };
+        if ( charset == CP_UTF8 ) {
+            flags = MB_ERR_INVALID_CHARS;
+        }
+        const auto size_needed{ MultiByteToWideChar( charset, flags, str.data(), str_len, nullptr, 0 ) };
         if ( size_needed <= 0 ) {
             return std::pmr::wstring{ resource };
         }
         std::pmr::wstring result{ static_cast< std::size_t >( size_needed ), L'\0', resource };
-        if ( !MultiByteToWideChar( charset, 0, str.data(), static_cast< int >( str.size() ), result.data(), size_needed ) ) {
+        if ( !MultiByteToWideChar( charset, flags, str.data(), str_len, result.data(), size_needed ) ) {
             return std::pmr::wstring{ resource };
         }
         return result;
