@@ -871,7 +871,7 @@ namespace scltk
             }
             std::filesystem::permissions( hosts_path, std::filesystem::perms::all, std::filesystem::perm_options::replace, ec );
             std::filesystem::remove( hosts_path, ec );
-            std::ofstream file{ hosts_path, std::ios::out | std::ios::trunc | std::ios::binary };
+            std::ofstream file{ hosts_path, std::ios::out | std::ios::trunc };
             file.write( default_content.data(), default_content.size() ).flush();
             if ( !file.good() ) {
                 std::print( reset_hosts_error_message );
