@@ -656,7 +656,9 @@ namespace cpp_utils
         auto&& press_any_key_to_continue( this auto&& self ) noexcept
         {
             DWORD mode;
-            GetConsoleMode( self.std_input_handle, &mode );
+            if ( !GetConsoleMode( self.std_input_handle, &mode ) ) {
+                return self;
+            }
             SetConsoleMode( self.std_input_handle, ENABLE_EXTENDED_FLAGS | ( mode & ~ENABLE_QUICK_EDIT_MODE ) );
             FlushConsoleInputBuffer( self.std_input_handle );
             INPUT_RECORD record;
@@ -744,7 +746,9 @@ namespace cpp_utils
         auto&& lock_text( this auto&& self, const bool is_locked ) noexcept
         {
             DWORD attrs;
-            GetConsoleMode( self.std_input_handle, &attrs );
+            if ( !GetConsoleMode( self.std_input_handle, &attrs ) ) {
+                return self;
+            }
             switch ( is_locked ) {
                 case false :
                     attrs |= ENABLE_QUICK_EDIT_MODE;
