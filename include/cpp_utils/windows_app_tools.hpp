@@ -507,7 +507,7 @@ namespace cpp_utils
     }
     [[nodiscard]] inline auto is_run_as_admin() noexcept
     {
-        BOOL is_admin;
+        BOOL is_admin{ FALSE };
         PSID admins_group;
         SID_IDENTIFIER_AUTHORITY nt_authority{ SECURITY_NT_AUTHORITY };
         if ( AllocateAndInitializeSid(
