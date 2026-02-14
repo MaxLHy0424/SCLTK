@@ -554,8 +554,8 @@ namespace cpp_utils
                 const auto thread_id{ GetCurrentThreadId() };
                 const auto window_thread_process_id{ GetWindowThreadProcessId( self.window_handle, nullptr ) };
                 AttachThreadInput( thread_id, window_thread_process_id, TRUE );
-                SetForegroundWindow( self.window_handle );
                 SetWindowPos( self.window_handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
+                SetForegroundWindow( self.window_handle );
                 AttachThreadInput( thread_id, window_thread_process_id, FALSE );
                 return self;
             }
@@ -567,8 +567,8 @@ namespace cpp_utils
                 const auto window_thread_process_id{ GetWindowThreadProcessId( self.window_handle, nullptr ) };
                 while ( true ) {
                     AttachThreadInput( thread_id, window_thread_process_id, TRUE );
-                    SetForegroundWindow( self.window_handle );
                     SetWindowPos( self.window_handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
+                    SetForegroundWindow( self.window_handle );
                     AttachThreadInput( thread_id, window_thread_process_id, FALSE );
                     std::this_thread::sleep_for( sleep_time );
                 }
@@ -581,8 +581,8 @@ namespace cpp_utils
                 const auto window_thread_process_id{ GetWindowThreadProcessId( self.window_handle, nullptr ) };
                 while ( !std::forward< F >( condition_checker )() ) {
                     AttachThreadInput( thread_id, window_thread_process_id, TRUE );
-                    SetForegroundWindow( self.window_handle );
                     SetWindowPos( self.window_handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
+                    SetForegroundWindow( self.window_handle );
                     AttachThreadInput( thread_id, window_thread_process_id, FALSE );
                     std::this_thread::sleep_for( sleep_time );
                 }
