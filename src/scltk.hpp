@@ -317,7 +317,7 @@ namespace scltk
             std::array< value_t_, info_table_base_t_::size > data_{};
             static inline constexpr auto str_enabled_{ ": enabled"sv };
             static inline constexpr auto str_disabled_{ ": disabled"sv };
-            static auto get_value_( const value_t_& value )
+            static auto get_value_( const value_t_& value ) noexcept
             {
                 if constexpr ( std::is_same_v< value_t_, std::atomic_flag > ) {
                     return value.test( std::memory_order_acquire );
@@ -325,7 +325,7 @@ namespace scltk
                     return value;
                 }
             }
-            static auto set_value_( value_t_& obj, const bool val )
+            static auto set_value_( value_t_& obj, const bool val ) noexcept
             {
                 if constexpr ( std::is_same_v< value_t_, std::atomic_flag > ) {
                     switch ( val ) {
@@ -336,14 +336,14 @@ namespace scltk
                     obj = val;
                 }
             }
-            static auto set_value_then_notify_all_( value_t_& obj, const bool val )
+            static auto set_value_then_notify_all_( value_t_& obj, const bool val ) noexcept
             {
                 set_value_( obj, val );
                 if constexpr ( std::is_same_v< value_t_, std::atomic_flag > ) {
                     obj.notify_all();
                 }
             }
-            auto load_( std::string_view line )
+            auto load_( std::string_view line ) noexcept
             {
                 bool value;
                 if ( line.size() > str_enabled_.size() && line.ends_with( str_enabled_ ) ) {
@@ -380,11 +380,11 @@ namespace scltk
                       ... );
                 }( std::make_index_sequence< info_table_base_t_::size >{} );
             }
-            static auto make_flip_button_text_( const bool current_value )
+            static auto make_flip_button_text_( const bool current_value ) noexcept
             {
                 return current_value == true ? " > 禁用 "sv : " > 启用 "sv;
             }
-            static auto flip_item_value_( const ui_func_args_t args, value_t_& value )
+            static auto flip_item_value_( const ui_func_args_t args, value_t_& value ) noexcept
             {
                 const auto value_to_set{ !get_value_( value ) };
                 set_value_then_notify_all_( value, value_to_set );
