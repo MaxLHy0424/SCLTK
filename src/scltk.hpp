@@ -824,7 +824,7 @@ namespace scltk
         inline auto reset_hosts() noexcept
         {
             std::print( " -> 重置 Hosts.\n" );
-            constexpr auto default_content{
+            constexpr const auto& default_content{
               "# Copyright (c) 1993-2009 Microsoft Corp.\n"
               "#\n"
               "# This is a sample HOSTS file used by Microsoft TCP/IP for Windows.\n"
@@ -845,7 +845,7 @@ namespace scltk
               "\n"
               "# localhost name resolution is handled within DNS itself.\n"
               "# 127.0.0.1       localhost\n"
-              "# ::1             localhost\n"sv };
+              "# ::1             localhost\n" };
             constexpr const auto& reset_hosts_error_message{ "\n (!) 重置 Hosts 失败.\n\n" };
             constexpr auto has_error{ []( const std::error_code& ec ) static
             {
@@ -870,7 +870,7 @@ namespace scltk
             std::filesystem::permissions( hosts_path, std::filesystem::perms::all, std::filesystem::perm_options::replace, ec );
             std::filesystem::remove( hosts_path, ec );
             std::ofstream file{ hosts_path, std::ios::out | std::ios::trunc };
-            file.write( default_content.data(), default_content.size() ).flush();
+            file.write( default_content, sizeof( default_content ) ).flush();
             if ( !file.good() ) {
                 std::print( reset_hosts_error_message );
             }
