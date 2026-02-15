@@ -1113,7 +1113,7 @@ namespace scltk
         {
             []< cpp_utils::const_wstring... Procs >( const cpp_utils::type_list< cpp_utils::value_identity< Procs >... > ) static noexcept
             {
-                constexpr const wchar_t data[]{ L"nul" };
+                constexpr const auto& data{ L"nul" };
                 ( ( void ) cpp_utils::create_registry_key(
                     HKEY_LOCAL_MACHINE,
                     cpp_utils::value_identity_v< cpp_utils::concat_const_string(
