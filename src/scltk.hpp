@@ -847,14 +847,6 @@ namespace scltk
               "# 127.0.0.1       localhost\n"
               "# ::1             localhost\n" };
             constexpr const auto& reset_hosts_error_message{ "\n (!) 重置 Hosts 失败.\n\n" };
-            constexpr auto has_error{ []( const std::error_code& ec ) static
-            {
-                if ( ec ) {
-                    std::print( reset_hosts_error_message );
-                    return true;
-                }
-                return false;
-            } };
             const auto hosts_path{ [] static
             {
                 std::array< wchar_t, MAX_PATH > result;
@@ -864,7 +856,8 @@ namespace scltk
             }() };
             std::error_code ec;
             const auto original_perms{ std::filesystem::status( hosts_path, ec ).permissions() };
-            if ( has_error( ec ) ) {
+            if ( ec ) {
+                std::print( reset_hosts_error_message );
                 return;
             }
             std::filesystem::permissions( hosts_path, std::filesystem::perms::all, std::filesystem::perm_options::replace, ec );
