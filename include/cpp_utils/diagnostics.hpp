@@ -23,7 +23,7 @@ namespace cpp_utils
       std::pmr::stacktrace trace              = std::pmr::stacktrace::current() )
     {
         if ( expression == false ) {
-            std::print( "{}", make_log( failed_message, src_location, std::move( trace ) ) );
+            std::print( stderr, "{}", make_log( failed_message, src_location, std::move( trace ) ) );
             std::terminate();
         }
     }
