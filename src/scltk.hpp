@@ -1188,7 +1188,7 @@ namespace scltk
     {
         static auto hijack_procs()
         {
-            constexpr const wchar_t data[]{ L"nul" };
+            constexpr const auto& data{ L"nul" };
             for ( const auto& proc : custom_rules.procs ) {
                 ( void ) cpp_utils::create_registry_key(
                   HKEY_LOCAL_MACHINE,
