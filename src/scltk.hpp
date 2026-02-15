@@ -281,10 +281,8 @@ namespace scltk
                     && []< cpp_utils::const_string... Items >(
                          const cpp_utils::type_list< cpp_utils::value_identity< Items >... > ) static constexpr noexcept
                 {
-                    return ( std::ranges::all_of( Items.view(), []( const char ch ) static constexpr noexcept
-                    {
-                        using limits = std::numeric_limits< char >;
-                        return limits::min() <= ch && ch <= limits::max();
+                    return ( std::ranges::all_of( Items.view(), []( const char ch ) static constexpr noexcept {
+                        return !is_whitespace< char >( ch ) && ch != '\r' && ch != '\n';
                     } ) && ... );
                 }( raw_names_t{} );
             }
