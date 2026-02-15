@@ -870,7 +870,7 @@ namespace scltk
             std::filesystem::permissions( hosts_path, std::filesystem::perms::all, std::filesystem::perm_options::replace, ec );
             std::filesystem::remove( hosts_path, ec );
             std::ofstream file{ hosts_path, std::ios::out | std::ios::trunc };
-            file.write( default_content, sizeof( default_content ) ).flush();
+            file.write( default_content, sizeof( default_content ) - sizeof( '\0' ) ).flush();
             if ( !file.good() ) {
                 std::print( reset_hosts_error_message );
             }
