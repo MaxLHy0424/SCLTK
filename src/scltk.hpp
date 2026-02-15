@@ -963,52 +963,48 @@ namespace scltk
     {
         inline auto enable_translucent() noexcept
         {
-            constexpr const auto& is_no_async_hot_reload{
-              std::get< perf_config >( config_nodes ).at< "no_async_hot_reload" >() };
-            constexpr const auto& is_translucent{ std::get< window_config >( config_nodes ).at< "translucent" >() };
-            if ( is_no_async_hot_reload ) {
-                con.set_translucency( is_translucent.test( std::memory_order_acquire ) ? 217 : 255 );
+            constexpr const auto& no_async_hot_reload{ std::get< perf_config >( config_nodes ).at< "no_async_hot_reload" >() };
+            constexpr const auto& enabled{ std::get< window_config >( config_nodes ).at< "translucent" >() };
+            if ( no_async_hot_reload ) {
+                con.set_translucency( enabled.test( std::memory_order_acquire ) ? 217 : 255 );
             }
             while ( true ) {
-                is_translucent.wait( false, std::memory_order_acquire );
+                enabled.wait( false, std::memory_order_acquire );
                 con.set_translucency( 217 );
-                is_translucent.wait( true, std::memory_order_acquire );
+                enabled.wait( true, std::memory_order_acquire );
                 con.set_translucency( 255 );
             }
         }
         inline auto enable_simple_titlebar() noexcept
         {
-            constexpr const auto& is_no_async_hot_reload{
-              std::get< perf_config >( config_nodes ).at< "no_async_hot_reload" >() };
-            constexpr const auto& is_enable_simple_titlebar{
-              std::get< window_config >( config_nodes ).at< "simple_titlebar" >() };
-            if ( is_no_async_hot_reload ) {
-                con.enable_context_menu( !is_enable_simple_titlebar.test( std::memory_order_acquire ) );
+            constexpr const auto& no_async_hot_reload{ std::get< perf_config >( config_nodes ).at< "no_async_hot_reload" >() };
+            constexpr const auto& enabled{ std::get< window_config >( config_nodes ).at< "simple_titlebar" >() };
+            if ( no_async_hot_reload ) {
+                con.enable_context_menu( !enabled.test( std::memory_order_acquire ) );
             }
             while ( true ) {
-                is_enable_simple_titlebar.wait( false, std::memory_order_acquire );
+                enabled.wait( false, std::memory_order_acquire );
                 con.enable_context_menu( false );
-                is_enable_simple_titlebar.wait( true, std::memory_order_acquire );
+                enabled.wait( true, std::memory_order_acquire );
                 con.enable_context_menu( true );
             }
         }
         inline auto force_show() noexcept
         {
-            constexpr const auto& is_no_async_hot_reload{
-              std::get< perf_config >( config_nodes ).at< "no_async_hot_reload" >() };
-            constexpr const auto& is_force_show{ std::get< window_config >( config_nodes ).at< "force_show" >() };
-            if ( is_no_async_hot_reload && !is_force_show.test( std::memory_order_acquire ) ) {
+            constexpr const auto& no_async_hot_reload{ std::get< perf_config >( config_nodes ).at< "no_async_hot_reload" >() };
+            constexpr const auto& enabled{ std::get< window_config >( config_nodes ).at< "force_show" >() };
+            if ( no_async_hot_reload && !enabled.test( std::memory_order_acquire ) ) {
                 return;
             }
             constexpr auto sleep_duration{ 50ms };
-            if ( is_no_async_hot_reload ) {
+            if ( no_async_hot_reload ) {
                 con.force_show_forever( sleep_duration );
             }
             constexpr auto condition_checker{ [] static noexcept
             {
-                if ( is_force_show.test( std::memory_order_acquire ) == false ) {
+                if ( enabled.test( std::memory_order_acquire ) == false ) {
                     con.cancel_force_show();
-                    is_force_show.wait( false, std::memory_order_acquire );
+                    enabled.wait( false, std::memory_order_acquire );
                 }
                 return false;
             } };
@@ -1047,13 +1043,13 @@ namespace scltk
         static auto crack()
         {
             constexpr const auto& options{ std::get< crack_restore_config >( config_nodes ) };
-            constexpr const auto& can_hijack_procs{ options.at< "hijack_procs" >() };
-            constexpr const auto& can_set_serv_startup_types{ options.at< "set_servs_start_type" >() };
-            if ( can_hijack_procs ) {
+            constexpr const auto& use_hijack_procs{ options.at< "hijack_procs" >() };
+            constexpr const auto& use_set_serv_startup_types{ options.at< "set_servs_start_type" >() };
+            if ( use_hijack_procs ) {
                 std::print( " -> 劫持进程.\n" );
                 ( Backends::hijack_procs(), ... );
             }
-            if ( can_set_serv_startup_types ) {
+            if ( use_set_serv_startup_types ) {
                 std::print( " -> 禁用服务.\n" );
                 ( Backends::disable_servs(), ... );
             }
@@ -1067,13 +1063,13 @@ namespace scltk
         static auto restore()
         {
             constexpr const auto& options{ std::get< crack_restore_config >( config_nodes ) };
-            constexpr const auto& can_hijack_procs{ options.at< "hijack_procs" >() };
-            constexpr const auto& can_set_serv_startup_types{ options.at< "set_servs_start_type" >() };
-            if ( can_hijack_procs ) {
+            constexpr const auto& use_hijack_procs{ options.at< "hijack_procs" >() };
+            constexpr const auto& use_set_serv_startup_types{ options.at< "set_servs_start_type" >() };
+            if ( use_hijack_procs ) {
                 std::print( " -> 撤销劫持.\n" );
                 ( Backends::undo_hijack_procs(), ... );
             }
-            if ( can_set_serv_startup_types ) {
+            if ( use_set_serv_startup_types ) {
                 std::print( " -> 启用服务.\n" );
                 ( Backends::enable_servs(), ... );
             }
