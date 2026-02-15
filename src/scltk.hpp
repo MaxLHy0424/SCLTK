@@ -275,7 +275,7 @@ namespace scltk
         {
             using base_t      = cpp_utils::type_list< Options... >;
             using raw_names_t = cpp_utils::type_list< cpp_utils::value_identity< Options::raw_name >... >;
-            static consteval auto is_valid()
+            static consteval auto is_valid() noexcept
             {
                 return raw_names_t::unique::size == raw_names_t::size
                     && []< cpp_utils::const_string... Items >(
@@ -287,12 +287,12 @@ namespace scltk
                 }( raw_names_t{} );
             }
             template < cpp_utils::const_string RawName >
-            static consteval auto contains()
+            static consteval auto contains() noexcept
             {
                 return raw_names_t::template contains< cpp_utils::value_identity< RawName > >;
             }
             template < cpp_utils::const_string RawName >
-            static consteval auto index_of()
+            static consteval auto index_of() noexcept
             {
                 return raw_names_t::template find_first< cpp_utils::value_identity< RawName > >;
             }
