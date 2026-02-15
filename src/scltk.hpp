@@ -18,7 +18,7 @@ namespace scltk
     inline constexpr SHORT console_width{ 50 };
     inline constexpr SHORT console_height{ 25 };
     inline constexpr UINT charset_id{ 936 };
-    inline constexpr auto config_file_name{ L"config.ini" };
+    inline constexpr const auto& config_file_name{ L"config.ini" };
     inline constexpr auto func_back{ cpp_utils::console_ui::func_back };
     inline constexpr auto func_exit{ cpp_utils::console_ui::func_exit };
     inline const cpp_utils::console con;
