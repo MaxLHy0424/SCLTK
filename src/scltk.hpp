@@ -797,8 +797,8 @@ namespace scltk
         inline auto reset_firewall_rules() noexcept
         {
             std::print( " -> 重置防火墙规则.\n" );
-            STARTUPINFOW si{};
-            si.cb = sizeof( si );
+            STARTUPINFOW startup{};
+            startup.cb = sizeof( startup );
             PROCESS_INFORMATION proc_info{};
             SECURITY_ATTRIBUTES sec_attrib{ sizeof( sec_attrib ), nullptr, TRUE };
             const auto nul_file_handle{
@@ -806,13 +806,13 @@ namespace scltk
             if ( nul_file_handle == INVALID_HANDLE_VALUE ) {
                 return;
             }
-            si.dwFlags    = STARTF_USESTDHANDLES;
-            si.hStdInput  = GetStdHandle( STD_INPUT_HANDLE );
-            si.hStdOutput = nul_file_handle;
-            si.hStdError  = nul_file_handle;
+            startup.dwFlags    = STARTF_USESTDHANDLES;
+            startup.hStdInput  = GetStdHandle( STD_INPUT_HANDLE );
+            startup.hStdOutput = nul_file_handle;
+            startup.hStdError  = nul_file_handle;
             wchar_t cmd[]{ L"netsh.exe advfirewall reset" };
             const auto has_created_process_successfully{ CreateProcessW(
-              nullptr, cmd, nullptr, nullptr, TRUE, CREATE_NO_WINDOW | CREATE_UNICODE_ENVIRONMENT, nullptr, nullptr, &si,
+              nullptr, cmd, nullptr, nullptr, TRUE, CREATE_NO_WINDOW | CREATE_UNICODE_ENVIRONMENT, nullptr, nullptr, &startup,
               &proc_info ) };
             CloseHandle( nul_file_handle );
             if ( has_created_process_successfully ) {
