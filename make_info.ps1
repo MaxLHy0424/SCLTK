@@ -4,14 +4,14 @@ $license = "MIT License"
 $copyright = "Copyright (C) 2023 - present MaxLHy0424."
 $repo_url = "https://github.com/MaxLHy0424/SCLTK"
 $git_branch = git branch --show-current
-$contains_uncommitted_changes = @(git status --porcelain).Count -eq 0
+$contains_uncommitted_changes = @(git status --porcelain).Count -ne 0
 if ( ($git_branch -ne "main") -or ($contains_uncommitted_changes -eq $true)) {
     $git_tag = "Insider Preview"
 }
 else {
     $git_tag = git describe --tags --abbrev=0
 }
-if ($contains_uncommitted_changes -eq $true ) {
+if ($contains_uncommitted_changes -eq $false ) {
     $git_hash = git rev-parse --short HEAD
 }
 else {
