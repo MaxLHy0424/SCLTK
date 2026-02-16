@@ -1130,7 +1130,7 @@ namespace scltk
         {
             []< cpp_utils::const_wstring... Procs >( const cpp_utils::type_list< cpp_utils::value_identity< Procs >... > ) static noexcept
             {
-                constexpr std::array names{ cpp_utils::value_identity_v< cpp_utils::concat_const_string( Procs ) >.view()... };
+                constexpr std::array names{ Procs.view()... };
                 ( void ) cpp_utils::terminate_process_by_names( names );
             }( typename BuiltinRuleNode::procs{} );
         }
