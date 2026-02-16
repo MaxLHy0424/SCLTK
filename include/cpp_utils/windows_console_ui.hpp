@@ -46,7 +46,15 @@ namespace cpp_utils
             func_args( func_args&& ) noexcept      = default;
             ~func_args() noexcept                  = default;
         };
-        using text_t = std::variant< std::string_view, std::pmr::string, std::string >;
+        using basic_text_t = std::variant< std::string_view, std::pmr::string, std::string >;
+        struct text_t final : public basic_text_t
+        {
+            using basic_text_t::variant;
+            template < std::size_t N >
+            consteval text_t( const char ( &string_literal )[ N ] ) noexcept
+              : basic_text_t{ ( std::string_view{ string_literal, N - 1 } ) }
+            { }
+        };
         using function_t
           = std::variant< std::move_only_function< func_action() >, std::move_only_function< func_action( func_args ) > >;
       private:
