@@ -397,7 +397,7 @@ namespace scltk
                 ui.reserve( 2 + data_.size() * 2 )
                   .add_back( make_title_text< "[ 配  置 ]", 2 >.view() )
                   .add_back(
-                    " < 返回 "sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity );
+                    " < 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity );
                 [ & ]< std::size_t... Is >( const std::index_sequence< Is... > )
                 {
                     ( ui.add_back(
@@ -439,7 +439,7 @@ namespace scltk
       private:
         static auto init_ui_( cpp_utils::console_ui& ui )
         {
-            ui.add_back( "\n[ 选项 ]\n"sv );
+            ui.add_back( "\n[ 选项 ]\n" );
         }
         static inline constexpr auto ui_count_{ 1uz };
       public:
@@ -528,7 +528,7 @@ namespace scltk
             cpp_utils::console_ui ui{ con, unsynced_mem_pool };
             ui.reserve( 3 )
               .add_back( make_title_text< "[ 配  置 ]", 2 >.view() )
-              .add_back( " < 返回 "sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
+              .add_back( " < 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
               .add_back(
                 "\n 自定义规则格式为 <flag>: <item>\n"
                 " <flag> 后的冒号与 <item> 之间可以有若干空白字符.\n"
@@ -546,13 +546,13 @@ namespace scltk
                 " serv: abc_connect\n"
                 " serv: abc_proc_defender\n"
                 " crack_helper: \"abc helper.exe\" crack\n"
-                " restore_helper: \"abc helper.exe\" restore"sv )
+                " restore_helper: \"abc helper.exe\" restore" )
               .show();
             return func_back;
         }
         static auto init_ui_( cpp_utils::console_ui& ui )
         {
-            ui.add_back( "\n[ 自定义规则 ]\n"sv ).add_back( " > 查看帮助信息 "sv, show_help_info_ );
+            ui.add_back( "\n[ 自定义规则 ]\n" ).add_back( " > 查看帮助信息 ", show_help_info_ );
         }
         static inline constexpr auto ui_count_{ 2uz };
       public:
@@ -656,7 +656,7 @@ namespace scltk
             cpp_utils::console_ui ui{ con, unsynced_mem_pool };
             ui.reserve( 3 )
               .add_back( make_title_text< "[ 配  置 ]", 2 >.view() )
-              .add_back( " < 返回 "sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
+              .add_back( " < 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
               .add_back(
                 "\n 配置以行作为单位解析.\n\n"
                 " 以 # 开头的行是注释, 不进行解析.\n\n"
@@ -666,7 +666,7 @@ namespace scltk
                 " 如果匹配不到配置项,\n"
                 " 则当前读取的标签到下一标签之间的内容都将被忽略.\n\n"
                 " 解析时会忽略每行前导和末尾的空白字符.\n"
-                " 如果当前行不是标签, 则该行将由上一个标签处理."sv )
+                " 如果当前行不是标签, 则该行将由上一个标签处理." )
               .show();
             return func_back;
         }
@@ -708,10 +708,10 @@ namespace scltk
             constexpr auto reserved_size{ 5 + ( decltype( nodes.request_ui_count() )::value + ... ) };
             ui.reserve( reserved_size )
               .add_back( make_title_text< "[ 配  置 ]", 2 >.view() )
-              .add_back( " < 返回\n"sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
-              .add_back( " > 查看解析规则 "sv, details::show_config_parsing_rules )
-              .add_back( " > 同步配置 "sv, details::sync_config )
-              .add_back( " > 打开配置文件 "sv, details::open_config_file );
+              .add_back( " < 返回\n", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
+              .add_back( " > 查看解析规则 ", details::show_config_parsing_rules )
+              .add_back( " > 同步配置 ", details::sync_config )
+              .add_back( " > 打开配置文件 ", details::open_config_file );
             ( nodes.init_ui( ui ), ... );
             ui.show();
         }, config_nodes );
@@ -722,10 +722,10 @@ namespace scltk
         cpp_utils::console_ui ui{ con, unsynced_mem_pool };
         ui.reserve( 3 )
           .add_back( make_title_text< "[ 关  于 ]", 2 >.view() )
-          .add_back( " < 返回 "sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
+          .add_back( " < 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
           .add_back(
             "\n[ 软件名 ]\n\n " INFO_FULL_NAME " (" INFO_SHORT_NAME ")\n\n[ 软件版本 ]\n\n " INFO_VERSION
-            "\n\n[ 许可证与版权 ]\n\n " INFO_LICENSE "\n\n " INFO_COPYRIGHT "\n\n[ 开源仓库 ]\n\n " INFO_REPO_URL ""sv )
+            "\n\n[ 许可证与版权 ]\n\n " INFO_LICENSE "\n\n " INFO_COPYRIGHT "\n\n[ 开源仓库 ]\n\n " INFO_REPO_URL )
           .show();
         return func_back;
     }
@@ -951,9 +951,9 @@ namespace scltk
         cpp_utils::console_ui ui{ con, unsynced_mem_pool };
         ui.reserve( 4 + funcs_t::size )
           .add_back( make_title_text< "[ 工 具 箱 ]", 2 >.view() )
-          .add_back( " < 返回 "sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
-          .add_back( "\n[ 快捷工具 ]\n"sv )
-          .add_back( " > 启动命令提示符\n"sv, details::launch_cmd );
+          .add_back( " < 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
+          .add_back( "\n[ 快捷工具 ]\n" )
+          .add_back( " > 启动命令提示符\n", details::launch_cmd );
         [ & ]< typename... Items >( const cpp_utils::type_list< Items... > )
         { ( ui.add_back( make_button_text< Items::description >.view(), Items::execute ), ... ); }( funcs_t{} );
         ui.show();
