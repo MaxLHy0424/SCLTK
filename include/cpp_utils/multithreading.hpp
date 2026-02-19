@@ -17,17 +17,11 @@ namespace cpp_utils
       const nproc_t nproc, It&& begin, W&& end, F&& func,
       std::pmr::memory_resource* const resource = std::pmr::get_default_resource() )
     {
-        if constexpr ( is_debugging_build ) {
-            if ( nproc == 0 ) {
-                std::print( "'nproc' cannot be zero!\n" );
-                std::terminate();
-            }
-        }
-        [[assume( nproc != 0 )]];
         using result_t = std::pmr::vector< std::thread >;
-        if ( begin == end ) {
+        if ( begin == end || nproc == 0 ) {
             return result_t{ resource };
         }
+        [[assume( nproc != 0 )]];
         const auto total{ static_cast< std::ptrdiff_t >( std::ranges::distance( begin, end ) ) };
         const auto nproc_for_executing{ std::ranges::min( static_cast< std::ptrdiff_t >( nproc ), total ) };
         const auto chunk_size{ total / nproc_for_executing };
