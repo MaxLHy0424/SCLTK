@@ -24,10 +24,10 @@ namespace cpp_utils
     [[nodiscard]] inline constexpr auto count_digits( const T n ) noexcept
     {
         using result_t = unsigned short;
-        auto abs_n{ std::abs( n ) };
-        if ( abs_n == 0 ) {
+        if ( n == 0 ) {
             return static_cast< result_t >( 1 );
         }
+        auto abs_n{ std::abs( n ) };
         result_t count{ 0 };
         while ( abs_n > 0 ) {
             abs_n /= 10;
