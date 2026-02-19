@@ -1010,11 +1010,11 @@ namespace scltk
             } };
             con.force_show_until( sleep_duration, condition_checker );
         }
-        inline constexpr std::array parallel_tasks{ enable_translucent, enable_simple_titlebar, force_show };
     }
     inline auto create_parallel_tasks() noexcept
     {
-        std::apply( []( auto&... funcs ) static noexcept { ( std::thread{ funcs }.detach(), ... ); }, details::parallel_tasks );
+        constexpr std::array parallel_tasks{ details::enable_translucent, details::enable_simple_titlebar, details::force_show };
+        std::apply( []( auto&... funcs ) static noexcept { ( std::thread{ funcs }.detach(), ... ); }, parallel_tasks );
     }
     namespace details
     {
