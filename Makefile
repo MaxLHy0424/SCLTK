@@ -1,4 +1,7 @@
+include_path   := include
+cpp_utils_path := $(include_path)/cpp_utils
 include env.mk
+include $(cpp_utils_path)/all.mk
 project_name     := SCLTK
 x86_64_compiler  := $(msys2_path)/ucrt64/bin/g++.exe
 i686_compiler    := $(msys2_path)/mingw32/bin/g++.exe
@@ -30,14 +33,14 @@ args_opt_release := -Ofast \
                    -fipa-icf \
                    -fomit-frame-pointer \
                    -fno-plt
-args_include     := -I./include
+args_include     := -I$(include_path)
 args_library     :=
 args_extra       :=
 input_charset    := utf-8
 output_charset   := gbk
 args_base        := -pipe -finput-charset=$(input_charset) -fexec-charset=$(output_charset) \
-                   -std=$(args_std) $(args_warning) $(args_defines) $(args_include) \
-                   $(args_library) $(args_extra)
+                    -std=$(args_std) $(args_warning) $(args_defines) $(args_include) \
+                    $(args_library) $(args_extra)
 args_debug       := -g3 -fuse-ld=lld -DDEBUG $(args_base) $(args_opt_debug) -fstack-protector-strong
 args_release     := -DNDEBUG -static $(args_base) $(args_opt_release)
 args_ld_base     := -fuse-ld=lld -Wl,-O3,--lto-O3,--lto-CGO3,--gc-sections,--strip-all,--as-needed,--no-insert-timestamp,--no-seh,--disable-runtime-pseudo-reloc,--disable-auto-import,--dynamicbase,--nxcompat,--high-entropy-va,--tsaware,--icf=all
@@ -46,7 +49,7 @@ args_ld_x86_64   := $(args_ld_base)
 args_upx         := --lzma --best --8-bit --no-align --ultra-brute -qq
 .PHONY: toolchain all build debug release pack_and_sign clean
 .NOTPARALLEL: all
-dependencies_testing := src/* include*
+dependencies_base := src/* src/info.hpp $(cpp_utils_all_files)
 all: toolchain build pack_and_sign
 build: debug release
 gpg_command := $(gpg_path) -bs -u $(gpg_key) --yes
@@ -81,24 +84,20 @@ clean:
 	$(msys2_path)/usr/bin/mkdir.exe build
 	$(msys2_path)/usr/bin/touch.exe build/.nothing
 dependencies_debug := src/*.cpp
-build/debug/__debug__.exe: $(dependencies_testing) \
-                           $(dependencies_debug) \
-                           src/info.hpp \
+build/debug/__debug__.exe: $(dependencies_base) \
                            build/debug/.nothing
 	$(x86_64_compiler) $(dependencies_debug) $(args_debug) -o $@
 dependencies_release_32bit := build/manifest-i686.o \
                               src/*.cpp
-build/release/$(project_name)-i686-msvcrt.exe: $(dependencies_testing) \
+build/release/$(project_name)-i686-msvcrt.exe: $(dependencies_base) \
                                                $(dependencies_release_32bit) \
-                                               src/info.hpp \
                                                build/release/.nothing
 	$(i686_compiler) $(dependencies_release_32bit) $(args_release) $(args_arch_i686) $(args_ld_i686) -o $@
 	$(msys2_path)/ucrt64/bin/upx.exe $@ $(args_upx)
 dependencies_release_64bit := build/manifest-x86_64.o \
                               src/*.cpp
-build/release/$(project_name)-x86_64-ucrt.exe: $(dependencies_testing) \
+build/release/$(project_name)-x86_64-ucrt.exe: $(dependencies_base) \
                                                $(dependencies_release_64bit) \
-                                               src/info.hpp \
                                                build/release/.nothing
 	$(x86_64_compiler) $(dependencies_release_64bit) $(args_release) $(args_arch_x86_64) $(args_ld_x86_64) -o $@
 	$(msys2_path)/ucrt64/bin/upx.exe $@ $(args_upx)
