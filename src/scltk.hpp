@@ -250,9 +250,9 @@ namespace scltk
                                    { child_t::ui_count_ } -> std::convertible_to< std::size_t >;
                                } )
                 {
-                    return std::integral_constant< std::size_t, child_t::ui_count_ >{};
+                    return cpp_utils::value_identity< static_cast< std::size_t >( child_t::ui_count_ ) >{};
                 } else {
-                    return std::integral_constant< std::size_t, 0uz >{};
+                    return cpp_utils::value_identity< 0uz >{};
                 }
             }
         };
