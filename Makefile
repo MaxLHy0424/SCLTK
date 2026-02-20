@@ -1,14 +1,14 @@
 include env.mk
-project_name     = SCLTK
-x86_64_compiler  = $(msys2_path)/ucrt64/bin/g++.exe
-i686_compiler    = $(msys2_path)/mingw32/bin/g++.exe
-args_arch_i686   = -march=pentium4 -mtune=generic -msse2 -mfpmath=sse
-args_arch_x86_64 = -march=x86-64 -mtune=generic -msse3 -mfpmath=sse
-args_defines     = -D{UNICODE,_UNICODE}
-args_std         = gnu++26
-args_warning     = -W{all,extra,effc++,pedantic,cast-align,logical-op,redundant-decls,shadow,strict-null-sentinel}
-args_opt_debug   = -Og -fno-omit-frame-pointer
-args_opt_release = -Ofast \
+project_name     := SCLTK
+x86_64_compiler  := $(msys2_path)/ucrt64/bin/g++.exe
+i686_compiler    := $(msys2_path)/mingw32/bin/g++.exe
+args_arch_i686   := -march=pentium4 -mtune=generic -msse2 -mfpmath=sse
+args_arch_x86_64 := -march=x86-64 -mtune=generic -msse3 -mfpmath=sse
+args_defines     := -D{UNICODE,_UNICODE}
+args_std         := gnu++26
+args_warning     := -W{all,extra,effc++,pedantic,cast-align,logical-op,redundant-decls,shadow,strict-null-sentinel}
+args_opt_debug   := -Og -fno-omit-frame-pointer
+args_opt_release := -Ofast \
                    -flto=auto \
                    -fno-use-linker-plugin \
                    -fwhole-program \
@@ -30,26 +30,26 @@ args_opt_release = -Ofast \
                    -fipa-icf \
                    -fomit-frame-pointer \
                    -fno-plt
-args_include     = -I./include
-args_library     =
-args_extra       =
-input_charset    = utf-8
-output_charset   = gbk
-args_base        = -pipe -finput-charset=$(input_charset) -fexec-charset=$(output_charset) \
+args_include     := -I./include
+args_library     :=
+args_extra       :=
+input_charset    := utf-8
+output_charset   := gbk
+args_base        := -pipe -finput-charset=$(input_charset) -fexec-charset=$(output_charset) \
                    -std=$(args_std) $(args_warning) $(args_defines) $(args_include) \
                    $(args_library) $(args_extra)
-args_debug       = -g3 -fuse-ld=lld -DDEBUG $(args_base) $(args_opt_debug) -fstack-protector-strong
-args_release     = -DNDEBUG -static $(args_base) $(args_opt_release)
-args_ld_base     = -fuse-ld=lld -Wl,-O3,--lto-O3,--lto-CGO3,--gc-sections,--strip-all,--as-needed,--no-insert-timestamp,--no-seh,--disable-runtime-pseudo-reloc,--disable-auto-import,--dynamicbase,--nxcompat,--high-entropy-va,--tsaware,--icf=all
-args_ld_i686     = $(args_ld_base)
-args_ld_x86_64   = $(args_ld_base)
-args_upx         = --lzma --best --8-bit --no-align --ultra-brute -qq
+args_debug       := -g3 -fuse-ld=lld -DDEBUG $(args_base) $(args_opt_debug) -fstack-protector-strong
+args_release     := -DNDEBUG -static $(args_base) $(args_opt_release)
+args_ld_base     := -fuse-ld=lld -Wl,-O3,--lto-O3,--lto-CGO3,--gc-sections,--strip-all,--as-needed,--no-insert-timestamp,--no-seh,--disable-runtime-pseudo-reloc,--disable-auto-import,--dynamicbase,--nxcompat,--high-entropy-va,--tsaware,--icf=all
+args_ld_i686     := $(args_ld_base)
+args_ld_x86_64   := $(args_ld_base)
+args_upx         := --lzma --best --8-bit --no-align --ultra-brute -qq
 .PHONY: toolchain all build debug release pack_and_sign clean make_info
 .NOTPARALLEL: all
-dependencies_testing = src/* include*
+dependencies_testing := src/* include*
 all: toolchain build pack_and_sign
 build: debug release
-gpg_command = $(gpg_path) -bs -u $(gpg_key) --yes
+gpg_command := $(gpg_path) -bs -u $(gpg_key) --yes
 pack_and_sign:
 	$(gpg_command) build/release/$(project_name)-i686-msvcrt.exe
 	$(gpg_command) build/release/$(project_name)-x86_64-ucrt.exe
@@ -83,32 +83,32 @@ clean:
 make_info:
 	$(pwsh_path) -NoProfile -ExecutionPolicy Bypass -File make_info.ps1
 src/info.hpp: make_info
-dependencies_debug = src/*.cpp
+dependencies_debug := src/*.cpp
 build/debug/__debug__.exe: $(dependencies_testing) \
                            $(dependencies_debug) \
                            make_info \
                            build/debug/.nothing
 	$(x86_64_compiler) $(dependencies_debug) $(args_debug) -o $@
-dependencies_release_32bit = build/manifest-i686.o \
-                             src/*.cpp
+dependencies_release_32bit := build/manifest-i686.o \
+                              src/*.cpp
 build/release/$(project_name)-i686-msvcrt.exe: $(dependencies_testing) \
                                                $(dependencies_release_32bit) \
                                                make_info \
                                                build/release/.nothing
 	$(i686_compiler) $(dependencies_release_32bit) $(args_release) $(args_arch_i686) $(args_ld_i686) -o $@
 	$(msys2_path)/ucrt64/bin/upx.exe $@ $(args_upx)
-dependencies_release_64bit = build/manifest-x86_64.o \
-                             src/*.cpp
+dependencies_release_64bit := build/manifest-x86_64.o \
+                              src/*.cpp
 build/release/$(project_name)-x86_64-ucrt.exe: $(dependencies_testing) \
                                                $(dependencies_release_64bit) \
                                                make_info \
                                                build/release/.nothing
 	$(x86_64_compiler) $(dependencies_release_64bit) $(args_release) $(args_arch_x86_64) $(args_ld_x86_64) -o $@
 	$(msys2_path)/ucrt64/bin/upx.exe $@ $(args_upx)
-dependencies_info = manifest.rc \
-                    img/favicon.ico \
-                    manifest.xml \
-                    src/info.hpp
+dependencies_info := manifest.rc \
+                     img/favicon.ico \
+                     manifest.xml \
+                     src/info.hpp
 build/manifest-i686.o: $(dependencies_info) \
                        make_info \
                        build/.nothing
