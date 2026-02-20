@@ -46,24 +46,31 @@ args_release     := -DNDEBUG -static $(args_base) $(args_opt_release)
 args_ld_base     := -fuse-ld=lld -Wl,-O3,--lto-O3,--lto-CGO3,--gc-sections,--strip-all,--as-needed,--no-insert-timestamp,--no-seh,--disable-runtime-pseudo-reloc,--disable-auto-import,--dynamicbase,--nxcompat,--high-entropy-va,--tsaware,--icf=all
 args_ld_i686     := $(args_ld_base)
 args_ld_x86_64   := $(args_ld_base)
-args_upx         := --lzma --best --8-bit --no-align --ultra-brute -qq
+args_upx         := --lzma --best --8-bit --no-align --ultra-brute -qqq
+_echo            := $(msys2_path)/usr/bin/echo.exe
 .PHONY: toolchain all build debug release pack_and_sign clean
 .NOTPARALLEL: all
 dependencies_base := src/* src/info.hpp $(cpp_utils_all_files)
 all: toolchain build pack_and_sign
 build: debug release
 gpg_command := $(gpg_path) -bs -u $(gpg_key) --yes
-pack_and_sign:
-	$(gpg_command) build/release/$(project_name)-i686-msvcrt.exe
-	$(gpg_command) build/release/$(project_name)-x86_64-ucrt.exe
-	$(msys2_path)/usr/bin/rm.exe -rf build/$(project_name).7z
-	$(msys2_path)/usr/bin/mkdir.exe build/__temp__ -p
-	$(msys2_path)/usr/bin/cp.exe build/release/*.exe build/__temp__/
-	$(msys2_path)/usr/bin/cp.exe build/release/*.sig build/__temp__/
-	$(msys2_path)/usr/bin/cp.exe LICENSE.txt build/__temp__/
-	$(msys2_path)/ucrt64/bin/7z.exe a -mx9 -m0=LZMA2 -md=64m -mfb=64 -ms=16g -mmt=16 build/$(project_name).7z ./build/__temp__/*
-	$(gpg_command) build/SCLTK.7z
-	$(msys2_path)/usr/bin/rm.exe -rf build/__temp__
+pack_and_sign: build
+	@$(_echo) "Signing binaries..."
+	@$(gpg_command) build/release/$(project_name)-i686-msvcrt.exe
+	@$(gpg_command) build/release/$(project_name)-x86_64-ucrt.exe
+	@$(_echo) "Removing old package..."
+	@$(msys2_path)/usr/bin/rm.exe -rf build/$(project_name).7z
+	@$(_echo) "Copying binaries, signatures, and the LICENSE.txt..."
+	@$(msys2_path)/usr/bin/mkdir.exe build/__temp__ -p
+	@$(msys2_path)/usr/bin/cp.exe build/release/*.exe build/__temp__/
+	@$(msys2_path)/usr/bin/cp.exe build/release/*.sig build/__temp__/
+	@$(msys2_path)/usr/bin/cp.exe LICENSE.txt build/__temp__/
+	@$(_echo) "Compressing to 'SCLTK.7z'..."
+	@$(msys2_path)/ucrt64/bin/7z.exe a -bso0 -bsp0 -mx9 -m0=LZMA2 -md=64m -mfb=64 -ms=16g -mmt=16 build/$(project_name).7z ./build/__temp__/*
+	@$(_echo) "Signing 'SCLTK.7z'..."
+	@$(gpg_command) build/SCLTK.7z
+	@$(_echo) "Cleaning 'build/__temp__'..."
+	@$(msys2_path)/usr/bin/rm.exe -rf build/__temp__
 toolchain:
 	$(msys2_path)/usr/bin/pacman.exe -Sy --noconfirm --needed\
      mingw-w64-i686-toolchain\
@@ -79,28 +86,34 @@ debug: build/debug/__debug__.exe
 release: build/release/$(project_name)-i686-msvcrt.exe \
          build/release/$(project_name)-x86_64-ucrt.exe
 clean:
-	$(msys2_path)/usr/bin/rm.exe -rf build
-	$(msys2_path)/usr/bin/rm.exe -rf src/info.hpp
-	$(msys2_path)/usr/bin/mkdir.exe build
-	$(msys2_path)/usr/bin/touch.exe build/.nothing
+	@$(_echo) "Cleaning..."
+	@$(msys2_path)/usr/bin/rm.exe -rf build
+	@$(msys2_path)/usr/bin/rm.exe -rf src/info.hpp
+	@$(msys2_path)/usr/bin/mkdir.exe build
+	@$(msys2_path)/usr/bin/touch.exe build/.nothing
 dependencies_debug := src/*.cpp
 build/debug/__debug__.exe: $(dependencies_base) \
                            build/debug/.nothing
-	$(x86_64_compiler) $(dependencies_debug) $(args_debug) -o $@
+	@$(_echo) "Compiling '$@'..."
+	@$(x86_64_compiler) $(dependencies_debug) $(args_debug) -o $@
 dependencies_release_32bit := build/manifest-i686.o \
                               src/*.cpp
 build/release/$(project_name)-i686-msvcrt.exe: $(dependencies_base) \
                                                $(dependencies_release_32bit) \
                                                build/release/.nothing
-	$(i686_compiler) $(dependencies_release_32bit) $(args_release) $(args_arch_i686) $(args_ld_i686) -o $@
-	$(msys2_path)/ucrt64/bin/upx.exe $@ $(args_upx)
+	@$(_echo) "Compiling '$@'..."
+	@$(i686_compiler) $(dependencies_release_32bit) $(args_release) $(args_arch_i686) $(args_ld_i686) -o $@
+	@$(_echo) "Compressing '$@'..."
+	@$(msys2_path)/ucrt64/bin/upx.exe $@ $(args_upx)
 dependencies_release_64bit := build/manifest-x86_64.o \
                               src/*.cpp
 build/release/$(project_name)-x86_64-ucrt.exe: $(dependencies_base) \
                                                $(dependencies_release_64bit) \
                                                build/release/.nothing
-	$(x86_64_compiler) $(dependencies_release_64bit) $(args_release) $(args_arch_x86_64) $(args_ld_x86_64) -o $@
-	$(msys2_path)/ucrt64/bin/upx.exe $@ $(args_upx)
+	@$(_echo) "Compiling '$@'..."
+	@$(x86_64_compiler) $(dependencies_release_64bit) $(args_release) $(args_arch_x86_64) $(args_ld_x86_64) -o $@
+	@$(_echo) "Compressing '$@'..."
+	@$(msys2_path)/ucrt64/bin/upx.exe $@ $(args_upx)
 dependencies_info := manifest.rc \
                      img/favicon.ico \
                      manifest.xml \
@@ -108,17 +121,22 @@ dependencies_info := manifest.rc \
 build/manifest-i686.o: $(dependencies_info) \
                        src/info.hpp \
                        build/.nothing
-	$(msys2_path)/usr/bin/windres.exe -i $< -o $@ $(args_defines) -c 65001 -F pe-i386
+	@$(_echo) "Generating '$@'..."
+	@$(msys2_path)/usr/bin/windres.exe -i $< -o $@ $(args_defines) -c 65001 -F pe-i386
 build/manifest-x86_64.o: $(dependencies_info) \
                          src/info.hpp \
                          build/.nothing
-	$(msys2_path)/usr/bin/windres.exe -i $< -o $@ $(args_defines) -c 65001 -F pe-x86-64
+	@$(_echo) "Generating '$@'..."
+	@$(msys2_path)/usr/bin/windres.exe -i $< -o $@ $(args_defines) -c 65001 -F pe-x86-64
 build/.nothing:
-	$(msys2_path)/usr/bin/mkdir.exe build -p
-	$(msys2_path)/usr/bin/touch.exe $@
+	@$(_echo) "Creating '$@'..."
+	@$(msys2_path)/usr/bin/mkdir.exe build -p
+	@$(msys2_path)/usr/bin/touch.exe $@
 build/debug/.nothing: build/.nothing
-	$(msys2_path)/usr/bin/mkdir.exe build/debug -p
-	$(msys2_path)/usr/bin/touch.exe $@
+	@$(_echo) "Creating '$@'..."
+	@$(msys2_path)/usr/bin/mkdir.exe build/debug -p
+	@$(msys2_path)/usr/bin/touch.exe $@
 build/release/.nothing: build/.nothing
-	$(msys2_path)/usr/bin/mkdir.exe build/release -p
-	$(msys2_path)/usr/bin/touch.exe $@
+	@$(_echo) "Creating '$@'..."
+	@$(msys2_path)/usr/bin/mkdir.exe build/release -p
+	@$(msys2_path)/usr/bin/touch.exe $@
