@@ -187,15 +187,15 @@ namespace scltk
         {
             static inline constexpr auto raw_name{ RawName };
         };
-        class config_node_impl;
+        class config_node_interface;
         template < typename T >
         struct is_parsable_config_node final
         {
-            static inline constexpr auto value{ ( std::is_base_of_v< config_node_impl, T > && requires { T::raw_name; } ) };
+            static inline constexpr auto value{ ( std::is_base_of_v< config_node_interface, T > && requires { T::raw_name; } ) };
         };
         template < typename T >
         inline constexpr auto is_parsable_config_node_v{ is_parsable_config_node< T >::value };
-        class config_node_impl
+        class config_node_interface
         {
           public:
             auto load( this auto&& self, const std::string_view line )
@@ -307,9 +307,9 @@ namespace scltk
             requires( is_valid_options_info_table< OptionsInfoTable >::value == true )
         class options_config_node final
           : public config_node_raw_name< RawName >
-          , public config_node_impl
+          , public config_node_interface
         {
-            friend config_node_impl;
+            friend config_node_interface;
           private:
             using info_table_base_t_ = typename OptionsInfoTable::base_t;
             using value_t_           = std::conditional_t< Atomic, std::atomic_flag, bool >;
@@ -431,9 +431,9 @@ namespace scltk
             ~options_config_node() noexcept                                          = default;
         };
     }
-    class options_title_ui final : public details::config_node_impl
+    class options_title_ui final : public details::config_node_interface
     {
-        friend details::config_node_impl;
+        friend details::config_node_interface;
       private:
         static auto init_ui_( cpp_utils::console_ui& ui )
         {
@@ -458,10 +458,10 @@ namespace scltk
       "perf", "性能", false,
       details::options_info_table< details::option_info< "no_async_hot_reload", "禁用异步热重载 (下次启动时生效)" > > >;
     class custom_rules_config final
-      : public details::config_node_impl
+      : public details::config_node_interface
       , public details::config_node_raw_name< "custom_rules" >
     {
-        friend details::config_node_impl;
+        friend details::config_node_interface;
       private:
         static inline constexpr auto flag_proc_{ L"proc:"sv };
         static inline constexpr auto flag_serv_{ L"serv:"sv };
@@ -564,7 +564,7 @@ namespace scltk
         {
             static inline constexpr auto is_valid_type{ std::is_same_v< std::decay_t< T >, T > };
             static inline constexpr auto has_traits{
-              std::is_base_of_v< config_node_impl, T > && std::is_default_constructible_v< T > };
+              std::is_base_of_v< config_node_interface, T > && std::is_default_constructible_v< T > };
             static inline constexpr auto value{ is_valid_type && has_traits };
             is_valid_config_node()           = delete;
             ~is_valid_config_node() noexcept = delete;
