@@ -44,7 +44,7 @@ args_ld_base     := -fuse-ld=lld -Wl,-O3,--lto-O3,--lto-CGO3,--gc-sections,--str
 args_ld_i686     := $(args_ld_base)
 args_ld_x86_64   := $(args_ld_base)
 args_upx         := --lzma --best --8-bit --no-align --ultra-brute -qq
-.PHONY: toolchain all build debug release pack_and_sign clean make_info
+.PHONY: toolchain all build debug release pack_and_sign clean
 .NOTPARALLEL: all
 dependencies_testing := src/* include*
 all: toolchain build pack_and_sign
@@ -80,20 +80,17 @@ clean:
 	$(msys2_path)/usr/bin/rm.exe -rf src/info.hpp
 	$(msys2_path)/usr/bin/mkdir.exe build
 	$(msys2_path)/usr/bin/touch.exe build/.nothing
-make_info:
-	$(pwsh_path) -NoProfile -ExecutionPolicy Bypass -File make_info.ps1
-src/info.hpp: make_info
 dependencies_debug := src/*.cpp
 build/debug/__debug__.exe: $(dependencies_testing) \
                            $(dependencies_debug) \
-                           make_info \
+                           src/info.hpp \
                            build/debug/.nothing
 	$(x86_64_compiler) $(dependencies_debug) $(args_debug) -o $@
 dependencies_release_32bit := build/manifest-i686.o \
                               src/*.cpp
 build/release/$(project_name)-i686-msvcrt.exe: $(dependencies_testing) \
                                                $(dependencies_release_32bit) \
-                                               make_info \
+                                               src/info.hpp \
                                                build/release/.nothing
 	$(i686_compiler) $(dependencies_release_32bit) $(args_release) $(args_arch_i686) $(args_ld_i686) -o $@
 	$(msys2_path)/ucrt64/bin/upx.exe $@ $(args_upx)
@@ -101,7 +98,7 @@ dependencies_release_64bit := build/manifest-x86_64.o \
                               src/*.cpp
 build/release/$(project_name)-x86_64-ucrt.exe: $(dependencies_testing) \
                                                $(dependencies_release_64bit) \
-                                               make_info \
+                                               src/info.hpp \
                                                build/release/.nothing
 	$(x86_64_compiler) $(dependencies_release_64bit) $(args_release) $(args_arch_x86_64) $(args_ld_x86_64) -o $@
 	$(msys2_path)/ucrt64/bin/upx.exe $@ $(args_upx)
@@ -110,11 +107,11 @@ dependencies_info := manifest.rc \
                      manifest.xml \
                      src/info.hpp
 build/manifest-i686.o: $(dependencies_info) \
-                       make_info \
+                       src/info.hpp \
                        build/.nothing
 	$(msys2_path)/usr/bin/windres.exe -i $< -o $@ $(args_defines) -c 65001 -F pe-i386
 build/manifest-x86_64.o: $(dependencies_info) \
-                         make_info \
+                         src/info.hpp \
                          build/.nothing
 	$(msys2_path)/usr/bin/windres.exe -i $< -o $@ $(args_defines) -c 65001 -F pe-x86-64
 build/.nothing:
