@@ -65,10 +65,10 @@ pack_and_sign: build
 	@$(msys2_path)/usr/bin/cp.exe build/release/*.exe build/__temp__/
 	@$(msys2_path)/usr/bin/cp.exe build/release/*.sig build/__temp__/
 	@$(msys2_path)/usr/bin/cp.exe LICENSE.txt build/__temp__/
-	@$(_echo) "Compressing to 'SCLTK.7z'..."
+	@$(_echo) "Compressing to '$(project_name).7z'..."
 	@$(msys2_path)/ucrt64/bin/7z.exe a -bso0 -bsp0 -mx9 -m0=LZMA2 -md=64m -mfb=64 -ms=16g -mmt=16 build/$(project_name).7z ./build/__temp__/*
-	@$(_echo) "Signing 'SCLTK.7z'..."
-	@$(gpg_command) build/SCLTK.7z
+	@$(_echo) "Signing '$(project_name).7z'..."
+	@$(gpg_command) build/$(project_name).7z
 	@$(_echo) "Cleaning 'build/__temp__'..."
 	@$(msys2_path)/usr/bin/rm.exe -rf build/__temp__
 toolchain:
