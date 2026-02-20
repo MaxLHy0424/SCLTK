@@ -269,7 +269,7 @@ gpg_key    = key-id
 > [!NOTE]
 > 发布时，推荐使用如下命令：
 > ```bash
-> .\make.ps1 -target build && .\make.ps1 -target pack_and_sign
+> .\make.ps1 -target clean && .\make.ps1 -target pack_and_sign
 > ```
 
 > [!WARNING]
