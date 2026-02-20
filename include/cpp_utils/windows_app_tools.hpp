@@ -321,7 +321,7 @@ namespace cpp_utils
         process_entry.dwSize = sizeof( PROCESSENTRY32W );
         bool is_found{ false };
         LONG status{ ERROR_NOT_FOUND };
-        if ( Process32FirstW( process_snapshot, &process_entry ) ) [[unlikely]] {
+        if ( Process32FirstW( process_snapshot, &process_entry ) ) [[likely]] {
             do {
                 if ( _wcsicmp( process_entry.szExeFile, process_name.data() ) == 0 ) {
                     is_found = true;
