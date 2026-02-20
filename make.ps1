@@ -58,4 +58,4 @@ if ((Get-FileHash $old_info).Hash -ne (Get-FileHash $new_info).Hash ) {
     Copy-Item -Path $new_info -Destination $old_info
 }
 Remove-Item -Path "build/info.gen"
-& "$msys2_path/usr/bin/make.exe" $target -j
+& "$msys2_path/usr/bin/make.exe" $target -f main.mk -j
