@@ -273,6 +273,9 @@ gpg_key    = key-id
 > ```
 
 > [!WARNING]
+> 请勿绕过 `.\make.ps1`。
+
+> [!WARNING]
 > SCLTK 仓库下所有源代码文件均以 UTF-8 编码保存，如果使用其他文本编码保存源代码文件，可能导致非 ASCII 字符变成乱码。
 
 # ❤️ 鸣谢
