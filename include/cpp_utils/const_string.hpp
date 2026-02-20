@@ -138,6 +138,14 @@ namespace cpp_utils
         }( strings ), ... );
         return basic_const_string{ storage };
     }
+    namespace const_string_literals
+    {
+        template < basic_const_string S >
+        inline consteval auto operator""_cs() noexcept
+        {
+            return S;
+        }
+    }
     namespace details
     {
         template < basic_const_string S >
