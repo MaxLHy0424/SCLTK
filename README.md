@@ -235,7 +235,7 @@ gpg_key    = key-id
 接下来，在仓库本地目录下打开终端，执行：
 
 ```bash
-make all
+.\make.ps1 -target all
 ```
 
 脚本将会自动安装工具链和依赖库，并构建 SCLTK。生成的 SCLTK 可执行文件位于 `build/debug` 和 `build/release` 中。
@@ -243,36 +243,33 @@ make all
 后续构建可使用：
 
 ```bash
-make build
+.\make.ps1 -target build
 ```
 
 ```bash
-make debug
+.\make.ps1 -target debug
 ```
 
 ```bash
-make release
+.\make.ps1 -target release
 ```
-
-> [!NOTE]
-> 可在 `make build`、`make debug`、`make release` 后附加 `-j` 参数来加快构建速度。
 
 更新工具链，可使用：
 
 ```bash
-make toolchain
+.\make.ps1 -target toolchain
 ```
 
 打包 `build/release` 下的可执行文件和 `LICENSE.txt` 并签名，可使用：
 
 ```bash
-make pack_and_sign
+.\make.ps1 -target pack_and_sign
 ```
 
 > [!NOTE]
 > 发布时，推荐使用如下命令：
 > ```bash
-> make build -j && make pack_and_sign
+> .\make.ps1 -target build && .\make.ps1 -target pack_and_sign
 > ```
 
 > [!WARNING]
