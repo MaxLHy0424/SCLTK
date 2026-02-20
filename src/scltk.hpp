@@ -1136,7 +1136,7 @@ namespace scltk
         }
         static auto crack_helper()
         {
-            if ( !std::is_same_v< decltype( BuiltinRuleNode::crack_helper ), decltype( details::empty_lambda ) > ) {
+            if constexpr ( !std::is_same_v< decltype( BuiltinRuleNode::crack_helper ), decltype( details::empty_lambda ) > ) {
                 BuiltinRuleNode::crack_helper();
             }
         }
@@ -1168,7 +1168,7 @@ namespace scltk
         }
         static auto restore_helper()
         {
-            if ( !std::is_same_v< decltype( BuiltinRuleNode::restore_helper ), decltype( details::empty_lambda ) > ) {
+            if constexpr ( !std::is_same_v< decltype( BuiltinRuleNode::restore_helper ), decltype( details::empty_lambda ) > ) {
                 BuiltinRuleNode::restore_helper();
             }
         }
