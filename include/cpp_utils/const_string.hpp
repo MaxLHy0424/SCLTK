@@ -141,7 +141,7 @@ namespace cpp_utils
     namespace const_string_literals
     {
         template < basic_const_string S >
-        inline consteval auto operator""_cs() noexcept
+        [[nodiscard]] inline consteval auto operator""_cs() noexcept
         {
             return S;
         }
