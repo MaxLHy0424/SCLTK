@@ -48,7 +48,7 @@ args_ld_i686     := $(args_ld_base)
 args_ld_x86_64   := $(args_ld_base)
 args_upx         := --lzma --best --8-bit --no-align --ultra-brute -qqq
 _echo            := $(msys2_path)/usr/bin/echo.exe
-.PHONY: toolchain all build debug release pack_and_sign clean
+.PHONY: toolchain all build debug release release-32 release-64 pack_and_sign clean
 .NOTPARALLEL: all
 dependencies_base := src/* src/info.hpp $(cpp_utils_all_files)
 all: toolchain build pack_and_sign
