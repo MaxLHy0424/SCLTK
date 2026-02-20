@@ -83,8 +83,9 @@ toolchain:
      base-devel\
      binutils
 debug: build/debug/__debug__.exe
-release: build/release/$(project_name)-i686-msvcrt.exe \
-         build/release/$(project_name)-x86_64-ucrt.exe
+release: release-32 release-64
+release-32: build/release/$(project_name)-i686-msvcrt.exe
+release-64: build/release/$(project_name)-x86_64-ucrt.exe
 clean:
 	@$(_echo) "Cleaning..."
 	@$(msys2_path)/usr/bin/rm.exe -rf build
