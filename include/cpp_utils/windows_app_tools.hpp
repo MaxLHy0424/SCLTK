@@ -30,17 +30,17 @@ namespace cpp_utils
       const std::wstring_view str, const UINT charset,
       std::pmr::memory_resource* const resource = std::pmr::get_default_resource() ) noexcept
     {
-        if ( str.empty() ) {
+        if ( str.empty() ) [[unlikely]] {
             return std::pmr::string{ resource };
         }
         const auto str_len{ [ & ] noexcept
         {
-            if ( str.size() > static_cast< size_t >( INT_MAX ) ) {
+            if ( str.size() > static_cast< size_t >( INT_MAX ) ) [[unlikely]] {
                 return 0;
             }
             return static_cast< int >( str.size() );
         }() };
-        if ( str_len == 0 ) {
+        if ( str_len == 0 ) [[unlikely]] {
             return std::pmr::string{ resource };
         }
         DWORD flags{ 0 };
@@ -48,13 +48,13 @@ namespace cpp_utils
             flags = WC_ERR_INVALID_CHARS;
         }
         const auto size_needed{ WideCharToMultiByte( charset, flags, str.data(), str_len, nullptr, 0, nullptr, nullptr ) };
-        if ( size_needed == 0 ) {
+        if ( size_needed == 0 ) [[unlikely]] {
             return std::pmr::string{ resource };
         }
         std::pmr::string result{ static_cast< std::size_t >( size_needed ), '\0', resource };
         const auto converted{
           WideCharToMultiByte( charset, flags, str.data(), str_len, result.data(), size_needed, nullptr, nullptr ) };
-        if ( converted == 0 || converted != size_needed ) {
+        if ( converted == 0 || converted != size_needed ) [[unlikely]] {
             return std::pmr::string{ resource };
         }
         return result;
@@ -63,17 +63,17 @@ namespace cpp_utils
       const std::string_view str, const UINT charset,
       std::pmr::memory_resource* const resource = std::pmr::get_default_resource() ) noexcept
     {
-        if ( str.empty() ) {
+        if ( str.empty() ) [[unlikely]] {
             return std::pmr::wstring{ resource };
         }
         const auto str_len{ [ & ] noexcept
         {
-            if ( str.size() > static_cast< size_t >( INT_MAX ) ) {
+            if ( str.size() > static_cast< size_t >( INT_MAX ) ) [[unlikely]] {
                 return 0;
             }
             return static_cast< int >( str.size() );
         }() };
-        if ( str_len == 0 ) {
+        if ( str_len == 0 ) [[unlikely]] {
             return std::pmr::wstring{ resource };
         }
         DWORD flags{ 0 };
@@ -81,11 +81,11 @@ namespace cpp_utils
             flags = MB_ERR_INVALID_CHARS;
         }
         const auto size_needed{ MultiByteToWideChar( charset, flags, str.data(), str_len, nullptr, 0 ) };
-        if ( size_needed <= 0 ) {
+        if ( size_needed <= 0 ) [[unlikely]] {
             return std::pmr::wstring{ resource };
         }
         std::pmr::wstring result{ static_cast< std::size_t >( size_needed ), L'\0', resource };
-        if ( !MultiByteToWideChar( charset, flags, str.data(), str_len, result.data(), size_needed ) ) {
+        if ( !MultiByteToWideChar( charset, flags, str.data(), str_len, result.data(), size_needed ) ) [[unlikely]] {
             return std::pmr::wstring{ resource };
         }
         return result;
@@ -99,17 +99,19 @@ namespace cpp_utils
             DWORD result{ ERROR_SUCCESS };
             SERVICE_STATUS status{};
             DWORD bytes_needed{ 0 };
-            if ( !QueryServiceConfigW( service, nullptr, 0, &bytes_needed ) && GetLastError() == ERROR_INSUFFICIENT_BUFFER ) {
+            if ( !QueryServiceConfigW( service, nullptr, 0, &bytes_needed ) && GetLastError() == ERROR_INSUFFICIENT_BUFFER )
+              [[likely]]
+            {
                 std::pmr::vector< BYTE > buffer( bytes_needed, resource );
                 auto config{ std::bit_cast< LPQUERY_SERVICE_CONFIGW >( buffer.data() ) };
-                if ( QueryServiceConfigW( service, config, bytes_needed, &bytes_needed ) ) {
-                    if ( config->lpDependencies != nullptr && *config->lpDependencies != L'\0' ) {
+                if ( QueryServiceConfigW( service, config, bytes_needed, &bytes_needed ) ) [[likely]] {
+                    if ( config->lpDependencies != nullptr && *config->lpDependencies != L'\0' ) [[likely]] {
                         auto dependency{ config->lpDependencies };
-                        while ( *dependency != L'\0' ) {
+                        while ( *dependency != L'\0' ) [[likely]] {
                             const auto dependency_service{ OpenServiceW( scm, dependency, SERVICE_STOP | SERVICE_QUERY_STATUS ) };
-                            if ( dependency_service != nullptr ) {
+                            if ( dependency_service != nullptr ) [[likely]] {
                                 const auto dep_result{ stop_service_and_dependencies( scm, dependency_service, resource ) };
-                                if ( dep_result != ERROR_SUCCESS && result == ERROR_SUCCESS ) {
+                                if ( dep_result != ERROR_SUCCESS && result == ERROR_SUCCESS ) [[unlikely]] {
                                     result = dep_result;
                                 }
                                 CloseServiceHandle( dependency_service );
@@ -119,16 +121,16 @@ namespace cpp_utils
                     }
                 }
             }
-            if ( ControlService( service, SERVICE_CONTROL_STOP, &status ) ) {
+            if ( ControlService( service, SERVICE_CONTROL_STOP, &status ) ) [[likely]] {
                 bool query_success{ true };
                 while ( query_success && status.dwCurrentState == SERVICE_STOP_PENDING ) {
                     query_success = QueryServiceStatus( service, &status );
                     std::this_thread::sleep_for( 5ms );
                 }
-                if ( !query_success || status.dwCurrentState != SERVICE_STOPPED ) {
+                if ( !query_success || status.dwCurrentState != SERVICE_STOPPED ) [[unlikely]] {
                     result = ERROR_SERVICE_REQUEST_TIMEOUT;
                 }
-            } else if ( GetLastError() != ERROR_SERVICE_NOT_ACTIVE ) {
+            } else if ( GetLastError() != ERROR_SERVICE_NOT_ACTIVE ) [[unlikely]] {
                 result = GetLastError();
             }
             return result;
@@ -138,23 +140,26 @@ namespace cpp_utils
         {
             DWORD result{ ERROR_SUCCESS };
             DWORD bytes_needed{ 0 };
-            if ( !QueryServiceConfigW( service, nullptr, 0, &bytes_needed ) && GetLastError() == ERROR_INSUFFICIENT_BUFFER ) {
+            if ( !QueryServiceConfigW( service, nullptr, 0, &bytes_needed ) && GetLastError() == ERROR_INSUFFICIENT_BUFFER )
+              [[likely]]
+            {
                 std::pmr::vector< BYTE > buffer( bytes_needed, resource );
                 auto config{ std::bit_cast< LPQUERY_SERVICE_CONFIGW >( buffer.data() ) };
-                if ( QueryServiceConfigW( service, config, bytes_needed, &bytes_needed ) ) {
+                if ( QueryServiceConfigW( service, config, bytes_needed, &bytes_needed ) ) [[likely]] {
                     if ( config->lpDependencies != nullptr && *config->lpDependencies != L'\0' ) {
                         auto dependency{ config->lpDependencies };
-                        while ( *dependency != L'\0' ) {
-                            if ( *dependency != L'@' ) {
+                        while ( *dependency != L'\0' ) [[likely]] {
+                            if ( *dependency != L'@' ) [[likely]] {
                                 const auto dependency_service{
                                   OpenServiceW( scm, dependency, SERVICE_START | SERVICE_QUERY_STATUS ) };
-                                if ( dependency_service != nullptr ) {
+                                if ( dependency_service != nullptr ) [[likely]] {
                                     SERVICE_STATUS status{};
                                     if ( !QueryServiceStatus( dependency_service, &status )
-                                         || ( status.dwCurrentState != SERVICE_RUNNING && status.dwCurrentState != SERVICE_START_PENDING ) )
+                                         || ( status.dwCurrentState != SERVICE_RUNNING
+                                              && status.dwCurrentState != SERVICE_START_PENDING ) ) [[likely]]
                                     {
                                         const auto dep_result{ start_service_and_dependencies( scm, dependency_service, resource ) };
-                                        if ( dep_result != ERROR_SUCCESS && result == ERROR_SUCCESS ) {
+                                        if ( dep_result != ERROR_SUCCESS && result == ERROR_SUCCESS ) [[unlikely]] {
                                             result = dep_result;
                                         }
                                     }
@@ -166,8 +171,8 @@ namespace cpp_utils
                     }
                 }
             }
-            if ( result == ERROR_SUCCESS && !StartServiceW( service, 0, nullptr ) ) {
-                if ( const auto err{ GetLastError() }; err != ERROR_SERVICE_ALREADY_RUNNING ) {
+            if ( result == ERROR_SUCCESS && !StartServiceW( service, 0, nullptr ) ) [[likely]] {
+                if ( const auto err{ GetLastError() }; err != ERROR_SERVICE_ALREADY_RUNNING ) [[unlikely]] {
                     result = err;
                 }
             }
@@ -181,23 +186,23 @@ namespace cpp_utils
         tp.PrivilegeCount = 0;
         LUID local_uid;
         DWORD result{ ERROR_SUCCESS };
-        if ( !OpenProcessToken( proc, TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, &token ) ) {
+        if ( !OpenProcessToken( proc, TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, &token ) ) [[unlikely]] {
             result = GetLastError();
             goto Cleanup;
         }
-        if ( !LookupPrivilegeValueW( NULL, privilege, &local_uid ) ) {
+        if ( !LookupPrivilegeValueW( NULL, privilege, &local_uid ) ) [[unlikely]] {
             result = GetLastError();
             goto Cleanup;
         }
         tp.PrivilegeCount             = 1;
         tp.Privileges[ 0 ].Luid       = local_uid;
         tp.Privileges[ 0 ].Attributes = is_enabled ? SE_PRIVILEGE_ENABLED : 0;
-        if ( !AdjustTokenPrivileges( token, FALSE, &tp, sizeof( TOKEN_PRIVILEGES ), nullptr, nullptr ) ) {
+        if ( !AdjustTokenPrivileges( token, FALSE, &tp, sizeof( TOKEN_PRIVILEGES ), nullptr, nullptr ) ) [[unlikely]] {
             result = GetLastError();
             goto Cleanup;
         }
     Cleanup:
-        if ( token != nullptr ) {
+        if ( token != nullptr ) [[likely]] {
             CloseHandle( token );
         }
         return result;
@@ -205,7 +210,7 @@ namespace cpp_utils
     [[nodiscard]] inline auto terminate_process_by_pid( const DWORD pid ) noexcept
     {
         const auto process_handle{ OpenProcess( PROCESS_TERMINATE, FALSE, pid ) };
-        if ( process_handle == nullptr ) {
+        if ( process_handle == nullptr ) [[unlikely]] {
             return static_cast< LONG >( ERROR_ACCESS_DENIED );
         }
         const LONG status{ TerminateProcess( process_handle, 1 ) };
@@ -215,18 +220,18 @@ namespace cpp_utils
     [[nodiscard]] inline auto terminate_process_by_name( const std::wstring_view process_name ) noexcept
     {
         const auto process_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ) };
-        if ( process_snapshot == INVALID_HANDLE_VALUE ) {
+        if ( process_snapshot == INVALID_HANDLE_VALUE ) [[unlikely]] {
             return static_cast< LONG >( ERROR_NOT_FOUND );
         }
         PROCESSENTRY32W process_entry{};
         process_entry.dwSize = sizeof( PROCESSENTRY32W );
         bool is_found{ false };
         LONG status{ ERROR_NOT_FOUND };
-        if ( Process32FirstW( process_snapshot, &process_entry ) ) {
+        if ( Process32FirstW( process_snapshot, &process_entry ) ) [[likely]] {
             do {
                 if ( _wcsicmp( process_entry.szExeFile, process_name.data() ) == 0 ) {
                     is_found = true;
-                    if ( terminate_process_by_pid( process_entry.th32ProcessID ) == ERROR_SUCCESS ) {
+                    if ( terminate_process_by_pid( process_entry.th32ProcessID ) == ERROR_SUCCESS ) [[likely]] {
                         status = ERROR_SUCCESS;
                     }
                 }
@@ -243,21 +248,21 @@ namespace cpp_utils
         }
     [[nodiscard]] inline auto terminate_process_by_names( const Range& process_names ) noexcept
     {
-        if ( process_names.empty() ) {
+        if ( process_names.empty() ) [[unlikely]] {
             return static_cast< LONG >( ERROR_SUCCESS );
         }
         const auto process_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ) };
-        if ( process_snapshot == INVALID_HANDLE_VALUE ) {
+        if ( process_snapshot == INVALID_HANDLE_VALUE ) [[unlikely]] {
             return static_cast< LONG >( ERROR_NOT_FOUND );
         }
         PROCESSENTRY32W process_entry{};
         process_entry.dwSize = sizeof( PROCESSENTRY32W );
         LONG status{ ERROR_NOT_FOUND };
-        if ( Process32FirstW( process_snapshot, &process_entry ) ) {
+        if ( Process32FirstW( process_snapshot, &process_entry ) ) [[likely]] {
             do {
                 for ( const auto& process_name : process_names ) {
                     if ( _wcsicmp( process_entry.szExeFile, process_name.data() ) == 0 ) {
-                        if ( terminate_process_by_pid( process_entry.th32ProcessID ) == ERROR_SUCCESS ) {
+                        if ( terminate_process_by_pid( process_entry.th32ProcessID ) == ERROR_SUCCESS ) [[likely]] {
                             status = ERROR_SUCCESS;
                         }
                         break;
@@ -272,12 +277,12 @@ namespace cpp_utils
     {
         using nt_suspend_process = LONG( NTAPI* )( HANDLE );
         const auto process_handle{ OpenProcess( PROCESS_SUSPEND_RESUME, FALSE, pid ) };
-        if ( process_handle == nullptr ) {
+        if ( process_handle == nullptr ) [[unlikely]] {
             return static_cast< LONG >( ERROR_ACCESS_DENIED );
         }
         const auto pfn{
           std::bit_cast< nt_suspend_process >( GetProcAddress( GetModuleHandleW( L"ntdll.dll" ), "NtSuspendProcess" ) ) };
-        if ( pfn == nullptr ) {
+        if ( pfn == nullptr ) [[unlikely]] {
             return static_cast< LONG >( ERROR_ACCESS_DENIED );
         }
         const auto result{ pfn( process_handle ) };
@@ -288,12 +293,12 @@ namespace cpp_utils
     {
         using nt_resume_process = LONG( NTAPI* )( HANDLE );
         const auto process_handle{ OpenProcess( PROCESS_SUSPEND_RESUME, FALSE, pid ) };
-        if ( process_handle == nullptr ) {
+        if ( process_handle == nullptr ) [[unlikely]] {
             return static_cast< LONG >( ERROR_ACCESS_DENIED );
         }
         const auto pfn{
           std::bit_cast< nt_resume_process >( GetProcAddress( GetModuleHandleW( L"ntdll.dll" ), "NtResumeProcess" ) ) };
-        if ( pfn == nullptr ) {
+        if ( pfn == nullptr ) [[unlikely]] {
             return static_cast< LONG >( ERROR_ACCESS_DENIED );
         }
         const auto result{ pfn( process_handle ) };
@@ -303,25 +308,25 @@ namespace cpp_utils
     [[nodiscard]] inline auto suspend_process_by_name( const std::wstring_view process_name ) noexcept
     {
         const auto process_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ) };
-        if ( process_snapshot == INVALID_HANDLE_VALUE ) {
+        if ( process_snapshot == INVALID_HANDLE_VALUE ) [[unlikely]] {
             return static_cast< LONG >( ERROR_NOT_FOUND );
         }
         using nt_suspend_process = LONG( NTAPI* )( HANDLE ) noexcept;
         const auto pfn{
           std::bit_cast< nt_suspend_process >( GetProcAddress( GetModuleHandleW( L"ntdll.dll" ), "NtSuspendProcess" ) ) };
-        if ( pfn == nullptr ) {
+        if ( pfn == nullptr ) [[unlikely]] {
             return static_cast< LONG >( ERROR_ACCESS_DENIED );
         }
         PROCESSENTRY32W process_entry{};
         process_entry.dwSize = sizeof( PROCESSENTRY32W );
         bool is_found{ false };
         LONG status{ ERROR_NOT_FOUND };
-        if ( Process32FirstW( process_snapshot, &process_entry ) ) {
+        if ( Process32FirstW( process_snapshot, &process_entry ) ) [[unlikely]] {
             do {
                 if ( _wcsicmp( process_entry.szExeFile, process_name.data() ) == 0 ) {
                     is_found = true;
                     const auto process_handle{ OpenProcess( PROCESS_SUSPEND_RESUME, FALSE, process_entry.th32ProcessID ) };
-                    if ( process_handle == nullptr ) {
+                    if ( process_handle == nullptr ) [[unlikely]] {
                         status = ERROR_ACCESS_DENIED;
                     }
                     status = pfn( process_handle );
@@ -335,25 +340,25 @@ namespace cpp_utils
     [[nodiscard]] inline auto resume_process_by_name( const std::wstring_view process_name ) noexcept
     {
         const auto process_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ) };
-        if ( process_snapshot == INVALID_HANDLE_VALUE ) {
+        if ( process_snapshot == INVALID_HANDLE_VALUE ) [[unlikely]] {
             return static_cast< LONG >( ERROR_NOT_FOUND );
         }
         using nt_resume_process = LONG( NTAPI* )( HANDLE ) noexcept;
         const auto pfn{
           std::bit_cast< nt_resume_process >( GetProcAddress( GetModuleHandleW( L"ntdll.dll" ), "NtResumeProcess" ) ) };
-        if ( pfn == nullptr ) {
+        if ( pfn == nullptr ) [[unlikely]] {
             return static_cast< LONG >( ERROR_ACCESS_DENIED );
         }
         PROCESSENTRY32W process_entry{};
         process_entry.dwSize = sizeof( PROCESSENTRY32W );
         bool is_found{ false };
         LONG status{ ERROR_NOT_FOUND };
-        if ( Process32FirstW( process_snapshot, &process_entry ) ) {
+        if ( Process32FirstW( process_snapshot, &process_entry ) ) [[likely]] {
             do {
                 if ( _wcsicmp( process_entry.szExeFile, process_name.data() ) == 0 ) {
                     is_found = true;
                     const auto process_handle{ OpenProcess( PROCESS_SUSPEND_RESUME, FALSE, process_entry.th32ProcessID ) };
-                    if ( process_handle == nullptr ) {
+                    if ( process_handle == nullptr ) [[unlikely]] {
                         status = ERROR_ACCESS_DENIED;
                     }
                     status = pfn( process_handle );
@@ -374,26 +379,26 @@ namespace cpp_utils
     [[nodiscard]] inline auto suspend_process_by_names( const Range& process_names ) noexcept
     {
         const auto process_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ) };
-        if ( process_snapshot == INVALID_HANDLE_VALUE ) {
+        if ( process_snapshot == INVALID_HANDLE_VALUE ) [[unlikely]] {
             return static_cast< LONG >( ERROR_NOT_FOUND );
         }
         using nt_suspend_process = LONG( NTAPI* )( HANDLE ) noexcept;
         const auto pfn{
           std::bit_cast< nt_suspend_process >( GetProcAddress( GetModuleHandleW( L"ntdll.dll" ), "NtSuspendProcess" ) ) };
-        if ( pfn == nullptr ) {
+        if ( pfn == nullptr ) [[unlikely]] {
             return static_cast< LONG >( ERROR_ACCESS_DENIED );
         }
         PROCESSENTRY32W process_entry{};
         process_entry.dwSize = sizeof( PROCESSENTRY32W );
         bool is_found{ false };
         LONG status{ ERROR_NOT_FOUND };
-        if ( Process32FirstW( process_snapshot, &process_entry ) ) {
+        if ( Process32FirstW( process_snapshot, &process_entry ) ) [[likely]] {
             do {
                 for ( const auto& process_name : process_names ) {
                     if ( _wcsicmp( process_entry.szExeFile, process_name.data() ) == 0 ) {
                         is_found = true;
                         const auto process_handle{ OpenProcess( PROCESS_SUSPEND_RESUME, FALSE, process_entry.th32ProcessID ) };
-                        if ( process_handle == nullptr ) {
+                        if ( process_handle == nullptr ) [[unlikely]] {
                             status = ERROR_ACCESS_DENIED;
                         }
                         status = pfn( process_handle );
@@ -414,26 +419,26 @@ namespace cpp_utils
     [[nodiscard]] inline auto resume_process_by_names( const Range& process_names ) noexcept
     {
         const auto process_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ) };
-        if ( process_snapshot == INVALID_HANDLE_VALUE ) {
+        if ( process_snapshot == INVALID_HANDLE_VALUE ) [[unlikely]] {
             return static_cast< LONG >( ERROR_NOT_FOUND );
         }
         using nt_resume_process = LONG( NTAPI* )( HANDLE ) noexcept;
         const auto pfn{
           std::bit_cast< nt_resume_process >( GetProcAddress( GetModuleHandleW( L"ntdll.dll" ), "NtResumeProcess" ) ) };
-        if ( pfn == nullptr ) {
+        if ( pfn == nullptr ) [[unlikely]] {
             return static_cast< LONG >( ERROR_ACCESS_DENIED );
         }
         PROCESSENTRY32W process_entry{};
         process_entry.dwSize = sizeof( PROCESSENTRY32W );
         bool is_found{ false };
         LONG status{ ERROR_NOT_FOUND };
-        if ( Process32FirstW( process_snapshot, &process_entry ) ) {
+        if ( Process32FirstW( process_snapshot, &process_entry ) ) [[likely]] {
             do {
                 for ( const auto& process_name : process_names ) {
                     if ( _wcsicmp( process_entry.szExeFile, process_name.data() ) == 0 ) {
                         is_found = true;
                         const auto process_handle{ OpenProcess( PROCESS_SUSPEND_RESUME, FALSE, process_entry.th32ProcessID ) };
-                        if ( process_handle == nullptr ) {
+                        if ( process_handle == nullptr ) [[unlikely]] {
                             status = ERROR_ACCESS_DENIED;
                         }
                         status = pfn( process_handle );
@@ -453,7 +458,7 @@ namespace cpp_utils
         HKEY key_handle;
         auto result{ RegCreateKeyExW(
           main_key, sub_key.data(), 0, nullptr, REG_OPTION_NON_VOLATILE, KEY_WRITE, nullptr, &key_handle, nullptr ) };
-        if ( result != ERROR_SUCCESS ) {
+        if ( result != ERROR_SUCCESS ) [[unlikely]] {
             return result;
         }
         result = RegSetValueExW( key_handle, value_name.data(), 0, type, data, data_size );
@@ -465,7 +470,7 @@ namespace cpp_utils
     {
         HKEY key_handle;
         auto result{ RegOpenKeyExW( main_key, sub_key.data(), 0, KEY_WRITE, &key_handle ) };
-        if ( result != ERROR_SUCCESS ) {
+        if ( result != ERROR_SUCCESS ) [[unlikely]] {
             return result;
         }
         result = RegDeleteValueW( key_handle, value_name.data() );
@@ -479,15 +484,15 @@ namespace cpp_utils
     [[nodiscard]] inline auto set_service_start_type( const std::wstring_view service_name, const DWORD start_type ) noexcept
     {
         const auto scm{ OpenSCManagerW( nullptr, nullptr, SC_MANAGER_CONNECT ) };
-        if ( scm == nullptr ) {
+        if ( scm == nullptr ) [[unlikely]] {
             return GetLastError();
         }
         const auto service{ OpenServiceW( scm, service_name.data(), SERVICE_CHANGE_CONFIG ) };
         DWORD result{ ERROR_SUCCESS };
-        if ( service != nullptr ) {
+        if ( service != nullptr ) [[likely]] {
             if ( !ChangeServiceConfigW(
                    service, SERVICE_NO_CHANGE, start_type, SERVICE_NO_CHANGE, nullptr, nullptr, nullptr, nullptr, nullptr,
-                   nullptr, nullptr ) )
+                   nullptr, nullptr ) ) [[unlikely]]
             {
                 result = GetLastError();
             }
@@ -502,13 +507,13 @@ namespace cpp_utils
       const std::wstring_view service_name, std::pmr::memory_resource* const resource = std::pmr::get_default_resource() ) noexcept
     {
         const auto scm{ OpenSCManagerW( nullptr, nullptr, SC_MANAGER_CONNECT | SC_MANAGER_ENUMERATE_SERVICE ) };
-        if ( scm == nullptr ) {
+        if ( scm == nullptr ) [[unlikely]] {
             return GetLastError();
         }
         const auto service{
           OpenServiceW( scm, service_name.data(), SERVICE_STOP | SERVICE_QUERY_STATUS | SERVICE_ENUMERATE_DEPENDENTS ) };
         DWORD result{ ERROR_SUCCESS };
-        if ( service != nullptr ) {
+        if ( service != nullptr ) [[likely]] {
             result = details::stop_service_and_dependencies( scm, service, resource );
             CloseServiceHandle( service );
         } else {
@@ -521,12 +526,12 @@ namespace cpp_utils
       const std::wstring_view service_name, std::pmr::memory_resource* const resource = std::pmr::get_default_resource() ) noexcept
     {
         const auto scm{ OpenSCManagerW( nullptr, nullptr, SC_MANAGER_CONNECT ) };
-        if ( scm == nullptr ) {
+        if ( scm == nullptr ) [[unlikely]] {
             return GetLastError();
         }
         const auto service{ OpenServiceW( scm, service_name.data(), SERVICE_START | SERVICE_QUERY_STATUS | SERVICE_QUERY_CONFIG ) };
         DWORD result{ ERROR_SUCCESS };
-        if ( service != nullptr ) {
+        if ( service != nullptr ) [[likely]] {
             result = details::start_service_and_dependencies( scm, service, resource );
             CloseServiceHandle( service );
         } else {
@@ -542,7 +547,7 @@ namespace cpp_utils
         SID_IDENTIFIER_AUTHORITY nt_authority{ SECURITY_NT_AUTHORITY };
         if ( AllocateAndInitializeSid(
                &nt_authority, 2, SECURITY_BUILTIN_DOMAIN_RID, DOMAIN_ALIAS_RID_ADMINS, 0, 0, 0, 0, 0, 0, &admins_group )
-             == TRUE )
+             == TRUE ) [[likely]]
         {
             CheckTokenMembership( nullptr, admins_group, &is_admin );
             FreeSid( admins_group );
@@ -686,7 +691,7 @@ namespace cpp_utils
         auto&& press_any_key_to_continue( this auto&& self ) noexcept
         {
             DWORD mode;
-            if ( !GetConsoleMode( self.std_input_handle, &mode ) ) {
+            if ( !GetConsoleMode( self.std_input_handle, &mode ) ) [[unlikely]] {
                 return self;
             }
             SetConsoleMode( self.std_input_handle, ENABLE_EXTENDED_FLAGS | ( mode & ~ENABLE_QUICK_EDIT_MODE ) );
@@ -776,7 +781,7 @@ namespace cpp_utils
         auto&& lock_text( this auto&& self, const bool is_locked ) noexcept
         {
             DWORD attrs;
-            if ( !GetConsoleMode( self.std_input_handle, &attrs ) ) {
+            if ( !GetConsoleMode( self.std_input_handle, &attrs ) ) [[unlikely]] {
                 return self;
             }
             switch ( is_locked ) {

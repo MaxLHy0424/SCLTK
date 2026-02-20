@@ -7,14 +7,14 @@ namespace cpp_utils
     template < std::integral T >
     [[nodiscard]] inline constexpr auto is_prime_number( const T n ) noexcept
     {
-        if ( n == 2 ) {
+        if ( n == 2 ) [[unlikely]] {
             return true;
         }
-        if ( n < 2 ) {
+        if ( n < 2 ) [[unlikely]] {
             return false;
         }
         for ( T i{ 2 }; i * i <= n; ++i ) {
-            if ( n % i == 0 ) {
+            if ( n % i == 0 ) [[likely]] {
                 return false;
             }
         }
@@ -24,7 +24,7 @@ namespace cpp_utils
     [[nodiscard]] inline constexpr auto count_digits( const T n ) noexcept
     {
         using result_t = unsigned short;
-        if ( n == 0 ) {
+        if ( n == 0 ) [[unlikely]] {
             return static_cast< result_t >( 1 );
         }
         auto abs_n{ std::abs( n ) };

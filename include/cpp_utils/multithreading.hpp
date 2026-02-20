@@ -18,7 +18,7 @@ namespace cpp_utils
       std::pmr::memory_resource* const resource = std::pmr::get_default_resource() )
     {
         using result_t = std::pmr::vector< std::thread >;
-        if ( begin == end || nproc == 0 ) {
+        if ( begin == end || nproc == 0 ) [[unlikely]] {
             return result_t{ resource };
         }
         [[assume( nproc != 0 )]];

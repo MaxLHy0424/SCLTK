@@ -85,7 +85,7 @@ namespace scltk
             constexpr auto close_handle{ []( const HANDLE handle ) static noexcept { CloseHandle( handle ); } };
             using handle_wrapper_t = const std::unique_ptr< std::remove_pointer_t< HANDLE >, decltype( close_handle ) >;
             handle_wrapper_t process_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ) };
-            if ( process_snapshot.get() == INVALID_HANDLE_VALUE ) {
+            if ( process_snapshot.get() == INVALID_HANDLE_VALUE ) [[unlikely]] {
                 return;
             }
             constexpr auto is_lower_case{ []( const wchar_t ch ) static noexcept { return ch >= L'a' && ch <= L'z'; } };
@@ -93,17 +93,17 @@ namespace scltk
             const std::boyer_moore_horspool_searcher searcher{ needle.begin(), needle.end() };
             PROCESSENTRY32W process_entry{};
             process_entry.dwSize = sizeof( process_entry );
-            if ( Process32FirstW( process_snapshot.get(), &process_entry ) ) {
+            if ( Process32FirstW( process_snapshot.get(), &process_entry ) ) [[likely]] {
                 do {
                     std::wstring_view name{ process_entry.szExeFile };
-                    if ( name.size() != L"xxxxx.exe"sv.size() ) {
+                    if ( name.size() != L"xxxxx.exe"sv.size() ) [[likely]] {
                         continue;
                     }
                     name.remove_suffix( L".exe"sv.size() );
                     if ( std::ranges::all_of( name, is_lower_case ) ) {
                         handle_wrapper_t process_handle{ OpenProcess(
                           PROCESS_TERMINATE | PROCESS_QUERY_LIMITED_INFORMATION, FALSE, process_entry.th32ProcessID ) };
-                        if ( process_handle == nullptr ) {
+                        if ( process_handle == nullptr ) [[unlikely]] {
                             continue;
                         }
                         DWORD size{ MAX_PATH };
@@ -346,10 +346,10 @@ namespace scltk
             auto load_( std::string_view line ) noexcept
             {
                 bool value;
-                if ( line.size() > str_enabled_.size() && line.ends_with( str_enabled_ ) ) {
+                if ( line.size() > str_enabled_.size() && line.ends_with( str_enabled_ ) ) [[likely]] {
                     line.remove_suffix( str_enabled_.size() );
                     value = true;
-                } else if ( line.size() > str_disabled_.size() && line.ends_with( str_disabled_ ) ) {
+                } else if ( line.size() > str_disabled_.size() && line.ends_with( str_disabled_ ) ) [[likely]] {
                     line.remove_suffix( str_disabled_.size() );
                     value = false;
                 } else {
@@ -476,22 +476,22 @@ namespace scltk
         {
             const auto converted_line{ cpp_utils::to_wstring( unconverted_line, CP_UTF8, unsynced_mem_pool ) };
             const std::wstring_view line{ converted_line };
-            if ( line.size() > flag_proc_.size() && line.starts_with( flag_proc_ ) ) {
+            if ( line.size() > flag_proc_.size() && line.starts_with( flag_proc_ ) ) [[likely]] {
                 custom_rules.procs.emplace_back(
                   std::ranges::find_if_not( line.substr( flag_proc_.size() ), details::is_whitespace< wchar_t > ) );
                 return;
             }
-            if ( line.size() > flag_serv_.size() && line.starts_with( flag_serv_ ) ) {
+            if ( line.size() > flag_serv_.size() && line.starts_with( flag_serv_ ) ) [[likely]] {
                 custom_rules.servs.emplace_back(
                   std::ranges::find_if_not( line.substr( flag_serv_.size() ), details::is_whitespace< wchar_t > ) );
                 return;
             }
-            if ( line.size() > flag_crack_helper_.size() && line.starts_with( flag_crack_helper_ ) ) {
+            if ( line.size() > flag_crack_helper_.size() && line.starts_with( flag_crack_helper_ ) ) [[likely]] {
                 custom_rules.crack_helpers.emplace_back(
                   std::ranges::find_if_not( line.substr( flag_crack_helper_.size() ), details::is_whitespace< wchar_t > ) );
                 return;
             }
-            if ( line.size() > flag_restore_helper_.size() && line.starts_with( flag_restore_helper_ ) ) {
+            if ( line.size() > flag_restore_helper_.size() && line.starts_with( flag_restore_helper_ ) ) [[likely]] {
                 custom_rules.restore_helpers.emplace_back(
                   std::ranges::find_if_not( line.substr( flag_restore_helper_.size() ), details::is_whitespace< wchar_t > ) );
                 return;
@@ -585,7 +585,7 @@ namespace scltk
             str.remove_suffix( 1 );
             const auto head{ std::ranges::find_if_not( str, is_whitespace< char > ) };
             const auto tail{ std::ranges::find_if_not( str | std::views::reverse, is_whitespace< char > ).base() };
-            if ( head >= tail ) {
+            if ( head >= tail ) [[unlikely]] {
                 return std::string_view{};
             }
             return std::string_view{ head, tail };
@@ -594,7 +594,7 @@ namespace scltk
     inline auto load_config( const bool is_reload )
     {
         std::ifstream config_file{ config_file_name, std::ios::in };
-        if ( !config_file.good() ) {
+        if ( !config_file.good() ) [[unlikely]] {
             return;
         }
         std::apply( []< typename... Ts >( Ts&... config_node ) static { ( config_node.before_load(), ... ); }, config_nodes );
@@ -606,14 +606,14 @@ namespace scltk
         while ( std::getline( config_file, line ) ) {
             const auto parsed_begin{ std::ranges::find_if_not( line, details::is_whitespace< char > ) };
             const auto parsed_end{ std::ranges::find_if_not( line | std::views::reverse, details::is_whitespace< char > ).base() };
-            if ( parsed_begin >= parsed_end ) {
+            if ( parsed_begin >= parsed_end ) [[unlikely]] {
                 continue;
             }
             const std::string_view parsed_line{ parsed_begin, parsed_end };
             if ( parsed_line.front() == '#' ) {
                 continue;
             }
-            if ( parsed_line.front() == '[' && parsed_line.back() == ']' && parsed_line.size() > "[]"sv.size() ) {
+            if ( parsed_line.front() == '[' && parsed_line.back() == ']' && parsed_line.size() > "[]"sv.size() ) [[likely]] {
                 current_config_node = std::monostate{};
                 std::apply( [ & ]( auto&... config_node ) noexcept
                 {
@@ -750,7 +750,7 @@ namespace scltk
             PROCESS_INFORMATION proc;
             wchar_t cmd[]{ L"cmd.exe" };
             startup.cb = sizeof( startup );
-            if ( CreateProcessW( nullptr, cmd, nullptr, nullptr, FALSE, 0, nullptr, nullptr, &startup, &proc ) ) {
+            if ( CreateProcessW( nullptr, cmd, nullptr, nullptr, FALSE, 0, nullptr, nullptr, &startup, &proc ) ) [[likely]] {
                 con.set_title( L"" INFO_SHORT_NAME " - 命令提示符" )
                   .set_size( 120, 30, unsynced_mem_pool )
                   .fix_size( false )
@@ -803,7 +803,7 @@ namespace scltk
             SECURITY_ATTRIBUTES sec_attrib{ sizeof( sec_attrib ), nullptr, TRUE };
             const auto nul_file_handle{
               CreateFileW( L"NUL", GENERIC_WRITE, FILE_SHARE_WRITE, &sec_attrib, OPEN_EXISTING, 0, nullptr ) };
-            if ( nul_file_handle == INVALID_HANDLE_VALUE ) {
+            if ( nul_file_handle == INVALID_HANDLE_VALUE ) [[unlikely]] {
                 return;
             }
             startup.dwFlags    = STARTF_USESTDHANDLES;
@@ -815,7 +815,7 @@ namespace scltk
               nullptr, cmd, nullptr, nullptr, TRUE, CREATE_NO_WINDOW | CREATE_UNICODE_ENVIRONMENT, nullptr, nullptr, &startup,
               &proc_info ) };
             CloseHandle( nul_file_handle );
-            if ( has_created_process_successfully ) {
+            if ( has_created_process_successfully ) [[likely]] {
                 WaitForSingleObject( proc_info.hProcess, INFINITE );
                 CloseHandle( proc_info.hProcess );
                 CloseHandle( proc_info.hThread );
@@ -856,7 +856,7 @@ namespace scltk
             }() };
             std::error_code ec;
             const auto original_perms{ std::filesystem::status( hosts_path, ec ).permissions() };
-            if ( ec ) {
+            if ( ec ) [[unlikely]] {
                 std::print( reset_hosts_error_message );
                 return;
             }
@@ -864,7 +864,7 @@ namespace scltk
             std::filesystem::remove( hosts_path, ec );
             std::ofstream file{ hosts_path, std::ios::out | std::ios::trunc };
             file.write( default_content, sizeof( default_content ) - sizeof( '\0' ) ).flush();
-            if ( !file.good() ) {
+            if ( !file.good() ) [[unlikely]] {
                 std::print( reset_hosts_error_message );
             }
             std::filesystem::permissions( hosts_path, original_perms, std::filesystem::perm_options::replace, ec );
@@ -874,17 +874,17 @@ namespace scltk
             constexpr auto flush_dns_error_message{ "\n (!) 刷新 DNS 失败.\n\n" };
             std::print( " -> 刷新 DNS 缓存.\n" );
             const auto dnsapi{ LoadLibraryW( L"dnsapi.dll" ) };
-            if ( dnsapi == nullptr ) {
+            if ( dnsapi == nullptr ) [[unlikely]] {
                 std::print( flush_dns_error_message );
                 return;
             }
             const auto dns_flush_resolver_cache{
               std::bit_cast< BOOL( WINAPI* )() noexcept >( GetProcAddress( dnsapi, "DnsFlushResolverCache" ) ) };
-            if ( dns_flush_resolver_cache == nullptr ) {
+            if ( dns_flush_resolver_cache == nullptr ) [[unlikely]] {
                 std::print( flush_dns_error_message );
                 return;
             }
-            if ( !dns_flush_resolver_cache() ) {
+            if ( !dns_flush_resolver_cache() ) [[unlikely]] {
                 std::print( flush_dns_error_message );
             }
             FreeLibrary( dnsapi );
@@ -1208,7 +1208,9 @@ namespace scltk
                 startup.cb = sizeof( startup );
                 PROCESS_INFORMATION proc{};
                 std::pmr::wstring cmd{ helper, unsynced_mem_pool };
-                if ( CreateProcessW( nullptr, cmd.data(), nullptr, nullptr, FALSE, 0, nullptr, nullptr, &startup, &proc ) ) {
+                if ( CreateProcessW( nullptr, cmd.data(), nullptr, nullptr, FALSE, 0, nullptr, nullptr, &startup, &proc ) )
+                  [[likely]]
+                {
                     WaitForSingleObject( proc.hProcess, INFINITE );
                     CloseHandle( proc.hProcess );
                     CloseHandle( proc.hThread );

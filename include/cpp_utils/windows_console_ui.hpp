@@ -159,7 +159,7 @@ namespace cpp_utils
         {
             const auto target{ std::ranges::find_if( lines_, [ & ]( const line_node_& line ) noexcept
             { return line == current_event.dwMousePosition; } ) };
-            if ( target == lines_.end() ) {
+            if ( target == lines_.end() ) [[unlikely]] {
                 return func_back;
             }
             if ( is_empty_function_( target->func ) ) {
@@ -306,7 +306,7 @@ namespace cpp_utils
         }
         auto& show()
         {
-            if ( empty() ) {
+            if ( empty() ) [[unlikely]] {
                 return *this;
             }
             using namespace std::chrono_literals;

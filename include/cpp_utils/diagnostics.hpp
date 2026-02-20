@@ -22,7 +22,7 @@ namespace cpp_utils
       const std::source_location src_location = std::source_location::current(),
       std::pmr::stacktrace trace              = std::pmr::stacktrace::current() )
     {
-        if ( expression == false ) {
+        if ( expression == false ) [[unlikely]] {
             std::print( stderr, "{}", make_log( failed_message, src_location, std::move( trace ) ) );
             std::terminate();
         }
