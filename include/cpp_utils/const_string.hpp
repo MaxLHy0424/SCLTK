@@ -3,6 +3,7 @@
 #include <array>
 #include <concepts>
 #include <string_view>
+#include <vector>
 #include "compiler.hpp"
 #include "meta.hpp"
 namespace cpp_utils
@@ -137,6 +138,31 @@ namespace cpp_utils
             begin += N;
         }( strings ), ... );
         return basic_const_string{ storage };
+    }
+    template < character T, std::integral auto N >
+    [[nodiscard]] inline consteval auto make_const_string_from_integral() noexcept
+    {
+        if constexpr ( N == 0 ) {
+            return make_repeated_const_string< static_cast< T >( '0' ), 1 >();
+        } else {
+            constexpr auto f{ [] static
+            {
+                auto abs_n{ std::abs( N ) };
+                std::vector< T > abs_chars;
+                while ( abs_n != 0 ) {
+                    abs_chars.emplace_back( static_cast< T >( abs_n % 10 + '0' ) );
+                    abs_n /= 10;
+                }
+                std::ranges::reverse( abs_chars );
+                std::vector< T > final_chars;
+                if constexpr ( N < 0 ) {
+                    final_chars.emplace_back( static_cast< T >( '-' ) );
+                }
+                final_chars.append_range( abs_chars );
+                return final_chars;
+            } };
+            return basic_const_string{ invoke_to_array< f >() };
+        }
     }
     namespace const_string_literals
     {
