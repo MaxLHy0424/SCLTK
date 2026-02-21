@@ -147,7 +147,7 @@ namespace cpp_utils
         } else {
             constexpr auto f{ [] static
             {
-                auto abs_n{ N < 0 ? N : -N };
+                auto abs_n{ N < 0 ? -N : N };
                 std::vector< T > abs_chars;
                 while ( abs_n != 0 ) {
                     abs_chars.emplace_back( static_cast< T >( abs_n % 10 + '0' ) );
