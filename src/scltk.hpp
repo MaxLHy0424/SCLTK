@@ -149,11 +149,13 @@ namespace scltk
         details::make_const_wstring_list_t< L"STUDSRV" >,
         [] static noexcept
     {
+        ( void ) cpp_utils::stop_service_with_dependencies( L"TDKeybd" );
         ( void ) cpp_utils::stop_service_with_dependencies( L"TDNetFilter" );
         ( void ) cpp_utils::stop_service_with_dependencies( L"TDFileFilter" );
     },
         [] static noexcept
     {
+        ( void ) cpp_utils::start_service_with_dependencies( L"TDKeybd" );
         ( void ) cpp_utils::start_service_with_dependencies( L"TDNetFilter" );
         ( void ) cpp_utils::start_service_with_dependencies( L"TDFileFilter" );
     } >,
