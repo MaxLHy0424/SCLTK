@@ -1,11 +1,9 @@
 #pragma once
-#include <chrono>
 #include <functional>
 #include <memory_resource>
 #include <print>
 #include <ranges>
 #include <string>
-#include <thread>
 #include <utility>
 #include "compiler.hpp"
 #include "windows_app_tools.hpp"
@@ -102,18 +100,15 @@ namespace cpp_utils
             GetConsoleScreenBufferInfo( console_.std_output_handle, &console_data );
             return console_data.dwCursorPosition;
         }
-        auto get_event_( const bool is_move = true ) noexcept
+        auto try_get_event_( INPUT_RECORD& record )
         {
-            using namespace std::chrono_literals;
-            INPUT_RECORD record;
-            DWORD reg;
-            while ( true ) {
-                std::this_thread::sleep_for( 20ms );
-                ReadConsoleInputW( console_.std_input_handle, &record, 1, &reg );
-                if ( record.EventType == MOUSE_EVENT && ( is_move || record.Event.MouseEvent.dwEventFlags != mouse::move ) ) {
-                    return record.Event.MouseEvent;
+            if ( WaitForSingleObject( console_.std_input_handle, INFINITE ) == WAIT_OBJECT_0 ) {
+                DWORD reg;
+                if ( ReadConsoleInputW( console_.std_input_handle, &record, 1, &reg ) && reg != 0 ) {
+                    return true;
                 }
             }
+            return false;
         }
         auto rewrite_( const COORD cursor_position, const line_node_& line )
         {
@@ -308,21 +303,23 @@ namespace cpp_utils
             if ( empty() ) [[unlikely]] {
                 return *this;
             }
-            using namespace std::chrono_literals;
             console_.show_cursor( false );
             console_.lock_text( true );
             init_pos_();
-            MOUSE_EVENT_RECORD event;
             auto func_return_value{ func_back };
             while ( func_return_value == func_back ) {
-                event = get_event_();
-                switch ( event.dwEventFlags ) {
-                    case mouse::move : refresh_( event.dwMousePosition ); break;
-                    case mouse::click : {
-                        if ( event.dwButtonState != false ) {
-                            func_return_value = invoke_func_( event );
+                INPUT_RECORD record;
+                while ( try_get_event_( record ) ) {
+                    if ( record.EventType == MOUSE_EVENT ) {
+                        const auto& mouse_event{ record.Event.MouseEvent };
+                        if ( mouse_event.dwEventFlags == mouse::move ) {
+                            refresh_( mouse_event.dwMousePosition );
+                        } else if ( mouse_event.dwEventFlags == mouse::click && mouse_event.dwButtonState != 0 ) {
+                            func_return_value = invoke_func_( mouse_event );
+                            if ( func_return_value != func_back ) {
+                                break;
+                            }
                         }
-                        break;
                     }
                 }
             }
