@@ -8,7 +8,6 @@
 #include <thread>
 #include <utility>
 #include "compiler.hpp"
-#include "meta.hpp"
 #include "windows_app_tools.hpp"
 #include "windows_definitions.hpp"
 namespace cpp_utils
