@@ -104,20 +104,20 @@ namespace cpp_utils
             {
                 std::pmr::vector< BYTE > buffer( bytes_needed, resource );
                 const auto config{ std::bit_cast< LPQUERY_SERVICE_CONFIGW >( buffer.data() ) };
-                if ( QueryServiceConfigW( service, config, bytes_needed, &bytes_needed ) ) [[likely]] {
-                    if ( config->lpDependencies != nullptr && *config->lpDependencies != L'\0' ) [[likely]] {
-                        auto dependency{ config->lpDependencies };
-                        while ( *dependency != L'\0' ) [[likely]] {
-                            const auto dependency_service{ OpenServiceW( scm, dependency, SERVICE_STOP | SERVICE_QUERY_STATUS ) };
-                            if ( dependency_service != nullptr ) [[likely]] {
-                                const auto dep_result{ stop_service_and_dependencies( scm, dependency_service, resource ) };
-                                if ( dep_result != ERROR_SUCCESS && result == ERROR_SUCCESS ) [[unlikely]] {
-                                    result = dep_result;
-                                }
-                                CloseServiceHandle( dependency_service );
+                if ( QueryServiceConfigW( service, config, bytes_needed, &bytes_needed ) && config->lpDependencies != nullptr
+                     && *config->lpDependencies != L'\0' ) [[likely]]
+                {
+                    auto dependency{ config->lpDependencies };
+                    while ( *dependency != L'\0' ) [[likely]] {
+                        const auto dependency_service{ OpenServiceW( scm, dependency, SERVICE_STOP | SERVICE_QUERY_STATUS ) };
+                        if ( dependency_service != nullptr ) [[likely]] {
+                            const auto dep_result{ stop_service_and_dependencies( scm, dependency_service, resource ) };
+                            if ( dep_result != ERROR_SUCCESS && result == ERROR_SUCCESS ) [[unlikely]] {
+                                result = dep_result;
                             }
-                            dependency += std::wcslen( dependency ) + 1;
+                            CloseServiceHandle( dependency_service );
                         }
+                        dependency += std::wcslen( dependency ) + 1;
                     }
                 }
             }
@@ -130,8 +130,8 @@ namespace cpp_utils
                 if ( !query_success || status.dwCurrentState != SERVICE_STOPPED ) [[unlikely]] {
                     result = ERROR_SERVICE_REQUEST_TIMEOUT;
                 }
-            } else if ( GetLastError() != ERROR_SERVICE_NOT_ACTIVE ) [[unlikely]] {
-                result = GetLastError();
+            } else if ( const auto err{ GetLastError() }; err != ERROR_SERVICE_NOT_ACTIVE ) [[unlikely]] {
+                result = err;
             }
             return result;
         }
@@ -145,29 +145,28 @@ namespace cpp_utils
             {
                 std::pmr::vector< BYTE > buffer( bytes_needed, resource );
                 const auto config{ std::bit_cast< LPQUERY_SERVICE_CONFIGW >( buffer.data() ) };
-                if ( QueryServiceConfigW( service, config, bytes_needed, &bytes_needed ) ) [[likely]] {
-                    if ( config->lpDependencies != nullptr && *config->lpDependencies != L'\0' ) {
-                        auto dependency{ config->lpDependencies };
-                        while ( *dependency != L'\0' ) [[likely]] {
-                            if ( *dependency != L'@' ) [[likely]] {
-                                const auto dependency_service{
-                                  OpenServiceW( scm, dependency, SERVICE_START | SERVICE_QUERY_STATUS ) };
-                                if ( dependency_service != nullptr ) [[likely]] {
-                                    SERVICE_STATUS status{};
-                                    if ( !QueryServiceStatus( dependency_service, &status )
-                                         || ( status.dwCurrentState != SERVICE_RUNNING
-                                              && status.dwCurrentState != SERVICE_START_PENDING ) ) [[likely]]
-                                    {
-                                        const auto dep_result{ start_service_and_dependencies( scm, dependency_service, resource ) };
-                                        if ( dep_result != ERROR_SUCCESS && result == ERROR_SUCCESS ) [[unlikely]] {
-                                            result = dep_result;
-                                        }
+                if ( QueryServiceConfigW( service, config, bytes_needed, &bytes_needed ) && config->lpDependencies != nullptr
+                     && *config->lpDependencies != L'\0' ) [[likely]]
+                {
+                    auto dependency{ config->lpDependencies };
+                    while ( *dependency != L'\0' ) [[likely]] {
+                        if ( *dependency != L'@' ) [[likely]] {
+                            const auto dependency_service{ OpenServiceW( scm, dependency, SERVICE_START | SERVICE_QUERY_STATUS ) };
+                            if ( dependency_service != nullptr ) [[likely]] {
+                                SERVICE_STATUS status{};
+                                if ( !QueryServiceStatus( dependency_service, &status )
+                                     || ( status.dwCurrentState != SERVICE_RUNNING && status.dwCurrentState != SERVICE_START_PENDING ) )
+                                  [[likely]]
+                                {
+                                    const auto dep_result{ start_service_and_dependencies( scm, dependency_service, resource ) };
+                                    if ( dep_result != ERROR_SUCCESS && result == ERROR_SUCCESS ) [[unlikely]] {
+                                        result = dep_result;
                                     }
-                                    CloseServiceHandle( dependency_service );
                                 }
+                                CloseServiceHandle( dependency_service );
                             }
-                            dependency += std::wcslen( dependency ) + 1;
                         }
+                        dependency += std::wcslen( dependency ) + 1;
                     }
                 }
             }
