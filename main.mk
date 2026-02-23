@@ -45,7 +45,6 @@ args_release     := -DNDEBUG -static $(args_base) $(args_opt_release)
 args_ld_base     := -fuse-ld=lld -Wl,-O3,--lto-O3,--lto-CGO3,--gc-sections,--strip-all,--as-needed,--no-insert-timestamp,--no-seh,--disable-runtime-pseudo-reloc,--disable-auto-import,--dynamicbase,--nxcompat,--high-entropy-va,--tsaware,--icf=all
 args_ld_i686     := $(args_ld_base)
 args_ld_x86_64   := $(args_ld_base)
-args_upx         := --lzma --best --8-bit --no-align -qqq
 _echo            := /usr/bin/echo
 .PHONY: toolchain all build debug release release-32 release-64 pack_and_sign clean
 .NOTPARALLEL: all
@@ -53,6 +52,7 @@ dependencies_base := src/* src/info.hpp $(cpp_utils_all_files)
 all: toolchain build pack_and_sign
 build: debug release
 gpg_command := gpg -bs -u $(gpg_key) --yes
+upx_command := /ucrt64/bin/upx --lzma --best --8-bit --no-align -qqq
 pack_and_sign: build
 	@$(_echo) "Signing binaries..."
 	@$(gpg_command) build/release/$(project_name)-i686-msvcrt.exe
@@ -104,7 +104,7 @@ build/release/$(project_name)-i686-msvcrt.exe: $(dependencies_base) \
 	@$(_echo) "Compiling '$@'..."
 	@$(i686_compiler) $(dependencies_release_32bit) $(args_release) $(args_arch_i686) $(args_ld_i686) -o $@
 	@$(_echo) "Compressing '$@'..."
-	@/ucrt64/bin/upx $@ $(args_upx)
+	@$(upx_command) $@
 dependencies_release_64bit := build/manifest-x86_64.o \
                               src/*.cpp
 build/release/$(project_name)-x86_64-ucrt.exe: $(dependencies_base) \
@@ -113,7 +113,7 @@ build/release/$(project_name)-x86_64-ucrt.exe: $(dependencies_base) \
 	@$(_echo) "Compiling '$@'..."
 	@$(x86_64_compiler) $(dependencies_release_64bit) $(args_release) $(args_arch_x86_64) $(args_ld_x86_64) -o $@
 	@$(_echo) "Compressing '$@'..."
-	@/ucrt64/bin/upx $@ $(args_upx)
+	@$(upx_command) $@
 dependencies_info := manifest.rc \
                      img/favicon.ico \
                      manifest.xml \
