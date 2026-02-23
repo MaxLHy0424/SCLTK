@@ -46,7 +46,7 @@ args_release     := -DNDEBUG -static $(args_base) $(args_opt_release)
 args_ld_base     := -fuse-ld=lld -Wl,-O3,--lto-O3,--lto-CGO3,--gc-sections,--strip-all,--as-needed,--no-insert-timestamp,--no-seh,--disable-runtime-pseudo-reloc,--disable-auto-import,--dynamicbase,--nxcompat,--high-entropy-va,--tsaware,--icf=all
 args_ld_i686     := $(args_ld_base)
 args_ld_x86_64   := $(args_ld_base)
-args_upx         := --lzma --best --8-bit --no-align --ultra-brute -qqq
+args_upx         := --lzma --best --8-bit --no-align -qqq
 _echo            := $(msys2_path)/usr/bin/echo.exe
 .PHONY: toolchain all build debug release release-32 release-64 pack_and_sign clean
 .NOTPARALLEL: all
