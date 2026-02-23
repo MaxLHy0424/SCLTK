@@ -1,5 +1,5 @@
-include_path   := include
-cpp_utils_path := $(include_path)/cpp_utils
+include_path     := include
+cpp_utils_path   := $(include_path)/cpp_utils
 include $(cpp_utils_path)/all.mk
 project_name     := SCLTK
 x86_64_compiler  := /ucrt64/bin/g++
@@ -45,31 +45,27 @@ args_release     := -DNDEBUG -static $(args_base) $(args_opt_release)
 args_ld_base     := -fuse-ld=lld -Wl,-O3,--lto-O3,--lto-CGO3,--gc-sections,--strip-all,--as-needed,--no-insert-timestamp,--no-seh,--disable-runtime-pseudo-reloc,--disable-auto-import,--dynamicbase,--nxcompat,--high-entropy-va,--tsaware,--icf=all
 args_ld_i686     := $(args_ld_base)
 args_ld_x86_64   := $(args_ld_base)
-_echo            := /usr/bin/echo
+cmd_echo         := /usr/bin/echo
+cmd_upx          := /ucrt64/bin/upx --lzma --best --8-bit --no-align -qqq
+cmd_gpg          := gpg -bs -u $(gpg_key) --yes
+dep_test         := src/main.cpp src/scltk.hpp src/info.hpp $(cpp_utils_all_files)
+dep_debug        := src/*.cpp
+dep_release-32   := build/manifest-i686.o \
+                    src/*.cpp
+dep_release-64   := build/manifest-x86_64.o \
+                    src/*.cpp
+dep_res          := manifest.rc \
+                    img/favicon.ico \
+                    manifest.xml \
+                    src/info.hpp
 .PHONY: toolchain all build debug release release-32 release-64 pack_and_sign clean
 .NOTPARALLEL: all
-dependencies_base := src/* src/info.hpp $(cpp_utils_all_files)
 all: toolchain build pack_and_sign
 build: debug release
-gpg_command := gpg -bs -u $(gpg_key) --yes
-upx_command := /ucrt64/bin/upx --lzma --best --8-bit --no-align -qqq
-pack_and_sign: build
-	@$(_echo) "Signing binaries..."
-	@$(gpg_command) build/release/$(project_name)-i686-msvcrt.exe
-	@$(gpg_command) build/release/$(project_name)-x86_64-ucrt.exe
-	@$(_echo) "Removing old package..."
-	@/usr/bin/rm -rf build/$(project_name).7z
-	@$(_echo) "Copying binaries, signatures, and the LICENSE.txt..."
-	@/usr/bin/mkdir build/__temp__ -p
-	@/usr/bin/cp build/release/*.exe build/__temp__/
-	@/usr/bin/cp build/release/*.sig build/__temp__/
-	@/usr/bin/cp LICENSE.txt build/__temp__/
-	@$(_echo) "Compressing to '$(project_name).7z'..."
-	@/ucrt64/bin/7z a -bso0 -bsp0 -mx9 -m0=LZMA2 -md=64m -mfb=64 -ms=16g -mmt=16 build/$(project_name).7z ./build/__temp__/*
-	@$(_echo) "Signing '$(project_name).7z'..."
-	@$(gpg_command) build/$(project_name).7z
-	@$(_echo) "Cleaning 'build/__temp__'..."
-	@/usr/bin/rm -rf build/__temp__
+debug: build/debug/__debug__.exe
+release: release-32 release-64
+release-32: build/release/$(project_name)-i686-msvcrt.exe
+release-64: build/release/$(project_name)-x86_64-ucrt.exe
 toolchain:
 	/usr/bin/pacman -Sy --noconfirm --needed\
      mingw-w64-i686-toolchain\
@@ -81,62 +77,64 @@ toolchain:
      base\
      base-devel\
      binutils
-debug: build/debug/__debug__.exe
-release: release-32 release-64
-release-32: build/release/$(project_name)-i686-msvcrt.exe
-release-64: build/release/$(project_name)-x86_64-ucrt.exe
+pack_and_sign: build
+	@$(cmd_echo) "Signing binaries..."
+	@$(cmd_gpg) build/release/$(project_name)-i686-msvcrt.exe
+	@$(cmd_gpg) build/release/$(project_name)-x86_64-ucrt.exe
+	@$(cmd_echo) "Removing old package..."
+	@/usr/bin/rm -rf build/$(project_name).7z
+	@$(cmd_echo) "Copying binaries, signatures, and the LICENSE.txt..."
+	@/usr/bin/mkdir build/__temp__ -p
+	@/usr/bin/cp build/release/*.exe build/__temp__/
+	@/usr/bin/cp build/release/*.sig build/__temp__/
+	@/usr/bin/cp LICENSE.txt build/__temp__/
+	@$(cmd_echo) "Compressing to '$(project_name).7z'..."
+	@/ucrt64/bin/7z a -bso0 -bsp0 -mx9 -m0=LZMA2 -md=64m -mfb=64 -ms=16g -mmt=16 build/$(project_name).7z ./build/__temp__/*
+	@$(cmd_echo) "Signing '$(project_name).7z'..."
+	@$(cmd_gpg) build/$(project_name).7z
+	@$(cmd_echo) "Cleaning 'build/__temp__'..."
+	@/usr/bin/rm -rf build/__temp__
 clean:
-	@$(_echo) "Cleaning..."
+	@$(cmd_echo) "Cleaning..."
 	@/usr/bin/rm -rf build
 	@/usr/bin/rm -rf src/info.hpp
 	@/usr/bin/mkdir build
 	@/usr/bin/touch build/.nothing
-dependencies_debug := src/*.cpp
-build/debug/__debug__.exe: $(dependencies_base) \
+build/debug/__debug__.exe: $(dep_test) \
                            build/debug/.nothing
-	@$(_echo) "Compiling '$@'..."
-	@$(x86_64_compiler) $(dependencies_debug) $(args_debug) -o $@
-dependencies_release_32bit := build/manifest-i686.o \
-                              src/*.cpp
-build/release/$(project_name)-i686-msvcrt.exe: $(dependencies_base) \
-                                               $(dependencies_release_32bit) \
+	@$(cmd_echo) "Compiling '$@'..."
+	@$(x86_64_compiler) $(dep_debug) $(args_debug) -o $@
+build/release/$(project_name)-i686-msvcrt.exe: $(dep_test) \
+                                               $(dep_release-32) \
                                                build/release/.nothing
-	@$(_echo) "Compiling '$@'..."
-	@$(i686_compiler) $(dependencies_release_32bit) $(args_release) $(args_arch_i686) $(args_ld_i686) -o $@
-	@$(_echo) "Compressing '$@'..."
-	@$(upx_command) $@
-dependencies_release_64bit := build/manifest-x86_64.o \
-                              src/*.cpp
-build/release/$(project_name)-x86_64-ucrt.exe: $(dependencies_base) \
-                                               $(dependencies_release_64bit) \
+	@$(cmd_echo) "Compiling '$@'..."
+	@$(i686_compiler) $(dep_release-32) $(args_release) $(args_arch_i686) $(args_ld_i686) -o $@
+	@$(cmd_echo) "Compressing '$@'..."
+	@$(cmd_upx) $@
+build/release/$(project_name)-x86_64-ucrt.exe: $(dep_test) \
+                                               $(dep_release-64) \
                                                build/release/.nothing
-	@$(_echo) "Compiling '$@'..."
-	@$(x86_64_compiler) $(dependencies_release_64bit) $(args_release) $(args_arch_x86_64) $(args_ld_x86_64) -o $@
-	@$(_echo) "Compressing '$@'..."
-	@$(upx_command) $@
-dependencies_info := manifest.rc \
-                     img/favicon.ico \
-                     manifest.xml \
-                     src/info.hpp
-build/manifest-i686.o: $(dependencies_info) \
-                       src/info.hpp \
+	@$(cmd_echo) "Compiling '$@'..."
+	@$(x86_64_compiler) $(dep_release-64) $(args_release) $(args_arch_x86_64) $(args_ld_x86_64) -o $@
+	@$(cmd_echo) "Compressing '$@'..."
+	@$(cmd_upx) $@
+build/manifest-i686.o: $(dep_res) \
                        build/.nothing
-	@$(_echo) "Generating '$@'..."
+	@$(cmd_echo) "Generating '$@'..."
 	@/usr/bin/windres -i $< -o $@ $(args_defines) -c 65001 -F pe-i386
-build/manifest-x86_64.o: $(dependencies_info) \
-                         src/info.hpp \
+build/manifest-x86_64.o: $(dep_res) \
                          build/.nothing
-	@$(_echo) "Generating '$@'..."
+	@$(cmd_echo) "Generating '$@'..."
 	@/usr/bin/windres -i $< -o $@ $(args_defines) -c 65001 -F pe-x86-64
 build/.nothing:
-	@$(_echo) "Creating '$@'..."
+	@$(cmd_echo) "Creating '$@'..."
 	@/usr/bin/mkdir build -p
 	@/usr/bin/touch $@
 build/debug/.nothing: build/.nothing
-	@$(_echo) "Creating '$@'..."
+	@$(cmd_echo) "Creating '$@'..."
 	@/usr/bin/mkdir build/debug -p
 	@/usr/bin/touch $@
 build/release/.nothing: build/.nothing
-	@$(_echo) "Creating '$@'..."
+	@$(cmd_echo) "Creating '$@'..."
 	@/usr/bin/mkdir build/release -p
 	@/usr/bin/touch $@
