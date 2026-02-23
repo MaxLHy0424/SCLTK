@@ -1,21 +1,10 @@
 param(
     [Parameter(Mandatory)]
-    [string]$target
+    [string]$target,
+    [string]$gpg_key = ""
 )
-$env_file = "env.mk"
-$env_target_value = "msys2_path"
-if (-not (Test-Path $env_file)) {
-    Write-Error "Please create $env_file by make_env.ps1"
-    exit 1
-}
-$pattern = "^${env_target_value}\s*=\s*(.*)$"
-$match = Select-String -Path $env_file -Pattern $pattern
-if ($match) {
-    $msys2_path = $match.Matches.Groups[1].Value.Trim()
-    $msys2_path = $msys2_path -replace "^[`"']|[`"']$", ""
-}
-else {
-    Write-Error "Unable to find $env_target_value"
+if (($target -eq "pack_and_sign") -and ($gpg_key -eq "")) {
+    Write-Error -Message "Please provide your gpg key id!"
     exit 1
 }
 $software_full_name = "Student Computer Lab Toolkit"
@@ -23,16 +12,16 @@ $software_short_name = "SCLTK"
 $license = "MIT License"
 $copyright = "Copyright (C) 2023 - present MaxLHy0424."
 $repo_url = "https://github.com/MaxLHy0424/SCLTK"
-$git_branch = & "$msys2_path/usr/bin/git.exe" branch --show-current
+$git_branch = & git branch --show-current
 $contains_uncommitted_changes = @(git status --porcelain).Count -ne 0
 if (($git_branch -ne "main") -or ($contains_uncommitted_changes -eq $true)) {
     $git_tag = "Insider Preview"
 }
 else {
-    $git_tag = & "$msys2_path/usr/bin/git.exe" describe --tags --abbrev=0
+    $git_tag = & git describe --tags --abbrev=0
 }
 if ($contains_uncommitted_changes -eq $false ) {
-    $git_hash = & "$msys2_path/usr/bin/git.exe" rev-parse --short HEAD
+    $git_hash = & git rev-parse --short HEAD
 }
 else {
     $git_hash = "<work in progress>"
@@ -58,4 +47,4 @@ if ((Get-FileHash $old_info).Hash -ne (Get-FileHash $new_info).Hash ) {
     Copy-Item -Path $new_info -Destination $old_info
 }
 Remove-Item -Path "build/info.gen"
-& "$msys2_path/usr/bin/make.exe" $target -f main.mk -j
+& make $target -f main.mk -j gpg_key=$gpg_key
