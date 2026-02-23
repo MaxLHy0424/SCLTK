@@ -11,27 +11,27 @@ args_std         := gnu++26
 args_warning     := -W{all,extra,effc++,pedantic,cast-align,logical-op,redundant-decls,shadow,strict-null-sentinel}
 args_opt_debug   := -Og -fno-omit-frame-pointer
 args_opt_release := -Ofast \
-                   -flto=auto \
-                   -fno-use-linker-plugin \
-                   -fwhole-program \
-                   -s \
-                   -fvisibility=hidden \
-                   -fvisibility-inlines-hidden \
-                   -fno-rtti \
-                   -fno-exceptions \
-                   -fno-unwind-tables \
-                   -fno-asynchronous-unwind-tables \
-                   -fno-common \
-                   -ffunction-sections \
-                   -fdata-sections \
-                   -fno-semantic-interposition \
-                   -fdevirtualize-at-ltrans \
-                   -fdevirtualize-speculatively \
-                   -fipa-pta \
-                   -fipa-ra \
-                   -fipa-icf \
-                   -fomit-frame-pointer \
-                   -fno-plt
+                    -flto=auto \
+                    -fno-use-linker-plugin \
+                    -fwhole-program \
+                    -s \
+                    -fvisibility=hidden \
+                    -fvisibility-inlines-hidden \
+                    -fno-rtti \
+                    -fno-exceptions \
+                    -fno-unwind-tables \
+                    -fno-asynchronous-unwind-tables \
+                    -fno-common \
+                    -ffunction-sections \
+                    -fdata-sections \
+                    -fno-semantic-interposition \
+                    -fdevirtualize-at-ltrans \
+                    -fdevirtualize-speculatively \
+                    -fipa-pta \
+                    -fipa-ra \
+                    -fipa-icf \
+                    -fomit-frame-pointer \
+                    -fno-plt
 args_include     := -I$(include_path)
 args_library     :=
 args_extra       :=
