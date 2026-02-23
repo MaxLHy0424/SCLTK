@@ -967,7 +967,7 @@ namespace scltk
             if ( no_async_hot_reload ) {
                 con.set_translucency( enabled.test( std::memory_order_acquire ) ? 217 : 255 );
             }
-            while ( true ) {
+            for ( ;; ) {
                 enabled.wait( false, std::memory_order_acquire );
                 con.set_translucency( 217 );
                 enabled.wait( true, std::memory_order_acquire );
@@ -981,7 +981,7 @@ namespace scltk
             if ( no_async_hot_reload ) {
                 con.enable_context_menu( !enabled.test( std::memory_order_acquire ) );
             }
-            while ( true ) {
+            for ( ;; ) {
                 enabled.wait( false, std::memory_order_acquire );
                 con.enable_context_menu( false );
                 enabled.wait( true, std::memory_order_acquire );

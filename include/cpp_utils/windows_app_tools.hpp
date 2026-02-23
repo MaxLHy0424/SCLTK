@@ -599,7 +599,7 @@ namespace cpp_utils
             {
                 const auto thread_id{ GetCurrentThreadId() };
                 const auto window_thread_process_id{ GetWindowThreadProcessId( self.window_handle, nullptr ) };
-                while ( true ) {
+                for ( ;; ) {
                     AttachThreadInput( thread_id, window_thread_process_id, TRUE );
                     SetWindowPos( self.window_handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
                     SetForegroundWindow( self.window_handle );
