@@ -90,7 +90,7 @@ namespace cpp_utils
         }
         return result;
     }
-    namespace details
+    namespace details_
     {
         [[nodiscard]] inline auto stop_service_and_dependencies(
           const SC_HANDLE scm, const SC_HANDLE service, std::pmr::memory_resource* const resource ) noexcept -> DWORD
@@ -513,7 +513,7 @@ namespace cpp_utils
           OpenServiceW( scm, service_name.data(), SERVICE_STOP | SERVICE_QUERY_STATUS | SERVICE_ENUMERATE_DEPENDENTS ) };
         DWORD result{ ERROR_SUCCESS };
         if ( service != nullptr ) [[likely]] {
-            result = details::stop_service_and_dependencies( scm, service, resource );
+            result = details_::stop_service_and_dependencies( scm, service, resource );
             CloseServiceHandle( service );
         } else {
             result = GetLastError();
@@ -531,7 +531,7 @@ namespace cpp_utils
         const auto service{ OpenServiceW( scm, service_name.data(), SERVICE_START | SERVICE_QUERY_STATUS | SERVICE_QUERY_CONFIG ) };
         DWORD result{ ERROR_SUCCESS };
         if ( service != nullptr ) [[likely]] {
-            result = details::start_service_and_dependencies( scm, service, resource );
+            result = details_::start_service_and_dependencies( scm, service, resource );
             CloseServiceHandle( service );
         } else {
             result = GetLastError();
@@ -565,7 +565,7 @@ namespace cpp_utils
         GetModuleFileNameW( nullptr, file_path.data(), MAX_PATH );
         ShellExecuteW( nullptr, L"runas", file_path.data(), nullptr, nullptr, SW_SHOWNORMAL );
     }
-    namespace details
+    namespace details_
     {
         class basic_window
         {
@@ -672,16 +672,16 @@ namespace cpp_utils
             }
         };
     }
-    class window final : public details::basic_window
+    class window final : public details_::basic_window
     {
         auto operator=( const window& ) noexcept -> window& = default;
         window() noexcept
-          : details::basic_window{ .window_handle{ GetForegroundWindow() } }
+          : details_::basic_window{ .window_handle{ GetForegroundWindow() } }
         { }
         window( const window& ) noexcept = default;
         ~window() noexcept               = default;
     };
-    class console final : public details::basic_window
+    class console final : public details_::basic_window
     {
       public:
         HANDLE std_input_handle;
@@ -800,7 +800,7 @@ namespace cpp_utils
         }
         auto operator=( const console& ) noexcept -> console& = default;
         console() noexcept
-          : details::basic_window{ .window_handle{ GetConsoleWindow() } }
+          : details_::basic_window{ .window_handle{ GetConsoleWindow() } }
           , std_input_handle{ GetStdHandle( STD_INPUT_HANDLE ) }
           , std_output_handle{ GetStdHandle( STD_OUTPUT_HANDLE ) }
           , std_error_handle{ GetStdHandle( STD_ERROR_HANDLE ) }

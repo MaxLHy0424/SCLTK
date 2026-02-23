@@ -485,7 +485,7 @@ namespace cpp_utils
     inline constexpr auto is_same_as_type_list_v{ is_same_as_type_list< T >::value };
     template < typename T >
     concept same_as_type_list = is_same_as_type_list_v< T >;
-    namespace details
+    namespace details_
     {
         template < typename, typename >
         struct type_list_concat_impl final
@@ -538,35 +538,35 @@ namespace cpp_utils
     template < same_as_type_list List1, same_as_type_list List2 >
     struct type_list_concat final
     {
-        using type = typename details::type_list_concat_impl< List1, List2 >::type;
+        using type = typename details_::type_list_concat_impl< List1, List2 >::type;
     };
     template < same_as_type_list List1, same_as_type_list List2 >
     using type_list_concat_t = typename type_list_concat< List1, List2 >::type;
     template < same_as_type_list List1, same_as_type_list List2 >
     struct type_list_intersection final
     {
-        using type = typename details::type_list_intersection_impl< List1, List2 >::type;
+        using type = typename details_::type_list_intersection_impl< List1, List2 >::type;
     };
     template < same_as_type_list List1, same_as_type_list List2 >
     using type_list_intersection_t = typename type_list_intersection< List1, List2 >::type;
     template < same_as_type_list List1, same_as_type_list List2 >
     struct type_list_difference final
     {
-        using type = typename details::type_list_difference_impl< List1, List2 >::type;
+        using type = typename details_::type_list_difference_impl< List1, List2 >::type;
     };
     template < same_as_type_list List1, same_as_type_list List2 >
     using type_list_difference_t = typename type_list_difference< List1, List2 >::type;
     template < same_as_type_list List1, same_as_type_list List2 >
     struct type_list_symmetric_difference final
     {
-        using type = typename details::type_list_symmetric_difference_impl< List1, List2 >::type;
+        using type = typename details_::type_list_symmetric_difference_impl< List1, List2 >::type;
     };
     template < same_as_type_list List1, same_as_type_list List2 >
     using type_list_symmetric_difference_t = typename type_list_symmetric_difference< List1, List2 >::type;
     template < common_type T, std::size_t N >
     struct make_repeated_type_list final
     {
-        using type = typename details::make_repeated_type_list_impl< T, N >::type;
+        using type = typename details_::make_repeated_type_list_impl< T, N >::type;
     };
     template < common_type T, std::size_t N >
     using make_repeated_type_list_t = typename make_repeated_type_list< T, N >::type;

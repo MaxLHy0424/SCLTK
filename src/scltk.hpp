@@ -59,7 +59,7 @@ namespace scltk
       Title, cpp_utils::make_repeated_const_string< '\n', NewLineCount >() ) };
     template < cpp_utils::const_string Text >
     inline constexpr auto make_button_text{ cpp_utils::concat_const_string( " > "_cs, Text, " "_cs ) };
-    namespace details
+    namespace details_
     {
         inline auto press_any_key_to_return() noexcept
         {
@@ -118,7 +118,7 @@ namespace scltk
         }
     }
     template < cpp_utils::const_string DisplayName, cpp_utils::same_as_type_list Procs, cpp_utils::same_as_type_list Servs,
-               std::invocable auto CrackHelper = details::empty_lambda, std::invocable auto RestoreHelper = details::empty_lambda >
+               std::invocable auto CrackHelper = details_::empty_lambda, std::invocable auto RestoreHelper = details_::empty_lambda >
     struct compile_time_rule_node final
     {
         static inline constexpr auto display_name{ DisplayName };
@@ -138,15 +138,15 @@ namespace scltk
     using builtin_rules_t = cpp_utils::type_list<
       compile_time_rule_node<
         "机房管理助手",
-        details::make_const_wstring_list_t<
+        details_::make_const_wstring_list_t<
           L"yz.exe", L"jfglzs.exe", L"jfglzsn.exe", L"jfglzsp.exe", L"przs.exe", L"zmserv.exe", L"zmsrv.exe" >,
-        details::make_const_wstring_list_t< L"zmserv" >, details::terminate_jfglzs_daemon >,
+        details_::make_const_wstring_list_t< L"zmserv" >, details_::terminate_jfglzs_daemon >,
       compile_time_rule_node<
         "极域电子教室",
-        details::make_const_wstring_list_t<
+        details_::make_const_wstring_list_t<
           L"StudentMain.exe", L"DispcapHelper.exe", L"VRCwPlayer.exe", L"InstHelpApp.exe", L"InstHelpApp64.exe",
           L"TDOvrSet.exe", L"GATESRV.exe", L"ProcHelper64.exe", L"MasterHelper.exe" >,
-        details::make_const_wstring_list_t< L"STUDSRV" >,
+        details_::make_const_wstring_list_t< L"STUDSRV" >,
         [] static noexcept
     {
         ( void ) cpp_utils::stop_service_with_dependencies( L"TDKeybd" );
@@ -161,28 +161,30 @@ namespace scltk
     } >,
       compile_time_rule_node<
         "联想智能云教室",
-        details::make_const_wstring_list_t<
+        details_::make_const_wstring_list_t<
           L"WfbsPnpInstall.exe", L"WFBSMon.exe", L"WFBSMlogon.exe", L"WFBSSvrLogShow.exe", L"ResetIp.exe", L"FuncForWIN64.exe",
           L"Fireware.exe", L"BCDBootCopy.exe", L"refreship.exe", L"WFDeskShow.exe", L"lenovoLockScreen.exe",
           L"PortControl64.exe", L"DesktopCheck.exe", L"DeploymentManager.exe", L"DeploymentAgent.exe", L"XYNTService.exe" >,
-        details::make_const_wstring_list_t< L"BSAgentSvr", L"tvnserver", L"WFBSMlogon" > >,
+        details_::make_const_wstring_list_t< L"BSAgentSvr", L"tvnserver", L"WFBSMlogon" > >,
       compile_time_rule_node<
         "红蜘蛛多媒体网络教室",
-        details::make_const_wstring_list_t< L"rscheck.exe", L"checkrs.exe", L"REDAgent.exe", L"PerformanceCheck.exe",
-                                            L"edpaper.exe", L"Adapter.exe", L"repview.exe", L"FormatPaper.exe" >,
-        details::make_const_wstring_list_t< L"appcheck2", L"checkapp2" > >,
-      compile_time_rule_node< "伽卡他卡电子教室", details::make_const_wstring_list_t< L"Student.exe", L"Smonitor.exe" >,
-                              details::make_const_wstring_list_t< L"Smsvc" > >,
+        details_::make_const_wstring_list_t<
+          L"rscheck.exe", L"checkrs.exe", L"REDAgent.exe", L"PerformanceCheck.exe", L"edpaper.exe", L"Adapter.exe",
+          L"repview.exe", L"FormatPaper.exe" >,
+        details_::make_const_wstring_list_t< L"appcheck2", L"checkapp2" > >,
+      compile_time_rule_node< "伽卡他卡电子教室", details_::make_const_wstring_list_t< L"Student.exe", L"Smonitor.exe" >,
+                              details_::make_const_wstring_list_t< L"Smsvc" > >,
       compile_time_rule_node<
-        "凌波网络教室", details::make_const_wstring_list_t< L"sbkup.exe", L"wsf.exe", L"NCStu.exe", L"NCCmn.dll" >,
-        details::make_const_wstring_list_t< L"Windows Application and Components Data Backup Support Service" > >,
+        "凌波网络教室", details_::make_const_wstring_list_t< L"sbkup.exe", L"wsf.exe", L"NCStu.exe", L"NCCmn.dll" >,
+        details_::make_const_wstring_list_t< L"Windows Application and Components Data Backup Support Service" > >,
       compile_time_rule_node<
         "Veyon",
-        details::make_const_wstring_list_t< L"veyon-worker.exe", L"veyon-configurator.exe", L"veyon-server.exe",
-                                            L"veyon-cli.exe", L"veyon-wcli.exe", L"veyon-service.exe" >,
-        details::make_const_wstring_list_t< L"VeyonService" > > >;
+        details_::make_const_wstring_list_t<
+          L"veyon-worker.exe", L"veyon-configurator.exe", L"veyon-server.exe", L"veyon-cli.exe", L"veyon-wcli.exe",
+          L"veyon-service.exe" >,
+        details_::make_const_wstring_list_t< L"VeyonService" > > >;
     runtime_rule_node custom_rules;
-    namespace details
+    namespace details_
     {
         template < cpp_utils::const_string RawName >
         struct config_node_raw_name
@@ -433,9 +435,9 @@ namespace scltk
             ~options_config_node() noexcept                                          = default;
         };
     }
-    class options_title_ui final : public details::config_node_interface
+    class options_title_ui final : public details_::config_node_interface
     {
-        friend details::config_node_interface;
+        friend details_::config_node_interface;
       private:
         static auto init_ui_( cpp_utils::console_ui& ui )
         {
@@ -446,31 +448,32 @@ namespace scltk
         options_title_ui() noexcept  = default;
         ~options_title_ui() noexcept = default;
     };
-    using crack_restore_config = details::options_config_node<
+    using crack_restore_config = details_::options_config_node<
       "crack_restore", "破解与恢复", false,
-      details::options_info_table<
-        details::option_info< "hijack_procs", "劫持进程" >,
-        details::option_info< "set_servs_start_type", "设置服务启动类型" > > >;
-    using window_config = details::options_config_node<
+      details_::options_info_table<
+        details_::option_info< "hijack_procs", "劫持进程" >,
+        details_::option_info< "set_servs_start_type", "设置服务启动类型" > > >;
+    using window_config = details_::options_config_node<
       "window", "窗口显示", true,
-      details::options_info_table<
-        details::option_info< "force_show", "置顶窗口 (异步)" >, details::option_info< "simple_titlebar", "极简标题栏 (异步)" >,
-        details::option_info< "translucent", "半透明 (异步)" > > >;
-    using perf_config = details::options_config_node<
+      details_::options_info_table<
+        details_::option_info< "force_show", "置顶窗口 (异步)" >,
+        details_::option_info< "simple_titlebar", "极简标题栏 (异步)" >,
+        details_::option_info< "translucent", "半透明 (异步)" > > >;
+    using perf_config = details_::options_config_node<
       "perf", "性能", false,
-      details::options_info_table< details::option_info< "no_async_hot_reload", "禁用异步热重载 (下次启动时生效)" > > >;
+      details_::options_info_table< details_::option_info< "no_async_hot_reload", "禁用异步热重载 (下次启动时生效)" > > >;
     class custom_rules_config final
-      : public details::config_node_interface
-      , public details::config_node_raw_name< "custom_rules" >
+      : public details_::config_node_interface
+      , public details_::config_node_raw_name< "custom_rules" >
     {
-        friend details::config_node_interface;
+        friend details_::config_node_interface;
       private:
         static inline constexpr auto flag_proc_{ L"proc:"sv };
         static inline constexpr auto flag_serv_{ L"serv:"sv };
         static inline constexpr auto flag_crack_helper_{ L"crack_helper:"sv };
         static inline constexpr auto flag_restore_helper_{ L"restore_helper:"sv };
         static_assert( []( auto... strings ) static consteval noexcept {
-            return ( std::ranges::none_of( strings, details::is_whitespace< wchar_t > ) && ... );
+            return ( std::ranges::none_of( strings, details_::is_whitespace< wchar_t > ) && ... );
         }( flag_proc_, flag_serv_, flag_crack_helper_, flag_restore_helper_ ) );
         static auto load_( const std::string_view unconverted_line )
         {
@@ -478,22 +481,22 @@ namespace scltk
             const std::wstring_view line{ converted_line };
             if ( line.size() > flag_proc_.size() && line.starts_with( flag_proc_ ) ) [[likely]] {
                 custom_rules.procs.emplace_back(
-                  std::ranges::find_if_not( line.substr( flag_proc_.size() ), details::is_whitespace< wchar_t > ) );
+                  std::ranges::find_if_not( line.substr( flag_proc_.size() ), details_::is_whitespace< wchar_t > ) );
                 return;
             }
             if ( line.size() > flag_serv_.size() && line.starts_with( flag_serv_ ) ) [[likely]] {
                 custom_rules.servs.emplace_back(
-                  std::ranges::find_if_not( line.substr( flag_serv_.size() ), details::is_whitespace< wchar_t > ) );
+                  std::ranges::find_if_not( line.substr( flag_serv_.size() ), details_::is_whitespace< wchar_t > ) );
                 return;
             }
             if ( line.size() > flag_crack_helper_.size() && line.starts_with( flag_crack_helper_ ) ) [[likely]] {
                 custom_rules.crack_helpers.emplace_back(
-                  std::ranges::find_if_not( line.substr( flag_crack_helper_.size() ), details::is_whitespace< wchar_t > ) );
+                  std::ranges::find_if_not( line.substr( flag_crack_helper_.size() ), details_::is_whitespace< wchar_t > ) );
                 return;
             }
             if ( line.size() > flag_restore_helper_.size() && line.starts_with( flag_restore_helper_ ) ) [[likely]] {
                 custom_rules.restore_helpers.emplace_back(
-                  std::ranges::find_if_not( line.substr( flag_restore_helper_.size() ), details::is_whitespace< wchar_t > ) );
+                  std::ranges::find_if_not( line.substr( flag_restore_helper_.size() ), details_::is_whitespace< wchar_t > ) );
                 return;
             }
         }
@@ -559,7 +562,7 @@ namespace scltk
         custom_rules_config() noexcept  = default;
         ~custom_rules_config() noexcept = default;
     };
-    namespace details
+    namespace details_
     {
         template < typename T >
         struct is_valid_config_node final
@@ -574,10 +577,10 @@ namespace scltk
     }
     using config_nodes_t
       = cpp_utils::type_list< options_title_ui, crack_restore_config, window_config, perf_config, custom_rules_config >;
-    static_assert( config_nodes_t::all_of< details::is_valid_config_node > );
+    static_assert( config_nodes_t::all_of< details_::is_valid_config_node > );
     static_assert( config_nodes_t::unique::size == config_nodes_t::size );
     inline config_nodes_t::apply< std::tuple > config_nodes{};
-    namespace details
+    namespace details_
     {
         inline auto get_config_node_raw_name_by_tag( std::string_view str ) noexcept
         {
@@ -599,13 +602,13 @@ namespace scltk
         }
         std::apply( []< typename... Ts >( Ts&... config_node ) static { ( config_node.before_load(), ... ); }, config_nodes );
         std::pmr::string line;
-        using parsable_config_nodes_t = config_nodes_t::filter< details::is_parsable_config_node >;
+        using parsable_config_nodes_t = config_nodes_t::filter< details_::is_parsable_config_node >;
         using config_node_recorder_t
           = parsable_config_nodes_t::transform< std::add_pointer >::add_front< std::monostate >::apply< std::variant >;
         config_node_recorder_t current_config_node;
         while ( std::getline( config_file, line ) ) {
-            const auto parsed_begin{ std::ranges::find_if_not( line, details::is_whitespace< char > ) };
-            const auto parsed_end{ std::ranges::find_if_not( line | std::views::reverse, details::is_whitespace< char > ).base() };
+            const auto parsed_begin{ std::ranges::find_if_not( line, details_::is_whitespace< char > ) };
+            const auto parsed_end{ std::ranges::find_if_not( line | std::views::reverse, details_::is_whitespace< char > ).base() };
             if ( parsed_begin >= parsed_end ) [[unlikely]] {
                 continue;
             }
@@ -617,7 +620,7 @@ namespace scltk
                 current_config_node = std::monostate{};
                 std::apply( [ & ]( auto&... config_node ) noexcept
                 {
-                    const auto current_raw_name{ details::get_config_node_raw_name_by_tag( parsed_line ) };
+                    const auto current_raw_name{ details_::get_config_node_raw_name_by_tag( parsed_line ) };
                     ( [ & ]< typename T >( T& current_node ) noexcept
                     {
                         if constexpr ( parsable_config_nodes_t::contains< T > ) {
@@ -649,7 +652,7 @@ namespace scltk
         }
         std::apply( []< typename... Ts >( Ts&... config_node ) static { ( config_node.after_load(), ... ); }, config_nodes );
     }
-    namespace details
+    namespace details_
     {
         inline auto show_config_parsing_rules()
         {
@@ -709,9 +712,9 @@ namespace scltk
             ui.reserve( reserved_size )
               .add_back( make_title_text< "[ 配  置 ]", 2 >.view() )
               .add_back( " < 返回\n", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
-              .add_back( " > 查看解析规则 ", details::show_config_parsing_rules )
-              .add_back( " > 同步配置 ", details::sync_config )
-              .add_back( " > 打开配置文件 ", details::open_config_file );
+              .add_back( " > 查看解析规则 ", details_::show_config_parsing_rules )
+              .add_back( " > 同步配置 ", details_::sync_config )
+              .add_back( " > 打开配置文件 ", details_::open_config_file );
             ( nodes.init_ui( ui ), ... );
             ui.show();
         }, config_nodes );
@@ -729,7 +732,7 @@ namespace scltk
           .show();
         return func_back;
     }
-    namespace details
+    namespace details_
     {
         template < cpp_utils::const_string Description, void ( *Func )() noexcept >
         struct func_item final
@@ -940,25 +943,25 @@ namespace scltk
     inline auto toolkit()
     {
         using funcs_t = cpp_utils::type_list<
-          details::func_item< "重启资源管理器", details::relaunch_explorer >,
-          details::func_item< "恢复操作系统组件", details::restore_os_components >,
-          details::func_item< "恢复 USB 存储设备访问", details::restore_usb_device_access >,
-          details::func_item< "重置部分网络设置", details::reset_partial_network_settings >,
-          details::func_item< "重置 \"机房管理助手\" 配置", details::reset_jfglzs_config >,
-          details::func_item< "重置 Google Chrome 管理策略", details::reset_google_chrome_policy >,
-          details::func_item< "重置 Microsoft Edge 管理策略", details::reset_microsoft_edge_policy > >;
+          details_::func_item< "重启资源管理器", details_::relaunch_explorer >,
+          details_::func_item< "恢复操作系统组件", details_::restore_os_components >,
+          details_::func_item< "恢复 USB 存储设备访问", details_::restore_usb_device_access >,
+          details_::func_item< "重置部分网络设置", details_::reset_partial_network_settings >,
+          details_::func_item< "重置 \"机房管理助手\" 配置", details_::reset_jfglzs_config >,
+          details_::func_item< "重置 Google Chrome 管理策略", details_::reset_google_chrome_policy >,
+          details_::func_item< "重置 Microsoft Edge 管理策略", details_::reset_microsoft_edge_policy > >;
         cpp_utils::console_ui ui{ con, unsynced_mem_pool };
         ui.reserve( 4 + funcs_t::size )
           .add_back( make_title_text< "[ 工 具 箱 ]", 2 >.view() )
           .add_back( " < 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
           .add_back( "\n[ 快捷工具 ]\n" )
-          .add_back( " > 启动命令提示符\n", details::launch_cmd );
+          .add_back( " > 启动命令提示符\n", details_::launch_cmd );
         [ & ]< typename... Items >( const cpp_utils::type_list< Items... > )
         { ( ui.add_back( make_button_text< Items::description >.view(), Items::execute ), ... ); }( funcs_t{} );
         ui.show();
         return func_back;
     }
-    namespace details
+    namespace details_
     {
         inline auto enable_translucent() noexcept
         {
@@ -1012,10 +1015,10 @@ namespace scltk
     }
     inline auto create_parallel_tasks() noexcept
     {
-        constexpr std::array parallel_tasks{ details::enable_translucent, details::enable_simple_titlebar, details::force_show };
+        constexpr std::array parallel_tasks{ details_::enable_translucent, details_::enable_simple_titlebar, details_::force_show };
         std::apply( []( auto&... funcs ) static noexcept { ( std::thread{ funcs }.detach(), ... ); }, parallel_tasks );
     }
-    namespace details
+    namespace details_
     {
         enum class rule_executor_mode : bool
         {
@@ -1079,18 +1082,18 @@ namespace scltk
         }
         static auto operator()()
         {
-            switch ( details::current_rule_executor_mode ) {
-                case details::rule_executor_mode::crack : std::print( make_title_text< "[ 破  解 ]", 3 >.view() ); break;
-                case details::rule_executor_mode::restore : std::print( make_title_text< "[ 恢  复 ]", 3 >.view() ); break;
+            switch ( details_::current_rule_executor_mode ) {
+                case details_::rule_executor_mode::crack : std::print( make_title_text< "[ 破  解 ]", 3 >.view() ); break;
+                case details_::rule_executor_mode::restore : std::print( make_title_text< "[ 恢  复 ]", 3 >.view() ); break;
                 default : std::unreachable();
             }
-            switch ( details::current_rule_executor_mode ) {
-                case details::rule_executor_mode::crack : crack(); break;
-                case details::rule_executor_mode::restore : restore(); break;
+            switch ( details_::current_rule_executor_mode ) {
+                case details_::rule_executor_mode::crack : crack(); break;
+                case details_::rule_executor_mode::restore : restore(); break;
                 default : std::unreachable();
             }
             std::print( "\n (i) 操作已完成." );
-            details::press_any_key_to_return();
+            details_::press_any_key_to_return();
             return func_back;
         }
     };
@@ -1134,7 +1137,7 @@ namespace scltk
         }
         static auto crack_helper()
         {
-            if constexpr ( !std::is_same_v< decltype( BuiltinRuleNode::crack_helper ), decltype( details::empty_lambda ) > ) {
+            if constexpr ( !std::is_same_v< decltype( BuiltinRuleNode::crack_helper ), decltype( details_::empty_lambda ) > ) {
                 BuiltinRuleNode::crack_helper();
             }
         }
@@ -1165,7 +1168,8 @@ namespace scltk
         }
         static auto restore_helper()
         {
-            if constexpr ( !std::is_same_v< decltype( BuiltinRuleNode::restore_helper ), decltype( details::empty_lambda ) > ) {
+            if constexpr ( !std::is_same_v< decltype( BuiltinRuleNode::restore_helper ), decltype( details_::empty_lambda ) > )
+            {
                 BuiltinRuleNode::restore_helper();
             }
         }
@@ -1247,20 +1251,20 @@ namespace scltk
       = builtin_rules_t::apply_each< builtin_rules_executor_backend >::add_front< custom_rule_executor_backend >::apply< rule_executor >;
     inline auto make_executor_mode_ui_text() noexcept
     {
-        switch ( details::current_rule_executor_mode ) {
-            case details::rule_executor_mode::crack : return "[ 破解 (点击切换) ]\n"sv;
-            case details::rule_executor_mode::restore : return "[ 恢复 (点击切换) ]\n"sv;
+        switch ( details_::current_rule_executor_mode ) {
+            case details_::rule_executor_mode::crack : return "[ 破解 (点击切换) ]\n"sv;
+            case details_::rule_executor_mode::restore : return "[ 恢复 (点击切换) ]\n"sv;
             default : std::unreachable();
         }
     }
     inline auto flip_executor_mode( const ui_func_args_t args ) noexcept
     {
-        switch ( details::current_rule_executor_mode ) {
-            case details::rule_executor_mode::crack :
-                details::current_rule_executor_mode = details::rule_executor_mode::restore;
+        switch ( details_::current_rule_executor_mode ) {
+            case details_::rule_executor_mode::crack :
+                details_::current_rule_executor_mode = details_::rule_executor_mode::restore;
                 break;
-            case details::rule_executor_mode::restore :
-                details::current_rule_executor_mode = details::rule_executor_mode::crack;
+            case details_::rule_executor_mode::restore :
+                details_::current_rule_executor_mode = details_::rule_executor_mode::crack;
                 break;
             default : std::unreachable();
         }
