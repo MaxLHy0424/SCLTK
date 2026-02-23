@@ -232,12 +232,15 @@ gpg_key    = key-id
 接下来，在仓库本地目录下打开终端，执行：
 
 ```bash
-.\make.ps1 -target all
+.\make.ps1 -target toolchain
 ```
 
-脚本将会自动安装工具链和依赖库，并构建 SCLTK。生成的 SCLTK 可执行文件位于 `build/debug` 和 `build/release` 中。
+脚本将会自动安装工具链和依赖库。
 
-后续构建可使用：
+> [!NOTE]
+> 即便您已经安装了 SCLTK 所需的工具链和依赖库，也务必使用上面的命令，因为 SCLTK 的开发总是使用最新的工具链和依赖库。
+
+构建可使用：
 
 ```bash
 .\make.ps1 -target build
