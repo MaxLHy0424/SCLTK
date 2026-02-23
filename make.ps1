@@ -43,7 +43,7 @@ $new_info = "build/info.gen"
 if (-not (Test-Path $old_info -PathType Leaf) -or -not (Test-Path $new_info -PathType Leaf ) ) {
     Copy-Item -Path $new_info -Destination $old_info
 }
-if ((Get-FileHash $old_info).Hash -ne (Get-FileHash $new_info).Hash ) {
+elseif ((Get-FileHash $old_info).Hash -ne (Get-FileHash $new_info).Hash ) {
     Copy-Item -Path $new_info -Destination $old_info
 }
 Remove-Item -Path "build/info.gen"
