@@ -688,37 +688,37 @@ namespace cpp_utils
         HANDLE std_output_handle;
         HANDLE std_error_handle;
         template < typename... Args >
-        auto&& print( this auto&& self, std::format_string< Args... > fmt, Args&&... args )
+            requires( sizeof...( Args ) != 0 )
+        auto&& print( this auto&& self, const std::format_string< Args... > fmt, Args&&... args )
         {
-            constexpr auto skip_formatting{ sizeof...( Args ) == 0uz };
             DWORD chars_written;
-            if constexpr ( skip_formatting ) {
-                WriteConsoleA(
-                  self.std_output_handle, static_cast< const void* >( fmt.get().data() ), fmt.get().size(), &chars_written,
-                  nullptr );
-            } else {
-                const auto formatted{ std::format( fmt, std::forward< Args >( args )... ) };
-                WriteConsoleA(
-                  self.std_output_handle, static_cast< const void* >( formatted.data() ), formatted.size(), &chars_written,
-                  nullptr );
-            }
+            const auto formatted{ std::format( fmt, std::forward< Args >( args )... ) };
+            WriteConsoleA(
+              self.std_output_handle, static_cast< const void* >( formatted.data() ), formatted.size(), &chars_written, nullptr );
             return self;
         }
         template < typename... Args >
-        auto&& print( this auto&& self, std::wformat_string< Args... > fmt, Args&&... args )
+            requires( sizeof...( Args ) != 0 )
+        auto&& print( this auto&& self, const std::wformat_string< Args... > fmt, Args&&... args )
         {
-            constexpr auto skip_formatting{ sizeof...( Args ) == 0uz };
             DWORD chars_written;
-            if constexpr ( skip_formatting ) {
-                WriteConsoleW(
-                  self.std_output_handle, static_cast< const void* >( fmt.get().data() ), fmt.get().size(), &chars_written,
-                  nullptr );
-            } else {
-                const auto formatted{ std::format( fmt, std::forward< Args >( args )... ) };
-                WriteConsoleW(
-                  self.std_output_handle, static_cast< const void* >( formatted.data() ), formatted.size(), &chars_written,
-                  nullptr );
-            }
+            const auto formatted{ std::format( fmt, std::forward< Args >( args )... ) };
+            WriteConsoleW(
+              self.std_output_handle, static_cast< const void* >( formatted.data() ), formatted.size(), &chars_written, nullptr );
+            return self;
+        }
+        auto&& print( this auto&& self, const std::string_view string )
+        {
+            DWORD chars_written;
+            WriteConsoleA(
+              self.std_output_handle, static_cast< const void* >( string.data() ), string.size(), &chars_written, nullptr );
+            return self;
+        }
+        auto&& print( this auto&& self, const std::wstring_view string )
+        {
+            DWORD chars_written;
+            WriteConsoleW(
+              self.std_output_handle, static_cast< const void* >( string.data() ), string.size(), &chars_written, nullptr );
             return self;
         }
         auto&& press_any_key_to_continue( this auto&& self ) noexcept
