@@ -47,4 +47,4 @@ elseif ((Get-FileHash $old_info).Hash -ne (Get-FileHash $new_info).Hash ) {
     Copy-Item -Path $new_info -Destination $old_info
 }
 Remove-Item -Path "build/info.gen"
-& make $target -f main.mk -j gpg_key=$gpg_key
+return (& make $target -f main.mk -j gpg_key=$gpg_key)
