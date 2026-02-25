@@ -687,6 +687,40 @@ namespace cpp_utils
         HANDLE std_input_handle;
         HANDLE std_output_handle;
         HANDLE std_error_handle;
+        template < typename... Args >
+        auto&& print( this auto&& self, std::format_string< Args... > fmt, Args&&... args )
+        {
+            constexpr auto skip_formatting{ sizeof...( Args ) == 0uz };
+            DWORD chars_written;
+            if constexpr ( skip_formatting ) {
+                WriteConsoleA(
+                  self.std_output_handle, static_cast< const void* >( fmt.get().data() ), fmt.get().size(), &chars_written,
+                  nullptr );
+            } else {
+                const auto formatted{ std::format( fmt, std::forward< Args >( args )... ) };
+                WriteConsoleA(
+                  self.std_output_handle, static_cast< const void* >( formatted.data() ), formatted.size(), &chars_written,
+                  nullptr );
+            }
+            return self;
+        }
+        template < typename... Args >
+        auto&& print( this auto&& self, std::wformat_string< Args... > fmt, Args&&... args )
+        {
+            constexpr auto skip_formatting{ sizeof...( Args ) == 0uz };
+            DWORD chars_written;
+            if constexpr ( skip_formatting ) {
+                WriteConsoleW(
+                  self.std_output_handle, static_cast< const void* >( fmt.get().data() ), fmt.get().size(), &chars_written,
+                  nullptr );
+            } else {
+                const auto formatted{ std::format( fmt, std::forward< Args >( args )... ) };
+                WriteConsoleW(
+                  self.std_output_handle, static_cast< const void* >( formatted.data() ), formatted.size(), &chars_written,
+                  nullptr );
+            }
+            return self;
+        }
         auto&& press_any_key_to_continue( this auto&& self ) noexcept
         {
             DWORD mode;
