@@ -88,23 +88,23 @@ namespace cpp_utils
             ~line_node_() noexcept              = default;
         };
         std::pmr::vector< line_node_ > lines_;
-        const console& console_;
+        const console& con_;
         auto set_line_attrs_( line_node_& self, const WORD current_attrs ) noexcept
         {
-            SetConsoleTextAttribute( console_.std_output_handle, current_attrs );
+            SetConsoleTextAttribute( con_.std_output_handle, current_attrs );
             self.last_attrs = current_attrs;
         }
         auto get_cursor_() noexcept
         {
             CONSOLE_SCREEN_BUFFER_INFO console_data;
-            GetConsoleScreenBufferInfo( console_.std_output_handle, &console_data );
+            GetConsoleScreenBufferInfo( con_.std_output_handle, &console_data );
             return console_data.dwCursorPosition;
         }
         auto try_get_event_( INPUT_RECORD& record )
         {
-            if ( WaitForSingleObject( console_.std_input_handle, INFINITE ) == WAIT_OBJECT_0 ) {
+            if ( WaitForSingleObject( con_.std_input_handle, INFINITE ) == WAIT_OBJECT_0 ) {
                 DWORD reg;
-                if ( ReadConsoleInputW( console_.std_input_handle, &record, 1, &reg ) && reg != 0 ) {
+                if ( ReadConsoleInputW( con_.std_input_handle, &record, 1, &reg ) && reg != 0 ) {
                     return true;
                 }
             }
@@ -113,16 +113,16 @@ namespace cpp_utils
         auto rewrite_( const COORD cursor_position, const line_node_& line )
         {
             const auto [ console_width, console_height ]{ cursor_position };
-            SetConsoleCursorPosition( console_.std_output_handle, { 0, console_height } );
+            SetConsoleCursorPosition( con_.std_output_handle, { 0, console_height } );
             std::print(
               "{}", std::pmr::string{ static_cast< std::size_t >( console_width ), ' ', lines_.get_allocator().resource() } );
-            SetConsoleCursorPosition( console_.std_output_handle, { 0, console_height } );
+            SetConsoleCursorPosition( con_.std_output_handle, { 0, console_height } );
             line.print_text();
-            SetConsoleCursorPosition( console_.std_output_handle, { 0, console_height } );
+            SetConsoleCursorPosition( con_.std_output_handle, { 0, console_height } );
         }
         auto init_pos_()
         {
-            console_.clear( lines_.get_allocator().resource() );
+            con_.clear( lines_.get_allocator().resource() );
             for ( const auto back_ptr{ &lines_.back() }; auto& line : lines_ ) {
                 line.position = get_cursor_();
                 set_line_attrs_( line, line.default_attrs );
@@ -163,10 +163,10 @@ namespace cpp_utils
             if ( is_empty_function_( target->func ) ) {
                 return func_back;
             }
-            console_.clear( lines_.get_allocator().resource() );
+            con_.clear( lines_.get_allocator().resource() );
             set_line_attrs_( *target, target->default_attrs );
-            console_.show_cursor( false );
-            console_.lock_text( true );
+            con_.show_cursor( false );
+            con_.lock_text( true );
             const auto value{ target->func.visit< func_action >( [ & ]< typename F >( F& func )
             {
                 if constexpr ( std::is_same_v< F, std::move_only_function< func_action() > > ) {
@@ -177,8 +177,8 @@ namespace cpp_utils
                     static_assert( false, "unknown callback!" );
                 }
             } ) };
-            console_.show_cursor( false );
-            console_.lock_text( true );
+            con_.show_cursor( false );
+            con_.lock_text( true );
             init_pos_();
             return value;
         }
@@ -307,8 +307,8 @@ namespace cpp_utils
             if ( empty() ) [[unlikely]] {
                 return *this;
             }
-            console_.show_cursor( false );
-            console_.lock_text( true );
+            con_.show_cursor( false );
+            con_.lock_text( true );
             init_pos_();
             auto func_return_value{ func_back };
             while ( func_return_value == func_back ) {
@@ -327,14 +327,14 @@ namespace cpp_utils
                     }
                 }
             }
-            console_.clear( lines_.get_allocator().resource() );
+            con_.clear( lines_.get_allocator().resource() );
             return *this;
         }
         auto operator=( const console_ui& ) noexcept -> console_ui& = default;
         auto operator=( console_ui&& ) noexcept -> console_ui&      = default;
         console_ui( const console& console_info, std::pmr::memory_resource* const resource = std::pmr::get_default_resource() ) noexcept
           : lines_{ resource }
-          , console_{ console_info }
+          , con_{ console_info }
         { }
         console_ui( console&&, std::pmr::memory_resource* const = std::pmr::get_default_resource() ) noexcept = delete;
         console_ui( const console_ui& ) noexcept                                                              = default;
