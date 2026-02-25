@@ -1100,6 +1100,7 @@ namespace scltk
     template < typename BuiltinRuleNode >
     struct builtin_rules_executor_backend final
     {
+        using empty_lambda_t = decltype( details_::empty_lambda );
         static auto hijack_procs() noexcept
         {
             []< cpp_utils::const_wstring... Procs >( const cpp_utils::type_list< cpp_utils::value_identity< Procs >... > ) static noexcept
@@ -1137,7 +1138,7 @@ namespace scltk
         }
         static auto crack_helper()
         {
-            if constexpr ( !std::is_same_v< decltype( BuiltinRuleNode::crack_helper ), decltype( details_::empty_lambda ) > ) {
+            if constexpr ( !std::is_same_v< decltype( BuiltinRuleNode::crack_helper ), empty_lambda_t > ) {
                 BuiltinRuleNode::crack_helper();
             }
         }
@@ -1168,8 +1169,7 @@ namespace scltk
         }
         static auto restore_helper()
         {
-            if constexpr ( !std::is_same_v< decltype( BuiltinRuleNode::restore_helper ), decltype( details_::empty_lambda ) > )
-            {
+            if constexpr ( !std::is_same_v< decltype( BuiltinRuleNode::restore_helper ), empty_lambda_t > ) {
                 BuiltinRuleNode::restore_helper();
             }
         }
