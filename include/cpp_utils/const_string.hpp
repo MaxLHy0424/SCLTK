@@ -9,11 +9,11 @@
 namespace cpp_utils
 {
     template < typename T >
-    concept character
+    concept char_type
       = std::same_as< std::remove_cv_t< T >, char > || std::same_as< std::remove_cv_t< T >, wchar_t >
      || std::same_as< std::remove_cv_t< T >, char8_t > || std::same_as< std::remove_cv_t< T >, char16_t >
      || std::same_as< std::remove_cv_t< T >, char32_t >;
-    template < character T, std::size_t N >
+    template < char_type T, std::size_t N >
         requires std::same_as< T, std::decay_t< T > >
     struct basic_const_string final
     {
@@ -83,7 +83,7 @@ namespace cpp_utils
         {
             return std::basic_string_view< T >{ c_str(), size() };
         }
-        template < character OtherCharT, std::size_t OtherN >
+        template < char_type OtherCharT, std::size_t OtherN >
         [[nodiscard]] constexpr auto operator==( const basic_const_string< OtherCharT, OtherN >& other ) const noexcept
         {
             if constexpr ( !std::is_same_v< T, OtherCharT > || N != OtherN ) {
@@ -108,7 +108,7 @@ namespace cpp_utils
         consteval basic_const_string( basic_const_string< T, N >&& ) noexcept      = default;
         constexpr ~basic_const_string() noexcept                                   = default;
     };
-    template < character T, std::size_t N >
+    template < char_type T, std::size_t N >
     basic_const_string( const T ( & )[ N ] ) -> basic_const_string< T, N - 1 >;
     template < std::size_t N >
     using const_string = basic_const_string< char, N >;
@@ -120,14 +120,14 @@ namespace cpp_utils
     using const_u16string = basic_const_string< char16_t, N >;
     template < std::size_t N >
     using const_u32string = basic_const_string< char32_t, N >;
-    template < character auto C, std::size_t N >
+    template < char_type auto C, std::size_t N >
     [[nodiscard]] inline consteval auto make_repeated_const_string() noexcept
     {
         std::array< decltype( C ), N > str;
         str.fill( C );
         return basic_const_string{ str };
     }
-    template < character T, std::size_t... Ns >
+    template < char_type T, std::size_t... Ns >
     [[nodiscard]] inline consteval auto concat_const_string( const basic_const_string< T, Ns >... strings ) noexcept
     {
         std::array< T, ( Ns + ... ) > storage;
@@ -139,7 +139,7 @@ namespace cpp_utils
         }( strings ), ... );
         return basic_const_string{ storage };
     }
-    template < character T, std::integral auto N >
+    template < char_type T, std::integral auto N >
     [[nodiscard]] inline consteval auto make_const_string_from_integral() noexcept
     {
         if constexpr ( N == 0 ) {
