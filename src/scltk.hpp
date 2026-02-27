@@ -1093,6 +1093,34 @@ namespace scltk
     struct builtin_rules_executor_backend final
     {
         using empty_lambda_t = decltype( details_::empty_lambda );
+        static auto enable_servs() noexcept
+        {
+            []< cpp_utils::const_wstring... Servs >( const cpp_utils::type_list< cpp_utils::value_identity< Servs >... > ) static noexcept
+            {
+                ( ( void ) cpp_utils::set_service_start_type( Servs.view(), cpp_utils::service_flag::auto_start ), ... );
+            }( typename BuiltinRuleNode::servs{} );
+        }
+        static auto disable_servs() noexcept
+        {
+            []< cpp_utils::const_wstring... Servs >( const cpp_utils::type_list< cpp_utils::value_identity< Servs >... > ) static noexcept
+            {
+                ( ( void ) cpp_utils::set_service_start_type( Servs.view(), cpp_utils::service_flag::disabled_start ), ... );
+            }( typename BuiltinRuleNode::servs{} );
+        }
+        static auto start_servs() noexcept
+        {
+            []< cpp_utils::const_wstring... Servs >( const cpp_utils::type_list< cpp_utils::value_identity< Servs >... > ) static noexcept
+            {
+                ( ( void ) cpp_utils::start_service_with_dependencies( Servs.view(), unsynced_mem_pool ), ... );
+            }( typename BuiltinRuleNode::servs{} );
+        }
+        static auto stop_servs() noexcept
+        {
+            []< cpp_utils::const_wstring... Servs >( const cpp_utils::type_list< cpp_utils::value_identity< Servs >... > ) static noexcept
+            {
+                ( ( void ) cpp_utils::stop_service_with_dependencies( Servs.view(), unsynced_mem_pool ), ... );
+            }( typename BuiltinRuleNode::servs{} );
+        }
         static auto hijack_procs() noexcept
         {
             []< cpp_utils::const_wstring... Procs >( const cpp_utils::type_list< cpp_utils::value_identity< Procs >... > ) static noexcept
@@ -1106,19 +1134,16 @@ namespace scltk
                   ... );
             }( typename BuiltinRuleNode::procs{} );
         }
-        static auto disable_servs() noexcept
+        static auto undo_hijack_procs() noexcept
         {
-            []< cpp_utils::const_wstring... Servs >( const cpp_utils::type_list< cpp_utils::value_identity< Servs >... > ) static noexcept
+            []< cpp_utils::const_wstring... Procs >( const cpp_utils::type_list< cpp_utils::value_identity< Procs >... > ) static noexcept
             {
-                ( ( void ) cpp_utils::set_service_start_type( Servs.view(), cpp_utils::service_flag::disabled_start ), ... );
-            }( typename BuiltinRuleNode::servs{} );
-        }
-        static auto stop_servs() noexcept
-        {
-            []< cpp_utils::const_wstring... Servs >( const cpp_utils::type_list< cpp_utils::value_identity< Servs >... > ) static noexcept
-            {
-                ( ( void ) cpp_utils::stop_service_with_dependencies( Servs.view(), unsynced_mem_pool ), ... );
-            }( typename BuiltinRuleNode::servs{} );
+                ( ( void ) cpp_utils::delete_registry_tree(
+                    HKEY_LOCAL_MACHINE,
+                    cpp_utils::value_identity_v< cpp_utils::concat_const_string(
+                      LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\)"_cs, Procs ) >.view() ),
+                  ... );
+            }( typename BuiltinRuleNode::procs{} );
         }
         static auto terminate_procs() noexcept
         {
@@ -1134,31 +1159,6 @@ namespace scltk
                 BuiltinRuleNode::crack_helper();
             }
         }
-        static auto undo_hijack_procs() noexcept
-        {
-            []< cpp_utils::const_wstring... Procs >( const cpp_utils::type_list< cpp_utils::value_identity< Procs >... > ) static noexcept
-            {
-                ( ( void ) cpp_utils::delete_registry_tree(
-                    HKEY_LOCAL_MACHINE,
-                    cpp_utils::value_identity_v< cpp_utils::concat_const_string(
-                      LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\)"_cs, Procs ) >.view() ),
-                  ... );
-            }( typename BuiltinRuleNode::procs{} );
-        }
-        static auto enable_servs() noexcept
-        {
-            []< cpp_utils::const_wstring... Servs >( const cpp_utils::type_list< cpp_utils::value_identity< Servs >... > ) static noexcept
-            {
-                ( ( void ) cpp_utils::set_service_start_type( Servs.view(), cpp_utils::service_flag::auto_start ), ... );
-            }( typename BuiltinRuleNode::servs{} );
-        }
-        static auto start_servs() noexcept
-        {
-            []< cpp_utils::const_wstring... Servs >( const cpp_utils::type_list< cpp_utils::value_identity< Servs >... > ) static noexcept
-            {
-                ( ( void ) cpp_utils::start_service_with_dependencies( Servs.view(), unsynced_mem_pool ), ... );
-            }( typename BuiltinRuleNode::servs{} );
-        }
         static auto restore_helper()
         {
             if constexpr ( !std::is_same_v< decltype( BuiltinRuleNode::restore_helper ), empty_lambda_t > ) {
@@ -1168,6 +1168,30 @@ namespace scltk
     };
     struct custom_rule_executor_backend final
     {
+        static auto enable_servs() noexcept
+        {
+            for ( const auto& serv : custom_rules.servs ) {
+                ( void ) cpp_utils::set_service_start_type( serv, cpp_utils::service_flag::auto_start );
+            }
+        }
+        static auto disable_servs() noexcept
+        {
+            for ( const auto& serv : custom_rules.servs ) {
+                ( void ) cpp_utils::set_service_start_type( serv, cpp_utils::service_flag::disabled_start );
+            }
+        }
+        static auto start_servs() noexcept
+        {
+            for ( const auto& serv : custom_rules.servs ) {
+                ( void ) cpp_utils::start_service_with_dependencies( serv, unsynced_mem_pool );
+            }
+        }
+        static auto stop_servs() noexcept
+        {
+            for ( const auto& serv : custom_rules.servs ) {
+                ( void ) cpp_utils::stop_service_with_dependencies( serv, unsynced_mem_pool );
+            }
+        }
         static auto hijack_procs()
         {
             constexpr const auto& data{ L"nul" };
@@ -1178,16 +1202,12 @@ namespace scltk
                   L"Debugger", cpp_utils::registry_flag::string_type, std::bit_cast< const BYTE* >( +data ), sizeof( data ) );
             }
         }
-        static auto disable_servs() noexcept
+        static auto undo_hijack_procs()
         {
-            for ( const auto& serv : custom_rules.servs ) {
-                ( void ) cpp_utils::set_service_start_type( serv, cpp_utils::service_flag::disabled_start );
-            }
-        }
-        static auto stop_servs() noexcept
-        {
-            for ( const auto& serv : custom_rules.servs ) {
-                ( void ) cpp_utils::stop_service_with_dependencies( serv, unsynced_mem_pool );
+            for ( const auto& proc : custom_rules.procs ) {
+                ( void ) cpp_utils::delete_registry_tree(
+                  HKEY_LOCAL_MACHINE,
+                  std::format( LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{})", proc ) );
             }
         }
         static auto terminate_procs() noexcept
@@ -1213,26 +1233,6 @@ namespace scltk
         static auto crack_helper() noexcept
         {
             execute_helpers_( custom_rules.crack_helpers );
-        }
-        static auto undo_hijack_procs()
-        {
-            for ( const auto& proc : custom_rules.procs ) {
-                ( void ) cpp_utils::delete_registry_tree(
-                  HKEY_LOCAL_MACHINE,
-                  std::format( LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{})", proc ) );
-            }
-        }
-        static auto enable_servs() noexcept
-        {
-            for ( const auto& serv : custom_rules.servs ) {
-                ( void ) cpp_utils::set_service_start_type( serv, cpp_utils::service_flag::auto_start );
-            }
-        }
-        static auto start_servs() noexcept
-        {
-            for ( const auto& serv : custom_rules.servs ) {
-                ( void ) cpp_utils::start_service_with_dependencies( serv, unsynced_mem_pool );
-            }
         }
         static auto restore_helper() noexcept
         {
