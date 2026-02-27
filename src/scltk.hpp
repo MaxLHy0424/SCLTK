@@ -685,11 +685,22 @@ namespace scltk
             std::print(
               cpp_utils::value_identity_v< cpp_utils::concat_const_string(
                 make_title_text< "[ 配  置 ]", 3 >,  " -> 尝试打开配置文件.\n\n"_cs ) >.view() );
-            std::print(
-              " (i) 打开配置文件{}.",
-              std::bit_cast< INT_PTR >( ShellExecuteW( nullptr, L"open", config_file_name, nullptr, nullptr, SW_SHOWNORMAL ) ) > 32
-                ? "成功"
-                : "失败" );
+            bool success{ false };
+            if ( std::filesystem::exists( config_file_name ) ) {
+                auto cmd{
+                  cpp_utils::concat_const_string( L"notepad.exe "_cs, cpp_utils::const_wstring{ config_file_name } ).data() };
+                STARTUPINFOW startup{};
+                PROCESS_INFORMATION proc;
+                startup.cb = sizeof( startup );
+                if ( CreateProcessW( nullptr, cmd.data(), nullptr, nullptr, FALSE, 0, nullptr, nullptr, &startup, &proc ) )
+                  [[likely]]
+                {
+                    CloseHandle( proc.hProcess );
+                    CloseHandle( proc.hThread );
+                    success = true;
+                }
+            }
+            std::print( " (i) 打开配置文件{}.", success ? "成功" : "失败" );
             press_any_key_to_return();
             return func_back;
         }
