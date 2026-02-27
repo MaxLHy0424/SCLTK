@@ -310,21 +310,19 @@ namespace cpp_utils
             con_.show_cursor( false );
             con_.lock_text( true );
             init_pos_();
+            INPUT_RECORD record;
+            const auto& mouse_event{ record.Event.MouseEvent };
             auto func_return_value{ func_back };
             while ( func_return_value == func_back ) {
-                INPUT_RECORD record;
-                while ( try_get_event_( record ) ) {
-                    if ( record.EventType == MOUSE_EVENT ) {
-                        const auto& mouse_event{ record.Event.MouseEvent };
-                        if ( mouse_event.dwEventFlags == mouse::move ) {
-                            refresh_( mouse_event.dwMousePosition );
-                        } else if ( mouse_event.dwEventFlags == mouse::click && mouse_event.dwButtonState != 0 ) {
-                            func_return_value = invoke_func_( mouse_event );
-                            if ( func_return_value != func_back ) {
-                                break;
-                            }
-                        }
-                    }
+                if ( try_get_event_( record ) == false || record.EventType != MOUSE_EVENT ) {
+                    continue;
+                }
+                if ( mouse_event.dwEventFlags == mouse::move ) {
+                    refresh_( mouse_event.dwMousePosition );
+                    continue;
+                }
+                if ( mouse_event.dwEventFlags == mouse::click && mouse_event.dwButtonState != 0 ) {
+                    func_return_value = invoke_func_( mouse_event );
                 }
             }
             con_.clear( lines_.get_allocator().resource() );
