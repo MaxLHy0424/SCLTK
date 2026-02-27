@@ -42,17 +42,6 @@ namespace scltk
         cpp_utils::clone_self();
         return func_exit;
     }
-    inline auto elevate_privilege() noexcept
-    {
-        constexpr std::array special_privileges{
-          L"" SE_ASSIGNPRIMARYTOKEN_NAME, L"" SE_BACKUP_NAME, L"" SE_RESTORE_NAME, L"" SE_DEBUG_NAME,
-          L"" SE_INCREASE_QUOTA_NAME,     L"" SE_TCB_NAME };
-        std::apply( []( auto... privileges ) static noexcept
-        {
-            const auto proc{ GetCurrentProcess() };
-            ( ( void ) cpp_utils::set_privilege( proc, privileges, true ), ... );
-        }, special_privileges );
-    }
     template < cpp_utils::const_string Title, std::size_t NewLineCount >
     inline constexpr auto make_title_text{ cpp_utils::concat_const_string(
       cpp_utils::make_repeated_const_string< ' ', ( static_cast< std::size_t >( console_width ) - Title.size() + 1 ) / 2 >(),
