@@ -680,7 +680,9 @@ namespace scltk
                 make_title_text< "[ 配  置 ]", 3 >, " -> 同步配置.\n\n"_cs ) >.view() );
             load_config( true );
             std::ofstream config_file_stream{ config_file_name, std::ios::out | std::ios::trunc };
-            constexpr auto header{ u8"# " INFO_FULL_NAME "\n# " INFO_VERSION "\n# 请以 UTF-8 编码保存本文件。\n" };
+            constexpr auto header{
+              u8"# " INFO_FULL_NAME "\n# " INFO_GIT_TAG " (" INFO_GIT_BRANCH " " INFO_GIT_HASH
+              ")\n# 请以 UTF-8 编码保存本文件。\n" };
             constexpr auto header_size{ std::char_traits< char8_t >::length( header ) * sizeof( char8_t ) };
             config_file_stream.write( std::bit_cast< const char* >( header ), header_size );
             std::apply( [ & ]( auto&... config_node ) { ( config_node.sync( config_file_stream ), ... ); }, config_nodes );
@@ -727,8 +729,9 @@ namespace scltk
           .add_back( make_title_text< "[ 关  于 ]", 2 >.view() )
           .add_back( " < 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
           .add_back(
-            "\n[ 软件名 ]\n\n " INFO_FULL_NAME " (" INFO_SHORT_NAME ")\n\n[ 软件版本 ]\n\n " INFO_VERSION
-            "\n\n[ 许可证与版权 ]\n\n " INFO_LICENSE "\n\n " INFO_COPYRIGHT "\n\n[ 开源仓库 ]\n\n " INFO_REPO_URL )
+            "\n[ 软件名 ]\n\n " INFO_FULL_NAME " (" INFO_SHORT_NAME ")\n\n[ 软件版本 ]\n\n Tag: " INFO_GIT_TAG
+            "\n Branch: " INFO_GIT_BRANCH "\n Commit: " INFO_GIT_HASH "\n\n[ 许可证与版权 ]\n\n " INFO_LICENSE
+            "\n\n " INFO_COPYRIGHT "\n\n[ 开源仓库 ]\n\n " INFO_REPO_URL )
           .show();
         return func_back;
     }
