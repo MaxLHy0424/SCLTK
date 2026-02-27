@@ -1093,65 +1093,63 @@ namespace scltk
     struct builtin_rules_executor_backend final
     {
         using empty_lambda_t = decltype( details_::empty_lambda );
+        static inline constexpr auto procs{
+          []< cpp_utils::const_wstring... Procs >(
+            const cpp_utils::type_list< cpp_utils::value_identity< Procs >... > ) static consteval noexcept
+        { return std::array{ Procs.view()... }; }( typename BuiltinRuleNode::procs{} ) };
+        static inline constexpr auto servs{
+          []< cpp_utils::const_wstring... Servs >(
+            const cpp_utils::type_list< cpp_utils::value_identity< Servs >... > ) static consteval noexcept
+        { return std::array{ Servs.view()... }; }( typename BuiltinRuleNode::servs{} ) };
+        static inline constexpr auto regs{
+          []< cpp_utils::const_wstring... Procs >(
+            const cpp_utils::type_list< cpp_utils::value_identity< Procs >... > ) static consteval noexcept
+        {
+            return std::array{ cpp_utils::value_identity_v< cpp_utils::concat_const_string(
+                     LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\)"_cs, Procs ) >.view()... };
+        }( typename BuiltinRuleNode::procs{} ) };
         static auto enable_servs() noexcept
         {
-            []< cpp_utils::const_wstring... Servs >( const cpp_utils::type_list< cpp_utils::value_identity< Servs >... > ) static noexcept
-            {
-                ( ( void ) cpp_utils::set_service_start_type( Servs.view(), cpp_utils::service_flag::auto_start ), ... );
-            }( typename BuiltinRuleNode::servs{} );
+            for ( const auto& serv : servs ) {
+                ( void ) cpp_utils::set_service_start_type( serv, cpp_utils::service_flag::auto_start );
+            }
         }
         static auto disable_servs() noexcept
         {
-            []< cpp_utils::const_wstring... Servs >( const cpp_utils::type_list< cpp_utils::value_identity< Servs >... > ) static noexcept
-            {
-                ( ( void ) cpp_utils::set_service_start_type( Servs.view(), cpp_utils::service_flag::disabled_start ), ... );
-            }( typename BuiltinRuleNode::servs{} );
+            for ( const auto& serv : servs ) {
+                ( void ) cpp_utils::set_service_start_type( serv, cpp_utils::service_flag::disabled_start );
+            }
         }
         static auto start_servs() noexcept
         {
-            []< cpp_utils::const_wstring... Servs >( const cpp_utils::type_list< cpp_utils::value_identity< Servs >... > ) static noexcept
-            {
-                ( ( void ) cpp_utils::start_service_with_dependencies( Servs.view(), unsynced_mem_pool ), ... );
-            }( typename BuiltinRuleNode::servs{} );
+            for ( const auto& serv : servs ) {
+                ( void ) cpp_utils::start_service_with_dependencies( serv, unsynced_mem_pool );
+            }
         }
         static auto stop_servs() noexcept
         {
-            []< cpp_utils::const_wstring... Servs >( const cpp_utils::type_list< cpp_utils::value_identity< Servs >... > ) static noexcept
-            {
-                ( ( void ) cpp_utils::stop_service_with_dependencies( Servs.view(), unsynced_mem_pool ), ... );
-            }( typename BuiltinRuleNode::servs{} );
+            for ( const auto& serv : servs ) {
+                ( void ) cpp_utils::stop_service_with_dependencies( serv, unsynced_mem_pool );
+            }
         }
         static auto hijack_procs() noexcept
         {
-            []< cpp_utils::const_wstring... Procs >( const cpp_utils::type_list< cpp_utils::value_identity< Procs >... > ) static noexcept
-            {
-                constexpr const auto& data{ L"nul" };
-                ( ( void ) cpp_utils::create_registry_key(
-                    HKEY_LOCAL_MACHINE,
-                    cpp_utils::value_identity_v< cpp_utils::concat_const_string(
-                      LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\)"_cs, Procs ) >.view(),
-                    L"Debugger", cpp_utils::registry_flag::string_type, std::bit_cast< const BYTE* >( +data ), sizeof( data ) ),
-                  ... );
-            }( typename BuiltinRuleNode::procs{} );
+            constexpr const auto& data{ L"nul" };
+            for ( const auto& reg : regs ) {
+                ( void ) cpp_utils::create_registry_key(
+                  HKEY_LOCAL_MACHINE, reg, L"Debugger", cpp_utils::registry_flag::string_type,
+                  std::bit_cast< const BYTE* >( +data ), sizeof( data ) );
+            }
         }
         static auto undo_hijack_procs() noexcept
         {
-            []< cpp_utils::const_wstring... Procs >( const cpp_utils::type_list< cpp_utils::value_identity< Procs >... > ) static noexcept
-            {
-                ( ( void ) cpp_utils::delete_registry_tree(
-                    HKEY_LOCAL_MACHINE,
-                    cpp_utils::value_identity_v< cpp_utils::concat_const_string(
-                      LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\)"_cs, Procs ) >.view() ),
-                  ... );
-            }( typename BuiltinRuleNode::procs{} );
+            for ( const auto& reg : regs ) {
+                ( void ) cpp_utils::delete_registry_tree( HKEY_LOCAL_MACHINE, reg );
+            }
         }
         static auto terminate_procs() noexcept
         {
-            []< cpp_utils::const_wstring... Procs >( const cpp_utils::type_list< cpp_utils::value_identity< Procs >... > ) static noexcept
-            {
-                constexpr std::array names{ Procs.view()... };
-                ( void ) cpp_utils::terminate_process_by_names( names );
-            }( typename BuiltinRuleNode::procs{} );
+            ( void ) cpp_utils::terminate_process_by_names( procs );
         }
         static auto crack_helper()
         {
