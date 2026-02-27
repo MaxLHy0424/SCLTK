@@ -689,14 +689,14 @@ namespace scltk
             if ( std::filesystem::exists( config_file_name ) ) {
                 auto cmd{
                   cpp_utils::concat_const_string( L"notepad.exe "_cs, cpp_utils::const_wstring{ config_file_name } ).data() };
-                STARTUPINFOW startup{};
-                PROCESS_INFORMATION proc;
-                startup.cb = sizeof( startup );
-                if ( CreateProcessW( nullptr, cmd.data(), nullptr, nullptr, FALSE, 0, nullptr, nullptr, &startup, &proc ) )
+                STARTUPINFOW startup_info{};
+                PROCESS_INFORMATION proc_info;
+                startup_info.cb = sizeof( startup_info );
+                if ( CreateProcessW( nullptr, cmd.data(), nullptr, nullptr, FALSE, 0, nullptr, nullptr, &startup_info, &proc_info ) )
                   [[likely]]
                 {
-                    CloseHandle( proc.hProcess );
-                    CloseHandle( proc.hThread );
+                    CloseHandle( proc_info.hProcess );
+                    CloseHandle( proc_info.hThread );
                     success = true;
                 }
             }
@@ -752,11 +752,13 @@ namespace scltk
         };
         inline auto launch_cmd()
         {
-            STARTUPINFOW startup{};
-            PROCESS_INFORMATION proc;
+            STARTUPINFOW startup_info{};
+            PROCESS_INFORMATION proc_info;
             wchar_t cmd[]{ L"cmd.exe" };
-            startup.cb = sizeof( startup );
-            if ( CreateProcessW( nullptr, cmd, nullptr, nullptr, FALSE, 0, nullptr, nullptr, &startup, &proc ) ) [[likely]] {
+            startup_info.cb = sizeof( startup_info );
+            if ( CreateProcessW( nullptr, cmd, nullptr, nullptr, FALSE, 0, nullptr, nullptr, &startup_info, &proc_info ) )
+              [[likely]]
+            {
                 con.set_title( L"" INFO_SHORT_NAME " - 命令提示符" )
                   .set_size( 120, 30, unsynced_mem_pool )
                   .fix_size( false )
@@ -764,9 +766,9 @@ namespace scltk
                   .show_cursor( true )
                   .lock_text( false );
                 SetConsoleScreenBufferSize( con.std_output_handle, { 120, std::numeric_limits< SHORT >::max() - 1 } );
-                WaitForSingleObject( proc.hProcess, INFINITE );
-                CloseHandle( proc.hProcess );
-                CloseHandle( proc.hThread );
+                WaitForSingleObject( proc_info.hProcess, INFINITE );
+                CloseHandle( proc_info.hProcess );
+                CloseHandle( proc_info.hThread );
                 con.set_charset( charset_id )
                   .set_title( L"" INFO_SHORT_NAME )
                   .set_size( console_width, console_height, unsynced_mem_pool )
@@ -802,23 +804,23 @@ namespace scltk
         inline auto reset_firewall_rules() noexcept
         {
             std::print( " -> 重置防火墙规则.\n" );
-            STARTUPINFOW startup{};
-            startup.cb = sizeof( startup );
+            STARTUPINFOW startup_info{};
             PROCESS_INFORMATION proc_info{};
             SECURITY_ATTRIBUTES sec_attrib{ sizeof( sec_attrib ), nullptr, TRUE };
+            startup_info.cb = sizeof( startup_info );
             const auto nul_file_handle{
               CreateFileW( L"NUL", GENERIC_WRITE, FILE_SHARE_WRITE, &sec_attrib, OPEN_EXISTING, 0, nullptr ) };
             if ( nul_file_handle == INVALID_HANDLE_VALUE ) [[unlikely]] {
                 return;
             }
-            startup.dwFlags    = STARTF_USESTDHANDLES;
-            startup.hStdInput  = GetStdHandle( STD_INPUT_HANDLE );
-            startup.hStdOutput = nul_file_handle;
-            startup.hStdError  = nul_file_handle;
+            startup_info.dwFlags    = STARTF_USESTDHANDLES;
+            startup_info.hStdInput  = GetStdHandle( STD_INPUT_HANDLE );
+            startup_info.hStdOutput = nul_file_handle;
+            startup_info.hStdError  = nul_file_handle;
             wchar_t cmd[]{ L"netsh.exe advfirewall reset" };
             const auto has_created_process_successfully{ CreateProcessW(
-              nullptr, cmd, nullptr, nullptr, TRUE, CREATE_NO_WINDOW | CREATE_UNICODE_ENVIRONMENT, nullptr, nullptr, &startup,
-              &proc_info ) };
+              nullptr, cmd, nullptr, nullptr, TRUE, CREATE_NO_WINDOW | CREATE_UNICODE_ENVIRONMENT, nullptr, nullptr,
+              &startup_info, &proc_info ) };
             CloseHandle( nul_file_handle );
             if ( has_created_process_successfully ) [[likely]] {
                 WaitForSingleObject( proc_info.hProcess, INFINITE );
@@ -1226,16 +1228,16 @@ namespace scltk
         static auto execute_helpers_( const std::pmr::vector< std::pmr::wstring >& helpers ) noexcept
         {
             for ( const auto& helper : helpers ) {
-                STARTUPINFOW startup{};
-                startup.cb = sizeof( startup );
-                PROCESS_INFORMATION proc{};
                 std::pmr::wstring cmd{ helper, unsynced_mem_pool };
-                if ( CreateProcessW( nullptr, cmd.data(), nullptr, nullptr, FALSE, 0, nullptr, nullptr, &startup, &proc ) )
+                STARTUPINFOW startup_info{};
+                PROCESS_INFORMATION proc_info{};
+                startup_info.cb = sizeof( startup_info );
+                if ( CreateProcessW( nullptr, cmd.data(), nullptr, nullptr, FALSE, 0, nullptr, nullptr, &startup_info, &proc_info ) )
                   [[likely]]
                 {
-                    WaitForSingleObject( proc.hProcess, INFINITE );
-                    CloseHandle( proc.hProcess );
-                    CloseHandle( proc.hThread );
+                    WaitForSingleObject( proc_info.hProcess, INFINITE );
+                    CloseHandle( proc_info.hProcess );
+                    CloseHandle( proc_info.hThread );
                 }
             }
         }
