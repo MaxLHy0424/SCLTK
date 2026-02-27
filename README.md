@@ -60,7 +60,7 @@ SCLTK 发行版文件名规则为 `SCLTK-<arch>-<runtime>.exe`，其中 `<arch>`
   `> 配置`
 
 > [!NOTE]
-> 配置文件 `config.ini` 中以 `#` 开头的行是注释。\
+> 配置文件 `SCLTK.conf` 中以 `#` 开头的行是注释。\
 > 配置文件头部注释为 SCLTK 自动生成。
 > 
 > 配置解析规则如下：
@@ -195,7 +195,7 @@ restore_helper: "abc helper.exe" restore
 
 ## 自定义规则乱码
 
-请尝试将配置文件 `config.ini` 使用 UTF-8 编码重新保存后重新启动 SCLTK。
+请尝试将配置文件 `SCLTK.conf` 使用 UTF-8 编码重新保存后重新启动 SCLTK。
 
 ## 有时 SCLTK 窗口内的项目无法点击
 
