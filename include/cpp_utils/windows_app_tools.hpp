@@ -189,7 +189,7 @@ namespace cpp_utils
             result = GetLastError();
             goto Cleanup;
         }
-        if ( !LookupPrivilegeValueW( NULL, privilege, &local_uid ) ) [[unlikely]] {
+        if ( !LookupPrivilegeValueW( nullptr, privilege, &local_uid ) ) [[unlikely]] {
             result = GetLastError();
             goto Cleanup;
         }
