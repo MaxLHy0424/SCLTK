@@ -46,7 +46,7 @@ args_ld_base     := -fuse-ld=lld -Wl,-O3,--lto-O3,--lto-CGO3,--gc-sections,--str
 args_ld_i686     := $(args_ld_base)
 args_ld_x86_64   := $(args_ld_base)
 cmd_echo         := /usr/bin/echo
-cmd_upx          := /ucrt64/bin/upx --lzma --best --8-bit --no-align -qqq
+cmd_upx          := /ucrt64/bin/upx --lzma --best --8-bit --no-align --ultra-brute -qqq
 cmd_gpg          := gpg -bs -u $(gpg_key) --yes
 dep_test         := src/main.cpp src/scltk.hpp src/info.hpp $(cpp_utils_all_files)
 dep_debug        := src/*.cpp
