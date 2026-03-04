@@ -710,8 +710,7 @@ namespace scltk
         std::apply( []( auto&... nodes ) static
         {
             cpp_utils::console_ui ui{ con, unsynced_mem_pool };
-            constexpr auto reserved_size{ 5 + ( decltype( nodes.request_ui_count() )::value + ... ) };
-            ui.reserve( reserved_size )
+            ui.reserve( 5 + ( decltype( nodes.request_ui_count() )::value + ... ) )
               .add_back( make_title_text< "[ 配  置 ]", 2 >.view() )
               .add_back( " < 返回\n", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
               .add_back( " > 查看解析规则 ", details_::show_config_parsing_rules )
