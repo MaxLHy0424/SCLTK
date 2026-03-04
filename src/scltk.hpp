@@ -986,6 +986,7 @@ namespace scltk
             restore
         };
         inline auto current_rule_executor_mode{ rule_executor_mode::crack };
+        constexpr std::array mythware_servs{ L"STUDSRV"sv, L"TDKeybd"sv, L"TDNetFilter"sv, L"TDFileFilter"sv };
     }
     using builtin_rules_t = cpp_utils::type_list<
       compile_time_rule_node<
@@ -998,18 +999,32 @@ namespace scltk
         details_::make_const_wstring_list_t<
           L"StudentMain.exe", L"DispcapHelper.exe", L"VRCwPlayer.exe", L"InstHelpApp.exe", L"InstHelpApp64.exe",
           L"TDOvrSet.exe", L"GATESRV.exe", L"ProcHelper64.exe", L"MasterHelper.exe" >,
-        details_::make_const_wstring_list_t< L"STUDSRV" >,
+        details_::make_const_wstring_list_t<>,
         [] static noexcept
     {
-        ( void ) cpp_utils::stop_service_with_dependencies( L"TDKeybd" );
-        ( void ) cpp_utils::stop_service_with_dependencies( L"TDNetFilter" );
-        ( void ) cpp_utils::stop_service_with_dependencies( L"TDFileFilter" );
+        constexpr const auto& use_set_serv_startup_types{
+          std::get< crack_restore_config >( config_nodes ).at< "set_servs_start_type" >() };
+        if ( use_set_serv_startup_types ) {
+            for ( const auto& serv : details_::mythware_servs ) {
+                ( void ) cpp_utils::set_service_start_type( serv, cpp_utils::service_flag::disabled_start );
+            }
+        }
+        for ( const auto& serv : details_::mythware_servs ) {
+            ( void ) cpp_utils::stop_service_with_dependencies( serv );
+        }
     },
         [] static noexcept
     {
-        ( void ) cpp_utils::start_service_with_dependencies( L"TDKeybd" );
-        ( void ) cpp_utils::start_service_with_dependencies( L"TDNetFilter" );
-        ( void ) cpp_utils::start_service_with_dependencies( L"TDFileFilter" );
+        constexpr const auto& use_set_serv_startup_types{
+          std::get< crack_restore_config >( config_nodes ).at< "set_servs_start_type" >() };
+        if ( use_set_serv_startup_types ) {
+            for ( const auto& serv : details_::mythware_servs ) {
+                ( void ) cpp_utils::set_service_start_type( serv, cpp_utils::service_flag::auto_start );
+            }
+        }
+        for ( const auto& serv : details_::mythware_servs ) {
+            ( void ) cpp_utils::start_service_with_dependencies( serv );
+        }
     } >,
       compile_time_rule_node<
         "联想智能云教室",
@@ -1112,16 +1127,16 @@ namespace scltk
         static inline constexpr auto procs{
           []< cpp_utils::const_wstring... Procs >(
             const cpp_utils::type_list< cpp_utils::value_identity< Procs >... > ) static consteval noexcept
-        { return std::array{ Procs.view()... }; }( typename BuiltinRuleNode::procs{} ) };
+        { return std::array< std::wstring_view, sizeof...( Procs ) >{ Procs.view()... }; }( typename BuiltinRuleNode::procs{} ) };
         static inline constexpr auto servs{
           []< cpp_utils::const_wstring... Servs >(
             const cpp_utils::type_list< cpp_utils::value_identity< Servs >... > ) static consteval noexcept
-        { return std::array{ Servs.view()... }; }( typename BuiltinRuleNode::servs{} ) };
+        { return std::array< std::wstring_view, sizeof...( Servs ) >{ Servs.view()... }; }( typename BuiltinRuleNode::servs{} ) };
         static inline constexpr auto regs{
           []< cpp_utils::const_wstring... Procs >(
             const cpp_utils::type_list< cpp_utils::value_identity< Procs >... > ) static consteval noexcept
         {
-            return std::array{ cpp_utils::value_identity_v< cpp_utils::concat_const_string(
+            return std::array< std::wstring_view, sizeof...( Procs )>{ cpp_utils::value_identity_v< cpp_utils::concat_const_string(
                      LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\)"_cs, Procs ) >.view()... };
         }( typename BuiltinRuleNode::procs{} ) };
         static auto enable_servs() noexcept
