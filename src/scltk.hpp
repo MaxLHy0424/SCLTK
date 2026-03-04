@@ -128,54 +128,6 @@ namespace scltk
         item_t crack_helpers{ unsynced_mem_pool };
         item_t restore_helpers{ unsynced_mem_pool };
     };
-    using builtin_rules_t = cpp_utils::type_list<
-      compile_time_rule_node<
-        "机房管理助手",
-        details_::make_const_wstring_list_t<
-          L"yz.exe", L"jfglzs.exe", L"jfglzsn.exe", L"jfglzsp.exe", L"przs.exe", L"zmserv.exe", L"zmsrv.exe" >,
-        details_::make_const_wstring_list_t< L"zmserv" >, details_::terminate_jfglzs_daemon >,
-      compile_time_rule_node<
-        "极域电子教室",
-        details_::make_const_wstring_list_t<
-          L"StudentMain.exe", L"DispcapHelper.exe", L"VRCwPlayer.exe", L"InstHelpApp.exe", L"InstHelpApp64.exe",
-          L"TDOvrSet.exe", L"GATESRV.exe", L"ProcHelper64.exe", L"MasterHelper.exe" >,
-        details_::make_const_wstring_list_t< L"STUDSRV" >,
-        [] static noexcept
-    {
-        ( void ) cpp_utils::stop_service_with_dependencies( L"TDKeybd" );
-        ( void ) cpp_utils::stop_service_with_dependencies( L"TDNetFilter" );
-        ( void ) cpp_utils::stop_service_with_dependencies( L"TDFileFilter" );
-    },
-        [] static noexcept
-    {
-        ( void ) cpp_utils::start_service_with_dependencies( L"TDKeybd" );
-        ( void ) cpp_utils::start_service_with_dependencies( L"TDNetFilter" );
-        ( void ) cpp_utils::start_service_with_dependencies( L"TDFileFilter" );
-    } >,
-      compile_time_rule_node<
-        "联想智能云教室",
-        details_::make_const_wstring_list_t<
-          L"WfbsPnpInstall.exe", L"WFBSMon.exe", L"WFBSMlogon.exe", L"WFBSSvrLogShow.exe", L"ResetIp.exe", L"FuncForWIN64.exe",
-          L"Fireware.exe", L"BCDBootCopy.exe", L"refreship.exe", L"WFDeskShow.exe", L"lenovoLockScreen.exe",
-          L"PortControl64.exe", L"DesktopCheck.exe", L"DeploymentManager.exe", L"DeploymentAgent.exe", L"XYNTService.exe" >,
-        details_::make_const_wstring_list_t< L"BSAgentSvr", L"tvnserver", L"WFBSMlogon" > >,
-      compile_time_rule_node<
-        "红蜘蛛多媒体网络教室",
-        details_::make_const_wstring_list_t<
-          L"rscheck.exe", L"checkrs.exe", L"REDAgent.exe", L"PerformanceCheck.exe", L"edpaper.exe", L"Adapter.exe",
-          L"repview.exe", L"FormatPaper.exe" >,
-        details_::make_const_wstring_list_t< L"appcheck2", L"checkapp2" > >,
-      compile_time_rule_node< "伽卡他卡电子教室", details_::make_const_wstring_list_t< L"Student.exe", L"Smonitor.exe" >,
-                              details_::make_const_wstring_list_t< L"Smsvc" > >,
-      compile_time_rule_node<
-        "凌波网络教室", details_::make_const_wstring_list_t< L"sbkup.exe", L"wsf.exe", L"NCStu.exe", L"NCCmn.dll" >,
-        details_::make_const_wstring_list_t< L"Windows Application and Components Data Backup Support Service" > >,
-      compile_time_rule_node<
-        "Veyon",
-        details_::make_const_wstring_list_t<
-          L"veyon-worker.exe", L"veyon-configurator.exe", L"veyon-server.exe", L"veyon-cli.exe", L"veyon-wcli.exe",
-          L"veyon-service.exe" >,
-        details_::make_const_wstring_list_t< L"VeyonService" > > >;
     runtime_rule_node custom_rules;
     namespace details_
     {
@@ -1035,6 +987,54 @@ namespace scltk
         };
         inline auto current_rule_executor_mode{ rule_executor_mode::crack };
     }
+    using builtin_rules_t = cpp_utils::type_list<
+      compile_time_rule_node<
+        "机房管理助手",
+        details_::make_const_wstring_list_t<
+          L"yz.exe", L"jfglzs.exe", L"jfglzsn.exe", L"jfglzsp.exe", L"przs.exe", L"zmserv.exe", L"zmsrv.exe" >,
+        details_::make_const_wstring_list_t< L"zmserv" >, details_::terminate_jfglzs_daemon >,
+      compile_time_rule_node<
+        "极域电子教室",
+        details_::make_const_wstring_list_t<
+          L"StudentMain.exe", L"DispcapHelper.exe", L"VRCwPlayer.exe", L"InstHelpApp.exe", L"InstHelpApp64.exe",
+          L"TDOvrSet.exe", L"GATESRV.exe", L"ProcHelper64.exe", L"MasterHelper.exe" >,
+        details_::make_const_wstring_list_t< L"STUDSRV" >,
+        [] static noexcept
+    {
+        ( void ) cpp_utils::stop_service_with_dependencies( L"TDKeybd" );
+        ( void ) cpp_utils::stop_service_with_dependencies( L"TDNetFilter" );
+        ( void ) cpp_utils::stop_service_with_dependencies( L"TDFileFilter" );
+    },
+        [] static noexcept
+    {
+        ( void ) cpp_utils::start_service_with_dependencies( L"TDKeybd" );
+        ( void ) cpp_utils::start_service_with_dependencies( L"TDNetFilter" );
+        ( void ) cpp_utils::start_service_with_dependencies( L"TDFileFilter" );
+    } >,
+      compile_time_rule_node<
+        "联想智能云教室",
+        details_::make_const_wstring_list_t<
+          L"WfbsPnpInstall.exe", L"WFBSMon.exe", L"WFBSMlogon.exe", L"WFBSSvrLogShow.exe", L"ResetIp.exe", L"FuncForWIN64.exe",
+          L"Fireware.exe", L"BCDBootCopy.exe", L"refreship.exe", L"WFDeskShow.exe", L"lenovoLockScreen.exe",
+          L"PortControl64.exe", L"DesktopCheck.exe", L"DeploymentManager.exe", L"DeploymentAgent.exe", L"XYNTService.exe" >,
+        details_::make_const_wstring_list_t< L"BSAgentSvr", L"tvnserver", L"WFBSMlogon" > >,
+      compile_time_rule_node<
+        "红蜘蛛多媒体网络教室",
+        details_::make_const_wstring_list_t<
+          L"rscheck.exe", L"checkrs.exe", L"REDAgent.exe", L"PerformanceCheck.exe", L"edpaper.exe", L"Adapter.exe",
+          L"repview.exe", L"FormatPaper.exe" >,
+        details_::make_const_wstring_list_t< L"appcheck2", L"checkapp2" > >,
+      compile_time_rule_node< "伽卡他卡电子教室", details_::make_const_wstring_list_t< L"Student.exe", L"Smonitor.exe" >,
+                              details_::make_const_wstring_list_t< L"Smsvc" > >,
+      compile_time_rule_node<
+        "凌波网络教室", details_::make_const_wstring_list_t< L"sbkup.exe", L"wsf.exe", L"NCStu.exe", L"NCCmn.dll" >,
+        details_::make_const_wstring_list_t< L"Windows Application and Components Data Backup Support Service" > >,
+      compile_time_rule_node<
+        "Veyon",
+        details_::make_const_wstring_list_t<
+          L"veyon-worker.exe", L"veyon-configurator.exe", L"veyon-server.exe", L"veyon-cli.exe", L"veyon-wcli.exe",
+          L"veyon-service.exe" >,
+        details_::make_const_wstring_list_t< L"VeyonService" > > >;
     template < typename... Backends >
         requires requires {
             requires cpp_utils::as_concept< ( sizeof...( Backends ) != 0 ) >;
