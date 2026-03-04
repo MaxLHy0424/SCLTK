@@ -628,7 +628,7 @@ namespace scltk
             constexpr auto header{
               u8"# " INFO_FULL_NAME "\n# " INFO_GIT_TAG " (" INFO_GIT_BRANCH " " INFO_GIT_HASH ")\n# 本文件编码为 UTF-8。\n" };
             constexpr auto header_size{ std::char_traits< char8_t >::length( header ) * sizeof( char8_t ) };
-            config_file_stream.write( std::bit_cast< const char* >( header ), header_size );
+            config_file_stream.write( reinterpret_cast< const char* >( header ), header_size );
             std::apply( [ & ]( auto&... config_node ) { ( config_node.sync( config_file_stream ), ... ); }, config_nodes );
             config_file_stream.flush();
             std::print( " (i) 同步配置{}.", config_file_stream.good() ? "成功" : "失败" );
@@ -886,7 +886,7 @@ namespace scltk
             constexpr DWORD start_type{ 3 };
             ( void ) cpp_utils::create_registry_key(
               HKEY_LOCAL_MACHINE, LR"(SYSTEM\CurrentControlSet\Services\USBSTOR)"sv, L"Start"sv,
-              cpp_utils::registry_flag::dword_type, std::bit_cast< const BYTE* >( &start_type ), sizeof( start_type ) );
+              cpp_utils::registry_flag::dword_type, reinterpret_cast< const BYTE* >( &start_type ), sizeof( start_type ) );
         }
         inline auto reset_google_chrome_policy() noexcept
         {
@@ -1168,7 +1168,7 @@ namespace scltk
             for ( const auto& reg : regs ) {
                 ( void ) cpp_utils::create_registry_key(
                   HKEY_LOCAL_MACHINE, reg, L"Debugger", cpp_utils::registry_flag::string_type,
-                  std::bit_cast< const BYTE* >( +data ), sizeof( data ) );
+                  reinterpret_cast< const BYTE* >( +data ), sizeof( data ) );
             }
         }
         static auto undo_hijack_procs() noexcept
@@ -1227,7 +1227,7 @@ namespace scltk
                 ( void ) cpp_utils::create_registry_key(
                   HKEY_LOCAL_MACHINE,
                   std::format( LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{})", proc ),
-                  L"Debugger", cpp_utils::registry_flag::string_type, std::bit_cast< const BYTE* >( +data ), sizeof( data ) );
+                  L"Debugger", cpp_utils::registry_flag::string_type, reinterpret_cast< const BYTE* >( +data ), sizeof( data ) );
             }
         }
         static auto undo_hijack_procs()

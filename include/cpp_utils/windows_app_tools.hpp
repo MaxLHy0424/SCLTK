@@ -103,7 +103,7 @@ namespace cpp_utils
               [[likely]]
             {
                 std::pmr::vector< BYTE > buffer( bytes_needed, resource );
-                const auto config{ std::bit_cast< LPQUERY_SERVICE_CONFIGW >( buffer.data() ) };
+                const auto config{ reinterpret_cast< LPQUERY_SERVICE_CONFIGW >( buffer.data() ) };
                 if ( QueryServiceConfigW( service, config, bytes_needed, &bytes_needed ) && config->lpDependencies != nullptr
                      && *config->lpDependencies != L'\0' ) [[likely]]
                 {
@@ -144,7 +144,7 @@ namespace cpp_utils
               [[likely]]
             {
                 std::pmr::vector< BYTE > buffer( bytes_needed, resource );
-                const auto config{ std::bit_cast< LPQUERY_SERVICE_CONFIGW >( buffer.data() ) };
+                const auto config{ reinterpret_cast< LPQUERY_SERVICE_CONFIGW >( buffer.data() ) };
                 if ( QueryServiceConfigW( service, config, bytes_needed, &bytes_needed ) && config->lpDependencies != nullptr
                      && *config->lpDependencies != L'\0' ) [[likely]]
                 {
