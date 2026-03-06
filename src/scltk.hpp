@@ -733,27 +733,31 @@ namespace scltk
         }
         inline auto restore_os_components() noexcept
         {
-            using reg_dirs_t = make_const_wstring_list_t<
-              LR"(Software\Policies\Microsoft\Windows\System)", LR"(Software\Microsoft\Windows\CurrentVersion\Policies\System)",
-              LR"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)", LR"(Software\Policies\Microsoft\MMC)" >;
-            using procs_t = make_const_wstring_list_t<
+            constexpr std::array policy_regs{
+              LR"(Software\Policies\Microsoft\Windows\System)"sv,
+              LR"(Software\Microsoft\Windows\CurrentVersion\Policies\System)"sv,
+              LR"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)"sv, LR"(Software\Policies\Microsoft\MMC)"sv };
+            using execs_t = make_const_wstring_list_t<
               L"tasklist", L"taskkill", L"ntsd", L"sc", L"net", L"reg", L"cmd", L"taskmgr", L"perfmon", L"regedit", L"mmc",
               L"dism", L"sfc", L"netsh", L"sethc", L"sidebar", L"shvlzm", L"winmine", L"bckgzm", L"Chess", L"chkrzm",
               L"FreeCell", L"Hearts", L"Magnify", L"Mahjong", L"Minesweeper", L"PurblePlace", L"Solitaire", L"SpiderSolitaire" >;
+            constexpr auto fifo_regs{
+              []< cpp_utils::const_wstring... Items >(
+                const cpp_utils::type_list< cpp_utils::value_identity< Items >... > ) static consteval noexcept
+            {
+                return std::array< std::wstring_view, sizeof...( Items ) >{ cpp_utils::value_identity_v< cpp_utils::concat_const_string(
+                      LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\)"_cs, Items, L".exe"_cs ) >.view()... };
+            }( execs_t{} ) };
             std::print( " -> 撤销功能禁用.\n" );
-            []< cpp_utils::const_wstring... Items >( const cpp_utils::type_list< cpp_utils::value_identity< Items >... > ) static noexcept
-            { ( ( void ) cpp_utils::delete_registry_tree( HKEY_CURRENT_USER, Items.view() ), ... ); }( reg_dirs_t{} );
+            for ( const auto& policy_reg : policy_regs ) {
+                ( void ) cpp_utils::delete_registry_tree( HKEY_CURRENT_USER, policy_reg );
+            }
             ( void ) cpp_utils::delete_registry_key(
               HKEY_LOCAL_MACHINE, LR"(SOFTWARE\Policies\Microsoft\Windows NT\SystemRestore)"sv, L"DisableSR"sv );
             std::print( " -> 撤销映像劫持.\n" );
-            []< cpp_utils::const_wstring... Items >( const cpp_utils::type_list< cpp_utils::value_identity< Items >... > ) static noexcept
-            {
-                ( ( void ) cpp_utils::delete_registry_tree(
-                    HKEY_LOCAL_MACHINE,
-                    cpp_utils::value_identity_v< cpp_utils::concat_const_string(
-                      LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\)"_cs, Items, L".exe"_cs ) >.view() ),
-                  ... );
-            }( procs_t{} );
+            for ( const auto& fifo_reg : fifo_regs ) {
+                ( void ) cpp_utils::delete_registry_tree( HKEY_LOCAL_MACHINE, fifo_reg );
+            }
         }
         inline auto reset_firewall_rules() noexcept
         {
@@ -865,13 +869,11 @@ namespace scltk
             std::print( " -> 删除配置.\n" );
             ( void ) cpp_utils::delete_registry_tree( HKEY_CURRENT_USER, LR"(Software\jfglzs)"sv );
             std::print( " -> 删除自启动项.\n" );
-            using autorun_items_t = make_const_wstring_list_t< L"jfglzs", L"jfglzsn", L"jfglzsp", L"prozs", L"przs" >;
-            []< cpp_utils::const_wstring... Items >( const cpp_utils::type_list< cpp_utils::value_identity< Items >... > ) static noexcept
-            {
-                ( ( void ) cpp_utils::delete_registry_key(
-                    HKEY_LOCAL_MACHINE, LR"(SOFTWARE\Microsoft\Windows\CurrentVersion\Run)", Items.view() ),
-                  ... );
-            }( autorun_items_t{} );
+            constexpr std::array autorun_items{ L"jfglzs"sv, L"jfglzsn"sv, L"jfglzsp"sv, L"prozs"sv, L"przs"sv };
+            for ( const auto& autorun_item : autorun_items ) {
+                ( void ) cpp_utils::delete_registry_key(
+                  HKEY_LOCAL_MACHINE, LR"(SOFTWARE\Microsoft\Windows\CurrentVersion\Run)", autorun_item );
+            }
         }
         inline auto relaunch_explorer() noexcept
         {
