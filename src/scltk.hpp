@@ -977,7 +977,9 @@ namespace scltk
     inline auto create_parallel_tasks() noexcept
     {
         constexpr std::array parallel_tasks{ details_::enable_translucent, details_::enable_simple_titlebar, details_::force_show };
-        std::apply( []( auto&... funcs ) static noexcept { ( std::thread{ funcs }.detach(), ... ); }, parallel_tasks );
+        for ( const auto& parallel_task : parallel_tasks ) {
+            std::thread{ parallel_task }.detach();
+        }
     }
     namespace details_
     {
