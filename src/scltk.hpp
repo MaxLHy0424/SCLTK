@@ -739,7 +739,7 @@ namespace scltk
               LR"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)"sv, LR"(Software\Policies\Microsoft\MMC)"sv };
             using execs_t = make_const_wstring_list_t<
               L"tasklist", L"taskkill", L"ntsd", L"sc", L"net", L"reg", L"cmd", L"taskmgr", L"perfmon", L"regedit", L"mmc",
-              L"dism", L"sfc", L"netsh", L"sethc", L"sidebar", L"shvlzm", L"winmine", L"bckgzm", L"Chess", L"chkrzm",
+              L"dism", L"sfc", L"netsh", L"sethc", L"sidebar", L"shvlzm", L"winmine", L"bckgzm", L"Chess", L"chkrzm", L"route",
               L"FreeCell", L"Hearts", L"Magnify", L"Mahjong", L"Minesweeper", L"PurblePlace", L"Solitaire", L"SpiderSolitaire" >;
             constexpr auto fifo_regs{
               []< cpp_utils::const_wstring... Items >(
