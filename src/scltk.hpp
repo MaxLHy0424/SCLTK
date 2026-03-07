@@ -7,6 +7,7 @@
 #include <cpp_utils/meta.hpp>
 #include <cpp_utils/windows_app_tools.hpp>
 #include <cpp_utils/windows_console_ui.hpp>
+#include <iphlpapi.h>
 #include <filesystem>
 #include <fstream>
 #include <limits>
@@ -759,6 +760,60 @@ namespace scltk
                 ( void ) cpp_utils::delete_registry_tree( HKEY_LOCAL_MACHINE, fifo_reg );
             }
         }
+        inline auto remove_malicious_route_rules() noexcept
+        {
+            std::print( " -> 移除恶意路由规则.\n" );
+            constexpr auto normal_route{ []( const DWORD ip ) static noexcept
+            {
+                const auto first_byte{ static_cast< BYTE >( ( ip >> 24 ) & 0xFF ) };
+                return ( first_byte == 127 ) || ( first_byte == 224 ) || ( ip == 0xFFFFFFFF ) || ( ip == 0x00000000 );
+            } };
+            constexpr auto private_ip{ []( const DWORD ip ) static noexcept
+            {
+                const auto first_byte{ static_cast< BYTE >( ( ip >> 24 ) & 0xFF ) };
+                const auto second_byte{ static_cast< BYTE >( ( ip >> 16 ) & 0xFF ) };
+                if ( first_byte == 10 ) {
+                    return true;
+                }
+                if ( first_byte == 192 && second_byte == 168 ) {
+                    return true;
+                }
+                if ( first_byte == 169 && second_byte == 254 ) {
+                    return true;
+                }
+                if ( first_byte == 172 ) {
+                    return ( second_byte >= 16 && second_byte <= 31 );
+                }
+                return false;
+            } };
+            constexpr auto deleter{ []( PMIB_IPFORWARDTABLE ptr ) static noexcept { std::free( ptr ); } };
+            std::unique_ptr< std::remove_pointer_t< PMIB_IPFORWARDTABLE >, decltype( deleter ) > p_table{ nullptr };
+            DWORD dw_size{ 0 };
+            if ( GetIpForwardTable( nullptr, &dw_size, 0 ) == ERROR_INSUFFICIENT_BUFFER ) {
+                p_table.reset( static_cast< PMIB_IPFORWARDTABLE >( std::malloc( dw_size ) ) );
+            }
+            if ( p_table == nullptr || GetIpForwardTable( p_table.get(), &dw_size, 0 ) != NO_ERROR ) {
+                return;
+            }
+            std::pmr::vector< DWORD > malicious_indices{ unsynced_mem_pool };
+            malicious_indices.reserve( p_table->dwNumEntries );
+            for ( DWORD i{ 0 }; i < p_table->dwNumEntries; ++i ) {
+                const auto& ip{ p_table->table[ i ] };
+                if ( ip.dwForwardMask == 0xFFFFFFFF && !normal_route( ip.dwForwardDest ) && !private_ip( ip.dwForwardDest ) ) {
+                    malicious_indices.emplace_back( i );
+                }
+            }
+            if ( malicious_indices.empty() ) {
+                return;
+            }
+            std::ranges::sort( malicious_indices, std::ranges::greater{} );
+            for ( const auto& idx : malicious_indices ) {
+                if ( idx >= p_table->dwNumEntries ) {
+                    continue;
+                }
+                DeleteIpForwardEntry( &p_table->table[ idx ] );
+            }
+        }
         inline auto reset_firewall_rules() noexcept
         {
             std::print( " -> 重置防火墙规则.\n" );
@@ -856,6 +911,7 @@ namespace scltk
         }
         inline auto reset_partial_network_settings() noexcept
         {
+            remove_malicious_route_rules();
             reset_firewall_rules();
             reset_hosts();
             flush_dns();
