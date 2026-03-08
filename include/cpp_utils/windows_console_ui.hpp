@@ -2,7 +2,6 @@
 #include <functional>
 #include <memory_resource>
 #include <print>
-#include <ranges>
 #include <string>
 #include <utility>
 #include "compiler.hpp"
