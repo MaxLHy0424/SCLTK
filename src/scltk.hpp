@@ -1112,14 +1112,23 @@ namespace scltk
     template < typename... Backends >
         requires requires {
             requires cpp_utils::as_concept< ( sizeof...( Backends ) != 0 ) >;
+            { ( Backends::run_enable_servs || ... ) } -> std::convertible_to< bool >;
             ( Backends::enable_servs(), ... );
+            { ( Backends::run_disable_servs || ... ) } -> std::convertible_to< bool >;
             ( Backends::disable_servs(), ... );
+            { ( Backends::run_start_servs || ... ) } -> std::convertible_to< bool >;
             ( Backends::start_servs(), ... );
+            { ( Backends::run_stop_servs || ... ) } -> std::convertible_to< bool >;
             ( Backends::stop_servs(), ... );
+            { ( Backends::run_hijack_procs || ... ) } -> std::convertible_to< bool >;
             ( Backends::hijack_procs(), ... );
+            { ( Backends::run_undo_hijack_procs || ... ) } -> std::convertible_to< bool >;
             ( Backends::undo_hijack_procs(), ... );
+            { ( Backends::run_terminate_procs || ... ) } -> std::convertible_to< bool >;
             ( Backends::terminate_procs(), ... );
+            { ( Backends::run_crack_helper || ... ) } -> std::convertible_to< bool >;
             ( Backends::crack_helper(), ... );
+            { ( Backends::run_restore_helper || ... ) } -> std::convertible_to< bool >;
             ( Backends::restore_helper(), ... );
         }
     struct rule_executor final
@@ -1129,38 +1138,119 @@ namespace scltk
             constexpr const auto& options{ std::get< crack_restore_config >( config_nodes ) };
             constexpr const auto& use_hijack_procs{ options.at< "hijack_procs" >() };
             constexpr const auto& use_set_serv_startup_types{ options.at< "set_servs_start_type" >() };
-            if ( use_hijack_procs ) {
-                std::print( " -> 劫持进程.\n" );
-                ( Backends::hijack_procs(), ... );
+            if constexpr ( ( Backends::run_hijack_procs || ... ) ) {
+                if ( use_hijack_procs ) {
+                    std::print( " -> 劫持进程.\n" );
+                    (
+                      []< typename Backend >() static
+                    {
+                        if constexpr ( Backend::run_hijack_procs ) {
+                            Backend::hijack_procs();
+                        }
+                    }.template operator()< Backends >(),
+                      ... );
+                }
             }
-            if ( use_set_serv_startup_types ) {
-                std::print( " -> 禁用服务.\n" );
-                ( Backends::disable_servs(), ... );
+            if constexpr ( ( Backends::run_disable_servs || ... ) ) {
+                if ( use_set_serv_startup_types ) {
+                    std::print( " -> 禁用服务.\n" );
+                    (
+                      []< typename Backend >() static
+                    {
+                        if constexpr ( Backend::run_disable_servs ) {
+                            Backend::disable_servs();
+                        }
+                    }.template operator()< Backends >(),
+                      ... );
+                }
             }
-            std::print( " -> 停止服务.\n" );
-            ( Backends::stop_servs(), ... );
-            std::print( " -> 终止进程.\n" );
-            ( Backends::terminate_procs(), ... );
-            std::print( " -> 执行扩展操作.\n" );
-            ( Backends::crack_helper(), ... );
+            if constexpr ( ( Backends::run_stop_servs || ... ) ) {
+                std::print( " -> 停止服务.\n" );
+                (
+                  []< typename Backend >() static
+                {
+                    if constexpr ( Backend::run_stop_servs ) {
+                        Backend::stop_servs();
+                    }
+                }.template operator()< Backends >(),
+                  ... );
+            }
+            if constexpr ( ( Backends::run_terminate_procs || ... ) ) {
+                std::print( " -> 终止进程.\n" );
+                (
+                  []< typename Backend >() static
+                {
+                    if constexpr ( Backend::run_terminate_procs ) {
+                        Backend::terminate_procs();
+                    }
+                }.template operator()< Backends >(),
+                  ... );
+            }
+            if constexpr ( ( Backends::run_crack_helper || ... ) ) {
+                std::print( " -> 执行扩展操作.\n" );
+                (
+                  []< typename Backend >() static
+                {
+                    if constexpr ( Backend::run_crack_helper ) {
+                        Backend::crack_helper();
+                    }
+                }.template operator()< Backends >(),
+                  ... );
+            }
         }
         static auto restore()
         {
             constexpr const auto& options{ std::get< crack_restore_config >( config_nodes ) };
             constexpr const auto& use_hijack_procs{ options.at< "hijack_procs" >() };
             constexpr const auto& use_set_serv_startup_types{ options.at< "set_servs_start_type" >() };
-            if ( use_hijack_procs ) {
-                std::print( " -> 撤销劫持.\n" );
-                ( Backends::undo_hijack_procs(), ... );
+            if constexpr ( ( Backends::run_undo_hijack_procs || ... ) ) {
+                if ( use_hijack_procs ) {
+                    std::print( " -> 撤销劫持.\n" );
+                    (
+                      []< typename Backend >() static
+                    {
+                        if constexpr ( Backend::run_undo_hijack_procs ) {
+                            Backend::undo_hijack_procs();
+                        }
+                    }.template operator()< Backends >(),
+                      ... );
+                }
             }
-            if ( use_set_serv_startup_types ) {
-                std::print( " -> 启用服务.\n" );
-                ( Backends::enable_servs(), ... );
+            if constexpr ( ( Backends::run_enable_servs || ... ) ) {
+                if ( use_set_serv_startup_types ) {
+                    std::print( " -> 启用服务.\n" );
+                    (
+                      []< typename Backend >() static
+                    {
+                        if constexpr ( Backend::run_enable_servs ) {
+                            Backend::enable_servs();
+                        }
+                    }.template operator()< Backends >(),
+                      ... );
+                }
             }
-            std::print( " -> 启动服务.\n" );
-            ( Backends::start_servs(), ... );
-            std::print( " -> 执行扩展操作.\n" );
-            ( Backends::restore_helper(), ... );
+            if constexpr ( ( Backends::run_start_servs || ... ) ) {
+                std::print( " -> 启动服务.\n" );
+                (
+                  []< typename Backend >() static
+                {
+                    if constexpr ( Backend::run_start_servs ) {
+                        Backend::start_servs();
+                    }
+                }.template operator()< Backends >(),
+                  ... );
+            }
+            if constexpr ( ( Backends::run_restore_helper || ... ) ) {
+                std::print( " -> 执行扩展操作.\n" );
+                (
+                  []< typename Backend >() static
+                {
+                    if constexpr ( Backend::run_restore_helper ) {
+                        Backend::restore_helper();
+                    }
+                }.template operator()< Backends >(),
+                  ... );
+            }
         }
         static auto operator()()
         {
@@ -1198,30 +1288,35 @@ namespace scltk
             return std::array< std::wstring_view, sizeof...( Procs )>{ cpp_utils::value_identity_v< cpp_utils::concat_const_string(
                      LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\)"_cs, Procs ) >.view()... };
         }( typename BuiltinRuleNode::procs{} ) };
+        static inline constexpr auto run_enable_servs{ !servs.empty() };
         static auto enable_servs() noexcept
         {
             for ( const auto& serv : servs ) {
                 ( void ) cpp_utils::set_service_start_type( serv, cpp_utils::service_flag::auto_start );
             }
         }
+        static inline constexpr auto run_disable_servs{ !servs.empty() };
         static auto disable_servs() noexcept
         {
             for ( const auto& serv : servs ) {
                 ( void ) cpp_utils::set_service_start_type( serv, cpp_utils::service_flag::disabled_start );
             }
         }
+        static inline constexpr auto run_start_servs{ !servs.empty() };
         static auto start_servs() noexcept
         {
             for ( const auto& serv : servs ) {
                 ( void ) cpp_utils::start_service_with_dependencies( serv, unsynced_mem_pool );
             }
         }
+        static inline constexpr auto run_stop_servs{ !servs.empty() };
         static auto stop_servs() noexcept
         {
             for ( const auto& serv : servs ) {
                 ( void ) cpp_utils::stop_service_with_dependencies( serv, unsynced_mem_pool );
             }
         }
+        static inline constexpr auto run_hijack_procs{ !regs.empty() };
         static auto hijack_procs() noexcept
         {
             constexpr const auto& data{ L"nul" };
@@ -1231,55 +1326,62 @@ namespace scltk
                   reinterpret_cast< const BYTE* >( +data ), sizeof( data ) );
             }
         }
+        static inline constexpr auto run_undo_hijack_procs{ !regs.empty() };
         static auto undo_hijack_procs() noexcept
         {
             for ( const auto& reg : regs ) {
                 ( void ) cpp_utils::delete_registry_tree( HKEY_LOCAL_MACHINE, reg );
             }
         }
+        static inline constexpr auto run_terminate_procs{ !procs.empty() };
         static auto terminate_procs() noexcept
         {
             ( void ) cpp_utils::terminate_process_by_names( procs );
         }
+        static inline constexpr auto run_crack_helper{
+          !std::is_same_v< decltype( BuiltinRuleNode::crack_helper ), empty_lambda_t > };
         static auto crack_helper()
         {
-            if constexpr ( !std::is_same_v< decltype( BuiltinRuleNode::crack_helper ), empty_lambda_t > ) {
-                BuiltinRuleNode::crack_helper();
-            }
+            BuiltinRuleNode::crack_helper();
         }
+        static inline constexpr auto run_restore_helper{
+          !std::is_same_v< decltype( BuiltinRuleNode::restore_helper ), empty_lambda_t > };
         static auto restore_helper()
         {
-            if constexpr ( !std::is_same_v< decltype( BuiltinRuleNode::restore_helper ), empty_lambda_t > ) {
-                BuiltinRuleNode::restore_helper();
-            }
+            BuiltinRuleNode::restore_helper();
         }
     };
     struct custom_rule_executor_backend final
     {
+        static inline constexpr auto run_enable_servs{ true };
         static auto enable_servs() noexcept
         {
             for ( const auto& serv : custom_rules.servs ) {
                 ( void ) cpp_utils::set_service_start_type( serv, cpp_utils::service_flag::auto_start );
             }
         }
+        static inline constexpr auto run_disable_servs{ true };
         static auto disable_servs() noexcept
         {
             for ( const auto& serv : custom_rules.servs ) {
                 ( void ) cpp_utils::set_service_start_type( serv, cpp_utils::service_flag::disabled_start );
             }
         }
+        static inline constexpr auto run_start_servs{ true };
         static auto start_servs() noexcept
         {
             for ( const auto& serv : custom_rules.servs ) {
                 ( void ) cpp_utils::start_service_with_dependencies( serv, unsynced_mem_pool );
             }
         }
+        static inline constexpr auto run_stop_servs{ true };
         static auto stop_servs() noexcept
         {
             for ( const auto& serv : custom_rules.servs ) {
                 ( void ) cpp_utils::stop_service_with_dependencies( serv, unsynced_mem_pool );
             }
         }
+        static inline constexpr auto run_hijack_procs{ true };
         static auto hijack_procs()
         {
             constexpr const auto& data{ L"nul" };
@@ -1290,6 +1392,7 @@ namespace scltk
                   L"Debugger", cpp_utils::registry_flag::string_type, reinterpret_cast< const BYTE* >( +data ), sizeof( data ) );
             }
         }
+        static inline constexpr auto run_undo_hijack_procs{ true };
         static auto undo_hijack_procs()
         {
             for ( const auto& proc : custom_rules.procs ) {
@@ -1298,6 +1401,7 @@ namespace scltk
                   std::format( LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{})", proc ) );
             }
         }
+        static inline constexpr auto run_terminate_procs{ true };
         static auto terminate_procs() noexcept
         {
             ( void ) cpp_utils::terminate_process_by_names( custom_rules.procs );
@@ -1318,10 +1422,12 @@ namespace scltk
                 }
             }
         }
+        static inline constexpr auto run_crack_helper{ true };
         static auto crack_helper() noexcept
         {
             execute_helpers_( custom_rules.crack_helpers );
         }
+        static inline constexpr auto run_restore_helper{ true };
         static auto restore_helper() noexcept
         {
             execute_helpers_( custom_rules.restore_helpers );
