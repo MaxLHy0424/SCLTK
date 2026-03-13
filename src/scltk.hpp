@@ -746,8 +746,11 @@ namespace scltk
               []< cpp_utils::const_wstring... Items >(
                 const cpp_utils::type_list< cpp_utils::value_identity< Items >... > ) static consteval noexcept
             {
-                return std::array< std::wstring_view, sizeof...( Items ) >{ cpp_utils::value_identity_v< cpp_utils::concat_const_string(
-                      LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\)"_cs, Items, L".exe"_cs ) >.view()... };
+                return std::array< std::wstring_view, sizeof...( Items ) * 2 >{
+                    cpp_utils::value_identity_v< cpp_utils::concat_const_string(
+                      LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\)"_cs, Items, L".exe"_cs ) >.view()...,
+                    cpp_utils::value_identity_v< cpp_utils::concat_const_string(
+                      LR"(SOFTWARE\WOW6432Node\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\)"_cs, Items, L".exe"_cs ) >.view()... };
             }( execs_t{} ) };
             std::print( " -> 撤销功能禁用.\n" );
             for ( const auto& policy_reg : policy_regs ) {
@@ -759,6 +762,15 @@ namespace scltk
             for ( const auto& fifo_reg : fifo_regs ) {
                 ( void ) cpp_utils::delete_registry_tree( HKEY_LOCAL_MACHINE, fifo_reg );
             }
+            std::print( " -> 重置部分系统设置.\n" );
+            constexpr DWORD n{ 1 };
+            ( void ) cpp_utils::delete_registry_key( HKEY_CURRENT_USER, LR"(Control Panel\Desktop)"sv, L"AutoEndTasks"sv );
+            ( void ) cpp_utils::create_registry_key(
+              HKEY_LOCAL_MACHINE, LR"(Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced)"sv, L"ShowTaskViewButton"sv,
+              cpp_utils::registry_flag::dword_type, reinterpret_cast< const BYTE* >( &n ), sizeof( n ) );
+            ( void ) cpp_utils::create_registry_key(
+              HKEY_LOCAL_MACHINE, LR"(SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\Folder\Hidden\SHOWALL)"sv,
+              L"CheckedValue"sv, cpp_utils::registry_flag::dword_type, reinterpret_cast< const BYTE* >( &n ), sizeof( n ) );
         }
         inline auto remove_malicious_route_rules() noexcept
         {
@@ -924,6 +936,10 @@ namespace scltk
             ( void ) cpp_utils::delete_registry_key( HKEY_CURRENT_USER, L"Software"sv, L"n"sv );
             std::print( " -> 删除配置.\n" );
             ( void ) cpp_utils::delete_registry_tree( HKEY_CURRENT_USER, LR"(Software\jfglzs)"sv );
+            ( void ) cpp_utils::delete_registry_key(
+              HKEY_CURRENT_USER, LR"(Software\Microsoft\Windows\CurrentVersion\RunNotification)"sv, L"StartupTNotijfglzsn"sv );
+            ( void ) cpp_utils::delete_registry_key(
+              HKEY_CURRENT_USER, LR"(Software\Microsoft\Windows\CurrentVersion\RunNotification)"sv, L"StartupTNotiprozs"sv );
             std::print( " -> 删除自启动项.\n" );
             constexpr std::array autorun_items{ L"jfglzs"sv, L"jfglzsn"sv, L"jfglzsp"sv, L"prozs"sv, L"przs"sv };
             for ( const auto& autorun_item : autorun_items ) {
@@ -946,15 +962,16 @@ namespace scltk
               HKEY_LOCAL_MACHINE, LR"(SYSTEM\CurrentControlSet\Services\USBSTOR)"sv, L"Start"sv,
               cpp_utils::registry_flag::dword_type, reinterpret_cast< const BYTE* >( &start_type ), sizeof( start_type ) );
         }
-        inline auto reset_google_chrome_policy() noexcept
+        inline auto reset_common_web_browsers_policy() noexcept
         {
             std::print( " -> 删除注册表.\n" );
             ( void ) cpp_utils::delete_registry_tree( HKEY_LOCAL_MACHINE, LR"(SOFTWARE\Policies\Google\Chrome)"sv );
-        }
-        inline auto reset_microsoft_edge_policy() noexcept
-        {
-            std::print( " -> 删除注册表.\n" );
+            ( void ) cpp_utils::delete_registry_tree( HKEY_LOCAL_MACHINE, LR"(SOFTWARE\WOW6432Node\Policies\Google\Chrome)"sv );
             ( void ) cpp_utils::delete_registry_tree( HKEY_LOCAL_MACHINE, LR"(SOFTWARE\Policies\Microsoft\Edge)"sv );
+            ( void ) cpp_utils::delete_registry_tree( HKEY_LOCAL_MACHINE, LR"(SOFTWARE\WOW6432Node\Policies\Microsoft\Edge)"sv );
+            ( void ) cpp_utils::delete_registry_tree( HKEY_LOCAL_MACHINE, LR"(SOFTWARE\Policies\Mozilla\Firefox)"sv );
+            ( void ) cpp_utils::delete_registry_tree(
+              HKEY_LOCAL_MACHINE, LR"(SOFTWARE\WOW6432Node\Policies\Mozilla\Firefox)"sv );
         }
     }
     inline auto toolkit()
@@ -965,8 +982,7 @@ namespace scltk
           details_::func_item< "恢复 USB 存储设备访问", details_::restore_usb_device_access >,
           details_::func_item< "重置部分网络设置", details_::reset_partial_network_settings >,
           details_::func_item< "重置 \"机房管理助手\" 配置", details_::reset_jfglzs_config >,
-          details_::func_item< "重置 Google Chrome 管理策略", details_::reset_google_chrome_policy >,
-          details_::func_item< "重置 Microsoft Edge 管理策略", details_::reset_microsoft_edge_policy > >;
+          details_::func_item< "重置 Chrome & Edge & Firefox 管理策略", details_::reset_common_web_browsers_policy > >;
         cpp_utils::console_ui ui{ con, unsynced_mem_pool };
         ui.reserve( 4 + funcs_t::size )
           .add_back( make_title_text< "[ 工 具 箱 ]", 2 >.view() )
