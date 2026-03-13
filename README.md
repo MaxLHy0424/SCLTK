@@ -171,10 +171,8 @@ restore_helper: "abc helper.exe" restore
 `> 重置部分网络设置`
 - **删除 “机房管理助手” 的密码、配置、自启动项**\
 `> 重置 "机房管理助手" 配置`
-- **通过删除相关注册表来重置 Google Chrome 管理策略**\
-`> 重置 Google Chrome 管理策略`
-- **通过删除相关注册表来重置 Microsoft Edge 管理策略**\
-`> 重置 Microsoft Edge 管理策略`
+- **重置 Google Chrome、Microsoft Edge、Mozilla Firefox 的管理策略**\
+`> 重置 Chrome & Edge & Firefox 管理策略`
 
 ## 5 破解/恢复
 
