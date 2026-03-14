@@ -506,6 +506,17 @@ namespace cpp_utils
     {
         return RegDeleteTreeW( main_key, sub_key.data() );
     }
+    [[nodiscard]] inline auto delete_registry_tree_without_redirect( const HKEY main_key, const std::wstring_view sub_key ) noexcept
+    {
+        HKEY key_handle;
+        auto result{ RegOpenKeyExW( main_key, sub_key.data(), 0, KEY_WRITE | KEY_WOW64_64KEY, &key_handle ) };
+        if ( result != ERROR_SUCCESS ) [[unlikely]] {
+            return result;
+        }
+        result = RegDeleteTreeW( key_handle, nullptr );
+        RegCloseKey( key_handle );
+        return result;
+    }
     [[nodiscard]] inline auto set_service_start_type( const std::wstring_view service_name, const DWORD start_type ) noexcept
     {
         const auto scm{ OpenSCManagerW( nullptr, nullptr, SC_MANAGER_CONNECT ) };
