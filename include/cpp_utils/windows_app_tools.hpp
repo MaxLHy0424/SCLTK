@@ -508,15 +508,7 @@ namespace cpp_utils
     }
     [[nodiscard]] inline auto delete_registry_tree_without_redirect( const HKEY main_key, const std::wstring_view sub_key ) noexcept
     {
-        HKEY key_handle;
-        auto result{ RegOpenKeyExW(
-          main_key, sub_key.data(), 0, DELETE | KEY_ENUMERATE_SUB_KEYS | KEY_QUERY_VALUE | KEY_WOW64_64KEY, &key_handle ) };
-        if ( result != ERROR_SUCCESS ) [[unlikely]] {
-            return result;
-        }
-        result = RegDeleteTreeW( key_handle, nullptr );
-        RegCloseKey( key_handle );
-        return result;
+        return RegDeleteKeyExW( main_key, sub_key.data(), KEY_WOW64_64KEY, 0 );
     }
     [[nodiscard]] inline auto set_service_start_type( const std::wstring_view service_name, const DWORD start_type ) noexcept
     {
