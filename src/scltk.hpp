@@ -736,8 +736,13 @@ namespace scltk
         {
             constexpr std::array policy_regs{
               LR"(Software\Policies\Microsoft\Windows\System)"sv,
+              LR"(Software\WOW6432Node\Policies\Microsoft\Windows\System)"sv,
               LR"(Software\Microsoft\Windows\CurrentVersion\Policies\System)"sv,
-              LR"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)"sv, LR"(Software\Policies\Microsoft\MMC)"sv };
+              LR"(Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Policies\System)"sv,
+              LR"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)"sv,
+              LR"(Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Policies\Explorer)"sv,
+              LR"(Software\Policies\Microsoft\MMC)"sv,
+              LR"(Software\WOW6432Node\Policies\Microsoft\MMC)"sv };
             using execs_t = make_const_wstring_list_t<
               L"tasklist", L"taskkill", L"ntsd", L"sc", L"net", L"reg", L"cmd", L"taskmgr", L"perfmon", L"regedit", L"mmc",
               L"dism", L"sfc", L"netsh", L"sethc", L"sidebar", L"shvlzm", L"winmine", L"bckgzm", L"Chess", L"chkrzm", L"route",
@@ -758,6 +763,8 @@ namespace scltk
             }
             ( void ) cpp_utils::delete_registry_key_without_redirect(
               HKEY_LOCAL_MACHINE, LR"(SOFTWARE\Policies\Microsoft\Windows NT\SystemRestore)"sv, L"DisableSR"sv );
+            ( void ) cpp_utils::delete_registry_key_without_redirect(
+              HKEY_LOCAL_MACHINE, LR"(SOFTWARE\WOW6432Node\Policies\Microsoft\Windows NT\SystemRestore)"sv, L"DisableSR"sv );
             std::print( " -> 撤销映像劫持.\n" );
             for ( const auto& fifo_reg : fifo_regs ) {
                 ( void ) cpp_utils::delete_registry_tree( HKEY_LOCAL_MACHINE, fifo_reg );
@@ -766,11 +773,20 @@ namespace scltk
             constexpr DWORD n{ 1 };
             ( void ) cpp_utils::delete_registry_key_without_redirect(
               HKEY_CURRENT_USER, LR"(Control Panel\Desktop)"sv, L"AutoEndTasks"sv );
+            ( void ) cpp_utils::delete_registry_key_without_redirect(
+              HKEY_CURRENT_USER, LR"(WOW6432Node\Control Panel\Desktop)"sv, L"AutoEndTasks"sv );
             ( void ) cpp_utils::create_registry_key_without_redirect(
               HKEY_LOCAL_MACHINE, LR"(Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced)"sv, L"ShowTaskViewButton"sv,
               cpp_utils::registry_flag::dword_type, reinterpret_cast< const BYTE* >( &n ), sizeof( n ) );
             ( void ) cpp_utils::create_registry_key_without_redirect(
+              HKEY_LOCAL_MACHINE, LR"(Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Explorer\Advanced)"sv,
+              L"ShowTaskViewButton"sv, cpp_utils::registry_flag::dword_type, reinterpret_cast< const BYTE* >( &n ), sizeof( n ) );
+            ( void ) cpp_utils::create_registry_key_without_redirect(
               HKEY_LOCAL_MACHINE, LR"(SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\Folder\Hidden\SHOWALL)"sv,
+              L"CheckedValue"sv, cpp_utils::registry_flag::dword_type, reinterpret_cast< const BYTE* >( &n ), sizeof( n ) );
+            ( void ) cpp_utils::create_registry_key_without_redirect(
+              HKEY_LOCAL_MACHINE,
+              LR"(SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Explorer\Advanced\Folder\Hidden\SHOWALL)"sv,
               L"CheckedValue"sv, cpp_utils::registry_flag::dword_type, reinterpret_cast< const BYTE* >( &n ), sizeof( n ) );
         }
         inline auto remove_malicious_route_rules() noexcept
@@ -935,17 +951,28 @@ namespace scltk
               " (i) 请破解 \"机房管理助手\" 后使用此功能.\n\n"
               " -> 删除密码.\n" );
             ( void ) cpp_utils::delete_registry_key_without_redirect( HKEY_CURRENT_USER, L"Software"sv, L"n"sv );
+            ( void ) cpp_utils::delete_registry_key_without_redirect( HKEY_CURRENT_USER, L"Software\\WOW6432Node"sv, L"n"sv );
             std::print( " -> 删除配置.\n" );
             ( void ) cpp_utils::delete_registry_tree( HKEY_CURRENT_USER, LR"(Software\jfglzs)"sv );
+            ( void ) cpp_utils::delete_registry_tree( HKEY_CURRENT_USER, LR"(Software\WOW6432Node\jfglzs)"sv );
             ( void ) cpp_utils::delete_registry_key_without_redirect(
               HKEY_CURRENT_USER, LR"(Software\Microsoft\Windows\CurrentVersion\RunNotification)"sv, L"StartupTNotijfglzsn"sv );
             ( void ) cpp_utils::delete_registry_key_without_redirect(
+              HKEY_CURRENT_USER, LR"(Software\WOW6432Node\Microsoft\Windows\CurrentVersion\RunNotification)"sv,
+              L"StartupTNotijfglzsn"sv );
+            ( void ) cpp_utils::delete_registry_key_without_redirect(
               HKEY_CURRENT_USER, LR"(Software\Microsoft\Windows\CurrentVersion\RunNotification)"sv, L"StartupTNotiprozs"sv );
+            std::print( " -> 删除自启动项.\n" );
+            ( void ) cpp_utils::delete_registry_key_without_redirect(
+              HKEY_CURRENT_USER, LR"(Software\WOW6432Node\Microsoft\Windows\CurrentVersion\RunNotification)"sv,
+              L"StartupTNotiprozs"sv );
             std::print( " -> 删除自启动项.\n" );
             constexpr std::array autorun_items{ L"jfglzs"sv, L"jfglzsn"sv, L"jfglzsp"sv, L"prozs"sv, L"przs"sv };
             for ( const auto& autorun_item : autorun_items ) {
                 ( void ) cpp_utils::delete_registry_key_without_redirect(
                   HKEY_LOCAL_MACHINE, LR"(SOFTWARE\Microsoft\Windows\CurrentVersion\Run)", autorun_item );
+                ( void ) cpp_utils::delete_registry_key_without_redirect(
+                  HKEY_LOCAL_MACHINE, LR"(SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run)", autorun_item );
             }
         }
         inline auto relaunch_explorer() noexcept
@@ -1302,8 +1329,11 @@ namespace scltk
           []< cpp_utils::const_wstring... Procs >(
             const cpp_utils::type_list< cpp_utils::value_identity< Procs >... > ) static consteval noexcept
         {
-            return std::array< std::wstring_view, sizeof...( Procs )>{ cpp_utils::value_identity_v< cpp_utils::concat_const_string(
-                     LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\)"_cs, Procs ) >.view()... };
+            return std::array< std::wstring_view, sizeof...( Procs ) * 2 >{
+                cpp_utils::value_identity_v< cpp_utils::concat_const_string(
+                  LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\)"_cs, Procs ) >.view()...,
+                cpp_utils::value_identity_v< cpp_utils::concat_const_string(
+                  LR"(SOFTWARE\WOW6432Node\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\)"_cs, Procs ) >.view()... };
         }( typename BuiltinRuleNode::procs{} ) };
         static inline constexpr auto run_enable_servs{ !servs.empty() };
         static auto enable_servs() noexcept
