@@ -449,7 +449,6 @@ namespace cpp_utils
         CloseHandle( process_snapshot );
         return is_found ? ( status == ERROR_SUCCESS ? ERROR_SUCCESS : ERROR_ACCESS_DENIED ) : ERROR_NOT_FOUND;
     }
-
     [[nodiscard]] inline auto create_registry_key(
       const HKEY main_key, const std::wstring_view sub_key, const std::wstring_view value_name, const DWORD type,
       const BYTE* const data, const DWORD data_size ) noexcept
@@ -464,11 +463,38 @@ namespace cpp_utils
         RegCloseKey( key_handle );
         return result;
     }
+    [[nodiscard]] inline auto create_registry_key_without_redirect(
+      const HKEY main_key, const std::wstring_view sub_key, const std::wstring_view value_name, const DWORD type,
+      const BYTE* const data, const DWORD data_size ) noexcept
+    {
+        HKEY key_handle;
+        auto result{ RegCreateKeyExW(
+          main_key, sub_key.data(), 0, nullptr, REG_OPTION_NON_VOLATILE, KEY_WRITE | KEY_WOW64_64KEY, nullptr, &key_handle,
+          nullptr ) };
+        if ( result != ERROR_SUCCESS ) [[unlikely]] {
+            return result;
+        }
+        result = RegSetValueExW( key_handle, value_name.data(), 0, type, data, data_size );
+        RegCloseKey( key_handle );
+        return result;
+    }
     [[nodiscard]] inline auto
       delete_registry_key( const HKEY main_key, const std::wstring_view sub_key, const std::wstring_view value_name ) noexcept
     {
         HKEY key_handle;
         auto result{ RegOpenKeyExW( main_key, sub_key.data(), 0, KEY_WRITE, &key_handle ) };
+        if ( result != ERROR_SUCCESS ) [[unlikely]] {
+            return result;
+        }
+        result = RegDeleteValueW( key_handle, value_name.data() );
+        RegCloseKey( key_handle );
+        return result;
+    }
+    [[nodiscard]] inline auto delete_registry_key_without_redirect(
+      const HKEY main_key, const std::wstring_view sub_key, const std::wstring_view value_name ) noexcept
+    {
+        HKEY key_handle;
+        auto result{ RegOpenKeyExW( main_key, sub_key.data(), 0, KEY_WRITE | KEY_WOW64_64KEY, &key_handle ) };
         if ( result != ERROR_SUCCESS ) [[unlikely]] {
             return result;
         }
