@@ -759,7 +759,7 @@ namespace scltk
             }( execs_t{} ) };
             std::print( " -> 撤销功能禁用.\n" );
             for ( const auto& policy_reg : policy_regs ) {
-                ( void ) cpp_utils::delete_registry_tree( HKEY_CURRENT_USER, policy_reg );
+                ( void ) cpp_utils::delete_registry_tree_without_redirect( HKEY_CURRENT_USER, policy_reg );
             }
             ( void ) cpp_utils::delete_registry_key_without_redirect(
               HKEY_LOCAL_MACHINE, LR"(SOFTWARE\Policies\Microsoft\Windows NT\SystemRestore)"sv, L"DisableSR"sv );
@@ -767,7 +767,7 @@ namespace scltk
               HKEY_LOCAL_MACHINE, LR"(SOFTWARE\WOW6432Node\Policies\Microsoft\Windows NT\SystemRestore)"sv, L"DisableSR"sv );
             std::print( " -> 撤销映像劫持.\n" );
             for ( const auto& fifo_reg : fifo_regs ) {
-                ( void ) cpp_utils::delete_registry_tree( HKEY_LOCAL_MACHINE, fifo_reg );
+                ( void ) cpp_utils::delete_registry_tree_without_redirect( HKEY_LOCAL_MACHINE, fifo_reg );
             }
             std::print( " -> 重置部分系统设置.\n" );
             constexpr DWORD n{ 1 };
@@ -953,8 +953,8 @@ namespace scltk
             ( void ) cpp_utils::delete_registry_key_without_redirect( HKEY_CURRENT_USER, L"Software"sv, L"n"sv );
             ( void ) cpp_utils::delete_registry_key_without_redirect( HKEY_CURRENT_USER, L"Software\\WOW6432Node"sv, L"n"sv );
             std::print( " -> 删除配置.\n" );
-            ( void ) cpp_utils::delete_registry_tree( HKEY_CURRENT_USER, LR"(Software\jfglzs)"sv );
-            ( void ) cpp_utils::delete_registry_tree( HKEY_CURRENT_USER, LR"(Software\WOW6432Node\jfglzs)"sv );
+            ( void ) cpp_utils::delete_registry_tree_without_redirect( HKEY_CURRENT_USER, LR"(Software\jfglzs)"sv );
+            ( void ) cpp_utils::delete_registry_tree_without_redirect( HKEY_CURRENT_USER, LR"(Software\WOW6432Node\jfglzs)"sv );
             ( void ) cpp_utils::delete_registry_key_without_redirect(
               HKEY_CURRENT_USER, LR"(Software\Microsoft\Windows\CurrentVersion\RunNotification)"sv, L"StartupTNotijfglzsn"sv );
             ( void ) cpp_utils::delete_registry_key_without_redirect(
@@ -998,7 +998,7 @@ namespace scltk
               LR"(SOFTWARE\Policies\Microsoft\Edge)"sv,  LR"(SOFTWARE\WOW6432Node\Policies\Microsoft\Edge)"sv,
               LR"(SOFTWARE\Policies\Mozilla\Firefox)"sv, LR"(SOFTWARE\WOW6432Node\Policies\Mozilla\Firefox)"sv };
             for ( const auto& reg : regs ) {
-                ( void ) cpp_utils::delete_registry_tree( HKEY_LOCAL_MACHINE, reg );
+                ( void ) cpp_utils::delete_registry_tree_without_redirect( HKEY_LOCAL_MACHINE, reg );
             }
         }
     }
@@ -1377,7 +1377,7 @@ namespace scltk
         static auto undo_hijack_procs() noexcept
         {
             for ( const auto& reg : regs ) {
-                ( void ) cpp_utils::delete_registry_tree( HKEY_LOCAL_MACHINE, reg );
+                ( void ) cpp_utils::delete_registry_tree_without_redirect( HKEY_LOCAL_MACHINE, reg );
             }
         }
         static inline constexpr auto run_terminate_procs{ !procs.empty() };
@@ -1443,7 +1443,7 @@ namespace scltk
         static auto undo_hijack_procs()
         {
             for ( const auto& proc : custom_rules.procs ) {
-                ( void ) cpp_utils::delete_registry_tree(
+                ( void ) cpp_utils::delete_registry_tree_without_redirect(
                   HKEY_LOCAL_MACHINE,
                   std::format( LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{})", proc ) );
             }
