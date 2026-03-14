@@ -965,13 +965,13 @@ namespace scltk
         inline auto reset_common_web_browsers_policy() noexcept
         {
             std::print( " -> 删除注册表.\n" );
-            ( void ) cpp_utils::delete_registry_tree( HKEY_LOCAL_MACHINE, LR"(SOFTWARE\Policies\Google\Chrome)"sv );
-            ( void ) cpp_utils::delete_registry_tree( HKEY_LOCAL_MACHINE, LR"(SOFTWARE\WOW6432Node\Policies\Google\Chrome)"sv );
-            ( void ) cpp_utils::delete_registry_tree( HKEY_LOCAL_MACHINE, LR"(SOFTWARE\Policies\Microsoft\Edge)"sv );
-            ( void ) cpp_utils::delete_registry_tree( HKEY_LOCAL_MACHINE, LR"(SOFTWARE\WOW6432Node\Policies\Microsoft\Edge)"sv );
-            ( void ) cpp_utils::delete_registry_tree( HKEY_LOCAL_MACHINE, LR"(SOFTWARE\Policies\Mozilla\Firefox)"sv );
-            ( void ) cpp_utils::delete_registry_tree(
-              HKEY_LOCAL_MACHINE, LR"(SOFTWARE\WOW6432Node\Policies\Mozilla\Firefox)"sv );
+            constexpr std::array regs{
+              LR"(SOFTWARE\Policies\Google\Chrome)"sv,   LR"(SOFTWARE\WOW6432Node\Policies\Google\Chrome)"sv,
+              LR"(SOFTWARE\Policies\Microsoft\Edge)"sv,  LR"(SOFTWARE\WOW6432Node\Policies\Microsoft\Edge)"sv,
+              LR"(SOFTWARE\Policies\Mozilla\Firefox)"sv, LR"(SOFTWARE\WOW6432Node\Policies\Mozilla\Firefox)"sv };
+            for ( const auto& reg : regs ) {
+                ( void ) cpp_utils::delete_registry_tree( HKEY_LOCAL_MACHINE, reg );
+            }
         }
     }
     inline auto toolkit()
