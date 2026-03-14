@@ -756,7 +756,7 @@ namespace scltk
             for ( const auto& policy_reg : policy_regs ) {
                 ( void ) cpp_utils::delete_registry_tree( HKEY_CURRENT_USER, policy_reg );
             }
-            ( void ) cpp_utils::delete_registry_key(
+            ( void ) cpp_utils::delete_registry_key_without_redirect(
               HKEY_LOCAL_MACHINE, LR"(SOFTWARE\Policies\Microsoft\Windows NT\SystemRestore)"sv, L"DisableSR"sv );
             std::print( " -> 撤销映像劫持.\n" );
             for ( const auto& fifo_reg : fifo_regs ) {
@@ -764,11 +764,12 @@ namespace scltk
             }
             std::print( " -> 重置部分系统设置.\n" );
             constexpr DWORD n{ 1 };
-            ( void ) cpp_utils::delete_registry_key( HKEY_CURRENT_USER, LR"(Control Panel\Desktop)"sv, L"AutoEndTasks"sv );
-            ( void ) cpp_utils::create_registry_key(
+            ( void ) cpp_utils::delete_registry_key_without_redirect(
+              HKEY_CURRENT_USER, LR"(Control Panel\Desktop)"sv, L"AutoEndTasks"sv );
+            ( void ) cpp_utils::create_registry_key_without_redirect(
               HKEY_LOCAL_MACHINE, LR"(Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced)"sv, L"ShowTaskViewButton"sv,
               cpp_utils::registry_flag::dword_type, reinterpret_cast< const BYTE* >( &n ), sizeof( n ) );
-            ( void ) cpp_utils::create_registry_key(
+            ( void ) cpp_utils::create_registry_key_without_redirect(
               HKEY_LOCAL_MACHINE, LR"(SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\Folder\Hidden\SHOWALL)"sv,
               L"CheckedValue"sv, cpp_utils::registry_flag::dword_type, reinterpret_cast< const BYTE* >( &n ), sizeof( n ) );
         }
@@ -933,17 +934,17 @@ namespace scltk
             std::print(
               " (i) 请破解 \"机房管理助手\" 后使用此功能.\n\n"
               " -> 删除密码.\n" );
-            ( void ) cpp_utils::delete_registry_key( HKEY_CURRENT_USER, L"Software"sv, L"n"sv );
+            ( void ) cpp_utils::delete_registry_key_without_redirect( HKEY_CURRENT_USER, L"Software"sv, L"n"sv );
             std::print( " -> 删除配置.\n" );
             ( void ) cpp_utils::delete_registry_tree( HKEY_CURRENT_USER, LR"(Software\jfglzs)"sv );
-            ( void ) cpp_utils::delete_registry_key(
+            ( void ) cpp_utils::delete_registry_key_without_redirect(
               HKEY_CURRENT_USER, LR"(Software\Microsoft\Windows\CurrentVersion\RunNotification)"sv, L"StartupTNotijfglzsn"sv );
-            ( void ) cpp_utils::delete_registry_key(
+            ( void ) cpp_utils::delete_registry_key_without_redirect(
               HKEY_CURRENT_USER, LR"(Software\Microsoft\Windows\CurrentVersion\RunNotification)"sv, L"StartupTNotiprozs"sv );
             std::print( " -> 删除自启动项.\n" );
             constexpr std::array autorun_items{ L"jfglzs"sv, L"jfglzsn"sv, L"jfglzsp"sv, L"prozs"sv, L"przs"sv };
             for ( const auto& autorun_item : autorun_items ) {
-                ( void ) cpp_utils::delete_registry_key(
+                ( void ) cpp_utils::delete_registry_key_without_redirect(
                   HKEY_LOCAL_MACHINE, LR"(SOFTWARE\Microsoft\Windows\CurrentVersion\Run)", autorun_item );
             }
         }
@@ -958,7 +959,7 @@ namespace scltk
         {
             std::print( " -> 写入注册表.\n" );
             constexpr DWORD start_type{ 3 };
-            ( void ) cpp_utils::create_registry_key(
+            ( void ) cpp_utils::create_registry_key_without_redirect(
               HKEY_LOCAL_MACHINE, LR"(SYSTEM\CurrentControlSet\Services\USBSTOR)"sv, L"Start"sv,
               cpp_utils::registry_flag::dword_type, reinterpret_cast< const BYTE* >( &start_type ), sizeof( start_type ) );
         }
@@ -1337,7 +1338,7 @@ namespace scltk
         {
             constexpr const auto& data{ L"nul" };
             for ( const auto& reg : regs ) {
-                ( void ) cpp_utils::create_registry_key(
+                ( void ) cpp_utils::create_registry_key_without_redirect(
                   HKEY_LOCAL_MACHINE, reg, L"Debugger", cpp_utils::registry_flag::string_type,
                   reinterpret_cast< const BYTE* >( +data ), sizeof( data ) );
             }
@@ -1402,7 +1403,7 @@ namespace scltk
         {
             constexpr const auto& data{ L"nul" };
             for ( const auto& proc : custom_rules.procs ) {
-                ( void ) cpp_utils::create_registry_key(
+                ( void ) cpp_utils::create_registry_key_without_redirect(
                   HKEY_LOCAL_MACHINE,
                   std::format( LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{})", proc ),
                   L"Debugger", cpp_utils::registry_flag::string_type, reinterpret_cast< const BYTE* >( +data ), sizeof( data ) );
