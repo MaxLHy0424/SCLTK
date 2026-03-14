@@ -98,8 +98,6 @@ clean:
 	@$(cmd_echo) "Cleaning..."
 	@/usr/bin/rm -rf build
 	@/usr/bin/rm -rf src/info.hpp
-	@/usr/bin/mkdir build
-	@/usr/bin/touch build/.nothing
 build/debug/__debug__.exe: $(dep_test) \
                            build/debug/.nothing
 	@$(cmd_echo) "Compiling '$@'..."
