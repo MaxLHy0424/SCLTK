@@ -482,7 +482,7 @@ namespace cpp_utils
       delete_registry_key( const HKEY main_key, const std::wstring_view sub_key, const std::wstring_view value_name ) noexcept
     {
         HKEY key_handle;
-        auto result{ RegOpenKeyExW( main_key, sub_key.data(), 0, KEY_WRITE, &key_handle ) };
+        auto result{ RegOpenKeyExW( main_key, sub_key.data(), 0, KEY_SET_VALUE, &key_handle ) };
         if ( result != ERROR_SUCCESS ) [[unlikely]] {
             return result;
         }
@@ -494,7 +494,7 @@ namespace cpp_utils
       const HKEY main_key, const std::wstring_view sub_key, const std::wstring_view value_name ) noexcept
     {
         HKEY key_handle;
-        auto result{ RegOpenKeyExW( main_key, sub_key.data(), 0, KEY_WRITE | KEY_WOW64_64KEY, &key_handle ) };
+        auto result{ RegOpenKeyExW( main_key, sub_key.data(), 0, KEY_SET_VALUE | KEY_WOW64_64KEY, &key_handle ) };
         if ( result != ERROR_SUCCESS ) [[unlikely]] {
             return result;
         }
@@ -509,7 +509,8 @@ namespace cpp_utils
     [[nodiscard]] inline auto delete_registry_tree_without_redirect( const HKEY main_key, const std::wstring_view sub_key ) noexcept
     {
         HKEY key_handle;
-        auto result{ RegOpenKeyExW( main_key, sub_key.data(), 0, KEY_WRITE | KEY_WOW64_64KEY, &key_handle ) };
+        auto result{ RegOpenKeyExW(
+          main_key, sub_key.data(), 0, DELETE | KEY_ENUMERATE_SUB_KEYS | KEY_QUERY_VALUE | KEY_WOW64_64KEY, &key_handle ) };
         if ( result != ERROR_SUCCESS ) [[unlikely]] {
             return result;
         }
