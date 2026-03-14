@@ -954,24 +954,21 @@ namespace scltk
             std::print( " -> 删除配置.\n" );
             ( void ) cpp_utils::delete_registry_tree_without_redirect( HKEY_CURRENT_USER, LR"(Software\jfglzs)"sv );
             ( void ) cpp_utils::delete_registry_tree_without_redirect( HKEY_CURRENT_USER, LR"(Software\WOW6432Node\jfglzs)"sv );
-            ( void ) cpp_utils::delete_registry_key_without_redirect(
-              HKEY_CURRENT_USER, LR"(Software\Microsoft\Windows\CurrentVersion\RunNotification)"sv, L"StartupTNotijfglzsn"sv );
-            ( void ) cpp_utils::delete_registry_key_without_redirect(
-              HKEY_CURRENT_USER, LR"(Software\WOW6432Node\Microsoft\Windows\CurrentVersion\RunNotification)"sv,
-              L"StartupTNotijfglzsn"sv );
-            ( void ) cpp_utils::delete_registry_key_without_redirect(
-              HKEY_CURRENT_USER, LR"(Software\Microsoft\Windows\CurrentVersion\RunNotification)"sv, L"StartupTNotiprozs"sv );
-            std::print( " -> 删除自启动项.\n" );
-            ( void ) cpp_utils::delete_registry_key_without_redirect(
-              HKEY_CURRENT_USER, LR"(Software\WOW6432Node\Microsoft\Windows\CurrentVersion\RunNotification)"sv,
-              L"StartupTNotiprozs"sv );
             std::print( " -> 删除自启动项.\n" );
             constexpr std::array autorun_items{ L"jfglzs"sv, L"jfglzsn"sv, L"jfglzsp"sv, L"prozs"sv, L"przs"sv };
+            constexpr std::array notification_items{ L"StartupTNotijfglzsn"sv, L"StartupTNotiprozs"sv };
             for ( const auto& autorun_item : autorun_items ) {
                 ( void ) cpp_utils::delete_registry_key_without_redirect(
                   HKEY_LOCAL_MACHINE, LR"(SOFTWARE\Microsoft\Windows\CurrentVersion\Run)", autorun_item );
                 ( void ) cpp_utils::delete_registry_key_without_redirect(
                   HKEY_LOCAL_MACHINE, LR"(SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run)", autorun_item );
+            }
+            for ( const auto& notification_item : notification_items ) {
+                ( void ) cpp_utils::delete_registry_key_without_redirect(
+                  HKEY_CURRENT_USER, LR"(Software\Microsoft\Windows\CurrentVersion\RunNotification)"sv, notification_item );
+                ( void ) cpp_utils::delete_registry_key_without_redirect(
+                  HKEY_CURRENT_USER, LR"(Software\WOW6432Node\Microsoft\Windows\CurrentVersion\RunNotification)"sv,
+                  notification_item );
             }
         }
         inline auto relaunch_explorer() noexcept
