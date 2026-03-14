@@ -26,6 +26,9 @@ if ($contains_uncommitted_changes -eq $false ) {
 else {
     $git_hash = "<work in progress>"
 }
+if (-not (Test-Path "build")) {
+    New-Item -Path "build" -ItemType Directory
+}
 @"
 #pragma once
 #define INFO_FULL_NAME  "$software_full_name"
