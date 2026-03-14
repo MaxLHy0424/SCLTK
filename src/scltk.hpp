@@ -734,15 +734,6 @@ namespace scltk
         }
         inline auto restore_os_components() noexcept
         {
-            constexpr std::array policy_regs{
-              LR"(Software\Policies\Microsoft\Windows\System)"sv,
-              LR"(Software\WOW6432Node\Policies\Microsoft\Windows\System)"sv,
-              LR"(Software\Microsoft\Windows\CurrentVersion\Policies\System)"sv,
-              LR"(Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Policies\System)"sv,
-              LR"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)"sv,
-              LR"(Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Policies\Explorer)"sv,
-              LR"(Software\Policies\Microsoft\MMC)"sv,
-              LR"(Software\WOW6432Node\Policies\Microsoft\MMC)"sv };
             using execs_t = make_const_wstring_list_t<
               L"tasklist", L"taskkill", L"ntsd", L"sc", L"net", L"reg", L"cmd", L"taskmgr", L"perfmon", L"regedit", L"mmc",
               L"dism", L"sfc", L"netsh", L"sethc", L"sidebar", L"shvlzm", L"winmine", L"bckgzm", L"Chess", L"chkrzm", L"route",
@@ -757,37 +748,45 @@ namespace scltk
                     cpp_utils::value_identity_v< cpp_utils::concat_const_string(
                       LR"(SOFTWARE\WOW6432Node\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\)"_cs, Items, L".exe"_cs ) >.view()... };
             }( execs_t{} ) };
-            std::print( " -> 撤销功能禁用.\n" );
-            for ( const auto& policy_reg : policy_regs ) {
-                ( void ) cpp_utils::delete_registry_tree_without_redirect( HKEY_CURRENT_USER, policy_reg );
-            }
-            ( void ) cpp_utils::delete_registry_key_without_redirect(
-              HKEY_LOCAL_MACHINE, LR"(SOFTWARE\Policies\Microsoft\Windows NT\SystemRestore)"sv, L"DisableSR"sv );
-            ( void ) cpp_utils::delete_registry_key_without_redirect(
-              HKEY_LOCAL_MACHINE, LR"(SOFTWARE\WOW6432Node\Policies\Microsoft\Windows NT\SystemRestore)"sv, L"DisableSR"sv );
+            constexpr std::array policy_key_regs{
+              LR"(Software\Policies\Microsoft\Windows\System)"sv,
+              LR"(Software\WOW6432Node\Policies\Microsoft\Windows\System)"sv,
+              LR"(Software\Microsoft\Windows\CurrentVersion\Policies\System)"sv,
+              LR"(Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Policies\System)"sv,
+              LR"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)"sv,
+              LR"(Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Policies\Explorer)"sv,
+              LR"(Software\Policies\Microsoft\MMC)"sv,
+              LR"(Software\WOW6432Node\Policies\Microsoft\MMC)"sv };
+            constexpr std::pair< std::wstring_view, std::wstring_view > policy_value_regs[]{
+              {LR"(SOFTWARE\Policies\Microsoft\Windows NT\SystemRestore)"sv,             L"DisableSR"sv   },
+              {LR"(SOFTWARE\WOW6432Node\Policies\Microsoft\Windows NT\SystemRestore)"sv, L"DisableSR"sv   },
+              {LR"(Control Panel\Desktop)"sv,                                            L"AutoEndTasks"sv},
+              {LR"(WOW6432Node\Control Panel\Desktop)"sv,                                L"AutoEndTasks"sv}
+            };
+            constexpr std::pair< std::wstring_view, std::wstring_view > need_enabled_regs[]{
+              {LR"(Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced)"sv,                                   L"ShowTaskViewButton"sv},
+              {LR"(Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Explorer\Advanced)"sv,                       L"ShowTaskViewButton"sv},
+              {LR"(SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\Folder\Hidden\SHOWALL)"sv,             L"CheckedValue"sv      },
+              {LR"(SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Explorer\Advanced\Folder\Hidden\SHOWALL)"sv,
+               L"CheckedValue"sv                                                                                                             }
+            };
+            constexpr DWORD need_enabled_reg_value{ 1 };
             std::print( " -> 撤销映像劫持.\n" );
             for ( const auto& fifo_reg : fifo_regs ) {
                 ( void ) cpp_utils::delete_registry_tree_without_redirect( HKEY_LOCAL_MACHINE, fifo_reg );
             }
-            std::print( " -> 重置部分系统设置.\n" );
-            constexpr DWORD n{ 1 };
-            ( void ) cpp_utils::delete_registry_key_without_redirect(
-              HKEY_CURRENT_USER, LR"(Control Panel\Desktop)"sv, L"AutoEndTasks"sv );
-            ( void ) cpp_utils::delete_registry_key_without_redirect(
-              HKEY_CURRENT_USER, LR"(WOW6432Node\Control Panel\Desktop)"sv, L"AutoEndTasks"sv );
-            ( void ) cpp_utils::create_registry_key_without_redirect(
-              HKEY_LOCAL_MACHINE, LR"(Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced)"sv, L"ShowTaskViewButton"sv,
-              cpp_utils::registry_flag::dword_type, reinterpret_cast< const BYTE* >( &n ), sizeof( n ) );
-            ( void ) cpp_utils::create_registry_key_without_redirect(
-              HKEY_LOCAL_MACHINE, LR"(Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Explorer\Advanced)"sv,
-              L"ShowTaskViewButton"sv, cpp_utils::registry_flag::dword_type, reinterpret_cast< const BYTE* >( &n ), sizeof( n ) );
-            ( void ) cpp_utils::create_registry_key_without_redirect(
-              HKEY_LOCAL_MACHINE, LR"(SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\Folder\Hidden\SHOWALL)"sv,
-              L"CheckedValue"sv, cpp_utils::registry_flag::dword_type, reinterpret_cast< const BYTE* >( &n ), sizeof( n ) );
-            ( void ) cpp_utils::create_registry_key_without_redirect(
-              HKEY_LOCAL_MACHINE,
-              LR"(SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Explorer\Advanced\Folder\Hidden\SHOWALL)"sv,
-              L"CheckedValue"sv, cpp_utils::registry_flag::dword_type, reinterpret_cast< const BYTE* >( &n ), sizeof( n ) );
+            std::print( " -> 撤销功能禁用.\n" );
+            for ( const auto& policy_reg : policy_key_regs ) {
+                ( void ) cpp_utils::delete_registry_tree_without_redirect( HKEY_CURRENT_USER, policy_reg );
+            }
+            for ( const auto& [ key, value ] : policy_value_regs ) {
+                ( void ) cpp_utils::delete_registry_key_without_redirect( HKEY_LOCAL_MACHINE, key, value );
+            }
+            for ( const auto& [ key, value ] : need_enabled_regs ) {
+                ( void ) cpp_utils::create_registry_key_without_redirect(
+                  HKEY_LOCAL_MACHINE, key, value, cpp_utils::registry_flag::dword_type,
+                  reinterpret_cast< const BYTE* >( &need_enabled_reg_value ), sizeof( need_enabled_reg_value ) );
+            }
         }
         inline auto remove_malicious_route_rules() noexcept
         {
