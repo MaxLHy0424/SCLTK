@@ -811,18 +811,18 @@ namespace scltk
                 return false;
             } };
             constexpr auto deleter{ []( PMIB_IPFORWARDTABLE ptr ) static noexcept { std::free( ptr ); } };
-            std::unique_ptr< std::remove_pointer_t< PMIB_IPFORWARDTABLE >, decltype( deleter ) > p_table{ nullptr };
-            DWORD dw_size{ 0 };
-            if ( GetIpForwardTable( nullptr, &dw_size, 0 ) == ERROR_INSUFFICIENT_BUFFER ) {
-                p_table.reset( static_cast< PMIB_IPFORWARDTABLE >( std::malloc( dw_size ) ) );
+            std::unique_ptr< std::remove_pointer_t< PMIB_IPFORWARDTABLE >, decltype( deleter ) > route_table{ nullptr };
+            DWORD route_table_size{ 0 };
+            if ( GetIpForwardTable( nullptr, &route_table_size, 0 ) == ERROR_INSUFFICIENT_BUFFER ) {
+                route_table.reset( static_cast< PMIB_IPFORWARDTABLE >( std::malloc( route_table_size ) ) );
             }
-            if ( p_table == nullptr || GetIpForwardTable( p_table.get(), &dw_size, 0 ) != NO_ERROR ) {
+            if ( route_table == nullptr || GetIpForwardTable( route_table.get(), &route_table_size, 0 ) != NO_ERROR ) {
                 return;
             }
             std::pmr::vector< DWORD > malicious_indices{ unsynced_mem_pool };
-            malicious_indices.reserve( p_table->dwNumEntries );
-            for ( DWORD i{ 0 }; i < p_table->dwNumEntries; ++i ) {
-                const auto& ip{ p_table->table[ i ] };
+            malicious_indices.reserve( route_table->dwNumEntries );
+            for ( DWORD i{ 0 }; i < route_table->dwNumEntries; ++i ) {
+                const auto& ip{ route_table->table[ i ] };
                 if ( ip.dwForwardMask == 0xFFFFFFFF && !normal_route( ip.dwForwardDest ) && !private_ip( ip.dwForwardDest ) ) {
                     malicious_indices.emplace_back( i );
                 }
@@ -832,10 +832,10 @@ namespace scltk
             }
             std::ranges::sort( malicious_indices, std::ranges::greater{} );
             for ( const auto& idx : malicious_indices ) {
-                if ( idx >= p_table->dwNumEntries ) {
+                if ( idx >= route_table->dwNumEntries ) {
                     continue;
                 }
-                DeleteIpForwardEntry( &p_table->table[ idx ] );
+                DeleteIpForwardEntry( &route_table->table[ idx ] );
             }
         }
         inline auto reset_firewall_rules() noexcept
@@ -890,7 +890,7 @@ namespace scltk
               "# localhost name resolution is handled within DNS itself.\n"
               "# 127.0.0.1       localhost\n"
               "# ::1             localhost\n" };
-            constexpr const auto& reset_hosts_error_message{ "\n (!) 重置 Hosts 失败.\n\n" };
+            constexpr auto reset_hosts_error_message{ "\n (!) 重置 Hosts 失败.\n\n"sv };
             const auto hosts_path{ [] static
             {
                 std::array< wchar_t, MAX_PATH > result;
@@ -915,7 +915,7 @@ namespace scltk
         }
         inline auto flush_dns() noexcept
         {
-            constexpr auto flush_dns_error_message{ "\n (!) 刷新 DNS 失败.\n\n" };
+            constexpr auto flush_dns_error_message{ "\n (!) 刷新 DNS 失败.\n\n"sv };
             std::print( " -> 刷新 DNS 缓存.\n" );
             const auto dnsapi{ LoadLibraryW( L"dnsapi.dll" ) };
             if ( dnsapi == nullptr ) [[unlikely]] {
