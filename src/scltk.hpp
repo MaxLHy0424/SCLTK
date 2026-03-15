@@ -1321,7 +1321,7 @@ namespace scltk
           []< cpp_utils::const_wstring... Servs >(
             const cpp_utils::type_list< cpp_utils::value_identity< Servs >... > ) static consteval noexcept
         { return std::array< std::wstring_view, sizeof...( Servs ) >{ Servs.view()... }; }( typename BuiltinRuleNode::servs{} ) };
-        static inline constexpr auto regs{
+        static inline constexpr auto fifo_regs{
           []< cpp_utils::const_wstring... Procs >(
             const cpp_utils::type_list< cpp_utils::value_identity< Procs >... > ) static consteval noexcept
         {
@@ -1359,20 +1359,20 @@ namespace scltk
                 ( void ) cpp_utils::stop_service_with_dependencies( serv, unsynced_mem_pool );
             }
         }
-        static inline constexpr auto run_hijack_procs{ !regs.empty() };
+        static inline constexpr auto run_hijack_procs{ !fifo_regs.empty() };
         static auto hijack_procs() noexcept
         {
-            constexpr const auto& data{ L"nul" };
-            for ( const auto& reg : regs ) {
+            constexpr const auto& value{ L"nul" };
+            for ( const auto& reg : fifo_regs ) {
                 ( void ) cpp_utils::create_registry_key_without_redirect(
                   HKEY_LOCAL_MACHINE, reg, L"Debugger", cpp_utils::registry_flag::string_type,
-                  reinterpret_cast< const BYTE* >( +data ), sizeof( data ) );
+                  reinterpret_cast< const BYTE* >( +value ), sizeof( value ) );
             }
         }
-        static inline constexpr auto run_undo_hijack_procs{ !regs.empty() };
+        static inline constexpr auto run_undo_hijack_procs{ !fifo_regs.empty() };
         static auto undo_hijack_procs() noexcept
         {
-            for ( const auto& reg : regs ) {
+            for ( const auto& reg : fifo_regs ) {
                 ( void ) cpp_utils::delete_registry_tree_without_redirect( HKEY_LOCAL_MACHINE, reg );
             }
         }
@@ -1427,12 +1427,12 @@ namespace scltk
         static inline constexpr auto run_hijack_procs{ true };
         static auto hijack_procs()
         {
-            constexpr const auto& data{ L"nul" };
+            constexpr const auto& value{ L"nul" };
             for ( const auto& proc : custom_rules.procs ) {
                 ( void ) cpp_utils::create_registry_key_without_redirect(
                   HKEY_LOCAL_MACHINE,
                   std::format( LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{})", proc ),
-                  L"Debugger", cpp_utils::registry_flag::string_type, reinterpret_cast< const BYTE* >( +data ), sizeof( data ) );
+                  L"Debugger", cpp_utils::registry_flag::string_type, reinterpret_cast< const BYTE* >( +value ), sizeof( value ) );
             }
         }
         static inline constexpr auto run_undo_hijack_procs{ true };
