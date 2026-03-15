@@ -1297,12 +1297,10 @@ namespace scltk
             switch ( details_::current_rule_executor_mode ) {
                 case details_::rule_executor_mode::crack : std::print( make_title_text< "[ 破  解 ]", 3 >.view() ); break;
                 case details_::rule_executor_mode::restore : std::print( make_title_text< "[ 恢  复 ]", 3 >.view() ); break;
-                default : std::unreachable();
             }
             switch ( details_::current_rule_executor_mode ) {
                 case details_::rule_executor_mode::crack : crack(); break;
                 case details_::rule_executor_mode::restore : restore(); break;
-                default : std::unreachable();
             }
             std::print( "\n (i) 操作已完成." );
             details_::press_any_key_to_return();
@@ -1483,7 +1481,6 @@ namespace scltk
         switch ( details_::current_rule_executor_mode ) {
             case details_::rule_executor_mode::crack : return "[ 破解 (点击切换) ]\n"sv;
             case details_::rule_executor_mode::restore : return "[ 恢复 (点击切换) ]\n"sv;
-            default : std::unreachable();
         }
     }
     inline auto flip_executor_mode( const ui_func_args_t args ) noexcept
@@ -1495,7 +1492,6 @@ namespace scltk
             case details_::rule_executor_mode::restore :
                 details_::current_rule_executor_mode = details_::rule_executor_mode::crack;
                 break;
-            default : std::unreachable();
         }
         args.parent_ui.set_text( args.node_index, make_executor_mode_ui_text() );
         return func_back;
