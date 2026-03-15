@@ -1427,6 +1427,10 @@ namespace scltk
                   HKEY_LOCAL_MACHINE,
                   std::format( LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{})", proc ),
                   L"Debugger", cpp_utils::registry_flag::string_type, reinterpret_cast< const BYTE* >( +value ), sizeof( value ) );
+                ( void ) cpp_utils::create_registry_key_without_redirect(
+                  HKEY_LOCAL_MACHINE,
+                  std::format( LR"(SOFTWARE\WOW6432Node\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{})", proc ),
+                  L"Debugger", cpp_utils::registry_flag::string_type, reinterpret_cast< const BYTE* >( +value ), sizeof( value ) );
             }
         }
         static inline constexpr auto run_undo_hijack_procs{ true };
@@ -1436,6 +1440,10 @@ namespace scltk
                 ( void ) cpp_utils::delete_registry_tree_without_redirect(
                   HKEY_LOCAL_MACHINE,
                   std::format( LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{})", proc ) );
+                ( void ) cpp_utils::delete_registry_tree_without_redirect(
+                  HKEY_LOCAL_MACHINE,
+                  std::format(
+                    LR"(SOFTWARE\WOW6432Node\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{})", proc ) );
             }
         }
         static inline constexpr auto run_terminate_procs{ true };
