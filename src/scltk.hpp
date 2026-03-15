@@ -44,11 +44,11 @@ namespace scltk
         return func_exit;
     }
     template < cpp_utils::const_string Title, std::size_t NewLineCount >
-    inline constexpr auto make_title_text{ cpp_utils::concat_const_string(
+    inline constexpr auto make_middle_text{ cpp_utils::concat_const_string(
       cpp_utils::make_repeated_const_string< ' ', ( static_cast< std::size_t >( console_width ) - Title.size() + 1 ) / 2 >(),
       Title, cpp_utils::make_repeated_const_string< '\n', NewLineCount >() ) };
     template < cpp_utils::const_string Text >
-    inline constexpr auto make_button_text{ cpp_utils::concat_const_string( " > "_cs, Text, " "_cs ) };
+    inline constexpr auto make_item_text{ cpp_utils::concat_const_string( " > "_cs, Text, " "_cs ) };
     namespace details_
     {
         inline auto press_any_key_to_return() noexcept
@@ -340,7 +340,7 @@ namespace scltk
             {
                 cpp_utils::console_ui ui{ con, unsynced_mem_pool };
                 ui.reserve( 2 + data_.size() * 2 )
-                  .add_back( make_title_text< "[ 配  置 ]", 2 >.view() )
+                  .add_back( make_middle_text< "[ 配  置 ]", 2 >.view() )
                   .add_back(
                     " < 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity );
                 [ & ]< std::size_t... Is >( const std::index_sequence< Is... > )
@@ -359,7 +359,7 @@ namespace scltk
             }
             auto init_ui_( cpp_utils::console_ui& ui )
             {
-                ui.add_back( make_button_text< DisplayName >.view(), std::bind_back( make_option_editor_ui_, std::ref( data_ ) ) );
+                ui.add_back( make_item_text< DisplayName >.view(), std::bind_back( make_option_editor_ui_, std::ref( data_ ) ) );
             }
             static inline constexpr auto ui_count_{ 1uz };
           public:
@@ -472,7 +472,7 @@ namespace scltk
         {
             cpp_utils::console_ui ui{ con, unsynced_mem_pool };
             ui.reserve( 3 )
-              .add_back( make_title_text< "[ 配  置 ]", 2 >.view() )
+              .add_back( make_middle_text< "[ 配  置 ]", 2 >.view() )
               .add_back( " < 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
               .add_back(
                 "\n 自定义规则格式为 <flag>: <item>\n"
@@ -600,7 +600,7 @@ namespace scltk
         {
             cpp_utils::console_ui ui{ con, unsynced_mem_pool };
             ui.reserve( 3 )
-              .add_back( make_title_text< "[ 配  置 ]", 2 >.view() )
+              .add_back( make_middle_text< "[ 配  置 ]", 2 >.view() )
               .add_back( " < 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
               .add_back(
                 "\n 配置以行作为单位解析.\n\n"
@@ -619,7 +619,7 @@ namespace scltk
         {
             std::print(
               cpp_utils::value_identity_v< cpp_utils::concat_const_string(
-                make_title_text< "[ 配  置 ]", 3 >, " -> 同步配置.\n\n"_cs ) >.view() );
+                make_middle_text< "[ 配  置 ]", 3 >, " -> 同步配置.\n\n"_cs ) >.view() );
             load_config( true );
             std::ofstream config_file_stream{ config_file_name, std::ios::out | std::ios::trunc };
             constexpr auto header{
@@ -636,7 +636,7 @@ namespace scltk
         {
             std::print(
               cpp_utils::value_identity_v< cpp_utils::concat_const_string(
-                make_title_text< "[ 配  置 ]", 3 >,  " -> 尝试打开配置文件.\n\n"_cs ) >.view() );
+                make_middle_text< "[ 配  置 ]", 3 >,  " -> 尝试打开配置文件.\n\n"_cs ) >.view() );
             bool success{ false };
             if ( std::filesystem::exists( config_file_name ) ) {
                 auto cmd{
@@ -663,7 +663,7 @@ namespace scltk
         {
             cpp_utils::console_ui ui{ con, unsynced_mem_pool };
             ui.reserve( 5 + ( decltype( nodes.request_ui_count() )::value + ... ) )
-              .add_back( make_title_text< "[ 配  置 ]", 2 >.view() )
+              .add_back( make_middle_text< "[ 配  置 ]", 2 >.view() )
               .add_back( " < 返回\n", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
               .add_back( " > 查看解析规则 ", details_::show_config_parsing_rules )
               .add_back( " > 同步配置 ", details_::sync_config )
@@ -677,7 +677,7 @@ namespace scltk
     {
         cpp_utils::console_ui ui{ con, unsynced_mem_pool };
         ui.reserve( 3 )
-          .add_back( make_title_text< "[ 关  于 ]", 2 >.view() )
+          .add_back( make_middle_text< "[ 关  于 ]", 2 >.view() )
           .add_back( " < 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
           .add_back(
             "\n[ 软件名 ]\n\n " INFO_FULL_NAME " (" INFO_SHORT_NAME ")\n\n[ 软件版本 ]\n\n Tag: " INFO_GIT_TAG
@@ -694,7 +694,7 @@ namespace scltk
             static inline constexpr auto description{ Description };
             static auto execute() noexcept
             {
-                std::print( make_title_text< "[ 工 具 箱 ]", 3 >.view() );
+                std::print( make_middle_text< "[ 工 具 箱 ]", 3 >.view() );
                 Func();
                 std::print( "\n (i) 操作已完成." );
                 press_any_key_to_return();
@@ -1005,12 +1005,12 @@ namespace scltk
           details_::func_item< "重置 Chrome & Edge & Firefox 管理策略", details_::reset_common_web_browsers_policy > >;
         cpp_utils::console_ui ui{ con, unsynced_mem_pool };
         ui.reserve( 4 + funcs_t::size )
-          .add_back( make_title_text< "[ 工 具 箱 ]", 2 >.view() )
+          .add_back( make_middle_text< "[ 工 具 箱 ]", 2 >.view() )
           .add_back( " < 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
           .add_back( "\n[ 快捷工具 ]\n" )
           .add_back( " > 启动命令提示符\n", details_::launch_cmd );
         [ & ]< typename... Items >( const cpp_utils::type_list< Items... > )
-        { ( ui.add_back( make_button_text< Items::description >.view(), Items::execute ), ... ); }( funcs_t{} );
+        { ( ui.add_back( make_item_text< Items::description >.view(), Items::execute ), ... ); }( funcs_t{} );
         ui.show();
         return func_back;
     }
@@ -1291,8 +1291,8 @@ namespace scltk
         static auto operator()()
         {
             switch ( details_::current_rule_executor_mode ) {
-                case details_::rule_executor_mode::crack : std::print( make_title_text< "[ 破  解 ]", 3 >.view() ); break;
-                case details_::rule_executor_mode::restore : std::print( make_title_text< "[ 恢  复 ]", 3 >.view() ); break;
+                case details_::rule_executor_mode::crack : std::print( make_middle_text< "[ 破  解 ]", 3 >.view() ); break;
+                case details_::rule_executor_mode::restore : std::print( make_middle_text< "[ 恢  复 ]", 3 >.view() ); break;
             }
             switch ( details_::current_rule_executor_mode ) {
                 case details_::rule_executor_mode::crack : crack(); break;

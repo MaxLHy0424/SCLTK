@@ -18,7 +18,7 @@ auto main() -> int
     scltk::create_parallel_tasks();
     cpp_utils::console_ui ui{ scltk::con, scltk::unsynced_mem_pool };
     ui.reserve( 9 + scltk::builtin_rules_t::size )
-      .add_back( scltk::make_title_text< "[ 主  页 ]", 2 >.view() )
+      .add_back( scltk::make_middle_text< "[ 主  页 ]", 2 >.view() )
       .add_back( " < 退出 ", scltk::quit, cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_intensity )
       .add_back( " < 重启\n", scltk::relaunch, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
       .add_back( " > 关于 ", scltk::info )
@@ -32,7 +32,7 @@ auto main() -> int
     [ & ]< typename... Nodes >( const cpp_utils::type_list< Nodes... > )
     {
         ( ui.add_back(
-            scltk::make_button_text< Nodes::display_name >.view(),
+            scltk::make_item_text< Nodes::display_name >.view(),
             scltk::rule_executor< scltk::builtin_rules_executor_backend< Nodes > >{} ),
           ... );
     }( scltk::builtin_rules_t{} );
