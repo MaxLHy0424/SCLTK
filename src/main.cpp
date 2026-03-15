@@ -13,7 +13,7 @@ auto main() -> int
       .enable_window_maximize_ctrl( false )
       .enable_window_minimize_ctrl( false )
       .enable_window_close_ctrl( false );
-    scltk::elevate_privilege();
+    ( void ) cpp_utils::set_privilege( GetCurrentProcess(), L"" SE_DEBUG_NAME, true );
     scltk::load_config( false );
     scltk::create_parallel_tasks();
     cpp_utils::console_ui ui{ scltk::con, scltk::unsynced_mem_pool };
