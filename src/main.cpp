@@ -887,7 +887,7 @@ namespace scltk
               "# localhost name resolution is handled within DNS itself.\n"
               "# 127.0.0.1       localhost\n"
               "# ::1             localhost\n" };
-            constexpr auto reset_hosts_error_message{ "\n (!) 重置 Hosts 失败.\n\n"sv };
+            constexpr const auto& reset_hosts_error_message{ "\n (!) 重置 Hosts 失败.\n\n" };
             const auto hosts_path{ [] static
             {
                 std::array< wchar_t, MAX_PATH > result;
@@ -912,7 +912,7 @@ namespace scltk
         }
         auto flush_dns() noexcept
         {
-            constexpr auto flush_dns_error_message{ "\n (!) 刷新 DNS 失败.\n\n"sv };
+            constexpr const auto& flush_dns_error_message{ "\n (!) 刷新 DNS 失败.\n\n" };
             std::print( " -> 刷新 DNS 缓存.\n" );
             const auto dnsapi{ LoadLibraryW( L"dnsapi.dll" ) };
             if ( dnsapi == nullptr ) [[unlikely]] {
