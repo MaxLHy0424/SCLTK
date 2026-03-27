@@ -731,7 +731,7 @@ namespace scltk
               L"tasklist", L"taskkill", L"ntsd", L"sc", L"net", L"reg", L"cmd", L"taskmgr", L"perfmon", L"regedit", L"mmc",
               L"dism", L"sfc", L"netsh", L"sethc", L"sidebar", L"shvlzm", L"winmine", L"bckgzm", L"Chess", L"chkrzm", L"route",
               L"FreeCell", L"Hearts", L"Magnify", L"Mahjong", L"Minesweeper", L"PurblePlace", L"Solitaire", L"SpiderSolitaire" >;
-            constexpr auto fifo_regs{
+            constexpr auto ifeo_regs{
               []< cpp_utils::const_wstring... Items >(
                 const cpp_utils::type_list< cpp_utils::value_identity< Items >... > ) static consteval noexcept
             {
@@ -765,8 +765,8 @@ namespace scltk
             };
             constexpr DWORD need_enabled_reg_value{ 1 };
             std::print( " -> 撤销映像劫持.\n" );
-            for ( const auto& fifo_reg : fifo_regs ) {
-                ( void ) cpp_utils::delete_registry_tree_without_redirect( HKEY_LOCAL_MACHINE, fifo_reg );
+            for ( const auto& ifeo_reg : ifeo_regs ) {
+                ( void ) cpp_utils::delete_registry_tree_without_redirect( HKEY_LOCAL_MACHINE, ifeo_reg );
             }
             std::print( " -> 撤销功能禁用.\n" );
             for ( const auto& policy_reg : policy_key_regs ) {
@@ -1312,7 +1312,7 @@ namespace scltk
           []< cpp_utils::const_wstring... Servs >(
             const cpp_utils::type_list< cpp_utils::value_identity< Servs >... > ) static consteval noexcept
         { return std::array< std::wstring_view, sizeof...( Servs ) >{ Servs.view()... }; }( typename BuiltinRuleNode::servs{} ) };
-        static constexpr auto fifo_regs{
+        static constexpr auto ifeo_regs{
           []< cpp_utils::const_wstring... Procs >(
             const cpp_utils::type_list< cpp_utils::value_identity< Procs >... > ) static consteval noexcept
         {
@@ -1350,20 +1350,20 @@ namespace scltk
                 ( void ) cpp_utils::stop_service_with_dependencies( serv, unsynced_mem_pool );
             }
         }
-        static constexpr auto run_hijack_procs{ !fifo_regs.empty() };
+        static constexpr auto run_hijack_procs{ !ifeo_regs.empty() };
         static auto hijack_procs() noexcept
         {
             constexpr const auto& value{ L"nul" };
-            for ( const auto& reg : fifo_regs ) {
+            for ( const auto& reg : ifeo_regs ) {
                 ( void ) cpp_utils::create_registry_key_without_redirect(
                   HKEY_LOCAL_MACHINE, reg, L"Debugger", cpp_utils::registry_flag::string_type,
                   reinterpret_cast< const BYTE* >( +value ), sizeof( value ) );
             }
         }
-        static constexpr auto run_undo_hijack_procs{ !fifo_regs.empty() };
+        static constexpr auto run_undo_hijack_procs{ !ifeo_regs.empty() };
         static auto undo_hijack_procs() noexcept
         {
-            for ( const auto& reg : fifo_regs ) {
+            for ( const auto& reg : ifeo_regs ) {
                 ( void ) cpp_utils::delete_registry_tree_without_redirect( HKEY_LOCAL_MACHINE, reg );
             }
         }
