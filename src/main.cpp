@@ -2,14 +2,12 @@
 #define _WIN32_WINNT 0x0601
 #define NOCOMM
 #include <cpp_utils/const_string.hpp>
-#include <cpp_utils/math.hpp>
 #include <cpp_utils/meta.hpp>
 #include <cpp_utils/windows_app_tools.hpp>
 #include <cpp_utils/windows_console_ui.hpp>
 #include <iphlpapi.h>
 #include <filesystem>
 #include <fstream>
-#include <limits>
 #include "info.hpp"
 namespace scltk
 {
