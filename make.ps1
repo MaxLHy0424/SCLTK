@@ -24,7 +24,7 @@ if ($contains_uncommitted_changes -eq $false ) {
     $git_hash = & git rev-parse HEAD
 }
 else {
-    $git_hash = "<work in progress>"
+    $git_hash = "<Work In Progress>"
 }
 if (-not (Test-Path "build")) {
     New-Item -Path "build" -ItemType Directory
