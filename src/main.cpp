@@ -743,25 +743,17 @@ namespace scltk
             }( execs_t{} ) };
             constexpr std::array policy_key_regs{
               LR"(Software\Policies\Microsoft\Windows\System)"sv,
-              LR"(Software\WOW6432Node\Policies\Microsoft\Windows\System)"sv,
-              LR"(Software\Microsoft\Windows\CurrentVersion\Policies\System)"sv,
-              LR"(Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Policies\System)"sv,
-              LR"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)"sv,
-              LR"(Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Policies\Explorer)"sv,
               LR"(Software\Policies\Microsoft\MMC)"sv,
-              LR"(Software\WOW6432Node\Policies\Microsoft\MMC)"sv };
+              LR"(Software\Microsoft\Windows\CurrentVersion\Policies\System)"sv,
+              LR"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)"sv,
+            };
             constexpr std::pair< std::wstring_view, std::wstring_view > policy_value_regs[]{
-              {LR"(SOFTWARE\Policies\Microsoft\Windows NT\SystemRestore)"sv,             L"DisableSR"sv   },
-              {LR"(SOFTWARE\WOW6432Node\Policies\Microsoft\Windows NT\SystemRestore)"sv, L"DisableSR"sv   },
-              {LR"(Control Panel\Desktop)"sv,                                            L"AutoEndTasks"sv},
-              {LR"(WOW6432Node\Control Panel\Desktop)"sv,                                L"AutoEndTasks"sv}
+              {LR"(SOFTWARE\Policies\Microsoft\Windows NT\SystemRestore)"sv, L"DisableSR"sv   },
+              {LR"(Control Panel\Desktop)"sv,                                L"AutoEndTasks"sv}
             };
             constexpr std::pair< std::wstring_view, std::wstring_view > need_enabled_regs[]{
-              {LR"(Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced)"sv,                                   L"ShowTaskViewButton"sv},
-              {LR"(Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Explorer\Advanced)"sv,                       L"ShowTaskViewButton"sv},
-              {LR"(SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\Folder\Hidden\SHOWALL)"sv,             L"CheckedValue"sv      },
-              {LR"(SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Explorer\Advanced\Folder\Hidden\SHOWALL)"sv,
-               L"CheckedValue"sv                                                                                                             }
+              {LR"(SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced)"sv,                       L"ShowTaskViewButton"sv},
+              {LR"(SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\Folder\Hidden\SHOWALL)"sv, L"CheckedValue"sv      }
             };
             constexpr DWORD need_enabled_reg_value{ 1 };
             std::print( " -> 撤销映像劫持.\n" );
@@ -959,10 +951,8 @@ namespace scltk
               " (i) 请破解 \"机房管理助手\" 后使用此功能.\n\n"
               " -> 删除密码.\n" );
             ( void ) cpp_utils::delete_registry_key_without_redirect( HKEY_CURRENT_USER, L"Software"sv, L"n"sv );
-            ( void ) cpp_utils::delete_registry_key_without_redirect( HKEY_CURRENT_USER, L"Software\\WOW6432Node"sv, L"n"sv );
             std::print( " -> 删除配置.\n" );
             ( void ) cpp_utils::delete_registry_tree_without_redirect( HKEY_CURRENT_USER, LR"(Software\jfglzs)"sv );
-            ( void ) cpp_utils::delete_registry_tree_without_redirect( HKEY_CURRENT_USER, LR"(Software\WOW6432Node\jfglzs)"sv );
             std::print( " -> 删除自启动项.\n" );
             constexpr std::array autorun_items{ L"jfglzs"sv, L"jfglzsn"sv, L"jfglzsp"sv, L"prozs"sv, L"przs"sv };
             constexpr std::array notification_items{ L"StartupTNotijfglzsn"sv, L"StartupTNotiprozs"sv };
@@ -975,9 +965,6 @@ namespace scltk
             for ( const auto& notification_item : notification_items ) {
                 ( void ) cpp_utils::delete_registry_key_without_redirect(
                   HKEY_CURRENT_USER, LR"(Software\Microsoft\Windows\CurrentVersion\RunNotification)"sv, notification_item );
-                ( void ) cpp_utils::delete_registry_key_without_redirect(
-                  HKEY_CURRENT_USER, LR"(Software\WOW6432Node\Microsoft\Windows\CurrentVersion\RunNotification)"sv,
-                  notification_item );
             }
         }
         auto relaunch_explorer() noexcept
