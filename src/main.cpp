@@ -53,6 +53,19 @@ namespace scltk
             std::print( "\n\n 请按任意键返回." );
             con.press_any_key_to_continue();
         }
+        template < cpp_utils::character CharT, typename... Args >
+            requires(
+              ( std::same_as< std::decay_t< Args >, std::basic_string< CharT > >
+                || std::same_as< std::decay_t< Args >, std::pmr::basic_string< CharT > >
+                || std::same_as< std::decay_t< Args >, std::basic_string_view< CharT > > )
+              && ... )
+        auto concat_string( Args&&... strings )
+        {
+            std::pmr::basic_string< CharT > result;
+            result.reserve( ( std::forward< Args >( strings ).size() + ... ) );
+            ( result.append( std::forward< Args >( strings ) ), ... );
+            return result;
+        }
         template < cpp_utils::character CharT >
         constexpr auto is_whitespace( const CharT ch ) noexcept
         {
@@ -1440,11 +1453,13 @@ namespace scltk
             for ( const auto& proc : custom_rules.procs ) {
                 ( void ) cpp_utils::create_registry_key_without_redirect(
                   HKEY_LOCAL_MACHINE,
-                  std::format( LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{})", proc ),
+                  details_::concat_string< wchar_t >(
+                    LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\)"sv, proc ),
                   L"Debugger", cpp_utils::registry_flag::string_type, reinterpret_cast< const BYTE* >( +value ), sizeof( value ) );
                 ( void ) cpp_utils::create_registry_key_without_redirect(
                   HKEY_LOCAL_MACHINE,
-                  std::format( LR"(SOFTWARE\WOW6432Node\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{})", proc ),
+                  details_::concat_string< wchar_t >(
+                    LR"(SOFTWARE\WOW6432Node\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\)"sv, proc ),
                   L"Debugger", cpp_utils::registry_flag::string_type, reinterpret_cast< const BYTE* >( +value ), sizeof( value ) );
             }
         }
@@ -1454,11 +1469,12 @@ namespace scltk
             for ( const auto& proc : custom_rules.procs ) {
                 ( void ) cpp_utils::delete_registry_tree_without_redirect(
                   HKEY_LOCAL_MACHINE,
-                  std::format( LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{})", proc ) );
+                  details_::concat_string< wchar_t >(
+                    LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\)"sv, proc ) );
                 ( void ) cpp_utils::delete_registry_tree_without_redirect(
                   HKEY_LOCAL_MACHINE,
-                  std::format(
-                    LR"(SOFTWARE\WOW6432Node\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\{})", proc ) );
+                  details_::concat_string< wchar_t >(
+                    LR"(SOFTWARE\WOW6432Node\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\)"sv, proc ) );
             }
         }
         static constexpr auto run_terminate_procs{ true };
