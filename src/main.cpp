@@ -947,9 +947,7 @@ namespace scltk
         }
         auto reset_jfglzs_config() noexcept
         {
-            std::print(
-              " (i) 请破解 \"机房管理助手\" 后使用此功能.\n\n"
-              " -> 删除密码.\n" );
+            std::print( " -> 删除密码.\n" );
             ( void ) cpp_utils::delete_registry_key_without_redirect( HKEY_CURRENT_USER, L"Software"sv, L"n"sv );
             std::print( " -> 删除配置.\n" );
             ( void ) cpp_utils::delete_registry_tree_without_redirect( HKEY_CURRENT_USER, LR"(Software\jfglzs)"sv );
@@ -1007,7 +1005,9 @@ namespace scltk
         ui.reserve( 4 + funcs_t::size )
           .add_back( make_middle_text< "[ 工 具 箱 ]", 2 >.view() )
           .add_back( " < 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
-          .add_back( "\n[ 快捷工具 ]\n" )
+          .add_back(
+            "\n[ 快捷工具 ]\n\n"
+            " (i) 请破解电子教室软件后再使用此处功能.\n" )
           .add_back( " > 启动命令提示符\n", details_::launch_cmd );
         [ & ]< typename... Items >( const cpp_utils::type_list< Items... > )
         { ( ui.add_back( make_item_text< Items::description >.view(), Items::execute ), ... ); }( funcs_t{} );
