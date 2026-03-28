@@ -888,6 +888,22 @@ namespace scltk
               "# 127.0.0.1       localhost\n"
               "# ::1             localhost\n" };
             constexpr const auto& reset_hosts_error_message{ "\n (!) 重置 Hosts 失败.\n\n" };
+#ifndef _WIN64
+            struct wow64_filesystem_guard final
+            {
+                PVOID value{ nullptr };
+                auto operator=( const wow64_filesystem_guard& ) noexcept -> wow64_filesystem_guard& = delete;
+                wow64_filesystem_guard() noexcept
+                {
+                    Wow64DisableWow64FsRedirection( &value );
+                }
+                wow64_filesystem_guard( const wow64_filesystem_guard& ) noexcept = delete;
+                ~wow64_filesystem_guard() noexcept
+                {
+                    Wow64RevertWow64FsRedirection( value );
+                }
+            } filesystem_redirect_guard;
+#endif
             const auto hosts_path{ [] static
             {
                 std::array< wchar_t, MAX_PATH > result;
