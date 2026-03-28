@@ -808,7 +808,7 @@ namespace scltk
                 route_table_() noexcept
                 {
                     if ( GetIpForwardTable( nullptr, &size, 0 ) == ERROR_INSUFFICIENT_BUFFER ) {
-                        ptr = static_cast< PMIB_IPFORWARDTABLE >( std::malloc( size ) );
+                        ptr = static_cast< PMIB_IPFORWARDTABLE >( unsynced_mem_pool->allocate( size ) );
                         if ( ptr != nullptr && GetIpForwardTable( ptr, &size, 0 ) == NO_ERROR ) {
                             valid = true;
                         }
@@ -818,7 +818,7 @@ namespace scltk
                 ~route_table_() noexcept
                 {
                     if ( ptr != nullptr ) {
-                        std::free( ptr );
+                        unsynced_mem_pool->deallocate( ptr, size );
                     }
                 }
             } route_table;
