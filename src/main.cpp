@@ -881,20 +881,20 @@ namespace scltk
               "# ::1             localhost\n" };
             constexpr const auto& reset_hosts_error_message{ "\n (!) 重置 Hosts 失败.\n\n" };
 #ifndef _WIN64
-            struct wow64_filesystem_guard final
+            struct wow64_filesystem_redirect_guard_ final
             {
                 PVOID value{ nullptr };
-                auto operator=( const wow64_filesystem_guard& ) noexcept -> wow64_filesystem_guard& = delete;
-                wow64_filesystem_guard() noexcept
+                auto operator=( const wow64_filesystem_redirect_guard_& ) noexcept -> wow64_filesystem_redirect_guard_& = delete;
+                wow64_filesystem_redirect_guard_() noexcept
                 {
                     Wow64DisableWow64FsRedirection( &value );
                 }
-                wow64_filesystem_guard( const wow64_filesystem_guard& ) noexcept = delete;
-                ~wow64_filesystem_guard() noexcept
+                wow64_filesystem_redirect_guard_( const wow64_filesystem_redirect_guard_& ) noexcept = delete;
+                ~wow64_filesystem_redirect_guard_() noexcept
                 {
                     Wow64RevertWow64FsRedirection( value );
                 }
-            } filesystem_redirect_guard;
+            } wow64_filesystem_redirect_guard;
 #endif
             const auto hosts_path{ [] static
             {
