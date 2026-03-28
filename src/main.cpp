@@ -799,19 +799,36 @@ namespace scltk
                 }
                 return false;
             } };
-            constexpr auto deleter{ []( PMIB_IPFORWARDTABLE ptr ) static noexcept { std::free( ptr ); } };
-            std::unique_ptr< std::remove_pointer_t< PMIB_IPFORWARDTABLE >, decltype( deleter ) > route_table{ nullptr };
-            DWORD route_table_size{ 0 };
-            if ( GetIpForwardTable( nullptr, &route_table_size, 0 ) == ERROR_INSUFFICIENT_BUFFER ) {
-                route_table.reset( static_cast< PMIB_IPFORWARDTABLE >( std::malloc( route_table_size ) ) );
-            }
-            if ( route_table == nullptr || GetIpForwardTable( route_table.get(), &route_table_size, 0 ) != NO_ERROR ) {
+            struct route_table_ final
+            {
+                PMIB_IPFORWARDTABLE ptr{ nullptr };
+                DWORD size{ 0 };
+                bool valid{ false };
+                auto operator=( const route_table_& ) -> route_table_& = delete;
+                route_table_() noexcept
+                {
+                    if ( GetIpForwardTable( nullptr, &size, 0 ) == ERROR_INSUFFICIENT_BUFFER ) {
+                        ptr = static_cast< PMIB_IPFORWARDTABLE >( std::malloc( size ) );
+                        if ( ptr != nullptr && GetIpForwardTable( ptr, &size, 0 ) == NO_ERROR ) {
+                            valid = true;
+                        }
+                    }
+                }
+                route_table_( const route_table_& ) noexcept = delete;
+                ~route_table_() noexcept
+                {
+                    if ( ptr != nullptr ) {
+                        std::free( ptr );
+                    }
+                }
+            } route_table;
+            if ( route_table.valid == false ) [[unlikely]] {
                 return;
             }
             std::pmr::vector< DWORD > malicious_indices{ unsynced_mem_pool };
-            malicious_indices.reserve( route_table->dwNumEntries );
-            for ( DWORD i{ 0 }; i < route_table->dwNumEntries; ++i ) {
-                const auto& ip{ route_table->table[ i ] };
+            malicious_indices.reserve( route_table.ptr->dwNumEntries );
+            for ( DWORD i{ 0 }; i < route_table.ptr->dwNumEntries; ++i ) {
+                const auto& ip{ route_table.ptr->table[ i ] };
                 if ( ip.dwForwardMask == 0xFFFFFFFF && !normal_route( ip.dwForwardDest ) && !private_ip( ip.dwForwardDest ) ) {
                     malicious_indices.emplace_back( i );
                 }
@@ -821,10 +838,10 @@ namespace scltk
             }
             std::ranges::sort( malicious_indices, std::ranges::greater{} );
             for ( const auto& idx : malicious_indices ) {
-                if ( idx >= route_table->dwNumEntries ) {
+                if ( idx >= route_table.ptr->dwNumEntries ) {
                     continue;
                 }
-                DeleteIpForwardEntry( &route_table->table[ idx ] );
+                DeleteIpForwardEntry( &route_table.ptr->table[ idx ] );
             }
         }
         auto reset_firewall_rules() noexcept
