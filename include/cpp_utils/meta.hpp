@@ -15,11 +15,11 @@ namespace cpp_utils
         }
     [[nodiscard]] inline consteval auto invoke_to_array() noexcept
     {
-        using value_t = typename decltype( Func() )::value_type;
+        using value_type = typename decltype( Func() )::value_type;
         constexpr auto len{ Func().size() };
         auto temp{ Func() };
         return [ & ]< std::size_t... Is >( const std::index_sequence< Is... > )
-        { return std::array< value_t, len >{ *std::next( temp.begin(), Is )... }; }( std::make_index_sequence< len >{} );
+        { return std::array< value_type, len >{ *std::next( temp.begin(), Is )... }; }( std::make_index_sequence< len >{} );
     }
     template < typename... Fs >
     struct overloads final : public Fs...
@@ -76,7 +76,7 @@ namespace cpp_utils
     template < auto V >
     struct value_identity final
     {
-        using value_t = decltype( V );
+        using type = decltype( V );
         static inline constexpr auto value{ V };
         constexpr auto operator<=>( const value_identity< V >& ) const noexcept        = default;
         constexpr auto operator==( const value_identity< V >& ) const noexcept -> bool = default;

@@ -38,6 +38,7 @@ namespace cpp_utils
       private:
         T ptr_{};
       public:
+        using value_type = T;
         constexpr auto reset( const T src ) noexcept
         {
             ptr_ = src;

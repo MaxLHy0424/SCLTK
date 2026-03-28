@@ -42,22 +42,22 @@ namespace cpp_utils
             func_args( func_args&& ) noexcept      = default;
             ~func_args() noexcept                  = default;
         };
-        using basic_text_t = std::variant< std::string_view, std::pmr::string, std::string >;
-        struct text_t final : public basic_text_t
+        using basic_text_type = std::variant< std::string_view, std::pmr::string, std::string >;
+        struct text_type final : public basic_text_type
         {
-            using basic_text_t::variant;
+            using basic_text_type::variant;
             template < std::size_t N >
-            consteval text_t( const char ( &string_literal )[ N ] ) noexcept
-              : basic_text_t{ ( std::string_view{ string_literal, N - 1 } ) }
+            consteval text_type( const char ( &string_literal )[ N ] ) noexcept
+              : basic_text_type{ ( std::string_view{ string_literal, N - 1 } ) }
             { }
         };
-        using function_t
+        using function_type
           = std::variant< std::move_only_function< func_action() >, std::move_only_function< func_action( func_args ) > >;
       private:
         struct line_node_ final
         {
-            text_t text{};
-            function_t func{};
+            text_type text{};
+            function_type func{};
             WORD default_attrs{ console_text::foreground_white };
             WORD intensity_attrs{ console_text::foreground_green | console_text::foreground_blue };
             WORD last_attrs{ console_text::foreground_white };
@@ -75,7 +75,7 @@ namespace cpp_utils
             auto operator=( const line_node_& ) -> line_node_&     = delete;
             auto operator=( line_node_&& ) noexcept -> line_node_& = default;
             line_node_() noexcept                                  = default;
-            line_node_( text_t& text_ref, function_t& func_ref, const WORD default_text_attrs, const WORD intensity_text_attrs ) noexcept
+            line_node_( text_type& text_ref, function_type& func_ref, const WORD default_text_attrs, const WORD intensity_text_attrs ) noexcept
               : text{ std::move( text_ref ) }
               , func{ std::move( func_ref ) }
               , default_attrs{ default_text_attrs }
@@ -144,7 +144,7 @@ namespace cpp_utils
                 }
             }
         }
-        static auto is_empty_function_( const function_t& func ) noexcept
+        static auto is_empty_function_( const function_type& func ) noexcept
         {
             return func.visit< bool >( []( const auto& various_func ) static noexcept { return various_func == nullptr; } );
         }
@@ -220,7 +220,7 @@ namespace cpp_utils
             return *this;
         }
         auto& add_front(
-          text_t text, function_t func = {},
+          text_type text, function_type func = {},
           const WORD intensity_attrs = console_text::foreground_green | console_text::foreground_blue,
           const WORD default_attrs   = console_text::foreground_white )
         {
@@ -229,7 +229,7 @@ namespace cpp_utils
             return *this;
         }
         auto& add_back(
-          text_t text, function_t func = {},
+          text_type text, function_type func = {},
           const WORD intensity_attrs = console_text::foreground_blue | console_text::foreground_green,
           const WORD default_attrs   = console_text::foreground_white )
         {
@@ -237,7 +237,7 @@ namespace cpp_utils
             return *this;
         }
         auto& insert(
-          const std::size_t index, text_t text, function_t func = {},
+          const std::size_t index, text_type text, function_type func = {},
           const WORD intensity_attrs = console_text::foreground_green | console_text::foreground_blue,
           const WORD default_attrs   = console_text::foreground_white )
         {
@@ -245,7 +245,7 @@ namespace cpp_utils
               lines_.cbegin() + index, text, func, default_attrs, is_empty_function_( func ) ? default_attrs : intensity_attrs );
             return *this;
         }
-        auto& set_text( const std::size_t index, text_t text )
+        auto& set_text( const std::size_t index, text_type text )
         {
             if constexpr ( is_debugging_build ) {
                 lines_.at( index ).text = std::move( text );
@@ -254,7 +254,7 @@ namespace cpp_utils
             }
             return *this;
         }
-        auto& set_func( const std::size_t index, function_t func )
+        auto& set_func( const std::size_t index, function_type func )
         {
             if constexpr ( is_debugging_build ) {
                 lines_.at( index ).func = std::move( func );

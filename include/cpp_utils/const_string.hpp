@@ -17,7 +17,7 @@ namespace cpp_utils
         requires std::same_as< T, std::decay_t< T > >
     struct basic_const_string final
     {
-        using char_t = T;
+        using char_type = T;
         std::array< T, N + 1 > storage_{};
         [[nodiscard]] constexpr const auto& data() const noexcept
         {
