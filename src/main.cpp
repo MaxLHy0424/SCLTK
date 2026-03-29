@@ -886,7 +886,7 @@ namespace scltk
                 return;
             }
             startup_info.dwFlags    = STARTF_USESTDHANDLES;
-            startup_info.hStdInput  = GetStdHandle( STD_INPUT_HANDLE );
+            startup_info.hStdInput  = con.std_input_handle;
             startup_info.hStdOutput = nul_file_handle;
             startup_info.hStdError  = nul_file_handle;
             wchar_t cmd[]{ L"netsh.exe advfirewall reset" };
@@ -962,11 +962,7 @@ namespace scltk
             }
             const auto dns_flush_resolver_cache{
               std::bit_cast< BOOL( WINAPI* )() noexcept >( GetProcAddress( dnsapi, "DnsFlushResolverCache" ) ) };
-            if ( dns_flush_resolver_cache == nullptr ) [[unlikely]] {
-                std::print( flush_dns_error_message );
-                return;
-            }
-            if ( !dns_flush_resolver_cache() ) [[unlikely]] {
+            if ( dns_flush_resolver_cache == nullptr || !dns_flush_resolver_cache() ) [[unlikely]] {
                 std::print( flush_dns_error_message );
             }
             FreeLibrary( dnsapi );
