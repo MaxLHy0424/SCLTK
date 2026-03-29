@@ -1000,7 +1000,16 @@ namespace scltk
             std::print( " -> 终止进程.\n" );
             ( void ) cpp_utils::terminate_process_by_name( L"explorer.exe"sv );
             std::print( " -> 启动进程.\n" );
-            ShellExecuteW( nullptr, L"open", L"explorer.exe", nullptr, nullptr, SW_HIDE );
+            wchar_t cmd[]{ L"explorer.exe" };
+            STARTUPINFOW startup_info{};
+            PROCESS_INFORMATION proc_info{};
+            startup_info.cb = sizeof( startup_info );
+            if ( CreateProcessW( nullptr, cmd, nullptr, nullptr, FALSE, 0, nullptr, nullptr, &startup_info, &proc_info ) )
+              [[likely]]
+            {
+                CloseHandle( proc_info.hProcess );
+                CloseHandle( proc_info.hThread );
+            }
         }
         auto restore_usb_device_access() noexcept
         {
