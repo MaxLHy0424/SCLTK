@@ -662,8 +662,9 @@ namespace scltk
             std::print(
               cpp_utils::value_identity_v< cpp_utils::concat_const_string(
                 make_middle_text< "[ 配  置 ]", 3 >,  " -> 尝试打开配置文件.\n\n"_cs ) >.view() );
+            std::error_code ec;
             bool success{ false };
-            if ( std::filesystem::exists( config_file_name ) ) {
+            if ( std::filesystem::exists( config_file_name, ec ) ) {
                 auto cmd{
                   cpp_utils::concat_const_string( L"notepad.exe "_cs, cpp_utils::const_wstring{ config_file_name } ).data() };
                 STARTUPINFOW startup_info{};
