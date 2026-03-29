@@ -537,12 +537,9 @@ namespace scltk
         template < typename T >
         struct is_valid_config_node final
         {
-            static constexpr auto is_valid_type{ std::is_same_v< std::decay_t< T >, T > };
-            static constexpr auto has_traits{
-              std::is_base_of_v< config_node_interface, T > && std::is_default_constructible_v< T > };
-            static constexpr auto value{ is_valid_type && has_traits };
-            is_valid_config_node()           = delete;
-            ~is_valid_config_node() noexcept = delete;
+            static constexpr auto value{
+              std::is_base_of_v< config_node_interface, T > && std::is_default_constructible_v< T >
+              && std::is_same_v< std::decay_t< T >, T > };
         };
     }
     using config_nodes_t
