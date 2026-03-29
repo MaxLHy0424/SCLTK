@@ -21,7 +21,7 @@
 | SCLTK v4 | [v4.10.7](https://github.com/MaxLHy0424/SCLTK/releases/tag/v4.10.7)         | ❌ 停止维护 | 2024-03-26/2024-06-19 |
 | SCLTK v5 | [v5.11.1](https://github.com/MaxLHy0424/SCLTK/releases/tag/v5.11.1)         | ❌ 停止维护 | 2024-08-25/2024-12-23 |
 | SCLTK v6 | [v6.3.3](https://github.com/MaxLHy0424/SCLTK/releases/tag/v6.3.3)           | ❌ 停止维护 | 2025-01-29/2025-06-09 |
-| SCLTK v7 | [v7.1.3](https://github.com/MaxLHy0424/SCLTK/releases/tag/v7.1.3)           | ✅ 基线开发 | 2025-11-10/..         |
+| SCLTK v7 | [v7.1.4](https://github.com/MaxLHy0424/SCLTK/releases/tag/v7.1.4)           | ✅ 基线开发 | 2025-11-10/..         |
 
 # 📖 使用指南
 

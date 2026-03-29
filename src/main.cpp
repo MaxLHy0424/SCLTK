@@ -32,7 +32,7 @@ namespace scltk
         std::pmr::set_default_resource( &pool );
         return &pool;
     }() };
-    using ui_func_args_t = cpp_utils::console_ui::func_args;
+    using ui_func_args_type = cpp_utils::console_ui::func_args;
     auto quit() noexcept
     {
         return func_exit;
@@ -101,8 +101,8 @@ namespace scltk
         auto terminate_jfglzs_daemon() noexcept
         {
             constexpr auto close_handle{ []( const HANDLE handle ) static noexcept { CloseHandle( handle ); } };
-            using handle_wrapper_t = const std::unique_ptr< std::remove_pointer_t< HANDLE >, decltype( close_handle ) >;
-            handle_wrapper_t process_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ) };
+            using handle_wrapper_type = const std::unique_ptr< std::remove_pointer_t< HANDLE >, decltype( close_handle ) >;
+            handle_wrapper_type process_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ) };
             if ( process_snapshot.get() == INVALID_HANDLE_VALUE ) [[unlikely]] {
                 return;
             }
@@ -119,7 +119,7 @@ namespace scltk
                     }
                     name.remove_suffix( L".exe"sv.size() );
                     if ( std::ranges::all_of( name, is_lower_case ) ) {
-                        handle_wrapper_t process_handle{ OpenProcess(
+                        handle_wrapper_type process_handle{ OpenProcess(
                           PROCESS_TERMINATE | PROCESS_QUERY_LIMITED_INFORMATION, FALSE, process_entry.th32ProcessID ) };
                         if ( process_handle == nullptr ) [[unlikely]] {
                             continue;
@@ -147,11 +147,11 @@ namespace scltk
     };
     struct runtime_rule_node final
     {
-        using item_t = std::pmr::vector< std::pmr::wstring >;
-        item_t procs{ unsynced_mem_pool };
-        item_t servs{ unsynced_mem_pool };
-        item_t crack_helpers{ unsynced_mem_pool };
-        item_t restore_helpers{ unsynced_mem_pool };
+        using item_type = std::pmr::vector< std::pmr::wstring >;
+        item_type procs{ unsynced_mem_pool };
+        item_type servs{ unsynced_mem_pool };
+        item_type crack_helpers{ unsynced_mem_pool };
+        item_type restore_helpers{ unsynced_mem_pool };
     };
     runtime_rule_node custom_rules;
     namespace details_
@@ -174,15 +174,15 @@ namespace scltk
           public:
             auto load( this auto&& self, const std::string_view line )
             {
-                using child_t = std::decay_t< decltype( self ) >;
-                if constexpr ( is_parsable_config_node_v< child_t > ) {
+                using child_type = std::decay_t< decltype( self ) >;
+                if constexpr ( is_parsable_config_node_v< child_type > ) {
                     self.load_( line );
                 }
             }
             auto reload( this auto&& self, const std::string_view line )
             {
-                using child_t = std::decay_t< decltype( self ) >;
-                if constexpr ( is_parsable_config_node_v< child_t > && requires( child_t obj ) { obj.reload_( line ); } ) {
+                using child_type = std::decay_t< decltype( self ) >;
+                if constexpr ( is_parsable_config_node_v< child_type > && requires( child_type d ) { d.reload_( line ); } ) {
                     self.reload_( line );
                 } else {
                     self.load( line );
@@ -190,41 +190,41 @@ namespace scltk
             }
             auto sync( this auto&& self, std::ofstream& out )
             {
-                using child_t = std::decay_t< decltype( self ) >;
-                if constexpr ( is_parsable_config_node_v< child_t > ) {
-                    out << cpp_utils::value_identity_v< cpp_utils::concat_const_string( "["_cs, child_t::raw_name, "]\n"_cs ) >.view();
+                using child_type = std::decay_t< decltype( self ) >;
+                if constexpr ( is_parsable_config_node_v< child_type > ) {
+                    out << cpp_utils::value_identity_v< cpp_utils::concat_const_string( "["_cs, child_type::raw_name, "]\n"_cs ) >.view();
                     self.sync_( out );
                 }
             }
             auto before_load( this auto&& self )
             {
-                using child_t = std::decay_t< decltype( self ) >;
-                if constexpr ( is_parsable_config_node_v< child_t > && requires( child_t obj ) { obj.before_load_(); } ) {
+                using child_type = std::decay_t< decltype( self ) >;
+                if constexpr ( is_parsable_config_node_v< child_type > && requires( child_type d ) { d.before_load_(); } ) {
                     self.before_load_();
                 }
             }
             auto after_load( this auto&& self )
             {
-                using child_t = std::decay_t< decltype( self ) >;
-                if constexpr ( is_parsable_config_node_v< child_t > && requires( child_t obj ) { obj.after_load_(); } ) {
+                using child_type = std::decay_t< decltype( self ) >;
+                if constexpr ( is_parsable_config_node_v< child_type > && requires( child_type d ) { d.after_load_(); } ) {
                     self.after_load_();
                 }
             }
             auto init_ui( this auto&& self, cpp_utils::console_ui& parent_ui )
             {
-                using child_t = std::decay_t< decltype( self ) >;
-                if constexpr ( requires( child_t obj ) { obj.init_ui_( parent_ui ); } ) {
+                using child_type = std::decay_t< decltype( self ) >;
+                if constexpr ( requires( child_type d ) { d.init_ui_( parent_ui ); } ) {
                     self.init_ui_( parent_ui );
                 }
             }
             consteval auto request_ui_count( this auto&& self ) noexcept
             {
-                using child_t = std::decay_t< decltype( self ) >;
-                if constexpr ( requires( child_t obj ) {
-                                   { child_t::ui_count_ } -> std::convertible_to< std::size_t >;
+                using child_type = std::decay_t< decltype( self ) >;
+                if constexpr ( requires {
+                                   { child_type::ui_count_ } -> std::convertible_to< std::size_t >;
                                } )
                 {
-                    return cpp_utils::value_identity< static_cast< std::size_t >( child_t::ui_count_ ) >{};
+                    return cpp_utils::value_identity< static_cast< std::size_t >( child_type::ui_count_ ) >{};
                 } else {
                     return cpp_utils::value_identity< 0uz >{};
                 }
@@ -246,28 +246,28 @@ namespace scltk
             requires( is_option_info< Options >::value && ... )
         struct options_info_table final
         {
-            using base_t      = cpp_utils::type_list< Options... >;
-            using raw_names_t = cpp_utils::type_list< cpp_utils::value_identity< Options::raw_name >... >;
+            using base_type      = cpp_utils::type_list< Options... >;
+            using raw_names_type = cpp_utils::type_list< cpp_utils::value_identity< Options::raw_name >... >;
             static consteval auto is_valid() noexcept
             {
-                return raw_names_t::unique::size == raw_names_t::size
+                return raw_names_type::unique::size == raw_names_type::size
                     && []< cpp_utils::const_string... Items >(
                          const cpp_utils::type_list< cpp_utils::value_identity< Items >... > ) static constexpr noexcept
                 {
                     return ( std::ranges::all_of( Items.view(), []( const char ch ) static constexpr noexcept {
                         return !is_whitespace< char >( ch ) && ch != '\r' && ch != '\n';
                     } ) && ... );
-                }( raw_names_t{} );
+                }( raw_names_type{} );
             }
             template < cpp_utils::const_string RawName >
             static consteval auto contains() noexcept
             {
-                return raw_names_t::template contains< cpp_utils::value_identity< RawName > >;
+                return raw_names_type::template contains< cpp_utils::value_identity< RawName > >;
             }
             template < cpp_utils::const_string RawName >
             static consteval auto index_of() noexcept
             {
-                return raw_names_t::template find_first< cpp_utils::value_identity< RawName > >;
+                return raw_names_type::template find_first< cpp_utils::value_identity< RawName > >;
             }
         };
         template < typename >
@@ -285,22 +285,22 @@ namespace scltk
         {
             friend config_node_interface;
           private:
-            using info_table_base_t_ = typename OptionsInfoTable::base_t;
-            using value_t_           = std::conditional_t< Atomic, std::atomic_flag, bool >;
-            std::array< value_t_, info_table_base_t_::size > data_{};
+            using info_table_base_type_ = typename OptionsInfoTable::base_type;
+            using value_type_           = std::conditional_t< Atomic, std::atomic_flag, bool >;
+            std::array< value_type_, info_table_base_type_::size > data_{};
             static constexpr auto str_enabled_{ ": enabled"sv };
             static constexpr auto str_disabled_{ ": disabled"sv };
-            static auto get_value_( const value_t_& value ) noexcept
+            static auto get_value_( const value_type_& value ) noexcept
             {
-                if constexpr ( std::is_same_v< value_t_, std::atomic_flag > ) {
+                if constexpr ( std::is_same_v< value_type_, std::atomic_flag > ) {
                     return value.test( std::memory_order_acquire );
                 } else {
                     return value;
                 }
             }
-            static auto set_value_( value_t_& obj, const bool val ) noexcept
+            static auto set_value_( value_type_& obj, const bool val ) noexcept
             {
-                if constexpr ( std::is_same_v< value_t_, std::atomic_flag > ) {
+                if constexpr ( std::is_same_v< value_type_, std::atomic_flag > ) {
                     switch ( val ) {
                         case false : obj.clear( std::memory_order_release ); break;
                         case true : ( void ) obj.test_and_set( std::memory_order_release ); break;
@@ -309,10 +309,10 @@ namespace scltk
                     obj = val;
                 }
             }
-            static auto set_value_then_notify_all_( value_t_& obj, const bool val ) noexcept
+            static auto set_value_then_notify_all_( value_type_& obj, const bool val ) noexcept
             {
                 set_value_( obj, val );
-                if constexpr ( std::is_same_v< value_t_, std::atomic_flag > ) {
+                if constexpr ( std::is_same_v< value_type_, std::atomic_flag > ) {
                     obj.notify_all();
                 }
             }
@@ -333,14 +333,14 @@ namespace scltk
                     (
                       [ & ]< std::size_t I > noexcept
                     {
-                        if ( info_table_base_t_::template at< I >::raw_name.view() == line ) {
+                        if ( info_table_base_type_::template at< I >::raw_name.view() == line ) {
                             set_value_( std::get< I >( data_ ), value );
                             return true;
                         }
                         return false;
                     }.template operator()< Is >()
                       || ... );
-                }( std::make_index_sequence< info_table_base_t_::size >{} );
+                }( std::make_index_sequence< info_table_base_type_::size >{} );
             }
             static auto reload_( const std::string_view ) noexcept
             { }
@@ -348,23 +348,23 @@ namespace scltk
             {
                 [ & ]< std::size_t... Is >( const std::index_sequence< Is... > )
                 {
-                    ( ( out << info_table_base_t_::template at< Is >::raw_name.view()
+                    ( ( out << info_table_base_type_::template at< Is >::raw_name.view()
                             << ( get_value_( std::get< Is >( data_ ) ) == true ? str_enabled_ : str_disabled_ ) << '\n' ),
                       ... );
-                }( std::make_index_sequence< info_table_base_t_::size >{} );
+                }( std::make_index_sequence< info_table_base_type_::size >{} );
             }
             static auto make_flip_button_text_( const bool current_value ) noexcept
             {
                 return current_value == true ? " > 禁用 "sv : " > 启用 "sv;
             }
-            static auto flip_item_value_( const ui_func_args_t args, value_t_& value ) noexcept
+            static auto flip_item_value_( const ui_func_args_type args, value_type_& value ) noexcept
             {
                 const auto value_to_set{ !get_value_( value ) };
                 set_value_then_notify_all_( value, value_to_set );
                 args.parent_ui.set_text( args.node_index, make_flip_button_text_( value_to_set ) );
                 return func_back;
             }
-            static auto make_option_editor_ui_( std::array< value_t_, info_table_base_t_::size >& data_ )
+            static auto make_option_editor_ui_( std::array< value_type_, info_table_base_type_::size >& data_ )
             {
                 cpp_utils::console_ui ui{ con, unsynced_mem_pool };
                 ui.reserve( 2 + data_.size() * 2 )
@@ -375,13 +375,13 @@ namespace scltk
                 {
                     ( ui.add_back(
                           cpp_utils::value_identity_v< cpp_utils::concat_const_string(
-                            "\n[ "_cs, info_table_base_t_::template at< Is >::display_name, " ]\n"_cs ) >.view() )
+                            "\n[ "_cs, info_table_base_type_::template at< Is >::display_name, " ]\n"_cs ) >.view() )
                         .add_back(
                           make_flip_button_text_( get_value_( std::get< Is >( data_ ) ) ),
                           std::bind_back( flip_item_value_, std::ref( std::get< Is >( data_ ) ) ),
                           cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_green ),
                       ... );
-                }( std::make_index_sequence< info_table_base_t_::size >{} );
+                }( std::make_index_sequence< info_table_base_type_::size >{} );
                 ui.show();
                 return func_back;
             }
@@ -542,11 +542,11 @@ namespace scltk
               && std::is_same_v< std::decay_t< T >, T > };
         };
     }
-    using config_nodes_t
+    using config_nodes_type
       = cpp_utils::type_list< options_title_ui, crack_restore_config, window_config, perf_config, custom_rules_config >;
-    static_assert( config_nodes_t::all_of< details_::is_valid_config_node > );
-    static_assert( config_nodes_t::unique::size == config_nodes_t::size );
-    config_nodes_t::apply< std::tuple > config_nodes{};
+    static_assert( config_nodes_type::all_of< details_::is_valid_config_node > );
+    static_assert( config_nodes_type::unique::size == config_nodes_type::size );
+    config_nodes_type::apply< std::tuple > config_nodes{};
     namespace details_
     {
         auto get_config_node_raw_name_by_tag( std::string_view str ) noexcept
@@ -569,10 +569,10 @@ namespace scltk
         }
         std::apply( []< typename... Ts >( Ts&... config_node ) static { ( config_node.before_load(), ... ); }, config_nodes );
         std::pmr::string line;
-        using parsable_config_nodes_t = config_nodes_t::filter< details_::is_parsable_config_node >;
-        using config_node_recorder_t
-          = parsable_config_nodes_t::transform< std::add_pointer >::add_front< std::monostate >::apply< std::variant >;
-        config_node_recorder_t current_config_node;
+        using parsable_config_nodes_type = config_nodes_type::filter< details_::is_parsable_config_node >;
+        using config_node_recorder_type
+          = parsable_config_nodes_type::transform< std::add_pointer >::add_front< std::monostate >::apply< std::variant >;
+        config_node_recorder_type current_config_node;
         while ( std::getline( config_file, line ) ) {
             const auto parsed_begin{ std::ranges::find_if_not( line, details_::is_whitespace< char > ) };
             const auto parsed_end{ std::ranges::find_if_not( line | std::views::reverse, details_::is_whitespace< char > ).base() };
@@ -590,7 +590,7 @@ namespace scltk
                     const auto current_raw_name{ details_::get_config_node_raw_name_by_tag( parsed_line ) };
                     ( [ & ]< typename T >( T& current_node ) noexcept
                     {
-                        if constexpr ( parsable_config_nodes_t::contains< T > ) {
+                        if constexpr ( parsable_config_nodes_type::contains< T > ) {
                             if ( T::raw_name.view() == current_raw_name ) {
                                 current_config_node = std::addressof( current_node );
                                 return true;
@@ -756,7 +756,7 @@ namespace scltk
         }
         auto restore_os_components() noexcept
         {
-            using execs_t = make_const_wstring_list_t<
+            using execs = make_const_wstring_list_t<
               L"tasklist", L"taskkill", L"ntsd", L"sc", L"net", L"reg", L"cmd", L"taskmgr", L"perfmon", L"regedit", L"mmc",
               L"dism", L"sfc", L"netsh", L"sethc", L"sidebar", L"shvlzm", L"winmine", L"bckgzm", L"Chess", L"chkrzm", L"route",
               L"FreeCell", L"Hearts", L"Magnify", L"Mahjong", L"Minesweeper", L"PurblePlace", L"Solitaire", L"SpiderSolitaire" >;
@@ -769,7 +769,7 @@ namespace scltk
                       LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\)"_cs, Items, L".exe"_cs ) >.view()...,
                     cpp_utils::value_identity_v< cpp_utils::concat_const_string(
                       LR"(SOFTWARE\WOW6432Node\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\)"_cs, Items, L".exe"_cs ) >.view()... };
-            }( execs_t{} ) };
+            }( execs{} ) };
             constexpr std::array policy_key_regs{
               LR"(Software\Policies\Microsoft\Windows\System)"sv,
               LR"(Software\Policies\Microsoft\MMC)"sv,
@@ -1035,7 +1035,7 @@ namespace scltk
     }
     auto toolkit()
     {
-        using funcs_t = cpp_utils::type_list<
+        using funcs = cpp_utils::type_list<
           details_::func_item< "重启资源管理器", details_::relaunch_explorer >,
           details_::func_item< "恢复操作系统组件", details_::restore_os_components >,
           details_::func_item< "恢复 USB 存储设备访问", details_::restore_usb_device_access >,
@@ -1043,7 +1043,7 @@ namespace scltk
           details_::func_item< "重置 \"机房管理助手\" 配置", details_::reset_jfglzs_config >,
           details_::func_item< "重置 Chrome & Edge & Firefox 管理策略", details_::reset_common_web_browsers_policy > >;
         cpp_utils::console_ui ui{ con, unsynced_mem_pool };
-        ui.reserve( 4 + funcs_t::size )
+        ui.reserve( 4 + funcs::size )
           .add_back( make_middle_text< "[ 工 具 箱 ]", 2 >.view() )
           .add_back( " < 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
           .add_back(
@@ -1051,7 +1051,7 @@ namespace scltk
             " (i) 请破解电子教室软件后再使用此处功能.\n" )
           .add_back( " > 启动命令提示符\n", details_::launch_cmd );
         [ & ]< typename... Items >( const cpp_utils::type_list< Items... > )
-        { ( ui.add_back( make_item_text< Items::description >.view(), Items::execute ), ... ); }( funcs_t{} );
+        { ( ui.add_back( make_item_text< Items::description >.view(), Items::execute ), ... ); }( funcs{} );
         ui.show();
         return func_back;
     }
@@ -1124,7 +1124,7 @@ namespace scltk
         auto current_rule_executor_mode{ rule_executor_mode::crack };
         constexpr std::array mythware_servs{ L"STUDSRV"sv, L"TDKeybd"sv, L"TDNetFilter"sv, L"TDFileFilter"sv };
     }
-    using builtin_rules_t = cpp_utils::type_list<
+    using builtin_rules = cpp_utils::type_list<
       compile_time_rule_node<
         "机房管理助手",
         details_::make_const_wstring_list_t<
@@ -1349,7 +1349,7 @@ namespace scltk
     template < typename BuiltinRuleNode >
     struct builtin_rules_executor_backend final
     {
-        using empty_lambda_t = decltype( details_::empty_lambda );
+        using empty_lambda_type = decltype( details_::empty_lambda );
         static constexpr auto procs{
           []< cpp_utils::const_wstring... Procs >(
             const cpp_utils::type_list< cpp_utils::value_identity< Procs >... > ) static consteval noexcept
@@ -1418,12 +1418,13 @@ namespace scltk
         {
             ( void ) cpp_utils::terminate_process_by_names( procs );
         }
-        static constexpr auto run_crack_helper{ !std::is_same_v< decltype( BuiltinRuleNode::crack_helper ), empty_lambda_t > };
+        static constexpr auto run_crack_helper{ !std::is_same_v< decltype( BuiltinRuleNode::crack_helper ), empty_lambda_type > };
         static auto crack_helper()
         {
             BuiltinRuleNode::crack_helper();
         }
-        static constexpr auto run_restore_helper{ !std::is_same_v< decltype( BuiltinRuleNode::restore_helper ), empty_lambda_t > };
+        static constexpr auto run_restore_helper{
+          !std::is_same_v< decltype( BuiltinRuleNode::restore_helper ), empty_lambda_type > };
         static auto restore_helper()
         {
             BuiltinRuleNode::restore_helper();
@@ -1522,8 +1523,8 @@ namespace scltk
             execute_helpers_( custom_rules.restore_helpers );
         }
     };
-    using all_rules_t
-      = builtin_rules_t::apply_each< builtin_rules_executor_backend >::add_front< custom_rule_executor_backend >::apply< rule_executor >;
+    using all_rules
+      = builtin_rules::apply_each< builtin_rules_executor_backend >::add_front< custom_rule_executor_backend >::apply< rule_executor >;
     auto make_executor_mode_ui_text() noexcept
     {
         switch ( details_::current_rule_executor_mode ) {
@@ -1531,7 +1532,7 @@ namespace scltk
             case details_::rule_executor_mode::restore : return "[ 恢复 (点击切换) ]\n"sv;
         }
     }
-    auto flip_executor_mode( const ui_func_args_t args ) noexcept
+    auto flip_executor_mode( const ui_func_args_type args ) noexcept
     {
         switch ( details_::current_rule_executor_mode ) {
             case details_::rule_executor_mode::crack :
@@ -1563,7 +1564,7 @@ auto main() -> int
     scltk::load_config( false );
     scltk::create_parallel_tasks();
     cpp_utils::console_ui ui{ scltk::con, scltk::unsynced_mem_pool };
-    ui.reserve( 9 + scltk::builtin_rules_t::size )
+    ui.reserve( 9 + scltk::builtin_rules::size )
       .add_back( scltk::make_middle_text< "[ 主  页 ]", 2 >.view() )
       .add_back( " < 退出 ", scltk::quit, cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_intensity )
       .add_back( " < 重启\n", scltk::relaunch, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
@@ -1573,7 +1574,7 @@ auto main() -> int
       .add_back(
         scltk::make_executor_mode_ui_text(), scltk::flip_executor_mode,
         cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_green )
-      .add_back( " > 全部执行\n", scltk::all_rules_t{} )
+      .add_back( " > 全部执行\n", scltk::all_rules{} )
       .add_back( " > * 自定义 * ", scltk::rule_executor< scltk::custom_rule_executor_backend >{} );
     [ & ]< typename... Nodes >( const cpp_utils::type_list< Nodes... > )
     {
@@ -1581,6 +1582,6 @@ auto main() -> int
             scltk::make_item_text< Nodes::display_name >.view(),
             scltk::rule_executor< scltk::builtin_rules_executor_backend< Nodes > >{} ),
           ... );
-    }( scltk::builtin_rules_t{} );
+    }( scltk::builtin_rules{} );
     ui.show();
 }
