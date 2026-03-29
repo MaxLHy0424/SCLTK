@@ -1,6 +1,8 @@
 #define WINVER       0x0601
 #define _WIN32_WINNT 0x0601
 #define NOCOMM
+#define NOSOUND
+#define NORPC
 #include <cpp_utils/const_string.hpp>
 #include <cpp_utils/meta.hpp>
 #include <cpp_utils/windows_app_tools.hpp>
