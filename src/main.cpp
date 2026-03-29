@@ -1002,6 +1002,22 @@ namespace scltk
             std::print( " -> 终止进程.\n" );
             ( void ) cpp_utils::terminate_process_by_name( L"explorer.exe"sv );
             std::print( " -> 启动进程.\n" );
+#ifndef _WIN64
+            struct wow64_filesystem_redirect_guard_ final
+            {
+                PVOID value{ nullptr };
+                auto operator=( const wow64_filesystem_redirect_guard_& ) noexcept -> wow64_filesystem_redirect_guard_& = delete;
+                wow64_filesystem_redirect_guard_() noexcept
+                {
+                    Wow64DisableWow64FsRedirection( &value );
+                }
+                wow64_filesystem_redirect_guard_( const wow64_filesystem_redirect_guard_& ) noexcept = delete;
+                ~wow64_filesystem_redirect_guard_() noexcept
+                {
+                    Wow64RevertWow64FsRedirection( value );
+                }
+            } wow64_filesystem_redirect_guard;
+#endif
             wchar_t cmd[]{ L"explorer.exe" };
             STARTUPINFOW startup_info{};
             PROCESS_INFORMATION proc_info{};
