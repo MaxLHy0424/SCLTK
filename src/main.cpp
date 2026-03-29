@@ -1388,7 +1388,7 @@ namespace scltk
         static constexpr auto run_hijack_procs{ !ifeo_regs.empty() };
         static auto hijack_procs() noexcept
         {
-            constexpr const auto& value{ L"nul" };
+            constexpr const auto& value{ L"NUL" };
             for ( const auto& reg : ifeo_regs ) {
                 ( void ) cpp_utils::create_registry_key_without_redirect(
                   HKEY_LOCAL_MACHINE, reg, L"Debugger", cpp_utils::registry_flag::string_type,
@@ -1451,7 +1451,7 @@ namespace scltk
         static constexpr auto run_hijack_procs{ true };
         static auto hijack_procs()
         {
-            constexpr const auto& value{ L"nul" };
+            constexpr const auto& value{ L"NUL" };
             for ( const auto& proc : custom_rules.procs ) {
                 ( void ) cpp_utils::create_registry_key_without_redirect(
                   HKEY_LOCAL_MACHINE,
