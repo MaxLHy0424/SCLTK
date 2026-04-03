@@ -1037,7 +1037,7 @@ namespace scltk
             }
             SetupDiDestroyDeviceInfoList( device_info );
         }
-        auto reset_partial_network_settings() noexcept
+        auto fix_network() noexcept
         {
             remove_malicious_route_rules();
             reset_firewall_rules();
@@ -1110,7 +1110,7 @@ namespace scltk
           details_::func_item< "重启资源管理器", details_::relaunch_explorer >,
           details_::func_item< "恢复操作系统组件", details_::restore_os_components >,
           details_::func_item< "恢复 USB 存储设备访问", details_::restore_usb_device_access >,
-          details_::func_item< "重置部分网络设置", details_::reset_partial_network_settings >,
+          details_::func_item< "修复网络访问", details_::fix_network >,
           details_::func_item< "重置 \"机房管理助手\" 配置", details_::reset_jfglzs_config >,
           details_::func_item< "重置 Chrome & Edge & Firefox 管理策略", details_::reset_common_web_browsers_policy > >;
         cpp_utils::console_ui ui{ con, unsynced_mem_pool };
