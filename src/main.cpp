@@ -1062,6 +1062,7 @@ namespace scltk
             constexpr const auto& enabled{ std::get< window_config >( config_nodes ).at< "translucent" >() };
             if ( no_async_hot_reload ) {
                 con.set_translucency( enabled.test( std::memory_order_acquire ) ? 217 : 255 );
+                return;
             }
             for ( ;; ) {
                 enabled.wait( false, std::memory_order_acquire );
@@ -1076,6 +1077,7 @@ namespace scltk
             constexpr const auto& enabled{ std::get< window_config >( config_nodes ).at< "simple_titlebar" >() };
             if ( no_async_hot_reload ) {
                 con.enable_context_menu( !enabled.test( std::memory_order_acquire ) );
+                return;
             }
             for ( ;; ) {
                 enabled.wait( false, std::memory_order_acquire );
