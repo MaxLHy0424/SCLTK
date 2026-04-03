@@ -933,7 +933,7 @@ namespace scltk
                 return;
             }
             if ( set_device_state( device_info, &device_info_data, FALSE ) ) {
-                std::this_thread::sleep_for( 5s );
+                std::this_thread::sleep_for( 3s );
                 set_device_state( device_info, &device_info_data, TRUE );
             }
             SetupDiDestroyDeviceInfoList( device_info );
