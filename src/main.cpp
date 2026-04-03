@@ -433,9 +433,6 @@ namespace scltk
         details_::option_info< "force_show", "置顶窗口 (异步)" >,
         details_::option_info< "simple_titlebar", "极简标题栏 (异步)" >,
         details_::option_info< "translucent", "半透明 (异步)" > > >;
-    using perf_config = details_::options_config_node<
-      "perf", "性能", false,
-      details_::options_info_table< details_::option_info< "no_async_hot_reload", "禁用异步热重载 (下次启动时生效)" > > >;
     class custom_rules_config final
       : public details_::config_node_interface
       , public details_::config_node_raw_name< "custom_rules" >
@@ -546,8 +543,7 @@ namespace scltk
               && std::is_same_v< std::decay_t< T >, T > };
         };
     }
-    using config_nodes_type
-      = cpp_utils::type_list< options_title_ui, crack_restore_config, window_config, perf_config, custom_rules_config >;
+    using config_nodes_type = cpp_utils::type_list< options_title_ui, crack_restore_config, window_config, custom_rules_config >;
     static_assert( config_nodes_type::all_of< details_::is_valid_config_node > );
     static_assert( config_nodes_type::unique::size == config_nodes_type::size );
     config_nodes_type::apply< std::tuple > config_nodes{};
@@ -1035,12 +1031,7 @@ namespace scltk
     {
         auto enable_translucent() noexcept
         {
-            constexpr const auto& no_async_hot_reload{ std::get< perf_config >( config_nodes ).at< "no_async_hot_reload" >() };
             constexpr const auto& enabled{ std::get< window_config >( config_nodes ).at< "translucent" >() };
-            if ( no_async_hot_reload ) {
-                con.set_translucency( enabled.test( std::memory_order_acquire ) ? 217 : 255 );
-                return;
-            }
             for ( ;; ) {
                 enabled.wait( false, std::memory_order_acquire );
                 con.set_translucency( 217 );
@@ -1050,12 +1041,7 @@ namespace scltk
         }
         auto enable_simple_titlebar() noexcept
         {
-            constexpr const auto& no_async_hot_reload{ std::get< perf_config >( config_nodes ).at< "no_async_hot_reload" >() };
             constexpr const auto& enabled{ std::get< window_config >( config_nodes ).at< "simple_titlebar" >() };
-            if ( no_async_hot_reload ) {
-                con.enable_context_menu( !enabled.test( std::memory_order_acquire ) );
-                return;
-            }
             for ( ;; ) {
                 enabled.wait( false, std::memory_order_acquire );
                 con.enable_context_menu( false );
@@ -1065,15 +1051,8 @@ namespace scltk
         }
         auto force_show() noexcept
         {
-            constexpr const auto& no_async_hot_reload{ std::get< perf_config >( config_nodes ).at< "no_async_hot_reload" >() };
             constexpr const auto& enabled{ std::get< window_config >( config_nodes ).at< "force_show" >() };
-            if ( no_async_hot_reload && !enabled.test( std::memory_order_acquire ) ) {
-                return;
-            }
             constexpr auto sleep_duration{ 50ms };
-            if ( no_async_hot_reload ) {
-                con.force_show_forever( sleep_duration );
-            }
             constexpr auto condition_checker{ [] static noexcept
             {
                 if ( enabled.test( std::memory_order_acquire ) == false ) {
