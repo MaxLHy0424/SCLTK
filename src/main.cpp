@@ -837,7 +837,7 @@ namespace scltk
         {
             std::print( " -> 重置 Hosts.\n" );
 #ifndef _WIN64
-            const wow64_no_filesystem_redirect_guard no_filesystem_redirect;
+            const wow64_no_filesystem_redirect_guard _;
 #endif
             const auto hosts_path{ [] static
             {
@@ -976,7 +976,7 @@ namespace scltk
             ( void ) cpp_utils::terminate_process_by_name( L"explorer.exe"sv );
             std::print( " -> 启动进程.\n" );
 #ifndef _WIN64
-            const wow64_no_filesystem_redirect_guard no_filesystem_redirect;
+            const wow64_no_filesystem_redirect_guard _;
 #endif
             wchar_t cmd[]{ L"explorer.exe" };
             STARTUPINFOW startup_info{};
