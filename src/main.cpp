@@ -836,28 +836,6 @@ namespace scltk
         auto reset_hosts() noexcept
         {
             std::print( " -> 重置 Hosts.\n" );
-            constexpr const auto& default_content{
-              "# Copyright (c) 1993-2009 Microsoft Corp.\n"
-              "#\n"
-              "# This is a sample HOSTS file used by Microsoft TCP/IP for Windows.\n"
-              "#\n"
-              "# This file contains the mappings of IP addresses to host names. Each\n"
-              "# entry should be kept on an individual line. The IP address should\n"
-              "# be placed in the first column followed by the corresponding host name.\n"
-              "# The IP address and the host name should be separated by at least one\n"
-              "# space.\n"
-              "#\n"
-              "# Additionally, comments (such as these) may be inserted on individual\n"
-              "# lines or following the machine name denoted by a '#' symbol.\n"
-              "#\n"
-              "# For example:\n"
-              "#\n"
-              "#      102.54.94.97     rhino.acme.com          # source server\n"
-              "#       38.25.63.10     x.acme.com              # x client host\n"
-              "\n"
-              "# localhost name resolution is handled within DNS itself.\n"
-              "# 127.0.0.1       localhost\n"
-              "# ::1             localhost\n" };
 #ifndef _WIN64
             const wow64_no_filesystem_redirect_guard no_filesystem_redirect;
 #endif
@@ -875,8 +853,7 @@ namespace scltk
             }
             std::filesystem::permissions( hosts_path, std::filesystem::perms::all, std::filesystem::perm_options::replace, ec );
             std::filesystem::remove( hosts_path, ec );
-            std::ofstream file{ hosts_path, std::ios::out | std::ios::trunc };
-            file.write( default_content, sizeof( default_content ) - sizeof( '\0' ) ).flush();
+            std::ofstream{ hosts_path, std::ios::out }.close();
             std::filesystem::permissions( hosts_path, original_perms, std::filesystem::perm_options::replace, ec );
         }
         auto flush_dns() noexcept
