@@ -1370,63 +1370,81 @@ namespace scltk
         static constexpr auto run_enable_servs{ !servs.empty() };
         static auto enable_servs() noexcept
         {
-            for ( const auto& serv : servs ) {
-                ( void ) cpp_utils::set_service_start_type( serv, cpp_utils::service_flag::auto_start );
+            if constexpr ( run_enable_servs ) {
+                for ( const auto& serv : servs ) {
+                    ( void ) cpp_utils::set_service_start_type( serv, cpp_utils::service_flag::auto_start );
+                }
             }
         }
         static constexpr auto run_disable_servs{ !servs.empty() };
         static auto disable_servs() noexcept
         {
-            for ( const auto& serv : servs ) {
-                ( void ) cpp_utils::set_service_start_type( serv, cpp_utils::service_flag::disabled_start );
+            if constexpr ( run_disable_servs ) {
+                for ( const auto& serv : servs ) {
+                    ( void ) cpp_utils::set_service_start_type( serv, cpp_utils::service_flag::disabled_start );
+                }
             }
         }
         static constexpr auto run_start_servs{ !servs.empty() };
         static auto start_servs() noexcept
         {
-            for ( const auto& serv : servs ) {
-                ( void ) cpp_utils::start_service_with_dependencies( serv, unsynced_mem_pool );
+            if constexpr ( run_start_servs ) {
+                for ( const auto& serv : servs ) {
+                    ( void ) cpp_utils::start_service_with_dependencies( serv, unsynced_mem_pool );
+                }
             }
         }
         static constexpr auto run_stop_servs{ !servs.empty() };
         static auto stop_servs() noexcept
         {
-            for ( const auto& serv : servs ) {
-                ( void ) cpp_utils::stop_service_with_dependencies( serv, unsynced_mem_pool );
+            if constexpr ( run_stop_servs ) {
+                for ( const auto& serv : servs ) {
+                    ( void ) cpp_utils::stop_service_with_dependencies( serv, unsynced_mem_pool );
+                }
             }
         }
         static constexpr auto run_hijack_procs{ !ifeo_regs.empty() };
         static auto hijack_procs() noexcept
         {
-            constexpr const auto& value{ L"NUL" };
-            for ( const auto& reg : ifeo_regs ) {
-                ( void ) cpp_utils::create_registry_key_without_redirect(
-                  HKEY_LOCAL_MACHINE, reg, L"Debugger", cpp_utils::registry_flag::string_type,
-                  reinterpret_cast< const BYTE* >( +value ), sizeof( value ) );
+            if constexpr ( run_hijack_procs ) {
+                constexpr const auto& value{ L"NUL" };
+                for ( const auto& reg : ifeo_regs ) {
+                    ( void ) cpp_utils::create_registry_key_without_redirect(
+                      HKEY_LOCAL_MACHINE, reg, L"Debugger", cpp_utils::registry_flag::string_type,
+                      reinterpret_cast< const BYTE* >( +value ), sizeof( value ) );
+                }
             }
         }
         static constexpr auto run_undo_hijack_procs{ !ifeo_regs.empty() };
         static auto undo_hijack_procs() noexcept
         {
-            for ( const auto& reg : ifeo_regs ) {
-                ( void ) cpp_utils::delete_registry_tree_without_redirect( HKEY_LOCAL_MACHINE, reg );
+            if constexpr ( run_undo_hijack_procs ) {
+                for ( const auto& reg : ifeo_regs ) {
+                    ( void ) cpp_utils::delete_registry_tree_without_redirect( HKEY_LOCAL_MACHINE, reg );
+                }
             }
         }
         static constexpr auto run_terminate_procs{ !procs.empty() };
         static auto terminate_procs() noexcept
         {
-            ( void ) cpp_utils::terminate_process_by_names( procs );
+            if constexpr ( run_terminate_procs ) {
+                ( void ) cpp_utils::terminate_process_by_names( procs );
+            }
         }
         static constexpr auto run_crack_helper{ !std::is_same_v< decltype( BuiltinRuleNode::crack_helper ), empty_lambda_type > };
         static auto crack_helper()
         {
-            BuiltinRuleNode::crack_helper();
+            if constexpr ( run_crack_helper ) {
+                BuiltinRuleNode::crack_helper();
+            }
         }
         static constexpr auto run_restore_helper{
           !std::is_same_v< decltype( BuiltinRuleNode::restore_helper ), empty_lambda_type > };
         static auto restore_helper()
         {
-            BuiltinRuleNode::restore_helper();
+            if constexpr ( run_restore_helper ) {
+                BuiltinRuleNode::restore_helper();
+            }
         }
     };
     struct custom_rule_executor_backend final
