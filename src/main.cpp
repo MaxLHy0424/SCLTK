@@ -806,77 +806,6 @@ namespace scltk
                   reinterpret_cast< const BYTE* >( &need_enabled_reg_value ), sizeof( need_enabled_reg_value ) );
             }
         }
-        auto remove_malicious_route_rules() noexcept
-        {
-            std::print( " -> 移除恶意路由规则.\n" );
-            constexpr auto normal_route{ []( const DWORD ip ) static noexcept
-            {
-                const auto first_byte{ static_cast< BYTE >( ( ip >> 24 ) & 0xFF ) };
-                return ( first_byte == 127 ) || ( first_byte == 224 ) || ( ip == 0xFFFFFFFF ) || ( ip == 0x00000000 );
-            } };
-            constexpr auto private_ip{ []( const DWORD ip ) static noexcept
-            {
-                const auto first_byte{ static_cast< BYTE >( ( ip >> 24 ) & 0xFF ) };
-                const auto second_byte{ static_cast< BYTE >( ( ip >> 16 ) & 0xFF ) };
-                if ( first_byte == 10 ) {
-                    return true;
-                }
-                if ( first_byte == 192 && second_byte == 168 ) {
-                    return true;
-                }
-                if ( first_byte == 169 && second_byte == 254 ) {
-                    return true;
-                }
-                if ( first_byte == 172 ) {
-                    return ( second_byte >= 16 && second_byte <= 31 );
-                }
-                return false;
-            } };
-            struct route_table_ final
-            {
-                PMIB_IPFORWARDTABLE ptr{ nullptr };
-                DWORD size{ 0 };
-                bool valid{ false };
-                auto operator=( const route_table_& ) -> route_table_& = delete;
-                route_table_() noexcept
-                {
-                    if ( GetIpForwardTable( nullptr, &size, 0 ) == ERROR_INSUFFICIENT_BUFFER ) {
-                        ptr = static_cast< PMIB_IPFORWARDTABLE >( unsynced_mem_pool->allocate( size ) );
-                        if ( ptr != nullptr && GetIpForwardTable( ptr, &size, 0 ) == NO_ERROR ) {
-                            valid = true;
-                        }
-                    }
-                }
-                route_table_( const route_table_& ) noexcept = delete;
-                ~route_table_() noexcept
-                {
-                    if ( ptr != nullptr ) {
-                        unsynced_mem_pool->deallocate( ptr, size );
-                    }
-                }
-            } route_table;
-            if ( route_table.valid == false ) [[unlikely]] {
-                return;
-            }
-            std::pmr::vector< DWORD > malicious_indices{ unsynced_mem_pool };
-            malicious_indices.reserve( route_table.ptr->dwNumEntries );
-            for ( DWORD i{ 0 }; i < route_table.ptr->dwNumEntries; ++i ) {
-                const auto& ip{ route_table.ptr->table[ i ] };
-                if ( ip.dwForwardMask == 0xFFFFFFFF && !normal_route( ip.dwForwardDest ) && !private_ip( ip.dwForwardDest ) ) {
-                    malicious_indices.emplace_back( i );
-                }
-            }
-            if ( malicious_indices.empty() ) {
-                return;
-            }
-            std::ranges::sort( malicious_indices, std::ranges::greater{} );
-            for ( const auto& idx : malicious_indices ) {
-                if ( idx >= route_table.ptr->dwNumEntries ) {
-                    continue;
-                }
-                DeleteIpForwardEntry( &route_table.ptr->table[ idx ] );
-            }
-        }
         auto reset_firewall_rules() noexcept
         {
             std::print( " -> 重置防火墙规则.\n" );
@@ -1039,7 +968,6 @@ namespace scltk
         }
         auto fix_network() noexcept
         {
-            remove_malicious_route_rules();
             reset_firewall_rules();
             reset_hosts();
             flush_dns();
