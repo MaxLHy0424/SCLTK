@@ -430,9 +430,8 @@ namespace scltk
     using window_config = details_::options_config_node<
       "window", "窗口显示", true,
       details_::options_info_table<
-        details_::option_info< "force_show", "置顶窗口 (异步)" >,
-        details_::option_info< "simple_titlebar", "极简标题栏 (异步)" >,
-        details_::option_info< "translucent", "半透明 (异步)" > > >;
+        details_::option_info< "force_show", "置顶窗口" >, details_::option_info< "simple_titlebar", "极简标题栏" >,
+        details_::option_info< "translucent", "半透明" > > >;
     class custom_rules_config final
       : public details_::config_node_interface
       , public details_::config_node_raw_name< "custom_rules" >
