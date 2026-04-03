@@ -33,7 +33,7 @@ args_opt_release := -Ofast \
                     -fomit-frame-pointer \
                     -fno-plt
 args_include     := -I$(include_path)
-args_library     := -liphlpapi
+args_library     := -liphlpapi -lsetupapi
 args_extra       :=
 input_charset    := utf-8
 output_charset   := gbk

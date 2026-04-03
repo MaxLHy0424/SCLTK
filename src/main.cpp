@@ -1,5 +1,6 @@
 #define WINVER       0x0601
 #define _WIN32_WINNT 0x0601
+#include <winsock2.h>
 #define NOCOMM
 #define NOSOUND
 #define NORPC
@@ -7,10 +8,13 @@
 #include <cpp_utils/meta.hpp>
 #include <cpp_utils/windows_app_tools.hpp>
 #include <cpp_utils/windows_console_ui.hpp>
+#include <initguid.h>
 #include <iphlpapi.h>
+#include <setupapi.h>
 #include <filesystem>
 #include <fstream>
 #include "info.hpp"
+DEFINE_GUID( GUID_DEVCLASS_NET, 0x4d36e972, 0xe325, 0x11ce, 0xbf, 0xc1, 0x08, 0x00, 0x2b, 0xe1, 0x03, 0x18 );
 namespace scltk
 {
     using namespace std::chrono_literals;
@@ -960,12 +964,86 @@ namespace scltk
             }
             FreeLibrary( dnsapi );
         }
+        auto set_device_state( const HDEVINFO device_info, SP_DEVINFO_DATA* const p_device_info_data, const bool enabled ) noexcept
+        {
+            SP_PROPCHANGE_PARAMS pcp;
+            pcp.ClassInstallHeader.cbSize          = sizeof( SP_CLASSINSTALL_HEADER );
+            pcp.ClassInstallHeader.InstallFunction = DIF_PROPERTYCHANGE;
+            pcp.StateChange                        = enabled ? DICS_ENABLE : DICS_DISABLE;
+            pcp.Scope                              = DICS_FLAG_GLOBAL;
+            pcp.HwProfile                          = 0;
+            if ( !SetupDiSetClassInstallParamsW( device_info, p_device_info_data, &pcp.ClassInstallHeader, sizeof( pcp ) ) )
+              [[unlikely]]
+            {
+                return FALSE;
+            }
+            return SetupDiCallClassInstaller( DIF_PROPERTYCHANGE, device_info, p_device_info_data );
+        }
+        auto relaunch_network_adapters() noexcept
+        {
+            std::print( " -> 重启网络适配器.\n" );
+            NET_LUID target_local_uid{};
+            wchar_t target_name[ 256 ]{};
+            ULONG out_buffer_length{};
+            GetAdaptersAddresses( AF_UNSPEC, 0, nullptr, nullptr, &out_buffer_length );
+            auto addresses{ static_cast< PIP_ADAPTER_ADDRESSES >( unsynced_mem_pool->allocate( out_buffer_length ) ) };
+            if ( GetAdaptersAddresses( AF_UNSPEC, 0, nullptr, addresses, &out_buffer_length ) == NO_ERROR ) [[likely]] {
+                auto current{ addresses };
+                while ( current != nullptr ) {
+                    if ( ( current->IfType == IF_TYPE_ETHERNET_CSMACD || current->IfType == IF_TYPE_IEEE80211 )
+                         && current->OperStatus == IfOperStatusUp )
+                    {
+                        target_local_uid = current->Luid;
+                        wcscpy_s( target_name, 256, current->Description );
+                        break;
+                    }
+                    current = current->Next;
+                }
+            }
+            unsynced_mem_pool->deallocate( addresses, out_buffer_length );
+            if ( target_local_uid.Value == 0 ) [[unlikely]] {
+                return;
+            }
+            const auto device_info{ SetupDiGetClassDevsW( &GUID_DEVCLASS_NET, nullptr, nullptr, DIGCF_PRESENT ) };
+            if ( device_info == INVALID_HANDLE_VALUE ) [[unlikely]] {
+                return;
+            }
+            SP_DEVINFO_DATA device_info_data;
+            device_info_data.cbSize = sizeof( SP_DEVINFO_DATA );
+            bool found{ false };
+            for ( DWORD i{ 0 }; SetupDiEnumDeviceInfo( device_info, i, &device_info_data ); ++i ) {
+                wchar_t buffer[ 256 ];
+                if ( !SetupDiGetDeviceRegistryPropertyW(
+                       device_info, &device_info_data, SPDRP_FRIENDLYNAME, nullptr, reinterpret_cast< PBYTE >( buffer ),
+                       sizeof( buffer ), nullptr )
+                     && !SetupDiGetDeviceRegistryPropertyW(
+                       device_info, &device_info_data, SPDRP_DEVICEDESC, nullptr, reinterpret_cast< PBYTE >( buffer ),
+                       sizeof( buffer ), nullptr ) )
+                {
+                    continue;
+                }
+                if ( wcscmp( buffer, target_name ) == 0 ) {
+                    found = true;
+                    break;
+                }
+            }
+            if ( !found ) [[unlikely]] {
+                SetupDiDestroyDeviceInfoList( device_info );
+                return;
+            }
+            if ( set_device_state( device_info, &device_info_data, FALSE ) ) {
+                std::this_thread::sleep_for( 5s );
+                set_device_state( device_info, &device_info_data, TRUE );
+            }
+            SetupDiDestroyDeviceInfoList( device_info );
+        }
         auto reset_partial_network_settings() noexcept
         {
             remove_malicious_route_rules();
             reset_firewall_rules();
             reset_hosts();
             flush_dns();
+            relaunch_network_adapters();
         }
         auto reset_jfglzs_config() noexcept
         {
