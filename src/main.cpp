@@ -925,7 +925,6 @@ namespace scltk
               "# localhost name resolution is handled within DNS itself.\n"
               "# 127.0.0.1       localhost\n"
               "# ::1             localhost\n" };
-            constexpr const auto& reset_hosts_error_message{ "\n (!) 重置 Hosts 失败.\n\n" };
 #ifndef _WIN64
             const wow64_no_filesystem_redirect_guard no_filesystem_redirect;
 #endif
@@ -939,31 +938,25 @@ namespace scltk
             std::error_code ec;
             const auto original_perms{ std::filesystem::status( hosts_path, ec ).permissions() };
             if ( ec ) [[unlikely]] {
-                std::print( reset_hosts_error_message );
                 return;
             }
             std::filesystem::permissions( hosts_path, std::filesystem::perms::all, std::filesystem::perm_options::replace, ec );
             std::filesystem::remove( hosts_path, ec );
             std::ofstream file{ hosts_path, std::ios::out | std::ios::trunc };
             file.write( default_content, sizeof( default_content ) - sizeof( '\0' ) ).flush();
-            if ( !file.good() ) [[unlikely]] {
-                std::print( reset_hosts_error_message );
-            }
             std::filesystem::permissions( hosts_path, original_perms, std::filesystem::perm_options::replace, ec );
         }
         auto flush_dns() noexcept
         {
-            constexpr const auto& flush_dns_error_message{ "\n (!) 刷新 DNS 失败.\n\n" };
             std::print( " -> 刷新 DNS 缓存.\n" );
             const auto dnsapi{ LoadLibraryW( L"dnsapi.dll" ) };
             if ( dnsapi == nullptr ) [[unlikely]] {
-                std::print( flush_dns_error_message );
                 return;
             }
             const auto dns_flush_resolver_cache{
               std::bit_cast< BOOL( WINAPI* )() noexcept >( GetProcAddress( dnsapi, "DnsFlushResolverCache" ) ) };
-            if ( dns_flush_resolver_cache == nullptr || !dns_flush_resolver_cache() ) [[unlikely]] {
-                std::print( flush_dns_error_message );
+            if ( dns_flush_resolver_cache != nullptr ) [[likely]] {
+                dns_flush_resolver_cache();
             }
             FreeLibrary( dnsapi );
         }
