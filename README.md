@@ -194,7 +194,7 @@ restore_helper: "abc helper.exe" restore
 
 ## 破解后一些软件运行时报错 “找不到文件”
 
-在不影响软件正常运行的情况下，可以尝试修改可执行文件名称。另外，打开注册表编辑器，在 `HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options` 下找到和要运行的软件的文件名称相同的项，删除即可。
+在不影响软件正常运行的情况下，可以尝试修改可执行文件名称。另外，打开注册表编辑器，在 `HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options` 和 `HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Windows NT\CurrentVersion\Image File Execution Options` 下找到和要运行的软件的文件名称相同的项，删除即可。
 
 ## SCLTK 在某些版本的 Windows OS 上无法运行
 
