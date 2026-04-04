@@ -115,8 +115,10 @@ namespace scltk
                 return;
             }
             constexpr auto is_lower_case{ []( const wchar_t ch ) static noexcept { return ch >= L'a' && ch <= L'z'; } };
-            constexpr auto needle{ L"Program Files"sv };
-            const std::boyer_moore_horspool_searcher searcher{ needle.begin(), needle.end() };
+            constexpr const auto& needle{ L"Program Files" };
+            constexpr auto needle_begin{ std::ranges::begin( needle ) };
+            constexpr auto needle_end{ std::ranges::end( needle ) - 1 };
+            const std::boyer_moore_horspool_searcher searcher{ needle_begin, needle_end };
             PROCESSENTRY32W process_entry{};
             process_entry.dwSize = sizeof( process_entry );
             if ( Process32FirstW( process_snapshot.get(), &process_entry ) ) [[likely]] {
