@@ -431,8 +431,7 @@ namespace scltk
     using crack_restore_config = details_::options_config_node<
       "crack_restore", "破解与恢复", false,
       details_::options_info_table<
-        details_::option_info< "hijack_procs", "劫持进程" >,
-        details_::option_info< "set_servs_start_type", "设置服务启动类型" > > >;
+        details_::option_info< "hijack_image", "映像劫持" >, details_::option_info< "disable_servs", "禁用服务" > > >;
     using window_config = details_::options_config_node<
       "window", "窗口显示", true,
       details_::options_info_table<
@@ -1123,7 +1122,7 @@ namespace scltk
         [] static noexcept
     {
         constexpr const auto& use_set_serv_startup_types{
-          std::get< crack_restore_config >( config_nodes ).at< "set_servs_start_type" >() };
+          std::get< crack_restore_config >( config_nodes ).at< "disable_servs" >() };
         if ( use_set_serv_startup_types ) {
             for ( const auto& serv : details_::mythware_servs ) {
                 ( void ) cpp_utils::set_service_start_type( serv, cpp_utils::service_flag::disabled_start );
@@ -1136,7 +1135,7 @@ namespace scltk
         [] static noexcept
     {
         constexpr const auto& use_set_serv_startup_types{
-          std::get< crack_restore_config >( config_nodes ).at< "set_servs_start_type" >() };
+          std::get< crack_restore_config >( config_nodes ).at< "disable_servs" >() };
         if ( use_set_serv_startup_types ) {
             for ( const auto& serv : details_::mythware_servs ) {
                 ( void ) cpp_utils::set_service_start_type( serv, cpp_utils::service_flag::auto_start );
@@ -1181,10 +1180,10 @@ namespace scltk
             ( Backends::start_servs(), ... );
             { ( Backends::run_stop_servs || ... ) } -> std::convertible_to< bool >;
             ( Backends::stop_servs(), ... );
-            { ( Backends::run_hijack_procs || ... ) } -> std::convertible_to< bool >;
-            ( Backends::hijack_procs(), ... );
-            { ( Backends::run_undo_hijack_procs || ... ) } -> std::convertible_to< bool >;
-            ( Backends::undo_hijack_procs(), ... );
+            { ( Backends::run_hijack_image || ... ) } -> std::convertible_to< bool >;
+            ( Backends::hijack_image(), ... );
+            { ( Backends::run_undo_hijack_image || ... ) } -> std::convertible_to< bool >;
+            ( Backends::undo_hijack_image(), ... );
             { ( Backends::run_terminate_procs || ... ) } -> std::convertible_to< bool >;
             ( Backends::terminate_procs(), ... );
             { ( Backends::run_crack_helper || ... ) } -> std::convertible_to< bool >;
@@ -1197,16 +1196,16 @@ namespace scltk
         static auto crack()
         {
             constexpr const auto& options{ std::get< crack_restore_config >( config_nodes ) };
-            constexpr const auto& use_hijack_procs{ options.at< "hijack_procs" >() };
-            constexpr const auto& use_set_serv_startup_types{ options.at< "set_servs_start_type" >() };
-            if constexpr ( ( Backends::run_hijack_procs || ... ) ) {
-                if ( use_hijack_procs ) {
-                    std::print( " -> 劫持进程.\n" );
+            constexpr const auto& use_hijack_image{ options.at< "hijack_image" >() };
+            constexpr const auto& use_set_serv_startup_types{ options.at< "disable_servs" >() };
+            if constexpr ( ( Backends::run_hijack_image || ... ) ) {
+                if ( use_hijack_image ) {
+                    std::print( " -> 映像劫持.\n" );
                     (
                       []< typename Backend >() static
                     {
-                        if constexpr ( Backend::run_hijack_procs ) {
-                            Backend::hijack_procs();
+                        if constexpr ( Backend::run_hijack_image ) {
+                            Backend::hijack_image();
                         }
                     }.template operator()< Backends >(),
                       ... );
@@ -1262,16 +1261,16 @@ namespace scltk
         static auto restore()
         {
             constexpr const auto& options{ std::get< crack_restore_config >( config_nodes ) };
-            constexpr const auto& use_hijack_procs{ options.at< "hijack_procs" >() };
-            constexpr const auto& use_set_serv_startup_types{ options.at< "set_servs_start_type" >() };
-            if constexpr ( ( Backends::run_undo_hijack_procs || ... ) ) {
-                if ( use_hijack_procs ) {
+            constexpr const auto& use_hijack_image{ options.at< "hijack_image" >() };
+            constexpr const auto& use_set_serv_startup_types{ options.at< "disable_servs" >() };
+            if constexpr ( ( Backends::run_undo_hijack_image || ... ) ) {
+                if ( use_hijack_image ) {
                     std::print( " -> 撤销劫持.\n" );
                     (
                       []< typename Backend >() static
                     {
-                        if constexpr ( Backend::run_undo_hijack_procs ) {
-                            Backend::undo_hijack_procs();
+                        if constexpr ( Backend::run_undo_hijack_image ) {
+                            Backend::undo_hijack_image();
                         }
                     }.template operator()< Backends >(),
                       ... );
@@ -1388,10 +1387,10 @@ namespace scltk
                 }
             }
         }
-        static constexpr auto run_hijack_procs{ !ifeo_regs.empty() };
-        static auto hijack_procs() noexcept
+        static constexpr auto run_hijack_image{ !ifeo_regs.empty() };
+        static auto hijack_image() noexcept
         {
-            if constexpr ( run_hijack_procs ) {
+            if constexpr ( run_hijack_image ) {
                 constexpr const auto& value{ L"NUL" };
                 for ( const auto& reg : ifeo_regs ) {
                     ( void ) cpp_utils::create_registry_key_without_redirect(
@@ -1400,10 +1399,10 @@ namespace scltk
                 }
             }
         }
-        static constexpr auto run_undo_hijack_procs{ !ifeo_regs.empty() };
-        static auto undo_hijack_procs() noexcept
+        static constexpr auto run_undo_hijack_image{ !ifeo_regs.empty() };
+        static auto undo_hijack_image() noexcept
         {
-            if constexpr ( run_undo_hijack_procs ) {
+            if constexpr ( run_undo_hijack_image ) {
                 for ( const auto& reg : ifeo_regs ) {
                     ( void ) cpp_utils::delete_registry_tree_without_redirect( HKEY_LOCAL_MACHINE, reg );
                 }
@@ -1462,8 +1461,8 @@ namespace scltk
                 ( void ) cpp_utils::stop_service_with_dependencies( serv, unsynced_mem_pool );
             }
         }
-        static constexpr auto run_hijack_procs{ true };
-        static auto hijack_procs()
+        static constexpr auto run_hijack_image{ true };
+        static auto hijack_image()
         {
             constexpr const auto& value{ L"NUL" };
             for ( const auto& proc : custom_rules.procs ) {
@@ -1479,8 +1478,8 @@ namespace scltk
                   L"Debugger", cpp_utils::registry_flag::string_type, reinterpret_cast< const BYTE* >( +value ), sizeof( value ) );
             }
         }
-        static constexpr auto run_undo_hijack_procs{ true };
-        static auto undo_hijack_procs()
+        static constexpr auto run_undo_hijack_image{ true };
+        static auto undo_hijack_image()
         {
             for ( const auto& proc : custom_rules.procs ) {
                 ( void ) cpp_utils::delete_registry_tree_without_redirect(
