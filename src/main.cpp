@@ -431,7 +431,8 @@ namespace scltk
       "window", "窗口显示", true,
       details_::options_info_table<
         details_::option_info< "force_show", "置顶窗口" >, details_::option_info< "simple_titlebar", "极简标题栏" >,
-        details_::option_info< "translucent", "半透明" > > >;
+        details_::option_info< "translucent", "半透明" >,
+        details_::option_info< "no_hot_reload", "禁用热重载 (下次启动时生效)" > > >;
     class custom_rules_config final
       : public details_::config_node_interface
       , public details_::config_node_raw_name< "custom_rules" >
@@ -1031,6 +1032,13 @@ namespace scltk
         auto enable_translucent() noexcept
         {
             constexpr const auto& enabled{ std::get< window_config >( config_nodes ).at< "translucent" >() };
+            constexpr const auto& no_hot_reload{ std::get< window_config >( config_nodes ).at< "no_hot_reload" >() };
+            if ( no_hot_reload.test( std::memory_order_acquire ) == true ) {
+                switch ( enabled.test( std::memory_order_acquire ) ) {
+                    case false : con.set_translucency( 255 ); return;
+                    case true : con.set_translucency( 217 ); return;
+                }
+            }
             for ( ;; ) {
                 enabled.wait( false, std::memory_order_acquire );
                 con.set_translucency( 217 );
@@ -1041,6 +1049,13 @@ namespace scltk
         auto enable_simple_titlebar() noexcept
         {
             constexpr const auto& enabled{ std::get< window_config >( config_nodes ).at< "simple_titlebar" >() };
+            constexpr const auto& no_hot_reload{ std::get< window_config >( config_nodes ).at< "no_hot_reload" >() };
+            if ( no_hot_reload.test( std::memory_order_acquire ) == true ) {
+                switch ( enabled.test( std::memory_order_acquire ) ) {
+                    case false : con.enable_context_menu( true ); return;
+                    case true : con.enable_context_menu( false ); return;
+                }
+            }
             for ( ;; ) {
                 enabled.wait( false, std::memory_order_acquire );
                 con.enable_context_menu( false );
@@ -1051,7 +1066,14 @@ namespace scltk
         auto force_show() noexcept
         {
             constexpr const auto& enabled{ std::get< window_config >( config_nodes ).at< "force_show" >() };
+            constexpr const auto& no_hot_reload{ std::get< window_config >( config_nodes ).at< "no_hot_reload" >() };
             constexpr auto sleep_duration{ 50ms };
+            if ( no_hot_reload.test( std::memory_order_acquire ) ) {
+                if ( enabled.test( std::memory_order_acquire ) == false ) {
+                    return;
+                }
+                con.force_show_forever( sleep_duration );
+            }
             constexpr auto condition_checker{ [] static noexcept
             {
                 if ( enabled.test( std::memory_order_acquire ) == false ) {
