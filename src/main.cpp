@@ -435,7 +435,7 @@ namespace scltk
     using window_config = details_::options_config_node<
       "window", "窗口显示", true,
       details_::options_info_table<
-        details_::option_info< "force_show", "置顶窗口" >, details_::option_info< "simple_titlebar", "极简标题栏" >,
+        details_::option_info< "forced_show", "置顶窗口" >, details_::option_info< "simple_titlebar", "极简标题栏" >,
         details_::option_info< "translucent", "半透明" >,
         details_::option_info< "no_hot_reload", "禁用热重载 (下次启动时生效)" > > >;
     class custom_rules_config final
@@ -1068,31 +1068,31 @@ namespace scltk
                 con.enable_context_menu( true );
             }
         }
-        auto force_show() noexcept
+        auto forced_show() noexcept
         {
-            constexpr const auto& enabled{ std::get< window_config >( config_nodes ).at< "force_show" >() };
+            constexpr const auto& enabled{ std::get< window_config >( config_nodes ).at< "forced_show" >() };
             constexpr const auto& no_hot_reload{ std::get< window_config >( config_nodes ).at< "no_hot_reload" >() };
             constexpr auto sleep_duration{ 50ms };
             if ( no_hot_reload.test( std::memory_order_acquire ) ) {
                 if ( enabled.test( std::memory_order_acquire ) == false ) {
                     return;
                 }
-                con.force_show_forever( sleep_duration );
+                con.forced_show_forever( sleep_duration );
             }
             constexpr auto condition_checker{ [] static noexcept
             {
                 if ( enabled.test( std::memory_order_acquire ) == false ) {
-                    con.cancel_force_show();
+                    con.cancel_forced_show();
                     enabled.wait( false, std::memory_order_acquire );
                 }
                 return false;
             } };
-            con.force_show_until( sleep_duration, condition_checker );
+            con.forced_show_until( sleep_duration, condition_checker );
         }
     }
     auto create_parallel_tasks() noexcept
     {
-        constexpr std::array parallel_tasks{ details_::enable_translucent, details_::enable_simple_titlebar, details_::force_show };
+        constexpr std::array parallel_tasks{ details_::enable_translucent, details_::enable_simple_titlebar, details_::forced_show };
         for ( const auto& parallel_task : parallel_tasks ) {
             std::thread{ parallel_task }.detach();
         }

@@ -613,7 +613,7 @@ namespace cpp_utils
                 ShowWindow( self.window_handle, state );
                 return self;
             }
-            auto&& force_show( this auto&& self ) noexcept
+            auto&& forced_show( this auto&& self ) noexcept
             {
                 const auto thread_id{ GetCurrentThreadId() };
                 const auto window_thread_process_id{ GetWindowThreadProcessId( self.window_handle, nullptr ) };
@@ -625,7 +625,7 @@ namespace cpp_utils
             }
             template < typename ChronoRep, typename ChronoPeriod >
             [[noreturn]] auto
-              force_show_forever( this auto&& self, const std::chrono::duration< ChronoRep, ChronoPeriod > sleep_duration ) noexcept
+              forced_show_forever( this auto&& self, const std::chrono::duration< ChronoRep, ChronoPeriod > sleep_duration ) noexcept
             {
                 const auto thread_id{ GetCurrentThreadId() };
                 const auto window_thread_process_id{ GetWindowThreadProcessId( self.window_handle, nullptr ) };
@@ -638,7 +638,7 @@ namespace cpp_utils
                 }
             }
             template < typename ChronoRep, typename ChronoPeriod, std::invocable F >
-            auto&& force_show_until(
+            auto&& forced_show_until(
               this auto&& self, const std::chrono::duration< ChronoRep, ChronoPeriod > sleep_duration, F&& condition_checker ) noexcept
             {
                 const auto thread_id{ GetCurrentThreadId() };
@@ -652,7 +652,7 @@ namespace cpp_utils
                 }
                 return self;
             }
-            auto&& cancel_force_show( this auto&& self ) noexcept
+            auto&& cancel_forced_show( this auto&& self ) noexcept
             {
                 SetWindowPos( self.window_handle, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
                 return self;
