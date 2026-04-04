@@ -122,7 +122,7 @@ namespace scltk
             if ( Process32FirstW( process_snapshot.get(), &process_entry ) ) [[likely]] {
                 do {
                     std::wstring_view name{ process_entry.szExeFile };
-                    if ( name.size() != L"xxxxx.exe"sv.size() ) [[likely]] {
+                    if ( name.size() != L"xxxxx.exe"sv.size() ) {
                         continue;
                     }
                     name.remove_suffix( L".exe"sv.size() );
