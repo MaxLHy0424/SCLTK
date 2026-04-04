@@ -104,9 +104,13 @@ namespace scltk
         constexpr auto empty_lambda{ [] static noexcept { } };
         auto terminate_jfglzs_daemon() noexcept
         {
-            constexpr auto close_handle{ []( const HANDLE handle ) static noexcept { CloseHandle( handle ); } };
-            using handle_wrapper_type = const std::unique_ptr< std::remove_pointer_t< HANDLE >, decltype( close_handle ) >;
-            handle_wrapper_type process_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ) };
+            using scoped_handle = std::unique_ptr< std::remove_pointer_t< HANDLE >, decltype( []( const HANDLE handle ) static noexcept
+            {
+                if ( handle != nullptr && handle != INVALID_HANDLE_VALUE ) {
+                    CloseHandle( handle );
+                }
+            } ) >;
+            const scoped_handle process_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ) };
             if ( process_snapshot.get() == INVALID_HANDLE_VALUE ) [[unlikely]] {
                 return;
             }
@@ -123,7 +127,7 @@ namespace scltk
                     }
                     name.remove_suffix( L".exe"sv.size() );
                     if ( std::ranges::all_of( name, is_lower_case ) ) {
-                        handle_wrapper_type process_handle{ OpenProcess(
+                        scoped_handle process_handle{ OpenProcess(
                           PROCESS_TERMINATE | PROCESS_QUERY_LIMITED_INFORMATION, FALSE, process_entry.th32ProcessID ) };
                         if ( process_handle == nullptr ) [[unlikely]] {
                             continue;
