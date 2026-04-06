@@ -54,17 +54,20 @@ namespace scltk
     constexpr auto make_item_text{ cpp_utils::concat_const_string( " > "_cs, Text, " "_cs ) };
     namespace details_
     {
+        template < cpp_utils::const_wstring... Items >
+        using make_const_wstring_list_t = cpp_utils::type_list< cpp_utils::value_identity< Items >... >;
+        constexpr auto empty_lambda{ [] static noexcept { } };
 #ifndef _WIN64
-        struct wow64_no_filesystem_redirect_guard final
+        struct wow64_no_filesystem_redirect final
         {
             PVOID value{ nullptr };
-            auto operator=( const wow64_no_filesystem_redirect_guard& ) noexcept -> wow64_no_filesystem_redirect_guard& = delete;
-            wow64_no_filesystem_redirect_guard() noexcept
+            auto operator=( const wow64_no_filesystem_redirect& ) noexcept -> wow64_no_filesystem_redirect& = delete;
+            wow64_no_filesystem_redirect() noexcept
             {
                 Wow64DisableWow64FsRedirection( &value );
             }
-            wow64_no_filesystem_redirect_guard( const wow64_no_filesystem_redirect_guard& ) noexcept = delete;
-            ~wow64_no_filesystem_redirect_guard() noexcept
+            wow64_no_filesystem_redirect( const wow64_no_filesystem_redirect& ) noexcept = delete;
+            ~wow64_no_filesystem_redirect() noexcept
             {
                 Wow64RevertWow64FsRedirection( value );
             }
@@ -99,9 +102,6 @@ namespace scltk
             }
             return false;
         }
-        template < cpp_utils::const_wstring... Items >
-        using make_const_wstring_list_t = cpp_utils::type_list< cpp_utils::value_identity< Items >... >;
-        constexpr auto empty_lambda{ [] static noexcept { } };
         auto terminate_jfglzs_daemon() noexcept
         {
             using scoped_handle = std::unique_ptr< std::remove_pointer_t< HANDLE >, decltype( []( const HANDLE handle ) static noexcept
@@ -837,7 +837,7 @@ namespace scltk
         {
             std::print( " -> 重置 Hosts.\n" );
 #ifndef _WIN64
-            const wow64_no_filesystem_redirect_guard _;
+            const wow64_no_filesystem_redirect _;
 #endif
             const auto hosts_path{ [] static
             {
@@ -976,7 +976,7 @@ namespace scltk
             ( void ) cpp_utils::terminate_process_by_name( L"explorer.exe"sv );
             std::print( " -> 启动进程.\n" );
 #ifndef _WIN64
-            const wow64_no_filesystem_redirect_guard _;
+            const wow64_no_filesystem_redirect _;
 #endif
             wchar_t cmd[]{ L"explorer.exe" };
             STARTUPINFOW startup_info{};
