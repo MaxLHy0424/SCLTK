@@ -741,8 +741,7 @@ namespace scltk
             if ( CreateProcessW( nullptr, cmd, nullptr, nullptr, FALSE, 0, nullptr, nullptr, &startup_info, &proc_info ) )
               [[likely]]
             {
-                con.set_title( L"" INFO_SHORT_NAME " - 命令提示符" )
-                  .set_size( 120, 30, unsynced_mem_pool )
+                con.set_size( 120, 30, unsynced_mem_pool )
                   .fix_size( false )
                   .enable_window_maximize_ctrl( true )
                   .show_cursor( true )
