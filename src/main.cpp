@@ -651,10 +651,10 @@ namespace scltk
               cpp_utils::value_identity_v< cpp_utils::concat_const_string(
                 make_middle_text< "[ 配  置 ]", 3 >, " -> 同步配置.\n\n"_cs ) >.view() );
             load_config( true );
-            std::ofstream config_file_stream{ config_file_name, std::ios::out | std::ios::trunc };
             constexpr auto header{
               u8"# " INFO_FULL_NAME "\n# " INFO_GIT_TAG " (" INFO_GIT_BRANCH " " INFO_GIT_HASH ")\n# 本文件编码为 UTF-8。\n" };
             constexpr auto header_size{ std::char_traits< char8_t >::length( header ) * sizeof( char8_t ) };
+            std::ofstream config_file_stream{ config_file_name, std::ios::out | std::ios::trunc };
             config_file_stream.write( reinterpret_cast< const char* >( header ), header_size );
             std::apply( [ & ]( auto&... config_node ) { ( config_node.sync( config_file_stream ), ... ); }, config_nodes );
             config_file_stream.flush();
