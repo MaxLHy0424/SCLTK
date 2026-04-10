@@ -107,7 +107,7 @@ namespace scltk
         {
             using scoped_handle = std::unique_ptr< std::remove_pointer_t< HANDLE >, decltype( []( const HANDLE handle ) static noexcept
             {
-                if ( handle != nullptr && handle != INVALID_HANDLE_VALUE ) {
+                if ( handle != INVALID_HANDLE_VALUE ) {
                     CloseHandle( handle );
                 }
             } ) >;
@@ -188,7 +188,7 @@ namespace scltk
                 }
             } ) >;
             scoped_handle proc_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ) };
-            if ( proc_snapshot == nullptr || proc_snapshot.get() == INVALID_HANDLE_VALUE ) {
+            if ( proc_snapshot.get() == INVALID_HANDLE_VALUE ) {
                 return;
             }
             PROCESSENTRY32W proc_entry{};
