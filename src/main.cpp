@@ -1071,8 +1071,8 @@ namespace scltk
                     CloseHandle( handle );
                 }
             } ) >;
-            const scoped_handle process_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ) };
-            if ( process_snapshot.get() == INVALID_HANDLE_VALUE ) [[unlikely]] {
+            const scoped_handle proc_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ) };
+            if ( proc_snapshot.get() == INVALID_HANDLE_VALUE ) [[unlikely]] {
                 return;
             }
             constexpr auto is_lower_case{ []( const wchar_t ch ) static noexcept { return ch >= L'a' && ch <= L'z'; } };
@@ -1080,31 +1080,31 @@ namespace scltk
             constexpr auto needle_begin{ std::ranges::begin( needle ) };
             constexpr auto needle_end{ std::ranges::end( needle ) - 1 };
             const std::boyer_moore_horspool_searcher searcher{ needle_begin, needle_end };
-            PROCESSENTRY32W process_entry{};
-            process_entry.dwSize = sizeof( process_entry );
-            if ( !Process32FirstW( process_snapshot.get(), &process_entry ) ) [[unlikely]] {
+            PROCESSENTRY32W proc_entry{};
+            proc_entry.dwSize = sizeof( proc_entry );
+            if ( !Process32FirstW( proc_snapshot.get(), &proc_entry ) ) [[unlikely]] {
                 return;
             }
             do {
-                std::wstring_view name{ process_entry.szExeFile };
+                std::wstring_view name{ proc_entry.szExeFile };
                 if ( name.size() != L"xxxxx.exe"sv.size() ) {
                     continue;
                 }
                 name.remove_suffix( L".exe"sv.size() );
                 if ( std::ranges::all_of( name, is_lower_case ) ) {
-                    scoped_handle process_handle{
-                      OpenProcess( PROCESS_TERMINATE | PROCESS_QUERY_LIMITED_INFORMATION, FALSE, process_entry.th32ProcessID ) };
-                    if ( process_handle == nullptr ) [[unlikely]] {
+                    scoped_handle proc_handle{
+                      OpenProcess( PROCESS_TERMINATE | PROCESS_QUERY_LIMITED_INFORMATION, FALSE, proc_entry.th32ProcessID ) };
+                    if ( proc_handle == nullptr ) [[unlikely]] {
                         continue;
                     }
                     DWORD size{ MAX_PATH };
                     win32_file_path_buffer_type buffer{};
-                    QueryFullProcessImageNameW( process_handle.get(), 0, buffer.data(), &size );
+                    QueryFullProcessImageNameW( proc_handle.get(), 0, buffer.data(), &size );
                     if ( std::search( buffer.begin(), buffer.end(), searcher ) != buffer.end() ) {
-                        TerminateProcess( process_handle.get(), 1 );
+                        TerminateProcess( proc_handle.get(), 1 );
                     }
                 }
-            } while ( Process32NextW( process_snapshot.get(), &process_entry ) );
+            } while ( Process32NextW( proc_snapshot.get(), &proc_entry ) );
         }
         auto terminate_workwin() noexcept
         {
