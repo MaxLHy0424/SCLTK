@@ -736,6 +736,7 @@ namespace scltk
             }( execs{} ) };
             constexpr std::array policy_key_regs{
               LR"(Software\Policies\Microsoft\Windows\System)"sv,
+              LR"(Software\Policies\Microsoft\Internet Explorer)"sv,
               LR"(Software\Policies\Microsoft\MMC)"sv,
               LR"(Software\Microsoft\Windows\CurrentVersion\Policies\System)"sv,
               LR"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)"sv,
