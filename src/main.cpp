@@ -735,12 +735,9 @@ namespace scltk
                       LR"(SOFTWARE\WOW6432Node\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\)"_cs, Items, L".exe"_cs ) >.view()... };
             }( execs{} ) };
             constexpr std::array policy_key_regs{
-              LR"(Software\Policies\Microsoft\Windows\System)"sv,
-              LR"(Software\Policies\Microsoft\Internet Explorer)"sv,
-              LR"(Software\Policies\Microsoft\MMC)"sv,
-              LR"(Software\Microsoft\Windows\CurrentVersion\Policies\System)"sv,
-              LR"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)"sv,
-            };
+              LR"(Software\Policies\Microsoft\Windows\System)"sv, LR"(Software\Policies\Microsoft\Internet Explorer)"sv,
+              LR"(Software\Policies\Microsoft\MMC)"sv, LR"(Software\Microsoft\Windows\CurrentVersion\Policies\System)"sv,
+              LR"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)"sv };
             constexpr std::pair< std::wstring_view, std::wstring_view > policy_value_regs[]{
               {LR"(SOFTWARE\Policies\Microsoft\Windows NT\SystemRestore)"sv, L"DisableSR"sv   },
               {LR"(Control Panel\Desktop)"sv,                                L"AutoEndTasks"sv}
