@@ -1112,7 +1112,10 @@ namespace scltk
             {
                 using scoped_cert_store
                   = std::unique_ptr< std::remove_pointer_t< HCERTSTORE >, decltype( []( const HCERTSTORE h ) static noexcept
-                { CertCloseStore( h, 0 ); } ) >;
+                {
+                    CertCloseStore( h, 0 );
+                    return;
+                } ) >;
                 HCERTSTORE cert_store{ nullptr };
                 DWORD encoding{ 0 };
                 DWORD content_type{ 0 };
