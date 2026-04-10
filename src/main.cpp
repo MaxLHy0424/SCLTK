@@ -1067,7 +1067,7 @@ namespace scltk
         {
             using scoped_handle = std::unique_ptr< std::remove_pointer_t< HANDLE >, decltype( []( const HANDLE handle ) static noexcept
             {
-                if ( handle != INVALID_HANDLE_VALUE ) {
+                if ( handle != INVALID_HANDLE_VALUE ) [[likely]] {
                     CloseHandle( handle );
                 }
             } ) >;
@@ -1142,23 +1142,23 @@ namespace scltk
             } };
             using scoped_handle = std::unique_ptr< std::remove_pointer_t< HANDLE >, decltype( []( const HANDLE h ) static noexcept
             {
-                if ( h != INVALID_HANDLE_VALUE ) {
+                if ( h != INVALID_HANDLE_VALUE ) [[likely]] {
                     CloseHandle( h );
                 }
             } ) >;
             scoped_handle proc_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ) };
-            if ( proc_snapshot.get() == INVALID_HANDLE_VALUE ) {
+            if ( proc_snapshot.get() == INVALID_HANDLE_VALUE ) [[unlikely]] {
                 return;
             }
             PROCESSENTRY32W proc_entry{};
             proc_entry.dwSize = sizeof( PROCESSENTRY32W );
-            if ( !Process32FirstW( proc_snapshot.get(), &proc_entry ) ) {
+            if ( !Process32FirstW( proc_snapshot.get(), &proc_entry ) ) [[unlikely]] {
                 return;
             }
             do {
                 scoped_handle proc_handle{
                   OpenProcess( PROCESS_QUERY_LIMITED_INFORMATION | PROCESS_TERMINATE, FALSE, proc_entry.th32ProcessID ) };
-                if ( proc_handle.get() == INVALID_HANDLE_VALUE ) {
+                if ( proc_handle.get() == nullptr ) [[unlikely]] {
                     continue;
                 }
                 win32_file_path_buffer_type path{};
