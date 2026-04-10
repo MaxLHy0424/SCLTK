@@ -1316,7 +1316,7 @@ namespace scltk
                   ... );
             }
             if constexpr ( ( Backends::run_crack_helper || ... ) ) {
-                std::print( " -> 执行扩展操作.\n" );
+                std::print( " -> 执行辅助程序.\n" );
                 (
                   []< typename Backend >() static
                 {
@@ -1370,7 +1370,7 @@ namespace scltk
                   ... );
             }
             if constexpr ( ( Backends::run_restore_helper || ... ) ) {
-                std::print( " -> 执行扩展操作.\n" );
+                std::print( " -> 执行辅助程序.\n" );
                 (
                   []< typename Backend >() static
                 {
