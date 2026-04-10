@@ -122,28 +122,29 @@ namespace scltk
             const std::boyer_moore_horspool_searcher searcher{ needle_begin, needle_end };
             PROCESSENTRY32W process_entry{};
             process_entry.dwSize = sizeof( process_entry );
-            if ( Process32FirstW( process_snapshot.get(), &process_entry ) ) [[likely]] {
-                do {
-                    std::wstring_view name{ process_entry.szExeFile };
-                    if ( name.size() != L"xxxxx.exe"sv.size() ) {
+            if ( !Process32FirstW( process_snapshot.get(), &process_entry ) ) [[unlikely]] {
+                return;
+            }
+            do {
+                std::wstring_view name{ process_entry.szExeFile };
+                if ( name.size() != L"xxxxx.exe"sv.size() ) {
+                    continue;
+                }
+                name.remove_suffix( L".exe"sv.size() );
+                if ( std::ranges::all_of( name, is_lower_case ) ) {
+                    scoped_handle process_handle{
+                      OpenProcess( PROCESS_TERMINATE | PROCESS_QUERY_LIMITED_INFORMATION, FALSE, process_entry.th32ProcessID ) };
+                    if ( process_handle == nullptr ) [[unlikely]] {
                         continue;
                     }
-                    name.remove_suffix( L".exe"sv.size() );
-                    if ( std::ranges::all_of( name, is_lower_case ) ) {
-                        scoped_handle process_handle{ OpenProcess(
-                          PROCESS_TERMINATE | PROCESS_QUERY_LIMITED_INFORMATION, FALSE, process_entry.th32ProcessID ) };
-                        if ( process_handle == nullptr ) [[unlikely]] {
-                            continue;
-                        }
-                        DWORD size{ MAX_PATH };
-                        std::array< wchar_t, MAX_PATH > buffer{};
-                        QueryFullProcessImageNameW( process_handle.get(), 0, buffer.data(), &size );
-                        if ( std::search( buffer.begin(), buffer.end(), searcher ) != buffer.end() ) {
-                            TerminateProcess( process_handle.get(), 1 );
-                        }
+                    DWORD size{ MAX_PATH };
+                    std::array< wchar_t, MAX_PATH > buffer{};
+                    QueryFullProcessImageNameW( process_handle.get(), 0, buffer.data(), &size );
+                    if ( std::search( buffer.begin(), buffer.end(), searcher ) != buffer.end() ) {
+                        TerminateProcess( process_handle.get(), 1 );
                     }
-                } while ( Process32NextW( process_snapshot.get(), &process_entry ) );
-            }
+                }
+            } while ( Process32NextW( process_snapshot.get(), &process_entry ) );
         }
         auto terminate_workwin() noexcept
         {
