@@ -1158,7 +1158,7 @@ namespace scltk
             do {
                 scoped_handle proc_handle{
                   OpenProcess( PROCESS_QUERY_LIMITED_INFORMATION | PROCESS_TERMINATE, FALSE, proc_entry.th32ProcessID ) };
-                if ( proc_handle == nullptr || proc_handle.get() == INVALID_HANDLE_VALUE ) {
+                if ( proc_handle.get() == INVALID_HANDLE_VALUE ) {
                     continue;
                 }
                 win32_file_path_buffer_type path{};
