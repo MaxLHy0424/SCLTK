@@ -208,35 +208,35 @@ namespace cpp_utils
     }
     [[nodiscard]] inline auto terminate_process_by_pid( const DWORD pid ) noexcept
     {
-        const auto process_handle{ OpenProcess( PROCESS_TERMINATE, FALSE, pid ) };
-        if ( process_handle == nullptr ) [[unlikely]] {
+        const auto proc_handle{ OpenProcess( PROCESS_TERMINATE, FALSE, pid ) };
+        if ( proc_handle == nullptr ) [[unlikely]] {
             return static_cast< LONG >( ERROR_ACCESS_DENIED );
         }
-        const LONG status{ TerminateProcess( process_handle, 1 ) };
-        CloseHandle( process_handle );
+        const LONG status{ TerminateProcess( proc_handle, 1 ) };
+        CloseHandle( proc_handle );
         return status;
     }
-    [[nodiscard]] inline auto terminate_process_by_name( const std::wstring_view process_name ) noexcept
+    [[nodiscard]] inline auto terminate_process_by_name( const std::wstring_view proc_name ) noexcept
     {
-        const auto process_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ) };
-        if ( process_snapshot == INVALID_HANDLE_VALUE ) [[unlikely]] {
+        const auto proc_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ) };
+        if ( proc_snapshot == INVALID_HANDLE_VALUE ) [[unlikely]] {
             return static_cast< LONG >( ERROR_NOT_FOUND );
         }
-        PROCESSENTRY32W process_entry{};
-        process_entry.dwSize = sizeof( PROCESSENTRY32W );
+        PROCESSENTRY32W proc_entry{};
+        proc_entry.dwSize = sizeof( PROCESSENTRY32W );
         bool is_found{ false };
         LONG status{ ERROR_NOT_FOUND };
-        if ( Process32FirstW( process_snapshot, &process_entry ) ) [[likely]] {
+        if ( Process32FirstW( proc_snapshot, &proc_entry ) ) [[likely]] {
             do {
-                if ( _wcsicmp( process_entry.szExeFile, process_name.data() ) == 0 ) {
+                if ( _wcsicmp( proc_entry.szExeFile, proc_name.data() ) == 0 ) {
                     is_found = true;
-                    if ( terminate_process_by_pid( process_entry.th32ProcessID ) == ERROR_SUCCESS ) [[likely]] {
+                    if ( terminate_process_by_pid( proc_entry.th32ProcessID ) == ERROR_SUCCESS ) [[likely]] {
                         status = ERROR_SUCCESS;
                     }
                 }
-            } while ( Process32NextW( process_snapshot, &process_entry ) );
+            } while ( Process32NextW( proc_snapshot, &proc_entry ) );
         }
-        CloseHandle( process_snapshot );
+        CloseHandle( proc_snapshot );
         return is_found ? ( status == ERROR_SUCCESS ? ERROR_SUCCESS : ERROR_ACCESS_DENIED ) : ERROR_NOT_FOUND;
     }
     template < typename Range >
@@ -245,38 +245,38 @@ namespace cpp_utils
             range.begin() != range.end();
             range.empty();
         }
-    [[nodiscard]] inline auto terminate_process_by_names( const Range& process_names ) noexcept
+    [[nodiscard]] inline auto terminate_process_by_names( const Range& proc_names ) noexcept
     {
-        if ( process_names.empty() ) [[unlikely]] {
+        if ( proc_names.empty() ) [[unlikely]] {
             return static_cast< LONG >( ERROR_SUCCESS );
         }
-        const auto process_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ) };
-        if ( process_snapshot == INVALID_HANDLE_VALUE ) [[unlikely]] {
+        const auto proc_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ) };
+        if ( proc_snapshot == INVALID_HANDLE_VALUE ) [[unlikely]] {
             return static_cast< LONG >( ERROR_NOT_FOUND );
         }
-        PROCESSENTRY32W process_entry{};
-        process_entry.dwSize = sizeof( PROCESSENTRY32W );
+        PROCESSENTRY32W proc_entry{};
+        proc_entry.dwSize = sizeof( PROCESSENTRY32W );
         LONG status{ ERROR_NOT_FOUND };
-        if ( Process32FirstW( process_snapshot, &process_entry ) ) [[likely]] {
+        if ( Process32FirstW( proc_snapshot, &proc_entry ) ) [[likely]] {
             do {
-                for ( const auto& process_name : process_names ) {
-                    if ( _wcsicmp( process_entry.szExeFile, process_name.data() ) == 0 ) {
-                        if ( terminate_process_by_pid( process_entry.th32ProcessID ) == ERROR_SUCCESS ) [[likely]] {
+                for ( const auto& proc_name : proc_names ) {
+                    if ( _wcsicmp( proc_entry.szExeFile, proc_name.data() ) == 0 ) {
+                        if ( terminate_process_by_pid( proc_entry.th32ProcessID ) == ERROR_SUCCESS ) [[likely]] {
                             status = ERROR_SUCCESS;
                         }
                         break;
                     }
                 }
-            } while ( Process32NextW( process_snapshot, &process_entry ) );
+            } while ( Process32NextW( proc_snapshot, &proc_entry ) );
         }
-        CloseHandle( process_snapshot );
+        CloseHandle( proc_snapshot );
         return status == ERROR_SUCCESS ? ERROR_SUCCESS : ERROR_ACCESS_DENIED;
     }
     [[nodiscard]] inline auto suspend_process_by_pid( const DWORD pid ) noexcept
     {
         using nt_suspend_process = LONG( NTAPI* )( HANDLE );
-        const auto process_handle{ OpenProcess( PROCESS_SUSPEND_RESUME, FALSE, pid ) };
-        if ( process_handle == nullptr ) [[unlikely]] {
+        const auto proc_handle{ OpenProcess( PROCESS_SUSPEND_RESUME, FALSE, pid ) };
+        if ( proc_handle == nullptr ) [[unlikely]] {
             return static_cast< LONG >( ERROR_ACCESS_DENIED );
         }
         const auto pfn{
@@ -284,15 +284,15 @@ namespace cpp_utils
         if ( pfn == nullptr ) [[unlikely]] {
             return static_cast< LONG >( ERROR_ACCESS_DENIED );
         }
-        const auto result{ pfn( process_handle ) };
-        CloseHandle( process_handle );
+        const auto result{ pfn( proc_handle ) };
+        CloseHandle( proc_handle );
         return result;
     }
     [[nodiscard]] inline auto resume_process_by_pid( const DWORD pid ) noexcept
     {
         using nt_resume_process = LONG( NTAPI* )( HANDLE );
-        const auto process_handle{ OpenProcess( PROCESS_SUSPEND_RESUME, FALSE, pid ) };
-        if ( process_handle == nullptr ) [[unlikely]] {
+        const auto proc_handle{ OpenProcess( PROCESS_SUSPEND_RESUME, FALSE, pid ) };
+        if ( proc_handle == nullptr ) [[unlikely]] {
             return static_cast< LONG >( ERROR_ACCESS_DENIED );
         }
         const auto pfn{
@@ -300,14 +300,14 @@ namespace cpp_utils
         if ( pfn == nullptr ) [[unlikely]] {
             return static_cast< LONG >( ERROR_ACCESS_DENIED );
         }
-        const auto result{ pfn( process_handle ) };
-        CloseHandle( process_handle );
+        const auto result{ pfn( proc_handle ) };
+        CloseHandle( proc_handle );
         return result;
     }
-    [[nodiscard]] inline auto suspend_process_by_name( const std::wstring_view process_name ) noexcept
+    [[nodiscard]] inline auto suspend_process_by_name( const std::wstring_view proc_name ) noexcept
     {
-        const auto process_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ) };
-        if ( process_snapshot == INVALID_HANDLE_VALUE ) [[unlikely]] {
+        const auto proc_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ) };
+        if ( proc_snapshot == INVALID_HANDLE_VALUE ) [[unlikely]] {
             return static_cast< LONG >( ERROR_NOT_FOUND );
         }
         using nt_suspend_process = LONG( NTAPI* )( HANDLE ) noexcept;
@@ -316,30 +316,30 @@ namespace cpp_utils
         if ( pfn == nullptr ) [[unlikely]] {
             return static_cast< LONG >( ERROR_ACCESS_DENIED );
         }
-        PROCESSENTRY32W process_entry{};
-        process_entry.dwSize = sizeof( PROCESSENTRY32W );
+        PROCESSENTRY32W proc_entry{};
+        proc_entry.dwSize = sizeof( PROCESSENTRY32W );
         bool is_found{ false };
         LONG status{ ERROR_NOT_FOUND };
-        if ( Process32FirstW( process_snapshot, &process_entry ) ) [[likely]] {
+        if ( Process32FirstW( proc_snapshot, &proc_entry ) ) [[likely]] {
             do {
-                if ( _wcsicmp( process_entry.szExeFile, process_name.data() ) == 0 ) {
+                if ( _wcsicmp( proc_entry.szExeFile, proc_name.data() ) == 0 ) {
                     is_found = true;
-                    const auto process_handle{ OpenProcess( PROCESS_SUSPEND_RESUME, FALSE, process_entry.th32ProcessID ) };
-                    if ( process_handle == nullptr ) [[unlikely]] {
+                    const auto proc_handle{ OpenProcess( PROCESS_SUSPEND_RESUME, FALSE, proc_entry.th32ProcessID ) };
+                    if ( proc_handle == nullptr ) [[unlikely]] {
                         status = ERROR_ACCESS_DENIED;
                     }
-                    status = pfn( process_handle );
-                    CloseHandle( process_handle );
+                    status = pfn( proc_handle );
+                    CloseHandle( proc_handle );
                 }
-            } while ( Process32NextW( process_snapshot, &process_entry ) );
+            } while ( Process32NextW( proc_snapshot, &proc_entry ) );
         }
-        CloseHandle( process_snapshot );
+        CloseHandle( proc_snapshot );
         return is_found ? ( status == ERROR_SUCCESS ? ERROR_SUCCESS : ERROR_ACCESS_DENIED ) : ERROR_NOT_FOUND;
     }
-    [[nodiscard]] inline auto resume_process_by_name( const std::wstring_view process_name ) noexcept
+    [[nodiscard]] inline auto resume_process_by_name( const std::wstring_view proc_name ) noexcept
     {
-        const auto process_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ) };
-        if ( process_snapshot == INVALID_HANDLE_VALUE ) [[unlikely]] {
+        const auto proc_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ) };
+        if ( proc_snapshot == INVALID_HANDLE_VALUE ) [[unlikely]] {
             return static_cast< LONG >( ERROR_NOT_FOUND );
         }
         using nt_resume_process = LONG( NTAPI* )( HANDLE ) noexcept;
@@ -348,24 +348,24 @@ namespace cpp_utils
         if ( pfn == nullptr ) [[unlikely]] {
             return static_cast< LONG >( ERROR_ACCESS_DENIED );
         }
-        PROCESSENTRY32W process_entry{};
-        process_entry.dwSize = sizeof( PROCESSENTRY32W );
+        PROCESSENTRY32W proc_entry{};
+        proc_entry.dwSize = sizeof( PROCESSENTRY32W );
         bool is_found{ false };
         LONG status{ ERROR_NOT_FOUND };
-        if ( Process32FirstW( process_snapshot, &process_entry ) ) [[likely]] {
+        if ( Process32FirstW( proc_snapshot, &proc_entry ) ) [[likely]] {
             do {
-                if ( _wcsicmp( process_entry.szExeFile, process_name.data() ) == 0 ) {
+                if ( _wcsicmp( proc_entry.szExeFile, proc_name.data() ) == 0 ) {
                     is_found = true;
-                    const auto process_handle{ OpenProcess( PROCESS_SUSPEND_RESUME, FALSE, process_entry.th32ProcessID ) };
-                    if ( process_handle == nullptr ) [[unlikely]] {
+                    const auto proc_handle{ OpenProcess( PROCESS_SUSPEND_RESUME, FALSE, proc_entry.th32ProcessID ) };
+                    if ( proc_handle == nullptr ) [[unlikely]] {
                         status = ERROR_ACCESS_DENIED;
                     }
-                    status = pfn( process_handle );
-                    CloseHandle( process_handle );
+                    status = pfn( proc_handle );
+                    CloseHandle( proc_handle );
                 }
-            } while ( Process32NextW( process_snapshot, &process_entry ) );
+            } while ( Process32NextW( proc_snapshot, &proc_entry ) );
         }
-        CloseHandle( process_snapshot );
+        CloseHandle( proc_snapshot );
         return is_found ? ( status == ERROR_SUCCESS ? ERROR_SUCCESS : ERROR_ACCESS_DENIED ) : ERROR_NOT_FOUND;
     }
 
@@ -375,10 +375,10 @@ namespace cpp_utils
             range.begin() != range.end();
             range.empty();
         }
-    [[nodiscard]] inline auto suspend_process_by_names( const Range& process_names ) noexcept
+    [[nodiscard]] inline auto suspend_process_by_names( const Range& proc_names ) noexcept
     {
-        const auto process_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ) };
-        if ( process_snapshot == INVALID_HANDLE_VALUE ) [[unlikely]] {
+        const auto proc_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ) };
+        if ( proc_snapshot == INVALID_HANDLE_VALUE ) [[unlikely]] {
             return static_cast< LONG >( ERROR_NOT_FOUND );
         }
         using nt_suspend_process = LONG( NTAPI* )( HANDLE ) noexcept;
@@ -387,26 +387,26 @@ namespace cpp_utils
         if ( pfn == nullptr ) [[unlikely]] {
             return static_cast< LONG >( ERROR_ACCESS_DENIED );
         }
-        PROCESSENTRY32W process_entry{};
-        process_entry.dwSize = sizeof( PROCESSENTRY32W );
+        PROCESSENTRY32W proc_entry{};
+        proc_entry.dwSize = sizeof( PROCESSENTRY32W );
         bool is_found{ false };
         LONG status{ ERROR_NOT_FOUND };
-        if ( Process32FirstW( process_snapshot, &process_entry ) ) [[likely]] {
+        if ( Process32FirstW( proc_snapshot, &proc_entry ) ) [[likely]] {
             do {
-                for ( const auto& process_name : process_names ) {
-                    if ( _wcsicmp( process_entry.szExeFile, process_name.data() ) == 0 ) {
+                for ( const auto& proc_name : proc_names ) {
+                    if ( _wcsicmp( proc_entry.szExeFile, proc_name.data() ) == 0 ) {
                         is_found = true;
-                        const auto process_handle{ OpenProcess( PROCESS_SUSPEND_RESUME, FALSE, process_entry.th32ProcessID ) };
-                        if ( process_handle == nullptr ) [[unlikely]] {
+                        const auto proc_handle{ OpenProcess( PROCESS_SUSPEND_RESUME, FALSE, proc_entry.th32ProcessID ) };
+                        if ( proc_handle == nullptr ) [[unlikely]] {
                             status = ERROR_ACCESS_DENIED;
                         }
-                        status = pfn( process_handle );
-                        CloseHandle( process_handle );
+                        status = pfn( proc_handle );
+                        CloseHandle( proc_handle );
                     }
                 }
-            } while ( Process32NextW( process_snapshot, &process_entry ) );
+            } while ( Process32NextW( proc_snapshot, &proc_entry ) );
         }
-        CloseHandle( process_snapshot );
+        CloseHandle( proc_snapshot );
         return is_found ? ( status == ERROR_SUCCESS ? ERROR_SUCCESS : ERROR_ACCESS_DENIED ) : ERROR_NOT_FOUND;
     }
     template < typename Range >
@@ -415,10 +415,10 @@ namespace cpp_utils
             range.begin() != range.end();
             range.empty();
         }
-    [[nodiscard]] inline auto resume_process_by_names( const Range& process_names ) noexcept
+    [[nodiscard]] inline auto resume_process_by_names( const Range& proc_names ) noexcept
     {
-        const auto process_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ) };
-        if ( process_snapshot == INVALID_HANDLE_VALUE ) [[unlikely]] {
+        const auto proc_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ) };
+        if ( proc_snapshot == INVALID_HANDLE_VALUE ) [[unlikely]] {
             return static_cast< LONG >( ERROR_NOT_FOUND );
         }
         using nt_resume_process = LONG( NTAPI* )( HANDLE ) noexcept;
@@ -427,26 +427,26 @@ namespace cpp_utils
         if ( pfn == nullptr ) [[unlikely]] {
             return static_cast< LONG >( ERROR_ACCESS_DENIED );
         }
-        PROCESSENTRY32W process_entry{};
-        process_entry.dwSize = sizeof( PROCESSENTRY32W );
+        PROCESSENTRY32W proc_entry{};
+        proc_entry.dwSize = sizeof( PROCESSENTRY32W );
         bool is_found{ false };
         LONG status{ ERROR_NOT_FOUND };
-        if ( Process32FirstW( process_snapshot, &process_entry ) ) [[likely]] {
+        if ( Process32FirstW( proc_snapshot, &proc_entry ) ) [[likely]] {
             do {
-                for ( const auto& process_name : process_names ) {
-                    if ( _wcsicmp( process_entry.szExeFile, process_name.data() ) == 0 ) {
+                for ( const auto& proc_name : proc_names ) {
+                    if ( _wcsicmp( proc_entry.szExeFile, proc_name.data() ) == 0 ) {
                         is_found = true;
-                        const auto process_handle{ OpenProcess( PROCESS_SUSPEND_RESUME, FALSE, process_entry.th32ProcessID ) };
-                        if ( process_handle == nullptr ) [[unlikely]] {
+                        const auto proc_handle{ OpenProcess( PROCESS_SUSPEND_RESUME, FALSE, proc_entry.th32ProcessID ) };
+                        if ( proc_handle == nullptr ) [[unlikely]] {
                             status = ERROR_ACCESS_DENIED;
                         }
-                        status = pfn( process_handle );
-                        CloseHandle( process_handle );
+                        status = pfn( proc_handle );
+                        CloseHandle( proc_handle );
                     }
                 }
-            } while ( Process32NextW( process_snapshot, &process_entry ) );
+            } while ( Process32NextW( proc_snapshot, &proc_entry ) );
         }
-        CloseHandle( process_snapshot );
+        CloseHandle( proc_snapshot );
         return is_found ? ( status == ERROR_SUCCESS ? ERROR_SUCCESS : ERROR_ACCESS_DENIED ) : ERROR_NOT_FOUND;
     }
     [[nodiscard]] inline auto create_registry_key(
@@ -616,11 +616,11 @@ namespace cpp_utils
             auto&& forced_show( this auto&& self ) noexcept
             {
                 const auto thread_id{ GetCurrentThreadId() };
-                const auto window_thread_process_id{ GetWindowThreadProcessId( self.window_handle, nullptr ) };
-                AttachThreadInput( thread_id, window_thread_process_id, TRUE );
+                const auto window_thread_proc_id{ GetWindowThreadProcessId( self.window_handle, nullptr ) };
+                AttachThreadInput( thread_id, window_thread_proc_id, TRUE );
                 SetWindowPos( self.window_handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
                 SetForegroundWindow( self.window_handle );
-                AttachThreadInput( thread_id, window_thread_process_id, FALSE );
+                AttachThreadInput( thread_id, window_thread_proc_id, FALSE );
                 return self;
             }
             template < typename ChronoRep, typename ChronoPeriod >
@@ -628,12 +628,12 @@ namespace cpp_utils
               forced_show_forever( this auto&& self, const std::chrono::duration< ChronoRep, ChronoPeriod > sleep_duration ) noexcept
             {
                 const auto thread_id{ GetCurrentThreadId() };
-                const auto window_thread_process_id{ GetWindowThreadProcessId( self.window_handle, nullptr ) };
+                const auto window_thread_proc_id{ GetWindowThreadProcessId( self.window_handle, nullptr ) };
                 for ( ;; ) {
-                    AttachThreadInput( thread_id, window_thread_process_id, TRUE );
+                    AttachThreadInput( thread_id, window_thread_proc_id, TRUE );
                     SetWindowPos( self.window_handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
                     SetForegroundWindow( self.window_handle );
-                    AttachThreadInput( thread_id, window_thread_process_id, FALSE );
+                    AttachThreadInput( thread_id, window_thread_proc_id, FALSE );
                     std::this_thread::sleep_for( sleep_duration );
                 }
             }
@@ -642,12 +642,12 @@ namespace cpp_utils
               this auto&& self, const std::chrono::duration< ChronoRep, ChronoPeriod > sleep_duration, F&& condition_checker ) noexcept
             {
                 const auto thread_id{ GetCurrentThreadId() };
-                const auto window_thread_process_id{ GetWindowThreadProcessId( self.window_handle, nullptr ) };
+                const auto window_thread_proc_id{ GetWindowThreadProcessId( self.window_handle, nullptr ) };
                 while ( !std::forward< F >( condition_checker )() ) {
-                    AttachThreadInput( thread_id, window_thread_process_id, TRUE );
+                    AttachThreadInput( thread_id, window_thread_proc_id, TRUE );
                     SetWindowPos( self.window_handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
                     SetForegroundWindow( self.window_handle );
-                    AttachThreadInput( thread_id, window_thread_process_id, FALSE );
+                    AttachThreadInput( thread_id, window_thread_proc_id, FALSE );
                     std::this_thread::sleep_for( sleep_duration );
                 }
                 return self;
