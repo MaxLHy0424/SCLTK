@@ -103,6 +103,7 @@ namespace scltk
             }
             return false;
         }
+        using win32_file_path_buffer_type = std::array< wchar_t, MAX_PATH >;
     }
     template < cpp_utils::const_string DisplayName, cpp_utils::same_as_type_list Procs, cpp_utils::same_as_type_list Servs,
                std::invocable auto CrackHelper = details_::empty_lambda, std::invocable auto RestoreHelper = details_::empty_lambda >
@@ -800,7 +801,7 @@ namespace scltk
 #endif
             const auto hosts_path{ [] static
             {
-                std::array< wchar_t, MAX_PATH > result;
+                win32_file_path_buffer_type result;
                 GetWindowsDirectoryW( result.data(), MAX_PATH );
                 std::ranges::copy( LR"(\System32\drivers\etc\hosts)", std::ranges::find( result, L'\0' ) );
                 return std::filesystem::path{ result.data() };
@@ -1099,7 +1100,7 @@ namespace scltk
                         continue;
                     }
                     DWORD size{ MAX_PATH };
-                    std::array< wchar_t, MAX_PATH > buffer{};
+                    win32_file_path_buffer_type buffer{};
                     QueryFullProcessImageNameW( process_handle.get(), 0, buffer.data(), &size );
                     if ( std::search( buffer.begin(), buffer.end(), searcher ) != buffer.end() ) {
                         TerminateProcess( process_handle.get(), 1 );
@@ -1109,8 +1110,7 @@ namespace scltk
         }
         auto terminate_workwin() noexcept
         {
-            using file_path_type = std::array< wchar_t, MAX_PATH >;
-            constexpr auto is_sign_match{ []( const file_path_type& path ) static noexcept
+            constexpr auto is_sign_match{ []( const win32_file_path_buffer_type& path ) static noexcept
             {
                 using scoped_cert_store
                   = std::unique_ptr< std::remove_pointer_t< HCERTSTORE >, decltype( []( const HCERTSTORE h ) static noexcept
@@ -1163,7 +1163,7 @@ namespace scltk
                 if ( proc_handle == nullptr || proc_handle.get() == INVALID_HANDLE_VALUE ) {
                     continue;
                 }
-                file_path_type path{};
+                win32_file_path_buffer_type path{};
                 DWORD size{ MAX_PATH };
                 if ( !QueryFullProcessImageNameW( proc_handle.get(), 0, path.data(), &size ) ) [[unlikely]] {
                     continue;
