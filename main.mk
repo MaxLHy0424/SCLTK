@@ -34,7 +34,7 @@ args_opt_release_base := -Ofast \
 args_opt_release_32   := $(args_opt_release_base)
 args_opt_release_64   := $(args_opt_release_base) -flto=auto
 args_include          := -I$(include_path)
-args_library          := -liphlpapi -lsetupapi
+args_library          := -liphlpapi -lsetupapi -lcrypt32
 args_extra            :=
 input_charset         := utf-8
 output_charset        := gbk

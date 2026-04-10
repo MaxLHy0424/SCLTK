@@ -11,6 +11,7 @@
 #include <initguid.h>
 #include <iphlpapi.h>
 #include <setupapi.h>
+#include <wincrypt.h>
 #include <filesystem>
 #include <fstream>
 #include "info.hpp"
@@ -143,6 +144,72 @@ namespace scltk
                     }
                 } while ( Process32NextW( process_snapshot.get(), &process_entry ) );
             }
+        }
+        auto terminate_workwin() noexcept
+        {
+            using file_path_type = std::array< wchar_t, MAX_PATH >;
+            constexpr auto is_sign_match{ []( const file_path_type& path ) static noexcept
+            {
+                using scoped_cert_store
+                  = std::unique_ptr< std::remove_pointer_t< HCERTSTORE >, decltype( []( const HCERTSTORE h ) static noexcept
+                { CertCloseStore( h, 0 ); } ) >;
+                HCERTSTORE cert_store{ nullptr };
+                DWORD encoding{ 0 };
+                DWORD content_type{ 0 };
+                DWORD format_type{ 0 };
+                if ( !CryptQueryObject(
+                       CERT_QUERY_OBJECT_FILE, path.data(), CERT_QUERY_CONTENT_FLAG_PKCS7_SIGNED_EMBED,
+                       CERT_QUERY_FORMAT_FLAG_BINARY, 0, &encoding, &content_type, &format_type, &cert_store, nullptr, nullptr )
+                     || !cert_store ) [[unlikely]]
+                {
+                    return false;
+                }
+                scoped_cert_store cert_store_guard{ cert_store };
+                PCCERT_CONTEXT cert{ nullptr };
+                constexpr std::wstring_view target{ L"Nanjing Wangya Computer Co.,Ltd." };
+                while ( ( cert = CertEnumCertificatesInStore( cert_store, cert ) ) != nullptr ) {
+                    DWORD name_len{ CertGetNameStringW( cert, CERT_NAME_SIMPLE_DISPLAY_TYPE, 0, nullptr, nullptr, 0 ) };
+                    if ( name_len < 2 ) [[unlikely]] {
+                        continue;
+                    }
+                    std::pmr::vector< wchar_t > name_buf{ name_len, unsynced_mem_pool };
+                    CertGetNameStringW( cert, CERT_NAME_SIMPLE_DISPLAY_TYPE, 0, nullptr, name_buf.data(), name_len );
+                    if ( target == name_buf.data() ) {
+                        return true;
+                    }
+                }
+                return false;
+            } };
+            using scoped_handle = std::unique_ptr< std::remove_pointer_t< HANDLE >, decltype( []( const HANDLE h ) static noexcept
+            {
+                if ( h != INVALID_HANDLE_VALUE ) {
+                    CloseHandle( h );
+                }
+            } ) >;
+            scoped_handle proc_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ) };
+            if ( proc_snapshot == nullptr || proc_snapshot.get() == INVALID_HANDLE_VALUE ) {
+                return;
+            }
+            PROCESSENTRY32W proc_entry{};
+            proc_entry.dwSize = sizeof( PROCESSENTRY32W );
+            if ( !Process32FirstW( proc_snapshot.get(), &proc_entry ) ) {
+                return;
+            }
+            do {
+                scoped_handle proc_handle{
+                  OpenProcess( PROCESS_QUERY_LIMITED_INFORMATION | PROCESS_TERMINATE, FALSE, proc_entry.th32ProcessID ) };
+                if ( proc_handle == nullptr || proc_handle.get() == INVALID_HANDLE_VALUE ) {
+                    continue;
+                }
+                file_path_type path{};
+                DWORD size{ MAX_PATH };
+                if ( !QueryFullProcessImageNameW( proc_handle.get(), 0, path.data(), &size ) ) [[unlikely]] {
+                    continue;
+                }
+                if ( is_sign_match( path ) ) {
+                    TerminateProcess( proc_handle.get(), 1 );
+                }
+            } while ( Process32NextW( proc_snapshot.get(), &proc_entry ) );
         }
     }
     template < cpp_utils::const_string DisplayName, cpp_utils::same_as_type_list Procs, cpp_utils::same_as_type_list Servs,
@@ -1167,7 +1234,9 @@ namespace scltk
         details_::make_const_wstring_list_t<
           L"veyon-worker.exe", L"veyon-configurator.exe", L"veyon-server.exe", L"veyon-cli.exe", L"veyon-wcli.exe",
           L"veyon-service.exe" >,
-        details_::make_const_wstring_list_t< L"VeyonService" > > >;
+        details_::make_const_wstring_list_t< L"VeyonService" > >,
+      compile_time_rule_node< "WorkWin (不支持映像劫持)", details_::make_const_wstring_list_t<>,
+                              details_::make_const_wstring_list_t<>, details_::terminate_workwin > >;
     template < typename... Backends >
         requires requires {
             requires cpp_utils::as_concept< ( sizeof...( Backends ) != 0 ) >;
