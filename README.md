@@ -2,7 +2,6 @@
 
 <div align="center">
 
-![title](./img/title.png)\
 **Student Computer Lab Toolkit**\
 **轻松破解电子教室软件，基于 Modern C++**
 
