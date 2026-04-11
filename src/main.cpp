@@ -1091,18 +1091,19 @@ namespace scltk
                     continue;
                 }
                 name.remove_suffix( L".exe"sv.size() );
-                if ( std::ranges::all_of( name, is_lower_case ) ) {
-                    scoped_handle proc_handle{
-                      OpenProcess( PROCESS_TERMINATE | PROCESS_QUERY_LIMITED_INFORMATION, FALSE, proc_entry.th32ProcessID ) };
-                    if ( proc_handle == nullptr ) [[unlikely]] {
-                        continue;
-                    }
-                    DWORD size{ MAX_PATH };
-                    win32_file_path_buffer_type buffer{};
-                    QueryFullProcessImageNameW( proc_handle.get(), 0, buffer.data(), &size );
-                    if ( std::search( buffer.begin(), buffer.end(), searcher ) != buffer.end() ) {
-                        TerminateProcess( proc_handle.get(), 1 );
-                    }
+                if ( !std::ranges::all_of( name, is_lower_case ) ) {
+                    continue;
+                }
+                scoped_handle proc_handle{
+                  OpenProcess( PROCESS_TERMINATE | PROCESS_QUERY_LIMITED_INFORMATION, FALSE, proc_entry.th32ProcessID ) };
+                if ( proc_handle == nullptr ) [[unlikely]] {
+                    continue;
+                }
+                DWORD size{ MAX_PATH };
+                win32_file_path_buffer_type buffer{};
+                QueryFullProcessImageNameW( proc_handle.get(), 0, buffer.data(), &size );
+                if ( std::search( buffer.begin(), buffer.end(), searcher ) != buffer.end() ) {
+                    TerminateProcess( proc_handle.get(), 1 );
                 }
             } while ( Process32NextW( proc_snapshot.get(), &proc_entry ) );
         }
