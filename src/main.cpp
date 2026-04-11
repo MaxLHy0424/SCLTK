@@ -1131,7 +1131,7 @@ namespace scltk
                 scoped_cert_store cert_store_guard{ cert_store };
                 PCCERT_CONTEXT cert{ nullptr };
                 constexpr std::wstring_view target{ L"Nanjing Wangya Computer Co.,Ltd." };
-                while ( ( cert = CertEnumCertificatesInStore( cert_store, cert ) ) != nullptr ) {
+                while ( ( cert = CertEnumCertificatesInStore( cert_store, cert ) ) != nullptr ) [[likely]] {
                     DWORD name_len{ CertGetNameStringW( cert, CERT_NAME_SIMPLE_DISPLAY_TYPE, 0, nullptr, nullptr, 0 ) };
                     if ( name_len < 2 ) [[unlikely]] {
                         continue;
