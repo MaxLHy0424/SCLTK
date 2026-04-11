@@ -1264,7 +1264,7 @@ namespace scltk
         }
     struct rule_executor final
     {
-        static auto crack()
+        static auto crack_()
         {
             constexpr const auto& options{ std::get< crack_restore_config >( config_nodes ) };
             constexpr const auto& use_hijack_image{ options.at< "hijack_image" >() };
@@ -1329,7 +1329,7 @@ namespace scltk
                   ... );
             }
         }
-        static auto restore()
+        static auto restore_()
         {
             constexpr const auto& options{ std::get< crack_restore_config >( config_nodes ) };
             constexpr const auto& use_hijack_image{ options.at< "hijack_image" >() };
@@ -1383,16 +1383,16 @@ namespace scltk
                   ... );
             }
         }
-        static auto operator()()
+        static auto entry()
         {
             switch ( details_::current_rule_executor_mode ) {
                 case details_::rule_executor_mode::crack :
                     std::print( make_middle_text< "[ 破  解 ]", 3 >.view() );
-                    crack();
+                    crack_();
                     break;
                 case details_::rule_executor_mode::restore :
                     std::print( make_middle_text< "[ 恢  复 ]", 3 >.view() );
-                    restore();
+                    restore_();
                     break;
             }
             std::print( "\n (i) 操作已完成." );
@@ -1646,13 +1646,13 @@ auto main() -> int
       .add_back(
         scltk::make_executor_mode_ui_text(), scltk::flip_executor_mode,
         cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_green )
-      .add_back( " > 全部执行\n", scltk::all_rules{} )
-      .add_back( " > * 自定义 * ", scltk::rule_executor< scltk::custom_rule_executor_backend >{} );
+      .add_back( " > 全部执行\n", scltk::all_rules::entry )
+      .add_back( " > * 自定义 * ", scltk::rule_executor< scltk::custom_rule_executor_backend >::entry );
     [ & ]< typename... Nodes >( const cpp_utils::type_list< Nodes... > )
     {
         ( ui.add_back(
             scltk::make_item_text< Nodes::display_name >.view(),
-            scltk::rule_executor< scltk::builtin_rules_executor_backend< Nodes > >{} ),
+            scltk::rule_executor< scltk::builtin_rules_executor_backend< Nodes > >::entry ),
           ... );
     }( scltk::builtin_rules{} );
     ui.show();
