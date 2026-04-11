@@ -21,12 +21,19 @@ namespace scltk
     using namespace std::chrono_literals;
     using namespace std::string_view_literals;
     using namespace cpp_utils::const_string_literals;
+    using ui_func_args_type = cpp_utils::console_ui::func_args;
     constexpr SHORT console_width{ 50 };
     constexpr SHORT console_height{ 25 };
     constexpr UINT charset_id{ 936 };
     constexpr const auto& config_file_name{ L"SCLTK.conf" };
     constexpr auto func_back{ cpp_utils::console_ui::func_back };
     constexpr auto func_exit{ cpp_utils::console_ui::func_exit };
+    template < cpp_utils::const_string Title, std::size_t NewLineCount >
+    constexpr auto make_middle_text{ cpp_utils::concat_const_string(
+      cpp_utils::make_repeated_const_string< ' ', ( static_cast< std::size_t >( console_width ) - Title.size() + 1 ) / 2 >(),
+      Title, cpp_utils::make_repeated_const_string< '\n', NewLineCount >() ) };
+    template < cpp_utils::const_string Text >
+    constexpr auto make_item_text{ cpp_utils::concat_const_string( " > "_cs, Text, " "_cs ) };
     const cpp_utils::console con;
     const auto unsynced_mem_pool{ [] static noexcept
     {
@@ -37,7 +44,6 @@ namespace scltk
         std::pmr::set_default_resource( &pool );
         return &pool;
     }() };
-    using ui_func_args_type = cpp_utils::console_ui::func_args;
     auto quit() noexcept
     {
         return func_exit;
@@ -47,17 +53,33 @@ namespace scltk
         cpp_utils::clone_self();
         return func_exit;
     }
-    template < cpp_utils::const_string Title, std::size_t NewLineCount >
-    constexpr auto make_middle_text{ cpp_utils::concat_const_string(
-      cpp_utils::make_repeated_const_string< ' ', ( static_cast< std::size_t >( console_width ) - Title.size() + 1 ) / 2 >(),
-      Title, cpp_utils::make_repeated_const_string< '\n', NewLineCount >() ) };
-    template < cpp_utils::const_string Text >
-    constexpr auto make_item_text{ cpp_utils::concat_const_string( " > "_cs, Text, " "_cs ) };
+    namespace details_
+    {
+        constexpr auto empty_lambda{ [] static noexcept { } };
+    }
+    template < cpp_utils::const_string DisplayName, cpp_utils::same_as_type_list Procs, cpp_utils::same_as_type_list Servs,
+               std::invocable auto CrackHelper = details_::empty_lambda, std::invocable auto RestoreHelper = details_::empty_lambda >
+    struct compile_time_rule_node final
+    {
+        static constexpr auto display_name{ DisplayName };
+        static constexpr auto crack_helper{ CrackHelper };
+        static constexpr auto restore_helper{ RestoreHelper };
+        using procs = Procs;
+        using servs = Servs;
+    };
+    struct runtime_rule_node final
+    {
+        using item_type = std::pmr::vector< std::pmr::wstring >;
+        item_type procs{ unsynced_mem_pool };
+        item_type servs{ unsynced_mem_pool };
+        item_type crack_helpers{ unsynced_mem_pool };
+        item_type restore_helpers{ unsynced_mem_pool };
+    };
+    runtime_rule_node custom_rules;
     namespace details_
     {
         template < cpp_utils::const_wstring... Items >
         using make_const_wstring_list_t = cpp_utils::type_list< cpp_utils::value_identity< Items >... >;
-        constexpr auto empty_lambda{ [] static noexcept { } };
 #ifndef _WIN64
         struct wow64_no_filesystem_redirect final
         {
@@ -104,28 +126,6 @@ namespace scltk
             return false;
         }
         using win32_file_path_buffer_type = std::array< wchar_t, MAX_PATH >;
-    }
-    template < cpp_utils::const_string DisplayName, cpp_utils::same_as_type_list Procs, cpp_utils::same_as_type_list Servs,
-               std::invocable auto CrackHelper = details_::empty_lambda, std::invocable auto RestoreHelper = details_::empty_lambda >
-    struct compile_time_rule_node final
-    {
-        static constexpr auto display_name{ DisplayName };
-        static constexpr auto crack_helper{ CrackHelper };
-        static constexpr auto restore_helper{ RestoreHelper };
-        using procs = Procs;
-        using servs = Servs;
-    };
-    struct runtime_rule_node final
-    {
-        using item_type = std::pmr::vector< std::pmr::wstring >;
-        item_type procs{ unsynced_mem_pool };
-        item_type servs{ unsynced_mem_pool };
-        item_type crack_helpers{ unsynced_mem_pool };
-        item_type restore_helpers{ unsynced_mem_pool };
-    };
-    runtime_rule_node custom_rules;
-    namespace details_
-    {
         template < cpp_utils::const_string RawName >
         struct config_node_raw_name
         {
