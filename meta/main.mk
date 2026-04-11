@@ -50,16 +50,16 @@ args_ld_64            := $(args_ld_base)
 cmd_echo              := /usr/bin/echo
 cmd_upx               := /ucrt64/bin/upx --lzma --best --8-bit --no-align --ultra-brute -qqq
 cmd_gpg               := gpg -bs -u $(gpg_key) --yes
-dep_test              := src/main.cpp src/info.hpp $(cpp_utils_all_files)
+dep_test              := src/main.cpp meta/info.h $(cpp_utils_all_files)
 dep_debug             := src/*.cpp
 dep_release_32        := build/manifest-i686.o \
                          src/*.cpp
 dep_release_64        := build/manifest-x86_64.o \
                          src/*.cpp
-dep_res               := manifest.rc \
-                         img/favicon.ico \
-                         manifest.xml \
-                         src/info.hpp
+dep_res               := meta/manifest.rc \
+                         meta/favicon.ico \
+                         meta/manifest.xml \
+                         meta/info.h
 .PHONY: toolchain all build debug release release-32 release-64 pack_and_sign clean
 .NOTPARALLEL: all
 all: toolchain build pack_and_sign
@@ -99,7 +99,7 @@ pack_and_sign: build
 clean:
 	@$(cmd_echo) "Cleaning..."
 	@/usr/bin/rm -rf build
-	@/usr/bin/rm -rf src/info.hpp
+	@/usr/bin/rm -rf meta/info.h
 build/debug/__debug__.exe: $(dep_test) \
                            build/debug/.nothing
 	@$(cmd_echo) "Compiling '$@'..."

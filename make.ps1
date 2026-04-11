@@ -29,6 +29,8 @@ else {
 if (-not (Test-Path "build")) {
     New-Item -Path "build" -ItemType Directory
 }
+$old_info = "meta/info.h"
+$new_info = "meta/info.new.h"
 @"
 #pragma once
 #define INFO_FULL_NAME  "$software_full_name"
@@ -39,14 +41,12 @@ if (-not (Test-Path "build")) {
 #define INFO_GIT_BRANCH "$git_branch"
 #define INFO_GIT_TAG    "$git_tag"
 #define INFO_GIT_HASH   "$git_hash"
-"@ | Out-File -FilePath "build/info.gen" -Encoding UTF8 -NoNewline -Force
-$old_info = "src/info.hpp"
-$new_info = "build/info.gen"
+"@ | Out-File -FilePath $new_info -Encoding UTF8 -NoNewline -Force
 if (-not (Test-Path $old_info -PathType Leaf) -or -not (Test-Path $new_info -PathType Leaf ) ) {
     Copy-Item -Path $new_info -Destination $old_info
 }
 elseif ((Get-FileHash $old_info).Hash -ne (Get-FileHash $new_info).Hash ) {
     Copy-Item -Path $new_info -Destination $old_info
 }
-Remove-Item -Path "build/info.gen"
-& make $target -f main.mk -j gpg_key=$gpg_key
+Remove-Item -Path $new_info
+& make $target -f .\meta\main.mk -j gpg_key=$gpg_key

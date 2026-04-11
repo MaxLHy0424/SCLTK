@@ -1,2 +1,3 @@
 /build/
-/src/info.hpp
+/meta/info.h
+/meta/info.new.h
