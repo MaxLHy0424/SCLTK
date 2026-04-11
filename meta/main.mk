@@ -57,7 +57,7 @@ dep_release_32        := build/manifest-i686.o \
 dep_release_64        := build/manifest-x86_64.o \
                          src/*.cpp
 dep_res               := meta/manifest.rc \
-                         meta/favicon.ico \
+                         meta/SCLTK.ico \
                          meta/manifest.xml \
                          meta/info.h
 .PHONY: toolchain all build debug release release-32 release-64 pack_and_sign clean
