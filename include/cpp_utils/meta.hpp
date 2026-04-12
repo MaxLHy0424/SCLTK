@@ -19,7 +19,9 @@ namespace cpp_utils
         constexpr auto len{ Func().size() };
         auto temp{ Func() };
         return [ & ]< std::size_t... Is >( const std::index_sequence< Is... > )
-        { return std::array< value_type, len >{ *std::next( temp.begin(), Is )... }; }( std::make_index_sequence< len >{} );
+        {
+            return std::array< value_type, len >{ *std::next( temp.begin(), Is )... };
+        }( std::make_index_sequence< len >{} );
     }
     template < typename... Fs >
     struct overloads final : public Fs...
@@ -532,7 +534,9 @@ namespace cpp_utils
         {
             static consteval auto to_identity( const std::size_t ) noexcept -> type_identity< T >;
             using type = decltype( []< std::size_t... Is >( const std::index_sequence< Is... > ) consteval static noexcept
-            { return type_list< typename decltype( to_identity( Is ) )::type... >{}; }( std::make_index_sequence< N >{} ) );
+            {
+                return type_list< typename decltype( to_identity( Is ) )::type... >{};
+            }( std::make_index_sequence< N >{} ) );
         };
     }
     template < same_as_type_list List1, same_as_type_list List2 >

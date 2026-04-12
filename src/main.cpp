@@ -224,7 +224,8 @@ namespace scltk
                     && []< cpp_utils::const_string... Items >(
                          const cpp_utils::type_list< cpp_utils::value_identity< Items >... > ) static constexpr noexcept
                 {
-                    return ( std::ranges::all_of( Items.view(), []( const char ch ) static constexpr noexcept {
+                    return ( std::ranges::all_of( Items.view(), []( const char ch ) static constexpr noexcept
+                    {
                         return !is_whitespace< char >( ch ) && ch != '\r' && ch != '\n';
                     } ) && ... );
                 }( raw_names_type{} );
@@ -408,7 +409,8 @@ namespace scltk
         static constexpr auto flag_serv_{ L"serv:"sv };
         static constexpr auto flag_crack_helper_{ L"crack_helper:"sv };
         static constexpr auto flag_restore_helper_{ L"restore_helper:"sv };
-        static_assert( []( auto... strings ) static consteval noexcept {
+        static_assert( []( auto... strings ) static consteval noexcept
+        {
             return ( std::ranges::none_of( strings, details_::is_whitespace< wchar_t > ) && ... );
         }( flag_proc_, flag_serv_, flag_crack_helper_, flag_restore_helper_ ) );
         static auto load_( const std::string_view unconverted_line )
@@ -532,7 +534,10 @@ namespace scltk
         if ( !config_file.good() ) [[unlikely]] {
             return;
         }
-        std::apply( []< typename... Ts >( Ts&... config_node ) static { ( config_node.before_load(), ... ); }, config_nodes );
+        std::apply( []< typename... Ts >( Ts&... config_node ) static
+        {
+            ( config_node.before_load(), ... );
+        }, config_nodes );
         std::pmr::string line;
         using parsable_config_nodes_type = config_nodes_type::filter< details_::is_parsable_config_node >;
         using config_node_recorder_type
@@ -582,7 +587,10 @@ namespace scltk
                 } );
             }
         }
-        std::apply( []< typename... Ts >( Ts&... config_node ) static { ( config_node.after_load(), ... ); }, config_nodes );
+        std::apply( []< typename... Ts >( Ts&... config_node ) static
+        {
+            ( config_node.after_load(), ... );
+        }, config_nodes );
     }
     namespace details_
     {
@@ -616,7 +624,10 @@ namespace scltk
             constexpr auto header_size{ std::char_traits< char8_t >::length( header ) * sizeof( char8_t ) };
             std::ofstream config_file_stream{ config_file_name, std::ios::out | std::ios::trunc };
             config_file_stream.write( reinterpret_cast< const char* >( header ), header_size );
-            std::apply( [ & ]( auto&... config_node ) { ( config_node.sync( config_file_stream ), ... ); }, config_nodes );
+            std::apply( [ & ]( auto&... config_node )
+            {
+                ( config_node.sync( config_file_stream ), ... );
+            }, config_nodes );
             config_file_stream.flush();
             std::print( " (i) 同步配置{}.", config_file_stream.good() ? "成功" : "失败" );
             press_any_key_to_return();
@@ -985,7 +996,9 @@ namespace scltk
             " (i) 请破解电子教室软件后再使用此处功能.\n" )
           .add_back( " > 启动命令提示符\n", details_::launch_cmd );
         [ & ]< typename... Items >( const cpp_utils::type_list< Items... > )
-        { ( ui.add_back( make_item_text< Items::description >.view(), Items::execute ), ... ); }( funcs{} );
+        {
+            ( ui.add_back( make_item_text< Items::description >.view(), Items::execute ), ... );
+        }( funcs{} );
         ui.show();
         return func_back;
     }
@@ -1075,7 +1088,10 @@ namespace scltk
             if ( proc_snapshot.get() == INVALID_HANDLE_VALUE ) [[unlikely]] {
                 return;
             }
-            constexpr auto is_lower_case{ []( const wchar_t ch ) static noexcept { return ch >= L'a' && ch <= L'z'; } };
+            constexpr auto is_lower_case{ []( const wchar_t ch ) static noexcept
+            {
+                return ch >= L'a' && ch <= L'z';
+            } };
             constexpr const auto& needle{ L"Program Files" };
             constexpr auto needle_begin{ std::ranges::begin( needle ) };
             constexpr auto needle_end{ std::ranges::end( needle ) - 1 };
@@ -1407,11 +1423,15 @@ namespace scltk
         static constexpr auto procs{
           []< cpp_utils::const_wstring... Procs >(
             const cpp_utils::type_list< cpp_utils::value_identity< Procs >... > ) static consteval noexcept
-        { return std::array< std::wstring_view, sizeof...( Procs ) >{ Procs.view()... }; }( typename BuiltinRuleNode::procs{} ) };
+        {
+            return std::array< std::wstring_view, sizeof...( Procs ) >{ Procs.view()... };
+        }( typename BuiltinRuleNode::procs{} ) };
         static constexpr auto servs{
           []< cpp_utils::const_wstring... Servs >(
             const cpp_utils::type_list< cpp_utils::value_identity< Servs >... > ) static consteval noexcept
-        { return std::array< std::wstring_view, sizeof...( Servs ) >{ Servs.view()... }; }( typename BuiltinRuleNode::servs{} ) };
+        {
+            return std::array< std::wstring_view, sizeof...( Servs ) >{ Servs.view()... };
+        }( typename BuiltinRuleNode::servs{} ) };
         static constexpr auto ifeo_regs{
           []< cpp_utils::const_wstring... Procs >(
             const cpp_utils::type_list< cpp_utils::value_identity< Procs >... > ) static consteval noexcept

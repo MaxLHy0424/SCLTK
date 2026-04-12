@@ -64,11 +64,17 @@ namespace cpp_utils
             COORD position{};
             auto print_text() const
             {
-                text.visit( []( const auto& line_text ) static { std::print( "{}", line_text ); } );
+                text.visit( []( const auto& line_text ) static
+                {
+                    std::print( "{}", line_text );
+                } );
             }
             auto operator==( const COORD current_position ) const noexcept
             {
-                const auto text_size{ text.visit< std::size_t >( []( const auto& txt ) static noexcept { return txt.size(); } ) };
+                const auto text_size{ text.visit< std::size_t >( []( const auto& txt ) static noexcept
+                {
+                    return txt.size();
+                } ) };
                 return position.Y == current_position.Y && position.X <= current_position.X
                     && current_position.X < position.X + static_cast< SHORT >( text_size );
             }
@@ -146,7 +152,10 @@ namespace cpp_utils
         }
         static auto is_empty_function_( const function_type& func ) noexcept
         {
-            return func.visit< bool >( []( const auto& various_func ) static noexcept { return various_func == nullptr; } );
+            return func.visit< bool >( []( const auto& various_func ) static noexcept
+            {
+                return various_func == nullptr;
+            } );
         }
         auto invoke_func_( const MOUSE_EVENT_RECORD current_event )
         {
