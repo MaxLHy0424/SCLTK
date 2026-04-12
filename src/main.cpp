@@ -1080,9 +1080,7 @@ namespace scltk
         {
             using scoped_handle = std::unique_ptr< std::remove_pointer_t< HANDLE >, decltype( []( const HANDLE handle ) static noexcept
             {
-                if ( handle != INVALID_HANDLE_VALUE ) [[likely]] {
-                    CloseHandle( handle );
-                }
+                CloseHandle( handle );
             } ) >;
             const scoped_handle proc_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ) };
             if ( proc_snapshot.get() == INVALID_HANDLE_VALUE ) [[unlikely]] {
@@ -1131,7 +1129,6 @@ namespace scltk
                   = std::unique_ptr< std::remove_pointer_t< HCERTSTORE >, decltype( []( const HCERTSTORE h ) static noexcept
                 {
                     CertCloseStore( h, 0 );
-                    return;
                 } ) >;
                 HCERTSTORE cert_store{ nullptr };
                 DWORD encoding{ 0 };
@@ -1162,9 +1159,7 @@ namespace scltk
             } };
             using scoped_handle = std::unique_ptr< std::remove_pointer_t< HANDLE >, decltype( []( const HANDLE h ) static noexcept
             {
-                if ( h != INVALID_HANDLE_VALUE ) [[likely]] {
-                    CloseHandle( h );
-                }
+                CloseHandle( h );
             } ) >;
             scoped_handle proc_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ) };
             if ( proc_snapshot.get() == INVALID_HANDLE_VALUE ) [[unlikely]] {
