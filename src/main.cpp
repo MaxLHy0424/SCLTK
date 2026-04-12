@@ -187,7 +187,7 @@ namespace scltk
                     self.init_ui_( parent_ui );
                 }
             }
-            consteval auto request_ui_count( this auto&& self ) noexcept
+            consteval auto ui_count( this auto&& self ) noexcept
             {
                 using child_type = std::decay_t< decltype( self ) >;
                 if constexpr ( requires {
@@ -664,7 +664,7 @@ namespace scltk
         std::apply( []( auto&... nodes ) static
         {
             cpp_utils::console_ui ui{ con, unsynced_mem_pool };
-            ui.reserve( 5 + ( decltype( nodes.request_ui_count() )::value + ... ) )
+            ui.reserve( 5 + ( decltype( nodes.ui_count() )::value + ... ) )
               .add_back( make_middle_text< "[ 配  置 ]", 2 >.view() )
               .add_back( " < 返回\n", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
               .add_back( " > 查看解析规则 ", details_::show_config_parsing_rules )
