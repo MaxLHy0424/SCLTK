@@ -1006,8 +1006,9 @@ namespace scltk
     {
         auto enable_translucent() noexcept
         {
-            constexpr const auto& enabled{ std::get< window_config >( config_nodes ).at< "translucent" >() };
-            constexpr const auto& no_hot_reload{ std::get< window_config >( config_nodes ).at< "no_hot_reload" >() };
+            constexpr const auto& window_config_node{ std::get< window_config >( config_nodes ) };
+            constexpr const auto& enabled{ window_config_node.at< "translucent" >() };
+            constexpr const auto& no_hot_reload{ window_config_node.at< "no_hot_reload" >() };
             if ( no_hot_reload.test( std::memory_order_acquire ) == true ) {
                 switch ( enabled.test( std::memory_order_acquire ) ) {
                     case false : con.set_translucency( 255 ); return;
@@ -1023,8 +1024,9 @@ namespace scltk
         }
         auto enable_simple_titlebar() noexcept
         {
-            constexpr const auto& enabled{ std::get< window_config >( config_nodes ).at< "simple_titlebar" >() };
-            constexpr const auto& no_hot_reload{ std::get< window_config >( config_nodes ).at< "no_hot_reload" >() };
+            constexpr const auto& window_config_node{ std::get< window_config >( config_nodes ) };
+            constexpr const auto& enabled{ window_config_node.at< "simple_titlebar" >() };
+            constexpr const auto& no_hot_reload{ window_config_node.at< "no_hot_reload" >() };
             if ( no_hot_reload.test( std::memory_order_acquire ) == true ) {
                 switch ( enabled.test( std::memory_order_acquire ) ) {
                     case false : con.enable_context_menu( true ); return;
@@ -1040,8 +1042,9 @@ namespace scltk
         }
         auto forced_show() noexcept
         {
-            constexpr const auto& enabled{ std::get< window_config >( config_nodes ).at< "forced_show" >() };
-            constexpr const auto& no_hot_reload{ std::get< window_config >( config_nodes ).at< "no_hot_reload" >() };
+            constexpr const auto& window_config_node{ std::get< window_config >( config_nodes ) };
+            constexpr const auto& enabled{ window_config_node.at< "forced_show" >() };
+            constexpr const auto& no_hot_reload{ window_config_node.at< "no_hot_reload" >() };
             constexpr auto sleep_duration{ 50ms };
             if ( no_hot_reload.test( std::memory_order_acquire ) ) {
                 if ( enabled.test( std::memory_order_acquire ) == false ) {
@@ -1277,9 +1280,9 @@ namespace scltk
     {
         static auto crack_()
         {
-            constexpr const auto& options{ std::get< crack_restore_config >( config_nodes ) };
-            constexpr const auto& use_hijack_image{ options.at< "hijack_image" >() };
-            constexpr const auto& use_set_serv_startup_types{ options.at< "disable_servs" >() };
+            constexpr const auto& crack_restore_config_node{ std::get< crack_restore_config >( config_nodes ) };
+            constexpr const auto& use_hijack_image{ crack_restore_config_node.at< "hijack_image" >() };
+            constexpr const auto& use_set_serv_startup_types{ crack_restore_config_node.at< "disable_servs" >() };
             if constexpr ( ( Backends::run_hijack_image || ... ) ) {
                 if ( use_hijack_image ) {
                     std::print( " -> 映像劫持.\n" );
@@ -1342,9 +1345,9 @@ namespace scltk
         }
         static auto restore_()
         {
-            constexpr const auto& options{ std::get< crack_restore_config >( config_nodes ) };
-            constexpr const auto& use_hijack_image{ options.at< "hijack_image" >() };
-            constexpr const auto& use_set_serv_startup_types{ options.at< "disable_servs" >() };
+            constexpr const auto& crack_restore_config_node{ std::get< crack_restore_config >( config_nodes ) };
+            constexpr const auto& use_hijack_image{ crack_restore_config_node.at< "hijack_image" >() };
+            constexpr const auto& use_set_serv_startup_types{ crack_restore_config_node.at< "disable_servs" >() };
             if constexpr ( ( Backends::run_undo_hijack_image || ... ) ) {
                 if ( use_hijack_image ) {
                     std::print( " -> 撤销劫持.\n" );
