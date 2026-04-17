@@ -14,6 +14,7 @@
 #include <wincrypt.h>
 #include <filesystem>
 #include <fstream>
+#include <random>
 #include "../meta/info.h"
 DEFINE_GUID( GUID_DEVCLASS_NET, 0x4d36e972, 0xe325, 0x11ce, 0xbf, 0xc1, 0x08, 0x00, 0x2b, 0xe1, 0x03, 0x18 );
 namespace scltk
@@ -394,7 +395,9 @@ namespace scltk
       details_::options_info_table<
         details_::option_info< "hijack_image", "映像劫持" >, details_::option_info< "disable_servs", "禁用服务" > > >;
     using window_config = details_::options_config_node<
-      "window", "窗口显示", true, details_::options_info_table< details_::option_info< "forced_show", "置顶窗口" > > >;
+      "window", "窗口显示", true,
+      details_::options_info_table<
+        details_::option_info< "forced_show", "置顶窗口" >, details_::option_info< "random_title", "随机标题" > > >;
     class custom_rules_config final
       : public details_::config_node_interface
       , public details_::config_node_raw_name< "custom_rules" >
@@ -1014,10 +1017,46 @@ namespace scltk
             } };
             con.forced_show_until( sleep_duration, condition_checker );
         }
+        auto random_title() noexcept
+        {
+            constexpr const auto& window_config_node{ std::get< window_config >( config_nodes ) };
+            constexpr const auto& enabled{ window_config_node.at< "random_title" >() };
+            constexpr auto dict{ cpp_utils::invoke_to_array< [] static noexcept
+            {
+                std::vector< wchar_t > dict;
+                for ( auto ch{ L'A' }; ch <= L'Z'; ++ch ) {
+                    dict.emplace_back( ch );
+                }
+                for ( auto ch{ L'a' }; ch <= L'z'; ++ch ) {
+                    dict.emplace_back( ch );
+                }
+                for ( auto ch{ L'0' }; ch <= L'9'; ++ch ) {
+                    dict.emplace_back( ch );
+                }
+                for ( const auto ch : std::wstring_view{ LR"(?!@#$%^&*()-_=+[]{}\|/;:'",.<>)" } ) {
+                    dict.emplace_back( ch );
+                }
+                return dict;
+            } >() };
+            constexpr auto title_length{ 32uz };
+            std::array< wchar_t, title_length + 1 > title;
+            std::mt19937_64 gen{ std::random_device{}() };
+            std::uniform_int_distribution< std::size_t > dist{ 0uz, dict.size() - 1uz };
+            for ( auto i{ 0uz }; i < title_length; ++i ) {
+                title[ i ] = dict[ dist( gen ) ];
+            }
+            title.back() = L'\0';
+            while ( true ) {
+                con.set_title( L"" INFO_SHORT_NAME );
+                enabled.wait( false, std::memory_order_acquire );
+                con.set_title( title.data() );
+                enabled.wait( true, std::memory_order_acquire );
+            }
+        }
     }
     auto create_parallel_tasks() noexcept
     {
-        constexpr std::array parallel_tasks{ details_::forced_show };
+        constexpr std::array parallel_tasks{ details_::forced_show, details_::random_title };
         for ( const auto& parallel_task : parallel_tasks ) {
             std::thread{ parallel_task }.detach();
         }
