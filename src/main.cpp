@@ -1004,8 +1004,7 @@ namespace scltk
     {
         auto forced_show() noexcept
         {
-            constexpr const auto& window_config_node{ std::get< window_config >( config_nodes ) };
-            constexpr const auto& enabled{ window_config_node.at< "forced_show" >() };
+            constexpr const auto& enabled{ std::get< window_config >( config_nodes ).at< "forced_show" >() };
             constexpr auto sleep_duration{ 50ms };
             constexpr auto condition_checker{ [] static noexcept
             {
@@ -1019,8 +1018,7 @@ namespace scltk
         }
         auto random_title() noexcept
         {
-            constexpr const auto& window_config_node{ std::get< window_config >( config_nodes ) };
-            constexpr const auto& enabled{ window_config_node.at< "random_title" >() };
+            constexpr const auto& enabled{ std::get< window_config >( config_nodes ).at< "random_title" >() };
             constexpr auto generate_title{ [] static noexcept
             {
                 constexpr auto chars_dict{ cpp_utils::invoke_to_array< [] static noexcept
