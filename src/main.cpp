@@ -718,7 +718,6 @@ namespace scltk
                 CloseHandle( proc_info.hProcess );
                 CloseHandle( proc_info.hThread );
                 con.set_charset( charset_id )
-                  .set_title( L"" INFO_SHORT_NAME )
                   .set_size( console_width, console_height, unsynced_mem_pool )
                   .fix_size( true )
                   .enable_window_maximize_ctrl( false );
@@ -1595,7 +1594,6 @@ auto main() -> int
     scltk::con.set_charset( scltk::charset_id );
     std::print( " -> 准备就绪." );
     scltk::con.ignore_exit_signal( true )
-      .set_title( L"" INFO_SHORT_NAME )
       .show_cursor( false )
       .fix_size( true )
       .lock_text( true )
