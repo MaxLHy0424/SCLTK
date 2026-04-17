@@ -1021,35 +1021,39 @@ namespace scltk
         {
             constexpr const auto& window_config_node{ std::get< window_config >( config_nodes ) };
             constexpr const auto& enabled{ window_config_node.at< "random_title" >() };
-            constexpr auto dict{ cpp_utils::invoke_to_array< [] static noexcept
+            constexpr auto generate_title{ [] static noexcept
             {
-                std::vector< wchar_t > dict;
-                for ( auto ch{ L'A' }; ch <= L'Z'; ++ch ) {
-                    dict.emplace_back( ch );
+                constexpr auto chars_dict{ cpp_utils::invoke_to_array< [] static noexcept
+                {
+                    std::vector< wchar_t > dict;
+                    for ( auto ch{ L'A' }; ch <= L'Z'; ++ch ) {
+                        dict.emplace_back( ch );
+                    }
+                    for ( auto ch{ L'a' }; ch <= L'z'; ++ch ) {
+                        dict.emplace_back( ch );
+                    }
+                    for ( auto ch{ L'0' }; ch <= L'9'; ++ch ) {
+                        dict.emplace_back( ch );
+                    }
+                    for ( const auto ch : std::wstring_view{ LR"(?!@#$%^&*()-_=+[]{}\|/;:'",.<>)" } ) {
+                        dict.emplace_back( ch );
+                    }
+                    return dict;
+                } >() };
+                constexpr auto title_length{ 32uz };
+                std::array< wchar_t, title_length + 1 > title;
+                std::mt19937_64 gen{ std::random_device{}() };
+                std::uniform_int_distribution< std::size_t > dist{ 0uz, chars_dict.size() - 1uz };
+                for ( auto i{ 0uz }; i < title_length; ++i ) {
+                    title[ i ] = chars_dict[ dist( gen ) ];
                 }
-                for ( auto ch{ L'a' }; ch <= L'z'; ++ch ) {
-                    dict.emplace_back( ch );
-                }
-                for ( auto ch{ L'0' }; ch <= L'9'; ++ch ) {
-                    dict.emplace_back( ch );
-                }
-                for ( const auto ch : std::wstring_view{ LR"(?!@#$%^&*()-_=+[]{}\|/;:'",.<>)" } ) {
-                    dict.emplace_back( ch );
-                }
-                return dict;
-            } >() };
-            constexpr auto title_length{ 32uz };
-            std::array< wchar_t, title_length + 1 > title;
-            std::mt19937_64 gen{ std::random_device{}() };
-            std::uniform_int_distribution< std::size_t > dist{ 0uz, dict.size() - 1uz };
-            for ( auto i{ 0uz }; i < title_length; ++i ) {
-                title[ i ] = dict[ dist( gen ) ];
-            }
-            title.back() = L'\0';
+                title.back() = L'\0';
+                return title;
+            } };
             while ( true ) {
                 con.set_title( L"" INFO_SHORT_NAME );
                 enabled.wait( false, std::memory_order_acquire );
-                con.set_title( title.data() );
+                con.set_title( generate_title().data() );
                 enabled.wait( true, std::memory_order_acquire );
             }
         }
