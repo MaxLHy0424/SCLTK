@@ -5,8 +5,6 @@
 #define NOSOUND
 #define NORPC
 #include <cpp_utils/const_string.hpp>
-#include <cpp_utils/meta.hpp>
-#include <cpp_utils/windows_app_tools.hpp>
 #include <cpp_utils/windows_console_ui.hpp>
 #include <initguid.h>
 #include <iphlpapi.h>
