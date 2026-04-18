@@ -92,6 +92,186 @@ namespace cpp_utils
     }
     namespace details_
     {
+        struct scoped_handle final
+        {
+            HANDLE value{ nullptr };
+            [[nodiscard]] auto get() const noexcept
+            {
+                return value;
+            }
+            auto reset( const HANDLE h ) noexcept
+            {
+                if ( value != nullptr && value != INVALID_HANDLE_VALUE ) [[likely]] {
+                    CloseHandle( value );
+                }
+                value = h;
+            }
+            [[nodiscard]] auto put() noexcept
+            {
+                reset( nullptr );
+                return &value;
+            }
+            scoped_handle() noexcept = default;
+            scoped_handle( const HANDLE h ) noexcept
+              : value{ h }
+            { }
+            scoped_handle( const scoped_handle& )                    = delete;
+            auto operator=( const scoped_handle& ) -> scoped_handle& = delete;
+            scoped_handle( scoped_handle&& other ) noexcept
+              : value{ other.value }
+            {
+                other.value = nullptr;
+            }
+            auto operator=( scoped_handle&& other ) noexcept -> scoped_handle&
+            {
+                if ( this != &other ) [[likely]] {
+                    reset( other.value );
+                    other.value = nullptr;
+                }
+                return *this;
+            }
+            ~scoped_handle() noexcept
+            {
+                if ( value != nullptr && value != INVALID_HANDLE_VALUE ) [[likely]] {
+                    CloseHandle( value );
+                }
+            }
+        };
+        struct scoped_sc_handle final
+        {
+            SC_HANDLE value{ nullptr };
+            [[nodiscard]] auto get() const noexcept
+            {
+                return value;
+            }
+            void reset( const SC_HANDLE h ) noexcept
+            {
+                if ( value != nullptr ) [[likely]] {
+                    CloseServiceHandle( value );
+                }
+                value = h;
+            }
+            [[nodiscard]] auto put() noexcept
+            {
+                reset( nullptr );
+                return &value;
+            }
+            scoped_sc_handle() noexcept = default;
+            scoped_sc_handle( const SC_HANDLE h ) noexcept
+              : value{ h }
+            { }
+            scoped_sc_handle( const scoped_sc_handle& )                    = delete;
+            auto operator=( const scoped_sc_handle& ) -> scoped_sc_handle& = delete;
+            scoped_sc_handle( scoped_sc_handle&& other ) noexcept
+              : value{ other.value }
+            {
+                other.value = nullptr;
+            }
+            auto operator=( scoped_sc_handle&& other ) noexcept -> scoped_sc_handle&
+            {
+                if ( this != &other ) [[likely]] {
+                    reset( other.value );
+                    other.value = nullptr;
+                }
+                return *this;
+            }
+            ~scoped_sc_handle() noexcept
+            {
+                if ( value != nullptr ) [[likely]] {
+                    CloseServiceHandle( value );
+                }
+            }
+        };
+        struct scoped_hkey final
+        {
+            HKEY value{ nullptr };
+            [[nodiscard]] auto get() const noexcept
+            {
+                return value;
+            }
+            auto reset( const HKEY h ) noexcept
+            {
+                if ( value != nullptr ) [[likely]] {
+                    RegCloseKey( value );
+                }
+                value = h;
+            }
+            [[nodiscard]] auto put() noexcept
+            {
+                reset( nullptr );
+                return &value;
+            }
+            scoped_hkey() noexcept = default;
+            scoped_hkey( const HKEY h ) noexcept
+              : value{ h }
+            { }
+            scoped_hkey( const scoped_hkey& )                    = delete;
+            auto operator=( const scoped_hkey& ) -> scoped_hkey& = delete;
+            scoped_hkey( scoped_hkey&& other ) noexcept
+              : value{ other.value }
+            {
+                other.value = nullptr;
+            }
+            auto operator=( scoped_hkey&& other ) noexcept -> scoped_hkey&
+            {
+                if ( this != &other ) [[likely]] {
+                    reset( other.value );
+                    other.value = nullptr;
+                }
+                return *this;
+            }
+            ~scoped_hkey() noexcept
+            {
+                if ( value != nullptr ) [[likely]] {
+                    RegCloseKey( value );
+                }
+            }
+        };
+        struct scoped_psid final
+        {
+            PSID value{ nullptr };
+            [[nodiscard]] auto get() const noexcept
+            {
+                return value;
+            }
+            auto reset( const PSID p ) noexcept
+            {
+                if ( value != nullptr ) {
+                    FreeSid( value );
+                }
+                value = p;
+            }
+            [[nodiscard]] auto put() noexcept
+            {
+                reset( nullptr );
+                return &value;
+            }
+            scoped_psid() noexcept = default;
+            scoped_psid( const PSID p ) noexcept
+              : value{ p }
+            { }
+            scoped_psid( const scoped_psid& )                    = delete;
+            auto operator=( const scoped_psid& ) -> scoped_psid& = delete;
+            scoped_psid( scoped_psid&& other ) noexcept
+              : value{ other.value }
+            {
+                other.value = nullptr;
+            }
+            auto operator=( scoped_psid&& other ) noexcept -> scoped_psid&
+            {
+                if ( this != &other ) [[likely]] {
+                    reset( other.value );
+                    other.value = nullptr;
+                }
+                return *this;
+            }
+            ~scoped_psid() noexcept
+            {
+                if ( value != nullptr ) [[likely]] {
+                    FreeSid( value );
+                }
+            }
+        };
         [[nodiscard]] inline auto stop_service_and_dependencies(
           const SC_HANDLE scm, const SC_HANDLE service, std::pmr::memory_resource* const resource ) noexcept -> DWORD
         {
@@ -109,13 +289,12 @@ namespace cpp_utils
                 {
                     auto dependency{ config->lpDependencies };
                     while ( *dependency != L'\0' ) [[likely]] {
-                        const auto dependency_service{ OpenServiceW( scm, dependency, SERVICE_STOP | SERVICE_QUERY_STATUS ) };
-                        if ( dependency_service != nullptr ) [[likely]] {
-                            const auto dep_result{ stop_service_and_dependencies( scm, dependency_service, resource ) };
+                        scoped_sc_handle dependency_service{ OpenServiceW( scm, dependency, SERVICE_STOP | SERVICE_QUERY_STATUS ) };
+                        if ( dependency_service.get() != nullptr ) [[likely]] {
+                            const auto dep_result{ stop_service_and_dependencies( scm, dependency_service.get(), resource ) };
                             if ( dep_result != ERROR_SUCCESS && result == ERROR_SUCCESS ) [[unlikely]] {
                                 result = dep_result;
                             }
-                            CloseServiceHandle( dependency_service );
                         }
                         dependency += std::wcslen( dependency ) + 1;
                     }
@@ -151,19 +330,20 @@ namespace cpp_utils
                     auto dependency{ config->lpDependencies };
                     while ( *dependency != L'\0' ) [[likely]] {
                         if ( *dependency != L'@' ) [[likely]] {
-                            const auto dependency_service{ OpenServiceW( scm, dependency, SERVICE_START | SERVICE_QUERY_STATUS ) };
-                            if ( dependency_service != nullptr ) [[likely]] {
+                            scoped_sc_handle dependency_service{
+                              OpenServiceW( scm, dependency, SERVICE_START | SERVICE_QUERY_STATUS ) };
+                            if ( dependency_service.get() != nullptr ) [[likely]] {
                                 SERVICE_STATUS status{};
-                                if ( !QueryServiceStatus( dependency_service, &status )
+                                if ( !QueryServiceStatus( dependency_service.get(), &status )
                                      || ( status.dwCurrentState != SERVICE_RUNNING && status.dwCurrentState != SERVICE_START_PENDING ) )
                                   [[likely]]
                                 {
-                                    const auto dep_result{ start_service_and_dependencies( scm, dependency_service, resource ) };
+                                    const auto dep_result{
+                                      start_service_and_dependencies( scm, dependency_service.get(), resource ) };
                                     if ( dep_result != ERROR_SUCCESS && result == ERROR_SUCCESS ) [[unlikely]] {
                                         result = dep_result;
                                     }
                                 }
-                                CloseServiceHandle( dependency_service );
                             }
                         }
                         dependency += std::wcslen( dependency ) + 1;
@@ -180,53 +360,46 @@ namespace cpp_utils
     }
     [[nodiscard]] inline auto set_privilege( const HANDLE proc, const wchar_t* const privilege, const bool is_enabled ) noexcept
     {
-        HANDLE token{ nullptr };
+        details_::scoped_handle token;
         TOKEN_PRIVILEGES tp{};
         tp.PrivilegeCount = 0;
         LUID local_uid;
-        DWORD result{ ERROR_SUCCESS };
-        if ( !OpenProcessToken( proc, TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, &token ) ) [[unlikely]] {
-            result = GetLastError();
-            goto Cleanup;
+        if ( !OpenProcessToken( proc, TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, token.put() ) ) [[unlikely]] {
+            return GetLastError();
         }
         if ( !LookupPrivilegeValueW( nullptr, privilege, &local_uid ) ) [[unlikely]] {
-            result = GetLastError();
-            goto Cleanup;
+            return GetLastError();
         }
         tp.PrivilegeCount             = 1;
         tp.Privileges[ 0 ].Luid       = local_uid;
         tp.Privileges[ 0 ].Attributes = is_enabled ? SE_PRIVILEGE_ENABLED : 0;
-        if ( !AdjustTokenPrivileges( token, FALSE, &tp, sizeof( TOKEN_PRIVILEGES ), nullptr, nullptr ) ) [[unlikely]] {
-            result = GetLastError();
-            goto Cleanup;
+        if ( !AdjustTokenPrivileges( token.get(), FALSE, &tp, sizeof( TOKEN_PRIVILEGES ), nullptr, nullptr ) ) [[unlikely]] {
+            return GetLastError();
         }
-    Cleanup:
-        if ( token != nullptr ) [[likely]] {
-            CloseHandle( token );
-        }
-        return result;
+        return static_cast< DWORD >( ERROR_SUCCESS );
     }
     [[nodiscard]] inline auto terminate_process_by_pid( const DWORD pid ) noexcept
     {
-        const auto proc_handle{ OpenProcess( PROCESS_TERMINATE, FALSE, pid ) };
-        if ( proc_handle == nullptr ) [[unlikely]] {
+        details_::scoped_handle proc_handle{ OpenProcess( PROCESS_TERMINATE, FALSE, pid ) };
+        if ( proc_handle.get() == nullptr ) [[unlikely]] {
             return static_cast< LONG >( ERROR_ACCESS_DENIED );
         }
-        const LONG status{ TerminateProcess( proc_handle, 1 ) };
-        CloseHandle( proc_handle );
-        return status;
+        if ( !TerminateProcess( proc_handle.get(), 1 ) ) [[unlikely]] {
+            return static_cast< LONG >( GetLastError() );
+        }
+        return static_cast< LONG >( ERROR_SUCCESS );
     }
     [[nodiscard]] inline auto terminate_process_by_name( const std::wstring_view proc_name ) noexcept
     {
-        const auto proc_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ) };
-        if ( proc_snapshot == INVALID_HANDLE_VALUE ) [[unlikely]] {
+        details_::scoped_handle proc_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ) };
+        if ( proc_snapshot.get() == INVALID_HANDLE_VALUE ) [[unlikely]] {
             return static_cast< LONG >( ERROR_NOT_FOUND );
         }
         PROCESSENTRY32W proc_entry{};
         proc_entry.dwSize = sizeof( PROCESSENTRY32W );
         bool is_found{ false };
         LONG status{ ERROR_NOT_FOUND };
-        if ( Process32FirstW( proc_snapshot, &proc_entry ) ) [[likely]] {
+        if ( Process32FirstW( proc_snapshot.get(), &proc_entry ) ) [[likely]] {
             do {
                 if ( _wcsicmp( proc_entry.szExeFile, proc_name.data() ) == 0 ) {
                     is_found = true;
@@ -234,9 +407,8 @@ namespace cpp_utils
                         status = ERROR_SUCCESS;
                     }
                 }
-            } while ( Process32NextW( proc_snapshot, &proc_entry ) );
+            } while ( Process32NextW( proc_snapshot.get(), &proc_entry ) );
         }
-        CloseHandle( proc_snapshot );
         return is_found ? ( status == ERROR_SUCCESS ? ERROR_SUCCESS : ERROR_ACCESS_DENIED ) : ERROR_NOT_FOUND;
     }
     template < typename Range >
@@ -250,14 +422,14 @@ namespace cpp_utils
         if ( proc_names.empty() ) [[unlikely]] {
             return static_cast< LONG >( ERROR_SUCCESS );
         }
-        const auto proc_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ) };
-        if ( proc_snapshot == INVALID_HANDLE_VALUE ) [[unlikely]] {
+        details_::scoped_handle proc_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ) };
+        if ( proc_snapshot.get() == INVALID_HANDLE_VALUE ) [[unlikely]] {
             return static_cast< LONG >( ERROR_NOT_FOUND );
         }
         PROCESSENTRY32W proc_entry{};
         proc_entry.dwSize = sizeof( PROCESSENTRY32W );
         LONG status{ ERROR_NOT_FOUND };
-        if ( Process32FirstW( proc_snapshot, &proc_entry ) ) [[likely]] {
+        if ( Process32FirstW( proc_snapshot.get(), &proc_entry ) ) [[likely]] {
             do {
                 for ( const auto& proc_name : proc_names ) {
                     if ( _wcsicmp( proc_entry.szExeFile, proc_name.data() ) == 0 ) {
@@ -267,16 +439,15 @@ namespace cpp_utils
                         break;
                     }
                 }
-            } while ( Process32NextW( proc_snapshot, &proc_entry ) );
+            } while ( Process32NextW( proc_snapshot.get(), &proc_entry ) );
         }
-        CloseHandle( proc_snapshot );
         return status == ERROR_SUCCESS ? ERROR_SUCCESS : ERROR_ACCESS_DENIED;
     }
     [[nodiscard]] inline auto suspend_process_by_pid( const DWORD pid ) noexcept
     {
-        using nt_suspend_process = LONG( NTAPI* )( HANDLE );
-        const auto proc_handle{ OpenProcess( PROCESS_SUSPEND_RESUME, FALSE, pid ) };
-        if ( proc_handle == nullptr ) [[unlikely]] {
+        using nt_suspend_process = LONG( NTAPI* )( HANDLE ) noexcept;
+        details_::scoped_handle proc_handle{ OpenProcess( PROCESS_SUSPEND_RESUME, FALSE, pid ) };
+        if ( proc_handle.get() == nullptr ) [[unlikely]] {
             return static_cast< LONG >( ERROR_ACCESS_DENIED );
         }
         const auto pfn{
@@ -284,15 +455,13 @@ namespace cpp_utils
         if ( pfn == nullptr ) [[unlikely]] {
             return static_cast< LONG >( ERROR_ACCESS_DENIED );
         }
-        const auto result{ pfn( proc_handle ) };
-        CloseHandle( proc_handle );
-        return result;
+        return pfn( proc_handle.get() );
     }
     [[nodiscard]] inline auto resume_process_by_pid( const DWORD pid ) noexcept
     {
-        using nt_resume_process = LONG( NTAPI* )( HANDLE );
-        const auto proc_handle{ OpenProcess( PROCESS_SUSPEND_RESUME, FALSE, pid ) };
-        if ( proc_handle == nullptr ) [[unlikely]] {
+        using nt_resume_process = LONG( NTAPI* )( HANDLE ) noexcept;
+        details_::scoped_handle proc_handle{ OpenProcess( PROCESS_SUSPEND_RESUME, FALSE, pid ) };
+        if ( proc_handle.get() == nullptr ) [[unlikely]] {
             return static_cast< LONG >( ERROR_ACCESS_DENIED );
         }
         const auto pfn{
@@ -300,14 +469,12 @@ namespace cpp_utils
         if ( pfn == nullptr ) [[unlikely]] {
             return static_cast< LONG >( ERROR_ACCESS_DENIED );
         }
-        const auto result{ pfn( proc_handle ) };
-        CloseHandle( proc_handle );
-        return result;
+        return pfn( proc_handle.get() );
     }
     [[nodiscard]] inline auto suspend_process_by_name( const std::wstring_view proc_name ) noexcept
     {
-        const auto proc_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ) };
-        if ( proc_snapshot == INVALID_HANDLE_VALUE ) [[unlikely]] {
+        details_::scoped_handle proc_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ) };
+        if ( proc_snapshot.get() == INVALID_HANDLE_VALUE ) [[unlikely]] {
             return static_cast< LONG >( ERROR_NOT_FOUND );
         }
         using nt_suspend_process = LONG( NTAPI* )( HANDLE ) noexcept;
@@ -320,26 +487,25 @@ namespace cpp_utils
         proc_entry.dwSize = sizeof( PROCESSENTRY32W );
         bool is_found{ false };
         LONG status{ ERROR_NOT_FOUND };
-        if ( Process32FirstW( proc_snapshot, &proc_entry ) ) [[likely]] {
+        if ( Process32FirstW( proc_snapshot.get(), &proc_entry ) ) [[likely]] {
             do {
                 if ( _wcsicmp( proc_entry.szExeFile, proc_name.data() ) == 0 ) {
                     is_found = true;
-                    const auto proc_handle{ OpenProcess( PROCESS_SUSPEND_RESUME, FALSE, proc_entry.th32ProcessID ) };
-                    if ( proc_handle == nullptr ) [[unlikely]] {
+                    details_::scoped_handle proc_handle{ OpenProcess( PROCESS_SUSPEND_RESUME, FALSE, proc_entry.th32ProcessID ) };
+                    if ( proc_handle.get() == nullptr ) [[unlikely]] {
                         status = ERROR_ACCESS_DENIED;
+                    } else {
+                        status = pfn( proc_handle.get() );
                     }
-                    status = pfn( proc_handle );
-                    CloseHandle( proc_handle );
                 }
-            } while ( Process32NextW( proc_snapshot, &proc_entry ) );
+            } while ( Process32NextW( proc_snapshot.get(), &proc_entry ) );
         }
-        CloseHandle( proc_snapshot );
         return is_found ? ( status == ERROR_SUCCESS ? ERROR_SUCCESS : ERROR_ACCESS_DENIED ) : ERROR_NOT_FOUND;
     }
     [[nodiscard]] inline auto resume_process_by_name( const std::wstring_view proc_name ) noexcept
     {
-        const auto proc_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ) };
-        if ( proc_snapshot == INVALID_HANDLE_VALUE ) [[unlikely]] {
+        details_::scoped_handle proc_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ) };
+        if ( proc_snapshot.get() == INVALID_HANDLE_VALUE ) [[unlikely]] {
             return static_cast< LONG >( ERROR_NOT_FOUND );
         }
         using nt_resume_process = LONG( NTAPI* )( HANDLE ) noexcept;
@@ -352,23 +518,21 @@ namespace cpp_utils
         proc_entry.dwSize = sizeof( PROCESSENTRY32W );
         bool is_found{ false };
         LONG status{ ERROR_NOT_FOUND };
-        if ( Process32FirstW( proc_snapshot, &proc_entry ) ) [[likely]] {
+        if ( Process32FirstW( proc_snapshot.get(), &proc_entry ) ) [[likely]] {
             do {
                 if ( _wcsicmp( proc_entry.szExeFile, proc_name.data() ) == 0 ) {
                     is_found = true;
-                    const auto proc_handle{ OpenProcess( PROCESS_SUSPEND_RESUME, FALSE, proc_entry.th32ProcessID ) };
-                    if ( proc_handle == nullptr ) [[unlikely]] {
+                    details_::scoped_handle proc_handle{ OpenProcess( PROCESS_SUSPEND_RESUME, FALSE, proc_entry.th32ProcessID ) };
+                    if ( proc_handle.get() == nullptr ) [[unlikely]] {
                         status = ERROR_ACCESS_DENIED;
+                    } else {
+                        status = pfn( proc_handle.get() );
                     }
-                    status = pfn( proc_handle );
-                    CloseHandle( proc_handle );
                 }
-            } while ( Process32NextW( proc_snapshot, &proc_entry ) );
+            } while ( Process32NextW( proc_snapshot.get(), &proc_entry ) );
         }
-        CloseHandle( proc_snapshot );
         return is_found ? ( status == ERROR_SUCCESS ? ERROR_SUCCESS : ERROR_ACCESS_DENIED ) : ERROR_NOT_FOUND;
     }
-
     template < typename Range >
         requires requires( const Range& range ) {
             { *range.begin() } -> std::convertible_to< std::wstring_view >;
@@ -377,8 +541,8 @@ namespace cpp_utils
         }
     [[nodiscard]] inline auto suspend_process_by_names( const Range& proc_names ) noexcept
     {
-        const auto proc_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ) };
-        if ( proc_snapshot == INVALID_HANDLE_VALUE ) [[unlikely]] {
+        details_::scoped_handle proc_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ) };
+        if ( proc_snapshot.get() == INVALID_HANDLE_VALUE ) [[unlikely]] {
             return static_cast< LONG >( ERROR_NOT_FOUND );
         }
         using nt_suspend_process = LONG( NTAPI* )( HANDLE ) noexcept;
@@ -391,22 +555,22 @@ namespace cpp_utils
         proc_entry.dwSize = sizeof( PROCESSENTRY32W );
         bool is_found{ false };
         LONG status{ ERROR_NOT_FOUND };
-        if ( Process32FirstW( proc_snapshot, &proc_entry ) ) [[likely]] {
+        if ( Process32FirstW( proc_snapshot.get(), &proc_entry ) ) [[likely]] {
             do {
                 for ( const auto& proc_name : proc_names ) {
                     if ( _wcsicmp( proc_entry.szExeFile, proc_name.data() ) == 0 ) {
                         is_found = true;
-                        const auto proc_handle{ OpenProcess( PROCESS_SUSPEND_RESUME, FALSE, proc_entry.th32ProcessID ) };
-                        if ( proc_handle == nullptr ) [[unlikely]] {
+                        details_::scoped_handle proc_handle{
+                          OpenProcess( PROCESS_SUSPEND_RESUME, FALSE, proc_entry.th32ProcessID ) };
+                        if ( proc_handle.get() == nullptr ) [[unlikely]] {
                             status = ERROR_ACCESS_DENIED;
+                        } else {
+                            status = pfn( proc_handle.get() );
                         }
-                        status = pfn( proc_handle );
-                        CloseHandle( proc_handle );
                     }
                 }
-            } while ( Process32NextW( proc_snapshot, &proc_entry ) );
+            } while ( Process32NextW( proc_snapshot.get(), &proc_entry ) );
         }
-        CloseHandle( proc_snapshot );
         return is_found ? ( status == ERROR_SUCCESS ? ERROR_SUCCESS : ERROR_ACCESS_DENIED ) : ERROR_NOT_FOUND;
     }
     template < typename Range >
@@ -417,8 +581,8 @@ namespace cpp_utils
         }
     [[nodiscard]] inline auto resume_process_by_names( const Range& proc_names ) noexcept
     {
-        const auto proc_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ) };
-        if ( proc_snapshot == INVALID_HANDLE_VALUE ) [[unlikely]] {
+        details_::scoped_handle proc_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ) };
+        if ( proc_snapshot.get() == INVALID_HANDLE_VALUE ) [[unlikely]] {
             return static_cast< LONG >( ERROR_NOT_FOUND );
         }
         using nt_resume_process = LONG( NTAPI* )( HANDLE ) noexcept;
@@ -431,76 +595,68 @@ namespace cpp_utils
         proc_entry.dwSize = sizeof( PROCESSENTRY32W );
         bool is_found{ false };
         LONG status{ ERROR_NOT_FOUND };
-        if ( Process32FirstW( proc_snapshot, &proc_entry ) ) [[likely]] {
+        if ( Process32FirstW( proc_snapshot.get(), &proc_entry ) ) [[likely]] {
             do {
                 for ( const auto& proc_name : proc_names ) {
                     if ( _wcsicmp( proc_entry.szExeFile, proc_name.data() ) == 0 ) {
                         is_found = true;
-                        const auto proc_handle{ OpenProcess( PROCESS_SUSPEND_RESUME, FALSE, proc_entry.th32ProcessID ) };
-                        if ( proc_handle == nullptr ) [[unlikely]] {
+                        details_::scoped_handle proc_handle{
+                          OpenProcess( PROCESS_SUSPEND_RESUME, FALSE, proc_entry.th32ProcessID ) };
+                        if ( proc_handle.get() == nullptr ) [[unlikely]] {
                             status = ERROR_ACCESS_DENIED;
+                        } else {
+                            status = pfn( proc_handle.get() );
                         }
-                        status = pfn( proc_handle );
-                        CloseHandle( proc_handle );
                     }
                 }
-            } while ( Process32NextW( proc_snapshot, &proc_entry ) );
+            } while ( Process32NextW( proc_snapshot.get(), &proc_entry ) );
         }
-        CloseHandle( proc_snapshot );
         return is_found ? ( status == ERROR_SUCCESS ? ERROR_SUCCESS : ERROR_ACCESS_DENIED ) : ERROR_NOT_FOUND;
     }
     [[nodiscard]] inline auto create_registry_key(
       const HKEY main_key, const std::wstring_view sub_key, const std::wstring_view value_name, const DWORD type,
       const BYTE* const data, const DWORD data_size ) noexcept
     {
-        HKEY key_handle;
+        details_::scoped_hkey key_handle;
         auto result{ RegCreateKeyExW(
-          main_key, sub_key.data(), 0, nullptr, REG_OPTION_NON_VOLATILE, KEY_WRITE, nullptr, &key_handle, nullptr ) };
+          main_key, sub_key.data(), 0, nullptr, REG_OPTION_NON_VOLATILE, KEY_WRITE, nullptr, key_handle.put(), nullptr ) };
         if ( result != ERROR_SUCCESS ) [[unlikely]] {
             return result;
         }
-        result = RegSetValueExW( key_handle, value_name.data(), 0, type, data, data_size );
-        RegCloseKey( key_handle );
-        return result;
+        return RegSetValueExW( key_handle.get(), value_name.data(), 0, type, data, data_size );
     }
     [[nodiscard]] inline auto create_registry_key_without_redirect(
       const HKEY main_key, const std::wstring_view sub_key, const std::wstring_view value_name, const DWORD type,
       const BYTE* const data, const DWORD data_size ) noexcept
     {
-        HKEY key_handle;
+        details_::scoped_hkey key_handle;
         auto result{ RegCreateKeyExW(
-          main_key, sub_key.data(), 0, nullptr, REG_OPTION_NON_VOLATILE, KEY_WRITE | KEY_WOW64_64KEY, nullptr, &key_handle,
+          main_key, sub_key.data(), 0, nullptr, REG_OPTION_NON_VOLATILE, KEY_WRITE | KEY_WOW64_64KEY, nullptr, key_handle.put(),
           nullptr ) };
         if ( result != ERROR_SUCCESS ) [[unlikely]] {
             return result;
         }
-        result = RegSetValueExW( key_handle, value_name.data(), 0, type, data, data_size );
-        RegCloseKey( key_handle );
-        return result;
+        return RegSetValueExW( key_handle.get(), value_name.data(), 0, type, data, data_size );
     }
     [[nodiscard]] inline auto
       delete_registry_key( const HKEY main_key, const std::wstring_view sub_key, const std::wstring_view value_name ) noexcept
     {
-        HKEY key_handle;
-        auto result{ RegOpenKeyExW( main_key, sub_key.data(), 0, KEY_SET_VALUE, &key_handle ) };
+        details_::scoped_hkey key_handle;
+        auto result{ RegOpenKeyExW( main_key, sub_key.data(), 0, KEY_SET_VALUE, key_handle.put() ) };
         if ( result != ERROR_SUCCESS ) [[unlikely]] {
             return result;
         }
-        result = RegDeleteValueW( key_handle, value_name.data() );
-        RegCloseKey( key_handle );
-        return result;
+        return RegDeleteValueW( key_handle.get(), value_name.data() );
     }
     [[nodiscard]] inline auto delete_registry_key_without_redirect(
       const HKEY main_key, const std::wstring_view sub_key, const std::wstring_view value_name ) noexcept
     {
-        HKEY key_handle;
-        auto result{ RegOpenKeyExW( main_key, sub_key.data(), 0, KEY_SET_VALUE | KEY_WOW64_64KEY, &key_handle ) };
+        details_::scoped_hkey key_handle;
+        auto result{ RegOpenKeyExW( main_key, sub_key.data(), 0, KEY_SET_VALUE | KEY_WOW64_64KEY, key_handle.put() ) };
         if ( result != ERROR_SUCCESS ) [[unlikely]] {
             return result;
         }
-        result = RegDeleteValueW( key_handle, value_name.data() );
-        RegCloseKey( key_handle );
-        return result;
+        return RegDeleteValueW( key_handle.get(), value_name.data() );
     }
     [[nodiscard]] inline auto delete_registry_tree( const HKEY main_key, const std::wstring_view sub_key ) noexcept
     {
@@ -512,74 +668,68 @@ namespace cpp_utils
     }
     [[nodiscard]] inline auto set_service_start_type( const std::wstring_view service_name, const DWORD start_type ) noexcept
     {
-        const auto scm{ OpenSCManagerW( nullptr, nullptr, SC_MANAGER_CONNECT ) };
-        if ( scm == nullptr ) [[unlikely]] {
+        details_::scoped_sc_handle scm{ OpenSCManagerW( nullptr, nullptr, SC_MANAGER_CONNECT ) };
+        if ( scm.get() == nullptr ) [[unlikely]] {
             return GetLastError();
         }
-        const auto service{ OpenServiceW( scm, service_name.data(), SERVICE_CHANGE_CONFIG ) };
+        details_::scoped_sc_handle service{ OpenServiceW( scm.get(), service_name.data(), SERVICE_CHANGE_CONFIG ) };
         DWORD result{ ERROR_SUCCESS };
-        if ( service != nullptr ) [[likely]] {
+        if ( service.get() != nullptr ) [[likely]] {
             if ( !ChangeServiceConfigW(
-                   service, SERVICE_NO_CHANGE, start_type, SERVICE_NO_CHANGE, nullptr, nullptr, nullptr, nullptr, nullptr,
+                   service.get(), SERVICE_NO_CHANGE, start_type, SERVICE_NO_CHANGE, nullptr, nullptr, nullptr, nullptr, nullptr,
                    nullptr, nullptr ) ) [[unlikely]]
             {
                 result = GetLastError();
             }
-            CloseServiceHandle( service );
         } else {
             result = GetLastError();
         }
-        CloseServiceHandle( scm );
         return result;
     }
     [[nodiscard]] inline auto stop_service_with_dependencies(
       const std::wstring_view service_name, std::pmr::memory_resource* const resource = std::pmr::get_default_resource() ) noexcept
     {
-        const auto scm{ OpenSCManagerW( nullptr, nullptr, SC_MANAGER_CONNECT | SC_MANAGER_ENUMERATE_SERVICE ) };
-        if ( scm == nullptr ) [[unlikely]] {
+        details_::scoped_sc_handle scm{ OpenSCManagerW( nullptr, nullptr, SC_MANAGER_CONNECT | SC_MANAGER_ENUMERATE_SERVICE ) };
+        if ( scm.get() == nullptr ) [[unlikely]] {
             return GetLastError();
         }
-        const auto service{
-          OpenServiceW( scm, service_name.data(), SERVICE_STOP | SERVICE_QUERY_STATUS | SERVICE_ENUMERATE_DEPENDENTS ) };
+        details_::scoped_sc_handle service{
+          OpenServiceW( scm.get(), service_name.data(), SERVICE_STOP | SERVICE_QUERY_STATUS | SERVICE_ENUMERATE_DEPENDENTS ) };
         DWORD result{ ERROR_SUCCESS };
-        if ( service != nullptr ) [[likely]] {
-            result = details_::stop_service_and_dependencies( scm, service, resource );
-            CloseServiceHandle( service );
+        if ( service.get() != nullptr ) [[likely]] {
+            result = details_::stop_service_and_dependencies( scm.get(), service.get(), resource );
         } else {
             result = GetLastError();
         }
-        CloseServiceHandle( scm );
         return result;
     }
     [[nodiscard]] inline auto start_service_with_dependencies(
       const std::wstring_view service_name, std::pmr::memory_resource* const resource = std::pmr::get_default_resource() ) noexcept
     {
-        const auto scm{ OpenSCManagerW( nullptr, nullptr, SC_MANAGER_CONNECT ) };
-        if ( scm == nullptr ) [[unlikely]] {
+        details_::scoped_sc_handle scm{ OpenSCManagerW( nullptr, nullptr, SC_MANAGER_CONNECT ) };
+        if ( scm.get() == nullptr ) [[unlikely]] {
             return GetLastError();
         }
-        const auto service{ OpenServiceW( scm, service_name.data(), SERVICE_START | SERVICE_QUERY_STATUS | SERVICE_QUERY_CONFIG ) };
+        details_::scoped_sc_handle service{
+          OpenServiceW( scm.get(), service_name.data(), SERVICE_START | SERVICE_QUERY_STATUS | SERVICE_QUERY_CONFIG ) };
         DWORD result{ ERROR_SUCCESS };
-        if ( service != nullptr ) [[likely]] {
-            result = details_::start_service_and_dependencies( scm, service, resource );
-            CloseServiceHandle( service );
+        if ( service.get() != nullptr ) [[likely]] {
+            result = details_::start_service_and_dependencies( scm.get(), service.get(), resource );
         } else {
             result = GetLastError();
         }
-        CloseServiceHandle( scm );
         return result;
     }
     [[nodiscard]] inline auto is_run_as_admin() noexcept
     {
         BOOL is_admin{ FALSE };
-        PSID admins_group;
+        details_::scoped_psid admins_group;
         SID_IDENTIFIER_AUTHORITY nt_authority{ SECURITY_NT_AUTHORITY };
         if ( AllocateAndInitializeSid(
-               &nt_authority, 2, SECURITY_BUILTIN_DOMAIN_RID, DOMAIN_ALIAS_RID_ADMINS, 0, 0, 0, 0, 0, 0, &admins_group )
+               &nt_authority, 2, SECURITY_BUILTIN_DOMAIN_RID, DOMAIN_ALIAS_RID_ADMINS, 0, 0, 0, 0, 0, 0, admins_group.put() )
              == TRUE ) [[likely]]
         {
-            CheckTokenMembership( nullptr, admins_group, &is_admin );
-            FreeSid( admins_group );
+            CheckTokenMembership( nullptr, admins_group.get(), &is_admin );
         }
         return static_cast< bool >( is_admin );
     }
@@ -704,6 +854,7 @@ namespace cpp_utils
     }
     class window final : public details_::basic_window
     {
+      public:
         auto operator=( const window& ) noexcept -> window& = default;
         window() noexcept
           : details_::basic_window{ .window_handle{ GetForegroundWindow() } }
