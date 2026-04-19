@@ -1333,6 +1333,7 @@ namespace scltk
                 }.template operator()< Backends >(),
                   ... );
             }
+            std::print( "\n (i) 操作已完成." );
         }
         static auto restore_()
         {
@@ -1387,6 +1388,9 @@ namespace scltk
                 }.template operator()< Backends >(),
                   ... );
             }
+            std::print(
+              "\n (i) 操作已完成.\n"
+              "     可能需要手动启动电子教室软件." );
         }
         static auto entry()
         {
@@ -1400,7 +1404,6 @@ namespace scltk
                     restore_();
                     break;
             }
-            std::print( "\n (i) 操作已完成." );
             details_::press_any_key_to_return();
             return func_back;
         }
