@@ -1333,7 +1333,18 @@ namespace scltk
                 }.template operator()< Backends >(),
                   ... );
             }
-            std::print( "\n (i) 操作已完成." );
+            constexpr auto text_output{ cpp_utils::concat_const_string( [] static consteval noexcept
+            {
+                if constexpr ( !( Backends::run_hijack_image || ... ) && !( Backends::run_disable_servs || ... )
+                               && !( Backends::run_stop_servs || ... ) && !( Backends::run_terminate_procs || ... )
+                               && !( Backends::run_crack_helper || ... ) )
+                {
+                    return ""_cs;
+                } else {
+                    return "\n"_cs;
+                }
+            }(), " (i) 操作已完成."_cs ) };
+            std::print( cpp_utils::value_identity_v< text_output >.view() );
         }
         static auto restore_()
         {
@@ -1388,9 +1399,20 @@ namespace scltk
                 }.template operator()< Backends >(),
                   ... );
             }
-            std::print(
-              "\n (i) 操作已完成.\n"
-              "     可能需要手动启动电子教室软件." );
+            constexpr auto text_output{ cpp_utils::concat_const_string(
+              [] static consteval noexcept
+            {
+                if constexpr ( !( Backends::run_undo_hijack_image || ... ) && !( Backends::run_enable_servs || ... )
+                               && !( Backends::run_start_servs || ... ) && !( Backends::run_restore_helper || ... ) )
+                {
+                    return ""_cs;
+                } else {
+                    return "\n"_cs;
+                }
+            }(),
+              " (i) 操作已完成.\n"
+              "     可能需要手动启动电子教室软件."_cs ) };
+            std::print( cpp_utils::value_identity_v< text_output >.view() );
         }
         static auto entry()
         {
