@@ -1243,7 +1243,7 @@ namespace scltk
           L"veyon-worker.exe", L"veyon-configurator.exe", L"veyon-server.exe", L"veyon-cli.exe", L"veyon-wcli.exe",
           L"veyon-service.exe" >,
         details_::make_const_wstring_list_t< L"VeyonService" > >,
-      compile_time_rule_node< "WorkWin (不支持映像劫持)", details_::make_const_wstring_list_t<>,
+      compile_time_rule_node< "WorkWin (实验性，不支持映像劫持)", details_::make_const_wstring_list_t<>,
                               details_::make_const_wstring_list_t<>, details_::terminate_workwin > >;
     template < typename... Backends >
         requires requires {
