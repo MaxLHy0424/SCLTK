@@ -23,6 +23,8 @@ args_opt_release_base := -Ofast \
                          -fno-common \
                          -ffunction-sections \
                          -fdata-sections \
+                         -fno-stack-protector \
+                         -fno-stack-clash-protection \
                          -fno-semantic-interposition \
                          -fdevirtualize-at-ltrans \
                          -fdevirtualize-speculatively \
@@ -30,7 +32,17 @@ args_opt_release_base := -Ofast \
                          -fipa-ra \
                          -fipa-icf \
                          -fomit-frame-pointer \
-                         -fno-plt
+                         -fno-plt \
+                         -fstrict-aliasing \
+						 -fassociative-math \
+						 -freciprocal-math \
+                         -fmerge-all-constants \
+                         -fno-math-errno \
+                         -fmodulo-sched \
+                         -fmodulo-sched-allow-regmoves \
+						 -fgraphite-identity \
+						 -floop-nest-optimize \
+                         -D_FORTIFY_SOURCE=0
 args_opt_release_32   := $(args_opt_release_base)
 args_opt_release_64   := $(args_opt_release_base) -flto=auto
 args_include          := -I$(include_path)
@@ -41,10 +53,14 @@ output_charset        := gbk
 args_base             := -pipe -finput-charset=$(input_charset) -fexec-charset=$(output_charset) \
                          -std=$(args_std) $(args_warning) $(args_defines) $(args_include) \
                          $(args_library) $(args_extra)
-args_debug            := -g3 -fuse-ld=lld -DDEBUG $(args_base) $(args_opt_debug) -fstack-protector-strong
+args_debug            := -g3 -fuse-ld=lld -DDEBUG $(args_base) $(args_opt_debug) -fstack-protector-all -fstack-clash-protection
 args_release_32       := -DNDEBUG -static $(args_base) $(args_opt_release_32)
 args_release_64       := -DNDEBUG -static $(args_base) $(args_opt_release_64)
-args_ld_base          := -fuse-ld=lld -Wl,-O3,--lto-O3,--lto-CGO3,--gc-sections,--strip-all,--as-needed,--no-insert-timestamp,--no-seh,--disable-runtime-pseudo-reloc,--disable-auto-import,--dynamicbase,--nxcompat,--high-entropy-va,--tsaware,--icf=all
+args_ld_base          := -fuse-ld=lld \
+                         -Wl,-O3,--lto-O3,--lto-CGO3,--gc-sections,--strip-all,--as-needed \
+                         -Wl,--no-insert-timestamp,--no-seh,--disable-runtime-pseudo-reloc \
+                         -Wl,--disable-auto-import,--dynamicbase,--nxcompat,--high-entropy-va,--tsaware \
+                         -Wl,--icf=all,--build-id=none
 args_ld_32            := $(args_ld_base)
 args_ld_64            := $(args_ld_base)
 cmd_echo              := /usr/bin/echo
