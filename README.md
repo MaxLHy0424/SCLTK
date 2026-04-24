@@ -5,7 +5,7 @@
 **Student Computer Lab Toolkit**\
 **轻松破解电子教室软件，基于 Modern C++**
 
-**已加入 [“机房抗联”](https://github.com/JumperTT/jfkl)**
+**已加入 [“机房抗联”](https://clra.woen.pics)**
 
 </div>
 
