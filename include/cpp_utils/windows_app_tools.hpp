@@ -748,10 +748,10 @@ namespace cpp_utils
     class console final
     {
       public:
-        HWND window_handle;
-        HANDLE std_input_handle;
-        HANDLE std_output_handle;
-        HANDLE std_error_handle;
+        HWND window_handle{ GetConsoleWindow() };
+        HANDLE std_input_handle{ GetStdHandle( STD_INPUT_HANDLE ) };
+        HANDLE std_output_handle{ GetStdHandle( STD_OUTPUT_HANDLE ) };
+        HANDLE std_error_handle{ GetStdHandle( STD_ERROR_HANDLE ) };
         [[nodiscard]] auto get_state() noexcept
         {
             WINDOWPLACEMENT wp;
@@ -962,15 +962,6 @@ namespace cpp_utils
             SetConsoleMode( self.std_input_handle, attrs );
             return self;
         }
-        auto operator=( const console& ) noexcept -> console& = default;
-        console() noexcept
-          : window_handle{ GetConsoleWindow() }
-          , std_input_handle{ GetStdHandle( STD_INPUT_HANDLE ) }
-          , std_output_handle{ GetStdHandle( STD_OUTPUT_HANDLE ) }
-          , std_error_handle{ GetStdHandle( STD_ERROR_HANDLE ) }
-        { }
-        console( const console& ) noexcept = default;
-        ~console() noexcept                = default;
     };
 #else
 # error "must be compiled on the windows os"
