@@ -1227,10 +1227,7 @@ namespace scltk
           L"PortControl64.exe", L"DesktopCheck.exe", L"DeploymentManager.exe", L"DeploymentAgent.exe", L"XYNTService.exe" >,
         details_::make_const_wstring_list_t< L"BSAgentSvr", L"tvnserver", L"WFBSMlogon" > >,
       compile_time_rule_node<
-        "红蜘蛛多媒体网络教室",
-        details_::make_const_wstring_list_t<
-          L"rscheck.exe", L"checkrs.exe", L"REDAgent.exe", L"PerformanceCheck.exe", L"edpaper.exe", L"Adapter.exe",
-          L"repview.exe", L"FormatPaper.exe" >,
+        "红蜘蛛多媒体网络教室", details_::make_const_wstring_list_t< L"rscheck.exe", L"checkrs.exe", L"REDAgent.exe" >,
         details_::make_const_wstring_list_t< L"appcheck2", L"checkapp2" > >,
       compile_time_rule_node< "伽卡他卡电子教室", details_::make_const_wstring_list_t< L"Student.exe", L"Smonitor.exe" >,
                               details_::make_const_wstring_list_t< L"Smsvc" > >,
