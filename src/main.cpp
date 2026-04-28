@@ -1235,7 +1235,7 @@ namespace scltk
         "凌波网络教室", details_::make_const_wstring_list_t< L"sbkup.exe", L"wsf.exe", L"NCStu.exe", L"NCCmn.dll" >,
         details_::make_const_wstring_list_t< L"Windows Application and Components Data Backup Support Service" > >,
       compile_time_rule_node<
-        "管鲍电子教室",
+        "管鲍电子教室 & GZYZ",
         details_::make_const_wstring_list_t<
           L"CRMSPre.exe", L"Student.exe", L"StudentTools.exe", L"EcrSetup.exe", L"ExamClient.exe", L"AnyTimeSrv.exe",
           L"NetLockerInstall.exe", L"NetLockerInstall64.exe", L"LockerManage64.exe" >,
