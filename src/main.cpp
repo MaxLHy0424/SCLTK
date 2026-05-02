@@ -348,7 +348,7 @@ namespace scltk
                             "\n[ "_cs, info_table_base_type_::template at< Is >::display_name, " ]\n"_cs ) >.view() )
                         .add_back(
                           make_flip_button_text_( get_value_( std::get< Is >( data_ ) ) ),
-                          std::bind_back( flip_item_value_, std::ref( std::get< Is >( data_ ) ) ),
+                          std::bind_back< flip_item_value_ >( std::ref( std::get< Is >( data_ ) ) ),
                           cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_green ),
                       ... );
                 }( std::make_index_sequence< info_table_base_type_::size >{} );
@@ -357,7 +357,7 @@ namespace scltk
             }
             auto init_ui_( cpp_utils::console_ui& ui )
             {
-                ui.add_back( make_item_text< DisplayName >.view(), std::bind_back( make_option_editor_ui_, std::ref( data_ ) ) );
+                ui.add_back( make_item_text< DisplayName >.view(), std::bind_back< make_option_editor_ui_ >( std::ref( data_ ) ) );
             }
             static constexpr auto ui_count_{ 1uz };
           public:
