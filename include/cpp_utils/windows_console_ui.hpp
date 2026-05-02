@@ -52,7 +52,7 @@ namespace cpp_utils
             { }
         };
         using function_type
-          = std::variant< std::move_only_function< func_action() >, std::move_only_function< func_action( func_args ) > >;
+          = std::variant< std::copyable_function< func_action() >, std::copyable_function< func_action( func_args ) > >;
       private:
         struct line_node_ final
         {
@@ -177,9 +177,9 @@ namespace cpp_utils
             con_.lock_text( true );
             const auto value{ target->func.visit< func_action >( [ & ]< typename F >( F& func )
             {
-                if constexpr ( std::is_same_v< F, std::move_only_function< func_action() > > ) {
+                if constexpr ( std::is_same_v< F, std::copyable_function< func_action() > > ) {
                     return func();
-                } else if constexpr ( std::is_same_v< F, std::move_only_function< func_action( func_args ) > > ) {
+                } else if constexpr ( std::is_same_v< F, std::copyable_function< func_action( func_args ) > > ) {
                     return func( func_args{ *this, static_cast< std::size_t >( target - lines_.begin().base() ), current_event } );
                 } else {
                     static_assert( false, "unknown callback!" );
