@@ -10,7 +10,7 @@ args_defines          := -D{UNICODE,_UNICODE}
 args_std              := gnu++26
 args_warning          := -W{all,extra,effc++,pedantic,cast-align,logical-op,redundant-decls,shadow,strict-null-sentinel}
 args_opt_debug        := -Og -fno-omit-frame-pointer
-args_opt_release_base := -Ofast \
+args_opt_release_base := -Oz \
                          -fno-use-linker-plugin \
                          -fwhole-program \
                          -s \
