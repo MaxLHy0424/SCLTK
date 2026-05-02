@@ -34,7 +34,7 @@ args_opt_release_base := -Ofast \
                          -fomit-frame-pointer \
                          -fno-plt \
                          -fstrict-aliasing \
-						 -fassociative-math \
+						 -ffast-math \
 						 -freciprocal-math \
                          -fmerge-all-constants \
                          -fno-math-errno \
