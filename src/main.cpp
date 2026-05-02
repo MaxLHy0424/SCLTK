@@ -412,26 +412,25 @@ namespace scltk
         }( flag_proc_, flag_serv_, flag_crack_helper_, flag_restore_helper_ ) );
         static auto load_( const std::string_view unconverted_line )
         {
-            const auto converted_line{ cpp_utils::to_wstring( unconverted_line, CP_UTF8, unsynced_mem_pool ) };
-            const std::wstring_view line{ converted_line };
+            const auto line{ cpp_utils::to_wstring( unconverted_line, CP_UTF8, unsynced_mem_pool ) };
             if ( line.size() > flag_proc_.size() && line.starts_with( flag_proc_ ) ) [[likely]] {
                 custom_rules.procs.emplace_back(
-                  std::ranges::find_if_not( line.substr( flag_proc_.size() ), details_::is_whitespace< wchar_t > ) );
+                  std::ranges::find_if_not( line.subview( flag_proc_.size() ), details_::is_whitespace< wchar_t > ) );
                 return;
             }
             if ( line.size() > flag_serv_.size() && line.starts_with( flag_serv_ ) ) [[likely]] {
                 custom_rules.servs.emplace_back(
-                  std::ranges::find_if_not( line.substr( flag_serv_.size() ), details_::is_whitespace< wchar_t > ) );
+                  std::ranges::find_if_not( line.subview( flag_serv_.size() ), details_::is_whitespace< wchar_t > ) );
                 return;
             }
             if ( line.size() > flag_crack_helper_.size() && line.starts_with( flag_crack_helper_ ) ) [[likely]] {
                 custom_rules.crack_helpers.emplace_back(
-                  std::ranges::find_if_not( line.substr( flag_crack_helper_.size() ), details_::is_whitespace< wchar_t > ) );
+                  std::ranges::find_if_not( line.subview( flag_crack_helper_.size() ), details_::is_whitespace< wchar_t > ) );
                 return;
             }
             if ( line.size() > flag_restore_helper_.size() && line.starts_with( flag_restore_helper_ ) ) [[likely]] {
                 custom_rules.restore_helpers.emplace_back(
-                  std::ranges::find_if_not( line.substr( flag_restore_helper_.size() ), details_::is_whitespace< wchar_t > ) );
+                  std::ranges::find_if_not( line.subview( flag_restore_helper_.size() ), details_::is_whitespace< wchar_t > ) );
                 return;
             }
         }
