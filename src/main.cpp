@@ -551,9 +551,9 @@ namespace scltk
             }
             if ( parsed_line.front() == '[' && parsed_line.back() == ']' && parsed_line.size() > "[]"sv.size() ) [[likely]] {
                 current_config_node = std::monostate{};
+                const auto current_raw_name{ details_::get_config_node_raw_name_by_tag( parsed_line ) };
                 std::apply( [ & ]( auto&... config_node ) noexcept
                 {
-                    const auto current_raw_name{ details_::get_config_node_raw_name_by_tag( parsed_line ) };
                     ( [ & ]< typename T >( T& current_node ) noexcept
                     {
                         if constexpr ( parsable_config_nodes_type::contains< T > ) {
