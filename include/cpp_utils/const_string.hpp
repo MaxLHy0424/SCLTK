@@ -120,6 +120,14 @@ namespace cpp_utils
     using const_u16string = basic_const_string< char16_t, N >;
     template < std::size_t N >
     using const_u32string = basic_const_string< char32_t, N >;
+    namespace const_string_literals
+    {
+        template < basic_const_string S >
+        [[nodiscard]] inline consteval auto operator""_cs() noexcept
+        {
+            return S;
+        }
+    }
     template < character auto C, std::size_t N >
     [[nodiscard]] inline consteval auto make_repeated_const_string() noexcept
     {
@@ -162,14 +170,6 @@ namespace cpp_utils
                 return final_chars;
             } };
             return basic_const_string{ invoke_to_array< f >() };
-        }
-    }
-    namespace const_string_literals
-    {
-        template < basic_const_string S >
-        [[nodiscard]] inline consteval auto operator""_cs() noexcept
-        {
-            return S;
         }
     }
     namespace details_
