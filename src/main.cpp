@@ -397,8 +397,8 @@ namespace scltk
       details_::options_info_table<
         details_::option_info< "forced_show", "置顶窗口" >, details_::option_info< "random_title", "随机标题" > > >;
     class custom_rules_config final
-      : public details_::config_node_interface
-      , public details_::config_node_raw_name< "custom_rules" >
+      : public details_::config_node_raw_name< "custom_rules" >
+      , public details_::config_node_interface
     {
         friend details_::config_node_interface;
       private:
