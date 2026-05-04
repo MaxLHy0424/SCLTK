@@ -175,13 +175,11 @@ namespace cpp_utils
         template < basic_const_string S >
         struct split_const_string_impl
         {
-          private:
             template < std::size_t... Is >
             static consteval auto impl_( const std::index_sequence< Is... > ) noexcept
             {
                 return type_list< value_identity< S[ Is ] >... >{};
             }
-          public:
             using type = decltype( impl_( std::make_index_sequence< S.size() >{} ) );
         };
     }
