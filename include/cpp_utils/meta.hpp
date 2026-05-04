@@ -130,8 +130,7 @@ namespace cpp_utils
         template < template < typename > typename Pred, std::size_t I >
         static consteval auto find_last_if_impl_() noexcept
         {
-            using T = std::tuple_element_t< I, std::tuple< Ts... > >;
-            if constexpr ( Pred< T >::value ) {
+            if constexpr ( Pred< std::tuple_element_t< I, std::tuple< Ts... > > >::value ) {
                 return I;
             } else {
                 if constexpr ( I == 0 ) {
