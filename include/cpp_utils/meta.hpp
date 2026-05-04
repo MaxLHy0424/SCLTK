@@ -114,6 +114,24 @@ namespace cpp_utils
             template < typename T >
             using predicate = std::is_same< T, U >;
         };
+        template < common_type... Args >
+        struct starts_with_impl_ final
+        {
+            template < common_type... Us >
+            static consteval auto test( const type_list< Us... > ) noexcept -> std::bool_constant< false >;
+            template < common_type... Us >
+            static consteval auto test( const type_list< Args..., Us... > ) noexcept -> std::bool_constant< true >;
+            static inline constexpr auto value{ decltype( test( type_list< Ts... >{} ) )::value };
+        };
+        template < common_type... Args >
+        struct ends_with_impl_ final
+        {
+            template < common_type... Us >
+            static consteval auto test( const type_list< Us... > ) noexcept -> std::bool_constant< false >;
+            template < common_type... Us >
+            static consteval auto test( const type_list< Us..., Args... > ) noexcept -> std::bool_constant< true >;
+            static inline constexpr auto value{ decltype( test( type_list< Ts... >{} ) )::value };
+        };
         template < template < typename > typename Pred, std::size_t I >
         static consteval auto find_first_if_impl_() noexcept
         {
@@ -407,6 +425,10 @@ namespace cpp_utils
                 return ( Pred< Ts >::value || ... );
             }
         }() };
+        template < common_type... Us >
+        static inline constexpr auto starts_with{ starts_with_impl_< Us... >::value };
+        template < common_type... Us >
+        static inline constexpr auto ends_with{ ends_with_impl_< Us... >::value };
         template < template < typename > typename Pred >
         static inline constexpr auto none_of{ ( !Pred< Ts >::value && ... ) };
         template < template < typename > typename Pred >
