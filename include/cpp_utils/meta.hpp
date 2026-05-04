@@ -491,8 +491,6 @@ namespace cpp_utils
         using filter = typename filter_impl_< Pred >::type;
         template < template < typename > typename Pred >
         using filter_not = typename remove_if_impl_< Pred >::type;
-        template < template < typename > typename Pred >
-        using partition = type_list< filter< Pred >, filter_not< Pred > >;
     };
     template < typename T >
     struct is_same_as_type_list final : std::false_type
