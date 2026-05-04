@@ -153,21 +153,19 @@ namespace cpp_utils
         if constexpr ( N == 0 ) {
             return make_repeated_const_string< static_cast< T >( '0' ), 1 >();
         } else {
-            constexpr auto f{ [] static
+            constexpr auto f{ [] static constexpr
             {
                 auto abs_n{ N < 0 ? -N : N };
-                std::vector< T > abs_chars;
+                std::vector< T > chars;
                 while ( abs_n != 0 ) {
-                    abs_chars.emplace_back( static_cast< T >( abs_n % 10 + '0' ) );
+                    chars.emplace_back( static_cast< T >( abs_n % 10 + '0' ) );
                     abs_n /= 10;
                 }
-                std::ranges::reverse( abs_chars );
-                std::vector< T > final_chars;
-                if constexpr ( N < 0 ) {
-                    final_chars.emplace_back( static_cast< T >( '-' ) );
+                if ( N < 0 ) {
+                    chars.emplace_back( static_cast< T >( '-' ) );
                 }
-                final_chars.append_range( abs_chars );
-                return final_chars;
+                std::ranges::reverse( chars );
+                return chars;
             } };
             return basic_const_string{ invoke_to_array< f >() };
         }
