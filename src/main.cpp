@@ -390,8 +390,7 @@ namespace scltk
     };
     using crack_restore_config = details_::options_config_node<
       "crack_restore", "破解与恢复", false,
-      details_::options_info_table<
-        details_::option_info< "hijack_image", "映像劫持" >, details_::option_info< "disable_servs", "禁用服务" > > >;
+      details_::options_info_table< details_::option_info< "hijack_image", "映像劫持" > > >;
     using window_config = details_::options_config_node<
       "window", "窗口显示", true,
       details_::options_info_table<
@@ -1194,27 +1193,15 @@ namespace scltk
         details_::make_const_wstring_list_t<>,
         [] static noexcept
     {
-        constexpr const auto& use_set_serv_startup_types{
-          std::get< crack_restore_config >( config_nodes ).at< "disable_servs" >() };
-        if ( use_set_serv_startup_types ) {
-            for ( const auto& serv : details_::mythware_servs ) {
-                ( void ) cpp_utils::set_service_start_type( serv, cpp_utils::service_flag::disabled_start );
-            }
-        }
         for ( const auto& serv : details_::mythware_servs ) {
+            ( void ) cpp_utils::set_service_start_type( serv, cpp_utils::service_flag::disabled_start );
             ( void ) cpp_utils::stop_service_with_dependencies( serv );
         }
     },
         [] static noexcept
     {
-        constexpr const auto& use_set_serv_startup_types{
-          std::get< crack_restore_config >( config_nodes ).at< "disable_servs" >() };
-        if ( use_set_serv_startup_types ) {
-            for ( const auto& serv : details_::mythware_servs ) {
-                ( void ) cpp_utils::set_service_start_type( serv, cpp_utils::service_flag::auto_start );
-            }
-        }
         for ( const auto& serv : details_::mythware_servs ) {
+            ( void ) cpp_utils::set_service_start_type( serv, cpp_utils::service_flag::auto_start );
             ( void ) cpp_utils::start_service_with_dependencies( serv );
         }
     } >,
@@ -1250,14 +1237,10 @@ namespace scltk
     template < typename... Backends >
         requires requires {
             requires cpp_utils::as_concept< ( sizeof...( Backends ) != 0 ) >;
-            { ( Backends::run_enable_servs || ... ) } -> std::convertible_to< bool >;
-            ( Backends::enable_servs(), ... );
-            { ( Backends::run_disable_servs || ... ) } -> std::convertible_to< bool >;
-            ( Backends::disable_servs(), ... );
-            { ( Backends::run_start_servs || ... ) } -> std::convertible_to< bool >;
-            ( Backends::start_servs(), ... );
-            { ( Backends::run_stop_servs || ... ) } -> std::convertible_to< bool >;
-            ( Backends::stop_servs(), ... );
+            { ( Backends::run_enable_and_start_servs || ... ) } -> std::convertible_to< bool >;
+            ( Backends::enable_and_start_servs(), ... );
+            { ( Backends::run_disable_and_stop_servs || ... ) } -> std::convertible_to< bool >;
+            ( Backends::disable_and_stop_servs(), ... );
             { ( Backends::run_hijack_image || ... ) } -> std::convertible_to< bool >;
             ( Backends::hijack_image(), ... );
             { ( Backends::run_undo_hijack_image || ... ) } -> std::convertible_to< bool >;
@@ -1275,7 +1258,6 @@ namespace scltk
         {
             constexpr const auto& crack_restore_config_node{ std::get< crack_restore_config >( config_nodes ) };
             constexpr const auto& use_hijack_image{ crack_restore_config_node.at< "hijack_image" >() };
-            constexpr const auto& use_set_serv_startup_types{ crack_restore_config_node.at< "disable_servs" >() };
             if constexpr ( ( Backends::run_hijack_image || ... ) ) {
                 if ( use_hijack_image ) {
                     std::print( " -> 映像劫持.\n" );
@@ -1289,26 +1271,13 @@ namespace scltk
                       ... );
                 }
             }
-            if constexpr ( ( Backends::run_disable_servs || ... ) ) {
-                if ( use_set_serv_startup_types ) {
-                    std::print( " -> 禁用服务.\n" );
-                    (
-                      []< typename Backend >() static
-                    {
-                        if constexpr ( Backend::run_disable_servs ) {
-                            Backend::disable_servs();
-                        }
-                    }.template operator()< Backends >(),
-                      ... );
-                }
-            }
-            if constexpr ( ( Backends::run_stop_servs || ... ) ) {
-                std::print( " -> 停止服务.\n" );
+            if constexpr ( ( Backends::run_disable_and_stop_servs || ... ) ) {
+                std::print( " -> 禁用并停止服务.\n" );
                 (
                   []< typename Backend >() static
                 {
-                    if constexpr ( Backend::run_stop_servs ) {
-                        Backend::stop_servs();
+                    if constexpr ( Backend::run_disable_and_stop_servs ) {
+                        Backend::disable_and_stop_servs();
                     }
                 }.template operator()< Backends >(),
                   ... );
@@ -1337,9 +1306,8 @@ namespace scltk
             }
             constexpr auto text_output{ cpp_utils::concat_const_string( [] static consteval noexcept
             {
-                if constexpr ( !( Backends::run_hijack_image || ... ) && !( Backends::run_disable_servs || ... )
-                               && !( Backends::run_stop_servs || ... ) && !( Backends::run_terminate_procs || ... )
-                               && !( Backends::run_crack_helper || ... ) )
+                if constexpr ( !( Backends::run_hijack_image || ... ) && !( Backends::run_disable_and_stop_servs || ... )
+                               && !( Backends::run_terminate_procs || ... ) && !( Backends::run_crack_helper || ... ) )
                 {
                     return ""_cs;
                 } else {
@@ -1352,7 +1320,6 @@ namespace scltk
         {
             constexpr const auto& crack_restore_config_node{ std::get< crack_restore_config >( config_nodes ) };
             constexpr const auto& use_hijack_image{ crack_restore_config_node.at< "hijack_image" >() };
-            constexpr const auto& use_set_serv_startup_types{ crack_restore_config_node.at< "disable_servs" >() };
             if constexpr ( ( Backends::run_undo_hijack_image || ... ) ) {
                 if ( use_hijack_image ) {
                     std::print( " -> 撤销劫持.\n" );
@@ -1366,26 +1333,13 @@ namespace scltk
                       ... );
                 }
             }
-            if constexpr ( ( Backends::run_enable_servs || ... ) ) {
-                if ( use_set_serv_startup_types ) {
-                    std::print( " -> 启用服务.\n" );
-                    (
-                      []< typename Backend >() static
-                    {
-                        if constexpr ( Backend::run_enable_servs ) {
-                            Backend::enable_servs();
-                        }
-                    }.template operator()< Backends >(),
-                      ... );
-                }
-            }
-            if constexpr ( ( Backends::run_start_servs || ... ) ) {
-                std::print( " -> 启动服务.\n" );
+            if constexpr ( ( Backends::run_enable_and_start_servs || ... ) ) {
+                std::print( " -> 启用并启动服务.\n" );
                 (
                   []< typename Backend >() static
                 {
-                    if constexpr ( Backend::run_start_servs ) {
-                        Backend::start_servs();
+                    if constexpr ( Backend::run_enable_and_start_servs ) {
+                        Backend::enable_and_start_servs();
                     }
                 }.template operator()< Backends >(),
                   ... );
@@ -1404,8 +1358,8 @@ namespace scltk
             constexpr auto text_output{ cpp_utils::concat_const_string(
               [] static consteval noexcept
             {
-                if constexpr ( !( Backends::run_undo_hijack_image || ... ) && !( Backends::run_enable_servs || ... )
-                               && !( Backends::run_start_servs || ... ) && !( Backends::run_restore_helper || ... ) )
+                if constexpr ( !( Backends::run_undo_hijack_image || ... ) && !( Backends::run_enable_and_start_servs || ... )
+                               && !( Backends::run_restore_helper || ... ) )
                 {
                     return ""_cs;
                 } else {
@@ -1458,38 +1412,22 @@ namespace scltk
                 cpp_utils::value_identity_v< cpp_utils::concat_const_string(
                   LR"(SOFTWARE\WOW6432Node\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\)"_cs, Procs ) >.view()... };
         }( typename BuiltinRuleNode::procs{} ) };
-        static constexpr auto run_enable_servs{ !servs.empty() };
-        static auto enable_servs() noexcept
+        static constexpr auto run_enable_and_start_servs{ !servs.empty() };
+        static auto enable_and_start_servs() noexcept
         {
-            if constexpr ( run_enable_servs ) {
+            if constexpr ( run_enable_and_start_servs ) {
                 for ( const auto& serv : servs ) {
                     ( void ) cpp_utils::set_service_start_type( serv, cpp_utils::service_flag::auto_start );
-                }
-            }
-        }
-        static constexpr auto run_disable_servs{ !servs.empty() };
-        static auto disable_servs() noexcept
-        {
-            if constexpr ( run_disable_servs ) {
-                for ( const auto& serv : servs ) {
-                    ( void ) cpp_utils::set_service_start_type( serv, cpp_utils::service_flag::disabled_start );
-                }
-            }
-        }
-        static constexpr auto run_start_servs{ !servs.empty() };
-        static auto start_servs() noexcept
-        {
-            if constexpr ( run_start_servs ) {
-                for ( const auto& serv : servs ) {
                     ( void ) cpp_utils::start_service_with_dependencies( serv, unsynced_mem_pool );
                 }
             }
         }
-        static constexpr auto run_stop_servs{ !servs.empty() };
-        static auto stop_servs() noexcept
+        static constexpr auto run_disable_and_stop_servs{ !servs.empty() };
+        static auto disable_and_stop_servs() noexcept
         {
-            if constexpr ( run_stop_servs ) {
+            if constexpr ( run_disable_and_stop_servs ) {
                 for ( const auto& serv : servs ) {
+                    ( void ) cpp_utils::set_service_start_type( serv, cpp_utils::service_flag::disabled_start );
                     ( void ) cpp_utils::stop_service_with_dependencies( serv, unsynced_mem_pool );
                 }
             }
@@ -1540,31 +1478,19 @@ namespace scltk
     };
     struct custom_rule_executor_backend final
     {
-        static constexpr auto run_enable_servs{ true };
-        static auto enable_servs() noexcept
+        static constexpr auto run_enable_and_start_servs{ true };
+        static auto enable_and_start_servs() noexcept
         {
             for ( const auto& serv : custom_rules.servs ) {
                 ( void ) cpp_utils::set_service_start_type( serv, cpp_utils::service_flag::auto_start );
-            }
-        }
-        static constexpr auto run_disable_servs{ true };
-        static auto disable_servs() noexcept
-        {
-            for ( const auto& serv : custom_rules.servs ) {
-                ( void ) cpp_utils::set_service_start_type( serv, cpp_utils::service_flag::disabled_start );
-            }
-        }
-        static constexpr auto run_start_servs{ true };
-        static auto start_servs() noexcept
-        {
-            for ( const auto& serv : custom_rules.servs ) {
                 ( void ) cpp_utils::start_service_with_dependencies( serv, unsynced_mem_pool );
             }
         }
-        static constexpr auto run_stop_servs{ true };
-        static auto stop_servs() noexcept
+        static constexpr auto run_disable_and_stop_servs{ true };
+        static auto disable_and_stop_servs() noexcept
         {
             for ( const auto& serv : custom_rules.servs ) {
+                ( void ) cpp_utils::set_service_start_type( serv, cpp_utils::service_flag::disabled_start );
                 ( void ) cpp_utils::stop_service_with_dependencies( serv, unsynced_mem_pool );
             }
         }
