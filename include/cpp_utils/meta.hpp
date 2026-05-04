@@ -144,7 +144,6 @@ namespace cpp_utils
         template < std::size_t, bool = empty_ >
         struct at_impl_ final
         {
-            static_assert( false, "index out of bounds" );
             using type = error_type;
         };
         template < std::size_t I >
@@ -274,14 +273,11 @@ namespace cpp_utils
         template < std::size_t I1, std::size_t I2 >
         struct swap_impl_< I1, I2, true > final
         {
-            static_assert( false, "swap index out of bounds" );
             using type = error_type;
         };
         template < std::size_t I1, std::size_t I2 >
         struct swap_impl_< I1, I2, false > final
         {
-            static_assert( I1 < size_, "swap first index out of bounds" );
-            static_assert( I2 < size_, "swap second index out of bounds" );
             using type_at_i1 = std::tuple_element_t< I1, std::tuple< Ts... > >;
             using type_at_i2 = std::tuple_element_t< I2, std::tuple< Ts... > >;
             template < std::size_t I >
@@ -492,7 +488,6 @@ namespace cpp_utils
         template < typename, typename >
         struct type_list_concat_impl final
         {
-            static_assert( false, "can only concatenate type_list types" );
             using type = error_type;
         };
         template < typename... Ts, typename... Us >
