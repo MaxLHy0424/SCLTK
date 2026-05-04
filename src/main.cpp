@@ -558,7 +558,7 @@ namespace scltk
                     {
                         if constexpr ( parsable_config_nodes_type::contains< T > ) {
                             if ( T::raw_name.view() == current_raw_name ) {
-                                current_config_node = std::addressof( current_node );
+                                current_config_node = &current_node;
                                 return true;
                             }
                         }
