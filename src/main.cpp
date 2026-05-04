@@ -530,7 +530,7 @@ namespace scltk
         if ( !config_file.good() ) [[unlikely]] {
             return;
         }
-        std::apply( []< typename... Ts >( Ts&... config_node ) static
+        std::apply( []( auto&... config_node ) static
         {
             ( config_node.before_load(), ... );
         }, config_nodes );
@@ -583,7 +583,7 @@ namespace scltk
                 } );
             }
         }
-        std::apply( []< typename... Ts >( Ts&... config_node ) static
+        std::apply( []( auto&... config_node ) static
         {
             ( config_node.after_load(), ... );
         }, config_nodes );
