@@ -203,6 +203,10 @@ SCLTK 不对 Windows Vista 及更早的版本保有任何技术支持。SCLTK �
 
 请尝试使用最新版本的 SCLTK 进行破解，如果仍不起作用，可能是因为内建规则已失效。此时，可使用自定义规则临时解决。如果条件允许，请且尽快上报。
 
+## SCLTK 无法终止某些进程
+
+由于成本（驱动程序的认证费用不菲）及安全原因，SCLTK 只使用了用户态 Windows API，对于受驱动程序保护的进程可能无法终止。可以通过 ARK（Anti-Rootkit）工具来终止这些进程。推荐的 ARK 工具有 [OpenArk](http://openark.blackint3.com:88)、[KSwordARK](https://github.com/WangWei-CM/KSword)、[StarlightGUI](https://github.com/OpenStarlight/StarlightGUI)。
+
 # 🛠️ 二次开发
 
 首先，请确保您已经安装了 [msys2](https://www.msys2.org)，并在 [msys2](https://www.msys2.org) 已安装软件包 `make` 和 `git`。
