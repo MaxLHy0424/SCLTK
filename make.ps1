@@ -10,7 +10,7 @@ if (($target -eq "pack_and_sign") -and ($gpg_key -eq "")) {
 $software_full_name = "Student Computer Lab Toolkit"
 $software_short_name = "SCLTK"
 $license = "MIT License"
-$copyright = "Copyright (C) 2023 - present MaxLHy0424."
+$copyright = "Copyright (C) 2023 MaxLHy0424."
 $repo_url = "https://github.com/MaxLHy0424/SCLTK"
 $git_branch = & git branch --show-current
 $contains_uncommitted_changes = @(git status --porcelain).Count -ne 0
