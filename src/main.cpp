@@ -57,7 +57,7 @@ namespace scltk
         template < cpp_utils::const_wstring... Items >
         using make_const_wstring_list_t   = cpp_utils::type_list< cpp_utils::value_identity< Items >... >;
         using win32_file_path_buffer_type = std::array< wchar_t, MAX_PATH >;
-        constexpr std::array mythware_servs{ L"STUDSRV"sv, L"TDKeybd"sv, L"TDNetFilter"sv, L"TDFileFilter"sv };
+        constexpr std::array mythware_servs{ L"STUDSRV"sv, L"TDKeybd"sv, L"TDNetFilter"sv, L"TDFileFilter"sv, L"CMSGateSVC"sv };
         auto terminate_jfglzs_daemon() noexcept
         {
             using scoped_handle = std::unique_ptr< std::remove_pointer_t< HANDLE >, decltype( []( const HANDLE handle ) static noexcept
@@ -190,7 +190,8 @@ namespace scltk
         "极域电子教室",
         details_::make_const_wstring_list_t<
           L"StudentMain.exe", L"DispcapHelper.exe", L"VRCwPlayer.exe", L"InstHelpApp.exe", L"InstHelpApp64.exe",
-          L"TDOvrSet.exe", L"GATESRV.exe", L"ProcHelper64.exe", L"MasterHelper.exe" >,
+          L"TDOvrSet.exe", L"GATESRV.exe", L"ProcHelper64.exe", L"MasterHelper.exe", L"config-service.exe", L"gate-service.exe",
+          L"network-service.exe", L"service-manager.exe", L"student.exe", L"student-service.exe", L"sys-cmd-service.exe" >,
         details_::make_const_wstring_list_t<>,
         [] static noexcept
     {
