@@ -184,7 +184,7 @@ namespace scltk
       compile_time_rule_node<
         "机房管理助手",
         details_::make_const_wstring_list_t<
-          L"yz.exe", L"jfglzs.exe", L"jfglzsn.exe", L"jfglzsp.exe", L"przs.exe", L"zmserv.exe", L"zmsrv.exe" >,
+          L"jfglzs.exe", L"jfglzsn.exe", L"jfglzsp.exe", L"przs.exe", L"zmserv.exe", L"zmsrv.exe" >,
         details_::make_const_wstring_list_t< L"zmserv" >, details_::terminate_jfglzs_daemon >,
       compile_time_rule_node<
         "极域电子教室",
