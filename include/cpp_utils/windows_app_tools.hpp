@@ -2,6 +2,7 @@
 #if defined( _WIN32 ) || defined( _WIN64 )
 # include "windows_definitions.hpp"
 # if true
+#  include <ntdef.h>
 #  include <tlhelp32.h>
 # endif
 #endif
@@ -369,6 +370,99 @@ namespace cpp_utils
         }
         return static_cast< DWORD >( ERROR_SUCCESS );
     }
+    class process_snapshot final
+    {
+      private:
+        using p_nt_terminate_process = NTSTATUS( NTAPI* )( HANDLE, NTSTATUS );
+        p_nt_terminate_process nt_terminate_process_{ nullptr };
+        details_::scoped_handle snapshot_{ nullptr };
+      public:
+        [[nodiscard]] auto valid() const noexcept
+        {
+            return nt_terminate_process_ != nullptr && snapshot_.get() != INVALID_HANDLE_VALUE;
+        }
+        [[nodiscard]] auto get_nt_terminate_process() const noexcept
+        {
+            return nt_terminate_process_;
+        }
+        [[nodiscard]] auto refresh() noexcept
+        {
+            const auto new_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ) };
+            if ( new_snapshot == INVALID_HANDLE_VALUE ) [[unlikely]] {
+                return false;
+            }
+            snapshot_.reset( new_snapshot );
+            return true;
+        }
+        template < typename F >
+            requires requires( F&& f, const PROCESSENTRY32W& proc_entry ) {
+                { std::forward< F >( f )( proc_entry ) } noexcept -> std::convertible_to< bool >;
+            }
+        [[nodiscard]] auto iterate( F&& func ) const noexcept
+        {
+            if ( snapshot_.get() == INVALID_HANDLE_VALUE ) [[unlikely]] {
+                return false;
+            }
+            PROCESSENTRY32W proc_entry{};
+            proc_entry.dwSize = sizeof( PROCESSENTRY32W );
+            bool result{ true };
+            if ( !Process32FirstW( snapshot_.get(), &proc_entry ) ) [[unlikely]] {
+                return false;
+            }
+            do {
+                result = std::forward< F >( func )( std::as_const( proc_entry ) );
+            } while ( Process32NextW( snapshot_.get(), &proc_entry ) );
+            return result;
+        }
+        [[nodiscard]] auto terminate_by_pid( const DWORD pid ) const noexcept
+        {
+            details_::scoped_handle proc_handle{ OpenProcess( PROCESS_TERMINATE, FALSE, pid ) };
+            if ( proc_handle.get() == nullptr ) [[unlikely]] {
+                return false;
+            }
+            return NT_SUCCESS( nt_terminate_process_( proc_handle.get(), 0 ) );
+        }
+        [[nodiscard]] auto terminate_by_name( const std::wstring_view name ) const noexcept
+        {
+            return iterate( [ & ]( const PROCESSENTRY32W& proc_entry ) noexcept
+            {
+                if ( _wcsicmp( proc_entry.szExeFile, name.data() ) == 0 ) {
+                    return terminate_by_pid( proc_entry.th32ProcessID );
+                }
+                return true;
+            } );
+        }
+        template < typename Range >
+            requires requires( const Range& range ) {
+                { *range.begin() } -> std::convertible_to< std::wstring_view >;
+                range.begin() != range.end();
+                range.empty();
+            }
+        [[nodiscard]] auto terminate_by_names( Range&& names ) const noexcept
+        {
+            return iterate( [ & ]( const PROCESSENTRY32W& proc_entry ) noexcept
+            {
+                for ( const auto& name : names ) {
+                    if ( _wcsicmp( proc_entry.szExeFile, name.data() ) == 0 ) {
+                        return terminate_by_pid( proc_entry.th32ProcessID );
+                    }
+                }
+                return true;
+            } );
+        }
+        auto operator=( const process_snapshot& ) -> process_snapshot& = delete;
+        auto operator=( process_snapshot&& ) -> process_snapshot&      = delete;
+        process_snapshot() noexcept
+        {
+            const auto ntdll_handle{ GetModuleHandleW( L"ntdll.dll" ) };
+            nt_terminate_process_
+              = std::bit_cast< p_nt_terminate_process >( GetProcAddress( ntdll_handle, "NtTerminateProcess" ) );
+            ( void ) refresh();
+        }
+        process_snapshot( const process_snapshot& ) = delete;
+        process_snapshot( process_snapshot&& )      = delete;
+        ~process_snapshot()                         = default;
+    };
     [[nodiscard]] inline auto terminate_process_by_pid( const DWORD pid ) noexcept
     {
         details_::scoped_handle proc_handle{ OpenProcess( PROCESS_TERMINATE, FALSE, pid ) };
