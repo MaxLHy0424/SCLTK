@@ -48,11 +48,6 @@ namespace scltk
     {
         return func_exit;
     }
-    auto relaunch() noexcept
-    {
-        cpp_utils::clone_self();
-        return func_exit;
-    }
     namespace details_
     {
         template < cpp_utils::const_wstring... Items >
@@ -1590,8 +1585,7 @@ auto main() -> int
     cpp_utils::console_ui ui{ scltk::con, scltk::unsynced_mem_pool };
     ui.reserve( 9 + scltk::builtin_rules::size )
       .add_back( scltk::make_middle_text< "[ 主  页 ]", 2 >.view() )
-      .add_back( " < 退出 ", scltk::quit, cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_intensity )
-      .add_back( " < 重启\n", scltk::relaunch, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
+      .add_back( " < 退出\n", scltk::quit, cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_intensity )
       .add_back( " > 关于 ", scltk::info )
       .add_back( " > 配置 ", scltk::config_ui )
       .add_back( " > 工具箱\n", scltk::toolkit )
