@@ -43,6 +43,7 @@ namespace scltk
         std::pmr::set_default_resource( &pool );
         return &pool;
     }() };
+    cpp_utils::process_snapshot proc_snapshot;
     auto quit() noexcept
     {
         return func_exit;
@@ -57,116 +58,98 @@ namespace scltk
         template < cpp_utils::const_wstring... Items >
         using make_const_wstring_list_t   = cpp_utils::type_list< cpp_utils::value_identity< Items >... >;
         using win32_file_path_buffer_type = std::array< wchar_t, MAX_PATH >;
+        using scoped_handle = std::unique_ptr< std::remove_pointer_t< HANDLE >, decltype( []( const HANDLE handle ) static noexcept
+        {
+            CloseHandle( handle );
+        } ) >;
         constexpr std::array mythware_servs{ L"STUDSRV"sv, L"TDKeybd"sv, L"TDNetFilter"sv, L"TDFileFilter"sv, L"CMSGateSVC"sv };
         auto terminate_jfglzs_daemon() noexcept
         {
-            using scoped_handle = std::unique_ptr< std::remove_pointer_t< HANDLE >, decltype( []( const HANDLE handle ) static noexcept
-            {
-                CloseHandle( handle );
-            } ) >;
-            const scoped_handle proc_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ) };
-            if ( proc_snapshot.get() == INVALID_HANDLE_VALUE ) [[unlikely]] {
-                return;
-            }
-            constexpr auto is_lower_case{ []( const wchar_t ch ) static noexcept
-            {
-                return ch >= L'a' && ch <= L'z';
-            } };
             constexpr const auto& needle{ L"Program Files" };
             constexpr auto needle_begin{ std::ranges::begin( needle ) };
             constexpr auto needle_end{ std::ranges::end( needle ) - 1 };
             const std::boyer_moore_horspool_searcher searcher{ needle_begin, needle_end };
-            PROCESSENTRY32W proc_entry{};
-            proc_entry.dwSize = sizeof( proc_entry );
-            if ( !Process32FirstW( proc_snapshot.get(), &proc_entry ) ) [[unlikely]] {
-                return;
-            }
-            do {
+            ( void ) proc_snapshot.iterate( [ & ]( const PROCESSENTRY32W& proc_entry ) noexcept
+            {
+                constexpr auto is_lower_case{ []( const wchar_t ch ) static noexcept
+                {
+                    return ch >= L'a' && ch <= L'z';
+                } };
                 std::wstring_view name{ proc_entry.szExeFile };
                 if ( name.size() != L"xxxxx.exe"sv.size() ) {
-                    continue;
+                    return true;
                 }
                 name.remove_suffix( L".exe"sv.size() );
                 if ( !std::ranges::all_of( name, is_lower_case ) ) {
-                    continue;
+                    return true;
                 }
                 scoped_handle proc_handle{
                   OpenProcess( PROCESS_TERMINATE | PROCESS_QUERY_LIMITED_INFORMATION, FALSE, proc_entry.th32ProcessID ) };
                 if ( proc_handle == nullptr ) [[unlikely]] {
-                    continue;
+                    return true;
                 }
                 DWORD size{ MAX_PATH };
                 win32_file_path_buffer_type buffer{};
                 QueryFullProcessImageNameW( proc_handle.get(), 0, buffer.data(), &size );
                 if ( std::search( buffer.begin(), buffer.end(), searcher ) != buffer.end() ) {
-                    TerminateProcess( proc_handle.get(), 1 );
+                    proc_snapshot.get_nt_terminate_process()( proc_handle.get(), 0 );
                 }
-            } while ( Process32NextW( proc_snapshot.get(), &proc_entry ) );
+                return true;
+            } );
         }
         auto terminate_workwin() noexcept
         {
-            constexpr auto is_sign_match{ []( const win32_file_path_buffer_type& path ) static noexcept
+            ( void ) proc_snapshot.iterate( []( const PROCESSENTRY32W& proc_entry ) static noexcept
             {
-                using scoped_cert_store
-                  = std::unique_ptr< std::remove_pointer_t< HCERTSTORE >, decltype( []( const HCERTSTORE h ) static noexcept
+                constexpr auto is_sign_match{ []( const win32_file_path_buffer_type& path ) static noexcept
                 {
-                    CertCloseStore( h, 0 );
-                } ) >;
-                HCERTSTORE cert_store{ nullptr };
-                DWORD encoding{ 0 };
-                DWORD content_type{ 0 };
-                DWORD format_type{ 0 };
-                if ( !CryptQueryObject(
-                       CERT_QUERY_OBJECT_FILE, path.data(), CERT_QUERY_CONTENT_FLAG_PKCS7_SIGNED_EMBED,
-                       CERT_QUERY_FORMAT_FLAG_BINARY, 0, &encoding, &content_type, &format_type, &cert_store, nullptr, nullptr )
-                     || !cert_store ) [[unlikely]]
-                {
+                    using scoped_cert_store
+                      = std::unique_ptr< std::remove_pointer_t< HCERTSTORE >, decltype( []( const HCERTSTORE h ) static noexcept
+                    {
+                        CertCloseStore( h, 0 );
+                    } ) >;
+                    HCERTSTORE cert_store{ nullptr };
+                    DWORD encoding{ 0 };
+                    DWORD content_type{ 0 };
+                    DWORD format_type{ 0 };
+                    if ( !CryptQueryObject(
+                           CERT_QUERY_OBJECT_FILE, path.data(), CERT_QUERY_CONTENT_FLAG_PKCS7_SIGNED_EMBED,
+                           CERT_QUERY_FORMAT_FLAG_BINARY, 0, &encoding, &content_type, &format_type, &cert_store, nullptr, nullptr )
+                         || !cert_store ) [[unlikely]]
+                    {
+                        return false;
+                    }
+                    scoped_cert_store cert_store_guard{ cert_store };
+                    PCCERT_CONTEXT cert{ nullptr };
+                    constexpr std::wstring_view target{ L"Nanjing Wangya Computer Co.,Ltd." };
+                    while ( ( cert = CertEnumCertificatesInStore( cert_store, cert ) ) != nullptr ) [[likely]] {
+                        DWORD name_len{ CertGetNameStringW( cert, CERT_NAME_SIMPLE_DISPLAY_TYPE, 0, nullptr, nullptr, 0 ) };
+                        if ( name_len < 2 ) [[unlikely]] {
+                            continue;
+                        }
+                        std::pmr::vector< wchar_t > name_buf{ name_len, unsynced_mem_pool };
+                        CertGetNameStringW( cert, CERT_NAME_SIMPLE_DISPLAY_TYPE, 0, nullptr, name_buf.data(), name_len );
+                        if ( target == name_buf.data() ) {
+                            return true;
+                        }
+                    }
                     return false;
-                }
-                scoped_cert_store cert_store_guard{ cert_store };
-                PCCERT_CONTEXT cert{ nullptr };
-                constexpr std::wstring_view target{ L"Nanjing Wangya Computer Co.,Ltd." };
-                while ( ( cert = CertEnumCertificatesInStore( cert_store, cert ) ) != nullptr ) [[likely]] {
-                    DWORD name_len{ CertGetNameStringW( cert, CERT_NAME_SIMPLE_DISPLAY_TYPE, 0, nullptr, nullptr, 0 ) };
-                    if ( name_len < 2 ) [[unlikely]] {
-                        continue;
-                    }
-                    std::pmr::vector< wchar_t > name_buf{ name_len, unsynced_mem_pool };
-                    CertGetNameStringW( cert, CERT_NAME_SIMPLE_DISPLAY_TYPE, 0, nullptr, name_buf.data(), name_len );
-                    if ( target == name_buf.data() ) {
-                        return true;
-                    }
-                }
-                return false;
-            } };
-            using scoped_handle = std::unique_ptr< std::remove_pointer_t< HANDLE >, decltype( []( const HANDLE h ) static noexcept
-            {
-                CloseHandle( h );
-            } ) >;
-            scoped_handle proc_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ) };
-            if ( proc_snapshot.get() == INVALID_HANDLE_VALUE ) [[unlikely]] {
-                return;
-            }
-            PROCESSENTRY32W proc_entry{};
-            proc_entry.dwSize = sizeof( PROCESSENTRY32W );
-            if ( !Process32FirstW( proc_snapshot.get(), &proc_entry ) ) [[unlikely]] {
-                return;
-            }
-            do {
+                } };
                 scoped_handle proc_handle{
                   OpenProcess( PROCESS_QUERY_LIMITED_INFORMATION | PROCESS_TERMINATE, FALSE, proc_entry.th32ProcessID ) };
                 if ( proc_handle.get() == nullptr ) [[unlikely]] {
-                    continue;
+                    return true;
                 }
                 win32_file_path_buffer_type path{};
                 DWORD size{ MAX_PATH };
                 if ( !QueryFullProcessImageNameW( proc_handle.get(), 0, path.data(), &size ) ) [[unlikely]] {
-                    continue;
+                    return true;
                 }
                 if ( is_sign_match( path ) ) {
-                    TerminateProcess( proc_handle.get(), 1 );
+                    proc_snapshot.get_nt_terminate_process()( proc_handle.get(), 0 );
                 }
-            } while ( Process32NextW( proc_snapshot.get(), &proc_entry ) );
+                return true;
+            } );
         }
         constexpr auto empty_lambda{ [] static noexcept { } };
     }
@@ -1103,7 +1086,9 @@ namespace scltk
         auto relaunch_explorer() noexcept
         {
             std::print( " -> 终止进程.\n" );
-            ( void ) cpp_utils::terminate_process_by_name( L"explorer.exe"sv );
+            if ( proc_snapshot.refresh() && proc_snapshot.valid() ) {
+                ( void ) proc_snapshot.terminate_by_name( L"explorer.exe"sv );
+            }
             std::print( " -> 启动进程.\n" );
 #ifndef _WIN64
             const wow64_no_filesystem_redirect _;
@@ -1259,6 +1244,11 @@ namespace scltk
         {
             constexpr const auto& crack_restore_config_node{ std::get< crack_restore_config >( config_nodes ) };
             constexpr const auto& use_hijack_image{ crack_restore_config_node.at< "hijack_image" >() };
+            ( void ) proc_snapshot.refresh();
+            if ( !proc_snapshot.valid() ) [[unlikely]] {
+                std::print( " (!) 进程快照初始化错误!\n" );
+                return;
+            }
             if constexpr ( ( Backends::run_hijack_image || ... ) ) {
                 if ( use_hijack_image ) {
                     std::print( " -> 映像劫持.\n" );
@@ -1458,7 +1448,7 @@ namespace scltk
         static auto terminate_procs() noexcept
         {
             if constexpr ( run_terminate_procs ) {
-                ( void ) cpp_utils::terminate_process_by_names( procs );
+                ( void ) proc_snapshot.terminate_by_names( procs );
             }
         }
         static constexpr auto run_crack_helper{ !std::is_same_v< decltype( BuiltinRuleNode::crack_helper ), empty_lambda_type > };
@@ -1529,7 +1519,7 @@ namespace scltk
         static constexpr auto run_terminate_procs{ true };
         static auto terminate_procs() noexcept
         {
-            ( void ) cpp_utils::terminate_process_by_names( custom_rules.procs );
+            ( void ) proc_snapshot.terminate_by_names( custom_rules.procs );
         }
         static auto execute_helpers_( const std::pmr::vector< std::pmr::wstring >& helpers ) noexcept
         {
