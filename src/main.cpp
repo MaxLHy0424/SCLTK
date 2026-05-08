@@ -44,6 +44,13 @@ namespace scltk
         return &pool;
     }() };
     cpp_utils::process_snapshot proc_snapshot;
+    auto disable_hotkey() noexcept
+    {
+        DWORD attrs;
+        GetConsoleMode( con.std_input_handle, &attrs );
+        attrs &= ~ENABLE_PROCESSED_INPUT;
+        SetConsoleMode( con.std_input_handle, attrs );
+    }
     auto quit() noexcept
     {
         return func_exit;
@@ -1579,6 +1586,7 @@ auto main() -> int
       .enable_window_maximize_ctrl( false )
       .enable_window_minimize_ctrl( false )
       .enable_window_close_ctrl( false );
+    scltk::disable_hotkey();
     ( void ) cpp_utils::set_privilege( GetCurrentProcess(), L"" SE_DEBUG_NAME, true );
     scltk::load_config( false );
     scltk::create_parallel_tasks();
