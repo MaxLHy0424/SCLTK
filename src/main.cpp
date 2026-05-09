@@ -1245,14 +1245,14 @@ namespace scltk
         static auto crack_()
         {
             constexpr const auto& crack_restore_config_node{ std::get< crack_restore_config >( config_nodes ) };
-            constexpr const auto& use_hijack_image{ crack_restore_config_node.at< "hijack_image" >() };
+            constexpr const auto& enabled_hijack_image{ crack_restore_config_node.at< "hijack_image" >() };
             ( void ) proc_snapshot.refresh();
             if ( !proc_snapshot.valid() ) [[unlikely]] {
                 std::print( " (!) 进程快照初始化错误!\n" );
                 return;
             }
             if constexpr ( ( Backends::run_hijack_image || ... ) ) {
-                if ( use_hijack_image ) {
+                if ( enabled_hijack_image ) {
                     std::print( " -> 映像劫持.\n" );
                     (
                       []< typename Backend >() static
@@ -1312,9 +1312,9 @@ namespace scltk
         static auto restore_()
         {
             constexpr const auto& crack_restore_config_node{ std::get< crack_restore_config >( config_nodes ) };
-            constexpr const auto& use_hijack_image{ crack_restore_config_node.at< "hijack_image" >() };
+            constexpr const auto& enabled_hijack_image{ crack_restore_config_node.at< "hijack_image" >() };
             if constexpr ( ( Backends::run_undo_hijack_image || ... ) ) {
-                if ( use_hijack_image ) {
+                if ( enabled_hijack_image ) {
                     std::print( " -> 撤销劫持.\n" );
                     (
                       []< typename Backend >() static
