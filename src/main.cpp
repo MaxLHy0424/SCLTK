@@ -351,6 +351,13 @@ namespace scltk
                 }
             }
         };
+        template < typename T >
+        struct is_valid_config_node final
+        {
+            static constexpr auto value{
+              std::is_base_of_v< config_node_interface, T > && std::is_default_constructible_v< T >
+              && std::is_same_v< std::decay_t< T >, T > };
+        };
         template < cpp_utils::const_string RawName, cpp_utils::const_string DisplayName >
         struct option_info final
         {
@@ -647,16 +654,6 @@ namespace scltk
         custom_rules_config() noexcept  = default;
         ~custom_rules_config() noexcept = default;
     };
-    namespace details_
-    {
-        template < typename T >
-        struct is_valid_config_node final
-        {
-            static constexpr auto value{
-              std::is_base_of_v< config_node_interface, T > && std::is_default_constructible_v< T >
-              && std::is_same_v< std::decay_t< T >, T > };
-        };
-    }
     using config_nodes_type = cpp_utils::type_list< options_title_ui, crack_restore_config, window_config, custom_rules_config >;
     static_assert( config_nodes_type::all_of< details_::is_valid_config_node > );
     static_assert( config_nodes_type::unique::size == config_nodes_type::size );
