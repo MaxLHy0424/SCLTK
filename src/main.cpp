@@ -51,7 +51,7 @@ namespace scltk
         attrs &= ~ENABLE_PROCESSED_INPUT;
         SetConsoleMode( con.std_input_handle, attrs );
     }
-    auto quit() noexcept
+    constexpr auto quit() noexcept
     {
         return func_exit;
     }
