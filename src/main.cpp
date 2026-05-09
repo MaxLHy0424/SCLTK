@@ -28,7 +28,7 @@ namespace scltk
     constexpr auto func_back{ cpp_utils::console_ui::func_back };
     constexpr auto func_exit{ cpp_utils::console_ui::func_exit };
     template < cpp_utils::const_string Title, std::size_t NewLineCount >
-    constexpr auto make_middle_text{ cpp_utils::concat_const_string(
+    constexpr auto make_title_text{ cpp_utils::concat_const_string(
       cpp_utils::make_repeated_const_string< ' ', ( static_cast< std::size_t >( console_width ) - Title.size() + 1 ) / 2 >(),
       Title, cpp_utils::make_repeated_const_string< '\n', NewLineCount >() ) };
     template < cpp_utils::const_string Text >
@@ -497,7 +497,7 @@ namespace scltk
             {
                 cpp_utils::console_ui ui{ con, unsynced_mem_pool };
                 ui.reserve( 2 + data_.size() * 2 )
-                  .add_back( make_middle_text< "[ 配  置 ]", 2 >.view() )
+                  .add_back( make_title_text< "[ 配  置 ]", 2 >.view() )
                   .add_back(
                     " < 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity );
                 [ & ]< std::size_t... Is >( const std::index_sequence< Is... > )
@@ -622,7 +622,7 @@ namespace scltk
         {
             cpp_utils::console_ui ui{ con, unsynced_mem_pool };
             ui.reserve( 3 )
-              .add_back( make_middle_text< "[ 配  置 ]", 2 >.view() )
+              .add_back( make_title_text< "[ 配  置 ]", 2 >.view() )
               .add_back( " < 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
               .add_back(
                 "\n 自定义规则格式为 <flag>: <item>\n"
@@ -742,7 +742,7 @@ namespace scltk
         {
             cpp_utils::console_ui ui{ con, unsynced_mem_pool };
             ui.reserve( 3 )
-              .add_back( make_middle_text< "[ 配  置 ]", 2 >.view() )
+              .add_back( make_title_text< "[ 配  置 ]", 2 >.view() )
               .add_back( " < 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
               .add_back(
                 "\n 配置以行作为单位解析.\n\n"
@@ -761,7 +761,7 @@ namespace scltk
         {
             std::print(
               cpp_utils::value_identity_v< cpp_utils::concat_const_string(
-                make_middle_text< "[ 配  置 ]", 3 >, " -> 同步配置.\n\n"_cs ) >.view() );
+                make_title_text< "[ 配  置 ]", 3 >, " -> 同步配置.\n\n"_cs ) >.view() );
             load_config( true );
             constexpr auto header{
               u8"# " INFO_FULL_NAME "\n# " INFO_GIT_TAG " (" INFO_GIT_BRANCH " " INFO_GIT_HASH ")\n# 本文件编码为 UTF-8。\n" };
@@ -781,7 +781,7 @@ namespace scltk
         {
             std::print(
               cpp_utils::value_identity_v< cpp_utils::concat_const_string(
-                make_middle_text< "[ 配  置 ]", 3 >,  " -> 尝试打开配置文件.\n\n"_cs ) >.view() );
+                make_title_text< "[ 配  置 ]", 3 >,  " -> 尝试打开配置文件.\n\n"_cs ) >.view() );
             std::error_code ec;
             bool success{ false };
             if ( std::filesystem::exists( config_file_name, ec ) ) {
@@ -809,7 +809,7 @@ namespace scltk
         {
             cpp_utils::console_ui ui{ con, unsynced_mem_pool };
             ui.reserve( 5 + ( decltype( nodes.ui_count() )::value + ... ) )
-              .add_back( make_middle_text< "[ 配  置 ]", 2 >.view() )
+              .add_back( make_title_text< "[ 配  置 ]", 2 >.view() )
               .add_back( " < 返回\n", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
               .add_back( " > 查看解析规则 ", details_::show_config_parsing_rules )
               .add_back( " > 同步配置 ", details_::sync_config )
@@ -823,7 +823,7 @@ namespace scltk
     {
         cpp_utils::console_ui ui{ con, unsynced_mem_pool };
         ui.reserve( 3 )
-          .add_back( make_middle_text< "[ 关  于 ]", 2 >.view() )
+          .add_back( make_title_text< "[ 关  于 ]", 2 >.view() )
           .add_back( " < 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
           .add_back(
             "\n[ 软件名 ]\n\n " INFO_FULL_NAME " (" INFO_SHORT_NAME ")\n\n[ 软件版本 ]\n\n 标签: " INFO_GIT_TAG
@@ -840,7 +840,7 @@ namespace scltk
             static constexpr auto description{ Description };
             static auto execute() noexcept
             {
-                std::print( make_middle_text< "[ 工 具 箱 ]", 3 >.view() );
+                std::print( make_title_text< "[ 工 具 箱 ]", 3 >.view() );
                 Func();
                 std::print( "\n (i) 操作已完成." );
                 press_any_key_to_return();
@@ -1134,7 +1134,7 @@ namespace scltk
           details_::func_item< "重置 Chrome & Edge & Firefox 管理策略", details_::reset_common_web_browsers_policy > >;
         cpp_utils::console_ui ui{ con, unsynced_mem_pool };
         ui.reserve( 4 + funcs::size )
-          .add_back( make_middle_text< "[ 工 具 箱 ]", 2 >.view() )
+          .add_back( make_title_text< "[ 工 具 箱 ]", 2 >.view() )
           .add_back( " < 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
           .add_back(
             "\n[ 快捷工具 ]\n\n"
@@ -1364,11 +1364,11 @@ namespace scltk
         {
             switch ( details_::current_rule_executor_mode ) {
                 case details_::rule_executor_mode::crack :
-                    std::print( make_middle_text< "[ 破  解 ]", 3 >.view() );
+                    std::print( make_title_text< "[ 破  解 ]", 3 >.view() );
                     crack_();
                     break;
                 case details_::rule_executor_mode::restore :
-                    std::print( make_middle_text< "[ 恢  复 ]", 3 >.view() );
+                    std::print( make_title_text< "[ 恢  复 ]", 3 >.view() );
                     restore_();
                     break;
             }
@@ -1589,7 +1589,7 @@ auto main() -> int
     scltk::create_parallel_tasks();
     cpp_utils::console_ui ui{ scltk::con, scltk::unsynced_mem_pool };
     ui.reserve( 9 + scltk::builtin_rules::size )
-      .add_back( scltk::make_middle_text< "[ 主  页 ]", 2 >.view() )
+      .add_back( scltk::make_title_text< "[ 主  页 ]", 2 >.view() )
       .add_back( " < 退出\n", scltk::quit, cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_intensity )
       .add_back( " > 关于 ", scltk::info )
       .add_back( " > 配置 ", scltk::config_ui )
