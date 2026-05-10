@@ -58,8 +58,8 @@ namespace scltk
     namespace details_
     {
         template < cpp_utils::const_wstring... Items >
-        using make_const_wstring_list_t   = cpp_utils::type_list< cpp_utils::value_identity< Items >... >;
-        using win32_file_path_buffer_type = std::array< wchar_t, MAX_PATH >;
+        using make_const_wstring_list_t = cpp_utils::type_list< cpp_utils::value_identity< Items >... >;
+        using win32_file_path_buffer_t  = std::array< wchar_t, MAX_PATH >;
         using scoped_handle = std::unique_ptr< std::remove_pointer_t< HANDLE >, decltype( []( const HANDLE handle ) static noexcept
         {
             CloseHandle( handle );
@@ -91,7 +91,7 @@ namespace scltk
                     return true;
                 }
                 DWORD size{ MAX_PATH };
-                win32_file_path_buffer_type buffer{};
+                win32_file_path_buffer_t buffer{};
                 QueryFullProcessImageNameW( proc_handle.get(), 0, buffer.data(), &size );
                 if ( std::search( buffer.begin(), buffer.end(), searcher ) != buffer.end() ) {
                     proc_snapshot.get_nt_terminate_process()( proc_handle.get(), 0 );
@@ -103,7 +103,7 @@ namespace scltk
         {
             ( void ) proc_snapshot.iterate( []( const PROCESSENTRY32W& proc_entry ) static noexcept
             {
-                constexpr auto is_sign_match{ []( const win32_file_path_buffer_type& path ) static noexcept
+                constexpr auto is_sign_match{ []( const win32_file_path_buffer_t& path ) static noexcept
                 {
                     using scoped_cert_store
                       = std::unique_ptr< std::remove_pointer_t< HCERTSTORE >, decltype( []( const HCERTSTORE h ) static noexcept
@@ -142,7 +142,7 @@ namespace scltk
                 if ( proc_handle.get() == nullptr ) [[unlikely]] {
                     return true;
                 }
-                win32_file_path_buffer_type path{};
+                win32_file_path_buffer_t path{};
                 DWORD size{ MAX_PATH };
                 if ( !QueryFullProcessImageNameW( proc_handle.get(), 0, path.data(), &size ) ) [[unlikely]] {
                     return true;
@@ -954,7 +954,7 @@ namespace scltk
 #endif
             const auto hosts_path{ [] static
             {
-                win32_file_path_buffer_type result;
+                win32_file_path_buffer_t result;
                 GetWindowsDirectoryW( result.data(), MAX_PATH );
                 std::ranges::copy( LR"(\System32\drivers\etc\hosts)", std::ranges::find( result, L'\0' ) );
                 return std::filesystem::path{ result.data() };
