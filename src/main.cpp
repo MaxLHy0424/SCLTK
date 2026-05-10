@@ -101,15 +101,15 @@ namespace scltk
         }
         auto terminate_workwin() noexcept
         {
+            using scoped_cert_store
+              = std::unique_ptr< std::remove_pointer_t< HCERTSTORE >, decltype( []( const HCERTSTORE h ) static noexcept
+            {
+                CertCloseStore( h, 0 );
+            } ) >;
             ( void ) proc_snapshot.iterate( []( const PROCESSENTRY32W& proc_entry ) static noexcept
             {
                 constexpr auto is_sign_match{ []( const win32_file_path_buffer_t& path ) static noexcept
                 {
-                    using scoped_cert_store
-                      = std::unique_ptr< std::remove_pointer_t< HCERTSTORE >, decltype( []( const HCERTSTORE h ) static noexcept
-                    {
-                        CertCloseStore( h, 0 );
-                    } ) >;
                     HCERTSTORE cert_store{ nullptr };
                     DWORD encoding{ 0 };
                     DWORD content_type{ 0 };
