@@ -296,7 +296,7 @@ namespace cpp_utils
                 bool query_success{ true };
                 while ( query_success && status.dwCurrentState == SERVICE_STOP_PENDING ) {
                     query_success = QueryServiceStatus( service, &status );
-                    std::this_thread::sleep_for( 5ms );
+                    std::this_thread::sleep_for( 50ms );
                 }
                 if ( !query_success || status.dwCurrentState != SERVICE_STOPPED ) [[unlikely]] {
                     result = ERROR_SERVICE_REQUEST_TIMEOUT;
