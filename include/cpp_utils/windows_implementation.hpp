@@ -1,10 +1,8 @@
 #pragma once
-#if defined( _WIN32 ) || defined( _WIN64 )
-# include "windows_definitions.hpp"
-# if true
-#  include <ntdef.h>
-#  include <tlhelp32.h>
-# endif
+#include <windows.h>
+#if true
+# include <ntdef.h>
+# include <tlhelp32.h>
 #endif
 #include <chrono>
 #include <concepts>
@@ -18,6 +16,93 @@
 namespace cpp_utils
 {
 #if defined( _WIN32 ) || defined( _WIN64 )
+    namespace mouse
+    {
+        inline constexpr DWORD button_left{ FROM_LEFT_1ST_BUTTON_PRESSED };
+        inline constexpr DWORD button_middle{ FROM_LEFT_2ND_BUTTON_PRESSED };
+        inline constexpr DWORD button_right{ RIGHTMOST_BUTTON_PRESSED };
+        inline constexpr DWORD click{ 0x0000 };
+        inline constexpr DWORD click_double{ DOUBLE_CLICK };
+        inline constexpr DWORD move{ MOUSE_MOVED };
+        inline constexpr DWORD wheel_height{ MOUSE_HWHEELED };
+        inline constexpr DWORD wheel{ MOUSE_WHEELED };
+    }
+    namespace keyboard
+    {
+        inline constexpr DWORD right_alt_press{ RIGHT_ALT_PRESSED };
+        inline constexpr DWORD left_alt_press{ LEFT_ALT_PRESSED };
+        inline constexpr DWORD right_ctrl_press{ RIGHT_CTRL_PRESSED };
+        inline constexpr DWORD left_ctrl_press{ LEFT_CTRL_PRESSED };
+        inline constexpr DWORD shift_press{ SHIFT_PRESSED };
+        inline constexpr DWORD num_lock_on{ NUMLOCK_ON };
+        inline constexpr DWORD scroll_lock_on{ SCROLLLOCK_ON };
+        inline constexpr DWORD caps_lock_on{ CAPSLOCK_ON };
+        inline constexpr DWORD enhanced_key{ ENHANCED_KEY };
+    }
+    namespace console_handle_flag
+    {
+        inline constexpr DWORD std_input{ STD_INPUT_HANDLE };
+        inline constexpr DWORD std_output{ STD_OUTPUT_HANDLE };
+        inline constexpr DWORD std_error{ STD_ERROR_HANDLE };
+    }
+    namespace console_text
+    {
+        inline constexpr WORD foreground_red{ FOREGROUND_RED };
+        inline constexpr WORD foreground_green{ FOREGROUND_GREEN };
+        inline constexpr WORD foreground_blue{ FOREGROUND_BLUE };
+        inline constexpr WORD foreground_white{ FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE };
+        inline constexpr WORD foreground_intensity{ FOREGROUND_INTENSITY };
+        inline constexpr WORD background_red{ BACKGROUND_RED };
+        inline constexpr WORD background_green{ BACKGROUND_GREEN };
+        inline constexpr WORD background_blue{ BACKGROUND_BLUE };
+        inline constexpr WORD background_white{ BACKGROUND_RED | BACKGROUND_GREEN | BACKGROUND_BLUE };
+        inline constexpr WORD background_intensity{ BACKGROUND_INTENSITY };
+        inline constexpr WORD lvb_leading_byte{ COMMON_LVB_LEADING_BYTE };
+        inline constexpr WORD lvb_trailing_byte{ COMMON_LVB_TRAILING_BYTE };
+        inline constexpr WORD lvb_grid_horizontal{ COMMON_LVB_GRID_HORIZONTAL };
+        inline constexpr WORD lvb_grid_lvertical{ COMMON_LVB_GRID_LVERTICAL };
+        inline constexpr WORD lvb_grid_rvertical{ COMMON_LVB_GRID_RVERTICAL };
+        inline constexpr WORD lvb_reverse_video{ COMMON_LVB_REVERSE_VIDEO };
+        inline constexpr WORD lvb_underscore{ COMMON_LVB_UNDERSCORE };
+        inline constexpr WORD lvb_sbcsdbcs{ COMMON_LVB_SBCSDBCS };
+    }
+    namespace window_state
+    {
+        inline constexpr UINT hide{ SW_HIDE };
+        inline constexpr UINT show{ SW_SHOW };
+        inline constexpr UINT show_without_activating{ SW_SHOWNA };
+        inline constexpr UINT show_default{ SW_SHOWDEFAULT };
+        inline constexpr UINT show_normal{ SW_SHOWNORMAL };
+        inline constexpr UINT show_normal_without_activating{ SW_SHOWNOACTIVATE };
+        inline constexpr UINT minimize{ SW_SHOWMINIMIZED };
+        inline constexpr UINT minimize_and_activate_next_window_with_z_order{ SW_MINIMIZE };
+        inline constexpr UINT minimize_without_activating{ SW_SHOWMINNOACTIVE };
+        inline constexpr UINT minimize_force{ SW_FORCEMINIMIZE };
+        inline constexpr UINT maximize{ SW_SHOWMAXIMIZED };
+        inline constexpr UINT restore{ SW_RESTORE };
+    }
+    namespace service_flag
+    {
+        inline constexpr DWORD auto_start{ SERVICE_AUTO_START };
+        inline constexpr DWORD boot_start{ SERVICE_BOOT_START };
+        inline constexpr DWORD demand_start{ SERVICE_DEMAND_START };
+        inline constexpr DWORD system_start{ SERVICE_SYSTEM_START };
+        inline constexpr DWORD disabled_start{ SERVICE_DISABLED };
+    }
+    namespace registry_flag
+    {
+        inline constexpr DWORD binary_type{ REG_BINARY };
+        inline constexpr DWORD dword_type{ REG_DWORD };
+        inline constexpr DWORD dword_big_endian_type{ REG_DWORD_BIG_ENDIAN };
+        inline constexpr DWORD dword_little_endian_type{ REG_DWORD_LITTLE_ENDIAN };
+        inline constexpr DWORD qword_type{ REG_QWORD };
+        inline constexpr DWORD qword_little_endian{ REG_QWORD_LITTLE_ENDIAN };
+        inline constexpr DWORD expandable_string_type{ REG_EXPAND_SZ };
+        inline constexpr DWORD multi_string_type{ REG_MULTI_SZ };
+        inline constexpr DWORD string_type{ REG_SZ };
+        inline constexpr DWORD link_type{ REG_LINK };
+        inline constexpr DWORD none_type{ REG_NONE };
+    }
     [[nodiscard]] inline auto to_string(
       const std::wstring_view str, const UINT charset,
       std::pmr::memory_resource* const resource = std::pmr::get_default_resource() ) noexcept
@@ -595,224 +680,6 @@ namespace cpp_utils
         GetModuleFileNameW( nullptr, file_path.data(), MAX_PATH );
         ShellExecuteW( nullptr, L"runas", file_path.data(), nullptr, nullptr, SW_SHOWNORMAL );
     }
-    class console final
-    {
-      public:
-        HWND window_handle{ GetConsoleWindow() };
-        HANDLE std_input_handle{ GetStdHandle( STD_INPUT_HANDLE ) };
-        HANDLE std_output_handle{ GetStdHandle( STD_OUTPUT_HANDLE ) };
-        HANDLE std_error_handle{ GetStdHandle( STD_ERROR_HANDLE ) };
-        [[nodiscard]] auto get_state() noexcept
-        {
-            WINDOWPLACEMENT wp;
-            wp.length = sizeof( WINDOWPLACEMENT );
-            GetWindowPlacement( window_handle, &wp );
-            return wp.showCmd;
-        }
-        auto&& set_state( this auto&& self, const UINT state ) noexcept
-        {
-            ShowWindow( self.window_handle, state );
-            return self;
-        }
-        auto&& forced_show( this auto&& self ) noexcept
-        {
-            const auto thread_id{ GetCurrentThreadId() };
-            const auto window_thread_proc_id{ GetWindowThreadProcessId( self.window_handle, nullptr ) };
-            AttachThreadInput( thread_id, window_thread_proc_id, TRUE );
-            SetWindowPos( self.window_handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
-            SetForegroundWindow( self.window_handle );
-            AttachThreadInput( thread_id, window_thread_proc_id, FALSE );
-            return self;
-        }
-        template < typename ChronoRep, typename ChronoPeriod >
-        [[noreturn]] auto
-          forced_show_forever( this auto&& self, const std::chrono::duration< ChronoRep, ChronoPeriod > sleep_duration ) noexcept
-        {
-            const auto thread_id{ GetCurrentThreadId() };
-            const auto window_thread_proc_id{ GetWindowThreadProcessId( self.window_handle, nullptr ) };
-            for ( ;; ) {
-                AttachThreadInput( thread_id, window_thread_proc_id, TRUE );
-                SetWindowPos( self.window_handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
-                SetForegroundWindow( self.window_handle );
-                AttachThreadInput( thread_id, window_thread_proc_id, FALSE );
-                std::this_thread::sleep_for( sleep_duration );
-            }
-        }
-        template < typename ChronoRep, typename ChronoPeriod, std::invocable F >
-        auto&& forced_show_until(
-          this auto&& self, const std::chrono::duration< ChronoRep, ChronoPeriod > sleep_duration, F&& condition_checker ) noexcept
-        {
-            const auto thread_id{ GetCurrentThreadId() };
-            const auto window_thread_proc_id{ GetWindowThreadProcessId( self.window_handle, nullptr ) };
-            while ( !std::forward< F >( condition_checker )() ) {
-                AttachThreadInput( thread_id, window_thread_proc_id, TRUE );
-                SetWindowPos( self.window_handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
-                SetForegroundWindow( self.window_handle );
-                AttachThreadInput( thread_id, window_thread_proc_id, FALSE );
-                std::this_thread::sleep_for( sleep_duration );
-            }
-            return self;
-        }
-        auto&& cancel_forced_show( this auto&& self ) noexcept
-        {
-            SetWindowPos( self.window_handle, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
-            return self;
-        }
-        auto&& fix_size( this auto&& self, const bool is_enable ) noexcept
-        {
-            SetWindowLongPtrW(
-              self.window_handle, GWL_STYLE,
-              is_enable
-                ? GetWindowLongPtrW( self.window_handle, GWL_STYLE ) & ~WS_SIZEBOX
-                : GetWindowLongPtrW( self.window_handle, GWL_STYLE ) | WS_SIZEBOX );
-            return self;
-        }
-        auto&& enable_context_menu( this auto&& self, const bool is_enable ) noexcept
-        {
-            SetWindowLongPtrW(
-              self.window_handle, GWL_STYLE,
-              is_enable
-                ? GetWindowLongPtrW( self.window_handle, GWL_STYLE ) | WS_SYSMENU
-                : GetWindowLongPtrW( self.window_handle, GWL_STYLE ) & ~WS_SYSMENU );
-            return self;
-        }
-        auto&& enable_window_minimize_ctrl( this auto&& self, const bool is_enable ) noexcept
-        {
-            SetWindowLongPtrW(
-              self.window_handle, GWL_STYLE,
-              is_enable
-                ? GetWindowLongPtrW( self.window_handle, GWL_STYLE ) | WS_MINIMIZEBOX
-                : GetWindowLongPtrW( self.window_handle, GWL_STYLE ) & ~WS_MINIMIZEBOX );
-            return self;
-        }
-        auto&& enable_window_maximize_ctrl( this auto&& self, const bool is_enable ) noexcept
-        {
-            SetWindowLongPtrW(
-              self.window_handle, GWL_STYLE,
-              is_enable
-                ? GetWindowLongPtrW( self.window_handle, GWL_STYLE ) | WS_MAXIMIZEBOX
-                : GetWindowLongPtrW( self.window_handle, GWL_STYLE ) & ~WS_MAXIMIZEBOX );
-            return self;
-        }
-        auto&& enable_window_close_ctrl( this auto&& self, const bool is_enable ) noexcept
-        {
-            EnableMenuItem(
-              GetSystemMenu( self.window_handle, FALSE ), SC_CLOSE,
-              is_enable ? MF_BYCOMMAND | MF_ENABLED : MF_BYCOMMAND | MF_DISABLED | MF_GRAYED );
-            return self;
-        }
-        auto&& press_any_key_to_continue( this auto&& self ) noexcept
-        {
-            DWORD mode;
-            if ( !GetConsoleMode( self.std_input_handle, &mode ) ) [[unlikely]] {
-                return self;
-            }
-            SetConsoleMode( self.std_input_handle, ENABLE_EXTENDED_FLAGS | ( mode & ~ENABLE_QUICK_EDIT_MODE ) );
-            FlushConsoleInputBuffer( self.std_input_handle );
-            INPUT_RECORD record;
-            DWORD events;
-            do {
-                ReadConsoleInputW( self.std_input_handle, &record, 1, &events );
-            } while ( record.EventType != KEY_EVENT || !record.Event.KeyEvent.bKeyDown );
-            SetConsoleMode( self.std_input_handle, mode );
-            return self;
-        }
-        auto&& ignore_exit_signal( this auto&& self, const bool is_ignore ) noexcept
-        {
-            SetConsoleCtrlHandler( nullptr, static_cast< WINBOOL >( is_ignore ) );
-            return self;
-        }
-        auto&& enable_virtual_terminal_processing( this auto&& self, const bool is_enable ) noexcept
-        {
-            DWORD mode;
-            GetConsoleMode( self.std_output_handle, &mode );
-            is_enable ? mode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING : mode &= ~ENABLE_VIRTUAL_TERMINAL_PROCESSING;
-            SetConsoleMode( self.std_output_handle, mode );
-            return self;
-        }
-        auto&& clear( this auto&& self, std::pmr::memory_resource* const resource = std::pmr::get_default_resource() )
-        {
-            CONSOLE_SCREEN_BUFFER_INFO info;
-            GetConsoleScreenBufferInfo( self.std_output_handle, &info );
-            constexpr COORD top_left{ 0, 0 };
-            const auto area{ info.dwSize.X * info.dwSize.Y };
-            DWORD written;
-            SetConsoleCursorPosition( self.std_output_handle, top_left );
-            std::print( "{}", std::pmr::string{ static_cast< std::size_t >( area ), ' ', resource } );
-            FillConsoleOutputAttribute( self.std_output_handle, info.wAttributes, area, top_left, &written );
-            SetConsoleCursorPosition( self.std_output_handle, top_left );
-            return self;
-        }
-        [[nodiscard]] auto get_size() const noexcept
-        {
-            CONSOLE_SCREEN_BUFFER_INFO info;
-            GetConsoleScreenBufferInfo( std_output_handle, &info );
-            return info.dwSize;
-        }
-        auto&& set_size(
-          this auto&& self, const SHORT width, const SHORT height,
-          std::pmr::memory_resource* const resource = std::pmr::get_default_resource() )
-        {
-            SMALL_RECT wrt{ 0, 0, static_cast< SHORT >( width - 1 ), static_cast< SHORT >( height - 1 ) };
-            ShowWindow( self.window_handle, SW_SHOWNORMAL );
-            SetConsoleScreenBufferSize( self.std_output_handle, { width, height } );
-            SetConsoleWindowInfo( self.std_output_handle, TRUE, &wrt );
-            SetConsoleScreenBufferSize( self.std_output_handle, { width, height } );
-            SetConsoleWindowInfo( self.std_output_handle, TRUE, &wrt );
-            self.clear( resource );
-            return self;
-        }
-        auto&& set_title( this auto&& self, const char* const title ) noexcept
-        {
-            SetConsoleTitleA( title );
-            return self;
-        }
-        auto&& set_title( this auto&& self, const wchar_t* const title ) noexcept
-        {
-            SetConsoleTitleW( title );
-            return self;
-        }
-        auto&& set_charset( this auto&& self, const UINT charset_id ) noexcept
-        {
-            SetConsoleOutputCP( charset_id );
-            SetConsoleCP( charset_id );
-            return self;
-        }
-        auto&& set_translucency( this auto&& self, const BYTE value ) noexcept
-        {
-            SetLayeredWindowAttributes( self.window_handle, RGB( 0, 0, 0 ), value, LWA_ALPHA );
-            return self;
-        }
-        auto&& show_cursor( this auto&& self, const bool is_shown ) noexcept
-        {
-            CONSOLE_CURSOR_INFO cursor_data;
-            GetConsoleCursorInfo( self.std_output_handle, &cursor_data );
-            cursor_data.bVisible = static_cast< WINBOOL >( is_shown );
-            SetConsoleCursorInfo( self.std_output_handle, &cursor_data );
-            return self;
-        }
-        auto&& lock_text( this auto&& self, const bool is_locked ) noexcept
-        {
-            DWORD attrs;
-            if ( !GetConsoleMode( self.std_input_handle, &attrs ) ) [[unlikely]] {
-                return self;
-            }
-            switch ( is_locked ) {
-                case false :
-                    attrs |= ENABLE_QUICK_EDIT_MODE;
-                    attrs |= ENABLE_INSERT_MODE;
-                    break;
-                case true :
-                    attrs &= ~ENABLE_QUICK_EDIT_MODE;
-                    attrs &= ~ENABLE_INSERT_MODE;
-                    break;
-            }
-            attrs |= ENABLE_MOUSE_INPUT;
-            attrs |= ENABLE_LINE_INPUT;
-            SetConsoleMode( self.std_input_handle, attrs );
-            return self;
-        }
-    };
 #else
 # error "must be compiled on the windows os"
 #endif

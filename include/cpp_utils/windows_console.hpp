@@ -5,11 +5,228 @@
 #include <string>
 #include <utility>
 #include "compiler.hpp"
-#include "windows_app_tools.hpp"
-#include "windows_definitions.hpp"
+#include "windows_implementation.hpp"
 namespace cpp_utils
 {
 #if defined( _WIN32 ) || defined( _WIN64 )
+    class console final
+    {
+      public:
+        HWND window_handle{ GetConsoleWindow() };
+        HANDLE std_input_handle{ GetStdHandle( STD_INPUT_HANDLE ) };
+        HANDLE std_output_handle{ GetStdHandle( STD_OUTPUT_HANDLE ) };
+        HANDLE std_error_handle{ GetStdHandle( STD_ERROR_HANDLE ) };
+        [[nodiscard]] auto get_state() noexcept
+        {
+            WINDOWPLACEMENT wp;
+            wp.length = sizeof( WINDOWPLACEMENT );
+            GetWindowPlacement( window_handle, &wp );
+            return wp.showCmd;
+        }
+        auto&& set_state( this auto&& self, const UINT state ) noexcept
+        {
+            ShowWindow( self.window_handle, state );
+            return self;
+        }
+        auto&& forced_show( this auto&& self ) noexcept
+        {
+            const auto thread_id{ GetCurrentThreadId() };
+            const auto window_thread_proc_id{ GetWindowThreadProcessId( self.window_handle, nullptr ) };
+            AttachThreadInput( thread_id, window_thread_proc_id, TRUE );
+            SetWindowPos( self.window_handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
+            SetForegroundWindow( self.window_handle );
+            AttachThreadInput( thread_id, window_thread_proc_id, FALSE );
+            return self;
+        }
+        template < typename ChronoRep, typename ChronoPeriod >
+        [[noreturn]] auto
+          forced_show_forever( this auto&& self, const std::chrono::duration< ChronoRep, ChronoPeriod > sleep_duration ) noexcept
+        {
+            const auto thread_id{ GetCurrentThreadId() };
+            const auto window_thread_proc_id{ GetWindowThreadProcessId( self.window_handle, nullptr ) };
+            for ( ;; ) {
+                AttachThreadInput( thread_id, window_thread_proc_id, TRUE );
+                SetWindowPos( self.window_handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
+                SetForegroundWindow( self.window_handle );
+                AttachThreadInput( thread_id, window_thread_proc_id, FALSE );
+                std::this_thread::sleep_for( sleep_duration );
+            }
+        }
+        template < typename ChronoRep, typename ChronoPeriod, std::invocable F >
+        auto&& forced_show_until(
+          this auto&& self, const std::chrono::duration< ChronoRep, ChronoPeriod > sleep_duration, F&& condition_checker ) noexcept
+        {
+            const auto thread_id{ GetCurrentThreadId() };
+            const auto window_thread_proc_id{ GetWindowThreadProcessId( self.window_handle, nullptr ) };
+            while ( !std::forward< F >( condition_checker )() ) {
+                AttachThreadInput( thread_id, window_thread_proc_id, TRUE );
+                SetWindowPos( self.window_handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
+                SetForegroundWindow( self.window_handle );
+                AttachThreadInput( thread_id, window_thread_proc_id, FALSE );
+                std::this_thread::sleep_for( sleep_duration );
+            }
+            return self;
+        }
+        auto&& cancel_forced_show( this auto&& self ) noexcept
+        {
+            SetWindowPos( self.window_handle, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
+            return self;
+        }
+        auto&& fix_size( this auto&& self, const bool is_enable ) noexcept
+        {
+            SetWindowLongPtrW(
+              self.window_handle, GWL_STYLE,
+              is_enable
+                ? GetWindowLongPtrW( self.window_handle, GWL_STYLE ) & ~WS_SIZEBOX
+                : GetWindowLongPtrW( self.window_handle, GWL_STYLE ) | WS_SIZEBOX );
+            return self;
+        }
+        auto&& enable_context_menu( this auto&& self, const bool is_enable ) noexcept
+        {
+            SetWindowLongPtrW(
+              self.window_handle, GWL_STYLE,
+              is_enable
+                ? GetWindowLongPtrW( self.window_handle, GWL_STYLE ) | WS_SYSMENU
+                : GetWindowLongPtrW( self.window_handle, GWL_STYLE ) & ~WS_SYSMENU );
+            return self;
+        }
+        auto&& enable_window_minimize_ctrl( this auto&& self, const bool is_enable ) noexcept
+        {
+            SetWindowLongPtrW(
+              self.window_handle, GWL_STYLE,
+              is_enable
+                ? GetWindowLongPtrW( self.window_handle, GWL_STYLE ) | WS_MINIMIZEBOX
+                : GetWindowLongPtrW( self.window_handle, GWL_STYLE ) & ~WS_MINIMIZEBOX );
+            return self;
+        }
+        auto&& enable_window_maximize_ctrl( this auto&& self, const bool is_enable ) noexcept
+        {
+            SetWindowLongPtrW(
+              self.window_handle, GWL_STYLE,
+              is_enable
+                ? GetWindowLongPtrW( self.window_handle, GWL_STYLE ) | WS_MAXIMIZEBOX
+                : GetWindowLongPtrW( self.window_handle, GWL_STYLE ) & ~WS_MAXIMIZEBOX );
+            return self;
+        }
+        auto&& enable_window_close_ctrl( this auto&& self, const bool is_enable ) noexcept
+        {
+            EnableMenuItem(
+              GetSystemMenu( self.window_handle, FALSE ), SC_CLOSE,
+              is_enable ? MF_BYCOMMAND | MF_ENABLED : MF_BYCOMMAND | MF_DISABLED | MF_GRAYED );
+            return self;
+        }
+        auto&& press_any_key_to_continue( this auto&& self ) noexcept
+        {
+            DWORD mode;
+            if ( !GetConsoleMode( self.std_input_handle, &mode ) ) [[unlikely]] {
+                return self;
+            }
+            SetConsoleMode( self.std_input_handle, ENABLE_EXTENDED_FLAGS | ( mode & ~ENABLE_QUICK_EDIT_MODE ) );
+            FlushConsoleInputBuffer( self.std_input_handle );
+            INPUT_RECORD record;
+            DWORD events;
+            do {
+                ReadConsoleInputW( self.std_input_handle, &record, 1, &events );
+            } while ( record.EventType != KEY_EVENT || !record.Event.KeyEvent.bKeyDown );
+            SetConsoleMode( self.std_input_handle, mode );
+            return self;
+        }
+        auto&& ignore_exit_signal( this auto&& self, const bool is_ignore ) noexcept
+        {
+            SetConsoleCtrlHandler( nullptr, static_cast< WINBOOL >( is_ignore ) );
+            return self;
+        }
+        auto&& enable_virtual_terminal_processing( this auto&& self, const bool is_enable ) noexcept
+        {
+            DWORD mode;
+            GetConsoleMode( self.std_output_handle, &mode );
+            is_enable ? mode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING : mode &= ~ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+            SetConsoleMode( self.std_output_handle, mode );
+            return self;
+        }
+        auto&& clear( this auto&& self, std::pmr::memory_resource* const resource = std::pmr::get_default_resource() )
+        {
+            CONSOLE_SCREEN_BUFFER_INFO info;
+            GetConsoleScreenBufferInfo( self.std_output_handle, &info );
+            constexpr COORD top_left{ 0, 0 };
+            const auto area{ info.dwSize.X * info.dwSize.Y };
+            DWORD written;
+            SetConsoleCursorPosition( self.std_output_handle, top_left );
+            std::print( "{}", std::pmr::string{ static_cast< std::size_t >( area ), ' ', resource } );
+            FillConsoleOutputAttribute( self.std_output_handle, info.wAttributes, area, top_left, &written );
+            SetConsoleCursorPosition( self.std_output_handle, top_left );
+            return self;
+        }
+        [[nodiscard]] auto get_size() const noexcept
+        {
+            CONSOLE_SCREEN_BUFFER_INFO info;
+            GetConsoleScreenBufferInfo( std_output_handle, &info );
+            return info.dwSize;
+        }
+        auto&& set_size(
+          this auto&& self, const SHORT width, const SHORT height,
+          std::pmr::memory_resource* const resource = std::pmr::get_default_resource() )
+        {
+            SMALL_RECT wrt{ 0, 0, static_cast< SHORT >( width - 1 ), static_cast< SHORT >( height - 1 ) };
+            ShowWindow( self.window_handle, SW_SHOWNORMAL );
+            SetConsoleScreenBufferSize( self.std_output_handle, { width, height } );
+            SetConsoleWindowInfo( self.std_output_handle, TRUE, &wrt );
+            SetConsoleScreenBufferSize( self.std_output_handle, { width, height } );
+            SetConsoleWindowInfo( self.std_output_handle, TRUE, &wrt );
+            self.clear( resource );
+            return self;
+        }
+        auto&& set_title( this auto&& self, const char* const title ) noexcept
+        {
+            SetConsoleTitleA( title );
+            return self;
+        }
+        auto&& set_title( this auto&& self, const wchar_t* const title ) noexcept
+        {
+            SetConsoleTitleW( title );
+            return self;
+        }
+        auto&& set_charset( this auto&& self, const UINT charset_id ) noexcept
+        {
+            SetConsoleOutputCP( charset_id );
+            SetConsoleCP( charset_id );
+            return self;
+        }
+        auto&& set_translucency( this auto&& self, const BYTE value ) noexcept
+        {
+            SetLayeredWindowAttributes( self.window_handle, RGB( 0, 0, 0 ), value, LWA_ALPHA );
+            return self;
+        }
+        auto&& show_cursor( this auto&& self, const bool is_shown ) noexcept
+        {
+            CONSOLE_CURSOR_INFO cursor_data;
+            GetConsoleCursorInfo( self.std_output_handle, &cursor_data );
+            cursor_data.bVisible = static_cast< WINBOOL >( is_shown );
+            SetConsoleCursorInfo( self.std_output_handle, &cursor_data );
+            return self;
+        }
+        auto&& lock_text( this auto&& self, const bool is_locked ) noexcept
+        {
+            DWORD attrs;
+            if ( !GetConsoleMode( self.std_input_handle, &attrs ) ) [[unlikely]] {
+                return self;
+            }
+            switch ( is_locked ) {
+                case false :
+                    attrs |= ENABLE_QUICK_EDIT_MODE;
+                    attrs |= ENABLE_INSERT_MODE;
+                    break;
+                case true :
+                    attrs &= ~ENABLE_QUICK_EDIT_MODE;
+                    attrs &= ~ENABLE_INSERT_MODE;
+                    break;
+            }
+            attrs |= ENABLE_MOUSE_INPUT;
+            attrs |= ENABLE_LINE_INPUT;
+            SetConsoleMode( self.std_input_handle, attrs );
+            return self;
+        }
+    };
     class console_ui final
     {
       public:
