@@ -417,8 +417,8 @@ namespace scltk
             using info_table_base_type_ = typename OptionsInfoTable::base_type;
             using value_type_           = std::conditional_t< Atomic, std::atomic_flag, bool >;
             std::array< value_type_, info_table_base_type_::size > data_{};
-            static constexpr auto str_enabled_{ ": enabled"sv };
-            static constexpr auto str_disabled_{ ": disabled"sv };
+            static constexpr auto suffix_true_{ ": true"sv };
+            static constexpr auto suffix_false_{ ": false"sv };
             static auto get_value_( const value_type_& value ) noexcept
             {
                 if constexpr ( std::is_same_v< value_type_, std::atomic_flag > ) {
@@ -448,11 +448,11 @@ namespace scltk
             auto load_( std::string_view line ) noexcept
             {
                 bool value;
-                if ( line.size() > str_enabled_.size() && line.ends_with( str_enabled_ ) ) [[likely]] {
-                    line.remove_suffix( str_enabled_.size() );
+                if ( line.size() > suffix_true_.size() && line.ends_with( suffix_true_ ) ) [[likely]] {
+                    line.remove_suffix( suffix_true_.size() );
                     value = true;
-                } else if ( line.size() > str_disabled_.size() && line.ends_with( str_disabled_ ) ) [[likely]] {
-                    line.remove_suffix( str_disabled_.size() );
+                } else if ( line.size() > suffix_false_.size() && line.ends_with( suffix_false_ ) ) [[likely]] {
+                    line.remove_suffix( suffix_false_.size() );
                     value = false;
                 } else {
                     return;
@@ -478,7 +478,7 @@ namespace scltk
                 [ & ]< std::size_t... Is >( const std::index_sequence< Is... > )
                 {
                     ( ( out << info_table_base_type_::template at< Is >::raw_name.view()
-                            << ( get_value_( std::get< Is >( data_ ) ) == true ? str_enabled_ : str_disabled_ ) << '\n' ),
+                            << ( get_value_( std::get< Is >( data_ ) ) == true ? suffix_true_ : suffix_false_ ) << '\n' ),
                       ... );
                 }( std::make_index_sequence< info_table_base_type_::size >{} );
             }
