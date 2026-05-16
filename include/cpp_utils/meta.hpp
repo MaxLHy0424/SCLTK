@@ -509,12 +509,23 @@ namespace cpp_utils
         {
             using type = error_type;
         };
+        template <>
+        struct type_list_concat_impl< type_list<> > final
+        {
+            using type = type_list<>;
+        };
+        template < typename... Ts >
+        struct type_list_concat_impl< type_list< Ts... > > final
+        {
+            using type = type_list< Ts... >;
+        };
         template < typename... Ts, typename... Us >
         struct type_list_concat_impl< type_list< Ts... >, type_list< Us... > > final
         {
             using type = type_list< Ts..., Us... >;
         };
         template < typename... Ts, typename... Us, typename... Ls >
+            requires( sizeof...( Ls ) != 0 )
         struct type_list_concat_impl< type_list< Ts... >, type_list< Us... >, Ls... > final
         {
             using type = typename type_list_concat_impl< type_list< Ts..., Us... >, Ls... >::type;
