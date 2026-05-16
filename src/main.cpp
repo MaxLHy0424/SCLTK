@@ -208,6 +208,12 @@ namespace scltk
         "凌波网络教室", details_::make_const_wstring_list_t< L"sbkup.exe", L"wsf.exe", L"NCStu.exe", L"NCCmn.dll" >,
         details_::make_const_wstring_list_t< L"Windows Application and Components Data Backup Support Service" > >,
       compile_time_rule_node<
+        "传奇电子教室",
+        details_::make_const_wstring_list_t<
+          L"Student.exe", L"PsGhost.exe", L"secprocess.exe", L"SECService.exe", L"MirrorProInfo.exe", L"ClickShow.exe",
+          L"GtSRun.exe" >,
+        details_::make_const_wstring_list_t< L"SECService" > >,
+      compile_time_rule_node<
         "管鲍电子教室 & GZYZ",
         details_::make_const_wstring_list_t<
           L"CRMSPre.exe", L"Student.exe", L"StudentTools.exe", L"EcrSetup.exe", L"ExamClient.exe", L"AnyTimeSrv.exe",
