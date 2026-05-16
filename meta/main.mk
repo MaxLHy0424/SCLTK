@@ -34,14 +34,14 @@ args_opt_release_base := -Ofast \
                          -fomit-frame-pointer \
                          -fno-plt \
                          -fstrict-aliasing \
-						 -ffast-math \
-						 -freciprocal-math \
+                         -ffast-math \
+                         -freciprocal-math \
                          -fmerge-all-constants \
                          -fno-math-errno \
                          -fmodulo-sched \
                          -fmodulo-sched-allow-regmoves \
-						 -fgraphite-identity \
-						 -floop-nest-optimize \
+                         -fgraphite-identity \
+                         -floop-nest-optimize \
                          -D_FORTIFY_SOURCE=0
 args_opt_release_32   := $(args_opt_release_base)
 args_opt_release_64   := $(args_opt_release_base) -flto=auto
