@@ -203,11 +203,11 @@ SCLTK 不对 Windows Vista 及更早的版本保有任何技术支持。SCLTK �
 
 # 🛠️ 二次开发
 
-首先，请确保您已经安装了 [msys2](https://www.msys2.org)，并在 [msys2](https://www.msys2.org) 已安装软件包 `make` 和 `git`。
+首先，请确保您已经安装了 [msys2](https://www.msys2.org)，并在 [msys2](https://www.msys2.org) 已安装软件包 `make` 和 `git`，[msys2](https://www.msys2.org) 的 `ucrt64`、`mingw32`、`msys` 环境应当添加到环境变量中。
 
 然后，使用 git 克隆本仓库到本地。
 
-接下来，在仓库本地目录下打开终端，执行：
+接下来，在仓库本地目录下打开终端（不是 [msys2](https://www.msys2.org) 的），执行：
 
 ```pwsh
 .\make.ps1 -target toolchain
@@ -238,7 +238,7 @@ SCLTK 不对 Windows Vista 及更早的版本保有任何技术支持。SCLTK �
 .\make.ps1 -target toolchain
 ```
 
-打包 `build/release` 下的可执行文件和 `LICENSE.txt` 并签名，可使用：
+构建并打包 `build/release` 下的可执行文件和 `LICENSE.txt` 并签名，可使用：
 
 ```pwsh
 .\make.ps1 -target pack_and_sign -gpg_key=<key-id>
