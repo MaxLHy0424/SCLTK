@@ -504,7 +504,7 @@ namespace cpp_utils
     concept same_as_type_list = is_same_as_type_list_v< T >;
     namespace details_
     {
-        template < typename, typename >
+        template < typename... >
         struct type_list_concat_impl final
         {
             using type = error_type;
@@ -513,6 +513,11 @@ namespace cpp_utils
         struct type_list_concat_impl< type_list< Ts... >, type_list< Us... > > final
         {
             using type = type_list< Ts..., Us... >;
+        };
+        template < typename... Ts, typename... Us, typename... Ls >
+        struct type_list_concat_impl< type_list< Ts... >, type_list< Us... >, Ls... > final
+        {
+            using type = typename type_list_concat_impl< type_list< Ts..., Us... >, Ls... >::type;
         };
         template < typename List >
         struct is_in_type_list final
@@ -553,13 +558,13 @@ namespace cpp_utils
             }( std::make_index_sequence< N >{} ) );
         };
     }
-    template < same_as_type_list List1, same_as_type_list List2 >
+    template < same_as_type_list... Lists >
     struct type_list_concat final
     {
-        using type = typename details_::type_list_concat_impl< List1, List2 >::type;
+        using type = typename details_::type_list_concat_impl< Lists... >::type;
     };
-    template < same_as_type_list List1, same_as_type_list List2 >
-    using type_list_concat_t = typename type_list_concat< List1, List2 >::type;
+    template < same_as_type_list... Lists >
+    using type_list_concat_t = typename type_list_concat< Lists... >::type;
     template < same_as_type_list List1, same_as_type_list List2 >
     struct type_list_intersection final
     {
