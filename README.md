@@ -260,5 +260,5 @@ SCLTK 不对 Windows Vista 及更早的版本保有任何技术支持。SCLTK �
 
 # ❤️ 鸣谢
 
-- [fengliteam](https://github.com/fengliteam) 提供大量改进建议，开发姊妹项目 [SCA](https://github.com/fengliteam/SCA)。
+- [fengliteam](https://github.com/fengliteam) 提供大量改进建议。
 - [lzh173](https://github.com/lzh173) 提供 “机房管理助手” 逆向工程后的部分代码。
