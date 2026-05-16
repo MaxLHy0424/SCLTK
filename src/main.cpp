@@ -1383,7 +1383,7 @@ namespace scltk
             return func_back;
         }
     };
-    template < typename BuiltinRuleNode >
+    template < typename... BuiltinRuleNodes >
     struct builtin_rules_executor_backend final
     {
         using empty_lambda_type = decltype( details_::empty_lambda );
@@ -1392,13 +1392,13 @@ namespace scltk
             const cpp_utils::type_list< cpp_utils::value_identity< Procs >... > ) static consteval noexcept
         {
             return std::array< std::wstring_view, sizeof...( Procs ) >{ Procs.view()... };
-        }( typename BuiltinRuleNode::procs{} ) };
+        }( typename cpp_utils::type_list_concat_t< typename BuiltinRuleNodes::procs... >::unique{} ) };
         static constexpr auto servs{
           []< cpp_utils::const_wstring... Servs >(
             const cpp_utils::type_list< cpp_utils::value_identity< Servs >... > ) static consteval noexcept
         {
             return std::array< std::wstring_view, sizeof...( Servs ) >{ Servs.view()... };
-        }( typename BuiltinRuleNode::servs{} ) };
+        }( typename cpp_utils::type_list_concat_t< typename BuiltinRuleNodes::servs... >::unique{} ) };
         static constexpr auto ifeo_regs{
           []< cpp_utils::const_wstring... Procs >(
             const cpp_utils::type_list< cpp_utils::value_identity< Procs >... > ) static consteval noexcept
@@ -1408,7 +1408,7 @@ namespace scltk
                   LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\)"_cs, Procs ) >.view()...,
                 cpp_utils::value_identity_v< cpp_utils::concat_const_string(
                   LR"(SOFTWARE\WOW6432Node\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\)"_cs, Procs ) >.view()... };
-        }( typename BuiltinRuleNode::procs{} ) };
+        }( typename cpp_utils::type_list_concat_t< typename BuiltinRuleNodes::procs... >::unique{} ) };
         static constexpr auto run_enable_and_start_servs{ !servs.empty() };
         static auto enable_and_start_servs() noexcept
         {
@@ -1457,19 +1457,34 @@ namespace scltk
                 ( void ) proc_snapshot.terminate_by_names( procs );
             }
         }
-        static constexpr auto run_crack_helper{ !std::is_same_v< decltype( BuiltinRuleNode::crack_helper ), empty_lambda_type > };
+        static constexpr auto run_crack_helper{
+          ( !std::is_same_v< decltype( BuiltinRuleNodes::crack_helper ), empty_lambda_type > || ... ) };
         static auto crack_helper()
         {
             if constexpr ( run_crack_helper ) {
-                BuiltinRuleNode::crack_helper();
+                (
+                  []< typename Node >() static
+                {
+                    if constexpr ( !std::is_same_v< decltype( Node::crack_helper ), empty_lambda_type > ) {
+                        Node::crack_helper();
+                    }
+                }.template operator()< BuiltinRuleNodes >(),
+                  ... );
             }
         }
         static constexpr auto run_restore_helper{
-          !std::is_same_v< decltype( BuiltinRuleNode::restore_helper ), empty_lambda_type > };
+          ( !std::is_same_v< decltype( BuiltinRuleNodes::restore_helper ), empty_lambda_type > || ... ) };
         static auto restore_helper()
         {
             if constexpr ( run_restore_helper ) {
-                BuiltinRuleNode::restore_helper();
+                (
+                  []< typename Node >() static
+                {
+                    if constexpr ( !std::is_same_v< decltype( Node::restore_helper ), empty_lambda_type > ) {
+                        Node::restore_helper();
+                    }
+                }.template operator()< BuiltinRuleNodes >(),
+                  ... );
             }
         }
     };
@@ -1554,8 +1569,7 @@ namespace scltk
             execute_helpers_( custom_rules.restore_helpers );
         }
     };
-    using all_rules
-      = builtin_rules::apply_each< builtin_rules_executor_backend >::add_front< custom_rule_executor_backend >::apply< rule_executor >;
+    using all_rules = rule_executor< custom_rule_executor_backend, builtin_rules::apply< builtin_rules_executor_backend > >;
     auto make_executor_mode_ui_text() noexcept
     {
         switch ( details_::current_rule_executor_mode ) {
