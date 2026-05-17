@@ -56,13 +56,15 @@ args_base             := -pipe -finput-charset=$(input_charset) -fexec-charset=$
 args_debug            := -g3 -fuse-ld=lld -DDEBUG $(args_base) $(args_opt_debug) -fstack-protector-all -fstack-clash-protection
 args_release_32       := -DNDEBUG -static $(args_base) $(args_opt_release_32)
 args_release_64       := -DNDEBUG -static $(args_base) $(args_opt_release_64)
-args_ld_base          := -fuse-ld=lld \
+args_ld_32            := -Wl,-O3,--gc-sections,--strip-all,--as-needed \
+                         -Wl,--no-insert-timestamp,--no-seh,--disable-runtime-pseudo-reloc \
+                         -Wl,--disable-auto-import,--dynamicbase,--nxcompat,--tsaware \
+                         -Wl,--build-id=none
+args_ld_64            := -fuse-ld=lld \
                          -Wl,-O3,--lto-O3,--lto-CGO3,--gc-sections,--strip-all,--as-needed \
                          -Wl,--no-insert-timestamp,--no-seh,--disable-runtime-pseudo-reloc \
                          -Wl,--disable-auto-import,--dynamicbase,--nxcompat,--high-entropy-va,--tsaware \
                          -Wl,--icf=all,--build-id=none
-args_ld_32            := $(args_ld_base)
-args_ld_64            := $(args_ld_base)
 cmd_echo              := /usr/bin/echo
 cmd_upx               := /ucrt64/bin/upx --lzma --best --8-bit --no-align --ultra-brute -qqq
 cmd_gpg               := gpg -bs -u $(gpg_key) --yes
@@ -89,7 +91,6 @@ toolchain:
      mingw-w64-i686-toolchain\
      mingw-w64-ucrt-x86_64-toolchain\
      mingw-w64-ucrt-x86_64-lld\
-     mingw-w64-i686-lld\
      mingw-w64-ucrt-x86_64-7zip\
      mingw-w64-ucrt-x86_64-upx\
      base\
