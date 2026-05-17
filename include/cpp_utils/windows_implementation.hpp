@@ -108,32 +108,20 @@ namespace cpp_utils
       const std::wstring_view str, const UINT charset,
       std::pmr::memory_resource* const resource = std::pmr::get_default_resource() ) noexcept
     {
-        if ( str.empty() ) [[unlikely]] {
-            return std::pmr::string( resource );
+        if ( str.empty() || str.size() > static_cast< std::size_t >( INT_MAX ) ) [[unlikely]] {
+            return std::pmr::string{ resource };
         }
-        const auto str_len{ [ & ] noexcept
-        {
-            if ( str.size() > static_cast< size_t >( INT_MAX ) ) [[unlikely]] {
-                return 0;
-            }
-            return static_cast< int >( str.size() );
-        }() };
-        if ( str_len == 0 ) [[unlikely]] {
-            return std::pmr::string( resource );
-        }
-        DWORD flags{ 0 };
-        if ( charset == CP_UTF8 ) {
-            flags = WC_ERR_INVALID_CHARS;
-        }
+        const auto str_len{ static_cast< int >( str.size() ) };
+        const auto flags{ static_cast< DWORD >( charset == CP_UTF8 ? WC_ERR_INVALID_CHARS : 0 ) };
         const auto size_needed{ WideCharToMultiByte( charset, flags, str.data(), str_len, nullptr, 0, nullptr, nullptr ) };
         if ( size_needed == 0 ) [[unlikely]] {
-            return std::pmr::string( resource );
+            return std::pmr::string{ resource };
         }
-        std::pmr::string result( static_cast< std::size_t >( size_needed ), '\0', resource );
-        const auto converted{
-          WideCharToMultiByte( charset, flags, str.data(), str_len, result.data(), size_needed, nullptr, nullptr ) };
-        if ( converted == 0 || converted != size_needed ) [[unlikely]] {
-            return std::pmr::string( resource );
+        std::pmr::string result{ static_cast< std::size_t >( size_needed ), '\0', resource };
+        if ( WideCharToMultiByte( charset, flags, str.data(), str_len, result.data(), size_needed, nullptr, nullptr ) != size_needed )
+          [[unlikely]]
+        {
+            return std::pmr::string{ resource };
         }
         return result;
     }
@@ -141,30 +129,18 @@ namespace cpp_utils
       const std::string_view str, const UINT charset,
       std::pmr::memory_resource* const resource = std::pmr::get_default_resource() ) noexcept
     {
-        if ( str.empty() ) [[unlikely]] {
-            return std::pmr::wstring( resource );
+        if ( str.empty() || str.size() > static_cast< std::size_t >( INT_MAX ) ) [[unlikely]] {
+            return std::pmr::wstring{ resource };
         }
-        const auto str_len{ [ & ] noexcept
-        {
-            if ( str.size() > static_cast< size_t >( INT_MAX ) ) [[unlikely]] {
-                return 0;
-            }
-            return static_cast< int >( str.size() );
-        }() };
-        if ( str_len == 0 ) [[unlikely]] {
-            return std::pmr::wstring( resource );
-        }
-        DWORD flags{ 0 };
-        if ( charset == CP_UTF8 ) {
-            flags = MB_ERR_INVALID_CHARS;
-        }
+        const auto str_len{ static_cast< int >( str.size() ) };
+        const auto flags{ static_cast< DWORD >( charset == CP_UTF8 ? MB_ERR_INVALID_CHARS : 0 ) };
         const auto size_needed{ MultiByteToWideChar( charset, flags, str.data(), str_len, nullptr, 0 ) };
         if ( size_needed <= 0 ) [[unlikely]] {
-            return std::pmr::wstring( resource );
+            return std::pmr::wstring{ resource };
         }
-        std::pmr::wstring result( static_cast< std::size_t >( size_needed ), L'\0', resource );
+        std::pmr::wstring result{ static_cast< std::size_t >( size_needed ), L'\0', resource };
         if ( !MultiByteToWideChar( charset, flags, str.data(), str_len, result.data(), size_needed ) ) [[unlikely]] {
-            return std::pmr::wstring( resource );
+            return std::pmr::wstring{ resource };
         }
         return result;
     }
@@ -198,42 +174,84 @@ namespace cpp_utils
         using scoped_sc_handle = std::experimental::unique_resource< SC_HANDLE, decltype( sc_handle_deleter ) >;
         using scoped_hkey      = std::experimental::unique_resource< HKEY, decltype( reg_key_handle_deleter ) >;
         using scoped_psid      = std::experimental::unique_resource< PSID, decltype( sid_deleter ) >;
+        template < typename F >
+        [[nodiscard]] inline auto with_service(
+          const std::wstring_view service_name, const DWORD scm_access, const DWORD service_access, F&& func ) noexcept -> DWORD
+        {
+            scoped_sc_handle scm{ OpenSCManagerW( nullptr, nullptr, scm_access ), sc_handle_deleter };
+            if ( scm.get() == nullptr ) [[unlikely]] {
+                return GetLastError();
+            }
+            scoped_sc_handle svc{ OpenServiceW( scm.get(), service_name.data(), service_access ), sc_handle_deleter };
+            if ( svc.get() == nullptr ) [[unlikely]] {
+                return GetLastError();
+            }
+            return func( scm.get(), svc.get() );
+        }
+        template < typename F >
+        [[nodiscard]] inline auto for_each_dependency( const wchar_t* deps, F&& func ) noexcept -> DWORD
+        {
+            DWORD result{ ERROR_SUCCESS };
+            auto current{ deps };
+            while ( *current != L'\0' ) [[likely]] {
+                if ( const auto r{ func( current ) }; r != ERROR_SUCCESS && result == ERROR_SUCCESS ) [[unlikely]] {
+                    result = r;
+                }
+                current += std::wcslen( current ) + 1;
+            }
+            return result;
+        }
+        template < typename F >
+        [[nodiscard]] inline auto
+          with_service_dependencies( const SC_HANDLE service, F&& func, std::pmr::memory_resource* const resource ) noexcept -> DWORD
+        {
+            constexpr DWORD stack_buffer_size{ 8192 };
+            std::array< BYTE, stack_buffer_size > stack_buffer{};
+            DWORD bytes_needed{ 0 };
+            const auto stack_config{ reinterpret_cast< LPQUERY_SERVICE_CONFIGW >( stack_buffer.data() ) };
+            if ( QueryServiceConfigW( service, stack_config, stack_buffer_size, &bytes_needed ) ) [[likely]] {
+                if ( stack_config->lpDependencies && *stack_config->lpDependencies != L'\0' ) {
+                    return func( stack_config->lpDependencies );
+                }
+                return ERROR_SUCCESS;
+            }
+            if ( GetLastError() != ERROR_INSUFFICIENT_BUFFER ) [[unlikely]] {
+                return ERROR_SUCCESS;
+            }
+            std::pmr::vector< BYTE > heap_buffer{ bytes_needed, resource };
+            const auto heap_config{ reinterpret_cast< LPQUERY_SERVICE_CONFIGW >( heap_buffer.data() ) };
+            if ( !QueryServiceConfigW( service, heap_config, bytes_needed, &bytes_needed ) ) [[unlikely]] {
+                return ERROR_SUCCESS;
+            }
+            if ( heap_config->lpDependencies && *heap_config->lpDependencies != L'\0' ) {
+                return func( heap_config->lpDependencies );
+            }
+            return ERROR_SUCCESS;
+        }
         [[nodiscard]] inline auto stop_service_and_dependencies(
           const SC_HANDLE scm, const SC_HANDLE service, std::pmr::memory_resource* const resource ) noexcept -> DWORD
         {
-            using namespace std::chrono_literals;
-            DWORD result{ ERROR_SUCCESS };
-            SERVICE_STATUS status{};
-            DWORD bytes_needed{ 0 };
-            if ( !QueryServiceConfigW( service, nullptr, 0, &bytes_needed ) && GetLastError() == ERROR_INSUFFICIENT_BUFFER )
-              [[likely]]
+            auto result{ with_service_dependencies( service, [ & ]( const wchar_t* deps ) noexcept -> DWORD
             {
-                std::pmr::vector< BYTE > buffer( bytes_needed, resource );
-                const auto config{ reinterpret_cast< LPQUERY_SERVICE_CONFIGW >( buffer.data() ) };
-                if ( QueryServiceConfigW( service, config, bytes_needed, &bytes_needed ) && config->lpDependencies != nullptr
-                     && *config->lpDependencies != L'\0' ) [[likely]]
+                return for_each_dependency( deps, [ & ]( const wchar_t* dep_name ) noexcept -> DWORD
                 {
-                    auto dependency{ config->lpDependencies };
-                    while ( *dependency != L'\0' ) [[likely]] {
-                        scoped_sc_handle dependency_service{
-                          OpenServiceW( scm, dependency, SERVICE_STOP | SERVICE_QUERY_STATUS ), sc_handle_deleter };
-                        if ( dependency_service.get() != nullptr ) [[likely]] {
-                            const auto dep_result{ stop_service_and_dependencies( scm, dependency_service.get(), resource ) };
-                            if ( dep_result != ERROR_SUCCESS && result == ERROR_SUCCESS ) [[unlikely]] {
-                                result = dep_result;
-                            }
-                        }
-                        dependency += std::wcslen( dependency ) + 1;
+                    const scoped_sc_handle dep_svc{
+                      OpenServiceW( scm, dep_name, SERVICE_STOP | SERVICE_QUERY_STATUS ), sc_handle_deleter };
+                    if ( dep_svc.get() == nullptr ) [[unlikely]] {
+                        return ERROR_SUCCESS;
                     }
-                }
-            }
+                    return stop_service_and_dependencies( scm, dep_svc.get(), resource );
+                } );
+            }, resource ) };
+            SERVICE_STATUS status{};
             if ( ControlService( service, SERVICE_CONTROL_STOP, &status ) ) [[likely]] {
-                bool query_success{ true };
-                while ( query_success && status.dwCurrentState == SERVICE_STOP_PENDING ) {
-                    query_success = QueryServiceStatus( service, &status );
+                using namespace std::chrono_literals;
+                bool query_ok{ true };
+                while ( query_ok && status.dwCurrentState == SERVICE_STOP_PENDING ) {
+                    query_ok = QueryServiceStatus( service, &status );
                     std::this_thread::sleep_for( 50ms );
                 }
-                if ( !query_success || status.dwCurrentState != SERVICE_STOPPED ) [[unlikely]] {
+                if ( !query_ok || status.dwCurrentState != SERVICE_STOPPED ) [[unlikely]] {
                     result = ERROR_SERVICE_REQUEST_TIMEOUT;
                 }
             } else if ( const auto err{ GetLastError() }; err != ERROR_SERVICE_NOT_ACTIVE ) [[unlikely]] {
@@ -244,60 +262,50 @@ namespace cpp_utils
         [[nodiscard]] inline auto start_service_and_dependencies(
           const SC_HANDLE scm, const SC_HANDLE service, std::pmr::memory_resource* const resource ) noexcept -> DWORD
         {
-            DWORD result{ ERROR_SUCCESS };
-            DWORD bytes_needed{ 0 };
-            if ( !QueryServiceConfigW( service, nullptr, 0, &bytes_needed ) && GetLastError() == ERROR_INSUFFICIENT_BUFFER )
-              [[likely]]
+            const auto result{ with_service_dependencies( service, [ & ]( const wchar_t* deps ) noexcept -> DWORD
             {
-                std::pmr::vector< BYTE > buffer( bytes_needed, resource );
-                const auto config{ reinterpret_cast< LPQUERY_SERVICE_CONFIGW >( buffer.data() ) };
-                if ( QueryServiceConfigW( service, config, bytes_needed, &bytes_needed ) && config->lpDependencies != nullptr
-                     && *config->lpDependencies != L'\0' ) [[likely]]
+                return for_each_dependency( deps, [ & ]( const wchar_t* dep_name ) noexcept -> DWORD
                 {
-                    auto dependency{ config->lpDependencies };
-                    while ( *dependency != L'\0' ) [[likely]] {
-                        if ( *dependency != L'@' ) [[likely]] {
-                            scoped_sc_handle dependency_service{
-                              OpenServiceW( scm, dependency, SERVICE_START | SERVICE_QUERY_STATUS ), sc_handle_deleter };
-                            if ( dependency_service.get() != nullptr ) [[likely]] {
-                                SERVICE_STATUS status{};
-                                if ( !QueryServiceStatus( dependency_service.get(), &status )
-                                     || ( status.dwCurrentState != SERVICE_RUNNING && status.dwCurrentState != SERVICE_START_PENDING ) )
-                                  [[likely]]
-                                {
-                                    const auto dep_result{
-                                      start_service_and_dependencies( scm, dependency_service.get(), resource ) };
-                                    if ( dep_result != ERROR_SUCCESS && result == ERROR_SUCCESS ) [[unlikely]] {
-                                        result = dep_result;
-                                    }
-                                }
-                            }
-                        }
-                        dependency += std::wcslen( dependency ) + 1;
+                    if ( *dep_name == L'@' ) [[unlikely]] {
+                        return ERROR_SUCCESS;
                     }
-                }
+                    const scoped_sc_handle dep_svc{
+                      OpenServiceW( scm, dep_name, SERVICE_START | SERVICE_QUERY_STATUS ), sc_handle_deleter };
+                    if ( dep_svc.get() == nullptr ) [[unlikely]] {
+                        return ERROR_SUCCESS;
+                    }
+                    SERVICE_STATUS status{};
+                    if ( QueryServiceStatus( dep_svc.get(), &status )
+                         && ( status.dwCurrentState == SERVICE_RUNNING || status.dwCurrentState == SERVICE_START_PENDING ) )
+                    {
+                        return ERROR_SUCCESS;
+                    }
+                    return start_service_and_dependencies( scm, dep_svc.get(), resource );
+                } );
+            }, resource ) };
+            if ( result != ERROR_SUCCESS ) [[unlikely]] {
+                return result;
             }
-            if ( result == ERROR_SUCCESS && !StartServiceW( service, 0, nullptr ) ) [[likely]] {
+            if ( !StartServiceW( service, 0, nullptr ) ) [[unlikely]] {
                 if ( const auto err{ GetLastError() }; err != ERROR_SERVICE_ALREADY_RUNNING ) [[unlikely]] {
-                    result = err;
+                    return err;
                 }
             }
-            return result;
+            return ERROR_SUCCESS;
         }
     }
     [[nodiscard]] inline auto set_privilege( const HANDLE proc, const wchar_t* const privilege, const bool is_enabled ) noexcept
     {
-        HANDLE token_temp;
-        TOKEN_PRIVILEGES tp{};
-        tp.PrivilegeCount = 0;
-        LUID local_uid;
+        HANDLE token_temp{ nullptr };
         if ( !OpenProcessToken( proc, TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, &token_temp ) ) [[unlikely]] {
             return GetLastError();
         }
         const details_::scoped_handle token{ token_temp, details_::handle_deleter };
+        LUID local_uid{};
         if ( !LookupPrivilegeValueW( nullptr, privilege, &local_uid ) ) [[unlikely]] {
             return GetLastError();
         }
+        TOKEN_PRIVILEGES tp{};
         tp.PrivilegeCount             = 1;
         tp.Privileges[ 0 ].Luid       = local_uid;
         tp.Privileges[ 0 ].Attributes = is_enabled ? SE_PRIVILEGE_ENABLED : 0;
@@ -341,10 +349,10 @@ namespace cpp_utils
             }
             PROCESSENTRY32W proc_entry{};
             proc_entry.dwSize = sizeof( PROCESSENTRY32W );
-            bool result{ true };
             if ( !Process32FirstW( snapshot_.get(), &proc_entry ) ) [[unlikely]] {
                 return false;
             }
+            auto result{ true };
             do {
                 result = std::forward< F >( func )( std::as_const( proc_entry ) );
             } while ( Process32NextW( snapshot_.get(), &proc_entry ) );
@@ -403,10 +411,11 @@ namespace cpp_utils
       const HKEY main_key, const std::wstring_view sub_key, const std::wstring_view value_name, const DWORD type,
       const BYTE* const data, const DWORD data_size ) noexcept
     {
-        HKEY key_handle_temp;
-        const auto result{ RegCreateKeyExW(
-          main_key, sub_key.data(), 0, nullptr, REG_OPTION_NON_VOLATILE, KEY_WRITE, nullptr, &key_handle_temp, nullptr ) };
-        if ( result != ERROR_SUCCESS ) [[unlikely]] {
+        HKEY key_handle_temp{ nullptr };
+        if ( const auto result{ RegCreateKeyExW(
+               main_key, sub_key.data(), 0, nullptr, REG_OPTION_NON_VOLATILE, KEY_WRITE, nullptr, &key_handle_temp, nullptr ) };
+             result != ERROR_SUCCESS ) [[unlikely]]
+        {
             return result;
         }
         details_::scoped_hkey key_handle{ key_handle_temp, details_::reg_key_handle_deleter };
@@ -416,11 +425,12 @@ namespace cpp_utils
       const HKEY main_key, const std::wstring_view sub_key, const std::wstring_view value_name, const DWORD type,
       const BYTE* const data, const DWORD data_size ) noexcept
     {
-        HKEY key_handle_temp;
-        const auto result{ RegCreateKeyExW(
-          main_key, sub_key.data(), 0, nullptr, REG_OPTION_NON_VOLATILE, KEY_WRITE | KEY_WOW64_64KEY, nullptr, &key_handle_temp,
-          nullptr ) };
-        if ( result != ERROR_SUCCESS ) [[unlikely]] {
+        HKEY key_handle_temp{ nullptr };
+        if ( const auto result{ RegCreateKeyExW(
+               main_key, sub_key.data(), 0, nullptr, REG_OPTION_NON_VOLATILE, KEY_WRITE | KEY_WOW64_64KEY, nullptr,
+               &key_handle_temp, nullptr ) };
+             result != ERROR_SUCCESS ) [[unlikely]]
+        {
             return result;
         }
         details_::scoped_hkey key_handle{ key_handle_temp, details_::reg_key_handle_deleter };
@@ -429,9 +439,10 @@ namespace cpp_utils
     [[nodiscard]] inline auto
       delete_registry_key( const HKEY main_key, const std::wstring_view sub_key, const std::wstring_view value_name ) noexcept
     {
-        HKEY key_handle_temp;
-        const auto result{ RegOpenKeyExW( main_key, sub_key.data(), 0, KEY_SET_VALUE, &key_handle_temp ) };
-        if ( result != ERROR_SUCCESS ) [[unlikely]] {
+        HKEY key_handle_temp{ nullptr };
+        if ( const auto result{ RegOpenKeyExW( main_key, sub_key.data(), 0, KEY_SET_VALUE, &key_handle_temp ) };
+             result != ERROR_SUCCESS ) [[unlikely]]
+        {
             return result;
         }
         details_::scoped_hkey key_handle{ key_handle_temp, details_::reg_key_handle_deleter };
@@ -440,9 +451,10 @@ namespace cpp_utils
     [[nodiscard]] inline auto delete_registry_key_without_redirect(
       const HKEY main_key, const std::wstring_view sub_key, const std::wstring_view value_name ) noexcept
     {
-        HKEY key_handle_temp;
-        const auto result{ RegOpenKeyExW( main_key, sub_key.data(), 0, KEY_SET_VALUE | KEY_WOW64_64KEY, &key_handle_temp ) };
-        if ( result != ERROR_SUCCESS ) [[unlikely]] {
+        HKEY key_handle_temp{ nullptr };
+        if ( const auto result{ RegOpenKeyExW( main_key, sub_key.data(), 0, KEY_SET_VALUE | KEY_WOW64_64KEY, &key_handle_temp ) };
+             result != ERROR_SUCCESS ) [[unlikely]]
+        {
             return result;
         }
         details_::scoped_hkey key_handle{ key_handle_temp, details_::reg_key_handle_deleter };
@@ -458,86 +470,64 @@ namespace cpp_utils
     }
     [[nodiscard]] inline auto set_service_start_type( const std::wstring_view service_name, const DWORD start_type ) noexcept
     {
-        details_::scoped_sc_handle scm{ OpenSCManagerW( nullptr, nullptr, SC_MANAGER_CONNECT ), details_::sc_handle_deleter };
-        if ( scm.get() == nullptr ) [[unlikely]] {
-            return GetLastError();
-        }
-        details_::scoped_sc_handle service{
-          OpenServiceW( scm.get(), service_name.data(), SERVICE_CHANGE_CONFIG ), details_::sc_handle_deleter };
-        DWORD result{ ERROR_SUCCESS };
-        if ( service.get() != nullptr ) [[likely]] {
+        return details_::with_service(
+          service_name, SC_MANAGER_CONNECT, SERVICE_CHANGE_CONFIG,
+          [ start_type ]( const SC_HANDLE, const SC_HANDLE svc ) noexcept -> DWORD
+        {
             if ( !ChangeServiceConfigW(
-                   service.get(), SERVICE_NO_CHANGE, start_type, SERVICE_NO_CHANGE, nullptr, nullptr, nullptr, nullptr, nullptr,
-                   nullptr, nullptr ) ) [[unlikely]]
+                   svc, SERVICE_NO_CHANGE, start_type, SERVICE_NO_CHANGE, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+                   nullptr ) ) [[unlikely]]
             {
-                result = GetLastError();
+                return GetLastError();
             }
-        } else {
-            result = GetLastError();
-        }
-        return result;
+            return ERROR_SUCCESS;
+        } );
     }
     [[nodiscard]] inline auto stop_service_with_dependencies(
       const std::wstring_view service_name, std::pmr::memory_resource* const resource = std::pmr::get_default_resource() ) noexcept
     {
-        details_::scoped_sc_handle scm{
-          OpenSCManagerW( nullptr, nullptr, SC_MANAGER_CONNECT | SC_MANAGER_ENUMERATE_SERVICE ), details_::sc_handle_deleter };
-        if ( scm.get() == nullptr ) [[unlikely]] {
-            return GetLastError();
-        }
-        details_::scoped_sc_handle service{
-          OpenServiceW( scm.get(), service_name.data(), SERVICE_STOP | SERVICE_QUERY_STATUS | SERVICE_ENUMERATE_DEPENDENTS ),
-          details_::sc_handle_deleter };
-        DWORD result{ ERROR_SUCCESS };
-        if ( service.get() != nullptr ) [[likely]] {
-            result = details_::stop_service_and_dependencies( scm.get(), service.get(), resource );
-        } else {
-            result = GetLastError();
-        }
-        return result;
+        return details_::with_service(
+          service_name, SC_MANAGER_CONNECT | SC_MANAGER_ENUMERATE_SERVICE,
+          SERVICE_STOP | SERVICE_QUERY_STATUS | SERVICE_ENUMERATE_DEPENDENTS,
+          [ resource ]( const SC_HANDLE scm, const SC_HANDLE svc ) noexcept -> DWORD
+        {
+            return details_::stop_service_and_dependencies( scm, svc, resource );
+        } );
     }
     [[nodiscard]] inline auto start_service_with_dependencies(
       const std::wstring_view service_name, std::pmr::memory_resource* const resource = std::pmr::get_default_resource() ) noexcept
     {
-        details_::scoped_sc_handle scm{ OpenSCManagerW( nullptr, nullptr, SC_MANAGER_CONNECT ), details_::sc_handle_deleter };
-        if ( scm.get() == nullptr ) [[unlikely]] {
-            return GetLastError();
-        }
-        details_::scoped_sc_handle service{
-          OpenServiceW( scm.get(), service_name.data(), SERVICE_START | SERVICE_QUERY_STATUS | SERVICE_QUERY_CONFIG ),
-          details_::sc_handle_deleter };
-        DWORD result{ ERROR_SUCCESS };
-        if ( service.get() != nullptr ) [[likely]] {
-            result = details_::start_service_and_dependencies( scm.get(), service.get(), resource );
-        } else {
-            result = GetLastError();
-        }
-        return result;
+        return details_::with_service(
+          service_name, SC_MANAGER_CONNECT, SERVICE_START | SERVICE_QUERY_STATUS | SERVICE_QUERY_CONFIG,
+          [ resource ]( const SC_HANDLE scm, const SC_HANDLE svc ) noexcept -> DWORD
+        {
+            return details_::start_service_and_dependencies( scm, svc, resource );
+        } );
     }
     [[nodiscard]] inline auto is_run_as_admin() noexcept
     {
-        BOOL is_admin{ FALSE };
         SID_IDENTIFIER_AUTHORITY nt_authority{ SECURITY_NT_AUTHORITY };
-        PSID admins_group_temp;
-        const auto success{
-          AllocateAndInitializeSid(
-            &nt_authority, 2, SECURITY_BUILTIN_DOMAIN_RID, DOMAIN_ALIAS_RID_ADMINS, 0, 0, 0, 0, 0, 0, &admins_group_temp )
-          == TRUE };
-        details_::scoped_psid admins_group{ admins_group_temp, details_::sid_deleter };
-        if ( success ) [[likely]] {
-            CheckTokenMembership( nullptr, admins_group.get(), &is_admin );
+        PSID admins_group_temp{ nullptr };
+        if ( !AllocateAndInitializeSid(
+               &nt_authority, 2, SECURITY_BUILTIN_DOMAIN_RID, DOMAIN_ALIAS_RID_ADMINS, 0, 0, 0, 0, 0, 0, &admins_group_temp ) )
+          [[unlikely]]
+        {
+            return false;
         }
+        details_::scoped_psid admins_group{ admins_group_temp, details_::sid_deleter };
+        BOOL is_admin{ FALSE };
+        CheckTokenMembership( nullptr, admins_group.get(), &is_admin );
         return static_cast< bool >( is_admin );
     }
     inline auto clone_self() noexcept
     {
-        std::array< wchar_t, MAX_PATH > file_path;
+        std::array< wchar_t, MAX_PATH > file_path{};
         GetModuleFileNameW( nullptr, file_path.data(), MAX_PATH );
         ShellExecuteW( nullptr, L"open", file_path.data(), nullptr, nullptr, SW_SHOWNORMAL );
     }
     inline auto clone_self_as_admin() noexcept
     {
-        std::array< wchar_t, MAX_PATH > file_path;
+        std::array< wchar_t, MAX_PATH > file_path{};
         GetModuleFileNameW( nullptr, file_path.data(), MAX_PATH );
         ShellExecuteW( nullptr, L"runas", file_path.data(), nullptr, nullptr, SW_SHOWNORMAL );
     }
