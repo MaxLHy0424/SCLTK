@@ -170,25 +170,25 @@ namespace cpp_utils
     }
     namespace details_
     {
-        constexpr auto handle_deleter{ []( const HANDLE h ) static noexcept
+        inline constexpr auto handle_deleter{ []( const HANDLE h ) static noexcept
         {
             if ( h != nullptr && h != INVALID_HANDLE_VALUE ) [[likely]] {
                 CloseHandle( h );
             }
         } };
-        constexpr auto sc_handle_deleter{ []( const SC_HANDLE h ) static noexcept
+        inline constexpr auto sc_handle_deleter{ []( const SC_HANDLE h ) static noexcept
         {
             if ( h != nullptr ) [[likely]] {
                 CloseServiceHandle( h );
             }
         } };
-        constexpr auto reg_key_handle_deleter{ []( const HKEY h ) static noexcept
+        inline constexpr auto reg_key_handle_deleter{ []( const HKEY h ) static noexcept
         {
             if ( h != nullptr ) [[likely]] {
                 RegCloseKey( h );
             }
         } };
-        constexpr auto sid_deleter{ []( const PSID p ) static noexcept
+        inline constexpr auto sid_deleter{ []( const PSID p ) static noexcept
         {
             if ( p != nullptr ) [[likely]] {
                 FreeSid( p );
