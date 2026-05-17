@@ -4,6 +4,7 @@
 # include <ntdef.h>
 # include <tlhelp32.h>
 #endif
+#include <experimental/scope>
 #include <chrono>
 #include <concepts>
 #include <functional>
@@ -169,186 +170,34 @@ namespace cpp_utils
     }
     namespace details_
     {
-        struct scoped_handle final
+        constexpr auto handle_deleter{ []( const HANDLE h ) static noexcept
         {
-            HANDLE value{ nullptr };
-            [[nodiscard]] auto get() const noexcept
-            {
-                return value;
+            if ( h != nullptr && h != INVALID_HANDLE_VALUE ) [[likely]] {
+                CloseHandle( h );
             }
-            auto reset( const HANDLE h ) noexcept
-            {
-                if ( value != nullptr && value != INVALID_HANDLE_VALUE ) [[likely]] {
-                    CloseHandle( value );
-                }
-                value = h;
-            }
-            [[nodiscard]] auto put() noexcept
-            {
-                reset( nullptr );
-                return &value;
-            }
-            scoped_handle() noexcept = default;
-            scoped_handle( const HANDLE h ) noexcept
-              : value{ h }
-            { }
-            scoped_handle( const scoped_handle& )                    = delete;
-            auto operator=( const scoped_handle& ) -> scoped_handle& = delete;
-            scoped_handle( scoped_handle&& other ) noexcept
-              : value{ other.value }
-            {
-                other.value = nullptr;
-            }
-            auto operator=( scoped_handle&& other ) noexcept -> scoped_handle&
-            {
-                if ( this != &other ) [[likely]] {
-                    reset( other.value );
-                    other.value = nullptr;
-                }
-                return *this;
-            }
-            ~scoped_handle() noexcept
-            {
-                if ( value != nullptr && value != INVALID_HANDLE_VALUE ) [[likely]] {
-                    CloseHandle( value );
-                }
-            }
-        };
-        struct scoped_sc_handle final
+        } };
+        constexpr auto sc_handle_deleter{ []( const SC_HANDLE h ) static noexcept
         {
-            SC_HANDLE value{ nullptr };
-            [[nodiscard]] auto get() const noexcept
-            {
-                return value;
+            if ( h != nullptr ) [[likely]] {
+                CloseServiceHandle( h );
             }
-            void reset( const SC_HANDLE h ) noexcept
-            {
-                if ( value != nullptr ) [[likely]] {
-                    CloseServiceHandle( value );
-                }
-                value = h;
-            }
-            [[nodiscard]] auto put() noexcept
-            {
-                reset( nullptr );
-                return &value;
-            }
-            scoped_sc_handle() noexcept = default;
-            scoped_sc_handle( const SC_HANDLE h ) noexcept
-              : value{ h }
-            { }
-            scoped_sc_handle( const scoped_sc_handle& )                    = delete;
-            auto operator=( const scoped_sc_handle& ) -> scoped_sc_handle& = delete;
-            scoped_sc_handle( scoped_sc_handle&& other ) noexcept
-              : value{ other.value }
-            {
-                other.value = nullptr;
-            }
-            auto operator=( scoped_sc_handle&& other ) noexcept -> scoped_sc_handle&
-            {
-                if ( this != &other ) [[likely]] {
-                    reset( other.value );
-                    other.value = nullptr;
-                }
-                return *this;
-            }
-            ~scoped_sc_handle() noexcept
-            {
-                if ( value != nullptr ) [[likely]] {
-                    CloseServiceHandle( value );
-                }
-            }
-        };
-        struct scoped_hkey final
+        } };
+        constexpr auto reg_key_handle_deleter{ []( const HKEY h ) static noexcept
         {
-            HKEY value{ nullptr };
-            [[nodiscard]] auto get() const noexcept
-            {
-                return value;
+            if ( h != nullptr ) [[likely]] {
+                RegCloseKey( h );
             }
-            auto reset( const HKEY h ) noexcept
-            {
-                if ( value != nullptr ) [[likely]] {
-                    RegCloseKey( value );
-                }
-                value = h;
-            }
-            [[nodiscard]] auto put() noexcept
-            {
-                reset( nullptr );
-                return &value;
-            }
-            scoped_hkey() noexcept = default;
-            scoped_hkey( const HKEY h ) noexcept
-              : value{ h }
-            { }
-            scoped_hkey( const scoped_hkey& )                    = delete;
-            auto operator=( const scoped_hkey& ) -> scoped_hkey& = delete;
-            scoped_hkey( scoped_hkey&& other ) noexcept
-              : value{ other.value }
-            {
-                other.value = nullptr;
-            }
-            auto operator=( scoped_hkey&& other ) noexcept -> scoped_hkey&
-            {
-                if ( this != &other ) [[likely]] {
-                    reset( other.value );
-                    other.value = nullptr;
-                }
-                return *this;
-            }
-            ~scoped_hkey() noexcept
-            {
-                if ( value != nullptr ) [[likely]] {
-                    RegCloseKey( value );
-                }
-            }
-        };
-        struct scoped_psid final
+        } };
+        constexpr auto sid_deleter{ []( const PSID p ) static noexcept
         {
-            PSID value{ nullptr };
-            [[nodiscard]] auto get() const noexcept
-            {
-                return value;
+            if ( p != nullptr ) [[likely]] {
+                FreeSid( p );
             }
-            auto reset( const PSID p ) noexcept
-            {
-                if ( value != nullptr ) {
-                    FreeSid( value );
-                }
-                value = p;
-            }
-            [[nodiscard]] auto put() noexcept
-            {
-                reset( nullptr );
-                return &value;
-            }
-            scoped_psid() noexcept = default;
-            scoped_psid( const PSID p ) noexcept
-              : value{ p }
-            { }
-            scoped_psid( const scoped_psid& )                    = delete;
-            auto operator=( const scoped_psid& ) -> scoped_psid& = delete;
-            scoped_psid( scoped_psid&& other ) noexcept
-              : value{ other.value }
-            {
-                other.value = nullptr;
-            }
-            auto operator=( scoped_psid&& other ) noexcept -> scoped_psid&
-            {
-                if ( this != &other ) [[likely]] {
-                    reset( other.value );
-                    other.value = nullptr;
-                }
-                return *this;
-            }
-            ~scoped_psid() noexcept
-            {
-                if ( value != nullptr ) [[likely]] {
-                    FreeSid( value );
-                }
-            }
-        };
+        } };
+        using scoped_handle    = std::experimental::unique_resource< HANDLE, decltype( handle_deleter ) >;
+        using scoped_sc_handle = std::experimental::unique_resource< SC_HANDLE, decltype( sc_handle_deleter ) >;
+        using scoped_hkey      = std::experimental::unique_resource< HKEY, decltype( reg_key_handle_deleter ) >;
+        using scoped_psid      = std::experimental::unique_resource< PSID, decltype( sid_deleter ) >;
         [[nodiscard]] inline auto stop_service_and_dependencies(
           const SC_HANDLE scm, const SC_HANDLE service, std::pmr::memory_resource* const resource ) noexcept -> DWORD
         {
@@ -366,7 +215,8 @@ namespace cpp_utils
                 {
                     auto dependency{ config->lpDependencies };
                     while ( *dependency != L'\0' ) [[likely]] {
-                        scoped_sc_handle dependency_service{ OpenServiceW( scm, dependency, SERVICE_STOP | SERVICE_QUERY_STATUS ) };
+                        scoped_sc_handle dependency_service{
+                          OpenServiceW( scm, dependency, SERVICE_STOP | SERVICE_QUERY_STATUS ), sc_handle_deleter };
                         if ( dependency_service.get() != nullptr ) [[likely]] {
                             const auto dep_result{ stop_service_and_dependencies( scm, dependency_service.get(), resource ) };
                             if ( dep_result != ERROR_SUCCESS && result == ERROR_SUCCESS ) [[unlikely]] {
@@ -408,7 +258,7 @@ namespace cpp_utils
                     while ( *dependency != L'\0' ) [[likely]] {
                         if ( *dependency != L'@' ) [[likely]] {
                             scoped_sc_handle dependency_service{
-                              OpenServiceW( scm, dependency, SERVICE_START | SERVICE_QUERY_STATUS ) };
+                              OpenServiceW( scm, dependency, SERVICE_START | SERVICE_QUERY_STATUS ), sc_handle_deleter };
                             if ( dependency_service.get() != nullptr ) [[likely]] {
                                 SERVICE_STATUS status{};
                                 if ( !QueryServiceStatus( dependency_service.get(), &status )
@@ -437,13 +287,14 @@ namespace cpp_utils
     }
     [[nodiscard]] inline auto set_privilege( const HANDLE proc, const wchar_t* const privilege, const bool is_enabled ) noexcept
     {
-        details_::scoped_handle token;
+        HANDLE token_temp;
         TOKEN_PRIVILEGES tp{};
         tp.PrivilegeCount = 0;
         LUID local_uid;
-        if ( !OpenProcessToken( proc, TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, token.put() ) ) [[unlikely]] {
+        if ( !OpenProcessToken( proc, TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, &token_temp ) ) [[unlikely]] {
             return GetLastError();
         }
+        const details_::scoped_handle token{ token_temp, details_::handle_deleter };
         if ( !LookupPrivilegeValueW( nullptr, privilege, &local_uid ) ) [[unlikely]] {
             return GetLastError();
         }
@@ -460,7 +311,7 @@ namespace cpp_utils
       private:
         using p_nt_terminate_process = NTSTATUS( NTAPI* )( HANDLE, NTSTATUS );
         p_nt_terminate_process nt_terminate_process_{ nullptr };
-        details_::scoped_handle snapshot_{ nullptr };
+        details_::scoped_handle snapshot_{ nullptr, details_::handle_deleter };
       public:
         [[nodiscard]] auto valid() const noexcept
         {
@@ -501,7 +352,7 @@ namespace cpp_utils
         }
         [[nodiscard]] auto terminate_by_pid( const DWORD pid ) const noexcept
         {
-            details_::scoped_handle proc_handle{ OpenProcess( PROCESS_TERMINATE, FALSE, pid ) };
+            details_::scoped_handle proc_handle{ OpenProcess( PROCESS_TERMINATE, FALSE, pid ), details_::handle_deleter };
             if ( proc_handle.get() == nullptr ) [[unlikely]] {
                 return false;
             }
@@ -552,45 +403,49 @@ namespace cpp_utils
       const HKEY main_key, const std::wstring_view sub_key, const std::wstring_view value_name, const DWORD type,
       const BYTE* const data, const DWORD data_size ) noexcept
     {
-        details_::scoped_hkey key_handle;
-        auto result{ RegCreateKeyExW(
-          main_key, sub_key.data(), 0, nullptr, REG_OPTION_NON_VOLATILE, KEY_WRITE, nullptr, key_handle.put(), nullptr ) };
+        HKEY key_handle_temp;
+        const auto result{ RegCreateKeyExW(
+          main_key, sub_key.data(), 0, nullptr, REG_OPTION_NON_VOLATILE, KEY_WRITE, nullptr, &key_handle_temp, nullptr ) };
         if ( result != ERROR_SUCCESS ) [[unlikely]] {
             return result;
         }
+        details_::scoped_hkey key_handle{ key_handle_temp, details_::reg_key_handle_deleter };
         return RegSetValueExW( key_handle.get(), value_name.data(), 0, type, data, data_size );
     }
     [[nodiscard]] inline auto create_registry_key_without_redirect(
       const HKEY main_key, const std::wstring_view sub_key, const std::wstring_view value_name, const DWORD type,
       const BYTE* const data, const DWORD data_size ) noexcept
     {
-        details_::scoped_hkey key_handle;
-        auto result{ RegCreateKeyExW(
-          main_key, sub_key.data(), 0, nullptr, REG_OPTION_NON_VOLATILE, KEY_WRITE | KEY_WOW64_64KEY, nullptr, key_handle.put(),
+        HKEY key_handle_temp;
+        const auto result{ RegCreateKeyExW(
+          main_key, sub_key.data(), 0, nullptr, REG_OPTION_NON_VOLATILE, KEY_WRITE | KEY_WOW64_64KEY, nullptr, &key_handle_temp,
           nullptr ) };
         if ( result != ERROR_SUCCESS ) [[unlikely]] {
             return result;
         }
+        details_::scoped_hkey key_handle{ key_handle_temp, details_::reg_key_handle_deleter };
         return RegSetValueExW( key_handle.get(), value_name.data(), 0, type, data, data_size );
     }
     [[nodiscard]] inline auto
       delete_registry_key( const HKEY main_key, const std::wstring_view sub_key, const std::wstring_view value_name ) noexcept
     {
-        details_::scoped_hkey key_handle;
-        auto result{ RegOpenKeyExW( main_key, sub_key.data(), 0, KEY_SET_VALUE, key_handle.put() ) };
+        HKEY key_handle_temp;
+        const auto result{ RegOpenKeyExW( main_key, sub_key.data(), 0, KEY_SET_VALUE, &key_handle_temp ) };
         if ( result != ERROR_SUCCESS ) [[unlikely]] {
             return result;
         }
+        details_::scoped_hkey key_handle{ key_handle_temp, details_::reg_key_handle_deleter };
         return RegDeleteValueW( key_handle.get(), value_name.data() );
     }
     [[nodiscard]] inline auto delete_registry_key_without_redirect(
       const HKEY main_key, const std::wstring_view sub_key, const std::wstring_view value_name ) noexcept
     {
-        details_::scoped_hkey key_handle;
-        auto result{ RegOpenKeyExW( main_key, sub_key.data(), 0, KEY_SET_VALUE | KEY_WOW64_64KEY, key_handle.put() ) };
+        HKEY key_handle_temp;
+        const auto result{ RegOpenKeyExW( main_key, sub_key.data(), 0, KEY_SET_VALUE | KEY_WOW64_64KEY, &key_handle_temp ) };
         if ( result != ERROR_SUCCESS ) [[unlikely]] {
             return result;
         }
+        details_::scoped_hkey key_handle{ key_handle_temp, details_::reg_key_handle_deleter };
         return RegDeleteValueW( key_handle.get(), value_name.data() );
     }
     [[nodiscard]] inline auto delete_registry_tree( const HKEY main_key, const std::wstring_view sub_key ) noexcept
@@ -603,11 +458,12 @@ namespace cpp_utils
     }
     [[nodiscard]] inline auto set_service_start_type( const std::wstring_view service_name, const DWORD start_type ) noexcept
     {
-        details_::scoped_sc_handle scm{ OpenSCManagerW( nullptr, nullptr, SC_MANAGER_CONNECT ) };
+        details_::scoped_sc_handle scm{ OpenSCManagerW( nullptr, nullptr, SC_MANAGER_CONNECT ), details_::sc_handle_deleter };
         if ( scm.get() == nullptr ) [[unlikely]] {
             return GetLastError();
         }
-        details_::scoped_sc_handle service{ OpenServiceW( scm.get(), service_name.data(), SERVICE_CHANGE_CONFIG ) };
+        details_::scoped_sc_handle service{
+          OpenServiceW( scm.get(), service_name.data(), SERVICE_CHANGE_CONFIG ), details_::sc_handle_deleter };
         DWORD result{ ERROR_SUCCESS };
         if ( service.get() != nullptr ) [[likely]] {
             if ( !ChangeServiceConfigW(
@@ -624,12 +480,14 @@ namespace cpp_utils
     [[nodiscard]] inline auto stop_service_with_dependencies(
       const std::wstring_view service_name, std::pmr::memory_resource* const resource = std::pmr::get_default_resource() ) noexcept
     {
-        details_::scoped_sc_handle scm{ OpenSCManagerW( nullptr, nullptr, SC_MANAGER_CONNECT | SC_MANAGER_ENUMERATE_SERVICE ) };
+        details_::scoped_sc_handle scm{
+          OpenSCManagerW( nullptr, nullptr, SC_MANAGER_CONNECT | SC_MANAGER_ENUMERATE_SERVICE ), details_::sc_handle_deleter };
         if ( scm.get() == nullptr ) [[unlikely]] {
             return GetLastError();
         }
         details_::scoped_sc_handle service{
-          OpenServiceW( scm.get(), service_name.data(), SERVICE_STOP | SERVICE_QUERY_STATUS | SERVICE_ENUMERATE_DEPENDENTS ) };
+          OpenServiceW( scm.get(), service_name.data(), SERVICE_STOP | SERVICE_QUERY_STATUS | SERVICE_ENUMERATE_DEPENDENTS ),
+          details_::sc_handle_deleter };
         DWORD result{ ERROR_SUCCESS };
         if ( service.get() != nullptr ) [[likely]] {
             result = details_::stop_service_and_dependencies( scm.get(), service.get(), resource );
@@ -641,12 +499,13 @@ namespace cpp_utils
     [[nodiscard]] inline auto start_service_with_dependencies(
       const std::wstring_view service_name, std::pmr::memory_resource* const resource = std::pmr::get_default_resource() ) noexcept
     {
-        details_::scoped_sc_handle scm{ OpenSCManagerW( nullptr, nullptr, SC_MANAGER_CONNECT ) };
+        details_::scoped_sc_handle scm{ OpenSCManagerW( nullptr, nullptr, SC_MANAGER_CONNECT ), details_::sc_handle_deleter };
         if ( scm.get() == nullptr ) [[unlikely]] {
             return GetLastError();
         }
         details_::scoped_sc_handle service{
-          OpenServiceW( scm.get(), service_name.data(), SERVICE_START | SERVICE_QUERY_STATUS | SERVICE_QUERY_CONFIG ) };
+          OpenServiceW( scm.get(), service_name.data(), SERVICE_START | SERVICE_QUERY_STATUS | SERVICE_QUERY_CONFIG ),
+          details_::sc_handle_deleter };
         DWORD result{ ERROR_SUCCESS };
         if ( service.get() != nullptr ) [[likely]] {
             result = details_::start_service_and_dependencies( scm.get(), service.get(), resource );
@@ -658,12 +517,14 @@ namespace cpp_utils
     [[nodiscard]] inline auto is_run_as_admin() noexcept
     {
         BOOL is_admin{ FALSE };
-        details_::scoped_psid admins_group;
         SID_IDENTIFIER_AUTHORITY nt_authority{ SECURITY_NT_AUTHORITY };
-        if ( AllocateAndInitializeSid(
-               &nt_authority, 2, SECURITY_BUILTIN_DOMAIN_RID, DOMAIN_ALIAS_RID_ADMINS, 0, 0, 0, 0, 0, 0, admins_group.put() )
-             == TRUE ) [[likely]]
-        {
+        PSID admins_group_temp;
+        const auto success{
+          AllocateAndInitializeSid(
+            &nt_authority, 2, SECURITY_BUILTIN_DOMAIN_RID, DOMAIN_ALIAS_RID_ADMINS, 0, 0, 0, 0, 0, 0, &admins_group_temp )
+          == TRUE };
+        details_::scoped_psid admins_group{ admins_group_temp, details_::sid_deleter };
+        if ( success ) [[likely]] {
             CheckTokenMembership( nullptr, admins_group.get(), &is_admin );
         }
         return static_cast< bool >( is_admin );
