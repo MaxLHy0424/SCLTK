@@ -152,7 +152,7 @@ namespace cpp_utils
             const auto area{ info.dwSize.X * info.dwSize.Y };
             DWORD written;
             SetConsoleCursorPosition( self.std_output_handle, top_left );
-            std::print( "{}", std::pmr::string{ static_cast< std::size_t >( area ), ' ', resource } );
+            std::print( "{}", std::pmr::string( static_cast< std::size_t >( area ), ' ', resource ) );
             FillConsoleOutputAttribute( self.std_output_handle, info.wAttributes, area, top_left, &written );
             SetConsoleCursorPosition( self.std_output_handle, top_left );
             return self;
@@ -337,7 +337,7 @@ namespace cpp_utils
             const auto [ console_width, console_height ]{ cursor_position };
             SetConsoleCursorPosition( con_.std_output_handle, { 0, console_height } );
             std::print(
-              "{}", std::pmr::string{ static_cast< std::size_t >( console_width ), ' ', lines_.get_allocator().resource() } );
+              "{}", std::pmr::string( static_cast< std::size_t >( console_width ), ' ', lines_.get_allocator().resource() ) );
             SetConsoleCursorPosition( con_.std_output_handle, { 0, console_height } );
             line.print_text();
             SetConsoleCursorPosition( con_.std_output_handle, { 0, console_height } );

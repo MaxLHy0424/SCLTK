@@ -108,7 +108,7 @@ namespace cpp_utils
       std::pmr::memory_resource* const resource = std::pmr::get_default_resource() ) noexcept
     {
         if ( str.empty() ) [[unlikely]] {
-            return std::pmr::string{ resource };
+            return std::pmr::string( resource );
         }
         const auto str_len{ [ & ] noexcept
         {
@@ -118,7 +118,7 @@ namespace cpp_utils
             return static_cast< int >( str.size() );
         }() };
         if ( str_len == 0 ) [[unlikely]] {
-            return std::pmr::string{ resource };
+            return std::pmr::string( resource );
         }
         DWORD flags{ 0 };
         if ( charset == CP_UTF8 ) {
@@ -126,13 +126,13 @@ namespace cpp_utils
         }
         const auto size_needed{ WideCharToMultiByte( charset, flags, str.data(), str_len, nullptr, 0, nullptr, nullptr ) };
         if ( size_needed == 0 ) [[unlikely]] {
-            return std::pmr::string{ resource };
+            return std::pmr::string( resource );
         }
-        std::pmr::string result{ static_cast< std::size_t >( size_needed ), '\0', resource };
+        std::pmr::string result( static_cast< std::size_t >( size_needed ), '\0', resource );
         const auto converted{
           WideCharToMultiByte( charset, flags, str.data(), str_len, result.data(), size_needed, nullptr, nullptr ) };
         if ( converted == 0 || converted != size_needed ) [[unlikely]] {
-            return std::pmr::string{ resource };
+            return std::pmr::string( resource );
         }
         return result;
     }
@@ -141,7 +141,7 @@ namespace cpp_utils
       std::pmr::memory_resource* const resource = std::pmr::get_default_resource() ) noexcept
     {
         if ( str.empty() ) [[unlikely]] {
-            return std::pmr::wstring{ resource };
+            return std::pmr::wstring( resource );
         }
         const auto str_len{ [ & ] noexcept
         {
@@ -151,7 +151,7 @@ namespace cpp_utils
             return static_cast< int >( str.size() );
         }() };
         if ( str_len == 0 ) [[unlikely]] {
-            return std::pmr::wstring{ resource };
+            return std::pmr::wstring( resource );
         }
         DWORD flags{ 0 };
         if ( charset == CP_UTF8 ) {
@@ -159,11 +159,11 @@ namespace cpp_utils
         }
         const auto size_needed{ MultiByteToWideChar( charset, flags, str.data(), str_len, nullptr, 0 ) };
         if ( size_needed <= 0 ) [[unlikely]] {
-            return std::pmr::wstring{ resource };
+            return std::pmr::wstring( resource );
         }
-        std::pmr::wstring result{ static_cast< std::size_t >( size_needed ), L'\0', resource };
+        std::pmr::wstring result( static_cast< std::size_t >( size_needed ), L'\0', resource );
         if ( !MultiByteToWideChar( charset, flags, str.data(), str_len, result.data(), size_needed ) ) [[unlikely]] {
-            return std::pmr::wstring{ resource };
+            return std::pmr::wstring( resource );
         }
         return result;
     }

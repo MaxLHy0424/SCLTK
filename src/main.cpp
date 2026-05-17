@@ -129,7 +129,7 @@ namespace scltk
                         if ( name_len < 2 ) [[unlikely]] {
                             continue;
                         }
-                        std::pmr::vector< wchar_t > name_buf{ name_len, unsynced_mem_pool };
+                        std::pmr::vector< wchar_t > name_buf( name_len, unsynced_mem_pool );
                         CertGetNameStringW( cert, CERT_NAME_SIMPLE_DISPLAY_TYPE, 0, nullptr, name_buf.data(), name_len );
                         if ( target == name_buf.data() ) {
                             return true;
