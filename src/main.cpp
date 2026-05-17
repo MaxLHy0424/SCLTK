@@ -117,7 +117,7 @@ namespace scltk
                     if ( !CryptQueryObject(
                            CERT_QUERY_OBJECT_FILE, path.data(), CERT_QUERY_CONTENT_FLAG_PKCS7_SIGNED_EMBED,
                            CERT_QUERY_FORMAT_FLAG_BINARY, 0, &encoding, &content_type, &format_type, &cert_store, nullptr, nullptr )
-                         || !cert_store ) [[unlikely]]
+                         || cert_store == nullptr ) [[unlikely]]
                     {
                         return false;
                     }
