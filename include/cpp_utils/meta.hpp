@@ -510,7 +510,7 @@ namespace cpp_utils
             using type = error_type;
         };
         template <>
-        struct type_list_concat_impl< type_list<> > final
+        struct type_list_concat_impl<> final
         {
             using type = type_list<>;
         };
