@@ -36,14 +36,19 @@
 
 ## 1 启动
 
-SCLTK 发行版文件名规则为 `SCLTK-<arch>-<runtime>.exe`，其中 `<arch>` 一般为 `x86_64` 或 `i686`，`<runtime>` 一般为 `ucrt` 或 `msvcrt`。
+SCLTK 的发行版文件名为 `SCLTK.exe`。SCLTK 支持的 Windows OS 如下：
 
-`<arch>` 和 `<runtime>` 的具体信息如下：
+| 版本            | 架构  | 额外要求                      |
+| --------------- | ----- | ----------------------------- |
+| Windows 10/11   | 64 位 | 无                            |
+| Windows 7/8/8.1 | 64 位 | 需安装 KB2999226（UCRT 补丁） |
 
-- **`x86_64` & `ucrt`（推荐）**\
-  开发工具链为 msys2 `mingw-w64-ucrt-x86_64-toolchain`，64 位可执行文件，运行时库为 Universal C Runtime（UCRT），支持 Windows 10 以上的 Windows OS（部分 Windows OS 在安装特定更新后可以运行）。
-- **`i686` & `msvcrt`**\
-  开发工具链为 msys2 `mingw-w64-i686-toolchain`，32 位可执行文件，运行时库为 Microsoft Visual C Runtime（MSVCRT），支持大部分 Windows OS。
+SCLTK v7.2.0 及后续版本不再支持：
+
+- 32 位 Windows OS；
+- 未安装 UCRT 的 Windows OS。
+
+对于正在使用上述不支持的 Windows OS的用户，请切换到 SCLTK-Legacy（即将推出！）。
 
 ## 2 常规操作
 
@@ -63,11 +68,11 @@ SCLTK 发行版文件名规则为 `SCLTK-<arch>-<runtime>.exe`，其中 `<arch>`
 > 配置文件头部注释为 SCLTK 自动生成。
 >
 > 配置解析规则如下：
-> - 跳过注释。
-> - 配置以行为单位解析。
-> - 各个配置分类在配置文件中由不同标签区分，标签的格式为 `[<标签名>]`，`<标签名>` 与中括号之间可以有若干空格。
-> - 如果匹配不到配置分类，则当前读取到的标签到下一个标签的前一行都将被忽略。
-> - 忽略每行前导和末尾的空白字符，包括空格，换页符（转义字符 0x0c `\f`），横向制表符（转义字符 0x09 `\t`），纵向制表符（转义字符 0x0b `\v`）等。
+> - 跳过注释；
+> - 配置以行为单位解析；
+> - 各个配置分类在配置文件中由不同标签区分，标签的格式为 `[<标签名>]`，`<标签名>` 与中括号之间可以有若干空格；
+> - 如果匹配不到配置分类，则当前读取到的标签到下一个标签的前一行都将被忽略；
+> - 忽略每行前导和末尾的空白字符，包括空格，换页符（转义字符 0x0c `\f`），横向制表符（转义字符 0x09 `\t`），纵向制表符（转义字符 0x0b `\v`）等；
 > - 如果当前行不是标签，则该行将由上一个标签处理。
 
 ### 3.0 配置操作
@@ -101,7 +106,7 @@ SCLTK 窗口相关选项。位于 `[ 选项 ]` 下。
 
 执行自定义规则破解/恢复时使用的规则。
 
-配置文件中标签 `[ custom_rules ]` 到下一个标签的部分。
+配置文件中标签 `[custom_rules]` 到下一个标签的部分。
 
 一项自定义规则遵循以下格式：
 
@@ -188,10 +193,6 @@ restore_helper: "abc helper.exe" restore
 ## 破解后一些软件运行时报错 “找不到文件”
 
 在不影响软件正常运行的情况下，可以尝试修改可执行文件名称。另外，打开注册表编辑器，在 `HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options` 和 `HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Windows NT\CurrentVersion\Image File Execution Options` 下找到和要运行的软件的文件名称相同的项，删除即可。
-
-## SCLTK 在某些版本的 Windows OS 上无法运行
-
-SCLTK 不对 Windows Vista 及更早的版本保有任何技术支持。SCLTK 将会持续支持对当前受 Microsoft 支持的 Windows OS。针对于 Windows 7/8/8.1，我们将开始进行兼容性改进，确保在 2027 年前保留对 Windows 7/8/8.1 的支持。
 
 ## SCLTK 使用内建规则破解不起作用
 
