@@ -832,9 +832,9 @@ namespace scltk
           .add_back( make_title_text< "[ 关  于 ]", 2 >.view() )
           .add_back( " < 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
           .add_back(
-            "\n[ 软件名 ]\n\n " INFO_FULL_NAME " (" INFO_SHORT_NAME ")\n\n[ 软件版本 ]\n\n 标签: " INFO_GIT_TAG
-            "\n 分支: " INFO_GIT_BRANCH "\n 提交: " INFO_GIT_HASH "\n\n[ 许可证与版权 ]\n\n " INFO_LICENSE
-            "\n\n " INFO_COPYRIGHT "\n\n[ 开源仓库 ]\n\n " INFO_REPO_URL )
+            "\n[ 软件名 ]\n\n " INFO_FULL_NAME "\n\n[ 软件版本 ]\n\n 标签: " INFO_GIT_TAG "\n 分支: " INFO_GIT_BRANCH
+            "\n 提交: " INFO_GIT_HASH "\n\n[ 许可证与版权 ]\n\n " INFO_LICENSE "\n\n " INFO_COPYRIGHT
+            "\n\n[ 开源仓库 ]\n\n " INFO_REPO_URL )
           .show();
         return func_back;
     }
