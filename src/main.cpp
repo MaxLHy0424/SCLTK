@@ -237,22 +237,6 @@ namespace scltk
     runtime_rule_node custom_rules;
     namespace details_
     {
-#ifndef _WIN64
-        struct wow64_no_filesystem_redirect final
-        {
-            PVOID value{ nullptr };
-            auto operator=( const wow64_no_filesystem_redirect& ) noexcept -> wow64_no_filesystem_redirect& = delete;
-            wow64_no_filesystem_redirect() noexcept
-            {
-                Wow64DisableWow64FsRedirection( &value );
-            }
-            wow64_no_filesystem_redirect( const wow64_no_filesystem_redirect& ) noexcept = delete;
-            ~wow64_no_filesystem_redirect() noexcept
-            {
-                Wow64RevertWow64FsRedirection( value );
-            }
-        };
-#endif
         auto press_any_key_to_return() noexcept
         {
             std::print( "\n\n 请按任意键返回." );
@@ -954,9 +938,6 @@ namespace scltk
         auto reset_hosts() noexcept
         {
             std::print( " -> 重置 Hosts.\n" );
-#ifndef _WIN64
-            const wow64_no_filesystem_redirect _;
-#endif
             const auto hosts_path{ [] static
             {
                 win32_file_path_buffer_t result;
@@ -1095,9 +1076,6 @@ namespace scltk
                 ( void ) proc_snapshot.terminate_by_name( L"explorer.exe"sv );
             }
             std::print( " -> 启动进程.\n" );
-#ifndef _WIN64
-            const wow64_no_filesystem_redirect _;
-#endif
             wchar_t cmd[]{ L"explorer.exe" };
             STARTUPINFOW startup_info{};
             PROCESS_INFORMATION proc_info{};
