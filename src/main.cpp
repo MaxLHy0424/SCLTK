@@ -55,6 +55,7 @@ namespace scltk
     {
         const auto current_process{ GetCurrentProcess() };
         ( void ) cpp_utils::set_privilege( current_process, L"" SE_DEBUG_NAME, true );
+        ( void ) cpp_utils::set_privilege( current_process, L"" SE_SHUTDOWN_NAME, true );
     }
     constexpr auto quit() noexcept
     {
@@ -1098,6 +1099,16 @@ namespace scltk
                 CloseHandle( proc_info.hThread );
             }
         }
+        auto logoff() noexcept
+        {
+            std::print( " (i) 5s 后将注销当前用户账户.\n" );
+            std::thread{ [] static noexcept
+            {
+                std::this_thread::sleep_for( 5s );
+                ExitWindowsEx( EWX_LOGOFF, 0 );
+            } }
+              .detach();
+        }
         auto restore_usb_device_access() noexcept
         {
             std::print( " -> 写入注册表.\n" );
@@ -1122,6 +1133,7 @@ namespace scltk
     {
         using funcs = cpp_utils::type_list<
           details_::func_item< "重启资源管理器", details_::relaunch_explorer >,
+          details_::func_item< "注销当前用户账户", details_::logoff >,
           details_::func_item< "恢复操作系统组件", details_::restore_os_components >,
           details_::func_item< "恢复 USB 存储设备访问", details_::restore_usb_device_access >,
           details_::func_item< "修复网络访问", details_::fix_network >,
