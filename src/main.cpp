@@ -538,7 +538,8 @@ namespace scltk
     };
     using crack_restore_config = details_::options_config_node<
       "crack_restore", "破解与恢复", false,
-      details_::options_info_table< details_::option_info< "hijack_image", "映像劫持" > > >;
+      details_::options_info_table<
+        details_::option_info< "hijack_image", "映像劫持" >, details_::option_info< "suspend_process", "挂起进程" > > >;
     using window_config = details_::options_config_node<
       "window", "窗口显示", true,
       details_::options_info_table<
@@ -1214,6 +1215,8 @@ namespace scltk
             ( Backends::hijack_image(), ... );
             { ( Backends::run_undo_hijack_image || ... ) } -> std::convertible_to< bool >;
             ( Backends::undo_hijack_image(), ... );
+            { ( Backends::run_suspend_procs || ... ) } -> std::convertible_to< bool >;
+            ( Backends::suspend_procs(), ... );
             { ( Backends::run_terminate_procs || ... ) } -> std::convertible_to< bool >;
             ( Backends::terminate_procs(), ... );
             { ( Backends::run_crack_helper || ... ) } -> std::convertible_to< bool >;
@@ -1227,6 +1230,7 @@ namespace scltk
         {
             constexpr const auto& crack_restore_config_node{ std::get< crack_restore_config >( config_nodes ) };
             constexpr const auto& enabled_hijack_image{ crack_restore_config_node.at< "hijack_image" >() };
+            constexpr const auto& enabled_suspend_process{ crack_restore_config_node.at< "suspend_process" >() };
             ( void ) proc_snapshot.refresh();
             if ( !proc_snapshot.valid() ) [[unlikely]] {
                 std::print( " (!) 进程快照初始化错误!\n" );
@@ -1255,6 +1259,19 @@ namespace scltk
                     }
                 }.template operator()< Backends >(),
                   ... );
+            }
+            if constexpr ( ( Backends::run_suspend_procs || ... ) ) {
+                if ( enabled_suspend_process ) {
+                    std::print( " -> 挂起进程.\n" );
+                    (
+                      []< typename Backend >() static
+                    {
+                        if constexpr ( Backend::run_suspend_procs ) {
+                            Backend::suspend_procs();
+                        }
+                    }.template operator()< Backends >(),
+                      ... );
+                }
             }
             if constexpr ( ( Backends::run_terminate_procs || ... ) ) {
                 std::print( " -> 终止进程.\n" );
@@ -1427,6 +1444,13 @@ namespace scltk
                 }
             }
         }
+        static constexpr auto run_suspend_procs{ !procs.empty() };
+        static auto suspend_procs() noexcept
+        {
+            if constexpr ( run_suspend_procs ) {
+                ( void ) proc_snapshot.suspend_by_names( procs );
+            }
+        }
         static constexpr auto run_terminate_procs{ !procs.empty() };
         static auto terminate_procs() noexcept
         {
@@ -1513,6 +1537,11 @@ namespace scltk
                   details_::concat_string< wchar_t >(
                     LR"(SOFTWARE\WOW6432Node\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\)"sv, proc ) );
             }
+        }
+        static constexpr auto run_suspend_procs{ true };
+        static auto suspend_procs() noexcept
+        {
+            ( void ) proc_snapshot.suspend_by_names( custom_rules.procs );
         }
         static constexpr auto run_terminate_procs{ true };
         static auto terminate_procs() noexcept
