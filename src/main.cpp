@@ -1101,10 +1101,10 @@ namespace scltk
         }
         auto logoff() noexcept
         {
-            std::print( " (i) 5s 后将注销当前用户账户.\n" );
+            std::print( " (i) 3s 后将注销当前用户账户.\n" );
             std::thread{ [] static noexcept
             {
-                std::this_thread::sleep_for( 5s );
+                std::this_thread::sleep_for( 3s );
                 ExitWindowsEx( EWX_LOGOFF, 0 );
             } }
               .detach();
