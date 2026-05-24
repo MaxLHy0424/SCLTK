@@ -175,7 +175,7 @@ namespace scltk
         details_::make_const_wstring_list_t<
           L"StudentMain.exe", L"DispcapHelper.exe", L"VRCwPlayer.exe", L"InstHelpApp.exe", L"InstHelpApp64.exe",
           L"TDOvrSet.exe", L"GATESRV.exe", L"ProcHelper64.exe", L"MasterHelper.exe", L"config-service.exe", L"gate-service.exe",
-          L"network-service.exe", L"service-manager.exe", L"student.exe", L"student-service.exe", L"sys-cmd-service.exe" >,
+          L"network-service.exe", L"service-manager.exe", L"Student.exe", L"student-service.exe", L"sys-cmd-service.exe" >,
         details_::make_const_wstring_list_t<>,
         [] static noexcept
     {
