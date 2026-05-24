@@ -51,6 +51,11 @@ namespace scltk
         attrs &= ~ENABLE_PROCESSED_INPUT;
         SetConsoleMode( con.std_input_handle, attrs );
     }
+    auto enable_privileges() noexcept
+    {
+        const auto current_process{ GetCurrentProcess() };
+        ( void ) cpp_utils::set_privilege( current_process, L"" SE_DEBUG_NAME, true );
+    }
     constexpr auto quit() noexcept
     {
         return func_exit;
@@ -1616,7 +1621,7 @@ auto main() -> int
       .enable_window_minimize_ctrl( false )
       .enable_window_close_ctrl( false );
     scltk::disable_hotkey();
-    ( void ) cpp_utils::set_privilege( GetCurrentProcess(), L"" SE_DEBUG_NAME, true );
+    scltk::enable_privileges();
     scltk::load_config( false );
     scltk::create_parallel_tasks();
     cpp_utils::console_ui ui{ scltk::con, scltk::unsynced_mem_pool };
