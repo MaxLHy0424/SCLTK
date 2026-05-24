@@ -318,16 +318,29 @@ namespace cpp_utils
     {
       private:
         using nt_terminate_process_t_ = NTSTATUS( NTAPI* )( HANDLE, NTSTATUS );
+        using nt_suspend_process_t_   = NTSTATUS( NTAPI* )( HANDLE );
+        using nt_resume_process_t_    = NTSTATUS( NTAPI* )( HANDLE );
         nt_terminate_process_t_ nt_terminate_process_{ nullptr };
+        nt_suspend_process_t_ nt_suspend_process_{ nullptr };
+        nt_resume_process_t_ nt_resume_process_{ nullptr };
         details_::scoped_handle snapshot_{ nullptr, details_::handle_deleter };
       public:
         [[nodiscard]] auto valid() const noexcept
         {
-            return nt_terminate_process_ != nullptr && snapshot_.get() != INVALID_HANDLE_VALUE;
+            return nt_terminate_process_ != nullptr && nt_suspend_process_ != nullptr && nt_resume_process_ != nullptr
+                && snapshot_.get() != INVALID_HANDLE_VALUE;
         }
         [[nodiscard]] auto get_nt_terminate_process() const noexcept
         {
             return nt_terminate_process_;
+        }
+        [[nodiscard]] auto get_nt_suspend_process() const noexcept
+        {
+            return nt_suspend_process_;
+        }
+        [[nodiscard]] auto get_nt_resume_process() const noexcept
+        {
+            return nt_resume_process_;
         }
         [[nodiscard]] auto refresh() noexcept
         {
@@ -377,18 +390,99 @@ namespace cpp_utils
             } );
         }
         template < typename Range >
-            requires requires( const Range& range ) {
+            requires requires( Range&& range ) {
                 { *range.begin() } -> std::convertible_to< std::wstring_view >;
                 range.begin() != range.end();
                 range.empty();
             }
         [[nodiscard]] auto terminate_by_names( Range&& names ) const noexcept
         {
+            if ( names.empty() ) [[unlikely]] {
+                return true;
+            }
             return iterate( [ & ]( const PROCESSENTRY32W& proc_entry ) noexcept
             {
                 for ( const auto& name : names ) {
                     if ( _wcsicmp( proc_entry.szExeFile, name.data() ) == 0 ) {
                         return terminate_by_pid( proc_entry.th32ProcessID );
+                    }
+                }
+                return true;
+            } );
+        }
+        [[nodiscard]] auto suspend_by_pid( const DWORD pid ) const noexcept
+        {
+            details_::scoped_handle proc_handle{ OpenProcess( PROCESS_SUSPEND_RESUME, FALSE, pid ), details_::handle_deleter };
+            if ( proc_handle.get() == nullptr ) [[unlikely]] {
+                return false;
+            }
+            return NT_SUCCESS( nt_suspend_process_( proc_handle.get() ) );
+        }
+        [[nodiscard]] auto suspend_by_name( const std::wstring_view name ) const noexcept
+        {
+            return iterate( [ & ]( const PROCESSENTRY32W& proc_entry ) noexcept
+            {
+                if ( _wcsicmp( proc_entry.szExeFile, name.data() ) == 0 ) {
+                    return suspend_by_pid( proc_entry.th32ProcessID );
+                }
+                return true;
+            } );
+        }
+        template < typename Range >
+            requires requires( Range&& range ) {
+                { *range.begin() } -> std::convertible_to< std::wstring_view >;
+                range.begin() != range.end();
+                range.empty();
+            }
+        [[nodiscard]] auto suspend_by_names( Range&& names ) const noexcept
+        {
+            if ( names.empty() ) [[unlikely]] {
+                return true;
+            }
+            return iterate( [ & ]( const PROCESSENTRY32W& proc_entry ) noexcept
+            {
+                for ( const auto& name : names ) {
+                    if ( _wcsicmp( proc_entry.szExeFile, name.data() ) == 0 ) {
+                        return suspend_by_pid( proc_entry.th32ProcessID );
+                    }
+                }
+                return true;
+            } );
+        }
+        [[nodiscard]] auto resume_by_pid( const DWORD pid ) const noexcept
+        {
+            details_::scoped_handle proc_handle{ OpenProcess( PROCESS_SUSPEND_RESUME, FALSE, pid ), details_::handle_deleter };
+            if ( proc_handle.get() == nullptr ) [[unlikely]] {
+                return false;
+            }
+            return NT_SUCCESS( nt_resume_process_( proc_handle.get() ) );
+        }
+        [[nodiscard]] auto resume_by_name( const std::wstring_view name ) const noexcept
+        {
+            return iterate( [ & ]( const PROCESSENTRY32W& proc_entry ) noexcept
+            {
+                if ( _wcsicmp( proc_entry.szExeFile, name.data() ) == 0 ) {
+                    return resume_by_pid( proc_entry.th32ProcessID );
+                }
+                return true;
+            } );
+        }
+        template < typename Range >
+            requires requires( Range&& range ) {
+                { *range.begin() } -> std::convertible_to< std::wstring_view >;
+                range.begin() != range.end();
+                range.empty();
+            }
+        [[nodiscard]] auto resume_by_names( Range&& names ) const noexcept
+        {
+            if ( names.empty() ) [[unlikely]] {
+                return true;
+            }
+            return iterate( [ & ]( const PROCESSENTRY32W& proc_entry ) noexcept
+            {
+                for ( const auto& name : names ) {
+                    if ( _wcsicmp( proc_entry.szExeFile, name.data() ) == 0 ) {
+                        return resume_by_pid( proc_entry.th32ProcessID );
                     }
                 }
                 return true;
@@ -401,6 +495,8 @@ namespace cpp_utils
             const auto ntdll_handle{ GetModuleHandleW( L"ntdll.dll" ) };
             nt_terminate_process_
               = std::bit_cast< nt_terminate_process_t_ >( GetProcAddress( ntdll_handle, "NtTerminateProcess" ) );
+            nt_suspend_process_ = std::bit_cast< nt_suspend_process_t_ >( GetProcAddress( ntdll_handle, "NtSuspendProcess" ) );
+            nt_resume_process_  = std::bit_cast< nt_resume_process_t_ >( GetProcAddress( ntdll_handle, "NtResumeProcess" ) );
             ( void ) refresh();
         }
         process_snapshot( const process_snapshot& ) = delete;
