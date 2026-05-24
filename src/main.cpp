@@ -908,6 +908,11 @@ namespace scltk
                   HKEY_LOCAL_MACHINE, key, value, cpp_utils::registry_flag::dword_type,
                   reinterpret_cast< const BYTE* >( &need_enabled_reg_value ), sizeof( need_enabled_reg_value ) );
             }
+            std::print( " -> 撤销按键禁用.\n" );
+            ( void ) cpp_utils::delete_registry_key_without_redirect(
+              HKEY_LOCAL_MACHINE, LR"(SYSTEM\CurrentControlSet\Control\Keyboard Layout)"sv, L"Scancode Map"sv );
+            ( void ) cpp_utils::delete_registry_key_without_redirect(
+              HKEY_CURRENT_USER, LR"(Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced)"sv, L"DisabledHotkeys"sv );
         }
         auto reset_firewall_rules() noexcept
         {
