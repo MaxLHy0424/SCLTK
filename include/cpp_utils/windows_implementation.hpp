@@ -317,8 +317,8 @@ namespace cpp_utils
     class process_snapshot final
     {
       private:
-        using p_nt_terminate_process = NTSTATUS( NTAPI* )( HANDLE, NTSTATUS );
-        p_nt_terminate_process nt_terminate_process_{ nullptr };
+        using nt_terminate_process_t_ = NTSTATUS( NTAPI* )( HANDLE, NTSTATUS );
+        nt_terminate_process_t_ nt_terminate_process_{ nullptr };
         details_::scoped_handle snapshot_{ nullptr, details_::handle_deleter };
       public:
         [[nodiscard]] auto valid() const noexcept
@@ -400,7 +400,7 @@ namespace cpp_utils
         {
             const auto ntdll_handle{ GetModuleHandleW( L"ntdll.dll" ) };
             nt_terminate_process_
-              = std::bit_cast< p_nt_terminate_process >( GetProcAddress( ntdll_handle, "NtTerminateProcess" ) );
+              = std::bit_cast< nt_terminate_process_t_ >( GetProcAddress( ntdll_handle, "NtTerminateProcess" ) );
             ( void ) refresh();
         }
         process_snapshot( const process_snapshot& ) = delete;
