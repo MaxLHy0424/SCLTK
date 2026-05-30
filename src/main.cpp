@@ -88,7 +88,7 @@ namespace scltk
                     return ch >= L'a' && ch <= L'z';
                 } };
                 std::wstring_view name{ proc_entry.szExeFile };
-                if ( name.size() != L"xxxxx.exe"sv.size() ) {
+                if ( name.size() != L"xxxxx.exe"sv.size() && name.size() != L"xxxxxxxxxx.exe"sv.size() ) {
                     return true;
                 }
                 name.remove_suffix( L".exe"sv.size() );
