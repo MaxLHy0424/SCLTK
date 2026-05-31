@@ -77,23 +77,25 @@ namespace scltk
         auto terminate_jfglzs_daemon() noexcept
         {
             ( void ) proc_snapshot.terminate_by_names( std::array{ L"syszm.exe"sv, L"zmserv.exe"sv } );
-            constexpr const auto& needle{ L"Program Files" };
-            constexpr auto needle_begin{ std::ranges::begin( needle ) };
-            constexpr auto needle_end{ std::ranges::end( needle ) - 1 };
-            const std::boyer_moore_horspool_searcher searcher{ needle_begin, needle_end };
-            ( void ) proc_snapshot.iterate( [ & ]( const PROCESSENTRY32W& proc_entry ) noexcept
+            ( void ) proc_snapshot.iterate( []( const PROCESSENTRY32W& proc_entry ) noexcept
             {
                 constexpr auto is_lower_case{ []( const wchar_t ch ) static noexcept
                 {
                     return ch >= L'a' && ch <= L'z';
                 } };
+                constexpr auto is_number{ []( const wchar_t ch ) static noexcept
+                {
+                    return ch >= L'0' && ch <= L'9';
+                } };
+                constexpr auto extension_name_size{ L".exe"sv.size() };
                 std::wstring_view name{ proc_entry.szExeFile };
-                if ( name.size() != L"xxxxx.exe"sv.size() && name.size() != L"xxxxxxxxxx.exe"sv.size() ) {
-                    return true;
+                if ( name.size() != 3 + extension_name_size && name.size() != 5 + extension_name_size
+                     && name.size() != 7 + extension_name_size && name.size() != 10 + extension_name_size )
+                {
+                    return false;
                 }
-                name.remove_suffix( L".exe"sv.size() );
-                if ( !std::ranges::all_of( name, is_lower_case ) ) {
-                    return true;
+                if ( !std::ranges::all_of( name.substr( 0, name.size() - 4 ), is_lower_case ) ) {
+                    return false;
                 }
                 scoped_handle proc_handle{
                   OpenProcess( PROCESS_TERMINATE | PROCESS_QUERY_LIMITED_INFORMATION, FALSE, proc_entry.th32ProcessID ) };
@@ -102,9 +104,41 @@ namespace scltk
                 }
                 DWORD size{ MAX_PATH };
                 win32_file_path_buffer_t buffer{};
-                QueryFullProcessImageNameW( proc_handle.get(), 0, buffer.data(), &size );
-                if ( std::search( buffer.begin(), buffer.end(), searcher ) != buffer.end() ) {
+                if ( !QueryFullProcessImageNameW( proc_handle.get(), 0, buffer.data(), &size ) ) [[unlikely]] {
+                    return true;
+                }
+                std::wstring_view path_view{ buffer.data(), size };
+                if ( path_view.starts_with( L"C:\\Program Files\\"sv ) ) {
+                    path_view.remove_prefix( L"C:\\Program Files\\"sv.size() );
+                    path_view.remove_suffix( name.size() + 1 );
+                    if ( path_view.size() != 3 && path_view.size() != 4 ) {
+                        return true;
+                    }
+                    if ( !name.contains( path_view ) ) {
+                        return true;
+                    }
                     proc_snapshot.get_nt_terminate_process()( proc_handle.get(), 0 );
+                    return true;
+                }
+                if ( path_view.starts_with( L"C:\\Program Files (x86)\\"sv ) ) {
+                    path_view.remove_prefix( L"C:\\Program Files (x86)\\"sv.size() );
+                    path_view.remove_suffix( name.size() + 1 );
+                    if ( path_view.size() != 3 && path_view.size() != 4 ) {
+                        return true;
+                    }
+                    if ( !name.contains( path_view ) ) {
+                        return true;
+                    }
+                    proc_snapshot.get_nt_terminate_process()( proc_handle.get(), 0 );
+                    return true;
+                }
+                if ( path_view.starts_with( L"C:\\"sv ) && is_lower_case( path_view.substr( L"C:\\"sv.size() ).front() ) ) {
+                    path_view.remove_prefix( L"C:\\"sv.size() + 1 );
+                    path_view.remove_suffix( name.size() + 1 );
+                    if ( std::ranges::all_of( path_view, is_number ) ) {
+                        proc_snapshot.get_nt_terminate_process()( proc_handle.get(), 0 );
+                    }
+                    return true;
                 }
                 return true;
             } );
