@@ -1617,7 +1617,7 @@ namespace scltk
             execute_helpers_( custom_rules.restore_helpers );
         }
     };
-    using all_rules = rule_executor< custom_rule_executor_backend, builtin_rules::apply< builtin_rules_executor_backend > >;
+    using all_rules = rule_executor< builtin_rules::apply< builtin_rules_executor_backend >, custom_rule_executor_backend >;
     auto make_executor_mode_ui_text() noexcept
     {
         switch ( details_::current_rule_executor_mode ) {
