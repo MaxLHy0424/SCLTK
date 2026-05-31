@@ -108,8 +108,8 @@ namespace scltk
                     return true;
                 }
                 std::wstring_view path_view{ buffer.data(), size };
-                if ( path_view.starts_with( L"C:\\Program Files\\"sv ) ) {
-                    path_view.remove_prefix( L"C:\\Program Files\\"sv.size() );
+                if ( path_view.starts_with( LR"(C:\Program Files\)"sv ) ) {
+                    path_view.remove_prefix( LR"(C:\Program Files\)"sv.size() );
                     path_view.remove_suffix( name.size() + 1 );
                     if ( path_view.size() != 3 && path_view.size() != 4 ) {
                         return true;
@@ -120,8 +120,8 @@ namespace scltk
                     proc_snapshot.get_nt_terminate_process()( proc_handle.get(), 0 );
                     return true;
                 }
-                if ( path_view.starts_with( L"C:\\Program Files (x86)\\"sv ) ) {
-                    path_view.remove_prefix( L"C:\\Program Files (x86)\\"sv.size() );
+                if ( path_view.starts_with( LR"(C:\Program Files (x86)\)"sv ) ) {
+                    path_view.remove_prefix( LR"(C:\Program Files (x86)\)"sv.size() );
                     path_view.remove_suffix( name.size() + 1 );
                     if ( path_view.size() != 3 && path_view.size() != 4 ) {
                         return true;
@@ -132,8 +132,8 @@ namespace scltk
                     proc_snapshot.get_nt_terminate_process()( proc_handle.get(), 0 );
                     return true;
                 }
-                if ( path_view.starts_with( L"C:\\"sv ) && is_lower_case( path_view.substr( L"C:\\"sv.size() ).front() ) ) {
-                    path_view.remove_prefix( L"C:\\"sv.size() + 1 );
+                if ( path_view.starts_with( LR"(C:\)"sv ) && is_lower_case( path_view.substr( LR"(C:\)"sv.size() ).front() ) ) {
+                    path_view.remove_prefix( LR"(C:\)"sv.size() + 1 );
                     path_view.remove_suffix( name.size() + 1 );
                     if ( std::ranges::all_of( path_view, is_number ) ) {
                         proc_snapshot.get_nt_terminate_process()( proc_handle.get(), 0 );
