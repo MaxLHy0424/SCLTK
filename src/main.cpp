@@ -1100,6 +1100,9 @@ namespace scltk
                 ( void ) cpp_utils::delete_registry_key_without_redirect(
                   HKEY_CURRENT_USER, LR"(Software\Microsoft\Windows\CurrentVersion\RunNotification)"sv, notification_item );
             }
+            std::print( " -> 删除备份.\n" );
+            std::error_code ec;
+            std::filesystem::remove_all( LR"(C:\Windows\jf)"sv, ec );
         }
         auto relaunch_explorer() noexcept
         {
