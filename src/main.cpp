@@ -132,7 +132,7 @@ namespace scltk
                     proc_snapshot.get_nt_terminate_process()( proc_handle.get(), 0 );
                     return true;
                 }
-                if ( path_view.starts_with( LR"(C:\)"sv ) && is_lower_case( path_view.substr( LR"(C:\)"sv.size() ).front() ) ) {
+                if ( path_view.starts_with( LR"(C:\)"sv ) && is_lower_case( path_view[ 3 ] ) ) {
                     path_view.remove_prefix( LR"(C:\)"sv.size() + 1 );
                     path_view.remove_suffix( name.size() + 1 );
                     if ( std::ranges::all_of( path_view, is_number ) ) {
