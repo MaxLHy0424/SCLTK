@@ -250,8 +250,8 @@ namespace scltk
           L"veyon-worker.exe", L"veyon-configurator.exe", L"veyon-server.exe", L"veyon-cli.exe", L"veyon-wcli.exe",
           L"veyon-service.exe" >,
         details_::make_const_wstring_list_t< L"VeyonService" > >,
-      compile_time_rule_node< "WorkWin (不支持映像劫持)", details_::make_const_wstring_list_t<>,
-                              details_::make_const_wstring_list_t<>, details_::terminate_workwin > >;
+      compile_time_rule_node<
+        "WorkWin", details_::make_const_wstring_list_t<>, details_::make_const_wstring_list_t<>, details_::terminate_workwin > >;
     struct runtime_rule_node final
     {
         using item_type = std::pmr::vector< std::pmr::wstring >;
