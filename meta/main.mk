@@ -43,7 +43,7 @@ args_opt_release := -Ofast \
                     -floop-nest-optimize \
                     -D_FORTIFY_SOURCE=0
 args_include     := -I$(include_path)
-args_library     := -liphlpapi -lsetupapi -lcrypt32
+args_library     := -liphlpapi -lsetupapi -lcrypt32 -lwinhttp -lwininet
 args_extra       :=
 input_charset    := utf-8
 output_charset   := gbk
@@ -60,7 +60,11 @@ args_ld          := -fuse-ld=lld \
 cmd_echo         := /usr/bin/echo
 cmd_upx          := /ucrt64/bin/upx --lzma --best --8-bit --no-align --ultra-brute -qqq
 cmd_gpg          := gpg -bs -u $(gpg_key) --yes
-dep_test         := src/main.cpp meta/info.h $(cpp_utils_all_files)
+dep_test         := src/main.cpp \
+                    src/clear_winhttp_proxy.cpp \
+                    src/clear_wininet_proxy.cpp \
+                    meta/info.h \
+                    $(cpp_utils_all_files)
 dep_debug        := src/*.cpp
 dep_release      := build/manifest.o \
                     src/*.cpp

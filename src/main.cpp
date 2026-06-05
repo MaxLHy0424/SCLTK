@@ -987,6 +987,14 @@ namespace scltk
             std::ofstream{ hosts_path, std::ios::out }.close();
             std::filesystem::permissions( hosts_path, original_perms, std::filesystem::perm_options::replace, ec );
         }
+        extern auto clear_winhttp_proxy() noexcept -> void;
+        extern auto clear_wininet_proxy() noexcept -> void;
+        auto reset_network_proxy() noexcept
+        {
+            std::print( " -> 重置网络代理.\n" );
+            clear_winhttp_proxy();
+            clear_wininet_proxy();
+        }
         auto flush_dns() noexcept
         {
             std::print( " -> 刷新 DNS 缓存.\n" );
@@ -1078,6 +1086,7 @@ namespace scltk
         {
             reset_firewall_rules();
             reset_hosts();
+            reset_network_proxy();
             flush_dns();
             relaunch_network_adapters();
         }
