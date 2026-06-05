@@ -889,7 +889,7 @@ namespace scltk
             }
             return func_back;
         }
-        auto restore_os_components() noexcept
+        auto restore_os_settings() noexcept
         {
             using execs = make_const_wstring_list_t<
               L"tasklist", L"taskkill", L"ntsd", L"sc", L"net", L"reg", L"cmd", L"taskmgr", L"perfmon", L"regedit", L"mmc",
@@ -1157,7 +1157,7 @@ namespace scltk
         using funcs = cpp_utils::type_list<
           details_::func_item< "重启资源管理器", details_::relaunch_explorer >,
           details_::func_item< "注销当前用户账户", details_::logoff >,
-          details_::func_item< "恢复操作系统组件", details_::restore_os_components >,
+          details_::func_item< "恢复操作系统设置", details_::restore_os_settings >,
           details_::func_item< "恢复 USB 存储设备访问", details_::restore_usb_device_access >,
           details_::func_item< "修复网络访问", details_::fix_network >,
           details_::func_item< "重置 \"机房管理助手\" 配置", details_::reset_jfglzs_config >,
