@@ -48,7 +48,7 @@ SCLTK v7.2.0 及后续版本不再支持：
 - 32 位 Windows OS；
 - 未安装 UCRT 的 Windows OS。
 
-对于正在使用上述不支持的 Windows OS的用户，请切换到 SCLTK-Legacy（即将推出！）。
+对于正在使用上述不支持的 Windows OS的用户，请转到 [SCLTK-Legacy](https://github.com/MaxLHy0424/SCLTK-Legacy)。
 
 ## 2 常规操作
 
