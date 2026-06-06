@@ -9,7 +9,7 @@
 
 </div>
 
-> [!CAUTION]
+> [!IMPORTANT]
 > SCLTK 仅适用于 Microsoft Windows OS。
 
 # 📦 获取
