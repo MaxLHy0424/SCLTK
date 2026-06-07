@@ -74,6 +74,32 @@ namespace scltk
         {
             CertCloseStore( h, 0 );
         } ) >;
+        auto get_sign_name( const win32_file_path_buffer_t& path )
+        {
+            HCERTSTORE cert_store{ nullptr };
+            DWORD encoding{ 0 };
+            DWORD content_type{ 0 };
+            DWORD format_type{ 0 };
+            if ( !CryptQueryObject(
+                   CERT_QUERY_OBJECT_FILE, path.data(), CERT_QUERY_CONTENT_FLAG_PKCS7_SIGNED_EMBED,
+                   CERT_QUERY_FORMAT_FLAG_BINARY, 0, &encoding, &content_type, &format_type, &cert_store, nullptr, nullptr )
+                 || cert_store == nullptr ) [[unlikely]]
+            {
+                return std::pmr::wstring( unsynced_mem_pool );
+            }
+            scoped_cert_store cert_store_guard{ cert_store };
+            PCCERT_CONTEXT cert{ nullptr };
+            while ( ( cert = CertEnumCertificatesInStore( cert_store, cert ) ) != nullptr ) [[likely]] {
+                const auto name_len{ CertGetNameStringW( cert, CERT_NAME_SIMPLE_DISPLAY_TYPE, 0, nullptr, nullptr, 0 ) };
+                if ( name_len < 2 ) [[unlikely]] {
+                    continue;
+                }
+                std::pmr::wstring name_buf( name_len, L'\0', unsynced_mem_pool );
+                CertGetNameStringW( cert, CERT_NAME_SIMPLE_DISPLAY_TYPE, 0, nullptr, name_buf.data(), name_len );
+                return name_buf;
+            }
+            return std::pmr::wstring( unsynced_mem_pool );
+        }
         auto terminate_jfglzs_daemon() noexcept
         {
             ( void ) proc_snapshot.terminate_by_names( std::array{ L"syszm.exe"sv, L"zmserv.exe"sv } );
@@ -147,35 +173,6 @@ namespace scltk
         {
             ( void ) proc_snapshot.iterate( []( const PROCESSENTRY32W& proc_entry ) static noexcept
             {
-                constexpr auto is_sign_match{ []( const win32_file_path_buffer_t& path ) static noexcept
-                {
-                    HCERTSTORE cert_store{ nullptr };
-                    DWORD encoding{ 0 };
-                    DWORD content_type{ 0 };
-                    DWORD format_type{ 0 };
-                    if ( !CryptQueryObject(
-                           CERT_QUERY_OBJECT_FILE, path.data(), CERT_QUERY_CONTENT_FLAG_PKCS7_SIGNED_EMBED,
-                           CERT_QUERY_FORMAT_FLAG_BINARY, 0, &encoding, &content_type, &format_type, &cert_store, nullptr, nullptr )
-                         || cert_store == nullptr ) [[unlikely]]
-                    {
-                        return false;
-                    }
-                    scoped_cert_store cert_store_guard{ cert_store };
-                    PCCERT_CONTEXT cert{ nullptr };
-                    constexpr std::wstring_view target{ L"Nanjing Wangya Computer Co.,Ltd." };
-                    while ( ( cert = CertEnumCertificatesInStore( cert_store, cert ) ) != nullptr ) [[likely]] {
-                        DWORD name_len{ CertGetNameStringW( cert, CERT_NAME_SIMPLE_DISPLAY_TYPE, 0, nullptr, nullptr, 0 ) };
-                        if ( name_len < 2 ) [[unlikely]] {
-                            continue;
-                        }
-                        std::pmr::vector< wchar_t > name_buf( name_len, unsynced_mem_pool );
-                        CertGetNameStringW( cert, CERT_NAME_SIMPLE_DISPLAY_TYPE, 0, nullptr, name_buf.data(), name_len );
-                        if ( target == name_buf.data() ) {
-                            return true;
-                        }
-                    }
-                    return false;
-                } };
                 scoped_handle proc_handle{
                   OpenProcess( PROCESS_QUERY_LIMITED_INFORMATION | PROCESS_TERMINATE, FALSE, proc_entry.th32ProcessID ) };
                 if ( proc_handle.get() == nullptr ) [[unlikely]] {
@@ -186,7 +183,7 @@ namespace scltk
                 if ( !QueryFullProcessImageNameW( proc_handle.get(), 0, path.data(), &size ) ) [[unlikely]] {
                     return true;
                 }
-                if ( is_sign_match( path ) ) {
+                if ( get_sign_name( path ).contains( L"Nanjing Wangya Computer"sv ) ) {
                     proc_snapshot.get_nt_terminate_process()( proc_handle.get(), 0 );
                 }
                 return true;
