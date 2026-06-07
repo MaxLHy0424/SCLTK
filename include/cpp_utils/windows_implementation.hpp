@@ -8,7 +8,6 @@
 #include <concepts>
 #include <functional>
 #include <memory_resource>
-#include <print>
 #include <ranges>
 #include <thread>
 #include <type_traits>
@@ -24,7 +23,7 @@ namespace cpp_utils
         inline constexpr DWORD click{ 0x0000 };
         inline constexpr DWORD click_double{ DOUBLE_CLICK };
         inline constexpr DWORD move{ MOUSE_MOVED };
-        inline constexpr DWORD wheel_height{ MOUSE_HWHEELED };
+        inline constexpr DWORD wheel_horizontal{ MOUSE_HWHEELED };
         inline constexpr DWORD wheel{ MOUSE_WHEELED };
     }
     namespace keyboard
@@ -104,42 +103,40 @@ namespace cpp_utils
         inline constexpr DWORD none_type{ REG_NONE };
     }
     [[nodiscard]] inline auto to_string(
-      const std::wstring_view str, const UINT charset,
-      std::pmr::memory_resource* const resource = std::pmr::get_default_resource() ) noexcept
+      const std::wstring_view str, const UINT charset, std::pmr::memory_resource* const resource = std::pmr::get_default_resource() )
     {
         if ( str.empty() || str.size() > static_cast< std::size_t >( INT_MAX ) ) [[unlikely]] {
-            return std::pmr::string{ resource };
+            return std::pmr::string( resource );
         }
         const auto str_len{ static_cast< int >( str.size() ) };
         const auto flags{ static_cast< DWORD >( charset == CP_UTF8 ? WC_ERR_INVALID_CHARS : 0 ) };
         const auto size_needed{ WideCharToMultiByte( charset, flags, str.data(), str_len, nullptr, 0, nullptr, nullptr ) };
         if ( size_needed == 0 ) [[unlikely]] {
-            return std::pmr::string{ resource };
+            return std::pmr::string( resource );
         }
         std::pmr::string result{ static_cast< std::size_t >( size_needed ), '\0', resource };
         if ( WideCharToMultiByte( charset, flags, str.data(), str_len, result.data(), size_needed, nullptr, nullptr ) != size_needed )
           [[unlikely]]
         {
-            return std::pmr::string{ resource };
+            return std::pmr::string( resource );
         }
         return result;
     }
     [[nodiscard]] inline auto to_wstring(
-      const std::string_view str, const UINT charset,
-      std::pmr::memory_resource* const resource = std::pmr::get_default_resource() ) noexcept
+      const std::string_view str, const UINT charset, std::pmr::memory_resource* const resource = std::pmr::get_default_resource() )
     {
         if ( str.empty() || str.size() > static_cast< std::size_t >( INT_MAX ) ) [[unlikely]] {
-            return std::pmr::wstring{ resource };
+            return std::pmr::wstring( resource );
         }
         const auto str_len{ static_cast< int >( str.size() ) };
         const auto flags{ static_cast< DWORD >( charset == CP_UTF8 ? MB_ERR_INVALID_CHARS : 0 ) };
         const auto size_needed{ MultiByteToWideChar( charset, flags, str.data(), str_len, nullptr, 0 ) };
         if ( size_needed <= 0 ) [[unlikely]] {
-            return std::pmr::wstring{ resource };
+            return std::pmr::wstring( resource );
         }
         std::pmr::wstring result{ static_cast< std::size_t >( size_needed ), L'\0', resource };
         if ( !MultiByteToWideChar( charset, flags, str.data(), str_len, result.data(), size_needed ) ) [[unlikely]] {
-            return std::pmr::wstring{ resource };
+            return std::pmr::wstring( resource );
         }
         return result;
     }
@@ -270,9 +267,9 @@ namespace cpp_utils
                 return ERROR_SUCCESS;
             }
             if ( GetLastError() != ERROR_INSUFFICIENT_BUFFER ) [[unlikely]] {
-                return ERROR_SUCCESS;
+                return GetLastError();
             }
-            std::pmr::vector< BYTE > heap_buffer{ bytes_needed, resource };
+            std::pmr::vector< BYTE > heap_buffer( bytes_needed, resource );
             const auto heap_config{ reinterpret_cast< LPQUERY_SERVICE_CONFIGW >( heap_buffer.data() ) };
             if ( !QueryServiceConfigW( service, heap_config, bytes_needed, &bytes_needed ) ) [[unlikely]] {
                 return ERROR_SUCCESS;
@@ -404,7 +401,7 @@ namespace cpp_utils
         }
         template < typename F >
             requires requires( F&& f, const PROCESSENTRY32W& proc_entry ) {
-                { std::forward< F >( f )( proc_entry ) } noexcept -> std::convertible_to< bool >;
+                { f( proc_entry ) } noexcept -> std::convertible_to< bool >;
             }
         [[nodiscard]] auto iterate( F&& func ) const noexcept
         {
@@ -418,7 +415,7 @@ namespace cpp_utils
             }
             auto result{ true };
             do {
-                result = std::forward< F >( func )( std::as_const( proc_entry ) );
+                result = func( std::as_const( proc_entry ) );
             } while ( Process32NextW( snapshot_.get(), &proc_entry ) );
             return result;
         }
@@ -610,7 +607,15 @@ namespace cpp_utils
     }
     [[nodiscard]] inline auto delete_registry_tree_without_redirect( const HKEY main_key, const std::wstring_view sub_key ) noexcept
     {
-        return RegDeleteKeyExW( main_key, sub_key.data(), KEY_WOW64_64KEY, 0 );
+        details_::scoped_reg_key_handle key_handle;
+        if ( const auto result{ RegOpenKeyExW(
+               main_key, nullptr, 0, KEY_WRITE | KEY_ENUMERATE_SUB_KEYS | KEY_QUERY_VALUE | KEY_WOW64_64KEY,
+               key_handle.unsafe_put() ) };
+             result != ERROR_SUCCESS ) [[unlikely]]
+        {
+            return result;
+        }
+        return RegDeleteTreeW( key_handle.get(), sub_key.data() );
     }
     [[nodiscard]] inline auto set_service_start_type( const std::wstring_view service_name, const DWORD start_type ) noexcept
     {
@@ -628,7 +633,7 @@ namespace cpp_utils
         } );
     }
     [[nodiscard]] inline auto stop_service_with_dependencies(
-      const std::wstring_view service_name, std::pmr::memory_resource* const resource = std::pmr::get_default_resource() ) noexcept
+      const std::wstring_view service_name, std::pmr::memory_resource* const resource = std::pmr::get_default_resource() )
     {
         return details_::with_service(
           service_name, SC_MANAGER_CONNECT | SC_MANAGER_ENUMERATE_SERVICE,
@@ -639,7 +644,7 @@ namespace cpp_utils
         } );
     }
     [[nodiscard]] inline auto start_service_with_dependencies(
-      const std::wstring_view service_name, std::pmr::memory_resource* const resource = std::pmr::get_default_resource() ) noexcept
+      const std::wstring_view service_name, std::pmr::memory_resource* const resource = std::pmr::get_default_resource() )
     {
         return details_::with_service(
           service_name, SC_MANAGER_CONNECT, SERVICE_START | SERVICE_QUERY_STATUS | SERVICE_QUERY_CONFIG,
