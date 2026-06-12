@@ -50,3 +50,4 @@ elseif ((Get-FileHash $old_info).Hash -ne (Get-FileHash $new_info).Hash ) {
 }
 Remove-Item -Path $new_info
 & make $target -f .\meta\main.mk -j gpg_key=$gpg_key
+exit $LASTEXITCODE
