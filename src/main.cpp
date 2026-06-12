@@ -583,7 +583,11 @@ namespace scltk
         }( flag_proc_, flag_serv_, flag_crack_helper_, flag_restore_helper_ ) );
         static auto load_( const std::string_view unconverted_line )
         {
-            const auto line{ cpp_utils::to_wstring( unconverted_line, CP_UTF8, unsynced_mem_pool ) };
+            const auto converted{ cpp_utils::to_wstring( unconverted_line, CP_UTF8, unsynced_mem_pool ) };
+            if ( !converted.has_value() ) [[unlikely]] {
+                return;
+            }
+            const auto& line{ converted.value() };
             if ( line.size() > flag_proc_.size() && line.starts_with( flag_proc_ ) ) [[likely]] {
                 custom_rules.procs.emplace_back(
                   std::ranges::find_if_not( line.subview( flag_proc_.size() ), details_::is_whitespace< wchar_t > ) );
@@ -607,22 +611,24 @@ namespace scltk
         }
         static auto sync_( std::ofstream& out )
         {
-            const auto flag_proc{ cpp_utils::to_string( flag_proc_, CP_UTF8, unsynced_mem_pool ) };
-            const auto flag_serv{ cpp_utils::to_string( flag_serv_, CP_UTF8, unsynced_mem_pool ) };
-            const auto flag_crack_helper{ cpp_utils::to_string( flag_crack_helper_, CP_UTF8, unsynced_mem_pool ) };
-            const auto flag_restore_helper{ cpp_utils::to_string( flag_restore_helper_, CP_UTF8, unsynced_mem_pool ) };
-            for ( const auto& proc : custom_rules.procs ) {
-                out << flag_proc << ' ' << cpp_utils::to_string( proc, CP_UTF8, unsynced_mem_pool ) << '\n';
-            }
-            for ( const auto& serv : custom_rules.servs ) {
-                out << flag_serv << ' ' << cpp_utils::to_string( serv, CP_UTF8, unsynced_mem_pool ) << '\n';
-            }
-            for ( const auto& crack_helper : custom_rules.crack_helpers ) {
-                out << flag_crack_helper << ' ' << cpp_utils::to_string( crack_helper, CP_UTF8, unsynced_mem_pool ) << '\n';
-            }
-            for ( const auto& restore_helper : custom_rules.restore_helpers ) {
-                out << flag_restore_helper << ' ' << cpp_utils::to_string( restore_helper, CP_UTF8, unsynced_mem_pool ) << '\n';
-            }
+            const auto output{ [ & ]( const std::wstring_view unconverted_flag, const runtime_rule_node::item_type& items )
+            {
+                const auto converted_flag{ cpp_utils::to_string( unconverted_flag, CP_UTF8, unsynced_mem_pool ) };
+                if ( !converted_flag.has_value() ) [[unlikely]] {
+                    return;
+                }
+                const auto& flag{ converted_flag.value() };
+                for ( const auto& item : items ) {
+                    const auto converted{ cpp_utils::to_string( item, CP_UTF8, unsynced_mem_pool ) };
+                    if ( converted.has_value() ) [[likely]] {
+                        out << flag << ' ' << converted.value() << '\n';
+                    }
+                }
+            } };
+            output( flag_proc_, custom_rules.procs );
+            output( flag_serv_, custom_rules.servs );
+            output( flag_crack_helper_, custom_rules.crack_helpers );
+            output( flag_restore_helper_, custom_rules.restore_helpers );
         }
         static auto before_load_() noexcept
         {
