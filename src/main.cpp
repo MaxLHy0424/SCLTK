@@ -690,6 +690,33 @@ namespace scltk
             }
             return std::string_view{ head, tail };
         }
+        class file_locker final
+        {
+          private:
+            HANDLE file_handle_;
+            bool locked;
+          public:
+            auto operator=( const file_locker& ) -> file_locker& = delete;
+            auto operator=( file_locker&& ) -> file_locker&      = delete;
+            file_locker( const HANDLE file_handle ) noexcept
+              : file_handle_{ file_handle }
+              , locked{ false }
+            {
+                OVERLAPPED overlapped{};
+                if ( LockFileEx( file_handle_, LOCKFILE_EXCLUSIVE_LOCK, 0, 0xFFFFFFFF, 0xFFFFFFFF, &overlapped ) ) [[likely]] {
+                    locked = true;
+                }
+            }
+            file_locker( const file_locker& )     = delete;
+            file_locker( file_locker&& ) noexcept = delete;
+            ~file_locker() noexcept
+            {
+                if ( locked ) [[likely]] {
+                    OVERLAPPED overlapped{};
+                    UnlockFileEx( file_handle_, 0, 0xFFFFFFFF, 0xFFFFFFFF, &overlapped );
+                }
+            }
+        };
     }
     auto load_config( const bool is_reload )
     {
@@ -697,6 +724,7 @@ namespace scltk
         if ( !config_file.good() ) [[unlikely]] {
             return;
         }
+        const details_::file_locker _{ config_file.native_handle() };
         std::apply( []( auto&... config_node ) static
         {
             ( config_node.before_load(), ... );
@@ -785,14 +813,17 @@ namespace scltk
             constexpr auto header{
               u8"# " INFO_FULL_NAME "\n# " INFO_GIT_TAG " (" INFO_GIT_BRANCH " " INFO_GIT_HASH ")\n# 本文件编码为 UTF-8。\n" };
             constexpr auto header_size{ std::char_traits< char8_t >::length( header ) * sizeof( char8_t ) };
-            std::ofstream config_file_stream{ config_file_name, std::ios::out | std::ios::trunc };
-            config_file_stream.write( reinterpret_cast< const char* >( header ), header_size );
-            std::apply( [ & ]( auto&... config_node )
-            {
-                ( config_node.sync( config_file_stream ), ... );
-            }, config_nodes );
-            config_file_stream.flush();
-            std::print( " (i) 同步配置{}.", config_file_stream.good() ? "成功" : "失败" );
+            std::ofstream config_file{ config_file_name, std::ios::out | std::ios::trunc };
+            if ( config_file.good() ) [[likely]] {
+                const details_::file_locker _{ config_file.native_handle() };
+                config_file.write( reinterpret_cast< const char* >( header ), header_size );
+                std::apply( [ & ]( auto&... config_node )
+                {
+                    ( config_node.sync( config_file ), ... );
+                }, config_nodes );
+                config_file.flush();
+            }
+            std::print( " (i) 同步配置{}.", config_file.good() ? "成功" : "失败" );
             press_any_key_to_return();
             return func_back;
         }
