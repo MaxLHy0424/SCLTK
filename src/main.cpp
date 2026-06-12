@@ -63,6 +63,7 @@ namespace scltk
     }
     namespace details_
     {
+        constexpr const auto& hijack_image_value{ L"*_HIJACKED_BY_SCLTK" };
         template < cpp_utils::const_wstring... Items >
         using make_const_wstring_list_t = cpp_utils::type_list< cpp_utils::value_identity< Items >... >;
         using win32_file_path_buffer_t  = std::array< wchar_t, MAX_PATH >;
@@ -1499,11 +1500,10 @@ namespace scltk
         static auto hijack_image() noexcept
         {
             if constexpr ( run_hijack_image ) {
-                constexpr const auto& value{ L"NUL" };
                 for ( const auto& reg : ifeo_regs ) {
                     ( void ) cpp_utils::create_registry_key_without_redirect(
                       HKEY_LOCAL_MACHINE, reg, L"Debugger", cpp_utils::registry_flag::string_type,
-                      reinterpret_cast< const BYTE* >( +value ), sizeof( value ) );
+                      reinterpret_cast< const BYTE* >( +details_::hijack_image_value ), sizeof( details_::hijack_image_value ) );
                 }
             }
         }
@@ -1586,18 +1586,19 @@ namespace scltk
         static constexpr auto run_hijack_image{ true };
         static auto hijack_image()
         {
-            constexpr const auto& value{ L"NUL" };
             for ( const auto& proc : custom_rules.procs ) {
                 ( void ) cpp_utils::create_registry_key_without_redirect(
                   HKEY_LOCAL_MACHINE,
                   details_::concat_string< wchar_t >(
                     LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\)"sv, proc ),
-                  L"Debugger", cpp_utils::registry_flag::string_type, reinterpret_cast< const BYTE* >( +value ), sizeof( value ) );
+                  L"Debugger", cpp_utils::registry_flag::string_type,
+                  reinterpret_cast< const BYTE* >( +details_::hijack_image_value ), sizeof( details_::hijack_image_value ) );
                 ( void ) cpp_utils::create_registry_key_without_redirect(
                   HKEY_LOCAL_MACHINE,
                   details_::concat_string< wchar_t >(
                     LR"(SOFTWARE\WOW6432Node\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\)"sv, proc ),
-                  L"Debugger", cpp_utils::registry_flag::string_type, reinterpret_cast< const BYTE* >( +value ), sizeof( value ) );
+                  L"Debugger", cpp_utils::registry_flag::string_type,
+                  reinterpret_cast< const BYTE* >( +details_::hijack_image_value ), sizeof( details_::hijack_image_value ) );
             }
         }
         static constexpr auto run_undo_hijack_image{ true };
