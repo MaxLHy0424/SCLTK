@@ -8,6 +8,7 @@
 #include <concepts>
 #include <functional>
 #include <memory_resource>
+#include <optional>
 #include <ranges>
 #include <thread>
 #include <type_traits>
@@ -103,40 +104,42 @@ namespace cpp_utils
         inline constexpr DWORD none_type{ REG_NONE };
     }
     [[nodiscard]] inline auto to_string(
-      const std::wstring_view str, const UINT charset, std::pmr::memory_resource* const resource = std::pmr::get_default_resource() )
+      const std::wstring_view str, const UINT charset,
+      std::pmr::memory_resource* const resource = std::pmr::get_default_resource() ) -> std::optional< std::pmr::string >
     {
         if ( str.empty() || str.size() > static_cast< std::size_t >( INT_MAX ) ) [[unlikely]] {
-            return std::pmr::string( resource );
+            return std::nullopt;
         }
         const auto str_len{ static_cast< int >( str.size() ) };
         const auto flags{ static_cast< DWORD >( charset == CP_UTF8 ? WC_ERR_INVALID_CHARS : 0 ) };
         const auto size_needed{ WideCharToMultiByte( charset, flags, str.data(), str_len, nullptr, 0, nullptr, nullptr ) };
         if ( size_needed == 0 ) [[unlikely]] {
-            return std::pmr::string( resource );
+            return std::nullopt;
         }
         std::pmr::string result{ static_cast< std::size_t >( size_needed ), '\0', resource };
         if ( WideCharToMultiByte( charset, flags, str.data(), str_len, result.data(), size_needed, nullptr, nullptr ) != size_needed )
           [[unlikely]]
         {
-            return std::pmr::string( resource );
+            return std::nullopt;
         }
         return result;
     }
     [[nodiscard]] inline auto to_wstring(
-      const std::string_view str, const UINT charset, std::pmr::memory_resource* const resource = std::pmr::get_default_resource() )
+      const std::string_view str, const UINT charset,
+      std::pmr::memory_resource* const resource = std::pmr::get_default_resource() ) -> std::optional< std::pmr::wstring >
     {
         if ( str.empty() || str.size() > static_cast< std::size_t >( INT_MAX ) ) [[unlikely]] {
-            return std::pmr::wstring( resource );
+            return std::nullopt;
         }
         const auto str_len{ static_cast< int >( str.size() ) };
         const auto flags{ static_cast< DWORD >( charset == CP_UTF8 ? MB_ERR_INVALID_CHARS : 0 ) };
         const auto size_needed{ MultiByteToWideChar( charset, flags, str.data(), str_len, nullptr, 0 ) };
         if ( size_needed <= 0 ) [[unlikely]] {
-            return std::pmr::wstring( resource );
+            return std::nullopt;
         }
         std::pmr::wstring result{ static_cast< std::size_t >( size_needed ), L'\0', resource };
         if ( !MultiByteToWideChar( charset, flags, str.data(), str_len, result.data(), size_needed ) ) [[unlikely]] {
-            return std::pmr::wstring( resource );
+            return std::nullopt;
         }
         return result;
     }
