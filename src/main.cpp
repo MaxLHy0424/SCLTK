@@ -924,22 +924,114 @@ namespace scltk
             }
             return func_back;
         }
+        class scoped_reg_key final
+        {
+          private:
+            HKEY handle_{ nullptr };
+          public:
+            [[nodiscard]] HKEY* unsafe_put() noexcept
+            {
+                return &handle_;
+            }
+            [[nodiscard]] HKEY get() const noexcept
+            {
+                return handle_;
+            }
+            auto operator=( const scoped_reg_key& ) -> scoped_reg_key&     = delete;
+            auto operator=( scoped_reg_key&& ) noexcept -> scoped_reg_key& = delete;
+            scoped_reg_key()                                               = default;
+            scoped_reg_key( const scoped_reg_key& )                        = delete;
+            scoped_reg_key( scoped_reg_key&& ) noexcept                    = delete;
+            ~scoped_reg_key() noexcept
+            {
+                if ( handle_ ) [[likely]] {
+                    RegCloseKey( handle_ );
+                }
+            }
+        };
+        auto process_ifeo_path( const std::wstring_view root_path )
+        {
+            scoped_reg_key root_key;
+            if ( RegOpenKeyExW(
+                   HKEY_LOCAL_MACHINE, root_path.data(), 0, KEY_ENUMERATE_SUB_KEYS | KEY_QUERY_VALUE | KEY_WOW64_64KEY,
+                   root_key.unsafe_put() )
+                 != ERROR_SUCCESS ) [[unlikely]]
+            {
+                return;
+            }
+            DWORD i{ 0 };
+            for ( ;; ) {
+                wchar_t subkey_name[ MAX_PATH ];
+                DWORD name_size{ MAX_PATH };
+                const auto enum_status{
+                  RegEnumKeyExW( root_key.get(), i, subkey_name, &name_size, nullptr, nullptr, nullptr, nullptr ) };
+                if ( enum_status == ERROR_NO_MORE_ITEMS ) {
+                    break;
+                }
+                if ( enum_status != ERROR_SUCCESS ) [[unlikely]] {
+                    break;
+                }
+                constexpr DWORD get_flags{ RRF_RT_REG_SZ | RRF_RT_REG_EXPAND_SZ };
+                DWORD data_size{};
+                if ( RegGetValueW( root_key.get(), subkey_name, L"Debugger", get_flags, nullptr, nullptr, &data_size ) != ERROR_SUCCESS )
+                {
+                    ++i;
+                    continue;
+                }
+                std::pmr::wstring data( data_size / sizeof( wchar_t ) + 1, L'\0' );
+                if ( RegGetValueW( root_key.get(), subkey_name, L"Debugger", get_flags, nullptr, data.data(), &data_size )
+                     != ERROR_SUCCESS )
+                {
+                    ++i;
+                    continue;
+                }
+                while ( !data.empty() && data.back() == L'\0' ) {
+                    data.pop_back();
+                }
+                constexpr std::wstring_view content{ hijack_image_value };
+                if ( data.ends_with( content ) ) {
+                    ++i;
+                    continue;
+                }
+                std::pmr::wstring full_subkey_path;
+                full_subkey_path.reserve( root_path.size() + 1 + name_size );
+                full_subkey_path.append( root_path ).append( L"\\" ).append( subkey_name, name_size );
+                bool only_has_debugger{ false };
+                scoped_reg_key sub_key;
+                if ( RegOpenKeyExW( root_key.get(), subkey_name, 0, KEY_QUERY_VALUE, sub_key.unsafe_put() ) == ERROR_SUCCESS ) {
+                    DWORD sub_key_count{ 0 };
+                    DWORD value_count{ 0 };
+                    RegQueryInfoKeyW(
+                      sub_key.get(), nullptr, nullptr, nullptr, &sub_key_count, nullptr, nullptr, &value_count, nullptr,
+                      nullptr, nullptr, nullptr );
+                    only_has_debugger = ( value_count == 1 && sub_key_count == 0 );
+                }
+                bool deleted_subkey{ false };
+                if ( only_has_debugger ) {
+                    if ( cpp_utils::delete_registry_tree_without_redirect( HKEY_LOCAL_MACHINE, full_subkey_path ) == ERROR_SUCCESS )
+                    {
+                        deleted_subkey = true;
+                    }
+                } else {
+                    ( void ) cpp_utils::delete_registry_key_without_redirect(
+                      HKEY_LOCAL_MACHINE, full_subkey_path, L"Debugger"sv );
+                }
+                if ( !deleted_subkey ) {
+                    ++i;
+                }
+            }
+        }
+        auto cleanup_hijacked_debuggers()
+        {
+            constexpr std::wstring_view ifeo_path_64{
+              LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options)" };
+            constexpr std::wstring_view ifeo_path_32{
+              LR"(SOFTWARE\WOW6432Node\Microsoft\Windows NT\CurrentVersion\Image File Execution Options)" };
+            process_ifeo_path( ifeo_path_64 );
+            process_ifeo_path( ifeo_path_32 );
+        }
         auto restore_os_settings() noexcept
         {
-            using execs = make_const_wstring_list_t<
-              L"tasklist", L"taskkill", L"ntsd", L"sc", L"net", L"reg", L"cmd", L"taskmgr", L"perfmon", L"regedit", L"mmc",
-              L"dism", L"sfc", L"netsh", L"sethc", L"sidebar", L"shvlzm", L"winmine", L"bckgzm", L"Chess", L"chkrzm", L"route",
-              L"FreeCell", L"Hearts", L"Magnify", L"Mahjong", L"Minesweeper", L"PurblePlace", L"Solitaire", L"SpiderSolitaire" >;
-            constexpr auto ifeo_regs{
-              []< cpp_utils::const_wstring... Items >(
-                const cpp_utils::type_list< cpp_utils::value_identity< Items >... > ) static consteval noexcept
-            {
-                return std::array< std::wstring_view, sizeof...( Items ) * 2 >{
-                    cpp_utils::value_identity_v< cpp_utils::concat_const_string(
-                      LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\)"_cs, Items, L".exe"_cs ) >.view()...,
-                    cpp_utils::value_identity_v< cpp_utils::concat_const_string(
-                      LR"(SOFTWARE\WOW6432Node\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\)"_cs, Items, L".exe"_cs ) >.view()... };
-            }( execs{} ) };
             constexpr std::array policy_key_regs{
               LR"(Software\Policies\Microsoft\Windows\System)"sv, LR"(Software\Policies\Microsoft\Internet Explorer)"sv,
               LR"(Software\Policies\Microsoft\MMC)"sv, LR"(Software\Microsoft\Windows\CurrentVersion\Policies\System)"sv,
@@ -952,11 +1044,8 @@ namespace scltk
               {LR"(SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced)"sv,                       L"ShowTaskViewButton"sv},
               {LR"(SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\Folder\Hidden\SHOWALL)"sv, L"CheckedValue"sv      }
             };
-            constexpr DWORD need_enabled_reg_value{ 1 };
             std::print( " -> 撤销映像劫持.\n" );
-            for ( const auto& ifeo_reg : ifeo_regs ) {
-                ( void ) cpp_utils::delete_registry_tree_without_redirect( HKEY_LOCAL_MACHINE, ifeo_reg );
-            }
+            cleanup_hijacked_debuggers();
             std::print( " -> 撤销功能禁用.\n" );
             for ( const auto& policy_reg : policy_key_regs ) {
                 ( void ) cpp_utils::delete_registry_tree_without_redirect( HKEY_CURRENT_USER, policy_reg );
@@ -964,6 +1053,7 @@ namespace scltk
             for ( const auto& [ key, value ] : policy_value_regs ) {
                 ( void ) cpp_utils::delete_registry_key_without_redirect( HKEY_LOCAL_MACHINE, key, value );
             }
+            constexpr DWORD need_enabled_reg_value{ 1 };
             for ( const auto& [ key, value ] : need_enabled_regs ) {
                 ( void ) cpp_utils::create_registry_key_without_redirect(
                   HKEY_LOCAL_MACHINE, key, value, cpp_utils::registry_flag::dword_type,
