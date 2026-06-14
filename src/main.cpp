@@ -1260,8 +1260,9 @@ namespace scltk
         {
             std::print(
               " (i) 该功能可能丢失未保存的文件数据,\n"
-              "     请确认文件均已保存!" );
-            press_any_key_to_return();
+              "     请确认文件均已保存!\n\n"
+              " 请按任意键继续." );
+            con.press_any_key_to_continue();
             std::print( "\n\n (i) 3s 后将注销当前用户账户.\n" );
             std::thread{ [] static noexcept
             {
