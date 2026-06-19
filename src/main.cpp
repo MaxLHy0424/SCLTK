@@ -924,6 +924,39 @@ namespace scltk
             }
             return func_back;
         }
+        auto relaunch_explorer() noexcept
+        {
+            std::print( " -> 终止进程.\n" );
+            if ( proc_snapshot.refresh() && proc_snapshot.valid() ) {
+                ( void ) proc_snapshot.terminate_by_name( L"explorer.exe"sv );
+            }
+            std::print( " -> 启动进程.\n" );
+            wchar_t cmd[]{ L"explorer.exe" };
+            STARTUPINFOW startup_info{};
+            PROCESS_INFORMATION proc_info{};
+            startup_info.cb = sizeof( startup_info );
+            if ( CreateProcessW( nullptr, cmd, nullptr, nullptr, FALSE, 0, nullptr, nullptr, &startup_info, &proc_info ) )
+              [[likely]]
+            {
+                CloseHandle( proc_info.hProcess );
+                CloseHandle( proc_info.hThread );
+            }
+        }
+        auto logoff() noexcept
+        {
+            std::print(
+              " (i) 该功能可能丢失未保存的文件数据,\n"
+              "     请确认文件均已保存!\n\n"
+              " 请按任意键继续." );
+            con.press_any_key_to_continue();
+            std::print( "\n\n (i) 3s 后将注销当前用户账户.\n" );
+            std::thread{ [] static noexcept
+            {
+                std::this_thread::sleep_for( 3s );
+                ExitWindowsEx( EWX_LOGOFF, 0 );
+            } }
+              .detach();
+        }
         class scoped_reg_key final
         {
           private:
@@ -1242,39 +1275,6 @@ namespace scltk
             std::print( " -> 删除备份.\n" );
             std::error_code ec;
             std::filesystem::remove_all( LR"(C:\Windows\jf)"sv, ec );
-        }
-        auto relaunch_explorer() noexcept
-        {
-            std::print( " -> 终止进程.\n" );
-            if ( proc_snapshot.refresh() && proc_snapshot.valid() ) {
-                ( void ) proc_snapshot.terminate_by_name( L"explorer.exe"sv );
-            }
-            std::print( " -> 启动进程.\n" );
-            wchar_t cmd[]{ L"explorer.exe" };
-            STARTUPINFOW startup_info{};
-            PROCESS_INFORMATION proc_info{};
-            startup_info.cb = sizeof( startup_info );
-            if ( CreateProcessW( nullptr, cmd, nullptr, nullptr, FALSE, 0, nullptr, nullptr, &startup_info, &proc_info ) )
-              [[likely]]
-            {
-                CloseHandle( proc_info.hProcess );
-                CloseHandle( proc_info.hThread );
-            }
-        }
-        auto logoff() noexcept
-        {
-            std::print(
-              " (i) 该功能可能丢失未保存的文件数据,\n"
-              "     请确认文件均已保存!\n\n"
-              " 请按任意键继续." );
-            con.press_any_key_to_continue();
-            std::print( "\n\n (i) 3s 后将注销当前用户账户.\n" );
-            std::thread{ [] static noexcept
-            {
-                std::this_thread::sleep_for( 3s );
-                ExitWindowsEx( EWX_LOGOFF, 0 );
-            } }
-              .detach();
         }
         auto reset_common_web_browsers_policy() noexcept
         {
