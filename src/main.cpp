@@ -1064,6 +1064,11 @@ namespace scltk
               HKEY_LOCAL_MACHINE, LR"(SYSTEM\CurrentControlSet\Control\Keyboard Layout)"sv, L"Scancode Map"sv );
             ( void ) cpp_utils::delete_registry_key_without_redirect(
               HKEY_CURRENT_USER, LR"(Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced)"sv, L"DisabledHotkeys"sv );
+            std::print( " -> 恢复 USB 存储器服务.\n" );
+            constexpr DWORD start_type{ 3 };
+            ( void ) cpp_utils::create_registry_key_without_redirect(
+              HKEY_LOCAL_MACHINE, LR"(SYSTEM\CurrentControlSet\Services\USBSTOR)"sv, L"Start"sv,
+              cpp_utils::registry_flag::dword_type, reinterpret_cast< const BYTE* >( &start_type ), sizeof( start_type ) );
         }
         auto reset_firewall_rules() noexcept
         {
@@ -1271,14 +1276,6 @@ namespace scltk
             } }
               .detach();
         }
-        auto restore_usb_device_access() noexcept
-        {
-            std::print( " -> 写入注册表.\n" );
-            constexpr DWORD start_type{ 3 };
-            ( void ) cpp_utils::create_registry_key_without_redirect(
-              HKEY_LOCAL_MACHINE, LR"(SYSTEM\CurrentControlSet\Services\USBSTOR)"sv, L"Start"sv,
-              cpp_utils::registry_flag::dword_type, reinterpret_cast< const BYTE* >( &start_type ), sizeof( start_type ) );
-        }
         auto reset_common_web_browsers_policy() noexcept
         {
             std::print( " -> 删除注册表.\n" );
@@ -1297,7 +1294,6 @@ namespace scltk
           details_::func_item< "重启资源管理器", details_::relaunch_explorer >,
           details_::func_item< "注销当前用户账户", details_::logoff >,
           details_::func_item< "恢复操作系统设置", details_::restore_os_settings >,
-          details_::func_item< "恢复 USB 存储设备访问", details_::restore_usb_device_access >,
           details_::func_item< "修复网络访问", details_::fix_network >,
           details_::func_item< "重置 \"机房管理助手\" 配置", details_::reset_jfglzs_config >,
           details_::func_item< "重置 Chrome & Edge & Firefox 管理策略", details_::reset_common_web_browsers_policy > >;
