@@ -63,6 +63,43 @@ namespace scltk
     }
     namespace details_
     {
+#ifndef _WIN64
+        struct wow64_file_redirect_guard final
+        {
+            HMODULE kernel32_dll{ GetModuleHandleW( L"kernel32.dll" ) };
+            PVOID old_value{ nullptr };
+            bool disabled{ false };
+            auto operator=( const wow64_file_redirect_guard& ) -> wow64_file_redirect_guard& = delete;
+            auto operator=( wow64_file_redirect_guard&& ) -> wow64_file_redirect_guard&      = delete;
+            wow64_file_redirect_guard() noexcept
+            {
+                if ( kernel32_dll == nullptr ) [[unlikely]] {
+                    return;
+                }
+                const auto fn_disable{ std::bit_cast< BOOL( WINAPI* )( PVOID* ) >(
+                  GetProcAddress( kernel32_dll, "Wow64DisableWow64FsRedirection" ) ) };
+                if ( fn_disable != nullptr ) {
+                    disabled = fn_disable( &old_value );
+                }
+            }
+            wow64_file_redirect_guard( const wow64_file_redirect_guard& ) = delete;
+            wow64_file_redirect_guard( wow64_file_redirect_guard&& )      = delete;
+            ~wow64_file_redirect_guard() noexcept
+            {
+                if ( !disabled ) [[unlikely]] {
+                    return;
+                }
+                if ( kernel32_dll == nullptr ) [[unlikely]] {
+                    return;
+                }
+                const auto fn_revert{ std::bit_cast< BOOL( WINAPI* )( PVOID ) >(
+                  GetProcAddress( kernel32_dll, "Wow64RevertWow64FsRedirection" ) ) };
+                if ( fn_revert != nullptr ) {
+                    fn_revert( old_value );
+                }
+            }
+        };
+#endif
         constexpr const auto& hijack_image_value{ L"*_HIJACKED_BY_SCLTK" };
         template < cpp_utils::const_wstring... Items >
         using make_const_wstring_list_t = cpp_utils::type_list< cpp_utils::value_identity< Items >... >;
@@ -1133,6 +1170,9 @@ namespace scltk
         auto reset_hosts() noexcept
         {
             std::print( " -> 重置 Hosts.\n" );
+#ifndef _WIN64
+            const wow64_file_redirect_guard _;
+#endif
             const auto hosts_path{ [] static
             {
                 win32_file_path_buffer_t result;
