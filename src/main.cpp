@@ -24,7 +24,7 @@ namespace scltk
     constexpr SHORT console_width{ 50 };
     constexpr SHORT console_height{ 25 };
     constexpr UINT charset_id{ 936 };
-    constexpr const auto& config_file_name{ L"SCLTK.conf" };
+    constexpr const auto& config_file_name{ L"" INFO_SHORT_NAME ".conf" };
     constexpr auto func_back{ cpp_utils::console_ui::func_back };
     constexpr auto func_exit{ cpp_utils::console_ui::func_exit };
     template < cpp_utils::const_string Title, std::size_t NewLineCount >
@@ -100,7 +100,7 @@ namespace scltk
             }
         };
 #endif
-        constexpr const auto& hijack_image_value{ L"*_HIJACKED_BY_SCLTK" };
+        constexpr const auto& hijack_image_value{ L"*HIJACKED*" };
         template < cpp_utils::const_wstring... Items >
         using make_const_wstring_list_t = cpp_utils::type_list< cpp_utils::value_identity< Items >... >;
         using win32_file_path_buffer_t  = std::array< wchar_t, MAX_PATH >;
@@ -1385,9 +1385,7 @@ namespace scltk
                     for ( auto ch{ L'0' }; ch <= L'9'; ++ch ) {
                         dict.emplace_back( ch );
                     }
-                    for ( const auto ch : std::wstring_view{ LR"(?!@#$%^&*()-_=+[]{}\|/;:'",.<>)" } ) {
-                        dict.emplace_back( ch );
-                    }
+                    dict.append_range( LR"(?!@#$%^&*()-_=+[]{}\|/;:'",.<>)"sv );
                     return dict;
                 } >() };
                 constexpr auto title_length{ 32uz };
