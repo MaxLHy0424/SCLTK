@@ -192,9 +192,10 @@ namespace cpp_utils
                 }
             }
         };
+        template < auto InvalidValue >
         inline auto test_handle( const HANDLE h ) noexcept
         {
-            return h != nullptr || h != INVALID_HANDLE_VALUE;
+            return h != InvalidValue;
         }
         inline auto delete_handle( const HANDLE h ) noexcept
         {
@@ -224,7 +225,8 @@ namespace cpp_utils
         {
             FreeSid( p );
         }
-        using scoped_handle         = win32_scoped_handle< HANDLE, test_handle, delete_handle >;
+        using scoped_handle         = win32_scoped_handle< HANDLE, test_handle< nullptr >, delete_handle >;
+        using scoped_legacy_handle  = win32_scoped_handle< HANDLE, test_handle< INVALID_HANDLE_VALUE >, delete_handle >;
         using scoped_sc_handle      = win32_scoped_handle< SC_HANDLE, test_sc_handle, delete_sc_handle >;
         using scoped_reg_key_handle = win32_scoped_handle< HKEY, test_reg_key_handle, delete_reg_key_handle >;
         using scoped_sid_handle     = win32_scoped_handle< PSID, test_sid_handle, delete_sid_handle >;
@@ -374,7 +376,7 @@ namespace cpp_utils
         nt_terminate_process_t_ nt_terminate_process_{ nullptr };
         nt_suspend_process_t_ nt_suspend_process_{ nullptr };
         nt_resume_process_t_ nt_resume_process_{ nullptr };
-        details_::scoped_handle snapshot_{};
+        details_::scoped_legacy_handle snapshot_{};
       public:
         [[nodiscard]] auto valid() const noexcept
         {
