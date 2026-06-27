@@ -192,10 +192,13 @@ namespace cpp_utils
                 }
             }
         };
-        template < auto InvalidValue >
         inline auto test_handle( const HANDLE h ) noexcept
         {
-            return h != InvalidValue;
+            return h != nullptr;
+        }
+        inline auto test_legacy_handle( const HANDLE h ) noexcept
+        {
+            return h != INVALID_HANDLE_VALUE;
         }
         inline auto delete_handle( const HANDLE h ) noexcept
         {
@@ -225,8 +228,8 @@ namespace cpp_utils
         {
             FreeSid( p );
         }
-        using scoped_handle         = win32_scoped_handle< HANDLE, test_handle< nullptr >, delete_handle >;
-        using scoped_legacy_handle  = win32_scoped_handle< HANDLE, test_handle< INVALID_HANDLE_VALUE >, delete_handle >;
+        using scoped_handle         = win32_scoped_handle< HANDLE, test_handle, delete_handle >;
+        using scoped_legacy_handle  = win32_scoped_handle< HANDLE, test_legacy_handle, delete_handle >;
         using scoped_sc_handle      = win32_scoped_handle< SC_HANDLE, test_sc_handle, delete_sc_handle >;
         using scoped_reg_key_handle = win32_scoped_handle< HKEY, test_reg_key_handle, delete_reg_key_handle >;
         using scoped_sid_handle     = win32_scoped_handle< PSID, test_sid_handle, delete_sid_handle >;
