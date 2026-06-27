@@ -12,6 +12,7 @@
 #include <wincrypt.h>
 #include <filesystem>
 #include <fstream>
+#include <memory>
 #include <random>
 #include "../meta/info.h"
 DEFINE_GUID( GUID_DEVCLASS_NET, 0x4d36e972, 0xe325, 0x11ce, 0xbf, 0xc1, 0x08, 0x00, 0x2b, 0xe1, 0x03, 0x18 );
@@ -112,28 +113,32 @@ namespace scltk
         {
             CertCloseStore( h, 0 );
         } ) >;
+        using scoped_cert_context
+          = std::unique_ptr< std::remove_pointer_t< PCCERT_CONTEXT >, decltype( []( const PCCERT_CONTEXT h ) static noexcept
+        {
+            CertFreeCertificateContext( h );
+        } ) >;
         auto get_sign_name( const win32_file_path_buffer_t& path )
         {
-            HCERTSTORE cert_store{ nullptr };
+            scoped_cert_store cert_store{ nullptr };
             DWORD encoding{ 0 };
             DWORD content_type{ 0 };
             DWORD format_type{ 0 };
             if ( !CryptQueryObject(
-                   CERT_QUERY_OBJECT_FILE, path.data(), CERT_QUERY_CONTENT_FLAG_PKCS7_SIGNED_EMBED,
-                   CERT_QUERY_FORMAT_FLAG_BINARY, 0, &encoding, &content_type, &format_type, &cert_store, nullptr, nullptr )
+                   CERT_QUERY_OBJECT_FILE, path.data(), CERT_QUERY_CONTENT_FLAG_PKCS7_SIGNED_EMBED, CERT_QUERY_FORMAT_FLAG_BINARY,
+                   0, &encoding, &content_type, &format_type, std::out_ptr( cert_store ), nullptr, nullptr )
                  || cert_store == nullptr ) [[unlikely]]
             {
                 return std::pmr::wstring( unsynced_mem_pool );
             }
-            scoped_cert_store cert_store_guard{ cert_store };
-            PCCERT_CONTEXT cert{ nullptr };
-            while ( ( cert = CertEnumCertificatesInStore( cert_store, cert ) ) != nullptr ) [[likely]] {
-                const auto name_len{ CertGetNameStringW( cert, CERT_NAME_SIMPLE_DISPLAY_TYPE, 0, nullptr, nullptr, 0 ) };
+            scoped_cert_context cert{ nullptr };
+            while ( cert.reset( CertEnumCertificatesInStore( cert_store.get(), cert.get() ) ), cert != nullptr ) [[likely]] {
+                const auto name_len{ CertGetNameStringW( cert.get(), CERT_NAME_SIMPLE_DISPLAY_TYPE, 0, nullptr, nullptr, 0 ) };
                 if ( name_len < 2 ) [[unlikely]] {
                     continue;
                 }
                 std::pmr::wstring name_buf( name_len, L'\0', unsynced_mem_pool );
-                CertGetNameStringW( cert, CERT_NAME_SIMPLE_DISPLAY_TYPE, 0, nullptr, name_buf.data(), name_len );
+                CertGetNameStringW( cert.get(), CERT_NAME_SIMPLE_DISPLAY_TYPE, 0, nullptr, name_buf.data(), name_len );
                 return name_buf;
             }
             return std::pmr::wstring( unsynced_mem_pool );
