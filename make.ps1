@@ -20,6 +20,9 @@ if (($git_branch -ne "main") -or ($contains_uncommitted_changes -eq $true)) {
 else {
     $git_tag = & git describe --tags --abbrev=0
 }
+if ($git_branch.Length -eq 0) {
+    $git_tag = "<Insider Preview>"
+}
 if ($contains_uncommitted_changes -eq $false ) {
     $git_hash = & git rev-parse HEAD
 }
