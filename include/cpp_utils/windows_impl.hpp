@@ -194,7 +194,7 @@ namespace cpp_utils
         };
         inline auto test_handle( const HANDLE h ) noexcept
         {
-            return h != nullptr && h != INVALID_HANDLE_VALUE;
+            return h != nullptr || h != INVALID_HANDLE_VALUE;
         }
         inline auto delete_handle( const HANDLE h ) noexcept
         {
