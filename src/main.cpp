@@ -145,6 +145,7 @@ namespace scltk
         }
         auto terminate_jfglzs_daemon() noexcept
         {
+            std::print( " -> 终止 \"机房管理助手\" 守护进程.\n" );
             ( void ) proc_snapshot.terminate_by_names( std::array{ L"syszm.exe"sv, L"zmserv.exe"sv } );
             ( void ) proc_snapshot.iterate( []( const PROCESSENTRY32W& proc_entry ) noexcept
             {
@@ -214,6 +215,7 @@ namespace scltk
         }
         auto terminate_workwin() noexcept
         {
+            std::print( " -> 终止 \"WorkWin\" 进程.\n" );
             ( void ) proc_snapshot.iterate( []( const PROCESSENTRY32W& proc_entry ) static noexcept
             {
                 scoped_handle proc_handle{
@@ -290,8 +292,10 @@ namespace scltk
           L"veyon-worker.exe", L"veyon-configurator.exe", L"veyon-server.exe", L"veyon-cli.exe", L"veyon-wcli.exe",
           L"veyon-service.exe" >,
         details_::make_const_wstring_list_t< L"VeyonService" > >,
-      compile_time_rule_node<
-        "WorkWin", details_::make_const_wstring_list_t<>, details_::make_const_wstring_list_t<>, details_::terminate_workwin > >;
+      compile_time_rule_node< "WorkWin", cpp_utils::type_list<>, cpp_utils::type_list<>, details_::terminate_workwin, [] static noexcept
+    {
+        std::print( " (i) \"WorkWin\" 无需恢复, 请直接启动软件.\n" );
+    } > >;
     struct runtime_rule_node final
     {
         using item_type = std::pmr::vector< std::pmr::wstring >;
@@ -1449,7 +1453,6 @@ namespace scltk
                   ... );
             }
             if constexpr ( ( Backends::run_crack_helper || ... ) ) {
-                std::print( " -> 执行辅助程序.\n" );
                 (
                   []< typename Backend >() static
                 {
@@ -1490,7 +1493,6 @@ namespace scltk
                   ... );
             }
             if constexpr ( ( Backends::run_restore_helper || ... ) ) {
-                std::print( " -> 执行辅助程序.\n" );
                 (
                   []< typename Backend >() static
                 {
@@ -1685,6 +1687,7 @@ namespace scltk
         }
         static auto execute_helpers_( const std::pmr::vector< std::pmr::wstring >& helpers ) noexcept
         {
+            std::print( " -> 执行自定义辅助程序.\n" );
             for ( const auto& helper : helpers ) {
                 std::pmr::wstring cmd{ helper, unsynced_mem_pool };
                 STARTUPINFOW startup_info{};
