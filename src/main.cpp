@@ -1458,17 +1458,6 @@ namespace scltk
                 }.template operator()< Backends >(),
                   ... );
             }
-            constexpr auto text_output{ cpp_utils::concat_const_string( [] static consteval noexcept
-            {
-                if constexpr ( !( Backends::run_hijack_image || ... ) && !( Backends::run_disable_and_stop_servs || ... )
-                               && !( Backends::run_terminate_procs || ... ) && !( Backends::run_crack_helper || ... ) )
-                {
-                    return ""_cs;
-                } else {
-                    return "\n"_cs;
-                }
-            }(), " (i) 操作已完成."_cs ) };
-            std::print( cpp_utils::value_identity_v< text_output >.view() );
         }
         static auto restore_()
         {
@@ -1509,20 +1498,6 @@ namespace scltk
                 }.template operator()< Backends >(),
                   ... );
             }
-            constexpr auto text_output{ cpp_utils::concat_const_string(
-              [] static consteval noexcept
-            {
-                if constexpr ( !( Backends::run_undo_hijack_image || ... ) && !( Backends::run_enable_and_start_servs || ... )
-                               && !( Backends::run_restore_helper || ... ) )
-                {
-                    return ""_cs;
-                } else {
-                    return "\n"_cs;
-                }
-            }(),
-              " (i) 操作已完成.\n"
-              "     可能需要手动启动电子教室软件."_cs ) };
-            std::print( cpp_utils::value_identity_v< text_output >.view() );
         }
         static auto entry()
         {
@@ -1536,6 +1511,7 @@ namespace scltk
                     restore_();
                     break;
             }
+            std::print( "\n (i) 操作已完成." );
             details_::press_any_key_to_return();
             return func_back;
         }
@@ -1827,9 +1803,8 @@ namespace scltk
             if ( std::get< crack_restore_config >( config_nodes ).at< "crack_when_launching" >() ) {
                 all_rules::crack_();
                 std::print(
-                  "\n\n"
-                  " (i) 已执行全部破解规则,\n"
-                  "     请按任意键进入主页." );
+                  "\n (i) 已执行全部破解规则,"
+                  "\n     请按任意键进入主页." );
                 con.press_any_key_to_continue();
             }
         }
