@@ -1389,7 +1389,7 @@ namespace scltk
         }
     struct rule_executor final
     {
-        static auto crack_()
+        static auto crack()
         {
             std::print( make_title_text< "[ 破  解 ]", 3 >.view() );
             constexpr const auto& crack_restore_config_node{ std::get< crack_restore_config >( config_nodes ) };
@@ -1460,7 +1460,7 @@ namespace scltk
                   ... );
             }
         }
-        static auto restore_()
+        static auto restore()
         {
             std::print( make_title_text< "[ 恢  复 ]", 3 >.view() );
             constexpr const auto& crack_restore_config_node{ std::get< crack_restore_config >( config_nodes ) };
@@ -1504,8 +1504,8 @@ namespace scltk
         static auto entry()
         {
             switch ( details_::current_rule_executor_mode ) {
-                case details_::rule_executor_mode::crack : crack_(); break;
-                case details_::rule_executor_mode::restore : restore_(); break;
+                case details_::rule_executor_mode::crack : crack(); break;
+                case details_::rule_executor_mode::restore : restore(); break;
             }
             std::print( "\n (i) 操作已完成." );
             details_::press_any_key_to_return();
@@ -1797,7 +1797,7 @@ namespace scltk
         auto crack_when_launching() noexcept
         {
             if ( std::get< crack_restore_config >( config_nodes ).at< "crack_when_launching" >() ) {
-                all_rules::crack_();
+                all_rules::crack();
                 std::print(
                   "\n (i) 已执行全部破解规则,"
                   "\n     请按任意键进入主页." );
