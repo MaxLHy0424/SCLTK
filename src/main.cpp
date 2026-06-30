@@ -1359,67 +1359,6 @@ namespace scltk
     }
     namespace details_
     {
-        auto forced_show() noexcept
-        {
-            constexpr const auto& enabled{ std::get< window_config >( config_nodes ).at< "forced_show" >() };
-            constexpr auto sleep_duration{ 50ms };
-            constexpr auto condition_checker{ [] static noexcept
-            {
-                if ( enabled.test( std::memory_order_acquire ) == false ) {
-                    con.cancel_forced_show();
-                    enabled.wait( false, std::memory_order_acquire );
-                }
-                return false;
-            } };
-            con.forced_show_until( sleep_duration, condition_checker );
-        }
-        auto random_title() noexcept
-        {
-            constexpr const auto& enabled{ std::get< window_config >( config_nodes ).at< "random_title" >() };
-            constexpr auto generate_title{ [] static noexcept
-            {
-                constexpr auto chars_dict{ cpp_utils::invoke_to_array< [] static noexcept
-                {
-                    std::vector< wchar_t > dict;
-                    for ( auto ch{ L'A' }; ch <= L'Z'; ++ch ) {
-                        dict.emplace_back( ch );
-                    }
-                    for ( auto ch{ L'a' }; ch <= L'z'; ++ch ) {
-                        dict.emplace_back( ch );
-                    }
-                    for ( auto ch{ L'0' }; ch <= L'9'; ++ch ) {
-                        dict.emplace_back( ch );
-                    }
-                    dict.append_range( LR"(?!@#$%^&*()-_=+[]{}\|/;:'",.<>)"sv );
-                    return dict;
-                } >() };
-                constexpr auto title_length{ 32uz };
-                std::array< wchar_t, title_length + 1 > title;
-                std::mt19937_64 gen{ std::random_device{}() };
-                std::uniform_int_distribution< std::size_t > dist{ 0uz, chars_dict.size() - 1uz };
-                for ( auto i{ 0uz }; i < title_length; ++i ) {
-                    title[ i ] = chars_dict[ dist( gen ) ];
-                }
-                title.back() = L'\0';
-                return title;
-            } };
-            while ( true ) {
-                con.set_title( L"" INFO_SHORT_NAME );
-                enabled.wait( false, std::memory_order_acquire );
-                con.set_title( generate_title().data() );
-                enabled.wait( true, std::memory_order_acquire );
-            }
-        }
-    }
-    auto create_parallel_tasks() noexcept
-    {
-        constexpr std::array parallel_tasks{ details_::forced_show, details_::random_title };
-        for ( const auto& parallel_task : parallel_tasks ) {
-            std::thread{ parallel_task }.detach();
-        }
-    }
-    namespace details_
-    {
         enum class rule_executor_mode : bool
         {
             crack,
@@ -1819,6 +1758,90 @@ namespace scltk
         args.parent_ui.set_text( args.node_index, make_executor_mode_ui_text() );
         return func_back;
     }
+    namespace details_
+    {
+        auto forced_show() noexcept
+        {
+            constexpr const auto& enabled{ std::get< window_config >( config_nodes ).at< "forced_show" >() };
+            constexpr auto sleep_duration{ 50ms };
+            constexpr auto condition_checker{ [] static noexcept
+            {
+                if ( enabled.test( std::memory_order_acquire ) == false ) {
+                    con.cancel_forced_show();
+                    enabled.wait( false, std::memory_order_acquire );
+                }
+                return false;
+            } };
+            con.forced_show_until( sleep_duration, condition_checker );
+        }
+        auto random_title() noexcept
+        {
+            constexpr const auto& enabled{ std::get< window_config >( config_nodes ).at< "random_title" >() };
+            constexpr auto generate_title{ [] static noexcept
+            {
+                constexpr auto chars_dict{ cpp_utils::invoke_to_array< [] static noexcept
+                {
+                    std::vector< wchar_t > dict;
+                    for ( auto ch{ L'A' }; ch <= L'Z'; ++ch ) {
+                        dict.emplace_back( ch );
+                    }
+                    for ( auto ch{ L'a' }; ch <= L'z'; ++ch ) {
+                        dict.emplace_back( ch );
+                    }
+                    for ( auto ch{ L'0' }; ch <= L'9'; ++ch ) {
+                        dict.emplace_back( ch );
+                    }
+                    dict.append_range( LR"(?!@#$%^&*()-_=+[]{}\|/;:'",.<>)"sv );
+                    return dict;
+                } >() };
+                constexpr auto title_length{ 32uz };
+                std::array< wchar_t, title_length + 1 > title;
+                std::mt19937_64 gen{ std::random_device{}() };
+                std::uniform_int_distribution< std::size_t > dist{ 0uz, chars_dict.size() - 1uz };
+                for ( auto i{ 0uz }; i < title_length; ++i ) {
+                    title[ i ] = chars_dict[ dist( gen ) ];
+                }
+                title.back() = L'\0';
+                return title;
+            } };
+            while ( true ) {
+                con.set_title( L"" INFO_SHORT_NAME );
+                enabled.wait( false, std::memory_order_acquire );
+                con.set_title( generate_title().data() );
+                enabled.wait( true, std::memory_order_acquire );
+            }
+        }
+    }
+    auto create_parallel_tasks() noexcept
+    {
+        constexpr std::array parallel_tasks{ details_::forced_show, details_::random_title };
+        for ( const auto& parallel_task : parallel_tasks ) {
+            std::thread{ parallel_task }.detach();
+        }
+    }
+    auto show_homepage_ui()
+    {
+        cpp_utils::console_ui ui{ scltk::con, scltk::unsynced_mem_pool };
+        ui.reserve( 9 + scltk::builtin_rules::size )
+          .add_back( scltk::make_title_text< "[ 主  页 ]", 2 >.view() )
+          .add_back( " < 退出\n", scltk::quit, cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_intensity )
+          .add_back( " > 关于 ", scltk::info )
+          .add_back( " > 配置 ", scltk::config_ui )
+          .add_back( " > 工具箱\n", scltk::toolkit )
+          .add_back(
+            scltk::make_executor_mode_ui_text(), scltk::flip_executor_mode,
+            cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_green )
+          .add_back( " > 全部执行\n", scltk::all_rules::entry )
+          .add_back( " > * 自定义 * ", scltk::rule_executor< scltk::custom_rule_executor_backend >::entry );
+        [ & ]< typename... Nodes >( const cpp_utils::type_list< Nodes... > )
+        {
+            ( ui.add_back(
+                scltk::make_item_text< Nodes::display_name >.view(),
+                scltk::rule_executor< scltk::builtin_rules_executor_backend< Nodes > >::entry ),
+              ... );
+        }( scltk::builtin_rules{} );
+        ui.show();
+    }
 }
 auto main() -> int
 {
@@ -1837,24 +1860,5 @@ auto main() -> int
     scltk::enable_privileges();
     scltk::load_config( false );
     scltk::create_parallel_tasks();
-    cpp_utils::console_ui ui{ scltk::con, scltk::unsynced_mem_pool };
-    ui.reserve( 9 + scltk::builtin_rules::size )
-      .add_back( scltk::make_title_text< "[ 主  页 ]", 2 >.view() )
-      .add_back( " < 退出\n", scltk::quit, cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_intensity )
-      .add_back( " > 关于 ", scltk::info )
-      .add_back( " > 配置 ", scltk::config_ui )
-      .add_back( " > 工具箱\n", scltk::toolkit )
-      .add_back(
-        scltk::make_executor_mode_ui_text(), scltk::flip_executor_mode,
-        cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_green )
-      .add_back( " > 全部执行\n", scltk::all_rules::entry )
-      .add_back( " > * 自定义 * ", scltk::rule_executor< scltk::custom_rule_executor_backend >::entry );
-    [ & ]< typename... Nodes >( const cpp_utils::type_list< Nodes... > )
-    {
-        ( ui.add_back(
-            scltk::make_item_text< Nodes::display_name >.view(),
-            scltk::rule_executor< scltk::builtin_rules_executor_backend< Nodes > >::entry ),
-          ... );
-    }( scltk::builtin_rules{} );
-    ui.show();
+    scltk::show_homepage_ui();
 }
