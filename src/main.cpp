@@ -1391,6 +1391,7 @@ namespace scltk
     {
         static auto crack_()
         {
+            std::print( make_title_text< "[ 破  解 ]", 3 >.view() );
             constexpr const auto& crack_restore_config_node{ std::get< crack_restore_config >( config_nodes ) };
             constexpr const auto& enabled_hijack_image{ crack_restore_config_node.at< "hijack_image" >() };
             constexpr const auto& enabled_suspend_process{ crack_restore_config_node.at< "suspend_process" >() };
@@ -1461,6 +1462,7 @@ namespace scltk
         }
         static auto restore_()
         {
+            std::print( make_title_text< "[ 恢  复 ]", 3 >.view() );
             constexpr const auto& crack_restore_config_node{ std::get< crack_restore_config >( config_nodes ) };
             constexpr const auto& enabled_hijack_image{ crack_restore_config_node.at< "hijack_image" >() };
             if constexpr ( ( Backends::run_undo_hijack_image || ... ) ) {
@@ -1502,14 +1504,8 @@ namespace scltk
         static auto entry()
         {
             switch ( details_::current_rule_executor_mode ) {
-                case details_::rule_executor_mode::crack :
-                    std::print( make_title_text< "[ 破  解 ]", 3 >.view() );
-                    crack_();
-                    break;
-                case details_::rule_executor_mode::restore :
-                    std::print( make_title_text< "[ 恢  复 ]", 3 >.view() );
-                    restore_();
-                    break;
+                case details_::rule_executor_mode::crack : crack_(); break;
+                case details_::rule_executor_mode::restore : restore_(); break;
             }
             std::print( "\n (i) 操作已完成." );
             details_::press_any_key_to_return();
