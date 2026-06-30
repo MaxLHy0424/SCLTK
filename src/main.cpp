@@ -605,7 +605,8 @@ namespace scltk
     using crack_restore_config = details_::options_config_node<
       "crack_restore", "破解与恢复", false,
       details_::options_info_table<
-        details_::option_info< "hijack_image", "映像劫持" >, details_::option_info< "suspend_process", "挂起进程" > > >;
+        details_::option_info< "crack_when_launching", "启动时破解" >, details_::option_info< "hijack_image", "映像劫持" >,
+        details_::option_info< "suspend_process", "挂起进程" > > >;
     using window_config = details_::options_config_node<
       "window", "窗口显示", true,
       details_::options_info_table<
@@ -1819,8 +1820,27 @@ namespace scltk
             std::thread{ parallel_task }.detach();
         }
     }
-    auto do_extra_prep_tasks()
-    { }
+    namespace details_
+    {
+        auto crack_when_launching() noexcept
+        {
+            if ( std::get< crack_restore_config >( config_nodes ).at< "crack_when_launching" >() ) {
+                all_rules::crack_();
+                std::print(
+                  "\n\n"
+                  " (i) 已执行全部破解规则,\n"
+                  "     请按任意键进入主页." );
+                con.press_any_key_to_continue();
+            }
+        }
+    }
+    auto do_extra_prep_tasks() noexcept
+    {
+        constexpr std::array tasks{ details_::crack_when_launching };
+        for ( const auto& task : tasks ) {
+            task();
+        }
+    }
     auto show_homepage_ui()
     {
         cpp_utils::console_ui ui{ scltk::con, scltk::unsynced_mem_pool };
