@@ -1819,6 +1819,8 @@ namespace scltk
             std::thread{ parallel_task }.detach();
         }
     }
+    auto do_extra_prep_tasks()
+    { }
     auto show_homepage_ui()
     {
         cpp_utils::console_ui ui{ scltk::con, scltk::unsynced_mem_pool };
@@ -1860,5 +1862,6 @@ auto main() -> int
     scltk::enable_privileges();
     scltk::load_config( false );
     scltk::create_parallel_tasks();
+    scltk::do_extra_prep_tasks();
     scltk::show_homepage_ui();
 }
