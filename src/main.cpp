@@ -1800,6 +1800,7 @@ namespace scltk
         auto crack_when_launching() noexcept
         {
             if ( std::get< crack_restore_config >( config_nodes ).at< "crack_when_launching" >() ) {
+                con.clear( unsynced_mem_pool );
                 all_rules::crack();
                 std::print(
                   "\n (i) 已执行全部破解规则,"
@@ -1842,9 +1843,8 @@ namespace scltk
 auto main() -> int
 {
     using namespace std::string_view_literals;
-    scltk::con.set_charset( scltk::charset_id );
-    std::print( " -> 准备就绪." );
-    scltk::con.ignore_exit_signal( true )
+    scltk::con.set_charset( scltk::charset_id )
+      .ignore_exit_signal( true )
       .show_cursor( false )
       .fix_size( true )
       .lock_text( true )
@@ -1852,6 +1852,7 @@ auto main() -> int
       .enable_window_maximize_ctrl( false )
       .enable_window_minimize_ctrl( false )
       .enable_window_close_ctrl( false );
+    std::print( " -> 准备就绪." );
     scltk::disable_hotkey();
     scltk::enable_privileges();
     scltk::load_config( false );
