@@ -323,20 +323,6 @@ namespace cpp_utils
         nt_suspend_process_t_ nt_suspend_process_{ nullptr };
         nt_resume_process_t_ nt_resume_process_{ nullptr };
         details_::scoped_legacy_handle snapshot_{};
-        auto wrapped_nt_open_process_( const DWORD pid, const ACCESS_MASK desired_ccess ) const noexcept
-        {
-            CLIENT_ID client_id{ .UniqueProcess{ reinterpret_cast< HANDLE >( pid ) }, .UniqueThread{ nullptr } };
-            OBJECT_ATTRIBUTES obj_attrs{
-              .Length{ sizeof( OBJECT_ATTRIBUTES ) },
-              .RootDirectory{ nullptr },
-              .ObjectName{ nullptr },
-              .Attributes{ OBJ_CASE_INSENSITIVE },
-              .SecurityDescriptor{ nullptr },
-              .SecurityQualityOfService{ nullptr } };
-            HANDLE proc_handle{ nullptr };
-            nt_open_process_( &proc_handle, desired_ccess, &obj_attrs, &client_id );
-            return proc_handle;
-        }
       public:
         [[nodiscard]] auto valid() const noexcept
         {
@@ -354,6 +340,20 @@ namespace cpp_utils
         [[nodiscard]] auto get_nt_resume_process() const noexcept
         {
             return nt_resume_process_;
+        }
+        [[nodiscard]] auto wrapped_nt_open_process( const DWORD pid, const ACCESS_MASK desired_ccess ) const noexcept
+        {
+            CLIENT_ID client_id{ .UniqueProcess{ reinterpret_cast< HANDLE >( pid ) }, .UniqueThread{ nullptr } };
+            OBJECT_ATTRIBUTES obj_attrs{
+              .Length{ sizeof( OBJECT_ATTRIBUTES ) },
+              .RootDirectory{ nullptr },
+              .ObjectName{ nullptr },
+              .Attributes{ OBJ_CASE_INSENSITIVE },
+              .SecurityDescriptor{ nullptr },
+              .SecurityQualityOfService{ nullptr } };
+            details_::scoped_handle proc_handle{};
+            nt_open_process_( std::out_ptr( proc_handle ), desired_ccess, &obj_attrs, &client_id );
+            return proc_handle;
         }
         [[nodiscard]] auto refresh() noexcept
         {
@@ -387,7 +387,7 @@ namespace cpp_utils
         }
         [[nodiscard]] auto terminate_by_pid( const DWORD pid ) const noexcept
         {
-            details_::scoped_handle proc_handle{ wrapped_nt_open_process_( pid, PROCESS_TERMINATE ) };
+            const auto proc_handle{ wrapped_nt_open_process( pid, PROCESS_TERMINATE ) };
             if ( proc_handle == nullptr ) [[unlikely]] {
                 return false;
             }
@@ -426,7 +426,7 @@ namespace cpp_utils
         }
         [[nodiscard]] auto suspend_by_pid( const DWORD pid ) const noexcept
         {
-            details_::scoped_handle proc_handle{ wrapped_nt_open_process_( pid, PROCESS_SUSPEND_RESUME ) };
+            const auto proc_handle{ wrapped_nt_open_process( pid, PROCESS_SUSPEND_RESUME ) };
             if ( proc_handle == nullptr ) [[unlikely]] {
                 return false;
             }
@@ -465,7 +465,7 @@ namespace cpp_utils
         }
         [[nodiscard]] auto resume_by_pid( const DWORD pid ) const noexcept
         {
-            details_::scoped_handle proc_handle{ wrapped_nt_open_process_( pid, PROCESS_SUSPEND_RESUME ) };
+            const auto proc_handle{ wrapped_nt_open_process( pid, PROCESS_SUSPEND_RESUME ) };
             if ( proc_handle == nullptr ) [[unlikely]] {
                 return false;
             }
