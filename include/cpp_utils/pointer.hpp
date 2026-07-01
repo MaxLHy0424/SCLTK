@@ -24,7 +24,8 @@ namespace cpp_utils
       private:
         T ptr_{};
       public:
-        using value_type = T;
+        using value_type   = T;
+        using checker_type = NullChecker;
         constexpr auto computable() const noexcept
         {
             return !std::is_same_v< std::remove_cv_t< std::remove_pointer_t< T > >, void >;
