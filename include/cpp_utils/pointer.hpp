@@ -39,11 +39,11 @@ namespace cpp_utils
         {
             return ptr_;
         }
-        constexpr explicit operator T() const noexcept
+        [[nodiscard]] constexpr operator T() const noexcept
         {
             return ptr_;
         }
-        constexpr explicit operator bool() const noexcept
+        [[nodiscard]] constexpr explicit operator bool() const noexcept
         {
             return !NullChecker{}( ptr_ );
         }
