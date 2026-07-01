@@ -51,7 +51,8 @@ namespace cpp_utils
         constexpr auto operator+=( const std::size_t n ) noexcept -> raw_pointer_wrapper< T >&
             requires( computable() )
         {
-            return ptr_ += n;
+            ptr_ += n;
+            return *this;
         }
         constexpr auto operator++() noexcept -> raw_pointer_wrapper< T >&
             requires( computable() )
@@ -72,7 +73,8 @@ namespace cpp_utils
         constexpr auto operator-=( const std::size_t n ) noexcept -> raw_pointer_wrapper< T >&
             requires( computable() )
         {
-            return ptr_ -= n;
+            ptr_ -= n;
+            return *this;
         }
         constexpr auto operator--() noexcept -> raw_pointer_wrapper< T >&
             requires( computable() )
