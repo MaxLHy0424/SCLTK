@@ -147,21 +147,22 @@ namespace cpp_utils
     }
     namespace details_
     {
-        using scoped_handle = std::unique_ptr< std::remove_pointer_t< HANDLE >, decltype( []( const HANDLE h ) static noexcept
+        struct null_legacy_handle_checker final
         {
-            CloseHandle( h );
-        } ) >;
-        using scoped_legacy_handle = unique_ptr_ex<
-            std::remove_pointer_t< HANDLE >,
-            decltype( []( const HANDLE h ) static noexcept
+            static inline auto operator()( const HANDLE h ) noexcept
             {
                 return h == INVALID_HANDLE_VALUE;
-            } ),
-            decltype( []( const HANDLE h ) static noexcept
+            }
+        };
+        struct handle_closer final
+        {
+            static inline auto operator()( const HANDLE h ) noexcept
             {
                 CloseHandle( h );
-            } )
-        >;
+            }
+        };
+        using scoped_handle = std::unique_ptr< std::remove_pointer_t< HANDLE >, handle_closer >;
+        using scoped_legacy_handle = unique_ptr_ex< std::remove_pointer_t< HANDLE >, null_legacy_handle_checker, handle_closer >;
         using scoped_sc_handle = std::unique_ptr< std::remove_pointer_t< SC_HANDLE >, decltype( []( const SC_HANDLE h ) static noexcept
         {
             CloseServiceHandle( h );
@@ -179,11 +180,11 @@ namespace cpp_utils
           const std::wstring_view service_name, const DWORD scm_access, const DWORD service_access, F&& func ) noexcept -> DWORD
         {
             scoped_sc_handle scm{ OpenSCManagerW( nullptr, nullptr, scm_access ) };
-            if ( !scm.valid() ) [[unlikely]] {
+            if ( scm == nullptr ) [[unlikely]] {
                 return GetLastError();
             }
             scoped_sc_handle svc{ OpenServiceW( scm.get(), service_name.data(), service_access ) };
-            if ( !svc.valid() ) [[unlikely]] {
+            if ( svc == nullptr ) [[unlikely]] {
                 return GetLastError();
             }
             return func( scm.get(), svc.get() );
