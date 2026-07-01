@@ -1,11 +1,24 @@
 #pragma once
+#include <concepts>
 #include <type_traits>
 namespace cpp_utils
 {
     template < typename T >
-    concept pointer = std::is_pointer_v< T >;
-    template < typename T >
-        requires( !std::is_const_v< T > && pointer< T > )
+    concept raw_pointer = std::is_pointer_v< T >;
+    template < typename PointerType, typename Checker >
+    concept null_pointer_checker_for = requires {
+        { Checker::empty( PointerType{ nullptr } ) } noexcept -> std::convertible_to< bool >;
+    };
+    struct default_null_pointer_checker final
+    {
+        template < raw_pointer T >
+        static constexpr auto empty( const T ptr ) noexcept
+        {
+            return ptr == nullptr;
+        }
+    };
+    template < raw_pointer T, null_pointer_checker_for< T > Checker = default_null_pointer_checker >
+        requires( !std::is_const_v< T > )
     class raw_pointer_wrapper final
     {
       private:
@@ -26,7 +39,7 @@ namespace cpp_utils
         }
         constexpr explicit operator bool() const noexcept
         {
-            return ptr != nullptr;
+            return !Checker::empty( ptr_ );
         }
         [[nodiscard]] constexpr auto&& operator*() const noexcept
             requires( computable() )
@@ -41,21 +54,21 @@ namespace cpp_utils
         [[nodiscard]] constexpr auto operator+( const std::size_t n ) const noexcept
             requires( computable() )
         {
-            return raw_pointer_wrapper< T >{ ptr_ + n };
+            return raw_pointer_wrapper< T, Checker >{ ptr_ + n };
         }
-        constexpr auto operator+=( const std::size_t n ) noexcept -> raw_pointer_wrapper< T >&
+        constexpr auto operator+=( const std::size_t n ) noexcept -> raw_pointer_wrapper< T, Checker >&
             requires( computable() )
         {
             ptr_ += n;
             return *this;
         }
-        constexpr auto operator++() noexcept -> raw_pointer_wrapper< T >&
+        constexpr auto operator++() noexcept -> raw_pointer_wrapper< T, Checker >&
             requires( computable() )
         {
             ++ptr_;
             return *this;
         }
-        constexpr auto operator++( int ) noexcept -> raw_pointer_wrapper< T >
+        constexpr auto operator++( int ) noexcept -> raw_pointer_wrapper< T, Checker >
             requires( computable() )
         {
             return ptr_++;
@@ -63,71 +76,74 @@ namespace cpp_utils
         [[nodiscard]] constexpr auto operator-( const std::size_t n ) const noexcept
             requires( computable() )
         {
-            return raw_pointer_wrapper< T >{ ptr_ - n };
+            return raw_pointer_wrapper< T, Checker >{ ptr_ - n };
         }
-        constexpr auto operator-=( const std::size_t n ) noexcept -> raw_pointer_wrapper< T >&
+        constexpr auto operator-=( const std::size_t n ) noexcept -> raw_pointer_wrapper< T, Checker >&
             requires( computable() )
         {
             ptr_ -= n;
             return *this;
         }
-        constexpr auto operator--() noexcept -> raw_pointer_wrapper< T >&
+        constexpr auto operator--() noexcept -> raw_pointer_wrapper< T, Checker >&
             requires( computable() )
         {
             --ptr_;
             return *this;
         }
-        constexpr auto operator--( int ) noexcept -> raw_pointer_wrapper< T >
+        constexpr auto operator--( int ) noexcept -> raw_pointer_wrapper< T, Checker >
             requires( computable() )
         {
             return ptr_--;
         }
-        constexpr auto operator=( const std::nullptr_t ) noexcept -> raw_pointer_wrapper< T >&
+        constexpr auto operator=( const std::nullptr_t ) noexcept -> raw_pointer_wrapper< T, Checker >&
         {
             ptr_ = nullptr;
             return *this;
         }
-        constexpr auto operator=( const raw_pointer_wrapper< T >& ) noexcept -> raw_pointer_wrapper< T >& = default;
-        constexpr auto operator=( raw_pointer_wrapper< T >&& ) noexcept -> raw_pointer_wrapper< T >&      = default;
-        constexpr raw_pointer_wrapper() noexcept                                                          = default;
+        constexpr auto operator=( const raw_pointer_wrapper< T, Checker >& ) noexcept
+          -> raw_pointer_wrapper< T, Checker >& = default;
+        constexpr auto operator=( raw_pointer_wrapper< T, Checker >&& ) noexcept -> raw_pointer_wrapper< T, Checker >& = default;
+        constexpr raw_pointer_wrapper() noexcept = default;
         constexpr raw_pointer_wrapper( const std::nullptr_t ) noexcept
           : ptr_{ nullptr }
         { }
         constexpr raw_pointer_wrapper( const T ptr ) noexcept
           : ptr_{ ptr }
         { }
-        constexpr raw_pointer_wrapper( const raw_pointer_wrapper< T >& ) noexcept = default;
-        constexpr raw_pointer_wrapper( raw_pointer_wrapper< T >&& ) noexcept      = default;
-        ~raw_pointer_wrapper() noexcept                                           = default;
+        constexpr raw_pointer_wrapper( const raw_pointer_wrapper< T, Checker >& ) noexcept = default;
+        constexpr raw_pointer_wrapper( raw_pointer_wrapper< T, Checker >&& ) noexcept      = default;
+        ~raw_pointer_wrapper() noexcept                                                    = default;
     };
-    template < pointer T >
-    [[nodiscard]] inline constexpr auto operator==( const raw_pointer_wrapper< T >& lhs, const raw_pointer_wrapper< T >& rhs ) noexcept
+    template < raw_pointer T, null_pointer_checker_for< T > Checker >
+    [[nodiscard]] inline constexpr auto
+      operator==( const raw_pointer_wrapper< T, Checker >& lhs, const raw_pointer_wrapper< T, Checker >& rhs ) noexcept
     {
         return lhs.get() == rhs.get();
     }
-    template < pointer T >
-    [[nodiscard]] inline constexpr auto operator!=( const raw_pointer_wrapper< T >& lhs, const raw_pointer_wrapper< T >& rhs ) noexcept
+    template < raw_pointer T, null_pointer_checker_for< T > Checker >
+    [[nodiscard]] inline constexpr auto
+      operator!=( const raw_pointer_wrapper< T, Checker >& lhs, const raw_pointer_wrapper< T, Checker >& rhs ) noexcept
     {
         return lhs.get() != rhs.get();
     }
-    template < pointer T >
-    [[nodiscard]] inline constexpr auto operator==( const raw_pointer_wrapper< T >& lhs, const std::nullptr_t ) noexcept
+    template < raw_pointer T, null_pointer_checker_for< T > Checker >
+    [[nodiscard]] inline constexpr auto operator==( const raw_pointer_wrapper< T, Checker >& lhs, const std::nullptr_t ) noexcept
     {
-        return lhs.get() == nullptr;
+        return Checker::empty( lhs.get() );
     }
-    template < pointer T >
-    [[nodiscard]] inline constexpr auto operator!=( const raw_pointer_wrapper< T >& lhs, const std::nullptr_t ) noexcept
+    template < raw_pointer T, null_pointer_checker_for< T > Checker >
+    [[nodiscard]] inline constexpr auto operator!=( const raw_pointer_wrapper< T, Checker >& lhs, const std::nullptr_t ) noexcept
     {
-        return lhs.get() != nullptr;
+        return !Checker::empty( lhs.get() );
     }
-    template < pointer T >
-    [[nodiscard]] inline constexpr auto operator==( const std::nullptr_t, const raw_pointer_wrapper< T >& rhs ) noexcept
+    template < raw_pointer T, null_pointer_checker_for< T > Checker >
+    [[nodiscard]] inline constexpr auto operator==( const std::nullptr_t, const raw_pointer_wrapper< T, Checker >& rhs ) noexcept
     {
-        return rhs.get() == nullptr;
+        return Checker::empty( rhs.get() );
     }
-    template < pointer T >
-    [[nodiscard]] inline constexpr auto operator!=( const std::nullptr_t, const raw_pointer_wrapper< T >& rhs ) noexcept
+    template < raw_pointer T, null_pointer_checker_for< T > Checker >
+    [[nodiscard]] inline constexpr auto operator!=( const std::nullptr_t, const raw_pointer_wrapper< T, Checker >& rhs ) noexcept
     {
-        return rhs.get() != nullptr;
+        return !Checker::empty( rhs.get() );
     }
 }
