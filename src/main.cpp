@@ -167,8 +167,8 @@ namespace scltk
                 if ( !std::ranges::all_of( name.substr( 0, name.size() - 4 ), is_lower_case ) ) {
                     return false;
                 }
-                scoped_handle proc_handle{
-                  OpenProcess( PROCESS_TERMINATE | PROCESS_QUERY_LIMITED_INFORMATION, FALSE, proc_entry.th32ProcessID ) };
+                const auto proc_handle{ proc_snapshot.wrapped_nt_open_process(
+                  proc_entry.th32ProcessID, PROCESS_TERMINATE | PROCESS_QUERY_LIMITED_INFORMATION ) };
                 if ( proc_handle == nullptr ) [[unlikely]] {
                     return true;
                 }
@@ -218,8 +218,8 @@ namespace scltk
             std::print( " -> 终止 \"WorkWin\" 进程.\n" );
             ( void ) proc_snapshot.iterate( []( const PROCESSENTRY32W& proc_entry ) static noexcept
             {
-                scoped_handle proc_handle{
-                  OpenProcess( PROCESS_QUERY_LIMITED_INFORMATION | PROCESS_TERMINATE, FALSE, proc_entry.th32ProcessID ) };
+                const auto proc_handle{ proc_snapshot.wrapped_nt_open_process(
+                  proc_entry.th32ProcessID, PROCESS_QUERY_LIMITED_INFORMATION | PROCESS_TERMINATE ) };
                 if ( proc_handle.get() == nullptr ) [[unlikely]] {
                     return true;
                 }
