@@ -156,7 +156,7 @@ namespace cpp_utils
     }
     namespace details_
     {
-        template < typename T, typename NullChecker, typename Deleter >
+        template < typename T, null_pointer_checker_for< T* > NullChecker, typename Deleter >
         struct unique_ptr_ex_deleter
         {
             using pointer = raw_pointer_wrapper< T*, NullChecker >;
@@ -173,7 +173,8 @@ namespace cpp_utils
             ~unique_ptr_ex_deleter() = default;
         };
     }
-    template < typename T, typename NullChecker = default_null_pointer_checker, typename Deleter = std::default_delete< T > >
+    template < typename T, null_pointer_checker_for< T* > NullChecker = default_null_pointer_checker,
+               typename Deleter = std::default_delete< T > >
         requires requires( Deleter d, T* p ) { d( p ); }
     using unique_ptr_ex = std::unique_ptr< T, details_::unique_ptr_ex_deleter< T, NullChecker, Deleter > >;
 }
