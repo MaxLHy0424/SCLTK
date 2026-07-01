@@ -48,6 +48,11 @@ namespace cpp_utils
         {
             return *ptr_;
         }
+        [[nodiscard]] constexpr auto operator->() const noexcept
+            requires( computable() )
+        {
+            return ptr_;
+        }
         [[nodiscard]] constexpr auto&& operator[]( const std::size_t n ) const noexcept
             requires( computable() )
         {
@@ -152,21 +157,23 @@ namespace cpp_utils
     namespace details_
     {
         template < typename T, typename NullChecker, typename Deleter >
-        struct unique_ptr_ex_deleter final : Deleter
+        struct unique_ptr_ex_deleter
         {
             using pointer = raw_pointer_wrapper< T*, NullChecker >;
-            using Deleter::Deleter;
-            static constexpr auto operator()( const pointer p ) noexcept
+            [[no_unique_address]] Deleter deleter;
+            static constexpr auto operator()( pointer p )
             {
-                if ( !NullChecker::empty( p.get() ) ) {
-                    static_cast< const Deleter& >( *this )( p.get() );
-                }
+                deleter( p.get() );
             }
+            constexpr unique_ptr_ex_deleter() = default;
+            template < typename... Args >
+            constexpr explicit unique_ptr_ex_deleter( Args&&... args )
+              : deleter{ std::forward< Args >( args )... }
+            { }
+            ~unique_ptr_ex_deleter() = default;
         };
     }
-    template < typename T, typename NullChecker, typename Deleter >
-        requires requires( Deleter d, raw_pointer_wrapper< T*, NullChecker > p ) {
-            { d( p ) } noexcept;
-        }
+    template < typename T, typename NullChecker = default_null_pointer_checker, typename Deleter = std::default_delete< T > >
+        requires requires( Deleter d, raw_pointer_wrapper< T*, NullChecker > p ) { d( p ); }
     using unique_ptr_ex = std::unique_ptr< T, details_::unique_ptr_ex_deleter< T, NullChecker, Deleter > >;
 }
