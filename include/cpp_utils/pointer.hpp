@@ -39,6 +39,10 @@ namespace cpp_utils
         {
             return ptr_;
         }
+        constexpr explicit operator T() const noexcept
+        {
+            return ptr_;
+        }
         constexpr explicit operator bool() const noexcept
         {
             return !NullChecker{}( ptr_ );
@@ -133,6 +137,26 @@ namespace cpp_utils
       operator!=( const raw_pointer_wrapper< T, NullChecker >& lhs, const raw_pointer_wrapper< T, NullChecker >& rhs ) noexcept
     {
         return lhs.get() != rhs.get();
+    }
+    template < raw_pointer T, null_pointer_checker_for< T > NullChecker >
+    [[nodiscard]] inline constexpr auto operator==( const raw_pointer_wrapper< T, NullChecker >& lhs, const T& rhs ) noexcept
+    {
+        return lhs.get() == rhs;
+    }
+    template < raw_pointer T, null_pointer_checker_for< T > NullChecker >
+    [[nodiscard]] inline constexpr auto operator!=( const raw_pointer_wrapper< T, NullChecker >& lhs, const T& rhs ) noexcept
+    {
+        return lhs.get() != rhs;
+    }
+    template < raw_pointer T, null_pointer_checker_for< T > NullChecker >
+    [[nodiscard]] inline constexpr auto operator==( const T& lhs, const raw_pointer_wrapper< T, NullChecker >& rhs ) noexcept
+    {
+        return lhs.get() == rhs;
+    }
+    template < raw_pointer T, null_pointer_checker_for< T > NullChecker >
+    [[nodiscard]] inline constexpr auto operator!=( const T& lhs, const raw_pointer_wrapper< T, NullChecker >& rhs ) noexcept
+    {
+        return lhs.get() != rhs;
     }
     template < raw_pointer T, null_pointer_checker_for< T > NullChecker >
     [[nodiscard]] inline constexpr auto operator==( const raw_pointer_wrapper< T, NullChecker >& lhs, const std::nullptr_t ) noexcept
