@@ -14,6 +14,7 @@
 #include <thread>
 #include <type_traits>
 #include <utility>
+#include "pointer.hpp"
 namespace cpp_utils
 {
 #if defined( _WIN32 ) || defined( _WIN64 )
@@ -146,94 +147,33 @@ namespace cpp_utils
     }
     namespace details_
     {
-        template < typename HandleType, auto HandleValidTester, auto HandleDeleter >
-            requires requires( const HandleType hd ) {
-                { HandleValidTester( hd ) } noexcept -> std::same_as< bool >;
-                { HandleDeleter( hd ) } noexcept;
-            }
-        class win32_scoped_handle final
-        {
-          private:
-            HandleType handle_;
-          public:
-            auto valid() const noexcept
-            {
-                return HandleValidTester( handle_ );
-            }
-            auto get() const noexcept
-            {
-                return handle_;
-            }
-            auto unsafe_put() noexcept
-            {
-                return &handle_;
-            }
-            auto& reset( const HandleType new_handle ) noexcept
-            {
-                if ( valid() ) [[likely]] {
-                    HandleDeleter( handle_ );
-                }
-                handle_ = new_handle;
-                return *this;
-            }
-            auto operator=( const win32_scoped_handle& ) -> win32_scoped_handle& = delete;
-            auto operator=( win32_scoped_handle&& ) -> win32_scoped_handle&      = delete;
-            explicit win32_scoped_handle() noexcept
-              : handle_{ nullptr }
-            { }
-            win32_scoped_handle( const HandleType handle ) noexcept
-              : handle_{ handle }
-            { }
-            win32_scoped_handle( const win32_scoped_handle& ) = delete;
-            win32_scoped_handle( win32_scoped_handle&& )      = delete;
-            ~win32_scoped_handle() noexcept
-            {
-                if ( valid() ) [[likely]] {
-                    HandleDeleter( handle_ );
-                }
-            }
-        };
-        inline auto test_handle( const HANDLE h ) noexcept
-        {
-            return h != nullptr;
-        }
-        inline auto test_legacy_handle( const HANDLE h ) noexcept
-        {
-            return h != INVALID_HANDLE_VALUE;
-        }
-        inline auto delete_handle( const HANDLE h ) noexcept
+        using scoped_handle = std::unique_ptr< std::remove_pointer_t< HANDLE >, decltype( []( const HANDLE h ) static noexcept
         {
             CloseHandle( h );
-        }
-        inline auto test_sc_handle( const SC_HANDLE h ) noexcept
-        {
-            return h != nullptr;
-        }
-        inline auto delete_sc_handle( const SC_HANDLE h ) noexcept
+        } ) >;
+        using scoped_legacy_handle = unique_ptr_ex<
+            std::remove_pointer_t< HANDLE >,
+            decltype( []( const HANDLE h ) static noexcept
+            {
+                return h == INVALID_HANDLE_VALUE;
+            } ),
+            decltype( []( const HANDLE h ) static noexcept
+            {
+                CloseHandle( h );
+            } )
+        >;
+        using scoped_sc_handle = std::unique_ptr< std::remove_pointer_t< SC_HANDLE >, decltype( []( const SC_HANDLE h ) static noexcept
         {
             CloseServiceHandle( h );
-        }
-        inline auto test_reg_key_handle( const HKEY h ) noexcept
-        {
-            return h != nullptr;
-        }
-        inline auto delete_reg_key_handle( const HKEY h ) noexcept
+        } ) >;
+        using scoped_reg_key_handle = std::unique_ptr< std::remove_pointer_t< HKEY >, decltype( []( const HKEY h ) static noexcept
         {
             RegCloseKey( h );
-        }
-        inline auto test_sid_handle( const PSID p ) noexcept
-        {
-            return p != nullptr;
-        }
-        inline auto delete_sid_handle( const PSID p ) noexcept
+        } ) >;
+        using scoped_sid_handle = std::unique_ptr< std::remove_pointer_t< PSID >, decltype( []( const PSID p ) static noexcept
         {
             FreeSid( p );
-        }
-        using scoped_handle         = win32_scoped_handle< HANDLE, test_handle, delete_handle >;
-        using scoped_legacy_handle  = win32_scoped_handle< HANDLE, test_legacy_handle, delete_handle >;
-        using scoped_sc_handle      = win32_scoped_handle< SC_HANDLE, test_sc_handle, delete_sc_handle >;
-        using scoped_reg_key_handle = win32_scoped_handle< HKEY, test_reg_key_handle, delete_reg_key_handle >;
-        using scoped_sid_handle     = win32_scoped_handle< PSID, test_sid_handle, delete_sid_handle >;
+        } ) >;
         template < typename F >
         [[nodiscard]] inline auto with_service(
           const std::wstring_view service_name, const DWORD scm_access, const DWORD service_access, F&& func ) noexcept -> DWORD
@@ -296,7 +236,7 @@ namespace cpp_utils
                 return for_each_dependency( deps, [ & ]( const wchar_t* dep_name ) noexcept -> DWORD
                 {
                     const scoped_sc_handle dep_svc{ OpenServiceW( scm, dep_name, SERVICE_STOP | SERVICE_QUERY_STATUS ) };
-                    if ( !dep_svc.valid() ) [[unlikely]] {
+                    if ( dep_svc == nullptr ) [[unlikely]] {
                         return ERROR_SUCCESS;
                     }
                     return stop_service_and_dependencies( scm, dep_svc.get(), resource );
@@ -329,7 +269,7 @@ namespace cpp_utils
                         return ERROR_SUCCESS;
                     }
                     const scoped_sc_handle dep_svc{ OpenServiceW( scm, dep_name, SERVICE_START | SERVICE_QUERY_STATUS ) };
-                    if ( !dep_svc.valid() ) [[unlikely]] {
+                    if ( dep_svc == nullptr ) [[unlikely]] {
                         return ERROR_SUCCESS;
                     }
                     SERVICE_STATUS status{};
@@ -355,7 +295,7 @@ namespace cpp_utils
     [[nodiscard]] inline auto set_privilege( const HANDLE proc, const wchar_t* const privilege, const bool is_enabled ) noexcept
     {
         details_::scoped_handle token;
-        if ( !OpenProcessToken( proc, TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, token.unsafe_put() ) ) [[unlikely]] {
+        if ( !OpenProcessToken( proc, TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, std::out_ptr( token ) ) ) [[unlikely]] {
             return GetLastError();
         }
         LUID local_uid{};
@@ -401,7 +341,7 @@ namespace cpp_utils
         [[nodiscard]] auto valid() const noexcept
         {
             return nt_terminate_process_ != nullptr && nt_suspend_process_ != nullptr && nt_resume_process_ != nullptr
-                && snapshot_.valid();
+                && snapshot_.get() != INVALID_HANDLE_VALUE;
         }
         [[nodiscard]] auto get_nt_terminate_process() const noexcept
         {
@@ -430,24 +370,25 @@ namespace cpp_utils
             }
         [[nodiscard]] auto iterate( F&& func ) const noexcept
         {
-            if ( !snapshot_.valid() ) [[unlikely]] {
+            const auto snapshot_value{ snapshot_.get() };
+            if ( snapshot_value == INVALID_HANDLE_VALUE ) [[unlikely]] {
                 return false;
             }
             PROCESSENTRY32W proc_entry{};
             proc_entry.dwSize = sizeof( PROCESSENTRY32W );
-            if ( !Process32FirstW( snapshot_.get(), &proc_entry ) ) [[unlikely]] {
+            if ( !Process32FirstW( snapshot_value, &proc_entry ) ) [[unlikely]] {
                 return false;
             }
             auto result{ true };
             do {
                 result = func( std::as_const( proc_entry ) );
-            } while ( Process32NextW( snapshot_.get(), &proc_entry ) );
+            } while ( Process32NextW( snapshot_value, &proc_entry ) );
             return result;
         }
         [[nodiscard]] auto terminate_by_pid( const DWORD pid ) const noexcept
         {
             details_::scoped_handle proc_handle{ wrapped_nt_open_process_( pid, PROCESS_TERMINATE ) };
-            if ( !proc_handle.valid() ) [[unlikely]] {
+            if ( proc_handle == nullptr ) [[unlikely]] {
                 return false;
             }
             return NT_SUCCESS( nt_terminate_process_( proc_handle.get(), 0 ) );
@@ -486,7 +427,7 @@ namespace cpp_utils
         [[nodiscard]] auto suspend_by_pid( const DWORD pid ) const noexcept
         {
             details_::scoped_handle proc_handle{ wrapped_nt_open_process_( pid, PROCESS_SUSPEND_RESUME ) };
-            if ( !proc_handle.valid() ) [[unlikely]] {
+            if ( proc_handle == nullptr ) [[unlikely]] {
                 return false;
             }
             return NT_SUCCESS( nt_suspend_process_( proc_handle.get() ) );
@@ -525,7 +466,7 @@ namespace cpp_utils
         [[nodiscard]] auto resume_by_pid( const DWORD pid ) const noexcept
         {
             details_::scoped_handle proc_handle{ wrapped_nt_open_process_( pid, PROCESS_SUSPEND_RESUME ) };
-            if ( !proc_handle.valid() ) [[unlikely]] {
+            if ( proc_handle == nullptr ) [[unlikely]] {
                 return false;
             }
             return NT_SUCCESS( nt_resume_process_( proc_handle.get() ) );
@@ -583,7 +524,8 @@ namespace cpp_utils
     {
         details_::scoped_reg_key_handle key_handle;
         if ( const auto result{ RegCreateKeyExW(
-               main_key, sub_key.data(), 0, nullptr, REG_OPTION_NON_VOLATILE, KEY_WRITE, nullptr, key_handle.unsafe_put(), nullptr ) };
+               main_key, sub_key.data(), 0, nullptr, REG_OPTION_NON_VOLATILE, KEY_WRITE, nullptr, std::out_ptr( key_handle ),
+               nullptr ) };
              result != ERROR_SUCCESS ) [[unlikely]]
         {
             return result;
@@ -597,7 +539,7 @@ namespace cpp_utils
         details_::scoped_reg_key_handle key_handle;
         if ( const auto result{ RegCreateKeyExW(
                main_key, sub_key.data(), 0, nullptr, REG_OPTION_NON_VOLATILE, KEY_WRITE | KEY_WOW64_64KEY, nullptr,
-               key_handle.unsafe_put(), nullptr ) };
+               std::out_ptr( key_handle ), nullptr ) };
              result != ERROR_SUCCESS ) [[unlikely]]
         {
             return result;
@@ -608,7 +550,7 @@ namespace cpp_utils
       delete_registry_key( const HKEY main_key, const std::wstring_view sub_key, const std::wstring_view value_name ) noexcept
     {
         details_::scoped_reg_key_handle key_handle;
-        if ( const auto result{ RegOpenKeyExW( main_key, sub_key.data(), 0, KEY_SET_VALUE, key_handle.unsafe_put() ) };
+        if ( const auto result{ RegOpenKeyExW( main_key, sub_key.data(), 0, KEY_SET_VALUE, std::out_ptr( key_handle ) ) };
              result != ERROR_SUCCESS ) [[unlikely]]
         {
             return result;
@@ -620,7 +562,7 @@ namespace cpp_utils
     {
         details_::scoped_reg_key_handle key_handle;
         if ( const auto result{
-               RegOpenKeyExW( main_key, sub_key.data(), 0, KEY_SET_VALUE | KEY_WOW64_64KEY, key_handle.unsafe_put() ) };
+               RegOpenKeyExW( main_key, sub_key.data(), 0, KEY_SET_VALUE | KEY_WOW64_64KEY, std::out_ptr( key_handle ) ) };
              result != ERROR_SUCCESS ) [[unlikely]]
         {
             return result;
@@ -636,7 +578,7 @@ namespace cpp_utils
         details_::scoped_reg_key_handle key_handle;
         if ( const auto result{ RegOpenKeyExW(
                main_key, nullptr, 0, KEY_WRITE | KEY_ENUMERATE_SUB_KEYS | KEY_QUERY_VALUE | KEY_WOW64_64KEY,
-               key_handle.unsafe_put() ) };
+               std::out_ptr( key_handle ) ) };
              result != ERROR_SUCCESS ) [[unlikely]]
         {
             return result;
@@ -684,8 +626,8 @@ namespace cpp_utils
         SID_IDENTIFIER_AUTHORITY nt_authority{ SECURITY_NT_AUTHORITY };
         details_::scoped_sid_handle admins_group;
         if ( !AllocateAndInitializeSid(
-               &nt_authority, 2, SECURITY_BUILTIN_DOMAIN_RID, DOMAIN_ALIAS_RID_ADMINS, 0, 0, 0, 0, 0, 0, admins_group.unsafe_put() ) )
-          [[unlikely]]
+               &nt_authority, 2, SECURITY_BUILTIN_DOMAIN_RID, DOMAIN_ALIAS_RID_ADMINS, 0, 0, 0, 0, 0, 0,
+               std::out_ptr( admins_group ) ) ) [[unlikely]]
         {
             return false;
         }
