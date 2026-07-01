@@ -17,6 +17,10 @@ namespace cpp_utils
         T ptr_{};
       public:
         using value_type = T;
+        constexpr auto computable() const noexcept
+        {
+            return !std::is_same_v< std::remove_cv_t< std::remove_pointer_t< T > >, void >;
+        }
         constexpr auto reset( const T src ) noexcept
         {
             ptr_ = src;
@@ -30,61 +34,61 @@ namespace cpp_utils
             return ptr_;
         }
         [[nodiscard]] constexpr auto&& operator*() const noexcept
-            requires( !std::same_as< std::remove_cv_t< std::remove_pointer_t< T > >, void > )
+            requires( computable() )
         {
             return *ptr_;
         }
         [[nodiscard]] constexpr auto&& operator[]( const std::size_t n ) const noexcept
-            requires( !std::same_as< std::remove_cv_t< std::remove_pointer_t< T > >, void > )
+            requires( computable() )
         {
             return ptr_[ n ];
         }
         [[nodiscard]] constexpr auto operator+( const std::size_t n ) const noexcept
-            requires( !std::same_as< std::remove_cv_t< std::remove_pointer_t< T > >, void > )
+            requires( computable() )
         {
             return raw_pointer_wrapper< T >{ ptr_ + n };
         }
         constexpr auto operator+=( const std::size_t n ) noexcept -> raw_pointer_wrapper< T >&
-            requires( !std::same_as< std::remove_cv_t< std::remove_pointer_t< T > >, void > )
+            requires( computable() )
         {
             return ptr_ += n;
         }
         constexpr auto operator++() noexcept -> raw_pointer_wrapper< T >&
-            requires( !std::same_as< std::remove_cv_t< std::remove_pointer_t< T > >, void > )
+            requires( computable() )
         {
             ++ptr_;
             return *this;
         }
         constexpr auto operator++( int ) noexcept -> raw_pointer_wrapper< T >
-            requires( !std::same_as< std::remove_cv_t< std::remove_pointer_t< T > >, void > )
+            requires( computable() )
         {
             return ptr_++;
         }
         [[nodiscard]] constexpr auto operator-( const std::size_t n ) const noexcept
-            requires( !std::same_as< std::remove_cv_t< std::remove_pointer_t< T > >, void > )
+            requires( computable() )
         {
             return raw_pointer_wrapper< T >{ ptr_ - n };
         }
         constexpr auto operator-=( const std::size_t n ) noexcept -> raw_pointer_wrapper< T >&
-            requires( !std::same_as< std::remove_cv_t< std::remove_pointer_t< T > >, void > )
+            requires( computable() )
         {
             return ptr_ -= n;
         }
         constexpr auto operator--() noexcept -> raw_pointer_wrapper< T >&
-            requires( !std::same_as< std::remove_cv_t< std::remove_pointer_t< T > >, void > )
+            requires( computable() )
         {
             --ptr_;
             return *this;
         }
         constexpr auto operator--( int ) noexcept -> raw_pointer_wrapper< T >
-            requires( !std::same_as< std::remove_cv_t< std::remove_pointer_t< T > >, void > )
+            requires( computable() )
         {
             return ptr_--;
         }
         constexpr auto operator=( const raw_pointer_wrapper< T >& ) noexcept -> raw_pointer_wrapper< T >& = default;
         constexpr auto operator=( raw_pointer_wrapper< T >&& ) noexcept -> raw_pointer_wrapper< T >&      = default;
         constexpr raw_pointer_wrapper() noexcept                                                          = default;
-        constexpr raw_pointer_wrapper( T ptr ) noexcept
+        constexpr raw_pointer_wrapper( const T ptr ) noexcept
           : ptr_{ ptr }
         { }
         constexpr raw_pointer_wrapper( const raw_pointer_wrapper< T >& ) noexcept = default;
