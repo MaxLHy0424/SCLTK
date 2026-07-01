@@ -147,13 +147,6 @@ namespace cpp_utils
     }
     namespace details_
     {
-        struct null_legacy_handle_checker final
-        {
-            static inline auto operator()( const HANDLE h ) noexcept
-            {
-                return h == INVALID_HANDLE_VALUE;
-            }
-        };
         struct handle_closer final
         {
             static inline auto operator()( const HANDLE h ) noexcept
@@ -161,8 +154,19 @@ namespace cpp_utils
                 CloseHandle( h );
             }
         };
-        using scoped_handle = std::unique_ptr< std::remove_pointer_t< HANDLE >, handle_closer >;
-        using scoped_legacy_handle = unique_ptr_ex< std::remove_pointer_t< HANDLE >, null_legacy_handle_checker, handle_closer >;
+        struct null_legacy_handle_checker final
+        {
+            static inline auto operator()( const HANDLE h ) noexcept
+            {
+                return h == INVALID_HANDLE_VALUE;
+            }
+        };
+    }
+    using scoped_handle = std::unique_ptr< std::remove_pointer_t< HANDLE >, details_::handle_closer >;
+    using scoped_legacy_handle
+      = unique_ptr_ex< std::remove_pointer_t< HANDLE >, details_::null_legacy_handle_checker, details_::handle_closer >;
+    namespace details_
+    {
         using scoped_sc_handle = std::unique_ptr< std::remove_pointer_t< SC_HANDLE >, decltype( []( const SC_HANDLE h ) static noexcept
         {
             CloseServiceHandle( h );
@@ -295,7 +299,7 @@ namespace cpp_utils
     }
     [[nodiscard]] inline auto set_privilege( const HANDLE proc, const wchar_t* const privilege, const bool is_enabled ) noexcept
     {
-        details_::scoped_handle token;
+        scoped_handle token;
         if ( !OpenProcessToken( proc, TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, std::out_ptr( token ) ) ) [[unlikely]] {
             return GetLastError();
         }
@@ -323,7 +327,7 @@ namespace cpp_utils
         nt_terminate_process_t_ nt_terminate_process_{ nullptr };
         nt_suspend_process_t_ nt_suspend_process_{ nullptr };
         nt_resume_process_t_ nt_resume_process_{ nullptr };
-        details_::scoped_legacy_handle snapshot_{};
+        scoped_legacy_handle snapshot_{};
       public:
         [[nodiscard]] auto valid() const noexcept
         {
@@ -352,7 +356,7 @@ namespace cpp_utils
               .Attributes{ OBJ_CASE_INSENSITIVE },
               .SecurityDescriptor{ nullptr },
               .SecurityQualityOfService{ nullptr } };
-            details_::scoped_handle proc_handle{};
+            scoped_handle proc_handle{};
             nt_open_process_( std::out_ptr( proc_handle ), desired_ccess, &obj_attrs, &client_id );
             return proc_handle;
         }
