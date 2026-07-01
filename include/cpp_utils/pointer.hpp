@@ -9,28 +9,6 @@ namespace cpp_utils
 {
     template < typename T >
     concept pointer = std::is_pointer_v< T >;
-    template < pointer T >
-    [[nodiscard]] inline auto to_universal_pointer( const T ptr ) noexcept
-    {
-        return reinterpret_cast< void* >( ptr );
-    }
-    template < pointer T >
-    [[nodiscard]] inline auto to_const_universal_pointer( const T ptr ) noexcept
-    {
-        return reinterpret_cast< const void* >( ptr );
-    }
-    template < pointer T >
-    [[nodiscard]] inline auto pointer_to_string( const T ptr )
-    {
-        using namespace std::string_literals;
-        return ptr == nullptr ? "nullptr"s : std::format( "0x{:x}", reinterpret_cast< const void* >( ptr ) );
-    }
-    template < pointer T >
-    [[nodiscard]] inline auto pointer_to_wstring( const T ptr )
-    {
-        using namespace std::string_literals;
-        return ptr == nullptr ? L"nullptr"s : std::format( L"0x{:x}", reinterpret_cast< const void* >( ptr ) );
-    }
     template < typename T >
         requires( !std::is_const_v< T > && pointer< T > )
     class raw_pointer_wrapper final
