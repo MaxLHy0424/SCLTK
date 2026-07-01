@@ -1,9 +1,4 @@
 #pragma once
-#include <algorithm>
-#include <bit>
-#include <concepts>
-#include <format>
-#include <string>
 #include <type_traits>
 namespace cpp_utils
 {
@@ -29,9 +24,9 @@ namespace cpp_utils
         {
             return ptr_;
         }
-        [[nodiscard]] constexpr operator T() const noexcept
+        constexpr explicit operator bool() const noexcept
         {
-            return ptr_;
+            return ptr != nullptr;
         }
         [[nodiscard]] constexpr auto&& operator*() const noexcept
             requires( computable() )
@@ -87,9 +82,17 @@ namespace cpp_utils
         {
             return ptr_--;
         }
+        constexpr auto operator=( const std::nullptr_t ) noexcept -> raw_pointer_wrapper< T >&
+        {
+            ptr_ = nullptr;
+            return *this;
+        }
         constexpr auto operator=( const raw_pointer_wrapper< T >& ) noexcept -> raw_pointer_wrapper< T >& = default;
         constexpr auto operator=( raw_pointer_wrapper< T >&& ) noexcept -> raw_pointer_wrapper< T >&      = default;
         constexpr raw_pointer_wrapper() noexcept                                                          = default;
+        constexpr raw_pointer_wrapper( const std::nullptr_t ) noexcept
+          : ptr_{ nullptr }
+        { }
         constexpr raw_pointer_wrapper( const T ptr ) noexcept
           : ptr_{ ptr }
         { }
@@ -97,4 +100,34 @@ namespace cpp_utils
         constexpr raw_pointer_wrapper( raw_pointer_wrapper< T >&& ) noexcept      = default;
         ~raw_pointer_wrapper() noexcept                                           = default;
     };
+    template < pointer T >
+    [[nodiscard]] inline constexpr auto operator==( const raw_pointer_wrapper< T >& lhs, const raw_pointer_wrapper< T >& rhs ) noexcept
+    {
+        return lhs.get() == rhs.get();
+    }
+    template < pointer T >
+    [[nodiscard]] inline constexpr auto operator!=( const raw_pointer_wrapper< T >& lhs, const raw_pointer_wrapper< T >& rhs ) noexcept
+    {
+        return lhs.get() != rhs.get();
+    }
+    template < pointer T >
+    [[nodiscard]] inline constexpr auto operator==( const raw_pointer_wrapper< T >& lhs, const std::nullptr_t ) noexcept
+    {
+        return lhs.get() == nullptr;
+    }
+    template < pointer T >
+    [[nodiscard]] inline constexpr auto operator!=( const raw_pointer_wrapper< T >& lhs, const std::nullptr_t ) noexcept
+    {
+        return lhs.get() != nullptr;
+    }
+    template < pointer T >
+    [[nodiscard]] inline constexpr auto operator==( const std::nullptr_t, const raw_pointer_wrapper< T >& rhs ) noexcept
+    {
+        return rhs.get() == nullptr;
+    }
+    template < pointer T >
+    [[nodiscard]] inline constexpr auto operator!=( const std::nullptr_t, const raw_pointer_wrapper< T >& rhs ) noexcept
+    {
+        return rhs.get() != nullptr;
+    }
 }
