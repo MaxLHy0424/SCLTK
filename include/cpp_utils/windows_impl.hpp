@@ -3,6 +3,7 @@
 #if true
 # include <ntdef.h>
 # include <tlhelp32.h>
+# include <winternl.h>
 #endif
 #include <chrono>
 #include <concepts>
@@ -373,13 +374,29 @@ namespace cpp_utils
     class process_snapshot final
     {
       private:
+        using nt_open_process_t_      = NTSTATUS( NTAPI* )( PHANDLE, ACCESS_MASK, POBJECT_ATTRIBUTES, PCLIENT_ID );
         using nt_terminate_process_t_ = NTSTATUS( NTAPI* )( HANDLE, NTSTATUS );
         using nt_suspend_process_t_   = NTSTATUS( NTAPI* )( HANDLE );
         using nt_resume_process_t_    = NTSTATUS( NTAPI* )( HANDLE );
+        nt_open_process_t_ nt_open_process_{ nullptr };
         nt_terminate_process_t_ nt_terminate_process_{ nullptr };
         nt_suspend_process_t_ nt_suspend_process_{ nullptr };
         nt_resume_process_t_ nt_resume_process_{ nullptr };
         details_::scoped_legacy_handle snapshot_{};
+        auto wrapped_nt_open_process_( const DWORD pid, const ACCESS_MASK desired_ccess ) const noexcept
+        {
+            CLIENT_ID client_id{ .UniqueProcess{ reinterpret_cast< HANDLE >( pid ) }, .UniqueThread{ nullptr } };
+            OBJECT_ATTRIBUTES obj_attrs{
+              .Length{ sizeof( OBJECT_ATTRIBUTES ) },
+              .RootDirectory{ nullptr },
+              .ObjectName{ nullptr },
+              .Attributes{ OBJ_CASE_INSENSITIVE },
+              .SecurityDescriptor{ nullptr },
+              .SecurityQualityOfService{ nullptr } };
+            HANDLE proc_handle{ nullptr };
+            nt_open_process_( &proc_handle, desired_ccess, &obj_attrs, &client_id );
+            return proc_handle;
+        }
       public:
         [[nodiscard]] auto valid() const noexcept
         {
@@ -429,7 +446,7 @@ namespace cpp_utils
         }
         [[nodiscard]] auto terminate_by_pid( const DWORD pid ) const noexcept
         {
-            details_::scoped_handle proc_handle{ OpenProcess( PROCESS_TERMINATE, FALSE, pid ) };
+            details_::scoped_handle proc_handle{ wrapped_nt_open_process_( pid, PROCESS_TERMINATE ) };
             if ( !proc_handle.valid() ) [[unlikely]] {
                 return false;
             }
@@ -468,7 +485,7 @@ namespace cpp_utils
         }
         [[nodiscard]] auto suspend_by_pid( const DWORD pid ) const noexcept
         {
-            details_::scoped_handle proc_handle{ OpenProcess( PROCESS_SUSPEND_RESUME, FALSE, pid ) };
+            details_::scoped_handle proc_handle{ wrapped_nt_open_process_( pid, PROCESS_SUSPEND_RESUME ) };
             if ( !proc_handle.valid() ) [[unlikely]] {
                 return false;
             }
@@ -507,7 +524,7 @@ namespace cpp_utils
         }
         [[nodiscard]] auto resume_by_pid( const DWORD pid ) const noexcept
         {
-            details_::scoped_handle proc_handle{ OpenProcess( PROCESS_SUSPEND_RESUME, FALSE, pid ) };
+            details_::scoped_handle proc_handle{ wrapped_nt_open_process_( pid, PROCESS_SUSPEND_RESUME ) };
             if ( !proc_handle.valid() ) [[unlikely]] {
                 return false;
             }
@@ -549,6 +566,7 @@ namespace cpp_utils
         process_snapshot() noexcept
         {
             const auto ntdll_handle{ GetModuleHandleW( L"ntdll.dll" ) };
+            nt_open_process_ = std::bit_cast< nt_open_process_t_ >( GetProcAddress( ntdll_handle, "NtOpenProcess" ) );
             nt_terminate_process_
               = std::bit_cast< nt_terminate_process_t_ >( GetProcAddress( ntdll_handle, "NtTerminateProcess" ) );
             nt_suspend_process_ = std::bit_cast< nt_suspend_process_t_ >( GetProcAddress( ntdll_handle, "NtSuspendProcess" ) );
