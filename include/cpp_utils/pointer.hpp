@@ -8,12 +8,12 @@ namespace cpp_utils
     concept raw_pointer = std::is_pointer_v< T >;
     template < typename NullChecker, typename PointerType >
     concept null_pointer_checker_for = requires( const PointerType ptr ) {
-        { NullChecker::empty( ptr ) } noexcept -> std::convertible_to< bool >;
+        { NullChecker{}( ptr ) } noexcept -> std::convertible_to< bool >;
     };
     struct default_null_pointer_checker final
     {
         template < raw_pointer T >
-        static constexpr auto empty( const T ptr ) noexcept
+        static constexpr auto operator()( const T ptr ) noexcept
         {
             return ptr == nullptr;
         }
@@ -27,7 +27,7 @@ namespace cpp_utils
       public:
         using value_type   = T;
         using checker_type = NullChecker;
-        static constexpr auto computable() const noexcept
+        static constexpr auto computable() noexcept
         {
             return !std::is_same_v< std::remove_cv_t< std::remove_pointer_t< T > >, void >;
         }
@@ -41,7 +41,7 @@ namespace cpp_utils
         }
         constexpr explicit operator bool() const noexcept
         {
-            return !NullChecker::empty( ptr_ );
+            return !NullChecker{}( ptr_ );
         }
         [[nodiscard]] constexpr auto&& operator*() const noexcept
             requires( computable() )
@@ -137,22 +137,22 @@ namespace cpp_utils
     template < raw_pointer T, null_pointer_checker_for< T > NullChecker >
     [[nodiscard]] inline constexpr auto operator==( const raw_pointer_wrapper< T, NullChecker >& lhs, const std::nullptr_t ) noexcept
     {
-        return NullChecker::empty( lhs.get() );
+        return NullChecker{}( lhs.get() );
     }
     template < raw_pointer T, null_pointer_checker_for< T > NullChecker >
     [[nodiscard]] inline constexpr auto operator!=( const raw_pointer_wrapper< T, NullChecker >& lhs, const std::nullptr_t ) noexcept
     {
-        return !NullChecker::empty( lhs.get() );
+        return !NullChecker{}( lhs.get() );
     }
     template < raw_pointer T, null_pointer_checker_for< T > NullChecker >
     [[nodiscard]] inline constexpr auto operator==( const std::nullptr_t, const raw_pointer_wrapper< T, NullChecker >& rhs ) noexcept
     {
-        return NullChecker::empty( rhs.get() );
+        return NullChecker{}( rhs.get() );
     }
     template < raw_pointer T, null_pointer_checker_for< T > NullChecker >
     [[nodiscard]] inline constexpr auto operator!=( const std::nullptr_t, const raw_pointer_wrapper< T, NullChecker >& rhs ) noexcept
     {
-        return !NullChecker::empty( rhs.get() );
+        return !NullChecker{}( rhs.get() );
     }
     namespace details_
     {
@@ -161,7 +161,7 @@ namespace cpp_utils
         {
             using pointer = raw_pointer_wrapper< T*, NullChecker >;
             [[no_unique_address]] Deleter deleter;
-            static constexpr auto operator()( pointer p )
+            constexpr auto operator()( pointer p )
             {
                 deleter( p.get() );
             }
@@ -174,6 +174,6 @@ namespace cpp_utils
         };
     }
     template < typename T, typename NullChecker = default_null_pointer_checker, typename Deleter = std::default_delete< T > >
-        requires requires( Deleter d, raw_pointer_wrapper< T*, NullChecker > p ) { d( p ); }
+        requires requires( Deleter d, T* p ) { d( p ); }
     using unique_ptr_ex = std::unique_ptr< T, details_::unique_ptr_ex_deleter< T, NullChecker, Deleter > >;
 }
