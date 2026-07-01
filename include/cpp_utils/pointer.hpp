@@ -1,5 +1,6 @@
 #pragma once
 #include <concepts>
+#include <memory>
 #include <type_traits>
 namespace cpp_utils
 {
@@ -148,4 +149,24 @@ namespace cpp_utils
     {
         return !NullChecker::empty( rhs.get() );
     }
+    namespace details_
+    {
+        template < typename T, typename NullChecker, typename Deleter >
+        struct unique_ptr_ex_deleter final : Deleter
+        {
+            using pointer = raw_pointer_wrapper< T*, NullChecker >;
+            using Deleter::Deleter;
+            static constexpr auto operator()( const pointer p ) noexcept
+            {
+                if ( !NullChecker::empty( p.get() ) ) {
+                    static_cast< const Deleter& >( *this )( p.get() );
+                }
+            }
+        };
+    }
+    template < typename T, typename NullChecker, typename Deleter >
+        requires requires( Deleter d, raw_pointer_wrapper< T*, NullChecker > p ) {
+            { d( p ) } noexcept;
+        }
+    using unique_ptr_ex = std::unique_ptr< T, details_::unique_ptr_ex_deleter< T, NullChecker, Deleter > >;
 }
