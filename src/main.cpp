@@ -611,9 +611,7 @@ namespace scltk
         details_::option_info< "crack_when_launching", "启动时破解" >, details_::option_info< "hijack_image", "映像劫持" >,
         details_::option_info< "suspend_process", "挂起进程" > > >;
     using window_config = details_::options_config_node<
-      "window", "窗口显示", true,
-      details_::options_info_table<
-        details_::option_info< "forced_show", "置顶窗口" >, details_::option_info< "random_title", "随机标题" > > >;
+      "window", "窗口显示", true, details_::options_info_table< details_::option_info< "forced_show", "置顶窗口" > > >;
     class custom_rules_config final
       : public details_::config_node_raw_name< "custom_rules" >
       , public details_::config_node_interface
@@ -1749,47 +1747,10 @@ namespace scltk
             } };
             con.forced_show_until( sleep_duration, condition_checker );
         }
-        auto random_title() noexcept
-        {
-            constexpr const auto& enabled{ std::get< window_config >( config_nodes ).at< "random_title" >() };
-            constexpr auto generate_title{ [] static noexcept
-            {
-                constexpr auto chars_dict{ cpp_utils::invoke_to_array< [] static noexcept
-                {
-                    std::vector< wchar_t > dict;
-                    for ( auto ch{ L'A' }; ch <= L'Z'; ++ch ) {
-                        dict.emplace_back( ch );
-                    }
-                    for ( auto ch{ L'a' }; ch <= L'z'; ++ch ) {
-                        dict.emplace_back( ch );
-                    }
-                    for ( auto ch{ L'0' }; ch <= L'9'; ++ch ) {
-                        dict.emplace_back( ch );
-                    }
-                    dict.append_range( LR"(?!@#$%^&*()-_=+[]{}\|/;:'",.<>)"sv );
-                    return dict;
-                } >() };
-                constexpr auto title_length{ 32uz };
-                std::array< wchar_t, title_length + 1 > title;
-                std::mt19937_64 gen{ std::random_device{}() };
-                std::uniform_int_distribution< std::size_t > dist{ 0uz, chars_dict.size() - 1uz };
-                for ( auto i{ 0uz }; i < title_length; ++i ) {
-                    title[ i ] = chars_dict[ dist( gen ) ];
-                }
-                title.back() = L'\0';
-                return title;
-            } };
-            while ( true ) {
-                con.set_title( L"" INFO_SHORT_NAME );
-                enabled.wait( false, std::memory_order_acquire );
-                con.set_title( generate_title().data() );
-                enabled.wait( true, std::memory_order_acquire );
-            }
-        }
     }
     auto create_parallel_tasks() noexcept
     {
-        constexpr std::array parallel_tasks{ details_::forced_show, details_::random_title };
+        constexpr std::array parallel_tasks{ details_::forced_show };
         for ( const auto& parallel_task : parallel_tasks ) {
             std::thread{ parallel_task }.detach();
         }
