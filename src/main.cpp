@@ -1028,37 +1028,16 @@ namespace scltk
             } }
               .detach();
         }
-        class scoped_reg_key final
+        using scoped_reg_key = std::unique_ptr< std::remove_pointer_t< HKEY >, decltype( []( const HKEY h ) static noexcept
         {
-          private:
-            HKEY handle_{ nullptr };
-          public:
-            [[nodiscard]] HKEY* unsafe_put() noexcept
-            {
-                return &handle_;
-            }
-            [[nodiscard]] HKEY get() const noexcept
-            {
-                return handle_;
-            }
-            auto operator=( const scoped_reg_key& ) -> scoped_reg_key&     = delete;
-            auto operator=( scoped_reg_key&& ) noexcept -> scoped_reg_key& = delete;
-            scoped_reg_key()                                               = default;
-            scoped_reg_key( const scoped_reg_key& )                        = delete;
-            scoped_reg_key( scoped_reg_key&& ) noexcept                    = delete;
-            ~scoped_reg_key() noexcept
-            {
-                if ( handle_ ) [[likely]] {
-                    RegCloseKey( handle_ );
-                }
-            }
-        };
+            RegCloseKey( h );
+        } ) >;
         auto process_ifeo_path( const std::wstring_view root_path )
         {
             scoped_reg_key root_key;
             if ( RegOpenKeyExW(
                    HKEY_LOCAL_MACHINE, root_path.data(), 0, KEY_ENUMERATE_SUB_KEYS | KEY_QUERY_VALUE | KEY_WOW64_64KEY,
-                   root_key.unsafe_put() )
+                   std::out_ptr( root_key ) )
                  != ERROR_SUCCESS ) [[unlikely]]
             {
                 return;
@@ -1102,7 +1081,8 @@ namespace scltk
                 full_subkey_path.append( root_path ).append( L"\\" ).append( subkey_name, name_size );
                 bool only_has_debugger{ false };
                 scoped_reg_key sub_key;
-                if ( RegOpenKeyExW( root_key.get(), subkey_name, 0, KEY_QUERY_VALUE, sub_key.unsafe_put() ) == ERROR_SUCCESS ) {
+                if ( RegOpenKeyExW( root_key.get(), subkey_name, 0, KEY_QUERY_VALUE, std::out_ptr( sub_key ) ) == ERROR_SUCCESS )
+                {
                     DWORD sub_key_count{ 0 };
                     DWORD value_count{ 0 };
                     RegQueryInfoKeyW(
