@@ -3,6 +3,7 @@
 #include <cstddef>
 #include <memory>
 #include <type_traits>
+#include <utility>
 namespace cpp_utils
 {
     template < typename T >
@@ -62,12 +63,12 @@ namespace cpp_utils
         {
             return ptr_[ n ];
         }
-        [[nodiscard]] constexpr auto operator+( const std::size_t n ) const noexcept
+        [[nodiscard]] constexpr auto operator+( const std::ptrdiff_t n ) const noexcept
             requires( computable() )
         {
             return raw_pointer_wrapper< T, NullChecker >{ ptr_ + n };
         }
-        constexpr auto operator+=( const std::size_t n ) noexcept -> raw_pointer_wrapper< T, NullChecker >&
+        constexpr auto operator+=( const std::ptrdiff_t n ) noexcept -> raw_pointer_wrapper< T, NullChecker >&
             requires( computable() )
         {
             ptr_ += n;
@@ -84,12 +85,12 @@ namespace cpp_utils
         {
             return ptr_++;
         }
-        [[nodiscard]] constexpr auto operator-( const std::size_t n ) const noexcept
+        [[nodiscard]] constexpr auto operator-( const std::ptrdiff_t n ) const noexcept
             requires( computable() )
         {
             return raw_pointer_wrapper< T, NullChecker >{ ptr_ - n };
         }
-        constexpr auto operator-=( const std::size_t n ) noexcept -> raw_pointer_wrapper< T, NullChecker >&
+        constexpr auto operator-=( const std::ptrdiff_t n ) noexcept -> raw_pointer_wrapper< T, NullChecker >&
             requires( computable() )
         {
             ptr_ -= n;
@@ -138,12 +139,12 @@ namespace cpp_utils
         return lhs.get() - rhs.get();
     }
     template < typename T, null_pointer_checker_for< T > NullChecker >
-    inline constexpr auto operator-( const raw_pointer_wrapper< T, NullChecker >& lhs, T* const rhs )
+    inline constexpr auto operator-( const raw_pointer_wrapper< T, NullChecker >& lhs, T* const rhs ) noexcept
     {
         return lhs.get() - rhs;
     }
     template < typename T, null_pointer_checker_for< T > NullChecker >
-    inline constexpr auto operator-( T* const lhs, const raw_pointer_wrapper< T, NullChecker >& rhs )
+    inline constexpr auto operator-( T* const lhs, const raw_pointer_wrapper< T, NullChecker >& rhs ) noexcept
     {
         return lhs - rhs.get();
     }
@@ -202,11 +203,11 @@ namespace cpp_utils
     namespace details_
     {
         template < typename T, null_pointer_checker_for< T > NullChecker, typename Deleter >
-        struct unique_ptr_ex_deleter
+        struct unique_ptr_ex_deleter final
         {
             using pointer = raw_pointer_wrapper< T, NullChecker >;
             [[no_unique_address]] Deleter deleter;
-            constexpr auto operator()( pointer p )
+            constexpr auto operator()( pointer p ) noexcept( noexcept( deleter( p.get() ) ) )
             {
                 deleter( p.get() );
             }
