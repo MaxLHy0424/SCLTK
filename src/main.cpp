@@ -1235,16 +1235,19 @@ namespace scltk
         auto flush_dns() noexcept
         {
             std::print( " -> 刷新 DNS 缓存.\n" );
-            const auto dnsapi{ LoadLibraryW( L"dnsapi.dll" ) };
+            using scoped_module_handle = std::unique_ptr< std::remove_pointer_t< HMODULE >, decltype( []( const HMODULE h )
+            {
+                FreeLibrary( h );
+            } ) >;
+            const scoped_module_handle dnsapi{ LoadLibraryW( L"dnsapi.dll" ) };
             if ( dnsapi == nullptr ) [[unlikely]] {
                 return;
             }
             const auto dns_flush_resolver_cache{
-              std::bit_cast< BOOL( WINAPI* )() noexcept >( GetProcAddress( dnsapi, "DnsFlushResolverCache" ) ) };
+              std::bit_cast< BOOL( WINAPI* )() noexcept >( GetProcAddress( dnsapi.get(), "DnsFlushResolverCache" ) ) };
             if ( dns_flush_resolver_cache != nullptr ) [[likely]] {
                 dns_flush_resolver_cache();
             }
-            FreeLibrary( dnsapi );
         }
         auto set_device_state( const HDEVINFO device_info, SP_DEVINFO_DATA* const p_device_info_data, const bool enabled ) noexcept
         {
