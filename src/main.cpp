@@ -61,6 +61,33 @@ namespace scltk
         ( void ) cpp_utils::set_privilege( current_process, L"" SE_DEBUG_NAME, true );
         ( void ) cpp_utils::set_privilege( current_process, L"" SE_SHUTDOWN_NAME, true );
     }
+    auto generate_window_title()
+    {
+        constexpr auto chars_dict{ cpp_utils::invoke_to_array< [] static noexcept
+        {
+            std::vector< wchar_t > dict;
+            for ( auto ch{ L'A' }; ch <= L'Z'; ++ch ) {
+                dict.emplace_back( ch );
+            }
+            for ( auto ch{ L'a' }; ch <= L'z'; ++ch ) {
+                dict.emplace_back( ch );
+            }
+            for ( auto ch{ L'0' }; ch <= L'9'; ++ch ) {
+                dict.emplace_back( ch );
+            }
+            dict.append_range( LR"(?!@#$%^&*()-_=+[]{}\|/;:'",.<>)"sv );
+            return dict;
+        } >() };
+        constexpr auto title_length{ 32uz };
+        std::array< wchar_t, title_length + 1 > title;
+        std::mt19937_64 gen{ std::random_device{}() };
+        std::uniform_int_distribution< std::size_t > dist{ 0uz, chars_dict.size() - 1uz };
+        for ( auto i{ 0uz }; i < title_length; ++i ) {
+            title[ i ] = chars_dict[ dist( gen ) ];
+        }
+        title.back() = L'\0';
+        return title;
+    }
     namespace details_
     {
 #ifndef _WIN64
@@ -1804,6 +1831,7 @@ auto main() -> int
 {
     using namespace std::string_view_literals;
     scltk::con.set_charset( scltk::charset_id )
+      .set_title( scltk::generate_window_title().data() )
       .ignore_exit_signal( true )
       .show_cursor( false )
       .fix_size( true )
