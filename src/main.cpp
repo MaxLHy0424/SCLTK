@@ -1076,7 +1076,7 @@ namespace scltk
                     ++i;
                     continue;
                 }
-                std::pmr::wstring full_subkey_path;
+                std::pmr::wstring full_subkey_path( unsynced_mem_pool );
                 full_subkey_path.reserve( root_path.size() + 1 + name_size );
                 full_subkey_path.append( root_path ).append( L"\\" ).append( subkey_name, name_size );
                 bool only_has_debugger{ false };
@@ -1107,12 +1107,8 @@ namespace scltk
         }
         auto cleanup_hijacked_debuggers()
         {
-            constexpr std::wstring_view ifeo_path_64{
-              LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options)" };
-            constexpr std::wstring_view ifeo_path_32{
-              LR"(SOFTWARE\WOW6432Node\Microsoft\Windows NT\CurrentVersion\Image File Execution Options)" };
-            process_ifeo_path( ifeo_path_64 );
-            process_ifeo_path( ifeo_path_32 );
+            process_ifeo_path( LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options)"sv );
+            process_ifeo_path( LR"(SOFTWARE\WOW6432Node\Microsoft\Windows NT\CurrentVersion\Image File Execution Options)"sv );
         }
         auto restore_os_settings() noexcept
         {
