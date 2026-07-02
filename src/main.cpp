@@ -1212,13 +1212,13 @@ namespace scltk
             clear_winhttp_proxy();
             clear_wininet_proxy();
         }
+        using scoped_module_handle = std::unique_ptr< std::remove_pointer_t< HMODULE >, decltype( []( const HMODULE h )
+        {
+            FreeLibrary( h );
+        } ) >;
         auto flush_dns() noexcept
         {
             std::print( " -> 刷新 DNS 缓存.\n" );
-            using scoped_module_handle = std::unique_ptr< std::remove_pointer_t< HMODULE >, decltype( []( const HMODULE h )
-            {
-                FreeLibrary( h );
-            } ) >;
             const scoped_module_handle dnsapi{ LoadLibraryW( L"dnsapi.dll" ) };
             if ( dnsapi == nullptr ) [[unlikely]] {
                 return;
