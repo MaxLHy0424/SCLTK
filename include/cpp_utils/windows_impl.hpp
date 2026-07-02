@@ -180,8 +180,8 @@ namespace cpp_utils
             FreeSid( p );
         } ) >;
         template < typename F >
-        [[nodiscard]] inline auto with_service(
-          const std::wstring_view service_name, const DWORD scm_access, const DWORD service_access, F&& func ) noexcept -> DWORD
+        [[nodiscard]] inline auto
+          with_service( const std::wstring_view service_name, const DWORD scm_access, const DWORD service_access, F&& func ) noexcept
         {
             scoped_sc_handle scm{ OpenSCManagerW( nullptr, nullptr, scm_access ) };
             if ( scm == nullptr ) [[unlikely]] {
@@ -194,7 +194,7 @@ namespace cpp_utils
             return func( scm.get(), svc.get() );
         }
         template < typename F >
-        [[nodiscard]] inline auto for_each_dependency( const wchar_t* deps, F&& func ) noexcept -> DWORD
+        [[nodiscard]] inline auto for_each_dependency( const wchar_t* deps, F&& func ) noexcept
         {
             DWORD result{ ERROR_SUCCESS };
             auto current{ deps };
@@ -208,7 +208,7 @@ namespace cpp_utils
         }
         template < typename F >
         [[nodiscard]] inline auto
-          with_service_dependencies( const SC_HANDLE service, F&& func, std::pmr::memory_resource* const resource ) noexcept -> DWORD
+          with_service_dependencies( const SC_HANDLE service, F&& func, std::pmr::memory_resource* const resource ) noexcept
         {
             constexpr DWORD stack_buffer_size{ 8192 };
             std::array< BYTE, stack_buffer_size > stack_buffer{};
@@ -218,7 +218,7 @@ namespace cpp_utils
                 if ( stack_config->lpDependencies && *stack_config->lpDependencies != L'\0' ) {
                     return func( stack_config->lpDependencies );
                 }
-                return ERROR_SUCCESS;
+                return static_cast< DWORD >( ERROR_SUCCESS );
             }
             if ( GetLastError() != ERROR_INSUFFICIENT_BUFFER ) [[unlikely]] {
                 return GetLastError();
@@ -226,23 +226,23 @@ namespace cpp_utils
             std::pmr::vector< BYTE > heap_buffer( bytes_needed, resource );
             const auto heap_config{ reinterpret_cast< LPQUERY_SERVICE_CONFIGW >( heap_buffer.data() ) };
             if ( !QueryServiceConfigW( service, heap_config, bytes_needed, &bytes_needed ) ) [[unlikely]] {
-                return ERROR_SUCCESS;
+                return static_cast< DWORD >( ERROR_SUCCESS );
             }
             if ( heap_config->lpDependencies && *heap_config->lpDependencies != L'\0' ) {
                 return func( heap_config->lpDependencies );
             }
-            return ERROR_SUCCESS;
+            return static_cast< DWORD >( ERROR_SUCCESS );
         }
         [[nodiscard]] inline auto stop_service_and_dependencies(
           const SC_HANDLE scm, const SC_HANDLE service, std::pmr::memory_resource* const resource ) noexcept -> DWORD
         {
-            auto result{ with_service_dependencies( service, [ & ]( const wchar_t* deps ) noexcept -> DWORD
+            auto result{ with_service_dependencies( service, [ & ]( const wchar_t* deps ) noexcept
             {
-                return for_each_dependency( deps, [ & ]( const wchar_t* dep_name ) noexcept -> DWORD
+                return for_each_dependency( deps, [ & ]( const wchar_t* dep_name ) noexcept
                 {
                     const scoped_sc_handle dep_svc{ OpenServiceW( scm, dep_name, SERVICE_STOP | SERVICE_QUERY_STATUS ) };
                     if ( dep_svc == nullptr ) [[unlikely]] {
-                        return ERROR_SUCCESS;
+                        return static_cast< DWORD >( ERROR_SUCCESS );
                     }
                     return stop_service_and_dependencies( scm, dep_svc.get(), resource );
                 } );
