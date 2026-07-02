@@ -217,7 +217,7 @@ namespace cpp_utils
             }
             constexpr auto operator=( const unique_ptr_ex_deleter< T, NullChecker, Deleter >& )
               -> unique_ptr_ex_deleter< T, NullChecker, Deleter >& = default;
-            constexpr auto operator=( unique_ptr_ex_deleter< T, NullChecker, Deleter >&& )
+            constexpr auto operator=( unique_ptr_ex_deleter< T, NullChecker, Deleter >&& ) noexcept
               -> unique_ptr_ex_deleter< T, NullChecker, Deleter >& = default;
             constexpr unique_ptr_ex_deleter()                      = default;
             template < typename... Args >
@@ -228,7 +228,7 @@ namespace cpp_utils
             constexpr unique_ptr_ex_deleter( const Deleter& d )
               : deleter{ d }
             { }
-            constexpr unique_ptr_ex_deleter( Deleter&& d )
+            constexpr unique_ptr_ex_deleter( Deleter&& d ) noexcept
               : deleter{ std::move( d ) }
             { }
             constexpr unique_ptr_ex_deleter( const unique_ptr_ex_deleter< T, NullChecker, Deleter >& ) = default;
