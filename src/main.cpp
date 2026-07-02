@@ -45,6 +45,10 @@ namespace scltk
         return &pool;
     }() };
     cpp_utils::process_snapshot proc_snapshot;
+    constexpr auto quit() noexcept
+    {
+        return func_exit;
+    }
     auto disable_hotkey() noexcept
     {
         DWORD attrs;
@@ -57,10 +61,6 @@ namespace scltk
         const auto current_process{ GetCurrentProcess() };
         ( void ) cpp_utils::set_privilege( current_process, L"" SE_DEBUG_NAME, true );
         ( void ) cpp_utils::set_privilege( current_process, L"" SE_SHUTDOWN_NAME, true );
-    }
-    constexpr auto quit() noexcept
-    {
-        return func_exit;
     }
     namespace details_
     {
