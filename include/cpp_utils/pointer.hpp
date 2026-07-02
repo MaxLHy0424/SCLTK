@@ -156,12 +156,12 @@ namespace cpp_utils
     template < typename T, null_pointer_checker_for< T > NullChecker >
     [[nodiscard]] inline constexpr auto operator==( T* const lhs, const raw_pointer_wrapper< T, NullChecker >& rhs ) noexcept
     {
-        return lhs.get() == rhs;
+        return lhs == rhs.get();
     }
     template < typename T, null_pointer_checker_for< T > NullChecker >
     [[nodiscard]] inline constexpr auto operator!=( T* const lhs, const raw_pointer_wrapper< T, NullChecker >& rhs ) noexcept
     {
-        return lhs.get() != rhs;
+        return lhs != rhs.get();
     }
     template < typename T, null_pointer_checker_for< T > NullChecker >
     [[nodiscard]] inline constexpr auto operator==( const raw_pointer_wrapper< T, NullChecker >& lhs, const std::nullptr_t ) noexcept
@@ -200,6 +200,7 @@ namespace cpp_utils
               -> unique_ptr_ex_deleter< T, NullChecker, Deleter >& = default;
             constexpr unique_ptr_ex_deleter()                      = default;
             template < typename... Args >
+                requires( !std::same_as< std::decay_t< Args >, unique_ptr_ex_deleter< T, NullChecker, Deleter > > && ... )
             constexpr unique_ptr_ex_deleter( Args&&... args )
               : deleter{ std::forward< Args >( args )... }
             { }
