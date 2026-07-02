@@ -69,9 +69,8 @@ dep_debug        := src/*.cpp
 dep_release      := build/manifest.o \
                     src/*.cpp
 dep_res          := meta/manifest.rc \
-                    meta/SCLTK.ico \
                     meta/manifest.xml \
-                    meta/info.h
+                    meta/SCLTK.ico
 .PHONY: toolchain build debug release pack_and_sign clean
 build: debug release
 debug: build/debug/__debug__.exe
