@@ -132,6 +132,22 @@ namespace cpp_utils
         ~raw_pointer_wrapper() noexcept                                                        = default;
     };
     template < typename T, null_pointer_checker_for< T > NullChecker >
+    inline constexpr auto
+      operator-( const raw_pointer_wrapper< T, NullChecker >& lhs, const raw_pointer_wrapper< T, NullChecker >& rhs ) noexcept
+    {
+        return lhs.get() - rhs.get();
+    }
+    template < typename T, null_pointer_checker_for< T > NullChecker >
+    inline constexpr auto operator-( const raw_pointer_wrapper< T, NullChecker >& lhs, T* const rhs )
+    {
+        return lhs.get() - rhs;
+    }
+    template < typename T, null_pointer_checker_for< T > NullChecker >
+    inline constexpr auto operator-( T* const lhs, const raw_pointer_wrapper< T, NullChecker >& rhs )
+    {
+        return lhs - rhs.get();
+    }
+    template < typename T, null_pointer_checker_for< T > NullChecker >
     [[nodiscard]] inline constexpr auto
       operator==( const raw_pointer_wrapper< T, NullChecker >& lhs, const raw_pointer_wrapper< T, NullChecker >& rhs ) noexcept
     {
