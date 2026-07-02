@@ -32,6 +32,10 @@ namespace cpp_utils
         {
             return !std::is_same_v< std::remove_cv_t< T >, void >;
         }
+        constexpr auto null() noexcept
+        {
+            return NullChecker{}( ptr_ );
+        }
         constexpr auto reset( const value_type src ) noexcept
         {
             ptr_ = src;
