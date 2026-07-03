@@ -90,7 +90,7 @@ namespace scltk
     }
     namespace details_
     {
-#ifndef _WIN64
+#ifdef SCLTK_LEGACY
         struct wow64_file_redirect_guard final
         {
             HMODULE kernel32_dll{ GetModuleHandleW( L"kernel32.dll" ) };
@@ -1194,7 +1194,7 @@ namespace scltk
         auto reset_hosts() noexcept
         {
             std::print( " -> 重置 Hosts.\n" );
-#ifndef _WIN64
+#ifdef SCLTK_LEGACY
             const wow64_file_redirect_guard _;
 #endif
             const auto hosts_path{ [] static
