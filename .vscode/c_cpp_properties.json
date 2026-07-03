@@ -9,7 +9,8 @@
             ],
             "defines": [
                 "UNICODE",
-                "_UNICODE"
+                "_UNICODE",
+                "CPP_UTILS_WINDOWS_IMPL_WIN7_FIX"
             ],
             "compilerArgs": [],
             "intelliSenseMode": "windows-gcc-x64",
