@@ -1097,7 +1097,7 @@ namespace scltk
                         deleted_subkey = true;
                     }
                 } else {
-                    ( void ) cpp_utils::delete_registry_key_without_redirect(
+                    ( void ) cpp_utils::delete_registry_value_without_redirect(
                       HKEY_LOCAL_MACHINE, full_subkey_path, L"Debugger"sv );
                 }
                 if ( !deleted_subkey ) {
@@ -1131,22 +1131,22 @@ namespace scltk
                 ( void ) cpp_utils::delete_registry_tree_without_redirect( HKEY_CURRENT_USER, policy_reg );
             }
             for ( const auto& [ key, value ] : policy_value_regs ) {
-                ( void ) cpp_utils::delete_registry_key_without_redirect( HKEY_LOCAL_MACHINE, key, value );
+                ( void ) cpp_utils::delete_registry_value_without_redirect( HKEY_LOCAL_MACHINE, key, value );
             }
             constexpr DWORD need_enabled_reg_value{ 1 };
             for ( const auto& [ key, value ] : need_enabled_regs ) {
-                ( void ) cpp_utils::create_registry_key_without_redirect(
+                ( void ) cpp_utils::create_registry_value_without_redirect(
                   HKEY_LOCAL_MACHINE, key, value, cpp_utils::registry_flag::dword_type,
                   reinterpret_cast< const BYTE* >( &need_enabled_reg_value ), sizeof( need_enabled_reg_value ) );
             }
             std::print( " -> 撤销按键禁用 (注销当前用户账户后生效).\n" );
-            ( void ) cpp_utils::delete_registry_key_without_redirect(
+            ( void ) cpp_utils::delete_registry_value_without_redirect(
               HKEY_LOCAL_MACHINE, LR"(SYSTEM\CurrentControlSet\Control\Keyboard Layout)"sv, L"Scancode Map"sv );
-            ( void ) cpp_utils::delete_registry_key_without_redirect(
+            ( void ) cpp_utils::delete_registry_value_without_redirect(
               HKEY_CURRENT_USER, LR"(Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced)"sv, L"DisabledHotkeys"sv );
             std::print( " -> 恢复 USB 存储器服务.\n" );
             constexpr DWORD start_type{ 3 };
-            ( void ) cpp_utils::create_registry_key_without_redirect(
+            ( void ) cpp_utils::create_registry_value_without_redirect(
               HKEY_LOCAL_MACHINE, LR"(SYSTEM\CurrentControlSet\Services\USBSTOR)"sv, L"Start"sv,
               cpp_utils::registry_flag::dword_type, reinterpret_cast< const BYTE* >( &start_type ), sizeof( start_type ) );
         }
@@ -1309,20 +1309,20 @@ namespace scltk
         auto reset_jfglzs_config() noexcept
         {
             std::print( " -> 删除密码.\n" );
-            ( void ) cpp_utils::delete_registry_key_without_redirect( HKEY_CURRENT_USER, L"Software"sv, L"n"sv );
+            ( void ) cpp_utils::delete_registry_value_without_redirect( HKEY_CURRENT_USER, L"Software"sv, L"n"sv );
             std::print( " -> 删除配置.\n" );
             ( void ) cpp_utils::delete_registry_tree_without_redirect( HKEY_CURRENT_USER, LR"(Software\jfglzs)"sv );
             std::print( " -> 删除自启动项.\n" );
             constexpr std::array autorun_items{ L"jfglzs"sv, L"jfglzsn"sv, L"jfglzsp"sv, L"prozs"sv, L"przs"sv };
             constexpr std::array notification_items{ L"StartupTNotijfglzsn"sv, L"StartupTNotiprozs"sv };
             for ( const auto& autorun_item : autorun_items ) {
-                ( void ) cpp_utils::delete_registry_key_without_redirect(
+                ( void ) cpp_utils::delete_registry_value_without_redirect(
                   HKEY_LOCAL_MACHINE, LR"(SOFTWARE\Microsoft\Windows\CurrentVersion\Run)"sv, autorun_item );
-                ( void ) cpp_utils::delete_registry_key_without_redirect(
+                ( void ) cpp_utils::delete_registry_value_without_redirect(
                   HKEY_LOCAL_MACHINE, LR"(SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run)"sv, autorun_item );
             }
             for ( const auto& notification_item : notification_items ) {
-                ( void ) cpp_utils::delete_registry_key_without_redirect(
+                ( void ) cpp_utils::delete_registry_value_without_redirect(
                   HKEY_CURRENT_USER, LR"(Software\Microsoft\Windows\CurrentVersion\RunNotification)"sv, notification_item );
             }
             std::print( " -> 删除备份.\n" );
@@ -1548,7 +1548,7 @@ namespace scltk
         {
             if constexpr ( run_hijack_image ) {
                 for ( const auto& reg : ifeo_regs ) {
-                    ( void ) cpp_utils::create_registry_key_without_redirect(
+                    ( void ) cpp_utils::create_registry_value_without_redirect(
                       HKEY_LOCAL_MACHINE, reg, L"Debugger"sv, cpp_utils::registry_flag::string_type,
                       reinterpret_cast< const BYTE* >( +details_::hijack_image_value ), sizeof( details_::hijack_image_value ) );
                 }
@@ -1634,13 +1634,13 @@ namespace scltk
         static auto hijack_image()
         {
             for ( const auto& proc : custom_rules.procs ) {
-                ( void ) cpp_utils::create_registry_key_without_redirect(
+                ( void ) cpp_utils::create_registry_value_without_redirect(
                   HKEY_LOCAL_MACHINE,
                   details_::concat_string< wchar_t >(
                     LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\)"sv, proc ),
                   L"Debugger"sv, cpp_utils::registry_flag::string_type,
                   reinterpret_cast< const BYTE* >( +details_::hijack_image_value ), sizeof( details_::hijack_image_value ) );
-                ( void ) cpp_utils::create_registry_key_without_redirect(
+                ( void ) cpp_utils::create_registry_value_without_redirect(
                   HKEY_LOCAL_MACHINE,
                   details_::concat_string< wchar_t >(
                     LR"(SOFTWARE\WOW6432Node\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\)"sv, proc ),

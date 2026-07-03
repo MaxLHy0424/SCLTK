@@ -526,7 +526,7 @@ namespace cpp_utils
         process_snapshot( process_snapshot&& )      = delete;
         ~process_snapshot()                         = default;
     };
-    [[nodiscard]] inline auto create_registry_key(
+    [[nodiscard]] inline auto create_registry_value(
       const HKEY main_key, const std::wstring_view sub_key, const std::wstring_view value_name, const DWORD type,
       const BYTE* const data, const DWORD data_size ) noexcept
     {
@@ -540,7 +540,7 @@ namespace cpp_utils
         }
         return RegSetValueExW( key_handle.get(), value_name.data(), 0, type, data, data_size );
     }
-    [[nodiscard]] inline auto create_registry_key_without_redirect(
+    [[nodiscard]] inline auto create_registry_value_without_redirect(
       const HKEY main_key, const std::wstring_view sub_key, const std::wstring_view value_name, const DWORD type,
       const BYTE* const data, const DWORD data_size ) noexcept
     {
@@ -555,7 +555,7 @@ namespace cpp_utils
         return RegSetValueExW( key_handle.get(), value_name.data(), 0, type, data, data_size );
     }
     [[nodiscard]] inline auto
-      delete_registry_key( const HKEY main_key, const std::wstring_view sub_key, const std::wstring_view value_name ) noexcept
+      delete_registry_value( const HKEY main_key, const std::wstring_view sub_key, const std::wstring_view value_name ) noexcept
     {
         details_::scoped_reg_key_handle key_handle;
         if ( const auto result{ RegOpenKeyExW( main_key, sub_key.data(), 0, KEY_SET_VALUE, std::out_ptr( key_handle ) ) };
@@ -565,7 +565,7 @@ namespace cpp_utils
         }
         return RegDeleteValueW( key_handle.get(), value_name.data() );
     }
-    [[nodiscard]] inline auto delete_registry_key_without_redirect(
+    [[nodiscard]] inline auto delete_registry_value_without_redirect(
       const HKEY main_key, const std::wstring_view sub_key, const std::wstring_view value_name ) noexcept
     {
         details_::scoped_reg_key_handle key_handle;
