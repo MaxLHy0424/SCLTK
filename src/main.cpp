@@ -1032,83 +1032,97 @@ namespace scltk
         {
             RegCloseKey( h );
         } ) >;
-        auto process_ifeo_path( const std::wstring_view root_path )
+        [[nodiscard]] auto is_sub_key_empty( const HKEY sub_key ) noexcept
+        {
+            wchar_t name[ 256 ];
+            DWORD index{ 0 };
+            auto size{ static_cast< DWORD >( std::size( name ) ) };
+            while ( RegEnumValueW( sub_key, index, name, &size, nullptr, nullptr, nullptr, nullptr ) == ERROR_SUCCESS ) {
+                if ( size != 0 ) {
+                    return false;
+                }
+                ++index;
+                size = static_cast< DWORD >( std::size( name ) );
+            }
+            index = 0;
+            size  = static_cast< DWORD >( std::size( name ) );
+            while ( RegEnumKeyExW( sub_key, index, name, &size, nullptr, nullptr, nullptr, nullptr ) == ERROR_SUCCESS ) {
+                return false;
+            }
+            return true;
+        }
+        auto process_debugger_values( const HKEY root_key ) noexcept
+        {
+            wchar_t sub_key_name[ 256 ];
+            DWORD index{ 0 };
+            auto size{ static_cast< DWORD >( std::size( sub_key_name ) ) };
+            while ( RegEnumKeyExW( root_key, index, sub_key_name, &size, nullptr, nullptr, nullptr, nullptr ) == ERROR_SUCCESS )
+            {
+                scoped_reg_key sub_key;
+                if ( RegOpenKeyExW( root_key, sub_key_name, 0, KEY_QUERY_VALUE | KEY_SET_VALUE, std::out_ptr( sub_key ) )
+                     == ERROR_SUCCESS )
+                {
+                    wchar_t value_data[ 1024 ];
+                    DWORD data_size{ sizeof( value_data ) };
+                    DWORD type{ 0 };
+                    if ( RegQueryValueExW( sub_key.get(), L"Debugger", nullptr, &type, reinterpret_cast< LPBYTE >( value_data ), &data_size )
+                           == ERROR_SUCCESS
+                         && type == REG_SZ )
+                    {
+                        constexpr std::wstring_view target{ hijack_image_value };
+                        if ( target != value_data ) {
+                            RegDeleteValueW( sub_key.get(), L"Debugger" );
+                        }
+                    }
+                }
+                ++index;
+                size = static_cast< DWORD >( std::size( sub_key_name ) );
+            }
+        }
+        auto process_empty_keys( const HKEY root_key ) noexcept
+        {
+            DWORD sub_key_count{ 0 };
+            if ( RegQueryInfoKeyW(
+                   root_key, nullptr, nullptr, nullptr, &sub_key_count, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr )
+                 != ERROR_SUCCESS )
+            {
+                return;
+            }
+            wchar_t sub_key_name[ 256 ];
+            for ( DWORD idx{ sub_key_count }; idx > 0; --idx ) {
+                auto size{ static_cast< DWORD >( std::size( sub_key_name ) ) };
+                if ( RegEnumKeyExW( root_key, idx - 1, sub_key_name, &size, nullptr, nullptr, nullptr, nullptr ) != ERROR_SUCCESS )
+                {
+                    continue;
+                }
+                scoped_reg_key sub_key;
+                if ( RegOpenKeyExW( root_key, sub_key_name, 0, KEY_QUERY_VALUE | KEY_ENUMERATE_SUB_KEYS, std::out_ptr( sub_key ) )
+                     == ERROR_SUCCESS )
+                {
+                    if ( is_sub_key_empty( sub_key.get() ) ) {
+                        RegDeleteKeyExW( root_key, sub_key_name, KEY_WOW64_64KEY, 0 );
+                    }
+                }
+            }
+        }
+        auto process_ifeo_path( const wchar_t* const path ) noexcept
         {
             scoped_reg_key root_key;
             if ( RegOpenKeyExW(
-                   HKEY_LOCAL_MACHINE, root_path.data(), 0, KEY_ENUMERATE_SUB_KEYS | KEY_QUERY_VALUE | KEY_WOW64_64KEY,
+                   HKEY_LOCAL_MACHINE, path, 0,
+                   KEY_READ | KEY_ENUMERATE_SUB_KEYS | KEY_QUERY_VALUE | KEY_SET_VALUE | DELETE | KEY_WOW64_64KEY,
                    std::out_ptr( root_key ) )
                  != ERROR_SUCCESS ) [[unlikely]]
             {
                 return;
             }
-            DWORD i{ 0 };
-            for ( ;; ) {
-                wchar_t subkey_name[ MAX_PATH ];
-                DWORD name_size{ MAX_PATH };
-                const auto enum_status{
-                  RegEnumKeyExW( root_key.get(), i, subkey_name, &name_size, nullptr, nullptr, nullptr, nullptr ) };
-                if ( enum_status == ERROR_NO_MORE_ITEMS ) {
-                    break;
-                }
-                if ( enum_status != ERROR_SUCCESS ) [[unlikely]] {
-                    break;
-                }
-                constexpr DWORD get_flags{ RRF_RT_REG_SZ | RRF_RT_REG_EXPAND_SZ };
-                DWORD data_size{};
-                if ( RegGetValueW( root_key.get(), subkey_name, L"Debugger", get_flags, nullptr, nullptr, &data_size ) != ERROR_SUCCESS )
-                {
-                    ++i;
-                    continue;
-                }
-                std::pmr::wstring data( data_size / sizeof( wchar_t ) + 1, L'\0' );
-                if ( RegGetValueW( root_key.get(), subkey_name, L"Debugger", get_flags, nullptr, data.data(), &data_size )
-                     != ERROR_SUCCESS )
-                {
-                    ++i;
-                    continue;
-                }
-                while ( !data.empty() && data.back() == L'\0' ) {
-                    data.pop_back();
-                }
-                constexpr std::wstring_view content{ hijack_image_value };
-                if ( data.ends_with( content ) ) {
-                    ++i;
-                    continue;
-                }
-                std::pmr::wstring full_subkey_path( unsynced_mem_pool );
-                full_subkey_path.reserve( root_path.size() + 1 + name_size );
-                full_subkey_path.append( root_path ).append( L"\\" ).append( subkey_name, name_size );
-                bool only_has_debugger{ false };
-                scoped_reg_key sub_key;
-                if ( RegOpenKeyExW( root_key.get(), subkey_name, 0, KEY_QUERY_VALUE, std::out_ptr( sub_key ) ) == ERROR_SUCCESS )
-                {
-                    DWORD sub_key_count{ 0 };
-                    DWORD value_count{ 0 };
-                    RegQueryInfoKeyW(
-                      sub_key.get(), nullptr, nullptr, nullptr, &sub_key_count, nullptr, nullptr, &value_count, nullptr,
-                      nullptr, nullptr, nullptr );
-                    only_has_debugger = ( value_count == 1 && sub_key_count == 0 );
-                }
-                bool deleted_subkey{ false };
-                if ( only_has_debugger ) {
-                    if ( cpp_utils::delete_registry_tree_without_redirect( HKEY_LOCAL_MACHINE, full_subkey_path ) == ERROR_SUCCESS )
-                    {
-                        deleted_subkey = true;
-                    }
-                } else {
-                    ( void ) cpp_utils::delete_registry_value_without_redirect(
-                      HKEY_LOCAL_MACHINE, full_subkey_path, L"Debugger"sv );
-                }
-                if ( !deleted_subkey ) {
-                    ++i;
-                }
-            }
+            process_debugger_values( root_key.get() );
+            process_empty_keys( root_key.get() );
         }
-        auto cleanup_hijacked_debuggers()
+        auto cleanup_hijacked_debuggers() noexcept
         {
-            process_ifeo_path( LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options)"sv );
-            process_ifeo_path( LR"(SOFTWARE\WOW6432Node\Microsoft\Windows NT\CurrentVersion\Image File Execution Options)"sv );
+            process_ifeo_path( LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options)" );
+            process_ifeo_path( LR"(SOFTWARE\WOW6432Node\Microsoft\Windows NT\CurrentVersion\Image File Execution Options)" );
         }
         auto restore_os_settings() noexcept
         {
