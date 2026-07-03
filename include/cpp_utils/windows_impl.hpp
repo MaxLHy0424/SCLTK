@@ -2,6 +2,9 @@
 #include <windows.h>
 #if true
 # include <ntdef.h>
+# ifdef CPP_UTILS_WINDOWS_IMPL_WIN7_FIX
+#  include <shlwapi.h>
+# endif
 # include <tlhelp32.h>
 # include <winternl.h>
 #endif
@@ -576,7 +579,11 @@ namespace cpp_utils
     }
     [[nodiscard]] inline auto delete_registry_tree( const HKEY main_key, const std::wstring_view sub_key ) noexcept
     {
+# ifdef CPP_UTILS_WINDOWS_IMPL_WIN7_FIX
+        return static_cast< LONG >( SHDeleteKeyW( main_key, sub_key.data() ) );
+# else
         return RegDeleteTreeW( main_key, sub_key.data() );
+# endif
     }
     [[nodiscard]] inline auto delete_registry_tree_without_redirect( const HKEY main_key, const std::wstring_view sub_key ) noexcept
     {
@@ -588,7 +595,11 @@ namespace cpp_utils
         {
             return result;
         }
+# ifdef CPP_UTILS_WINDOWS_IMPL_WIN7_FIX
+        return static_cast< LONG >( SHDeleteKeyW( key_handle.get(), sub_key.data() ) );
+# else
         return RegDeleteTreeW( key_handle.get(), sub_key.data() );
+# endif
     }
     [[nodiscard]] inline auto set_service_start_type( const std::wstring_view service_name, const DWORD start_type ) noexcept
     {
