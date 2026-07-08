@@ -991,7 +991,7 @@ namespace scltk
             cpp_utils::console_ui ui{ con, unsynced_mem_pool };
             ui.reserve( 5 + ( decltype( nodes.ui_count() )::value + ... ) )
               .add_back( make_title_text< "[ 配  置 ]", 2 >.view() )
-              .add_back( " < 返回\n", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
+              .add_back( " < 返回", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
               .add_back( " > 查看解析规则 ", details_::show_config_parsing_rules )
               .add_back( " > 同步配置 ", details_::sync_config )
               .add_back( " > 打开配置文件 ", details_::open_config_file );
@@ -1429,7 +1429,7 @@ namespace scltk
           .add_back(
             "\n[ 快捷工具 ]\n\n"
             " (i) 请破解电子教室软件后再使用此处功能.\n" )
-          .add_back( " > 启动命令提示符\n", details_::launch_cmd );
+          .add_back( " > 启动命令提示符", details_::launch_cmd );
         [ & ]< typename... Items >( const cpp_utils::type_list< Items... > )
         {
             ( ui.add_back( make_item_text< Items::description >.view(), Items::execute ), ... );
@@ -1859,14 +1859,14 @@ namespace scltk
         cpp_utils::console_ui ui{ scltk::con, scltk::unsynced_mem_pool };
         ui.reserve( 9 + scltk::builtin_rules::size )
           .add_back( scltk::make_title_text< "[ 主  页 ]", 2 >.view() )
-          .add_back( " < 退出\n", scltk::quit, cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_intensity )
+          .add_back( " < 退出", scltk::quit, cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_intensity )
           .add_back( " > 关于 ", scltk::info )
           .add_back( " > 配置 ", scltk::config_ui )
           .add_back( " > 工具箱\n", scltk::toolkit )
           .add_back(
             scltk::make_executor_mode_ui_text(), scltk::flip_executor_mode,
             cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_green )
-          .add_back( " > 全部执行\n", scltk::all_rules::entry )
+          .add_back( " > 全部执行", scltk::all_rules::entry )
           .add_back( " > * 自定义 * ", scltk::rule_executor< scltk::custom_rule_executor_backend >::entry );
         [ & ]< typename... Nodes >( const cpp_utils::type_list< Nodes... > )
         {
