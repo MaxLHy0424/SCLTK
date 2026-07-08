@@ -10,6 +10,7 @@
 #include <iphlpapi.h>
 #include <setupapi.h>
 #include <wincrypt.h>
+#include <cstring>
 #include <filesystem>
 #include <fstream>
 #include <random>
@@ -169,20 +170,70 @@ namespace scltk
             }
             return std::pmr::wstring( unsynced_mem_pool );
         }
+        constexpr auto is_capital_case( const wchar_t ch ) noexcept
+        {
+            return ch >= L'A' && ch <= L'Z';
+        };
+        constexpr auto is_lower_case( const wchar_t ch ) noexcept
+        {
+            return ch >= L'a' && ch <= L'z';
+        };
+        constexpr auto is_in_alphabet( const wchar_t ch ) noexcept
+        {
+            return is_capital_case( ch ) || is_lower_case( ch );
+        };
+        constexpr auto is_number( const wchar_t ch ) noexcept
+        {
+            return ch >= L'0' && ch <= L'9';
+        };
+        auto terminate_cbms() noexcept
+        {
+            std::print( " -> 终止 \"海米计算机批量维护系统\" 守护进程.\n" );
+            ( void ) proc_snapshot.iterate( []( const PROCESSENTRY32W& proc_entry ) noexcept
+            {
+                constexpr auto extension_name{ L".exe"sv };
+                constexpr auto is_number_or_in_alphabet{ []( const wchar_t ch ) static noexcept
+                {
+                    return is_in_alphabet( ch ) || is_number( ch );
+                } };
+                if ( const std::wstring_view file_name{ proc_entry.szExeFile };
+                     file_name.size() != 6 + extension_name.size() && file_name.size() != 7 + extension_name.size()
+                     && std::ranges::all_of( file_name.subview( 0, file_name.size() - extension_name.size() ), is_number_or_in_alphabet ) )
+                {
+                    return true;
+                }
+                const auto proc_handle{ proc_snapshot.wrapped_nt_open_process(
+                  proc_entry.th32ProcessID, PROCESS_TERMINATE | PROCESS_QUERY_LIMITED_INFORMATION ) };
+                if ( proc_handle == nullptr ) [[unlikely]] {
+                    return true;
+                }
+                DWORD size{ MAX_PATH };
+                win32_file_path_buffer_t buffer{};
+                if ( !QueryFullProcessImageNameW( proc_handle.get(), 0, buffer.data(), &size ) ) [[unlikely]] {
+                    return true;
+                }
+                for ( const auto original_token :
+                      std::wstring_view{ buffer.data(), size } | std::views::drop( L"C:\\"sv.size() ) | std::views::split( L'\\' ) )
+                {
+                    const std::wstring_view token{ original_token.begin(), original_token.end() };
+                    if ( token == L"yesok_CBCS"sv ) {
+                        proc_snapshot.get_nt_terminate_process()( proc_handle.get(), 0 );
+                        break;
+                    }
+                    if ( is_in_alphabet( token.front() ) && std::ranges::all_of( token.subview( 1 ), is_number ) ) {
+                        proc_snapshot.get_nt_terminate_process()( proc_handle.get(), 0 );
+                        break;
+                    }
+                }
+                return true;
+            } );
+        }
         auto terminate_jfglzs_daemon() noexcept
         {
             std::print( " -> 终止 \"机房管理助手\" 守护进程.\n" );
             ( void ) proc_snapshot.terminate_by_names( std::array{ L"syszm.exe"sv, L"zmserv.exe"sv } );
             ( void ) proc_snapshot.iterate( []( const PROCESSENTRY32W& proc_entry ) noexcept
             {
-                constexpr auto is_lower_case{ []( const wchar_t ch ) static noexcept
-                {
-                    return ch >= L'a' && ch <= L'z';
-                } };
-                constexpr auto is_number{ []( const wchar_t ch ) static noexcept
-                {
-                    return ch >= L'0' && ch <= L'9';
-                } };
                 constexpr auto extension_name_size{ L".exe"sv.size() };
                 std::wstring_view name{ proc_entry.szExeFile };
                 if ( name.size() != 3 + extension_name_size && name.size() != 5 + extension_name_size
@@ -260,7 +311,7 @@ namespace scltk
                 return true;
             } );
         }
-        constexpr auto empty_lambda{ [] static noexcept { } };
+        auto empty_lambda{ [] static noexcept { } };
     }
     template < cpp_utils::const_string DisplayName, cpp_utils::same_as_type_list Procs, cpp_utils::same_as_type_list Servs,
                std::invocable auto CrackHelper = details_::empty_lambda, std::invocable auto RestoreHelper = details_::empty_lambda >
@@ -273,6 +324,13 @@ namespace scltk
         using servs = Servs;
     };
     using builtin_rules = cpp_utils::type_list<
+      compile_time_rule_node<
+        "海米计算机批量维护系统",
+        details_::make_const_wstring_list_t<
+          L"CBMS_Client.exe", L"susetup.exe", L"suerver.exe", L"tsvchqst.exe", L"snntime.exe", L"svchqst.exe", L"svch0st.exe",
+          L"nssm.exe" >,
+        details_::make_const_wstring_list_t< L"suerver", L"svch0st", L"svchqst", L"snntime" >, details_::terminate_cbms >,
+
       compile_time_rule_node<
         "机房管理助手",
         details_::make_const_wstring_list_t<
