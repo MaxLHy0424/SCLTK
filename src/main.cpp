@@ -330,7 +330,6 @@ namespace scltk
           L"CBMS_Client.exe", L"susetup.exe", L"suerver.exe", L"tsvchqst.exe", L"snntime.exe", L"svchqst.exe", L"svch0st.exe",
           L"nssm.exe" >,
         details_::make_const_wstring_list_t< L"suerver", L"svch0st", L"svchqst", L"snntime" >, details_::terminate_cbms >,
-
       compile_time_rule_node<
         "机房管理助手",
         details_::make_const_wstring_list_t<
@@ -355,6 +354,12 @@ namespace scltk
         details_::make_const_wstring_list_t< L"appcheck2", L"checkapp2" > >,
       compile_time_rule_node< "伽卡他卡电子教室", details_::make_const_wstring_list_t< L"Student.exe", L"Smonitor.exe" >,
                               details_::make_const_wstring_list_t< L"Smsvc" > >,
+      compile_time_rule_node<
+        "锐捷云教室",
+        details_::make_const_wstring_list_t<
+          L"CMLauncher.exe", L"CMExternal.exe", L"ClassManagerAppSrv.exe", L"ClassManagerApp.exe", L"ClassManagerCmd.exe",
+          L"Thin_Client_Config_Tool.exe", L"RemoteTch.exe", L"RCD_AutoUpdate.exe", L"rccdaemon.exe" >,
+        details_::make_const_wstring_list_t< L"FileZilla Server", L"rccdaemon" > >,
       compile_time_rule_node<
         "凌波网络教室", details_::make_const_wstring_list_t< L"sbkup.exe", L"wsf.exe", L"NCStu.exe", L"NCCmn.dll" >,
         details_::make_const_wstring_list_t< L"Windows Application and Components Data Backup Support Service" > >,
