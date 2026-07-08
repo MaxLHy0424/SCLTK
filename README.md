@@ -15,7 +15,7 @@
 # 📦 获取
 
 > [!NOTE]
-> SCLTK 最新正式发行版和最新预览版可从 [SCLTK & SCLTK-Legacy 下载站](https://scltk.maxlhy0424.is-a.dev)获取。[SCLTK & SCLTK-Legacy 下载站](https://scltk.maxlhy0424.is-a.dev)完全开源，其构建自 [SCLTK-Website-Template](https://github.com/MaxLHy0424/SCLTK-Website-Template)。
+> SCLTK 最新正式发行版和最新预览版可从 [SCLTK & SCLTK-Legacy 下载站](https://scltk.maxlhy0424.is-a.dev)获取。如需自行部署，请转到 [SCLTK-Website-Template](https://github.com/MaxLHy0424/SCLTK-Website-Template)。
 
 | 大版本   | 最新正式发行版                                                              | 状态       | 生命周期（UTC+08:00） |
 | -------- | --------------------------------------------------------------------------- | ---------- | --------------------- |
