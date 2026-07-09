@@ -76,7 +76,7 @@ namespace scltk
             for ( auto ch{ L'0' }; ch <= L'9'; ++ch ) {
                 dict.emplace_back( ch );
             }
-            dict.append_range( LR"(?!@#$%^&*()-_=+[]{}\|/;:'",.<>)"sv );
+            dict.append_range( LR"(`~!@#$%^&*+-_=()[]{}/\|;:'",.<>?)"sv );
             return dict;
         } >() };
         constexpr auto title_length{ 32uz };
