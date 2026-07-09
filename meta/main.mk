@@ -20,6 +20,7 @@ args_opt_release := -Ofast \
                     -fno-unwind-tables \
                     -fno-asynchronous-unwind-tables \
                     -fno-common \
+                    -fno-ident \
                     -ffunction-sections \
                     -fdata-sections \
                     -fno-stack-protector \
@@ -35,6 +36,12 @@ args_opt_release := -Ofast \
                     -fstrict-aliasing \
                     -ffast-math \
                     -freciprocal-math \
+                    -fvect-cost-model=dynamic \
+                    -fipa-cp-clone \
+                    -fipa-bit-cp \
+                    -fisolate-erroneous-paths-attribute \
+                    -fsched-pressure \
+                    -frename-registers \
                     -fmerge-all-constants \
                     -fno-math-errno \
                     -fmodulo-sched \
