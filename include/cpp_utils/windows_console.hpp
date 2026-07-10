@@ -144,6 +144,20 @@ namespace cpp_utils
             SetConsoleMode( self.std_output_handle, mode );
             return self;
         }
+        auto&& print( this auto&& self, const std::string_view str ) noexcept
+        {
+            DWORD _;
+            WriteConsoleA(
+              self.std_output_handle, static_cast< const void* >( str.data() ), static_cast< DWORD >( str.size() ), &_, nullptr );
+            return self;
+        }
+        auto&& print( this auto&& self, const std::wstring_view str ) noexcept
+        {
+            DWORD _;
+            WriteConsoleW(
+              self.std_output_handle, static_cast< const void* >( str.data() ), static_cast< DWORD >( str.size() ), &_, nullptr );
+            return self;
+        }
         auto&& clear( this auto&& self, std::pmr::memory_resource* const resource = std::pmr::get_default_resource() )
         {
             CONSOLE_SCREEN_BUFFER_INFO info;
