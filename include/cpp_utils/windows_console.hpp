@@ -166,7 +166,7 @@ namespace cpp_utils
             const auto area{ info.dwSize.X * info.dwSize.Y };
             DWORD written;
             SetConsoleCursorPosition( self.std_output_handle, top_left );
-            std::print( "{}", std::pmr::string( static_cast< std::size_t >( area ), ' ', resource ) );
+            self.print( std::pmr::wstring( static_cast< std::size_t >( area ), L' ', resource ) );
             FillConsoleOutputAttribute( self.std_output_handle, info.wAttributes, area, top_left, &written );
             SetConsoleCursorPosition( self.std_output_handle, top_left );
             return self;
@@ -293,11 +293,11 @@ namespace cpp_utils
             WORD intensity_attrs{ console_text::foreground_green | console_text::foreground_blue };
             WORD last_attrs{ console_text::foreground_white };
             COORD position{};
-            auto print_text() const
+            auto print_text( const console& con ) const
             {
-                text.visit( []( const auto& line_text ) static
+                text.visit( [ & ]( const auto& line_text )
                 {
-                    std::print( "{}", line_text );
+                    con.print( line_text );
                 } );
             }
             auto operator==( const COORD current_position ) const noexcept
@@ -350,21 +350,21 @@ namespace cpp_utils
         {
             const auto [ console_width, console_height ]{ cursor_position };
             SetConsoleCursorPosition( con_.std_output_handle, { 0, console_height } );
-            std::print(
-              "{}", std::pmr::string( static_cast< std::size_t >( console_width ), ' ', lines_.get_allocator().resource() ) );
+            con_.print( std::pmr::wstring( static_cast< std::size_t >( console_width ), L' ', lines_.get_allocator().resource() ) );
             SetConsoleCursorPosition( con_.std_output_handle, { 0, console_height } );
-            line.print_text();
+            line.print_text( con_ );
             SetConsoleCursorPosition( con_.std_output_handle, { 0, console_height } );
         }
         auto init_pos_()
         {
+            using namespace std::string_view_literals;
             con_.clear( lines_.get_allocator().resource() );
             for ( const auto back_ptr{ &lines_.back() }; auto& line : lines_ ) {
                 line.position = get_cursor_();
                 set_line_attrs_( line, line.default_attrs );
-                line.print_text();
+                line.print_text( con_ );
                 if ( &line != back_ptr ) {
-                    std::print( "\n" );
+                    con_.print( "\n"sv );
                 }
             }
         }
