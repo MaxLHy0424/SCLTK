@@ -26,7 +26,7 @@ namespace cpp_utils
         auto&& set_state( this auto&& self, const UINT state ) noexcept
         {
             ShowWindow( self.window_handle, state );
-            return self;
+            return std::forward< decltype( self ) >( self );
         }
         auto&& forced_show( this auto&& self ) noexcept
         {
@@ -36,7 +36,7 @@ namespace cpp_utils
             SetWindowPos( self.window_handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
             SetForegroundWindow( self.window_handle );
             AttachThreadInput( thread_id, window_thread_proc_id, FALSE );
-            return self;
+            return std::forward< decltype( self ) >( self );
         }
         template < typename ChronoRep, typename ChronoPeriod >
         [[noreturn]] auto
@@ -65,12 +65,12 @@ namespace cpp_utils
                 AttachThreadInput( thread_id, window_thread_proc_id, FALSE );
                 std::this_thread::sleep_for( sleep_duration );
             }
-            return self;
+            return std::forward< decltype( self ) >( self );
         }
         auto&& cancel_forced_show( this auto&& self ) noexcept
         {
             SetWindowPos( self.window_handle, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
-            return self;
+            return std::forward< decltype( self ) >( self );
         }
         auto&& fix_size( this auto&& self, const bool is_enable ) noexcept
         {
@@ -79,7 +79,7 @@ namespace cpp_utils
               is_enable
                 ? GetWindowLongPtrW( self.window_handle, GWL_STYLE ) & ~WS_SIZEBOX
                 : GetWindowLongPtrW( self.window_handle, GWL_STYLE ) | WS_SIZEBOX );
-            return self;
+            return std::forward< decltype( self ) >( self );
         }
         auto&& enable_context_menu( this auto&& self, const bool is_enable ) noexcept
         {
@@ -88,7 +88,7 @@ namespace cpp_utils
               is_enable
                 ? GetWindowLongPtrW( self.window_handle, GWL_STYLE ) | WS_SYSMENU
                 : GetWindowLongPtrW( self.window_handle, GWL_STYLE ) & ~WS_SYSMENU );
-            return self;
+            return std::forward< decltype( self ) >( self );
         }
         auto&& enable_window_minimize_ctrl( this auto&& self, const bool is_enable ) noexcept
         {
@@ -97,7 +97,7 @@ namespace cpp_utils
               is_enable
                 ? GetWindowLongPtrW( self.window_handle, GWL_STYLE ) | WS_MINIMIZEBOX
                 : GetWindowLongPtrW( self.window_handle, GWL_STYLE ) & ~WS_MINIMIZEBOX );
-            return self;
+            return std::forward< decltype( self ) >( self );
         }
         auto&& enable_window_maximize_ctrl( this auto&& self, const bool is_enable ) noexcept
         {
@@ -106,20 +106,20 @@ namespace cpp_utils
               is_enable
                 ? GetWindowLongPtrW( self.window_handle, GWL_STYLE ) | WS_MAXIMIZEBOX
                 : GetWindowLongPtrW( self.window_handle, GWL_STYLE ) & ~WS_MAXIMIZEBOX );
-            return self;
+            return std::forward< decltype( self ) >( self );
         }
         auto&& enable_window_close_ctrl( this auto&& self, const bool is_enable ) noexcept
         {
             EnableMenuItem(
               GetSystemMenu( self.window_handle, FALSE ), SC_CLOSE,
               is_enable ? MF_BYCOMMAND | MF_ENABLED : MF_BYCOMMAND | MF_DISABLED | MF_GRAYED );
-            return self;
+            return std::forward< decltype( self ) >( self );
         }
         auto&& press_any_key_to_continue( this auto&& self ) noexcept
         {
             DWORD mode;
             if ( !GetConsoleMode( self.std_input_handle, &mode ) ) [[unlikely]] {
-                return self;
+                return std::forward< decltype( self ) >( self );
             }
             SetConsoleMode( self.std_input_handle, ENABLE_EXTENDED_FLAGS | ( mode & ~ENABLE_QUICK_EDIT_MODE ) );
             FlushConsoleInputBuffer( self.std_input_handle );
@@ -129,12 +129,12 @@ namespace cpp_utils
                 ReadConsoleInputW( self.std_input_handle, &record, 1, &events );
             } while ( record.EventType != KEY_EVENT || !record.Event.KeyEvent.bKeyDown );
             SetConsoleMode( self.std_input_handle, mode );
-            return self;
+            return std::forward< decltype( self ) >( self );
         }
         auto&& ignore_exit_signal( this auto&& self, const bool is_ignore ) noexcept
         {
             SetConsoleCtrlHandler( nullptr, static_cast< WINBOOL >( is_ignore ) );
-            return self;
+            return std::forward< decltype( self ) >( self );
         }
         auto&& enable_virtual_terminal_processing( this auto&& self, const bool is_enable ) noexcept
         {
@@ -142,21 +142,21 @@ namespace cpp_utils
             GetConsoleMode( self.std_output_handle, &mode );
             is_enable ? mode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING : mode &= ~ENABLE_VIRTUAL_TERMINAL_PROCESSING;
             SetConsoleMode( self.std_output_handle, mode );
-            return self;
+            return std::forward< decltype( self ) >( self );
         }
         auto&& print( this auto&& self, const std::string_view str ) noexcept
         {
             DWORD _;
             WriteConsoleA(
               self.std_output_handle, static_cast< const void* >( str.data() ), static_cast< DWORD >( str.size() ), &_, nullptr );
-            return self;
+            return std::forward< decltype( self ) >( self );
         }
         auto&& print( this auto&& self, const std::wstring_view str ) noexcept
         {
             DWORD _;
             WriteConsoleW(
               self.std_output_handle, static_cast< const void* >( str.data() ), static_cast< DWORD >( str.size() ), &_, nullptr );
-            return self;
+            return std::forward< decltype( self ) >( self );
         }
         auto&& clear( this auto&& self, std::pmr::memory_resource* const resource = std::pmr::get_default_resource() )
         {
@@ -169,7 +169,7 @@ namespace cpp_utils
             self.print( std::pmr::wstring( static_cast< std::size_t >( area ), L' ', resource ) );
             FillConsoleOutputAttribute( self.std_output_handle, info.wAttributes, area, top_left, &written );
             SetConsoleCursorPosition( self.std_output_handle, top_left );
-            return self;
+            return std::forward< decltype( self ) >( self );
         }
         [[nodiscard]] auto get_size() const noexcept
         {
@@ -188,28 +188,28 @@ namespace cpp_utils
             SetConsoleScreenBufferSize( self.std_output_handle, { width, height } );
             SetConsoleWindowInfo( self.std_output_handle, TRUE, &wrt );
             self.clear( resource );
-            return self;
+            return std::forward< decltype( self ) >( self );
         }
         auto&& set_title( this auto&& self, const char* const title ) noexcept
         {
             SetConsoleTitleA( title );
-            return self;
+            return std::forward< decltype( self ) >( self );
         }
         auto&& set_title( this auto&& self, const wchar_t* const title ) noexcept
         {
             SetConsoleTitleW( title );
-            return self;
+            return std::forward< decltype( self ) >( self );
         }
         auto&& set_charset( this auto&& self, const UINT charset_id ) noexcept
         {
             SetConsoleOutputCP( charset_id );
             SetConsoleCP( charset_id );
-            return self;
+            return std::forward< decltype( self ) >( self );
         }
         auto&& set_translucency( this auto&& self, const BYTE value ) noexcept
         {
             SetLayeredWindowAttributes( self.window_handle, RGB( 0, 0, 0 ), value, LWA_ALPHA );
-            return self;
+            return std::forward< decltype( self ) >( self );
         }
         auto&& show_cursor( this auto&& self, const bool is_shown ) noexcept
         {
@@ -217,13 +217,13 @@ namespace cpp_utils
             GetConsoleCursorInfo( self.std_output_handle, &cursor_data );
             cursor_data.bVisible = static_cast< WINBOOL >( is_shown );
             SetConsoleCursorInfo( self.std_output_handle, &cursor_data );
-            return self;
+            return std::forward< decltype( self ) >( self );
         }
         auto&& lock_text( this auto&& self, const bool is_locked ) noexcept
         {
             DWORD attrs;
             if ( !GetConsoleMode( self.std_input_handle, &attrs ) ) [[unlikely]] {
-                return self;
+                return std::forward< decltype( self ) >( self );
             }
             switch ( is_locked ) {
                 case false :
@@ -238,7 +238,7 @@ namespace cpp_utils
             attrs |= ENABLE_MOUSE_INPUT;
             attrs |= ENABLE_LINE_INPUT;
             SetConsoleMode( self.std_input_handle, attrs );
-            return self;
+            return std::forward< decltype( self ) >( self );
         }
     };
     class console_ui final
