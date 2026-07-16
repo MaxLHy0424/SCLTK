@@ -1,14 +1,22 @@
 param(
-    [Parameter(Mandatory)]
+    [string]$edition,
     [string]$target,
     [string]$gpg_key = ""
 )
+if (($edition -ne "mainline" ) -and ($edition -ne "legacy")) {
+    Write-Error -Message "The only available options are 'mainline' and 'legacy'!"
+    exit 1
+}
 if (($target -eq "pack_and_sign") -and ($gpg_key -eq "")) {
     Write-Error -Message "Please provide your gpg key id!"
     exit 1
 }
 $software_full_name = "Student Computer Lab Toolkit"
 $software_short_name = "SCLTK"
+if ($edition -eq "legacy") {
+    $software_full_name += " - Legacy Edition"
+    $software_short_name += "-Legacy"
+}
 $license = "MIT License"
 $copyright = "Copyright (C) 2023 MaxLHy0424."
 $repo_url = "https://github.com/MaxLHy0424/SCLTK"
@@ -32,8 +40,8 @@ else {
 if (-not (Test-Path "build")) {
     New-Item -Path "build" -ItemType Directory
 }
-$old_info = "meta/info.h"
-$new_info = "meta/info.new.h"
+$old_info = "meta/$edition/info.h"
+$new_info = "meta/$edition/info.new.h"
 @"
 #pragma once
 #define INFO_FULL_NAME  "$software_full_name"
@@ -52,5 +60,5 @@ elseif ((Get-FileHash $old_info).Hash -ne (Get-FileHash $new_info).Hash ) {
     Copy-Item -Path $new_info -Destination $old_info
 }
 Remove-Item -Path $new_info
-& make $target -f .\meta\main.mk -j gpg_key=$gpg_key
+& make $target -f .\meta\$edition\main.mk -j gpg_key=$gpg_key
 exit $LASTEXITCODE

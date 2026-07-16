@@ -2,7 +2,7 @@
     "version": 4,
     "configurations": [
         {
-            "name": "Win32",
+            "name": "SCLTK",
             "includePath": [
                 "${workspaceFolder}/*",
                 "${workspaceFolder}/include/*"
@@ -14,6 +14,25 @@
             ],
             "compilerArgs": [],
             "intelliSenseMode": "windows-gcc-x64",
+            "cStandard": "gnu23",
+            "cppStandard": "gnu++26",
+            "mergeConfigurations": false,
+            "configurationProvider": "ms-vscode.makefile-tools"
+        },
+        {
+            "name": "SCLTK-Legacy",
+            "includePath": [
+                "${workspaceFolder}/*",
+                "${workspaceFolder}/include/*"
+            ],
+            "defines": [
+                "UNICODE",
+                "_UNICODE",
+                "CPP_UTILS_WINDOWS_IMPL_WIN7_FIX",
+                "SCLTK_LEGACY"
+            ],
+            "compilerArgs": [],
+            "intelliSenseMode": "windows-gcc-x86",
             "cStandard": "gnu23",
             "cppStandard": "gnu++26",
             "mergeConfigurations": false,

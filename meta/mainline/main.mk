@@ -70,18 +70,18 @@ cmd_gpg          := gpg -bs -u $(gpg_key) --yes
 dep_test         := src/main.cpp \
                     src/clear_winhttp_proxy.cpp \
                     src/clear_wininet_proxy.cpp \
-                    meta/info.h \
+                    meta/mainline/info.h \
                     $(cpp_utils_all_files)
 dep_debug        := src/*.cpp
-dep_release      := build/manifest.o \
+dep_release      := build/$(project_name)/manifest.o \
                     src/*.cpp
 dep_res          := meta/manifest.rc \
                     meta/manifest.xml \
                     meta/SCLTK.ico
 .PHONY: toolchain build debug release pack_and_sign clean
 build: debug release
-debug: build/debug/__debug__.exe
-release: build/release/$(project_name).exe
+debug: build/$(project_name)/debug/__debug__.exe
+release: build/$(project_name)/release/$(project_name).exe
 toolchain:
 	/usr/bin/pacman -Sy --noconfirm --needed\
      mingw-w64-ucrt-x86_64-toolchain\
@@ -93,48 +93,48 @@ toolchain:
      binutils
 pack_and_sign: build
 	@$(cmd_echo) "Signing binaries..."
-	@$(cmd_gpg) build/release/$(project_name).exe
+	@$(cmd_gpg) build/$(project_name)/release/$(project_name).exe
 	@$(cmd_echo) "Removing old package..."
-	@/usr/bin/rm -rf build/$(project_name).7z
+	@/usr/bin/rm -rf build/$(project_name)/$(project_name).7z
 	@$(cmd_echo) "Copying binaries, signatures, and the LICENSE.txt..."
-	@/usr/bin/mkdir build/__temp__ -p
-	@/usr/bin/cp build/release/*.exe build/__temp__/
-	@/usr/bin/cp build/release/*.sig build/__temp__/
-	@/usr/bin/cp LICENSE.txt build/__temp__/
+	@/usr/bin/mkdir build/$(project_name)/__temp__ -p
+	@/usr/bin/cp build/$(project_name)/release/*.exe build/$(project_name)/__temp__/
+	@/usr/bin/cp build/$(project_name)/release/*.sig build/$(project_name)/__temp__/
+	@/usr/bin/cp LICENSE.txt build/$(project_name)/__temp__/
 	@$(cmd_echo) "Compressing to '$(project_name).7z'..."
-	@/ucrt64/bin/7z a -bso0 -bsp0 -mx9 -m0=LZMA2 -md=64m -mfb=64 -ms=16g -mmt=16 build/$(project_name).7z ./build/__temp__/*
+	@/ucrt64/bin/7z a -bso0 -bsp0 -mx9 -m0=LZMA2 -md=64m -mfb=64 -ms=16g -mmt=16 build/$(project_name)/$(project_name).7z build/$(project_name)/__temp__/*
 	@$(cmd_echo) "Signing '$(project_name).7z'..."
-	@$(cmd_gpg) build/$(project_name).7z
-	@$(cmd_echo) "Cleaning 'build/__temp__'..."
-	@/usr/bin/rm -rf build/__temp__
+	@$(cmd_gpg) build/$(project_name)/$(project_name).7z
+	@$(cmd_echo) "Cleaning 'build/$(project_name)/__temp__'..."
+	@/usr/bin/rm -rf build/$(project_name)/__temp__
 clean:
 	@$(cmd_echo) "Cleaning..."
-	@/usr/bin/rm -rf build
-	@/usr/bin/rm -rf meta/info.h
-build/debug/__debug__.exe: $(dep_test) \
-                           build/debug/.nothing
+	@/usr/bin/rm -rf build/$(project_name)
+	@/usr/bin/rm -rf meta/mainline/info.h
+build/$(project_name)/debug/__debug__.exe: $(dep_test) \
+                                           build/$(project_name)/debug/.gitkeep
 	@$(cmd_echo) "Compiling '$@'..."
 	@$(compiler) $(dep_debug) $(args_debug) -o $@
-build/release/$(project_name).exe: $(dep_test) \
-                                   $(dep_release) \
-                                   build/release/.nothing
+build/$(project_name)/release/$(project_name).exe: $(dep_test) \
+                                                   $(dep_release) \
+                                                   build/$(project_name)/release/.gitkeep
 	@$(cmd_echo) "Compiling '$@'..."
 	@$(compiler) $(dep_release) $(args_release) $(args_arch) $(args_ld) -o $@
 	@$(cmd_echo) "Compressing '$@'..."
 	@$(cmd_upx) $@
-build/manifest.o: $(dep_res) \
-                  build/.nothing
+build/$(project_name)/manifest.o: $(dep_res) \
+                                  build/$(project_name)/.gitkeep
 	@$(cmd_echo) "Generating '$@'..."
 	@/usr/bin/windres -i $< -o $@ $(args_defines) -c 65001 -F pe-x86-64
-build/.nothing:
+build/$(project_name)/.gitkeep:
 	@$(cmd_echo) "Creating '$@'..."
-	@/usr/bin/mkdir build -p
+	@/usr/bin/mkdir build/$(project_name) -p
 	@/usr/bin/touch $@
-build/debug/.nothing: build/.nothing
+build/$(project_name)/debug/.gitkeep: build/$(project_name)/.gitkeep
 	@$(cmd_echo) "Creating '$@'..."
-	@/usr/bin/mkdir build/debug -p
+	@/usr/bin/mkdir build/$(project_name)/debug -p
 	@/usr/bin/touch $@
-build/release/.nothing: build/.nothing
+build/$(project_name)/release/.gitkeep: build/$(project_name)/.gitkeep
 	@$(cmd_echo) "Creating '$@'..."
-	@/usr/bin/mkdir build/release -p
+	@/usr/bin/mkdir build/$(project_name)/release -p
 	@/usr/bin/touch $@

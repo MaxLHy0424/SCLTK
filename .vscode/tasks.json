@@ -2,10 +2,11 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "debug",
+            "label": "Debug_SCLTK",
             "type": "shell",
             "command": ".\\make.ps1",
             "args": [
+                "mainline",
                 "debug"
             ],
             "group": {
@@ -21,10 +22,13 @@
             "problemMatcher": "$gcc"
         },
         {
-            "label": "run",
+            "label": "Debug_SCLTK-Legacy",
             "type": "shell",
-            "dependsOn": "debug",
-            "command": "${workspaceFolder}/build/__debug__.exe",
+            "command": ".\\make.ps1",
+            "args": [
+                "legacy",
+                "debug"
+            ],
             "group": {
                 "kind": "test",
                 "isDefault": true
@@ -34,7 +38,8 @@
                 "reveal": "always",
                 "focus": true,
                 "panel": "shared"
-            }
+            },
+            "problemMatcher": "$gcc"
         }
     ]
 }

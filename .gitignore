@@ -1,3 +1,3 @@
 /build/
-/meta/info.h
-/meta/info.new.h
+/meta/*/info.h
+/meta/*/info.new.h

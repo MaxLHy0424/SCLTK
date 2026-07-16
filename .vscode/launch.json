@@ -2,18 +2,42 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "debug",
+            "name": "Debug SCLTK",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/debug/__debug__.exe",
+            "program": "${workspaceFolder}/build/SCLTK/debug/__debug__.exe",
             "args": [],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/build/debug",
+            "cwd": "${workspaceFolder}/build/SCLTK/debug",
             "environment": [],
             "externalConsole": true,
             "internalConsoleOptions": "openOnSessionStart",
             "MIMode": "gdb",
-            "preLaunchTask": "debug",
+            "preLaunchTask": "Debug_SCLTK",
+            "setupCommands": [
+                {
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                }
+            ]
+        },
+        {
+            "name": "Debug SCLTK-Legacy",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/SCLTK-Legacy/debug/__debug__.exe",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/build/SCLTK-Legacy/debug",
+            "environment": [],
+            "externalConsole": true,
+            "internalConsoleOptions": "openOnSessionStart",
+            "MIMode": "gdb",
+            "preLaunchTask": "Debug_SCLTK-Legacy",
             "setupCommands": [
                 {
                     "text": "-enable-pretty-printing",
