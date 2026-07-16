@@ -142,8 +142,8 @@ SCLTK 窗口相关选项。位于 `[ 选项 ]` 下。
 示例:
 ```ini
 [custom_rules]
-exec: abc_frontend.exe
-exec: abc_backend.com
+proc: abc_frontend.exe
+proc: abc_backend.com
 serv: abc_connect
 serv: abc_proc_defender
 crack_helper: "abc helper.exe" crack
