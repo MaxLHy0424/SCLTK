@@ -10,12 +10,12 @@
 </div>
 
 > [!IMPORTANT]
-> SCLTK 仅适用于 Microsoft Windows OS。
+> SCLTK & SCLTK-Legacy 仅适用于 Microsoft Windows OS。
 
 # 📦 获取
 
 > [!NOTE]
-> SCLTK 最新正式发行版和最新预览版可从 [SCLTK & SCLTK-Legacy 下载站](https://scltk.maxlhy0424.is-a.dev)获取。如需自行部署，请转到 [SCLTK-Website-Template](https://github.com/MaxLHy0424/SCLTK-Website-Template)。
+> SCLTK & SCLTK-Legacy 最新正式发行版和最新预览版可从 [SCLTK & SCLTK-Legacy 下载站](https://scltk.maxlhy0424.is-a.dev)获取。如需自行部署，请转到 [SCLTK-Website-Template](https://github.com/MaxLHy0424/SCLTK-Website-Template)。
 
 | 大版本   | 最新正式发行版                                                              | 状态       | 生命周期（UTC+08:00） |
 | -------- | --------------------------------------------------------------------------- | ---------- | --------------------- |
@@ -31,11 +31,11 @@
 
 ## 0 开始之前
 
-**使用 SCLTK 时建议关闭防病毒软件。若 SCLTK 被报为恶意软件，请在防病毒软件中添加排除项。**
+**使用 SCLTK / SCLTK-Legacy 时建议关闭防病毒软件。若 SCLTK / SCLTK-Legacy 被报为恶意软件，请在防病毒软件中添加排除项。**
 
-**请勿使用 SCLTK 扰乱课堂纪律，造成的后果与开发者无关。**
+**请勿使用 SCLTK & SCLTK-Legacy 扰乱课堂纪律，造成的后果与开发者无关。**
 
-**SCLTK 以 [MIT License](./LICENSE.txt) 开源，详细内容请自行阅读。**
+**SCLTK & SCLTK-Legacy 以 [MIT License](./LICENSE.txt) 开源，详细内容请自行阅读。**
 
 ## 1 启动
 
@@ -49,26 +49,26 @@ SCLTK 的发行版文件名为 `SCLTK.exe`。SCLTK 支持的 Windows OS 如下�
 SCLTK v7.2.0 及后续版本不再支持：
 
 - 32 位 Windows OS；
-- 未安装 UCRT 的 Windows OS。
+- 不支持 UCRT 的 Windows OS。
 
-对于正在使用上述不支持的 Windows OS的用户，请转到 [SCLTK-Legacy](https://github.com/MaxLHy0424/SCLTK-Legacy)。
+对于正在使用上述不支持的 Windows OS的用户，请使用 SCLTK-Legacy，其发行版文件名为 `SCLTK-Legacy.exe`。
 
 ## 2 常规操作
 
-- **退出 SCLTK**\
+- **退出 SCLTK / SCLTK-Legacy**\
   `< 退出`
-- **查看 SCLTK 信息**\
+- **查看 SCLTK / SCLTK-Legacy 信息**\
   `> 关于`
 
-## 3 配置 SCLTK
+## 3 配置 SCLTK / SCLTK-Legacy
 
 
 - **进入配置编辑页面**\
   `> 配置`
 
 > [!NOTE]
-> 配置文件 `SCLTK.conf` 中以 `#` 开头的行是注释。\
-> 配置文件头部注释为 SCLTK 自动生成。
+> 配置文件 `SCLTK.conf` / `SCLTK-Legacy.conf` 中以 `#` 开头的行是注释。\
+> 配置文件头部注释为 SCLTK / SCLTK-Legacy 自动生成。
 >
 > 配置解析规则如下：
 > - 跳过注释；
@@ -94,7 +94,7 @@ SCLTK v7.2.0 及后续版本不再支持：
 破解/恢复电子教室软件相关选项。位于 `[ 选项 ]` 下。
 
 - **启动时破解**\
-  在 SCLTK 启动并完成必要的初始化工作后，根据配置，执行全部破解规则（包括内建规则和自定义规则）。
+  在 SCLTK / SCLTK-Legacy 启动并完成必要的初始化工作后，根据配置，执行全部破解规则（包括内建规则和自定义规则）。
 - **映像劫持**\
   破解时劫持电子教室软件的进程，恢复时撤销劫持。
 - **挂起进程**\
@@ -102,7 +102,7 @@ SCLTK v7.2.0 及后续版本不再支持：
 
 ### 3.2 窗口显示
 
-SCLTK 窗口相关选项。位于 `[ 选项 ]` 下。
+SCLTK / SCLTK-Legacy 窗口相关选项。位于 `[ 选项 ]` 下。
 
 - **置顶窗口**\
   每 50ms 强制显示窗口并设为置顶。
@@ -137,7 +137,7 @@ SCLTK 窗口相关选项。位于 `[ 选项 ]` 下。
 > 可在 “配置” 页面下的 “自定义规则” 中，点击 `> 查看帮助信息` 阅读上述信息的简略版本。
 
 > [!WARNING]
-> SCLTK 不对自定义规则的正确性进行检测，一些规则可能导致意想不到的错误。在修改自定义规则时，请仔细检查。
+> SCLTK & SCLTK-Legacy不对自定义规则的正确性进行检测，一些规则可能导致意想不到的错误。在修改自定义规则时，请仔细检查。
 
 示例:
 ```ini
@@ -157,7 +157,7 @@ restore_helper: "abc helper.exe" restore
 
 **快捷工具：**
 
-- **在 SCLTK 窗口内直接启动命令提示符（可通过输入 `exit` 退出）**\
+- **在 SCLTK / SCLTK-Legacy 窗口内直接启动命令提示符（可通过输入 `exit` 退出）**\
 `> 启动命令提示符`
 - **一键重启资源管理器**\
 `> 重启资源管理器`
@@ -189,23 +189,23 @@ restore_helper: "abc helper.exe" restore
 
 ## 自定义规则乱码
 
-请尝试将配置文件 `SCLTK.conf` 使用 UTF-8 编码重新保存后重新启动 SCLTK。
+请尝试将配置文件 `SCLTK.conf` / `SCLTK-Legacy.conf` 使用 UTF-8 编码重新保存后重新启动 SCLTK。
 
-## 有时 SCLTK 窗口内的项目无法点击
+## 有时 SCLTK / SCLTK-Legacy 窗口内的项目无法点击
 
-通常，这是由于电子教室软件置顶窗口和 SCLTK 发生冲突导致的。这时，可以尝试按下 Win + D 返回桌面，再次尝试点击。
+通常，这是由于电子教室软件置顶窗口和 SCLTK / SCLTK-Legacy 发生冲突导致的。这时，可以尝试按下 Win + D 返回桌面，再次尝试点击。
 
 ## 破解后一些软件运行时报错 “找不到文件”
 
 在不影响软件正常运行的情况下，可以尝试修改可执行文件名称。另外，打开注册表编辑器，在 `HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options` 和 `HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Windows NT\CurrentVersion\Image File Execution Options` 下找到和要运行的软件的文件名称相同的项，删除即可。
 
-## SCLTK 使用内建规则破解不起作用
+## SCLTK / SCLTK-Legacy 使用内建规则破解不起作用
 
-请尝试使用最新版本的 SCLTK 进行破解，如果仍不起作用，可能是因为内建规则已失效。此时，可使用自定义规则临时解决。如果条件允许，请且尽快上报。
+请尝试使用最新版本的 SCLTK / SCLTK-Legacy 进行破解，如果仍不起作用，可能是因为内建规则已失效。此时，可使用自定义规则临时解决。如果条件允许，请且尽快上报。
 
-## SCLTK 无法终止某些进程
+## SCLTK / SCLTK-Legacy 无法终止某些进程
 
-由于成本（驱动程序的认证费用不菲）及安全原因，SCLTK 只使用了用户态 Windows API，对于受驱动程序保护的进程可能无法终止。可以通过 ARK（Anti-Rootkit）工具来终止这些进程。推荐的 ARK 工具有 [OpenArk](http://openark.blackint3.com:88)、[KSwordARK](https://github.com/WangWei-CM/KSword)、[StarlightGUI](https://github.com/OpenStarlight/StarlightGUI)。
+由于成本（驱动程序的认证费用不菲）及安全原因，SCLTK & SCLTK-Legacy 只使用了用户态 Windows API，对于受驱动程序保护的进程可能无法终止。可以通过 ARK（Anti-Rootkit）工具来终止这些进程。推荐的 ARK 工具有 [OpenArk](http://openark.blackint3.com:88)、[KSwordARK](https://github.com/WangWei-CM/KSword)、[StarlightGUI](https://github.com/OpenStarlight/StarlightGUI)。
 
 # 🛠️ 二次开发
 
@@ -213,10 +213,12 @@ restore_helper: "abc helper.exe" restore
 
 然后，使用 git 克隆本仓库到本地。
 
+本仓库支持构建 SCLTK 与 SCLTK-Legacy。如需构建 SCLTK，则下文中的 `<scltk-edition>` 为 `mainline`；如需构建 SCLTK-Legacy，则下文中的 `<scltk-edition>` 为 `legacy`
+
 接下来，在仓库本地目录下打开终端（不是 [msys2](https://www.msys2.org) 的），执行：
 
 ```pwsh
-.\make.ps1 -target toolchain
+.\make.ps1 -edition <scltk-edition> -target toolchain
 ```
 
 脚本将会自动安装工具链和依赖库。
@@ -227,27 +229,27 @@ restore_helper: "abc helper.exe" restore
 构建可使用：
 
 ```pwsh
-.\make.ps1 -target build
+.\make.ps1 -edition <scltk-edition> -target build
 ```
 
 ```pwsh
-.\make.ps1 -target debug
+.\make.ps1 -edition <scltk-edition> -target debug
 ```
 
 ```pwsh
-.\make.ps1 -target release
+.\make.ps1 -edition <scltk-edition> -target release
 ```
 
 更新工具链，可使用：
 
 ```pwsh
-.\make.ps1 -target toolchain
+.\make.ps1 -edition <scltk-edition> -target toolchain
 ```
 
 构建并打包 `build/release` 下的可执行文件和 `LICENSE.txt` 并签名，可使用：
 
 ```pwsh
-.\make.ps1 -target pack_and_sign -gpg_key=<key-id>
+.\make.ps1 -edition <scltk-edition> -target pack_and_sign -gpg_key=<key-id>
 ```
 
 其中，`<key-id>` 为签名所需的 GnuPG 密钥 ID。签名时所使用的 `gpg.exe` 为 `where.exe gpg.exe` 第一行的输出。
@@ -255,14 +257,14 @@ restore_helper: "abc helper.exe" restore
 > [!NOTE]
 > 发布时，推荐使用如下命令：
 > ```pwsh
-> .\make.ps1 -target clean && .\make.ps1 -target pack_and_sign -gpg_key=<key-id>
+> .\make.ps1 -edition <scltk-edition> -target clean && .\make.ps1 -edition <scltk-edition> -target pack_and_sign -gpg_key=<key-id>
 > ```
 
 > [!WARNING]
 > 请勿绕过 `.\make.ps1` 执行构建。
 
 > [!WARNING]
-> SCLTK 仓库下所有源代码文件均以 UTF-8 编码保存，如果使用其他文本编码保存源代码文件，可能导致非 ASCII 字符变成乱码。
+> 本仓库下所有源代码文件均以 UTF-8 编码保存，如果使用其他文本编码保存源代码文件，可能导致非 ASCII 字符变成乱码。
 
 # ❤️ 鸣谢
 
