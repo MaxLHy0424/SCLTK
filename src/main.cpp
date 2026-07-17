@@ -380,6 +380,14 @@ namespace scltk
           L"NetLockerInstall.exe", L"NetLockerInstall64.exe", L"LockerManage64.exe" >,
         details_::make_const_wstring_list_t< L"AnytimeSrv" > >,
       compile_time_rule_node<
+        "WeeBack",
+        details_::make_const_wstring_list_t<
+          L"watermarke.exe", L"TimerExitWindows.exe", L"termapps.exe", L"sdpi.exe", L"session_helper.exe", L"scrsender.exe",
+          L"PMonitorNO.exe", L"notify-send.exe", L"moviesender.exe", L"moviereceiver.exe", L"audiosender.exe",
+          L"audioreceiver.exe", L"mppgsvrc-ec.exe", L"mppgsvrc-ec-guard.exe", L"mppgclient-ec.exe", L"lock_screen.exe",
+          L"krtc-client.exe", L"FileFilterTipError.exe", L"dyws_agent.exe", L"NdisFilterInstall.exe" >,
+        details_::make_const_wstring_list_t< L"eClass Client Service", L"BrDevfer", L"ProcessProtect" > >,
+      compile_time_rule_node<
         "Veyon",
         details_::make_const_wstring_list_t<
           L"veyon-worker.exe", L"veyon-configurator.exe", L"veyon-server.exe", L"veyon-cli.exe", L"veyon-wcli.exe",
