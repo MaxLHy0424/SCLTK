@@ -1332,7 +1332,7 @@ namespace scltk
         }
         auto relaunch_network_adapters() noexcept
         {
-            cpp_utils::print( cpp_utils::no_formatting, " -> 重启网络适配器.\n"sv );
+            cpp_utils::print( cpp_utils::no_formatting, " -> 重启网络适配器 (可能失败).\n"sv );
             NET_LUID target_local_uid{};
             wchar_t target_name[ 256 ]{};
             ULONG out_buffer_length{};
