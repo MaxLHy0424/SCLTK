@@ -1,10 +1,9 @@
 #pragma once
 #include <functional>
 #include <memory_resource>
-#include <print>
 #include <string>
-#include <utility>
 #include "compiler.hpp"
+#include "print.hpp"
 #include "windows_impl.hpp"
 namespace cpp_utils
 {
@@ -144,20 +143,6 @@ namespace cpp_utils
             SetConsoleMode( self.std_output_handle, mode );
             return std::forward< decltype( self ) >( self );
         }
-        auto&& print( this auto&& self, const std::string_view str ) noexcept
-        {
-            DWORD _;
-            WriteConsoleA(
-              self.std_output_handle, static_cast< const void* >( str.data() ), static_cast< DWORD >( str.size() ), &_, nullptr );
-            return std::forward< decltype( self ) >( self );
-        }
-        auto&& print( this auto&& self, const std::wstring_view str ) noexcept
-        {
-            DWORD _;
-            WriteConsoleW(
-              self.std_output_handle, static_cast< const void* >( str.data() ), static_cast< DWORD >( str.size() ), &_, nullptr );
-            return std::forward< decltype( self ) >( self );
-        }
         auto&& clear( this auto&& self, std::pmr::memory_resource* const resource = std::pmr::get_default_resource() )
         {
             CONSOLE_SCREEN_BUFFER_INFO info;
@@ -166,7 +151,7 @@ namespace cpp_utils
             const auto area{ info.dwSize.X * info.dwSize.Y };
             DWORD written;
             SetConsoleCursorPosition( self.std_output_handle, top_left );
-            self.print( std::pmr::wstring( static_cast< std::size_t >( area ), L' ', resource ) );
+            print( no_formatting, std::pmr::string( static_cast< std::size_t >( area ), ' ', resource ) );
             FillConsoleOutputAttribute( self.std_output_handle, info.wAttributes, area, top_left, &written );
             SetConsoleCursorPosition( self.std_output_handle, top_left );
             return std::forward< decltype( self ) >( self );
@@ -293,11 +278,11 @@ namespace cpp_utils
             WORD intensity_attrs{ console_text::foreground_green | console_text::foreground_blue };
             WORD last_attrs{ console_text::foreground_white };
             COORD position{};
-            auto print_text( const console& con ) const
+            auto print_text() const noexcept
             {
-                text.visit( [ & ]( const auto& line_text )
+                text.visit( []( const auto& line_text ) static noexcept
                 {
-                    con.print( line_text );
+                    print( no_formatting, line_text );
                 } );
             }
             auto operator==( const COORD current_position ) const noexcept
@@ -350,9 +335,11 @@ namespace cpp_utils
         {
             const auto [ console_width, console_height ]{ cursor_position };
             SetConsoleCursorPosition( con_.std_output_handle, { 0, console_height } );
-            con_.print( std::pmr::wstring( static_cast< std::size_t >( console_width ), L' ', lines_.get_allocator().resource() ) );
+            print(
+              no_formatting,
+              std::pmr::string( static_cast< std::size_t >( console_width ), ' ', lines_.get_allocator().resource() ) );
             SetConsoleCursorPosition( con_.std_output_handle, { 0, console_height } );
-            line.print_text( con_ );
+            line.print_text();
             SetConsoleCursorPosition( con_.std_output_handle, { 0, console_height } );
         }
         auto init_pos_()
@@ -362,9 +349,9 @@ namespace cpp_utils
             for ( const auto back_ptr{ &lines_.back() }; auto& line : lines_ ) {
                 line.position = get_cursor_();
                 set_line_attrs_( line, line.default_attrs );
-                line.print_text( con_ );
+                line.print_text();
                 if ( &line != back_ptr ) {
-                    con_.print( "\n"sv );
+                    print( no_formatting, "\n"sv );
                 }
             }
         }

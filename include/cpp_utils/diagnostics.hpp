@@ -1,13 +1,10 @@
 #pragma once
 #include <exception>
-#include <format>
 #include <memory_resource>
-#include <print>
 #include <source_location>
 #include <stacktrace>
-#include <string_view>
-#include <utility>
 #include "compiler.hpp"
+#include "print.hpp"
 namespace cpp_utils
 {
     [[nodiscard]] inline auto make_log(
@@ -31,15 +28,15 @@ namespace cpp_utils
         try {
 #endif
             if ( std::forward< F >( func )() == false ) [[unlikely]] {
-                std::print( stderr, "{}", make_log( "assertion failid!"sv, src_location, std::move( trace ) ) );
+                print( no_formatting, stderr, make_log( "assertion failid!"sv, src_location, std::move( trace ) ) );
                 std::terminate();
             }
 #ifdef CPP_UTILS_MACRO_HAS_EXCEPTIONS
         } catch ( const std::exception& e ) {
-            std::print( stderr, "{}", make_log( e.what(), src_location, std::move( trace ) ) );
+            print( no_formatting, stderr, make_log( e.what(), src_location, std::move( trace ) ) );
             std::terminate();
         } catch ( ... ) {
-            std::print( stderr, "{}", make_log( "unknown exception caught!"sv, src_location, std::move( trace ) ) );
+            print( no_formatting, stderr, make_log( "unknown exception caught!"sv, src_location, std::move( trace ) ) );
             std::terminate();
         }
 #endif
