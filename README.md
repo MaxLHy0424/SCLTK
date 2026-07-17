@@ -15,17 +15,17 @@
 # 📦 获取
 
 > [!NOTE]
-> SCLTK & SCLTK-Legacy 最新正式发行版和最新预览版可从 [SCLTK & SCLTK-Legacy 下载站](https://scltk.maxlhy0424.is-a.dev)获取。如需自行部署，请转到 [SCLTK-Website-Template](https://github.com/MaxLHy0424/SCLTK-Website-Template)。
+> SCLTK & SCLTK-Legacy 可从 [SCLTK & SCLTK-Legacy 下载站](https://scltk.maxlhy0424.is-a.dev)获取。如需自行部署，请转到 [SCLTK-Website-Template](https://github.com/MaxLHy0424/SCLTK-Website-Template)。
 
-| 大版本   | 最新正式发行版                                                              | 状态       | 生命周期（UTC+08:00） |
-| -------- | --------------------------------------------------------------------------- | ---------- | --------------------- |
-| SCLTK v1 | [v1.0_Stable](https://github.com/MaxLHy0424/SCLTK/releases/tag/v1.0_Stable) | ❌ 停止维护 | 2023-12-17/2023-12-18 |
-| SCLTK v2 | [v2.5_Stable](https://github.com/MaxLHy0424/SCLTK/releases/tag/v2.5_Stable) | ❌ 停止维护 | 2024-01-01/2024-01-07 |
-| SCLTK v3 | [v3.0.1](https://github.com/MaxLHy0424/SCLTK/releases/tag/30174)            | ❌ 停止维护 | 2024-02-09/2024-02-10 |
-| SCLTK v4 | [v4.10.7](https://github.com/MaxLHy0424/SCLTK/releases/tag/v4.10.7)         | ❌ 停止维护 | 2024-03-26/2024-06-19 |
-| SCLTK v5 | [v5.11.1](https://github.com/MaxLHy0424/SCLTK/releases/tag/v5.11.1)         | ❌ 停止维护 | 2024-08-25/2024-12-23 |
-| SCLTK v6 | [v6.3.3](https://github.com/MaxLHy0424/SCLTK/releases/tag/v6.3.3)           | ❌ 停止维护 | 2025-01-29/2025-06-09 |
-| SCLTK v7 | [v7.1.5](https://github.com/MaxLHy0424/SCLTK/releases/tag/v7.1.5)           | ✅ 基线开发 | 2025-11-10/..         |
+| 主版本 | 最新正式发行版                                                              | 状态       | 生命周期（UTC+08:00） |
+| ------ | --------------------------------------------------------------------------- | ---------- | --------------------- |
+| v1     | [v1.0_Stable](https://github.com/MaxLHy0424/SCLTK/releases/tag/v1.0_Stable) | ❌ 停止维护 | 2023-12-17/2023-12-18 |
+| v2     | [v2.5_Stable](https://github.com/MaxLHy0424/SCLTK/releases/tag/v2.5_Stable) | ❌ 停止维护 | 2024-01-01/2024-01-07 |
+| v3     | [v3.0.1](https://github.com/MaxLHy0424/SCLTK/releases/tag/30174)            | ❌ 停止维护 | 2024-02-09/2024-02-10 |
+| v4     | [v4.10.7](https://github.com/MaxLHy0424/SCLTK/releases/tag/v4.10.7)         | ❌ 停止维护 | 2024-03-26/2024-06-19 |
+| v5     | [v5.11.1](https://github.com/MaxLHy0424/SCLTK/releases/tag/v5.11.1)         | ❌ 停止维护 | 2024-08-25/2024-12-23 |
+| v6     | [v6.3.3](https://github.com/MaxLHy0424/SCLTK/releases/tag/v6.3.3)           | ❌ 停止维护 | 2025-01-29/2025-06-09 |
+| v7     | [v7.1.5](https://github.com/MaxLHy0424/SCLTK/releases/tag/v7.1.5)           | ✅ 基线开发 | 2025-11-10/..         |
 
 # 📖 使用指南
 
