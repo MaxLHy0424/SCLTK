@@ -19,7 +19,6 @@ namespace cpp_utils
                 _setmode( _fileno( stream ), _O_BINARY );
             }
         }
-
     }
 #endif
     struct no_formatting_t final
