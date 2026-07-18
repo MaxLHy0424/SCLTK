@@ -970,7 +970,14 @@ namespace scltk
                 }, config_nodes );
                 config_file.flush();
             }
-            cpp_utils::print( cpp_utils::no_formatting, std::format( " (i) 同步配置{}.", config_file.good() ? "成功" : "失败" ) );
+            static constexpr auto final_message{ [] static consteval noexcept
+            {
+                constexpr auto msg_start{ " (i) 同步配置"_cs };
+                return std::array{
+                  cpp_utils::value_identity_v< cpp_utils::concat_const_string( msg_start, "失败."_cs ) >.view(),
+                  cpp_utils::value_identity_v< cpp_utils::concat_const_string( msg_start, "成功."_cs ) >.view() };
+            }() };
+            cpp_utils::print( cpp_utils::no_formatting, final_message[ static_cast< std::size_t >( config_file.good() ) ] );
             press_any_key_to_return();
             return func_back;
         }
@@ -996,7 +1003,14 @@ namespace scltk
                     success = true;
                 }
             }
-            cpp_utils::print( cpp_utils::no_formatting, std::format( " (i) 打开配置文件{}.", success ? "成功" : "失败" ) );
+            static constexpr auto final_message{ [] static consteval noexcept
+            {
+                constexpr auto msg_start{ " (i) 打开配置文件"_cs };
+                return std::array{
+                  cpp_utils::value_identity_v< cpp_utils::concat_const_string( msg_start, "失败."_cs ) >.view(),
+                  cpp_utils::value_identity_v< cpp_utils::concat_const_string( msg_start, "成功."_cs ) >.view() };
+            }() };
+            cpp_utils::print( cpp_utils::no_formatting, final_message[ static_cast< std::size_t >( success ) ] );
             press_any_key_to_return();
             return func_back;
         }
