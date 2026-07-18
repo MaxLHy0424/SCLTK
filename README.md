@@ -10,7 +10,7 @@
 </div>
 
 > [!IMPORTANT]
-> SCLTK & SCLTK-Legacy 仅适用于 Microsoft Windows OS。
+> SCLTK & SCLTK-Legacy 仅适用于 Microsoft Windows。
 
 # 📦 获取
 
@@ -39,7 +39,7 @@
 
 ## 1 启动
 
-SCLTK 的发行版文件名为 `SCLTK.exe`。SCLTK 支持的 Windows OS 如下：
+SCLTK 的发行版文件名为 `SCLTK.exe`。SCLTK 支持的 Windows 如下：
 
 | 版本            | 架构  | 额外要求                      |
 | --------------- | ----- | ----------------------------- |
@@ -48,10 +48,10 @@ SCLTK 的发行版文件名为 `SCLTK.exe`。SCLTK 支持的 Windows OS 如下�
 
 SCLTK v7.2.0 及后续版本不再支持：
 
-- 32 位 Windows OS；
-- 不支持 UCRT 的 Windows OS。
+- 32 位 Windows；
+- 不支持 UCRT 的 Windows。
 
-对于正在使用上述不支持的 Windows OS的用户，请使用 SCLTK-Legacy，其发行版文件名为 `SCLTK-Legacy.exe`。
+对于正在使用上述不支持的 Windows 的用户，请使用 SCLTK-Legacy，其发行版文件名为 `SCLTK-Legacy.exe`。
 
 ## 2 常规操作
 
@@ -86,7 +86,7 @@ SCLTK v7.2.0 及后续版本不再支持：
   `> 查看解析规则`
 - **同步已保存的配置和暂存的配置**\
   `> 同步配置`
-- **使用 Windows 记事本打开配置文件**\
+- **使用记事本打开配置文件**\
   `> 打开配置文件`
 
 ### 3.1 破解与恢复
