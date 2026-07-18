@@ -1,64 +1,85 @@
 param(
+    [ValidateSet('mainline', 'legacy')]
     [string]$edition,
     [string]$target,
     [string]$gpg_key = ""
 )
-if (($edition -ne "mainline" ) -and ($edition -ne "legacy")) {
-    Write-Error -Message "The only available options are 'mainline' and 'legacy'!"
-    exit 1
-}
-if (($target -eq "pack_and_sign") -and ($gpg_key -eq "")) {
-    Write-Error -Message "Please provide your gpg key id!"
+if ($target -eq 'pack_and_sign' -and [string]::IsNullOrEmpty($gpg_key)) {
+    Write-Error "Please provide your GPG key ID when target is 'pack_and_sign'."
     exit 1
 }
 $software_full_name = "Student Computer Lab Toolkit"
 $software_short_name = "SCLTK"
-if ($edition -eq "legacy") {
+if ($edition -eq 'legacy') {
     $software_full_name += " - Legacy Edition"
     $software_short_name += "-Legacy"
 }
 $license = "MIT License"
 $copyright = "Copyright (C) 2023 MaxLHy0424."
 $repo_url = "https://github.com/MaxLHy0424/SCLTK"
-$git_branch = & git branch --show-current
-$contains_uncommitted_changes = @(git status --porcelain).Count -ne 0
-if (($git_branch -ne "main") -or ($contains_uncommitted_changes -eq $true)) {
-    $git_tag = "<Insider Preview>"
+function Get-GitInfo {
+    $inRepo = & git rev-parse --is-inside-work-tree 2>$null
+    if ($LASTEXITCODE -ne 0 -or -not $inRepo) {
+        return @{
+            Branch = "<Unknown Branch>"
+            Tag    = "<Insider Preview>"
+            Hash   = "<Work In Progress>"
+        }
+    }
+    $branch = & git branch --show-current 2>$null
+    if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrEmpty($branch)) {
+        $branch = "<Unknown Branch>"
+    }
+    $status = & git status --porcelain 2>$null
+    $hasChanges = ($status -split "`n" | Where-Object { $_ -ne "" }).Count -gt 0
+    if ($branch -ne 'main' -or $hasChanges -or $branch -eq "<Unknown Branch>") {
+        $tag = "<Insider Preview>"
+    }
+    else {
+        $tag = & git describe --tags --abbrev=0 2>$null
+        if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrEmpty($tag)) {
+            $tag = "<No Tag>"
+        }
+    }
+    if ($hasChanges) {
+        $hash = "<Work In Progress>"
+    }
+    else {
+        $hash = & git rev-parse HEAD 2>$null
+        if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrEmpty($hash)) {
+            $hash = "<Unknown Hash>"
+        }
+    }
+    return @{
+        Branch = $branch
+        Tag    = $tag
+        Hash   = $hash
+    }
 }
-else {
-    $git_tag = & git describe --tags --abbrev=0
+$gitInfo = Get-GitInfo
+$metaDir = Join-Path -Path "meta" -ChildPath $edition
+$oldInfo = Join-Path -Path $metaDir -ChildPath "info.h"
+$newInfo = Join-Path -Path $metaDir -ChildPath "info.new.h"
+if (-not (Test-Path $metaDir)) {
+    New-Item -Path $metaDir -ItemType Directory -Force | Out-Null
 }
-if ($git_branch.Length -eq 0) {
-    $git_tag = "<Insider Preview>"
-}
-if ($contains_uncommitted_changes -eq $false ) {
-    $git_hash = & git rev-parse HEAD
-}
-else {
-    $git_hash = "<Work In Progress>"
-}
-if (-not (Test-Path "build")) {
-    New-Item -Path "build" -ItemType Directory
-}
-$old_info = "meta/$edition/info.h"
-$new_info = "meta/$edition/info.new.h"
-@"
+$content = @"
 #pragma once
 #define INFO_FULL_NAME  "$software_full_name"
 #define INFO_SHORT_NAME "$software_short_name"
 #define INFO_LICENSE    "$license"
 #define INFO_COPYRIGHT  "$copyright"
 #define INFO_REPO_URL   "$repo_url"
-#define INFO_GIT_BRANCH "$git_branch"
-#define INFO_GIT_TAG    "$git_tag"
-#define INFO_GIT_HASH   "$git_hash"
-"@ | Out-File -FilePath $new_info -Encoding UTF8 -NoNewline -Force
-if (-not (Test-Path $old_info -PathType Leaf) -or -not (Test-Path $new_info -PathType Leaf ) ) {
-    Copy-Item -Path $new_info -Destination $old_info
+#define INFO_GIT_BRANCH "$($gitInfo.Branch)"
+#define INFO_GIT_TAG    "$($gitInfo.Tag)"
+#define INFO_GIT_HASH   "$($gitInfo.Hash)"
+"@
+Set-Content -Path $newInfo -Value $content -Encoding UTF8 -NoNewline
+if (-not (Test-Path $oldInfo) -or (Get-FileHash $oldInfo).Hash -ne (Get-FileHash $newInfo).Hash) {
+    Move-Item -Path $newInfo -Destination $oldInfo -Force
 }
-elseif ((Get-FileHash $old_info).Hash -ne (Get-FileHash $new_info).Hash ) {
-    Copy-Item -Path $new_info -Destination $old_info
+else {
+    Remove-Item -Path $newInfo
 }
-Remove-Item -Path $new_info
-& make $target -f .\meta\$edition\main.mk -j gpg_key=$gpg_key
+& make $target -f ".\meta\$edition\main.mk" -j "gpg_key=$gpg_key"
 exit $LASTEXITCODE

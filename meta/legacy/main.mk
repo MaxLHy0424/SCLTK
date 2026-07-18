@@ -99,7 +99,7 @@ pack_and_sign: build
 	@/usr/bin/cp build/$(project_name)/release/*.sig build/$(project_name)/__temp__/
 	@/usr/bin/cp LICENSE.txt build/$(project_name)/__temp__/
 	@$(cmd_echo) "Compressing to '$(project_name).7z'..."
-	@/ucrt64/bin/7z a -bso0 -bsp0 -mx9 -m0=LZMA2 -md=64m -mfb=64 -ms=16g -mmt=16 build/$(project_name)/$(project_name).7z build/$(project_name)/__temp__/*
+	@/ucrt64/bin/7z a -bso0 -bsp0 -mx9 -m0=LZMA2 -md=64m -mfb=64 -ms=16g -mmt=16 build/$(project_name)/$(project_name).7z ./build/$(project_name)/__temp__/*
 	@$(cmd_echo) "Signing '$(project_name).7z'..."
 	@$(cmd_gpg) build/$(project_name)/$(project_name).7z
 	@$(cmd_echo) "Cleaning 'build/$(project_name)/__temp__'..."
