@@ -1143,6 +1143,7 @@ namespace scltk
         }
         auto process_debugger_values( const HKEY root_key ) noexcept
         {
+            constexpr std::wstring_view target{ hijack_image_value };
             wchar_t sub_key_name[ 256 ];
             DWORD index{ 0 };
             auto size{ static_cast< DWORD >( std::size( sub_key_name ) ) };
@@ -1159,7 +1160,6 @@ namespace scltk
                            == ERROR_SUCCESS
                          && type == REG_SZ )
                     {
-                        constexpr std::wstring_view target{ hijack_image_value };
                         if ( target != value_data ) {
                             RegDeleteValueW( sub_key.get(), L"Debugger" );
                         }
