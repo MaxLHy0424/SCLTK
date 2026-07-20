@@ -77,7 +77,7 @@ dep_release      := build/$(project_name)/manifest.o \
                     src/*.cpp
 dep_res          := meta/manifest.rc \
                     meta/manifest.xml \
-                    meta/SCLTK.ico
+                    meta/favicon.ico
 .PHONY: toolchain build debug release pack_and_sign clean
 build: debug release
 debug: build/$(project_name)/debug/__debug__.exe
