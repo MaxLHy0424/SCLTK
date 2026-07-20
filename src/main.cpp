@@ -99,10 +99,6 @@ namespace scltk
         template < cpp_utils::const_wstring... Items >
         using make_const_wstring_list_t = cpp_utils::type_list< cpp_utils::value_identity< Items >... >;
         using win32_file_path_buffer_t  = std::array< wchar_t, MAX_PATH >;
-        using scoped_handle = std::unique_ptr< std::remove_pointer_t< HANDLE >, decltype( []( const HANDLE handle ) static noexcept
-        {
-            CloseHandle( handle );
-        } ) >;
         using scoped_cert_store = std::unique_ptr< std::remove_pointer_t< HCERTSTORE >, decltype( []( const HCERTSTORE h ) static noexcept
         {
             CertCloseStore( h, 0 );
@@ -190,7 +186,7 @@ namespace scltk
         {
             return ch >= L'0' && ch <= L'9';
         };
-        auto terminate_cbms() noexcept
+        auto terminate_cbms_daemon() noexcept
         {
             cpp_utils::print( cpp_utils::no_formatting, " -> 终止 \"海米计算机批量维护系统\" 守护进程.\n"sv );
             ( void ) proc_snapshot.iterate( []( const PROCESSENTRY32W& proc_entry ) noexcept
@@ -333,7 +329,7 @@ namespace scltk
         details_::make_const_wstring_list_t<
           L"CBMS_Client.exe", L"susetup.exe", L"suerver.exe", L"tsvchqst.exe", L"snntime.exe", L"svchqst.exe", L"svch0st.exe",
           L"nssm.exe" >,
-        details_::make_const_wstring_list_t< L"suerver", L"svch0st", L"svchqst", L"snntime" >, details_::terminate_cbms >,
+        details_::make_const_wstring_list_t< L"suerver", L"svch0st", L"svchqst", L"snntime" >, details_::terminate_cbms_daemon >,
       compile_time_rule_node<
         "机房管理助手",
         details_::make_const_wstring_list_t<
