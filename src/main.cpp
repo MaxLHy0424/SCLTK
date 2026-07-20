@@ -95,6 +95,23 @@ namespace scltk
     }
     namespace details_
     {
+        constexpr const auto& hijack_image_value{ L"*HIJACKED*" };
+        template < cpp_utils::const_wstring... Items >
+        using make_const_wstring_list_t = cpp_utils::type_list< cpp_utils::value_identity< Items >... >;
+        using win32_file_path_buffer_t  = std::array< wchar_t, MAX_PATH >;
+        using scoped_handle = std::unique_ptr< std::remove_pointer_t< HANDLE >, decltype( []( const HANDLE handle ) static noexcept
+        {
+            CloseHandle( handle );
+        } ) >;
+        using scoped_cert_store = std::unique_ptr< std::remove_pointer_t< HCERTSTORE >, decltype( []( const HCERTSTORE h ) static noexcept
+        {
+            CertCloseStore( h, 0 );
+        } ) >;
+        using scoped_cert_context
+          = std::unique_ptr< std::remove_pointer_t< PCCERT_CONTEXT >, decltype( []( const PCCERT_CONTEXT h ) static noexcept
+        {
+            CertFreeCertificateContext( h );
+        } ) >;
 #ifdef SCLTK_LEGACY
         struct wow64_file_redirect_guard final
         {
@@ -132,23 +149,6 @@ namespace scltk
             }
         };
 #endif
-        constexpr const auto& hijack_image_value{ L"*HIJACKED*" };
-        template < cpp_utils::const_wstring... Items >
-        using make_const_wstring_list_t = cpp_utils::type_list< cpp_utils::value_identity< Items >... >;
-        using win32_file_path_buffer_t  = std::array< wchar_t, MAX_PATH >;
-        using scoped_handle = std::unique_ptr< std::remove_pointer_t< HANDLE >, decltype( []( const HANDLE handle ) static noexcept
-        {
-            CloseHandle( handle );
-        } ) >;
-        using scoped_cert_store = std::unique_ptr< std::remove_pointer_t< HCERTSTORE >, decltype( []( const HCERTSTORE h ) static noexcept
-        {
-            CertCloseStore( h, 0 );
-        } ) >;
-        using scoped_cert_context
-          = std::unique_ptr< std::remove_pointer_t< PCCERT_CONTEXT >, decltype( []( const PCCERT_CONTEXT h ) static noexcept
-        {
-            CertFreeCertificateContext( h );
-        } ) >;
         auto get_sign_name( const win32_file_path_buffer_t& path )
         {
             scoped_cert_store cert_store{ nullptr };
