@@ -505,14 +505,14 @@ namespace scltk
             auto before_load( this auto&& self )
             {
                 using child_type = std::decay_t< decltype( self ) >;
-                if constexpr ( is_parsable_config_node_v< child_type > && requires( child_type d ) { d.before_load_(); } ) {
+                if constexpr ( requires( child_type d ) { d.before_load_(); } ) {
                     self.before_load_();
                 }
             }
             auto after_load( this auto&& self )
             {
                 using child_type = std::decay_t< decltype( self ) >;
-                if constexpr ( is_parsable_config_node_v< child_type > && requires( child_type d ) { d.after_load_(); } ) {
+                if constexpr ( requires( child_type d ) { d.after_load_(); } ) {
                     self.after_load_();
                 }
             }
