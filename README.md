@@ -33,25 +33,18 @@
 
 **使用 SCLTK / SCLTK-Legacy 时建议关闭防病毒软件。若 SCLTK / SCLTK-Legacy 被报为恶意软件，请在防病毒软件中添加排除项。**
 
-**请勿使用 SCLTK & SCLTK-Legacy 扰乱课堂纪律，造成的后果与开发者无关。**
+**请勿使用 SCLTK / SCLTK-Legacy 扰乱课堂纪律，造成的后果与开发者无关。**
 
 **SCLTK & SCLTK-Legacy 以 [MIT License](./LICENSE.txt) 开源，详细内容请自行阅读。**
 
 ## 1 启动
 
-SCLTK 的发行版文件名为 `SCLTK.exe`。SCLTK 支持的 Windows 如下：
+SCLTK 的发行版文件名为 `SCLTK.exe`，SCLTK-Legacy 的发行版文件名为 `SCLTK-Legacy.exe`。两者支持的 Windows 如下：
 
-| 版本            | 架构  | 额外要求                      |
-| --------------- | ----- | ----------------------------- |
-| Windows 10/11   | 64 位 | 无                            |
-| Windows 7/8/8.1 | 64 位 | 需安装 KB2999226（UCRT 补丁） |
-
-SCLTK v7.2.0 及后续版本不再支持：
-
-- 32 位 Windows；
-- 不支持 UCRT 的 Windows。
-
-对于正在使用上述不支持的 Windows 的用户，请使用 SCLTK-Legacy，其发行版文件名为 `SCLTK-Legacy.exe`。
+| 项目         | Windows 版本                                       | Windows 架构 |
+| ------------ | -------------------------------------------------- | ------------ |
+| SCLTK        | Windows 7/8/8.1（需安装 KB2999226），Windows 10/11 | 64 位        |
+| SCLTK-Legacy | Windows 7/8/8.1/10/11                              | 32/64 位     |
 
 ## 2 常规操作
 
@@ -137,7 +130,7 @@ SCLTK / SCLTK-Legacy 窗口相关选项。位于 `[ 选项 ]` 下。
 > 可在 “配置” 页面下的 “自定义规则” 中，点击 `> 查看帮助信息` 阅读上述信息的简略版本。
 
 > [!WARNING]
-> SCLTK & SCLTK-Legacy不对自定义规则的正确性进行检测，一些规则可能导致意想不到的错误。在修改自定义规则时，请仔细检查。
+> SCLTK & SCLTK-Legacy 不对自定义规则的正确性进行检测，一些规则可能导致意想不到的错误。在修改自定义规则时，请仔细检查。
 
 示例:
 ```ini
@@ -224,7 +217,7 @@ restore_helper: "abc helper.exe" restore
 脚本将会自动安装工具链和依赖库。
 
 > [!NOTE]
-> 即便您已经安装了 SCLTK 所需的工具链和依赖库，也务必使用上面的命令，因为 SCLTK 的开发总是使用最新的工具链和依赖库。
+> 即便您已经安装了 SCLTK / SCLTK-Legacy 所需的工具链和依赖库，也务必使用上面的命令，因为 SCLTK & SCLTK-Legacy 的开发总是使用最新的工具链和依赖库。
 
 构建可使用：
 
