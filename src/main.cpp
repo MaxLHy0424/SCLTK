@@ -108,12 +108,41 @@ namespace scltk
         {
             CertFreeCertificateContext( h );
         } ) >;
-#ifdef SCLTK_LEGACY
-        struct wow64_file_redirect_guard final
+        class file_locker final
         {
+          private:
+            HANDLE file_handle_;
+            bool locked;
+          public:
+            auto operator=( const file_locker& ) -> file_locker& = delete;
+            auto operator=( file_locker&& ) -> file_locker&      = delete;
+            file_locker( const HANDLE file_handle ) noexcept
+              : file_handle_{ file_handle }
+              , locked{ false }
+            {
+                OVERLAPPED overlapped{};
+                if ( LockFileEx( file_handle_, LOCKFILE_EXCLUSIVE_LOCK, 0, 0xFFFFFFFF, 0xFFFFFFFF, &overlapped ) ) [[likely]] {
+                    locked = true;
+                }
+            }
+            file_locker( const file_locker& )     = delete;
+            file_locker( file_locker&& ) noexcept = delete;
+            ~file_locker() noexcept
+            {
+                if ( locked ) [[likely]] {
+                    OVERLAPPED overlapped{};
+                    UnlockFileEx( file_handle_, 0, 0xFFFFFFFF, 0xFFFFFFFF, &overlapped );
+                }
+            }
+        };
+#ifdef SCLTK_LEGACY
+        class wow64_file_redirect_guard final
+        {
+          private:
             HMODULE kernel32_dll{ GetModuleHandleW( L"kernel32.dll" ) };
             PVOID old_value{ nullptr };
             bool disabled{ false };
+          public:
             auto operator=( const wow64_file_redirect_guard& ) -> wow64_file_redirect_guard& = delete;
             auto operator=( wow64_file_redirect_guard&& ) -> wow64_file_redirect_guard&      = delete;
             wow64_file_redirect_guard() noexcept
@@ -145,6 +174,51 @@ namespace scltk
             }
         };
 #endif
+        constexpr auto is_capital_case( const wchar_t ch ) noexcept
+        {
+            return ch >= L'A' && ch <= L'Z';
+        };
+        constexpr auto is_lower_case( const wchar_t ch ) noexcept
+        {
+            return ch >= L'a' && ch <= L'z';
+        };
+        constexpr auto is_in_alphabet( const wchar_t ch ) noexcept
+        {
+            return is_capital_case( ch ) || is_lower_case( ch );
+        };
+        constexpr auto is_number( const wchar_t ch ) noexcept
+        {
+            return ch >= L'0' && ch <= L'9';
+        };
+        template < cpp_utils::character CharT >
+        constexpr auto is_whitespace( const CharT ch ) noexcept
+        {
+            switch ( ch ) {
+                case static_cast< CharT >( '\t' ) :
+                case static_cast< CharT >( '\v' ) :
+                case static_cast< CharT >( '\f' ) :
+                case static_cast< CharT >( ' ' ) : return true;
+            }
+            return false;
+        }
+        template < cpp_utils::character CharT, typename... Args >
+            requires(
+              ( std::same_as< std::decay_t< Args >, std::basic_string< CharT > >
+                || std::same_as< std::decay_t< Args >, std::pmr::basic_string< CharT > >
+                || std::same_as< std::decay_t< Args >, std::basic_string_view< CharT > > )
+              && ... )
+        auto concat_string( Args&&... strings )
+        {
+            std::pmr::basic_string< CharT > result;
+            result.reserve( ( std::forward< Args >( strings ).size() + ... ) );
+            ( result.append( std::forward< Args >( strings ) ), ... );
+            return result;
+        }
+        auto press_any_key_to_return() noexcept
+        {
+            cpp_utils::print( cpp_utils::no_formatting, "\n\n 请按任意键返回."sv );
+            con.press_any_key_to_continue();
+        }
         auto get_sign_name( const win32_file_path_buffer_t& path )
         {
             scoped_cert_store cert_store{ nullptr };
@@ -170,22 +244,6 @@ namespace scltk
             }
             return std::pmr::wstring( unsynced_mem_pool );
         }
-        constexpr auto is_capital_case( const wchar_t ch ) noexcept
-        {
-            return ch >= L'A' && ch <= L'Z';
-        };
-        constexpr auto is_lower_case( const wchar_t ch ) noexcept
-        {
-            return ch >= L'a' && ch <= L'z';
-        };
-        constexpr auto is_in_alphabet( const wchar_t ch ) noexcept
-        {
-            return is_capital_case( ch ) || is_lower_case( ch );
-        };
-        constexpr auto is_number( const wchar_t ch ) noexcept
-        {
-            return ch >= L'0' && ch <= L'9';
-        };
         auto terminate_cbms_daemon() noexcept
         {
             cpp_utils::print( cpp_utils::no_formatting, " -> 终止 \"海米计算机批量维护系统\" 守护进程.\n"sv );
@@ -404,35 +462,6 @@ namespace scltk
     runtime_rule_node custom_rules;
     namespace details_
     {
-        auto press_any_key_to_return() noexcept
-        {
-            cpp_utils::print( cpp_utils::no_formatting, "\n\n 请按任意键返回."sv );
-            con.press_any_key_to_continue();
-        }
-        template < cpp_utils::character CharT, typename... Args >
-            requires(
-              ( std::same_as< std::decay_t< Args >, std::basic_string< CharT > >
-                || std::same_as< std::decay_t< Args >, std::pmr::basic_string< CharT > >
-                || std::same_as< std::decay_t< Args >, std::basic_string_view< CharT > > )
-              && ... )
-        auto concat_string( Args&&... strings )
-        {
-            std::pmr::basic_string< CharT > result;
-            result.reserve( ( std::forward< Args >( strings ).size() + ... ) );
-            ( result.append( std::forward< Args >( strings ) ), ... );
-            return result;
-        }
-        template < cpp_utils::character CharT >
-        constexpr auto is_whitespace( const CharT ch ) noexcept
-        {
-            switch ( ch ) {
-                case static_cast< CharT >( '\t' ) :
-                case static_cast< CharT >( '\v' ) :
-                case static_cast< CharT >( '\f' ) :
-                case static_cast< CharT >( ' ' ) : return true;
-            }
-            return false;
-        }
         template < cpp_utils::const_string RawName >
         struct config_node_raw_name
         {
@@ -833,33 +862,6 @@ namespace scltk
             }
             return std::string_view{ head, tail };
         }
-        class file_locker final
-        {
-          private:
-            HANDLE file_handle_;
-            bool locked;
-          public:
-            auto operator=( const file_locker& ) -> file_locker& = delete;
-            auto operator=( file_locker&& ) -> file_locker&      = delete;
-            file_locker( const HANDLE file_handle ) noexcept
-              : file_handle_{ file_handle }
-              , locked{ false }
-            {
-                OVERLAPPED overlapped{};
-                if ( LockFileEx( file_handle_, LOCKFILE_EXCLUSIVE_LOCK, 0, 0xFFFFFFFF, 0xFFFFFFFF, &overlapped ) ) [[likely]] {
-                    locked = true;
-                }
-            }
-            file_locker( const file_locker& )     = delete;
-            file_locker( file_locker&& ) noexcept = delete;
-            ~file_locker() noexcept
-            {
-                if ( locked ) [[likely]] {
-                    OVERLAPPED overlapped{};
-                    UnlockFileEx( file_handle_, 0, 0xFFFFFFFF, 0xFFFFFFFF, &overlapped );
-                }
-            }
-        };
     }
     auto load_config( const bool is_reload )
     {
