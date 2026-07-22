@@ -742,14 +742,24 @@ namespace scltk
     {
         friend custom_rules_config::config_node_interface;
       private:
-        static constexpr auto flag_proc_{ L"proc:"sv };
-        static constexpr auto flag_serv_{ L"serv:"sv };
-        static constexpr auto flag_crack_helper_{ L"crack_helper:"sv };
-        static constexpr auto flag_restore_helper_{ L"restore_helper:"sv };
-        static_assert( []( auto... strings ) static consteval noexcept
+        struct flag_binding_ final
         {
-            return ( std::ranges::none_of( strings, details_::is_whitespace< wchar_t > ) && ... );
-        }( flag_proc_, flag_serv_, flag_crack_helper_, flag_restore_helper_ ) );
+            std::wstring_view flag;
+            runtime_rule_node::item_type& items;
+        };
+        static constexpr flag_binding_ bindings[]{
+          {L"proc:"sv,           custom_rules.procs          },
+          {L"serv:"sv,           custom_rules.servs          },
+          {L"crack_helper:"sv,   custom_rules.crack_helpers  },
+          {L"restore_helper:"sv, custom_rules.restore_helpers}
+        };
+        static_assert( []< std::size_t N >( const flag_binding_ ( &data )[ N ] ) static consteval noexcept
+        {
+            return [ & ]< std::size_t... Is >( const std::index_sequence< Is... > ) consteval noexcept
+            {
+                return ( std::ranges::none_of( data[ Is ].flag, details_::is_whitespace< wchar_t > ) && ... );
+            }( std::make_index_sequence< N >{} );
+        }( bindings ) );
         static auto load_( const std::string_view unconverted_line )
         {
             const auto converted{ cpp_utils::to_wstring( unconverted_line, CP_UTF8, unsynced_mem_pool ) };
@@ -757,47 +767,29 @@ namespace scltk
                 return;
             }
             const auto& line{ converted.value() };
-            if ( line.size() > flag_proc_.size() && line.starts_with( flag_proc_ ) ) [[likely]] {
-                custom_rules.procs.emplace_back(
-                  std::ranges::find_if_not( line.subview( flag_proc_.size() ), details_::is_whitespace< wchar_t > ) );
-                return;
-            }
-            if ( line.size() > flag_serv_.size() && line.starts_with( flag_serv_ ) ) [[likely]] {
-                custom_rules.servs.emplace_back(
-                  std::ranges::find_if_not( line.subview( flag_serv_.size() ), details_::is_whitespace< wchar_t > ) );
-                return;
-            }
-            if ( line.size() > flag_crack_helper_.size() && line.starts_with( flag_crack_helper_ ) ) [[likely]] {
-                custom_rules.crack_helpers.emplace_back(
-                  std::ranges::find_if_not( line.subview( flag_crack_helper_.size() ), details_::is_whitespace< wchar_t > ) );
-                return;
-            }
-            if ( line.size() > flag_restore_helper_.size() && line.starts_with( flag_restore_helper_ ) ) [[likely]] {
-                custom_rules.restore_helpers.emplace_back(
-                  std::ranges::find_if_not( line.subview( flag_restore_helper_.size() ), details_::is_whitespace< wchar_t > ) );
-                return;
+            for ( const auto& [ flag, items ] : bindings ) {
+                if ( line.starts_with( flag ) ) [[likely]] {
+                    items.emplace_back(
+                      std::ranges::find_if_not( line.subview( flag.size() ), details_::is_whitespace< wchar_t > ) );
+                    return;
+                }
             }
         }
         static auto sync_( std::ofstream& out )
         {
-            const auto output{ [ & ]( const std::wstring_view unconverted_flag, const runtime_rule_node::item_type& items )
-            {
-                const auto converted_flag{ cpp_utils::to_string( unconverted_flag, CP_UTF8, unsynced_mem_pool ) };
-                if ( !converted_flag.has_value() ) [[unlikely]] {
-                    return;
+            for ( const auto& [ unconverted_flag, items ] : bindings ) {
+                const auto converted{ cpp_utils::to_string( unconverted_flag, CP_UTF8, unsynced_mem_pool ) };
+                if ( !converted.has_value() ) [[unlikely]] {
+                    continue;
                 }
-                const auto& flag{ converted_flag.value() };
+                const auto& flag{ converted.value() };
                 for ( const auto& item : items ) {
-                    const auto converted{ cpp_utils::to_string( item, CP_UTF8, unsynced_mem_pool ) };
-                    if ( converted.has_value() ) [[likely]] {
-                        out << flag << ' ' << converted.value() << '\n';
+                    const auto line{ cpp_utils::to_string( item, CP_UTF8, unsynced_mem_pool ) };
+                    if ( line.has_value() ) [[likely]] {
+                        out << flag << ' ' << line.value() << '\n';
                     }
                 }
-            } };
-            output( flag_proc_, custom_rules.procs );
-            output( flag_serv_, custom_rules.servs );
-            output( flag_crack_helper_, custom_rules.crack_helpers );
-            output( flag_restore_helper_, custom_rules.restore_helpers );
+            }
         }
         static auto before_load_() noexcept
         {
