@@ -462,33 +462,29 @@ namespace scltk
     runtime_rule_node custom_rules;
     namespace details_
     {
-        template < cpp_utils::const_string RawName >
-        struct config_node_raw_name
-        {
-            static constexpr auto raw_name{ RawName };
-        };
-        class config_node_interface;
-        template < typename T >
-        struct is_parsable_config_node final
-        {
-            static constexpr auto value{ ( std::is_base_of_v< config_node_interface, T > && requires { T::raw_name; } ) };
-        };
-        template < typename T >
-        constexpr auto is_parsable_config_node_v{ is_parsable_config_node< T >::value };
+        template < bool Stateful, cpp_utils::const_string RawName >
         class config_node_interface
         {
           public:
+            static constexpr auto is_stateful{ Stateful };
+            static constexpr auto raw_name{ []
+            {
+                if constexpr ( Stateful ) {
+                    return RawName;
+                } else {
+                    return ""_cs;
+                }
+            }() };
             auto load( this auto&& self, const std::string_view line )
             {
-                using child_type = std::decay_t< decltype( self ) >;
-                if constexpr ( is_parsable_config_node_v< child_type > ) {
+                if constexpr ( is_stateful ) {
                     self.load_( line );
                 }
             }
             auto reload( this auto&& self, const std::string_view line )
             {
                 using child_type = std::decay_t< decltype( self ) >;
-                if constexpr ( is_parsable_config_node_v< child_type > && requires( child_type d ) { d.reload_( line ); } ) {
+                if constexpr ( is_stateful && requires( child_type d ) { d.reload_( line ); } ) {
                     self.reload_( line );
                 } else {
                     self.load( line );
@@ -496,9 +492,8 @@ namespace scltk
             }
             auto sync( this auto&& self, std::ofstream& out )
             {
-                using child_type = std::decay_t< decltype( self ) >;
-                if constexpr ( is_parsable_config_node_v< child_type > ) {
-                    out << cpp_utils::value_identity_v< cpp_utils::concat_const_string( "["_cs, child_type::raw_name, "]\n"_cs ) >.view();
+                if constexpr ( is_stateful ) {
+                    out << cpp_utils::value_identity_v< cpp_utils::concat_const_string( "["_cs, raw_name, "]\n"_cs ) >.view();
                     self.sync_( out );
                 }
             }
@@ -537,11 +532,17 @@ namespace scltk
             }
         };
         template < typename T >
+        struct is_stateful_config_node final
+        {
+            static constexpr auto value{ T::is_stateful };
+        };
+        template < typename T >
         struct is_valid_config_node final
         {
-            static constexpr auto value{
-              std::is_base_of_v< config_node_interface, T > && std::is_default_constructible_v< T >
-              && std::is_same_v< std::decay_t< T >, T > };
+            static constexpr auto value{ requires {
+                { T::is_stateful } -> std::convertible_to< bool >;
+                cpp_utils::concat_const_string( T::raw_name );
+            } && std::is_default_constructible_v< T > && std::is_same_v< std::decay_t< T >, T > };
         };
         template < cpp_utils::const_string RawName, cpp_utils::const_string DisplayName >
         struct option_info final
@@ -593,11 +594,9 @@ namespace scltk
         { };
         template < cpp_utils::const_string RawName, cpp_utils::const_string DisplayName, bool Atomic, typename OptionsInfoTable >
             requires( is_valid_options_info_table< OptionsInfoTable >::value == true )
-        class options_config_node final
-          : public config_node_raw_name< RawName >
-          , public config_node_interface
+        class options_config_node final : public config_node_interface< true, RawName >
         {
-            friend config_node_interface;
+            friend config_node_interface< true, RawName >;
           private:
             using info_table_base_type_ = typename OptionsInfoTable::base_type;
             using value_type_           = std::conditional_t< Atomic, std::atomic_flag, bool >;
@@ -719,9 +718,9 @@ namespace scltk
             ~options_config_node() noexcept                                          = default;
         };
     }
-    class options_title_ui final : public details_::config_node_interface
+    class options_title_ui final : public details_::config_node_interface< false, "options_title_ui" >
     {
-        friend details_::config_node_interface;
+        friend options_title_ui::config_node_interface;
       private:
         static auto init_ui_( cpp_utils::console_ui& ui )
         {
@@ -739,11 +738,9 @@ namespace scltk
         details_::option_info< "suspend_process", "挂起进程" > > >;
     using window_config = details_::options_config_node<
       "window", "窗口显示", true, details_::options_info_table< details_::option_info< "forced_show", "置顶窗口" > > >;
-    class custom_rules_config final
-      : public details_::config_node_raw_name< "custom_rules" >
-      , public details_::config_node_interface
+    class custom_rules_config final : public details_::config_node_interface< true, "custom_rules" >
     {
-        friend details_::config_node_interface;
+        friend custom_rules_config::config_node_interface;
       private:
         static constexpr auto flag_proc_{ L"proc:"sv };
         static constexpr auto flag_serv_{ L"serv:"sv };
@@ -875,9 +872,9 @@ namespace scltk
             ( config_node.before_load(), ... );
         }, config_nodes );
         std::pmr::string line;
-        using parsable_config_nodes_type = config_nodes_type::filter< details_::is_parsable_config_node >;
+        using stateful_config_nodes_type = config_nodes_type::filter< details_::is_stateful_config_node >;
         using config_node_recorder_type
-          = parsable_config_nodes_type::transform< std::add_pointer >::add_front< std::monostate >::apply< std::variant >;
+          = stateful_config_nodes_type::transform< std::add_pointer >::add_front< std::monostate >::apply< std::variant >;
         config_node_recorder_type current_config_node;
         while ( std::getline( config_file, line ) ) {
             const auto parsed_begin{ std::ranges::find_if_not( line, details_::is_whitespace< char > ) };
@@ -896,7 +893,7 @@ namespace scltk
                 {
                     ( [ & ]< typename T >( T& current_node ) noexcept
                     {
-                        if constexpr ( parsable_config_nodes_type::contains< T > ) {
+                        if constexpr ( stateful_config_nodes_type::contains< T > ) {
                             if ( T::raw_name.view() == current_raw_name ) {
                                 current_config_node = &current_node;
                                 return true;
