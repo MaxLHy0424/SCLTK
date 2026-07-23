@@ -793,10 +793,9 @@ namespace scltk
         }
         static auto before_load_() noexcept
         {
-            custom_rules.procs.clear();
-            custom_rules.servs.clear();
-            custom_rules.crack_helpers.clear();
-            custom_rules.restore_helpers.clear();
+            for ( auto& binding : bindings ) {
+                binding.items.clear();
+            }
         }
         static auto show_help_info_()
         {
