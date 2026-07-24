@@ -374,7 +374,7 @@ namespace cpp_utils
         }
         template < typename F >
             requires requires( F&& f, const PROCESSENTRY32W& proc_entry ) {
-                { f( proc_entry ) } noexcept -> std::convertible_to< bool >;
+                { f( proc_entry ) } -> std::convertible_to< bool >;
             }
         [[nodiscard]] auto iterate( F&& func ) const noexcept
         {
