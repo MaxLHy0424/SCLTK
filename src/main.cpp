@@ -1594,22 +1594,20 @@ namespace scltk
         static constexpr auto invoke_fn_search_for_procs{ !procs.empty() };
         static auto search_for_procs( std::pmr::vector< cpp_utils::scoped_handle >& proc_handles )
         {
-            if constexpr ( invoke_fn_enable_and_start_servs ) {
-                ( void ) proc_snapshot.iterate( [ & ]( const PROCESSENTRY32W& proc_entry ) noexcept
-                {
-                    for ( const auto& proc : procs ) {
-                        if ( _wcsicmp( proc_entry.szExeFile, proc.data() ) != 0 ) {
-                            continue;
-                        }
-                        auto proc_handle{ proc_snapshot.wrapped_nt_open_process(
-                          proc_entry.th32ProcessID, PROCESS_TERMINATE | PROCESS_SUSPEND_RESUME ) };
-                        if ( proc_handle != nullptr ) [[likely]] {
-                            proc_handles.emplace_back( std::move( proc_handle ) );
-                        }
+            ( void ) proc_snapshot.iterate( [ & ]( const PROCESSENTRY32W& proc_entry ) noexcept
+            {
+                for ( const auto& proc : procs ) {
+                    if ( _wcsicmp( proc_entry.szExeFile, proc.data() ) != 0 ) {
+                        continue;
                     }
-                    return true;
-                } );
-            }
+                    auto proc_handle{ proc_snapshot.wrapped_nt_open_process(
+                      proc_entry.th32ProcessID, PROCESS_TERMINATE | PROCESS_SUSPEND_RESUME ) };
+                    if ( proc_handle != nullptr ) [[likely]] {
+                        proc_handles.emplace_back( std::move( proc_handle ) );
+                    }
+                }
+                return true;
+            } );
         }
         static constexpr auto invoke_fn_get_estimated_proc_handles_numbers{ true };
         static consteval auto get_estimated_proc_handles_numbers() noexcept
@@ -1619,52 +1617,44 @@ namespace scltk
         static constexpr auto invoke_fn_enable_and_start_servs{ !servs.empty() };
         static auto enable_and_start_servs() noexcept
         {
-            if constexpr ( invoke_fn_enable_and_start_servs ) {
-                for ( const auto& serv : servs ) {
-                    ( void ) cpp_utils::set_service_start_type( serv, cpp_utils::service_flag::auto_start );
-                    ( void ) cpp_utils::start_service_with_dependencies( serv, unsynced_mem_pool );
-                }
+            for ( const auto& serv : servs ) {
+                ( void ) cpp_utils::set_service_start_type( serv, cpp_utils::service_flag::auto_start );
+                ( void ) cpp_utils::start_service_with_dependencies( serv, unsynced_mem_pool );
             }
         }
         static constexpr auto invoke_fn_disable_and_stop_servs{ !servs.empty() };
         static auto disable_and_stop_servs() noexcept
         {
-            if constexpr ( invoke_fn_disable_and_stop_servs ) {
-                for ( const auto& serv : servs ) {
-                    ( void ) cpp_utils::set_service_start_type( serv, cpp_utils::service_flag::disabled_start );
-                    ( void ) cpp_utils::stop_service_with_dependencies( serv, unsynced_mem_pool );
-                }
+            for ( const auto& serv : servs ) {
+                ( void ) cpp_utils::set_service_start_type( serv, cpp_utils::service_flag::disabled_start );
+                ( void ) cpp_utils::stop_service_with_dependencies( serv, unsynced_mem_pool );
             }
         }
         static constexpr auto invoke_fn_crack_helper{
           ( !std::is_same_v< decltype( BuiltinRuleNodes::crack_helper ), empty_lambda_type > || ... ) };
         static auto crack_helper()
         {
-            if constexpr ( invoke_fn_crack_helper ) {
-                (
-                  []< typename Node >() static
-                {
-                    if constexpr ( !std::is_same_v< decltype( Node::crack_helper ), empty_lambda_type > ) {
-                        Node::crack_helper();
-                    }
-                }.template operator()< BuiltinRuleNodes >(),
-                  ... );
-            }
+            (
+              []< typename Node >() static
+            {
+                if constexpr ( !std::is_same_v< decltype( Node::crack_helper ), empty_lambda_type > ) {
+                    Node::crack_helper();
+                }
+            }.template operator()< BuiltinRuleNodes >(),
+              ... );
         }
         static constexpr auto invoke_fn_restore_helper{
           ( !std::is_same_v< decltype( BuiltinRuleNodes::restore_helper ), empty_lambda_type > || ... ) };
         static auto restore_helper()
         {
-            if constexpr ( invoke_fn_restore_helper ) {
-                (
-                  []< typename Node >() static
-                {
-                    if constexpr ( !std::is_same_v< decltype( Node::restore_helper ), empty_lambda_type > ) {
-                        Node::restore_helper();
-                    }
-                }.template operator()< BuiltinRuleNodes >(),
-                  ... );
-            }
+            (
+              []< typename Node >() static
+            {
+                if constexpr ( !std::is_same_v< decltype( Node::restore_helper ), empty_lambda_type > ) {
+                    Node::restore_helper();
+                }
+            }.template operator()< BuiltinRuleNodes >(),
+              ... );
         }
     };
     struct custom_rule_executor_backend final
