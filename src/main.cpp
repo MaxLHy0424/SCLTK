@@ -1461,10 +1461,10 @@ namespace scltk
         auto current_rule_executor_mode{ rule_executor_mode::crack };
     }
     template < typename... Backends >
-        requires requires( std::pmr::vector< cpp_utils::scoped_handle >& proc_handles ) {
+        requires requires( const PROCESSENTRY32W& proc_entry ) {
             requires cpp_utils::as_concept< ( sizeof...( Backends ) != 0 ) >;
-            { ( Backends::invoke_fn_search_for_procs || ... ) } -> std::convertible_to< bool >;
-            ( Backends::search_for_procs( proc_handles ), ... );
+            { ( Backends::invoke_fn_is_target_proc || ... ) } -> std::convertible_to< bool >;
+            { ( Backends::is_target_proc( proc_entry ) || ... ) } -> std::convertible_to< bool >;
             { ( Backends::invoke_fn_get_estimated_proc_handles_numbers || ... ) } -> std::convertible_to< bool >;
             { ( Backends::get_estimated_proc_handles_numbers() + ... ) } -> std::convertible_to< std::size_t >;
             { ( Backends::invoke_fn_enable_and_start_servs || ... ) } -> std::convertible_to< bool >;
@@ -1488,34 +1488,50 @@ namespace scltk
                 cpp_utils::print( cpp_utils::no_formatting, " (!) 进程快照初始化错误!\n"sv );
                 return;
             }
-            std::pmr::vector< cpp_utils::scoped_handle > proc_handles( unsynced_mem_pool );
-            proc_handles.reserve( (
-              []< typename Backend >() static
-            {
-                if constexpr ( Backend::invoke_fn_get_estimated_proc_handles_numbers ) {
-                    return Backend::get_estimated_proc_handles_numbers();
-                } else {
-                    return 0uz;
+            if constexpr ( ( Backends::invoke_fn_is_target_proc || ... ) ) {
+                std::pmr::vector< cpp_utils::scoped_handle > proc_handles( unsynced_mem_pool );
+                proc_handles.reserve( (
+                  []< typename Backend >() static
+                {
+                    if constexpr ( Backend::invoke_fn_get_estimated_proc_handles_numbers ) {
+                        return Backend::get_estimated_proc_handles_numbers();
+                    } else {
+                        return 0uz;
+                    }
+                }.template operator()< Backends >()
+                  + ... ) );
+                ( void ) proc_snapshot.iterate( [ & ]( const PROCESSENTRY32W& proc_entry )
+                {
+                    if ( !(
+                           [ & ]< typename Backend >
+                    {
+                        if constexpr ( Backend::invoke_fn_is_target_proc ) {
+                            return Backend::is_target_proc( proc_entry );
+                        } else {
+                            return false;
+                        }
+                    }.template operator()< Backends >()
+                           || ... ) )
+                    {
+                        return true;
+                    }
+                    auto proc_handle{ proc_snapshot.wrapped_nt_open_process(
+                      proc_entry.th32ProcessID, PROCESS_TERMINATE | PROCESS_SUSPEND_RESUME ) };
+                    if ( proc_handle != nullptr ) [[likely]] {
+                        proc_handles.emplace_back( std::move( proc_handle ) );
+                    }
+                    return true;
+                } );
+                if ( enabled_suspend_process ) {
+                    cpp_utils::print( cpp_utils::no_formatting, " -> 挂起进程.\n"sv );
+                    for ( const auto& proc_handle : proc_handles ) {
+                        proc_snapshot.get_nt_suspend_process()( proc_handle.get() );
+                    }
                 }
-            }.template operator()< Backends >()
-              + ... ) );
-            (
-              [ & ]< typename Backend >
-            {
-                if constexpr ( Backend::invoke_fn_search_for_procs ) {
-                    Backend::search_for_procs( proc_handles );
-                }
-            }.template operator()< Backends >(),
-              ... );
-            if ( enabled_suspend_process ) {
-                cpp_utils::print( cpp_utils::no_formatting, " -> 挂起进程.\n"sv );
+                cpp_utils::print( cpp_utils::no_formatting, " -> 终止进程.\n"sv );
                 for ( const auto& proc_handle : proc_handles ) {
-                    proc_snapshot.get_nt_suspend_process()( proc_handle.get() );
+                    proc_snapshot.get_nt_terminate_process()( proc_handle.get(), 0 );
                 }
-            }
-            cpp_utils::print( cpp_utils::no_formatting, " -> 终止进程.\n"sv );
-            for ( const auto& proc_handle : proc_handles ) {
-                proc_snapshot.get_nt_terminate_process()( proc_handle.get(), 0 );
             }
             if constexpr ( ( Backends::invoke_fn_disable_and_stop_servs || ... ) ) {
                 cpp_utils::print( cpp_utils::no_formatting, " -> 禁用并停止服务.\n"sv );
@@ -1591,23 +1607,15 @@ namespace scltk
         {
             return std::array< std::wstring_view, sizeof...( Servs ) >{ Servs.view()... };
         }( typename cpp_utils::type_list_concat_t< typename BuiltinRuleNodes::servs... >::unique{} ) };
-        static constexpr auto invoke_fn_search_for_procs{ !procs.empty() };
-        static auto search_for_procs( std::pmr::vector< cpp_utils::scoped_handle >& proc_handles )
+        static constexpr auto invoke_fn_is_target_proc{ !procs.empty() };
+        static auto is_target_proc( const PROCESSENTRY32W& proc_entry )
         {
-            ( void ) proc_snapshot.iterate( [ & ]( const PROCESSENTRY32W& proc_entry ) noexcept
-            {
-                for ( const auto& proc : procs ) {
-                    if ( _wcsicmp( proc_entry.szExeFile, proc.data() ) != 0 ) {
-                        continue;
-                    }
-                    auto proc_handle{ proc_snapshot.wrapped_nt_open_process(
-                      proc_entry.th32ProcessID, PROCESS_TERMINATE | PROCESS_SUSPEND_RESUME ) };
-                    if ( proc_handle != nullptr ) [[likely]] {
-                        proc_handles.emplace_back( std::move( proc_handle ) );
-                    }
+            for ( const auto& proc : procs ) {
+                if ( _wcsicmp( proc_entry.szExeFile, proc.data() ) == 0 ) {
+                    return true;
                 }
-                return true;
-            } );
+            }
+            return false;
         }
         static constexpr auto invoke_fn_get_estimated_proc_handles_numbers{ true };
         static consteval auto get_estimated_proc_handles_numbers() noexcept
@@ -1659,23 +1667,15 @@ namespace scltk
     };
     struct custom_rule_executor_backend final
     {
-        static constexpr auto invoke_fn_search_for_procs{ true };
-        static auto search_for_procs( std::pmr::vector< cpp_utils::scoped_handle >& proc_handles )
+        static constexpr auto invoke_fn_is_target_proc{ true };
+        static auto is_target_proc( const PROCESSENTRY32W& proc_entry )
         {
-            ( void ) proc_snapshot.iterate( [ & ]( const PROCESSENTRY32W& proc_entry ) noexcept
-            {
-                for ( const auto& proc : custom_rules.procs ) {
-                    if ( _wcsicmp( proc_entry.szExeFile, proc.data() ) != 0 ) {
-                        continue;
-                    }
-                    auto proc_handle{ proc_snapshot.wrapped_nt_open_process(
-                      proc_entry.th32ProcessID, PROCESS_TERMINATE | PROCESS_SUSPEND_RESUME ) };
-                    if ( proc_handle != nullptr ) [[likely]] {
-                        proc_handles.emplace_back( std::move( proc_handle ) );
-                    }
+            for ( const auto& proc : custom_rules.procs ) {
+                if ( _wcsicmp( proc_entry.szExeFile, proc.data() ) == 0 ) {
+                    return true;
                 }
-                return true;
-            } );
+            }
+            return false;
         }
         static constexpr auto invoke_fn_get_estimated_proc_handles_numbers{ true };
         static auto get_estimated_proc_handles_numbers() noexcept
