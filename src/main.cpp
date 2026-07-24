@@ -95,7 +95,6 @@ namespace scltk
     }
     namespace details_
     {
-        constexpr const auto& hijack_image_value{ L"*HIJACKED*" };
         template < cpp_utils::const_wstring... Items >
         using make_const_wstring_list_t = cpp_utils::type_list< cpp_utils::value_identity< Items >... >;
         using win32_file_path_buffer_t  = std::array< wchar_t, MAX_PATH >;
@@ -734,7 +733,7 @@ namespace scltk
     using crack_restore_config = details_::options_config_node<
       "crack_restore", "破解与恢复", false,
       details_::options_info_table<
-        details_::option_info< "crack_when_launching", "启动时破解" >, details_::option_info< "hijack_image", "映像劫持" >,
+        details_::option_info< "crack_when_launching", "启动时破解" >,
         details_::option_info< "suspend_process", "挂起进程" > > >;
     using window_config = details_::options_config_node<
       "window", "窗口显示", true, details_::options_info_table< details_::option_info< "forced_show", "置顶窗口" > > >;
@@ -1129,7 +1128,6 @@ namespace scltk
         }
         auto process_debugger_values( const HKEY root_key ) noexcept
         {
-            constexpr std::wstring_view target{ hijack_image_value };
             wchar_t sub_key_name[ 256 ];
             DWORD index{ 0 };
             auto size{ static_cast< DWORD >( std::size( sub_key_name ) ) };
@@ -1146,9 +1144,7 @@ namespace scltk
                            == ERROR_SUCCESS
                          && type == REG_SZ )
                     {
-                        if ( target != value_data ) {
-                            RegDeleteValueW( sub_key.get(), L"Debugger" );
-                        }
+                        RegDeleteValueW( sub_key.get(), L"Debugger" );
                     }
                 }
                 ++index;
@@ -1467,10 +1463,6 @@ namespace scltk
     template < typename... Backends >
         requires requires {
             requires cpp_utils::as_concept< ( sizeof...( Backends ) != 0 ) >;
-            { ( Backends::run_hijack_image || ... ) } -> std::convertible_to< bool >;
-            ( Backends::hijack_image(), ... );
-            { ( Backends::run_undo_hijack_image || ... ) } -> std::convertible_to< bool >;
-            ( Backends::undo_hijack_image(), ... );
             { ( Backends::run_suspend_procs || ... ) } -> std::convertible_to< bool >;
             ( Backends::suspend_procs(), ... );
             { ( Backends::run_terminate_procs || ... ) } -> std::convertible_to< bool >;
@@ -1490,25 +1482,11 @@ namespace scltk
         {
             cpp_utils::print( cpp_utils::no_formatting, make_title_text< "[ 破  解 ]", 2 >.view() );
             constexpr const auto& crack_restore_config_node{ std::get< crack_restore_config >( config_nodes ) };
-            constexpr const auto& enabled_hijack_image{ crack_restore_config_node.at< "hijack_image" >() };
             constexpr const auto& enabled_suspend_process{ crack_restore_config_node.at< "suspend_process" >() };
             ( void ) proc_snapshot.refresh();
             if ( !proc_snapshot.valid() ) [[unlikely]] {
                 cpp_utils::print( cpp_utils::no_formatting, " (!) 进程快照初始化错误!\n"sv );
                 return;
-            }
-            if constexpr ( ( Backends::run_hijack_image || ... ) ) {
-                if ( enabled_hijack_image ) {
-                    cpp_utils::print( cpp_utils::no_formatting, " -> 映像劫持.\n"sv );
-                    (
-                      []< typename Backend >() static
-                    {
-                        if constexpr ( Backend::run_hijack_image ) {
-                            Backend::hijack_image();
-                        }
-                    }.template operator()< Backends >(),
-                      ... );
-                }
             }
             if constexpr ( ( Backends::run_suspend_procs || ... ) ) {
                 if ( enabled_suspend_process ) {
@@ -1559,21 +1537,6 @@ namespace scltk
         static auto restore()
         {
             cpp_utils::print( cpp_utils::no_formatting, make_title_text< "[ 恢  复 ]", 2 >.view() );
-            constexpr const auto& crack_restore_config_node{ std::get< crack_restore_config >( config_nodes ) };
-            constexpr const auto& enabled_hijack_image{ crack_restore_config_node.at< "hijack_image" >() };
-            if constexpr ( ( Backends::run_undo_hijack_image || ... ) ) {
-                if ( enabled_hijack_image ) {
-                    cpp_utils::print( cpp_utils::no_formatting, " -> 撤销劫持.\n"sv );
-                    (
-                      []< typename Backend >() static
-                    {
-                        if constexpr ( Backend::run_undo_hijack_image ) {
-                            Backend::undo_hijack_image();
-                        }
-                    }.template operator()< Backends >(),
-                      ... );
-                }
-            }
             if constexpr ( ( Backends::run_enable_and_start_servs || ... ) ) {
                 cpp_utils::print( cpp_utils::no_formatting, " -> 启用并启动服务.\n"sv );
                 (
@@ -1623,36 +1586,6 @@ namespace scltk
         {
             return std::array< std::wstring_view, sizeof...( Servs ) >{ Servs.view()... };
         }( typename cpp_utils::type_list_concat_t< typename BuiltinRuleNodes::servs... >::unique{} ) };
-        static constexpr auto ifeo_regs{
-          []< cpp_utils::const_wstring... Procs >(
-            const cpp_utils::type_list< cpp_utils::value_identity< Procs >... > ) static consteval noexcept
-        {
-            return std::array< std::wstring_view, sizeof...( Procs ) * 2 >{
-                cpp_utils::value_identity_v< cpp_utils::concat_const_string(
-                  LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\)"_cs, Procs ) >.view()...,
-                cpp_utils::value_identity_v< cpp_utils::concat_const_string(
-                  LR"(SOFTWARE\WOW6432Node\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\)"_cs, Procs ) >.view()... };
-        }( typename cpp_utils::type_list_concat_t< typename BuiltinRuleNodes::procs... >::unique{} ) };
-        static constexpr auto run_hijack_image{ !ifeo_regs.empty() };
-        static auto hijack_image() noexcept
-        {
-            if constexpr ( run_hijack_image ) {
-                for ( const auto& reg : ifeo_regs ) {
-                    ( void ) cpp_utils::create_registry_value_without_redirect(
-                      HKEY_LOCAL_MACHINE, reg, L"Debugger"sv, cpp_utils::registry_flag::string_type,
-                      reinterpret_cast< const BYTE* >( +details_::hijack_image_value ), sizeof( details_::hijack_image_value ) );
-                }
-            }
-        }
-        static constexpr auto run_undo_hijack_image{ !ifeo_regs.empty() };
-        static auto undo_hijack_image() noexcept
-        {
-            if constexpr ( run_undo_hijack_image ) {
-                for ( const auto& reg : ifeo_regs ) {
-                    ( void ) cpp_utils::delete_registry_tree_without_redirect( HKEY_LOCAL_MACHINE, reg );
-                }
-            }
-        }
         static constexpr auto run_suspend_procs{ !procs.empty() };
         static auto suspend_procs() noexcept
         {
@@ -1720,38 +1653,6 @@ namespace scltk
     };
     struct custom_rule_executor_backend final
     {
-        static constexpr auto run_hijack_image{ true };
-        static auto hijack_image()
-        {
-            for ( const auto& proc : custom_rules.procs ) {
-                ( void ) cpp_utils::create_registry_value_without_redirect(
-                  HKEY_LOCAL_MACHINE,
-                  details_::concat_string< wchar_t >(
-                    LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\)"sv, proc ),
-                  L"Debugger"sv, cpp_utils::registry_flag::string_type,
-                  reinterpret_cast< const BYTE* >( +details_::hijack_image_value ), sizeof( details_::hijack_image_value ) );
-                ( void ) cpp_utils::create_registry_value_without_redirect(
-                  HKEY_LOCAL_MACHINE,
-                  details_::concat_string< wchar_t >(
-                    LR"(SOFTWARE\WOW6432Node\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\)"sv, proc ),
-                  L"Debugger"sv, cpp_utils::registry_flag::string_type,
-                  reinterpret_cast< const BYTE* >( +details_::hijack_image_value ), sizeof( details_::hijack_image_value ) );
-            }
-        }
-        static constexpr auto run_undo_hijack_image{ true };
-        static auto undo_hijack_image()
-        {
-            for ( const auto& proc : custom_rules.procs ) {
-                ( void ) cpp_utils::delete_registry_tree_without_redirect(
-                  HKEY_LOCAL_MACHINE,
-                  details_::concat_string< wchar_t >(
-                    LR"(SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\)"sv, proc ) );
-                ( void ) cpp_utils::delete_registry_tree_without_redirect(
-                  HKEY_LOCAL_MACHINE,
-                  details_::concat_string< wchar_t >(
-                    LR"(SOFTWARE\WOW6432Node\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\)"sv, proc ) );
-            }
-        }
         static constexpr auto run_suspend_procs{ true };
         static auto suspend_procs() noexcept
         {
