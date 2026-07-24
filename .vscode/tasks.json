@@ -2,7 +2,7 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Debug_SCLTK",
+            "label": "Build SCLTK Debug Version",
             "type": "shell",
             "command": ".\\make.ps1",
             "args": [
@@ -22,7 +22,7 @@
             "problemMatcher": "$gcc"
         },
         {
-            "label": "Debug_SCLTK-Legacy",
+            "label": "Build SCLTK-Legacy Debug Version",
             "type": "shell",
             "command": ".\\make.ps1",
             "args": [
