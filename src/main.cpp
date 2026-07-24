@@ -1463,17 +1463,17 @@ namespace scltk
     template < typename... Backends >
         requires requires {
             requires cpp_utils::as_concept< ( sizeof...( Backends ) != 0 ) >;
-            { ( Backends::run_suspend_procs || ... ) } -> std::convertible_to< bool >;
+            { ( Backends::invoke_fn_suspend_procs || ... ) } -> std::convertible_to< bool >;
             ( Backends::suspend_procs(), ... );
-            { ( Backends::run_terminate_procs || ... ) } -> std::convertible_to< bool >;
+            { ( Backends::invoke_fn_terminate_procs || ... ) } -> std::convertible_to< bool >;
             ( Backends::terminate_procs(), ... );
-            { ( Backends::run_enable_and_start_servs || ... ) } -> std::convertible_to< bool >;
+            { ( Backends::invoke_fn_enable_and_start_servs || ... ) } -> std::convertible_to< bool >;
             ( Backends::enable_and_start_servs(), ... );
-            { ( Backends::run_disable_and_stop_servs || ... ) } -> std::convertible_to< bool >;
+            { ( Backends::invoke_fn_disable_and_stop_servs || ... ) } -> std::convertible_to< bool >;
             ( Backends::disable_and_stop_servs(), ... );
-            { ( Backends::run_crack_helper || ... ) } -> std::convertible_to< bool >;
+            { ( Backends::invoke_fn_crack_helper || ... ) } -> std::convertible_to< bool >;
             ( Backends::crack_helper(), ... );
-            { ( Backends::run_restore_helper || ... ) } -> std::convertible_to< bool >;
+            { ( Backends::invoke_fn_restore_helper || ... ) } -> std::convertible_to< bool >;
             ( Backends::restore_helper(), ... );
         }
     struct rule_executor final
@@ -1488,46 +1488,46 @@ namespace scltk
                 cpp_utils::print( cpp_utils::no_formatting, " (!) 进程快照初始化错误!\n"sv );
                 return;
             }
-            if constexpr ( ( Backends::run_suspend_procs || ... ) ) {
+            if constexpr ( ( Backends::invoke_fn_suspend_procs || ... ) ) {
                 if ( enabled_suspend_process ) {
                     cpp_utils::print( cpp_utils::no_formatting, " -> 挂起进程.\n"sv );
                     (
                       []< typename Backend >() static
                     {
-                        if constexpr ( Backend::run_suspend_procs ) {
+                        if constexpr ( Backend::invoke_fn_suspend_procs ) {
                             Backend::suspend_procs();
                         }
                     }.template operator()< Backends >(),
                       ... );
                 }
             }
-            if constexpr ( ( Backends::run_terminate_procs || ... ) ) {
+            if constexpr ( ( Backends::invoke_fn_terminate_procs || ... ) ) {
                 cpp_utils::print( cpp_utils::no_formatting, " -> 终止进程.\n"sv );
                 (
                   []< typename Backend >() static
                 {
-                    if constexpr ( Backend::run_terminate_procs ) {
+                    if constexpr ( Backend::invoke_fn_terminate_procs ) {
                         Backend::terminate_procs();
                     }
                 }.template operator()< Backends >(),
                   ... );
             }
-            if constexpr ( ( Backends::run_disable_and_stop_servs || ... ) ) {
+            if constexpr ( ( Backends::invoke_fn_disable_and_stop_servs || ... ) ) {
                 cpp_utils::print( cpp_utils::no_formatting, " -> 禁用并停止服务.\n"sv );
                 (
                   []< typename Backend >() static
                 {
-                    if constexpr ( Backend::run_disable_and_stop_servs ) {
+                    if constexpr ( Backend::invoke_fn_disable_and_stop_servs ) {
                         Backend::disable_and_stop_servs();
                     }
                 }.template operator()< Backends >(),
                   ... );
             }
-            if constexpr ( ( Backends::run_crack_helper || ... ) ) {
+            if constexpr ( ( Backends::invoke_fn_crack_helper || ... ) ) {
                 (
                   []< typename Backend >() static
                 {
-                    if constexpr ( Backend::run_crack_helper ) {
+                    if constexpr ( Backend::invoke_fn_crack_helper ) {
                         Backend::crack_helper();
                     }
                 }.template operator()< Backends >(),
@@ -1537,22 +1537,22 @@ namespace scltk
         static auto restore()
         {
             cpp_utils::print( cpp_utils::no_formatting, make_title_text< "[ 恢  复 ]", 2 >.view() );
-            if constexpr ( ( Backends::run_enable_and_start_servs || ... ) ) {
+            if constexpr ( ( Backends::invoke_fn_enable_and_start_servs || ... ) ) {
                 cpp_utils::print( cpp_utils::no_formatting, " -> 启用并启动服务.\n"sv );
                 (
                   []< typename Backend >() static
                 {
-                    if constexpr ( Backend::run_enable_and_start_servs ) {
+                    if constexpr ( Backend::invoke_fn_enable_and_start_servs ) {
                         Backend::enable_and_start_servs();
                     }
                 }.template operator()< Backends >(),
                   ... );
             }
-            if constexpr ( ( Backends::run_restore_helper || ... ) ) {
+            if constexpr ( ( Backends::invoke_fn_restore_helper || ... ) ) {
                 (
                   []< typename Backend >() static
                 {
-                    if constexpr ( Backend::run_restore_helper ) {
+                    if constexpr ( Backend::invoke_fn_restore_helper ) {
                         Backend::restore_helper();
                     }
                 }.template operator()< Backends >(),
@@ -1586,45 +1586,45 @@ namespace scltk
         {
             return std::array< std::wstring_view, sizeof...( Servs ) >{ Servs.view()... };
         }( typename cpp_utils::type_list_concat_t< typename BuiltinRuleNodes::servs... >::unique{} ) };
-        static constexpr auto run_suspend_procs{ !procs.empty() };
+        static constexpr auto invoke_fn_suspend_procs{ !procs.empty() };
         static auto suspend_procs() noexcept
         {
-            if constexpr ( run_suspend_procs ) {
+            if constexpr ( invoke_fn_suspend_procs ) {
                 ( void ) proc_snapshot.suspend_by_names( procs );
             }
         }
-        static constexpr auto run_terminate_procs{ !procs.empty() };
+        static constexpr auto invoke_fn_terminate_procs{ !procs.empty() };
         static auto terminate_procs() noexcept
         {
-            if constexpr ( run_terminate_procs ) {
+            if constexpr ( invoke_fn_terminate_procs ) {
                 ( void ) proc_snapshot.terminate_by_names( procs );
             }
         }
-        static constexpr auto run_enable_and_start_servs{ !servs.empty() };
+        static constexpr auto invoke_fn_enable_and_start_servs{ !servs.empty() };
         static auto enable_and_start_servs() noexcept
         {
-            if constexpr ( run_enable_and_start_servs ) {
+            if constexpr ( invoke_fn_enable_and_start_servs ) {
                 for ( const auto& serv : servs ) {
                     ( void ) cpp_utils::set_service_start_type( serv, cpp_utils::service_flag::auto_start );
                     ( void ) cpp_utils::start_service_with_dependencies( serv, unsynced_mem_pool );
                 }
             }
         }
-        static constexpr auto run_disable_and_stop_servs{ !servs.empty() };
+        static constexpr auto invoke_fn_disable_and_stop_servs{ !servs.empty() };
         static auto disable_and_stop_servs() noexcept
         {
-            if constexpr ( run_disable_and_stop_servs ) {
+            if constexpr ( invoke_fn_disable_and_stop_servs ) {
                 for ( const auto& serv : servs ) {
                     ( void ) cpp_utils::set_service_start_type( serv, cpp_utils::service_flag::disabled_start );
                     ( void ) cpp_utils::stop_service_with_dependencies( serv, unsynced_mem_pool );
                 }
             }
         }
-        static constexpr auto run_crack_helper{
+        static constexpr auto invoke_fn_crack_helper{
           ( !std::is_same_v< decltype( BuiltinRuleNodes::crack_helper ), empty_lambda_type > || ... ) };
         static auto crack_helper()
         {
-            if constexpr ( run_crack_helper ) {
+            if constexpr ( invoke_fn_crack_helper ) {
                 (
                   []< typename Node >() static
                 {
@@ -1635,11 +1635,11 @@ namespace scltk
                   ... );
             }
         }
-        static constexpr auto run_restore_helper{
+        static constexpr auto invoke_fn_restore_helper{
           ( !std::is_same_v< decltype( BuiltinRuleNodes::restore_helper ), empty_lambda_type > || ... ) };
         static auto restore_helper()
         {
-            if constexpr ( run_restore_helper ) {
+            if constexpr ( invoke_fn_restore_helper ) {
                 (
                   []< typename Node >() static
                 {
@@ -1653,17 +1653,17 @@ namespace scltk
     };
     struct custom_rule_executor_backend final
     {
-        static constexpr auto run_suspend_procs{ true };
+        static constexpr auto invoke_fn_suspend_procs{ true };
         static auto suspend_procs() noexcept
         {
             ( void ) proc_snapshot.suspend_by_names( custom_rules.procs );
         }
-        static constexpr auto run_terminate_procs{ true };
+        static constexpr auto invoke_fn_terminate_procs{ true };
         static auto terminate_procs() noexcept
         {
             ( void ) proc_snapshot.terminate_by_names( custom_rules.procs );
         }
-        static constexpr auto run_enable_and_start_servs{ true };
+        static constexpr auto invoke_fn_enable_and_start_servs{ true };
         static auto enable_and_start_servs() noexcept
         {
             for ( const auto& serv : custom_rules.servs ) {
@@ -1671,7 +1671,7 @@ namespace scltk
                 ( void ) cpp_utils::start_service_with_dependencies( serv, unsynced_mem_pool );
             }
         }
-        static constexpr auto run_disable_and_stop_servs{ true };
+        static constexpr auto invoke_fn_disable_and_stop_servs{ true };
         static auto disable_and_stop_servs() noexcept
         {
             for ( const auto& serv : custom_rules.servs ) {
@@ -1696,12 +1696,12 @@ namespace scltk
                 }
             }
         }
-        static constexpr auto run_crack_helper{ true };
+        static constexpr auto invoke_fn_crack_helper{ true };
         static auto crack_helper() noexcept
         {
             execute_helpers_( custom_rules.crack_helpers );
         }
-        static constexpr auto run_restore_helper{ true };
+        static constexpr auto invoke_fn_restore_helper{ true };
         static auto restore_helper() noexcept
         {
             execute_helpers_( custom_rules.restore_helpers );
