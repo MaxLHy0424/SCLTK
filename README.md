@@ -186,10 +186,6 @@ restore_helper: "abc helper.exe" restore
 
 通常，这是由于电子教室软件置顶窗口和 SCLTK / SCLTK-Legacy 发生冲突导致的。这时，可以尝试按下 Win + D 返回桌面，再次尝试点击。
 
-## 破解后一些软件运行时报错 “找不到文件”
-
-在不影响软件正常运行的情况下，可以尝试修改可执行文件名称。另外，打开注册表编辑器，在 `HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options` 和 `HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Windows NT\CurrentVersion\Image File Execution Options` 下找到和要运行的软件的文件名称相同的项，删除即可。
-
 ## SCLTK / SCLTK-Legacy 使用内建规则破解不起作用
 
 请尝试使用最新版本的 SCLTK / SCLTK-Legacy 进行破解，如果仍不起作用，可能是因为内建规则已失效。此时，可使用自定义规则临时解决。如果条件允许，请且尽快上报。
