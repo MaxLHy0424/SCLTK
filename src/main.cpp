@@ -422,7 +422,7 @@ namespace scltk
         constexpr auto default_helper{ [] static noexcept { } };
     }
     template <
-      cpp_utils::const_string DisplayName, cpp_utils::same_as_type_list Procs, cpp_utils::same_as_type_list Servs,
+      cpp_utils::const_string DisplayName, cpp_utils::same_as_type_list ProcNames, cpp_utils::same_as_type_list ServNames,
       auto ExtraProcMatcher = details_::default_extra_proc_matcher, auto CrackHelper = details_::default_helper,
       auto RestoreHelper = details_::default_helper >
         requires requires( const PROCESSENTRY32W& proc_entry ) {
@@ -436,8 +436,8 @@ namespace scltk
         static constexpr auto extra_proc_matcher{ ExtraProcMatcher };
         static constexpr auto crack_helper{ CrackHelper };
         static constexpr auto restore_helper{ RestoreHelper };
-        using procs = Procs;
-        using servs = Servs;
+        using proc_names = ProcNames;
+        using serv_names = ServNames;
     };
     using builtin_rules = cpp_utils::type_list<
       compile_time_rule_node<
@@ -1665,23 +1665,23 @@ namespace scltk
     {
         using default_extra_proc_matcher_type = decltype( details_::default_extra_proc_matcher );
         using default_helper_type             = decltype( details_::default_helper );
-        static constexpr auto procs{
-          []< cpp_utils::const_wstring... Procs >(
-            const cpp_utils::type_list< cpp_utils::value_identity< Procs >... > ) static consteval noexcept
+        static constexpr auto proc_names{
+          []< cpp_utils::const_wstring... ProcNames >(
+            const cpp_utils::type_list< cpp_utils::value_identity< ProcNames >... > ) static consteval noexcept
         {
-            return std::array< std::wstring_view, sizeof...( Procs ) >{ Procs.view()... };
-        }( typename cpp_utils::type_list_concat_t< typename BuiltinRuleNodes::procs... >::unique{} ) };
-        static constexpr auto servs{
-          []< cpp_utils::const_wstring... Servs >(
-            const cpp_utils::type_list< cpp_utils::value_identity< Servs >... > ) static consteval noexcept
+            return std::array< std::wstring_view, sizeof...( ProcNames ) >{ ProcNames.view()... };
+        }( typename cpp_utils::type_list_concat_t< typename BuiltinRuleNodes::proc_names... >::unique{} ) };
+        static constexpr auto serv_names{
+          []< cpp_utils::const_wstring... ServNames >(
+            const cpp_utils::type_list< cpp_utils::value_identity< ServNames >... > ) static consteval noexcept
         {
-            return std::array< std::wstring_view, sizeof...( Servs ) >{ Servs.view()... };
-        }( typename cpp_utils::type_list_concat_t< typename BuiltinRuleNodes::servs... >::unique{} ) };
-        static constexpr auto invoke_fn_is_target_proc{ !procs.empty() };
+            return std::array< std::wstring_view, sizeof...( ServNames ) >{ ServNames.view()... };
+        }( typename cpp_utils::type_list_concat_t< typename BuiltinRuleNodes::serv_names... >::unique{} ) };
+        static constexpr auto invoke_fn_is_target_proc{ !proc_names.empty() };
         static auto is_target_proc( const PROCESSENTRY32W& proc_entry )
         {
-            for ( const auto& proc : procs ) {
-                if ( _wcsicmp( proc_entry.szExeFile, proc.data() ) == 0 ) {
+            for ( const auto& proc_name : proc_names ) {
+                if ( _wcsicmp( proc_entry.szExeFile, proc_name.data() ) == 0 ) {
                     return true;
                 }
             }
@@ -1703,20 +1703,20 @@ namespace scltk
         static constexpr auto invoke_fn_get_estimated_proc_handles_numbers{ true };
         static consteval auto get_estimated_proc_handles_numbers() noexcept
         {
-            return procs.size() * 1.5;
+            return proc_names.size() * 1.5;
         }
-        static constexpr auto invoke_fn_enable_and_start_servs{ !servs.empty() };
+        static constexpr auto invoke_fn_enable_and_start_servs{ !serv_names.empty() };
         static auto enable_and_start_servs() noexcept
         {
-            for ( const auto& serv : servs ) {
+            for ( const auto& serv : serv_names ) {
                 ( void ) cpp_utils::set_service_start_type( serv, cpp_utils::service_flag::auto_start );
                 ( void ) cpp_utils::start_service_with_dependencies( serv, unsynced_mem_pool );
             }
         }
-        static constexpr auto invoke_fn_disable_and_stop_servs{ !servs.empty() };
+        static constexpr auto invoke_fn_disable_and_stop_servs{ !serv_names.empty() };
         static auto disable_and_stop_servs() noexcept
         {
-            for ( const auto& serv : servs ) {
+            for ( const auto& serv : serv_names ) {
                 ( void ) cpp_utils::set_service_start_type( serv, cpp_utils::service_flag::disabled_start );
                 ( void ) cpp_utils::stop_service_with_dependencies( serv, unsynced_mem_pool );
             }
