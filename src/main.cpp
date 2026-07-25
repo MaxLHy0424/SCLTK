@@ -889,18 +889,16 @@ namespace scltk
                 " 不符合格式的规则将会被忽略.\n"
                 " <item> 的类型由 <flag> 决定.\n"
                 " 其中, <flag> 有如下选项:\n"
-                " proc_name - Windows 进程名称.\n"
+                " proc_name - Windows 进程名称 (强制正则表达式匹配).\n"
                 " serv_name - Windows 服务的服务名称.\n"
                 " crack_helper - 破解时执行的程序的命令行.\n"
                 " restore_helper - 恢复时执行的程序的命令行.\n\n"
                 " 使用示例:\n"
                 " [custom_rules]\n"
-                " proc_name: abc_frontend.exe\n"
-                " proc_name: abc_backend.com\n"
-                " proc_name: abc_connect\n"
-                " proc_name: abc_proc_defender\n"
-                " crack_helper: \"abc helper.exe\" crack\n"
-                " restore_helper: \"abc helper.exe\" restore" )
+                " proc_name: ^abc_client[0-9]{10}\\.exe$\n"
+                " serv: abc_eclass\n"
+                " crack_helper: \"abc toolkit.exe\" crack\n"
+                " restore_helper: \"abc toolkit.exe\" restore" )
               .show();
             return func_back;
         }
