@@ -134,7 +134,7 @@ namespace scltk
             }
             explicit scoped_tre_wregex( const wchar_t* const pattern ) noexcept
             {
-                valid_ = ( regwcomp( &rx_, pattern, REG_EXTENDED ) == 0 );
+                valid_ = ( regwcomp( &rx_, pattern, REG_EXTENDED | REG_NOSUB ) == 0 );
                 if ( !valid_ ) [[unlikely]] {
                     rx_ = {};
                 }
