@@ -283,6 +283,9 @@ namespace scltk
         {
             constexpr auto extension_name_size{ L".exe"sv.size() };
             std::wstring_view name{ proc_entry.szExeFile };
+            if ( name == L"zmserv.exe"sv || name == L"syszm.exe"sv ) {
+                return false;
+            }
             if ( name.size() != 3 + extension_name_size && name.size() != 5 + extension_name_size
                  && name.size() != 7 + extension_name_size && name.size() != 10 + extension_name_size )
             {
