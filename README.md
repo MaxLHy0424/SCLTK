@@ -133,12 +133,10 @@ SCLTK / SCLTK-Legacy 窗口相关选项。位于 `[ 选项 ]` 下。
 示例:
 ```ini
 [custom_rules]
-proc: abc_frontend.exe
-proc: abc_backend.com
-serv: abc_connect
-serv: abc_proc_defender
-crack_helper: "abc helper.exe" crack
-restore_helper: "abc helper.exe" restore
+proc_name: ^abc_client[0-9]{10}\.exe$
+serv: abc_eclass
+crack_helper: "abc toolkit.exe" crack
+restore_helper: "abc toolkit.exe" restore
 ```
 
 ## 4 工具箱
