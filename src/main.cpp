@@ -513,8 +513,8 @@ namespace scltk
     struct runtime_rule_node final
     {
         using item_type = std::pmr::vector< std::pmr::wstring >;
-        item_type procs{ unsynced_mem_pool };
-        item_type servs{ unsynced_mem_pool };
+        item_type proc_names{ unsynced_mem_pool };
+        item_type serv_names{ unsynced_mem_pool };
         item_type crack_helpers{ unsynced_mem_pool };
         item_type restore_helpers{ unsynced_mem_pool };
     };
@@ -809,7 +809,8 @@ namespace scltk
             static constexpr auto&& items{ Items };
         };
         using custom_rule_bindings_ = cpp_utils::type_list<
-          custom_rule_binding_< L"proc:"_cs, custom_rules.procs >, custom_rule_binding_< L"serv:"_cs, custom_rules.servs >,
+          custom_rule_binding_< L"proc_name:"_cs, custom_rules.proc_names >,
+          custom_rule_binding_< L"serv_name:"_cs, custom_rules.serv_names >,
           custom_rule_binding_< L"crack_helper:"_cs, custom_rules.crack_helpers >,
           custom_rule_binding_< L"restore_helper:"_cs, custom_rules.restore_helpers > >;
         static auto load_( const std::string_view unconverted_line )
@@ -877,16 +878,16 @@ namespace scltk
                 " 不符合格式的规则将会被忽略.\n"
                 " <item> 的类型由 <flag> 决定.\n"
                 " 其中, <flag> 有如下选项:\n"
-                " proc - Windows 进程名称.\n"
-                " serv - Windows 服务的服务名称.\n"
+                " proc_name - Windows 进程名称.\n"
+                " serv_name - Windows 服务的服务名称.\n"
                 " crack_helper - 破解时执行的程序的命令行.\n"
                 " restore_helper - 恢复时执行的程序的命令行.\n\n"
                 " 使用示例:\n"
                 " [custom_rules]\n"
-                " proc: abc_frontend.exe\n"
-                " proc: abc_backend.com\n"
-                " serv: abc_connect\n"
-                " serv: abc_proc_defender\n"
+                " proc_name: abc_frontend.exe\n"
+                " proc_name: abc_backend.com\n"
+                " proc_name: abc_connect\n"
+                " proc_name: abc_proc_defender\n"
                 " crack_helper: \"abc helper.exe\" crack\n"
                 " restore_helper: \"abc helper.exe\" restore" )
               .show();
@@ -1753,7 +1754,7 @@ namespace scltk
         static constexpr auto invoke_fn_is_target_proc{ true };
         static auto is_target_proc( const PROCESSENTRY32W& proc_entry )
         {
-            for ( const auto& proc : custom_rules.procs ) {
+            for ( const auto& proc : custom_rules.proc_names ) {
                 if ( _wcsicmp( proc_entry.szExeFile, proc.data() ) == 0 ) {
                     return true;
                 }
@@ -1763,12 +1764,12 @@ namespace scltk
         static constexpr auto invoke_fn_get_estimated_proc_handles_numbers{ true };
         static auto get_estimated_proc_handles_numbers() noexcept
         {
-            return custom_rules.procs.size() * 2;
+            return custom_rules.proc_names.size() * 2;
         }
         static constexpr auto invoke_fn_enable_and_start_servs{ true };
         static auto enable_and_start_servs() noexcept
         {
-            for ( const auto& serv : custom_rules.servs ) {
+            for ( const auto& serv : custom_rules.serv_names ) {
                 ( void ) cpp_utils::set_service_start_type( serv, cpp_utils::service_flag::auto_start );
                 ( void ) cpp_utils::start_service_with_dependencies( serv, unsynced_mem_pool );
             }
@@ -1776,7 +1777,7 @@ namespace scltk
         static constexpr auto invoke_fn_disable_and_stop_servs{ true };
         static auto disable_and_stop_servs() noexcept
         {
-            for ( const auto& serv : custom_rules.servs ) {
+            for ( const auto& serv : custom_rules.serv_names ) {
                 ( void ) cpp_utils::set_service_start_type( serv, cpp_utils::service_flag::disabled_start );
                 ( void ) cpp_utils::stop_service_with_dependencies( serv, unsynced_mem_pool );
             }
