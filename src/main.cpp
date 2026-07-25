@@ -141,10 +141,10 @@ namespace scltk
                 }
                 return *this;
             }
-            explicit scoped_tre_wregex( const std::wstring_view pattern ) noexcept
+            scoped_tre_wregex( const std::wstring_view pattern ) noexcept
               : pattern_( pattern, unsynced_mem_pool )
             {
-                valid_ = ( regwcomp( &rx_, pattern_.data(), REG_EXTENDED | REG_NOSUB ) == 0 );
+                valid_ = ( regwcomp( &rx_, pattern_.data(), REG_EXTENDED | REG_NOSUB | REG_ICASE ) == 0 );
                 if ( !valid_ ) [[unlikely]] {
                     rx_ = {};
                 }
