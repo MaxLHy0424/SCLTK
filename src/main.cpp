@@ -1634,7 +1634,7 @@ namespace scltk
         static constexpr auto invoke_fn_get_estimated_proc_handles_numbers{ true };
         static consteval auto get_estimated_proc_handles_numbers() noexcept
         {
-            return procs.size();
+            return procs.size() * 1.5;
         }
         static constexpr auto invoke_fn_enable_and_start_servs{ !servs.empty() };
         static auto enable_and_start_servs() noexcept
