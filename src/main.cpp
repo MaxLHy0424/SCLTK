@@ -294,7 +294,7 @@ namespace scltk
             }
             return result;
         }
-        auto get_sign_name( const win32_file_path_buffer_t& path )
+        auto get_sign_name( const win32_file_path_buffer_t& path ) -> std::optional< std::pmr::wstring >
         {
             scoped_cert_store cert_store{ nullptr };
             DWORD encoding{ 0 };
@@ -305,7 +305,7 @@ namespace scltk
                    0, &encoding, &content_type, &format_type, std::out_ptr( cert_store ), nullptr, nullptr )
                  || cert_store == nullptr ) [[unlikely]]
             {
-                return std::pmr::wstring( unsynced_mem_pool );
+                return std::nullopt;
             }
             scoped_cert_context cert{ nullptr };
             while ( cert.reset( CertEnumCertificatesInStore( cert_store.get(), cert.get() ) ), cert != nullptr ) [[likely]] {
@@ -317,7 +317,7 @@ namespace scltk
                 CertGetNameStringW( cert.get(), CERT_NAME_SIMPLE_DISPLAY_TYPE, 0, nullptr, name_buf.data(), name_len );
                 return name_buf;
             }
-            return std::pmr::wstring( unsynced_mem_pool );
+            return std::nullopt;
         }
         auto is_cbms_daemon( const PROCESSENTRY32W& proc_entry ) noexcept
         {
@@ -429,7 +429,11 @@ namespace scltk
                 return false;
             }
             const auto& [ path, _ ]{ proc_path.value() };
-            if ( get_sign_name( path ).contains( L"Nanjing Wangya Computer"sv ) ) {
+            const auto sign_name{ get_sign_name( path ) };
+            if ( !sign_name.has_value() ) {
+                return false;
+            }
+            if ( sign_name.value().contains( L"Nanjing Wangya Computer"sv ) ) {
                 return true;
             }
             return false;
