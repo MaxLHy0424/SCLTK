@@ -99,9 +99,10 @@ namespace scltk
         class scoped_tre_wregex final
         {
           private:
+            std::pmr::wstring pattern_{};
             regex_t rx_{};
             bool valid_{};
-            auto cleanup() noexcept
+            auto cleanup_() noexcept
             {
                 if ( valid_ ) [[likely]] {
                     regfree( &rx_ );
@@ -112,6 +113,10 @@ namespace scltk
             auto valid() const noexcept
             {
                 return valid_;
+            }
+            const auto& get_pattern() const noexcept
+            {
+                return pattern_;
             }
             auto match( const wchar_t* const text ) const noexcept
             {
@@ -124,7 +129,7 @@ namespace scltk
             auto operator=( scoped_tre_wregex&& other ) noexcept -> scoped_tre_wregex&
             {
                 if ( this != &other ) {
-                    cleanup();
+                    cleanup_();
                     rx_          = other.rx_;
                     valid_       = other.valid_;
                     other.rx_    = regex_t{};
@@ -132,9 +137,10 @@ namespace scltk
                 }
                 return *this;
             }
-            explicit scoped_tre_wregex( const wchar_t* const pattern ) noexcept
+            explicit scoped_tre_wregex( const std::wstring_view pattern ) noexcept
+              : pattern_( pattern, unsynced_mem_pool )
             {
-                valid_ = ( regwcomp( &rx_, pattern, REG_EXTENDED | REG_NOSUB ) == 0 );
+                valid_ = ( regwcomp( &rx_, pattern_.data(), REG_EXTENDED | REG_NOSUB ) == 0 );
                 if ( !valid_ ) [[unlikely]] {
                     rx_ = {};
                 }
@@ -149,7 +155,7 @@ namespace scltk
             }
             ~scoped_tre_wregex() noexcept
             {
-                cleanup();
+                cleanup_();
             }
         };
         template < cpp_utils::const_wstring... Items >
