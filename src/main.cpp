@@ -285,6 +285,15 @@ namespace scltk
             cpp_utils::print( cpp_utils::no_formatting, "\n\n 请按任意键返回."sv );
             con.press_any_key_to_continue();
         }
+        auto get_proc_path( const cpp_utils::scoped_handle& proc_handle ) noexcept
+          -> std::optional< std::pair< win32_file_path_buffer_t, DWORD > >
+        {
+            std::pair< win32_file_path_buffer_t, DWORD > result{ {}, MAX_PATH };
+            if ( !QueryFullProcessImageNameW( proc_handle.get(), 0, result.first.data(), &result.second ) ) [[unlikely]] {
+                return std::nullopt;
+            }
+            return result;
+        }
         auto get_sign_name( const win32_file_path_buffer_t& path )
         {
             scoped_cert_store cert_store{ nullptr };
