@@ -801,24 +801,17 @@ namespace scltk
     {
         friend custom_rules_config::config_node_interface;
       private:
-        struct flag_binding_ final
+        template < cpp_utils::const_wstring Flag, auto& Items >
+            requires( std::ranges::none_of( Flag.view(), details_::is_whitespace< wchar_t > ) )
+        struct custom_rule_binding_ final
         {
-            std::wstring_view flag;
-            runtime_rule_node::item_type& items;
+            static constexpr auto flag{ Flag };
+            static constexpr auto&& items{ Items };
         };
-        static constexpr flag_binding_ bindings[]{
-          {L"proc:"sv,           custom_rules.procs          },
-          {L"serv:"sv,           custom_rules.servs          },
-          {L"crack_helper:"sv,   custom_rules.crack_helpers  },
-          {L"restore_helper:"sv, custom_rules.restore_helpers}
-        };
-        static_assert( []< std::size_t N >( const flag_binding_ ( &data )[ N ] ) static consteval noexcept
-        {
-            return [ & ]< std::size_t... Is >( const std::index_sequence< Is... > ) consteval noexcept
-            {
-                return ( std::ranges::none_of( data[ Is ].flag, details_::is_whitespace< wchar_t > ) && ... );
-            }( std::make_index_sequence< N >{} );
-        }( bindings ) );
+        using custom_rule_bindings_ = cpp_utils::type_list<
+          custom_rule_binding_< L"proc:"_cs, custom_rules.procs >, custom_rule_binding_< L"serv:"_cs, custom_rules.servs >,
+          custom_rule_binding_< L"crack_helper:"_cs, custom_rules.crack_helpers >,
+          custom_rule_binding_< L"restore_helper:"_cs, custom_rules.restore_helpers > >;
         static auto load_( const std::string_view unconverted_line )
         {
             const auto converted{ cpp_utils::to_wstring( unconverted_line, CP_UTF8, unsynced_mem_pool ) };
@@ -826,35 +819,51 @@ namespace scltk
                 return;
             }
             const auto& line{ converted.value() };
-            for ( const auto& [ flag, items ] : bindings ) {
-                if ( line.starts_with( flag ) ) [[likely]] {
-                    items.emplace_back(
-                      std::ranges::find_if_not( line.subview( flag.size() ), details_::is_whitespace< wchar_t > ) );
-                    return;
-                }
-            }
+            [ & ]< std::size_t... Is >( const std::index_sequence< Is... > )
+            {
+                ( [ & ]
+                {
+                    using current_binding = custom_rule_bindings_::at< Is >;
+                    if ( line.starts_with( current_binding::flag.view() ) ) [[likely]] {
+                        current_binding::items.emplace_back( std::ranges::find_if_not(
+                          line.subview( current_binding::flag.view().size() ), details_::is_whitespace< wchar_t > ) );
+                        return true;
+                    }
+                    return false;
+                }() || ... );
+            }( std::make_index_sequence< custom_rule_bindings_::size >{} );
         }
         static auto sync_( std::ofstream& out )
         {
-            for ( const auto& [ unconverted_flag, items ] : bindings ) {
-                const auto converted{ cpp_utils::to_string( unconverted_flag, CP_UTF8, unsynced_mem_pool ) };
-                if ( !converted.has_value() ) [[unlikely]] {
-                    continue;
-                }
-                const auto& flag{ converted.value() };
-                for ( const auto& item : items ) {
-                    const auto line{ cpp_utils::to_string( item, CP_UTF8, unsynced_mem_pool ) };
-                    if ( line.has_value() ) [[likely]] {
-                        out << flag << ' ' << line.value() << '\n';
+            [ & ]< std::size_t... Is >( const std::index_sequence< Is... > )
+            {
+                ( [ & ]
+                {
+                    using current_binding = custom_rule_bindings_::at< Is >;
+                    const auto converted{ cpp_utils::to_string( current_binding::flag.view(), CP_UTF8, unsynced_mem_pool ) };
+                    if ( !converted.has_value() ) [[unlikely]] {
+                        return;
                     }
-                }
-            }
+                    const auto& flag{ converted.value() };
+                    for ( const auto& item : current_binding::items ) {
+                        const auto line{ cpp_utils::to_string( item, CP_UTF8, unsynced_mem_pool ) };
+                        if ( line.has_value() ) [[likely]] {
+                            out << flag << ' ' << line.value() << '\n';
+                        }
+                    }
+                }(), ... );
+            }( std::make_index_sequence< custom_rule_bindings_::size >{} );
         }
         static auto before_load_() noexcept
         {
-            for ( auto& binding : bindings ) {
-                binding.items.clear();
-            }
+            []< std::size_t... Is >( const std::index_sequence< Is... > ) static noexcept
+            {
+                ( []() static noexcept
+                {
+                    using current_binding = custom_rule_bindings_::at< Is >;
+                    current_binding::items.clear();
+                }(), ... );
+            }( std::make_index_sequence< custom_rule_bindings_::size >{} );
         }
         static auto show_help_info_()
         {
