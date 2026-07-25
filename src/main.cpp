@@ -337,11 +337,11 @@ namespace scltk
             if ( proc_handle == nullptr ) [[unlikely]] {
                 return false;
             }
-            DWORD size{ MAX_PATH };
-            win32_file_path_buffer_t buffer{};
-            if ( !QueryFullProcessImageNameW( proc_handle.get(), 0, buffer.data(), &size ) ) [[unlikely]] {
+            const auto proc_path{ get_proc_path( proc_handle ) };
+            if ( !proc_path.has_value() ) {
                 return false;
             }
+            const auto& [ buffer, size ]{ proc_path.value() };
             for ( const auto original_token :
                   std::wstring_view{ buffer.data(), size } | std::views::drop( L"C:\\"sv.size() ) | std::views::split( L'\\' ) )
             {
@@ -375,11 +375,11 @@ namespace scltk
             if ( proc_handle == nullptr ) [[unlikely]] {
                 return false;
             }
-            DWORD size{ MAX_PATH };
-            win32_file_path_buffer_t buffer{};
-            if ( !QueryFullProcessImageNameW( proc_handle.get(), 0, buffer.data(), &size ) ) [[unlikely]] {
+            const auto proc_path{ get_proc_path( proc_handle ) };
+            if ( !proc_path.has_value() ) {
                 return false;
             }
+            const auto& [ buffer, size ]{ proc_path.value() };
             std::wstring_view path_view{ buffer.data(), size };
             if ( path_view.starts_with( LR"(C:\Program Files\)"sv ) ) {
                 path_view.remove_prefix( LR"(C:\Program Files\)"sv.size() );
@@ -424,11 +424,11 @@ namespace scltk
             if ( proc_handle.get() == nullptr ) [[unlikely]] {
                 return false;
             }
-            win32_file_path_buffer_t path{};
-            DWORD size{ MAX_PATH };
-            if ( !QueryFullProcessImageNameW( proc_handle.get(), 0, path.data(), &size ) ) [[unlikely]] {
+            const auto proc_path{ get_proc_path( proc_handle ) };
+            if ( !proc_path.has_value() ) {
                 return false;
             }
+            const auto& [ path, _ ]{ proc_path.value() };
             if ( get_sign_name( path ).contains( L"Nanjing Wangya Computer"sv ) ) {
                 return true;
             }
