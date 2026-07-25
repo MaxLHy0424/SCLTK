@@ -538,6 +538,8 @@ namespace scltk
         using regex_item_type  = std::pmr::vector< details_::scoped_tre_wregex >;
         using string_item_type = std::pmr::vector< std::pmr::wstring >;
         regex_item_type proc_names{ unsynced_mem_pool };
+        regex_item_type proc_paths{ unsynced_mem_pool };
+        regex_item_type proc_signs{ unsynced_mem_pool };
         string_item_type serv_names{ unsynced_mem_pool };
         string_item_type crack_helpers{ unsynced_mem_pool };
         string_item_type restore_helpers{ unsynced_mem_pool };
@@ -834,6 +836,8 @@ namespace scltk
         };
         using custom_rule_bindings_ = cpp_utils::type_list<
           custom_rule_binding_< L"proc_name:"_cs, custom_rules.proc_names >,
+          custom_rule_binding_< L"proc_path:"_cs, custom_rules.proc_paths >,
+          custom_rule_binding_< L"proc_sign:"_cs, custom_rules.proc_signs >,
           custom_rule_binding_< L"serv_name:"_cs, custom_rules.serv_names >,
           custom_rule_binding_< L"crack_helper:"_cs, custom_rules.crack_helpers >,
           custom_rule_binding_< L"restore_helper:"_cs, custom_rules.restore_helpers > >;
@@ -1778,8 +1782,32 @@ namespace scltk
         static constexpr auto invoke_fn_is_target_proc{ true };
         static auto is_target_proc( const PROCESSENTRY32W& proc_entry )
         {
-            for ( const auto& proc_name : custom_rules.proc_names ) {
-                if ( proc_name.match( proc_entry.szExeFile ) ) {
+            for ( const auto& proc_name_rx : custom_rules.proc_names ) {
+                if ( proc_name_rx.match( proc_entry.szExeFile ) ) {
+                    return true;
+                }
+            }
+            const auto proc_handle{
+              proc_snapshot.wrapped_nt_open_process( proc_entry.th32ProcessID, PROCESS_QUERY_LIMITED_INFORMATION ) };
+            if ( proc_handle == nullptr ) {
+                return false;
+            }
+            const auto proc_path{ details_::get_proc_path( proc_handle ) };
+            if ( !proc_path.has_value() ) {
+                return false;
+            }
+            const auto& [ proc_path_buffer, _ ]{ proc_path.value() };
+            for ( const auto& proc_path_rx : custom_rules.proc_paths ) {
+                if ( proc_path_rx.match( proc_path_buffer.data() ) ) {
+                    return true;
+                }
+            }
+            const auto proc_sign{ details_::get_sign_name( proc_path_buffer ) };
+            if ( !proc_sign.has_value() ) {
+                return false;
+            }
+            for ( const auto& proc_sign_rx : custom_rules.proc_signs ) {
+                if ( proc_sign_rx.match( proc_sign.value().data() ) ) {
                     return true;
                 }
             }
