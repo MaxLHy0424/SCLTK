@@ -125,11 +125,7 @@ namespace scltk
                 }
                 return regwexec( &rx_, text, 0, nullptr, 0 ) == 0;
             }
-            operator std::pmr::wstring()
-            {
-                return pattern_;
-            }
-            operator std::wstring_view() noexcept
+            operator std::wstring_view() const noexcept
             {
                 return pattern_;
             }
@@ -526,11 +522,12 @@ namespace scltk
     } > >;
     struct runtime_rule_node final
     {
-        using item_type = std::pmr::vector< std::pmr::wstring >;
-        item_type proc_names{ unsynced_mem_pool };
-        item_type serv_names{ unsynced_mem_pool };
-        item_type crack_helpers{ unsynced_mem_pool };
-        item_type restore_helpers{ unsynced_mem_pool };
+        using regex_item_type  = std::pmr::vector< details_::scoped_tre_wregex >;
+        using string_item_type = std::pmr::vector< std::pmr::wstring >;
+        regex_item_type proc_names{ unsynced_mem_pool };
+        string_item_type serv_names{ unsynced_mem_pool };
+        string_item_type crack_helpers{ unsynced_mem_pool };
+        string_item_type restore_helpers{ unsynced_mem_pool };
     };
     runtime_rule_node custom_rules;
     namespace details_
@@ -1768,8 +1765,8 @@ namespace scltk
         static constexpr auto invoke_fn_is_target_proc{ true };
         static auto is_target_proc( const PROCESSENTRY32W& proc_entry )
         {
-            for ( const auto& proc : custom_rules.proc_names ) {
-                if ( _wcsicmp( proc_entry.szExeFile, proc.data() ) == 0 ) {
+            for ( const auto& proc_name : custom_rules.proc_names ) {
+                if ( proc_name.match( proc_entry.szExeFile ) ) {
                     return true;
                 }
             }
@@ -1783,17 +1780,17 @@ namespace scltk
         static constexpr auto invoke_fn_enable_and_start_servs{ true };
         static auto enable_and_start_servs() noexcept
         {
-            for ( const auto& serv : custom_rules.serv_names ) {
-                ( void ) cpp_utils::set_service_start_type( serv, cpp_utils::service_flag::auto_start );
-                ( void ) cpp_utils::start_service_with_dependencies( serv, unsynced_mem_pool );
+            for ( const auto& serv_name : custom_rules.serv_names ) {
+                ( void ) cpp_utils::set_service_start_type( serv_name, cpp_utils::service_flag::auto_start );
+                ( void ) cpp_utils::start_service_with_dependencies( serv_name, unsynced_mem_pool );
             }
         }
         static constexpr auto invoke_fn_disable_and_stop_servs{ true };
         static auto disable_and_stop_servs() noexcept
         {
-            for ( const auto& serv : custom_rules.serv_names ) {
-                ( void ) cpp_utils::set_service_start_type( serv, cpp_utils::service_flag::disabled_start );
-                ( void ) cpp_utils::stop_service_with_dependencies( serv, unsynced_mem_pool );
+            for ( const auto& serv_name : custom_rules.serv_names ) {
+                ( void ) cpp_utils::set_service_start_type( serv_name, cpp_utils::service_flag::disabled_start );
+                ( void ) cpp_utils::stop_service_with_dependencies( serv_name, unsynced_mem_pool );
             }
         }
         static auto execute_helpers_( const std::pmr::vector< std::pmr::wstring >& helpers ) noexcept
