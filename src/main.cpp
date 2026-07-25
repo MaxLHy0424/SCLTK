@@ -125,6 +125,14 @@ namespace scltk
                 }
                 return regwexec( &rx_, text, 0, nullptr, 0 ) == 0;
             }
+            operator std::pmr::wstring()
+            {
+                return pattern_;
+            }
+            operator std::wstring_view() noexcept
+            {
+                return pattern_;
+            }
             auto operator=( const scoped_tre_wregex& ) -> scoped_tre_wregex& = delete;
             auto operator=( scoped_tre_wregex&& other ) noexcept -> scoped_tre_wregex&
             {
