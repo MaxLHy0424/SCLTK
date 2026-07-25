@@ -1616,8 +1616,8 @@ namespace scltk
                     return true;
                 }
             }
-            if (
-              [ & ]< typename Node >
+            if ( (
+                   [ & ]< typename Node >
             {
                 if constexpr ( !std::is_same_v< decltype( Node::extra_proc_matcher ), default_extra_proc_matcher_type > ) {
                     return Node::extra_proc_matcher( proc_entry );
@@ -1625,7 +1625,7 @@ namespace scltk
                     return false;
                 }
             }.template operator()< BuiltinRuleNodes >()
-              || ... )
+                   || ... ) )
             {
                 return true;
             }
