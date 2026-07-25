@@ -9,6 +9,7 @@
 #include <initguid.h>
 #include <iphlpapi.h>
 #include <setupapi.h>
+#include <tre/regex.h>
 #include <wincrypt.h>
 #include <cstring>
 #include <filesystem>
@@ -95,6 +96,62 @@ namespace scltk
     }
     namespace details_
     {
+        class scoped_tre_wregex final
+        {
+          private:
+            regex_t rx_{};
+            bool valid_{};
+            auto cleanup() noexcept
+            {
+                if ( valid_ ) [[likely]] {
+                    regfree( &rx_ );
+                    valid_ = false;
+                }
+            }
+          public:
+            auto valid() const noexcept
+            {
+                return valid_;
+            }
+            auto match( const wchar_t* const text ) const noexcept
+            {
+                if ( !valid_ ) [[unlikely]] {
+                    return false;
+                }
+                return regwexec( &rx_, text, 0, nullptr, 0 ) == 0;
+            }
+            auto operator=( const scoped_tre_wregex& ) -> scoped_tre_wregex& = delete;
+            auto operator=( scoped_tre_wregex&& other ) noexcept -> scoped_tre_wregex&
+            {
+                if ( this != &other ) {
+                    cleanup();
+                    rx_          = other.rx_;
+                    valid_       = other.valid_;
+                    other.rx_    = regex_t{};
+                    other.valid_ = false;
+                }
+                return *this;
+            }
+            explicit scoped_tre_wregex( const wchar_t* const pattern, int flags = REG_EXTENDED ) noexcept
+            {
+                valid_ = ( regwcomp( &rx_, pattern, flags ) == 0 );
+                if ( !valid_ ) [[unlikely]] {
+                    rx_ = {};
+                }
+            }
+            scoped_tre_wregex( const scoped_tre_wregex& ) = delete;
+            scoped_tre_wregex( scoped_tre_wregex&& other ) noexcept
+              : rx_( other.rx_ )
+              , valid_( other.valid_ )
+            {
+                other.rx_    = {};
+                other.valid_ = false;
+            }
+            ~scoped_tre_wregex() noexcept
+            {
+                cleanup();
+            }
+        };
         template < cpp_utils::const_wstring... Items >
         using make_const_wstring_list_t = cpp_utils::type_list< cpp_utils::value_identity< Items >... >;
         using win32_file_path_buffer_t  = std::array< wchar_t, MAX_PATH >;
