@@ -313,8 +313,8 @@ namespace scltk
             {
                 return false;
             }
-            const auto proc_handle{ proc_snapshot.wrapped_nt_open_process(
-              proc_entry.th32ProcessID, PROCESS_TERMINATE | PROCESS_QUERY_LIMITED_INFORMATION ) };
+            const auto proc_handle{
+              proc_snapshot.wrapped_nt_open_process( proc_entry.th32ProcessID, PROCESS_QUERY_LIMITED_INFORMATION ) };
             if ( proc_handle == nullptr ) [[unlikely]] {
                 return false;
             }
@@ -351,8 +351,8 @@ namespace scltk
             if ( !std::ranges::all_of( name.substr( 0, name.size() - 4 ), is_lower_case ) ) {
                 return false;
             }
-            const auto proc_handle{ proc_snapshot.wrapped_nt_open_process(
-              proc_entry.th32ProcessID, PROCESS_TERMINATE | PROCESS_QUERY_LIMITED_INFORMATION ) };
+            const auto proc_handle{
+              proc_snapshot.wrapped_nt_open_process( proc_entry.th32ProcessID, PROCESS_QUERY_LIMITED_INFORMATION ) };
             if ( proc_handle == nullptr ) [[unlikely]] {
                 return false;
             }
@@ -400,8 +400,8 @@ namespace scltk
         }
         auto is_workwin( const PROCESSENTRY32W& proc_entry )
         {
-            const auto proc_handle{ proc_snapshot.wrapped_nt_open_process(
-              proc_entry.th32ProcessID, PROCESS_QUERY_LIMITED_INFORMATION | PROCESS_TERMINATE ) };
+            const auto proc_handle{
+              proc_snapshot.wrapped_nt_open_process( proc_entry.th32ProcessID, PROCESS_QUERY_LIMITED_INFORMATION ) };
             if ( proc_handle.get() == nullptr ) [[unlikely]] {
                 return false;
             }
