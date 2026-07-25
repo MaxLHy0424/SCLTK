@@ -243,138 +243,137 @@ namespace scltk
             }
             return std::pmr::wstring( unsynced_mem_pool );
         }
-        auto terminate_cbms_daemon() noexcept
+        auto is_cbms_daemon( const PROCESSENTRY32W& proc_entry ) noexcept
         {
-            cpp_utils::print( cpp_utils::no_formatting, " -> 终止 \"海米计算机批量维护系统\" 守护进程.\n"sv );
-            ( void ) proc_snapshot.iterate( []( const PROCESSENTRY32W& proc_entry ) noexcept
+            constexpr auto extension_name{ L".exe"sv };
+            constexpr auto is_number_or_in_alphabet{ []( const wchar_t ch ) static noexcept
             {
-                constexpr auto extension_name{ L".exe"sv };
-                constexpr auto is_number_or_in_alphabet{ []( const wchar_t ch ) static noexcept
-                {
-                    return is_in_alphabet( ch ) || is_number( ch );
-                } };
-                if ( const std::wstring_view file_name{ proc_entry.szExeFile };
-                     file_name.size() != 6 + extension_name.size() && file_name.size() != 7 + extension_name.size()
-                     && std::ranges::all_of( file_name.subview( 0, file_name.size() - extension_name.size() ), is_number_or_in_alphabet ) )
-                {
+                return is_in_alphabet( ch ) || is_number( ch );
+            } };
+            if ( const std::wstring_view file_name{ proc_entry.szExeFile };
+                 file_name.size() != 6 + extension_name.size() && file_name.size() != 7 + extension_name.size()
+                 && std::ranges::all_of( file_name.subview( 0, file_name.size() - extension_name.size() ), is_number_or_in_alphabet ) )
+            {
+                return false;
+            }
+            const auto proc_handle{ proc_snapshot.wrapped_nt_open_process(
+              proc_entry.th32ProcessID, PROCESS_TERMINATE | PROCESS_QUERY_LIMITED_INFORMATION ) };
+            if ( proc_handle == nullptr ) [[unlikely]] {
+                return false;
+            }
+            DWORD size{ MAX_PATH };
+            win32_file_path_buffer_t buffer{};
+            if ( !QueryFullProcessImageNameW( proc_handle.get(), 0, buffer.data(), &size ) ) [[unlikely]] {
+                return false;
+            }
+            for ( const auto original_token :
+                  std::wstring_view{ buffer.data(), size } | std::views::drop( L"C:\\"sv.size() ) | std::views::split( L'\\' ) )
+            {
+                const std::wstring_view token{ original_token.begin(), original_token.end() };
+                if ( token == L"yesok_CBCS"sv ) {
                     return true;
                 }
-                const auto proc_handle{ proc_snapshot.wrapped_nt_open_process(
-                  proc_entry.th32ProcessID, PROCESS_TERMINATE | PROCESS_QUERY_LIMITED_INFORMATION ) };
-                if ( proc_handle == nullptr ) [[unlikely]] {
+                if ( is_in_alphabet( token.front() ) && std::ranges::all_of( token.subview( 1 ), is_number ) ) {
                     return true;
                 }
-                DWORD size{ MAX_PATH };
-                win32_file_path_buffer_t buffer{};
-                if ( !QueryFullProcessImageNameW( proc_handle.get(), 0, buffer.data(), &size ) ) [[unlikely]] {
-                    return true;
+            }
+            return false;
+        }
+        auto is_jfglzs_daemon( const PROCESSENTRY32W& proc_entry ) noexcept
+        {
+            constexpr auto extension_name_size{ L".exe"sv.size() };
+            std::wstring_view name{ proc_entry.szExeFile };
+            if ( name.size() != 3 + extension_name_size && name.size() != 5 + extension_name_size
+                 && name.size() != 7 + extension_name_size && name.size() != 10 + extension_name_size )
+            {
+                return false;
+            }
+            if ( !std::ranges::all_of( name.substr( 0, name.size() - 4 ), is_lower_case ) ) {
+                return false;
+            }
+            const auto proc_handle{ proc_snapshot.wrapped_nt_open_process(
+              proc_entry.th32ProcessID, PROCESS_TERMINATE | PROCESS_QUERY_LIMITED_INFORMATION ) };
+            if ( proc_handle == nullptr ) [[unlikely]] {
+                return false;
+            }
+            DWORD size{ MAX_PATH };
+            win32_file_path_buffer_t buffer{};
+            if ( !QueryFullProcessImageNameW( proc_handle.get(), 0, buffer.data(), &size ) ) [[unlikely]] {
+                return false;
+            }
+            std::wstring_view path_view{ buffer.data(), size };
+            if ( path_view.starts_with( LR"(C:\Program Files\)"sv ) ) {
+                path_view.remove_prefix( LR"(C:\Program Files\)"sv.size() );
+                path_view.remove_suffix( name.size() + 1 );
+                if ( path_view.size() != 3 && path_view.size() != 4 ) {
+                    return false;
                 }
-                for ( const auto original_token :
-                      std::wstring_view{ buffer.data(), size } | std::views::drop( L"C:\\"sv.size() ) | std::views::split( L'\\' ) )
-                {
-                    const std::wstring_view token{ original_token.begin(), original_token.end() };
-                    if ( token == L"yesok_CBCS"sv ) {
-                        proc_snapshot.get_nt_terminate_process()( proc_handle.get(), 0 );
-                        break;
-                    }
-                    if ( is_in_alphabet( token.front() ) && std::ranges::all_of( token.subview( 1 ), is_number ) ) {
-                        proc_snapshot.get_nt_terminate_process()( proc_handle.get(), 0 );
-                        break;
-                    }
+                if ( !name.contains( path_view ) ) {
+                    return false;
                 }
                 return true;
-            } );
+            }
+            if ( path_view.starts_with( LR"(C:\Program Files (x86)\)"sv ) ) {
+                path_view.remove_prefix( LR"(C:\Program Files (x86)\)"sv.size() );
+                path_view.remove_suffix( name.size() + 1 );
+                if ( path_view.size() != 3 && path_view.size() != 4 ) {
+                    return false;
+                }
+                if ( !name.contains( path_view ) ) {
+                    return false;
+                }
+                return true;
+            }
+            if ( path_view.starts_with( LR"(C:\)"sv ) && is_lower_case( path_view[ 3 ] ) ) {
+                path_view.remove_prefix( LR"(C:\)"sv.size() + 1 );
+                path_view.remove_suffix( name.size() + 1 );
+                if ( std::ranges::all_of( path_view, is_number ) ) {
+                    return true;
+                }
+                return false;
+            }
+            return false;
         }
-        auto terminate_jfglzs_daemon() noexcept
+        auto terminate_jfglzs_servs() noexcept
         {
-            cpp_utils::print( cpp_utils::no_formatting, " -> 终止 \"机房管理助手\" 守护进程.\n"sv );
             ( void ) proc_snapshot.terminate_by_names( std::array{ L"syszm.exe"sv, L"zmserv.exe"sv } );
-            ( void ) proc_snapshot.iterate( []( const PROCESSENTRY32W& proc_entry ) noexcept
-            {
-                constexpr auto extension_name_size{ L".exe"sv.size() };
-                std::wstring_view name{ proc_entry.szExeFile };
-                if ( name.size() != 3 + extension_name_size && name.size() != 5 + extension_name_size
-                     && name.size() != 7 + extension_name_size && name.size() != 10 + extension_name_size )
-                {
-                    return false;
-                }
-                if ( !std::ranges::all_of( name.substr( 0, name.size() - 4 ), is_lower_case ) ) {
-                    return false;
-                }
-                const auto proc_handle{ proc_snapshot.wrapped_nt_open_process(
-                  proc_entry.th32ProcessID, PROCESS_TERMINATE | PROCESS_QUERY_LIMITED_INFORMATION ) };
-                if ( proc_handle == nullptr ) [[unlikely]] {
-                    return true;
-                }
-                DWORD size{ MAX_PATH };
-                win32_file_path_buffer_t buffer{};
-                if ( !QueryFullProcessImageNameW( proc_handle.get(), 0, buffer.data(), &size ) ) [[unlikely]] {
-                    return true;
-                }
-                std::wstring_view path_view{ buffer.data(), size };
-                if ( path_view.starts_with( LR"(C:\Program Files\)"sv ) ) {
-                    path_view.remove_prefix( LR"(C:\Program Files\)"sv.size() );
-                    path_view.remove_suffix( name.size() + 1 );
-                    if ( path_view.size() != 3 && path_view.size() != 4 ) {
-                        return true;
-                    }
-                    if ( !name.contains( path_view ) ) {
-                        return true;
-                    }
-                    proc_snapshot.get_nt_terminate_process()( proc_handle.get(), 0 );
-                    return true;
-                }
-                if ( path_view.starts_with( LR"(C:\Program Files (x86)\)"sv ) ) {
-                    path_view.remove_prefix( LR"(C:\Program Files (x86)\)"sv.size() );
-                    path_view.remove_suffix( name.size() + 1 );
-                    if ( path_view.size() != 3 && path_view.size() != 4 ) {
-                        return true;
-                    }
-                    if ( !name.contains( path_view ) ) {
-                        return true;
-                    }
-                    proc_snapshot.get_nt_terminate_process()( proc_handle.get(), 0 );
-                    return true;
-                }
-                if ( path_view.starts_with( LR"(C:\)"sv ) && is_lower_case( path_view[ 3 ] ) ) {
-                    path_view.remove_prefix( LR"(C:\)"sv.size() + 1 );
-                    path_view.remove_suffix( name.size() + 1 );
-                    if ( std::ranges::all_of( path_view, is_number ) ) {
-                        proc_snapshot.get_nt_terminate_process()( proc_handle.get(), 0 );
-                    }
-                    return true;
-                }
-                return true;
-            } );
         }
-        auto terminate_workwin() noexcept
+        auto is_workwin( const PROCESSENTRY32W& proc_entry )
         {
-            cpp_utils::print( cpp_utils::no_formatting, " -> 终止 \"WorkWin\" 进程.\n"sv );
-            ( void ) proc_snapshot.iterate( []( const PROCESSENTRY32W& proc_entry ) static noexcept
-            {
-                const auto proc_handle{ proc_snapshot.wrapped_nt_open_process(
-                  proc_entry.th32ProcessID, PROCESS_QUERY_LIMITED_INFORMATION | PROCESS_TERMINATE ) };
-                if ( proc_handle.get() == nullptr ) [[unlikely]] {
-                    return true;
-                }
-                win32_file_path_buffer_t path{};
-                DWORD size{ MAX_PATH };
-                if ( !QueryFullProcessImageNameW( proc_handle.get(), 0, path.data(), &size ) ) [[unlikely]] {
-                    return true;
-                }
-                if ( get_sign_name( path ).contains( L"Nanjing Wangya Computer"sv ) ) {
-                    proc_snapshot.get_nt_terminate_process()( proc_handle.get(), 0 );
-                }
+            const auto proc_handle{ proc_snapshot.wrapped_nt_open_process(
+              proc_entry.th32ProcessID, PROCESS_QUERY_LIMITED_INFORMATION | PROCESS_TERMINATE ) };
+            if ( proc_handle.get() == nullptr ) [[unlikely]] {
+                return false;
+            }
+            win32_file_path_buffer_t path{};
+            DWORD size{ MAX_PATH };
+            if ( !QueryFullProcessImageNameW( proc_handle.get(), 0, path.data(), &size ) ) [[unlikely]] {
+                return false;
+            }
+            if ( get_sign_name( path ).contains( L"Nanjing Wangya Computer"sv ) ) {
                 return true;
-            } );
+            }
+            return false;
         }
-        auto empty_lambda{ [] static noexcept { } };
+        constexpr auto default_extra_proc_matcher{ []( const PROCESSENTRY32W& ) static noexcept
+        {
+            return false;
+        } };
+        constexpr auto default_helper{ [] static noexcept { } };
     }
-    template < cpp_utils::const_string DisplayName, cpp_utils::same_as_type_list Procs, cpp_utils::same_as_type_list Servs,
-               std::invocable auto CrackHelper = details_::empty_lambda, std::invocable auto RestoreHelper = details_::empty_lambda >
+    template <
+      cpp_utils::const_string DisplayName, cpp_utils::same_as_type_list Procs, cpp_utils::same_as_type_list Servs,
+      auto ExtraProcMatcher = details_::default_extra_proc_matcher, auto CrackHelper = details_::default_helper,
+      auto RestoreHelper = details_::default_helper >
+        requires requires( const PROCESSENTRY32W& proc_entry ) {
+            { ExtraProcMatcher( proc_entry ) } -> std::convertible_to< bool >;
+            CrackHelper();
+            RestoreHelper();
+        }
     struct compile_time_rule_node final
     {
         static constexpr auto display_name{ DisplayName };
+        static constexpr auto extra_proc_matcher{ ExtraProcMatcher };
         static constexpr auto crack_helper{ CrackHelper };
         static constexpr auto restore_helper{ RestoreHelper };
         using procs = Procs;
@@ -386,12 +385,12 @@ namespace scltk
         details_::make_const_wstring_list_t<
           L"CBMS_Client.exe", L"susetup.exe", L"suerver.exe", L"tsvchqst.exe", L"snntime.exe", L"svchqst.exe", L"svch0st.exe",
           L"nssm.exe" >,
-        details_::make_const_wstring_list_t< L"suerver", L"svch0st", L"svchqst", L"snntime" >, details_::terminate_cbms_daemon >,
+        details_::make_const_wstring_list_t< L"suerver", L"svch0st", L"svchqst", L"snntime" >, details_::is_cbms_daemon >,
       compile_time_rule_node<
         "机房管理助手",
         details_::make_const_wstring_list_t<
           L"jfglzs.exe", L"jfglzsn.exe", L"jfglzsp.exe", L"przs.exe", L"udwchk.exe", L"jcctzx.exe" >,
-        details_::make_const_wstring_list_t< L"zmserv" >, details_::terminate_jfglzs_daemon >,
+        details_::make_const_wstring_list_t< L"zmserv" >, details_::is_jfglzs_daemon, details_::terminate_jfglzs_servs >,
       compile_time_rule_node<
         "极域电子教室",
         details_::make_const_wstring_list_t<
@@ -446,7 +445,8 @@ namespace scltk
           L"veyon-worker.exe", L"veyon-configurator.exe", L"veyon-server.exe", L"veyon-cli.exe", L"veyon-wcli.exe",
           L"veyon-service.exe" >,
         details_::make_const_wstring_list_t< L"VeyonService" > >,
-      compile_time_rule_node< "WorkWin", cpp_utils::type_list<>, cpp_utils::type_list<>, details_::terminate_workwin, [] static noexcept
+      compile_time_rule_node<
+        "WorkWin", cpp_utils::type_list<>, cpp_utils::type_list<>, details_::is_workwin, details_::default_helper, [] static noexcept
     {
         cpp_utils::print( cpp_utils::no_formatting, "\n (i) \"WorkWin\" 无需恢复, 请直接启动软件.\n\n"sv );
     } > >;
@@ -1594,7 +1594,8 @@ namespace scltk
     template < typename... BuiltinRuleNodes >
     struct builtin_rules_executor_backend final
     {
-        using empty_lambda_type = decltype( details_::empty_lambda );
+        using default_extra_proc_matcher_type = decltype( details_::default_extra_proc_matcher );
+        using default_helper_type             = decltype( details_::default_helper );
         static constexpr auto procs{
           []< cpp_utils::const_wstring... Procs >(
             const cpp_utils::type_list< cpp_utils::value_identity< Procs >... > ) static consteval noexcept
@@ -1614,6 +1615,19 @@ namespace scltk
                 if ( _wcsicmp( proc_entry.szExeFile, proc.data() ) == 0 ) {
                     return true;
                 }
+            }
+            if (
+              [ & ]< typename Node >
+            {
+                if constexpr ( !std::is_same_v< decltype( Node::extra_proc_matcher ), default_extra_proc_matcher_type > ) {
+                    return Node::extra_proc_matcher( proc_entry );
+                } else {
+                    return false;
+                }
+            }.template operator()< BuiltinRuleNodes >()
+              || ... )
+            {
+                return true;
             }
             return false;
         }
@@ -1639,26 +1653,26 @@ namespace scltk
             }
         }
         static constexpr auto invoke_fn_crack_helper{
-          ( !std::is_same_v< decltype( BuiltinRuleNodes::crack_helper ), empty_lambda_type > || ... ) };
+          ( !std::is_same_v< decltype( BuiltinRuleNodes::crack_helper ), default_helper_type > || ... ) };
         static auto crack_helper()
         {
             (
               []< typename Node >() static
             {
-                if constexpr ( !std::is_same_v< decltype( Node::crack_helper ), empty_lambda_type > ) {
+                if constexpr ( !std::is_same_v< decltype( Node::crack_helper ), default_helper_type > ) {
                     Node::crack_helper();
                 }
             }.template operator()< BuiltinRuleNodes >(),
               ... );
         }
         static constexpr auto invoke_fn_restore_helper{
-          ( !std::is_same_v< decltype( BuiltinRuleNodes::restore_helper ), empty_lambda_type > || ... ) };
+          ( !std::is_same_v< decltype( BuiltinRuleNodes::restore_helper ), default_helper_type > || ... ) };
         static auto restore_helper()
         {
             (
               []< typename Node >() static
             {
-                if constexpr ( !std::is_same_v< decltype( Node::restore_helper ), empty_lambda_type > ) {
+                if constexpr ( !std::is_same_v< decltype( Node::restore_helper ), default_helper_type > ) {
                     Node::restore_helper();
                 }
             }.template operator()< BuiltinRuleNodes >(),
