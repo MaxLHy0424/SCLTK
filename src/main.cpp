@@ -144,7 +144,7 @@ namespace scltk
             scoped_tre_wregex( const std::wstring_view pattern ) noexcept
               : pattern_( pattern, unsynced_mem_pool )
             {
-                valid_ = ( regwcomp( &rx_, pattern_.data(), REG_EXTENDED | REG_NOSUB | REG_ICASE ) == 0 );
+                valid_ = ( regwcomp( &rx_, pattern_.data(), REG_EXTENDED | REG_NOSUB ) == 0 );
                 if ( !valid_ ) [[unlikely]] {
                     rx_ = {};
                 }
@@ -889,7 +889,7 @@ namespace scltk
                 " 不符合格式的规则将会被忽略.\n"
                 " <item> 的类型由 <flag> 决定.\n"
                 " <flag> 说明后带 (RG) 的, 强制使用正则表达式匹配,\n"
-                " 使用 ERE (扩展正则表达式) 语法, 忽略大小写.\n"
+                " 使用 ERE (扩展正则表达式) 语法, 大小写敏感.\n"
                 " 其中, <flag> 有如下选项:\n"
                 " proc_name - Windows 进程名称 (RG).\n"
                 " serv_name - Windows 服务的服务名称.\n"
