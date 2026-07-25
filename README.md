@@ -110,7 +110,7 @@ SCLTK / SCLTK-Legacy 窗口相关选项。位于 `[ 选项 ]` 下。
 <flag>: <item>
 ```
 
-`<flag>` 说明后带 `（RG）` 的，强制使用正则表达式匹配，使用 ERE（扩展正则表达式）语法，忽略大小写。目前而言，SCLTK & SCLTK-Legacy 使用 `libtre` 处理正则表达式。
+`<flag>` 说明后带 `（RG）` 的，强制使用正则表达式匹配，使用 ERE（扩展正则表达式）语法，大小写敏感。目前而言，SCLTK & SCLTK-Legacy 使用 `libtre` 处理正则表达式。
 
 `<flag>` 有以下选项（区分大小写）：
 - `proc`：Windows 进程名称（RG）。
