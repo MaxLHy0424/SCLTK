@@ -901,23 +901,22 @@ namespace scltk
               .add_back( make_title_text< "[ 配  置 ]", 1 >.view() )
               .add_back( " < 返回 ", quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
               .add_back(
-                "\n 自定义规则格式为 <flag>: <item>\n"
-                " <flag> 后的冒号与 <item> 之间可以有若干空白字符.\n"
-                " 不符合格式的规则将会被忽略.\n"
-                " <item> 的类型由 <flag> 决定.\n"
-                " <flag> 说明后带 (RG) 的, 强制使用正则表达式匹配,\n"
-                " 使用 ERE (扩展正则表达式) 语法, 大小写敏感.\n"
-                " 其中, <flag> 有如下选项:\n"
-                " proc_name - Windows 进程名称 (RG).\n"
-                " serv_name - Windows 服务的服务名称.\n"
-                " crack_helper - 破解时执行的程序的命令行.\n"
-                " restore_helper - 恢复时执行的程序的命令行.\n\n"
-                " 使用示例:\n"
-                " [custom_rules]\n"
-                " proc_name: ^abc_client[0-9]{10}\\.exe$\n"
-                " serv: abc_eclass\n"
-                " crack_helper: \"abc toolkit.exe\" crack\n"
-                " restore_helper: \"abc toolkit.exe\" restore" )
+                "\n 自定义规则格式为 <flag>:{可选的若干空格}<item>\n"
+                " 说明内容带有 (RX) 的 <flag>, 使用正则表达式匹配\n"
+                " (扩展正则表达式语法, 大小写敏感).\n"
+                " 合法的 <flag> 如下 (大小写敏感):\n"
+                "  proc_name - 进程名称 (RX).\n"
+                "   示例: ^abc_client[0-9]{10}\\.exe$\n"
+                "  proc_path - 进程的文件的路径 (RX).\n"
+                "   示例: ^C:\\\\[a-z][0-9]{9}\\\\[a-z]{10}\\.exe$\n"
+                "  proc_sign - 进程的文件的数字签名的签名者 (RX).\n"
+                "   示例: ^ABC eClass [a-z]{5}$\n"
+                "  serv_name - 服务名称.\n"
+                "   示例: abc_eclass\n"
+                "  crack_helper - 破解时执行的程序的命令行.\n"
+                "   示例: \"abc toolkit.exe\" crack\n"
+                "  restore_helper - 恢复时执行的程序的命令行.\n"
+                "   示例: \"abc toolkit.exe\" restore"sv )
               .show();
             return func_back;
         }
