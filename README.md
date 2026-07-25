@@ -107,10 +107,10 @@ SCLTK / SCLTK-Legacy 窗口相关选项。位于 `[ 选项 ]` 下。
 一项自定义规则遵循以下格式：
 
 ```
-<flag>: <item>
+<flag>:{可选的若干空格}<item>
 ```
 
-`<flag>` 说明后带 `（RG）` 的，强制使用正则表达式匹配，使用 ERE（扩展正则表达式）语法，大小写敏感。目前而言，SCLTK & SCLTK-Legacy 使用 `libtre` 处理正则表达式。
+说明内容带有 `(RX)` 的 `<flag>`, 使用正则表达式匹配（扩展正则表达式语法, 大小写敏感）
 
 <details>
     <summary>扩展正则表达式语法说明</summary>
@@ -217,19 +217,13 @@ SCLTK / SCLTK-Legacy 窗口相关选项。位于 `[ 选项 ]` 下。
 </details>
 
 
-`<flag>` 有以下选项（区分大小写）：
-- `proc`：Windows 进程名称（RG）。
-- `serv`：Windows 服务的服务名称（**不是 “显示名称”**）。
+合法的 `<flag>` 如下（大小写敏感）：
+- `proc_name`：进程名称（RX）。
+- `proc_path`：进程的文件的路径（RX）。
+- `proc_sign`：进程的文件的数字签名的签名者（RX）。
+- `serv_name`：服务名称。
 - `crack_helper`：破解时执行的程序的命令行。
 - `restore_helper`：恢复时执行的程序的命令行。
-
-`<flag>` 后的冒号与 `<item>` 之间可以有若干个空白字符。
-
-`<item>` 的类型由 `<flag>` 决定。
-
-如果 `<item>` 为空，该项规则将会被忽略。
-
-如果自定义规则不符合格式，则会被忽略。
 
 > [!NOTE]
 > 可在 “配置” 页面下的 “自定义规则” 中，点击 `> 查看帮助信息` 阅读上述信息的简略版本。
@@ -241,7 +235,9 @@ SCLTK / SCLTK-Legacy 窗口相关选项。位于 `[ 选项 ]` 下。
 ```ini
 [custom_rules]
 proc_name: ^abc_client[0-9]{10}\.exe$
-serv: abc_eclass
+proc_path: ^C:\\[a-z][0-9]{9}\\[a-z]{10}\.exe$
+proc_sign: ^ABC eClass [a-z]{5}$
+serv_name: abc_eclass
 crack_helper: "abc toolkit.exe" crack
 restore_helper: "abc toolkit.exe" restore
 ```
