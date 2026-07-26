@@ -22,6 +22,7 @@
 # include "../meta/mainline/info.h"
 #endif
 DEFINE_GUID( GUID_DEVCLASS_NET, 0x4d36e972, 0xe325, 0x11ce, 0xbf, 0xc1, 0x08, 0x00, 0x2b, 0xe1, 0x03, 0x18 );
+extern "C" BOOL WINAPI DnsFlushResolverCache();
 namespace scltk
 {
     using namespace std::chrono_literals;
@@ -1474,22 +1475,10 @@ namespace scltk
             clear_winhttp_proxy();
             clear_wininet_proxy();
         }
-        using scoped_module_handle = std::unique_ptr< std::remove_pointer_t< HMODULE >, decltype( []( const HMODULE h )
-        {
-            FreeLibrary( h );
-        } ) >;
         auto flush_dns() noexcept
         {
             cpp_utils::print( cpp_utils::no_formatting, " -> 刷新 DNS 缓存.\n"sv );
-            const scoped_module_handle dnsapi{ LoadLibraryW( L"dnsapi.dll" ) };
-            if ( dnsapi == nullptr ) [[unlikely]] {
-                return;
-            }
-            const auto dns_flush_resolver_cache{
-              std::bit_cast< BOOL( WINAPI* )() noexcept >( GetProcAddress( dnsapi.get(), "DnsFlushResolverCache" ) ) };
-            if ( dns_flush_resolver_cache != nullptr ) [[likely]] {
-                dns_flush_resolver_cache();
-            }
+            ( void ) DnsFlushResolverCache();
         }
         auto set_device_state( const HDEVINFO device_info, SP_DEVINFO_DATA* const p_device_info_data, const bool enabled ) noexcept
         {
