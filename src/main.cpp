@@ -11,6 +11,7 @@
 #include <setupapi.h>
 #include <tre/regex.h>
 #include <wincrypt.h>
+#include <charconv>
 #include <cstring>
 #include <filesystem>
 #include <fstream>
@@ -276,6 +277,20 @@ namespace scltk
             ( result.append( std::forward< Args >( strings ) ), ... );
             return result;
         }
+        auto convert_i16_to_hex_wstring_with_fields( unsigned short n ) noexcept
+        {
+            char a[ 4 ]{};
+            const auto ret{ std::to_chars( a, a + 4, n, 16 ) };
+            const auto written_size{ ret.ptr - a };
+            std::array< wchar_t, 4 > str{};
+            for ( auto i{ 0uz }; i < 4uz - written_size; ++i ) {
+                str[ i ] = L'0';
+            }
+            for ( auto i{ 4uz - written_size }; i < 4; ++i ) {
+                str[ i ] = static_cast< wchar_t >( std::toupper( a[ i - 4uz + written_size ] ) );
+            }
+            return str;
+        }
         auto press_any_key_to_return() noexcept
         {
             cpp_utils::print( cpp_utils::no_formatting, "\n\n 请按任意键返回."sv );
@@ -314,6 +329,66 @@ namespace scltk
                 return name_buf;
             }
             return std::nullopt;
+        }
+        auto get_version_info( const win32_file_path_buffer_t& path )
+        {
+            using targets = make_const_wstring_list_t< L"FileDescription", L"ProductName", L"LegalCopyright" >;
+            std::array< std::optional< std::pmr::wstring >, targets::size > result{};
+            DWORD handle{};
+            DWORD size{ GetFileVersionInfoSizeW( path.data(), &handle ) };
+            if ( size == 0 ) {
+                return result;
+            }
+            std::pmr::vector< BYTE > version_info_buffer( size, unsynced_mem_pool );
+            if ( !GetFileVersionInfoW( path.data(), handle, size, version_info_buffer.data() ) ) {
+                return result;
+            }
+            struct translation_buffer_type final
+            {
+                WORD language;
+                WORD codepage;
+            };
+            LPVOID translation_buffer;
+            UINT translate{ 0 };
+            if ( !VerQueryValueW( version_info_buffer.data(), LR"(\VarFileInfo\Translation)", &translation_buffer, &translate ) )
+            {
+                return result;
+            }
+            if ( translate < sizeof( translation_buffer_type ) ) {
+                return result;
+            }
+            constexpr auto sub_block_size{ []< std::size_t... Is >( std::index_sequence< Is... > ) static consteval noexcept
+            {
+                return std::ranges::max( { targets::template at< Is >::value.size()... } )
+                     + LR"(\StringFileInfo\12345678\)"sv.size() + 1;
+            }( std::make_index_sequence< targets::size >{} ) };
+            wchar_t sub_block[ sub_block_size ];
+            LPVOID version_info_buffer_ptr{ nullptr };
+            UINT length{ 0 };
+            [ & ]< std::size_t... Is >( std::index_sequence< Is... > )
+            {
+                ( [ & ]
+                {
+                    constexpr auto current_target{ targets::template at< Is >::value.view() };
+                    std::memset( sub_block, 0, sizeof( sub_block ) );
+                    [[maybe_unused]] const auto step1{ std::ranges::copy( LR"(\StringFileInfo\)"sv, sub_block ) };
+                    [[maybe_unused]] const auto step2{ std::ranges::copy(
+                      convert_i16_to_hex_wstring_with_fields(
+                        reinterpret_cast< translation_buffer_type* >( translation_buffer )->language ),
+                      step1.out ) };
+                    [[maybe_unused]] const auto step3{ std::ranges::copy(
+                      convert_i16_to_hex_wstring_with_fields(
+                        reinterpret_cast< translation_buffer_type* >( translation_buffer )->codepage ),
+                      step2.out ) };
+                    [[maybe_unused]] const auto step4{ std::ranges::copy( L"\\"sv, step3.out ) };
+                    [[maybe_unused]] const auto step5{ std::ranges::copy( current_target, step4.out ) };
+                    if ( VerQueryValueW( version_info_buffer.data(), sub_block, &version_info_buffer_ptr, &length ) ) {
+                        result[ Is ]
+                          = std::pmr::wstring( static_cast< wchar_t* >( version_info_buffer_ptr ), length, unsynced_mem_pool );
+                    }
+                }(), ... );
+            }( std::make_index_sequence< targets::size >{} );
+            return result;
         }
         auto is_cbms_daemon( const PROCESSENTRY32W& proc_entry ) noexcept
         {
