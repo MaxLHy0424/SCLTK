@@ -14,8 +14,16 @@
 
 # 📦 获取
 
+**[SCLTK & SCLTK-Legacy 发行版页面](https://github.com/MaxLHy0424/SCLTK/releases)**
+
+**官方下载站**：
+
+- [SCLTK & SCLTK-Legacy 下载站（Vercel）](https://scltk.maxlhy0424.is-a.dev)
+- [SCLTK & SCLTK-Legacy 下载站（Cloudflare Pages）](https://scltk.pages.dev)
+- [SCLTK & SCLTK-Legacy 下载站（PinMe）](https://scltk.pinme.dev)
+
 > [!NOTE]
-> SCLTK & SCLTK-Legacy 可从 [SCLTK & SCLTK-Legacy 下载站](https://scltk.maxlhy0424.is-a.dev)获取。如需自行部署，请转到 [SCLTK-Website-Template](https://github.com/MaxLHy0424/SCLTK-Website-Template)。
+> “SCLTK & SCLTK-Legacy 下载站” 完全开源。如需自行部署，请转到 [SCLTK-Website-Template](https://github.com/MaxLHy0424/SCLTK-Website-Template)。
 
 | 主版本 | 最新正式发行版                                                              | 状态       | 生命周期              |
 | ------ | --------------------------------------------------------------------------- | ---------- | --------------------- |
