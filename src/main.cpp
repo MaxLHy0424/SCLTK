@@ -611,6 +611,7 @@ namespace scltk
         regex_item_type proc_names{ unsynced_mem_pool };
         regex_item_type proc_paths{ unsynced_mem_pool };
         regex_item_type proc_signs{ unsynced_mem_pool };
+        regex_item_type proc_vinfos{ unsynced_mem_pool };
         string_item_type serv_names{ unsynced_mem_pool };
         string_item_type crack_helpers{ unsynced_mem_pool };
         string_item_type restore_helpers{ unsynced_mem_pool };
@@ -909,6 +910,7 @@ namespace scltk
           custom_rule_binding_< L"proc_name:"_cs, custom_rules.proc_names >,
           custom_rule_binding_< L"proc_path:"_cs, custom_rules.proc_paths >,
           custom_rule_binding_< L"proc_sign:"_cs, custom_rules.proc_signs >,
+          custom_rule_binding_< L"proc_vinfo:"_cs, custom_rules.proc_vinfos >,
           custom_rule_binding_< L"serv_name:"_cs, custom_rules.serv_names >,
           custom_rule_binding_< L"crack_helper:"_cs, custom_rules.crack_helpers >,
           custom_rule_binding_< L"restore_helper:"_cs, custom_rules.restore_helpers > >;
@@ -985,10 +987,13 @@ namespace scltk
                 " 合法的 <flag> 如下 (大小写敏感):\n"
                 "  proc_name - 进程名称 (RX).\n"
                 "   示例: ^abc_client[0-9]{10}\\.exe$\n"
-                "  proc_path - 进程的文件的路径 (RX).\n"
+                "  proc_path - 进程文件的路径 (RX).\n"
                 "   示例: ^C:\\\\[a-z][0-9]{9}\\\\[a-z]{10}\\.exe$\n"
-                "  proc_sign - 进程的文件的数字签名的签名者 (RX).\n"
+                "  proc_sign - 进程文件的数字签名签名者 (RX).\n"
                 "   示例: ^ABC eClass [a-z]{5}$\n"
+                "  proc_vinfo\n"
+                "  - 进程文件的 \"文件说明\" \"产品名称\" \"版权\" (RX).\n"
+                "   示例: ^Copyright [0-9]{4} ABC eClass\\.$\n"
                 "  serv_name - 服务名称.\n"
                 "   示例: abc_eclass\n"
                 "  crack_helper - 破解时执行的程序的命令行.\n"
@@ -1880,12 +1885,22 @@ namespace scltk
                 }
             }
             const auto proc_sign{ details_::get_sign_name( proc_path_buffer ) };
-            if ( !proc_sign.has_value() ) {
-                return false;
+            if ( proc_sign.has_value() ) {
+                for ( const auto& proc_sign_rx : custom_rules.proc_signs ) {
+                    if ( proc_sign_rx.match( proc_sign.value().data() ) ) {
+                        return true;
+                    }
+                }
             }
-            for ( const auto& proc_sign_rx : custom_rules.proc_signs ) {
-                if ( proc_sign_rx.match( proc_sign.value().data() ) ) {
-                    return true;
+            const auto proc_version_info_items{ details_::get_version_info( proc_path_buffer ) };
+            for ( const auto& item : proc_version_info_items ) {
+                if ( !item.has_value() ) {
+                    continue;
+                }
+                for ( const auto& proc_vinfo_rx : custom_rules.proc_vinfos ) {
+                    if ( proc_vinfo_rx.match( item.value().c_str() ) ) {
+                        return true;
+                    }
                 }
             }
             return false;
