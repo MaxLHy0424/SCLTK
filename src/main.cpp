@@ -1668,18 +1668,18 @@ namespace scltk
                 cpp_utils::print( cpp_utils::no_formatting, " (!) 进程快照初始化错误!\n"sv );
                 return;
             }
+            std::pmr::vector< cpp_utils::scoped_handle > proc_handles( unsynced_mem_pool );
+            proc_handles.reserve( (
+              []< typename Backend >() static
+            {
+                if constexpr ( Backend::invoke_fn_get_estimated_proc_handles_numbers ) {
+                    return Backend::get_estimated_proc_handles_numbers();
+                } else {
+                    return 0uz;
+                }
+            }.template operator()< Backends >()
+              + ... ) );
             if constexpr ( ( Backends::invoke_fn_is_target_proc || ... ) ) {
-                std::pmr::vector< cpp_utils::scoped_handle > proc_handles( unsynced_mem_pool );
-                proc_handles.reserve( (
-                  []< typename Backend >() static
-                {
-                    if constexpr ( Backend::invoke_fn_get_estimated_proc_handles_numbers ) {
-                        return Backend::get_estimated_proc_handles_numbers();
-                    } else {
-                        return 0uz;
-                    }
-                }.template operator()< Backends >()
-                  + ... ) );
                 ( void ) proc_snapshot.iterate( [ & ]( const PROCESSENTRY32W& proc_entry )
                 {
                     if ( !(
@@ -1702,16 +1702,16 @@ namespace scltk
                     }
                     return true;
                 } );
-                if ( enabled_suspend_process ) {
-                    cpp_utils::print( cpp_utils::no_formatting, " -> 挂起进程.\n"sv );
-                    for ( const auto& proc_handle : proc_handles ) {
-                        proc_snapshot.get_nt_suspend_process()( proc_handle.get() );
-                    }
-                }
-                cpp_utils::print( cpp_utils::no_formatting, " -> 终止进程.\n"sv );
+            }
+            if ( enabled_suspend_process ) {
+                cpp_utils::print( cpp_utils::no_formatting, " -> 挂起进程.\n"sv );
                 for ( const auto& proc_handle : proc_handles ) {
-                    proc_snapshot.get_nt_terminate_process()( proc_handle.get(), 0 );
+                    proc_snapshot.get_nt_suspend_process()( proc_handle.get() );
                 }
+            }
+            cpp_utils::print( cpp_utils::no_formatting, " -> 终止进程.\n"sv );
+            for ( const auto& proc_handle : proc_handles ) {
+                proc_snapshot.get_nt_terminate_process()( proc_handle.get(), 0 );
             }
             if constexpr ( ( Backends::invoke_fn_disable_and_stop_servs || ... ) ) {
                 cpp_utils::print( cpp_utils::no_formatting, " -> 禁用并停止服务.\n"sv );
