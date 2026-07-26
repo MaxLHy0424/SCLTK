@@ -125,10 +125,6 @@ namespace scltk
                 }
                 return regwexec( &rx_, text, 0, nullptr, 0 ) == 0;
             }
-            operator std::wstring_view() const noexcept
-            {
-                return pattern_;
-            }
             auto operator=( const scoped_wregex& ) -> scoped_wregex& = delete;
             auto operator=( scoped_wregex&& other ) noexcept -> scoped_wregex&
             {
@@ -875,7 +871,14 @@ namespace scltk
                     }
                     const auto& flag{ converted.value() };
                     for ( const auto& item : current_binding::items ) {
-                        const auto line{ cpp_utils::to_string( item, CP_UTF8, unsynced_mem_pool ) };
+                        const auto line{ cpp_utils::to_string( [ & ] noexcept -> decltype( auto )
+                        {
+                            if constexpr ( std::is_same_v< std::decay_t< decltype( item ) >, details_::scoped_wregex > ) {
+                                return item.get_pattern();
+                            } else {
+                                return item;
+                            }
+                        }(), CP_UTF8, unsynced_mem_pool ) };
                         if ( line.has_value() ) [[likely]] {
                             out << flag << ' ' << line.value() << '\n';
                         }
