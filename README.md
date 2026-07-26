@@ -10,55 +10,55 @@
 </div>
 
 > [!IMPORTANT]
-> SCLTK & SCLTK-Legacy 仅适用于 Microsoft Windows。
+> SCLTK 仅适用于 Microsoft Windows。
 
 # 📦 获取
 
-可从下列页面中获取 SCLTK / SCLTK-Legacy：
+可从下列页面中获取 SCLTK：
 
 - [本仓库发行版页面](https://github.com/MaxLHy0424/SCLTK/releases)；
-- [SCLTK & SCLTK-Legacy 下载站（Vercel）](https://scltk.maxlhy0424.is-a.dev)；
-- [SCLTK & SCLTK-Legacy 下载站（Cloudflare Pages）](https://scltk.pages.dev)；
-- [SCLTK & SCLTK-Legacy 下载站（PinMe）](https://scltk.pinme.dev)。
+- [SCLTK 下载站（Vercel）](https://scltk.maxlhy0424.is-a.dev)；
+- [SCLTK 下载站（Cloudflare Pages）](https://scltk.pages.dev)；
+- [SCLTK 下载站（PinMe）](https://scltk.pinme.dev)。
 
 > [!NOTE]
-> “SCLTK & SCLTK-Legacy 下载站” 完全开源。如需自行部署，请转到 [SCLTK-Website-Template](https://github.com/MaxLHy0424/SCLTK-Website-Template)。
+> “SCLTK 下载站” 完全开源。如需自行部署，请转到 [SCLTK-Website-Template](https://github.com/MaxLHy0424/SCLTK-Website-Template)。
 
 # 📖 使用指南
 
 ## 0 开始之前
 
-**使用 SCLTK / SCLTK-Legacy 时建议关闭防病毒软件。若 SCLTK / SCLTK-Legacy 被报为恶意软件，请在防病毒软件中添加排除项。**
+**使用 SCLTK 时建议关闭防病毒软件。若 SCLTK 被报为恶意软件，请在防病毒软件中添加排除项。**
 
-**请勿使用 SCLTK / SCLTK-Legacy 扰乱课堂纪律，造成的后果与开发者无关。**
+**请勿使用 SCLTK 扰乱课堂纪律，造成的后果与开发者无关。**
 
-**SCLTK & SCLTK-Legacy 以 [MIT License](./LICENSE.txt) 开源，详细内容请自行阅读。**
+**SCLTK 以 [MIT License](./LICENSE.txt) 开源，详细内容请自行阅读。**
 
 ## 1 启动
 
-SCLTK 的发行版文件名为 `SCLTK.exe`，SCLTK-Legacy 的发行版文件名为 `SCLTK-Legacy.exe`。两者支持的 Windows 如下：
+SCLTK-Mainline 的发行版文件名为 `SCLTK-Mainline.exe`，SCLTK-Legacy 的发行版文件名为 `SCLTK-Legacy.exe`。两者支持的 Windows 如下：
 
-| 项目         | Windows 版本                                       | Windows 架构 |
-| ------------ | -------------------------------------------------- | ------------ |
-| SCLTK        | Windows 7/8/8.1（需安装 KB2999226），Windows 10/11 | 64 位        |
-| SCLTK-Legacy | Windows 7/8/8.1/10/11                              | 32/64 位     |
+| 项目           | Windows 版本                                       | Windows 架构 |
+| -------------- | -------------------------------------------------- | ------------ |
+| SCLTK-Mainline | Windows 7/8/8.1（需安装 KB2999226），Windows 10/11 | 64 位        |
+| SCLTK-Legacy   | Windows 7/8/8.1/10/11                              | 32/64 位     |
 
 ## 2 常规操作
 
-- **退出 SCLTK / SCLTK-Legacy**\
+- **退出 SCLTK**\
   `< 退出`
-- **查看 SCLTK / SCLTK-Legacy 信息**\
+- **查看 SCLTK 信息**\
   `> 关于`
 
-## 3 配置 SCLTK / SCLTK-Legacy
+## 3 配置 SCLTK
 
 
 - **进入配置编辑页面**\
   `> 配置`
 
 > [!NOTE]
-> 配置文件 `SCLTK.conf` / `SCLTK-Legacy.conf` 中以 `#` 开头的行是注释。\
-> 配置文件头部注释为 SCLTK / SCLTK-Legacy 自动生成。
+> 配置文件 `SCLTK-Mainline.conf` / `SCLTK-Legacy.conf` 中以 `#` 开头的行是注释。\
+> 配置文件头部注释为 SCLTK 自动生成。
 >
 > 配置解析规则如下：
 > - 跳过注释；
@@ -84,13 +84,13 @@ SCLTK 的发行版文件名为 `SCLTK.exe`，SCLTK-Legacy 的发行版文件名�
 破解/恢复电子教室软件相关选项。位于 `[ 选项 ]` 下。
 
 - **启动时破解**\
-  在 SCLTK / SCLTK-Legacy 启动并完成必要的初始化工作后，根据配置，执行全部破解规则（包括内建规则和自定义规则）。
+  在 SCLTK 启动并完成必要的初始化工作后，根据配置，执行全部破解规则（包括内建规则和自定义规则）。
 - **挂起进程**\
   破解时挂起电子教室软件的大部分进程。
 
 ### 3.2 窗口显示
 
-SCLTK / SCLTK-Legacy 窗口相关选项。位于 `[ 选项 ]` 下。
+SCLTK 窗口相关选项。位于 `[ 选项 ]` 下。
 
 - **置顶窗口**\
   每 50ms 强制显示窗口并设为置顶。
@@ -222,7 +222,7 @@ SCLTK / SCLTK-Legacy 窗口相关选项。位于 `[ 选项 ]` 下。
 > 可在 “配置” 页面下的 “自定义规则” 中，点击 `> 查看帮助信息` 阅读上述信息的简略版本。
 
 > [!WARNING]
-> SCLTK & SCLTK-Legacy 不对自定义规则的正确性进行检测，一些规则可能导致意想不到的错误。在修改自定义规则时，请仔细检查。
+> SCLTK 不对自定义规则的正确性进行检测，一些规则可能导致意想不到的错误。在修改自定义规则时，请仔细检查。
 
 示例:
 ```ini
@@ -243,7 +243,7 @@ restore_helper: "abc toolkit.exe" restore
 
 **快捷工具：**
 
-- **在 SCLTK / SCLTK-Legacy 窗口内直接启动命令提示符（可通过输入 `exit` 退出）**\
+- **在 SCLTK 窗口内直接启动命令提示符（可通过输入 `exit` 退出）**\
 `> 启动命令提示符`
 - **一键重启资源管理器**\
 `> 重启资源管理器`
@@ -275,19 +275,19 @@ restore_helper: "abc toolkit.exe" restore
 
 ## 自定义规则乱码
 
-请尝试将配置文件 `SCLTK.conf` / `SCLTK-Legacy.conf` 使用 UTF-8 编码重新保存后重新启动 SCLTK。
+请尝试将配置文件 `SCLTK-Mainline.conf` / `SCLTK-Legacy.conf` 使用 UTF-8 编码重新保存后重新启动 SCLTK。
 
-## 有时 SCLTK / SCLTK-Legacy 窗口内的项目无法点击
+## 有时 SCLTK 窗口内的项目无法点击
 
-通常，这是由于电子教室软件置顶窗口和 SCLTK / SCLTK-Legacy 发生冲突导致的。这时，可以尝试按下 Win + D 返回桌面，再次尝试点击。
+通常，这是由于电子教室软件置顶窗口和 SCLTK 发生冲突导致的。这时，可以尝试按下 Win + D 返回桌面，再次尝试点击。
 
-## SCLTK / SCLTK-Legacy 使用内建规则破解不起作用
+## SCLTK 使用内建规则破解不起作用
 
-请尝试使用最新版本的 SCLTK / SCLTK-Legacy 进行破解，如果仍不起作用，可能是因为内建规则已失效。此时，可使用自定义规则临时解决。如果条件允许，请且尽快上报。
+请尝试使用最新版本的 SCLTK 进行破解，如果仍不起作用，可能是因为内建规则已失效。此时，可使用自定义规则临时解决。如果条件允许，请且尽快上报。
 
-## SCLTK / SCLTK-Legacy 无法终止某些进程
+## SCLTK 无法终止某些进程
 
-由于成本（驱动程序的认证费用不菲）及安全原因，SCLTK & SCLTK-Legacy 只使用了用户态 Windows API，对于受驱动程序保护的进程可能无法终止。可以通过 ARK（Anti-Rootkit）工具来终止这些进程。
+由于成本（驱动程序的认证费用不菲）及安全原因，SCLTK 只使用了用户态 Windows API，对于受驱动程序保护的进程可能无法终止。可以通过 ARK（Anti-Rootkit）工具来终止这些进程。
 
 # 🛠️ 二次开发
 
@@ -295,7 +295,7 @@ restore_helper: "abc toolkit.exe" restore
 
 然后，使用 git 克隆本仓库到本地。
 
-本仓库支持构建 SCLTK 与 SCLTK-Legacy。如需构建 SCLTK，则下文中的 `<scltk-edition>` 为 `mainline`；如需构建 SCLTK-Legacy，则下文中的 `<scltk-edition>` 为 `legacy`
+本仓库支持构建 SCLTK-Mainline 与 SCLTK-Legacy。如需构建 SCLTK-Mainline，则下文中的 `<scltk-edition>` 为 `mainline`；如需构建 SCLTK-Legacy，则下文中的 `<scltk-edition>` 为 `legacy`
 
 接下来，在仓库本地目录下打开终端（不是 [msys2](https://www.msys2.org) 的），执行：
 
@@ -306,7 +306,7 @@ restore_helper: "abc toolkit.exe" restore
 脚本将会自动安装工具链和依赖库。
 
 > [!NOTE]
-> 即便您已经安装了 SCLTK / SCLTK-Legacy 所需的工具链和依赖库，也务必使用上面的命令，因为 SCLTK & SCLTK-Legacy 的开发总是使用最新的工具链和依赖库。
+> 即便您已经安装了 SCLTK 所需的工具链和依赖库，也务必使用上面的命令，因为 SCLTK 的开发总是使用最新的工具链和依赖库。
 
 构建可使用：
 
