@@ -98,6 +98,7 @@ pack_and_sign: build
 	@/usr/bin/cp build/legacy/release/*.exe build/legacy/__temp__/
 	@/usr/bin/cp build/legacy/release/*.sig build/legacy/__temp__/
 	@/usr/bin/cp LICENSE.txt build/legacy/__temp__/
+	@/usr/bin/cp -r THIRD-PARTY-LICENSES build/mainline/__temp__/
 	@$(cmd_echo) "Compressing to '$(project_name).7z'..."
 	@/ucrt64/bin/7z a -bso0 -bsp0 -mx9 -m0=LZMA2 -md=64m -mfb=64 -ms=16g -mmt=16 build/legacy/$(project_name).7z ./build/legacy/__temp__/*
 	@$(cmd_echo) "Signing '$(project_name).7z'..."
