@@ -1792,7 +1792,9 @@ namespace scltk
         {
             return std::array< std::wstring_view, sizeof...( ServNames ) >{ ServNames.view()... };
         }( typename cpp_utils::type_list_concat_t< typename BuiltinRuleNodes::serv_names... >::unique{} ) };
-        static constexpr auto invoke_fn_is_target_proc{ !proc_names.empty() };
+        static constexpr auto invoke_fn_is_target_proc{
+          !proc_names.empty()
+          || ( !std::is_same_v< decltype( BuiltinRuleNodes::extra_proc_matcher ), default_extra_proc_matcher_type > || ... ) };
         static auto is_target_proc( const PROCESSENTRY32W& proc_entry )
         {
             for ( const auto& proc_name : proc_names ) {
