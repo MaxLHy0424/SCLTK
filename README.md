@@ -14,26 +14,15 @@
 
 # 📦 获取
 
-**[SCLTK & SCLTK-Legacy 发行版页面](https://github.com/MaxLHy0424/SCLTK/releases)**
+可从下列页面中获取 SCLTK / SCLTK-Legacy：
 
-**官方下载站**：
-
-- [SCLTK & SCLTK-Legacy 下载站（Vercel）](https://scltk.maxlhy0424.is-a.dev)
-- [SCLTK & SCLTK-Legacy 下载站（Cloudflare Pages）](https://scltk.pages.dev)
-- [SCLTK & SCLTK-Legacy 下载站（PinMe）](https://scltk.pinme.dev)
+- [本仓库发行版页面](https://github.com/MaxLHy0424/SCLTK/releases)；
+- [SCLTK & SCLTK-Legacy 下载站（Vercel）](https://scltk.maxlhy0424.is-a.dev)；
+- [SCLTK & SCLTK-Legacy 下载站（Cloudflare Pages）](https://scltk.pages.dev)；
+- [SCLTK & SCLTK-Legacy 下载站（PinMe）](https://scltk.pinme.dev)。
 
 > [!NOTE]
 > “SCLTK & SCLTK-Legacy 下载站” 完全开源。如需自行部署，请转到 [SCLTK-Website-Template](https://github.com/MaxLHy0424/SCLTK-Website-Template)。
-
-| 主版本 | 最新正式发行版                                                              | 状态       | 生命周期              |
-| ------ | --------------------------------------------------------------------------- | ---------- | --------------------- |
-| v1     | [v1.0_Stable](https://github.com/MaxLHy0424/SCLTK/releases/tag/v1.0_Stable) | ❌ 停止维护 | 2023-12-17/2023-12-18 |
-| v2     | [v2.5_Stable](https://github.com/MaxLHy0424/SCLTK/releases/tag/v2.5_Stable) | ❌ 停止维护 | 2024-01-01/2024-01-07 |
-| v3     | [v3.0.1](https://github.com/MaxLHy0424/SCLTK/releases/tag/30174)            | ❌ 停止维护 | 2024-02-09/2024-02-10 |
-| v4     | [v4.10.7](https://github.com/MaxLHy0424/SCLTK/releases/tag/v4.10.7)         | ❌ 停止维护 | 2024-03-26/2024-06-19 |
-| v5     | [v5.11.1](https://github.com/MaxLHy0424/SCLTK/releases/tag/v5.11.1)         | ❌ 停止维护 | 2024-08-25/2024-12-23 |
-| v6     | [v6.3.3](https://github.com/MaxLHy0424/SCLTK/releases/tag/v6.3.3)           | ❌ 停止维护 | 2025-01-29/2025-06-09 |
-| v7     | [v7.1.5](https://github.com/MaxLHy0424/SCLTK/releases/tag/v7.1.5)           | ✅ 基线开发 | 2025-11-10/..         |
 
 # 📖 使用指南
 
@@ -298,7 +287,7 @@ restore_helper: "abc toolkit.exe" restore
 
 ## SCLTK / SCLTK-Legacy 无法终止某些进程
 
-由于成本（驱动程序的认证费用不菲）及安全原因，SCLTK & SCLTK-Legacy 只使用了用户态 Windows API，对于受驱动程序保护的进程可能无法终止。可以通过 ARK（Anti-Rootkit）工具来终止这些进程。推荐的 ARK 工具有 [OpenArk](http://openark.blackint3.com:88)、[KSwordARK](https://github.com/WangWei-CM/KSword)、[StarlightGUI](https://github.com/OpenStarlight/StarlightGUI)。
+由于成本（驱动程序的认证费用不菲）及安全原因，SCLTK & SCLTK-Legacy 只使用了用户态 Windows API，对于受驱动程序保护的进程可能无法终止。可以通过 ARK（Anti-Rootkit）工具来终止这些进程。
 
 # 🛠️ 二次开发
 
