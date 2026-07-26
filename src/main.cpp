@@ -1783,14 +1783,12 @@ namespace scltk
         using default_extra_proc_matcher_type = decltype( details_::default_extra_proc_matcher );
         using default_helper_type             = decltype( details_::default_helper );
         static constexpr auto proc_names{
-          []< cpp_utils::const_wstring... ProcNames >(
-            const cpp_utils::type_list< cpp_utils::value_identity< ProcNames >... > ) static consteval noexcept
+          []< cpp_utils::const_wstring... ProcNames >( const details_::make_const_wstring_list_t< ProcNames... > ) static consteval noexcept
         {
             return std::array< std::wstring_view, sizeof...( ProcNames ) >{ ProcNames.view()... };
         }( typename cpp_utils::type_list_concat_t< typename BuiltinRuleNodes::proc_names... >::unique{} ) };
         static constexpr auto serv_names{
-          []< cpp_utils::const_wstring... ServNames >(
-            const cpp_utils::type_list< cpp_utils::value_identity< ServNames >... > ) static consteval noexcept
+          []< cpp_utils::const_wstring... ServNames >( const details_::make_const_wstring_list_t< ServNames... > ) static consteval noexcept
         {
             return std::array< std::wstring_view, sizeof...( ServNames ) >{ ServNames.view()... };
         }( typename cpp_utils::type_list_concat_t< typename BuiltinRuleNodes::serv_names... >::unique{} ) };
