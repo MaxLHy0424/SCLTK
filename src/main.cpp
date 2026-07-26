@@ -294,11 +294,6 @@ namespace scltk
             }
             return str;
         }
-        auto press_any_key_to_return() noexcept
-        {
-            cpp_utils::print( cpp_utils::no_formatting, "\n\n 请按任意键返回."sv );
-            con.press_any_key_to_continue();
-        }
         auto get_proc_path( const cpp_utils::scoped_handle& proc_handle ) noexcept
           -> std::optional< std::pair< win32_file_path_buffer_t, DWORD > >
         {
@@ -1141,12 +1136,13 @@ namespace scltk
             static constexpr auto final_message{ [] static consteval noexcept
             {
                 constexpr auto msg_start{ " (i) 同步配置"_cs };
+                constexpr auto msg_end{ ".\n\n 请按任意键返回."_cs };
                 return std::array{
-                  cpp_utils::value_identity_v< cpp_utils::concat_const_string( msg_start, "失败."_cs ) >.view(),
-                  cpp_utils::value_identity_v< cpp_utils::concat_const_string( msg_start, "成功."_cs ) >.view() };
+                  cpp_utils::value_identity_v< cpp_utils::concat_const_string( msg_start, "失败"_cs, msg_end ) >.view(),
+                  cpp_utils::value_identity_v< cpp_utils::concat_const_string( msg_start, "成功"_cs, msg_end ) >.view() };
             }() };
             cpp_utils::print( cpp_utils::no_formatting, final_message[ static_cast< std::size_t >( config_file.good() ) ] );
-            press_any_key_to_return();
+            con.press_any_key_to_continue();
             return func_back;
         }
         auto open_config_file()
@@ -1174,12 +1170,13 @@ namespace scltk
             static constexpr auto final_message{ [] static consteval noexcept
             {
                 constexpr auto msg_start{ " (i) 打开配置文件"_cs };
+                constexpr auto msg_end{ ".\n\n 请按任意键返回."_cs };
                 return std::array{
-                  cpp_utils::value_identity_v< cpp_utils::concat_const_string( msg_start, "失败."_cs ) >.view(),
-                  cpp_utils::value_identity_v< cpp_utils::concat_const_string( msg_start, "成功."_cs ) >.view() };
+                  cpp_utils::value_identity_v< cpp_utils::concat_const_string( msg_start, "失败"_cs, msg_end ) >.view(),
+                  cpp_utils::value_identity_v< cpp_utils::concat_const_string( msg_start, "成功"_cs, msg_end ) >.view() };
             }() };
             cpp_utils::print( cpp_utils::no_formatting, final_message[ static_cast< std::size_t >( success ) ] );
-            press_any_key_to_return();
+            con.press_any_key_to_continue();
             return func_back;
         }
     }
@@ -1222,8 +1219,8 @@ namespace scltk
             {
                 cpp_utils::print( cpp_utils::no_formatting, make_title_text< "[ 工 具 箱 ]", 2 >.view() );
                 Func();
-                cpp_utils::print( cpp_utils::no_formatting, "\n (i) 操作已完成."sv );
-                press_any_key_to_return();
+                cpp_utils::print( cpp_utils::no_formatting, "\n (i) 操作已完成.\n\n 请按任意键返回."sv );
+                con.press_any_key_to_continue();
                 return func_back;
             }
         };
@@ -1760,8 +1757,8 @@ namespace scltk
                 case details_::rule_executor_mode::crack : crack(); break;
                 case details_::rule_executor_mode::restore : restore(); break;
             }
-            cpp_utils::print( cpp_utils::no_formatting, "\n (i) 操作已完成."sv );
-            details_::press_any_key_to_return();
+            cpp_utils::print( cpp_utils::no_formatting, "\n (i) 操作已完成.\n\n 请按任意键返回."sv );
+            con.press_any_key_to_continue();
             return func_back;
         }
     };
