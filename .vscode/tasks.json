@@ -2,7 +2,7 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Build SCLTK Debug Version",
+            "label": "Build SCLTK-Mainline Debug Version",
             "type": "shell",
             "command": ".\\make.ps1",
             "args": [

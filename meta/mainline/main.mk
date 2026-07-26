@@ -1,7 +1,7 @@
 include_path     := include
 cpp_utils_path   := $(include_path)/cpp_utils
 include $(cpp_utils_path)/all.mk
-project_name     := SCLTK
+project_name     := SCLTK-Mainline
 compiler         := /ucrt64/bin/g++
 args_arch        := -march=x86-64 -mtune=generic -msse3 -mfpmath=sse
 args_defines     := -D{UNICODE,_UNICODE}

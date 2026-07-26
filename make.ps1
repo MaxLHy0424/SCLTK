@@ -8,12 +8,9 @@ if ($target -eq 'pack_and_sign' -and [string]::IsNullOrEmpty($gpg_key)) {
     Write-Error "Please provide your GPG key ID when target is 'pack_and_sign'."
     exit 1
 }
-$software_full_name = "Student Computer Lab Toolkit"
-$software_short_name = "SCLTK"
-if ($edition -eq 'legacy') {
-    $software_full_name += " - Legacy Edition"
-    $software_short_name += "-Legacy"
-}
+$converted_edition_string = $edition.ToLower().Substring(0, 1).ToUpper() + $edition.Substring(1)
+$software_full_name = "Student Computer Lab Toolkit - $converted_edition_string Edition"
+$software_short_name = "SCLTK-$converted_edition_string"
 $license = "MIT License"
 $copyright = "Copyright (C) 2023 MaxLHy0424."
 $repo_url = "https://github.com/MaxLHy0424/SCLTK"

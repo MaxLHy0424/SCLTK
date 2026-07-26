@@ -2,7 +2,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Debug SCLTK",
+            "name": "Debug SCLTK-Mainline",
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/build/mainline/debug/__debug__.exe",
@@ -13,7 +13,7 @@
             "externalConsole": true,
             "internalConsoleOptions": "openOnSessionStart",
             "MIMode": "gdb",
-            "preLaunchTask": "Build SCLTK Debug Version",
+            "preLaunchTask": "Build SCLTK-Mainline Debug Version",
             "setupCommands": [
                 {
                     "text": "-enable-pretty-printing",
