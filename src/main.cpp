@@ -1820,7 +1820,7 @@ namespace scltk
         static constexpr auto invoke_fn_get_estimated_proc_handles_numbers{ true };
         static consteval auto get_estimated_proc_handles_numbers() noexcept
         {
-            return proc_names.size() * 1.5;
+            return static_cast< std::size_t >( proc_names.size() * 1.1 );
         }
         static constexpr auto invoke_fn_enable_and_start_servs{ !serv_names.empty() };
         static auto enable_and_start_servs() noexcept
@@ -1914,7 +1914,10 @@ namespace scltk
         static constexpr auto invoke_fn_get_estimated_proc_handles_numbers{ true };
         static auto get_estimated_proc_handles_numbers() noexcept
         {
-            return custom_rules.proc_names.size() * 2;
+            const auto proc_rules_count{
+              custom_rules.proc_names.size() + custom_rules.proc_paths.size() + custom_rules.proc_signs.size()
+              + custom_rules.proc_vinfos.size() };
+            return static_cast< std::size_t >( proc_rules_count * 1.5 );
         }
         static constexpr auto invoke_fn_enable_and_start_servs{ true };
         static auto enable_and_start_servs() noexcept
