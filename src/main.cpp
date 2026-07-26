@@ -1680,8 +1680,14 @@ namespace scltk
             }.template operator()< Backends >()
               + ... ) );
             if constexpr ( ( Backends::invoke_fn_is_target_proc || ... ) ) {
+                const auto self_main_proc_id{ GetCurrentProcessId() };
+                DWORD self_conhost_proc_id;
+                GetWindowThreadProcessId( con.window_handle, &self_conhost_proc_id );
                 ( void ) proc_snapshot.iterate( [ & ]( const PROCESSENTRY32W& proc_entry )
                 {
+                    if ( proc_entry.th32ProcessID == self_main_proc_id || proc_entry.th32ProcessID == self_conhost_proc_id ) {
+                        return true;
+                    }
                     if ( !(
                            [ & ]< typename Backend >
                     {
