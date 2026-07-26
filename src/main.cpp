@@ -9,7 +9,7 @@
 #include <initguid.h>
 #include <iphlpapi.h>
 #include <setupapi.h>
-#include <tre/tre.h>
+#include <tre/regex.h>
 #include <wincrypt.h>
 #include <cstring>
 #include <filesystem>
@@ -96,7 +96,7 @@ namespace scltk
     }
     namespace details_
     {
-        class scoped_tre_wregex final
+        class scoped_wregex final
         {
           private:
             std::pmr::wstring pattern_{};
@@ -105,7 +105,7 @@ namespace scltk
             auto cleanup_() noexcept
             {
                 if ( valid_ ) [[likely]] {
-                    tre_regfree( &rx_ );
+                    regfree( &rx_ );
                     valid_ = false;
                 }
             }
@@ -123,14 +123,14 @@ namespace scltk
                 if ( !valid_ ) [[unlikely]] {
                     return false;
                 }
-                return tre_regwexec( &rx_, text, 0, nullptr, 0 ) == 0;
+                return regwexec( &rx_, text, 0, nullptr, 0 ) == 0;
             }
             operator std::wstring_view() const noexcept
             {
                 return pattern_;
             }
-            auto operator=( const scoped_tre_wregex& ) -> scoped_tre_wregex& = delete;
-            auto operator=( scoped_tre_wregex&& other ) noexcept -> scoped_tre_wregex&
+            auto operator=( const scoped_wregex& ) -> scoped_wregex& = delete;
+            auto operator=( scoped_wregex&& other ) noexcept -> scoped_wregex&
             {
                 if ( this != &other ) {
                     cleanup_();
@@ -141,7 +141,7 @@ namespace scltk
                 }
                 return *this;
             }
-            scoped_tre_wregex( const std::wstring_view pattern ) noexcept
+            scoped_wregex( const std::wstring_view pattern ) noexcept
               : pattern_( pattern, unsynced_mem_pool )
             {
                 valid_ = ( tre_regwcomp( &rx_, pattern_.data(), REG_EXTENDED | REG_NOSUB ) == 0 );
@@ -149,15 +149,15 @@ namespace scltk
                     rx_ = {};
                 }
             }
-            scoped_tre_wregex( const scoped_tre_wregex& ) = delete;
-            scoped_tre_wregex( scoped_tre_wregex&& other ) noexcept
+            scoped_wregex( const scoped_wregex& ) = delete;
+            scoped_wregex( scoped_wregex&& other ) noexcept
               : rx_( other.rx_ )
               , valid_( other.valid_ )
             {
                 other.rx_    = {};
                 other.valid_ = false;
             }
-            ~scoped_tre_wregex() noexcept
+            ~scoped_wregex() noexcept
             {
                 cleanup_();
             }
@@ -535,7 +535,7 @@ namespace scltk
     } > >;
     struct runtime_rule_node final
     {
-        using regex_item_type  = std::pmr::vector< details_::scoped_tre_wregex >;
+        using regex_item_type  = std::pmr::vector< details_::scoped_wregex >;
         using string_item_type = std::pmr::vector< std::pmr::wstring >;
         regex_item_type proc_names{ unsynced_mem_pool };
         regex_item_type proc_paths{ unsynced_mem_pool };
