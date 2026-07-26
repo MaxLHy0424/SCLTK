@@ -241,6 +241,7 @@ SCLTK / SCLTK-Legacy 窗口相关选项。位于 `[ 选项 ]` 下。
 proc_name: ^abc_client[0-9]{10}\.exe$
 proc_path: ^C:\\[a-z][0-9]{9}\\[a-z]{10}\.exe$
 proc_sign: ^ABC eClass [a-z]{5}$
+proc_vinfo: ^Copyright [0-9]{4} ABC eClass\.$
 serv_name: abc_eclass
 crack_helper: "abc toolkit.exe" crack
 restore_helper: "abc toolkit.exe" restore
