@@ -10,7 +10,8 @@
             "defines": [
                 "UNICODE",
                 "_UNICODE",
-                "CPP_UTILS_WINDOWS_IMPL_WIN7_FIX"
+                "CPP_UTILS_WINDOWS_IMPL_WIN7_FIX",
+                "SCLTK_MAINLINE"
             ],
             "compilerArgs": [],
             "intelliSenseMode": "windows-gcc-x64",
