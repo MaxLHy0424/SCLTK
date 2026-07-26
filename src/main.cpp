@@ -9,7 +9,7 @@
 #include <initguid.h>
 #include <iphlpapi.h>
 #include <setupapi.h>
-#include <tre/regex.h>
+#include <tre/tre.h>
 #include <wincrypt.h>
 #include <cstring>
 #include <filesystem>
@@ -105,7 +105,7 @@ namespace scltk
             auto cleanup_() noexcept
             {
                 if ( valid_ ) [[likely]] {
-                    regfree( &rx_ );
+                    tre_regfree( &rx_ );
                     valid_ = false;
                 }
             }
@@ -123,7 +123,7 @@ namespace scltk
                 if ( !valid_ ) [[unlikely]] {
                     return false;
                 }
-                return regwexec( &rx_, text, 0, nullptr, 0 ) == 0;
+                return tre_regwexec( &rx_, text, 0, nullptr, 0 ) == 0;
             }
             operator std::wstring_view() const noexcept
             {
@@ -144,7 +144,7 @@ namespace scltk
             scoped_tre_wregex( const std::wstring_view pattern ) noexcept
               : pattern_( pattern, unsynced_mem_pool )
             {
-                valid_ = ( regwcomp( &rx_, pattern_.data(), REG_EXTENDED | REG_NOSUB ) == 0 );
+                valid_ = ( tre_regwcomp( &rx_, pattern_.data(), REG_EXTENDED | REG_NOSUB ) == 0 );
                 if ( !valid_ ) [[unlikely]] {
                     rx_ = {};
                 }
