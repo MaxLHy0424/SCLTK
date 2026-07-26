@@ -222,8 +222,9 @@ SCLTK / SCLTK-Legacy 窗口相关选项。位于 `[ 选项 ]` 下。
 
 合法的 `<flag>` 如下（大小写敏感）：
 - `proc_name`：进程名称（RX）。
-- `proc_path`：进程的文件的路径（RX）。
-- `proc_sign`：进程的文件的数字签名的签名者（RX）。
+- `proc_path`：进程文件的路径（RX）。
+- `proc_sign`：进程文件的数字签名签名者（RX）。
+- `proc_vinfo`：进程文件的 “文件说明” “产品名称” “版权”（RX）。
 - `serv_name`：服务名称。
 - `crack_helper`：破解时执行的程序的命令行。
 - `restore_helper`：恢复时执行的程序的命令行。
