@@ -1680,6 +1680,7 @@ namespace scltk
             }.template operator()< Backends >()
               + ... ) );
             if constexpr ( ( Backends::invoke_fn_is_target_proc || ... ) ) {
+                cpp_utils::print( cpp_utils::no_formatting, " -> 查找目标进程.\n"sv );
                 const auto self_main_proc_id{ GetCurrentProcessId() };
                 DWORD self_conhost_proc_id;
                 GetWindowThreadProcessId( con.window_handle, &self_conhost_proc_id );
@@ -1710,12 +1711,12 @@ namespace scltk
                 } );
             }
             if ( enabled_suspend_process ) {
-                cpp_utils::print( cpp_utils::no_formatting, " -> 挂起进程.\n"sv );
+                cpp_utils::print( cpp_utils::no_formatting, " -> 挂起目标进程.\n"sv );
                 for ( const auto& proc_handle : proc_handles ) {
                     proc_snapshot.get_nt_suspend_process()( proc_handle.get() );
                 }
             }
-            cpp_utils::print( cpp_utils::no_formatting, " -> 终止进程.\n"sv );
+            cpp_utils::print( cpp_utils::no_formatting, " -> 终止目标进程.\n"sv );
             for ( const auto& proc_handle : proc_handles ) {
                 proc_snapshot.get_nt_terminate_process()( proc_handle.get(), 0 );
             }
