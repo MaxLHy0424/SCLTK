@@ -110,10 +110,10 @@ SCLTK / SCLTK-Legacy 窗口相关选项。位于 `[ 选项 ]` 下。
 <flag>:{可选的若干空格}<item>
 ```
 
-说明内容带有 `(RX)` 的 `<flag>`, 使用正则表达式匹配（扩展正则表达式语法, 大小写敏感）
+说明内容带有 `(RX)` 的 `<flag>`, 使用正则表达式（调用 `libtre`，使用 POSIX ERE 语法, 大小写敏感）。
 
 <details>
-    <summary>扩展正则表达式语法说明</summary>
+    <summary>POSIX ERE 语法说明</summary>
 
 > [!NOTE]
 >
