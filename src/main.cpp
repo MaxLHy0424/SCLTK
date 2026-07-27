@@ -15,6 +15,7 @@
 #include <cstring>
 #include <filesystem>
 #include <fstream>
+#include <inplace_vector>
 #include <random>
 #ifdef SCLTK_MAINLINE
 # include "../meta/mainline/info.h"
@@ -331,7 +332,7 @@ namespace scltk
         auto get_version_info( const win32_file_path_buffer_t& path )
         {
             using targets = make_const_wstring_list_t< L"FileDescription", L"ProductName", L"LegalCopyright" >;
-            std::array< std::optional< std::pmr::wstring >, targets::size > result{};
+            std::inplace_vector< std::pmr::wstring, targets::size > result;
             DWORD handle{};
             DWORD size{ GetFileVersionInfoSizeW( path.data(), &handle ) };
             if ( size == 0 ) {
@@ -360,23 +361,21 @@ namespace scltk
                 ( [ & ]
                 {
                     constexpr auto current_target{ targets::template at< Is >::value.view() };
-                    wchar_t sub_block[ current_target.size() + LR"(\StringFileInfo\12345678\)"sv.size() + 1 ]{};
+                    constexpr auto sub_block_size{ current_target.size() + LR"(\StringFileInfo\12345678\)"sv.size() + 1uz };
+                    std::inplace_vector< wchar_t, sub_block_size > sub_block;
                     LPVOID version_info_buffer_ptr{ nullptr };
                     UINT length{ 0 };
-                    [[maybe_unused]] const auto step1{ std::ranges::copy( LR"(\StringFileInfo\)"sv, sub_block ) };
-                    [[maybe_unused]] const auto step2{ std::ranges::copy(
-                      convert_i16_to_hex_wstring_with_fields(
-                        reinterpret_cast< translation_buffer_type* >( translation_buffer )->language ),
-                      step1.out ) };
-                    [[maybe_unused]] const auto step3{ std::ranges::copy(
-                      convert_i16_to_hex_wstring_with_fields(
-                        reinterpret_cast< translation_buffer_type* >( translation_buffer )->codepage ),
-                      step2.out ) };
-                    [[maybe_unused]] const auto step4{ std::ranges::copy( L"\\"sv, step3.out ) };
-                    [[maybe_unused]] const auto step5{ std::ranges::copy( current_target, step4.out ) };
-                    if ( VerQueryValueW( version_info_buffer.data(), sub_block, &version_info_buffer_ptr, &length ) ) {
-                        result[ Is ]
-                          = std::pmr::wstring( static_cast< wchar_t* >( version_info_buffer_ptr ), length, unsynced_mem_pool );
+                    sub_block.append_range( LR"(\StringFileInfo\)"sv );
+                    sub_block.append_range( convert_i16_to_hex_wstring_with_fields(
+                      reinterpret_cast< translation_buffer_type* >( translation_buffer )->language ) );
+                    sub_block.append_range( convert_i16_to_hex_wstring_with_fields(
+                      reinterpret_cast< translation_buffer_type* >( translation_buffer )->codepage ) );
+                    sub_block.unchecked_emplace_back( L'\\' );
+                    sub_block.append_range( current_target );
+                    sub_block.unchecked_emplace_back( L'\0' );
+                    if ( VerQueryValueW( version_info_buffer.data(), sub_block.data(), &version_info_buffer_ptr, &length ) ) {
+                        result.unchecked_emplace_back(
+                          static_cast< wchar_t* >( version_info_buffer_ptr ), length, unsynced_mem_pool );
                     }
                 }(), ... );
             }( std::make_index_sequence< targets::size >{} );
@@ -1878,11 +1877,8 @@ namespace scltk
             }
             const auto proc_version_info_items{ details_::get_version_info( proc_path_buffer ) };
             for ( const auto& item : proc_version_info_items ) {
-                if ( !item.has_value() ) {
-                    continue;
-                }
                 for ( const auto& proc_vinfo_rx : custom_rules.proc_vinfos ) {
-                    if ( proc_vinfo_rx.match( item.value().c_str() ) ) {
+                    if ( proc_vinfo_rx.match( item.c_str() ) ) {
                         return true;
                     }
                 }
