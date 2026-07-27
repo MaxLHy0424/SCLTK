@@ -355,20 +355,14 @@ namespace scltk
             if ( translate < sizeof( translation_buffer_type ) ) {
                 return result;
             }
-            constexpr auto sub_block_size{ []< std::size_t... Is >( std::index_sequence< Is... > ) static consteval noexcept
-            {
-                return std::ranges::max( { targets::template at< Is >::value.size()... } )
-                     + LR"(\StringFileInfo\12345678\)"sv.size() + 1;
-            }( std::make_index_sequence< targets::size >{} ) };
-            wchar_t sub_block[ sub_block_size ];
-            LPVOID version_info_buffer_ptr{ nullptr };
-            UINT length{ 0 };
             [ & ]< std::size_t... Is >( std::index_sequence< Is... > )
             {
                 ( [ & ]
                 {
                     constexpr auto current_target{ targets::template at< Is >::value.view() };
-                    std::memset( sub_block, 0, sizeof( sub_block ) );
+                    wchar_t sub_block[ current_target.size() + LR"(\StringFileInfo\12345678\)"sv.size() + 1 ]{};
+                    LPVOID version_info_buffer_ptr{ nullptr };
+                    UINT length{ 0 };
                     [[maybe_unused]] const auto step1{ std::ranges::copy( LR"(\StringFileInfo\)"sv, sub_block ) };
                     [[maybe_unused]] const auto step2{ std::ranges::copy(
                       convert_i16_to_hex_wstring_with_fields(
