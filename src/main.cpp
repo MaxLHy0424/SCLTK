@@ -358,13 +358,16 @@ namespace scltk
             }
             [ & ]< std::size_t... Is >( std::index_sequence< Is... > )
             {
+                constexpr auto sub_block_size{
+                  std::ranges::max( { targets::template at< Is >::value.view().size()... } )
+                  + LR"(\StringFileInfo\12345678\)"sv.size() + 1uz };
+                std::inplace_vector< wchar_t, sub_block_size > sub_block;
+                LPVOID version_info_buffer_ptr{ nullptr };
+                UINT length{ 0 };
                 ( [ & ]
                 {
                     constexpr auto current_target{ targets::template at< Is >::value.view() };
-                    constexpr auto sub_block_size{ current_target.size() + LR"(\StringFileInfo\12345678\)"sv.size() + 1uz };
-                    std::inplace_vector< wchar_t, sub_block_size > sub_block;
-                    LPVOID version_info_buffer_ptr{ nullptr };
-                    UINT length{ 0 };
+                    sub_block.clear();
                     sub_block.append_range( LR"(\StringFileInfo\)"sv );
                     sub_block.append_range( convert_i16_to_hex_wstring_with_fields(
                       reinterpret_cast< translation_buffer_type* >( translation_buffer )->language ) );
