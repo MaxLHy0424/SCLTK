@@ -353,7 +353,7 @@ namespace scltk
             if ( translate < sizeof( translation_buffer_type ) ) {
                 return result;
             }
-            [ & ]< std::size_t... Is >( std::index_sequence< Is... > )
+            [ & ]< std::size_t... Is >( std::index_sequence< Is... > ) noexcept
             {
                 constexpr auto sub_block_size{
                   std::ranges::max( { targets::template at< Is >::value.view().size()... } )
@@ -361,7 +361,7 @@ namespace scltk
                 std::inplace_vector< wchar_t, sub_block_size > sub_block;
                 LPVOID version_info_buffer_ptr{ nullptr };
                 UINT length{ 0 };
-                ( [ & ]
+                ( [ & ] noexcept
                 {
                     constexpr auto current_target{ targets::template at< Is >::value.view() };
                     sub_block.clear();
