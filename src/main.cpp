@@ -1006,11 +1006,7 @@ namespace scltk
         {
             []< std::size_t... Is >( const std::index_sequence< Is... > ) static noexcept
             {
-                ( []() static noexcept
-                {
-                    using current_binding = custom_rule_bindings_::at< Is >;
-                    current_binding::items.clear();
-                }(), ... );
+                ( custom_rule_bindings_::at< Is >::items.clear(), ... );
             }( std::make_index_sequence< custom_rule_bindings_::size >{} );
         }
         static auto show_help_info_()
