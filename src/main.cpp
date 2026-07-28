@@ -1114,7 +1114,7 @@ namespace scltk
                 make_title_text< "[ 配  置 ]", 2 >, " -> 同步配置.\n\n"_cs ) >.view() );
             load_config( true );
             constexpr auto header{
-              u8"# " INFO_FULL_NAME "\n# " INFO_GIT_TAG " (" INFO_GIT_BRANCH " " INFO_GIT_HASH ")\n# 本文件编码为 UTF-8。\n" };
+              u8"# " INFO_FULL_NAME "\n# " INFO_GIT_TAG " (" INFO_GIT_BRANCH " " INFO_GIT_HASH ")\n# UTF-8 编码\n" };
             constexpr auto header_size{ std::char_traits< char8_t >::length( header ) * sizeof( char8_t ) };
             std::ofstream config_file{ config_file_name, std::ios::out | std::ios::trunc };
             if ( config_file.good() ) [[likely]] {
