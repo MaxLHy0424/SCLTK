@@ -4,7 +4,7 @@ param(
     [string]$target,
     [string]$gpg_key = ""
 )
-if ($target -eq 'pack_and_sign' -and [string]::IsNullOrEmpty($gpg_key)) {
+if ($target -eq 'sign' -and [string]::IsNullOrEmpty($gpg_key)) {
     Write-Error "Please provide your GPG key ID when target is 'pack_and_sign'."
     exit 1
 }

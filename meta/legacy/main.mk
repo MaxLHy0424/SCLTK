@@ -76,35 +76,20 @@ dep_release      := build/legacy/manifest.o \
 dep_res          := meta/manifest.rc \
                     meta/manifest.xml \
                     meta/favicon.ico
-.PHONY: toolchain build debug release pack_and_sign clean
+.PHONY: toolchain build debug release sign clean
 build: debug release
 debug: build/legacy/debug/__debug__.exe
 release: build/legacy/release/$(project_name).exe
 toolchain:
 	/usr/bin/pacman -Sy --noconfirm --needed\
      mingw-w64-i686-toolchain\
-     mingw-w64-ucrt-x86_64-7zip\
      mingw-w64-ucrt-x86_64-upx\
      base\
      base-devel\
      binutils
-pack_and_sign: build
+sign: build
 	@$(cmd_echo) "Signing binaries..."
 	@$(cmd_gpg) build/legacy/release/$(project_name).exe
-	@$(cmd_echo) "Removing old package..."
-	@/usr/bin/rm -rf build/legacy/$(project_name).7z
-	@$(cmd_echo) "Copying binaries, signatures, and the LICENSE.txt..."
-	@/usr/bin/mkdir build/legacy/__temp__ -p
-	@/usr/bin/cp build/legacy/release/*.exe build/legacy/__temp__/
-	@/usr/bin/cp build/legacy/release/*.sig build/legacy/__temp__/
-	@/usr/bin/cp LICENSE.txt build/legacy/__temp__/
-	@/usr/bin/cp -r THIRD-PARTY-LICENSES build/mainline/__temp__/
-	@$(cmd_echo) "Compressing to '$(project_name).7z'..."
-	@/ucrt64/bin/7z a -bso0 -bsp0 -mx9 -m0=LZMA2 -md=64m -mfb=64 -ms=16g -mmt=16 build/legacy/$(project_name).7z ./build/legacy/__temp__/*
-	@$(cmd_echo) "Signing '$(project_name).7z'..."
-	@$(cmd_gpg) build/legacy/$(project_name).7z
-	@$(cmd_echo) "Cleaning 'build/legacy/__temp__'..."
-	@/usr/bin/rm -rf build/legacy/__temp__
 clean:
 	@$(cmd_echo) "Cleaning..."
 	@/usr/bin/rm -rf build/legacy
