@@ -135,9 +135,9 @@ namespace scltk
             {
                 if ( this != &other ) {
                     cleanup_();
+                    pattern_     = std::move( other.pattern_ );
                     rx_          = other.rx_;
                     valid_       = other.valid_;
-                    other.rx_    = regex_t{};
                     other.valid_ = false;
                 }
                 return *this;
@@ -146,16 +146,13 @@ namespace scltk
               : pattern_( pattern, unsynced_mem_pool )
             {
                 valid_ = ( tre_regwcomp( &rx_, pattern_.data(), REG_EXTENDED | REG_NOSUB ) == 0 );
-                if ( !valid_ ) [[unlikely]] {
-                    rx_ = {};
-                }
             }
             scoped_wregex( const scoped_wregex& ) = delete;
             scoped_wregex( scoped_wregex&& other ) noexcept
-              : rx_( other.rx_ )
-              , valid_( other.valid_ )
+              : pattern_{ std::move( other.pattern_ ) }
+              , rx_{ other.rx_ }
+              , valid_{ other.valid_ }
             {
-                other.rx_    = {};
                 other.valid_ = false;
             }
             ~scoped_wregex() noexcept
