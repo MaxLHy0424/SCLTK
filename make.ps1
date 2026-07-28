@@ -11,7 +11,6 @@ if ($target -eq 'sign' -and [string]::IsNullOrEmpty($gpg_key)) {
 $converted_edition_string = $edition.ToLower().Substring(0, 1).ToUpper() + $edition.Substring(1)
 $software_full_name = "Student Computer Lab Toolkit - $converted_edition_string Edition"
 $software_short_name = "SCLTK-$converted_edition_string"
-$copyright = "Copyright (C) 2023 MaxLHy0424.\n libtre: Copyright (c) 2001-2009 Ville Laurikari."
 $repo_url = "https://github.com/MaxLHy0424/SCLTK"
 function Get-GitInfo {
     $inRepo = & git rev-parse --is-inside-work-tree 2>$null
@@ -63,7 +62,6 @@ $content = @"
 #pragma once
 #define INFO_FULL_NAME  "$software_full_name"
 #define INFO_SHORT_NAME "$software_short_name"
-#define INFO_COPYRIGHT  "$copyright"
 #define INFO_REPO_URL   "$repo_url"
 #define INFO_GIT_BRANCH "$($gitInfo.Branch)"
 #define INFO_GIT_TAG    "$($gitInfo.Tag)"
