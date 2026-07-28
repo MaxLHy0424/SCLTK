@@ -371,15 +371,15 @@ namespace scltk
                     sub_block.clear();
                     sub_block.append_range( LR"(\StringFileInfo\)"sv );
                     sub_block.append_range( convert_i16_to_hex_wstring_with_fields(
-                      reinterpret_cast< translation_buffer_type* >( translation_buffer )->language ) );
+                      reinterpret_cast< const translation_buffer_type* >( translation_buffer )->language ) );
                     sub_block.append_range( convert_i16_to_hex_wstring_with_fields(
-                      reinterpret_cast< translation_buffer_type* >( translation_buffer )->codepage ) );
+                      reinterpret_cast< const translation_buffer_type* >( translation_buffer )->codepage ) );
                     sub_block.unchecked_emplace_back( L'\\' );
                     sub_block.append_range( current_target );
                     sub_block.unchecked_emplace_back( L'\0' );
                     if ( VerQueryValueW( version_info_buffer.data(), sub_block.data(), &version_info_buffer_ptr, &length ) ) {
                         result.unchecked_emplace_back(
-                          static_cast< wchar_t* >( version_info_buffer_ptr ), length, unsynced_mem_pool );
+                          static_cast< const wchar_t* >( version_info_buffer_ptr ), length, unsynced_mem_pool );
                     }
                 }(), ... );
             }( std::make_index_sequence< targets::size >{} );
