@@ -1226,10 +1226,10 @@ namespace scltk
           .add_back( make_title_text< "[ 关  于 ]", 1 >.view() )
           .add_back( " < 返回 "sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
           .add_back(
-            "\n[ 软件名 ]\n\n " INFO_FULL_NAME "\n\n[ 软件版本 ]\n\n 标签: " INFO_GIT_TAG "\n 分支: " INFO_GIT_BRANCH
+            "\n[ 软件名 ]\n\n " INFO_FULL_NAME "\n\n (aka" INFO_SHORT_NAME ")\n\n[ 软件版本 ]\n\n 标签: " INFO_GIT_TAG "\n 分支: " INFO_GIT_BRANCH
             "\n 提交: " INFO_GIT_HASH "\n\n[ 开源仓库 ]\n\n " INFO_REPO_URL "\n\n[ 许可证 ]\n"sv )
           .add_back(
-            cpp_utils::value_identity_v< cpp_utils::concat_const_string( " 保存许可证说明 "_cs, details_::license_file ) >.view(),
+            cpp_utils::value_identity_v< cpp_utils::concat_const_string( " 保存许可证说明 "_cs, details_::license_file,"."_cs ) >.view(),
             details_::save_licenses )
           .show();
         return func_back;
