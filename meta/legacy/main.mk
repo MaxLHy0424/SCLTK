@@ -87,7 +87,7 @@ toolchain:
      base\
      base-devel\
      binutils
-sign: build
+sign: release
 	@$(cmd_echo) "Signing binaries..."
 	@$(cmd_gpg) build/legacy/release/$(project_name).exe
 clean:
