@@ -429,7 +429,7 @@ namespace scltk
             {
                 return false;
             }
-            if ( !std::ranges::all_of( name.substr( 0, name.size() - 4 ), is_lower_case ) ) {
+            if ( !std::ranges::all_of( name.subview( 0, name.size() - 4 ), is_lower_case ) ) {
                 return false;
             }
             const auto proc_handle{
