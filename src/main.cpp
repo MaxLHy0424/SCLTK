@@ -597,7 +597,7 @@ namespace scltk
       compile_time_rule_node<
         "WorkWin", cpp_utils::type_list<>, cpp_utils::type_list<>, details_::is_workwin, details_::default_helper, [] static noexcept
     {
-        cpp_utils::print( cpp_utils::no_formatting, "\n (i) \"WorkWin\" 无需恢复, 请直接启动软件.\n\n"sv );
+        cpp_utils::print_without_formatting( "\n (i) \"WorkWin\" 无需恢复, 请直接启动软件.\n\n"sv );
     } > >;
     struct runtime_rule_node final
     {
@@ -1113,7 +1113,7 @@ namespace scltk
         }
         auto sync_config()
         {
-            cpp_utils::print( cpp_utils::no_formatting, 
+            cpp_utils::print_without_formatting(  
               cpp_utils::value_identity_v< cpp_utils::concat_const_string(
                 make_title_text< "[ 配  置 ]", 2 >, " -> 同步配置.\n\n"_cs ) >.view() );
             load_config( true );
@@ -1138,13 +1138,13 @@ namespace scltk
                   cpp_utils::value_identity_v< cpp_utils::concat_const_string( msg_start, "失败"_cs, msg_end ) >.view(),
                   cpp_utils::value_identity_v< cpp_utils::concat_const_string( msg_start, "成功"_cs, msg_end ) >.view() };
             }() };
-            cpp_utils::print( cpp_utils::no_formatting, final_message[ static_cast< std::size_t >( config_file.good() ) ] );
+            cpp_utils::print_without_formatting( final_message[ static_cast< std::size_t >( config_file.good() ) ] );
             con.press_any_key_to_continue();
             return func_back;
         }
         auto open_config_file()
         {
-            cpp_utils::print( cpp_utils::no_formatting, 
+            cpp_utils::print_without_formatting(  
               cpp_utils::value_identity_v< cpp_utils::concat_const_string(
                 make_title_text< "[ 配  置 ]", 2 >,  " -> 尝试打开配置文件.\n\n"_cs ) >.view() );
             constexpr auto cmd_init{
@@ -1172,7 +1172,7 @@ namespace scltk
                   cpp_utils::value_identity_v< cpp_utils::concat_const_string( msg_start, "失败"_cs, msg_end ) >.view(),
                   cpp_utils::value_identity_v< cpp_utils::concat_const_string( msg_start, "成功"_cs, msg_end ) >.view() };
             }() };
-            cpp_utils::print( cpp_utils::no_formatting, final_message[ static_cast< std::size_t >( success ) ] );
+            cpp_utils::print_without_formatting( final_message[ static_cast< std::size_t >( success ) ] );
             con.press_any_key_to_continue();
             return func_back;
         }
@@ -1246,9 +1246,9 @@ namespace scltk
             static constexpr auto description{ Description };
             static auto execute() noexcept
             {
-                cpp_utils::print( cpp_utils::no_formatting, make_title_text< "[ 工 具 箱 ]", 2 >.view() );
+                cpp_utils::print_without_formatting( make_title_text< "[ 工 具 箱 ]", 2 >.view() );
                 Func();
-                cpp_utils::print( cpp_utils::no_formatting, "\n (i) 操作已完成.\n\n 请按任意键返回."sv );
+                cpp_utils::print_without_formatting( "\n (i) 操作已完成.\n\n 请按任意键返回."sv );
                 con.press_any_key_to_continue();
                 return func_back;
             }
@@ -1280,11 +1280,11 @@ namespace scltk
         }
         auto relaunch_explorer() noexcept
         {
-            cpp_utils::print( cpp_utils::no_formatting, " -> 终止进程.\n"sv );
+            cpp_utils::print_without_formatting( " -> 终止进程.\n"sv );
             if ( proc_snapshot.refresh() && proc_snapshot.valid() ) {
                 ( void ) proc_snapshot.terminate_by_name( L"explorer.exe"sv );
             }
-            cpp_utils::print( cpp_utils::no_formatting, " -> 启动进程.\n"sv );
+            cpp_utils::print_without_formatting( " -> 启动进程.\n"sv );
             wchar_t cmd[]{ L"explorer.exe" };
             STARTUPINFOW startup_info{};
             PROCESS_INFORMATION proc_info{};
@@ -1298,13 +1298,12 @@ namespace scltk
         }
         auto logoff() noexcept
         {
-            cpp_utils::print(
-              cpp_utils::no_formatting,
+            cpp_utils::print_without_formatting(
               " (i) 该功能可能丢失未保存的文件数据,\n"
               "     请确认文件均已保存!\n\n"
               " 请按任意键继续."sv );
             con.press_any_key_to_continue();
-            cpp_utils::print( cpp_utils::no_formatting, "\n\n (i) 3s 后将注销当前用户账户.\n"sv );
+            cpp_utils::print_without_formatting( "\n\n (i) 3s 后将注销当前用户账户.\n"sv );
             std::this_thread::sleep_for( 3s );
             ExitWindowsEx( EWX_LOGOFF, 0 );
         }
@@ -1415,9 +1414,9 @@ namespace scltk
               {LR"(SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced)"sv,                       L"ShowTaskViewButton"sv},
               {LR"(SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\Folder\Hidden\SHOWALL)"sv, L"CheckedValue"sv      }
             };
-            cpp_utils::print( cpp_utils::no_formatting, " -> 撤销映像劫持.\n"sv );
+            cpp_utils::print_without_formatting( " -> 撤销映像劫持.\n"sv );
             cleanup_hijacked_debuggers();
-            cpp_utils::print( cpp_utils::no_formatting, " -> 撤销功能禁用.\n"sv );
+            cpp_utils::print_without_formatting( " -> 撤销功能禁用.\n"sv );
             for ( const auto& policy_reg : policy_key_regs ) {
                 ( void ) cpp_utils::delete_registry_tree_without_redirect( HKEY_CURRENT_USER, policy_reg );
             }
@@ -1430,12 +1429,12 @@ namespace scltk
                   HKEY_LOCAL_MACHINE, key, value, cpp_utils::registry_flag::dword_type,
                   reinterpret_cast< const BYTE* >( &need_enabled_reg_value ), sizeof( need_enabled_reg_value ) );
             }
-            cpp_utils::print( cpp_utils::no_formatting, " -> 撤销按键禁用 (注销当前用户账户后生效).\n"sv );
+            cpp_utils::print_without_formatting( " -> 撤销按键禁用 (注销当前用户账户后生效).\n"sv );
             ( void ) cpp_utils::delete_registry_value_without_redirect(
               HKEY_LOCAL_MACHINE, LR"(SYSTEM\CurrentControlSet\Control\Keyboard Layout)"sv, L"Scancode Map"sv );
             ( void ) cpp_utils::delete_registry_value_without_redirect(
               HKEY_CURRENT_USER, LR"(Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced)"sv, L"DisabledHotkeys"sv );
-            cpp_utils::print( cpp_utils::no_formatting, " -> 恢复 USB 存储器服务.\n"sv );
+            cpp_utils::print_without_formatting( " -> 恢复 USB 存储器服务.\n"sv );
             constexpr DWORD start_type{ 3 };
             ( void ) cpp_utils::create_registry_value_without_redirect(
               HKEY_LOCAL_MACHINE, LR"(SYSTEM\CurrentControlSet\Services\USBSTOR)"sv, L"Start"sv,
@@ -1443,7 +1442,7 @@ namespace scltk
         }
         auto reset_firewall_rules() noexcept
         {
-            cpp_utils::print( cpp_utils::no_formatting, " -> 重置防火墙规则.\n"sv );
+            cpp_utils::print_without_formatting( " -> 重置防火墙规则.\n"sv );
             STARTUPINFOW startup_info{};
             PROCESS_INFORMATION proc_info{};
             SECURITY_ATTRIBUTES sec_attrib{ sizeof( sec_attrib ), nullptr, TRUE };
@@ -1470,7 +1469,7 @@ namespace scltk
         }
         auto reset_hosts() noexcept
         {
-            cpp_utils::print( cpp_utils::no_formatting, " -> 重置 Hosts.\n"sv );
+            cpp_utils::print_without_formatting( " -> 重置 Hosts.\n"sv );
 #ifdef SCLTK_LEGACY
             const wow64_file_redirect_guard _;
 #endif
@@ -1495,13 +1494,13 @@ namespace scltk
         extern auto clear_wininet_proxy() noexcept -> void;
         auto reset_network_proxy() noexcept
         {
-            cpp_utils::print( cpp_utils::no_formatting, " -> 重置网络代理.\n"sv );
+            cpp_utils::print_without_formatting( " -> 重置网络代理.\n"sv );
             clear_winhttp_proxy();
             clear_wininet_proxy();
         }
         auto flush_dns() noexcept
         {
-            cpp_utils::print( cpp_utils::no_formatting, " -> 刷新 DNS 缓存.\n"sv );
+            cpp_utils::print_without_formatting( " -> 刷新 DNS 缓存.\n"sv );
             ( void ) DnsFlushResolverCache();
         }
         auto set_device_state( const HDEVINFO device_info, SP_DEVINFO_DATA* const p_device_info_data, const bool enabled ) noexcept
@@ -1521,7 +1520,7 @@ namespace scltk
         }
         auto relaunch_network_adapters() noexcept
         {
-            cpp_utils::print( cpp_utils::no_formatting, " -> 重启网络适配器 (可能失败).\n"sv );
+            cpp_utils::print_without_formatting( " -> 重启网络适配器 (可能失败).\n"sv );
             NET_LUID target_local_uid{};
             wchar_t target_name[ 256 ]{};
             ULONG out_buffer_length{};
@@ -1587,11 +1586,11 @@ namespace scltk
         }
         auto reset_jfglzs_config() noexcept
         {
-            cpp_utils::print( cpp_utils::no_formatting, " -> 删除密码.\n"sv );
+            cpp_utils::print_without_formatting( " -> 删除密码.\n"sv );
             ( void ) cpp_utils::delete_registry_value_without_redirect( HKEY_CURRENT_USER, L"Software"sv, L"n"sv );
-            cpp_utils::print( cpp_utils::no_formatting, " -> 删除配置.\n"sv );
+            cpp_utils::print_without_formatting( " -> 删除配置.\n"sv );
             ( void ) cpp_utils::delete_registry_tree_without_redirect( HKEY_CURRENT_USER, LR"(Software\jfglzs)"sv );
-            cpp_utils::print( cpp_utils::no_formatting, " -> 删除自启动项.\n"sv );
+            cpp_utils::print_without_formatting( " -> 删除自启动项.\n"sv );
             constexpr std::array autorun_items{ L"jfglzs"sv, L"jfglzsn"sv, L"jfglzsp"sv, L"prozs"sv, L"przs"sv };
             constexpr std::array notification_items{ L"StartupTNotijfglzsn"sv, L"StartupTNotiprozs"sv };
             for ( const auto& autorun_item : autorun_items ) {
@@ -1604,13 +1603,13 @@ namespace scltk
                 ( void ) cpp_utils::delete_registry_value_without_redirect(
                   HKEY_CURRENT_USER, LR"(Software\Microsoft\Windows\CurrentVersion\RunNotification)"sv, notification_item );
             }
-            cpp_utils::print( cpp_utils::no_formatting, " -> 删除备份.\n"sv );
+            cpp_utils::print_without_formatting( " -> 删除备份.\n"sv );
             std::error_code ec;
             std::filesystem::remove_all( LR"(C:\Windows\jf)"sv, ec );
         }
         auto reset_common_web_browsers_policy() noexcept
         {
-            cpp_utils::print( cpp_utils::no_formatting, " -> 删除注册表.\n"sv );
+            cpp_utils::print_without_formatting( " -> 删除注册表.\n"sv );
             constexpr std::array regs{
               LR"(SOFTWARE\Policies\Google\Chrome)"sv,   LR"(SOFTWARE\WOW6432Node\Policies\Google\Chrome)"sv,
               LR"(SOFTWARE\Policies\Microsoft\Edge)"sv,  LR"(SOFTWARE\WOW6432Node\Policies\Microsoft\Edge)"sv,
@@ -1673,12 +1672,12 @@ namespace scltk
     {
         static auto crack()
         {
-            cpp_utils::print( cpp_utils::no_formatting, make_title_text< "[ 破  解 ]", 2 >.view() );
+            cpp_utils::print_without_formatting( make_title_text< "[ 破  解 ]", 2 >.view() );
             constexpr const auto& crack_restore_config_node{ std::get< crack_restore_config >( config_nodes ) };
             constexpr const auto& enabled_suspend_process{ crack_restore_config_node.at< "suspend_process" >() };
             ( void ) proc_snapshot.refresh();
             if ( !proc_snapshot.valid() ) [[unlikely]] {
-                cpp_utils::print( cpp_utils::no_formatting, " (!) 进程快照初始化错误!\n"sv );
+                cpp_utils::print_without_formatting( " (!) 进程快照初始化错误!\n"sv );
                 return;
             }
             std::pmr::vector< cpp_utils::scoped_handle > proc_handles( unsynced_mem_pool );
@@ -1693,7 +1692,7 @@ namespace scltk
             }.template operator()< Backends >()
               + ... ) );
             if constexpr ( ( Backends::invoke_fn_is_target_proc || ... ) ) {
-                cpp_utils::print( cpp_utils::no_formatting, " -> 查找目标进程.\n"sv );
+                cpp_utils::print_without_formatting( " -> 查找目标进程.\n"sv );
                 const auto self_main_proc_id{ GetCurrentProcessId() };
                 DWORD self_conhost_proc_id;
                 GetWindowThreadProcessId( con.window_handle, &self_conhost_proc_id );
@@ -1724,17 +1723,17 @@ namespace scltk
                 } );
             }
             if ( enabled_suspend_process ) {
-                cpp_utils::print( cpp_utils::no_formatting, " -> 挂起目标进程.\n"sv );
+                cpp_utils::print_without_formatting( " -> 挂起目标进程.\n"sv );
                 for ( const auto& proc_handle : proc_handles ) {
                     proc_snapshot.get_nt_suspend_process()( proc_handle.get() );
                 }
             }
-            cpp_utils::print( cpp_utils::no_formatting, " -> 终止目标进程.\n"sv );
+            cpp_utils::print_without_formatting( " -> 终止目标进程.\n"sv );
             for ( const auto& proc_handle : proc_handles ) {
                 proc_snapshot.get_nt_terminate_process()( proc_handle.get(), 0 );
             }
             if constexpr ( ( Backends::invoke_fn_disable_and_stop_servs || ... ) ) {
-                cpp_utils::print( cpp_utils::no_formatting, " -> 禁用并停止服务.\n"sv );
+                cpp_utils::print_without_formatting( " -> 禁用并停止服务.\n"sv );
                 (
                   []< typename Backend >() static
                 {
@@ -1757,9 +1756,9 @@ namespace scltk
         }
         static auto restore()
         {
-            cpp_utils::print( cpp_utils::no_formatting, make_title_text< "[ 恢  复 ]", 2 >.view() );
+            cpp_utils::print_without_formatting( make_title_text< "[ 恢  复 ]", 2 >.view() );
             if constexpr ( ( Backends::invoke_fn_enable_and_start_servs || ... ) ) {
-                cpp_utils::print( cpp_utils::no_formatting, " -> 启用并启动服务.\n"sv );
+                cpp_utils::print_without_formatting( " -> 启用并启动服务.\n"sv );
                 (
                   []< typename Backend >() static
                 {
@@ -1786,7 +1785,7 @@ namespace scltk
                 case details_::rule_executor_mode::crack : crack(); break;
                 case details_::rule_executor_mode::restore : restore(); break;
             }
-            cpp_utils::print( cpp_utils::no_formatting, "\n (i) 操作已完成.\n\n 请按任意键返回."sv );
+            cpp_utils::print_without_formatting( "\n (i) 操作已完成.\n\n 请按任意键返回."sv );
             con.press_any_key_to_continue();
             return func_back;
         }
@@ -1948,7 +1947,7 @@ namespace scltk
         }
         static auto execute_helpers_( const std::pmr::vector< std::pmr::wstring >& helpers ) noexcept
         {
-            cpp_utils::print( cpp_utils::no_formatting, " -> 执行自定义辅助程序.\n"sv );
+            cpp_utils::print_without_formatting( " -> 执行自定义辅助程序.\n"sv );
             for ( const auto& helper : helpers ) {
                 std::pmr::wstring cmd{ helper, unsynced_mem_pool };
                 STARTUPINFOW startup_info{};
@@ -2026,8 +2025,7 @@ namespace scltk
             if ( std::get< crack_restore_config >( config_nodes ).at< "crack_when_launching" >() ) {
                 con.clear( unsynced_mem_pool );
                 all_rules::crack();
-                cpp_utils::print(
-                  cpp_utils::no_formatting,
+                cpp_utils::print_without_formatting(
                   "\n (i) 已执行全部破解规则,"
                   "\n     请按任意键进入主页." );
                 con.press_any_key_to_continue();
@@ -2078,7 +2076,7 @@ auto main() -> int
       .enable_window_maximize_ctrl( false )
       .enable_window_minimize_ctrl( false )
       .enable_window_close_ctrl( false );
-    cpp_utils::print( cpp_utils::no_formatting, " -> 准备就绪."sv );
+    cpp_utils::print_without_formatting( " -> 准备就绪."sv );
     scltk::disable_hotkey();
     scltk::enable_privileges();
     scltk::load_config( false );

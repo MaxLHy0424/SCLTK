@@ -151,7 +151,7 @@ namespace cpp_utils
             const auto area{ info.dwSize.X * info.dwSize.Y };
             DWORD written;
             SetConsoleCursorPosition( self.std_output_handle, top_left );
-            print( no_formatting, std::pmr::string( static_cast< std::size_t >( area ), ' ', resource ) );
+            print_without_formatting( std::pmr::string( static_cast< std::size_t >( area ), ' ', resource ) );
             FillConsoleOutputAttribute( self.std_output_handle, info.wAttributes, area, top_left, &written );
             SetConsoleCursorPosition( self.std_output_handle, top_left );
             return std::forward< decltype( self ) >( self );
@@ -282,7 +282,7 @@ namespace cpp_utils
             {
                 text.visit( []( const auto& line_text ) static noexcept
                 {
-                    print( no_formatting, line_text );
+                    print_without_formatting( line_text );
                 } );
             }
             auto operator==( const COORD current_position ) const noexcept
@@ -335,8 +335,7 @@ namespace cpp_utils
         {
             const auto [ console_width, console_height ]{ cursor_position };
             SetConsoleCursorPosition( con_.std_output_handle, { 0, console_height } );
-            print(
-              no_formatting,
+            print_without_formatting(
               std::pmr::string( static_cast< std::size_t >( console_width ), ' ', lines_.get_allocator().resource() ) );
             SetConsoleCursorPosition( con_.std_output_handle, { 0, console_height } );
             line.print_text();
@@ -351,7 +350,7 @@ namespace cpp_utils
                 set_line_attrs_( line, line.default_attrs );
                 line.print_text();
                 if ( &line != back_ptr ) {
-                    print( no_formatting, "\n"sv );
+                    print_without_formatting( "\n"sv );
                 }
             }
         }

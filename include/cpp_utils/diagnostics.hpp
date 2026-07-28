@@ -28,15 +28,15 @@ namespace cpp_utils
         try {
 #endif
             if ( std::forward< F >( func )() == false ) [[unlikely]] {
-                print( no_formatting, stderr, make_log( "assertion failid!"sv, src_location, std::move( trace ) ) );
+                print_without_formatting( stderr, make_log( "assertion failid!"sv, src_location, std::move( trace ) ) );
                 std::terminate();
             }
 #ifdef CPP_UTILS_MACRO_HAS_EXCEPTIONS
         } catch ( const std::exception& e ) {
-            print( no_formatting, stderr, make_log( e.what(), src_location, std::move( trace ) ) );
+            print_without_formatting( stderr, make_log( e.what(), src_location, std::move( trace ) ) );
             std::terminate();
         } catch ( ... ) {
-            print( no_formatting, stderr, make_log( "unknown exception caught!"sv, src_location, std::move( trace ) ) );
+            print_without_formatting( stderr, make_log( "unknown exception caught!"sv, src_location, std::move( trace ) ) );
             std::terminate();
         }
 #endif
