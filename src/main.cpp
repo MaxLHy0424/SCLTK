@@ -932,31 +932,56 @@ namespace scltk
             static constexpr auto&& items{ Items };
         };
         using custom_rule_bindings_ = cpp_utils::type_list<
-          custom_rule_binding_< L"proc_name:"_cs, custom_rules.proc_names >,
-          custom_rule_binding_< L"proc_path:"_cs, custom_rules.proc_paths >,
-          custom_rule_binding_< L"proc_sign:"_cs, custom_rules.proc_signs >,
-          custom_rule_binding_< L"proc_vinfo:"_cs, custom_rules.proc_vinfos >,
-          custom_rule_binding_< L"serv_name:"_cs, custom_rules.serv_names >,
-          custom_rule_binding_< L"crack_helper:"_cs, custom_rules.crack_helpers >,
-          custom_rule_binding_< L"restore_helper:"_cs, custom_rules.restore_helpers > >;
+          custom_rule_binding_< L"proc_name"_cs, custom_rules.proc_names >,
+          custom_rule_binding_< L"proc_path"_cs, custom_rules.proc_paths >,
+          custom_rule_binding_< L"proc_sign"_cs, custom_rules.proc_signs >,
+          custom_rule_binding_< L"proc_vinfo"_cs, custom_rules.proc_vinfos >,
+          custom_rule_binding_< L"serv_name"_cs, custom_rules.serv_names >,
+          custom_rule_binding_< L"crack_helper"_cs, custom_rules.crack_helpers >,
+          custom_rule_binding_< L"restore_helper"_cs, custom_rules.restore_helpers > >;
+        static constexpr auto splitting_char_{ ':' };
         static auto load_( const std::string_view unconverted_line )
         {
             const auto converted{ cpp_utils::to_wstring( unconverted_line, CP_UTF8, unsynced_mem_pool ) };
             if ( !converted.has_value() ) [[unlikely]] {
                 return;
             }
-            const auto& line{ converted.value() };
+            std::wstring_view line{ converted.value() };
             [ & ]< std::size_t... Is >( const std::index_sequence< Is... > )
             {
                 ( [ & ]
                 {
                     using current_binding = custom_rule_bindings_::at< Is >;
-                    if ( line.starts_with( current_binding::flag.view() ) ) [[likely]] {
-                        current_binding::items.emplace_back( std::ranges::find_if_not(
-                          line.subview( current_binding::flag.size() ), details_::is_whitespace< wchar_t > ) );
+                    if ( !line.starts_with( current_binding::flag.view() ) ) [[likely]] {
+                        return false;
+                    }
+                    line.remove_prefix( current_binding::flag.size() );
+                    {
+                        std::size_t whitespace_count{ 0 };
+                        for ( const auto ch : line ) {
+                            if ( !details_::is_whitespace< wchar_t >( ch ) ) {
+                                break;
+                            }
+                            ++whitespace_count;
+                        }
+                        line.remove_prefix( whitespace_count );
+                    }
+                    if ( line.front() != splitting_char_ ) [[unlikely]] {
                         return true;
                     }
-                    return false;
+                    line.remove_prefix( 1 );
+                    {
+                        std::size_t whitespace_count{ 0 };
+                        for ( const auto ch : line ) {
+                            if ( !details_::is_whitespace< wchar_t >( ch ) ) {
+                                break;
+                            }
+                            ++whitespace_count;
+                        }
+                        line.remove_prefix( whitespace_count );
+                    }
+                    current_binding::items.emplace_back( line );
+                    return true;
                 }() || ... );
             }( std::make_index_sequence< custom_rule_bindings_::size >{} );
         }
