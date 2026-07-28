@@ -288,7 +288,12 @@ namespace scltk
                 str[ i ] = L'0';
             }
             for ( auto i{ 4uz - written_size }; i < 4; ++i ) {
-                str[ i ] = static_cast< wchar_t >( std::toupper( a[ i - 4uz + written_size ] ) );
+                const auto ch{ static_cast< unsigned char >( a[ i - 4uz + written_size ] ) };
+                if ( is_lower_case( ch ) ) {
+                    str[ i ] = static_cast< wchar_t >( ch & 0b11011111 );
+                } else {
+                    str[ i ] = static_cast< wchar_t >( ch );
+                }
             }
             return str;
         }
