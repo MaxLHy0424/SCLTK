@@ -996,7 +996,7 @@ namespace scltk
                             }
                         }(), CP_UTF8, unsynced_mem_pool ) };
                         if ( line.has_value() ) [[likely]] {
-                            out << flag << ' ' << line.value() << '\n';
+                            out << flag << splitting_char_ << ' ' << line.value() << '\n';
                         }
                     }
                 }(), ... );
