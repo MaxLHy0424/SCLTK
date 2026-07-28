@@ -786,10 +786,10 @@ namespace scltk
             auto load_( std::string_view line ) noexcept
             {
                 bool value;
-                if ( line.ends_with( enabled_option_value_.view() ) ) [[likely]] {
+                if ( line.ends_with( enabled_option_value_.view() ) ) {
                     line.remove_suffix( enabled_option_value_.size() );
                     value = true;
-                } else if ( line.ends_with( disabled_option_value_.view() ) ) [[likely]] {
+                } else if ( line.ends_with( disabled_option_value_.view() ) ) {
                     line.remove_suffix( disabled_option_value_.size() );
                     value = false;
                 } else {
