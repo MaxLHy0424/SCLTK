@@ -481,7 +481,7 @@ namespace scltk
         }
         auto terminate_jfglzs_servs() noexcept
         {
-            ( void ) proc_snapshot.terminate_by_names( std::array{ L"syszm.exe"sv, L"zmserv.exe"sv } );
+            ( void ) proc_snapshot.terminate_by_names( std::array{ L"zmserv.exe"sv, L"syszm.exe"sv } );
         }
         auto is_workwin( const PROCESSENTRY32W& proc_entry )
         {
