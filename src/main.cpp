@@ -978,7 +978,7 @@ namespace scltk
               .add_back(
                 "\n 自定义规则格式为 <flag>:{可选的若干空格}<item>\n"
                 " 说明内容带有 (RX) 的 <flag>, 使用正则表达式\n"
-                " (调用 libtre, 使用 POSIX ERE 语法, 大小写敏感).\n"
+                " (调用 TRE, 使用 POSIX ERE 语法, 大小写敏感).\n"
                 " 合法的 <flag> 如下 (大小写敏感):\n"
                 "  proc_name - 进程名称 (RX).\n"
                 "   示例: ^abc_client[0-9]{10}\\.exe$\n"
