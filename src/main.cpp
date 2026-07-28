@@ -1216,7 +1216,7 @@ namespace scltk
             static constexpr auto file_content{ []< std::size_t... Is >( const std::index_sequence< Is... > ) static consteval noexcept
             {
                 return cpp_utils::concat_const_string( cpp_utils::concat_const_string(
-                  lisenses::at< Is >::component_name, ":\n"_cs, cpp_utils::make_repeated_const_string< '-', 50 >(), "\n"_cs,
+                  lisenses::at< Is >::component_name, "\n"_cs, cpp_utils::make_repeated_const_string< '-', 50 >(), "\n"_cs,
                   lisenses::at< Is >::content, cpp_utils::make_repeated_const_string< '-', 50 >(), "\n\n"_cs )... );
             }( std::make_index_sequence< lisenses::size >{} ) };
             constexpr auto file_content_view{ []() static consteval noexcept
