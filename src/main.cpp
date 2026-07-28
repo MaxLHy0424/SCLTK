@@ -934,6 +934,7 @@ namespace scltk
           custom_rule_binding_< L"crack_helper"_cs, custom_rules.crack_helpers >,
           custom_rule_binding_< L"restore_helper"_cs, custom_rules.restore_helpers > >;
         static constexpr auto splitting_char_{ ':' };
+        static_assert( !details_::is_whitespace< char >( splitting_char_ ) );
         static auto load_( const std::string_view unconverted_line )
         {
             const auto converted{ cpp_utils::to_wstring( unconverted_line, CP_UTF8, unsynced_mem_pool ) };
@@ -957,7 +958,7 @@ namespace scltk
                         }
                         ++whitespace_count;
                     }
-                    if ( line.front() != splitting_char_ ) [[unlikely]] {
+                    if ( line.front() != static_cast< wchar_t >( splitting_char_ ) ) [[unlikely]] {
                         return false;
                     }
                     line.remove_prefix( 1 );
