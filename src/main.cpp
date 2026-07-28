@@ -795,29 +795,23 @@ namespace scltk
                 } else {
                     return;
                 }
-                {
-                    std::size_t whitespace_count{ 0 };
-                    for ( const auto ch : line | std::views::reverse ) {
-                        if ( !is_whitespace< char >( ch ) ) {
-                            break;
-                        }
-                        ++whitespace_count;
+                for ( std::size_t whitespace_count{ 0 }; const auto ch : line | std::views::reverse ) {
+                    if ( !is_whitespace< char >( ch ) ) {
+                        line.remove_suffix( whitespace_count );
+                        break;
                     }
-                    line.remove_suffix( whitespace_count );
+                    ++whitespace_count;
                 }
                 if ( line.back() != splitting_char_ ) [[unlikely]] {
                     return;
                 }
                 line.remove_suffix( 1 );
-                {
-                    std::size_t whitespace_count{ 0 };
-                    for ( const auto ch : line | std::views::reverse ) {
-                        if ( !is_whitespace< char >( ch ) ) {
-                            break;
-                        }
-                        ++whitespace_count;
+                for ( std::size_t whitespace_count{ 0 }; const auto ch : line | std::views::reverse ) {
+                    if ( !is_whitespace< char >( ch ) ) {
+                        line.remove_suffix( whitespace_count );
+                        break;
                     }
-                    line.remove_suffix( whitespace_count );
+                    ++whitespace_count;
                 }
                 [ & ]< std::size_t... Is >( const std::index_sequence< Is... > ) noexcept
                 {
@@ -956,29 +950,23 @@ namespace scltk
                         return false;
                     }
                     line.remove_prefix( current_binding::flag.size() );
-                    {
-                        std::size_t whitespace_count{ 0 };
-                        for ( const auto ch : line ) {
-                            if ( !details_::is_whitespace< wchar_t >( ch ) ) {
-                                break;
-                            }
-                            ++whitespace_count;
+                    for ( std::size_t whitespace_count{ 0 }; const auto ch : line ) {
+                        if ( !details_::is_whitespace< wchar_t >( ch ) ) {
+                            line.remove_prefix( whitespace_count );
+                            break;
                         }
-                        line.remove_prefix( whitespace_count );
+                        ++whitespace_count;
                     }
                     if ( line.front() != splitting_char_ ) [[unlikely]] {
-                        return true;
+                        return false;
                     }
                     line.remove_prefix( 1 );
-                    {
-                        std::size_t whitespace_count{ 0 };
-                        for ( const auto ch : line ) {
-                            if ( !details_::is_whitespace< wchar_t >( ch ) ) {
-                                break;
-                            }
-                            ++whitespace_count;
+                    for ( std::size_t whitespace_count{ 0 }; const auto ch : line ) {
+                        if ( !details_::is_whitespace< wchar_t >( ch ) ) {
+                            line.remove_prefix( whitespace_count );
+                            break;
                         }
-                        line.remove_prefix( whitespace_count );
+                        ++whitespace_count;
                     }
                     current_binding::items.emplace_back( line );
                     return true;
