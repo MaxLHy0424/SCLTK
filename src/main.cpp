@@ -273,7 +273,7 @@ namespace scltk
               && ... )
         auto concat_string( Args&&... strings )
         {
-            std::pmr::basic_string< CharT > result;
+            std::pmr::basic_string< CharT > result( unsynced_mem_pool );
             result.reserve( ( std::forward< Args >( strings ).size() + ... ) );
             ( result.append( std::forward< Args >( strings ) ), ... );
             return result;
