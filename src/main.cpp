@@ -1222,7 +1222,7 @@ namespace scltk
     auto info()
     {
         cpp_utils::console_ui ui{ con, unsynced_mem_pool };
-        ui.reserve( 3 )
+        ui.reserve( 4 )
           .add_back( make_title_text< "[ 关  于 ]", 1 >.view() )
           .add_back( " < 返回 "sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
           .add_back(
