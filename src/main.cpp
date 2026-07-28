@@ -987,7 +987,7 @@ namespace scltk
                     }
                     const auto& flag{ converted.value() };
                     for ( const auto& item : current_binding::items ) {
-                        const auto line{ cpp_utils::to_string( [ & ] noexcept -> decltype( auto )
+                        const auto line{ cpp_utils::to_string( [ & ] noexcept -> std::wstring_view
                         {
                             if constexpr ( std::is_same_v< std::decay_t< decltype( item ) >, details_::scoped_wregex > ) {
                                 return item.get_pattern();
