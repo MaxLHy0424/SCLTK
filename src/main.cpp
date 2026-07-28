@@ -1189,6 +1189,36 @@ namespace scltk
         }, config_nodes );
         return func_back;
     }
+    namespace details_
+    {
+        template < cpp_utils::const_string ComponentName, cpp_utils::const_string Content >
+        struct license_info final
+        {
+            static constexpr auto component_name{ ComponentName };
+            static constexpr auto content{ Content };
+        };
+        constexpr auto license_file{ INFO_SHORT_NAME "-Licenses.txt"_cs };
+        auto save_licenses()
+        {
+            constexpr cpp_utils::const_string scltk_license{ std::to_array< char >( {
+#embed "../LICENSE.txt"
+            } ) };
+            constexpr cpp_utils::const_string libtre_license{ std::to_array< char >( {
+#embed "../THIRD-PARTY-LICENSES/libtre.txt"
+            } ) };
+            using lisenses = cpp_utils::type_list<
+              license_info< INFO_FULL_NAME " (" INFO_SHORT_NAME ")"_cs, scltk_license >,
+              license_info< "TRE (libtre)"_cs, libtre_license > >;
+            static constexpr auto full_content{ []< std::size_t... Is >( const std::index_sequence< Is... > ) static consteval noexcept
+            {
+                return cpp_utils::concat_const_string( cpp_utils::concat_const_string(
+                  lisenses::at< Is >::component_name, ":\n"_cs, cpp_utils::make_repeated_const_string< '-', 50 >(), "\n"_cs,
+                  lisenses::at< Is >::content, cpp_utils::make_repeated_const_string< '-', 50 >(), "\n\n"_cs )... );
+            }( std::make_index_sequence< lisenses::size >{} ) };
+            std::ofstream{ license_file.c_str(), std::ios::out | std::ios::trunc } << full_content.view();
+            return func_back;
+        }
+    };
     auto info()
     {
         cpp_utils::console_ui ui{ con, unsynced_mem_pool };
@@ -1197,7 +1227,10 @@ namespace scltk
           .add_back( " < 返回 "sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
           .add_back(
             "\n[ 软件名 ]\n\n " INFO_FULL_NAME "\n\n[ 软件版本 ]\n\n 标签: " INFO_GIT_TAG "\n 分支: " INFO_GIT_BRANCH
-            "\n 提交: " INFO_GIT_HASH "\n\n[ 版权 ]\n\n " INFO_COPYRIGHT "\n\n[ 开源仓库 ]\n\n " INFO_REPO_URL ""sv )
+            "\n 提交: " INFO_GIT_HASH "\n\n[ 开源仓库 ]\n\n " INFO_REPO_URL "\n\n[ 许可证 ]\n"sv )
+          .add_back(
+            cpp_utils::value_identity_v< cpp_utils::concat_const_string( " 保存许可证说明 "_cs, details_::license_file ) >.view(),
+            details_::save_licenses )
           .show();
         return func_back;
     }
