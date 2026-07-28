@@ -331,7 +331,7 @@ restore_helper: "abc toolkit.exe" restore
 构建并打包 `build/release` 下的可执行文件和 `LICENSE.txt` 并签名，可使用：
 
 ```pwsh
-.\make.ps1 -edition <scltk-edition> -target pack_and_sign -gpg_key=<key-id>
+.\make.ps1 -edition <scltk-edition> -target sign -gpg_key=<key-id>
 ```
 
 其中，`<key-id>` 为签名所需的 GnuPG 密钥 ID。签名时所使用的 `gpg.exe` 为 `where.exe gpg.exe` 第一行的输出。
@@ -339,7 +339,7 @@ restore_helper: "abc toolkit.exe" restore
 > [!NOTE]
 > 发布时，推荐使用如下命令：
 > ```pwsh
-> .\make.ps1 -edition <scltk-edition> -target clean && .\make.ps1 -edition <scltk-edition> -target pack_and_sign -gpg_key=<key-id>
+> .\make.ps1 -edition <scltk-edition> -target clean && .\make.ps1 -edition <scltk-edition> -target sign -gpg_key=<key-id>
 > ```
 
 > [!WARNING]
