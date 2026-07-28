@@ -947,7 +947,7 @@ namespace scltk
                 ( [ & ]
                 {
                     using current_binding = custom_rule_bindings_::at< Is >;
-                    if ( !line.starts_with( current_binding::flag.view() ) ) [[likely]] {
+                    if ( !line.starts_with( current_binding::flag.view() ) ) {
                         return false;
                     }
                     line.remove_prefix( current_binding::flag.size() );
