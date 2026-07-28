@@ -1197,7 +1197,7 @@ namespace scltk
             static constexpr auto component_name{ ComponentName };
             static constexpr auto content{ Content };
         };
-        constexpr auto license_file{ INFO_SHORT_NAME "-Licenses.txt"_cs };
+        constexpr auto license_file{ INFO_SHORT_NAME ".Licenses.txt"_cs };
         auto save_licenses()
         {
             constexpr cpp_utils::const_string scltk_license{ std::to_array< char >( {
