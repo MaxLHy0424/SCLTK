@@ -714,7 +714,7 @@ namespace scltk
         {
             using base_type      = cpp_utils::type_list< Options... >;
             using raw_names_type = cpp_utils::type_list< cpp_utils::value_identity< Options::raw_name >... >;
-            static consteval auto is_valid() noexcept
+            static consteval auto valid() noexcept
             {
                 return raw_names_type::unique::size == raw_names_type::size
                     && []< cpp_utils::const_string... Items >(
@@ -742,7 +742,7 @@ namespace scltk
         { };
         template < typename... Options >
         struct is_valid_options_info_table< options_info_table< Options... > > final
-          : std::conditional_t< options_info_table< Options... >::is_valid(), std::true_type, std::false_type >
+          : std::conditional_t< options_info_table< Options... >::valid(), std::true_type, std::false_type >
         { };
         template < cpp_utils::const_string RawName, cpp_utils::const_string DisplayName, bool Atomic, typename OptionsInfoTable >
             requires( is_valid_options_info_table< OptionsInfoTable >::value == true )
