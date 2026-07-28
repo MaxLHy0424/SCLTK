@@ -355,10 +355,9 @@ namespace scltk
             }
             [ & ]< std::size_t... Is >( std::index_sequence< Is... > ) noexcept
             {
-                constexpr auto sub_block_size{
-                  std::ranges::max( { targets::template at< Is >::value.view().size()... } )
-                  + LR"(\StringFileInfo\12345678\)"sv.size() + 1uz };
-                std::inplace_vector< wchar_t, sub_block_size > sub_block;
+                constexpr auto max_string_length{
+                  std::ranges::max( { targets::template at< Is >::value.size()... } ) + LR"(\StringFileInfo\12345678\)"sv.size() };
+                std::inplace_vector< wchar_t, max_string_length + 1uz > sub_block;
                 LPVOID version_info_buffer_ptr{ nullptr };
                 UINT length{ 0 };
                 ( [ & ] noexcept
@@ -919,7 +918,7 @@ namespace scltk
                     using current_binding = custom_rule_bindings_::at< Is >;
                     if ( line.starts_with( current_binding::flag.view() ) ) [[likely]] {
                         current_binding::items.emplace_back( std::ranges::find_if_not(
-                          line.subview( current_binding::flag.view().size() ), details_::is_whitespace< wchar_t > ) );
+                          line.subview( current_binding::flag.size() ), details_::is_whitespace< wchar_t > ) );
                         return true;
                     }
                     return false;
