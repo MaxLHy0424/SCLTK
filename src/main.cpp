@@ -753,8 +753,10 @@ namespace scltk
             using info_table_base_type_ = typename OptionsInfoTable::base_type;
             using value_type_           = std::conditional_t< Atomic, std::atomic_flag, bool >;
             std::array< value_type_, info_table_base_type_::size > data_{};
-            static constexpr auto suffix_true_{ ": true"sv };
-            static constexpr auto suffix_false_{ ": false"sv };
+            static constexpr auto enabled_option_value_{ "true"_cs };
+            static constexpr auto disabled_option_value_{ "false"_cs };
+            static constexpr auto splitting_char_{ ':' };
+            static_assert( !is_whitespace< char >( splitting_char_ ) );
             static auto get_value_( const value_type_& value ) noexcept
             {
                 if constexpr ( std::is_same_v< value_type_, std::atomic_flag > ) {
@@ -784,14 +786,38 @@ namespace scltk
             auto load_( std::string_view line ) noexcept
             {
                 bool value;
-                if ( line.size() > suffix_true_.size() && line.ends_with( suffix_true_ ) ) [[likely]] {
-                    line.remove_suffix( suffix_true_.size() );
+                if ( line.ends_with( enabled_option_value_.view() ) ) [[likely]] {
+                    line.remove_suffix( enabled_option_value_.size() );
                     value = true;
-                } else if ( line.size() > suffix_false_.size() && line.ends_with( suffix_false_ ) ) [[likely]] {
-                    line.remove_suffix( suffix_false_.size() );
+                } else if ( line.ends_with( disabled_option_value_.view() ) ) [[likely]] {
+                    line.remove_suffix( disabled_option_value_.size() );
                     value = false;
                 } else {
                     return;
+                }
+                {
+                    std::size_t whitespace_count{ 0 };
+                    for ( const auto ch : line | std::views::reverse ) {
+                        if ( !is_whitespace< char >( ch ) ) {
+                            break;
+                        }
+                        ++whitespace_count;
+                    }
+                    line.remove_suffix( whitespace_count );
+                }
+                if ( line.back() != splitting_char_ ) [[unlikely]] {
+                    return;
+                }
+                line.remove_suffix( 1 );
+                {
+                    std::size_t whitespace_count{ 0 };
+                    for ( const auto ch : line | std::views::reverse ) {
+                        if ( !is_whitespace< char >( ch ) ) {
+                            break;
+                        }
+                        ++whitespace_count;
+                    }
+                    line.remove_suffix( whitespace_count );
                 }
                 [ & ]< std::size_t... Is >( const std::index_sequence< Is... > ) noexcept
                 {
@@ -813,8 +839,12 @@ namespace scltk
             {
                 [ & ]< std::size_t... Is >( const std::index_sequence< Is... > )
                 {
-                    ( ( out << info_table_base_type_::template at< Is >::raw_name.view()
-                            << ( get_value_( std::get< Is >( data_ ) ) == true ? suffix_true_ : suffix_false_ ) << '\n' ),
+                    ( ( out
+                        << info_table_base_type_::template at< Is >::raw_name.view() << splitting_char_ << ' '
+                        << ( get_value_( std::get< Is >( data_ ) ) == true
+                               ? enabled_option_value_.view()
+                               : disabled_option_value_.view() )
+                        << '\n' ),
                       ... );
                 }( std::make_index_sequence< info_table_base_type_::size >{} );
             }
