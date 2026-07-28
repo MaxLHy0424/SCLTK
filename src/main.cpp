@@ -1213,13 +1213,19 @@ namespace scltk
             using lisenses = cpp_utils::type_list<
               license_info< INFO_FULL_NAME " (" INFO_SHORT_NAME ")"_cs, scltk_license >,
               license_info< "TRE (libtre)"_cs, libtre_license > >;
-            static constexpr auto full_content{ []< std::size_t... Is >( const std::index_sequence< Is... > ) static consteval noexcept
+            static constexpr auto file_content{ []< std::size_t... Is >( const std::index_sequence< Is... > ) static consteval noexcept
             {
                 return cpp_utils::concat_const_string( cpp_utils::concat_const_string(
                   lisenses::at< Is >::component_name, ":\n"_cs, cpp_utils::make_repeated_const_string< '-', 50 >(), "\n"_cs,
                   lisenses::at< Is >::content, cpp_utils::make_repeated_const_string< '-', 50 >(), "\n\n"_cs )... );
             }( std::make_index_sequence< lisenses::size >{} ) };
-            std::ofstream{ license_file.c_str(), std::ios::out | std::ios::trunc } << full_content.view();
+            constexpr auto file_content_view{ []() static consteval noexcept
+            {
+                auto view{ file_content.view() };
+                view.remove_suffix( 1 );
+                return view;
+            }() };
+            std::ofstream{ license_file.c_str(), std::ios::out | std::ios::trunc } << file_content_view;
             return func_back;
         }
     };
