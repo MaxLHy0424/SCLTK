@@ -218,13 +218,12 @@ SCLTK 窗口相关选项。位于 `[ 选项 ]` 下。
 - `crack_helper`：破解时执行的程序的命令行。
 - `restore_helper`：恢复时执行的程序的命令行。
 
-> [!NOTE]
-> 可在 “配置” 页面下的 “自定义规则” 中，点击 `> 查看帮助信息` 阅读上述信息的简略版本。
+可在 “配置” 页面下的 “自定义规则” 中，点击 `> 查看帮助信息` 阅读上述信息的简略版本。
 
-> [!WARNING]
-> SCLTK 不对自定义规则的正确性进行检测，一些规则可能导致意想不到的错误。在修改自定义规则时，请仔细检查。
+SCLTK 不对自定义规则的正确性进行检测，一些规则可能导致意想不到的错误。在修改自定义规则时，请仔细检查。
 
 示例:
+
 ```ini
 [custom_rules]
 proc_name: ^abc_client[0-9]{10}\.exe$
@@ -338,6 +337,7 @@ restore_helper: "abc toolkit.exe" restore
 
 > [!NOTE]
 > 发布时，推荐使用如下命令：
+>
 > ```pwsh
 > .\make.ps1 -edition <scltk-edition> -target clean && .\make.ps1 -edition <scltk-edition> -target sign -gpg_key=<key-id>
 > ```
