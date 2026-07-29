@@ -598,7 +598,7 @@ namespace scltk
       compile_time_rule_node<
         "WorkWin", cpp_utils::type_list<>, cpp_utils::type_list<>, details_::is_workwin, details_::default_helper, [] static noexcept
     {
-        cpp_utils::print_without_formatting( "\n (i) \"WorkWin\" 无需恢复, 请直接启动软件.\n\n"sv );
+        cpp_utils::print_without_formatting( " (i) \"WorkWin\" 无需恢复, 请直接启动软件.\n"sv );
     } > >;
     struct runtime_rule_node final
     {
