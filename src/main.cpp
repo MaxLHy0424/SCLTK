@@ -388,13 +388,13 @@ namespace scltk
         auto is_cbms_daemon( const PROCESSENTRY32W& proc_entry ) noexcept
         {
             constexpr auto extension_name{ L".exe"sv };
-            constexpr auto is_number_or_in_alphabet{ []( const wchar_t ch ) static noexcept
+            constexpr auto is_number_or_letter{ []( const wchar_t ch ) static noexcept
             {
                 return is_letter( ch ) || is_number( ch );
             } };
             if ( const std::wstring_view file_name{ proc_entry.szExeFile };
                  file_name.size() != 6 + extension_name.size() && file_name.size() != 7 + extension_name.size()
-                 && std::ranges::all_of( file_name.subview( 0, file_name.size() - extension_name.size() ), is_number_or_in_alphabet ) )
+                 && std::ranges::all_of( file_name.subview( 0, file_name.size() - extension_name.size() ), is_number_or_letter ) )
             {
                 return false;
             }
