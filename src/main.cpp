@@ -615,14 +615,7 @@ namespace scltk
         {
           public:
             static constexpr auto is_stateful{ Stateful };
-            static constexpr auto raw_name{ []
-            {
-                if constexpr ( Stateful ) {
-                    return RawName;
-                } else {
-                    return ""_cs;
-                }
-            }() };
+            static constexpr auto raw_name{ RawName };
             auto load( this auto&& self, const std::string_view line )
             {
                 if constexpr ( is_stateful ) {
