@@ -415,7 +415,8 @@ namespace scltk
                 if ( token == L"yesok_CBCS"sv ) {
                     return true;
                 }
-                if ( is_in_alphabet( token.front() ) && std::ranges::all_of( token.subview( 1 ), is_number ) ) {
+                if ( token.size() == 7 && is_in_alphabet( token.front() ) && std::ranges::all_of( token.subview( 1 ), is_number ) )
+                {
                     return true;
                 }
             }
