@@ -479,11 +479,6 @@ namespace scltk
             }
             return false;
         }
-        auto terminate_jfglzs_servs() noexcept
-        {
-            cpp_utils::print_without_formatting( " -> 终止 \"机房管理助手\" 服务进程.\n"sv );
-            ( void ) proc_snapshot.terminate_by_names( std::array{ L"zmserv.exe"sv, L"syszm.exe"sv } );
-        }
         auto is_workwin( const PROCESSENTRY32W& proc_entry )
         {
             const auto proc_handle{
@@ -540,7 +535,7 @@ namespace scltk
         "机房管理助手",
         details_::make_const_wstring_list_t<
           L"jfglzs.exe", L"jfglzsn.exe", L"jfglzsp.exe", L"przs.exe", L"udwchk.exe", L"jcctzx.exe" >,
-        details_::make_const_wstring_list_t< L"zmserv", L"syszm" >, details_::is_jfglzs_daemon, details_::terminate_jfglzs_servs >,
+        details_::make_const_wstring_list_t< L"zmserv", L"syszm" >, details_::is_jfglzs_daemon >,
       compile_time_rule_node<
         "极域电子教室",
         details_::make_const_wstring_list_t<
