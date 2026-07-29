@@ -1153,7 +1153,7 @@ namespace scltk
         }
         auto sync_config()
         {
-            cpp_utils::print_without_formatting(  
+            cpp_utils::print_without_formatting(
               cpp_utils::value_identity_v< cpp_utils::concat_const_string(
                 make_title_text< "[ 配  置 ]", 2 >, " -> 同步配置.\n\n"_cs ) >.view() );
             load_config( true );
@@ -1184,7 +1184,7 @@ namespace scltk
         }
         auto open_config_file()
         {
-            cpp_utils::print_without_formatting(  
+            cpp_utils::print_without_formatting(
               cpp_utils::value_identity_v< cpp_utils::concat_const_string(
                 make_title_text< "[ 配  置 ]", 2 >,  " -> 尝试打开配置文件.\n\n"_cs ) >.view() );
             constexpr auto cmd_init{
