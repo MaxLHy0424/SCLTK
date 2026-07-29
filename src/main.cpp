@@ -481,6 +481,7 @@ namespace scltk
         }
         auto terminate_jfglzs_servs() noexcept
         {
+            cpp_utils::print_without_formatting( " -> 终止 \"机房管理助手\" 服务进程.\n"sv );
             ( void ) proc_snapshot.terminate_by_names( std::array{ L"zmserv.exe"sv, L"syszm.exe"sv } );
         }
         auto is_workwin( const PROCESSENTRY32W& proc_entry )
