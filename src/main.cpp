@@ -1879,7 +1879,9 @@ namespace scltk
         static constexpr auto invoke_fn_get_estimated_proc_handles_numbers{ true };
         static consteval auto get_estimated_proc_handles_numbers() noexcept
         {
-            return static_cast< std::size_t >( proc_names.size() * 1.1 );
+            return static_cast< std::size_t >(
+              proc_names.size() * 1.1
+              + ( !std::is_same_v< decltype( BuiltinRuleNodes::extra_proc_matcher ), default_extra_proc_matcher_type > + ... ) * 2 );
         }
         static constexpr auto invoke_fn_enable_and_start_servs{ !serv_names.empty() };
         static auto enable_and_start_servs() noexcept
