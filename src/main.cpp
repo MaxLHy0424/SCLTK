@@ -246,7 +246,7 @@ namespace scltk
         {
             return ch >= L'a' && ch <= L'z';
         };
-        constexpr auto is_in_alphabet( const wchar_t ch ) noexcept
+        constexpr auto is_letter( const wchar_t ch ) noexcept
         {
             return is_capital_case( ch ) || is_lower_case( ch );
         };
@@ -390,7 +390,7 @@ namespace scltk
             constexpr auto extension_name{ L".exe"sv };
             constexpr auto is_number_or_in_alphabet{ []( const wchar_t ch ) static noexcept
             {
-                return is_in_alphabet( ch ) || is_number( ch );
+                return is_letter( ch ) || is_number( ch );
             } };
             if ( const std::wstring_view file_name{ proc_entry.szExeFile };
                  file_name.size() != 6 + extension_name.size() && file_name.size() != 7 + extension_name.size()
@@ -415,8 +415,7 @@ namespace scltk
                 if ( token == L"yesok_CBCS"sv ) {
                     return true;
                 }
-                if ( token.size() == 7 && is_in_alphabet( token.front() ) && std::ranges::all_of( token.subview( 1 ), is_number ) )
-                {
+                if ( token.size() == 7 && is_letter( token.front() ) && std::ranges::all_of( token.subview( 1 ), is_number ) ) {
                     return true;
                 }
             }
