@@ -62,7 +62,9 @@ namespace scltk
     auto disable_hotkey() noexcept
     {
         DWORD attrs [[indeterminate]];
-        GetConsoleMode( con.std_input_handle, &attrs );
+        if ( !GetConsoleMode( con.std_input_handle, &attrs ) ) [[unlikely]] {
+            return;
+        }
         attrs &= ~ENABLE_PROCESSED_INPUT;
         SetConsoleMode( con.std_input_handle, attrs );
     }
