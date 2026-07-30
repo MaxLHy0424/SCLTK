@@ -327,7 +327,7 @@ namespace cpp_utils
         };
         std::pmr::vector< line_node_ > lines_;
         const console& con_;
-        auto set_line_attrs_( line_node_& self, const WORD current_attrs ) noexcept
+        auto set_line_attrs_( line_node_& self, const WORD current_attrs ) const noexcept
         {
             SetConsoleTextAttribute( con_.std_output_handle, current_attrs );
             self.last_attrs = current_attrs;
@@ -340,7 +340,7 @@ namespace cpp_utils
             }
             return console_data.dwCursorPosition;
         }
-        auto try_get_event_( INPUT_RECORD& record )
+        auto try_get_event_( INPUT_RECORD& record ) const noexcept
         {
             if ( WaitForSingleObject( con_.std_input_handle, INFINITE ) == WAIT_OBJECT_0 ) {
                 DWORD reg [[indeterminate]];
@@ -350,7 +350,7 @@ namespace cpp_utils
             }
             return false;
         }
-        auto rewrite_( const COORD cursor_position, const line_node_& line )
+        auto rewrite_( const COORD cursor_position, const line_node_& line ) const
         {
             const auto [ console_width, console_height ]{ cursor_position };
             SetConsoleCursorPosition( con_.std_output_handle, { 0, console_height } );
