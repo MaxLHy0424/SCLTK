@@ -769,13 +769,6 @@ namespace scltk
                     obj = val;
                 }
             }
-            static auto set_value_then_notify_all_( value_type_& obj, const bool val ) noexcept
-            {
-                set_value_( obj, val );
-                if constexpr ( std::is_same_v< value_type_, std::atomic_flag > ) {
-                    obj.notify_all();
-                }
-            }
             auto load_( std::string_view line ) noexcept
             {
                 bool value [[indeterminate]];
@@ -842,7 +835,7 @@ namespace scltk
             static auto flip_item_value_( const ui_func_args_type args, value_type_& value ) noexcept
             {
                 const auto value_to_set{ !get_value_( value ) };
-                set_value_then_notify_all_( value, value_to_set );
+                set_value_( value, value_to_set );
                 args.parent_ui.set_text( args.node_index, make_flip_button_text_( value_to_set ) );
                 return func_back;
             }
