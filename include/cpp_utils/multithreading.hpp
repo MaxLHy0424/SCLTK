@@ -44,7 +44,7 @@ namespace cpp_utils
       It&& begin, W&& end, F&& func, std::pmr::memory_resource* const resource = std::pmr::get_default_resource() )
     {
         return create_parallel_task(
-          std::ranges::max( std::thread::hardware_concurrency(), 2u ), std::forward< It >( begin ), std::forward< It >( end ),
+          std::ranges::max( std::thread::hardware_concurrency(), 2u ), std::forward< It >( begin ), std::forward< W >( end ),
           std::forward< F >( func ), resource );
     }
     template < std::random_access_iterator It, std::sentinel_for< It > W, typename F >
@@ -70,7 +70,7 @@ namespace cpp_utils
       It&& begin, W&& end, F&& func, std::pmr::memory_resource* const resource = std::pmr::get_default_resource() )
     {
         parallel_for_each(
-          std::ranges::max( std::thread::hardware_concurrency(), 2u ), std::forward< It >( begin ), std::forward< It >( end ),
+          std::ranges::max( std::thread::hardware_concurrency(), 2u ), std::forward< It >( begin ), std::forward< W >( end ),
           std::forward< F >( func ), resource );
     }
 }
