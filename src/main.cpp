@@ -2037,27 +2037,53 @@ namespace scltk
     }
     namespace details_
     {
-        auto forced_show() noexcept
+        auto forced_show( const std::stop_token status ) noexcept
         {
             constexpr const auto& enabled{ std::get< window_config >( config_nodes ).at< "forced_show" >() };
             constexpr auto sleep_duration{ 50ms };
-            constexpr auto condition_checker{ [] static noexcept
+            const auto condition_checker{ [ & ] noexcept
             {
-                if ( enabled.test( std::memory_order_acquire ) == false ) {
-                    con.cancel_forced_show();
-                    enabled.wait( false, std::memory_order_acquire );
+                if ( enabled.test( std::memory_order_acquire ) == true ) {
+                    return status.stop_requested();
+                }
+                con.cancel_forced_show();
+                while ( enabled.test( std::memory_order_acquire ) == false ) {
+                    if ( status.stop_requested() ) [[unlikely]] {
+                        return true;
+                    }
+                    std::this_thread::sleep_for( sleep_duration );
                 }
                 return false;
             } };
             con.forced_show_until( sleep_duration, condition_checker );
         }
+        template < std::size_t N >
+        struct background_thread_manager final
+        {
+            std::stop_source stop_requester{};
+            std::inplace_vector< std::thread, N > threads{};
+            background_thread_manager() noexcept                          = default;
+            background_thread_manager( const background_thread_manager& ) = delete;
+            background_thread_manager( background_thread_manager&& )      = default;
+            ~background_thread_manager() noexcept
+            {
+                stop_requester.request_stop();
+                for ( auto& thread : threads ) {
+                    if ( thread.joinable() ) [[likely]] {
+                        thread.join();
+                    }
+                }
+            }
+        };
     }
-    auto create_parallel_tasks() noexcept
+    [[nodiscard]] auto create_background_threads()
     {
-        constexpr std::array parallel_tasks{ details_::forced_show };
-        for ( const auto& parallel_task : parallel_tasks ) {
-            std::thread{ parallel_task }.detach();
+        constexpr std::array funcs{ details_::forced_show };
+        details_::background_thread_manager< funcs.size() > mgr;
+        for ( const auto token{ mgr.stop_requester.get_token() }; const auto& func : funcs ) {
+            mgr.threads.unchecked_emplace_back( func, token );
         }
+        return mgr;
     }
     namespace details_
     {
@@ -2121,7 +2147,9 @@ auto main() -> int
     scltk::disable_hotkey();
     scltk::enable_privileges();
     scltk::load_config( false );
-    scltk::create_parallel_tasks();
+    const auto _{ scltk::create_background_threads() };
     scltk::do_extra_prep_tasks();
     scltk::show_homepage_ui();
+    cpp_utils::print_without_formatting( " -> 清理资源."sv );
+    return EXIT_SUCCESS;
 }
