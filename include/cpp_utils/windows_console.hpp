@@ -17,7 +17,7 @@ namespace cpp_utils
         HANDLE std_error_handle{ GetStdHandle( STD_ERROR_HANDLE ) };
         [[nodiscard]] auto get_state() noexcept
         {
-            WINDOWPLACEMENT wp;
+            WINDOWPLACEMENT wp{};
             wp.length = sizeof( WINDOWPLACEMENT );
             GetWindowPlacement( window_handle, &wp );
             return wp.showCmd;
@@ -116,14 +116,14 @@ namespace cpp_utils
         }
         auto&& press_any_key_to_continue( this auto&& self ) noexcept
         {
-            DWORD mode;
+            DWORD mode [[indeterminate]];
             if ( !GetConsoleMode( self.std_input_handle, &mode ) ) [[unlikely]] {
                 return std::forward< decltype( self ) >( self );
             }
             SetConsoleMode( self.std_input_handle, ENABLE_EXTENDED_FLAGS | ( mode & ~ENABLE_QUICK_EDIT_MODE ) );
             FlushConsoleInputBuffer( self.std_input_handle );
-            INPUT_RECORD record;
-            DWORD events;
+            INPUT_RECORD record{};
+            DWORD events [[indeterminate]];
             do {
                 ReadConsoleInputW( self.std_input_handle, &record, 1, &events );
             } while ( record.EventType != KEY_EVENT || !record.Event.KeyEvent.bKeyDown );
@@ -137,7 +137,7 @@ namespace cpp_utils
         }
         auto&& enable_virtual_terminal_processing( this auto&& self, const bool is_enable ) noexcept
         {
-            DWORD mode;
+            DWORD mode [[indeterminate]];
             GetConsoleMode( self.std_output_handle, &mode );
             is_enable ? mode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING : mode &= ~ENABLE_VIRTUAL_TERMINAL_PROCESSING;
             SetConsoleMode( self.std_output_handle, mode );
@@ -145,11 +145,11 @@ namespace cpp_utils
         }
         auto&& clear( this auto&& self, std::pmr::memory_resource* const resource = std::pmr::get_default_resource() )
         {
-            CONSOLE_SCREEN_BUFFER_INFO info;
+            CONSOLE_SCREEN_BUFFER_INFO info{};
             GetConsoleScreenBufferInfo( self.std_output_handle, &info );
             constexpr COORD top_left{ 0, 0 };
             const auto area{ info.dwSize.X * info.dwSize.Y };
-            DWORD written;
+            DWORD written [[indeterminate]];
             SetConsoleCursorPosition( self.std_output_handle, top_left );
             print_without_formatting( std::pmr::string( static_cast< std::size_t >( area ), ' ', resource ) );
             FillConsoleOutputAttribute( self.std_output_handle, info.wAttributes, area, top_left, &written );
@@ -158,7 +158,7 @@ namespace cpp_utils
         }
         [[nodiscard]] auto get_size() const noexcept
         {
-            CONSOLE_SCREEN_BUFFER_INFO info;
+            CONSOLE_SCREEN_BUFFER_INFO info{};
             GetConsoleScreenBufferInfo( std_output_handle, &info );
             return info.dwSize;
         }
@@ -198,7 +198,7 @@ namespace cpp_utils
         }
         auto&& show_cursor( this auto&& self, const bool is_shown ) noexcept
         {
-            CONSOLE_CURSOR_INFO cursor_data;
+            CONSOLE_CURSOR_INFO cursor_data{};
             GetConsoleCursorInfo( self.std_output_handle, &cursor_data );
             cursor_data.bVisible = static_cast< WINBOOL >( is_shown );
             SetConsoleCursorInfo( self.std_output_handle, &cursor_data );
@@ -206,7 +206,7 @@ namespace cpp_utils
         }
         auto&& lock_text( this auto&& self, const bool is_locked ) noexcept
         {
-            DWORD attrs;
+            DWORD attrs [[indeterminate]];
             if ( !GetConsoleMode( self.std_input_handle, &attrs ) ) [[unlikely]] {
                 return std::forward< decltype( self ) >( self );
             }
@@ -317,14 +317,14 @@ namespace cpp_utils
         }
         auto get_cursor_() noexcept
         {
-            CONSOLE_SCREEN_BUFFER_INFO console_data;
+            CONSOLE_SCREEN_BUFFER_INFO console_data{};
             GetConsoleScreenBufferInfo( con_.std_output_handle, &console_data );
             return console_data.dwCursorPosition;
         }
         auto try_get_event_( INPUT_RECORD& record )
         {
             if ( WaitForSingleObject( con_.std_input_handle, INFINITE ) == WAIT_OBJECT_0 ) {
-                DWORD reg;
+                DWORD reg [[indeterminate]];
                 if ( ReadConsoleInputW( con_.std_input_handle, &record, 1, &reg ) && reg != 0 ) {
                     return true;
                 }
@@ -535,7 +535,7 @@ namespace cpp_utils
             con_.show_cursor( false );
             con_.lock_text( true );
             init_pos_();
-            INPUT_RECORD record;
+            INPUT_RECORD record [[indeterminate]];
             const auto& mouse_event{ record.Event.MouseEvent };
             auto func_return_value{ func_back };
             while ( func_return_value == func_back ) {

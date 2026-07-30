@@ -61,7 +61,7 @@ namespace scltk
     }
     auto disable_hotkey() noexcept
     {
-        DWORD attrs;
+        DWORD attrs [[indeterminate]];
         GetConsoleMode( con.std_input_handle, &attrs );
         attrs &= ~ENABLE_PROCESSED_INPUT;
         SetConsoleMode( con.std_input_handle, attrs );
@@ -90,7 +90,7 @@ namespace scltk
             return dict;
         } >() };
         constexpr auto title_length{ 32uz };
-        std::array< wchar_t, title_length + 1 > title;
+        std::array< wchar_t, title_length + 1 > title [[indeterminate]];
         std::mt19937_64 gen{ std::random_device{}() };
         std::uniform_int_distribution< std::size_t > dist{ 0uz, chars_dict.size() - 1uz };
         for ( auto i{ 0uz }; i < title_length; ++i ) {
@@ -280,10 +280,10 @@ namespace scltk
         }
         auto convert_i16_to_hex_wstring_with_fields( unsigned short n ) noexcept
         {
-            char a[ 4 ]{};
+            char a[ 4 ] [[indeterminate]];
             const auto ret{ std::to_chars( a, a + 4, n, 16 ) };
             const auto written_size{ ret.ptr - a };
-            std::array< wchar_t, 4 > str{};
+            std::array< wchar_t, 4 > str [[indeterminate]];
             for ( auto i{ 0uz }; i < 4uz - written_size; ++i ) {
                 str[ i ] = L'0';
             }
@@ -300,8 +300,10 @@ namespace scltk
         auto get_proc_path( const cpp_utils::scoped_handle& proc_handle ) noexcept
           -> std::optional< std::pair< win32_file_path_buffer_t, DWORD > >
         {
-            std::pair< win32_file_path_buffer_t, DWORD > result{ {}, MAX_PATH };
-            if ( !QueryFullProcessImageNameW( proc_handle.get(), 0, result.first.data(), &result.second ) ) [[unlikely]] {
+            std::pair< win32_file_path_buffer_t, DWORD > result;
+            auto& [ buffer, size ]{ result };
+            size = MAX_PATH;
+            if ( !QueryFullProcessImageNameW( proc_handle.get(), 0, buffer.data(), &size ) ) [[unlikely]] {
                 return std::nullopt;
             }
             return result;
@@ -335,7 +337,7 @@ namespace scltk
         {
             using targets = make_const_wstring_list_t< L"FileDescription", L"ProductName", L"LegalCopyright" >;
             std::inplace_vector< std::pmr::wstring, targets::size > result;
-            DWORD handle{};
+            DWORD handle;
             DWORD size{ GetFileVersionInfoSizeW( path.data(), &handle ) };
             if ( size == 0 ) {
                 return result;
@@ -349,7 +351,7 @@ namespace scltk
                 WORD language;
                 WORD codepage;
             };
-            LPVOID translation_buffer;
+            LPVOID translation_buffer [[indeterminate]];
             UINT translate{ 0 };
             if ( !VerQueryValueW( version_info_buffer.data(), LR"(\VarFileInfo\Translation)", &translation_buffer, &translate ) )
             {
@@ -774,7 +776,7 @@ namespace scltk
             }
             auto load_( std::string_view line ) noexcept
             {
-                bool value;
+                bool value [[indeterminate]];
                 if ( line.ends_with( enabled_option_value_.view() ) ) {
                     line.remove_suffix( enabled_option_value_.size() );
                     value = true;
@@ -1183,8 +1185,8 @@ namespace scltk
             if ( std::filesystem::exists( config_file_name, ec ) ) {
                 auto cmd{ cmd_init };
                 STARTUPINFOW startup_info{};
-                PROCESS_INFORMATION proc_info;
                 startup_info.cb = sizeof( startup_info );
+                PROCESS_INFORMATION proc_info [[indeterminate]];
                 if ( CreateProcessW( nullptr, cmd.data(), nullptr, nullptr, FALSE, 0, nullptr, nullptr, &startup_info, &proc_info ) )
                   [[likely]]
                 {
@@ -1291,9 +1293,9 @@ namespace scltk
         auto launch_cmd()
         {
             STARTUPINFOW startup_info{};
-            PROCESS_INFORMATION proc_info;
-            wchar_t cmd[]{ L"cmd.exe" };
             startup_info.cb = sizeof( startup_info );
+            PROCESS_INFORMATION proc_info [[indeterminate]];
+            wchar_t cmd[]{ L"cmd.exe" };
             if ( CreateProcessW( nullptr, cmd, nullptr, nullptr, FALSE, 0, nullptr, nullptr, &startup_info, &proc_info ) )
               [[likely]]
             {
@@ -1320,10 +1322,10 @@ namespace scltk
                 ( void ) proc_snapshot.terminate_by_name( L"explorer.exe"sv );
             }
             cpp_utils::print_without_formatting( " -> 启动进程.\n"sv );
-            wchar_t cmd[]{ L"explorer.exe" };
             STARTUPINFOW startup_info{};
-            PROCESS_INFORMATION proc_info{};
             startup_info.cb = sizeof( startup_info );
+            PROCESS_INFORMATION proc_info [[indeterminate]];
+            wchar_t cmd[]{ L"explorer.exe" };
             if ( CreateProcessW( nullptr, cmd, nullptr, nullptr, FALSE, 0, nullptr, nullptr, &startup_info, &proc_info ) )
               [[likely]]
             {
@@ -1348,7 +1350,7 @@ namespace scltk
         } ) >;
         [[nodiscard]] auto is_sub_key_empty( const HKEY sub_key ) noexcept
         {
-            wchar_t name[ 256 ];
+            wchar_t name[ 256 ] [[indeterminate]];
             DWORD index{ 0 };
             auto size{ static_cast< DWORD >( std::size( name ) ) };
             while ( RegEnumValueW( sub_key, index, name, &size, nullptr, nullptr, nullptr, nullptr ) == ERROR_SUCCESS ) {
@@ -1367,7 +1369,7 @@ namespace scltk
         }
         auto process_debugger_values( const HKEY root_key ) noexcept
         {
-            wchar_t sub_key_name[ 256 ];
+            wchar_t sub_key_name[ 256 ] [[indeterminate]];
             DWORD index{ 0 };
             auto size{ static_cast< DWORD >( std::size( sub_key_name ) ) };
             while ( RegEnumKeyExW( root_key, index, sub_key_name, &size, nullptr, nullptr, nullptr, nullptr ) == ERROR_SUCCESS )
@@ -1399,7 +1401,7 @@ namespace scltk
             {
                 return;
             }
-            wchar_t sub_key_name[ 256 ];
+            wchar_t sub_key_name[ 256 ] [[indeterminate]];
             for ( DWORD idx{ sub_key_count }; idx > 0; --idx ) {
                 auto size{ static_cast< DWORD >( std::size( sub_key_name ) ) };
                 if ( RegEnumKeyExW( root_key, idx - 1, sub_key_name, &size, nullptr, nullptr, nullptr, nullptr ) != ERROR_SUCCESS )
@@ -1479,9 +1481,9 @@ namespace scltk
         {
             cpp_utils::print_without_formatting( " -> 重置防火墙规则.\n"sv );
             STARTUPINFOW startup_info{};
-            PROCESS_INFORMATION proc_info{};
-            SECURITY_ATTRIBUTES sec_attrib{ sizeof( sec_attrib ), nullptr, TRUE };
             startup_info.cb = sizeof( startup_info );
+            PROCESS_INFORMATION proc_info [[indeterminate]];
+            SECURITY_ATTRIBUTES sec_attrib{ sizeof( sec_attrib ), nullptr, TRUE };
             const auto nul_file_handle{
               CreateFileW( L"NUL", GENERIC_WRITE, FILE_SHARE_WRITE, &sec_attrib, OPEN_EXISTING, 0, nullptr ) };
             if ( nul_file_handle == INVALID_HANDLE_VALUE ) [[unlikely]] {
@@ -1510,7 +1512,7 @@ namespace scltk
 #endif
             const auto hosts_path{ [] static
             {
-                win32_file_path_buffer_t result;
+                win32_file_path_buffer_t result [[indeterminate]];
                 GetWindowsDirectoryW( result.data(), MAX_PATH );
                 std::ranges::copy( LR"(\System32\drivers\etc\hosts)", std::ranges::find( result, L'\0' ) );
                 return std::filesystem::path{ result.data() };
@@ -1540,7 +1542,7 @@ namespace scltk
         }
         auto set_device_state( const HDEVINFO device_info, SP_DEVINFO_DATA* const p_device_info_data, const bool enabled ) noexcept
         {
-            SP_PROPCHANGE_PARAMS pcp;
+            SP_PROPCHANGE_PARAMS pcp [[indeterminate]];
             pcp.ClassInstallHeader.cbSize          = sizeof( SP_CLASSINSTALL_HEADER );
             pcp.ClassInstallHeader.InstallFunction = DIF_PROPERTYCHANGE;
             pcp.StateChange                        = enabled ? DICS_ENABLE : DICS_DISABLE;
@@ -1558,7 +1560,7 @@ namespace scltk
             cpp_utils::print_without_formatting( " -> 重启网络适配器 (可能失败).\n"sv );
             NET_LUID target_local_uid{};
             wchar_t target_name[ 256 ]{};
-            ULONG out_buffer_length{};
+            ULONG out_buffer_length [[indeterminate]];
             GetAdaptersAddresses( AF_UNSPEC, 0, nullptr, nullptr, &out_buffer_length );
             auto addresses{ static_cast< PIP_ADAPTER_ADDRESSES >( unsynced_mem_pool->allocate( out_buffer_length ) ) };
             if ( GetAdaptersAddresses( AF_UNSPEC, 0, nullptr, addresses, &out_buffer_length ) == NO_ERROR ) [[likely]] {
@@ -1582,11 +1584,11 @@ namespace scltk
             if ( device_info == INVALID_HANDLE_VALUE ) [[unlikely]] {
                 return;
             }
-            SP_DEVINFO_DATA device_info_data;
+            SP_DEVINFO_DATA device_info_data [[indeterminate]];
             device_info_data.cbSize = sizeof( SP_DEVINFO_DATA );
             bool found{ false };
             for ( DWORD i{ 0 }; SetupDiEnumDeviceInfo( device_info, i, &device_info_data ); ++i ) {
-                wchar_t buffer[ 256 ];
+                wchar_t buffer[ 256 ] [[indeterminate]];
                 if ( !SetupDiGetDeviceRegistryPropertyW(
                        device_info, &device_info_data, SPDRP_FRIENDLYNAME, nullptr, reinterpret_cast< PBYTE >( buffer ),
                        sizeof( buffer ), nullptr )
@@ -1988,8 +1990,8 @@ namespace scltk
             for ( const auto& helper : helpers ) {
                 std::pmr::wstring cmd{ helper, unsynced_mem_pool };
                 STARTUPINFOW startup_info{};
-                PROCESS_INFORMATION proc_info{};
                 startup_info.cb = sizeof( startup_info );
+                PROCESS_INFORMATION proc_info [[indeterminate]];
                 if ( CreateProcessW( nullptr, cmd.data(), nullptr, nullptr, FALSE, 0, nullptr, nullptr, &startup_info, &proc_info ) )
                   [[likely]]
                 {

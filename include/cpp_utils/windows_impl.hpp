@@ -214,7 +214,7 @@ namespace cpp_utils
           with_service_dependencies( const SC_HANDLE service, F&& func, std::pmr::memory_resource* const resource ) noexcept
         {
             constexpr DWORD stack_buffer_size{ 8192 };
-            std::array< BYTE, stack_buffer_size > stack_buffer{};
+            std::array< BYTE, stack_buffer_size > stack_buffer [[indeterminate]];
             DWORD bytes_needed{ 0 };
             const auto stack_config{ reinterpret_cast< LPQUERY_SERVICE_CONFIGW >( stack_buffer.data() ) };
             if ( QueryServiceConfigW( service, stack_config, stack_buffer_size, &bytes_needed ) ) [[likely]] {
@@ -250,7 +250,7 @@ namespace cpp_utils
                     return stop_service_and_dependencies( scm, dep_svc.get(), resource );
                 } );
             }, resource ) };
-            SERVICE_STATUS status{};
+            SERVICE_STATUS status [[indeterminate]];
             if ( ControlService( service, SERVICE_CONTROL_STOP, &status ) ) [[likely]] {
                 using namespace std::chrono_literals;
                 bool query_ok{ true };
@@ -280,7 +280,7 @@ namespace cpp_utils
                     if ( dep_svc == nullptr ) [[unlikely]] {
                         return ERROR_SUCCESS;
                     }
-                    SERVICE_STATUS status{};
+                    SERVICE_STATUS status [[indeterminate]];
                     if ( QueryServiceStatus( dep_svc.get(), &status )
                          && ( status.dwCurrentState == SERVICE_RUNNING || status.dwCurrentState == SERVICE_START_PENDING ) )
                     {
@@ -306,11 +306,11 @@ namespace cpp_utils
         if ( !OpenProcessToken( proc, TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, std::out_ptr( token ) ) ) [[unlikely]] {
             return GetLastError();
         }
-        LUID local_uid{};
+        LUID local_uid [[indeterminate]];
         if ( !LookupPrivilegeValueW( nullptr, privilege, &local_uid ) ) [[unlikely]] {
             return GetLastError();
         }
-        TOKEN_PRIVILEGES tp{};
+        TOKEN_PRIVILEGES tp [[indeterminate]];
         tp.PrivilegeCount             = 1;
         tp.Privileges[ 0 ].Luid       = local_uid;
         tp.Privileges[ 0 ].Attributes = is_enabled ? SE_PRIVILEGE_ENABLED : 0;
@@ -382,7 +382,7 @@ namespace cpp_utils
             if ( snapshot_value == INVALID_HANDLE_VALUE ) [[unlikely]] {
                 return false;
             }
-            PROCESSENTRY32W proc_entry{};
+            PROCESSENTRY32W proc_entry [[indeterminate]];
             proc_entry.dwSize = sizeof( PROCESSENTRY32W );
             if ( !Process32FirstW( snapshot_value, &proc_entry ) ) [[unlikely]] {
                 return false;
@@ -653,13 +653,13 @@ namespace cpp_utils
     }
     inline auto clone_self() noexcept
     {
-        std::array< wchar_t, MAX_PATH > file_path{};
+        std::array< wchar_t, MAX_PATH > file_path [[indeterminate]];
         GetModuleFileNameW( nullptr, file_path.data(), MAX_PATH );
         ShellExecuteW( nullptr, L"open", file_path.data(), nullptr, nullptr, SW_SHOWNORMAL );
     }
     inline auto clone_self_as_admin() noexcept
     {
-        std::array< wchar_t, MAX_PATH > file_path{};
+        std::array< wchar_t, MAX_PATH > file_path [[indeterminate]];
         GetModuleFileNameW( nullptr, file_path.data(), MAX_PATH );
         ShellExecuteW( nullptr, L"runas", file_path.data(), nullptr, nullptr, SW_SHOWNORMAL );
     }

@@ -11,7 +11,7 @@ namespace scltk
     {
         auto clear_wininet_proxy() noexcept
         {
-            INTERNET_PER_CONN_OPTION options[ 5 ];
+            INTERNET_PER_CONN_OPTION options[ 5 ] [[indeterminate]];
             options[ 0 ].dwOption       = INTERNET_PER_CONN_FLAGS_UI;
             options[ 0 ].Value.dwValue  = 0;
             options[ 1 ].dwOption       = INTERNET_PER_CONN_PROXY_SERVER;
