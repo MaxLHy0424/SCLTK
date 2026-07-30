@@ -2,12 +2,11 @@
 #include <algorithm>
 #include <iterator>
 #include <memory_resource>
-#include <print>
+#include <optional>
 #include <ranges>
 #include <thread>
 #include <utility>
 #include <vector>
-#include "compiler.hpp"
 namespace cpp_utils
 {
     using nproc_t = decltype( std::thread::hardware_concurrency() );
@@ -16,17 +15,16 @@ namespace cpp_utils
     [[nodiscard]] inline auto create_parallel_task(
       const nproc_t nproc, It&& begin, W&& end, F&& func,
       std::pmr::memory_resource* const resource = std::pmr::get_default_resource() )
+      -> std::optional< std::pmr::vector< std::thread > >
     {
-        using result_type = std::pmr::vector< std::thread >;
         if ( begin == end || nproc == 0 ) [[unlikely]] {
-            return result_type( resource );
+            return std::nullopt;
         }
-        [[assume( nproc != 0 )]];
         const auto total{ static_cast< std::ptrdiff_t >( std::ranges::distance( begin, end ) ) };
         const auto nproc_for_executing{ std::ranges::min( static_cast< std::ptrdiff_t >( nproc ), total ) };
         const auto chunk_size{ total / nproc_for_executing };
         const auto remainder{ total % nproc_for_executing };
-        result_type threads( resource );
+        std::pmr::vector< std::thread > threads( resource );
         threads.reserve( nproc_for_executing );
         for ( std::ptrdiff_t i{ 0 }; i < nproc_for_executing; ++i ) {
             auto chunk_start{ begin + i * chunk_size + std::ranges::min( i, remainder ) };
@@ -55,9 +53,12 @@ namespace cpp_utils
       const nproc_t nproc, It&& begin, W&& end, F&& func,
       std::pmr::memory_resource* const resource = std::pmr::get_default_resource() )
     {
-        for ( auto& thread : create_parallel_task(
-                nproc, std::forward< It >( begin ), std::forward< W >( end ), std::forward< F >( func ), resource ) )
-        {
+        auto threads{ create_parallel_task(
+          nproc, std::forward< It >( begin ), std::forward< W >( end ), std::forward< F >( func ), resource ) };
+        if ( !threads.has_value() ) {
+            return;
+        }
+        for ( auto& thread : threads.value() ) {
             if ( thread.joinable() ) {
                 thread.join();
             }
