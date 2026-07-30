@@ -282,7 +282,7 @@ namespace scltk
         }
         auto convert_i16_to_hex_wstring_with_fields( unsigned short n ) noexcept
         {
-            char a[ 4 ] [[indeterminate]];
+            char a [[indeterminate]][ 4 ];
             const auto ret{ std::to_chars( a, a + 4, n, 16 ) };
             const auto written_size{ ret.ptr - a };
             std::array< wchar_t, 4 > str [[indeterminate]];
@@ -1352,7 +1352,7 @@ namespace scltk
         } ) >;
         [[nodiscard]] auto is_sub_key_empty( const HKEY sub_key ) noexcept
         {
-            wchar_t name[ 256 ] [[indeterminate]];
+            wchar_t name [[indeterminate]][ 256 ];
             DWORD index{ 0 };
             auto size{ static_cast< DWORD >( std::size( name ) ) };
             while ( RegEnumValueW( sub_key, index, name, &size, nullptr, nullptr, nullptr, nullptr ) == ERROR_SUCCESS ) {
@@ -1371,7 +1371,7 @@ namespace scltk
         }
         auto process_debugger_values( const HKEY root_key ) noexcept
         {
-            wchar_t sub_key_name[ 256 ] [[indeterminate]];
+            wchar_t sub_key_name [[indeterminate]][ 256 ];
             DWORD index{ 0 };
             auto size{ static_cast< DWORD >( std::size( sub_key_name ) ) };
             while ( RegEnumKeyExW( root_key, index, sub_key_name, &size, nullptr, nullptr, nullptr, nullptr ) == ERROR_SUCCESS )
@@ -1403,7 +1403,7 @@ namespace scltk
             {
                 return;
             }
-            wchar_t sub_key_name[ 256 ] [[indeterminate]];
+            wchar_t sub_key_name [[indeterminate]][ 256 ];
             for ( DWORD idx{ sub_key_count }; idx > 0; --idx ) {
                 auto size{ static_cast< DWORD >( std::size( sub_key_name ) ) };
                 if ( RegEnumKeyExW( root_key, idx - 1, sub_key_name, &size, nullptr, nullptr, nullptr, nullptr ) != ERROR_SUCCESS )
@@ -1590,7 +1590,7 @@ namespace scltk
             device_info_data.cbSize = sizeof( SP_DEVINFO_DATA );
             bool found{ false };
             for ( DWORD i{ 0 }; SetupDiEnumDeviceInfo( device_info, i, &device_info_data ); ++i ) {
-                wchar_t buffer[ 256 ] [[indeterminate]];
+                wchar_t buffer [[indeterminate]][ 256 ];
                 if ( !SetupDiGetDeviceRegistryPropertyW(
                        device_info, &device_info_data, SPDRP_FRIENDLYNAME, nullptr, reinterpret_cast< PBYTE >( buffer ),
                        sizeof( buffer ), nullptr )
