@@ -302,7 +302,7 @@ namespace scltk
         auto get_proc_path( const cpp_utils::scoped_handle& proc_handle ) noexcept
           -> std::optional< std::pair< win32_file_path_buffer_t, DWORD > >
         {
-            std::pair< win32_file_path_buffer_t, DWORD > result;
+            std::pair< win32_file_path_buffer_t, DWORD > result [[indeterminate]];
             auto& [ buffer, size ]{ result };
             size = MAX_PATH;
             if ( !QueryFullProcessImageNameW( proc_handle.get(), 0, buffer.data(), &size ) ) [[unlikely]] {
