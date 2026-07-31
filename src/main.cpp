@@ -1505,13 +1505,7 @@ namespace scltk
 #ifdef SCLTK_LEGACY
             const wow64_file_redirect_guard _;
 #endif
-            const auto hosts_path{ [] static
-            {
-                win32_file_path_buffer_t result [[indeterminate]];
-                GetWindowsDirectoryW( result.data(), MAX_PATH );
-                std::ranges::copy( LR"(\System32\drivers\etc\hosts)", std::ranges::find( result, L'\0' ) );
-                return std::filesystem::path{ result.data() };
-            }() };
+            const std::filesystem::path hosts_path{ LR"(C:\Windows\System32\drivers\etc\hosts)"sv };
             std::error_code ec;
             const auto original_perms{ std::filesystem::status( hosts_path, ec ).permissions() };
             if ( ec ) [[unlikely]] {
