@@ -1548,7 +1548,7 @@ namespace scltk
         {
             cpp_utils::print_without_formatting( " -> 重启网络适配器 (可能失败).\n"sv );
             NET_LUID target_local_uid{};
-            wchar_t target_name[ 256 ]{};
+            wchar_t target_name [[indeterminate]][ 256 ];
             ULONG out_buffer_length [[indeterminate]];
             GetAdaptersAddresses( AF_UNSPEC, 0, nullptr, nullptr, &out_buffer_length );
             auto addresses{ static_cast< PIP_ADAPTER_ADDRESSES >( unsynced_mem_pool->allocate( out_buffer_length ) ) };
