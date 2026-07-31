@@ -329,7 +329,7 @@ namespace scltk
                 if ( name_len < 2 ) [[unlikely]] {
                     continue;
                 }
-                std::pmr::wstring name_buf( name_len, L'\0', unsynced_mem_pool );
+                std::pmr::wstring name_buf( static_cast< std::size_t >( name_len - 1 ), L'\0', unsynced_mem_pool );
                 CertGetNameStringW( cert.get(), CERT_NAME_SIMPLE_DISPLAY_TYPE, 0, nullptr, name_buf.data(), name_len );
                 return name_buf;
             }
