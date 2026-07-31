@@ -1516,8 +1516,8 @@ namespace scltk
             std::ofstream{ hosts_path, std::ios::out }.close();
             std::filesystem::permissions( hosts_path, original_perms, std::filesystem::perm_options::replace, ec );
         }
-        extern auto clear_winhttp_proxy() noexcept -> void;
-        extern auto clear_wininet_proxy() noexcept -> void;
+        auto clear_winhttp_proxy() noexcept -> void;
+        auto clear_wininet_proxy() noexcept -> void;
         auto reset_network_proxy() noexcept
         {
             cpp_utils::print_without_formatting( " -> 重置网络代理.\n"sv );
