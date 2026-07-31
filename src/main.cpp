@@ -1175,9 +1175,9 @@ namespace scltk
                 make_title_text< "[ 配  置 ]", 2 >,  " -> 尝试打开配置文件.\n\n"_cs ) >.view() );
             constexpr auto cmd_init{
               cpp_utils::concat_const_string( L"notepad.exe "_cs, cpp_utils::const_wstring{ config_file_name } ).data() };
-            std::error_code ec;
+            std::error_code _;
             bool success{ false };
-            if ( std::filesystem::exists( config_file_name, ec ) ) {
+            if ( std::filesystem::exists( config_file_name, _ ) ) {
                 auto cmd{ cmd_init };
                 STARTUPINFOW startup_info{};
                 startup_info.cb = sizeof( startup_info );
@@ -1630,8 +1630,8 @@ namespace scltk
                   HKEY_CURRENT_USER, LR"(Software\Microsoft\Windows\CurrentVersion\RunNotification)"sv, notification_item );
             }
             cpp_utils::print_without_formatting( " -> 删除备份.\n"sv );
-            std::error_code ec;
-            std::filesystem::remove_all( LR"(C:\Windows\jf)"sv, ec );
+            std::error_code _;
+            std::filesystem::remove_all( LR"(C:\Windows\jf)"sv, _ );
         }
         auto reset_common_web_browsers_policy() noexcept
         {
