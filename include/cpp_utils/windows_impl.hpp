@@ -118,7 +118,7 @@ namespace cpp_utils
         const auto str_len{ static_cast< int >( str.size() ) };
         const auto flags{ static_cast< DWORD >( charset == CP_UTF8 ? WC_ERR_INVALID_CHARS : 0 ) };
         const auto size_needed{ WideCharToMultiByte( charset, flags, str.data(), str_len, nullptr, 0, nullptr, nullptr ) };
-        if ( size_needed == 0 ) [[unlikely]] {
+        if ( size_needed <= 0 ) [[unlikely]] {
             return std::nullopt;
         }
         std::pmr::string result{ static_cast< std::size_t >( size_needed ), '\0', resource };
