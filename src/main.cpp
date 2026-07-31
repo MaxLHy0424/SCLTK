@@ -1550,9 +1550,11 @@ namespace scltk
             NET_LUID target_local_uid{};
             wchar_t target_name [[indeterminate]][ 256 ];
             ULONG out_buffer_length [[indeterminate]];
-            GetAdaptersAddresses( AF_UNSPEC, 0, nullptr, nullptr, &out_buffer_length );
+            if ( GetAdaptersAddresses( AF_UNSPEC, 0, nullptr, nullptr, &out_buffer_length ) != ERROR_SUCCESS ) [[unlikely]] {
+                return;
+            }
             auto addresses{ static_cast< PIP_ADAPTER_ADDRESSES >( unsynced_mem_pool->allocate( out_buffer_length ) ) };
-            if ( GetAdaptersAddresses( AF_UNSPEC, 0, nullptr, addresses, &out_buffer_length ) == NO_ERROR ) [[likely]] {
+            if ( GetAdaptersAddresses( AF_UNSPEC, 0, nullptr, addresses, &out_buffer_length ) == ERROR_SUCCESS ) [[likely]] {
                 auto current{ addresses };
                 while ( current != nullptr ) {
                     if ( ( current->IfType == IF_TYPE_ETHERNET_CSMACD || current->IfType == IF_TYPE_IEEE80211 )
