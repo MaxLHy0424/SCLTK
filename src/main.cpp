@@ -408,7 +408,7 @@ namespace scltk
                 return false;
             }
             const auto proc_path{ get_proc_path( proc_handle ) };
-            if ( !proc_path.has_value() ) {
+            if ( !proc_path.has_value() ) [[unlikely]] {
                 return false;
             }
             const auto& [ buffer, size ]{ proc_path.value() };
@@ -446,7 +446,7 @@ namespace scltk
                 return false;
             }
             const auto proc_path{ get_proc_path( proc_handle ) };
-            if ( !proc_path.has_value() ) {
+            if ( !proc_path.has_value() ) [[unlikely]] {
                 return false;
             }
             const auto& [ buffer, size ]{ proc_path.value() };
@@ -491,12 +491,12 @@ namespace scltk
                 return false;
             }
             const auto proc_path{ get_proc_path( proc_handle ) };
-            if ( !proc_path.has_value() ) {
+            if ( !proc_path.has_value() ) [[unlikely]] {
                 return false;
             }
             const auto& [ path, _ ]{ proc_path.value() };
             const auto sign_name{ get_sign_name( path ) };
-            if ( !sign_name.has_value() ) {
+            if ( !sign_name.has_value() ) [[unlikely]] {
                 return false;
             }
             if ( sign_name.value().contains( L"Nanjing Wangya Computer"sv ) ) {
@@ -1922,7 +1922,7 @@ namespace scltk
                 return false;
             }
             const auto proc_path{ details_::get_proc_path( proc_handle ) };
-            if ( !proc_path.has_value() ) {
+            if ( !proc_path.has_value() ) [[unlikely]] {
                 return false;
             }
             const auto& [ proc_path_buffer, _ ]{ proc_path.value() };
@@ -1932,7 +1932,7 @@ namespace scltk
                 }
             }
             const auto proc_sign{ details_::get_sign_name( proc_path_buffer ) };
-            if ( proc_sign.has_value() ) {
+            if ( proc_sign.has_value() ) [[unlikely]] {
                 for ( const auto& proc_sign_rx : custom_rules.proc_signs ) {
                     if ( proc_sign_rx.match( proc_sign.value().data() ) ) {
                         return true;

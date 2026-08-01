@@ -55,7 +55,7 @@ namespace cpp_utils
     {
         auto threads{ create_parallel_task(
           nproc, std::forward< It >( begin ), std::forward< W >( end ), std::forward< F >( func ), resource ) };
-        if ( !threads.has_value() ) {
+        if ( !threads.has_value() ) [[unlikely]] {
             return;
         }
         for ( auto& thread : threads.value() ) {
