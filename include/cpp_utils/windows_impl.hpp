@@ -152,32 +152,40 @@ namespace cpp_utils
     {
         struct handle_closer final
         {
-            static inline auto operator()( const HANDLE h ) noexcept
+            static auto operator()( const HANDLE h ) noexcept
             {
                 CloseHandle( h );
             }
         };
         struct null_legacy_handle_checker final
         {
-            static inline auto operator()( const HANDLE h ) noexcept
+            static auto operator()( const HANDLE h ) noexcept
             {
                 return h == INVALID_HANDLE_VALUE;
+            }
+        };
+        struct sc_handle_closer final
+        {
+            static auto operator()( const SC_HANDLE h ) noexcept
+            {
+                CloseServiceHandle( h );
+            }
+        };
+        struct reg_key_handle_closer final
+        {
+            static auto operator()( const HKEY h ) noexcept
+            {
+                RegCloseKey( h );
             }
         };
     }
     using scoped_handle = std::unique_ptr< std::remove_pointer_t< HANDLE >, details_::handle_closer >;
     using scoped_legacy_handle
       = unique_ptr_ex< std::remove_pointer_t< HANDLE >, details_::null_legacy_handle_checker, details_::handle_closer >;
+    using scoped_sc_handle      = std::unique_ptr< std::remove_pointer_t< SC_HANDLE >, details_::sc_handle_closer >;
+    using scoped_reg_key_handle = std::unique_ptr< std::remove_pointer_t< HKEY >, details_::reg_key_handle_closer >;
     namespace details_
     {
-        using scoped_sc_handle = std::unique_ptr< std::remove_pointer_t< SC_HANDLE >, decltype( []( const SC_HANDLE h ) static noexcept
-        {
-            CloseServiceHandle( h );
-        } ) >;
-        using scoped_reg_key_handle = std::unique_ptr< std::remove_pointer_t< HKEY >, decltype( []( const HKEY h ) static noexcept
-        {
-            RegCloseKey( h );
-        } ) >;
         using scoped_sid_handle = std::unique_ptr< std::remove_pointer_t< PSID >, decltype( []( const PSID p ) static noexcept
         {
             FreeSid( p );
@@ -530,7 +538,7 @@ namespace cpp_utils
       const HKEY main_key, const std::wstring_view sub_key, const std::wstring_view value_name, const DWORD type,
       const BYTE* const data, const DWORD data_size ) noexcept
     {
-        details_::scoped_reg_key_handle key_handle;
+        scoped_reg_key_handle key_handle;
         if ( const auto result{ RegCreateKeyExW(
                main_key, sub_key.data(), 0, nullptr, REG_OPTION_NON_VOLATILE, KEY_WRITE, nullptr, std::out_ptr( key_handle ),
                nullptr ) };
@@ -544,7 +552,7 @@ namespace cpp_utils
       const HKEY main_key, const std::wstring_view sub_key, const std::wstring_view value_name, const DWORD type,
       const BYTE* const data, const DWORD data_size ) noexcept
     {
-        details_::scoped_reg_key_handle key_handle;
+        scoped_reg_key_handle key_handle;
         if ( const auto result{ RegCreateKeyExW(
                main_key, sub_key.data(), 0, nullptr, REG_OPTION_NON_VOLATILE, KEY_WRITE | KEY_WOW64_64KEY, nullptr,
                std::out_ptr( key_handle ), nullptr ) };
@@ -557,7 +565,7 @@ namespace cpp_utils
     [[nodiscard]] inline auto
       delete_registry_value( const HKEY main_key, const std::wstring_view sub_key, const std::wstring_view value_name ) noexcept
     {
-        details_::scoped_reg_key_handle key_handle;
+        scoped_reg_key_handle key_handle;
         if ( const auto result{ RegOpenKeyExW( main_key, sub_key.data(), 0, KEY_SET_VALUE, std::out_ptr( key_handle ) ) };
              result != ERROR_SUCCESS ) [[unlikely]]
         {
@@ -568,7 +576,7 @@ namespace cpp_utils
     [[nodiscard]] inline auto delete_registry_value_without_redirect(
       const HKEY main_key, const std::wstring_view sub_key, const std::wstring_view value_name ) noexcept
     {
-        details_::scoped_reg_key_handle key_handle;
+        scoped_reg_key_handle key_handle;
         if ( const auto result{
                RegOpenKeyExW( main_key, sub_key.data(), 0, KEY_SET_VALUE | KEY_WOW64_64KEY, std::out_ptr( key_handle ) ) };
              result != ERROR_SUCCESS ) [[unlikely]]
@@ -587,7 +595,7 @@ namespace cpp_utils
     }
     [[nodiscard]] inline auto delete_registry_tree_without_redirect( const HKEY main_key, const std::wstring_view sub_key ) noexcept
     {
-        details_::scoped_reg_key_handle key_handle;
+        scoped_reg_key_handle key_handle;
         if ( const auto result{ RegOpenKeyExW(
                main_key, nullptr, 0, KEY_WRITE | KEY_ENUMERATE_SUB_KEYS | KEY_QUERY_VALUE | KEY_WOW64_64KEY,
                std::out_ptr( key_handle ) ) };
