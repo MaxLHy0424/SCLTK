@@ -1337,10 +1337,6 @@ namespace scltk
             con.press_any_key_to_continue();
             ExitWindowsEx( EWX_LOGOFF, 0 );
         }
-        using scoped_reg_key = std::unique_ptr< std::remove_pointer_t< HKEY >, decltype( []( const HKEY h ) static noexcept
-        {
-            RegCloseKey( h );
-        } ) >;
         [[nodiscard]] auto is_sub_key_empty( const HKEY sub_key ) noexcept
         {
             wchar_t name [[indeterminate]][ 256 ];
@@ -1367,7 +1363,7 @@ namespace scltk
             auto size{ static_cast< DWORD >( std::size( sub_key_name ) ) };
             while ( RegEnumKeyExW( root_key, index, sub_key_name, &size, nullptr, nullptr, nullptr, nullptr ) == ERROR_SUCCESS )
             {
-                scoped_reg_key sub_key;
+                cpp_utils::scoped_reg_key_handle sub_key;
                 if ( RegOpenKeyExW( root_key, sub_key_name, 0, KEY_QUERY_VALUE | KEY_SET_VALUE, std::out_ptr( sub_key ) )
                      == ERROR_SUCCESS )
                 {
@@ -1401,7 +1397,7 @@ namespace scltk
                 {
                     continue;
                 }
-                scoped_reg_key sub_key;
+                cpp_utils::scoped_reg_key_handle sub_key;
                 if ( RegOpenKeyExW( root_key, sub_key_name, 0, KEY_QUERY_VALUE | KEY_ENUMERATE_SUB_KEYS, std::out_ptr( sub_key ) )
                      == ERROR_SUCCESS )
                 {
@@ -1413,7 +1409,7 @@ namespace scltk
         }
         auto process_ifeo_path( const wchar_t* const path ) noexcept
         {
-            scoped_reg_key root_key;
+            cpp_utils::scoped_reg_key_handle root_key;
             if ( RegOpenKeyExW(
                    HKEY_LOCAL_MACHINE, path, 0,
                    KEY_READ | KEY_ENUMERATE_SUB_KEYS | KEY_QUERY_VALUE | KEY_SET_VALUE | DELETE | KEY_WOW64_64KEY,
