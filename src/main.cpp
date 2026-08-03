@@ -2090,7 +2090,7 @@ namespace scltk
     auto show_homepage_ui()
     {
         cpp_utils::console_ui ui{ scltk::con, scltk::unsynced_mem_pool };
-        ui.reserve( 9 + scltk::builtin_rules::size )
+        ui.reserve( 8 + scltk::builtin_rules::size )
           .add_back( scltk::make_title_text< "[ 主  页 ]", 1 >.view() )
           .add_back( " < 退出 "sv, scltk::quit, cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_intensity )
           .add_back( " > 关于 "sv, scltk::info )
