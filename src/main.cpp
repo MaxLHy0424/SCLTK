@@ -1335,8 +1335,6 @@ namespace scltk
               "     请确认文件均已保存!\n\n"
               " 请按任意键继续."sv );
             con.press_any_key_to_continue();
-            cpp_utils::print_without_formatting( "\n\n (i) 3s 后将注销当前用户账户.\n"sv );
-            std::this_thread::sleep_for( 3s );
             ExitWindowsEx( EWX_LOGOFF, 0 );
         }
         using scoped_reg_key = std::unique_ptr< std::remove_pointer_t< HKEY >, decltype( []( const HKEY h ) static noexcept
