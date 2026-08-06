@@ -1,9 +1,13 @@
 #define WINVER       0x0601
 #define _WIN32_WINNT 0x0601
-#include <winsock2.h>
+#define UNICODE
+#define _UNICODE
 #define NOCOMM
 #define NOSOUND
 #define NORPC
+#include <winsock2.h>
+#define TRE_WCHAR
+#define TRE_MULTIBYTE
 #include <cpp_utils/const_string.hpp>
 #include <cpp_utils/windows_console.hpp>
 #include <initguid.h>

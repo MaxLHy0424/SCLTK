@@ -4,7 +4,7 @@ include $(cpp_utils_path)/all.mk
 project_name     := SCLTK-Mainline
 compiler         := /ucrt64/bin/g++
 args_arch        := -march=x86-64 -mtune=generic -msse3 -mfpmath=sse
-args_defines     := -D{UNICODE,_UNICODE,SCLTK_MAINLINE}
+args_defines     := -D{SCLTK_MAINLINE}
 args_std         := gnu++26
 args_warning     := -W{all,extra,effc++,pedantic,cast-align,logical-op,redundant-decls,shadow,strict-null-sentinel}
 args_opt_debug   := -Og -fno-omit-frame-pointer
