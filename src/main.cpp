@@ -9,7 +9,7 @@
 #include <initguid.h>
 #include <iphlpapi.h>
 #include <setupapi.h>
-#include <tre/regex.h>
+#include <tre/tre.h>
 #include <wincrypt.h>
 #include <charconv>
 #include <cstring>
@@ -112,7 +112,7 @@ namespace scltk
             auto cleanup_() noexcept
             {
                 if ( valid_ ) [[likely]] {
-                    regfree( &rx_ );
+                    tre_regfree( &rx_ );
                     valid_ = false;
                 }
             }
@@ -130,7 +130,7 @@ namespace scltk
                 if ( !valid_ ) [[unlikely]] {
                     return false;
                 }
-                return regwexec( &rx_, text, 0, nullptr, 0 ) == 0;
+                return tre_regwexec( &rx_, text, 0, nullptr, 0 ) == 0;
             }
             auto operator=( const scoped_wregex& ) -> scoped_wregex& = delete;
             auto operator=( scoped_wregex&& other ) noexcept -> scoped_wregex&
