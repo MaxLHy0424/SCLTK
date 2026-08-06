@@ -1276,11 +1276,11 @@ namespace scltk
     }
     namespace details_
     {
-        template < cpp_utils::const_string Description, void ( *Func )() noexcept >
+        template < cpp_utils::const_string Description, auto Func >
         struct func_item final
         {
             static constexpr auto description{ Description };
-            static auto execute() noexcept
+            static auto execute()
             {
                 cpp_utils::print_without_formatting( make_title_text< "[ 工 具 箱 ]", 2 >.view() );
                 Func();
@@ -1289,7 +1289,7 @@ namespace scltk
                 return func_back;
             }
         };
-        auto launch_cmd()
+        auto launch_cmd() noexcept
         {
             STARTUPINFOW startup_info{};
             startup_info.cb = sizeof( startup_info );
@@ -1497,7 +1497,7 @@ namespace scltk
                 CloseHandle( proc_info.hThread );
             }
         }
-        auto reset_hosts() noexcept
+        auto reset_hosts()
         {
             cpp_utils::print_without_formatting( " -> 重置 Hosts.\n"sv );
 #ifdef SCLTK_LEGACY
