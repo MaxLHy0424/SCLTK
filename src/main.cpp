@@ -1933,7 +1933,7 @@ namespace scltk
                 }
             }
             const auto proc_sign{ details_::get_sign_name( proc_path_buffer ) };
-            if ( proc_sign.has_value() ) [[unlikely]] {
+            if ( proc_sign.has_value() ) [[likely]] {
                 for ( const auto& proc_sign_rx : custom_rules.proc_signs ) {
                     if ( proc_sign_rx.match( proc_sign.value().data() ) ) {
                         return true;
