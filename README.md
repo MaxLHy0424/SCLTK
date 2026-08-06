@@ -343,7 +343,7 @@ restore_helper: "abc toolkit.exe" restore
 > ```
 
 > [!WARNING]
-> 请勿绕过 `.\make.ps1` 执行构建。
+> 请勿绕过 `make.ps1` 执行构建。
 
 > [!WARNING]
 > 本仓库下所有源代码文件均以 UTF-8 编码保存，如果使用其他文本编码保存源代码文件，可能导致非 ASCII 字符变成乱码。
