@@ -1674,7 +1674,7 @@ namespace scltk
             crack,
             restore
         };
-        auto current_rule_executor_mode{ rule_executor_mode::crack };
+        constinit auto current_rule_executor_mode{ rule_executor_mode::crack };
     }
     template < typename... Backends >
         requires requires( const PROCESSENTRY32W& proc_entry ) {
