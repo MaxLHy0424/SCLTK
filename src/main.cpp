@@ -1718,8 +1718,10 @@ namespace scltk
             if constexpr ( ( Backends::invoke_fn_is_target_proc || ... ) ) {
                 cpp_utils::print_without_formatting( " -> 查找目标进程.\n"sv );
                 const auto self_main_proc_id{ GetCurrentProcessId() };
-                DWORD self_conhost_proc_id;
-                GetWindowThreadProcessId( con.window_handle, &self_conhost_proc_id );
+                DWORD self_conhost_proc_id [[indeterminate]];
+                if ( !GetWindowThreadProcessId( con.window_handle, &self_conhost_proc_id ) ) [[unlikely]] {
+                    goto SKIP_SCANNING;
+                }
                 ( void ) proc_snapshot.iterate( [ & ]( const PROCESSENTRY32W& proc_entry )
                 {
                     if ( proc_entry.th32ProcessID == self_main_proc_id || proc_entry.th32ProcessID == self_conhost_proc_id ) {
@@ -1745,6 +1747,7 @@ namespace scltk
                     }
                     return true;
                 } );
+            SKIP_SCANNING:
             }
             if ( enabled_suspend_process ) {
                 cpp_utils::print_without_formatting( " -> 挂起目标进程.\n"sv );
