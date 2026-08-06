@@ -8,13 +8,6 @@
                 "${workspaceFolder}/include/*"
             ],
             "defines": [
-                "UNICODE",
-                "_UNICODE",
-                "NOCOMM",
-                "NOSOUND",
-                "NORPC",
-                "TRE_WCHAR",
-                "TRE_MULTIBYTE",
                 "CPP_UTILS_WINDOWS_IMPL_WIN7_FIX",
                 "SCLTK_MAINLINE"
             ],
@@ -32,13 +25,6 @@
                 "${workspaceFolder}/include/*"
             ],
             "defines": [
-                "UNICODE",
-                "_UNICODE",
-                "NOCOMM",
-                "NOSOUND",
-                "NORPC",
-                "TRE_WCHAR",
-                "TRE_MULTIBYTE",
                 "CPP_UTILS_WINDOWS_IMPL_WIN7_FIX",
                 "SCLTK_LEGACY"
             ],
