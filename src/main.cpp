@@ -1333,7 +1333,7 @@ namespace scltk
             cpp_utils::print_without_formatting(
               " (i) 该功能可能丢失未保存的文件数据,\n"
               "     请确认文件均已保存!\n\n"
-              " 请按任意键继续."sv );
+              " 请按任意键继续.\n"sv );
             con.press_any_key_to_continue();
             ExitWindowsEx( EWX_LOGOFF, 0 );
         }
