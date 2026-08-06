@@ -9,8 +9,8 @@ if ($target -eq 'sign' -and [string]::IsNullOrEmpty($gpg_key)) {
     exit 1
 }
 function Get-GitInfo {
-    $inRepo = & git rev-parse --is-inside-work-tree 2>$null
-    if ($LASTEXITCODE -ne 0 -or -not $inRepo) {
+    $in_repo = & git rev-parse --is-inside-work-tree 2>$null
+    if ($LASTEXITCODE -ne 0 -or -not $in_repo) {
         return @{
             Branch = "<Unknown Branch>"
             Tag    = "<Insider Preview>"
@@ -22,8 +22,8 @@ function Get-GitInfo {
         $branch = "<Unknown Branch>"
     }
     $status = & git status --porcelain 2>$null
-    $hasChanges = ($status -split "`n" | Where-Object { $_ -ne "" }).Count -gt 0
-    if ($branch -ne 'main' -or $hasChanges -or $branch -eq "<Unknown Branch>") {
+    $has_changes = ($status -split "`n" | Where-Object { $_ -ne "" }).Count -gt 0
+    if ($branch -ne 'main' -or $has_changes -or $branch -eq "<Unknown Branch>") {
         $tag = "<Insider Preview>"
     }
     else {
@@ -32,7 +32,7 @@ function Get-GitInfo {
             $tag = "<No Tag>"
         }
     }
-    if ($hasChanges) {
+    if ($has_changes) {
         $hash = "<Work In Progress>"
     }
     else {
@@ -42,36 +42,36 @@ function Get-GitInfo {
         }
     }
     return @{
-        Branch = $branch
-        Tag    = $tag
-        Hash   = $hash
+        branch = $branch
+        tag    = $tag
+        hash   = $hash
     }
 }
 $software_full_name = "Student Computer Lab Toolkit - $edition Edition"
 $software_short_name = "SCLTK-$edition"
 $repo_url = "https://github.com/MaxLHy0424/SCLTK"
-$gitInfo = Get-GitInfo
-$metaDir = Join-Path -Path "meta" -ChildPath $edition
-$oldInfo = Join-Path -Path $metaDir -ChildPath "info.h"
-$newInfo = Join-Path -Path $metaDir -ChildPath "info.new.h"
-if (-not (Test-Path $metaDir)) {
-    New-Item -Path $metaDir -ItemType Directory -Force | Out-Null
+$git_info = Get-GitInfo
+$meta_dir = Join-Path -Path "meta" -ChildPath $edition
+$old_info = Join-Path -Path $meta_dir -ChildPath "info.h"
+$new_info = Join-Path -Path $meta_dir -ChildPath "info.new.h"
+if (-not (Test-Path $meta_dir)) {
+    New-Item -Path $meta_dir -ItemType Directory -Force | Out-Null
 }
 $content = @"
 #pragma once
 #define INFO_FULL_NAME  "$software_full_name"
 #define INFO_SHORT_NAME "$software_short_name"
 #define INFO_REPO_URL   "$repo_url"
-#define INFO_GIT_BRANCH "$($gitInfo.Branch)"
-#define INFO_GIT_TAG    "$($gitInfo.Tag)"
-#define INFO_GIT_HASH   "$($gitInfo.Hash)"
+#define INFO_GIT_BRANCH "$($git_info.branch)"
+#define INFO_GIT_TAG    "$($git_info.tag)"
+#define INFO_GIT_HASH   "$($git_info.hash)"
 "@
-Set-Content -Path $newInfo -Value $content -Encoding UTF8 -NoNewline
-if (-not (Test-Path $oldInfo) -or (Get-FileHash $oldInfo).Hash -ne (Get-FileHash $newInfo).Hash) {
-    Move-Item -Path $newInfo -Destination $oldInfo -Force
+Set-Content -Path $new_info -Value $content -Encoding UTF8 -NoNewline
+if (-not (Test-Path $old_info) -or (Get-FileHash $old_info).Hash -ne (Get-FileHash $new_info).Hash) {
+    Move-Item -Path $new_info -Destination $old_info -Force
 }
 else {
-    Remove-Item -Path $newInfo
+    Remove-Item -Path $new_info
 }
 & make $target -f ".\meta\$edition\main.mk" -j "gpg_key=$gpg_key"
 exit $LASTEXITCODE
