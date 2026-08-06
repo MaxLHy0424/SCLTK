@@ -1,5 +1,5 @@
 param(
-    [ValidateSet('mainline', 'legacy')]
+    [ValidateSet('Mainline', 'Legacy')]
     [string]$edition,
     [string]$target,
     [string]$gpg_key = ""
@@ -8,9 +8,8 @@ if ($target -eq 'sign' -and [string]::IsNullOrEmpty($gpg_key)) {
     Write-Error "Please provide your GPG key ID when target is 'pack_and_sign'."
     exit 1
 }
-$converted_edition_string = $edition.ToLower().Substring(0, 1).ToUpper() + $edition.Substring(1)
-$software_full_name = "Student Computer Lab Toolkit - $converted_edition_string Edition"
-$software_short_name = "SCLTK-$converted_edition_string"
+$software_full_name = "Student Computer Lab Toolkit - $edition Edition"
+$software_short_name = "SCLTK-$edition"
 $repo_url = "https://github.com/MaxLHy0424/SCLTK"
 function Get-GitInfo {
     $inRepo = & git rev-parse --is-inside-work-tree 2>$null

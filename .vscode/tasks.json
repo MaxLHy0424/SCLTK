@@ -6,7 +6,7 @@
             "type": "shell",
             "command": ".\\make.ps1",
             "args": [
-                "mainline",
+                "Mainline",
                 "debug"
             ],
             "group": {
@@ -26,7 +26,7 @@
             "type": "shell",
             "command": ".\\make.ps1",
             "args": [
-                "legacy",
+                "Legacy",
                 "debug"
             ],
             "group": {
