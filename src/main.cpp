@@ -2041,11 +2041,15 @@ namespace scltk
             } };
             con.forced_show_until( sleep_duration, condition_checker );
         }
-        template < std::size_t N >
+    }
+    [[nodiscard]] auto create_background_threads()
+    {
+        constexpr std::array funcs{ details_::forced_show };
+        constexpr auto funcs_count{ funcs.size() };
+        static std::atomic_flag stop_source{};
         struct background_thread_manager final
         {
-            static inline std::atomic_flag stop_source{};
-            std::inplace_vector< std::thread, N > threads{};
+            std::inplace_vector< std::thread, funcs_count > threads{};
             background_thread_manager() noexcept                          = default;
             background_thread_manager( const background_thread_manager& ) = delete;
             background_thread_manager( background_thread_manager&& )      = default;
@@ -2059,12 +2063,8 @@ namespace scltk
                 }
             }
         };
-    }
-    [[nodiscard]] auto create_background_threads()
-    {
-        constexpr std::array funcs{ details_::forced_show };
-        details_::background_thread_manager< funcs.size() > mgr;
-        for ( const auto stop_token{ std::cref( mgr.stop_source ) }; const auto& func : funcs ) {
+        background_thread_manager mgr;
+        for ( const auto stop_token{ std::cref( stop_source ) }; const auto& func : funcs ) {
             mgr.threads.unchecked_emplace_back( func, stop_token );
         }
         return mgr;
