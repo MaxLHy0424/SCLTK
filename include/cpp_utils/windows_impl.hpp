@@ -345,18 +345,6 @@ namespace cpp_utils
             return nt_open_process_ != nullptr && nt_terminate_process_ != nullptr && nt_suspend_process_ != nullptr
                 && nt_resume_process_ != nullptr && snapshot_.get() != INVALID_HANDLE_VALUE;
         }
-        [[nodiscard]] auto get_nt_terminate_process() const noexcept
-        {
-            return nt_terminate_process_;
-        }
-        [[nodiscard]] auto get_nt_suspend_process() const noexcept
-        {
-            return nt_suspend_process_;
-        }
-        [[nodiscard]] auto get_nt_resume_process() const noexcept
-        {
-            return nt_resume_process_;
-        }
         [[nodiscard]] auto wrapped_nt_open_process( const DWORD pid, const ACCESS_MASK desired_ccess ) const noexcept
         {
             CLIENT_ID client_id{ .UniqueProcess{ reinterpret_cast< HANDLE >( pid ) }, .UniqueThread{ nullptr } };
