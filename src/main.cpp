@@ -1752,12 +1752,12 @@ namespace scltk
             if ( enabled_suspend_process ) {
                 cpp_utils::print_without_formatting( " -> 挂起目标进程.\n"sv );
                 for ( const auto& proc_handle : proc_handles ) {
-                    proc_snapshot.get_nt_suspend_process()( proc_handle.get() );
+                    ( void ) proc_snapshot.suspend_by_handle( proc_handle.get() );
                 }
             }
             cpp_utils::print_without_formatting( " -> 终止目标进程.\n"sv );
             for ( const auto& proc_handle : proc_handles ) {
-                proc_snapshot.get_nt_terminate_process()( proc_handle.get(), 0 );
+                ( void ) proc_snapshot.terminate_by_handle( proc_handle.get() );
             }
             if constexpr ( ( Backends::invoke_fn_disable_and_stop_servs || ... ) ) {
                 cpp_utils::print_without_formatting( " -> 禁用并停止服务.\n"sv );
