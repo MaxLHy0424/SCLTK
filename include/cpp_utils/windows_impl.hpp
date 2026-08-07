@@ -345,6 +345,15 @@ namespace cpp_utils
             return nt_open_process_ != nullptr && nt_terminate_process_ != nullptr && nt_suspend_process_ != nullptr
                 && nt_resume_process_ != nullptr && snapshot_.get() != INVALID_HANDLE_VALUE;
         }
+        [[nodiscard]] auto refresh() noexcept
+        {
+            const auto new_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ) };
+            if ( new_snapshot == INVALID_HANDLE_VALUE ) [[unlikely]] {
+                return false;
+            }
+            snapshot_.reset( new_snapshot );
+            return true;
+        }
         [[nodiscard]] auto open_process( const DWORD pid, const ACCESS_MASK desired_ccess ) const noexcept
         {
             CLIENT_ID client_id{ .UniqueProcess{ reinterpret_cast< HANDLE >( pid ) }, .UniqueThread{ nullptr } };
@@ -358,15 +367,6 @@ namespace cpp_utils
             scoped_handle proc_handle{};
             nt_open_process_( std::out_ptr( proc_handle ), desired_ccess, &obj_attrs, &client_id );
             return proc_handle;
-        }
-        [[nodiscard]] auto refresh() noexcept
-        {
-            const auto new_snapshot{ CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ) };
-            if ( new_snapshot == INVALID_HANDLE_VALUE ) [[unlikely]] {
-                return false;
-            }
-            snapshot_.reset( new_snapshot );
-            return true;
         }
         template < typename F >
             requires requires( F&& f, const PROCESSENTRY32W& proc_entry ) {
