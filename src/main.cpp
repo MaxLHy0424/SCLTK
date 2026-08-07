@@ -2021,18 +2021,18 @@ namespace scltk
     }
     namespace details_
     {
-        auto forced_show( const std::stop_token status ) noexcept
+        auto forced_show( const std::atomic_flag& stop_token ) noexcept
         {
             constexpr const auto& enabled{ std::get< window_config >( config_nodes ).at< "forced_show" >() };
             constexpr auto sleep_duration{ 50ms };
             const auto condition_checker{ [ & ] noexcept
             {
                 if ( enabled.test( std::memory_order_acquire ) == true ) {
-                    return status.stop_requested();
+                    return stop_token.test( std::memory_order_acquire );
                 }
                 con.cancel_forced_show();
                 while ( enabled.test( std::memory_order_acquire ) == false ) {
-                    if ( status.stop_requested() ) [[unlikely]] {
+                    if ( stop_token.test( std::memory_order_acquire ) == true ) {
                         return true;
                     }
                     std::this_thread::sleep_for( sleep_duration );
@@ -2044,14 +2044,14 @@ namespace scltk
         template < std::size_t N >
         struct background_thread_manager final
         {
-            std::stop_source stop_requester{};
+            static inline std::atomic_flag stop_source{};
             std::inplace_vector< std::thread, N > threads{};
             background_thread_manager() noexcept                          = default;
             background_thread_manager( const background_thread_manager& ) = delete;
             background_thread_manager( background_thread_manager&& )      = default;
             ~background_thread_manager() noexcept
             {
-                stop_requester.request_stop();
+                ( void ) stop_source.test_and_set( std::memory_order_release );
                 for ( auto& thread : threads ) {
                     if ( thread.joinable() ) [[likely]] {
                         thread.join();
@@ -2064,8 +2064,8 @@ namespace scltk
     {
         constexpr std::array funcs{ details_::forced_show };
         details_::background_thread_manager< funcs.size() > mgr;
-        for ( const auto token{ mgr.stop_requester.get_token() }; const auto& func : funcs ) {
-            mgr.threads.unchecked_emplace_back( func, token );
+        for ( const auto stop_token{ std::cref( mgr.stop_source ) }; const auto& func : funcs ) {
+            mgr.threads.unchecked_emplace_back( func, stop_token );
         }
         return mgr;
     }
