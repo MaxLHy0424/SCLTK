@@ -406,8 +406,7 @@ namespace scltk
             {
                 return false;
             }
-            const auto proc_handle{
-              proc_snapshot.wrapped_nt_open_process( proc_entry.th32ProcessID, PROCESS_QUERY_LIMITED_INFORMATION ) };
+            const auto proc_handle{ proc_snapshot.open_process( proc_entry.th32ProcessID, PROCESS_QUERY_LIMITED_INFORMATION ) };
             if ( proc_handle == nullptr ) [[unlikely]] {
                 return false;
             }
@@ -444,8 +443,7 @@ namespace scltk
             if ( !std::ranges::all_of( name.subview( 0, name.size() - 4 ), is_lower_case ) ) {
                 return false;
             }
-            const auto proc_handle{
-              proc_snapshot.wrapped_nt_open_process( proc_entry.th32ProcessID, PROCESS_QUERY_LIMITED_INFORMATION ) };
+            const auto proc_handle{ proc_snapshot.open_process( proc_entry.th32ProcessID, PROCESS_QUERY_LIMITED_INFORMATION ) };
             if ( proc_handle == nullptr ) [[unlikely]] {
                 return false;
             }
@@ -489,8 +487,7 @@ namespace scltk
         }
         auto is_workwin( const PROCESSENTRY32W& proc_entry )
         {
-            const auto proc_handle{
-              proc_snapshot.wrapped_nt_open_process( proc_entry.th32ProcessID, PROCESS_QUERY_LIMITED_INFORMATION ) };
+            const auto proc_handle{ proc_snapshot.open_process( proc_entry.th32ProcessID, PROCESS_QUERY_LIMITED_INFORMATION ) };
             if ( proc_handle.get() == nullptr ) [[unlikely]] {
                 return false;
             }
@@ -1740,8 +1737,8 @@ namespace scltk
                     {
                         return true;
                     }
-                    auto proc_handle{ proc_snapshot.wrapped_nt_open_process(
-                      proc_entry.th32ProcessID, PROCESS_TERMINATE | PROCESS_SUSPEND_RESUME ) };
+                    auto proc_handle{
+                      proc_snapshot.open_process( proc_entry.th32ProcessID, PROCESS_TERMINATE | PROCESS_SUSPEND_RESUME ) };
                     if ( proc_handle != nullptr ) [[likely]] {
                         proc_handles.emplace_back( std::move( proc_handle ) );
                     }
@@ -1917,8 +1914,7 @@ namespace scltk
                     return true;
                 }
             }
-            const auto proc_handle{
-              proc_snapshot.wrapped_nt_open_process( proc_entry.th32ProcessID, PROCESS_QUERY_LIMITED_INFORMATION ) };
+            const auto proc_handle{ proc_snapshot.open_process( proc_entry.th32ProcessID, PROCESS_QUERY_LIMITED_INFORMATION ) };
             if ( proc_handle == nullptr ) {
                 return false;
             }

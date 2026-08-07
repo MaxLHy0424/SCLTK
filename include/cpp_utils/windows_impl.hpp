@@ -345,7 +345,7 @@ namespace cpp_utils
             return nt_open_process_ != nullptr && nt_terminate_process_ != nullptr && nt_suspend_process_ != nullptr
                 && nt_resume_process_ != nullptr && snapshot_.get() != INVALID_HANDLE_VALUE;
         }
-        [[nodiscard]] auto wrapped_nt_open_process( const DWORD pid, const ACCESS_MASK desired_ccess ) const noexcept
+        [[nodiscard]] auto open_process( const DWORD pid, const ACCESS_MASK desired_ccess ) const noexcept
         {
             CLIENT_ID client_id{ .UniqueProcess{ reinterpret_cast< HANDLE >( pid ) }, .UniqueThread{ nullptr } };
             OBJECT_ATTRIBUTES obj_attrs{
@@ -395,7 +395,7 @@ namespace cpp_utils
         }
         [[nodiscard]] auto terminate_by_pid( const DWORD pid ) const noexcept
         {
-            const auto proc_handle{ wrapped_nt_open_process( pid, PROCESS_TERMINATE ) };
+            const auto proc_handle{ open_process( pid, PROCESS_TERMINATE ) };
             if ( proc_handle == nullptr ) [[unlikely]] {
                 return false;
             }
@@ -438,7 +438,7 @@ namespace cpp_utils
         }
         [[nodiscard]] auto suspend_by_pid( const DWORD pid ) const noexcept
         {
-            const auto proc_handle{ wrapped_nt_open_process( pid, PROCESS_SUSPEND_RESUME ) };
+            const auto proc_handle{ open_process( pid, PROCESS_SUSPEND_RESUME ) };
             if ( proc_handle == nullptr ) [[unlikely]] {
                 return false;
             }
@@ -481,7 +481,7 @@ namespace cpp_utils
         }
         [[nodiscard]] auto resume_by_pid( const DWORD pid ) const noexcept
         {
-            const auto proc_handle{ wrapped_nt_open_process( pid, PROCESS_SUSPEND_RESUME ) };
+            const auto proc_handle{ open_process( pid, PROCESS_SUSPEND_RESUME ) };
             if ( proc_handle == nullptr ) [[unlikely]] {
                 return false;
             }
