@@ -80,7 +80,7 @@ namespace scltk
     }
     auto generate_window_title()
     {
-        constexpr auto chars_dict{ cpp_utils::invoke_to_array< [] static noexcept
+        static constexpr auto chars_dict{ cpp_utils::invoke_to_array< [] static noexcept
         {
             std::vector< wchar_t > dict;
             for ( auto ch{ L'A' }; ch <= L'Z'; ++ch ) {
