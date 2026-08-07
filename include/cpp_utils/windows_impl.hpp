@@ -401,13 +401,17 @@ namespace cpp_utils
             } while ( Process32NextW( snapshot_value, &proc_entry ) );
             return result;
         }
+        [[nodiscard]] auto terminate_by_handle( const HANDLE h ) const noexcept
+        {
+            return NT_SUCCESS( nt_terminate_process_( h, 0 ) );
+        }
         [[nodiscard]] auto terminate_by_pid( const DWORD pid ) const noexcept
         {
             const auto proc_handle{ wrapped_nt_open_process( pid, PROCESS_TERMINATE ) };
             if ( proc_handle == nullptr ) [[unlikely]] {
                 return false;
             }
-            return NT_SUCCESS( nt_terminate_process_( proc_handle.get(), 0 ) );
+            return terminate_by_handle( proc_handle.get() );
         }
         [[nodiscard]] auto terminate_by_name( const std::wstring_view name ) const noexcept
         {
@@ -440,13 +444,17 @@ namespace cpp_utils
                 return true;
             } );
         }
+        [[nodiscard]] auto suspend_by_handle( const HANDLE h ) const noexcept
+        {
+            return NT_SUCCESS( nt_suspend_process_( h ) );
+        }
         [[nodiscard]] auto suspend_by_pid( const DWORD pid ) const noexcept
         {
             const auto proc_handle{ wrapped_nt_open_process( pid, PROCESS_SUSPEND_RESUME ) };
             if ( proc_handle == nullptr ) [[unlikely]] {
                 return false;
             }
-            return NT_SUCCESS( nt_suspend_process_( proc_handle.get() ) );
+            return suspend_by_handle( proc_handle.get() );
         }
         [[nodiscard]] auto suspend_by_name( const std::wstring_view name ) const noexcept
         {
@@ -479,13 +487,17 @@ namespace cpp_utils
                 return true;
             } );
         }
+        [[nodiscard]] auto resume_by_handle( const HANDLE h ) const noexcept
+        {
+            return NT_SUCCESS( nt_resume_process_( h ) );
+        }
         [[nodiscard]] auto resume_by_pid( const DWORD pid ) const noexcept
         {
             const auto proc_handle{ wrapped_nt_open_process( pid, PROCESS_SUSPEND_RESUME ) };
             if ( proc_handle == nullptr ) [[unlikely]] {
                 return false;
             }
-            return NT_SUCCESS( nt_resume_process_( proc_handle.get() ) );
+            return resume_by_handle( proc_handle.get() );
         }
         [[nodiscard]] auto resume_by_name( const std::wstring_view name ) const noexcept
         {
