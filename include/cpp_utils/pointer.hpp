@@ -28,7 +28,7 @@ namespace cpp_utils
       public:
         using value_type   = T*;
         using checker_type = NullChecker;
-        static constexpr auto computable() noexcept
+        static consteval auto computable() noexcept
         {
             return !std::is_same_v< std::remove_cv_t< T >, void >;
         }
