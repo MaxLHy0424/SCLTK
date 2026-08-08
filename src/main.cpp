@@ -2110,12 +2110,12 @@ auto main() -> int
       .set_title( scltk::generate_window_title().data() )
       .ignore_exit_signal( true )
       .show_cursor( false )
-      .fix_size( true )
       .lock_text( true )
+      .fix_size( true )
       .set_size( scltk::console_width, scltk::console_height, scltk::unsynced_mem_pool )
+      .enable_window_close_ctrl( false )
       .enable_window_maximize_ctrl( false )
-      .enable_window_minimize_ctrl( false )
-      .enable_window_close_ctrl( false );
+      .enable_window_minimize_ctrl( false );
     cpp_utils::print_without_formatting( " -> 准备就绪."sv );
     scltk::enable_privileges();
     scltk::load_config( false );
