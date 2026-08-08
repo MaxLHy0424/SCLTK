@@ -1165,7 +1165,7 @@ namespace scltk
             cpp_utils::print_without_formatting(
               cpp_utils::value_identity_v< cpp_utils::concat_const_string(
                 make_title_text< "[ 配  置 ]", 2 >,  " -> 尝试打开配置文件.\n\n"_cs ) >.view() );
-            constexpr auto cmd_init{
+            static constexpr auto cmd_init{
               cpp_utils::concat_const_string( L"notepad.exe "_cs, cpp_utils::const_wstring{ config_file_name } ).data() };
             std::error_code _;
             bool success{ false };
