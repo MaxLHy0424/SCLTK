@@ -63,15 +63,6 @@ namespace scltk
     {
         return func_exit;
     }
-    auto disable_hotkey() noexcept
-    {
-        DWORD attrs [[indeterminate]];
-        if ( !GetConsoleMode( con.std_input_handle, &attrs ) ) [[unlikely]] {
-            return;
-        }
-        attrs &= ~ENABLE_PROCESSED_INPUT;
-        SetConsoleMode( con.std_input_handle, attrs );
-    }
     auto enable_privileges() noexcept
     {
         const auto current_process{ GetCurrentProcess() };
@@ -2126,7 +2117,6 @@ auto main() -> int
       .enable_window_minimize_ctrl( false )
       .enable_window_close_ctrl( false );
     cpp_utils::print_without_formatting( " -> 准备就绪."sv );
-    scltk::disable_hotkey();
     scltk::enable_privileges();
     scltk::load_config( false );
     const auto _{ scltk::create_background_threads() };
