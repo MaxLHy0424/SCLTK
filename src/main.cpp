@@ -2023,10 +2023,9 @@ namespace scltk
     {
         auto forced_show( const std::atomic_flag& stop_token ) noexcept
         {
-            constexpr const auto& enabled{ std::get< window_config >( config_nodes ).at< "forced_show" >() };
-            constexpr auto sleep_duration{ 50ms };
-            const auto condition_checker{ [ & ] noexcept
+            con.forced_show_until( 50ms, [ & ] noexcept
             {
+                constexpr const auto& enabled{ std::get< window_config >( config_nodes ).at< "forced_show" >() };
                 if ( enabled.test( std::memory_order_acquire ) == true ) {
                     return stop_token.test( std::memory_order_acquire );
                 }
@@ -2035,11 +2034,10 @@ namespace scltk
                     if ( stop_token.test( std::memory_order_acquire ) == true ) {
                         return true;
                     }
-                    std::this_thread::sleep_for( sleep_duration );
+                    std::this_thread::sleep_for( 50ms );
                 }
                 return false;
-            } };
-            con.forced_show_until( sleep_duration, condition_checker );
+            } );
         }
     }
     [[nodiscard]] auto create_background_threads()
