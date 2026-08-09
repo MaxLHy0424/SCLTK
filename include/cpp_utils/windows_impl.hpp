@@ -528,7 +528,6 @@ namespace cpp_utils
               = std::bit_cast< nt_terminate_process_t_ >( GetProcAddress( ntdll_handle, "NtTerminateProcess" ) );
             nt_suspend_process_ = std::bit_cast< nt_suspend_process_t_ >( GetProcAddress( ntdll_handle, "NtSuspendProcess" ) );
             nt_resume_process_  = std::bit_cast< nt_resume_process_t_ >( GetProcAddress( ntdll_handle, "NtResumeProcess" ) );
-            ( void ) refresh();
         }
         process_snapshot( const process_snapshot& ) = delete;
         process_snapshot( process_snapshot&& )      = delete;
