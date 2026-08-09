@@ -342,8 +342,8 @@ namespace cpp_utils
       public:
         [[nodiscard]] auto valid() const noexcept
         {
-            return nt_open_process_ != nullptr && nt_terminate_process_ != nullptr && nt_suspend_process_ != nullptr
-                && nt_resume_process_ != nullptr && snapshot_.get() != INVALID_HANDLE_VALUE;
+            return nt_terminate_process_ != nullptr && nt_suspend_process_ != nullptr && nt_resume_process_ != nullptr
+                && nt_open_process_ != nullptr;
         }
         [[nodiscard]] auto refresh() noexcept
         {
