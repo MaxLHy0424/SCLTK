@@ -347,8 +347,3 @@ restore_helper: "abc toolkit.exe" restore
 
 > [!WARNING]
 > 本仓库下所有源代码文件均以 UTF-8 编码保存，如果使用其他文本编码保存源代码文件，可能导致非 ASCII 字符变成乱码。
-
-# ❤️ 鸣谢
-
-- [fengliteam](https://github.com/fengliteam) 提供大量改进建议。
-- [lzh173](https://github.com/lzh173) 提供 “机房管理助手” 逆向工程后的部分代码。
