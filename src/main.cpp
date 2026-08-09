@@ -1606,16 +1606,11 @@ namespace scltk
             ( void ) cpp_utils::delete_registry_tree_without_redirect( HKEY_CURRENT_USER, LR"(Software\jfglzs)"sv );
             cpp_utils::print_without_formatting( " -> 删除自启动项.\n"sv );
             constexpr std::array autorun_items{ L"jfglzs"sv, L"jfglzsn"sv, L"jfglzsp"sv, L"prozs"sv, L"przs"sv };
-            constexpr std::array notification_items{ L"StartupTNotijfglzsn"sv, L"StartupTNotiprozs"sv };
             for ( const auto& autorun_item : autorun_items ) {
                 ( void ) cpp_utils::delete_registry_value_without_redirect(
                   HKEY_LOCAL_MACHINE, LR"(SOFTWARE\Microsoft\Windows\CurrentVersion\Run)"sv, autorun_item );
                 ( void ) cpp_utils::delete_registry_value_without_redirect(
                   HKEY_LOCAL_MACHINE, LR"(SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run)"sv, autorun_item );
-            }
-            for ( const auto& notification_item : notification_items ) {
-                ( void ) cpp_utils::delete_registry_value_without_redirect(
-                  HKEY_CURRENT_USER, LR"(Software\Microsoft\Windows\CurrentVersion\RunNotification)"sv, notification_item );
             }
             cpp_utils::print_without_formatting( " -> 删除备份.\n"sv );
             std::error_code _;
