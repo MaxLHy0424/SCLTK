@@ -1688,8 +1688,7 @@ namespace scltk
             cpp_utils::print_without_formatting( make_title_text< "[ 破  解 ]", 2 >.view() );
             constexpr const auto& crack_restore_config_node{ std::get< crack_restore_config >( config_nodes ) };
             constexpr const auto& enabled_suspend_process{ crack_restore_config_node.at< "suspend_process" >() };
-            ( void ) proc_snapshot.refresh();
-            if ( !proc_snapshot.valid() ) [[unlikely]] {
+            if ( !proc_snapshot.valid() || !proc_snapshot.refresh() ) [[unlikely]] {
                 cpp_utils::print_without_formatting( " (!) 进程快照初始化错误!\n"sv );
                 return;
             }
