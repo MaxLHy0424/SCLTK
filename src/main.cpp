@@ -1592,9 +1592,9 @@ namespace scltk
         }
         auto fix_network() noexcept
         {
+            reset_network_proxy();
             reset_firewall_rules();
             reset_hosts();
-            reset_network_proxy();
             flush_dns();
             relaunch_network_adapters();
         }
