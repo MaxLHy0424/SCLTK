@@ -1243,7 +1243,8 @@ namespace scltk
                 view.remove_suffix( 1 );
                 return view;
             }() };
-            std::ofstream{ license_file.c_str(), std::ios::out | std::ios::trunc } << file_content_view;
+            std::ofstream{ license_file.c_str(), std::ios::out | std::ios::trunc }.write(
+              file_content_view.data(), file_content_view.size() );
             return func_back;
         }
     };
