@@ -1,3 +1,5 @@
 /build/
-/meta/*/info.h
-/meta/*/info.new.h
+/meta/mainline/info.h
+/meta/mainline/info.new.h
+/meta/legacy/info.h
+/meta/legacy/info.new.h
