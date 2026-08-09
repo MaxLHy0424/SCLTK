@@ -153,7 +153,7 @@ restore_helper: "abc toolkit.exe" restore
 - **重置网络代理，重置防火墙规则，重置 Hosts，刷新 DNS 缓存，重启网络适配器**\
 `> 修复网络访问`
 - **删除 “机房管理助手” 的密码、配置、自启动项**\
-`> 重置 "机房管理助手" 配置`
+`> 重置 机房管理助手 配置`
 - **重置 Google Chrome、Microsoft Edge、Mozilla Firefox 的管理策略**\
 `> 重置 Chrome & Edge & Firefox 管理策略`
 
