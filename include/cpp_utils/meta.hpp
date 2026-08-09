@@ -43,48 +43,6 @@ namespace cpp_utils
     };
     template < typename T >
     concept common_type = !std::same_as< std::decay_t< T >, error_type >;
-    template < typename T >
-    class type_identity final
-    {
-      public:
-        using type = T;
-        template < typename U >
-        consteval auto operator==( const type_identity< U > ) const noexcept
-        {
-            return std::is_same_v< T, U >;
-        }
-        template < typename U >
-        consteval auto operator!=( const type_identity< U > ) const noexcept
-        {
-            return !std::is_same_v< T, U >;
-        }
-        template < template < typename > typename Pred >
-            requires requires {
-                { Pred< T >::value } -> std::convertible_to< bool >;
-            }
-        static inline constexpr auto test{ Pred< T >::value };
-        template < template < typename > typename F >
-            requires requires { typename F< T >::type; }
-        using transform = type_identity< typename F< T >::type >;
-        template < template < typename > typename Pred, template < typename > typename F >
-            requires requires {
-                { Pred< T >::value } -> std::convertible_to< bool >;
-                typename F< T >::type;
-            }
-        using transform_if = type_identity< std::conditional_t< Pred< T >::value, typename F< T >::type, T > >;
-    };
-    template < typename T >
-    using type_identity_t = typename type_identity< T >::type;
-    template < auto V >
-    struct value_identity final
-    {
-        using type = decltype( V );
-        static inline constexpr auto value{ V };
-        constexpr auto operator<=>( const value_identity< V >& ) const noexcept        = default;
-        constexpr auto operator==( const value_identity< V >& ) const noexcept -> bool = default;
-    };
-    template < auto V >
-    static inline constexpr auto value_identity_v{ value_identity< V >::value };
     template < template < typename > typename Pred >
     struct negate_pred
     {
@@ -358,7 +316,7 @@ namespace cpp_utils
         {
             template < std::size_t... Is >
             static consteval auto helper( const std::index_sequence< Is... > ) noexcept
-              -> type_list< type_list< value_identity< Start + Is >, Ts >... >;
+              -> type_list< type_list< std::constant_wrapper< Start + Is >, Ts >... >;
             using type = decltype( helper( std::index_sequence_for< Ts... >{} ) );
         };
         template < template < typename > typename F >
@@ -562,7 +520,7 @@ namespace cpp_utils
         template < typename T, std::size_t N >
         struct make_repeated_type_list_impl final
         {
-            static consteval auto to_identity( const std::size_t ) noexcept -> type_identity< T >;
+            static consteval auto to_identity( const std::size_t ) noexcept -> std::type_identity< T >;
             using type = decltype( []< std::size_t... Is >( const std::index_sequence< Is... > ) consteval static noexcept
             {
                 return type_list< typename decltype( to_identity( Is ) )::type... >{};

@@ -178,7 +178,7 @@ namespace cpp_utils
             template < std::size_t... Is >
             static consteval auto impl_( const std::index_sequence< Is... > ) noexcept
             {
-                return type_list< value_identity< S[ Is ] >... >{};
+                return type_list< std::constant_wrapper< S[ Is ] >... >{};
             }
             using type = decltype( impl_( std::make_index_sequence< S.size() >{} ) );
         };

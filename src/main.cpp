@@ -158,7 +158,7 @@ namespace scltk
             }
         };
         template < cpp_utils::const_wstring... Items >
-        using make_const_wstring_list_t = cpp_utils::type_list< cpp_utils::value_identity< Items >... >;
+        using make_const_wstring_list_t = cpp_utils::type_list< std::constant_wrapper< Items >... >;
         using win32_file_path_buffer_t  = std::array< wchar_t, MAX_PATH >;
         using scoped_cert_store = std::unique_ptr< std::remove_pointer_t< HCERTSTORE >, decltype( []( const HCERTSTORE h ) static noexcept
         {
@@ -630,7 +630,7 @@ namespace scltk
             auto sync( this auto&& self, std::ofstream& out )
             {
                 if constexpr ( is_stateful ) {
-                    out << cpp_utils::value_identity_v< cpp_utils::concat_const_string( "["_cs, raw_name, "]\n"_cs ) >.view();
+                    out << std::constant_wrapper< cpp_utils::concat_const_string( "["_cs, raw_name, "]\n"_cs ) >::value.view();
                     self.sync_( out );
                 }
             }
@@ -662,9 +662,9 @@ namespace scltk
                                    { child_type::ui_count_ } -> std::convertible_to< std::size_t >;
                                } )
                 {
-                    return cpp_utils::value_identity< static_cast< std::size_t >( child_type::ui_count_ ) >{};
+                    return std::constant_wrapper< static_cast< std::size_t >( child_type::ui_count_ ) >{};
                 } else {
-                    return cpp_utils::value_identity< 0uz >{};
+                    return std::constant_wrapper< 0uz >{};
                 }
             }
         };
@@ -698,12 +698,12 @@ namespace scltk
         struct options_info_table final
         {
             using base_type      = cpp_utils::type_list< Options... >;
-            using raw_names_type = cpp_utils::type_list< cpp_utils::value_identity< Options::raw_name >... >;
+            using raw_names_type = cpp_utils::type_list< std::constant_wrapper< Options::raw_name >... >;
             static consteval auto valid() noexcept
             {
                 return raw_names_type::unique::size == raw_names_type::size
                     && []< cpp_utils::const_string... Items >(
-                         const cpp_utils::type_list< cpp_utils::value_identity< Items >... > ) static constexpr noexcept
+                         const cpp_utils::type_list< std::constant_wrapper< Items >... > ) static constexpr noexcept
                 {
                     return ( std::ranges::all_of( Items.view(), []( const char ch ) static constexpr noexcept
                     {
@@ -714,12 +714,12 @@ namespace scltk
             template < cpp_utils::const_string RawName >
             static consteval auto contains() noexcept
             {
-                return raw_names_type::template contains< cpp_utils::value_identity< RawName > >;
+                return raw_names_type::template contains< std::constant_wrapper< RawName > >;
             }
             template < cpp_utils::const_string RawName >
             static consteval auto index_of() noexcept
             {
-                return raw_names_type::template find_first< cpp_utils::value_identity< RawName > >;
+                return raw_names_type::template find_first< std::constant_wrapper< RawName > >;
             }
         };
         template < typename >
@@ -841,8 +841,8 @@ namespace scltk
                 [ & ]< std::size_t... Is >( const std::index_sequence< Is... > )
                 {
                     ( ui.add_back(
-                          cpp_utils::value_identity_v< cpp_utils::concat_const_string(
-                            "\n[ "_cs, info_table_base_type_::template at< Is >::display_name, " ]\n"_cs ) >.view() )
+                          std::constant_wrapper< cpp_utils::concat_const_string(
+                            "\n[ "_cs, info_table_base_type_::template at< Is >::display_name, " ]\n"_cs ) >::value.view() )
                         .add_back(
                           make_flip_button_text_( get_value_( std::get< Is >( data_ ) ) ),
                           std::bind_back< flip_item_value_ >( std::ref( std::get< Is >( data_ ) ) ),
@@ -1132,8 +1132,8 @@ namespace scltk
         auto sync_config()
         {
             cpp_utils::print_without_formatting(
-              cpp_utils::value_identity_v< cpp_utils::concat_const_string(
-                make_title_text< "[ 配  置 ]", 2 >, " -> 同步配置.\n\n"_cs ) >.view() );
+              std::constant_wrapper< cpp_utils::concat_const_string(
+                make_title_text< "[ 配  置 ]", 2 >, " -> 同步配置.\n\n"_cs ) >::value.view() );
             load_config( true );
             constexpr auto header{
               u8"# " INFO_FULL_NAME "\n# " INFO_GIT_TAG " (" INFO_GIT_BRANCH " " INFO_GIT_HASH ")\n# UTF-8 编码\n" };
@@ -1153,8 +1153,8 @@ namespace scltk
                 constexpr auto msg_start{ " (i) 同步配置"_cs };
                 constexpr auto msg_end{ ".\n\n 请按任意键返回."_cs };
                 return std::array{
-                  cpp_utils::value_identity_v< cpp_utils::concat_const_string( msg_start, "失败"_cs, msg_end ) >.view(),
-                  cpp_utils::value_identity_v< cpp_utils::concat_const_string( msg_start, "成功"_cs, msg_end ) >.view() };
+                  std::constant_wrapper< cpp_utils::concat_const_string( msg_start, "失败"_cs, msg_end ) >::value.view(),
+                  std::constant_wrapper< cpp_utils::concat_const_string( msg_start, "成功"_cs, msg_end ) >::value.view() };
             }() };
             cpp_utils::print_without_formatting( final_message[ static_cast< std::size_t >( config_file.good() ) ] );
             con.press_any_key_to_continue();
@@ -1163,8 +1163,8 @@ namespace scltk
         auto open_config_file()
         {
             cpp_utils::print_without_formatting(
-              cpp_utils::value_identity_v< cpp_utils::concat_const_string(
-                make_title_text< "[ 配  置 ]", 2 >,  " -> 尝试打开配置文件.\n\n"_cs ) >.view() );
+              std::constant_wrapper< cpp_utils::concat_const_string(
+                make_title_text< "[ 配  置 ]", 2 >, " -> 尝试打开配置文件.\n\n"_cs ) >::value.view() );
             static constexpr auto cmd_init{
               cpp_utils::concat_const_string( L"notepad.exe "_cs, cpp_utils::const_wstring{ config_file_name } ).data() };
             std::error_code _;
@@ -1187,8 +1187,8 @@ namespace scltk
                 constexpr auto msg_start{ " (i) 打开配置文件"_cs };
                 constexpr auto msg_end{ ".\n\n 请按任意键返回."_cs };
                 return std::array{
-                  cpp_utils::value_identity_v< cpp_utils::concat_const_string( msg_start, "失败"_cs, msg_end ) >.view(),
-                  cpp_utils::value_identity_v< cpp_utils::concat_const_string( msg_start, "成功"_cs, msg_end ) >.view() };
+                  std::constant_wrapper< cpp_utils::concat_const_string( msg_start, "失败"_cs, msg_end ) >::value.view(),
+                  std::constant_wrapper< cpp_utils::concat_const_string( msg_start, "成功"_cs, msg_end ) >::value.view() };
             }() };
             cpp_utils::print_without_formatting( final_message[ static_cast< std::size_t >( success ) ] );
             con.press_any_key_to_continue();
@@ -1254,10 +1254,11 @@ namespace scltk
           .add_back( make_title_text< "[ 关  于 ]", 1 >.view() )
           .add_back( " < 返回 "sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
           .add_back(
-            "\n[ 软件名 ]\n\n " INFO_FULL_NAME "\n\n (aka " INFO_SHORT_NAME ")\n\n[ 软件版本 ]\n\n 标签: " INFO_GIT_TAG "\n 分支: " INFO_GIT_BRANCH
-            "\n 提交: " INFO_GIT_HASH "\n\n[ 开源仓库 ]\n\n " INFO_REPO_URL "\n\n[ 许可证 ]\n"sv )
+            "\n[ 软件名 ]\n\n " INFO_FULL_NAME "\n\n (aka " INFO_SHORT_NAME ")\n\n[ 软件版本 ]\n\n 标签: " INFO_GIT_TAG
+            "\n 分支: " INFO_GIT_BRANCH "\n 提交: " INFO_GIT_HASH "\n\n[ 开源仓库 ]\n\n " INFO_REPO_URL "\n\n[ 许可证 ]\n"sv )
           .add_back(
-            cpp_utils::value_identity_v< cpp_utils::concat_const_string( " 保存许可证说明 "_cs, details_::license_file,"."_cs ) >.view(),
+            std::constant_wrapper< cpp_utils::concat_const_string( " 保存许可证说明 "_cs, details_::license_file, "."_cs ) >::value
+              .view(),
             details_::save_licenses )
           .show();
         return func_back;
