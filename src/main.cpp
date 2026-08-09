@@ -1906,7 +1906,7 @@ namespace scltk
                 }
             }
             const auto proc_handle{ proc_snapshot.open_process( proc_entry.th32ProcessID, PROCESS_QUERY_LIMITED_INFORMATION ) };
-            if ( proc_handle == nullptr ) {
+            if ( proc_handle == nullptr ) [[unlikely]] {
                 return false;
             }
             const auto proc_path{ details_::get_proc_path( proc_handle ) };
