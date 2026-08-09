@@ -2013,17 +2013,17 @@ namespace scltk
     }
     namespace details_
     {
-        auto forced_show( const std::atomic_flag& stop_token ) noexcept
+        auto forced_show( const std::atomic_flag* stop_token ) noexcept
         {
-            con.forced_show_until( 50ms, [ & ] noexcept
+            con.forced_show_until( 50ms, [ = ] noexcept
             {
                 constexpr const auto& enabled{ std::get< window_config >( config_nodes ).at< "forced_show" >() };
                 if ( enabled.test( std::memory_order_acquire ) == true ) {
-                    return stop_token.test( std::memory_order_acquire );
+                    return stop_token->test( std::memory_order_acquire );
                 }
                 con.cancel_forced_show();
                 while ( enabled.test( std::memory_order_acquire ) == false ) {
-                    if ( stop_token.test( std::memory_order_acquire ) == true ) {
+                    if ( stop_token->test( std::memory_order_acquire ) == true ) {
                         return true;
                     }
                     std::this_thread::sleep_for( 50ms );
@@ -2054,7 +2054,7 @@ namespace scltk
             }
         };
         background_thread_manager mgr;
-        for ( const auto stop_token{ std::cref( stop_source ) }; const auto& func : funcs ) {
+        for ( const auto stop_token{ &std::as_const( stop_source ) }; const auto& func : funcs ) {
             mgr.threads.unchecked_emplace_back( func, stop_token );
         }
         return mgr;
