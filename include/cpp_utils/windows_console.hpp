@@ -213,6 +213,7 @@ namespace cpp_utils
                     attrs &= ~ENABLE_QUICK_EDIT_MODE;
                     attrs &= ~ENABLE_INSERT_MODE;
                     break;
+                default : std::unreachable();
             }
             attrs |= ENABLE_MOUSE_INPUT;
             attrs |= ENABLE_LINE_INPUT;

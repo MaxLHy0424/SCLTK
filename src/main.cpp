@@ -755,6 +755,7 @@ namespace scltk
                     switch ( val ) {
                         case false : obj.clear( std::memory_order_release ); break;
                         case true : ( void ) obj.test_and_set( std::memory_order_release ); break;
+                        default : std::unreachable();
                     }
                 } else {
                     obj = val;
@@ -1794,6 +1795,7 @@ namespace scltk
             switch ( details_::current_rule_executor_mode ) {
                 case details_::rule_executor_mode::crack : crack(); break;
                 case details_::rule_executor_mode::restore : restore(); break;
+                default : std::unreachable();
             }
             cpp_utils::print_without_formatting( "\n (i) 操作已完成.\n\n 请按任意键返回."sv );
             con.press_any_key_to_continue();
@@ -1990,6 +1992,7 @@ namespace scltk
         switch ( details_::current_rule_executor_mode ) {
             case details_::rule_executor_mode::crack : return "[ 破解 (点击切换) ]\n"sv;
             case details_::rule_executor_mode::restore : return "[ 恢复 (点击切换) ]\n"sv;
+            default : std::unreachable();
         }
     }
     auto flip_executor_mode( const ui_func_args_type args ) noexcept
@@ -2001,6 +2004,7 @@ namespace scltk
             case details_::rule_executor_mode::restore :
                 details_::current_rule_executor_mode = details_::rule_executor_mode::crack;
                 break;
+            default : std::unreachable();
         }
         args.parent_ui.set_text( args.node_index, make_executor_mode_ui_text() );
         return func_back;
