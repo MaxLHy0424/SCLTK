@@ -901,7 +901,7 @@ namespace scltk
         struct custom_rule_binding_ final
         {
             static constexpr auto flag{ Flag };
-            static constexpr auto&& items{ Items };
+            static constexpr auto& items{ Items };
         };
         using custom_rule_bindings_ = cpp_utils::type_list<
           custom_rule_binding_< L"proc_name"_cs, custom_rules.proc_names >,
