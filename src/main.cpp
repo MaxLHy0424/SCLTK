@@ -173,24 +173,24 @@ namespace scltk
         {
           private:
             HANDLE file_handle_;
-            bool locked;
+            bool locked_;
           public:
             auto operator=( const file_locker& ) -> file_locker& = delete;
             auto operator=( file_locker&& ) -> file_locker&      = delete;
             file_locker( const HANDLE file_handle ) noexcept
               : file_handle_{ file_handle }
-              , locked{ false }
+              , locked_{ false }
             {
                 OVERLAPPED overlapped{};
                 if ( LockFileEx( file_handle_, LOCKFILE_EXCLUSIVE_LOCK, 0, 0xFFFFFFFF, 0xFFFFFFFF, &overlapped ) ) [[likely]] {
-                    locked = true;
+                    locked_ = true;
                 }
             }
             file_locker( const file_locker& )     = delete;
             file_locker( file_locker&& ) noexcept = delete;
             ~file_locker() noexcept
             {
-                if ( locked ) [[likely]] {
+                if ( locked_ ) [[likely]] {
                     OVERLAPPED overlapped{};
                     UnlockFileEx( file_handle_, 0, 0xFFFFFFFF, 0xFFFFFFFF, &overlapped );
                 }
