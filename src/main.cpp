@@ -1702,36 +1702,35 @@ namespace scltk
                 cpp_utils::print_without_formatting( " -> 查找目标进程.\n"sv );
                 const auto self_main_proc_id{ GetCurrentProcessId() };
                 DWORD self_conhost_proc_id [[indeterminate]];
-                if ( !GetWindowThreadProcessId( con.window_handle, &self_conhost_proc_id ) ) [[unlikely]] {
-                    goto SKIP_SCANNING;
-                }
-                const auto desired_access{
-                  enabled_suspend_process ? ( PROCESS_TERMINATE | PROCESS_SUSPEND_RESUME ) : PROCESS_TERMINATE };
-                ( void ) proc_snapshot.iterate( [ & ]( const PROCESSENTRY32W& proc_entry )
-                {
-                    if ( proc_entry.th32ProcessID == self_main_proc_id || proc_entry.th32ProcessID == self_conhost_proc_id ) {
-                        return true;
-                    }
-                    if ( !(
-                           [ & ]< typename Backend >
+                if ( GetWindowThreadProcessId( con.window_handle, &self_conhost_proc_id ) ) [[likely]] {
+                    const auto desired_access{
+                      enabled_suspend_process ? ( PROCESS_TERMINATE | PROCESS_SUSPEND_RESUME ) : PROCESS_TERMINATE };
+                    ( void ) proc_snapshot.iterate( [ & ]( const PROCESSENTRY32W& proc_entry )
                     {
-                        if constexpr ( Backend::invoke_fn_is_target_proc ) {
-                            return Backend::is_target_proc( proc_entry );
-                        } else {
-                            return false;
+                        if ( proc_entry.th32ProcessID == self_main_proc_id || proc_entry.th32ProcessID == self_conhost_proc_id )
+                        {
+                            return true;
                         }
-                    }.template operator()< Backends >()
-                           || ... ) )
-                    {
+                        if ( !(
+                               [ & ]< typename Backend >
+                        {
+                            if constexpr ( Backend::invoke_fn_is_target_proc ) {
+                                return Backend::is_target_proc( proc_entry );
+                            } else {
+                                return false;
+                            }
+                        }.template operator()< Backends >()
+                               || ... ) )
+                        {
+                            return true;
+                        }
+                        auto proc_handle{ proc_snapshot.open_process( proc_entry.th32ProcessID, desired_access ) };
+                        if ( proc_handle != nullptr ) [[likely]] {
+                            proc_handles.emplace_back( std::move( proc_handle ) );
+                        }
                         return true;
-                    }
-                    auto proc_handle{ proc_snapshot.open_process( proc_entry.th32ProcessID, desired_access ) };
-                    if ( proc_handle != nullptr ) [[likely]] {
-                        proc_handles.emplace_back( std::move( proc_handle ) );
-                    }
-                    return true;
-                } );
-            SKIP_SCANNING:
+                    } );
+                }
             }
             if ( enabled_suspend_process ) {
                 cpp_utils::print_without_formatting( " -> 挂起目标进程.\n"sv );
