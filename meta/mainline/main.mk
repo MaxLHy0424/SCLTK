@@ -52,7 +52,7 @@ args_opt_release := -Ofast \
                     -D_FORTIFY_SOURCE=0
 args_include     := -I$(include_path)
 args_library     := -ltre -liphlpapi -lsetupapi -lcrypt32 -lwinhttp -lwininet -lversion -ldnsapi
-args_extra       := $(cpp_utils_windows_impl_win7_args)
+args_extra       := $(cpp_utils_windows_impl_nt0600_args)
 input_charset    := utf-8
 output_charset   := gbk
 args_base        := -pipe -finput-charset=$(input_charset) -fexec-charset=$(output_charset) \

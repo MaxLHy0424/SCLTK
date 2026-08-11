@@ -2,7 +2,7 @@
 #include <windows.h>
 #if true
 # include <ntdef.h>
-# ifdef CPP_UTILS_WINDOWS_IMPL_WIN7_FIX
+# ifdef CPP_UTILS_WINDOWS_IMPL_NT0600_FIX
 #  include <shlwapi.h>
 # endif
 # include <tlhelp32.h>
@@ -586,7 +586,7 @@ namespace cpp_utils
     }
     [[nodiscard]] inline auto delete_registry_tree( const HKEY main_key, const std::wstring_view sub_key ) noexcept
     {
-# ifdef CPP_UTILS_WINDOWS_IMPL_WIN7_FIX
+# ifdef CPP_UTILS_WINDOWS_IMPL_NT0600_FIX
         return static_cast< LONG >( SHDeleteKeyW( main_key, sub_key.data() ) );
 # else
         return RegDeleteTreeW( main_key, sub_key.data() );
@@ -602,7 +602,7 @@ namespace cpp_utils
         {
             return result;
         }
-# ifdef CPP_UTILS_WINDOWS_IMPL_WIN7_FIX
+# ifdef CPP_UTILS_WINDOWS_IMPL_NT0600_FIX
         return static_cast< LONG >( SHDeleteKeyW( key_handle.get(), sub_key.data() ) );
 # else
         return RegDeleteTreeW( key_handle.get(), sub_key.data() );
