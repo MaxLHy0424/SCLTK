@@ -588,7 +588,7 @@ namespace scltk
         details_::make_const_wstring_list_t< L"VeyonService" > >,
       compile_time_rule_node< "WorkWin", cpp_utils::type_list<>, cpp_utils::type_list<>, details_::is_workwin, details_::noop_helper, [] static noexcept
     {
-        cpp_utils::print_without_formatting( " (i) \"WorkWin\" 无需恢复, 请直接启动软件.\n"sv );
+        cpp_utils::print_without_formatting( " (i) WorkWin 无需恢复, 请直接启动软件.\n"sv );
     } > >;
     struct runtime_rule_node final
     {
