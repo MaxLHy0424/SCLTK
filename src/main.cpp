@@ -2029,11 +2029,10 @@ namespace scltk
     [[nodiscard]] auto create_background_threads()
     {
         constexpr std::array funcs{ details_::forced_show };
-        constexpr auto funcs_count{ funcs.size() };
         static std::atomic_flag stop_source{};
         struct background_thread_manager final
         {
-            std::inplace_vector< std::thread, funcs_count > threads{};
+            std::inplace_vector< std::thread, funcs.size() > threads{};
             background_thread_manager() noexcept                          = default;
             background_thread_manager( const background_thread_manager& ) = delete;
             background_thread_manager( background_thread_manager&& )      = default;
