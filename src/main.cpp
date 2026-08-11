@@ -773,7 +773,7 @@ namespace scltk
                 } else {
                     return;
                 }
-                for ( std::size_t whitespace_count{ 0 }; const auto ch : line | std::views::reverse ) {
+                for ( auto whitespace_count{ 0uz }; const auto ch : line | std::views::reverse ) {
                     if ( !is_whitespace< char >( ch ) ) {
                         line.remove_suffix( whitespace_count );
                         break;
@@ -784,7 +784,7 @@ namespace scltk
                     return;
                 }
                 line.remove_suffix( 1 );
-                for ( std::size_t whitespace_count{ 0 }; const auto ch : line | std::views::reverse ) {
+                for ( auto whitespace_count{ 0uz }; const auto ch : line | std::views::reverse ) {
                     if ( !is_whitespace< char >( ch ) ) {
                         line.remove_suffix( whitespace_count );
                         break;
@@ -929,7 +929,7 @@ namespace scltk
                         return false;
                     }
                     line.remove_prefix( current_binding::flag.size() );
-                    for ( std::size_t whitespace_count{ 0 }; const auto ch : line ) {
+                    for ( auto whitespace_count{ 0uz }; const auto ch : line ) {
                         if ( !details_::is_whitespace< wchar_t >( ch ) ) {
                             line.remove_prefix( whitespace_count );
                             break;
@@ -940,7 +940,7 @@ namespace scltk
                         return false;
                     }
                     line.remove_prefix( 1 );
-                    for ( std::size_t whitespace_count{ 0 }; const auto ch : line ) {
+                    for ( auto whitespace_count{ 0uz }; const auto ch : line ) {
                         if ( !details_::is_whitespace< wchar_t >( ch ) ) {
                             line.remove_prefix( whitespace_count );
                             break;
