@@ -1705,6 +1705,8 @@ namespace scltk
                 if ( !GetWindowThreadProcessId( con.window_handle, &self_conhost_proc_id ) ) [[unlikely]] {
                     goto SKIP_SCANNING;
                 }
+                const auto desired_access{
+                  enabled_suspend_process ? ( PROCESS_TERMINATE | PROCESS_SUSPEND_RESUME ) : PROCESS_TERMINATE };
                 ( void ) proc_snapshot.iterate( [ & ]( const PROCESSENTRY32W& proc_entry )
                 {
                     if ( proc_entry.th32ProcessID == self_main_proc_id || proc_entry.th32ProcessID == self_conhost_proc_id ) {
@@ -1723,8 +1725,7 @@ namespace scltk
                     {
                         return true;
                     }
-                    auto proc_handle{
-                      proc_snapshot.open_process( proc_entry.th32ProcessID, PROCESS_TERMINATE | PROCESS_SUSPEND_RESUME ) };
+                    auto proc_handle{ proc_snapshot.open_process( proc_entry.th32ProcessID, desired_access ) };
                     if ( proc_handle != nullptr ) [[likely]] {
                         proc_handles.emplace_back( std::move( proc_handle ) );
                     }
