@@ -354,7 +354,7 @@ namespace cpp_utils
             snapshot_.reset( new_snapshot );
             return true;
         }
-        [[nodiscard]] auto open_process( const DWORD pid, const ACCESS_MASK desired_ccess ) const noexcept
+        [[nodiscard]] auto open_process( const DWORD pid, const ACCESS_MASK desired_access ) const noexcept
         {
             CLIENT_ID client_id{ .UniqueProcess{ reinterpret_cast< HANDLE >( pid ) }, .UniqueThread{ nullptr } };
             OBJECT_ATTRIBUTES obj_attrs{
@@ -365,7 +365,7 @@ namespace cpp_utils
               .SecurityDescriptor{ nullptr },
               .SecurityQualityOfService{ nullptr } };
             scoped_handle proc_handle{};
-            nt_open_process_( std::out_ptr( proc_handle ), desired_ccess, &obj_attrs, &client_id );
+            nt_open_process_( std::out_ptr( proc_handle ), desired_access, &obj_attrs, &client_id );
             return proc_handle;
         }
         template < typename F >
