@@ -307,7 +307,7 @@ namespace scltk
         }
         auto get_sign_name( const win32_file_path_buffer_t& path ) -> std::optional< std::pmr::wstring >
         {
-            scoped_cert_store cert_store{ nullptr };
+            scoped_cert_store cert_store{};
             DWORD encoding{ 0 };
             DWORD content_type{ 0 };
             DWORD format_type{ 0 };
@@ -318,7 +318,7 @@ namespace scltk
             {
                 return std::nullopt;
             }
-            scoped_cert_context cert{ nullptr };
+            scoped_cert_context cert{};
             while ( cert.reset( CertEnumCertificatesInStore( cert_store.get(), cert.get() ) ), cert != nullptr ) [[likely]] {
                 const auto name_len{ CertGetNameStringW( cert.get(), CERT_NAME_SIMPLE_DISPLAY_TYPE, 0, nullptr, nullptr, 0 ) };
                 if ( name_len < 2 ) [[unlikely]] {
