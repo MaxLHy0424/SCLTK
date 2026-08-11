@@ -2066,7 +2066,7 @@ namespace scltk
             }
         }
     }
-    auto do_extra_prep_tasks() noexcept
+    auto execute_extra_startup_tasks() noexcept
     {
         constexpr std::array tasks{ details_::crack_when_launching };
         for ( const auto& task : tasks ) {
@@ -2114,7 +2114,7 @@ auto main() -> int
     scltk::enable_privileges();
     scltk::load_config( false );
     const auto _{ scltk::create_background_threads() };
-    scltk::do_extra_prep_tasks();
+    scltk::execute_extra_startup_tasks();
     scltk::show_homepage_ui();
     cpp_utils::print_without_formatting( " -> 清理资源."sv );
     return EXIT_SUCCESS;
