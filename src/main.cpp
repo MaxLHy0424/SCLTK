@@ -496,16 +496,16 @@ namespace scltk
             }
             return false;
         }
-        constexpr auto default_extra_proc_matcher{ []( const PROCESSENTRY32W& ) static noexcept
+        constexpr auto noop_extra_proc_matcher{ []( const PROCESSENTRY32W& ) static noexcept
         {
             return false;
         } };
-        constexpr auto default_helper{ [] static noexcept { } };
+        constexpr auto noop_helper{ [] static noexcept { } };
     }
     template <
       cpp_utils::const_string DisplayName, cpp_utils::same_as_type_list ProcNames, cpp_utils::same_as_type_list ServNames,
-      auto ExtraProcMatcher = details_::default_extra_proc_matcher, auto CrackHelper = details_::default_helper,
-      auto RestoreHelper = details_::default_helper >
+      auto ExtraProcMatcher = details_::noop_extra_proc_matcher, auto CrackHelper = details_::noop_helper,
+      auto RestoreHelper = details_::noop_helper >
         requires requires( const PROCESSENTRY32W& proc_entry ) {
             { ExtraProcMatcher( proc_entry ) } -> std::convertible_to< bool >;
             CrackHelper();
@@ -586,8 +586,7 @@ namespace scltk
           L"veyon-worker.exe", L"veyon-configurator.exe", L"veyon-server.exe", L"veyon-cli.exe", L"veyon-wcli.exe",
           L"veyon-service.exe" >,
         details_::make_const_wstring_list_t< L"VeyonService" > >,
-      compile_time_rule_node<
-        "WorkWin", cpp_utils::type_list<>, cpp_utils::type_list<>, details_::is_workwin, details_::default_helper, [] static noexcept
+      compile_time_rule_node< "WorkWin", cpp_utils::type_list<>, cpp_utils::type_list<>, details_::is_workwin, details_::noop_helper, [] static noexcept
     {
         cpp_utils::print_without_formatting( " (i) \"WorkWin\" 无需恢复, 请直接启动软件.\n"sv );
     } > >;
@@ -1804,8 +1803,8 @@ namespace scltk
     template < typename... BuiltinRuleNodes >
     struct builtin_rules_executor_backend final
     {
-        using default_extra_proc_matcher_type = decltype( details_::default_extra_proc_matcher );
-        using default_helper_type             = decltype( details_::default_helper );
+        using noop_extra_proc_matcher_type = decltype( details_::noop_extra_proc_matcher );
+        using noop_helper_type             = decltype( details_::noop_helper );
         static constexpr auto proc_names{
           []< cpp_utils::const_wstring... ProcNames >( const details_::make_const_wstring_list_t< ProcNames... > ) static consteval noexcept
         {
@@ -1818,7 +1817,7 @@ namespace scltk
         }( typename cpp_utils::type_list_concat_t< typename BuiltinRuleNodes::serv_names... >::unique{} ) };
         static constexpr auto invoke_fn_is_target_proc{
           !proc_names.empty()
-          || ( !std::is_same_v< decltype( BuiltinRuleNodes::extra_proc_matcher ), default_extra_proc_matcher_type > || ... ) };
+          || ( !std::is_same_v< decltype( BuiltinRuleNodes::extra_proc_matcher ), noop_extra_proc_matcher_type > || ... ) };
         static auto is_target_proc( const PROCESSENTRY32W& proc_entry )
         {
             for ( const auto& proc_name : proc_names ) {
@@ -1829,7 +1828,7 @@ namespace scltk
             if ( (
                    [ & ]< typename Node >
             {
-                if constexpr ( !std::is_same_v< decltype( Node::extra_proc_matcher ), default_extra_proc_matcher_type > ) {
+                if constexpr ( !std::is_same_v< decltype( Node::extra_proc_matcher ), noop_extra_proc_matcher_type > ) {
                     return Node::extra_proc_matcher( proc_entry );
                 } else {
                     return false;
@@ -1846,7 +1845,7 @@ namespace scltk
         {
             return static_cast< std::size_t >(
               proc_names.size() * 1.1
-              + ( !std::is_same_v< decltype( BuiltinRuleNodes::extra_proc_matcher ), default_extra_proc_matcher_type > + ... ) * 2 );
+              + ( !std::is_same_v< decltype( BuiltinRuleNodes::extra_proc_matcher ), noop_extra_proc_matcher_type > + ... ) * 2 );
         }
         static constexpr auto invoke_fn_enable_and_start_servs{ !serv_names.empty() };
         static auto enable_and_start_servs() noexcept
@@ -1865,26 +1864,26 @@ namespace scltk
             }
         }
         static constexpr auto invoke_fn_crack_helper{
-          ( !std::is_same_v< decltype( BuiltinRuleNodes::crack_helper ), default_helper_type > || ... ) };
+          ( !std::is_same_v< decltype( BuiltinRuleNodes::crack_helper ), noop_helper_type > || ... ) };
         static auto crack_helper()
         {
             (
               []< typename Node >() static
             {
-                if constexpr ( !std::is_same_v< decltype( Node::crack_helper ), default_helper_type > ) {
+                if constexpr ( !std::is_same_v< decltype( Node::crack_helper ), noop_helper_type > ) {
                     Node::crack_helper();
                 }
             }.template operator()< BuiltinRuleNodes >(),
               ... );
         }
         static constexpr auto invoke_fn_restore_helper{
-          ( !std::is_same_v< decltype( BuiltinRuleNodes::restore_helper ), default_helper_type > || ... ) };
+          ( !std::is_same_v< decltype( BuiltinRuleNodes::restore_helper ), noop_helper_type > || ... ) };
         static auto restore_helper()
         {
             (
               []< typename Node >() static
             {
-                if constexpr ( !std::is_same_v< decltype( Node::restore_helper ), default_helper_type > ) {
+                if constexpr ( !std::is_same_v< decltype( Node::restore_helper ), noop_helper_type > ) {
                     Node::restore_helper();
                 }
             }.template operator()< BuiltinRuleNodes >(),
