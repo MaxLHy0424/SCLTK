@@ -567,7 +567,7 @@ namespace scltk
           L"GtSRun.exe" >,
         details_::make_const_wstring_list_t< L"SECService" > >,
       compile_time_rule_node<
-        "管鲍电子教室 & GZYZ",
+        "管鲍电子教室 / 噢易云教室 / GZYZ",
         details_::make_const_wstring_list_t<
           L"CRMSPre.exe", L"Student.exe", L"StudentTools.exe", L"EcrSetup.exe", L"ExamClient.exe", L"AnyTimeSrv.exe",
           L"NetLockerInstall.exe", L"NetLockerInstall64.exe", L"LockerManage64.exe" >,
