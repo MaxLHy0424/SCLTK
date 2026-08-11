@@ -48,6 +48,7 @@ args_opt_release := -Ofast \
                     -fmodulo-sched-allow-regmoves \
                     -fgraphite-identity \
                     -floop-nest-optimize \
+                    -fno-shrink-wrap \
                     -D_FORTIFY_SOURCE=0
 args_include     := -I$(include_path)
 args_library     := -ltre -liphlpapi -lsetupapi -lcrypt32 -lwinhttp -lwininet -lversion -ldnsapi
@@ -62,10 +63,10 @@ args_release     := -DNDEBUG -static $(args_base) $(args_opt_release)
 args_ld          := -fuse-ld=lld \
                     -Wl,-O3,--lto-O3,--lto-CGO3,--gc-sections,--strip-all,--as-needed \
                     -Wl,--no-insert-timestamp,--no-seh,--disable-runtime-pseudo-reloc \
-                    -Wl,--disable-auto-import,--dynamicbase,--nxcompat,--high-entropy-va,--tsaware \
-                    -Wl,--icf=all,--build-id=none
+                    -Wl,--disable-auto-import,--nxcompat,--high-entropy-va,--tsaware \
+                    -Wl,--icf=all,--build-id=none,--file-alignment=512
 cmd_echo         := /usr/bin/echo
-cmd_upx          := /ucrt64/bin/upx --lzma --best --8-bit --no-align --ultra-brute -qqq
+cmd_upx          := /ucrt64/bin/upx --lzma --best --8-bit --no-align --ultra-brute --all-filters -qqq
 cmd_gpg          := gpg -bs -u $(gpg_key) --yes
 dep_test         := src/main.cpp \
                     src/clear_winhttp_proxy.cpp \
