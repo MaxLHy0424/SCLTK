@@ -1230,20 +1230,20 @@ namespace scltk
             using licenses = cpp_utils::type_list<
               license_info< INFO_FULL_NAME " (" INFO_SHORT_NAME ")"_cs, scltk_license >,
               license_info< "TRE (libtre)"_cs, libtre_license > >;
-            static constexpr auto file_content{ []< std::size_t... Is >( const std::index_sequence< Is... > ) static consteval noexcept
+            static constexpr auto file_content{ cpp_utils::invoke_to_array< [] static constexpr noexcept
             {
-                return cpp_utils::concat_const_string( cpp_utils::concat_const_string(
-                  licenses::at< Is >::component_name, "\n"_cs, cpp_utils::make_repeated_const_string< '-', 50 >(), "\n"_cs,
-                  licenses::at< Is >::content, cpp_utils::make_repeated_const_string< '-', 50 >(), "\n\n"_cs )... );
-            }( std::make_index_sequence< licenses::size >{} ) };
-            constexpr auto file_content_view{ []() static consteval noexcept
-            {
-                auto view{ file_content.view() };
-                view.remove_suffix( 1 );
-                return view;
-            }() };
-            std::ofstream{ license_file.c_str(), std::ios::out | std::ios::trunc }.write(
-              file_content_view.data(), file_content_view.size() );
+                return []< std::size_t... Is >( const std::index_sequence< Is... > ) static constexpr noexcept
+                {
+                    constexpr auto base_content{ cpp_utils::concat_const_string( cpp_utils::concat_const_string(
+                      licenses::at< Is >::component_name, "\n"_cs, cpp_utils::make_repeated_const_string< '-', 50 >(), "\n"_cs,
+                      licenses::at< Is >::content, cpp_utils::make_repeated_const_string< '-', 50 >(), "\n\n"_cs )... ) };
+                    std::vector< char > chars;
+                    chars.append_range( base_content.view() );
+                    chars.pop_back();
+                    return chars;
+                }( std::make_index_sequence< licenses::size >{} );
+            } >() };
+            std::ofstream{ license_file.c_str(), std::ios::out | std::ios::trunc }.write( file_content.data(), file_content.size() );
             return func_back;
         }
     };
