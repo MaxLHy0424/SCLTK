@@ -194,7 +194,7 @@ restore_helper: "abc toolkit.exe" restore
 
 然后，使用 git 克隆本仓库到本地。
 
-本仓库支持构建 SCLTK-Mainline 与 SCLTK-Legacy。如需构建 SCLTK-Mainline，则下文中的 `<scltk-edition>` 为 `Mainline`；如需构建 SCLTK-Legacy，则下文中的 `<scltk-edition>` 为 `Legacy`
+本仓库支持构建 SCLTK-Mainline 与 SCLTK-Legacy。如需构建 SCLTK-Mainline，则下文中的 `<scltk-edition>` 为 `mainline`；如需构建 SCLTK-Legacy，则下文中的 `<scltk-edition>` 为 `legacy`
 
 接下来，在仓库本地目录下打开终端（不是 [msys2](https://www.msys2.org) 的），执行：
 
