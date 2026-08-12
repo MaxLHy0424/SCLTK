@@ -1135,7 +1135,7 @@ namespace scltk
                 make_title_text< "[ 配  置 ]", 2 >, " -> 同步配置.\n\n"_cs ) >::value.view() );
             load_config( true );
             constexpr auto header{
-              u8"# " INFO_FULL_NAME "\n# " INFO_GIT_TAG " (" INFO_GIT_BRANCH " " INFO_GIT_HASH ")\n# UTF-8 编码\n" };
+              u8"# " INFO_FULL_NAME "\n# " INFO_VERSION " (" INFO_GIT_BRANCH " " INFO_GIT_COMMIT ")\n# UTF-8 编码\n" };
             constexpr auto header_size{ std::char_traits< char8_t >::length( header ) * sizeof( char8_t ) };
             std::ofstream config_file{ config_file_name, std::ios::out | std::ios::trunc };
             if ( config_file.good() ) [[likely]] {
@@ -1254,8 +1254,9 @@ namespace scltk
           .add_back( make_title_text< "[ 关  于 ]", 1 >.view() )
           .add_back( " < 返回 "sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
           .add_back(
-            "\n[ 软件名 ]\n\n " INFO_FULL_NAME "\n\n (aka " INFO_SHORT_NAME ")\n\n[ 软件版本 ]\n\n 标签: " INFO_GIT_TAG
-            "\n 分支: " INFO_GIT_BRANCH "\n 提交: " INFO_GIT_HASH "\n\n[ 开源仓库 ]\n\n " INFO_REPO_URL "\n\n[ 许可证 ]\n"sv )
+            "\n[ 软件名 ]\n\n " INFO_FULL_NAME "\n\n (aka " INFO_SHORT_NAME ")\n\n[ 软件版本 ]\n\n " INFO_VERSION
+            "\n\n 分支: " INFO_GIT_BRANCH "\n 提交: " INFO_GIT_COMMIT "\n\n[ 开源仓库 ]\n\n " INFO_REPO_URL
+            "\n\n[ 许可证 ]\n"sv )
           .add_back(
             std::constant_wrapper< cpp_utils::concat_const_string( " 保存许可证说明 "_cs, details_::license_file ) >::value.view(),
             details_::save_licenses )
