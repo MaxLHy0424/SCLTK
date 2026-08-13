@@ -1496,10 +1496,11 @@ namespace scltk
             wchar_t target_name [[indeterminate]][ 256 ];
             ULONG out_buffer_length [[indeterminate]];
             GetAdaptersAddresses( AF_UNSPEC, 0, nullptr, nullptr, &out_buffer_length );
-            if ( const auto addresses{ static_cast< PIP_ADAPTER_ADDRESSES >( std::malloc( out_buffer_length ) ) };
-                 GetAdaptersAddresses( AF_UNSPEC, 0, nullptr, addresses, &out_buffer_length ) == ERROR_SUCCESS ) [[likely]]
+            if ( std::vector< BYTE > buffer( out_buffer_length );
+                 GetAdaptersAddresses( AF_UNSPEC, 0, nullptr, reinterpret_cast< PIP_ADAPTER_ADDRESSES >( buffer.data() ), &out_buffer_length )
+                 == ERROR_SUCCESS ) [[likely]]
             {
-                auto current{ addresses };
+                auto current{ reinterpret_cast< PIP_ADAPTER_ADDRESSES >( buffer.data() ) };
                 while ( current != nullptr ) {
                     if ( ( current->IfType == IF_TYPE_ETHERNET_CSMACD || current->IfType == IF_TYPE_IEEE80211 )
                          && current->OperStatus == IfOperStatusUp )
@@ -1510,7 +1511,6 @@ namespace scltk
                     }
                     current = current->Next;
                 }
-                std::free( addresses );
             }
             if ( target_local_uid.Value == 0 ) [[unlikely]] {
                 return;
