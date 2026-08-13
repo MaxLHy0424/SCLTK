@@ -1253,6 +1253,7 @@ namespace scltk
                     return std::vector{ std::from_range, base_content.view() | std::views::take( base_content.size() - 1 ) };
                 }( std::make_index_sequence< licenses::size >{} );
             } >() };
+            cpp_utils::print_without_formatting( " -> 写入文件."sv );
             std::ofstream{ license_file.c_str(), std::ios::out | std::ios::trunc }.write( file_content.data(), file_content.size() );
             return func_back;
         }
