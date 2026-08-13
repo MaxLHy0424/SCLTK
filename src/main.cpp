@@ -15,6 +15,7 @@
 #include <setupapi.h>
 #include <tre/tre.h>
 #include <wincrypt.h>
+#include <atomic>
 #include <charconv>
 #include <cstring>
 #include <filesystem>
@@ -49,15 +50,6 @@ namespace scltk
     template < cpp_utils::const_string Text >
     constexpr auto make_item_text{ cpp_utils::concat_const_string( " > "_cs, Text, " "_cs ) };
     const cpp_utils::console con;
-    const auto unsynced_mem_pool{ [] static noexcept
-    {
-        static std::pmr::unsynchronized_pool_resource pool{
-          std::pmr::pool_options{ .max_blocks_per_chunk{ 1024 }, .largest_required_pool_block{ 4096 } },
-          std::pmr::new_delete_resource()
-        };
-        std::pmr::set_default_resource( &pool );
-        return &pool;
-    }() };
     cpp_utils::process_snapshot proc_snapshot;
     constexpr auto quit() noexcept
     {
@@ -101,7 +93,7 @@ namespace scltk
         class scoped_wregex final
         {
           private:
-            std::pmr::wstring pattern_{};
+            std::wstring pattern_{};
             regex_t rx_{};
             bool valid_{};
             auto cleanup_() noexcept
@@ -140,7 +132,7 @@ namespace scltk
                 return *this;
             }
             scoped_wregex( const std::wstring_view pattern ) noexcept
-              : pattern_( pattern, unsynced_mem_pool )
+              : pattern_( pattern )
             {
                 valid_ = ( tre_regwcomp( &rx_, pattern_.data(), REG_EXTENDED | REG_NOSUB ) == 0 );
             }
@@ -278,12 +270,11 @@ namespace scltk
         template < cpp_utils::character CharT, typename... Args >
             requires(
               ( std::same_as< std::decay_t< Args >, std::basic_string< CharT > >
-                || std::same_as< std::decay_t< Args >, std::pmr::basic_string< CharT > >
                 || std::same_as< std::decay_t< Args >, std::basic_string_view< CharT > > )
               && ... )
         auto concat_string( Args&&... strings )
         {
-            std::pmr::basic_string< CharT > result( unsynced_mem_pool );
+            std::basic_string< CharT > result;
             result.reserve( ( std::forward< Args >( strings ).size() + ... ) );
             ( result.append( std::forward< Args >( strings ) ), ... );
             return result;
@@ -318,7 +309,7 @@ namespace scltk
             }
             return result;
         }
-        auto get_sign_name( const win32_file_path_buffer_t& path ) -> std::optional< std::pmr::wstring >
+        auto get_sign_name( const win32_file_path_buffer_t& path ) -> std::optional< std::wstring >
         {
             scoped_cert_store cert_store{};
             DWORD encoding{ 0 };
@@ -337,7 +328,7 @@ namespace scltk
                 if ( name_len < 2 ) [[unlikely]] {
                     continue;
                 }
-                std::pmr::wstring name_buf( static_cast< std::size_t >( name_len - 1 ), L'\0', unsynced_mem_pool );
+                std::wstring name_buf( static_cast< std::size_t >( name_len - 1 ), L'\0' );
                 CertGetNameStringW( cert.get(), CERT_NAME_SIMPLE_DISPLAY_TYPE, 0, nullptr, name_buf.data(), name_len );
                 return name_buf;
             }
@@ -346,13 +337,13 @@ namespace scltk
         auto get_version_info( const win32_file_path_buffer_t& path )
         {
             using targets = make_const_wstring_list_t< L"FileDescription", L"ProductName", L"LegalCopyright" >;
-            std::inplace_vector< std::pmr::wstring, targets::size > result;
+            std::inplace_vector< std::wstring, targets::size > result;
             DWORD handle;
             DWORD size{ GetFileVersionInfoSizeW( path.data(), &handle ) };
             if ( size == 0 ) {
                 return result;
             }
-            std::pmr::vector< BYTE > version_info_buffer( size, unsynced_mem_pool );
+            std::vector< BYTE > version_info_buffer( size );
             if ( !GetFileVersionInfoW( path.data(), handle, size, version_info_buffer.data() ) ) {
                 return result;
             }
@@ -390,8 +381,7 @@ namespace scltk
                     sub_block.append_range( current_target );
                     sub_block.unchecked_emplace_back( L'\0' );
                     if ( VerQueryValueW( version_info_buffer.data(), sub_block.data(), &version_info_buffer_ptr, &length ) ) {
-                        result.unchecked_emplace_back(
-                          static_cast< const wchar_t* >( version_info_buffer_ptr ), length, unsynced_mem_pool );
+                        result.unchecked_emplace_back( static_cast< const wchar_t* >( version_info_buffer_ptr ), length );
                     }
                 }(), ... );
             }( std::make_index_sequence< targets::size >{} );
@@ -605,15 +595,15 @@ namespace scltk
     } > >;
     struct runtime_rule_node final
     {
-        using regex_item_type  = std::pmr::vector< details_::scoped_wregex >;
-        using string_item_type = std::pmr::vector< std::pmr::wstring >;
-        regex_item_type proc_names{ unsynced_mem_pool };
-        regex_item_type proc_paths{ unsynced_mem_pool };
-        regex_item_type proc_signs{ unsynced_mem_pool };
-        regex_item_type proc_vinfos{ unsynced_mem_pool };
-        string_item_type serv_names{ unsynced_mem_pool };
-        string_item_type crack_helpers{ unsynced_mem_pool };
-        string_item_type restore_helpers{ unsynced_mem_pool };
+        using regex_item_type  = std::vector< details_::scoped_wregex >;
+        using string_item_type = std::vector< std::wstring >;
+        regex_item_type proc_names{};
+        regex_item_type proc_paths{};
+        regex_item_type proc_signs{};
+        regex_item_type proc_vinfos{};
+        string_item_type serv_names{};
+        string_item_type crack_helpers{};
+        string_item_type restore_helpers{};
     };
     runtime_rule_node custom_rules;
     namespace details_
@@ -845,7 +835,7 @@ namespace scltk
             }
             static auto make_option_editor_ui_( std::array< value_type_, info_table_base_type_::size >& data_ )
             {
-                cpp_utils::console_ui ui{ con, unsynced_mem_pool };
+                cpp_utils::console_ui ui{ con };
                 ui.reserve( 2 + data_.size() * 2 )
                   .add_back( make_title_text< "[ 配  置 ]", 1 >.view() )
                   .add_back(
@@ -927,7 +917,7 @@ namespace scltk
         static_assert( !details_::is_whitespace< char >( splitting_char_ ) );
         static auto load_( const std::string_view unconverted_line )
         {
-            const auto converted{ cpp_utils::to_wstring( unconverted_line, CP_UTF8, unsynced_mem_pool ) };
+            const auto converted{ cpp_utils::to_wstring( unconverted_line, CP_UTF8 ) };
             if ( !converted.has_value() ) [[unlikely]] {
                 return;
             }
@@ -971,7 +961,7 @@ namespace scltk
                 ( [ & ]
                 {
                     using current_binding = custom_rule_bindings_::at< Is >;
-                    const auto converted{ cpp_utils::to_string( current_binding::flag.view(), CP_UTF8, unsynced_mem_pool ) };
+                    const auto converted{ cpp_utils::to_string( current_binding::flag.view(), CP_UTF8 ) };
                     if ( !converted.has_value() ) [[unlikely]] {
                         return;
                     }
@@ -984,7 +974,7 @@ namespace scltk
                             } else {
                                 return item;
                             }
-                        }(), CP_UTF8, unsynced_mem_pool ) };
+                        }(), CP_UTF8 ) };
                         if ( line.has_value() ) [[likely]] {
                             out << flag << splitting_char_ << ' ' << line.value() << '\n';
                         }
@@ -1001,7 +991,7 @@ namespace scltk
         }
         static auto show_help_info_()
         {
-            cpp_utils::console_ui ui{ con, unsynced_mem_pool };
+            cpp_utils::console_ui ui{ con };
             ui.reserve( 3 )
               .add_back( make_title_text< "[ 配  置 ]", 1 >.view() )
               .add_back( " < 返回 "sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
@@ -1066,7 +1056,7 @@ namespace scltk
         {
             ( config_node.before_load(), ... );
         }, config_nodes );
-        std::pmr::string line;
+        std::string line;
         using stateful_config_nodes_type = config_nodes_type::filter< details_::is_stateful_config_node >;
         using config_node_recorder_type
           = stateful_config_nodes_type::transform< std::add_pointer >::add_front< std::monostate >::apply< std::variant >;
@@ -1124,7 +1114,7 @@ namespace scltk
     {
         auto show_config_parsing_rules()
         {
-            cpp_utils::console_ui ui{ con, unsynced_mem_pool };
+            cpp_utils::console_ui ui{ con };
             ui.reserve( 3 )
               .add_back( make_title_text< "[ 配  置 ]", 1 >.view() )
               .add_back( " < 返回 "sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
@@ -1211,7 +1201,7 @@ namespace scltk
     {
         std::apply( []( auto&... nodes ) static
         {
-            cpp_utils::console_ui ui{ con, unsynced_mem_pool };
+            cpp_utils::console_ui ui{ con };
             ui.reserve( 5 + ( decltype( nodes.ui_count() )::value + ... ) )
               .add_back( make_title_text< "[ 配  置 ]", 1 >.view() )
               .add_back( " < 返回 "sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
@@ -1260,7 +1250,7 @@ namespace scltk
     };
     auto info()
     {
-        cpp_utils::console_ui ui{ con, unsynced_mem_pool };
+        cpp_utils::console_ui ui{ con };
         ui.reserve( 4 )
           .add_back( make_title_text< "[ 关  于 ]", 1 >.view() )
           .add_back( " < 返回 "sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
@@ -1298,19 +1288,12 @@ namespace scltk
             if ( CreateProcessW( nullptr, cmd, nullptr, nullptr, FALSE, 0, nullptr, nullptr, &startup_info, &proc_info ) )
               [[likely]]
             {
-                con.set_size( 120, 30, unsynced_mem_pool )
-                  .fix_size( false )
-                  .enable_window_maximize_ctrl( true )
-                  .show_cursor( true )
-                  .lock_text( false );
+                con.set_size( 120, 30 ).fix_size( false ).enable_window_maximize_ctrl( true ).show_cursor( true ).lock_text( false );
                 SetConsoleScreenBufferSize( con.std_output_handle, { 120, std::numeric_limits< SHORT >::max() - 1 } );
                 WaitForSingleObject( proc_info.hProcess, INFINITE );
                 CloseHandle( proc_info.hProcess );
                 CloseHandle( proc_info.hThread );
-                con.set_charset( charset_id )
-                  .set_size( console_width, console_height, unsynced_mem_pool )
-                  .fix_size( true )
-                  .enable_window_maximize_ctrl( false );
+                con.set_charset( charset_id ).set_size( console_width, console_height ).fix_size( true ).enable_window_maximize_ctrl( false );
             }
             return func_back;
         }
@@ -1513,7 +1496,7 @@ namespace scltk
             wchar_t target_name [[indeterminate]][ 256 ];
             ULONG out_buffer_length [[indeterminate]];
             GetAdaptersAddresses( AF_UNSPEC, 0, nullptr, nullptr, &out_buffer_length );
-            if ( const auto addresses{ static_cast< PIP_ADAPTER_ADDRESSES >( unsynced_mem_pool->allocate( out_buffer_length ) ) };
+            if ( const auto addresses{ static_cast< PIP_ADAPTER_ADDRESSES >( std::malloc( out_buffer_length ) ) };
                  GetAdaptersAddresses( AF_UNSPEC, 0, nullptr, addresses, &out_buffer_length ) == ERROR_SUCCESS ) [[likely]]
             {
                 auto current{ addresses };
@@ -1527,7 +1510,7 @@ namespace scltk
                     }
                     current = current->Next;
                 }
-                unsynced_mem_pool->deallocate( addresses, out_buffer_length );
+                std::free( addresses );
             }
             if ( target_local_uid.Value == 0 ) [[unlikely]] {
                 return;
@@ -1612,7 +1595,7 @@ namespace scltk
           details_::func_item< "修复网络访问", details_::fix_network >,
           details_::func_item< "重置 机房管理助手 配置", details_::reset_jfglzs_config >,
           details_::func_item< "重置 Chrome & Edge & Firefox 管理策略", details_::reset_common_web_browsers_policy > >;
-        cpp_utils::console_ui ui{ con, unsynced_mem_pool };
+        cpp_utils::console_ui ui{ con };
         ui.reserve( 4 + funcs::size )
           .add_back( make_title_text< "[ 工 具 箱 ]", 1 >.view() )
           .add_back( " < 返回 "sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
@@ -1663,7 +1646,7 @@ namespace scltk
                 cpp_utils::print_without_formatting( " (!) 进程快照初始化错误!\n"sv );
                 return;
             }
-            std::pmr::vector< cpp_utils::scoped_handle > proc_handles( unsynced_mem_pool );
+            std::vector< cpp_utils::scoped_handle > proc_handles;
             proc_handles.reserve( (
               []< typename Backend >() static
             {
@@ -1828,7 +1811,7 @@ namespace scltk
         {
             for ( const auto& serv : serv_names ) {
                 ( void ) cpp_utils::set_service_start_type( serv, cpp_utils::service_flag::auto_start );
-                ( void ) cpp_utils::start_service_with_dependencies( serv, unsynced_mem_pool );
+                ( void ) cpp_utils::start_service_with_dependencies( serv );
             }
         }
         static constexpr auto invoke_fn_disable_and_stop_servs{ !serv_names.empty() };
@@ -1836,7 +1819,7 @@ namespace scltk
         {
             for ( const auto& serv : serv_names ) {
                 ( void ) cpp_utils::set_service_start_type( serv, cpp_utils::service_flag::disabled_start );
-                ( void ) cpp_utils::stop_service_with_dependencies( serv, unsynced_mem_pool );
+                ( void ) cpp_utils::stop_service_with_dependencies( serv );
             }
         }
         static constexpr auto invoke_fn_crack_helper{
@@ -1921,7 +1904,7 @@ namespace scltk
         {
             for ( const auto& serv_name : custom_rules.serv_names ) {
                 ( void ) cpp_utils::set_service_start_type( serv_name, cpp_utils::service_flag::auto_start );
-                ( void ) cpp_utils::start_service_with_dependencies( serv_name, unsynced_mem_pool );
+                ( void ) cpp_utils::start_service_with_dependencies( serv_name );
             }
         }
         static constexpr auto invoke_fn_disable_and_stop_servs{ true };
@@ -1929,14 +1912,14 @@ namespace scltk
         {
             for ( const auto& serv_name : custom_rules.serv_names ) {
                 ( void ) cpp_utils::set_service_start_type( serv_name, cpp_utils::service_flag::disabled_start );
-                ( void ) cpp_utils::stop_service_with_dependencies( serv_name, unsynced_mem_pool );
+                ( void ) cpp_utils::stop_service_with_dependencies( serv_name );
             }
         }
-        static auto execute_helpers_( const std::pmr::vector< std::pmr::wstring >& helpers ) noexcept
+        static auto execute_helpers_( const runtime_rule_node::string_item_type& helpers ) noexcept
         {
             cpp_utils::print_without_formatting( " -> 执行自定义辅助程序.\n"sv );
             for ( const auto& helper : helpers ) {
-                std::pmr::wstring cmd{ helper, unsynced_mem_pool };
+                std::wstring cmd{ helper };
                 STARTUPINFOW startup_info{};
                 startup_info.cb = sizeof( startup_info );
                 PROCESS_INFORMATION proc_info [[indeterminate]];
@@ -2033,7 +2016,7 @@ namespace scltk
         auto crack_when_launching() noexcept
         {
             if ( std::get< crack_restore_config >( config_nodes ).at< "crack_when_launching" >() ) {
-                con.clear( unsynced_mem_pool );
+                con.clear();
                 all_rules::crack();
                 cpp_utils::print_without_formatting(
                   "\n (i) 已执行全部破解规则,"
@@ -2051,7 +2034,7 @@ namespace scltk
     }
     auto show_homepage_ui()
     {
-        cpp_utils::console_ui ui{ scltk::con, scltk::unsynced_mem_pool };
+        cpp_utils::console_ui ui{ scltk::con };
         ui.reserve( 8 + scltk::builtin_rules::size )
           .add_back( scltk::make_title_text< "[ 主  页 ]", 1 >.view() )
           .add_back( " < 退出 "sv, scltk::quit, cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_intensity )
@@ -2082,7 +2065,7 @@ auto main() -> int
       .show_cursor( false )
       .lock_text( true )
       .fix_size( true )
-      .set_size( scltk::console_width, scltk::console_height, scltk::unsynced_mem_pool )
+      .set_size( scltk::console_width, scltk::console_height )
       .enable_window_close_ctrl( false )
       .enable_window_maximize_ctrl( false )
       .enable_window_minimize_ctrl( false );

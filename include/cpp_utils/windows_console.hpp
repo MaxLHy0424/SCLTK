@@ -1,6 +1,5 @@
 #pragma once
 #include <functional>
-#include <memory_resource>
 #include <string>
 #include "compiler.hpp"
 #include "print.hpp"
@@ -112,7 +111,7 @@ namespace cpp_utils
             SetConsoleCtrlHandler( nullptr, static_cast< WINBOOL >( is_ignore ) );
             return std::forward< decltype( self ) >( self );
         }
-        auto&& clear( this auto&& self, std::pmr::memory_resource* const resource = std::pmr::get_default_resource() )
+        auto&& clear( this auto&& self )
         {
             CONSOLE_SCREEN_BUFFER_INFO info [[indeterminate]];
             if ( !GetConsoleScreenBufferInfo( self.std_output_handle, &info ) ) [[unlikely]] {
@@ -122,7 +121,7 @@ namespace cpp_utils
             constexpr COORD top_left{ 0, 0 };
             DWORD _ [[indeterminate]];
             SetConsoleCursorPosition( self.std_output_handle, top_left );
-            print_without_formatting( std::pmr::string( static_cast< std::size_t >( area ), ' ', resource ) );
+            print_without_formatting( std::string( static_cast< std::size_t >( area ), ' ' ) );
             FillConsoleOutputAttribute( self.std_output_handle, info.wAttributes, area, top_left, &_ );
             SetConsoleCursorPosition( self.std_output_handle, top_left );
             return std::forward< decltype( self ) >( self );
@@ -144,9 +143,7 @@ namespace cpp_utils
                 : GetWindowLongPtrW( self.window_handle, GWL_STYLE ) | WS_SIZEBOX );
             return std::forward< decltype( self ) >( self );
         }
-        auto&& set_size(
-          this auto&& self, const SHORT width, const SHORT height,
-          std::pmr::memory_resource* const resource = std::pmr::get_default_resource() )
+        auto&& set_size( this auto&& self, const SHORT width, const SHORT height )
         {
             SMALL_RECT wrt{ 0, 0, static_cast< SHORT >( width - 1 ), static_cast< SHORT >( height - 1 ) };
             ShowWindow( self.window_handle, SW_SHOWNORMAL );
@@ -154,7 +151,7 @@ namespace cpp_utils
             SetConsoleWindowInfo( self.std_output_handle, TRUE, &wrt );
             SetConsoleScreenBufferSize( self.std_output_handle, { width, height } );
             SetConsoleWindowInfo( self.std_output_handle, TRUE, &wrt );
-            self.clear( resource );
+            self.clear();
             return std::forward< decltype( self ) >( self );
         }
         auto&& set_title( this auto&& self, const char* const title ) noexcept
@@ -275,7 +272,7 @@ namespace cpp_utils
             func_args( func_args&& ) noexcept      = default;
             ~func_args() noexcept                  = default;
         };
-        using basic_text_type = std::variant< std::string_view, std::pmr::string, std::string >;
+        using basic_text_type = std::variant< std::string_view, std::string >;
         struct text_type final : public basic_text_type
         {
             using basic_text_type::variant;
@@ -325,7 +322,7 @@ namespace cpp_utils
             line_node_( line_node_&& ) noexcept = default;
             ~line_node_() noexcept              = default;
         };
-        std::pmr::vector< line_node_ > lines_;
+        std::vector< line_node_ > lines_{};
         const console& con_;
         auto set_line_attrs_( line_node_& self, const WORD current_attrs ) const noexcept
         {
@@ -354,8 +351,7 @@ namespace cpp_utils
         {
             const auto [ console_width, console_height ]{ cursor_position };
             SetConsoleCursorPosition( con_.std_output_handle, { 0, console_height } );
-            print_without_formatting(
-              std::pmr::string( static_cast< std::size_t >( console_width ), ' ', lines_.get_allocator().resource() ) );
+            print_without_formatting( std::string( static_cast< std::size_t >( console_width ), ' ' ) );
             SetConsoleCursorPosition( con_.std_output_handle, { 0, console_height } );
             line.print_text();
             SetConsoleCursorPosition( con_.std_output_handle, { 0, console_height } );
@@ -363,7 +359,7 @@ namespace cpp_utils
         auto init_pos_()
         {
             using namespace std::string_view_literals;
-            con_.clear( lines_.get_allocator().resource() );
+            con_.clear();
             for ( const auto back_ptr{ &lines_.back() }; auto& line : lines_ ) {
                 const auto current_cursor_position{ get_cursor_() };
                 if ( !current_cursor_position.has_value() ) [[unlikely]] {
@@ -411,7 +407,7 @@ namespace cpp_utils
             if ( is_empty_function_( target->func ) ) {
                 return func_back;
             }
-            con_.clear( lines_.get_allocator().resource() );
+            con_.clear();
             set_line_attrs_( *target, target->default_attrs );
             con_.show_cursor( false );
             con_.lock_text( true );
@@ -420,7 +416,7 @@ namespace cpp_utils
                 if constexpr ( std::is_same_v< F, std::copyable_function< func_action() > > ) {
                     return func();
                 } else if constexpr ( std::is_same_v< F, std::copyable_function< func_action( func_args ) > > ) {
-                    return func( func_args{ *this, static_cast< std::size_t >( target - lines_.begin().base() ), current_event } );
+                    return func( func_args{ *this, static_cast< std::size_t >( target - lines_.data() ), current_event } );
                 } else {
                     static_assert( false, "unknown callback!" );
                 }
@@ -573,19 +569,18 @@ namespace cpp_utils
                     func_return_value = invoke_func_( mouse_event );
                 }
             }
-            con_.clear( lines_.get_allocator().resource() );
+            con_.clear();
             return *this;
         }
         auto operator=( const console_ui& ) noexcept -> console_ui& = default;
         auto operator=( console_ui&& ) noexcept -> console_ui&      = default;
-        console_ui( const console& console_info, std::pmr::memory_resource* const resource = std::pmr::get_default_resource() ) noexcept
-          : lines_{ resource }
-          , con_{ console_info }
+        console_ui( const console& console_info ) noexcept
+          : con_{ console_info }
         { }
-        console_ui( console&&, std::pmr::memory_resource* const = std::pmr::get_default_resource() ) noexcept = delete;
-        console_ui( const console_ui& ) noexcept                                                              = default;
-        console_ui( console_ui&& ) noexcept                                                                   = default;
-        ~console_ui() noexcept                                                                                = default;
+        console_ui( console&& ) noexcept         = delete;
+        console_ui( const console_ui& ) noexcept = default;
+        console_ui( console_ui&& ) noexcept      = default;
+        ~console_ui() noexcept                   = default;
     };
 #else
 # error "must be compiled on the windows os"

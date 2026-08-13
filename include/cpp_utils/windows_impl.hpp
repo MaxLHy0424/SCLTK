@@ -8,15 +8,20 @@
 # include <tlhelp32.h>
 # include <winternl.h>
 #endif
+#include <array>
+#include <bit>
 #include <chrono>
+#include <climits>
 #include <concepts>
+#include <cstddef>
 #include <functional>
-#include <memory_resource>
+#include <memory>
 #include <optional>
 #include <ranges>
 #include <thread>
 #include <type_traits>
 #include <utility>
+#include <vector>
 #include "pointer.hpp"
 namespace cpp_utils
 {
@@ -108,9 +113,7 @@ namespace cpp_utils
         inline constexpr DWORD link_type{ REG_LINK };
         inline constexpr DWORD none_type{ REG_NONE };
     }
-    [[nodiscard]] inline auto to_string(
-      const std::wstring_view str, const UINT charset,
-      std::pmr::memory_resource* const resource = std::pmr::get_default_resource() ) -> std::optional< std::pmr::string >
+    [[nodiscard]] inline auto to_string( const std::wstring_view str, const UINT charset ) -> std::optional< std::string >
     {
         if ( str.empty() || str.size() > static_cast< std::size_t >( INT_MAX ) ) [[unlikely]] {
             return std::nullopt;
@@ -121,7 +124,7 @@ namespace cpp_utils
         if ( size_needed <= 0 ) [[unlikely]] {
             return std::nullopt;
         }
-        std::pmr::string result{ static_cast< std::size_t >( size_needed ), '\0', resource };
+        std::string result( static_cast< std::size_t >( size_needed ), '\0' );
         if ( WideCharToMultiByte( charset, flags, str.data(), str_len, result.data(), size_needed, nullptr, nullptr ) != size_needed )
           [[unlikely]]
         {
@@ -129,9 +132,7 @@ namespace cpp_utils
         }
         return result;
     }
-    [[nodiscard]] inline auto to_wstring(
-      const std::string_view str, const UINT charset,
-      std::pmr::memory_resource* const resource = std::pmr::get_default_resource() ) -> std::optional< std::pmr::wstring >
+    [[nodiscard]] inline auto to_wstring( const std::string_view str, const UINT charset ) -> std::optional< std::wstring >
     {
         if ( str.empty() || str.size() > static_cast< std::size_t >( INT_MAX ) ) [[unlikely]] {
             return std::nullopt;
@@ -142,7 +143,7 @@ namespace cpp_utils
         if ( size_needed <= 0 ) [[unlikely]] {
             return std::nullopt;
         }
-        std::pmr::wstring result{ static_cast< std::size_t >( size_needed ), L'\0', resource };
+        std::wstring result( static_cast< std::size_t >( size_needed ), L'\0' );
         if ( !MultiByteToWideChar( charset, flags, str.data(), str_len, result.data(), size_needed ) ) [[unlikely]] {
             return std::nullopt;
         }
@@ -218,8 +219,7 @@ namespace cpp_utils
             return result;
         }
         template < typename F >
-        [[nodiscard]] inline auto
-          with_service_dependencies( const SC_HANDLE service, F&& func, std::pmr::memory_resource* const resource ) noexcept
+        [[nodiscard]] inline auto with_service_dependencies( const SC_HANDLE service, F&& func ) noexcept
         {
             constexpr DWORD stack_buffer_size{ 8192 };
             std::array< BYTE, stack_buffer_size > stack_buffer [[indeterminate]];
@@ -234,7 +234,7 @@ namespace cpp_utils
             if ( GetLastError() != ERROR_INSUFFICIENT_BUFFER ) [[unlikely]] {
                 return GetLastError();
             }
-            std::pmr::vector< BYTE > heap_buffer( bytes_needed, resource );
+            std::vector< BYTE > heap_buffer( bytes_needed );
             const auto heap_config{ reinterpret_cast< LPQUERY_SERVICE_CONFIGW >( heap_buffer.data() ) };
             if ( !QueryServiceConfigW( service, heap_config, bytes_needed, &bytes_needed ) ) [[unlikely]] {
                 return static_cast< DWORD >( ERROR_SUCCESS );
@@ -244,8 +244,7 @@ namespace cpp_utils
             }
             return static_cast< DWORD >( ERROR_SUCCESS );
         }
-        [[nodiscard]] inline auto stop_service_and_dependencies(
-          const SC_HANDLE scm, const SC_HANDLE service, std::pmr::memory_resource* const resource ) noexcept -> DWORD
+        [[nodiscard]] inline auto stop_service_and_dependencies( const SC_HANDLE scm, const SC_HANDLE service ) noexcept -> DWORD
         {
             auto result{ with_service_dependencies( service, [ & ]( const wchar_t* deps ) noexcept
             {
@@ -255,9 +254,9 @@ namespace cpp_utils
                     if ( dep_svc == nullptr ) [[unlikely]] {
                         return static_cast< DWORD >( ERROR_SUCCESS );
                     }
-                    return stop_service_and_dependencies( scm, dep_svc.get(), resource );
+                    return stop_service_and_dependencies( scm, dep_svc.get() );
                 } );
-            }, resource ) };
+            } ) };
             SERVICE_STATUS status [[indeterminate]];
             if ( ControlService( service, SERVICE_CONTROL_STOP, &status ) ) [[likely]] {
                 using namespace std::chrono_literals;
@@ -274,8 +273,7 @@ namespace cpp_utils
             }
             return result;
         }
-        [[nodiscard]] inline auto start_service_and_dependencies(
-          const SC_HANDLE scm, const SC_HANDLE service, std::pmr::memory_resource* const resource ) noexcept -> DWORD
+        [[nodiscard]] inline auto start_service_and_dependencies( const SC_HANDLE scm, const SC_HANDLE service ) noexcept -> DWORD
         {
             const auto result{ with_service_dependencies( service, [ & ]( const wchar_t* deps ) noexcept -> DWORD
             {
@@ -294,9 +292,9 @@ namespace cpp_utils
                     {
                         return ERROR_SUCCESS;
                     }
-                    return start_service_and_dependencies( scm, dep_svc.get(), resource );
+                    return start_service_and_dependencies( scm, dep_svc.get() );
                 } );
-            }, resource ) };
+            } ) };
             if ( result != ERROR_SUCCESS ) [[unlikely]] {
                 return result;
             }
@@ -623,25 +621,23 @@ namespace cpp_utils
             return ERROR_SUCCESS;
         } );
     }
-    [[nodiscard]] inline auto stop_service_with_dependencies(
-      const std::wstring_view service_name, std::pmr::memory_resource* const resource = std::pmr::get_default_resource() )
+    [[nodiscard]] inline auto stop_service_with_dependencies( const std::wstring_view service_name )
     {
         return details_::with_service(
           service_name, SC_MANAGER_CONNECT | SC_MANAGER_ENUMERATE_SERVICE,
           SERVICE_STOP | SERVICE_QUERY_STATUS | SERVICE_ENUMERATE_DEPENDENTS,
-          [ resource ]( const SC_HANDLE scm, const SC_HANDLE svc ) noexcept -> DWORD
+          []( const SC_HANDLE scm, const SC_HANDLE svc ) static noexcept -> DWORD
         {
-            return details_::stop_service_and_dependencies( scm, svc, resource );
+            return details_::stop_service_and_dependencies( scm, svc );
         } );
     }
-    [[nodiscard]] inline auto start_service_with_dependencies(
-      const std::wstring_view service_name, std::pmr::memory_resource* const resource = std::pmr::get_default_resource() )
+    [[nodiscard]] inline auto start_service_with_dependencies( const std::wstring_view service_name )
     {
         return details_::with_service(
           service_name, SC_MANAGER_CONNECT, SERVICE_START | SERVICE_QUERY_STATUS | SERVICE_QUERY_CONFIG,
-          [ resource ]( const SC_HANDLE scm, const SC_HANDLE svc ) noexcept -> DWORD
+          []( const SC_HANDLE scm, const SC_HANDLE svc ) static noexcept -> DWORD
         {
-            return details_::start_service_and_dependencies( scm, svc, resource );
+            return details_::start_service_and_dependencies( scm, svc );
         } );
     }
     [[nodiscard]] inline auto is_run_as_admin() noexcept
