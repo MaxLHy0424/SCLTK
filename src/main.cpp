@@ -63,7 +63,7 @@ namespace scltk
     }
     auto generate_window_title()
     {
-        static constexpr auto chars_dict{ cpp_utils::invoke_to_array< [] static noexcept
+        static constexpr auto chars_dict{ cpp_utils::invoke_to_array< [] static constexpr
         {
             std::vector< wchar_t > dict;
             for ( auto ch{ L'A' }; ch <= L'Z'; ++ch ) {
@@ -1233,9 +1233,9 @@ namespace scltk
             using licenses = cpp_utils::type_list<
               license_info< INFO_FULL_NAME " (" INFO_SHORT_NAME ")"_cs, scltk_license >,
               license_info< "TRE (libtre)"_cs, libtre_license > >;
-            static constexpr auto file_content{ cpp_utils::invoke_to_array< [] static constexpr noexcept
+            static constexpr auto file_content{ cpp_utils::invoke_to_array< [] static constexpr
             {
-                return []< std::size_t... Is >( const std::index_sequence< Is... > ) static constexpr noexcept
+                return []< std::size_t... Is >( const std::index_sequence< Is... > ) static constexpr
                 {
                     constexpr auto base_content{ cpp_utils::concat_const_string( cpp_utils::concat_const_string(
                       licenses::at< Is >::component_name, "\n"_cs, cpp_utils::make_repeated_const_string< '-', 50 >(), "\n"_cs,
