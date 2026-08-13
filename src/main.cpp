@@ -197,6 +197,19 @@ namespace scltk
             }
         };
 #ifdef SCLTK_LEGACY
+        auto is_wow64() noexcept
+        {
+            using is_wow64_process_t = BOOL( WINAPI* )( HANDLE, PBOOL );
+            const auto is_wow64_process{
+              std::bit_cast< is_wow64_process_t >( GetProcAddress( GetModuleHandleW( L"kernel32.dll" ), "IsWow64Process" ) ) };
+            if ( is_wow64_process == nullptr ) [[unlikely]] {
+                return FALSE;
+            }
+            if ( BOOL value [[indeterminate]]; is_wow64_process( GetCurrentProcess(), &value ) ) [[likely]] {
+                return value;
+            }
+            return FALSE;
+        }
         class wow64_file_redirect_guard final
         {
           private:
@@ -1533,7 +1546,17 @@ namespace scltk
         }
         auto relaunch_network_adapters() noexcept
         {
-            cpp_utils::print_without_formatting( " -> 重启网络适配器 (可能失败).\n"sv );
+#ifdef SCLTK_LEGACY
+            if ( is_wow64() ) {
+                cpp_utils::print_without_formatting(
+                  "\n"
+                  " (i) 由于 Windows 系统限制,\n"
+                  "     WOW64 下无法重启网络适配器,\n"
+                  "     请转到 控制面板 手动重启.\n"sv );
+                return;
+            }
+#endif
+            cpp_utils::print_without_formatting( " -> 重启网络适配器.\n"sv );
             NET_LUID target_local_uid{};
             wchar_t target_name [[indeterminate]][ 256 ];
             ULONG out_buffer_length [[indeterminate]];
