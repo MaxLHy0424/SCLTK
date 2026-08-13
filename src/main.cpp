@@ -1343,25 +1343,6 @@ namespace scltk
             con.press_any_key_to_continue();
             ExitWindowsEx( EWX_LOGOFF, 0 );
         }
-        [[nodiscard]] auto is_sub_key_empty( const HKEY sub_key ) noexcept
-        {
-            wchar_t name [[indeterminate]][ 256 ];
-            DWORD index{ 0 };
-            auto size{ static_cast< DWORD >( std::size( name ) ) };
-            while ( RegEnumValueW( sub_key, index, name, &size, nullptr, nullptr, nullptr, nullptr ) == ERROR_SUCCESS ) {
-                if ( size != 0 ) {
-                    return false;
-                }
-                ++index;
-                size = static_cast< DWORD >( std::size( name ) );
-            }
-            index = 0;
-            size  = static_cast< DWORD >( std::size( name ) );
-            while ( RegEnumKeyExW( sub_key, index, name, &size, nullptr, nullptr, nullptr, nullptr ) == ERROR_SUCCESS ) {
-                return false;
-            }
-            return true;
-        }
         auto process_debugger_values( const HKEY root_key ) noexcept
         {
             wchar_t sub_key_name [[indeterminate]][ 256 ];
@@ -1387,32 +1368,6 @@ namespace scltk
                 size = static_cast< DWORD >( std::size( sub_key_name ) );
             }
         }
-        auto process_empty_keys( const HKEY root_key ) noexcept
-        {
-            DWORD sub_key_count{ 0 };
-            if ( RegQueryInfoKeyW(
-                   root_key, nullptr, nullptr, nullptr, &sub_key_count, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr )
-                 != ERROR_SUCCESS )
-            {
-                return;
-            }
-            wchar_t sub_key_name [[indeterminate]][ 256 ];
-            for ( DWORD idx{ sub_key_count }; idx > 0; --idx ) {
-                auto size{ static_cast< DWORD >( std::size( sub_key_name ) ) };
-                if ( RegEnumKeyExW( root_key, idx - 1, sub_key_name, &size, nullptr, nullptr, nullptr, nullptr ) != ERROR_SUCCESS )
-                {
-                    continue;
-                }
-                cpp_utils::scoped_reg_key_handle sub_key;
-                if ( RegOpenKeyExW( root_key, sub_key_name, 0, KEY_QUERY_VALUE | KEY_ENUMERATE_SUB_KEYS, std::out_ptr( sub_key ) )
-                     == ERROR_SUCCESS )
-                {
-                    if ( is_sub_key_empty( sub_key.get() ) ) {
-                        RegDeleteKeyExW( root_key, sub_key_name, KEY_WOW64_64KEY, 0 );
-                    }
-                }
-            }
-        }
         auto process_ifeo_path( const wchar_t* const path ) noexcept
         {
             cpp_utils::scoped_reg_key_handle root_key;
@@ -1425,7 +1380,6 @@ namespace scltk
                 return;
             }
             process_debugger_values( root_key.get() );
-            process_empty_keys( root_key.get() );
         }
         auto cleanup_hijacked_debuggers() noexcept
         {
