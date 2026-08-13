@@ -15,6 +15,7 @@
 #include <concepts>
 #include <cstddef>
 #include <functional>
+#include <limits>
 #include <memory>
 #include <optional>
 #include <ranges>
@@ -115,7 +116,7 @@ namespace cpp_utils
     }
     [[nodiscard]] inline auto to_string( const std::wstring_view str, const UINT charset ) -> std::optional< std::string >
     {
-        if ( str.empty() || str.size() > static_cast< std::size_t >( INT_MAX ) ) [[unlikely]] {
+        if ( str.empty() || str.size() > static_cast< std::size_t >( std::numeric_limits< int >::max() ) ) [[unlikely]] {
             return std::nullopt;
         }
         const auto str_len{ static_cast< int >( str.size() ) };
@@ -134,7 +135,7 @@ namespace cpp_utils
     }
     [[nodiscard]] inline auto to_wstring( const std::string_view str, const UINT charset ) -> std::optional< std::wstring >
     {
-        if ( str.empty() || str.size() > static_cast< std::size_t >( INT_MAX ) ) [[unlikely]] {
+        if ( str.empty() || str.size() > static_cast< std::size_t >( std::numeric_limits< int >::max() ) ) [[unlikely]] {
             return std::nullopt;
         }
         const auto str_len{ static_cast< int >( str.size() ) };
