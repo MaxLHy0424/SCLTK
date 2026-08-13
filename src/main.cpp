@@ -1515,20 +1515,35 @@ namespace scltk
             if ( target_local_uid.Value == 0 ) [[unlikely]] {
                 return;
             }
-            const auto device_info{ SetupDiGetClassDevsW( &GUID_DEVCLASS_NET, nullptr, nullptr, DIGCF_PRESENT ) };
-            if ( device_info == INVALID_HANDLE_VALUE ) [[unlikely]] {
+            struct null_dev_info_handle_checker final
+            {
+                static auto operator()( const HDEVINFO h ) noexcept
+                {
+                    return h == INVALID_HANDLE_VALUE;
+                }
+            };
+            struct dev_info_handle_destroyer final
+            {
+                static auto operator()( const HDEVINFO h ) noexcept
+                {
+                    SetupDiDestroyDeviceInfoList( h );
+                }
+            };
+            const cpp_utils::unique_ptr_ex< std::remove_pointer_t< HDEVINFO >, null_dev_info_handle_checker, dev_info_handle_destroyer >
+              device_info{ SetupDiGetClassDevsW( &GUID_DEVCLASS_NET, nullptr, nullptr, DIGCF_PRESENT ) };
+            if ( device_info.get() == INVALID_HANDLE_VALUE ) [[unlikely]] {
                 return;
             }
             SP_DEVINFO_DATA device_info_data [[indeterminate]];
             device_info_data.cbSize = sizeof( SP_DEVINFO_DATA );
             bool found{ false };
-            for ( DWORD i{ 0 }; SetupDiEnumDeviceInfo( device_info, i, &device_info_data ); ++i ) {
+            for ( DWORD i{ 0 }; SetupDiEnumDeviceInfo( device_info.get(), i, &device_info_data ); ++i ) {
                 wchar_t buffer [[indeterminate]][ 256 ];
                 if ( !SetupDiGetDeviceRegistryPropertyW(
-                       device_info, &device_info_data, SPDRP_FRIENDLYNAME, nullptr, reinterpret_cast< PBYTE >( buffer ),
+                       device_info.get(), &device_info_data, SPDRP_FRIENDLYNAME, nullptr, reinterpret_cast< PBYTE >( buffer ),
                        sizeof( buffer ), nullptr )
                      && !SetupDiGetDeviceRegistryPropertyW(
-                       device_info, &device_info_data, SPDRP_DEVICEDESC, nullptr, reinterpret_cast< PBYTE >( buffer ),
+                       device_info.get(), &device_info_data, SPDRP_DEVICEDESC, nullptr, reinterpret_cast< PBYTE >( buffer ),
                        sizeof( buffer ), nullptr ) )
                 {
                     continue;
@@ -1539,14 +1554,12 @@ namespace scltk
                 }
             }
             if ( !found ) [[unlikely]] {
-                SetupDiDestroyDeviceInfoList( device_info );
                 return;
             }
-            if ( set_device_state( device_info, &device_info_data, FALSE ) ) {
+            if ( set_device_state( device_info.get(), &device_info_data, FALSE ) ) {
                 std::this_thread::sleep_for( 3s );
-                set_device_state( device_info, &device_info_data, TRUE );
+                set_device_state( device_info.get(), &device_info_data, TRUE );
             }
-            SetupDiDestroyDeviceInfoList( device_info );
         }
         auto fix_network() noexcept
         {
