@@ -1250,10 +1250,7 @@ namespace scltk
                     constexpr auto base_content{ cpp_utils::concat_const_string( cpp_utils::concat_const_string(
                       licenses::at< Is >::component_name, "\n"_cs, cpp_utils::make_repeated_const_string< '-', 50 >(), "\n"_cs,
                       licenses::at< Is >::content, cpp_utils::make_repeated_const_string< '-', 50 >(), "\n\n"_cs )... ) };
-                    std::vector< char > chars;
-                    chars.append_range( base_content.view() );
-                    chars.pop_back();
-                    return chars;
+                    return std::vector{ std::from_range, base_content.view() | std::views::take( base_content.size() - 1 ) };
                 }( std::make_index_sequence< licenses::size >{} );
             } >() };
             std::ofstream{ license_file.c_str(), std::ios::out | std::ios::trunc }.write( file_content.data(), file_content.size() );
