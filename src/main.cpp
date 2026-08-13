@@ -30,7 +30,6 @@
 # error "Unknown Edition!"
 #endif
 DEFINE_GUID( GUID_DEVCLASS_NET, 0x4d36e972, 0xe325, 0x11ce, 0xbf, 0xc1, 0x08, 0x00, 0x2b, 0xe1, 0x03, 0x18 );
-extern "C" BOOL DnsFlushResolverCache();
 namespace scltk
 {
     using namespace std::chrono_literals;
@@ -1459,10 +1458,23 @@ namespace scltk
             clear_winhttp_proxy();
             clear_wininet_proxy();
         }
+        using scoped_module = std::unique_ptr< std::remove_pointer_t< HMODULE >, decltype( []( const HMODULE h ) static noexcept
+        {
+            FreeLibrary( h );
+        } ) >;
         auto flush_dns() noexcept
         {
             cpp_utils::print_without_formatting( " -> 刷新 DNS 缓存.\n"sv );
-            ( void ) DnsFlushResolverCache();
+            const scoped_module dnsapi{ LoadLibraryW( L"dnsapi.dll" ) };
+            if ( dnsapi == nullptr ) [[unlikely]] {
+                return;
+            }
+            using dns_flush_resolver_cache_t = BOOL( WINAPI* )();
+            const auto dns_flush_resolver_cache{
+              std::bit_cast< dns_flush_resolver_cache_t >( GetProcAddress( dnsapi.get(), "DnsFlushResolverCache" ) ) };
+            if ( dns_flush_resolver_cache != nullptr ) [[likely]] {
+                dns_flush_resolver_cache();
+            }
         }
         auto set_device_state( const HDEVINFO device_info, SP_DEVINFO_DATA* const p_device_info_data, const bool enabled ) noexcept
         {
