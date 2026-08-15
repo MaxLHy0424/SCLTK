@@ -1387,20 +1387,27 @@ namespace scltk
             cleanup_hijacked_debuggers();
             cpp_utils::print_without_formatting( " -> 撤销功能禁用.\n"sv );
             for ( const auto& policy_reg : policy_key_regs ) {
+                ( void ) cpp_utils::delete_registry_tree_without_redirect( HKEY_LOCAL_MACHINE, policy_reg );
                 ( void ) cpp_utils::delete_registry_tree_without_redirect( HKEY_CURRENT_USER, policy_reg );
             }
             for ( const auto& [ key, value ] : policy_value_regs ) {
                 ( void ) cpp_utils::delete_registry_value_without_redirect( HKEY_LOCAL_MACHINE, key, value );
+                ( void ) cpp_utils::delete_registry_value_without_redirect( HKEY_CURRENT_USER, key, value );
             }
             constexpr DWORD need_enabled_reg_value{ 1 };
             for ( const auto& [ key, value ] : need_enabled_regs ) {
                 ( void ) cpp_utils::create_registry_value_without_redirect(
                   HKEY_LOCAL_MACHINE, key, value, cpp_utils::registry_flag::dword_type,
                   reinterpret_cast< const BYTE* >( &need_enabled_reg_value ), sizeof( need_enabled_reg_value ) );
+                ( void ) cpp_utils::create_registry_value_without_redirect(
+                  HKEY_CURRENT_USER, key, value, cpp_utils::registry_flag::dword_type,
+                  reinterpret_cast< const BYTE* >( &need_enabled_reg_value ), sizeof( need_enabled_reg_value ) );
             }
             cpp_utils::print_without_formatting( " -> 撤销按键禁用 (注销当前用户账户后生效).\n"sv );
             ( void ) cpp_utils::delete_registry_value_without_redirect(
               HKEY_LOCAL_MACHINE, LR"(SYSTEM\CurrentControlSet\Control\Keyboard Layout)"sv, L"Scancode Map"sv );
+            ( void ) cpp_utils::delete_registry_value_without_redirect(
+              HKEY_LOCAL_MACHINE, LR"(Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced)"sv, L"DisabledHotkeys"sv );
             ( void ) cpp_utils::delete_registry_value_without_redirect(
               HKEY_CURRENT_USER, LR"(Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced)"sv, L"DisabledHotkeys"sv );
             cpp_utils::print_without_formatting( " -> 恢复 USB 存储器服务.\n"sv );
