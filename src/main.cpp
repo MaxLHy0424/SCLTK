@@ -1373,8 +1373,11 @@ namespace scltk
               LR"(Software\Policies\Microsoft\MMC)"sv, LR"(Software\Microsoft\Windows\CurrentVersion\Policies\System)"sv,
               LR"(Software\Microsoft\Windows\CurrentVersion\Policies\Explorer)"sv };
             constexpr std::pair< std::wstring_view, std::wstring_view > policy_value_regs[]{
-              {LR"(SOFTWARE\Policies\Microsoft\Windows NT\SystemRestore)"sv, L"DisableSR"sv   },
-              {LR"(Control Panel\Desktop)"sv,                                L"AutoEndTasks"sv}
+              {LR"(SOFTWARE\Policies\Microsoft\Windows NT\SystemRestore)"sv, L"DisableSR"sv                },
+              {LR"(Control Panel\Desktop)"sv,                                L"AutoEndTasks"sv             },
+              {LR"(Control Panel\Desktop)"sv,                                L"HungAppTimeout"sv           },
+              {LR"(Control Panel\Desktop)"sv,                                L"WaitToKillAppTimeout"sv     },
+              {LR"(Control Panel\Desktop)"sv,                                L"WaitToKillServiceTimeout "sv}
             };
             constexpr std::pair< std::wstring_view, std::wstring_view > need_enabled_regs[]{
               {LR"(SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced)"sv,                       L"ShowTaskViewButton"sv},
