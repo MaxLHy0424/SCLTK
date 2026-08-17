@@ -1070,18 +1070,30 @@ namespace scltk
           = stateful_config_nodes_type::transform< std::add_pointer >::add_front< std::monostate >::apply< std::variant >;
         config_node_recorder_type current_config_node;
         while ( std::getline( config_file, line ) ) {
-            const auto parsed_begin{ std::ranges::find_if_not( line, details_::is_whitespace< char > ) };
-            const auto parsed_end{ std::ranges::find_if_not( line | std::views::reverse, details_::is_whitespace< char > ).base() };
-            if ( parsed_begin >= parsed_end ) [[unlikely]] {
+            std::string_view line_view{ line };
+            for ( auto whitespace_count{ 0uz }; const auto ch : line_view ) {
+                if ( !details_::is_whitespace< char >( ch ) ) {
+                    line_view.remove_prefix( whitespace_count );
+                    break;
+                }
+                ++whitespace_count;
+            }
+            for ( auto whitespace_count{ 0uz }; const auto ch : line_view | std::views::reverse ) {
+                if ( !details_::is_whitespace< char >( ch ) ) {
+                    line_view.remove_suffix( whitespace_count );
+                    break;
+                }
+                ++whitespace_count;
+            }
+            if ( line_view.empty() ) [[unlikely]] {
                 continue;
             }
-            const std::string_view parsed_line{ parsed_begin, parsed_end };
-            if ( parsed_line.front() == '#' ) {
+            if ( line_view.front() == '#' ) {
                 continue;
             }
-            if ( parsed_line.front() == '[' && parsed_line.back() == ']' && parsed_line.size() > "[]"sv.size() ) [[likely]] {
+            if ( line_view.front() == '[' && line_view.back() == ']' && line_view.size() > "[]"sv.size() ) [[likely]] {
                 current_config_node = std::monostate{};
-                const auto current_raw_name{ details_::get_config_node_raw_name_by_tag( parsed_line ) };
+                const auto current_raw_name{ details_::get_config_node_raw_name_by_tag( line_view ) };
                 if ( current_raw_name.empty() ) [[unlikely]] {
                     continue;
                 }
@@ -1104,14 +1116,14 @@ namespace scltk
                 current_config_node.visit( [ & ]< typename T >( const T node_ptr )
                 {
                     if constexpr ( !std::is_same_v< T, std::monostate > ) {
-                        node_ptr->reload( parsed_line );
+                        node_ptr->reload( line_view );
                     }
                 } );
             } else {
                 current_config_node.visit( [ & ]< typename T >( const T node_ptr )
                 {
                     if constexpr ( !std::is_same_v< T, std::monostate > ) {
-                        node_ptr->load( parsed_line );
+                        node_ptr->load( line_view );
                     }
                 } );
             }
