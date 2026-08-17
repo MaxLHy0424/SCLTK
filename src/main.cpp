@@ -1032,16 +1032,25 @@ namespace scltk
     config_nodes_type::apply< std::tuple > config_nodes{};
     namespace details_
     {
-        auto get_config_node_raw_name_by_tag( std::string_view str ) noexcept -> std::optional< std::string_view >
+        auto get_config_node_raw_name_by_tag( std::string_view str ) noexcept
         {
             str.remove_prefix( 1 );
             str.remove_suffix( 1 );
-            const auto head{ std::ranges::find_if_not( str, is_whitespace< char > ) };
-            const auto tail{ std::ranges::find_if_not( str | std::views::reverse, is_whitespace< char > ).base() };
-            if ( head >= tail ) [[unlikely]] {
-                return std::nullopt;
+            for ( auto whitespace_count{ 0uz }; const auto ch : str ) {
+                if ( !is_whitespace< char >( ch ) ) {
+                    str.remove_prefix( whitespace_count );
+                    break;
+                }
+                ++whitespace_count;
             }
-            return std::string_view{ head, tail };
+            for ( auto whitespace_count{ 0uz }; const auto ch : str | std::views::reverse ) {
+                if ( !is_whitespace< char >( ch ) ) {
+                    str.remove_suffix( whitespace_count );
+                    break;
+                }
+                ++whitespace_count;
+            }
+            return str;
         }
     }
     auto load_config( const bool is_reload )
@@ -1072,11 +1081,10 @@ namespace scltk
             }
             if ( parsed_line.front() == '[' && parsed_line.back() == ']' && parsed_line.size() > "[]"sv.size() ) [[likely]] {
                 current_config_node = std::monostate{};
-                const auto parsed_raw_name{ details_::get_config_node_raw_name_by_tag( parsed_line ) };
-                if ( !parsed_raw_name.has_value() ) [[unlikely]] {
+                const auto current_raw_name{ details_::get_config_node_raw_name_by_tag( parsed_line ) };
+                if ( current_raw_name.empty() ) [[unlikely]] {
                     continue;
                 }
-                const auto& current_raw_name{ parsed_raw_name.value() };
                 std::apply( [ & ]( auto&... config_node ) noexcept
                 {
                     ( [ & ]< typename T >( T& current_node ) noexcept
