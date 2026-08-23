@@ -2029,7 +2029,7 @@ namespace scltk
     {
         auto forced_show( const std::atomic_flag* stop_token ) noexcept
         {
-            con.forced_show_until( 50ms, [ = ] noexcept
+            con.forced_show_until( 50ms, [ stop_token ] noexcept
             {
                 constexpr const auto& enabled{ std::get< window_config >( config_nodes ).at< "forced_show" >() };
                 if ( enabled.test( std::memory_order_acquire ) == true ) {
