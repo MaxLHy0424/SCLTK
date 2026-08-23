@@ -1534,7 +1534,7 @@ namespace scltk
                   "\n"
                   " (i) 由于 Windows 系统限制,\n"
                   "     WOW64 下无法重启网络适配器,\n"
-                  "     请转到 控制面板 手动重启.\n"sv );
+                  "     请手动重启网络适配器.\n"sv );
                 return;
             }
 #endif
