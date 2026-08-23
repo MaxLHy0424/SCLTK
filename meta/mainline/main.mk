@@ -49,7 +49,9 @@ args_opt_release := -Ofast \
                     -fgraphite-identity \
                     -floop-nest-optimize \
                     -fno-shrink-wrap \
-                    -D_FORTIFY_SOURCE=0
+                    -D_FORTIFY_SOURCE=0 \
+                    -D_GLIBCXX_NO_ASSERTIONS \
+                    -D_GLIBCXX_PARALLEL
 args_include     := -I$(include_path)
 args_library     := -ltre -liphlpapi -lsetupapi -lcrypt32 -lwinhttp -lwininet -lversion
 args_extra       := $(cpp_utils_windows_impl_nt0600_args)
