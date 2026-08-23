@@ -48,7 +48,7 @@ namespace cpp_utils
             if constexpr ( empty() ) {
                 return storage_.back();
             } else {
-                return storage_[ size() - 1 ];
+                return storage_.data()[ size() - 1 ];
             }
         }
         [[nodiscard]] constexpr auto begin() const noexcept
@@ -69,7 +69,7 @@ namespace cpp_utils
         }
         [[nodiscard]] constexpr const auto& operator[]( const std::size_t index ) const noexcept
         {
-            return storage_[ index ];
+            return storage_.data()[ index ];
         }
         [[nodiscard]] constexpr const auto& at( const std::size_t index ) const noexcept
         {

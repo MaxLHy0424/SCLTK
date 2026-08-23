@@ -82,7 +82,7 @@ namespace scltk
         std::mt19937_64 gen{ std::random_device{}() };
         std::uniform_int_distribution< std::size_t > dist{ 0uz, chars_dict.size() - 1uz };
         for ( auto i{ 0uz }; i < title_length; ++i ) {
-            title[ i ] = chars_dict[ dist( gen ) ];
+            title.data()[ i ] = chars_dict.data()[ dist( gen ) ];
         }
         title.back() = L'\0';
         return title;
@@ -285,14 +285,14 @@ namespace scltk
             const auto written_size{ ret.ptr - a };
             std::array< wchar_t, 4 > str [[indeterminate]];
             for ( auto i{ 0uz }; i < 4uz - written_size; ++i ) {
-                str[ i ] = L'0';
+                str.data()[ i ] = L'0';
             }
             for ( auto i{ 4uz - written_size }; i < 4; ++i ) {
                 const auto ch{ static_cast< unsigned char >( a[ i - 4uz + written_size ] ) };
                 if ( is_lower_case( ch ) ) {
-                    str[ i ] = static_cast< wchar_t >( ch & 0b11011111 );
+                    str.data()[ i ] = static_cast< wchar_t >( ch & 0b11011111 );
                 } else {
-                    str[ i ] = static_cast< wchar_t >( ch );
+                    str.data()[ i ] = static_cast< wchar_t >( ch );
                 }
             }
             return str;
@@ -468,7 +468,7 @@ namespace scltk
                 }
                 return true;
             }
-            if ( path_view.starts_with( LR"(C:\)"sv ) && is_lower_case( path_view[ 3 ] ) ) {
+            if ( path_view.starts_with( LR"(C:\)"sv ) && is_lower_case( path_view.data()[ 3 ] ) ) {
                 path_view.remove_prefix( LR"(C:\)"sv.size() + 1 );
                 path_view.remove_suffix( name.size() + 1 );
                 if ( std::ranges::all_of( path_view, is_number ) ) {
@@ -1181,7 +1181,7 @@ namespace scltk
                   std::constant_wrapper< cpp_utils::concat_const_string( " (!)"_cs, msg_start, "失败"_cs, msg_end ) >::value.view(),
                   std::constant_wrapper< cpp_utils::concat_const_string( " (i)"_cs, msg_start, "成功"_cs, msg_end ) >::value.view() };
             }() };
-            cpp_utils::print_without_formatting( final_message[ static_cast< std::size_t >( config_file.good() ) ] );
+            cpp_utils::print_without_formatting( final_message.data()[ static_cast< std::size_t >( config_file.good() ) ] );
             con.press_any_key_to_continue();
             return func_back;
         }

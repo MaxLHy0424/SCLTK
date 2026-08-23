@@ -495,7 +495,7 @@ namespace cpp_utils
             if constexpr ( is_debugging_build ) {
                 lines_.at( index ).text = std::move( text );
             } else {
-                lines_[ index ].text = std::move( text );
+                lines_.data()[ index ].text = std::move( text );
             }
             return *this;
         }
@@ -504,7 +504,7 @@ namespace cpp_utils
             if constexpr ( is_debugging_build ) {
                 lines_.at( index ).func = std::move( func );
             } else {
-                lines_[ index ].func = std::move( func );
+                lines_.data()[ index ].func = std::move( func );
             }
             return *this;
         }
@@ -513,7 +513,7 @@ namespace cpp_utils
             if constexpr ( is_debugging_build ) {
                 lines_.at( index ).intensity_attrs = intensity_attrs;
             } else {
-                lines_[ index ].intensity_attrs = intensity_attrs;
+                lines_.data()[ index ].intensity_attrs = intensity_attrs;
             }
             return *this;
         }
@@ -522,7 +522,7 @@ namespace cpp_utils
             if constexpr ( is_debugging_build ) {
                 lines_.at( index ).default_attrs = default_attrs;
             } else {
-                lines_[ index ].default_attrs = default_attrs;
+                lines_.data()[ index ].default_attrs = default_attrs;
             }
             return *this;
         }
