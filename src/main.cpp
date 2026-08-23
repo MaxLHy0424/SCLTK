@@ -532,7 +532,8 @@ namespace scltk
       compile_time_rule_node<
         "机房管理助手",
         details_::make_const_wstring_list_t<
-          L"jfglzs.exe", L"jfglzsn.exe", L"jfglzsp.exe", L"przs.exe", L"udwchk.exe", L"jcctzx.exe" >,
+          L"学生机房管理助手.exe", L"jfglzs.exe", L"jfglzsn.exe", L"jfglzsp.exe", L"przs.exe", L"jcctzx.exe", L"jcctzx.exe",
+          L"udwchk.exe", L"srvany.exe", L"syszm.exe" >,
         details_::make_const_wstring_list_t< L"zmserv", L"syszm" >, details_::is_jfglzs_daemon >,
       compile_time_rule_node<
         "极域电子教室",
