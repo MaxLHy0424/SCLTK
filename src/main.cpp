@@ -1176,11 +1176,11 @@ namespace scltk
             }
             static constexpr auto final_message{ [] static consteval noexcept
             {
-                constexpr auto msg_start{ " (i) 同步配置"_cs };
+                constexpr auto msg_start{ "同步配置"_cs };
                 constexpr auto msg_end{ ".\n\n 请按任意键返回."_cs };
                 return std::array{
-                  std::constant_wrapper< cpp_utils::concat_const_string( msg_start, "失败"_cs, msg_end ) >::value.view(),
-                  std::constant_wrapper< cpp_utils::concat_const_string( msg_start, "成功"_cs, msg_end ) >::value.view() };
+                  std::constant_wrapper< cpp_utils::concat_const_string( " (!)"_cs, msg_start, "失败"_cs, msg_end ) >::value.view(),
+                  std::constant_wrapper< cpp_utils::concat_const_string( " (i)"_cs, msg_start, "成功"_cs, msg_end ) >::value.view() };
             }() };
             cpp_utils::print_without_formatting( final_message[ static_cast< std::size_t >( config_file.good() ) ] );
             con.press_any_key_to_continue();
@@ -1210,11 +1210,11 @@ namespace scltk
             }
             static constexpr auto final_message{ [] static consteval noexcept
             {
-                constexpr auto msg_start{ " (i) 打开配置文件"_cs };
+                constexpr auto msg_start{ "打开配置文件"_cs };
                 constexpr auto msg_end{ ".\n\n 请按任意键返回."_cs };
                 return std::array{
-                  std::constant_wrapper< cpp_utils::concat_const_string( msg_start, "失败"_cs, msg_end ) >::value.view(),
-                  std::constant_wrapper< cpp_utils::concat_const_string( msg_start, "成功"_cs, msg_end ) >::value.view() };
+                  std::constant_wrapper< cpp_utils::concat_const_string( "(!)"_cs, msg_start, "失败"_cs, msg_end ) >::value.view(),
+                  std::constant_wrapper< cpp_utils::concat_const_string( "(i)"_cs, msg_start, "成功"_cs, msg_end ) >::value.view() };
             }() };
             cpp_utils::print_without_formatting( final_message[ static_cast< std::size_t >( success ) ] );
             con.press_any_key_to_continue();
@@ -1662,7 +1662,7 @@ namespace scltk
           .add_back( " < 返回 "sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
           .add_back(
             "\n[ 快捷工具 ]\n\n"
-            " (i) 请破解电子教室软件后再使用此处功能.\n"sv )
+            " (i) 推荐破解后再使用此处功能.\n"sv )
           .add_back( " > 启动命令提示符 "sv, details_::launch_cmd );
         [ & ]< typename... Items >( const cpp_utils::type_list< Items... > )
         {
