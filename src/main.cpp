@@ -890,8 +890,7 @@ namespace scltk
     using crack_restore_config = details_::options_config_node<
       "crack_restore", "破解与恢复", false,
       details_::options_info_table<
-        details_::option_info< "crack_when_launching", "启动时破解" >,
-        details_::option_info< "suspend_process", "挂起进程" > > >;
+        details_::option_info< "crack_at_startup", "启动时破解" >, details_::option_info< "suspend_process", "挂起进程" > > >;
     using window_config = details_::options_config_node<
       "window", "窗口显示", true, details_::options_info_table< details_::option_info< "forced_show", "置顶窗口" > > >;
     class custom_rules_config final : public details_::config_node_interface< true, "custom_rules" >
@@ -2080,9 +2079,9 @@ namespace scltk
     }
     namespace details_
     {
-        auto crack_when_launching() noexcept
+        auto crack_at_startup() noexcept
         {
-            if ( std::get< crack_restore_config >( config_nodes ).at< "crack_when_launching" >() ) {
+            if ( std::get< crack_restore_config >( config_nodes ).at< "crack_at_startup" >() ) {
                 con.clear();
                 all_rules::crack();
                 cpp_utils::print_without_formatting(
@@ -2095,7 +2094,7 @@ namespace scltk
     }
     auto execute_extra_startup_tasks() noexcept
     {
-        constexpr std::array tasks{ details_::crack_when_launching };
+        constexpr std::array tasks{ details_::crack_at_startup };
         for ( const auto& task : tasks ) {
             task();
         }
