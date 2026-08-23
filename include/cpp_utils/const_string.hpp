@@ -45,7 +45,7 @@ namespace cpp_utils
         }
         [[nodiscard]] constexpr const auto& back() const noexcept
         {
-            if constexpr ( empty() ) {
+            if ( empty() ) {
                 return storage_.back();
             } else {
                 return storage_.data()[ size() - 1 ];

@@ -1178,8 +1178,8 @@ namespace scltk
                 constexpr auto msg_start{ "同步配置"_cs };
                 constexpr auto msg_end{ ".\n\n 请按任意键返回."_cs };
                 return std::array{
-                  std::constant_wrapper< cpp_utils::concat_const_string( " (!)"_cs, msg_start, "失败"_cs, msg_end ) >::value.view(),
-                  std::constant_wrapper< cpp_utils::concat_const_string( " (i)"_cs, msg_start, "成功"_cs, msg_end ) >::value.view() };
+                  std::constant_wrapper< cpp_utils::concat_const_string( " (!) "_cs, msg_start, "失败"_cs, msg_end ) >::value.view(),
+                  std::constant_wrapper< cpp_utils::concat_const_string( " (i) "_cs, msg_start, "成功"_cs, msg_end ) >::value.view() };
             }() };
             cpp_utils::print_without_formatting( final_message.data()[ static_cast< std::size_t >( config_file.good() ) ] );
             con.press_any_key_to_continue();
@@ -1212,8 +1212,8 @@ namespace scltk
                 constexpr auto msg_start{ "打开配置文件"_cs };
                 constexpr auto msg_end{ ".\n\n 请按任意键返回."_cs };
                 return std::array{
-                  std::constant_wrapper< cpp_utils::concat_const_string( "(!)"_cs, msg_start, "失败"_cs, msg_end ) >::value.view(),
-                  std::constant_wrapper< cpp_utils::concat_const_string( "(i)"_cs, msg_start, "成功"_cs, msg_end ) >::value.view() };
+                  std::constant_wrapper< cpp_utils::concat_const_string( " (!) "_cs, msg_start, "失败"_cs, msg_end ) >::value.view(),
+                  std::constant_wrapper< cpp_utils::concat_const_string( " (i) "_cs, msg_start, "成功"_cs, msg_end ) >::value.view() };
             }() };
             cpp_utils::print_without_formatting( final_message[ static_cast< std::size_t >( success ) ] );
             con.press_any_key_to_continue();
