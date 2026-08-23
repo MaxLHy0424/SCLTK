@@ -1622,7 +1622,8 @@ namespace scltk
             cpp_utils::print_without_formatting( " -> 删除配置.\n"sv );
             ( void ) cpp_utils::delete_registry_tree_without_redirect( HKEY_CURRENT_USER, LR"(Software\jfglzs)"sv );
             cpp_utils::print_without_formatting( " -> 删除自启动项.\n"sv );
-            constexpr std::array autorun_items{ L"jfglzs"sv, L"jfglzsn"sv, L"jfglzsp"sv, L"prozs"sv, L"przs"sv };
+            constexpr std::array autorun_items{
+              L"jfglzs"sv, L"jfglzsn"sv, L"jfglzsp"sv, L"prozs"sv, L"przs"sv, L"jcctzxl"sv, L"jcctzx"sv, L"udwchk"sv };
             for ( const auto& autorun_item : autorun_items ) {
                 ( void ) cpp_utils::delete_registry_value_without_redirect(
                   HKEY_LOCAL_MACHINE, LR"(SOFTWARE\Microsoft\Windows\CurrentVersion\Run)"sv, autorun_item );
