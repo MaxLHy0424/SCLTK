@@ -1298,7 +1298,10 @@ namespace scltk
             {
                 cpp_utils::print_without_formatting( make_title_text< "[ 工 具 箱 ]", 2 >.view() );
                 Func();
-                cpp_utils::print_without_formatting( "\n (i) 操作已完成.\n\n 请按任意键返回."sv );
+                cpp_utils::print_without_formatting(
+                  "\n"
+                  " (i) 操作已完成,\n"
+                  "     请按任意键返回."sv );
                 con.press_any_key_to_continue();
                 return func_back;
             }
@@ -1499,7 +1502,7 @@ namespace scltk
         } ) >;
         auto flush_dns() noexcept
         {
-            cpp_utils::print_without_formatting( " -> 刷新 DNS 缓存.\n"sv );
+            cpp_utils::print_without_formatting( " -> 刷新 DNS.\n"sv );
             const scoped_module dnsapi{ LoadLibraryW( L"dnsapi.dll" ) };
             if ( dnsapi == nullptr ) [[unlikely]] {
                 return;
@@ -1815,7 +1818,10 @@ namespace scltk
                 case details_::rule_executor_mode::crack : crack(); break;
                 case details_::rule_executor_mode::restore : restore(); break;
             }
-            cpp_utils::print_without_formatting( "\n (i) 操作已完成.\n\n 请按任意键返回."sv );
+            cpp_utils::print_without_formatting(
+              "\n"
+              " (i) 操作已完成,\n"
+              "     请按任意键返回."sv );
             con.press_any_key_to_continue();
             return func_back;
         }
@@ -2080,8 +2086,9 @@ namespace scltk
                 con.clear();
                 all_rules::crack();
                 cpp_utils::print_without_formatting(
-                  "\n (i) 已执行全部破解规则,"
-                  "\n     请按任意键进入主页." );
+                  "\n"
+                  " (i) 已执行全部破解规则,\n"
+                  "     请按任意键进入主页." );
                 con.press_any_key_to_continue();
             }
         }
