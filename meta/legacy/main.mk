@@ -62,7 +62,7 @@ args_base        := -pipe -finput-charset=$(input_charset) -fexec-charset=$(outp
                     $(args_library) $(args_extra)
 args_debug       := -g3 -fuse-ld=lld -DDEBUG $(args_base) $(args_opt_debug) -fstack-protector-all -fstack-clash-protection
 args_release     := -DNDEBUG -static $(args_base) $(args_opt_release)
-args_ld          := -Wl,-O3,--gc-sections,--strip-all,--as-needed,--build-id=none \
+args_linker      := -Wl,-O3,--gc-sections,--strip-all,--as-needed,--build-id=none \
                     -Wl,--no-insert-timestamp,--no-seh,--disable-runtime-pseudo-reloc \
                     -Wl,--disable-auto-import,--nxcompat,--tsaware,--file-alignment=512
 cmd_echo         := /usr/bin/echo
@@ -105,7 +105,7 @@ build/legacy/release/$(project_name).exe: $(dep_test) \
                                           $(dep_release) \
                                           build/legacy/release/.gitkeep
 	@$(cmd_echo) "Compiling '$@'..."
-	@$(compiler) $(dep_release) $(args_release) $(args_arch) $(args_ld) -o $@
+	@$(compiler) $(dep_release) $(args_release) $(args_arch) $(args_linker) -o $@
 	@$(cmd_echo) "Compressing '$@'..."
 	@$(cmd_upx) $@
 build/legacy/manifest.o: $(dep_res) \

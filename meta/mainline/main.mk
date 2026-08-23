@@ -62,7 +62,7 @@ args_base        := -pipe -finput-charset=$(input_charset) -fexec-charset=$(outp
                     $(args_library) $(args_extra)
 args_debug       := -g3 -fuse-ld=lld -DDEBUG $(args_base) $(args_opt_debug) -fstack-protector-all -fstack-clash-protection
 args_release     := -DNDEBUG -static $(args_base) $(args_opt_release)
-args_ld          := -fuse-ld=lld \
+args_linker      := -fuse-ld=lld \
                     -Wl,-O3,--lto-O3,--lto-CGO3,--gc-sections,--strip-all,--as-needed \
                     -Wl,--no-insert-timestamp,--no-seh,--disable-runtime-pseudo-reloc \
                     -Wl,--disable-auto-import,--nxcompat,--high-entropy-va,--tsaware \
@@ -108,7 +108,7 @@ build/mainline/release/$(project_name).exe: $(dep_test) \
                                             $(dep_release) \
                                             build/mainline/release/.gitkeep
 	@$(cmd_echo) "Compiling '$@'..."
-	@$(compiler) $(dep_release) $(args_release) $(args_arch) $(args_ld) -o $@
+	@$(compiler) $(dep_release) $(args_release) $(args_arch) $(args_linker) -o $@
 	@$(cmd_echo) "Compressing '$@'..."
 	@$(cmd_upx) $@
 build/mainline/manifest.o: $(dep_res) \
