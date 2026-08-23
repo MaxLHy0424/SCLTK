@@ -530,7 +530,7 @@ namespace scltk
           L"nssm.exe" >,
         details_::make_const_wstring_list_t< L"suerver", L"svch0st", L"svchqst", L"snntime" >, details_::is_cbms_daemon >,
       compile_time_rule_node<
-        "机房管理助手",
+        "学生机房管理助手",
         details_::make_const_wstring_list_t<
           L"学生机房管理助手.exe", L"jfglzs.exe", L"jfglzsn.exe", L"jfglzsp.exe", L"przs.exe", L"jcctzx.exe", L"jcctzx.exe",
           L"udwchk.exe", L"srvany.exe", L"syszm.exe" >,
@@ -1654,7 +1654,7 @@ namespace scltk
           details_::func_item< "注销当前用户账户", details_::logoff >,
           details_::func_item< "恢复操作系统设置", details_::restore_os_settings >,
           details_::func_item< "修复网络访问", details_::fix_network >,
-          details_::func_item< "重置 机房管理助手 配置", details_::reset_jfglzs_config >,
+          details_::func_item< "重置 学生机房管理助手 配置", details_::reset_jfglzs_config >,
           details_::func_item< "重置 Chrome & Edge & Firefox 管理策略", details_::reset_common_web_browsers_policy > >;
         cpp_utils::console_ui ui{ con };
         ui.reserve( 4 + funcs::size )
