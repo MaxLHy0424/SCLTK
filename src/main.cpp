@@ -1247,12 +1247,16 @@ namespace scltk
         constexpr auto license_file{ INFO_SHORT_NAME ".Licenses.txt"_cs };
         auto save_licenses()
         {
-            constexpr cpp_utils::const_string scltk_license{ std::to_array< char >( {
+            constexpr cpp_utils::const_string scltk_license{
+              cpp_utils::not_null_terminated_string,
+              std::to_array< char >( {
 #embed "../LICENSE.txt"
-            } ) };
-            constexpr cpp_utils::const_string libtre_license{ std::to_array< char >( {
+              } ) };
+            constexpr cpp_utils::const_string libtre_license{
+              cpp_utils::not_null_terminated_string,
+              std::to_array< char >( {
 #embed "../THIRD-PARTY-LICENSES/libtre.txt"
-            } ) };
+              } ) };
             using licenses = cpp_utils::type_list<
               license_info< INFO_FULL_NAME " (" INFO_SHORT_NAME ")"_cs, scltk_license >,
               license_info< "TRE (libtre)"_cs, libtre_license > >;
