@@ -1267,7 +1267,12 @@ namespace scltk
                     constexpr auto base_content{ cpp_utils::concat_const_string( cpp_utils::concat_const_string(
                       licenses::at< Is >::component_name, "\n"_cs, cpp_utils::make_repeated_const_string< '-', 50 >(), "\n"_cs,
                       licenses::at< Is >::content, cpp_utils::make_repeated_const_string< '-', 50 >(), "\n\n"_cs )... ) };
-                    return std::vector{ std::from_range, base_content.view() | std::views::take( base_content.size() - 1 ) };
+                    constexpr auto pred{ []( const char ch ) static constexpr noexcept
+                    {
+                        return ch != '\r';
+                    } };
+                    return std::vector{
+                      std::from_range, base_content.view().subview( 0, base_content.size() - 1 ) | std::views::filter( pred ) };
                 }( std::make_index_sequence< licenses::size >{} );
             } >() };
             cpp_utils::print_without_formatting( " -> 写入文件."sv );
