@@ -8,12 +8,9 @@
 #include "meta.hpp"
 namespace cpp_utils
 {
-    namespace details_
-    {
-        struct not_null_terminated_string_t final
-        { };
-    }
-    inline constexpr details_::not_null_terminated_string_t not_null_terminated_string;
+    struct not_null_terminated_string_t final
+    { };
+    inline constexpr not_null_terminated_string_t not_null_terminated_string;
     template < typename T >
     concept character
       = std::same_as< std::remove_cv_t< T >, char > || std::same_as< std::remove_cv_t< T >, wchar_t >
@@ -104,13 +101,13 @@ namespace cpp_utils
             std::ranges::copy( str, storage_.data() );
             storage_.back() = '\0';
         }
-        consteval basic_const_string( const details_::not_null_terminated_string_t, const T ( &str )[ N ] ) noexcept
+        consteval basic_const_string( const not_null_terminated_string_t, const T ( &str )[ N ] ) noexcept
             requires( N > 0 )
         {
             std::ranges::copy( str, storage_.data() );
             storage_.back() = '\0';
         }
-        consteval basic_const_string( const details_::not_null_terminated_string_t, const std::array< T, N > str ) noexcept
+        consteval basic_const_string( const not_null_terminated_string_t, const std::array< T, N > str ) noexcept
         {
             std::ranges::copy( str, storage_.data() );
             storage_.back() = '\0';
@@ -124,9 +121,9 @@ namespace cpp_utils
     template < character T, std::size_t N >
     basic_const_string( const std::array< T, N > ) -> basic_const_string< T, N - 1 >;
     template < character T, std::size_t N >
-    basic_const_string( const details_::not_null_terminated_string_t, const T ( & )[ N ] ) -> basic_const_string< T, N >;
+    basic_const_string( const not_null_terminated_string_t, const T ( & )[ N ] ) -> basic_const_string< T, N >;
     template < character T, std::size_t N >
-    basic_const_string( const details_::not_null_terminated_string_t, const std::array< T, N > ) -> basic_const_string< T, N >;
+    basic_const_string( const not_null_terminated_string_t, const std::array< T, N > ) -> basic_const_string< T, N >;
     template < std::size_t N >
     using const_string = basic_const_string< char, N >;
     template < std::size_t N >
