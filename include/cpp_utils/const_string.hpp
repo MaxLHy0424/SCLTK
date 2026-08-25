@@ -8,6 +8,12 @@
 #include "meta.hpp"
 namespace cpp_utils
 {
+    namespace details_
+    {
+        struct not_null_terminated_string_t final
+        { };
+    }
+    inline constexpr details_::not_null_terminated_string_t not_null_terminated_string;
     template < typename T >
     concept character
       = std::same_as< std::remove_cv_t< T >, char > || std::same_as< std::remove_cv_t< T >, wchar_t >
@@ -27,29 +33,23 @@ namespace cpp_utils
         {
             return static_cast< const T* >( storage_.data() );
         }
-        [[nodiscard]] constexpr auto empty() const noexcept
+        [[nodiscard]] static constexpr auto empty() noexcept
         {
             return N == 0;
         }
-        [[nodiscard]] constexpr auto size() const noexcept
+        [[nodiscard]] static constexpr auto size() noexcept
         {
             return N;
         }
-        [[nodiscard]] constexpr auto max_size() const noexcept
-        {
-            return storage_.max_size() - 1;
-        }
         [[nodiscard]] constexpr const auto& front() const noexcept
+            requires( N != 0 )
         {
             return storage_.front();
         }
         [[nodiscard]] constexpr const auto& back() const noexcept
+            requires( N != 0 )
         {
-            if ( empty() ) {
-                return storage_.back();
-            } else {
-                return storage_.data()[ size() - 1 ];
-            }
+            return storage_.data()[ size() - 1 ];
         }
         [[nodiscard]] constexpr auto begin() const noexcept
         {
@@ -99,7 +99,18 @@ namespace cpp_utils
             std::ranges::copy( str, storage_.data() );
             storage_.back() = '\0';
         }
-        consteval basic_const_string( const std::array< T, N > str ) noexcept
+        consteval basic_const_string( const std::array< T, N + 1 > str ) noexcept
+        {
+            std::ranges::copy( str, storage_.data() );
+            storage_.back() = '\0';
+        }
+        consteval basic_const_string( const details_::not_null_terminated_string_t, const T ( &str )[ N ] ) noexcept
+            requires( N > 0 )
+        {
+            std::ranges::copy( str, storage_.data() );
+            storage_.back() = '\0';
+        }
+        consteval basic_const_string( const details_::not_null_terminated_string_t, const std::array< T, N > str ) noexcept
         {
             std::ranges::copy( str, storage_.data() );
             storage_.back() = '\0';
@@ -110,6 +121,12 @@ namespace cpp_utils
     };
     template < character T, std::size_t N >
     basic_const_string( const T ( & )[ N ] ) -> basic_const_string< T, N - 1 >;
+    template < character T, std::size_t N >
+    basic_const_string( const std::array< T, N > ) -> basic_const_string< T, N - 1 >;
+    template < character T, std::size_t N >
+    basic_const_string( const details_::not_null_terminated_string_t, const T ( & )[ N ] ) -> basic_const_string< T, N >;
+    template < character T, std::size_t N >
+    basic_const_string( const details_::not_null_terminated_string_t, const std::array< T, N > ) -> basic_const_string< T, N >;
     template < std::size_t N >
     using const_string = basic_const_string< char, N >;
     template < std::size_t N >
@@ -133,7 +150,7 @@ namespace cpp_utils
     {
         std::array< decltype( C ), N > str;
         str.fill( C );
-        return basic_const_string{ str };
+        return basic_const_string{ not_null_terminated_string, str };
     }
     template < character T, std::size_t... Ns >
     [[nodiscard]] inline consteval auto concat_const_string( const basic_const_string< T, Ns >... strings ) noexcept
@@ -145,7 +162,7 @@ namespace cpp_utils
             std::ranges::copy( string.c_str(), string.c_str() + N, begin );
             begin += N;
         }( strings ), ... );
-        return basic_const_string{ storage };
+        return basic_const_string{ not_null_terminated_string, storage };
     }
     template < character T, std::integral auto N >
     [[nodiscard]] inline consteval auto make_const_string_from_integral() noexcept
