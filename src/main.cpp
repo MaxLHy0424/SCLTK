@@ -18,7 +18,6 @@
 #include <atomic>
 #include <charconv>
 #include <cstring>
-#include <filesystem>
 #include <fstream>
 #include <inplace_vector>
 #include <random>
@@ -89,6 +88,45 @@ namespace scltk
     }
     namespace details_
     {
+        constexpr auto is_capital_case( const wchar_t ch ) noexcept
+        {
+            return ch >= L'A' && ch <= L'Z';
+        };
+        constexpr auto is_lower_case( const wchar_t ch ) noexcept
+        {
+            return ch >= L'a' && ch <= L'z';
+        };
+        constexpr auto is_letter( const wchar_t ch ) noexcept
+        {
+            return is_capital_case( ch ) || is_lower_case( ch );
+        };
+        constexpr auto is_number( const wchar_t ch ) noexcept
+        {
+            return ch >= L'0' && ch <= L'9';
+        };
+        template < cpp_utils::character CharT >
+        constexpr auto is_whitespace( const CharT ch ) noexcept
+        {
+            switch ( ch ) {
+                case static_cast< CharT >( '\t' ) :
+                case static_cast< CharT >( '\v' ) :
+                case static_cast< CharT >( '\f' ) :
+                case static_cast< CharT >( ' ' ) : return true;
+            }
+            return false;
+        }
+        template < cpp_utils::character CharT, typename... Args >
+            requires(
+              ( std::same_as< std::decay_t< Args >, std::basic_string< CharT > >
+                || std::same_as< std::decay_t< Args >, std::basic_string_view< CharT > > )
+              && ... )
+        auto concat_string( Args&&... strings )
+        {
+            std::basic_string< CharT > result;
+            result.reserve( ( std::forward< Args >( strings ).size() + ... ) );
+            ( result.append( std::forward< Args >( strings ) ), ... );
+            return result;
+        }
         class scoped_wregex final
         {
           private:
@@ -187,6 +225,32 @@ namespace scltk
                 }
             }
         };
+        auto remove_directory( const std::wstring_view path ) -> bool
+        {
+            WIN32_FIND_DATAW find_data [[indeterminate]];
+            const cpp_utils::scoped_legacy_handle find{
+              FindFirstFileW( concat_string< wchar_t >( path, L"\\*"sv ).c_str(), &find_data ) };
+            if ( find.get() == INVALID_HANDLE_VALUE ) {
+                return RemoveDirectoryW( path.data() ) != 0;
+            }
+            do {
+                if ( wcscmp( find_data.cFileName, L"." ) == 0 || wcscmp( find_data.cFileName, L".." ) == 0 ) {
+                    continue;
+                }
+                const auto full_path{ concat_string< wchar_t >( path, L"\\"sv, std::wstring_view{ find_data.cFileName } ) };
+                if ( find_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY ) {
+                    if ( !remove_directory( full_path ) ) {
+                        return false;
+                    }
+                } else {
+                    SetFileAttributesW( full_path.c_str(), FILE_ATTRIBUTE_NORMAL );
+                    if ( !DeleteFileW( full_path.c_str() ) ) {
+                        return false;
+                    }
+                }
+            } while ( FindNextFileW( find.get(), &find_data ) );
+            return RemoveDirectoryW( path.data() ) != 0;
+        }
 #ifdef SCLTK_LEGACY
         auto is_wow64() noexcept
         {
@@ -239,45 +303,6 @@ namespace scltk
             }
         };
 #endif
-        constexpr auto is_capital_case( const wchar_t ch ) noexcept
-        {
-            return ch >= L'A' && ch <= L'Z';
-        };
-        constexpr auto is_lower_case( const wchar_t ch ) noexcept
-        {
-            return ch >= L'a' && ch <= L'z';
-        };
-        constexpr auto is_letter( const wchar_t ch ) noexcept
-        {
-            return is_capital_case( ch ) || is_lower_case( ch );
-        };
-        constexpr auto is_number( const wchar_t ch ) noexcept
-        {
-            return ch >= L'0' && ch <= L'9';
-        };
-        template < cpp_utils::character CharT >
-        constexpr auto is_whitespace( const CharT ch ) noexcept
-        {
-            switch ( ch ) {
-                case static_cast< CharT >( '\t' ) :
-                case static_cast< CharT >( '\v' ) :
-                case static_cast< CharT >( '\f' ) :
-                case static_cast< CharT >( ' ' ) : return true;
-            }
-            return false;
-        }
-        template < cpp_utils::character CharT, typename... Args >
-            requires(
-              ( std::same_as< std::decay_t< Args >, std::basic_string< CharT > >
-                || std::same_as< std::decay_t< Args >, std::basic_string_view< CharT > > )
-              && ... )
-        auto concat_string( Args&&... strings )
-        {
-            std::basic_string< CharT > result;
-            result.reserve( ( std::forward< Args >( strings ).size() + ... ) );
-            ( result.append( std::forward< Args >( strings ) ), ... );
-            return result;
-        }
         auto convert_i16_to_hex_wstring_with_fields( unsigned short n ) noexcept
         {
             char a [[indeterminate]][ 4 ];
@@ -1173,7 +1198,7 @@ namespace scltk
                 }, config_nodes );
                 config_file.flush();
             }
-            static constexpr auto final_message{ [] static consteval noexcept
+            static constexpr auto message{ [] static consteval noexcept
             {
                 constexpr auto msg_start{ "同步配置"_cs };
                 constexpr auto msg_end{ ".\n\n 请按任意键返回."_cs };
@@ -1181,7 +1206,7 @@ namespace scltk
                   std::constant_wrapper< cpp_utils::concat_const_string( " (!) "_cs, msg_start, "失败"_cs, msg_end ) >::value.view(),
                   std::constant_wrapper< cpp_utils::concat_const_string( " (i) "_cs, msg_start, "成功"_cs, msg_end ) >::value.view() };
             }() };
-            cpp_utils::print_without_formatting( final_message.data()[ static_cast< std::size_t >( config_file.good() ) ] );
+            cpp_utils::print_without_formatting( message.data()[ static_cast< std::size_t >( config_file.good() ) ] );
             con.press_any_key_to_continue();
             return func_back;
         }
@@ -1192,9 +1217,10 @@ namespace scltk
                 make_title_text< "[ 配  置 ]", 2 >, " -> 尝试打开配置文件.\n\n"_cs ) >::value.view() );
             static constexpr auto cmd_init{
               cpp_utils::concat_const_string( L"notepad.exe "_cs, cpp_utils::const_wstring{ config_file_name } ).data() };
-            std::error_code _;
             bool success{ false };
-            if ( std::filesystem::exists( config_file_name, _ ) ) {
+            if ( const auto attrib{ GetFileAttributesW( config_file_name ) };
+                 ( attrib != INVALID_FILE_ATTRIBUTES ) && !( attrib & FILE_ATTRIBUTE_DIRECTORY ) )
+            {
                 auto cmd{ cmd_init };
                 STARTUPINFOW startup_info{};
                 startup_info.cb = sizeof( startup_info );
@@ -1207,7 +1233,7 @@ namespace scltk
                     success = true;
                 }
             }
-            static constexpr auto final_message{ [] static consteval noexcept
+            static constexpr auto message{ [] static consteval noexcept
             {
                 constexpr auto msg_start{ "打开配置文件"_cs };
                 constexpr auto msg_end{ ".\n\n 请按任意键返回."_cs };
@@ -1215,7 +1241,7 @@ namespace scltk
                   std::constant_wrapper< cpp_utils::concat_const_string( " (!) "_cs, msg_start, "失败"_cs, msg_end ) >::value.view(),
                   std::constant_wrapper< cpp_utils::concat_const_string( " (i) "_cs, msg_start, "成功"_cs, msg_end ) >::value.view() };
             }() };
-            cpp_utils::print_without_formatting( final_message[ static_cast< std::size_t >( success ) ] );
+            cpp_utils::print_without_formatting( message[ static_cast< std::size_t >( success ) ] );
             con.press_any_key_to_continue();
             return func_back;
         }
@@ -1479,22 +1505,25 @@ namespace scltk
                 CloseHandle( proc_info.hThread );
             }
         }
-        auto reset_hosts()
+        auto reset_hosts() noexcept
         {
             cpp_utils::print_without_formatting( " -> 重置 Hosts.\n"sv );
 #ifdef SCLTK_LEGACY
             const wow64_file_redirect_guard _;
 #endif
-            const std::filesystem::path hosts_path{ LR"(C:\Windows\System32\drivers\etc\hosts)"sv };
-            std::error_code ec;
-            const auto original_perms{ std::filesystem::status( hosts_path, ec ).permissions() };
-            if ( ec ) [[unlikely]] {
-                return;
+            constexpr auto hosts_path{ LR"(C:\Windows\System32\drivers\etc\hosts)" };
+            const auto original_attrs{ GetFileAttributesW( hosts_path ) };
+            SetFileAttributesW( hosts_path, original_attrs & ~FILE_ATTRIBUTE_READONLY );
+            DeleteFileW( hosts_path );
+            if ( const auto file{ CreateFileW(
+                   hosts_path, GENERIC_READ | GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr ) };
+                 file != INVALID_HANDLE_VALUE ) [[likely]]
+            {
+                CloseHandle( file );
             }
-            std::filesystem::permissions( hosts_path, std::filesystem::perms::all, std::filesystem::perm_options::replace, ec );
-            std::filesystem::remove( hosts_path, ec );
-            std::ofstream{ hosts_path, std::ios::out }.close();
-            std::filesystem::permissions( hosts_path, original_perms, std::filesystem::perm_options::replace, ec );
+            if ( original_attrs != INVALID_FILE_ATTRIBUTES ) [[likely]] {
+                SetFileAttributesW( hosts_path, original_attrs );
+            }
         }
         auto clear_winhttp_proxy() noexcept -> void;
         auto clear_wininet_proxy() noexcept -> void;
@@ -1643,8 +1672,7 @@ namespace scltk
                   HKEY_LOCAL_MACHINE, LR"(SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run)"sv, autorun_item );
             }
             cpp_utils::print_without_formatting( " -> 删除备份.\n"sv );
-            std::error_code _;
-            std::filesystem::remove_all( LR"(C:\Windows\jf)"sv, _ );
+            remove_directory( LR"(C:\Windows\jf)"sv );
         }
         auto reset_common_web_browsers_policy() noexcept
         {
