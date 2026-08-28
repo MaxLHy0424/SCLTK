@@ -1956,45 +1956,81 @@ namespace scltk
     };
     struct custom_rule_executor_backend final
     {
-        static constexpr auto invoke_fn_is_target_proc{ true };
-        static auto is_target_proc( const PROCESSENTRY32W& proc_entry )
+      private:
+        static auto get_proc_path_( const DWORD pid ) -> std::optional< details_::win32_file_path_buffer_t >
         {
-            for ( const auto& proc_name_rx : custom_rules.proc_names ) {
-                if ( proc_name_rx.match( proc_entry.szExeFile ) ) {
-                    return true;
-                }
-            }
-            const auto proc_handle{ proc_snapshot.open_process( proc_entry.th32ProcessID, PROCESS_QUERY_LIMITED_INFORMATION ) };
+            const auto proc_handle{ proc_snapshot.open_process( pid, PROCESS_QUERY_LIMITED_INFORMATION ) };
             if ( proc_handle == nullptr ) [[unlikely]] {
+                return std::nullopt;
+            }
+            const auto buffer{ details_::get_proc_path( proc_handle ) };
+            if ( !buffer.has_value() ) [[unlikely]] {
+                return std::nullopt;
+            }
+            return buffer.value().first;
+        }
+        static auto is_target_proc_path_( const details_::win32_file_path_buffer_t& proc_path )
+        {
+            if ( custom_rules.proc_paths.empty() ) {
                 return false;
             }
-            const auto proc_path{ details_::get_proc_path( proc_handle ) };
-            if ( !proc_path.has_value() ) [[unlikely]] {
-                return false;
-            }
-            const auto& [ proc_path_buffer, _ ]{ proc_path.value() };
-            for ( const auto& proc_path_rx : custom_rules.proc_paths ) {
-                if ( proc_path_rx.match( proc_path_buffer.data() ) ) {
+            for ( const auto& rx : custom_rules.proc_paths ) {
+                if ( rx.match( proc_path.data() ) ) {
                     return true;
                 }
             }
-            const auto proc_sign{ details_::get_sign_name( proc_path_buffer ) };
-            if ( proc_sign.has_value() ) [[likely]] {
-                for ( const auto& proc_sign_rx : custom_rules.proc_signs ) {
-                    if ( proc_sign_rx.match( proc_sign.value().data() ) ) {
-                        return true;
-                    }
+            return false;
+        }
+        static auto is_target_proc_sign_( const details_::win32_file_path_buffer_t& proc_path )
+        {
+            if ( custom_rules.proc_signs.empty() ) {
+                return false;
+            }
+            const auto _{ details_::get_sign_name( proc_path ) };
+            if ( !_.has_value() ) [[unlikely]] {
+                return false;
+            }
+            const auto& proc_sign{ _.value() };
+            for ( const auto& rx : custom_rules.proc_signs ) {
+                if ( rx.match( proc_sign.c_str() ) ) {
+                    return true;
                 }
             }
-            const auto proc_version_info_items{ details_::get_version_info( proc_path_buffer ) };
-            for ( const auto& item : proc_version_info_items ) {
-                for ( const auto& proc_vinfo_rx : custom_rules.proc_vinfos ) {
-                    if ( proc_vinfo_rx.match( item.c_str() ) ) {
+            return false;
+        }
+        static auto is_target_proc_vinfo_( const details_::win32_file_path_buffer_t& proc_path )
+        {
+            if ( custom_rules.proc_vinfos.empty() ) {
+                return false;
+            }
+            const auto proc_vinfo_items{ details_::get_version_info( proc_path ) };
+            for ( const auto& proc_vinfo_item : proc_vinfo_items ) {
+                for ( const auto& rx : custom_rules.proc_vinfos ) {
+                    if ( rx.match( proc_vinfo_item.c_str() ) ) {
                         return true;
                     }
                 }
             }
             return false;
+        }
+      public:
+        static constexpr auto invoke_fn_is_target_proc{ true };
+        static auto is_target_proc( const PROCESSENTRY32W& proc_entry )
+        {
+            for ( const auto& rx : custom_rules.proc_names ) {
+                if ( rx.match( proc_entry.szExeFile ) ) {
+                    return true;
+                }
+            }
+            if ( custom_rules.proc_paths.empty() && custom_rules.proc_signs.empty() && custom_rules.proc_vinfos.empty() ) {
+                return false;
+            }
+            const auto _{ get_proc_path_( proc_entry.th32ProcessID ) };
+            if ( !_.has_value() ) [[unlikely]] {
+                return false;
+            }
+            const auto& proc_path{ _.value() };
+            return is_target_proc_path_( proc_path ) || is_target_proc_sign_( proc_path ) || is_target_proc_vinfo_( proc_path );
         }
         static constexpr auto invoke_fn_get_estimated_proc_handles_numbers{ true };
         static auto get_estimated_proc_handles_numbers() noexcept
