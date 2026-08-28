@@ -303,18 +303,18 @@ namespace scltk
             }
         };
 #endif
-        auto convert_i16_to_hex_wstring_with_fields( unsigned short n ) noexcept
+        auto convert_i16_to_hex_fixed_wchar4( unsigned short n ) noexcept
         {
             char a [[indeterminate]][ 4 ];
             const auto ret{ std::to_chars( a, a + 4, n, 16 ) };
-            const auto written_size{ ret.ptr - a };
+            const auto written_size{ static_cast< std::size_t >( ret.ptr - a ) };
             std::array< wchar_t, 4 > str [[indeterminate]];
             for ( auto i{ 0uz }; i < 4uz - written_size; ++i ) {
                 str.data()[ i ] = L'0';
             }
-            for ( auto i{ 4uz - written_size }; i < 4; ++i ) {
+            for ( auto i{ 4uz - written_size }; i < 4uz; ++i ) {
                 const auto ch{ static_cast< unsigned char >( a[ i - 4uz + written_size ] ) };
-                if ( is_lower_case( ch ) ) {
+                if ( ch >= 'a' && ch <= 'f' ) {
                     str.data()[ i ] = static_cast< wchar_t >( ch & 0b11011111 );
                 } else {
                     str.data()[ i ] = static_cast< wchar_t >( ch );
@@ -361,14 +361,13 @@ namespace scltk
         auto get_version_info( const win32_file_path_buffer_t& path )
         {
             using targets = make_const_wstring_list_t< L"FileDescription", L"ProductName", L"LegalCopyright" >;
-            std::inplace_vector< std::wstring, targets::size > result;
-            DWORD handle;
-            DWORD size{ GetFileVersionInfoSizeW( path.data(), &handle ) };
+            std::vector< std::wstring > result;
+            const auto size{ GetFileVersionInfoSizeW( path.data(), nullptr ) };
             if ( size == 0 ) {
                 return result;
             }
-            std::vector< BYTE > version_info_buffer( size );
-            if ( !GetFileVersionInfoW( path.data(), handle, size, version_info_buffer.data() ) ) {
+            const auto version_info_buffer{ std::make_unique_for_overwrite< BYTE[] >( static_cast< std::size_t >( size ) ) };
+            if ( !GetFileVersionInfoW( path.data(), 0, size, version_info_buffer.get() ) ) {
                 return result;
             }
             struct translation_buffer_type final
@@ -377,37 +376,40 @@ namespace scltk
                 WORD codepage;
             };
             LPVOID translation_buffer [[indeterminate]];
-            UINT translate{ 0 };
-            if ( !VerQueryValueW( version_info_buffer.data(), LR"(\VarFileInfo\Translation)", &translation_buffer, &translate ) )
+            UINT translation_size{ 0 };
+            if ( !VerQueryValueW( version_info_buffer.get(), LR"(\VarFileInfo\Translation)", &translation_buffer, &translation_size ) )
             {
                 return result;
             }
-            if ( translate < sizeof( translation_buffer_type ) ) {
+            const auto translation_count{ translation_size / sizeof( translation_buffer_type ) };
+            if ( translation_count == 0 ) {
                 return result;
             }
-            [ & ]< std::size_t... Is >( std::index_sequence< Is... > ) noexcept
+            result.reserve( targets::size * translation_count );
+            [ & ]< std::size_t... Is >( std::index_sequence< Is... > )
             {
                 constexpr auto max_string_length{
                   std::ranges::max( { targets::template at< Is >::value.size()... } ) + LR"(\StringFileInfo\12345678\)"sv.size() };
                 std::inplace_vector< wchar_t, max_string_length + 1uz > sub_block;
-                LPVOID version_info_buffer_ptr{ nullptr };
-                UINT length{ 0 };
-                ( [ & ] noexcept
-                {
-                    constexpr auto current_target{ targets::template at< Is >::value.view() };
-                    sub_block.clear();
-                    sub_block.append_range( LR"(\StringFileInfo\)"sv );
-                    sub_block.append_range( convert_i16_to_hex_wstring_with_fields(
-                      reinterpret_cast< const translation_buffer_type* >( translation_buffer )->language ) );
-                    sub_block.append_range( convert_i16_to_hex_wstring_with_fields(
-                      reinterpret_cast< const translation_buffer_type* >( translation_buffer )->codepage ) );
-                    sub_block.unchecked_emplace_back( L'\\' );
-                    sub_block.append_range( current_target );
-                    sub_block.unchecked_emplace_back( L'\0' );
-                    if ( VerQueryValueW( version_info_buffer.data(), sub_block.data(), &version_info_buffer_ptr, &length ) ) {
-                        result.unchecked_emplace_back( static_cast< const wchar_t* >( version_info_buffer_ptr ), length );
+                LPVOID version_info_buffer_ptr [[indeterminate]];
+                UINT length [[indeterminate]];
+                for ( auto current_count{ 0uz }; current_count < translation_count; ++current_count ) {
+                    const auto& current_buffer{
+                      reinterpret_cast< const translation_buffer_type* >( translation_buffer )[ current_count ] };
+                    for ( const auto& target : { targets::template at< Is >::value.view()... } ) {
+                        sub_block.clear();
+                        sub_block.append_range( LR"(\StringFileInfo\)"sv );
+                        sub_block.append_range( convert_i16_to_hex_fixed_wchar4( current_buffer.language ) );
+                        sub_block.append_range( convert_i16_to_hex_fixed_wchar4( current_buffer.codepage ) );
+                        sub_block.unchecked_emplace_back( L'\\' );
+                        sub_block.append_range( target );
+                        sub_block.unchecked_emplace_back( L'\0' );
+                        if ( VerQueryValueW( version_info_buffer.get(), sub_block.data(), &version_info_buffer_ptr, &length ) )
+                        {
+                            result.emplace_back( static_cast< const wchar_t* >( version_info_buffer_ptr ), length );
+                        }
                     }
-                }(), ... );
+                }
             }( std::make_index_sequence< targets::size >{} );
             return result;
         }
