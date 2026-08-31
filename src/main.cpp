@@ -231,7 +231,7 @@ namespace scltk
             const cpp_utils::scoped_legacy_handle find{
               FindFirstFileW( concat_string< wchar_t >( path, L"\\*"sv ).c_str(), &find_data ) };
             if ( find.get() == INVALID_HANDLE_VALUE ) {
-                return RemoveDirectoryW( path.data() ) != 0;
+                return RemoveDirectoryW( path.data() ) != FALSE;
             }
             do {
                 if ( wcscmp( find_data.cFileName, L"." ) == 0 || wcscmp( find_data.cFileName, L".." ) == 0 ) {
@@ -1679,12 +1679,27 @@ namespace scltk
         auto reset_common_web_browsers_policy() noexcept
         {
             cpp_utils::print_without_formatting( " -> 删除注册表.\n"sv );
-            constexpr std::array regs{
-              LR"(SOFTWARE\Policies\Google\Chrome)"sv,   LR"(SOFTWARE\WOW6432Node\Policies\Google\Chrome)"sv,
-              LR"(SOFTWARE\Policies\Microsoft\Edge)"sv,  LR"(SOFTWARE\WOW6432Node\Policies\Microsoft\Edge)"sv,
-              LR"(SOFTWARE\Policies\Mozilla\Firefox)"sv, LR"(SOFTWARE\WOW6432Node\Policies\Mozilla\Firefox)"sv };
-            for ( const auto& reg : regs ) {
-                ( void ) cpp_utils::delete_registry_tree_without_redirect( HKEY_LOCAL_MACHINE, reg );
+            constexpr std::array hklm_regs{
+              LR"(SOFTWARE\Google\Chrome)"sv,
+              LR"(SOFTWARE\WOW6432Node\Google\Chrome)"sv,
+              LR"(SOFTWARE\Policies\Google\Chrome)"sv,
+              LR"(SOFTWARE\WOW6432Node\Policies\Google\Chrome)"sv,
+              LR"(SOFTWARE\Policies\Google\Update)"sv,
+              LR"(SOFTWARE\WOW6432Node\Policies\Google\Update)"sv,
+              LR"(SOFTWARE\Google\Enrollment)"sv,
+              LR"(SOFTWARE\WOW6432Node\Google\Enrollment)"sv,
+              LR"(SOFTWARE\Policies\Microsoft\Edge)"sv,
+              LR"(SOFTWARE\WOW6432Node\Policies\Microsoft\Edge)"sv,
+              LR"(SOFTWARE\Policies\Mozilla\Firefox)"sv,
+              LR"(SOFTWARE\WOW6432Node\Policies\Mozilla\Firefox)"sv };
+            constexpr std::array hkcu_regs{
+              LR"(Software\Google\Chrome)"sv, LR"(Software\Policies\Google\Chrome)"sv, LR"(Software\Policies\Microsoft\Edge)"sv,
+              LR"(SOFTWARE\Policies\Mozilla\Firefox)"sv };
+            for ( const auto& hklm_reg : hklm_regs ) {
+                ( void ) cpp_utils::delete_registry_tree_without_redirect( HKEY_LOCAL_MACHINE, hklm_reg );
+            }
+            for ( const auto& hkcu_reg : hkcu_regs ) {
+                ( void ) cpp_utils::delete_registry_tree_without_redirect( HKEY_CURRENT_USER, hkcu_reg );
             }
         }
     }
