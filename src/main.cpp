@@ -457,57 +457,54 @@ namespace scltk
         auto is_jfglzs_daemon( const PROCESSENTRY32W& proc_entry ) noexcept
         {
             constexpr auto extension_name_size{ L".exe"sv.size() };
-            std::wstring_view name{ proc_entry.szExeFile };
-            if ( name == L"zmserv.exe"sv || name == L"syszm.exe"sv ) {
+            const std::wstring_view proc_name{ proc_entry.szExeFile };
+            if ( proc_name == L"zmserv.exe"sv || proc_name == L"syszm.exe"sv ) {
                 return false;
             }
-            if ( name.size() != 3 + extension_name_size && name.size() != 5 + extension_name_size
-                 && name.size() != 7 + extension_name_size && name.size() != 10 + extension_name_size )
+            if ( const auto main_name_size{ proc_name.size() - extension_name_size };
+                 main_name_size != 3uz && main_name_size != 5uz && main_name_size != 7uz && main_name_size != 10uz )
             {
                 return false;
             }
-            if ( !std::ranges::all_of( name.subview( 0, name.size() - 4 ), is_lower_case ) ) {
+            if ( !std::ranges::all_of( proc_name.subview( 0uz, proc_name.size() - extension_name_size ), is_lower_case ) ) {
                 return false;
             }
             const auto proc_handle{ proc_snapshot.open_process( proc_entry.th32ProcessID, PROCESS_QUERY_LIMITED_INFORMATION ) };
             if ( proc_handle == nullptr ) [[unlikely]] {
                 return false;
             }
-            const auto proc_path{ get_proc_path( proc_handle ) };
-            if ( !proc_path.has_value() ) [[unlikely]] {
+            const auto _{ get_proc_path( proc_handle ) };
+            if ( !_.has_value() ) [[unlikely]] {
                 return false;
             }
-            const auto& [ buffer, size ]{ proc_path.value() };
-            std::wstring_view path_view{ buffer.data(), size };
-            if ( path_view.starts_with( LR"(C:\Program Files\)"sv ) ) {
-                path_view.remove_prefix( LR"(C:\Program Files\)"sv.size() );
-                path_view.remove_suffix( name.size() + 1 );
-                if ( path_view.size() != 3 && path_view.size() != 4 ) {
+            const auto& [ proc_path_buffer, proc_path_size ]{ _.value() };
+            std::wstring_view proc_path_view{ proc_path_buffer.data(), proc_path_size };
+            if ( proc_path_view.starts_with( LR"(C:\Program Files\)"sv ) ) {
+                proc_path_view.remove_prefix( LR"(C:\Program Files\)"sv.size() );
+                proc_path_view.remove_suffix( proc_name.size() + 1uz );
+                if ( proc_path_view.size() != 3uz && proc_path_view.size() != 4uz ) {
                     return false;
                 }
-                if ( !name.contains( path_view ) ) {
+                if ( !proc_name.contains( proc_path_view ) ) {
                     return false;
                 }
                 return true;
             }
-            if ( path_view.starts_with( LR"(C:\Program Files (x86)\)"sv ) ) {
-                path_view.remove_prefix( LR"(C:\Program Files (x86)\)"sv.size() );
-                path_view.remove_suffix( name.size() + 1 );
-                if ( path_view.size() != 3 && path_view.size() != 4 ) {
+            if ( proc_path_view.starts_with( LR"(C:\Program Files (x86)\)"sv ) ) {
+                proc_path_view.remove_prefix( LR"(C:\Program Files (x86)\)"sv.size() );
+                proc_path_view.remove_suffix( proc_name.size() + 1 );
+                if ( proc_path_view.size() != 3uz && proc_path_view.size() != 4uz ) {
                     return false;
                 }
-                if ( !name.contains( path_view ) ) {
+                if ( !proc_name.contains( proc_path_view ) ) {
                     return false;
                 }
                 return true;
             }
-            if ( path_view.starts_with( LR"(C:\)"sv ) && is_lower_case( path_view.data()[ 3 ] ) ) {
-                path_view.remove_prefix( LR"(C:\)"sv.size() + 1 );
-                path_view.remove_suffix( name.size() + 1 );
-                if ( std::ranges::all_of( path_view, is_number ) ) {
-                    return true;
-                }
-                return false;
+            if ( proc_path_view.starts_with( LR"(C:\)"sv ) && is_lower_case( proc_path_view.data()[ 3 ] ) ) {
+                proc_path_view.remove_prefix( LR"(C:\)"sv.size() + 1uz );
+                proc_path_view.remove_suffix( proc_name.size() + 1uz );
+                return std::ranges::all_of( proc_path_view, is_number );
             }
             return false;
         }
