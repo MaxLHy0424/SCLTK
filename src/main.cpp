@@ -415,13 +415,13 @@ namespace scltk
         }
         auto is_cbms_daemon( const PROCESSENTRY32W& proc_entry ) noexcept
         {
-            constexpr auto extension_name{ L".exe"sv };
+            constexpr auto extension_name_size{ L".exe"sv.size() };
             constexpr auto is_number_or_letter{ []( const wchar_t ch ) static noexcept
             {
                 return is_letter( ch ) || is_number( ch );
             } };
             const auto file_main_name_size{
-              static_cast< std::size_t >( std::wcslen( proc_entry.szExeFile ) - extension_name.size() ) };
+              static_cast< std::size_t >( std::wcslen( proc_entry.szExeFile ) - extension_name_size ) };
             if ( ( file_main_name_size != 6uz && file_main_name_size != 7uz )
                  || !std::ranges::all_of( std::wstring_view{ proc_entry.szExeFile, file_main_name_size }, is_number_or_letter ) )
             {
@@ -438,7 +438,7 @@ namespace scltk
             const auto& [ proc_path_buffer, proc_path_size ]{ _.value() };
             std::wstring_view proc_path_view{ proc_path_buffer.data(), proc_path_size };
             if ( file_main_name_size == 7uz && proc_path_size > LR"(C:\_\a123456\a1b2c3d.exe)"sv.size() ) {
-                proc_path_view.remove_suffix( 1uz + 7uz + extension_name.size() );
+                proc_path_view.remove_suffix( 1uz + 7uz + extension_name_size );
                 if ( const auto parent_directory{ proc_path_view.subview( proc_path_view.size() - ( 1uz + 1uz + 6uz ) ) };
                      parent_directory.data()[ 0 ] == L'\\' && is_letter( parent_directory.data()[ 1 ] )
                      && std::ranges::all_of( parent_directory.subview( 2 ), is_number ) )
@@ -447,7 +447,7 @@ namespace scltk
                 }
             }
             if ( file_main_name_size == 6uz && proc_path_size > LR"(C:\_\tool\CBCS\yesok_CBCS\a1b2c3.exe)"sv.size() ) {
-                proc_path_view.remove_suffix( 1uz + 6uz + extension_name.size() );
+                proc_path_view.remove_suffix( 1uz + 6uz + extension_name_size );
                 if ( proc_path_view.ends_with( LR"(\tool\CBCS\yesok_CBCS)"sv ) ) {
                     return true;
                 }
