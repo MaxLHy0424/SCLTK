@@ -7,8 +7,8 @@ function Get-GitInfo {
     $in_repo = & git rev-parse --is-inside-work-tree 2>$null
     if ($LASTEXITCODE -ne 0 -or -not $in_repo) {
         return @{
-            branch = "<Unknown Branch>"
-            commit = "<Work In Progress>"
+            branch = "(Unknown Branch)"
+            commit = "(Work In Progress)"
         }
     }
     $branch = & git branch --show-current 2>$null
@@ -18,12 +18,12 @@ function Get-GitInfo {
     $status = & git status --porcelain 2>$null
     $has_changes = ($status -split "`n" | Where-Object { $_ -ne "" }).Count -gt 0
     if ($has_changes) {
-        $commit = "<Work In Progress>"
+        $commit = "(Work In Progress)"
     }
     else {
         $commit = & git rev-parse HEAD 2>$null
         if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrEmpty($commit)) {
-            $commit = "<Unknown Hash>"
+            $commit = "(Unknown Hash)"
         }
     }
     return @{
