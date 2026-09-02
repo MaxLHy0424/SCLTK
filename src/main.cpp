@@ -514,12 +514,12 @@ namespace scltk
             if ( proc_handle.get() == nullptr ) [[unlikely]] {
                 return false;
             }
-            const auto proc_path{ get_proc_path( proc_handle ) };
-            if ( !proc_path.has_value() ) [[unlikely]] {
+            const auto _{ get_proc_path( proc_handle ) };
+            if ( !_.has_value() ) [[unlikely]] {
                 return false;
             }
-            const auto& [ path, _ ]{ proc_path.value() };
-            const auto sign_name{ get_sign_name( path ) };
+            const auto& [ proc_path_buffer, proc_path_size ]{ _.value() };
+            const auto sign_name{ get_sign_name( proc_path_buffer ) };
             if ( !sign_name.has_value() ) [[unlikely]] {
                 return false;
             }
@@ -944,13 +944,13 @@ namespace scltk
           custom_rule_binding_< L"restore_helper"_cs, custom_rules.restore_helpers > >;
         static constexpr auto splitting_char_{ ':' };
         static_assert( !details_::is_whitespace< char >( splitting_char_ ) );
-        static auto load_( const std::string_view unconverted_line )
+        static auto load_( const std::string_view utf8_line )
         {
-            const auto converted{ cpp_utils::to_wstring( unconverted_line, CP_UTF8 ) };
-            if ( !converted.has_value() ) [[unlikely]] {
+            const auto _{ cpp_utils::to_wstring( utf8_line, CP_UTF8 ) };
+            if ( !_.has_value() ) [[unlikely]] {
                 return;
             }
-            std::wstring_view line{ converted.value() };
+            std::wstring_view line{ _.value() };
             [ & ]< std::size_t... Is >( const std::index_sequence< Is... > )
             {
                 ( [ & ]
@@ -990,11 +990,11 @@ namespace scltk
                 ( [ & ]
                 {
                     using current_binding = custom_rule_bindings_::at< Is >;
-                    const auto converted{ cpp_utils::to_string( current_binding::flag.view(), CP_UTF8 ) };
-                    if ( !converted.has_value() ) [[unlikely]] {
+                    const auto _{ cpp_utils::to_string( current_binding::flag.view(), CP_UTF8 ) };
+                    if ( !_.has_value() ) [[unlikely]] {
                         return;
                     }
-                    const auto& flag{ converted.value() };
+                    const auto& flag{ _.value() };
                     for ( const auto& item : current_binding::items ) {
                         const auto line{ cpp_utils::to_string( [ & ] noexcept -> std::wstring_view
                         {
