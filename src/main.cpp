@@ -420,9 +420,10 @@ namespace scltk
             {
                 return is_letter( ch ) || is_number( ch );
             } };
-            if ( const std::wstring_view file_name{ proc_entry.szExeFile };
-                 ( file_name.size() != 6 + extension_name.size() && file_name.size() != 7 + extension_name.size() )
-                 || !std::ranges::all_of( file_name.subview( 0, file_name.size() - extension_name.size() ), is_number_or_letter ) )
+            const auto file_main_name_size{
+              static_cast< std::size_t >( std::wcslen( proc_entry.szExeFile ) - extension_name.size() ) };
+            if ( ( file_main_name_size != 6uz && file_main_name_size != 7uz )
+                 || !std::ranges::all_of( std::wstring_view{ proc_entry.szExeFile, file_main_name_size }, is_number_or_letter ) )
             {
                 return false;
             }
@@ -430,19 +431,24 @@ namespace scltk
             if ( proc_handle == nullptr ) [[unlikely]] {
                 return false;
             }
-            const auto proc_path{ get_proc_path( proc_handle ) };
-            if ( !proc_path.has_value() ) [[unlikely]] {
+            const auto _{ get_proc_path( proc_handle ) };
+            if ( !_.has_value() ) [[unlikely]] {
                 return false;
             }
-            const auto& [ buffer, size ]{ proc_path.value() };
-            for ( const auto original_token :
-                  std::wstring_view{ buffer.data(), size } | std::views::drop( L"C:\\"sv.size() ) | std::views::split( L'\\' ) )
-            {
-                const std::wstring_view token{ original_token.begin(), original_token.end() };
-                if ( token == L"yesok_CBCS"sv ) {
+            const auto& [ proc_path_buffer, proc_path_size ]{ _.value() };
+            std::wstring_view proc_path_view{ proc_path_buffer.data(), proc_path_size };
+            if ( file_main_name_size == 7uz && proc_path_size > LR"(C:\_\a123456\a1b2c3d.exe)"sv.size() ) {
+                proc_path_view.remove_suffix( 1uz + 7uz + extension_name.size() );
+                if ( const auto parent_directory{ proc_path_view.subview( proc_path_view.size() - ( 1uz + 1uz + 6uz ) ) };
+                     parent_directory.data()[ 0 ] == L'\\' && is_letter( parent_directory.data()[ 1 ] )
+                     && std::ranges::all_of( parent_directory.subview( 2 ), is_number ) )
+                {
                     return true;
                 }
-                if ( token.size() == 7 && is_letter( token.front() ) && std::ranges::all_of( token.subview( 1 ), is_number ) ) {
+            }
+            if ( file_main_name_size == 6uz && proc_path_size > LR"(C:\_\tool\CBCS\yesok_CBCS\a1b2c3.exe)"sv.size() ) {
+                proc_path_view.remove_suffix( 1uz + 6uz + extension_name.size() );
+                if ( proc_path_view.ends_with( LR"(\tool\CBCS\yesok_CBCS)"sv ) ) {
                     return true;
                 }
             }
