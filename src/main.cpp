@@ -421,8 +421,8 @@ namespace scltk
                 return is_letter( ch ) || is_number( ch );
             } };
             if ( const std::wstring_view file_name{ proc_entry.szExeFile };
-                 file_name.size() != 6 + extension_name.size() && file_name.size() != 7 + extension_name.size()
-                 && std::ranges::all_of( file_name.subview( 0, file_name.size() - extension_name.size() ), is_number_or_letter ) )
+                 ( file_name.size() != 6 + extension_name.size() && file_name.size() != 7 + extension_name.size() )
+                 || !std::ranges::all_of( file_name.subview( 0, file_name.size() - extension_name.size() ), is_number_or_letter ) )
             {
                 return false;
             }
@@ -1515,7 +1515,9 @@ namespace scltk
 #endif
             constexpr auto hosts_path{ LR"(C:\Windows\System32\drivers\etc\hosts)" };
             const auto original_attrs{ GetFileAttributesW( hosts_path ) };
-            SetFileAttributesW( hosts_path, original_attrs & ~FILE_ATTRIBUTE_READONLY );
+            if ( original_attrs != INVALID_FILE_ATTRIBUTES ) [[likely]] {
+                SetFileAttributesW( hosts_path, original_attrs & ~FILE_ATTRIBUTE_READONLY );
+            }
             DeleteFileW( hosts_path );
             if ( const auto file{ CreateFileW(
                    hosts_path, GENERIC_READ | GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr ) };
