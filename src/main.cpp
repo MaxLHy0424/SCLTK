@@ -28,12 +28,12 @@
 #else
 # error "Unknown Edition!"
 #endif
+using namespace std::chrono_literals;
+using namespace std::string_view_literals;
+using namespace cpp_utils::const_string_literals;
 DEFINE_GUID( GUID_DEVCLASS_NET, 0x4d36e972, 0xe325, 0x11ce, 0xbf, 0xc1, 0x08, 0x00, 0x2b, 0xe1, 0x03, 0x18 );
 namespace scltk
 {
-    using namespace std::chrono_literals;
-    using namespace std::string_view_literals;
-    using namespace cpp_utils::const_string_literals;
     using ui_func_args_type = cpp_utils::console_ui::func_args;
     constexpr SHORT console_width{ 50 };
     constexpr SHORT console_height{ 25 };
@@ -2220,7 +2220,6 @@ namespace scltk
 }
 auto main() -> int
 {
-    using namespace std::string_view_literals;
     scltk::con.set_charset( scltk::charset_id )
       .set_title( scltk::generate_window_title().data() )
       .ignore_exit_signal( true )
