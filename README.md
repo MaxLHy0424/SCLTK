@@ -248,5 +248,5 @@ restore_helper: "abc toolkit.exe" restore
 
 ## ❤️ 致谢
 
-- [lzh173](https://github.com/lzh173)
-- [CLRA-org](https://github.com/CLRA-org)
+- [lzh173](https://github.com/lzh173)；
+- [CLRA-org](https://github.com/CLRA-org)。
