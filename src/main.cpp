@@ -864,7 +864,7 @@ namespace scltk
             {
                 cpp_utils::console_ui ui{ con };
                 ui.reserve( 2 + data_.size() * 2 )
-                  .add_back( make_title_text< "[ 配  置 ]", 1 >.view() )
+                  .add_back( make_title_text< "[ 配置 ]", 1 >.view() )
                   .add_back(
                     " < 返回 "sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity );
                 [ & ]< std::size_t... Is >( const std::index_sequence< Is... > )
@@ -1019,7 +1019,7 @@ namespace scltk
         {
             cpp_utils::console_ui ui{ con };
             ui.reserve( 3 )
-              .add_back( make_title_text< "[ 配  置 ]", 1 >.view() )
+              .add_back( make_title_text< "[ 配置 ]", 1 >.view() )
               .add_back( " < 返回 "sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
               .add_back(
                 "\n 自定义规则格式为 <flag>{空格}:{空格}<item>\n"
@@ -1166,7 +1166,7 @@ namespace scltk
         {
             cpp_utils::console_ui ui{ con };
             ui.reserve( 3 )
-              .add_back( make_title_text< "[ 配  置 ]", 1 >.view() )
+              .add_back( make_title_text< "[ 配置 ]", 1 >.view() )
               .add_back( " < 返回 "sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
               .add_back(
                 "\n 配置以行作为单位解析.\n\n"
@@ -1185,7 +1185,7 @@ namespace scltk
         {
             cpp_utils::print_without_formatting(
               std::constant_wrapper< cpp_utils::concat_const_string(
-                make_title_text< "[ 配  置 ]", 2 >, " -> 同步配置.\n\n"_cs ) >::value.view() );
+                make_title_text< "[ 配置 ]", 2 >, " -> 同步配置.\n\n"_cs ) >::value.view() );
             load_config( true );
             constexpr auto header{
               u8"# " INFO_FULL_NAME "\n# " INFO_VERSION " (" INFO_GIT_BRANCH " " INFO_GIT_COMMIT ")\n# UTF-8 编码\n" };
@@ -1216,7 +1216,7 @@ namespace scltk
         {
             cpp_utils::print_without_formatting(
               std::constant_wrapper< cpp_utils::concat_const_string(
-                make_title_text< "[ 配  置 ]", 2 >, " -> 尝试打开配置文件.\n\n"_cs ) >::value.view() );
+                make_title_text< "[ 配置 ]", 2 >, " -> 尝试打开配置文件.\n\n"_cs ) >::value.view() );
             static constexpr auto cmd_init{
               cpp_utils::concat_const_string( L"notepad.exe "_cs, cpp_utils::const_wstring{ config_file_name } ).data() };
             bool success{ false };
@@ -1254,7 +1254,7 @@ namespace scltk
         {
             cpp_utils::console_ui ui{ con };
             ui.reserve( 5 + ( decltype( nodes.ui_count() )::value + ... ) )
-              .add_back( make_title_text< "[ 配  置 ]", 1 >.view() )
+              .add_back( make_title_text< "[ 配置 ]", 1 >.view() )
               .add_back( " < 返回 "sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
               .add_back( " > 查看解析规则 "sv, details_::show_config_parsing_rules )
               .add_back( " > 同步配置 "sv, details_::sync_config )
@@ -1312,7 +1312,7 @@ namespace scltk
     {
         cpp_utils::console_ui ui{ con };
         ui.reserve( 4 )
-          .add_back( make_title_text< "[ 关  于 ]", 1 >.view() )
+          .add_back( make_title_text< "[ 关于 ]", 1 >.view() )
           .add_back( " < 返回 "sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
           .add_back(
             "\n[ 软件名 ]\n\n " INFO_FULL_NAME "\n\n (aka " INFO_SHORT_NAME ")\n\n[ 软件版本 ]\n\n " INFO_VERSION
@@ -1332,7 +1332,7 @@ namespace scltk
             static constexpr auto description{ Description };
             static auto execute()
             {
-                cpp_utils::print_without_formatting( make_title_text< "[ 工 具 箱 ]", 2 >.view() );
+                cpp_utils::print_without_formatting( make_title_text< "[ 工具箱 ]", 2 >.view() );
                 Func();
                 cpp_utils::print_without_formatting(
                   "\n"
@@ -1714,7 +1714,7 @@ namespace scltk
           details_::func_item< "重置 Chrome & Edge & Firefox 管理策略", details_::reset_common_web_browsers_policy > >;
         cpp_utils::console_ui ui{ con };
         ui.reserve( 4 + funcs::size )
-          .add_back( make_title_text< "[ 工 具 箱 ]", 1 >.view() )
+          .add_back( make_title_text< "[ 工具箱 ]", 1 >.view() )
           .add_back( " < 返回 "sv, quit, cpp_utils::console_text::foreground_green | cpp_utils::console_text::foreground_intensity )
           .add_back(
             "\n[ 快捷工具 ]\n\n"
@@ -1756,7 +1756,7 @@ namespace scltk
     {
         static auto crack()
         {
-            cpp_utils::print_without_formatting( make_title_text< "[ 破  解 ]", 2 >.view() );
+            cpp_utils::print_without_formatting( make_title_text< "[ 破解 ]", 2 >.view() );
             constexpr const auto& crack_restore_config_node{ std::get< crack_restore_config >( config_nodes ) };
             constexpr const auto& enabled_suspend_process{ crack_restore_config_node.at< "suspend_process" >() };
             if ( !proc_snapshot.valid() || !proc_snapshot.refresh() ) [[unlikely]] {
@@ -1842,7 +1842,7 @@ namespace scltk
         }
         static auto restore()
         {
-            cpp_utils::print_without_formatting( make_title_text< "[ 恢  复 ]", 2 >.view() );
+            cpp_utils::print_without_formatting( make_title_text< "[ 恢复 ]", 2 >.view() );
             if constexpr ( ( Backends::invoke_fn_enable_and_start_servs || ... ) ) {
                 cpp_utils::print_without_formatting( " -> 启用并启动服务.\n"sv );
                 (
@@ -2193,7 +2193,7 @@ namespace scltk
     {
         cpp_utils::console_ui ui{ scltk::con };
         ui.reserve( 8 + scltk::builtin_rules::size )
-          .add_back( scltk::make_title_text< "[ 主  页 ]", 1 >.view() )
+          .add_back( scltk::make_title_text< "[ 主页 ]", 1 >.view() )
           .add_back( " < 退出 "sv, scltk::quit, cpp_utils::console_text::foreground_red | cpp_utils::console_text::foreground_intensity )
           .add_back( " > 关于 "sv, scltk::info )
           .add_back( " > 配置 "sv, scltk::config_ui )
