@@ -1247,7 +1247,7 @@ namespace scltk
                   std::constant_wrapper< cpp_utils::concat_const_string( " (!) "_cs, msg_start, "失败"_cs, msg_end ) >::value.view(),
                   std::constant_wrapper< cpp_utils::concat_const_string( " (i) "_cs, msg_start, "成功"_cs, msg_end ) >::value.view() };
             }() };
-            cpp_utils::print_without_formatting( message[ static_cast< std::size_t >( success ) ] );
+            cpp_utils::print_without_formatting( message.data()[ static_cast< std::size_t >( success ) ] );
             con.press_any_key_to_continue();
             return func_back;
         }
