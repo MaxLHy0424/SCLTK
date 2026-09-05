@@ -222,26 +222,19 @@ namespace cpp_utils
         template < typename F >
         [[nodiscard]] inline auto with_service_dependencies( const SC_HANDLE service, F&& func ) noexcept
         {
-            constexpr DWORD stack_buffer_size{ 8192 };
-            std::array< BYTE, stack_buffer_size > stack_buffer [[indeterminate]];
             DWORD bytes_needed{ 0 };
-            const auto stack_config{ reinterpret_cast< LPQUERY_SERVICE_CONFIGW >( stack_buffer.data() ) };
-            if ( QueryServiceConfigW( service, stack_config, stack_buffer_size, &bytes_needed ) ) [[likely]] {
-                if ( stack_config->lpDependencies && *stack_config->lpDependencies != L'\0' ) {
-                    return func( stack_config->lpDependencies );
-                }
-                return static_cast< DWORD >( ERROR_SUCCESS );
-            }
-            if ( GetLastError() != ERROR_INSUFFICIENT_BUFFER ) [[unlikely]] {
+            if ( QueryServiceConfigW( service, nullptr, 0, &bytes_needed ) || GetLastError() != ERROR_INSUFFICIENT_BUFFER )
+              [[unlikely]]
+            {
                 return GetLastError();
             }
-            std::vector< BYTE > heap_buffer( bytes_needed );
-            const auto heap_config{ reinterpret_cast< LPQUERY_SERVICE_CONFIGW >( heap_buffer.data() ) };
-            if ( !QueryServiceConfigW( service, heap_config, bytes_needed, &bytes_needed ) ) [[unlikely]] {
-                return static_cast< DWORD >( ERROR_SUCCESS );
+            const auto buffer{ std::make_unique_for_overwrite< BYTE[] >( bytes_needed ) };
+            const auto config{ reinterpret_cast< LPQUERY_SERVICE_CONFIGW >( buffer.get() ) };
+            if ( !QueryServiceConfigW( service, config, bytes_needed, &bytes_needed ) ) [[unlikely]] {
+                return GetLastError();
             }
-            if ( heap_config->lpDependencies && *heap_config->lpDependencies != L'\0' ) {
-                return func( heap_config->lpDependencies );
+            if ( config->lpDependencies && *config->lpDependencies != L'\0' ) {
+                return func( config->lpDependencies );
             }
             return static_cast< DWORD >( ERROR_SUCCESS );
         }
