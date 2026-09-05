@@ -55,8 +55,9 @@ namespace scltk
     }
     auto enable_privileges() noexcept
     {
-        const auto current_process{ GetCurrentProcess() };
-        for ( const auto privilege : { L"" SE_DEBUG_NAME, L"" SE_SHUTDOWN_NAME } ) {
+        for ( const auto current_process{ GetCurrentProcess() };
+              const auto privilege : { L"" SE_DEBUG_NAME, L"" SE_SHUTDOWN_NAME } )
+        {
             ( void ) cpp_utils::set_privilege( current_process, privilege, true );
         }
     }
