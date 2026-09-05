@@ -53,7 +53,7 @@ args_opt_release := -Ofast \
                     -D_GLIBCXX_NO_ASSERTIONS \
                     -D_GLIBCXX_PARALLEL
 args_include     := -I$(include_path)
-args_library     := -ltre -liphlpapi -lsetupapi -lcrypt32 -lwinhttp -lwininet -lversion
+args_library     := -ltre -lsetupapi -lcfgmgr32 -lcrypt32 -lwinhttp -lwininet -lversion
 args_extra       := $(cpp_utils_windows_impl_nt0600_args)
 input_charset    := utf-8
 output_charset   := gbk

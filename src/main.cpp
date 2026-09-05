@@ -8,10 +8,10 @@
 #include <winsock2.h>
 #define TRE_WCHAR
 #define TRE_MULTIBYTE
+#include <cfgmgr32.h>
 #include <cpp_utils/const_string.hpp>
 #include <cpp_utils/windows_console.hpp>
 #include <initguid.h>
-#include <iphlpapi.h>
 #include <setupapi.h>
 #include <tre/tre.h>
 #include <wincrypt.h>
@@ -1559,9 +1559,9 @@ namespace scltk
             if ( !SetupDiSetClassInstallParamsW( device_info, p_device_info_data, &pcp.ClassInstallHeader, sizeof( pcp ) ) )
               [[unlikely]]
             {
-                return FALSE;
+                return;
             }
-            return SetupDiCallClassInstaller( DIF_PROPERTYCHANGE, device_info, p_device_info_data );
+            SetupDiCallClassInstaller( DIF_PROPERTYCHANGE, device_info, p_device_info_data );
         }
         auto relaunch_network_adapters() noexcept
         {
@@ -1576,29 +1576,6 @@ namespace scltk
             }
 #endif
             cpp_utils::print_without_formatting( " -> 重启网络适配器.\n"sv );
-            NET_LUID target_local_uid{};
-            wchar_t target_name [[indeterminate]][ 256 ];
-            ULONG out_buffer_length [[indeterminate]];
-            GetAdaptersAddresses( AF_UNSPEC, 0, nullptr, nullptr, &out_buffer_length );
-            if ( const auto buffer{ std::make_unique_for_overwrite< BYTE[] >( out_buffer_length ) };
-                 GetAdaptersAddresses( AF_UNSPEC, 0, nullptr, reinterpret_cast< PIP_ADAPTER_ADDRESSES >( buffer.get() ), &out_buffer_length )
-                 == ERROR_SUCCESS ) [[likely]]
-            {
-                auto current{ reinterpret_cast< PIP_ADAPTER_ADDRESSES >( buffer.get() ) };
-                while ( current != nullptr ) {
-                    if ( ( current->IfType == IF_TYPE_ETHERNET_CSMACD || current->IfType == IF_TYPE_IEEE80211 )
-                         && current->OperStatus == IfOperStatusUp )
-                    {
-                        target_local_uid = current->Luid;
-                        wcscpy_s( target_name, 256, current->Description );
-                        break;
-                    }
-                    current = current->Next;
-                }
-            }
-            if ( target_local_uid.Value == 0 ) [[unlikely]] {
-                return;
-            }
             struct null_dev_info_handle_checker final
             {
                 static auto operator()( const HDEVINFO h ) noexcept
@@ -1618,31 +1595,30 @@ namespace scltk
             if ( device_info.get() == INVALID_HANDLE_VALUE ) [[unlikely]] {
                 return;
             }
-            SP_DEVINFO_DATA device_info_data [[indeterminate]];
-            device_info_data.cbSize = sizeof( SP_DEVINFO_DATA );
-            bool found{ false };
-            for ( DWORD i{ 0 }; SetupDiEnumDeviceInfo( device_info.get(), i, &device_info_data ); ++i ) {
-                wchar_t buffer [[indeterminate]][ 256 ];
-                if ( !SetupDiGetDeviceRegistryPropertyW(
-                       device_info.get(), &device_info_data, SPDRP_FRIENDLYNAME, nullptr, reinterpret_cast< PBYTE >( buffer ),
-                       sizeof( buffer ), nullptr )
-                     && !SetupDiGetDeviceRegistryPropertyW(
-                       device_info.get(), &device_info_data, SPDRP_DEVICEDESC, nullptr, reinterpret_cast< PBYTE >( buffer ),
-                       sizeof( buffer ), nullptr ) )
-                {
-                    continue;
-                }
-                if ( wcscmp( buffer, target_name ) == 0 ) {
-                    found = true;
+            std::vector< SP_DEVINFO_DATA > devices;
+            for ( DWORD i{ 0 };; ++i ) {
+                SP_DEVINFO_DATA device_info_data [[indeterminate]];
+                device_info_data.cbSize = sizeof( SP_DEVINFO_DATA );
+                if ( !SetupDiEnumDeviceInfo( device_info.get(), i, &device_info_data ) ) {
                     break;
                 }
+                ULONG device_status [[indeterminate]];
+                ULONG device_problem [[indeterminate]];
+                if ( CM_Get_DevNode_Status( &device_status, &device_problem, device_info_data.DevInst, 0 ) == CR_SUCCESS
+                     && ( device_status & DN_STARTED ) != 0 )
+                {
+                    devices.emplace_back( device_info_data );
+                }
             }
-            if ( !found ) [[unlikely]] {
+            if ( devices.empty() ) [[unlikely]] {
                 return;
             }
-            if ( set_device_state( device_info.get(), &device_info_data, FALSE ) ) {
-                std::this_thread::sleep_for( 3s );
-                set_device_state( device_info.get(), &device_info_data, TRUE );
+            for ( auto& dev : devices ) {
+                set_device_state( device_info.get(), &dev, FALSE );
+            }
+            std::this_thread::sleep_for( 3s );
+            for ( auto& dev : devices ) {
+                set_device_state( device_info.get(), &dev, TRUE );
             }
         }
         auto fix_network() noexcept
