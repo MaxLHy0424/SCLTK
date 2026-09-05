@@ -1591,11 +1591,11 @@ namespace scltk
             wchar_t target_name [[indeterminate]][ 256 ];
             ULONG out_buffer_length [[indeterminate]];
             GetAdaptersAddresses( AF_UNSPEC, 0, nullptr, nullptr, &out_buffer_length );
-            if ( std::vector< BYTE > buffer( out_buffer_length );
-                 GetAdaptersAddresses( AF_UNSPEC, 0, nullptr, reinterpret_cast< PIP_ADAPTER_ADDRESSES >( buffer.data() ), &out_buffer_length )
+            if ( const auto buffer{ std::make_unique_for_overwrite< BYTE[] >( out_buffer_length ) };
+                 GetAdaptersAddresses( AF_UNSPEC, 0, nullptr, reinterpret_cast< PIP_ADAPTER_ADDRESSES >( buffer.get() ), &out_buffer_length )
                  == ERROR_SUCCESS ) [[likely]]
             {
-                auto current{ reinterpret_cast< PIP_ADAPTER_ADDRESSES >( buffer.data() ) };
+                auto current{ reinterpret_cast< PIP_ADAPTER_ADDRESSES >( buffer.get() ) };
                 while ( current != nullptr ) {
                     if ( ( current->IfType == IF_TYPE_ETHERNET_CSMACD || current->IfType == IF_TYPE_IEEE80211 )
                          && current->OperStatus == IfOperStatusUp )
