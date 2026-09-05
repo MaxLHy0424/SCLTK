@@ -1393,16 +1393,16 @@ namespace scltk
         }
         auto process_debugger_values( const HKEY root_key ) noexcept
         {
-            wchar_t sub_key_name [[indeterminate]][ 256 ];
+            std::array< wchar_t, 256 > sub_key_name [[indeterminate]];
             DWORD index{ 0 };
-            auto size{ static_cast< DWORD >( std::size( sub_key_name ) ) };
-            while ( RegEnumKeyExW( root_key, index, sub_key_name, &size, nullptr, nullptr, nullptr, nullptr ) == ERROR_SUCCESS )
+            DWORD size{ sub_key_name.size() };
+            while ( RegEnumKeyExW( root_key, index, sub_key_name.data(), &size, nullptr, nullptr, nullptr, nullptr ) == ERROR_SUCCESS )
             {
                 cpp_utils::scoped_reg_key_handle sub_key;
-                if ( RegOpenKeyExW( root_key, sub_key_name, 0, KEY_QUERY_VALUE | KEY_SET_VALUE, std::out_ptr( sub_key ) )
+                if ( RegOpenKeyExW( root_key, sub_key_name.data(), 0, KEY_QUERY_VALUE | KEY_SET_VALUE, std::out_ptr( sub_key ) )
                      == ERROR_SUCCESS )
                 {
-                    wchar_t value_data[ 1024 ];
+                    wchar_t value_data [[indeterminate]][ 1024 ];
                     DWORD data_size{ sizeof( value_data ) };
                     DWORD type{ 0 };
                     if ( RegQueryValueExW( sub_key.get(), L"Debugger", nullptr, &type, reinterpret_cast< LPBYTE >( value_data ), &data_size )
@@ -1413,7 +1413,7 @@ namespace scltk
                     }
                 }
                 ++index;
-                size = static_cast< DWORD >( std::size( sub_key_name ) );
+                size = static_cast< DWORD >( sub_key_name.size() );
             }
         }
         auto process_ifeo_path( const wchar_t* const path ) noexcept
