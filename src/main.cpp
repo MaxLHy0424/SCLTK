@@ -2,6 +2,7 @@
 #define _WIN32_WINNT 0x0601
 #define UNICODE
 #define _UNICODE
+#define WIN32_LEAN_AND_MEAN
 #define NOCOMM
 #define NOSOUND
 #define NORPC
