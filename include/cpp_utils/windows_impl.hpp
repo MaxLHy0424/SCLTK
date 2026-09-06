@@ -648,18 +648,6 @@ namespace cpp_utils
         CheckTokenMembership( nullptr, admins_group.get(), &is_admin );
         return static_cast< bool >( is_admin );
     }
-    inline auto clone_self() noexcept
-    {
-        std::array< wchar_t, MAX_PATH > file_path [[indeterminate]];
-        GetModuleFileNameW( nullptr, file_path.data(), MAX_PATH );
-        ShellExecuteW( nullptr, L"open", file_path.data(), nullptr, nullptr, SW_SHOWNORMAL );
-    }
-    inline auto clone_self_as_admin() noexcept
-    {
-        std::array< wchar_t, MAX_PATH > file_path [[indeterminate]];
-        GetModuleFileNameW( nullptr, file_path.data(), MAX_PATH );
-        ShellExecuteW( nullptr, L"runas", file_path.data(), nullptr, nullptr, SW_SHOWNORMAL );
-    }
 #else
 # error "must be compiled on the windows os"
 #endif
