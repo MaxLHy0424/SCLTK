@@ -2121,9 +2121,16 @@ namespace scltk
         struct background_thread_manager final
         {
             std::inplace_vector< std::thread, funcs.size() > threads{};
-            background_thread_manager() noexcept                          = default;
-            background_thread_manager( const background_thread_manager& ) = delete;
-            background_thread_manager( background_thread_manager&& )      = default;
+            auto operator=( const background_thread_manager& ) -> background_thread_manager&     = delete;
+            auto operator=( background_thread_manager&& ) noexcept -> background_thread_manager& = default;
+            background_thread_manager()
+            {
+                for ( const auto& func : funcs ) {
+                    threads.unchecked_emplace_back( func, &std::as_const( stop_source ) );
+                }
+            }
+            background_thread_manager( const background_thread_manager& )     = delete;
+            background_thread_manager( background_thread_manager&& ) noexcept = default;
             ~background_thread_manager() noexcept
             {
                 ( void ) stop_source.test_and_set( std::memory_order_release );
@@ -2134,11 +2141,7 @@ namespace scltk
                 }
             }
         };
-        background_thread_manager mgr;
-        for ( const auto stop_token{ &std::as_const( stop_source ) }; const auto& func : funcs ) {
-            mgr.threads.unchecked_emplace_back( func, stop_token );
-        }
-        return mgr;
+        return background_thread_manager{};
     }
     namespace details_
     {
