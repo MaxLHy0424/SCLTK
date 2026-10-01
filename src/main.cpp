@@ -1399,7 +1399,7 @@ namespace scltk
                 DWORD buffer_size{ static_cast< DWORD >( sub_key_name.size() ) };
                 const auto result{ RegEnumKeyExW(
                   root_key.get(), index++, sub_key_name.data(), &buffer_size, nullptr, nullptr, nullptr, nullptr ) };
-                if ( result == ERROR_NO_MORE_FILES ) [[likely]] {
+                if ( result == ERROR_NO_MORE_ITEMS ) [[likely]] {
                     break;
                 }
                 if ( result != ERROR_SUCCESS ) [[unlikely]] {
