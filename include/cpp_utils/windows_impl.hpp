@@ -272,7 +272,7 @@ namespace cpp_utils
             }
             auto result{ true };
             do {
-                result = func( std::as_const( proc_entry ) );
+                result &= !!func( std::as_const( proc_entry ) );
             } while ( Process32NextW( snapshot_value, &proc_entry ) );
             return result;
         }
