@@ -378,7 +378,7 @@ namespace cpp_utils
         static inline constexpr auto any_of{ [] static consteval noexcept
         {
             if ( empty_ ) {
-                return true;
+                return false;
             } else {
                 return ( Pred< Ts >::value || ... );
             }
