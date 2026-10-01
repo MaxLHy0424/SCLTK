@@ -994,6 +994,9 @@ namespace scltk
                     }
                     line.remove_prefix( 1 );
                     line = details_::trim_leading_whitespace( line );
+                    if ( line.empty() ) [[unlikely]] {
+                        return true;
+                    }
                     current_binding::items.emplace_back( line );
                     return true;
                 }() || ... );
