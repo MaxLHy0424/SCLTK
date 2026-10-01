@@ -192,113 +192,6 @@ namespace cpp_utils
         {
             FreeSid( p );
         } ) >;
-        template < typename F >
-        [[nodiscard]] inline auto
-          with_service( const std::wstring_view service_name, const DWORD scm_access, const DWORD service_access, F&& func ) noexcept
-        {
-            scoped_sc_handle scm{ OpenSCManagerW( nullptr, nullptr, scm_access ) };
-            if ( scm == nullptr ) [[unlikely]] {
-                return GetLastError();
-            }
-            scoped_sc_handle svc{ OpenServiceW( scm.get(), service_name.data(), service_access ) };
-            if ( svc == nullptr ) [[unlikely]] {
-                return GetLastError();
-            }
-            return func( scm.get(), svc.get() );
-        }
-        template < typename F >
-        [[nodiscard]] inline auto for_each_dependency( const wchar_t* deps, F&& func ) noexcept
-        {
-            DWORD result{ ERROR_SUCCESS };
-            auto current{ deps };
-            while ( *current != L'\0' ) [[likely]] {
-                if ( const auto r{ func( current ) }; r != ERROR_SUCCESS && result == ERROR_SUCCESS ) [[unlikely]] {
-                    result = r;
-                }
-                current += std::wcslen( current ) + 1;
-            }
-            return result;
-        }
-        template < typename F >
-        [[nodiscard]] inline auto with_service_dependencies( const SC_HANDLE service, F&& func ) noexcept
-        {
-            DWORD bytes_needed{ 0 };
-            if ( QueryServiceConfigW( service, nullptr, 0, &bytes_needed ) || GetLastError() != ERROR_INSUFFICIENT_BUFFER )
-              [[unlikely]]
-            {
-                return GetLastError();
-            }
-            const auto buffer{ std::make_unique_for_overwrite< BYTE[] >( bytes_needed ) };
-            const auto config{ reinterpret_cast< LPQUERY_SERVICE_CONFIGW >( buffer.get() ) };
-            if ( !QueryServiceConfigW( service, config, bytes_needed, &bytes_needed ) ) [[unlikely]] {
-                return GetLastError();
-            }
-            if ( config->lpDependencies && *config->lpDependencies != L'\0' ) {
-                return func( config->lpDependencies );
-            }
-            return static_cast< DWORD >( ERROR_SUCCESS );
-        }
-        [[nodiscard]] inline auto stop_service_and_dependencies( const SC_HANDLE scm, const SC_HANDLE service ) noexcept -> DWORD
-        {
-            auto result{ with_service_dependencies( service, [ & ]( const wchar_t* deps ) noexcept
-            {
-                return for_each_dependency( deps, [ & ]( const wchar_t* dep_name ) noexcept
-                {
-                    const scoped_sc_handle dep_svc{ OpenServiceW( scm, dep_name, SERVICE_STOP | SERVICE_QUERY_STATUS ) };
-                    if ( dep_svc == nullptr ) [[unlikely]] {
-                        return static_cast< DWORD >( ERROR_SUCCESS );
-                    }
-                    return stop_service_and_dependencies( scm, dep_svc.get() );
-                } );
-            } ) };
-            SERVICE_STATUS status [[indeterminate]];
-            if ( ControlService( service, SERVICE_CONTROL_STOP, &status ) ) [[likely]] {
-                using namespace std::chrono_literals;
-                bool query_ok{ true };
-                while ( query_ok && status.dwCurrentState == SERVICE_STOP_PENDING ) {
-                    query_ok = QueryServiceStatus( service, &status );
-                    std::this_thread::sleep_for( 50ms );
-                }
-                if ( !query_ok || status.dwCurrentState != SERVICE_STOPPED ) [[unlikely]] {
-                    result = ERROR_SERVICE_REQUEST_TIMEOUT;
-                }
-            } else if ( const auto err{ GetLastError() }; err != ERROR_SERVICE_NOT_ACTIVE ) [[unlikely]] {
-                result = err;
-            }
-            return result;
-        }
-        [[nodiscard]] inline auto start_service_and_dependencies( const SC_HANDLE scm, const SC_HANDLE service ) noexcept -> DWORD
-        {
-            const auto result{ with_service_dependencies( service, [ & ]( const wchar_t* deps ) noexcept -> DWORD
-            {
-                return for_each_dependency( deps, [ & ]( const wchar_t* dep_name ) noexcept -> DWORD
-                {
-                    if ( *dep_name == L'@' ) [[unlikely]] {
-                        return ERROR_SUCCESS;
-                    }
-                    const scoped_sc_handle dep_svc{ OpenServiceW( scm, dep_name, SERVICE_START | SERVICE_QUERY_STATUS ) };
-                    if ( dep_svc == nullptr ) [[unlikely]] {
-                        return ERROR_SUCCESS;
-                    }
-                    SERVICE_STATUS status [[indeterminate]];
-                    if ( QueryServiceStatus( dep_svc.get(), &status )
-                         && ( status.dwCurrentState == SERVICE_RUNNING || status.dwCurrentState == SERVICE_START_PENDING ) )
-                    {
-                        return ERROR_SUCCESS;
-                    }
-                    return start_service_and_dependencies( scm, dep_svc.get() );
-                } );
-            } ) };
-            if ( result != ERROR_SUCCESS ) [[unlikely]] {
-                return result;
-            }
-            if ( !StartServiceW( service, 0, nullptr ) ) [[unlikely]] {
-                if ( const auto err{ GetLastError() }; err != ERROR_SERVICE_ALREADY_RUNNING ) [[unlikely]] {
-                    return err;
-                }
-            }
-            return ERROR_SUCCESS;
-        }
     }
     [[nodiscard]] inline auto set_privilege( const HANDLE proc, const wchar_t* const privilege, const bool is_enabled ) noexcept
     {
@@ -600,40 +493,175 @@ namespace cpp_utils
         return RegDeleteTreeW( key_handle.get(), sub_key.data() );
 # endif
     }
-    [[nodiscard]] inline auto set_service_start_type( const std::wstring_view service_name, const DWORD start_type ) noexcept
+    class service_manager final
     {
-        return details_::with_service(
-          service_name, SC_MANAGER_CONNECT, SERVICE_CHANGE_CONFIG,
-          [ start_type ]( const SC_HANDLE, const SC_HANDLE svc ) noexcept -> DWORD
+      private:
+        scoped_sc_handle scm_{};
+        template < typename F >
+        [[nodiscard]] static auto for_each_dependency( const wchar_t* deps, F&& func ) noexcept
         {
-            if ( !ChangeServiceConfigW(
-                   svc, SERVICE_NO_CHANGE, start_type, SERVICE_NO_CHANGE, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
-                   nullptr ) ) [[unlikely]]
+            DWORD result{ ERROR_SUCCESS };
+            auto current{ deps };
+            while ( *current != L'\0' ) [[likely]] {
+                if ( const auto r{ func( current ) }; r != ERROR_SUCCESS && result == ERROR_SUCCESS ) [[unlikely]] {
+                    result = r;
+                }
+                current += std::wcslen( current ) + 1;
+            }
+            return result;
+        }
+        template < typename F >
+        [[nodiscard]] static auto with_service_dependencies( const SC_HANDLE service, F&& func ) noexcept
+        {
+            DWORD bytes_needed{ 0 };
+            if ( QueryServiceConfigW( service, nullptr, 0, &bytes_needed ) || GetLastError() != ERROR_INSUFFICIENT_BUFFER )
+              [[unlikely]]
             {
                 return GetLastError();
             }
+            const auto buffer{ std::make_unique_for_overwrite< BYTE[] >( bytes_needed ) };
+            const auto config{ reinterpret_cast< LPQUERY_SERVICE_CONFIGW >( buffer.get() ) };
+            if ( !QueryServiceConfigW( service, config, bytes_needed, &bytes_needed ) ) [[unlikely]] {
+                return GetLastError();
+            }
+            if ( config->lpDependencies && *config->lpDependencies != L'\0' ) {
+                return func( config->lpDependencies );
+            }
+            return static_cast< DWORD >( ERROR_SUCCESS );
+        }
+      public:
+        [[nodiscard]] auto valid() const noexcept
+        {
+            return scm_ != nullptr;
+        }
+        [[nodiscard]] auto refresh() noexcept
+        {
+            const auto new_scm{ OpenSCManagerW( nullptr, nullptr, SC_MANAGER_CONNECT ) };
+            if ( new_scm == nullptr ) [[unlikely]] {
+                return false;
+            }
+            scm_.reset( new_scm );
+            return true;
+        }
+        [[nodiscard]] auto open_service( const std::wstring_view name, const DWORD desired_access ) const noexcept
+        {
+            if ( scm_ == nullptr ) [[unlikely]] {
+                SetLastError( ERROR_INVALID_HANDLE );
+                return scoped_sc_handle{};
+            }
+            return scoped_sc_handle{ OpenServiceW( scm_.get(), name.data(), desired_access ) };
+        }
+        [[nodiscard]] auto start_by_handle( const SC_HANDLE service ) const noexcept -> DWORD
+        {
+            if ( !valid() ) [[unlikely]] {
+                return ERROR_INVALID_HANDLE;
+            }
+            const auto result{ with_service_dependencies( service, [ & ]( const wchar_t* deps ) noexcept -> DWORD
+            {
+                return for_each_dependency( deps, [ & ]( const wchar_t* dep_name ) noexcept -> DWORD
+                {
+                    if ( *dep_name == L'@' ) [[unlikely]] {
+                        return ERROR_SUCCESS;
+                    }
+                    const auto dep_service{ open_service( dep_name, SERVICE_START | SERVICE_QUERY_STATUS | SERVICE_QUERY_CONFIG ) };
+                    if ( dep_service == nullptr ) [[unlikely]] {
+                        return ERROR_SUCCESS;
+                    }
+                    SERVICE_STATUS status [[indeterminate]];
+                    if ( QueryServiceStatus( dep_service.get(), &status )
+                         && ( status.dwCurrentState == SERVICE_RUNNING || status.dwCurrentState == SERVICE_START_PENDING ) )
+                    {
+                        return ERROR_SUCCESS;
+                    }
+                    return start_by_handle( dep_service.get() );
+                } );
+            } ) };
+            if ( result != ERROR_SUCCESS ) [[unlikely]] {
+                return result;
+            }
+            if ( !StartServiceW( service, 0, nullptr ) ) [[unlikely]] {
+                if ( const auto err{ GetLastError() }; err != ERROR_SERVICE_ALREADY_RUNNING ) [[unlikely]] {
+                    return err;
+                }
+            }
             return ERROR_SUCCESS;
-        } );
-    }
-    [[nodiscard]] inline auto stop_service_with_dependencies( const std::wstring_view service_name )
-    {
-        return details_::with_service(
-          service_name, SC_MANAGER_CONNECT | SC_MANAGER_ENUMERATE_SERVICE,
-          SERVICE_STOP | SERVICE_QUERY_STATUS | SERVICE_ENUMERATE_DEPENDENTS,
-          []( const SC_HANDLE scm, const SC_HANDLE svc ) static noexcept -> DWORD
+        }
+        [[nodiscard]] auto start_by_name( const std::wstring_view name ) const noexcept -> DWORD
         {
-            return details_::stop_service_and_dependencies( scm, svc );
-        } );
-    }
-    [[nodiscard]] inline auto start_service_with_dependencies( const std::wstring_view service_name )
-    {
-        return details_::with_service(
-          service_name, SC_MANAGER_CONNECT, SERVICE_START | SERVICE_QUERY_STATUS | SERVICE_QUERY_CONFIG,
-          []( const SC_HANDLE scm, const SC_HANDLE svc ) static noexcept -> DWORD
+            const auto service{ open_service( name, SERVICE_START | SERVICE_QUERY_STATUS | SERVICE_QUERY_CONFIG ) };
+            if ( service == nullptr ) [[unlikely]] {
+                return GetLastError();
+            }
+            return start_by_handle( service.get() );
+        }
+        [[nodiscard]] auto stop_by_handle( const SC_HANDLE service ) const noexcept -> DWORD
         {
-            return details_::start_service_and_dependencies( scm, svc );
-        } );
-    }
+            if ( !valid() ) [[unlikely]] {
+                return ERROR_INVALID_HANDLE;
+            }
+            auto result{ with_service_dependencies( service, [ & ]( const wchar_t* deps ) noexcept
+            {
+                return for_each_dependency( deps, [ & ]( const wchar_t* dep_name ) noexcept
+                {
+                    const auto dep_service{ open_service( dep_name, SERVICE_STOP | SERVICE_QUERY_STATUS | SERVICE_QUERY_CONFIG ) };
+                    if ( dep_service == nullptr ) [[unlikely]] {
+                        return static_cast< DWORD >( ERROR_SUCCESS );
+                    }
+                    return stop_by_handle( dep_service.get() );
+                } );
+            } ) };
+            SERVICE_STATUS status [[indeterminate]];
+            if ( ControlService( service, SERVICE_CONTROL_STOP, &status ) ) [[likely]] {
+                using namespace std::chrono_literals;
+                bool query_ok{ true };
+                while ( query_ok && status.dwCurrentState == SERVICE_STOP_PENDING ) {
+                    query_ok = QueryServiceStatus( service, &status );
+                    std::this_thread::sleep_for( 50ms );
+                }
+                if ( !query_ok || status.dwCurrentState != SERVICE_STOPPED ) [[unlikely]] {
+                    result = ERROR_SERVICE_REQUEST_TIMEOUT;
+                }
+            } else if ( const auto err{ GetLastError() }; err != ERROR_SERVICE_NOT_ACTIVE ) [[unlikely]] {
+                result = err;
+            }
+            return result;
+        }
+        [[nodiscard]] auto stop_by_name( const std::wstring_view name ) const noexcept -> DWORD
+        {
+            const auto service{ open_service( name, SERVICE_STOP | SERVICE_QUERY_STATUS | SERVICE_QUERY_CONFIG ) };
+            if ( service == nullptr ) [[unlikely]] {
+                return GetLastError();
+            }
+            return stop_by_handle( service.get() );
+        }
+        [[nodiscard]] auto set_start_type_by_handle( const SC_HANDLE service, const DWORD start_type ) const noexcept -> DWORD
+        {
+            if ( !ChangeServiceConfigW(
+                   service, SERVICE_NO_CHANGE, start_type, SERVICE_NO_CHANGE, nullptr, nullptr, nullptr, nullptr, nullptr,
+                   nullptr, nullptr ) ) [[unlikely]]
+            {
+                return GetLastError();
+            }
+            return static_cast< DWORD >( ERROR_SUCCESS );
+        }
+        [[nodiscard]] auto set_start_type_by_name( const std::wstring_view name, const DWORD start_type ) const noexcept -> DWORD
+        {
+            const auto service{ open_service( name, SERVICE_CHANGE_CONFIG ) };
+            if ( service == nullptr ) [[unlikely]] {
+                return GetLastError();
+            }
+            return set_start_type_by_handle( service.get(), start_type );
+        }
+        auto operator=( const service_manager& ) -> service_manager& = delete;
+        auto operator=( service_manager&& ) -> service_manager&      = delete;
+        service_manager() noexcept
+        {
+            ( void ) refresh();
+        }
+        service_manager( const service_manager& ) = delete;
+        service_manager( service_manager&& )      = delete;
+        ~service_manager()                        = default;
+    };
     [[nodiscard]] inline auto is_run_as_admin() noexcept
     {
         SID_IDENTIFIER_AUTHORITY nt_authority{ SECURITY_NT_AUTHORITY };

@@ -50,6 +50,7 @@ namespace scltk
     constexpr auto make_item_text{ cpp_utils::concat_const_string( " > "_cs, Text, " "_cs ) };
     const cpp_utils::console con;
     cpp_utils::process_snapshot proc_snapshot;
+    cpp_utils::service_manager serv_manager;
     constexpr auto quit() noexcept
     {
         return func_exit;
@@ -1873,16 +1874,16 @@ namespace scltk
         static auto enable_and_start_servs() noexcept
         {
             for ( const auto& serv : serv_names ) {
-                ( void ) cpp_utils::set_service_start_type( serv, cpp_utils::service_flag::auto_start );
-                ( void ) cpp_utils::start_service_with_dependencies( serv );
+                ( void ) serv_manager.set_start_type_by_name( serv, cpp_utils::service_flag::auto_start );
+                ( void ) serv_manager.start_by_name( serv );
             }
         }
         static constexpr auto invoke_fn_disable_and_stop_servs{ !serv_names.empty() };
         static auto disable_and_stop_servs() noexcept
         {
             for ( const auto& serv : serv_names ) {
-                ( void ) cpp_utils::set_service_start_type( serv, cpp_utils::service_flag::disabled_start );
-                ( void ) cpp_utils::stop_service_with_dependencies( serv );
+                ( void ) serv_manager.set_start_type_by_name( serv, cpp_utils::service_flag::disabled_start );
+                ( void ) serv_manager.stop_by_name( serv );
             }
         }
         static constexpr auto invoke_fn_crack_helper{
@@ -2002,16 +2003,16 @@ namespace scltk
         static auto enable_and_start_servs() noexcept
         {
             for ( const auto& serv_name : custom_rules.serv_names ) {
-                ( void ) cpp_utils::set_service_start_type( serv_name, cpp_utils::service_flag::auto_start );
-                ( void ) cpp_utils::start_service_with_dependencies( serv_name );
+                ( void ) serv_manager.set_start_type_by_name( serv_name, cpp_utils::service_flag::auto_start );
+                ( void ) serv_manager.start_by_name( serv_name );
             }
         }
         static constexpr auto invoke_fn_disable_and_stop_servs{ true };
         static auto disable_and_stop_servs() noexcept
         {
             for ( const auto& serv_name : custom_rules.serv_names ) {
-                ( void ) cpp_utils::set_service_start_type( serv_name, cpp_utils::service_flag::disabled_start );
-                ( void ) cpp_utils::stop_service_with_dependencies( serv_name );
+                ( void ) serv_manager.set_start_type_by_name( serv_name, cpp_utils::service_flag::disabled_start );
+                ( void ) serv_manager.stop_by_name( serv_name );
             }
         }
         static auto execute_helpers_( const runtime_rule_node::string_item_type& helpers ) noexcept
@@ -2086,7 +2087,7 @@ namespace scltk
     }
     [[nodiscard]] auto create_background_threads()
     {
-        constexpr std::array funcs{ details_::forced_show };
+        static constexpr std::array funcs{ details_::forced_show };
         static std::atomic_flag stop_source{};
         struct background_thread_manager final
         {
