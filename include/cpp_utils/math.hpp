@@ -1,7 +1,7 @@
 #pragma once
-#include <cmath>
 #include <concepts>
 #include <numeric>
+#include <type_traits>
 namespace cpp_utils
 {
     template < std::integral T >
@@ -24,24 +24,39 @@ namespace cpp_utils
     [[nodiscard]] inline constexpr auto count_digits( const T n ) noexcept
     {
         using result_type = unsigned short;
-        if ( n == 0 ) {
-            return static_cast< result_type >( 1 );
-        }
-        auto abs_n{ std::abs( n ) };
-        result_type count{ 0 };
-        while ( abs_n > 0 ) {
-            abs_n /= 10;
-            ++count;
+        result_type count{ 1 };
+        auto value{ +n };
+        if constexpr ( std::is_signed_v< T > ) {
+            while ( value <= -10 || value >= 10 ) {
+                value /= 10;
+                ++count;
+            }
+        } else {
+            while ( value >= 10 ) {
+                value /= 10;
+                ++count;
+            }
         }
         return count;
     }
     template < typename T >
-    concept number = std::integral< T > || std::floating_point< T > || std::same_as< T, std::decay_t< T > >;
-    template < number T >
+    concept number = std::integral< T > || std::floating_point< T >;
+    template < typename T >
+    concept saturating_integer
+      = std::integral< T > && !std::same_as< std::remove_cv_t< T >, bool > && !std::same_as< std::remove_cv_t< T >, char >
+     && !std::same_as< std::remove_cv_t< T >, wchar_t > && !std::same_as< std::remove_cv_t< T >, char8_t >
+     && !std::same_as< std::remove_cv_t< T >, char16_t > && !std::same_as< std::remove_cv_t< T >, char32_t >;
+    template < saturating_integer T >
     class sat_num final
     {
       private:
         T data_;
+        template < std::integral U >
+        static constexpr auto to_stored_( const U n ) noexcept
+        {
+            using promoted_type = decltype( +n );
+            return std::saturating_cast< T >( static_cast< promoted_type >( n ) );
+        }
       public:
         using value_type = T;
         [[nodiscard]] constexpr auto data() const noexcept
@@ -55,115 +70,115 @@ namespace cpp_utils
         template < number U >
         [[nodiscard]] constexpr auto operator<=>( const sat_num< U >& src ) const noexcept
         {
-            if constexpr ( std::is_floating_point_v< U > ) {
-                return data_ <=> static_cast< T >( src.data() );
+            if constexpr ( std::integral< U > ) {
+                return data_ <=> to_stored_( src.data() );
             } else {
-                return data_ <=> std::saturate_cast< T >( src.data() );
+                return data_ <=> src.data();
             }
         }
         template < number U >
         [[nodiscard]] constexpr auto operator<=>( const U n ) const noexcept
         {
-            if constexpr ( std::is_floating_point_v< U > ) {
-                return data_ <=> static_cast< T >( n );
+            if constexpr ( std::integral< U > ) {
+                return data_ <=> to_stored_( n );
             } else {
-                return data_ <=> std::saturate_cast< T >( n );
+                return data_ <=> n;
             }
         }
-        template < number U >
+        template < std::integral U >
         [[nodiscard]] constexpr auto operator+( const sat_num< U > src ) const noexcept
         {
-            return sat_num< T >{ std::add_sat< T >( data_, src.data() ) };
+            return sat_num< T >{ std::saturating_add( data_, to_stored_( src.data() ) ) };
         }
-        template < number U >
+        template < std::integral U >
         [[nodiscard]] constexpr auto operator-( const sat_num< U > src ) const noexcept
         {
-            return sat_num< T >{ std::sub_sat< T >( data_, src.data() ) };
+            return sat_num< T >{ std::saturating_sub( data_, to_stored_( src.data() ) ) };
         }
-        template < number U >
+        template < std::integral U >
         [[nodiscard]] constexpr auto operator*( const sat_num< U > src ) const noexcept
         {
-            return sat_num< T >{ std::mul_sat< T >( data_, src.data() ) };
+            return sat_num< T >{ std::saturating_mul( data_, to_stored_( src.data() ) ) };
         }
-        template < number U >
+        template < std::integral U >
         [[nodiscard]] constexpr auto operator/( const sat_num< U > src ) const noexcept
         {
-            return sat_num< T >{ std::div_sat< T >( data_, src.data() ) };
+            return sat_num< T >{ std::saturating_div( data_, to_stored_( src.data() ) ) };
         }
-        template < number U >
-        [[nodiscard]] constexpr auto& operator+=( const sat_num< U > src ) noexcept
+        template < std::integral U >
+        constexpr auto& operator+=( const sat_num< U > src ) noexcept
         {
-            data_ = std::add_sat< T >( data_, src.data() );
+            data_ = std::saturating_add( data_, to_stored_( src.data() ) );
             return *this;
         }
-        template < number U >
-        [[nodiscard]] constexpr auto& operator-=( const sat_num< U > src ) noexcept
+        template < std::integral U >
+        constexpr auto& operator-=( const sat_num< U > src ) noexcept
         {
-            data_ = std::sub_sat< T >( data_, src.data() );
+            data_ = std::saturating_sub( data_, to_stored_( src.data() ) );
             return *this;
         }
-        template < number U >
-        [[nodiscard]] constexpr auto& operator*=( const sat_num< U > src ) noexcept
+        template < std::integral U >
+        constexpr auto& operator*=( const sat_num< U > src ) noexcept
         {
-            data_ = std::mul_sat< T >( data_, src.data() );
+            data_ = std::saturating_mul( data_, to_stored_( src.data() ) );
             return *this;
         }
-        template < number U >
-        [[nodiscard]] constexpr auto& operator/=( const sat_num< U > src ) noexcept
+        template < std::integral U >
+        constexpr auto& operator/=( const sat_num< U > src ) noexcept
         {
-            data_ = std::div_sat< T >( data_, src.data() );
+            data_ = std::saturating_div( data_, to_stored_( src.data() ) );
             return *this;
         }
-        template < number U >
+        template < std::integral U >
         [[nodiscard]] constexpr auto operator+( const U n ) const noexcept
         {
-            return sat_num< T >{ std::add_sat< T >( data_, n ) };
+            return sat_num< T >{ std::saturating_add( data_, to_stored_( n ) ) };
         }
-        template < number U >
+        template < std::integral U >
         [[nodiscard]] constexpr auto operator-( const U n ) const noexcept
         {
-            return sat_num< T >{ std::sub_sat< T >( data_, n ) };
+            return sat_num< T >{ std::saturating_sub( data_, to_stored_( n ) ) };
         }
-        template < number U >
+        template < std::integral U >
         [[nodiscard]] constexpr auto operator*( const U n ) const noexcept
         {
-            return sat_num< T >{ std::mul_sat< T >( data_, n ) };
+            return sat_num< T >{ std::saturating_mul( data_, to_stored_( n ) ) };
         }
-        template < number U >
+        template < std::integral U >
         [[nodiscard]] constexpr auto operator/( const U n ) const noexcept
         {
-            return sat_num< T >{ std::div_sat< T >( data_, n ) };
+            return sat_num< T >{ std::saturating_div( data_, to_stored_( n ) ) };
         }
-        template < number U >
-        [[nodiscard]] constexpr auto& operator+=( const U n ) noexcept
+        template < std::integral U >
+        constexpr auto& operator+=( const U n ) noexcept
         {
-            data_ = std::add_sat< T >( data_, n );
+            data_ = std::saturating_add( data_, to_stored_( n ) );
             return *this;
         }
-        template < number U >
-        [[nodiscard]] constexpr auto& operator-=( const U n ) noexcept
+        template < std::integral U >
+        constexpr auto& operator-=( const U n ) noexcept
         {
-            data_ = std::sub_sat< T >( data_, n );
+            data_ = std::saturating_sub( data_, to_stored_( n ) );
             return *this;
         }
-        template < number U >
-        [[nodiscard]] constexpr auto& operator*=( const U n ) noexcept
+        template < std::integral U >
+        constexpr auto& operator*=( const U n ) noexcept
         {
-            data_ = std::mul_sat< T >( data_, n );
+            data_ = std::saturating_mul( data_, to_stored_( n ) );
             return *this;
         }
-        template < number U >
-        [[nodiscard]] constexpr auto& operator/=( const U n ) noexcept
+        template < std::integral U >
+        constexpr auto& operator/=( const U n ) noexcept
         {
-            data_ = std::div_sat< T >( data_, n );
+            data_ = std::saturating_div( data_, to_stored_( n ) );
             return *this;
         }
-        [[nodiscard]] constexpr auto& operator=( const sat_num< T >& src ) noexcept
+        constexpr auto& operator=( const sat_num< T >& src ) noexcept
         {
             data_ = src.data_;
             return *this;
         }
-        [[nodiscard]] constexpr auto& operator=( sat_num< T >&& src ) noexcept
+        constexpr auto& operator=( sat_num< T >&& src ) noexcept
         {
             data_     = src.data_;
             src.data_ = {};
@@ -182,7 +197,6 @@ namespace cpp_utils
         }
         ~sat_num() noexcept = default;
     };
-    template < typename T >
-        requires std::integral< T > || std::floating_point< T >
+    template < saturating_integer T >
     sat_num( T ) -> sat_num< std::decay_t< T > >;
 }
