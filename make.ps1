@@ -41,6 +41,20 @@ if (-not $current_edition) {
     Write-Error "Unknown edition!"
     exit 1
 }
+$make_path = (Get-Command make -CommandType Application -ErrorAction SilentlyContinue | Select-Object -First 1).Path
+if ($make_path) {
+    $msys_root = Split-Path -Path (Split-Path -Path (Split-Path -Path $make_path -Parent) -Parent) -Parent
+    $toolchain_name = switch ($current_edition.key.ToLower()) {
+        'mainline' { 'ucrt64' }
+        'legacy'   { 'mingw32' }
+    }
+    if ($toolchain_name) {
+        $toolchain_bin = Join-Path -Path $msys_root -ChildPath "$toolchain_name\bin"
+        if (Test-Path -Path $toolchain_bin) {
+            $env:PATH = "$toolchain_bin;$env:PATH"
+        }
+    }
+}
 $git_info = Get-GitInfo
 $meta_dir = Join-Path -Path "meta" -ChildPath $edition
 $old_info = Join-Path -Path $meta_dir -ChildPath "info.h"
