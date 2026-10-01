@@ -539,7 +539,7 @@ namespace cpp_utils
         }
         [[nodiscard]] auto refresh() noexcept
         {
-            const auto new_scm{ OpenSCManagerW( nullptr, nullptr, SC_MANAGER_CONNECT ) };
+            const auto new_scm{ OpenSCManagerW( nullptr, nullptr, SC_MANAGER_CONNECT | SC_MANAGER_ENUMERATE_SERVICE ) };
             if ( new_scm == nullptr ) [[unlikely]] {
                 return false;
             }
