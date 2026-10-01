@@ -79,7 +79,7 @@ SCLTK-Mainline 的发行版文件名为 `SCLTK-Mainline.exe`，SCLTK-Legacy 的�
 
 ### 3.1 破解与恢复
 
-破解/恢复电子教室软件相关选项。位于 `[ 选项 ]` 下。
+破解/恢复电子教室软件相关选项。在配置文件中位于 `[crack_restore]` 标签下。
 
 - **启动时破解**\
   在 SCLTK 启动并完成必要的初始化工作后，根据配置，执行全部破解规则（包括内建规则和自定义规则）。
@@ -88,7 +88,7 @@ SCLTK-Mainline 的发行版文件名为 `SCLTK-Mainline.exe`，SCLTK-Legacy 的�
 
 ### 3.2 窗口显示
 
-SCLTK 窗口相关选项。位于 `[ 选项 ]` 下。
+SCLTK 窗口相关选项。在配置文件中位于 `[window]` 标签下。
 
 - **置顶窗口**\
   每 50ms 强制显示窗口并设为置顶。
