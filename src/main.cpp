@@ -118,6 +118,27 @@ namespace scltk
             }
             return false;
         }
+        template < cpp_utils::character CharT >
+        constexpr auto trim_leading_whitespace( std::basic_string_view< CharT > text ) noexcept
+        {
+            while ( !text.empty() && is_whitespace( text.front() ) ) {
+                text.remove_prefix( 1 );
+            }
+            return text;
+        }
+        template < cpp_utils::character CharT >
+        constexpr auto trim_trailing_whitespace( std::basic_string_view< CharT > text ) noexcept
+        {
+            while ( !text.empty() && is_whitespace( text.back() ) ) {
+                text.remove_suffix( 1 );
+            }
+            return text;
+        }
+        template < cpp_utils::character CharT >
+        constexpr auto trim_whitespace( const std::basic_string_view< CharT > text ) noexcept
+        {
+            return trim_trailing_whitespace( trim_leading_whitespace( text ) );
+        }
         template < cpp_utils::character CharT, typename... Args >
             requires(
               ( std::same_as< std::decay_t< Args >, std::basic_string< CharT > >
@@ -799,6 +820,7 @@ namespace scltk
             auto load_( std::string_view line ) noexcept
             {
                 bool value [[indeterminate]];
+                line = trim_trailing_whitespace( line );
                 if ( line.ends_with( enabled_option_value_.view() ) ) {
                     line.remove_suffix( enabled_option_value_.size() );
                     value = true;
@@ -808,24 +830,12 @@ namespace scltk
                 } else {
                     return;
                 }
-                for ( auto whitespace_count{ 0uz }; const auto ch : line | std::views::reverse ) {
-                    if ( !is_whitespace< char >( ch ) ) {
-                        line.remove_suffix( whitespace_count );
-                        break;
-                    }
-                    ++whitespace_count;
-                }
-                if ( line.back() != splitting_char_ ) [[unlikely]] {
+                line = trim_trailing_whitespace( line );
+                if ( line.empty() || line.back() != splitting_char_ ) [[unlikely]] {
                     return;
                 }
                 line.remove_suffix( 1 );
-                for ( auto whitespace_count{ 0uz }; const auto ch : line | std::views::reverse ) {
-                    if ( !is_whitespace< char >( ch ) ) {
-                        line.remove_suffix( whitespace_count );
-                        break;
-                    }
-                    ++whitespace_count;
-                }
+                line = trim_trailing_whitespace( line );
                 [ & ]< std::size_t... Is >( const std::index_sequence< Is... > ) noexcept
                 {
                     (
@@ -953,7 +963,7 @@ namespace scltk
             if ( !_.has_value() ) [[unlikely]] {
                 return;
             }
-            std::wstring_view line{ _.value() };
+            auto line{ details_::trim_whitespace< wchar_t >( _.value() ) };
             [ & ]< std::size_t... Is >( const std::index_sequence< Is... > )
             {
                 ( [ & ]
@@ -963,24 +973,12 @@ namespace scltk
                         return false;
                     }
                     line.remove_prefix( current_binding::flag.size() );
-                    for ( auto whitespace_count{ 0uz }; const auto ch : line ) {
-                        if ( !details_::is_whitespace< wchar_t >( ch ) ) {
-                            line.remove_prefix( whitespace_count );
-                            break;
-                        }
-                        ++whitespace_count;
-                    }
-                    if ( line.front() != static_cast< wchar_t >( splitting_char_ ) ) [[unlikely]] {
+                    line = details_::trim_leading_whitespace( line );
+                    if ( line.empty() || line.front() != static_cast< wchar_t >( splitting_char_ ) ) [[unlikely]] {
                         return false;
                     }
                     line.remove_prefix( 1 );
-                    for ( auto whitespace_count{ 0uz }; const auto ch : line ) {
-                        if ( !details_::is_whitespace< wchar_t >( ch ) ) {
-                            line.remove_prefix( whitespace_count );
-                            break;
-                        }
-                        ++whitespace_count;
-                    }
+                    line = details_::trim_leading_whitespace( line );
                     current_binding::items.emplace_back( line );
                     return true;
                 }() || ... );
@@ -1069,21 +1067,7 @@ namespace scltk
         {
             str.remove_prefix( 1 );
             str.remove_suffix( 1 );
-            for ( auto whitespace_count{ 0uz }; const auto ch : str ) {
-                if ( !is_whitespace< char >( ch ) ) {
-                    str.remove_prefix( whitespace_count );
-                    break;
-                }
-                ++whitespace_count;
-            }
-            for ( auto whitespace_count{ 0uz }; const auto ch : str | std::views::reverse ) {
-                if ( !is_whitespace< char >( ch ) ) {
-                    str.remove_suffix( whitespace_count );
-                    break;
-                }
-                ++whitespace_count;
-            }
-            return str;
+            return trim_whitespace( str );
         }
     }
     auto load_config( const bool is_reload )
@@ -1103,21 +1087,7 @@ namespace scltk
           = stateful_config_nodes_type::transform< std::add_pointer >::add_front< std::monostate >::apply< std::variant >;
         config_node_recorder_type current_config_node;
         while ( std::getline( config_file, line ) ) {
-            std::string_view line_view{ line };
-            for ( auto whitespace_count{ 0uz }; const auto ch : line_view ) {
-                if ( !details_::is_whitespace< char >( ch ) ) {
-                    line_view.remove_prefix( whitespace_count );
-                    break;
-                }
-                ++whitespace_count;
-            }
-            for ( auto whitespace_count{ 0uz }; const auto ch : line_view | std::views::reverse ) {
-                if ( !details_::is_whitespace< char >( ch ) ) {
-                    line_view.remove_suffix( whitespace_count );
-                    break;
-                }
-                ++whitespace_count;
-            }
+            auto line_view{ details_::trim_whitespace< char >( line ) };
             if ( line_view.empty() ) [[unlikely]] {
                 continue;
             }
