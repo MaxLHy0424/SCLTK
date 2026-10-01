@@ -431,7 +431,8 @@ namespace scltk
                         sub_block.unchecked_emplace_back( L'\\' );
                         sub_block.append_range( target );
                         sub_block.unchecked_emplace_back( L'\0' );
-                        if ( VerQueryValueW( version_info_buffer.get(), sub_block.data(), &version_info_buffer_ptr, &length ) )
+                        if ( VerQueryValueW( version_info_buffer.get(), sub_block.data(), &version_info_buffer_ptr, &length )
+                             && length != 0 )
                         {
                             result.emplace_back( static_cast< const wchar_t* >( version_info_buffer_ptr ), length );
                         }
@@ -508,6 +509,9 @@ namespace scltk
             std::wstring_view proc_path_view{ proc_path_buffer.data(), proc_path_size };
             if ( proc_path_view.starts_with( LR"(C:\Program Files\)"sv ) ) {
                 proc_path_view.remove_prefix( LR"(C:\Program Files\)"sv.size() );
+                if ( proc_path_view.size() < proc_name.size() + 1uz ) {
+                    return false;
+                }
                 proc_path_view.remove_suffix( proc_name.size() + 1uz );
                 if ( proc_path_view.size() != 3uz && proc_path_view.size() != 4uz ) {
                     return false;
@@ -519,7 +523,10 @@ namespace scltk
             }
             if ( proc_path_view.starts_with( LR"(C:\Program Files (x86)\)"sv ) ) {
                 proc_path_view.remove_prefix( LR"(C:\Program Files (x86)\)"sv.size() );
-                proc_path_view.remove_suffix( proc_name.size() + 1 );
+                if ( proc_path_view.size() < proc_name.size() + 1uz ) {
+                    return false;
+                }
+                proc_path_view.remove_suffix( proc_name.size() + 1uz );
                 if ( proc_path_view.size() != 3uz && proc_path_view.size() != 4uz ) {
                     return false;
                 }
@@ -528,10 +535,15 @@ namespace scltk
                 }
                 return true;
             }
-            if ( proc_path_view.starts_with( LR"(C:\)"sv ) && is_lower_case( proc_path_view.data()[ 3 ] ) ) {
+            if ( proc_path_view.starts_with( LR"(C:\)"sv ) && proc_path_view.size() > LR"(C:\)"sv.size()
+                 && is_lower_case( proc_path_view.data()[ 3 ] ) )
+            {
                 proc_path_view.remove_prefix( LR"(C:\)"sv.size() + 1uz );
+                if ( proc_path_view.size() < proc_name.size() + 1uz ) {
+                    return false;
+                }
                 proc_path_view.remove_suffix( proc_name.size() + 1uz );
-                return std::ranges::all_of( proc_path_view, is_number );
+                return !proc_path_view.empty() && std::ranges::all_of( proc_path_view, is_number );
             }
             return false;
         }
@@ -1356,6 +1368,7 @@ namespace scltk
                 CloseHandle( proc_info.hProcess );
                 CloseHandle( proc_info.hThread );
             }
+            return;
         }
         auto logoff() noexcept
         {
@@ -1378,13 +1391,17 @@ namespace scltk
                 return;
             }
             std::array< wchar_t, 256 > sub_key_name [[indeterminate]];
-            DWORD buffer_size [[indeterminate]];
             DWORD index{ 0 };
-            while (
-              RegEnumKeyExW(
-                root_key.get(), index++, sub_key_name.data(), &( buffer_size = sub_key_name.size() ), nullptr, nullptr, nullptr, nullptr )
-              == ERROR_SUCCESS )
-            {
+            while ( true ) {
+                DWORD buffer_size{ static_cast< DWORD >( sub_key_name.size() ) };
+                const auto result{ RegEnumKeyExW(
+                  root_key.get(), index++, sub_key_name.data(), &buffer_size, nullptr, nullptr, nullptr, nullptr ) };
+                if ( result == ERROR_NO_MORE_FILES ) [[likely]] {
+                    break;
+                }
+                if ( result != ERROR_SUCCESS ) [[unlikely]] {
+                    continue;
+                }
                 if ( cpp_utils::scoped_reg_key_handle sub_key;
                      RegOpenKeyExW( root_key.get(), sub_key_name.data(), 0, KEY_QUERY_VALUE | KEY_SET_VALUE, std::out_ptr( sub_key ) )
                      == ERROR_SUCCESS )
