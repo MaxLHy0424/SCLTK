@@ -51,6 +51,8 @@ namespace scltk
     const cpp_utils::console con;
     cpp_utils::process_snapshot proc_snapshot;
     cpp_utils::service_manager serv_manager;
+    cpp_utils::registry_manager hklm_registry{ HKEY_LOCAL_MACHINE, cpp_utils::registry_flag::without_redirect };
+    cpp_utils::registry_manager hkcu_registry{ HKEY_CURRENT_USER, cpp_utils::registry_flag::without_redirect };
     constexpr auto quit() noexcept
     {
         return func_exit;
@@ -1417,34 +1419,33 @@ namespace scltk
             cleanup_hijacked_debuggers();
             cpp_utils::print_without_formatting( " -> 撤销功能禁用.\n"sv );
             for ( const auto& policy_reg : policy_key_regs ) {
-                ( void ) cpp_utils::delete_registry_tree_without_redirect( HKEY_LOCAL_MACHINE, policy_reg );
-                ( void ) cpp_utils::delete_registry_tree_without_redirect( HKEY_CURRENT_USER, policy_reg );
+                ( void ) hklm_registry.delete_tree( policy_reg );
+                ( void ) hkcu_registry.delete_tree( policy_reg );
             }
             for ( const auto& [ key, value ] : policy_value_regs ) {
-                ( void ) cpp_utils::delete_registry_value_without_redirect( HKEY_LOCAL_MACHINE, key, value );
-                ( void ) cpp_utils::delete_registry_value_without_redirect( HKEY_CURRENT_USER, key, value );
+                ( void ) hklm_registry.delete_value( key, value );
+                ( void ) hkcu_registry.delete_value( key, value );
             }
             constexpr DWORD need_enabled_reg_value{ 1 };
             for ( const auto& [ key, value ] : need_enabled_regs ) {
-                ( void ) cpp_utils::create_registry_value_without_redirect(
-                  HKEY_LOCAL_MACHINE, key, value, cpp_utils::registry_flag::dword_type,
-                  reinterpret_cast< const BYTE* >( &need_enabled_reg_value ), sizeof( need_enabled_reg_value ) );
-                ( void ) cpp_utils::create_registry_value_without_redirect(
-                  HKEY_CURRENT_USER, key, value, cpp_utils::registry_flag::dword_type,
-                  reinterpret_cast< const BYTE* >( &need_enabled_reg_value ), sizeof( need_enabled_reg_value ) );
+                ( void ) hklm_registry.create_value(
+                  key, value, cpp_utils::registry_flag::dword_type, reinterpret_cast< const BYTE* >( &need_enabled_reg_value ),
+                  sizeof( need_enabled_reg_value ) );
+                ( void ) hkcu_registry.create_value(
+                  key, value, cpp_utils::registry_flag::dword_type, reinterpret_cast< const BYTE* >( &need_enabled_reg_value ),
+                  sizeof( need_enabled_reg_value ) );
             }
             cpp_utils::print_without_formatting( " -> 撤销按键禁用 (注销当前用户账户后生效).\n"sv );
-            ( void ) cpp_utils::delete_registry_value_without_redirect(
-              HKEY_LOCAL_MACHINE, LR"(SYSTEM\CurrentControlSet\Control\Keyboard Layout)"sv, L"Scancode Map"sv );
-            ( void ) cpp_utils::delete_registry_value_without_redirect(
-              HKEY_LOCAL_MACHINE, LR"(Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced)"sv, L"DisabledHotkeys"sv );
-            ( void ) cpp_utils::delete_registry_value_without_redirect(
-              HKEY_CURRENT_USER, LR"(Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced)"sv, L"DisabledHotkeys"sv );
+            ( void ) hklm_registry.delete_value( LR"(SYSTEM\CurrentControlSet\Control\Keyboard Layout)"sv, L"Scancode Map"sv );
+            ( void ) hklm_registry.delete_value(
+              LR"(Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced)"sv, L"DisabledHotkeys"sv );
+            ( void ) hkcu_registry.delete_value(
+              LR"(Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced)"sv, L"DisabledHotkeys"sv );
             cpp_utils::print_without_formatting( " -> 恢复 USB 存储器服务.\n"sv );
             constexpr DWORD start_type{ 3 };
-            ( void ) cpp_utils::create_registry_value_without_redirect(
-              HKEY_LOCAL_MACHINE, LR"(SYSTEM\CurrentControlSet\Services\USBSTOR)"sv, L"Start"sv,
-              cpp_utils::registry_flag::dword_type, reinterpret_cast< const BYTE* >( &start_type ), sizeof( start_type ) );
+            ( void ) hklm_registry.create_value(
+              LR"(SYSTEM\CurrentControlSet\Services\USBSTOR)"sv, L"Start"sv, cpp_utils::registry_flag::dword_type,
+              reinterpret_cast< const BYTE* >( &start_type ), sizeof( start_type ) );
         }
         auto reset_firewall_rules() noexcept
         {
@@ -1605,17 +1606,16 @@ namespace scltk
         auto reset_jfglzs_config() noexcept
         {
             cpp_utils::print_without_formatting( " -> 删除密码.\n"sv );
-            ( void ) cpp_utils::delete_registry_value_without_redirect( HKEY_CURRENT_USER, L"Software"sv, L"n"sv );
+            ( void ) hkcu_registry.delete_value( L"Software"sv, L"n"sv );
             cpp_utils::print_without_formatting( " -> 删除配置.\n"sv );
-            ( void ) cpp_utils::delete_registry_tree_without_redirect( HKEY_CURRENT_USER, LR"(Software\jfglzs)"sv );
+            ( void ) hkcu_registry.delete_tree( LR"(Software\jfglzs)"sv );
             cpp_utils::print_without_formatting( " -> 删除自启动项.\n"sv );
             constexpr std::array autorun_items{
               L"jfglzs"sv, L"jfglzsn"sv, L"jfglzsp"sv, L"prozs"sv, L"przs"sv, L"jcctzxl"sv, L"jcctzx"sv, L"udwchk"sv };
             for ( const auto& autorun_item : autorun_items ) {
-                ( void ) cpp_utils::delete_registry_value_without_redirect(
-                  HKEY_LOCAL_MACHINE, LR"(SOFTWARE\Microsoft\Windows\CurrentVersion\Run)"sv, autorun_item );
-                ( void ) cpp_utils::delete_registry_value_without_redirect(
-                  HKEY_LOCAL_MACHINE, LR"(SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run)"sv, autorun_item );
+                ( void ) hklm_registry.delete_value( LR"(SOFTWARE\Microsoft\Windows\CurrentVersion\Run)"sv, autorun_item );
+                ( void ) hklm_registry.delete_value(
+                  LR"(SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run)"sv, autorun_item );
             }
             cpp_utils::print_without_formatting( " -> 删除备份.\n"sv );
             remove_directory( LR"(C:\Windows\jf)"sv );
@@ -1640,10 +1640,10 @@ namespace scltk
               LR"(Software\Google\Chrome)"sv, LR"(Software\Policies\Google\Chrome)"sv, LR"(Software\Policies\Microsoft\Edge)"sv,
               LR"(SOFTWARE\Policies\Mozilla\Firefox)"sv };
             for ( const auto& hklm_reg : hklm_regs ) {
-                ( void ) cpp_utils::delete_registry_tree_without_redirect( HKEY_LOCAL_MACHINE, hklm_reg );
+                ( void ) hklm_registry.delete_tree( hklm_reg );
             }
             for ( const auto& hkcu_reg : hkcu_regs ) {
-                ( void ) cpp_utils::delete_registry_tree_without_redirect( HKEY_CURRENT_USER, hkcu_reg );
+                ( void ) hkcu_registry.delete_tree( hkcu_reg );
             }
         }
     }

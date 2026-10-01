@@ -113,6 +113,8 @@ namespace cpp_utils
         inline constexpr DWORD string_type{ REG_SZ };
         inline constexpr DWORD link_type{ REG_LINK };
         inline constexpr DWORD none_type{ REG_NONE };
+        inline constexpr DWORD with_redirect{ 0 };
+        inline constexpr DWORD without_redirect{ KEY_WOW64_64KEY };
     }
     [[nodiscard]] inline auto to_string( const std::wstring_view str, const UINT charset ) -> std::optional< std::string >
     {
@@ -418,81 +420,82 @@ namespace cpp_utils
         process_snapshot( process_snapshot&& )      = delete;
         ~process_snapshot()                         = default;
     };
-    [[nodiscard]] inline auto create_registry_value(
-      const HKEY main_key, const std::wstring_view sub_key, const std::wstring_view value_name, const DWORD type,
-      const BYTE* const data, const DWORD data_size ) noexcept
+    class registry_manager final
     {
-        scoped_reg_key_handle key_handle;
-        if ( const auto result{ RegCreateKeyExW(
-               main_key, sub_key.data(), 0, nullptr, REG_OPTION_NON_VOLATILE, KEY_WRITE, nullptr, std::out_ptr( key_handle ),
-               nullptr ) };
-             result != ERROR_SUCCESS ) [[unlikely]]
+      private:
+        HKEY hive_{ nullptr };
+        DWORD view_flags_{ 0 };
+        scoped_reg_key_handle main_key_{};
+      public:
+        [[nodiscard]] auto valid() const noexcept
         {
-            return result;
+            return main_key_ != nullptr;
         }
-        return RegSetValueExW( key_handle.get(), value_name.data(), 0, type, data, data_size );
-    }
-    [[nodiscard]] inline auto create_registry_value_without_redirect(
-      const HKEY main_key, const std::wstring_view sub_key, const std::wstring_view value_name, const DWORD type,
-      const BYTE* const data, const DWORD data_size ) noexcept
-    {
-        scoped_reg_key_handle key_handle;
-        if ( const auto result{ RegCreateKeyExW(
-               main_key, sub_key.data(), 0, nullptr, REG_OPTION_NON_VOLATILE, KEY_WRITE | KEY_WOW64_64KEY, nullptr,
-               std::out_ptr( key_handle ), nullptr ) };
-             result != ERROR_SUCCESS ) [[unlikely]]
+        [[nodiscard]] auto refresh() noexcept
         {
-            return result;
+            scoped_reg_key_handle new_key;
+            if ( const auto result{ RegOpenKeyExW(
+                   hive_, nullptr, 0, KEY_WRITE | KEY_ENUMERATE_SUB_KEYS | KEY_QUERY_VALUE | view_flags_, std::out_ptr( new_key ) ) };
+                 result != ERROR_SUCCESS ) [[unlikely]]
+            {
+                return false;
+            }
+            main_key_ = std::move( new_key );
+            return true;
         }
-        return RegSetValueExW( key_handle.get(), value_name.data(), 0, type, data, data_size );
-    }
-    [[nodiscard]] inline auto
-      delete_registry_value( const HKEY main_key, const std::wstring_view sub_key, const std::wstring_view value_name ) noexcept
-    {
-        scoped_reg_key_handle key_handle;
-        if ( const auto result{ RegOpenKeyExW( main_key, sub_key.data(), 0, KEY_SET_VALUE, std::out_ptr( key_handle ) ) };
-             result != ERROR_SUCCESS ) [[unlikely]]
+        [[nodiscard]] auto create_value(
+          const std::wstring_view sub_key, const std::wstring_view value_name, const DWORD type, const BYTE* const data,
+          const DWORD data_size ) const noexcept -> DWORD
         {
-            return result;
+            if ( !valid() ) [[unlikely]] {
+                return ERROR_INVALID_HANDLE;
+            }
+            scoped_reg_key_handle key_handle;
+            if ( const auto result{ RegCreateKeyExW(
+                   main_key_.get(), sub_key.data(), 0, nullptr, REG_OPTION_NON_VOLATILE, KEY_WRITE, nullptr,
+                   std::out_ptr( key_handle ), nullptr ) };
+                 result != ERROR_SUCCESS ) [[unlikely]]
+            {
+                return result;
+            }
+            return RegSetValueExW( key_handle.get(), value_name.data(), 0, type, data, data_size );
         }
-        return RegDeleteValueW( key_handle.get(), value_name.data() );
-    }
-    [[nodiscard]] inline auto delete_registry_value_without_redirect(
-      const HKEY main_key, const std::wstring_view sub_key, const std::wstring_view value_name ) noexcept
-    {
-        scoped_reg_key_handle key_handle;
-        if ( const auto result{
-               RegOpenKeyExW( main_key, sub_key.data(), 0, KEY_SET_VALUE | KEY_WOW64_64KEY, std::out_ptr( key_handle ) ) };
-             result != ERROR_SUCCESS ) [[unlikely]]
+        [[nodiscard]] auto delete_value( const std::wstring_view sub_key, const std::wstring_view value_name ) const noexcept -> DWORD
         {
-            return result;
+            if ( !valid() ) [[unlikely]] {
+                return ERROR_INVALID_HANDLE;
+            }
+            scoped_reg_key_handle key_handle;
+            if ( const auto result{ RegOpenKeyExW( main_key_.get(), sub_key.data(), 0, KEY_SET_VALUE, std::out_ptr( key_handle ) ) };
+                 result != ERROR_SUCCESS ) [[unlikely]]
+            {
+                return result;
+            }
+            return RegDeleteValueW( key_handle.get(), value_name.data() );
         }
-        return RegDeleteValueW( key_handle.get(), value_name.data() );
-    }
-    [[nodiscard]] inline auto delete_registry_tree( const HKEY main_key, const std::wstring_view sub_key ) noexcept
-    {
+        [[nodiscard]] auto delete_tree( const std::wstring_view sub_key ) const noexcept -> DWORD
+        {
+            if ( !valid() ) [[unlikely]] {
+                return ERROR_INVALID_HANDLE;
+            }
 # ifdef CPP_UTILS_WINDOWS_IMPL_NT0600_FIX
-        return static_cast< LONG >( SHDeleteKeyW( main_key, sub_key.data() ) );
+            return static_cast< LONG >( SHDeleteKeyW( main_key_.get(), sub_key.data() ) );
 # else
-        return RegDeleteTreeW( main_key, sub_key.data() );
+            return RegDeleteTreeW( main_key_.get(), sub_key.data() );
 # endif
-    }
-    [[nodiscard]] inline auto delete_registry_tree_without_redirect( const HKEY main_key, const std::wstring_view sub_key ) noexcept
-    {
-        scoped_reg_key_handle key_handle;
-        if ( const auto result{ RegOpenKeyExW(
-               main_key, nullptr, 0, KEY_WRITE | KEY_ENUMERATE_SUB_KEYS | KEY_QUERY_VALUE | KEY_WOW64_64KEY,
-               std::out_ptr( key_handle ) ) };
-             result != ERROR_SUCCESS ) [[unlikely]]
-        {
-            return result;
         }
-# ifdef CPP_UTILS_WINDOWS_IMPL_NT0600_FIX
-        return static_cast< LONG >( SHDeleteKeyW( key_handle.get(), sub_key.data() ) );
-# else
-        return RegDeleteTreeW( key_handle.get(), sub_key.data() );
-# endif
-    }
+        auto operator=( const registry_manager& ) -> registry_manager& = delete;
+        auto operator=( registry_manager&& ) -> registry_manager&      = delete;
+        registry_manager( const HKEY hive, const DWORD view_flags = registry_flag::with_redirect ) noexcept
+          : hive_{ hive }
+          , view_flags_{ view_flags }
+        {
+            ( void ) refresh();
+        }
+        registry_manager( const registry_manager& ) = delete;
+        registry_manager( registry_manager&& )      = delete;
+        ~registry_manager()                         = default;
+    };
     class service_manager final
     {
       private:
