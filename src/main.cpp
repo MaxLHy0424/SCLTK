@@ -1764,8 +1764,9 @@ namespace scltk
                         {
                             return true;
                         }
-                        auto proc_handle{ proc_snapshot.open_process( proc_entry.th32ProcessID, desired_access ) };
-                        if ( proc_handle != nullptr ) [[likely]] {
+                        if ( auto proc_handle{ proc_snapshot.open_process( proc_entry.th32ProcessID, desired_access ) };
+                             proc_handle != nullptr ) [[likely]]
+                        {
                             proc_handles.emplace_back( std::move( proc_handle ) );
                         }
                         return true;
