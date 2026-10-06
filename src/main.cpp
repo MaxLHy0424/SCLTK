@@ -2144,8 +2144,7 @@ namespace scltk
                 all_rules::crack();
                 cpp_utils::print_without_formatting(
                   "\n"
-                  " (i) 已执行全部破解规则,\n"
-                  "     请按任意键进入主页."sv );
+                  " (i) 请按任意键进入主页."sv );
                 con.press_any_key_to_continue();
             }
         }
