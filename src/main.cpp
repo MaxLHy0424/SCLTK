@@ -12,7 +12,6 @@
 #include <cfgmgr32.h>
 #include <cpp_utils/const_string.hpp>
 #include <cpp_utils/windows_console.hpp>
-#include <initguid.h>
 #include <setupapi.h>
 #include <tre/tre.h>
 #include <wincrypt.h>
