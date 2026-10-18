@@ -6,6 +6,7 @@
 #define NOCOMM
 #define NOSOUND
 #define NORPC
+#include <initguid.h>
 #include <winsock2.h>
 #define TRE_WCHAR
 #define TRE_MULTIBYTE
