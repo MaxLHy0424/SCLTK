@@ -1530,7 +1530,7 @@ namespace scltk
         auto flush_dns() noexcept
         {
             cpp_utils::print_without_formatting( " -> 刷新 DNS.\n"sv );
-            const scoped_module dnsapi{ LoadLibraryW( L"dnsapi.dll" ) };
+            const scoped_module dnsapi{ LoadLibraryExW( L"dnsapi.dll", nullptr, LOAD_LIBRARY_SEARCH_SYSTEM32 ) };
             if ( dnsapi == nullptr ) [[unlikely]] {
                 return;
             }
