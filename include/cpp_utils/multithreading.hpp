@@ -27,7 +27,7 @@ namespace cpp_utils
         for ( std::ptrdiff_t i{ 0 }; i < nproc_for_executing; ++i ) {
             auto chunk_start{ begin + i * chunk_size + std::ranges::min( i, remainder ) };
             auto chunk_end{ chunk_start + chunk_size + ( i < remainder ? 1 : 0 ) };
-            threads.emplace_back( [ =, func ] mutable
+            threads.emplace_back( [ = ] mutable
             {
                 for ( auto& it{ chunk_start }; it != chunk_end; ++it ) {
                     func( *it );
