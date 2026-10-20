@@ -11,7 +11,7 @@ namespace cpp_utils
 {
     using nproc_t = decltype( std::thread::hardware_concurrency() );
     template < std::random_access_iterator It, std::sentinel_for< It > W, typename F >
-        requires std::invocable< F, decltype( *std::declval< It >() ) > && std::copyable< std::decay_t< F > >
+        requires std::invocable< F, std::iter_reference_t< It > > && std::copyable< std::decay_t< F > >
     [[nodiscard]] inline auto create_parallel_task( const nproc_t nproc, It&& begin, W&& end, F&& func )
       -> std::optional< std::vector< std::thread > >
     {
@@ -37,7 +37,7 @@ namespace cpp_utils
         return threads;
     }
     template < std::random_access_iterator It, std::sentinel_for< It > W, typename F >
-        requires std::invocable< F, decltype( *std::declval< It >() ) > && std::copyable< std::decay_t< F > >
+        requires std::invocable< F, std::iter_reference_t< It > > && std::copyable< std::decay_t< F > >
     [[nodiscard]] inline auto create_parallel_task( It&& begin, W&& end, F&& func )
     {
         return create_parallel_task(
@@ -45,7 +45,7 @@ namespace cpp_utils
           std::forward< F >( func ) );
     }
     template < std::random_access_iterator It, std::sentinel_for< It > W, typename F >
-        requires std::invocable< F, decltype( *std::declval< It >() ) > && std::copyable< std::decay_t< F > >
+        requires std::invocable< F, std::iter_reference_t< It > > && std::copyable< std::decay_t< F > >
     inline auto parallel_for_each( const nproc_t nproc, It&& begin, W&& end, F&& func )
     {
         auto threads{
@@ -60,7 +60,7 @@ namespace cpp_utils
         }
     }
     template < std::random_access_iterator It, std::sentinel_for< It > W, typename F >
-        requires std::invocable< F, decltype( *std::declval< It >() ) > && std::copyable< std::decay_t< F > >
+        requires std::invocable< F, std::iter_reference_t< It > > && std::copyable< std::decay_t< F > >
     inline auto parallel_for_each( It&& begin, W&& end, F&& func )
     {
         parallel_for_each(
